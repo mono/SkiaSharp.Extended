@@ -1,42 +1,50 @@
-#tool "nuget:?package=NUnit.ConsoleRunner"
+#load "../common.cake"
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var verbosity = Argument("verbosity", "Verbose");
 
-Task("Build")
-    .Does(() =>
-{
-    // build the PCL solution
-    NuGetRestore("./source/SkiaSharp.Extended.NetFramework.sln");
-    DotNetBuild("./source/SkiaSharp.Extended.NetFramework.sln", settings => settings.SetConfiguration(configuration));
+var buildSpec = new BuildSpec {
+    Libs = new ISolutionBuilder [] {
+        new DefaultSolutionBuilder {
+            PreBuildAction = () => {
+                // restore netstandard
+                StartProcess("dotnet", new ProcessSettings {
+                    Arguments = "restore ./source/SkiaSharp.Extended.NetStandard.sln"
+                });
+            },
+            PostBuildAction = () => {
+                // build netstandard
+                StartProcess("dotnet", new ProcessSettings {
+                    Arguments = "build -c " + configuration + " ./source/SkiaSharp.Extended.NetStandard.sln"
+                });
+            },
+            SolutionPath = "./source/SkiaSharp.Extended.NetFramework.sln",
+            Configuration = configuration,
+            OutputFiles = new [] { 
+                new OutputFileCopy {
+                    FromFile = "./source/SkiaSharp.Extended/bin/Release/SkiaSharp.Extended.dll",
+                    ToDirectory = "./output/portable"
+                },
+                new OutputFileCopy {
+                    FromFile = "./source/SkiaSharp.Extended.NetStandard/bin/Release/SkiaSharp.Extended.dll",
+                    ToDirectory = "./output/netstandard"
+                },
+            }
+        },
+    },
 
-    // copy output
-    EnsureDirectoryExists("./output/portable");
-    CopyFileToDirectory("./source/SkiaSharp.Extended/bin/" + configuration + "/SkiaSharp.Extended.dll", "./output/portable");
+    // Samples = new ISolutionBuilder [] {
+    //     new DefaultSolutionBuilder { SolutionPath = "./samples/SkiaSharpDemo.sln" },
+    // },
 
-    // build the .NET Standard solution
-    DotNetCoreRestore("./source/SkiaSharp.Extended.NetStandard");
-    DotNetCoreBuild("./source/SkiaSharp.Extended.NetStandard.sln", new DotNetCoreBuildSettings { Configuration = configuration });
+    NuGets = new [] {
+        new NuGetInfo { NuSpec = "./nuget/SkiaSharp.Extended.nuspec"},
+    },
+};
 
-    // copy output
-    EnsureDirectoryExists("./output/netstandard");
-    CopyFileToDirectory("./source/SkiaSharp.Extended.NetStandard/bin/" + configuration + "/SkiaSharp.Extended.dll", "./output/netstandard");
-});
-
-Task("Package")
-    .IsDependentOn("Build")
-    .Does(() =>
-{
-    // create the package
-    NuGetPack ("./nuget/SkiaSharp.Extended.nuspec", new NuGetPackSettings { 
-        OutputDirectory = "./output/",
-        BasePath = "./",
-    });
-});
-
-Task("Test")
-    .IsDependentOn("Build")
+Task("tests")
+    .IsDependentOn("libs")
     .Does(() =>
 {
     // build the tests
@@ -49,19 +57,11 @@ Task("Test")
     });
 });
 
-Task("Clean")
-    .Does(() =>
-{
-    CleanDirectories ("./source/*/bin");
-    CleanDirectories ("./source/*/obj");
-    CleanDirectories ("./source/packages");
-
-    CleanDirectories ("./output");
-});
-
 Task("Default")
-    .IsDependentOn("Build")
-    .IsDependentOn("Package")
-    .IsDependentOn("Test");
+    .IsDependentOn("libs")
+    .IsDependentOn("nuget")
+    .IsDependentOn("tests");
+
+SetupXamarinBuildTasks (buildSpec, Tasks, Task);
 
 RunTarget(target);

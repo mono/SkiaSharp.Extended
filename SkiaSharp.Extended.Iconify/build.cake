@@ -1,45 +1,71 @@
 #addin "Cake.FileHelpers"
 
+#load "../common.cake"
+
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var verbosity = Argument("verbosity", "Verbose");
 
-var FontAwesomeVersion = "4.7.0";
-var FontAwesomeStyleUrl = string.Format("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/v{0}/css/font-awesome.min.css", FontAwesomeVersion);
-var FontAwesomeFontUrl = string.Format("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/v{0}/fonts/fontawesome-webfont.ttf", FontAwesomeVersion);
+var baseAssembly = "./source/SkiaSharp.Extended.Iconify/bin/" + configuration + "/SkiaSharp.Extended.Iconify.dll";
+var fontAssemblies = "./source/SkiaSharp.Extended.Iconify.*/bin/" + configuration + "/SkiaSharp.Extended.Iconify.*.dll";
 
-// var EntypoUrl = "https://dl.dropboxusercontent.com/u/4339492/entypo.zip";
+var buildSpec = new BuildSpec {
+    Libs = new ISolutionBuilder [] {
+        new DefaultSolutionBuilder {
+            SolutionPath = "./source/SkiaSharp.Extended.Iconify.sln",
+            Configuration = configuration,
+            OutputFiles = GetFiles(fontAssemblies)
+                .Select(assembly => new OutputFileCopy { FromFile = assembly, ToDirectory = "./output/portable" })
+                .Union(new [] { new OutputFileCopy { FromFile = baseAssembly, ToDirectory = "./output/portable" } })
+                .ToArray(),
+        },
+    },
 
-var IonIconsVersion = "2.0.1";
-var IonIconsStyleUrl = string.Format("https://raw.githubusercontent.com/ionic-team/ionicons/v{0}/css/ionicons.min.css", IonIconsVersion);
-var IonIconsFontUrl = string.Format("https://raw.githubusercontent.com/ionic-team/ionicons/v{0}/fonts/ionicons.ttf", IonIconsVersion);
+    // Samples = new ISolutionBuilder [] {
+    //     new DefaultSolutionBuilder { SolutionPath = "./samples/SkiaSharpDemo.sln" },
+    // },
 
-var MaterialDesignIconsVersion = "1.9.32";
-var MaterialDesignIconsStyleUrl = string.Format("http://cdn.materialdesignicons.com/{0}/css/materialdesignicons.min.css", MaterialDesignIconsVersion);
-var MaterialDesignIconsFontUrl = string.Format("http://cdn.materialdesignicons.com/{0}/fonts/materialdesignicons-webfont.ttf", MaterialDesignIconsVersion);
+    NuGets = GetFiles("./nuget/*.nuspec")
+        .Select(nuspec => new NuGetInfo { NuSpec = nuspec })
+        .ToArray(),
+};
 
-var MaterialIconsVersion = "3.0.1";
-var MaterialIconsStyleUrl = string.Format("https://raw.githubusercontent.com/google/material-design-icons/{0}/iconfont/codepoints", MaterialIconsVersion);
-var MaterialIconsFontUrl = string.Format("https://github.com/google/material-design-icons/raw/{0}/iconfont/MaterialIcons-Regular.ttf", MaterialIconsVersion);
-
-var MeteoconsUrl = "http://www.alessioatzeni.com/meteocons/res/download/meteocons-font.zip";
-
-var SimpleLineIconsVersion = "2.4.1";
-var SimpleLineIconsStyleUrl = string.Format("https://raw.githubusercontent.com/thesabbir/simple-line-icons/{0}/css/simple-line-icons.css", SimpleLineIconsVersion);
-var SimpleLineIconsFontUrl = string.Format("https://raw.githubusercontent.com/thesabbir/simple-line-icons/{0}/fonts/Simple-Line-Icons.ttf", SimpleLineIconsVersion);
-
-var TypiconsVersion = "2.0.9";
-var TypiconsStyleUrl = string.Format("https://raw.githubusercontent.com/stephenhutchings/typicons.font/v{0}/src/font/typicons.min.css", TypiconsVersion);
-var TypiconsFontUrl = string.Format("https://raw.githubusercontent.com/stephenhutchings/typicons.font/v{0}/src/font/typicons.ttf", TypiconsVersion);
-
-var WeatherIconsVersion = "2.0.10";
-var WeatherIconsStyleUrl = string.Format("https://raw.githubusercontent.com/erikflowers/weather-icons/{0}/css/weather-icons.min.css", WeatherIconsVersion);
-var WeatherIconsStyleWindUrl = string.Format("https://raw.githubusercontent.com/erikflowers/weather-icons/{0}/css/weather-icons-wind.min.css", WeatherIconsVersion);
-var WeatherIconsFontUrl = string.Format("https://raw.githubusercontent.com/erikflowers/weather-icons/{0}/font/weathericons-regular-webfont.ttf", WeatherIconsVersion);
-
-Task("Externals")
+Task("externals-download")
     .Does(() =>
 {
+    var FontAwesomeVersion = "4.7.0";
+    var FontAwesomeStyleUrl = string.Format("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/v{0}/css/font-awesome.min.css", FontAwesomeVersion);
+    var FontAwesomeFontUrl = string.Format("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/v{0}/fonts/fontawesome-webfont.ttf", FontAwesomeVersion);
+
+    // var EntypoUrl = "https://dl.dropboxusercontent.com/u/4339492/entypo.zip";
+
+    var IonIconsVersion = "2.0.1";
+    var IonIconsStyleUrl = string.Format("https://raw.githubusercontent.com/ionic-team/ionicons/v{0}/css/ionicons.min.css", IonIconsVersion);
+    var IonIconsFontUrl = string.Format("https://raw.githubusercontent.com/ionic-team/ionicons/v{0}/fonts/ionicons.ttf", IonIconsVersion);
+
+    var MaterialDesignIconsVersion = "1.9.32";
+    var MaterialDesignIconsStyleUrl = string.Format("http://cdn.materialdesignicons.com/{0}/css/materialdesignicons.min.css", MaterialDesignIconsVersion);
+    var MaterialDesignIconsFontUrl = string.Format("http://cdn.materialdesignicons.com/{0}/fonts/materialdesignicons-webfont.ttf", MaterialDesignIconsVersion);
+
+    var MaterialIconsVersion = "3.0.1";
+    var MaterialIconsStyleUrl = string.Format("https://raw.githubusercontent.com/google/material-design-icons/{0}/iconfont/codepoints", MaterialIconsVersion);
+    var MaterialIconsFontUrl = string.Format("https://github.com/google/material-design-icons/raw/{0}/iconfont/MaterialIcons-Regular.ttf", MaterialIconsVersion);
+
+    var MeteoconsUrl = "http://www.alessioatzeni.com/meteocons/res/download/meteocons-font.zip";
+
+    var SimpleLineIconsVersion = "2.4.1";
+    var SimpleLineIconsStyleUrl = string.Format("https://raw.githubusercontent.com/thesabbir/simple-line-icons/{0}/css/simple-line-icons.css", SimpleLineIconsVersion);
+    var SimpleLineIconsFontUrl = string.Format("https://raw.githubusercontent.com/thesabbir/simple-line-icons/{0}/fonts/Simple-Line-Icons.ttf", SimpleLineIconsVersion);
+
+    var TypiconsVersion = "2.0.9";
+    var TypiconsStyleUrl = string.Format("https://raw.githubusercontent.com/stephenhutchings/typicons.font/v{0}/src/font/typicons.min.css", TypiconsVersion);
+    var TypiconsFontUrl = string.Format("https://raw.githubusercontent.com/stephenhutchings/typicons.font/v{0}/src/font/typicons.ttf", TypiconsVersion);
+
+    var WeatherIconsVersion = "2.0.10";
+    var WeatherIconsStyleUrl = string.Format("https://raw.githubusercontent.com/erikflowers/weather-icons/{0}/css/weather-icons.min.css", WeatherIconsVersion);
+    var WeatherIconsStyleWindUrl = string.Format("https://raw.githubusercontent.com/erikflowers/weather-icons/{0}/css/weather-icons-wind.min.css", WeatherIconsVersion);
+    var WeatherIconsFontUrl = string.Format("https://raw.githubusercontent.com/erikflowers/weather-icons/{0}/font/weathericons-regular-webfont.ttf", WeatherIconsVersion);
+
     // download all the styles
 
     // FontAwesome
@@ -110,8 +136,9 @@ Task("Externals")
     }
 });
 
-Task("Build")
-    .IsDependentOn("Externals")
+Task("externals")
+    .IsDependentOn("externals-download")
+    .IsDependentOn("externals-base")
     .Does(() =>
 {
     var GenerateIconifySource = new Action<FilePath, string, string>((stylesheet, type, codepointType) => {
@@ -145,56 +172,20 @@ Task("Build")
     GenerateIconifySource("externals/SimpleLineIcons/simple-line-icons.css", "SimpleLineIcons", "css");
     GenerateIconifySource("externals/Typicons/typicons.min.css", "Typicons", "css");
     GenerateIconifySource("externals/WeatherIcons/weather-icons.css", "WeatherIcons", "css");
-
-    // now build the libraries
-    NuGetRestore("./source/SkiaSharp.Extended.Iconify.sln");
-    DotNetBuild("./source/SkiaSharp.Extended.Iconify.sln", settings => settings.SetConfiguration(configuration));
-
-    // copy to output
-    EnsureDirectoryExists("./output/assemblies/");
-    CopyFiles("./source/SkiaSharp.Extended.Iconify/bin/" + configuration + "/SkiaSharp.Extended.Iconify.dll", "./output/assemblies/");
-    CopyFiles("./source/SkiaSharp.Extended.Iconify.*/bin/" + configuration + "/SkiaSharp.Extended.Iconify.*.dll", "./output/assemblies/");
 });
 
-Task("Package")
-    .IsDependentOn("Build")
+Task("clean")
+    .IsDependentOn("clean-base")
     .Does(() =>
 {
-    foreach (var nuspec in GetFiles("./nuget/*.nuspec")) {
-        NuGetPack (nuspec, new NuGetPackSettings { 
-            OutputDirectory = "./output/nugets",
-            BasePath = "./",
-        });
-    }
-});
-
-Task("Clean")
-    .Does(() =>
-{
-    CleanDirectories ("./source/*/bin");
-    CleanDirectories ("./source/*/obj");
-    CleanDirectories ("./source/packages");
-
-    CleanDirectories ("./samples/*/bin");
-    CleanDirectories ("./samples/*/obj");
-    CleanDirectories ("./samples/packages");
-    CleanDirectories ("./samples/*/AppPackages");
-    DeleteFiles ("./samples/*/project.lock.json");
-    CleanDirectories ("./samples/*/*/bin");
-    CleanDirectories ("./samples/*/*/obj");
-    CleanDirectories ("./samples/*/packages");
-    CleanDirectories ("./samples/*/*/AppPackages");
-    DeleteFiles ("./samples/*/*/project.lock.json");
-
     if (DirectoryExists ("./externals"))
         DeleteDirectory ("./externals", true);
-
-    if (DirectoryExists ("./output"))
-        DeleteDirectory ("./output", true);
 });
 
 Task("Default")
-    .IsDependentOn("Build")
-    .IsDependentOn("Package");
+    .IsDependentOn("libs")
+    .IsDependentOn("nuget");
+
+SetupXamarinBuildTasks (buildSpec, Tasks, Task);
 
 RunTarget(target);

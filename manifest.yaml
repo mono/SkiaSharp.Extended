@@ -1,0 +1,10 @@
+- Name: SkiaSharp.Extended
+  BuildScript: ./SkiaSharp.Extended/build.cake
+  TriggerPaths: [ SkiaSharp.Extended ]
+  MacBuildTargets: [ Default ]
+  WindowsBuildTargets: [ Default ]
+- Name: SkiaSharp.Extended.Iconify
+  BuildScript: ./SkiaSharp.Extended.Iconify/build.cake
+  TriggerPaths: [ SkiaSharp.Extended.Iconify ]
+  MacBuildTargets: [ Default ]
+  WindowsBuildTargets: [ Default ]

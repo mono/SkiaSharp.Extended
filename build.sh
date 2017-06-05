@@ -17,6 +17,7 @@ PACKAGES_CONFIG=$TOOLS_DIR/packages.config
 PACKAGES_CONFIG_MD5=$TOOLS_DIR/packages.config.md5sum
 ADDINS_PACKAGES_CONFIG=$ADDINS_DIR/packages.config
 MODULES_PACKAGES_CONFIG=$MODULES_DIR/packages.config
+CAKE_PACKAGES_CONFIG=$SCRIPT_DIR/cake.packages.config
 
 # Define md5sum or md5 depending on Linux/OSX
 MD5_EXE=
@@ -56,12 +57,17 @@ if [ ! -d "$TOOLS_DIR" ]; then
 fi
 
 # Make sure that packages.config exist.
-if [ ! -f "$TOOLS_DIR/packages.config" ]; then
-    echo "Downloading packages.config..."
-    curl -Lsfo "$TOOLS_DIR/packages.config" http://cakebuild.net/download/bootstrapper/packages
-    if [ $? -ne 0 ]; then
-        echo "An error occured while downloading packages.config."
-        exit 1
+if [ ! -f "$PACKAGES_CONFIG" ]; then
+    if [ ! -f "$CAKE_PACKAGES_CONFIG" ]; then
+       echo "Downloading packages.config..."
+       curl -Lsfo "$PACKAGES_CONFIG" http://cakebuild.net/bootstrapper/packages
+       if [ $? -ne 0 ]; then
+           echo "An error occured while downloading packages.config."
+           exit 1
+        fi
+    else
+        echo "using local cake.packages.config..."
+        cp "$CAKE_PACKAGES_CONFIG" "$PACKAGES_CONFIG"
     fi
 fi
 
