@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkiaSharp.Extended.Tests", "SkiaSharp.Extended.Tests\SkiaSharp.Extended.Tests.csproj", "{524491E8-1481-442F-9286-8D00BF807065}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SkiaSharp.Extended.Shared", "..\source\SkiaSharp.Extended.Shared\SkiaSharp.Extended.Shared.shproj", "{E3290CE6-0ADA-486B-9BAB-8BCF07F9BE45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkiaSharp.Extended", "..\source\SkiaSharp.Extended\SkiaSharp.Extended.csproj", "{FEA1FEC9-950C-46C0-9EB0-A515E0AB8F19}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\source\SkiaSharp.Extended.Shared\SkiaSharp.Extended.Shared.projitems*{e3290ce6-0ada-486b-9bab-8bcf07f9be45}*SharedItemsImports = 13
+		..\source\SkiaSharp.Extended.Shared\SkiaSharp.Extended.Shared.projitems*{fea1fec9-950c-46c0-9eb0-a515e0ab8f19}*SharedItemsImports = 4
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{524491E8-1481-442F-9286-8D00BF807065}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{524491E8-1481-442F-9286-8D00BF807065}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{524491E8-1481-442F-9286-8D00BF807065}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{524491E8-1481-442F-9286-8D00BF807065}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEA1FEC9-950C-46C0-9EB0-A515E0AB8F19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA1FEC9-950C-46C0-9EB0-A515E0AB8F19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEA1FEC9-950C-46C0-9EB0-A515E0AB8F19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEA1FEC9-950C-46C0-9EB0-A515E0AB8F19}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

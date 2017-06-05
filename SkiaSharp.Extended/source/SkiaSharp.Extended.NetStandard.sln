@@ -1,0 +1,19 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkiaSharp.Extended.NetStandard", "SkiaSharp.Extended.NetStandard\SkiaSharp.Extended.NetStandard.csproj", "{EF44E419-98AE-492F-8F90-1AA45EABB90B}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SkiaSharp.Extended.Shared", "SkiaSharp.Extended.Shared\SkiaSharp.Extended.Shared.shproj", "{E3290CE6-0ADA-486B-9BAB-8BCF07F9BE45}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EF44E419-98AE-492F-8F90-1AA45EABB90B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF44E419-98AE-492F-8F90-1AA45EABB90B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF44E419-98AE-492F-8F90-1AA45EABB90B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF44E419-98AE-492F-8F90-1AA45EABB90B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
