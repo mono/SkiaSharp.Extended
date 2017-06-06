@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -193,6 +193,26 @@ namespace SkiaSharp
 			// parse elements
 			switch (elementName)
 			{
+				case "image":
+					{
+						var x = ReadNumber(e.Attribute("x"));
+						var y = ReadNumber(e.Attribute("y"));
+						var width = ReadNumber(e.Attribute("width"));
+						var height = ReadNumber(e.Attribute("height"));
+						var bytes = ReadBytes(e.Attributes().FirstOrDefault((arg) => arg.Name.LocalName == "href"));
+
+						using (var data = SKData.CreateCopy(bytes))
+						using (var image = SKImage.FromEncodedData(data))
+						{
+							if (image != null)
+							{
+								var rect = SKRect.Create(x, y, width, height);
+								canvas.DrawImage(image, rect);
+							}
+						}
+
+						break;
+					}
 				case "text":
 					if (stroke != null || fill != null)
 					{
@@ -1043,6 +1063,24 @@ namespace SkiaSharp
 				value = ReadNumber(strValue);
 			}
 			return value;
+		}
+
+		private byte[] ReadBytes(XAttribute a)
+		{
+			if (a == null) return new byte[0];
+
+			var base64 = a.Value.Split(',');
+			byte[] bytes = null;
+
+			if (base64.Length > 1)
+			{
+				bytes = Convert.FromBase64String(base64[1]);
+			}
+
+            // image empty
+			bytes = bytes ?? new byte[0];
+
+			return bytes;
 		}
 
 		private float ReadNumber(string raw)
