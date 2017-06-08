@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 
 namespace SkiaSharp.Extended.Iconify
 {
@@ -8,24 +7,25 @@ namespace SkiaSharp.Extended.Iconify
 	{
 		public const string ManifestResourceName = "SkiaSharp.Extended.Iconify.fontawesome-webfont.ttf";
 
-		public static Stream GetFontStream()
-		{
-			var type = typeof(FontAwesome).GetTypeInfo();
-			var assembly = type.Assembly;
+		public static Stream GetFontStream() => SKTextRunLookupEntry.GetManifestFontStream(typeof(FontAwesome), ManifestResourceName);
 
-			return assembly.GetManifestResourceStream(ManifestResourceName);
-		}
+		public static SKTypeface GetTypeface() => SKTextRunLookupEntry.GetManifestTypeface(typeof(FontAwesome), ManifestResourceName);
+	}
 
-		public static SKTypeface GetTypeface()
+	public class FontAwesomeLookupEntry : SKTextRunLookupEntry
+	{
+		public FontAwesomeLookupEntry()
+			: base(FontAwesome.GetTypeface(), true, FontAwesome.Characters)
 		{
-			return SKTypeface.FromStream(GetFontStream());
 		}
+	}
 
-		public static void AddTo(SKTextRunLookup lookup)
-		{
-			if (lookup == null)
-				throw new ArgumentNullException(nameof(lookup));
-			lookup.AddTypeface(GetTypeface(), Characters);
-		}
+	public static class SKTextRunLookupExtensions
+	{
+		private static readonly Lazy<FontAwesomeLookupEntry> entry = new Lazy<FontAwesomeLookupEntry>(() => new FontAwesomeLookupEntry());
+
+		public static void AddFontAwesome(this SKTextRunLookup lookup) => lookup.AddTypeface(entry.Value);
+
+		public static void RemoveFontAwesome(this SKTextRunLookup lookup) => lookup.RemoveTypeface(entry.Value);
 	}
 }

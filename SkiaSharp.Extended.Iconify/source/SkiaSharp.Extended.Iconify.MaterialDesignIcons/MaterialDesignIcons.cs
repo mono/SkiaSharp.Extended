@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 
 namespace SkiaSharp.Extended.Iconify
 {
@@ -8,24 +7,25 @@ namespace SkiaSharp.Extended.Iconify
 	{
 		public const string ManifestResourceName = "SkiaSharp.Extended.Iconify.materialdesignicons-webfont.ttf";
 
-		public static Stream GetFontStream()
-		{
-			var type = typeof(MaterialDesignIcons).GetTypeInfo();
-			var assembly = type.Assembly;
+		public static Stream GetFontStream() => SKTextRunLookupEntry.GetManifestFontStream(typeof(MaterialDesignIcons), ManifestResourceName);
 
-			return assembly.GetManifestResourceStream(ManifestResourceName);
-		}
+		public static SKTypeface GetTypeface() => SKTextRunLookupEntry.GetManifestTypeface(typeof(MaterialDesignIcons), ManifestResourceName);
+	}
 
-		public static SKTypeface GetTypeface()
+	public class MaterialDesignIconsLookupEntry : SKTextRunLookupEntry
+	{
+		public MaterialDesignIconsLookupEntry()
+			: base(MaterialDesignIcons.GetTypeface(), true, MaterialDesignIcons.Characters)
 		{
-			return SKTypeface.FromStream(GetFontStream());
 		}
+	}
 
-		public static void AddTo(SKTextRunLookup lookup)
-		{
-			if (lookup == null)
-				throw new ArgumentNullException(nameof(lookup));
-			lookup.AddTypeface(GetTypeface(), Characters);
-		}
+	public static class SKTextRunLookupExtensions
+	{
+		private static readonly Lazy<MaterialDesignIconsLookupEntry> entry = new Lazy<MaterialDesignIconsLookupEntry>(() => new MaterialDesignIconsLookupEntry());
+
+		public static void AddMaterialDesignIcons(this SKTextRunLookup lookup) => lookup.AddTypeface(entry.Value);
+
+		public static void RemoveMaterialDesignIcons(this SKTextRunLookup lookup) => lookup.RemoveTypeface(entry.Value);
 	}
 }
