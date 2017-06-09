@@ -11,8 +11,6 @@ interesting projects:
 
 ## Building
 
-_Make sure [.NET Core][netcore] is installed._
-
 The root just contains a build script that will build all the other 
 scripts. To build everything, just run the command-line:
 

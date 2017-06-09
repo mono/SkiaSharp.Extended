@@ -12,6 +12,7 @@ var fontAssemblies = "./source/SkiaSharp.Extended.Iconify.*/bin/" + configuratio
 var buildSpec = new BuildSpec {
     Libs = new ISolutionBuilder [] {
         new DefaultSolutionBuilder {
+            AlwaysUseMSBuild = true,
             SolutionPath = "./source/SkiaSharp.Extended.Iconify.sln",
             Configuration = configuration,
             OutputFiles = GetFiles(fontAssemblies)

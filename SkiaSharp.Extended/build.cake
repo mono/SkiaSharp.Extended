@@ -7,19 +7,8 @@ var verbosity = Argument("verbosity", "Verbose");
 var buildSpec = new BuildSpec {
     Libs = new ISolutionBuilder [] {
         new DefaultSolutionBuilder {
-            PreBuildAction = () => {
-                // restore netstandard
-                StartProcess("dotnet", new ProcessSettings {
-                    Arguments = "restore ./source/SkiaSharp.Extended.NetStandard.sln"
-                });
-            },
-            PostBuildAction = () => {
-                // build netstandard
-                StartProcess("dotnet", new ProcessSettings {
-                    Arguments = "build -c " + configuration + " ./source/SkiaSharp.Extended.NetStandard.sln"
-                });
-            },
-            SolutionPath = "./source/SkiaSharp.Extended.NetFramework.sln",
+            AlwaysUseMSBuild = true,
+            SolutionPath = "./source/SkiaSharp.Extended.sln",
             Configuration = configuration,
             OutputFiles = new [] { 
                 new OutputFileCopy {
