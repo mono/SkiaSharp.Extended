@@ -29,6 +29,7 @@ using the extensions methods:
 
 ```csharp
 SKCanvas canvas = ...
+
 canvas.DrawStar(
     100, 100, // x, y
     100,      // outer radius

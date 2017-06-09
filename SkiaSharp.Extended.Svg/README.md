@@ -48,5 +48,6 @@ _NOTE: although this library is in the `SkiaSharp.Extended.XXX` repository, this
 library retains the `SkiaSharp.Svg` assembly name and legacy namespace to avoid 
 any breaking changes._
 
+
 [google-svg]: https://groups.google.com/d/msg/skia-discuss/8grSzbS0GnI/GxsAdCCUU9cJ
 [ngraphics]: https://github.com/praeclarum/NGraphics

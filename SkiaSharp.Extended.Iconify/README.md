@@ -47,6 +47,7 @@ var paint = new SKPaint();
 canvas.DrawIconifiedText(text, 10, 100, paint);
 ```
 
+
 ## Supported Icon Fonts
 
 There are several icon fonts that are currently supported:
@@ -63,6 +64,7 @@ There are several icon fonts that are currently supported:
 These are just what we have now, but it is very simple to add some more.
 All we need is the `.ttf` font file and some mapping from a name to the
 unicode character.
+
 
 ## Advanced
 
