@@ -5,3 +5,4 @@
 
 #tool nuget:?package=XamarinComponent&version=1.1.0.42
 #tool nuget:?package=NUnit.ConsoleRunner&version=3.6.1
+#tool nuget:?package=NUnit.Extension.NUnitV2ResultWriter&version=3.5.0

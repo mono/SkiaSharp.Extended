@@ -42,7 +42,8 @@ Task("tests")
 
     // run the tests
     NUnit3("./tests/**/bin/" + configuration + "/*.Tests.dll", new NUnit3Settings {
-        Results = "./output/TestResult.xml"
+        Results = "./output/TestResult.xml",
+        ResultFormat = "nunit2",
     });
 });
 
