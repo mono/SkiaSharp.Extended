@@ -6,8 +6,8 @@ var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var verbosity = Argument("verbosity", "Verbose");
 
-var baseAssembly = "./source/SkiaSharp.Extended.Iconify/bin/" + configuration + "/SkiaSharp.Extended.Iconify.dll";
-var fontAssemblies = "./source/SkiaSharp.Extended.Iconify.*/bin/" + configuration + "/SkiaSharp.Extended.Iconify.*.dll";
+var directories = GetDirectories("./source/SkiaSharp.Extended.Iconify*");
+var assemblies = directories.Select(dir => dir.Combine("bin/" + configuration).CombineWithFilePath(dir.GetDirectoryName() + ".dll"));
 
 var buildSpec = new BuildSpec {
     Libs = new ISolutionBuilder [] {
@@ -15,10 +15,7 @@ var buildSpec = new BuildSpec {
             AlwaysUseMSBuild = true,
             SolutionPath = "./source/SkiaSharp.Extended.Iconify.sln",
             Configuration = configuration,
-            OutputFiles = GetFiles(fontAssemblies)
-                .Select(assembly => new OutputFileCopy { FromFile = assembly, ToDirectory = "./output/portable" })
-                .Union(new [] { new OutputFileCopy { FromFile = baseAssembly, ToDirectory = "./output/portable" } })
-                .ToArray(),
+            OutputFiles = assemblies.Select(ass => new OutputFileCopy { FromFile = ass, ToDirectory = "./output/portable" }).ToArray(),
         },
     },
 
