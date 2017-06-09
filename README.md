@@ -1,5 +1,7 @@
 # SkiaSharp.Extended
 
+[![Build Status](https://jenkins.mono-project.com/buildStatus/icon?job=Components-SkiaSharp.Extended)](https://jenkins.mono-project.com/view/Components/job/Components-SkiaSharp.Extended/)
+
 **SkiaSharp.Extended** is a collection some cool libraries that may be 
 useful to some apps. There are several repositories that may have 
 interesting projects:
