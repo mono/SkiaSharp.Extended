@@ -13,6 +13,7 @@ var buildSpec = new BuildSpec {
     Libs = new ISolutionBuilder [] {
         new DefaultSolutionBuilder {
             AlwaysUseMSBuild = true,
+            BuildsOn = BuildPlatforms.Windows | BuildPlatforms.Mac,
             SolutionPath = "./source/SkiaSharp.Extended.Iconify.sln",
             Configuration = configuration,
             OutputFiles = assemblies.Select(ass => new OutputFileCopy { FromFile = ass, ToDirectory = "./output/portable" }).ToArray(),

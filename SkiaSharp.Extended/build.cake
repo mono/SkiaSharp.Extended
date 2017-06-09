@@ -8,6 +8,7 @@ var buildSpec = new BuildSpec {
     Libs = new ISolutionBuilder [] {
         new DefaultSolutionBuilder {
             AlwaysUseMSBuild = true,
+            BuildsOn = BuildPlatforms.Windows | BuildPlatforms.Mac,
             SolutionPath = "./source/SkiaSharp.Extended.sln",
             Configuration = configuration,
             OutputFiles = new [] { 
