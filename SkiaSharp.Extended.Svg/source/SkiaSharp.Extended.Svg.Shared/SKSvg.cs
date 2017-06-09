@@ -234,8 +234,9 @@ namespace SkiaSharp
 			{
 				case "image":
 					{
-						var x = ReadNumber(e.Attribute("x"));
-						var y = ReadNumber(e.Attribute("y"));
+
+                        var x = ReadNumber(e.Attribute("x"));
+                        var y = ReadNumber(e.Attribute("y"));
 						var width = ReadNumber(e.Attribute("width"));
 						var height = ReadNumber(e.Attribute("height"));
 						var bytes = ReadBytes(e.Attributes().FirstOrDefault((arg) => arg.Name.LocalName == "href"));
@@ -261,13 +262,13 @@ namespace SkiaSharp
 				case "rect":
 					if (stroke != null || fill != null)
 					{
-						var x = ReadNumber(e.Attribute("x"));
-						var y = ReadNumber(e.Attribute("y"));
+                        var x = ReadNumber(e.Attribute("x"));
+                        var y = ReadNumber(e.Attribute("y"));
 						var width = ReadNumber(e.Attribute("width"));
 						var height = ReadNumber(e.Attribute("height"));
 						var rx = ReadNumber(e.Attribute("rx"));
 						var ry = ReadNumber(e.Attribute("ry"));
-						var rect = SKRect.Create(x, y, width, height);
+						var rect = SKRect.Create(0, 0, width, height);
 						if (rx > 0 || ry > 0)
 						{
 							if (fill != null)
@@ -648,6 +649,17 @@ namespace SkiaSharp
 				{
 					var k = m.Groups[1].Value;
 					var v = m.Groups[2].Value;
+
+                    if (v.Contains("rgb(")){
+                        var color = v.Replace("rgb(", "").Replace(")", "");
+                        var values = color.Split(',');
+                        var r = Convert.ToInt32(values[0]).ToString("X2");
+                        var g = Convert.ToInt32(values[1]).ToString("X2");
+                        var b = Convert.ToInt32(values[2]).ToString("X2");
+                        v = $"#{r}{g}{b}";
+                    }
+
+
 					d[k] = v;
 				}
 			}
