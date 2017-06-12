@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using System.Text;
 
 namespace SkiaSharp
 {
@@ -66,7 +67,7 @@ namespace SkiaSharp
 
 		public bool Load(Stream stream)
 		{
-			return Load(XDocument.Load(stream));
+	        return Load(XDocument.Load(stream));
 		}
 
 		private bool Load(XDocument xdoc)
@@ -268,7 +269,7 @@ namespace SkiaSharp
 						var height = ReadNumber(e.Attribute("height"));
 						var rx = ReadNumber(e.Attribute("rx"));
 						var ry = ReadNumber(e.Attribute("ry"));
-						var rect = SKRect.Create(0, 0, width, height);
+						var rect = SKRect.Create(x, y, width, height);
 						if (rx > 0 || ry > 0)
 						{
 							if (fill != null)
