@@ -916,14 +916,23 @@ namespace SkiaSharp
 
 		private SKPath ReadPolyPath(string pointsData, bool closePath)
 		{
-			var path = new SKPath();
-			var points = pointsData.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-			for (int i = 0; i < points.Length; i++)
+            /// compatibility
+            /// x y,x y,x y and x,y x,y x,y
+
+            var path = new SKPath();
+		    var pointsRaw = pointsData.Split(' ').ToList();
+		    var points = new List<string>();
+
+		    foreach (var point in pointsRaw)
+		    {
+		        var values = point.Split(',');
+		        points.AddRange(values);
+		    }
+
+			for (int i = 0; i < points.Count; i+=2)
 			{
-				var point = points[i];
-				var xy = point.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-				var x = ReadNumber(xy[0]);
-				var y = ReadNumber(xy[1]);
+				var x = ReadNumber(points[i]);
+				var y = ReadNumber(points[i+1]);
 				if (i == 0)
 				{
 					path.MoveTo(x, y);
