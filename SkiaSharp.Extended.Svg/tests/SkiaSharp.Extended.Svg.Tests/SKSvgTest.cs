@@ -47,6 +47,26 @@ namespace SkiaSharp.Extended.Svg.Tests
 		}
 
 		[Test]
+		public void SvgLoadsPolygon()
+		{
+			var path = Path.Combine(PathToImages, "sketch.svg");
+			var background = (SKColor)0xfff8f8f8;
+			var fill = (SKColor)0xFF4990E2;
+
+			var svg = new SKSvg();
+			svg.Load(path);
+
+			var bmp = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
+			var canvas = new SKCanvas(bmp);
+			canvas.Clear(background);
+			canvas.DrawPicture(svg.Picture);
+			canvas.Flush();
+
+			Assert.AreEqual(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+			Assert.AreEqual(background, bmp.GetPixel(5, 5));
+		}
+
+		[Test]
 		public void SvgCanvasCreatesValidDrawing()
 		{
 			using (var stream = new MemoryStream())
