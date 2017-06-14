@@ -11,9 +11,98 @@ namespace SkiaSharp.Extended
 		private const float UprightAngle = PI / 2f;
 		private const float TotalAngle = 2f * PI;
 
-		public static SKPoint GetCirclePoint(float r, float angle)
+		public static SKPath CreateInterpolation(SKPath from, SKPath to, float t)
 		{
-			return new SKPoint(r * (float)Math.Cos(angle), r * (float)Math.Sin(angle));
+			if (from == null)
+				throw new ArgumentNullException(nameof(from));
+			if (to == null)
+				throw new ArgumentNullException(nameof(to));
+
+			if (t <= float.Epsilon)
+			{
+				return from;
+			}
+
+			if (1f - t <= float.Epsilon)
+			{
+				return to;
+			}
+
+			var interpolation = new SKPathInterpolation(from, to);
+			return interpolation.Interpolate(t);
+		}
+
+		public static SKPoint CirclePoint(float radius, float radians)
+		{
+			return new SKPoint(radius * (float)Math.Cos(radians), radius * (float)Math.Sin(radians));
+		}
+
+		public static float Area(IList<SKPoint> polygon)
+		{
+			if (polygon == null)
+				throw new ArgumentNullException(nameof(polygon));
+
+			var len = polygon.Count;
+
+			// a polygon must have at least 3 points
+			if (len < 3)
+			{
+				return 0;
+			}
+
+			var a = SKPoint.Empty;
+			var b = polygon[len - 1];
+
+			var area = 0.0f;
+
+			var i = -1;
+			while (++i < len)
+			{
+				a = b;
+				b = polygon[i];
+				area += a.Y * b.X - a.X * b.Y;
+			}
+
+			return area / 2f;
+		}
+
+		public static float Perimeter(IList<SKPoint> polygon, bool close = true)
+		{
+			if (polygon == null)
+				throw new ArgumentNullException(nameof(polygon));
+
+			var len = polygon.Count;
+
+			// a line must have at least 2 points
+			if (len < 2)
+			{
+				return 0;
+			}
+
+			var perimeter = 0.0f;
+
+			for (var i = 0; i < len - 1; i++)
+			{
+				perimeter += Distance(polygon[i], polygon[i + 1]);
+			}
+			if (close)
+			{
+				perimeter += Distance(polygon[0], polygon[len - 1]);
+			}
+
+			return perimeter;
+		}
+
+		public static float Distance(SKPoint a, SKPoint b)
+		{
+			var dx = a.X - b.X;
+			var dy = a.Y - b.Y;
+			return (float)Math.Sqrt(dx * dx + dy * dy);
+		}
+
+		public static SKPoint PointAlong(SKPoint a, SKPoint b, float pct)
+		{
+			return new SKPoint(a.X + (b.X - a.X) * pct, a.Y + (b.Y - a.Y) * pct);
 		}
 
 		public static SKPath CreateSectorPath(float start, float end, float outerRadius, float innerRadius = 0.0f, float margin = 0.0f, float explodeDistance = 0.0f, SKPathDirection direction = SKPathDirection.Clockwise)
@@ -54,10 +143,10 @@ namespace SkiaSharp.Extended
 			var offsetr = innerRadius == 0 ? 0 : ((margin / (TotalAngle * innerRadius)) * TotalAngle);
 
 			// get the points
-			var a = GetCirclePoint(outerRadius, startAngle + offsetR) + offset;
-			var b = GetCirclePoint(outerRadius, endAngle - offsetR) + offset;
-			var c = GetCirclePoint(innerRadius, endAngle - offsetr) + offset;
-			var d = GetCirclePoint(innerRadius, startAngle + offsetr) + offset;
+			var a = CirclePoint(outerRadius, startAngle + offsetR) + offset;
+			var b = CirclePoint(outerRadius, endAngle - offsetR) + offset;
+			var c = CirclePoint(innerRadius, endAngle - offsetr) + offset;
+			var d = CirclePoint(innerRadius, startAngle + offsetr) + offset;
 
 			// add the points to the path
 			path.MoveTo(a);
