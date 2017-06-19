@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -17,6 +18,7 @@ namespace SkiaSharp
 
 		private static readonly IFormatProvider icult = CultureInfo.InvariantCulture;
 		private static readonly XNamespace xlink = "http://www.w3.org/1999/xlink";
+		private static readonly XNamespace svg = "http://www.w3.org/2000/svg";
 		private static readonly char[] WS = new char[] { ' ', '\t', '\n', '\r' };
 		private static readonly Regex unitRe = new Regex("px|pt|em|ex|pc|cm|mm|in");
 		private static readonly Regex percRe = new Regex("%");
@@ -25,6 +27,20 @@ namespace SkiaSharp
 		private static readonly Regex WSRe = new Regex(@"\s{2,}");
 
 		private readonly Dictionary<string, XElement> defs = new Dictionary<string, XElement>();
+
+#if PORTABLE
+		// basically use reflection to try and find a method that supports a 
+		// file path AND a XmlParserContext...
+		private static readonly MethodInfo createReaderMethod;
+
+		static SKSvg()
+		{
+			// try and find `Create(string, XmlReaderSettings, XmlParserContext)`
+			createReaderMethod = typeof(XmlReader).GetRuntimeMethod(
+				nameof(XmlReader.Create),
+				new[] { typeof(string), typeof(XmlReaderSettings), typeof(XmlParserContext) });
+		}
+#endif
 
 		public SKSvg()
 			: this(DefaultPPI, SKSize.Empty)
@@ -59,12 +75,47 @@ namespace SkiaSharp
 
 		public SKPicture Load(string filename)
 		{
-			return Load(XDocument.Load(filename));
+#if PORTABLE
+			// PCL does not have the ability to read a file and use a context
+			if (createReaderMethod == null)
+			{
+				return Load(XDocument.Load(filename));
+			}
+
+			// we know that there we can access the method via reflection
+			var args = new object[] { filename, null, CreateSvgXmlContext() };
+			using (var reader = (XmlReader)createReaderMethod.Invoke(null, args))
+			{
+				return Load(reader);
+			}
+#else
+			using (var stream = File.OpenRead(filename))
+			{
+				return Load(stream);
+			}
+#endif
 		}
 
 		public SKPicture Load(Stream stream)
 		{
-			return Load(XDocument.Load(stream));
+			using (var reader = XmlReader.Create(stream, null, CreateSvgXmlContext()))
+			{
+				return Load(reader);
+			}
+		}
+
+		public SKPicture Load(XmlReader reader)
+		{
+			return Load(XDocument.Load(reader));
+		}
+
+		private static XmlParserContext CreateSvgXmlContext()
+		{
+			var table = new NameTable();
+			var manager = new XmlNamespaceManager(table);
+			manager.AddNamespace(string.Empty, svg.NamespaceName);
+			manager.AddNamespace("xlink", xlink.NamespaceName);
+			return new XmlParserContext(null, manager, null, XmlSpace.None);
 		}
 
 		private SKPicture Load(XDocument xdoc)

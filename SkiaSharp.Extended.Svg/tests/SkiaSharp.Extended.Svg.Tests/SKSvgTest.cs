@@ -113,5 +113,48 @@ namespace SkiaSharp.Extended.Svg.Tests
 				Assert.AreEqual("15", ellipse.Attribute("ry").Value);
 			}
 		}
+
+		[Test]
+		public void SvgCanReadFileWithNoXLinkNamespacePrefix()
+		{
+			var path = Path.Combine(PathToImages, "issues-8.svg");
+			var background = (SKColor)0x000000;
+			var fill = (SKColor)0xFFDCDFE2;
+
+			var svg = new SKSvg();
+			svg.Load(path);
+
+			var bmp = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
+			var canvas = new SKCanvas(bmp);
+			canvas.Clear(background);
+			canvas.DrawPicture(svg.Picture);
+			canvas.Flush();
+
+			Assert.AreEqual(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+			Assert.AreEqual(background, bmp.GetPixel(5, 5));
+		}
+
+		[Test]
+		public void SvgCanReadFileWithNoXLinkNamespacePrefixFromStreams()
+		{
+			var path = Path.Combine(PathToImages, "issues-8.svg");
+			var background = (SKColor)0x000000;
+			var fill = (SKColor)0xFFDCDFE2;
+
+			var svg = new SKSvg();
+			using (var stream = File.OpenRead(path))
+			{
+				svg.Load(stream);
+			}
+
+			var bmp = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
+			var canvas = new SKCanvas(bmp);
+			canvas.Clear(background);
+			canvas.DrawPicture(svg.Picture);
+			canvas.Flush();
+
+			Assert.AreEqual(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+			Assert.AreEqual(background, bmp.GetPixel(5, 5));
+		}
 	}
 }
