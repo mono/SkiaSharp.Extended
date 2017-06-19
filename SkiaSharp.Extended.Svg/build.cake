@@ -9,15 +9,17 @@ var buildSpec = new BuildSpec {
         new DefaultSolutionBuilder {
             PreBuildAction = () => {
                 // restore netstandard
-                StartProcess("dotnet", new ProcessSettings {
+                var res = StartProcess("dotnet", new ProcessSettings {
                     Arguments = "restore ./source/SkiaSharp.Extended.Svg.NetStandard.sln"
                 });
+                if (res != 0) throw new Exception("dotnet returned " + res);
             },
             PostBuildAction = () => {
                 // build netstandard
-                StartProcess("dotnet", new ProcessSettings {
+                var res = StartProcess("dotnet", new ProcessSettings {
                     Arguments = "build -c " + configuration + " ./source/SkiaSharp.Extended.Svg.NetStandard.sln"
                 });
+                if (res != 0) throw new Exception("dotnet returned " + res);
             },
             AlwaysUseMSBuild = true,
             BuildsOn = BuildPlatforms.Windows | BuildPlatforms.Mac,
