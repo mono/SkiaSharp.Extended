@@ -1,5 +1,3 @@
-#addin "Cake.FileHelpers"
-
 #load "../common.cake"
 
 var target = Argument("target", "Default");
