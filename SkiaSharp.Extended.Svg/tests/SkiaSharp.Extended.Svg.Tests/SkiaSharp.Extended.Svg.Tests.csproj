@@ -68,6 +68,9 @@
     <Content Include="images\issues-8.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="images\dashes.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\source\SkiaSharp.Extended.Svg\SkiaSharp.Extended.Svg.csproj">

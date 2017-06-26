@@ -6,11 +6,15 @@
             x:Class="SkiaSharpDemo.MainPage"
             Title="SkiaSharp">
 
-    <ContentPage x:Name="logosPage" Title="Logos" Appearing="OnPageAppearing">
+    <ContentPage Title="Logos" Appearing="OnPageAppearing" AutomationId="logos.svg">
         <views:SKCanvasView PaintSurface="OnPainting" />
     </ContentPage>
 
-    <ContentPage x:Name="transparencyPage" Title="Transparency" Appearing="OnPageAppearing">
+    <ContentPage Title="Transparency" Appearing="OnPageAppearing" AutomationId="opacity.svg">
+        <views:SKCanvasView PaintSurface="OnPainting" />
+    </ContentPage>
+
+    <ContentPage Title="Dashes" Appearing="OnPageAppearing" AutomationId="dashes.svg">
         <views:SKCanvasView PaintSurface="OnPainting" />
     </ContentPage>
 

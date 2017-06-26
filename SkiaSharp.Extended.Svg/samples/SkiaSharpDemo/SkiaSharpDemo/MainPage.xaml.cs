@@ -38,16 +38,11 @@ namespace SkiaSharpDemo
 		{
 			svg = null;
 
-			if (sender == logosPage)
-			{
-				LoadSvg("logos.svg");
-			}
-			else if (sender == transparencyPage)
-			{
-				LoadSvg("opacity.svg");
-			}
+			var page = (ContentPage)sender;
+			LoadSvg(page.AutomationId);
 
-			((SKCanvasView)((ContentPage)sender).Content).InvalidateSurface();
+			var canvas = (SKCanvasView)page.Content;
+			canvas.InvalidateSurface();
 		}
 
 		private void OnPainting(object sender, SKPaintSurfaceEventArgs e)

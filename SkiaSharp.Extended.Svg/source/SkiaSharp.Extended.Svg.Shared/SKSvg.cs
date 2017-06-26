@@ -706,6 +706,32 @@ namespace SkiaSharp
 				}
 
 				// stroke attributes
+				var strokeDashArray = GetString(style, "stroke-dasharray");
+				if (!string.IsNullOrWhiteSpace(strokeDashArray))
+				{
+					if ("none".Equals(strokeDashArray, StringComparison.OrdinalIgnoreCase))
+					{
+						// remove any dash
+						if (strokePaint != null)
+							strokePaint.PathEffect = null;
+					}
+					else
+					{
+						if (strokePaint == null)
+							strokePaint = CreatePaint(true);
+
+						// get the dash
+						var dashesStrings = strokeDashArray.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+						var dashes = dashesStrings.Select(ReadNumber).ToArray();
+						if (dashesStrings.Length % 2 == 1)
+							dashes = dashes.Concat(dashes).ToArray();
+						// get the offset
+						var strokeDashOffset = ReadNumber(style, "stroke-dashoffset", 0);
+						// set the effect
+						strokePaint.PathEffect = SKPathEffect.CreateDash(dashes.ToArray(), strokeDashOffset);
+					}
+				}
+
 				var strokeWidth = GetString(style, "stroke-width");
 				if (!string.IsNullOrWhiteSpace(strokeWidth))
 				{

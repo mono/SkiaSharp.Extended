@@ -67,6 +67,37 @@ namespace SkiaSharp.Extended.Svg.Tests
 		}
 
 		[Test]
+		public void SvgLoadsDashes()
+		{
+			var path = Path.Combine(PathToImages, "dashes.svg");
+
+			var svg = new SKSvg();
+			svg.Load(path);
+
+			var bmp = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
+			var canvas = new SKCanvas(bmp);
+			canvas.Clear(SKColors.White);
+			canvas.DrawPicture(svg.Picture);
+			canvas.Flush();
+
+			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 3, 20));
+			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 7, 20));
+			Assert.AreEqual(SKColors.White, bmp.GetPixel(10 + 13, 20));
+
+			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 3, 40));
+			Assert.AreEqual(SKColors.White, bmp.GetPixel(10 + 7, 40));
+			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 13, 40));
+
+			Assert.AreEqual(SKColors.White, bmp.GetPixel(10 + 3, 60));
+			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 7, 60));
+			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 13, 60));
+
+			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 3, 80));
+			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 7, 80));
+			Assert.AreEqual(SKColors.White, bmp.GetPixel(10 + 13, 80));
+		}
+
+		[Test]
 		public void SvgCanvasCreatesValidDrawing()
 		{
 			using (var stream = new MemoryStream())
