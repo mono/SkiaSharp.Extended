@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -10,6 +11,34 @@ using System.Xml;
 using System.Xml.Linq;
 
 namespace SkiaSharp
+{
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete("Use 'SkiaSharp.Extended.Svg.SKSvg' instead. This type will be removed in the future.")]
+	public class SKSvg : SkiaSharp.Extended.Svg.SKSvg
+	{
+		public SKSvg()
+			: base()
+		{
+		}
+
+		public SKSvg(float pixelsPerInch)
+			: base(pixelsPerInch)
+		{
+		}
+
+		public SKSvg(SKSize canvasSize)
+			: base(canvasSize)
+		{
+		}
+
+		public SKSvg(float pixelsPerInch, SKSize canvasSize)
+			: base(pixelsPerInch, canvasSize)
+		{
+		}
+	}
+}
+
+namespace SkiaSharp.Extended.Svg
 {
 	public class SKSvg
 	{
