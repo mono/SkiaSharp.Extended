@@ -9,7 +9,7 @@ interesting projects:
  - [SkiaSharp][skiasharp] _(the engine)_
  - [SkiaSharp.Extended][extended] _(additional APIs)_
  - [SkiaSharp.Extended.Iconify][iconify] _(iconify library)_
- - [SkiaSharp.Svg][svg] _(lightweight SVG loader)_
+ - [SkiaSharp.Extended.Svg][svg] _(lightweight SVG loader)_
 
 ## Building
 
