@@ -43,7 +43,7 @@ Task("tests")
 {
     // build the tests
     NuGetRestore("./tests/SkiaSharp.Extended.Svg.Tests.sln");
-    DotNetBuild("./tests/SkiaSharp.Extended.Svg.Tests.sln", settings => settings.SetConfiguration(configuration));
+    MSBuild("./tests/SkiaSharp.Extended.Svg.Tests.sln", settings => settings.SetConfiguration(configuration));
 
     // run the tests
     NUnit3("./tests/**/bin/" + configuration + "/*.Tests.dll", new NUnit3Settings {

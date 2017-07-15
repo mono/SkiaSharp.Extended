@@ -156,7 +156,7 @@ Task("externals")
 
     // first build the generator
     NuGetRestore("./source/IconifyGenerator.sln");
-    DotNetBuild("./source/IconifyGenerator.sln", settings => settings.SetConfiguration(configuration));
+    MSBuild("./source/IconifyGenerator.sln", settings => settings.SetConfiguration(configuration));
 
     // copy generator to output
     EnsureDirectoryExists("./output/");

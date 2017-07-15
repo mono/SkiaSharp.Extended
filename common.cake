@@ -100,16 +100,16 @@ var RunSNReSign = new Action<FilePath, FilePath>((assembly, key) =>
     });
 });
 
-var SignAssemblies = new Action<string, string>((files, key) => 
-{
-    foreach (var f in GetFiles(files)) {
-        SignAssembly(f, key);
-    }
-});
-
 var SignAssembly = new Action<FilePath, FilePath>((file, key) => 
 {
     Information("Making sure that '{0}' is signed.", file);
     RunSNReSign(MakeAbsolute(file), MakeAbsolute(key));
     RunSNVerify(MakeAbsolute(file));
+});
+
+var SignAssemblies = new Action<string, string>((files, key) => 
+{
+    foreach (var f in GetFiles(files)) {
+        SignAssembly(f, key);
+    }
 });
