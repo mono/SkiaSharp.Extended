@@ -20,7 +20,11 @@ var buildSpec = new BuildSpec {
                     FromFile = "./source/SkiaSharp.Extended.NetStandard/bin/Release/SkiaSharp.Extended.dll",
                     ToDirectory = "./output/netstandard"
                 },
-            }
+            },
+            PostBuildAction = () => {
+                SignAssembly("./source/SkiaSharp.Extended/bin/Release/SkiaSharp.Extended.dll", "../keys/mono.snk");
+                SignAssembly("./source/SkiaSharp.Extended.NetStandard/bin/Release/SkiaSharp.Extended.dll", "../keys/mono.snk");
+            },
         },
     },
 

@@ -15,6 +15,7 @@ var buildSpec = new BuildSpec {
             SolutionPath = "./source/SkiaSharp.Extended.Iconify.sln",
             Configuration = configuration,
             OutputFiles = assemblies.Select(ass => new OutputFileCopy { FromFile = ass, ToDirectory = "./output/portable" }).ToArray(),
+            PostBuildAction = () => { foreach (var ass in assemblies) SignAssembly(ass, "../keys/Open.snk"); },
         },
     },
 

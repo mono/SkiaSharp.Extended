@@ -90,7 +90,16 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="1.59.0" />
+    <PackageReference Include="SkiaSharp.Views" Version="1.59.0" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="1.59.0" />
+    <PackageReference Include="Xamarin.Forms" Version="2.3.5.256-pre6" />
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="5.3.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SkiaSharpDemo\SkiaSharpDemo.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -126,12 +135,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SkiaSharpDemo\SkiaSharpDemo.csproj">
-      <Project>{e692c20c-8daa-4883-ba28-77efb465f88c}</Project>
-      <Name>SkiaSharpDemo</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

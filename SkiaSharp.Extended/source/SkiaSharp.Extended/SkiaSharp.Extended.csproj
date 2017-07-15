@@ -36,18 +36,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="SkiaSharp">
-      <HintPath>..\packages\SkiaSharp.1.58.0\lib\portable-net45+win8+wpa81+wp8\SkiaSharp.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <PackageReference Include="SkiaSharp" Version="1.59.0" />
   </ItemGroup>
   <Import Project="..\SkiaSharp.Extended.Shared\SkiaSharp.Extended.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
