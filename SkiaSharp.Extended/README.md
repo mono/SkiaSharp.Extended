@@ -1,6 +1,6 @@
 # SkiaSharp.Extended
 
-[![SkiaSharp](https://img.shields.io/nuget/vpre/SkiaSharp.Extended.svg?maxAge=2592000)](https://www.nuget.org/packages/SkiaSharp.Extended)
+[![SkiaSharp.Extended](https://img.shields.io/nuget/vpre/SkiaSharp.Extended.svg?maxAge=2592000)](https://www.nuget.org/packages/SkiaSharp.Extended)
 
 **SkiaSharp.Extended** is a collection some cool functions that may be 
 useful to some apps.
