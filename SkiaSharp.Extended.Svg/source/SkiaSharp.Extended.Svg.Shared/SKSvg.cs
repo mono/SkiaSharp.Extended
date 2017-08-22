@@ -258,6 +258,9 @@ namespace SkiaSharp.Extended.Svg
 
 		private void ReadElement(XElement e, SKCanvas canvas, SKPaint stroke, SKPaint fill)
 		{
+			if (e.Attribute("display")?.Value == "none")
+                return;
+
 			// transform matrix
 			var transform = ReadTransform(e.Attribute("transform")?.Value ?? string.Empty);
 			canvas.Save();
@@ -947,30 +950,16 @@ namespace SkiaSharp.Extended.Svg
 			}
 
 			return t;
-		}
+		}	
 
 		private SKPath ReadPolyPath(string pointsData, bool closePath)
 		{
-			var path = new SKPath();
-			var points = pointsData.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
-			for (int i = 0; i < points.Length - 1; i += 2)
-			{
-				var x = ReadNumber(points[i]);
-				var y = ReadNumber(points[i + 1]);
-				if (i == 0)
-				{
-					path.MoveTo(x, y);
-				}
-				else
-				{
-					path.LineTo(x, y);
-				}
-			}
-			if (closePath)
-			{
-				path.Close();
-			}
-			return path;
+			var path = SKPath.ParseSvgPathData("M" + svgPath);
+
+            if (closePath)
+                path?.Close();
+
+            return path;
 		}
 
 		private SKTextAlign ReadTextAlignment(XElement element)
