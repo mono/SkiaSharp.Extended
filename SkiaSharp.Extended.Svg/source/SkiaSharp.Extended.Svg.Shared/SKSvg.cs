@@ -954,7 +954,7 @@ namespace SkiaSharp.Extended.Svg
 
 		private SKPath ReadPolyPath(string pointsData, bool closePath)
 		{
-			var path = SKPath.ParseSvgPathData("M" + svgPath);
+			var path = SKPath.ParseSvgPathData("M" + pointsData);
 
             if (closePath)
                 path?.Close();
