@@ -35,13 +35,7 @@ namespace SkiaSharp.Extended.Svg.Tests
 			var path = Path.Combine(PathToImages, "logos.svg");
 			var background = (SKColor)0xfff8f8f8;
 
-			var svg = new SKSvg();
-			svg.Load(path);
-
-			var bmp = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
-			var canvas = new SKCanvas(bmp);
-			canvas.DrawPicture(svg.Picture);
-			canvas.Flush();
+			var bmp = LoadSvgBitmap(path);
 
 			Assert.AreEqual(background, bmp.GetPixel(0, 0));
 		}
@@ -53,14 +47,7 @@ namespace SkiaSharp.Extended.Svg.Tests
 			var background = (SKColor)0xfff8f8f8;
 			var fill = (SKColor)0xFF4990E2;
 
-			var svg = new SKSvg();
-			svg.Load(path);
-
-			var bmp = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
-			var canvas = new SKCanvas(bmp);
-			canvas.Clear(background);
-			canvas.DrawPicture(svg.Picture);
-			canvas.Flush();
+			var bmp = LoadSvgBitmap(path, background);
 
 			Assert.AreEqual(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
 			Assert.AreEqual(background, bmp.GetPixel(5, 5));
@@ -71,14 +58,7 @@ namespace SkiaSharp.Extended.Svg.Tests
 		{
 			var path = Path.Combine(PathToImages, "dashes.svg");
 
-			var svg = new SKSvg();
-			svg.Load(path);
-
-			var bmp = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
-			var canvas = new SKCanvas(bmp);
-			canvas.Clear(SKColors.White);
-			canvas.DrawPicture(svg.Picture);
-			canvas.Flush();
+			var bmp = LoadSvgBitmap(path, SKColors.White);
 
 			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 3, 20));
 			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 7, 20));
@@ -146,6 +126,62 @@ namespace SkiaSharp.Extended.Svg.Tests
 		}
 
 		[Test]
+		public void SvgCanUnderstandColorNames()
+		{
+			var svg =
+@"<svg xmlns=""http://www.w3.org/2000/svg"" version=""1.1""
+    x=""0px"" y=""0px"" width=""100"" height=""100"" viewBox=""0 0 100 100"">
+  <rect style=""fill:lime"" width=""100"" height=""100"" x=""0"" y=""0"" />
+</svg>";
+
+			var bmp = CreateSvgBitmap(svg);
+
+			Assert.AreEqual(SKColors.Lime, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+		}
+
+		[Test]
+		public void SvgCanUnderstandRgbColors()
+		{
+			var svg =
+@"<svg xmlns=""http://www.w3.org/2000/svg"" version=""1.1""
+    x=""0px"" y=""0px"" width=""100"" height=""100"" viewBox=""0 0 100 100"">
+  <rect style=""fill:rgb(0,255,0)"" width=""100"" height=""100"" x=""0"" y=""0"" />
+</svg>";
+
+			var bmp = CreateSvgBitmap(svg);
+
+			Assert.AreEqual(SKColors.Lime, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+		}
+
+		[Test]
+		public void SvgCanUnderstandPolygon()
+		{
+			var svg =
+@"<svg xmlns=""http://www.w3.org/2000/svg"" version=""1.1""
+    x=""0px"" y=""0px"" width=""100"" height=""100"" viewBox=""0 0 100 100"">
+  <polygon points=""20,70 50,20 80,70"" style=""fill:white; stroke:black; stroke-width:10""/>
+</svg>";
+
+			var bmp = CreateSvgBitmap(svg);
+
+			Assert.AreEqual(SKColors.Black, bmp.GetPixel(50, 70));
+		}
+
+		[Test]
+		public void SvgCanUnderstandPolyline()
+		{
+			var svg =
+@"<svg xmlns=""http://www.w3.org/2000/svg"" version=""1.1""
+    x=""0px"" y=""0px"" width=""100"" height=""100"" viewBox=""0 0 100 100"">
+  <polyline points=""20,70 50,20 80,70"" style=""fill:white; stroke:black; stroke-width:10""/>
+</svg>";
+
+			var bmp = CreateSvgBitmap(svg, SKColors.Green);
+
+			Assert.AreEqual(SKColors.Green, bmp.GetPixel(50, 70));
+		}
+
+		[Test]
 		public void SvgCanReadFileWithNoXLinkNamespacePrefix()
 		{
 			var path = Path.Combine(PathToImages, "issues-8.svg");
@@ -154,12 +190,7 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 			var svg = new SKSvg();
 			svg.Load(path);
-
-			var bmp = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
-			var canvas = new SKCanvas(bmp);
-			canvas.Clear(background);
-			canvas.DrawPicture(svg.Picture);
-			canvas.Flush();
+			var bmp = CreateBitmap(svg, background);
 
 			Assert.AreEqual(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
 			Assert.AreEqual(background, bmp.GetPixel(5, 5));
@@ -178,14 +209,50 @@ namespace SkiaSharp.Extended.Svg.Tests
 				svg.Load(stream);
 			}
 
-			var bmp = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
-			var canvas = new SKCanvas(bmp);
-			canvas.Clear(background);
-			canvas.DrawPicture(svg.Picture);
-			canvas.Flush();
+			var bmp = CreateBitmap(svg, background);
 
 			Assert.AreEqual(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
 			Assert.AreEqual(background, bmp.GetPixel(5, 5));
+		}
+
+		private static SKBitmap LoadSvgBitmap(string svgPath, SKColor? background = null)
+		{
+			// open the SVG
+			var svg = new SKSvg();
+			svg.Load(svgPath);
+
+			return CreateBitmap(svg, background);
+		}
+
+		private static SKBitmap CreateSvgBitmap(string svgData, SKColor? background = null)
+		{
+			// open the SVG
+			var svg = new SKSvg();
+			using (var stream = new MemoryStream())
+			using (var writer = new StreamWriter(stream))
+			{
+				writer.Write(svgData);
+				writer.Flush();
+				stream.Position = 0;
+
+				svg.Load(stream);
+			}
+
+			return CreateBitmap(svg, background);
+		}
+
+		private static SKBitmap CreateBitmap(SKSvg svg, SKColor? background = null)
+		{
+			// create and draw the bitmap
+			var bmp = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
+			using (var canvas = new SKCanvas(bmp))
+			{
+				canvas.Clear(background ?? SKColors.Transparent);
+				canvas.DrawPicture(svg.Picture);
+				canvas.Flush();
+			}
+
+			return bmp;
 		}
 	}
 }
