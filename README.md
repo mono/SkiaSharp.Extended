@@ -18,11 +18,11 @@ scripts. To build everything, just run the command-line:
 
 Mac/Linux:
 
-    $ ./build.sh
+    $ ./build.sh -t build --force=true
 
 Windows:
 
-    > .\build.ps1
+    > .\build.ps1 -Target build --Force='true'
 
 If only a specific project, or a set of projects, are to be built, 
 then pass a value to the `names` argument:
@@ -30,11 +30,11 @@ then pass a value to the `names` argument:
 
 Mac/Linux:
 
-    $ ./build.sh -names=SkiaSharp.Extended.Iconify
+    $ ./build.sh -t build --force=true -names=SkiaSharp.Extended.Iconify
 
 Windows:
 
-    > .\build.ps1 -Names=SkiaSharp.Extended.Iconify
+    > .\build.ps1 -Target build --Force='true' -Names='SkiaSharp.Extended.Iconify'
 
 ## License
 
