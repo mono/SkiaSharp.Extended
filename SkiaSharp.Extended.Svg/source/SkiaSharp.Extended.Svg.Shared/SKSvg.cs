@@ -59,7 +59,6 @@ namespace SkiaSharp.Extended.Svg
         private readonly XmlReaderSettings xmlReaderSettings = new XmlReaderSettings()
         {
             DtdProcessing = DtdProcessing.Ignore,
-            ValidationType = ValidationType.None,
             IgnoreComments = true,
         };		
 
