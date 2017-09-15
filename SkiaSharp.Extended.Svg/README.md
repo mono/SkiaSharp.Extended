@@ -1,6 +1,6 @@
 # SkiaSharp.Extended.Svg
 
-[![SkiaSharp.Extended.Svg](https://img.shields.io/nuget/vpre/SkiaSharp.Svg.svg?maxAge=2592000)](https://www.nuget.org/packages/SkiaSharp.Svg)
+[![SkiaSharp.Extended.Svg](https://img.shields.io/nuget/vpre/SkiaSharp.Svg.svg?maxAge=2592000)](https://www.nuget.org/packages/SkiaSharp.Svg)  [![NuGet](https://img.shields.io/nuget/dt/SkiaSharp.Svg.svg)](https://www.nuget.org/packages/SkiaSharp.Svg)
 
 **SkiaSharp.Svg** is lightweight SVG parser that can be used for 
 most SVG needs.

@@ -33,7 +33,7 @@ var buildSpec = new BuildSpec {
     // },
 
     NuGets = new [] {
-        new NuGetInfo { NuSpec = "./nuget/SkiaSharp.Extended.nuspec"},
+        new NuGetInfo { NuSpec = "./nuget/SkiaSharp.Extended.nuspec" },
     },
 };
 
