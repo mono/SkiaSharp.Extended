@@ -187,5 +187,34 @@ namespace SkiaSharp.Extended.Svg.Tests
 			Assert.AreEqual(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
 			Assert.AreEqual(background, bmp.GetPixel(5, 5));
 		}
+
+
+		[Test]
+		public void SvgRespectsClipPath()
+		{
+			var path = Path.Combine(PathToImages, "clipping.svg");
+			var background = (SKColor)0xffffff;
+			var fill = (SKColor)0x000000;
+
+			var svg = new SKSvg();
+			svg.Load(path);
+
+			var bmp = new SKBitmap((int)svg.CanvasSize.Width, (int)svg.CanvasSize.Height);
+			var canvas = new SKCanvas(bmp);
+			canvas.Clear(background);
+			
+			canvas.DrawPicture(svg.Picture);
+			canvas.Flush();
+
+			for (int x = 1; x < 20; x++)
+			{
+				for (int y = 1; y < 20; y++)
+				{
+					Assert.AreEqual(fill, bmp.GetPixel(x, y));
+					Assert.AreEqual(background, bmp.GetPixel(x + 20, y + 20));
+				}
+			}
+		}
+		
 	}
 }

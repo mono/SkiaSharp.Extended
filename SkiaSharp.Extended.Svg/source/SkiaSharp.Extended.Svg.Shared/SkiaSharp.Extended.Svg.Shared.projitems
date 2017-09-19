@@ -10,6 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Properties\SkiaSharpSvgAssemblyInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SKCanvasExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SKCircle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SKLine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SKOval.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SKRoundedRect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SKSvg.cs" />
   </ItemGroup>
 </Project>
