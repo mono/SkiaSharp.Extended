@@ -498,13 +498,21 @@ namespace SkiaSharp.Extended.Svg
 			var xy = new SKPoint(x, y);
 
 			ReadFontAttributes(e, fill);
-			fill.TextAlign = ReadTextAlignment(e);
+			var textAlign = ReadTextAlignment(e);
+			var baselineShift = ReadBaselineShift(e);
 
-			ReadTextSpans(e, canvas, xy, stroke, fill);
+			ReadTextSpans(e, canvas, xy, textAlign, baselineShift, stroke, fill);
 		}
 
-		private void ReadTextSpans(XElement e, SKCanvas canvas, SKPoint location, SKPaint stroke, SKPaint fill)
+		private void ReadTextSpans(XElement e, SKCanvas canvas, SKPoint location, SKTextAlign textAlign, float baselineShift, SKPaint stroke, SKPaint fill)
 		{
+			var spans = new SKText(textAlign);
+
+			// textAlign is used for all spans within the <text> element. If different textAligns would be needed, it is necessary to use
+			// several <text> elements instead of <tspan> elements
+			var currentBaselineShift = baselineShift;
+			fill.TextAlign = SKTextAlign.Left;  // fixed alignment for all spans
+
 			var nodes = e.Nodes().ToArray();
 			for (int i = 0; i < nodes.Length; i++)
 			{
@@ -526,9 +534,7 @@ namespace SkiaSharp.Extended.Svg
 							textSegments[count - 1] = textSegments[count - 1].TrimEnd();
 						var text = WSRe.Replace(string.Concat(textSegments), " ");
 
-						canvas.DrawText(text, location.X, location.Y, fill);
-
-						location.X += fill.MeasureText(text);
+						spans.Append(new SKTextSpan(text, fill.Clone(), baselineShift: currentBaselineShift));
 					}
 				}
 				else if (c.NodeType == XmlNodeType.Element)
@@ -536,22 +542,24 @@ namespace SkiaSharp.Extended.Svg
 					var ce = (XElement)c;
 					if (ce.Name.LocalName == "tspan")
 					{
-						var spanFill = fill.Clone();
-
 						// the current span may want to change the cursor position
-						location.X = ReadOptionalNumber(ce.Attribute("x")) ?? location.X;
-						location.Y = ReadOptionalNumber(ce.Attribute("y")) ?? location.Y;
+						var x = ReadOptionalNumber(ce.Attribute("x"));
+						var y = ReadOptionalNumber(ce.Attribute("y"));
 
+						var spanFill = fill.Clone();
 						ReadFontAttributes(ce, spanFill);
+
+						// Don't read text-anchor from tspans!, Only use enclosing text-anchor from text element !
+						currentBaselineShift = ReadBaselineShift(ce);
 
 						var text = ce.Value.Trim();
 
-						canvas.DrawText(text, location.X, location.Y, spanFill);
-
-						location.X += spanFill.MeasureText(text);
+						spans.Append(new SKTextSpan(text, spanFill, x, y, currentBaselineShift));
 					}
 				}
 			}
+
+			canvas.DrawText(location.X, location.Y, spans);
 		}
 
 		private void ReadFontAttributes(XElement e, SKPaint paint)
@@ -1067,7 +1075,7 @@ namespace SkiaSharp.Extended.Svg
 						LogOrThrow($"SVG element '{elementName}' is not supported in clipPath.");
 						break;
 				}
-				
+                
 			}
 
 			return result;
@@ -1125,6 +1133,27 @@ namespace SkiaSharp.Extended.Svg
 				default:
 					return SKTextAlign.Left;
 			}
+		}
+
+		private float ReadBaselineShift(XElement element)
+		{
+			string value = null;
+			if (element != null)
+			{
+				var attrib = element.Attribute("baseline-shift");
+				if (attrib != null && !string.IsNullOrWhiteSpace(attrib.Value))
+					value = attrib.Value;
+				else
+				{
+					var style = element.Attribute("style");
+					if (style != null && !string.IsNullOrWhiteSpace(style.Value))
+					{
+						value = GetString(ReadStyle(style.Value), "baseline-shift");
+					}
+				}
+			}
+
+			return ReadNumber(value);
 		}
 
 		private SKShader ReadGradient(XElement defE)
