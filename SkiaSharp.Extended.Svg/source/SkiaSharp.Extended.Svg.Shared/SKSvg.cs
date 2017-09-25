@@ -586,7 +586,8 @@ namespace SkiaSharp.Extended.Svg
 						// Don't read text-anchor from tspans!, Only use enclosing text-anchor from text element !
 						currentBaselineShift = ReadBaselineShift(ce);
 
-						var text = ce.Value.Trim();
+                        // Do not trim text contained in a tspan element as this should be interpreted as "intentional whitespace"
+                        var text = ce.Value; //.Trim();
 
 						spans.Append(new SKTextSpan(text, spanFill, x, y, currentBaselineShift));
 					}
