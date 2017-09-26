@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -1077,7 +1077,7 @@ namespace SkiaSharp
 				bytes = Convert.FromBase64String(base64[1]);
 			}
 
-            // image empty
+			// image empty
 			bytes = bytes ?? new byte[0];
 
 			return bytes;
