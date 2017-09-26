@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -98,11 +98,13 @@ namespace SkiaSharp.Extended.Svg
 		public SKRect ViewBox { get; private set; }
 		public SKSize CanvasSize { get; private set; }
 		public SKPicture Picture { get; private set; }
+        public XElement SvgContent { get; private set; }
+        public string PreserveAspectRatio { get; private set; }
 		public string Description { get; private set; }
 		public string Title { get; private set; }
 		public string Version { get; private set; }
 
-		public SKPicture Load(string filename)
+		public bool Load(string filename)
 		{
 #if PORTABLE
 			// PCL does not have the ability to read a file and use a context
@@ -125,7 +127,7 @@ namespace SkiaSharp.Extended.Svg
 #endif
 		}
 
-		public SKPicture Load(Stream stream)
+		public bool Load(Stream stream)
 		{
 			using (var reader = XmlReader.Create(stream, null, CreateSvgXmlContext()))
 			{
@@ -147,28 +149,44 @@ namespace SkiaSharp.Extended.Svg
 			return new XmlParserContext(null, manager, null, XmlSpace.None);
 		}
 
-		private SKPicture Load(XDocument xdoc)
+		private bool Load(XDocument xdoc)
 		{
-			var svg = xdoc.Root;
-			var ns = svg.Name.Namespace;
+			var status = false;
+
+			try
+			{
+				status = InternalLoad(xdoc);
+			}
+			catch (Exception)
+			{ 
+
+			}
+
+			return status;
+		}
+
+		private bool InternalLoad(XDocument xdoc)
+		{
+			SvgContent = xdoc.Root;
+			var ns = SvgContent.Name.Namespace;
 
 			// find the defs (gradients) - and follow all hrefs
-			foreach (var d in svg.Descendants())
+			foreach (var d in SvgContent.Descendants())
 			{
 				var id = d.Attribute("id")?.Value?.Trim();
 				if (!string.IsNullOrEmpty(id))
 					defs[id] = ReadDefinition(d);
 			}
 
-			Version = svg.Attribute("version")?.Value;
-			Title = svg.Element(ns + "title")?.Value;
-			Description = svg.Element(ns + "desc")?.Value ?? svg.Element(ns + "description")?.Value;
+			Version = SvgContent.Attribute("version")?.Value;
+			Title = SvgContent.Element(ns + "title")?.Value;
+			Description = SvgContent.Element(ns + "desc")?.Value ?? SvgContent.Element(ns + "description")?.Value;
 
 			// TODO: parse the "preserveAspectRatio" values properly
-			var preserveAspectRatio = svg.Attribute("preserveAspectRatio")?.Value;
+			PreserveAspectRatio = SvgContent.Attribute("preserveAspectRatio")?.Value;
 
 			// get the SVG dimensions
-			var viewBoxA = svg.Attribute("viewBox") ?? svg.Attribute("viewPort");
+			var viewBoxA = SvgContent.Attribute("viewBox") ?? SvgContent.Attribute("viewPort");
 			if (viewBoxA != null)
 			{
 				ViewBox = ReadRectangle(viewBoxA.Value);
@@ -177,8 +195,8 @@ namespace SkiaSharp.Extended.Svg
 			if (CanvasSize.IsEmpty)
 			{
 				// get the user dimensions
-				var widthA = svg.Attribute("width");
-				var heightA = svg.Attribute("height");
+				var widthA = SvgContent.Attribute("width");
+				var heightA = SvgContent.Attribute("height");
 				var width = ReadNumber(widthA);
 				var height = ReadNumber(heightA);
 				var size = new SKSize(width, height);
@@ -204,43 +222,64 @@ namespace SkiaSharp.Extended.Svg
 				CanvasSize = size;
 			}
 
-			// create the picture from the elements
+			return true;
+		}
+
+		private void DrawInCanvas(SKCanvas canvas)
+		{
+			if (!ViewBox.IsEmpty && (ViewBox.Width != CanvasSize.Width || ViewBox.Height != CanvasSize.Height))
+			{
+				if (PreserveAspectRatio == "none")
+				{
+					canvas.Scale(CanvasSize.Width / ViewBox.Width, CanvasSize.Height / ViewBox.Height);
+				}
+				else
+				{
+					// TODO: just center scale for now
+					var scale = Math.Min(CanvasSize.Width / ViewBox.Width, CanvasSize.Height / ViewBox.Height);
+					var centered = SKRect.Create(CanvasSize).AspectFit(ViewBox.Size);
+					canvas.Translate(centered.Left, centered.Top);
+					canvas.Scale(scale, scale);
+				}
+			}
+
+			// translate the canvas by the viewBox origin
+			canvas.Translate(-ViewBox.Left, -ViewBox.Top);
+
+			// if the viewbox was specified, then crop to that
+			if (!ViewBox.IsEmpty)
+			{
+				canvas.ClipRect(ViewBox);
+			}
+
+			LoadElements(SvgContent.Elements(), canvas);
+		}
+
+		public SKPicture CreatePicture()
+		{
+			SKPicture picture = null;
+
 			using (var recorder = new SKPictureRecorder())
 			using (var canvas = recorder.BeginRecording(SKRect.Create(CanvasSize)))
 			{
-				// if there is no viewbox, then we don't do anything, otherwise
-				// scale the SVG dimensions to fit inside the user dimensions
-				if (!ViewBox.IsEmpty && (ViewBox.Width != CanvasSize.Width || ViewBox.Height != CanvasSize.Height))
-				{
-					if (preserveAspectRatio == "none")
-					{
-						canvas.Scale(CanvasSize.Width / ViewBox.Width, CanvasSize.Height / ViewBox.Height);
-					}
-					else
-					{
-						// TODO: just center scale for now
-						var scale = Math.Min(CanvasSize.Width / ViewBox.Width, CanvasSize.Height / ViewBox.Height);
-						var centered = SKRect.Create(CanvasSize).AspectFit(ViewBox.Size);
-						canvas.Translate(centered.Left, centered.Top);
-						canvas.Scale(scale, scale);
-					}
-				}
-
-				// translate the canvas by the viewBox origin
-				canvas.Translate(-ViewBox.Left, -ViewBox.Top);
-
-				// if the viewbox was specified, then crop to that
-				if (!ViewBox.IsEmpty)
-				{
-					canvas.ClipRect(ViewBox);
-				}
-
-				LoadElements(svg.Elements(), canvas);
-
-				Picture = recorder.EndRecording();
+				DrawInCanvas(canvas);
+				picture = recorder.EndRecording();
 			}
 
-			return Picture;
+			return picture;
+		}
+
+		public SKBitmap CreateBitmap()
+		{
+			SKBitmap bitmap = new SKBitmap((int)CanvasSize.Width, (int)CanvasSize.Height);
+
+			using (var canvas = new SKCanvas(bitmap))
+			{
+				canvas.Clear();
+				DrawInCanvas(canvas);
+			}
+
+			return bitmap;
 		}
 
 		private void LoadElements(IEnumerable<XElement> elements, SKCanvas canvas)
