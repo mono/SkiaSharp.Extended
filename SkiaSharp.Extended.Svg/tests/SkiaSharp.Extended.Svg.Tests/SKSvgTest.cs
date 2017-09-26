@@ -41,6 +41,19 @@ namespace SkiaSharp.Extended.Svg.Tests
 		}
 
 		[Test]
+		public void SvgLoadsLocalEmbeddedImages()
+		{
+			var path = Path.Combine(PathToImages, "embedded.svg");
+			var background = (SKColor)0xffffffff;
+			var fill = (SKColor)0xff3498db;
+
+			var bmp = LoadSvgBitmap(path, background);
+
+			Assert.AreEqual(background, bmp.GetPixel(25, 25));
+			Assert.AreEqual(fill, bmp.GetPixel(35, 50));
+		}
+
+		[Test]
 		public void SvgLoadsPolygon()
 		{
 			var path = Path.Combine(PathToImages, "sketch.svg");
@@ -253,6 +266,15 @@ namespace SkiaSharp.Extended.Svg.Tests
 			}
 
 			return bmp;
+		}
+
+		private static void SaveBitmap(SKBitmap bitmap, string path = "output.png")
+		{
+			using (var file = File.OpenWrite(Path.Combine(PathToImages, path)))
+			using (var stream = new SKManagedWStream(file))
+			{
+				bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
+			}
 		}
 	}
 }

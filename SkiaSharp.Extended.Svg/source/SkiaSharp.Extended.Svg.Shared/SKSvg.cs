@@ -278,22 +278,32 @@ namespace SkiaSharp.Extended.Svg
 			{
 				case "image":
 					{
-						var x = ReadNumber(e.Attribute("x"));
-						var y = ReadNumber(e.Attribute("y"));
-						var width = ReadNumber(e.Attribute("width"));
-						var height = ReadNumber(e.Attribute("height"));
-						var bytes = ReadBytes(e.Attributes().FirstOrDefault((arg) => arg.Name.LocalName == "href"));
-
-						using (var data = SKData.CreateCopy(bytes))
-						using (var image = SKImage.FromEncodedData(data))
+						var uri = ReadHrefString(e);
+						if (uri != null)
 						{
-							if (image != null)
+							var x = ReadNumber(e.Attribute("x"));
+							var y = ReadNumber(e.Attribute("y"));
+							var width = ReadNumber(e.Attribute("width"));
+							var height = ReadNumber(e.Attribute("height"));
+
+							if (uri.StartsWith("data:"))
 							{
-								var rect = SKRect.Create(x, y, width, height);
-								canvas.DrawImage(image, rect);
+								var bytes = ReadBytes(uri);
+								using (var data = SKData.CreateCopy(bytes))
+								using (var image = SKImage.FromEncodedData(data))
+								{
+									if (image != null)
+									{
+										var rect = SKRect.Create(x, y, width, height);
+										canvas.DrawImage(image, rect);
+									}
+								}
+							}
+							else
+							{
+								LogOrThrow($"Remote images are not supported");
 							}
 						}
-
 						break;
 					}
 				case "text":
@@ -1092,13 +1102,18 @@ namespace SkiaSharp.Extended.Svg
 
 		private XElement ReadHref(XElement e)
 		{
-			var href = e.Attribute(xlink + "href")?.Value?.Substring(1);
+			var href = ReadHrefString(e)?.Substring(1);
 			XElement child;
 			if (string.IsNullOrEmpty(href) || !defs.TryGetValue(href, out child))
 			{
 				child = null;
 			}
 			return child;
+		}
+		
+		private static string ReadHrefString(XElement e)
+		{
+			return (e.Attribute("href") ?? e.Attribute(xlink + "href"))?.Value;
 		}
 
 		private SortedDictionary<float, SKColor> ReadStops(XElement e)
@@ -1151,22 +1166,19 @@ namespace SkiaSharp.Extended.Svg
 			return value;
 		}
 
-		private byte[] ReadBytes(XAttribute a)
+		private byte[] ReadBytes(string uri)
 		{
-			if (a == null) return new byte[0];
-
-			var base64 = a.Value.Split(',');
-			byte[] bytes = null;
-
-			if (base64.Length > 1)
+			if (!string.IsNullOrEmpty(uri))
 			{
-				bytes = Convert.FromBase64String(base64[1]);
+				var offset = uri.IndexOf(",");
+				if (offset != -1 && offset - 1 < uri.Length)
+				{
+					uri = uri.Substring(offset + 1);
+					return Convert.FromBase64String(uri);
+				}
 			}
 
-			// image empty
-			bytes = bytes ?? new byte[0];
-
-			return bytes;
+			return null;
 		}
 
 		private float ReadNumber(string raw)
