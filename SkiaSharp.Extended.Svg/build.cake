@@ -7,19 +7,9 @@ var verbosity = Argument("verbosity", "Verbose");
 var buildSpec = new BuildSpec {
     Libs = new ISolutionBuilder [] {
         new DefaultSolutionBuilder {
-            PreBuildAction = () => {
-                // restore netstandard
-                StartProcess("dotnet", new ProcessSettings {
-                    Arguments = "restore ./source/SkiaSharp.Extended.Svg.NetStandard.sln"
-                });
-            },
-            PostBuildAction = () => {
-                // build netstandard
-                StartProcess("dotnet", new ProcessSettings {
-                    Arguments = "build -c " + configuration + " ./source/SkiaSharp.Extended.Svg.NetStandard.sln"
-                });
-            },
-            SolutionPath = "./source/SkiaSharp.Extended.Svg.NetFramework.sln",
+            AlwaysUseMSBuild = true,
+            BuildsOn = BuildPlatforms.Windows | BuildPlatforms.Mac,
+            SolutionPath = "./source/SkiaSharp.Extended.Svg.sln",
             Configuration = configuration,
             OutputFiles = new [] { 
                 new OutputFileCopy {
@@ -30,7 +20,11 @@ var buildSpec = new BuildSpec {
                     FromFile = "./source/SkiaSharp.Extended.Svg.NetStandard/bin/Release/SkiaSharp.Svg.dll",
                     ToDirectory = "./output/netstandard"
                 },
-            }
+            },
+            PostBuildAction = () => {
+                SignAssembly("./source/SkiaSharp.Extended.Svg/bin/Release/SkiaSharp.Svg.dll", "../keys/mono.snk");
+                SignAssembly("./source/SkiaSharp.Extended.Svg.NetStandard/bin/Release/SkiaSharp.Svg.dll", "../keys/mono.snk");
+            },
         },
     },
 
@@ -39,7 +33,7 @@ var buildSpec = new BuildSpec {
     // },
 
     NuGets = new [] {
-        new NuGetInfo { NuSpec = "./nuget/SkiaSharp.Extended.Svg.nuspec"},
+        new NuGetInfo { NuSpec = "./nuget/SkiaSharp.Extended.Svg.nuspec" },
     },
 };
 
@@ -49,11 +43,12 @@ Task("tests")
 {
     // build the tests
     NuGetRestore("./tests/SkiaSharp.Extended.Svg.Tests.sln");
-    DotNetBuild("./tests/SkiaSharp.Extended.Svg.Tests.sln", settings => settings.SetConfiguration(configuration));
+    MSBuild("./tests/SkiaSharp.Extended.Svg.Tests.sln", settings => settings.SetConfiguration(configuration));
 
     // run the tests
     NUnit3("./tests/**/bin/" + configuration + "/*.Tests.dll", new NUnit3Settings {
-        Results = "./output/TestResult.xml"
+        Results = "./output/TestResult.xml",
+        ResultFormat = "nunit2",
     });
 });
 

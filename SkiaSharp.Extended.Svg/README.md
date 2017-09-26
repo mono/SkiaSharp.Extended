@@ -1,6 +1,6 @@
 # SkiaSharp.Extended.Svg
 
-[![SkiaSharp](https://img.shields.io/nuget/vpre/SkiaSharp.Svg.svg?maxAge=2592000)](https://www.nuget.org/packages/SkiaSharp.Svg)
+[![SkiaSharp.Extended.Svg](https://img.shields.io/nuget/vpre/SkiaSharp.Svg.svg?maxAge=2592000)](https://www.nuget.org/packages/SkiaSharp.Svg)  [![NuGet](https://img.shields.io/nuget/dt/SkiaSharp.Svg.svg)](https://www.nuget.org/packages/SkiaSharp.Svg)
 
 **SkiaSharp.Svg** is lightweight SVG parser that can be used for 
 most SVG needs.
@@ -43,6 +43,10 @@ var matrix = SKMatrix.MakeScale(scale, scale);
 // draw the svg
 canvas.DrawPicture(svg.Picture, ref matrix);
 ```
+
+_NOTE: although this library is in the `SkiaSharp.Extended.XXX` repository, this  
+library retains the `SkiaSharp.Svg` assembly name and legacy namespace to avoid 
+any breaking changes._
 
 
 [google-svg]: https://groups.google.com/d/msg/skia-discuss/8grSzbS0GnI/GxsAdCCUU9cJ

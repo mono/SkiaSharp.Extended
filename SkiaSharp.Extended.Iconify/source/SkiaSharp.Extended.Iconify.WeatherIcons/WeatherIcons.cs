@@ -8,24 +8,25 @@ namespace SkiaSharp.Extended.Iconify
 	{
 		public const string ManifestResourceName = "SkiaSharp.Extended.Iconify.weathericons-regular-webfont.ttf";
 
-		public static Stream GetFontStream()
-		{
-			var type = typeof(WeatherIcons).GetTypeInfo();
-			var assembly = type.Assembly;
+		public static Stream GetFontStream() => SKTextRunLookupEntry.GetManifestFontStream(typeof(WeatherIcons), ManifestResourceName);
 
-			return assembly.GetManifestResourceStream(ManifestResourceName);
-		}
+		public static SKTypeface GetTypeface() => SKTextRunLookupEntry.GetManifestTypeface(typeof(WeatherIcons), ManifestResourceName);
+	}
 
-		public static SKTypeface GetTypeface()
+	public class WeatherIconsLookupEntry : SKTextRunLookupEntry
+	{
+		public WeatherIconsLookupEntry()
+			: base(WeatherIcons.GetTypeface(), true, WeatherIcons.Characters)
 		{
-			return SKTypeface.FromStream(GetFontStream());
 		}
+	}
 
-		public static void AddTo(SKTextRunLookup lookup)
-		{
-			if (lookup == null)
-				throw new ArgumentNullException(nameof(lookup));
-			lookup.AddTypeface(GetTypeface(), Characters);
-		}
+	public static class SKTextRunLookupExtensions
+	{
+		private static readonly Lazy<WeatherIconsLookupEntry> entry = new Lazy<WeatherIconsLookupEntry>(() => new WeatherIconsLookupEntry());
+
+		public static void AddWeatherIcons(this SKTextRunLookup lookup) => lookup.AddTypeface(entry.Value);
+
+		public static void RemoveWeatherIcons(this SKTextRunLookup lookup) => lookup.RemoveTypeface(entry.Value);
 	}
 }

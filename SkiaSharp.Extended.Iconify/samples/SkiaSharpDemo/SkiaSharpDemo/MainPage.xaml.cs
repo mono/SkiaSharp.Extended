@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using SkiaSharp;
+﻿using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
@@ -32,20 +29,8 @@ namespace SkiaSharpDemo
 			var typicons = "SkiaSharp runs on {{typcn-device-desktop}}, {{typcn-device-laptop}}, {{typcn-device-phone}} and {{typcn-device-tablet}} devices!";
 			var weather = "An {{wi-solar-eclipse}} is when the {{wi-day-sunny color=f9d71c}} is hidden.";
 
-			using (var lookup = new SKTextRunLookup())
 			using (var textPaint = new SKPaint())
 			{
-				// the lookup does not have to be re-created on each draw
-				// instead, it can be created and re-used
-				FontAwesome.AddTo(lookup);
-				IonIcons.AddTo(lookup);
-				MaterialDesignIcons.AddTo(lookup);
-				MaterialIcons.AddTo(lookup);
-				Meteocons.AddTo(lookup);
-				SimpleLineIcons.AddTo(lookup);
-				Typicons.AddTo(lookup);
-				WeatherIcons.AddTo(lookup);
-
 				textPaint.IsAntialias = true;
 				textPaint.TextSize = 48;
 				textPaint.Typeface = SKTypeface.FromFamilyName("Arial");
@@ -57,28 +42,28 @@ namespace SkiaSharpDemo
 				var padding = 24;
 				var yOffset = padding + textPaint.TextSize;
 
-				canvas.DrawIconifiedText(fontAwesome, padding, yOffset, lookup, textPaint);
+				canvas.DrawIconifiedText(fontAwesome, padding, yOffset, textPaint);
 				yOffset += padding + textPaint.TextSize;
 
-				canvas.DrawIconifiedText(ionIcons, padding, yOffset, lookup, textPaint);
+				canvas.DrawIconifiedText(ionIcons, padding, yOffset, textPaint);
 				yOffset += padding + textPaint.TextSize;
 
-				canvas.DrawIconifiedText(materialDesignIcons, padding, yOffset, lookup, textPaint);
+				canvas.DrawIconifiedText(materialDesignIcons, padding, yOffset, textPaint);
 				yOffset += padding + textPaint.TextSize;
 
-				canvas.DrawIconifiedText(materialIcons, padding, yOffset, lookup, textPaint);
+				canvas.DrawIconifiedText(materialIcons, padding, yOffset, textPaint);
 				yOffset += padding + textPaint.TextSize;
 
-				canvas.DrawIconifiedText(meteocons, padding, yOffset, lookup, textPaint);
+				canvas.DrawIconifiedText(meteocons, padding, yOffset, textPaint);
 				yOffset += padding + textPaint.TextSize;
 
-				canvas.DrawIconifiedText(simple, padding, yOffset, lookup, textPaint);
+				canvas.DrawIconifiedText(simple, padding, yOffset, textPaint);
 				yOffset += padding + textPaint.TextSize;
 
-				canvas.DrawIconifiedText(typicons, padding, yOffset, lookup, textPaint);
+				canvas.DrawIconifiedText(typicons, padding, yOffset, textPaint);
 				yOffset += padding + textPaint.TextSize;
 
-				canvas.DrawIconifiedText(weather, padding, yOffset, lookup, textPaint);
+				canvas.DrawIconifiedText(weather, padding, yOffset, textPaint);
 				yOffset += padding + textPaint.TextSize;
 			}
 		}

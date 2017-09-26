@@ -1,23 +1,21 @@
-#addin "Cake.FileHelpers"
-
 #load "../common.cake"
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var verbosity = Argument("verbosity", "Verbose");
 
-var baseAssembly = "./source/SkiaSharp.Extended.Iconify/bin/" + configuration + "/SkiaSharp.Extended.Iconify.dll";
-var fontAssemblies = "./source/SkiaSharp.Extended.Iconify.*/bin/" + configuration + "/SkiaSharp.Extended.Iconify.*.dll";
+var directories = GetDirectories("./source/SkiaSharp.Extended.Iconify*");
+var assemblies = directories.Select(dir => dir.Combine("bin/" + configuration).CombineWithFilePath(dir.GetDirectoryName() + ".dll"));
 
 var buildSpec = new BuildSpec {
     Libs = new ISolutionBuilder [] {
         new DefaultSolutionBuilder {
+            AlwaysUseMSBuild = true,
+            BuildsOn = BuildPlatforms.Windows | BuildPlatforms.Mac,
             SolutionPath = "./source/SkiaSharp.Extended.Iconify.sln",
             Configuration = configuration,
-            OutputFiles = GetFiles(fontAssemblies)
-                .Select(assembly => new OutputFileCopy { FromFile = assembly, ToDirectory = "./output/portable" })
-                .Union(new [] { new OutputFileCopy { FromFile = baseAssembly, ToDirectory = "./output/portable" } })
-                .ToArray(),
+            OutputFiles = assemblies.Select(ass => new OutputFileCopy { FromFile = ass, ToDirectory = "./output/portable" }).ToArray(),
+            PostBuildAction = () => { foreach (var ass in assemblies) SignAssembly(ass, "../keys/Open.snk"); },
         },
     },
 
@@ -158,7 +156,7 @@ Task("externals")
 
     // first build the generator
     NuGetRestore("./source/IconifyGenerator.sln");
-    DotNetBuild("./source/IconifyGenerator.sln", settings => settings.SetConfiguration(configuration));
+    MSBuild("./source/IconifyGenerator.sln", settings => settings.SetConfiguration(configuration));
 
     // copy generator to output
     EnsureDirectoryExists("./output/");
