@@ -749,7 +749,7 @@ namespace SkiaSharp.Extended.Svg
 		private Dictionary<string, string> ReadStyle(XElement e)
 		{
 			// get from local attributes
-			var dic = e.Attributes().ToDictionary(k => k.Name.LocalName, v => v.Value);
+			var dic = e.Attributes().Where(a => HasSvgNamespace(a.Name)).ToDictionary(k => k.Name.LocalName, v => v.Value);
 
 			var style = e.Attribute("style")?.Value;
 			if (!string.IsNullOrWhiteSpace(style))
@@ -763,6 +763,14 @@ namespace SkiaSharp.Extended.Svg
 			}
 
 			return dic;
+		}
+
+		private static bool HasSvgNamespace(XName name)
+		{
+			return
+				string.IsNullOrEmpty(name.Namespace?.NamespaceName) ||
+				name.Namespace == svg ||
+				name.Namespace == xlink;
 		}
 
 		private Dictionary<string, string> ReadPaints(XElement e, ref SKPaint stroke, ref SKPaint fill, bool isGroup)
