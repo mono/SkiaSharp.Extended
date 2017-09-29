@@ -324,11 +324,11 @@ namespace SkiaSharp.Extended.Svg
 						var rect = SKRect.Create(x, y, width, height);
 						if (rx > 0 || ry > 0)
 						{
-                            if (rx == null)
-                                rx = ry;
-                            if (ry == null)
-                                ry = rx;
-                            if (fill != null)
+							if (rx == null)
+								rx = ry;
+							if (ry == null)
+								ry = rx;
+							if (fill != null)
 								canvas.DrawRoundRect(rect, rx.Value, ry.Value, fill);
 							if (stroke != null)
 								canvas.DrawRoundRect(rect, rx.Value, ry.Value, stroke);

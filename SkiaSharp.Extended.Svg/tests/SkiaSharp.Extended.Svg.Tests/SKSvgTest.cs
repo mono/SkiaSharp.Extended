@@ -167,6 +167,37 @@ namespace SkiaSharp.Extended.Svg.Tests
 		}
 
 		[Test]
+		public void RectWithSingleCornerRadius()
+		{
+			var check = new Action<string>(svg => { 
+				var bmp = CreateSvgBitmap(svg, SKColors.White);
+
+				Assert.AreEqual(SKColors.White, bmp.GetPixel(3, 3));
+				Assert.AreEqual(SKColors.White, bmp.GetPixel(97, 3));
+				Assert.AreEqual(SKColors.White, bmp.GetPixel(3, 97));
+				Assert.AreEqual(SKColors.White, bmp.GetPixel(97, 97));
+			});
+
+			check(
+@"<svg xmlns=""http://www.w3.org/2000/svg"" version=""1.1""
+    x=""0px"" y=""0px"" width=""100"" height=""100"" viewBox=""0 0 100 100"">
+  <rect style=""fill:red"" width=""100"" height=""100"" x=""0"" y=""0"" rx=""20"" ry=""20"" />
+</svg>");
+
+			check(
+@"<svg xmlns=""http://www.w3.org/2000/svg"" version=""1.1""
+    x=""0px"" y=""0px"" width=""100"" height=""100"" viewBox=""0 0 100 100"">
+  <rect style=""fill:red"" width=""100"" height=""100"" x=""0"" y=""0"" rx=""20"" />
+</svg>");
+
+			check(
+@"<svg xmlns=""http://www.w3.org/2000/svg"" version=""1.1""
+    x=""0px"" y=""0px"" width=""100"" height=""100"" viewBox=""0 0 100 100"">
+  <rect style=""fill:red"" width=""100"" height=""100"" x=""0"" y=""0"" ry=""20"" />
+</svg>");
+		}
+
+		[Test]
 		public void SvgCanUnderstandPolygon()
 		{
 			var svg =
