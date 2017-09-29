@@ -56,6 +56,11 @@ namespace SkiaSharp.Extended.Svg
 		private static readonly Regex WSRe = new Regex(@"\s{2,}");
 
 		private readonly Dictionary<string, XElement> defs = new Dictionary<string, XElement>();
+		private readonly XmlReaderSettings xmlReaderSettings = new XmlReaderSettings()
+		{
+			DtdProcessing = DtdProcessing.Ignore,
+			IgnoreComments = true,
+		};
 
 #if PORTABLE
 		// basically use reflection to try and find a method that supports a 
@@ -112,7 +117,7 @@ namespace SkiaSharp.Extended.Svg
 			}
 
 			// we know that there we can access the method via reflection
-			var args = new object[] { filename, null, CreateSvgXmlContext() };
+			var args = new object[] { filename, xmlReaderSettings, CreateSvgXmlContext() };
 			using (var reader = (XmlReader)createReaderMethod.Invoke(null, args))
 			{
 				return Load(reader);
@@ -127,7 +132,7 @@ namespace SkiaSharp.Extended.Svg
 
 		public SKPicture Load(Stream stream)
 		{
-			using (var reader = XmlReader.Create(stream, null, CreateSvgXmlContext()))
+			using (var reader = XmlReader.Create(stream, xmlReaderSettings, CreateSvgXmlContext()))
 			{
 				return Load(reader);
 			}

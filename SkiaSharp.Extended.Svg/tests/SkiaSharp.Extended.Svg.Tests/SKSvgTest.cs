@@ -259,6 +259,15 @@ namespace SkiaSharp.Extended.Svg.Tests
 			Assert.AreEqual(background, bmp.GetPixel(5, 5));
 		}
 
+		[Test]
+		public void SvgCanReadFileWithDTD()
+		{
+			var path = Path.Combine(PathToImages, "dtd.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.Red);
+
+			Assert.AreEqual(SKColors.Black, bmp.GetPixel(50, 50));
+		}
+
 		private static SKBitmap LoadSvgBitmap(string svgPath, SKColor? background = null)
 		{
 			// open the SVG
