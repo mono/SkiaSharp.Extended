@@ -241,7 +241,13 @@ namespace SkiaSharp.Extended.Svg
 					canvas.ClipRect(ViewBox);
 				}
 
-				LoadElements(svg.Elements(), canvas);
+				// read style
+				SKPaint stroke = null;
+				SKPaint fill = CreatePaint();
+				var style = ReadPaints(svg, ref stroke, ref fill, true);
+
+				// read elements
+				LoadElements(svg.Elements(), canvas, stroke, fill);
 
 				Picture = recorder.EndRecording();
 			}
@@ -249,17 +255,12 @@ namespace SkiaSharp.Extended.Svg
 			return Picture;
 		}
 
-		private void LoadElements(IEnumerable<XElement> elements, SKCanvas canvas)
+		private void LoadElements(IEnumerable<XElement> elements, SKCanvas canvas, SKPaint stroke, SKPaint fill)
 		{
 			foreach (var e in elements)
 			{
-				ReadElement(e, canvas);
+				ReadElement(e, canvas, stroke, fill);
 			}
-		}
-
-		private void ReadElement(XElement e, SKCanvas canvas)
-		{
-			ReadElement(e, canvas, null, CreatePaint());
 		}
 
 		private void ReadElement(XElement e, SKCanvas canvas, SKPaint stroke, SKPaint fill)

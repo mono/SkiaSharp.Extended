@@ -227,6 +227,18 @@ namespace SkiaSharp.Extended.Svg.Tests
 		}
 
 		[Test]
+		public void SvgStylesAreAlsoUsed()
+		{
+			var path = Path.Combine(PathToImages, "issues-22.svg");
+
+			var svg = new SKSvg();
+			svg.Load(path);
+			var bmp = CreateBitmap(svg, SKColors.White);
+
+			Assert.AreEqual(SKColors.White, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+		}
+
+		[Test]
 		public void SvgCanReadFileWithNoXLinkNamespacePrefix()
 		{
 			var path = Path.Combine(PathToImages, "issues-8.svg");
