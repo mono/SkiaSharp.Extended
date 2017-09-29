@@ -266,10 +266,10 @@ namespace SkiaSharp.Extended.Svg
 
 			// clip-path
 			var clipPath = ReadClipPath(e.Attribute("clip-path")?.Value ?? string.Empty);
-            if (clipPath != null)
-            {
-                canvas.ClipPath(clipPath);
-            }
+			if (clipPath != null)
+			{
+				canvas.ClipPath(clipPath);
+			}
 
 			// SVG element
 			var elementName = e.Name.LocalName;
@@ -291,7 +291,6 @@ namespace SkiaSharp.Extended.Svg
 					if (stroke != null || fill != null)
 					{
 						var rect = ParseRoundedRect(e);
-
 						if (rect.IsRounded())
 						{
 							if (fill != null)
