@@ -319,15 +319,19 @@ namespace SkiaSharp.Extended.Svg
 						var y = ReadNumber(e.Attribute("y"));
 						var width = ReadNumber(e.Attribute("width"));
 						var height = ReadNumber(e.Attribute("height"));
-						var rx = ReadNumber(e.Attribute("rx"));
-						var ry = ReadNumber(e.Attribute("ry"));
+						var rx = ReadOptionalNumber(e.Attribute("rx"));
+						var ry = ReadOptionalNumber(e.Attribute("ry"));
 						var rect = SKRect.Create(x, y, width, height);
 						if (rx > 0 || ry > 0)
 						{
-							if (fill != null)
-								canvas.DrawRoundRect(rect, rx, ry, fill);
+                            if (rx == null)
+                                rx = ry;
+                            if (ry == null)
+                                ry = rx;
+                            if (fill != null)
+								canvas.DrawRoundRect(rect, rx.Value, ry.Value, fill);
 							if (stroke != null)
-								canvas.DrawRoundRect(rect, rx, ry, stroke);
+								canvas.DrawRoundRect(rect, rx.Value, ry.Value, stroke);
 						}
 						else
 						{
