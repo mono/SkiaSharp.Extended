@@ -52,6 +52,7 @@ namespace SkiaSharp.Extended.Svg
 		private static readonly Regex unitRe = new Regex("px|pt|em|ex|pc|cm|mm|in");
 		private static readonly Regex percRe = new Regex("%");
 		private static readonly Regex fillUrlRe = new Regex(@"url\s*\(\s*#([^\)]+)\)");
+		private static readonly Regex clipPathUrlRe = new Regex(@"url\s*\(\s*#([^\)]+)\)");
 		private static readonly Regex keyValueRe = new Regex(@"\s*([\w-]+)\s*:\s*(.*)");
 		private static readonly Regex WSRe = new Regex(@"\s{2,}");
 
@@ -271,6 +272,13 @@ namespace SkiaSharp.Extended.Svg
 			canvas.Save();
 			canvas.Concat(ref transform);
 
+			// clip-path
+			var clipPath = ReadClipPath(e.Attribute("clip-path")?.Value ?? string.Empty);
+			if (clipPath != null)
+			{
+				canvas.ClipPath(clipPath);
+			}
+
 			// SVG element
 			var elementName = e.Name.LocalName;
 			var isGroup = elementName == "g";
@@ -320,56 +328,41 @@ namespace SkiaSharp.Extended.Svg
 				case "rect":
 					if (stroke != null || fill != null)
 					{
-						var x = ReadNumber(e.Attribute("x"));
-						var y = ReadNumber(e.Attribute("y"));
-						var width = ReadNumber(e.Attribute("width"));
-						var height = ReadNumber(e.Attribute("height"));
-						var rx = ReadOptionalNumber(e.Attribute("rx"));
-						var ry = ReadOptionalNumber(e.Attribute("ry"));
-						var rect = SKRect.Create(x, y, width, height);
-						if (rx > 0 || ry > 0)
+						var rect = ParseRoundedRect(e);
+						if (rect.IsRounded())
 						{
-							if (rx == null)
-								rx = ry;
-							if (ry == null)
-								ry = rx;
 							if (fill != null)
-								canvas.DrawRoundRect(rect, rx.Value, ry.Value, fill);
+								canvas.DrawRoundRect(rect, fill);
 							if (stroke != null)
-								canvas.DrawRoundRect(rect, rx.Value, ry.Value, stroke);
+								canvas.DrawRoundRect(rect, stroke);
 						}
 						else
 						{
 							if (fill != null)
-								canvas.DrawRect(rect, fill);
+								canvas.DrawRect(rect.Rect, fill);
 							if (stroke != null)
-								canvas.DrawRect(rect, stroke);
+								canvas.DrawRect(rect.Rect, stroke);
 						}
 					}
 					break;
 				case "ellipse":
 					if (stroke != null || fill != null)
 					{
-						var cx = ReadNumber(e.Attribute("cx"));
-						var cy = ReadNumber(e.Attribute("cy"));
-						var rx = ReadNumber(e.Attribute("rx"));
-						var ry = ReadNumber(e.Attribute("ry"));
+						var oval = ParseOval(e);
 						if (fill != null)
-							canvas.DrawOval(cx, cy, rx, ry, fill);
+							canvas.DrawOval(oval, fill);
 						if (stroke != null)
-							canvas.DrawOval(cx, cy, rx, ry, stroke);
+							canvas.DrawOval(oval, stroke);
 					}
 					break;
 				case "circle":
 					if (stroke != null || fill != null)
 					{
-						var cx = ReadNumber(e.Attribute("cx"));
-						var cy = ReadNumber(e.Attribute("cy"));
-						var rr = ReadNumber(e.Attribute("r"));
+						var circle = ParseCircle(e);
 						if (fill != null)
-							canvas.DrawCircle(cx, cy, rr, fill);
+							canvas.DrawCircle(circle, fill);
 						if (stroke != null)
-							canvas.DrawCircle(cx, cy, rr, stroke);
+							canvas.DrawCircle(circle, stroke);
 					}
 					break;
 				case "path":
@@ -453,11 +446,8 @@ namespace SkiaSharp.Extended.Svg
 				case "line":
 					if (stroke != null)
 					{
-						var x1 = ReadNumber(e.Attribute("x1"));
-						var x2 = ReadNumber(e.Attribute("x2"));
-						var y1 = ReadNumber(e.Attribute("y1"));
-						var y2 = ReadNumber(e.Attribute("y2"));
-						canvas.DrawLine(x1, y1, x2, y2, stroke);
+						var line = ParseLine(e);
+						canvas.DrawLine(line, stroke);
 					}
 					break;
 				case "switch":
@@ -495,6 +485,48 @@ namespace SkiaSharp.Extended.Svg
 
 			// restore matrix
 			canvas.Restore();
+		}
+
+		private SKOval ParseOval(XElement e)
+		{
+			var cx = ReadNumber(e.Attribute("cx"));
+			var cy = ReadNumber(e.Attribute("cy"));
+			var rx = ReadNumber(e.Attribute("rx"));
+			var ry = ReadNumber(e.Attribute("ry"));
+
+			return new SKOval(new SKPoint(cx, cy), rx, ry);
+		}
+
+		private SKCircle ParseCircle(XElement e)
+		{
+			var cx = ReadNumber(e.Attribute("cx"));
+			var cy = ReadNumber(e.Attribute("cy"));
+			var rr = ReadNumber(e.Attribute("r"));
+
+			return new SKCircle(new SKPoint(cx, cy), rr);
+		}
+
+		private SKLine ParseLine(XElement e)
+		{
+			var x1 = ReadNumber(e.Attribute("x1"));
+			var x2 = ReadNumber(e.Attribute("x2"));
+			var y1 = ReadNumber(e.Attribute("y1"));
+			var y2 = ReadNumber(e.Attribute("y2"));
+
+			return new SKLine(new SKPoint(x1, y1), new SKPoint(x2, y2));
+		}
+
+		private SKRoundedRect ParseRoundedRect(XElement e)
+		{
+			var x = ReadNumber(e.Attribute("x"));
+			var y = ReadNumber(e.Attribute("y"));
+			var width = ReadNumber(e.Attribute("width"));
+			var height = ReadNumber(e.Attribute("height"));
+			var rx = ReadOptionalNumber(e.Attribute("rx"));
+			var ry = ReadOptionalNumber(e.Attribute("ry"));
+			var rect = SKRect.Create(x, y, width, height);
+
+			return new SKRoundedRect(rect, rx ?? ry ?? 0, ry ?? rx ?? 0);
 		}
 
 		private void ReadText(XElement e, SKCanvas canvas, SKPaint stroke, SKPaint fill)
@@ -992,6 +1024,118 @@ namespace SkiaSharp.Extended.Svg
 			}
 
 			return t;
+		}
+
+		private SKPath ReadClipPath(string raw)
+		{
+			if (string.IsNullOrWhiteSpace(raw))
+			{
+				return null;
+			}
+
+			SKPath result = null;
+			var read = false;
+			var urlM = clipPathUrlRe.Match(raw);
+			if (urlM.Success)
+			{
+				var id = urlM.Groups[1].Value.Trim();
+
+				XElement defE;
+				if (defs.TryGetValue(id, out defE))
+				{
+					result = ReadClipPathDefinition(defE);
+					if (result != null)
+					{
+						read = true;
+					}
+				}
+				else
+				{
+					LogOrThrow($"Invalid clip-path url reference: {id}");
+				}
+			}
+
+			if (!read)
+			{
+				LogOrThrow($"Unsupported clip-path: {raw}");
+			}
+
+			return result;
+		}
+
+		private SKPath ReadClipPathDefinition(XElement e)
+		{
+			if (e.Name.LocalName != "clipPath")
+			{
+				return null;
+			}
+
+			var result = new SKPath();
+
+			var ns = e.Name.Namespace;
+			foreach (var ce in e.Elements())
+			{
+				var elementName = ce.Name.LocalName;
+				switch (elementName)
+				{
+					case "rect":
+						var rect = ParseRoundedRect(ce);
+						result.AddRoundedRect(rect.Rect, rect.RadiusX, rect.RadiusY);
+						break;
+					case "ellipse":
+						var oval = ParseOval(ce);
+						result.AddOval(oval.BoundingRect);
+						break;
+					case "circle":
+						var circle = ParseCircle(ce);
+						result.AddCircle(circle.Center.X, circle.Center.Y, circle.Radius);
+						break;
+					case "line":
+						var line = ParseLine(ce);
+						result.MoveTo(line.P1);
+						result.LineTo(line.P2);
+						break;
+					case "path":
+						var d = e.Attribute("d")?.Value;
+						if (!string.IsNullOrWhiteSpace(d))
+						{
+							var path = SKPath.ParseSvgPathData(d);
+							result.AddPath(path);
+						}
+						break;
+					default:
+						LogOrThrow($"SVG element '{elementName}' is not supported in clipPath.");
+						break;
+				}
+				
+			}
+
+			return result;
+
+		}
+
+		private SKPath ReadPolyPath(string pointsData, bool closePath)
+		{
+			var path = new SKPath();
+			var points = pointsData.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+			for (int i = 0; i < points.Length - 1; i += 2)
+			{
+				var x = ReadNumber(points[i]);
+				var y = ReadNumber(points[i + 1]);
+				if (i == 0)
+				{
+					path.MoveTo(x, y);
+				}
+				else
+				{
+					path.LineTo(x, y);
+				}
+			}
+			if (closePath)
+			{
+				path.Close();
+			}
+			return path;
 		}
 
 		private SKTextAlign ReadTextAlignment(XElement element)
