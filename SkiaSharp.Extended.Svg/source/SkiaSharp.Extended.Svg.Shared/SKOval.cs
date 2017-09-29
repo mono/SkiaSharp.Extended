@@ -17,6 +17,6 @@ namespace SkiaSharp.Extended.Svg
 			RadiusY = ry;
 		}
 
-		public SKRect BoundingRect => SKRect.Create(Center.X - RadiusX, Center.Y - RadiusY, 2 * RadiusX, 2 * RadiusY);
+		public SKRect BoundingRect => new SKRect(Center.X - RadiusX, Center.Y - RadiusY, Center.X + RadiusX, Center.Y + RadiusY);
 	}
 }

@@ -326,76 +326,19 @@ namespace SkiaSharp.Extended.Svg
 					}
 					break;
 				case "rect":
-					if (stroke != null || fill != null)
-					{
-						var rect = ParseRoundedRect(e);
-						if (rect.IsRounded())
-						{
-							if (fill != null)
-								canvas.DrawRoundRect(rect, fill);
-							if (stroke != null)
-								canvas.DrawRoundRect(rect, stroke);
-						}
-						else
-						{
-							if (fill != null)
-								canvas.DrawRect(rect.Rect, fill);
-							if (stroke != null)
-								canvas.DrawRect(rect.Rect, stroke);
-						}
-					}
-					break;
 				case "ellipse":
-					if (stroke != null || fill != null)
-					{
-						var oval = ParseOval(e);
-						if (fill != null)
-							canvas.DrawOval(oval, fill);
-						if (stroke != null)
-							canvas.DrawOval(oval, stroke);
-					}
-					break;
 				case "circle":
-					if (stroke != null || fill != null)
-					{
-						var circle = ParseCircle(e);
-						if (fill != null)
-							canvas.DrawCircle(circle, fill);
-						if (stroke != null)
-							canvas.DrawCircle(circle, stroke);
-					}
-					break;
 				case "path":
-					if (stroke != null || fill != null)
-					{
-						var d = e.Attribute("d")?.Value;
-						if (!string.IsNullOrWhiteSpace(d))
-						{
-							var path = SKPath.ParseSvgPathData(d);
-							if (fill != null)
-								canvas.DrawPath(path, fill);
-							if (stroke != null)
-								canvas.DrawPath(path, stroke);
-						}
-					}
-					break;
 				case "polygon":
 				case "polyline":
-					if (stroke != null || fill != null)
+				case "line":
+					var elementPath = ParseElement(e);
+					if ((stroke != null || fill != null) && elementPath != null)
 					{
-						var close = elementName == "polygon";
-						var p = e.Attribute("points")?.Value;
-						if (!string.IsNullOrWhiteSpace(p))
-						{
-							p = "M" + p;
-							if (close)
-								p += " Z";
-							var path = SKPath.ParseSvgPathData(p);
-							if (fill != null)
-								canvas.DrawPath(path, fill);
-							if (stroke != null)
-								canvas.DrawPath(path, stroke);
-						}
+						if (fill != null)
+							canvas.DrawPath(elementPath, fill);
+						if (stroke != null)
+							canvas.DrawPath(elementPath, stroke);
 					}
 					break;
 				case "g":
@@ -443,13 +386,6 @@ namespace SkiaSharp.Extended.Svg
 						}
 					}
 					break;
-				case "line":
-					if (stroke != null)
-					{
-						var line = ParseLine(e);
-						canvas.DrawLine(line, stroke);
-					}
-					break;
 				case "switch":
 					if (e.HasElements)
 					{
@@ -485,6 +421,63 @@ namespace SkiaSharp.Extended.Svg
 
 			// restore matrix
 			canvas.Restore();
+		}
+
+		private SKPath ParseElement(XElement e)
+		{
+			var path = new SKPath();
+
+			var elementName = e.Name.LocalName;
+			switch (elementName)
+			{
+				case "rect":
+					var rect = ParseRoundedRect(e);
+					if (rect.IsRounded())
+						path.AddRoundedRect(rect.Rect, rect.RadiusX, rect.RadiusY);
+					else
+						path.AddRect(rect.Rect);
+					break;
+				case "ellipse":
+					var oval = ParseOval(e);
+					path.AddOval(oval.BoundingRect);
+					break;
+				case "circle":
+					var circle = ParseCircle(e);
+					path.AddCircle(circle.Center.X, circle.Center.Y, circle.Radius);
+					break;
+				case "path":
+					var d = e.Attribute("d")?.Value;
+					if (!string.IsNullOrWhiteSpace(d))
+					{
+						path.Dispose();
+						path = SKPath.ParseSvgPathData(d);
+					}
+					break;
+				case "polygon":
+				case "polyline":
+					var close = elementName == "polygon";
+					var p = e.Attribute("points")?.Value;
+					if (!string.IsNullOrWhiteSpace(p))
+					{
+						p = "M" + p;
+						if (close)
+							p += " Z";
+						path.Dispose();
+						path = SKPath.ParseSvgPathData(p);
+					}
+					break;
+				case "line":
+					var line = ParseLine(e);
+					path.MoveTo(line.P1);
+					path.LineTo(line.P2);
+					break;
+				default:
+					path.Dispose();
+					path = null;
+					break;
+			}
+
+			return path;
 		}
 
 		private SKOval ParseOval(XElement e)
@@ -1065,77 +1058,27 @@ namespace SkiaSharp.Extended.Svg
 
 		private SKPath ReadClipPathDefinition(XElement e)
 		{
-			if (e.Name.LocalName != "clipPath")
+			if (e.Name.LocalName != "clipPath" || !e.HasElements)
 			{
 				return null;
 			}
 
 			var result = new SKPath();
 
-			var ns = e.Name.Namespace;
 			foreach (var ce in e.Elements())
 			{
-				var elementName = ce.Name.LocalName;
-				switch (elementName)
+				var path = ParseElement(ce);
+				if (path != null)
 				{
-					case "rect":
-						var rect = ParseRoundedRect(ce);
-						result.AddRoundedRect(rect.Rect, rect.RadiusX, rect.RadiusY);
-						break;
-					case "ellipse":
-						var oval = ParseOval(ce);
-						result.AddOval(oval.BoundingRect);
-						break;
-					case "circle":
-						var circle = ParseCircle(ce);
-						result.AddCircle(circle.Center.X, circle.Center.Y, circle.Radius);
-						break;
-					case "line":
-						var line = ParseLine(ce);
-						result.MoveTo(line.P1);
-						result.LineTo(line.P2);
-						break;
-					case "path":
-						var d = e.Attribute("d")?.Value;
-						if (!string.IsNullOrWhiteSpace(d))
-						{
-							var path = SKPath.ParseSvgPathData(d);
-							result.AddPath(path);
-						}
-						break;
-					default:
-						LogOrThrow($"SVG element '{elementName}' is not supported in clipPath.");
-						break;
-				}
-				
-			}
-
-			return result;
-
-		}
-
-		private SKPath ReadPolyPath(string pointsData, bool closePath)
-		{
-			var path = new SKPath();
-			var points = pointsData.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
-			for (int i = 0; i < points.Length - 1; i += 2)
-			{
-				var x = ReadNumber(points[i]);
-				var y = ReadNumber(points[i + 1]);
-				if (i == 0)
-				{
-					path.MoveTo(x, y);
+					result.AddPath(path);
 				}
 				else
 				{
-					path.LineTo(x, y);
+					LogOrThrow($"SVG element '{ce.Name.LocalName}' is not supported in clipPath.");
 				}
 			}
-			if (closePath)
-			{
-				path.Close();
-			}
-			return path;
+
+			return result;
 		}
 
 		private SKTextAlign ReadTextAlignment(XElement element)
@@ -1263,7 +1206,7 @@ namespace SkiaSharp.Extended.Svg
 			}
 			return child;
 		}
-		
+
 		private static string ReadHrefString(XElement e)
 		{
 			return (e.Attribute("href") ?? e.Attribute(xlink + "href"))?.Value;
