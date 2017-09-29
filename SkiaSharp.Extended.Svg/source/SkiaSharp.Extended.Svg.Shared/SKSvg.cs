@@ -586,7 +586,10 @@ namespace SkiaSharp.Extended.Svg
 						// Don't read text-anchor from tspans!, Only use enclosing text-anchor from text element !
 						currentBaselineShift = ReadBaselineShift(ce);
 
-                        // Do not trim text contained in a tspan element as this should be interpreted as "intentional whitespace"
+						// Don't read text-anchor from tspans!, Only use enclosing text-anchor from text element !
+						currentBaselineShift = ReadBaselineShift(ce);
+
+						spans.Append(new SKTextSpan(text, spanFill, x, y, currentBaselineShift));
                         var text = ce.Value; //.Trim();
 
 						spans.Append(new SKTextSpan(text, spanFill, x, y, currentBaselineShift));
@@ -1090,7 +1093,7 @@ namespace SkiaSharp.Extended.Svg
 				{
 					result.AddPath(path);
 				}
-				
+                
 				else
 				{
 					LogOrThrow($"SVG element '{ce.Name.LocalName}' is not supported in clipPath.");
