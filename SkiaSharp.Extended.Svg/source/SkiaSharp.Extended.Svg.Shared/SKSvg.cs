@@ -876,8 +876,7 @@ namespace SkiaSharp.Extended.Svg
 				}
 				else
 				{
-					if (fillPaint == null)
-						fillPaint = CreatePaint();
+					fillPaint = CreatePaint();
 
 					SKColor color;
 					if (ColorHelper.TryParse(fill, out color))
