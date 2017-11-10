@@ -16,5 +16,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)SKOval.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SKRoundedRect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SKSvg.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\CssHelpers.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Helpers\" />
   </ItemGroup>
 </Project>

@@ -57,6 +57,7 @@ namespace SkiaSharp.Extended.Svg
 		private static readonly Regex WSRe = new Regex(@"\s{2,}");
 
 		private readonly Dictionary<string, XElement> defs = new Dictionary<string, XElement>();
+        private Dictionary<string, string> styles;
 		private readonly XmlReaderSettings xmlReaderSettings = new XmlReaderSettings()
 		{
 			DtdProcessing = DtdProcessing.Ignore,
@@ -290,6 +291,11 @@ namespace SkiaSharp.Extended.Svg
 			// parse elements
 			switch (elementName)
 			{
+                case "style":
+                    {
+                        styles = CssHelpers.ParseSelectors(e.Value);
+                        break;
+                    },
 				case "image":
 					{
 						var uri = ReadHrefString(e);
@@ -746,24 +752,47 @@ namespace SkiaSharp.Extended.Svg
 			return d;
 		}
 
-		private Dictionary<string, string> ReadStyle(XElement e)
-		{
-			// get from local attributes
-			var dic = e.Attributes().Where(a => HasSvgNamespace(a.Name)).ToDictionary(k => k.Name.LocalName, v => v.Value);
+        private Dictionary<string, string> ReadStyle(XElement e)
+        {
+            // get from local attributes
+            var dic = e.Attributes().Where(a => HasSvgNamespace(a.Name)).ToDictionary(k => k.Name.LocalName, v => v.Value);
 
-			var style = e.Attribute("style")?.Value;
-			if (!string.IsNullOrWhiteSpace(style))
-			{
-				// get from stlye attribute
-				var styleDic = ReadStyle(style);
+            string className;
+            string glStyle;
 
-				// overwrite
-				foreach (var pair in styleDic)
-					dic[pair.Key] = pair.Value;
-			}
+            if (styles != null && styles.TryGetValue(e.Name.LocalName, out glStyle))
+            {
+                // get from stlye attribute
+                var styleDic = ReadStyle(glStyle);
 
-			return dic;
-		}
+                // overwrite
+                foreach (var pair in styleDic)
+                    dic[pair.Key] = pair.Value;
+            }
+            if (styles != null && dic.TryGetValue("class", out className)
+                && styles.TryGetValue("." + className, out glStyle))
+            {
+                // get from stlye attribute
+                var styleDic = ReadStyle(glStyle);
+
+                // overwrite
+                foreach (var pair in styleDic)
+                    dic[pair.Key] = pair.Value;
+            }
+
+            var style = e.Attribute("style")?.Value;
+            if (!string.IsNullOrWhiteSpace(style))
+            {
+                // get from stlye attribute
+                var styleDic = ReadStyle(style);
+
+                // overwrite
+                foreach (var pair in styleDic)
+                    dic[pair.Key] = pair.Value;
+            }
+
+            return dic;
+        }
 
 		private static bool HasSvgNamespace(XName name)
 		{
@@ -876,8 +905,7 @@ namespace SkiaSharp.Extended.Svg
 				}
 				else
 				{
-					if (fillPaint == null)
-						fillPaint = CreatePaint();
+					fillPaint = CreatePaint();
 
 					SKColor color;
 					if (ColorHelper.TryParse(fill, out color))
