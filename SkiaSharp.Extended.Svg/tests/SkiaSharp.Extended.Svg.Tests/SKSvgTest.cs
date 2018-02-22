@@ -41,6 +41,21 @@ namespace SkiaSharp.Extended.Svg.Tests
 		}
 
 		[Test]
+		public void SvgRespectsBaselineShift()
+		{
+			var path = Path.Combine(PathToImages, "baselines.svg");
+			var background = (SKColor)0xffffffff;
+			var fill = SKColors.Black;
+
+			var bmp = LoadSvgBitmap(path, background);
+
+			Assert.AreEqual(background, bmp.GetPixel(25, 25));
+
+			// test for the explicit positioning, the others aren't supported yet
+			Assert.AreEqual(fill, bmp.GetPixel(370, 40));
+		}
+
+		[Test]
 		public void SvgLoadsLocalEmbeddedImages()
 		{
 			var path = Path.Combine(PathToImages, "embedded.svg");
