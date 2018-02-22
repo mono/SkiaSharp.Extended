@@ -9,13 +9,16 @@
     <Import_RootNamespace>SkiaSharp</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ColorHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Properties\SkiaSharpSvgAssemblyInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SKCanvasExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SKCircle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SKLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SKOval.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SKSvgImage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SKRoundedRect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SKSvg.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SKSvg.deprecated.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SKText.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SKTextSpan.cs" />
   </ItemGroup>
