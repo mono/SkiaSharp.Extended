@@ -19,9 +19,9 @@ var buildSpec = new BuildSpec {
         },
     },
 
-    // Samples = new ISolutionBuilder [] {
-    //     new DefaultSolutionBuilder { SolutionPath = "./samples/SkiaSharpDemo.sln" },
-    // },
+    Samples = new ISolutionBuilder [] {
+        new DefaultSolutionBuilder { SolutionPath = "./samples/SkiaSharpDemo.sln" },
+    },
 
     NuGets = GetFiles("./nuget/*.nuspec")
         .Select(nuspec => new NuGetInfo { NuSpec = nuspec })
@@ -182,7 +182,8 @@ Task("clean")
 
 Task("Default")
     .IsDependentOn("libs")
-    .IsDependentOn("nuget");
+    .IsDependentOn("nuget")
+    .IsDependentOn("samples");
 
 SetupXamarinBuildTasks (buildSpec, Tasks, Task);
 

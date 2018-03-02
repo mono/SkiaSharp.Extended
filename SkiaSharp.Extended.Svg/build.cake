@@ -28,9 +28,9 @@ var buildSpec = new BuildSpec {
         },
     },
 
-    // Samples = new ISolutionBuilder [] {
-    //     new DefaultSolutionBuilder { SolutionPath = "./samples/SkiaSharpDemo.sln" },
-    // },
+    Samples = new ISolutionBuilder [] {
+        new DefaultSolutionBuilder { SolutionPath = "./samples/SkiaSharpDemo.sln" },
+    },
 
     NuGets = new [] {
         new NuGetInfo { NuSpec = "./nuget/SkiaSharp.Extended.Svg.nuspec" },
@@ -55,7 +55,8 @@ Task("tests")
 Task("Default")
     .IsDependentOn("libs")
     .IsDependentOn("nuget")
-    .IsDependentOn("tests");
+    .IsDependentOn("tests")
+    .IsDependentOn("samples");
 
 SetupXamarinBuildTasks (buildSpec, Tasks, Task);
 
