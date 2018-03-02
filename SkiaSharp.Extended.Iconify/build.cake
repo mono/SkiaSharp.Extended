@@ -22,7 +22,13 @@ var buildSpec = new BuildSpec {
     Samples = new ISolutionBuilder [] {
         new DefaultSolutionBuilder {
             AlwaysUseMSBuild = true,
-            BuildsOn = BuildPlatforms.Windows | BuildPlatforms.Mac,
+            BuildsOn = BuildPlatforms.Windows,
+            SolutionPath = "./samples/SkiaSharpDemo.sln"
+        },
+        new DefaultSolutionBuilder {
+            AlwaysUseMSBuild = true,
+            BuildsOn = BuildPlatforms.Mac,
+            Platform = "iPhone",
             SolutionPath = "./samples/SkiaSharpDemo.sln"
         },
     },
