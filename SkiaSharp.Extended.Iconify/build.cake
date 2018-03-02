@@ -47,7 +47,7 @@ Task("externals-download")
 
     var MaterialIconsVersion = "3.0.1";
     var MaterialIconsStyleUrl = string.Format("https://raw.githubusercontent.com/google/material-design-icons/{0}/iconfont/codepoints", MaterialIconsVersion);
-    var MaterialIconsFontUrl = string.Format("https://github.com/google/material-design-icons/raw/{0}/iconfont/MaterialIcons-Regular.ttf", MaterialIconsVersion);
+    var MaterialIconsFontUrl = string.Format("https://raw.githubusercontent.com/google/material-design-icons/{0}/iconfont/MaterialIcons-Regular.ttf", MaterialIconsVersion);
 
     var MeteoconsUrl = "http://www.alessioatzeni.com/meteocons/res/download/meteocons-font.zip";
 
