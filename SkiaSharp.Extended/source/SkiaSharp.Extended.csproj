@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3;netstandard2.0;portable-net45+win8+wpa81+wp8</TargetFrameworks>
+    <AssemblyName>SkiaSharp.Extended</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended</RootNamespace>
+    <AssemblyVersion>1.60.0.0</AssemblyVersion>
+    <AssemblyFileVersion>1.60.0.0</AssemblyFileVersion>
+    <Version>1.60.0</Version>
+    <Product>$(AssemblyName) ($(TargetFramework))</Product>
+    <PackOnBuild>true</PackOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>en</NeutralLanguage>
+    <DefineConstants>$(DefineConstants);</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended</PackageId>
+    <Title>SkiaSharp.Extended</Title>
+    <PackageVersion>$(Version)$(VersionSuffix)</PackageVersion>
+    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
+    <Authors>Xamarin Inc.</Authors>
+    <Owners>microsoft,Xamarin,XamarinNuGet</Owners>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>This package adds many additional features and utilities for use with SkiaSharp.</Description>
+    <Summary>This package adds many additional features and utilities for use with SkiaSharp.</Summary>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <PackageIconUrl>https://cdn.rawgit.com/mono/SkiaSharp/v1.53.0/images/skia_256x256.png</PackageIconUrl>
+    <PackageTags>xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform skiasharp</PackageTags>
+    <PackageLicenseUrl>https://github.com/mono/SkiaSharp.Extended/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/mono/SkiaSharp.Extended</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mono/SkiaSharp.Extended</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
+    <DefineConstants>$(DefineConstants);NET_STANDARD;</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSBuild.Sdk.Extras" Version="1.2.2" PrivateAssets="All" />
+    <PackageReference Include="SkiaSharp" Version="1.60.0" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\Signing.targets" />
+
+</Project>

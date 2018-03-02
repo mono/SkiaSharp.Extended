@@ -1,8 +1,15 @@
 #load "../common.cake"
 
 var target = Argument("target", "Default");
-var configuration = Argument("configuration", "Release");
-var verbosity = Argument("verbosity", "Verbose");
+
+Task("libs")
+    .Does(() =>
+{
+    MSBuild ("./source/SkiaSharp.Extended.sln", new MSBuildSettings {
+        Configuration = "Release",
+        MSBuildPlatform = MSBuildPlatform.x86,
+    });
+});
 
 var buildSpec = new BuildSpec {
     Libs = new ISolutionBuilder [] {

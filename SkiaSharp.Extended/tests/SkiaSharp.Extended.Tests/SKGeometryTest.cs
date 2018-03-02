@@ -1,18 +1,18 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 namespace SkiaSharp.Extended.Tests
 {
 	public class SKGeometryTest
 	{
-		[Test]
+		[Fact]
 		public void GeometryGeneratesRectPath()
 		{
 			var rectPath = SKGeometry.CreateTrianglePath(100);
 
-			Assert.AreEqual(3, rectPath.PointCount);
+			Assert.Equal(3, rectPath.PointCount);
 		}
 
-		[Test]
+		[Fact]
 		public void TriangleAreaCalculation()
 		{
 			var points = new[]
@@ -23,10 +23,10 @@ namespace SkiaSharp.Extended.Tests
 			};
 			var area = SKGeometry.Area(points);
 
-			Assert.AreEqual(50f, area);
+			Assert.Equal(50f, area);
 		}
 
-		[Test]
+		[Fact]
 		public void RectangleAreaCalculation()
 		{
 			var points = new[]
@@ -38,10 +38,10 @@ namespace SkiaSharp.Extended.Tests
 			};
 			var area = SKGeometry.Area(points);
 
-			Assert.AreEqual(200f, area);
+			Assert.Equal(200f, area);
 		}
 
-		[Test]
+		[Fact]
 		public void PerimeterCalculation()
 		{
 			var points = new[]
@@ -52,38 +52,38 @@ namespace SkiaSharp.Extended.Tests
 			};
 			var perimeter = SKGeometry.Perimeter(points);
 
-			Assert.AreEqual(120f, perimeter);
+			Assert.Equal(120f, perimeter);
 		}
 
-		[Test]
+		[Fact]
 		public void DistanceCalculation()
 		{
 			var dist = SKGeometry.Distance(new SKPoint(10, 10), new SKPoint(10, 40));
 
-			Assert.AreEqual(30f, dist);
+			Assert.Equal(30f, dist);
 		}
 
-		[Test]
+		[Fact]
 		public void CreateInterpolationReturnsOriginals()
 		{
 			var path1 = new SKPath();
 			var path2 = new SKPath();
 
 			var interpolated = SKGeometry.CreateInterpolation(path1, path2, -1);
-			Assert.AreEqual(path1, interpolated);
+			Assert.Equal(path1, interpolated);
 
 			interpolated = SKGeometry.CreateInterpolation(path1, path2, 0);
-			Assert.AreEqual(path1, interpolated);
+			Assert.Equal(path1, interpolated);
 
 			interpolated = SKGeometry.CreateInterpolation(path1, path2, 0.5f);
-			Assert.AreNotEqual(path1, interpolated);
-			Assert.AreNotEqual(path2, interpolated);
+			Assert.NotEqual(path1, interpolated);
+			Assert.NotEqual(path2, interpolated);
 
 			interpolated = SKGeometry.CreateInterpolation(path1, path2, 1);
-			Assert.AreEqual(path2, interpolated);
+			Assert.Equal(path2, interpolated);
 
 			interpolated = SKGeometry.CreateInterpolation(path1, path2, 2);
-			Assert.AreEqual(path2, interpolated);
+			Assert.Equal(path2, interpolated);
 		}
 	}
 }
