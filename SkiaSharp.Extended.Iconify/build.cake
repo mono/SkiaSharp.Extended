@@ -20,7 +20,11 @@ var buildSpec = new BuildSpec {
     },
 
     Samples = new ISolutionBuilder [] {
-        new DefaultSolutionBuilder { SolutionPath = "./samples/SkiaSharpDemo.sln" },
+        new DefaultSolutionBuilder {
+            AlwaysUseMSBuild = true,
+            BuildsOn = BuildPlatforms.Windows | BuildPlatforms.Mac,
+            SolutionPath = "./samples/SkiaSharpDemo.sln"
+        },
     },
 
     NuGets = GetFiles("./nuget/*.nuspec")
