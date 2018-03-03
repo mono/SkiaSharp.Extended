@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net47</TargetFramework>
+    <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\source\SkiaSharp.Extended.csproj" />
+    <ProjectReference Include="..\source\SkiaSharp.Extended.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="SkiaSharp.Extended.Tests\**\*.cs"  />
   </ItemGroup>
 
   <Target Name="Test">

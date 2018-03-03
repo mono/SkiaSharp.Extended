@@ -3,8 +3,8 @@
 
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' == 'Windows_NT' ">true</PublicSign>
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)keys\mono.snk</AssemblyOriginatorKeyFile>
+    <KeyFileName Condition=" '$(KeyFileName)' == '' ">Open.snk</KeyFileName>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)keys\$(KeyFileName)</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <!--

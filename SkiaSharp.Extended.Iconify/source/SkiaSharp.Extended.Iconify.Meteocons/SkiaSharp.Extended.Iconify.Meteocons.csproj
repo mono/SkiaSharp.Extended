@@ -1,36 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
-    <OutputTypeEx>library</OutputTypeEx>
-    <RootNamespace>SkiaSharp.Extended.Iconify</RootNamespace>
+    <TargetFrameworks>netstandard1.3;netstandard2.0;portable-net45+win8+wpa81+wp8</TargetFrameworks>
     <AssemblyName>SkiaSharp.Extended.Iconify.Meteocons</AssemblyName>
-    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-    <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
-    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
-    <!-- TODO: remove this when CoreCLR supports signing on non-Windows -->
-    <!--<SignAssembly Condition=" '$(OS)' == 'Windows_NT' ">true</SignAssembly>-->
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
-    <AssemblyOriginatorKeyFile>..\..\..\keys\Open.snk</AssemblyOriginatorKeyFile>
+    <RootNamespace>SkiaSharp.Extended.Iconify</RootNamespace>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <AssemblyFileVersion>1.0.0.0</AssemblyFileVersion>
+    <Version>2.0.0</Version>
+    <Product>$(AssemblyName) ($(TargetFramework))</Product>
+    <PackOnBuild>true</PackOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>en</NeutralLanguage>
+    <DefineConstants>$(DefineConstants);</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>TRACE;DEBUG;NET_STANDARD</DefineConstants>
-    <OutputPath>bin\Debug\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DefineConstants>TRACE;NET_STANDARD</DefineConstants>
-    <OutputPath>bin\Release\</OutputPath>
-  </PropertyGroup>
+
   <ItemGroup>
+    <DownloadZipFile Include="http://www.alessioatzeni.com/meteocons/res/download/meteocons-font.zip"
+                     Font="meteocons-font\FONT\Font-face\meteocons-webfont.ttf" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.Iconify.Meteocons</PackageId>
+    <Title>Meteocons for SkiaSharp.Extended.Iconify</Title>
+    <PackageVersion>$(Version)$(VersionSuffix)</PackageVersion>
+    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
+    <Authors>Xamarin Inc.</Authors>
+    <Owners>microsoft,Xamarin,XamarinNuGet</Owners>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>The Meteocons font for SkiaSharp.Extended.Iconify.</Description>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <!-- <PackageIconUrl>https://cdn.rawgit.com/mono/SkiaSharp/v1.53.0/images/skia_256x256.png</PackageIconUrl> -->
+    <PackageTags>xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform skiasharp</PackageTags>
+    <PackageLicenseUrl>https://github.com/mono/SkiaSharp.Extended/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/mono/SkiaSharp.Extended</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mono/SkiaSharp.Extended</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
+    <DefineConstants>$(DefineConstants);NET_STANDARD;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSBuild.Sdk.Extras" Version="1.2.2" PrivateAssets="All" />
     <PackageReference Include="SkiaSharp" Version="1.60.0" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\SkiaSharp.Extended.Iconify\SkiaSharp.Extended.Iconify.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\..\externals\Meteocons\meteocons-font\FONT\Font-face\meteocons-webfont.ttf">
-      <Link>meteocons-webfont.ttf</Link>
-    </EmbeddedResource>
-  </ItemGroup>
+
+  <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\..\Signing.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\IconifyDownloader.targets" />
+
 </Project>

@@ -12,6 +12,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
     <DefineConstants>$(DefineConstants);</DefineConstants>
+    <KeyFileName>mono.snk</KeyFileName>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -23,17 +24,24 @@
     <Owners>microsoft,Xamarin,XamarinNuGet</Owners>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>This package adds many additional features and utilities for use with SkiaSharp.</Description>
-    <Summary>This package adds many additional features and utilities for use with SkiaSharp.</Summary>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <PackageIconUrl>https://cdn.rawgit.com/mono/SkiaSharp/v1.53.0/images/skia_256x256.png</PackageIconUrl>
     <PackageTags>xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform skiasharp</PackageTags>
-    <PackageLicenseUrl>https://github.com/mono/SkiaSharp.Extended/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/mono/SkiaSharp.Extended/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/mono/SkiaSharp.Extended</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mono/SkiaSharp.Extended</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
     <DefineConstants>$(DefineConstants);NET_STANDARD;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
+    <DebugType>pdbonly</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
