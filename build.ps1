@@ -1,11 +1,16 @@
 $ErrorActionPreference = "Stop"
 
-$env:BUILD_NUMBER = 123
+if (!$env:BUILD_NUMBER) {
+    $env:BUILD_NUMBER = 0
+}
 
-$vswhere = 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe'
-
-$msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
-$msbuild = join-path $msbuild 'MSBuild\15.0\Bin\MSBuild.exe'
+if ($IsMacOS) {
+    $msbuild = "msbuild"
+} else {
+    $vswhere = 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe'
+    $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
+    $msbuild = join-path $msbuild 'MSBuild\15.0\Bin\MSBuild.exe'
+}
 
 function Build
 {
