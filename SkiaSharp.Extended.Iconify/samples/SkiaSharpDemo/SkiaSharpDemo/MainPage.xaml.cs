@@ -27,7 +27,7 @@ namespace SkiaSharpDemo
 			var meteocons = "We love the {{mc-sun color=f9d71c}} and some {{mc-cloud-double-o}} s.";
 			var simple = "We all {{icon-heart color=ff0000}} a {{icon-present}}!";
 			var typicons = "SkiaSharp runs on {{typcn-device-desktop}}, {{typcn-device-laptop}}, {{typcn-device-phone}} and {{typcn-device-tablet}} devices!";
-			var weather = "An {{wi-solar-eclipse}} is when the {{wi-day-sunny color=f9d71c}} is hidden.";
+			var weather = "An {{wi-solar-eclipse}} is when the {{wi-day-sunny color=f9d71c}} is hidden (there might be {{wi-wind}}).";
 
 			using (var textPaint = new SKPaint())
 			{

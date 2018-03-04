@@ -102,7 +102,7 @@
                Condition=" '@(_RemoteFontFile)' != '' and !Exists('%(_RemoteFontFile.TargetPath)') " />
 
     <!-- combine all stylesheets into one for the generator -->
-    <_MergeFiles Files="%(_RemoteStyleSheet.TargetPath)"
+    <_MergeFiles Files="@(_RemoteStyleSheet -> '%(TargetPath)')"
                  Destination="$(GeneratedStylesheetPath)"
                  Reset="true"
                  Condition=" '@(_RemoteStyleSheet)' != '' " />
@@ -238,6 +238,7 @@
         else if (Reset)
             File.Delete(Destination);
 
+        Log.LogMessage("Creating file '{0}'...", Destination);
         using (var dest = File.OpenWrite(Destination))
         {
             foreach (var file in Files)
@@ -249,6 +250,7 @@
                 }
             }
         }
+        Log.LogMessage("Merge for '{0}' complete...", Destination);
 
         return true;
       ]]>
