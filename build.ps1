@@ -1,5 +1,11 @@
 $ErrorActionPreference = "Stop"
 
+if (!$env:BUILD_NUMBER) {
+    $betaPrefix = "beta"
+} else {
+    $betaPrefix = "beta-$env:BUILD_NUMBER"
+}
+
 if ($IsMacOS) {
     $msbuild = "msbuild"
 } else {
@@ -30,7 +36,7 @@ function Pack
     & $msbuild $project /m /t:pack /p:Configuration=Release
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
-    & $msbuild $project /m /t:pack /p:Configuration=Release /p:VersionSuffix="beta-$env:BUILD_NUMBER"
+    & $msbuild $project /m /t:pack /p:Configuration=Release /p:VersionSuffix="$betaPrefix"
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
     $dir = [System.IO.Path]::GetDirectoryName($project)
