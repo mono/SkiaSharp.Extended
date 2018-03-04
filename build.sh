@@ -1,5 +1,4 @@
-#!/bin/bash
-set -e
+#!/bin/bash -ex
 
 [ -z "$BUILD_NUMBER" ] && BUILD_NUMBER="0"
 
