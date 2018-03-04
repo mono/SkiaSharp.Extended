@@ -39,7 +39,7 @@
     <!-- build the generator -->
     <MSBuild Projects="$(MSBuildThisFileDirectory)IconifyGenerator\IconifyGenerator.csproj"
              Targets="Restore;Build"
-             Properties="Configuration=Release"
+             Properties="Configuration=$(Configuration)"
              Condition=" !Exists('$(iconify)') "
              RemoveProperties="TargetFramework" />
 
@@ -102,15 +102,10 @@
                Condition=" '@(_RemoteFontFile)' != '' and !Exists('%(_RemoteFontFile.TargetPath)') " />
 
     <!-- combine all stylesheets into one for the generator -->
-    <ReadLinesFromFile File="%(_RemoteStyleSheet.TargetPath)"
-                       Condition=" '@(_RemoteStyleSheet)' != '' ">
-      <Output TaskParameter="Lines"
-              ItemName="_FontStyleLine"/>
-    </ReadLinesFromFile>
-    <WriteLinesToFile File="$(GeneratedStylesheetPath)"
-                      Lines="@(_FontStyleLine)"
-                      Overwrite="true"
-                      Condition=" @(_FontStyleLine.Length) != '' " />
+    <_MergeFiles Files="%(_RemoteStyleSheet.TargetPath)"
+                 Destination="$(GeneratedStylesheetPath)"
+                 Reset="true"
+                 Condition=" '@(_RemoteStyleSheet)' != '' " />
 
     <!-- run the generator to create the dictionaries and other code -->
     <Exec Command="$(_ManagedExeLauncher) $(iconify) -output=&quot;$(GeneratedCodePath)&quot; -namespace=&quot;$(RootNamespace)&quot; -type=&quot;$(IconifyTypeName)&quot; -codepoints=&quot;$(IconifyStylesheetType)&quot; &quot;$(GeneratedStylesheetPath)&quot;"
@@ -167,53 +162,95 @@
 
         public class _Download : Microsoft.Build.Utilities.Task, ICancelableTask
         {
-          private CancellationTokenSource cts = new CancellationTokenSource();
+            private CancellationTokenSource cts = new CancellationTokenSource();
 
-          public string Url { get; set; }
-          public string Destination { get; set; }
-          public int Timeout { get; set; }
+            public string Url { get; set; }
+            public string Destination { get; set; }
+            public int Timeout { get; set; }
 
-          public void Cancel()
-          {
-            cts.Cancel();
-          }
-
-          public override bool Execute()
-          {
-            var tcs = new TaskCompletionSource<bool>();
-
-            Task.Run(async () =>
+            public void Cancel()
             {
-              Log.LogMessage("Downloading '{0}' to '{1}'...", Url, Destination);
+                cts.Cancel();
+            }
 
-              var dir = Path.GetDirectoryName(Destination);
-              if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
+            public override bool Execute()
+            {
+                var tcs = new TaskCompletionSource<bool>();
 
-              try
-              {
-                var client = new WebClient();
+                Task.Run(async () =>
+                {
+                    Log.LogMessage("Downloading '{0}' to '{1}'...", Url, Destination);
 
-                var token = cts.Token;
-                cts.CancelAfter(TimeSpan.FromSeconds(Timeout));
-                token.Register(() => client.CancelAsync());
-                token.ThrowIfCancellationRequested();
+                    var dir = Path.GetDirectoryName(Destination);
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
 
-                await client.DownloadFileTaskAsync(Url, Destination);
+                    try
+                    {
+                        var client = new WebClient();
 
-                Log.LogMessage("Download of '{0}' complete.", Url);
+                        var token = cts.Token;
+                        cts.CancelAfter(TimeSpan.FromSeconds(Timeout));
+                        token.Register(() => client.CancelAsync());
+                        token.ThrowIfCancellationRequested();
 
-                tcs.SetResult(true);
-              }
-              catch (Exception ex)
-              {
-                tcs.SetException(ex);
-              }
-            });
+                        await client.DownloadFileTaskAsync(Url, Destination);
 
-            return tcs.Task.Result;
-          }
+                        Log.LogMessage("Download of '{0}' complete.", Url);
+
+                        tcs.SetResult(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        tcs.SetException(ex);
+                    }
+                });
+
+                return tcs.Task.Result;
+            }
         }
+      ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <!--
+    ===================================================================================================================
+    _MergeFiles
+
+    A task that merges a collection of files into one.
+    ===================================================================================================================
+  -->
+  <UsingTask TaskName="_MergeFiles"
+             TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <Files ParameterType="System.String[]" Required="true"/>
+      <Destination ParameterType="System.String" Required="true"/>
+      <Reset ParameterType="System.Boolean" Required="true"/>
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs">
+      <![CDATA[
+        var dir = Path.GetDirectoryName(Destination);
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+        else if (Reset)
+            File.Delete(Destination);
+
+        using (var dest = File.OpenWrite(Destination))
+        {
+            foreach (var file in Files)
+            {
+                Log.LogMessage("Merging file '{0}' into '{1}'...", file, Destination);
+                using (var stream = File.OpenRead(file))
+                {
+                    stream.CopyTo(dest);
+                }
+            }
+        }
+
+        return true;
       ]]>
       </Code>
     </Task>
