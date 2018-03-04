@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <!--
-    ============================================================
+    ===================================================================================================================
     _SignAssembly
 
     Sign the assembly using sn.
-    ============================================================
+    ===================================================================================================================
   -->
   <Target Name="_SignAssembly" AfterTargets="CoreCompile" Condition=" '$(OS)' != 'Windows_NT' ">
     <Exec Command="sn -R @(IntermediateAssembly -> '&quot;%(Identity)&quot;') &quot;$(AssemblyOriginatorKeyFile)&quot;" />

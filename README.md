@@ -11,31 +11,6 @@ interesting projects:
  - [SkiaSharp.Extended.Iconify][iconify] _(iconify library)_
  - [SkiaSharp.Extended.Svg][svg] _(lightweight SVG loader)_
 
-## Building
-
-The root just contains a build script that will build all the other 
-scripts. To build everything, just run the command-line:
-
-Mac/Linux:
-
-    $ ./build.sh -t build --force=true
-
-Windows:
-
-    > .\build.ps1 -Target build --Force='true'
-
-If only a specific project, or a set of projects, are to be built, 
-then pass a value to the `names` argument:
-
-
-Mac/Linux:
-
-    $ ./build.sh -t build --force=true -names=SkiaSharp.Extended.Iconify
-
-Windows:
-
-    > .\build.ps1 -Target build --Force='true' -Names='SkiaSharp.Extended.Iconify'
-
 ## License
 
 The code in this repository is licensed under the [MIT License][license].
