@@ -73,7 +73,10 @@
     <PackageReference Include="Xamarin.Forms" Version="2.5.0.280555" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SkiaSharpDemo\SkiaSharpDemo.csproj" />
+    <ProjectReference Include="..\SkiaSharpDemo\SkiaSharpDemo.csproj">
+      <Project>{A2563433-9CE0-42ED-BB51-640A0FFA9D0F}</Project>
+      <Name>SkiaSharpDemo</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />

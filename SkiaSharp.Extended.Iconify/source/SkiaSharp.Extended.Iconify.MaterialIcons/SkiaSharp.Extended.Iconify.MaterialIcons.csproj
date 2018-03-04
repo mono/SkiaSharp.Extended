@@ -40,6 +40,10 @@
     <DefineConstants>$(DefineConstants);NET_STANDARD;</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('portable')) ">
+    <DefineConstants>$(DefineConstants);PORTABLE;</DefineConstants>
+  </PropertyGroup>
+
   <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
