@@ -25,6 +25,8 @@ repository:
 The CI server just runs that single file and outputs all the packages, 
 assemblies and test results.
 
+_NOTE: for macOS, you may need to [first install PowerShell][pwsh]._
+
 ## License
 
 The code in this repository is licensed under the [MIT License][license].
@@ -36,3 +38,4 @@ The code in this repository is licensed under the [MIT License][license].
 [extended]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended
 [iconify]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended.Iconify
 [svg]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended.Svg
+[pwsh]: https://github.com/PowerShell/PowerShell
