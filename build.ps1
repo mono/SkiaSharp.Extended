@@ -40,7 +40,8 @@ function Pack
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
     $dir = [System.IO.Path]::GetDirectoryName($project)
-    Copy-Item -Path "$dir/bin/Release/" -Destination "./output/$output/" -Recurse -Force
+    New-Item -Path "./output/$output" -ItemType Directory -Force | Out-Null
+    Copy-Item -Path "$dir/bin/Release" -Destination "./output/$output" -Recurse -Force
 }
 
 function Test
@@ -51,7 +52,8 @@ function Test
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
     $dir = [System.IO.Path]::GetDirectoryName($project)
-    Copy-Item -Path "$dir/bin/Release/net47/TestResult.xml" -Destination "./output/$output/" -Force
+    New-Item -Path "./output/$output" -ItemType Directory -Force | Out-Null
+    Copy-Item -Path "$dir/bin/Release/net47/TestResult.xml" -Destination "./output/$output" -Force
 }
 
 Write-Output "MSBuild path: '$msbuild'"
