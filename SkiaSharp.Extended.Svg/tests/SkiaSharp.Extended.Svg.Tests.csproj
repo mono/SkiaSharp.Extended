@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+
+  <PropertyGroup>
+    <TargetFramework>net47</TargetFramework>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <PreferredNativeSkiaSharp>x86</PreferredNativeSkiaSharp>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="1.60.0" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.msbuild" Version="2.3.1" NoWarn="NU1701" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\source\SkiaSharp.Extended.Svg.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="SkiaSharp.Extended.Svg.Tests\**\*.cs" Link="%(RecursiveDir)\%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SkiaSharp.Extended.Svg.Tests\images\*.svg" Link="images\%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="Test">
+    <xunit Assemblies="$(TargetPath)" NUnit="$(TargetDir)TestResult.xml" />
+  </Target>
+
+</Project>

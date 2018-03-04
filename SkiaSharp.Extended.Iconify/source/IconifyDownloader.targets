@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <iconify>$(MSBuildThisFileDirectory)\IconifyGenerator\bin\$(Configuration)\net461\iconify.exe</iconify>
+    <IconifyStylesheetType Condition=" '$(IconifyStylesheetType)' == '' ">css</IconifyStylesheetType>
+    <IconifyTypeName Condition=" '$(IconifyTypeName)' == '' ">$([System.IO.Path]::GetExtension('$(AssemblyName)').Substring(1))</IconifyTypeName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+    <_ManagedExeLauncher Condition=" Exists('/Library/Frameworks/Mono.framework/Versions/Current/bin/mono') ">/Library/Frameworks/Mono.framework/Versions/Current/bin/mono</_ManagedExeLauncher>
+    <_ManagedExeLauncher Condition=" Exists('/usr/local/bin/mono') ">/usr/local/bin/mono</_ManagedExeLauncher>
+    <_ManagedExeLauncher Condition=" Exists('/usr/bin/mono') ">/usr/bin/mono</_ManagedExeLauncher>
+    <_ManagedExeLauncher Condition=" '$(_ManagedExeLauncher)' == '' ">mono</_ManagedExeLauncher>
+  </PropertyGroup>
+
+  <!--
+    ===================================================================================================================
+    BuildGenerator and _DoBuildGenerator
+
+    Build the gernerator tool.
+    ===================================================================================================================
+  -->
+  <Target Name="BuildGenerator">
+    <!-- decide whether to run a build or wait for one to finish -->
+    <CallTarget Targets="_DoBuildGenerator"
+                Condition=" !Exists('$(iconify)') and !Exists('$(iconify).building') " />
+    <_WaitForFile FileName="$(iconify).building"
+                  ToExist="false"
+                  Timeout="30"
+                  Condition=" !Exists('$(iconify)') " />
+  </Target>
+  <Target Name="_DoBuildGenerator">
+    <!-- let everyone know we are building -->
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName($(iconify).building))" />
+    <Touch AlwaysCreate="true" 
+           Files="$(iconify).building" />
+
+    <!-- build the generator -->
+    <MSBuild Projects="$(MSBuildThisFileDirectory)IconifyGenerator\IconifyGenerator.csproj"
+             Targets="Restore;Build"
+             Properties="Configuration=$(Configuration)"
+             Condition=" !Exists('$(iconify)') "
+             RemoveProperties="TargetFramework" />
+
+    <!-- let everyone know the build is over -->
+    <Delete Files="$(iconify).building" />
+  </Target>
+
+  <!--
+    ===================================================================================================================
+    DownloadResources
+
+    The target that downloads the <FontResource> items and generates the code files.
+    ===================================================================================================================
+  -->
+  <Target Name="DownloadResources"
+          BeforeTargets="BeforeBuild"
+          DependsOnTargets="BuildGenerator">
+
+    <PropertyGroup>
+      <FontsDirectory>$(MSBuildProjectDirectory)\$(IntermediateOutputPath)fonts\</FontsDirectory>
+      <GeneratedCodePath>$(FontsDirectory)$(IconifyTypeName).generated.cs</GeneratedCodePath>
+      <GeneratedStylesheetPath>$(FontsDirectory)$(IconifyTypeName).generated.css</GeneratedStylesheetPath>
+    </PropertyGroup>
+
+    <!-- make sure all the attributes we want are set -->
+    <CreateItem Include="@(RemoteFontFile)"
+                AdditionalMetadata="TargetPath=$(FontsDirectory)$([System.IO.Path]::GetFilename('%(Identity)'));EmbeddedName=$([System.IO.Path]::GetFilename('%(Identity)'))">
+      <Output TaskParameter="Include"
+              ItemName="_RemoteFontFile"/>
+    </CreateItem>
+    <CreateItem Include="@(RemoteStyleSheet)"
+                AdditionalMetadata="TargetPath=$(FontsDirectory)$([System.IO.Path]::GetFilename('%(Identity)'));EmbeddedName=$([System.IO.Path]::GetFilename('%(Identity)'))">
+      <Output TaskParameter="Include"
+              ItemName="_RemoteStyleSheet"/>
+    </CreateItem>
+    <CreateItem Include="@(DownloadZipFile)"
+                AdditionalMetadata="TargetPath=$(FontsDirectory)$([System.IO.Path]::GetFilename('%(Identity)'));EmbeddedName=$([System.IO.Path]::GetFilename('%(Font)'));UnzipDirectory=$(FontsDirectory)$([System.IO.Path]::GetFilenameWithoutExtension('%(Identity)'))\;">
+      <Output TaskParameter="Include"
+              ItemName="_DownloadZipFile"/>
+    </CreateItem>
+
+    <!-- download any zip files -->
+    <_Download Url="%(_DownloadZipFile.Identity)" 
+               Destination="%(_DownloadZipFile.TargetPath)"
+               Timeout="30"
+               Condition=" '@(_DownloadZipFile)' != '' and !Exists('%(_DownloadZipFile.UnzipDirectory)%(_DownloadZipFile.Font)') " />
+    <!-- and extract them -->
+    <_Unzip FileName="%(_DownloadZipFile.TargetPath)"
+            Destination="%(_DownloadZipFile.UnzipDirectory)"
+            Condition=" '@(_DownloadZipFile)' != '' " />
+
+    <!-- download any standalong fonts/styles -->
+    <_Download Url="%(_RemoteStyleSheet.Identity)"
+               Destination="%(_RemoteStyleSheet.TargetPath)"
+               Timeout="30"
+               Condition=" '@(_RemoteStyleSheet)' != '' and !Exists('%(_RemoteStyleSheet.TargetPath)') " />
+    <_Download Url="%(_RemoteFontFile.Identity)" 
+               Destination="%(_RemoteFontFile.TargetPath)"
+               Timeout="30"
+               Condition=" '@(_RemoteFontFile)' != '' and !Exists('%(_RemoteFontFile.TargetPath)') " />
+
+    <!-- combine all stylesheets into one for the generator -->
+    <_MergeFiles Files="%(_RemoteStyleSheet.TargetPath)"
+                 Destination="$(GeneratedStylesheetPath)"
+                 Reset="true"
+                 Condition=" '@(_RemoteStyleSheet)' != '' " />
+
+    <!-- run the generator to create the dictionaries and other code -->
+    <Exec Command="$(_ManagedExeLauncher) $(iconify) -output=&quot;$(GeneratedCodePath)&quot; -namespace=&quot;$(RootNamespace)&quot; -type=&quot;$(IconifyTypeName)&quot; -codepoints=&quot;$(IconifyStylesheetType)&quot; &quot;$(GeneratedStylesheetPath)&quot;"
+          Condition=" !Exists('$(GeneratedCodePath)') and Exists('$(GeneratedStylesheetPath)') " />
+
+    <!-- add all the font files and generated code to the probject -->
+    <ItemGroup>
+      <Compile Include="$(GeneratedCodePath)"
+               Condition=" Exists('$(GeneratedCodePath)')" />
+      <EmbeddedResource Include="%(_DownloadZipFile.UnzipDirectory)%(_DownloadZipFile.Font)"
+                        Link="@(_DownloadZipFile -> '%(EmbeddedName)')"
+                        Condition=" Exists('%(_DownloadZipFile.UnzipDirectory)%(_DownloadZipFile.Font)')" />
+      <EmbeddedResource Include="@(_RemoteFontFile -> '%(TargetPath)')"
+                        Link="@(_RemoteFontFile -> '%(EmbeddedName)')"
+                        Condition=" '@(_RemoteFontFile)' != '' " />
+    </ItemGroup>
+
+    <!-- prepare to clean up after ourselves -->
+    <ItemGroup>
+      <FileWrites Include="$(FontsDirectory)\**\*" />
+    </ItemGroup>
+
+  </Target>
+
+  <!--
+    ===================================================================================================================
+    _Download
+
+    A small task that just downloads a file.
+    ===================================================================================================================
+  -->
+  <UsingTask TaskName="_Download"
+             TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <Url ParameterType="System.String" Required="true"/>
+      <Destination ParameterType="System.String" Required="true" />
+      <Timeout ParameterType="System.Int32" Required="true"/>
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System" />
+      <Using Namespace="System.Net"/>
+      <Code Type="Class" Language="cs">
+      <![CDATA[
+        using System;
+        using System.IO;
+        using System.Net;
+        using System.Threading;
+        using System.Threading.Tasks;
+        using Microsoft.Build.Utilities;
+        using Microsoft.Build.Framework;
+
+        using Task = System.Threading.Tasks.Task;
+
+        public class _Download : Microsoft.Build.Utilities.Task, ICancelableTask
+        {
+            private CancellationTokenSource cts = new CancellationTokenSource();
+
+            public string Url { get; set; }
+            public string Destination { get; set; }
+            public int Timeout { get; set; }
+
+            public void Cancel()
+            {
+                cts.Cancel();
+            }
+
+            public override bool Execute()
+            {
+                var tcs = new TaskCompletionSource<bool>();
+
+                Task.Run(async () =>
+                {
+                    Log.LogMessage("Downloading '{0}' to '{1}'...", Url, Destination);
+
+                    var dir = Path.GetDirectoryName(Destination);
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    try
+                    {
+                        var client = new WebClient();
+
+                        var token = cts.Token;
+                        cts.CancelAfter(TimeSpan.FromSeconds(Timeout));
+                        token.Register(() => client.CancelAsync());
+                        token.ThrowIfCancellationRequested();
+
+                        await client.DownloadFileTaskAsync(Url, Destination);
+
+                        Log.LogMessage("Download of '{0}' complete.", Url);
+
+                        tcs.SetResult(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        tcs.SetException(ex);
+                    }
+                });
+
+                return tcs.Task.Result;
+            }
+        }
+      ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <!--
+    ===================================================================================================================
+    _MergeFiles
+
+    A task that merges a collection of files into one.
+    ===================================================================================================================
+  -->
+  <UsingTask TaskName="_MergeFiles"
+             TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <Files ParameterType="System.String[]" Required="true"/>
+      <Destination ParameterType="System.String" Required="true"/>
+      <Reset ParameterType="System.Boolean" Required="true"/>
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs">
+      <![CDATA[
+        var dir = Path.GetDirectoryName(Destination);
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+        else if (Reset)
+            File.Delete(Destination);
+
+        using (var dest = File.OpenWrite(Destination))
+        {
+            foreach (var file in Files)
+            {
+                Log.LogMessage("Merging file '{0}' into '{1}'...", file, Destination);
+                using (var stream = File.OpenRead(file))
+                {
+                    stream.CopyTo(dest);
+                }
+            }
+        }
+
+        return true;
+      ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <!--
+    ===================================================================================================================
+    _WaitForFile
+
+    A small task that just waits for a particular file to be created or to be deleted.
+    ===================================================================================================================
+  -->
+  <UsingTask TaskName="_WaitForFile"
+             TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <FileName ParameterType="System.String" Required="true"/>
+      <ToExist ParameterType="System.Boolean" Required="true"/>
+      <Timeout ParameterType="System.Int32" Required="true"/>
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System" />
+      <Using Namespace="System.Threading"/>
+      <Code Type="Fragment" Language="cs">
+      <![CDATA[
+        if (File.Exists(FileName) == ToExist)
+            return true;
+
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(Timeout));
+
+        while (!cts.IsCancellationRequested && File.Exists(FileName) != ToExist)
+        {
+            Log.LogMessage("Waiting for '{0}' to {1}...", FileName, ToExist ? "appear" : "disappear");
+            Thread.Sleep(250);
+        }
+        return true;
+      ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <!--
+    ===================================================================================================================
+    _Unzip
+
+    A small task that extracts a zip file.
+    ===================================================================================================================
+  -->
+  <UsingTask TaskName="_Unzip"
+             TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <FileName ParameterType="System.String" Required="true" />
+      <Destination ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.IO.Compression" />
+      <Reference Include="System.IO.Compression.FileSystem" />
+      <Using Namespace="System.IO.Compression" />
+      <Code Type="Fragment" Language="cs">
+      <![CDATA[
+        if (!File.Exists(FileName))
+        {
+            Log.LogError("Zip file not found '{0}'.", FileName);
+            return false;
+        }
+
+        if (Directory.Exists(Destination))
+            Directory.Delete(Destination, true);
+        Directory.CreateDirectory(Destination);
+
+        Log.LogMessage("Unzipping file '{0}' to '{1}'...", FileName, Destination);
+
+        using (var archive = ZipFile.OpenRead(FileName))
+        {
+            archive.ExtractToDirectory(Destination);
+        } 
+
+        Log.LogMessage("Unzipping file '{0}' complete.", FileName);
+        return true;
+      ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+</Project>

@@ -1,34 +1,29 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;netstandard2.0;portable-net45+win8+wpa81+wp8</TargetFrameworks>
-    <AssemblyName>SkiaSharp.Extended.Iconify.Typicons</AssemblyName>
-    <RootNamespace>SkiaSharp.Extended.Iconify</RootNamespace>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <AssemblyFileVersion>2.0.9.0</AssemblyFileVersion>
-    <Version>3.0.0</Version>
+    <AssemblyName>SkiaSharp.Extended</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended</RootNamespace>
+    <AssemblyVersion>1.60.0.0</AssemblyVersion>
+    <AssemblyFileVersion>1.60.0.0</AssemblyFileVersion>
+    <Version>1.60.0</Version>
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <NeutralLanguage>en</NeutralLanguage>
     <DefineConstants>$(DefineConstants);</DefineConstants>
-    <TypiconsVersion>2.0.9</TypiconsVersion>
+    <KeyFileName>mono.snk</KeyFileName>
   </PropertyGroup>
 
-  <ItemGroup>
-    <RemoteFontFile Include="https://raw.githubusercontent.com/stephenhutchings/typicons.font/v$(TypiconsVersion)/src/font/typicons.ttf" />
-    <RemoteStyleSheet Include="https://raw.githubusercontent.com/stephenhutchings/typicons.font/v$(TypiconsVersion)/src/font/typicons.min.css" />
-  </ItemGroup>
-
   <PropertyGroup>
-    <PackageId>SkiaSharp.Extended.Iconify.Typicons</PackageId>
-    <Title>Typicons for SkiaSharp.Extended.Iconify</Title>
+    <PackageId>SkiaSharp.Extended</PackageId>
+    <Title>SkiaSharp.Extended</Title>
     <PackageVersion Condition=" '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
     <Authors>Xamarin Inc.</Authors>
     <Owners>microsoft,Xamarin,XamarinNuGet</Owners>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Description>The Typicons font for SkiaSharp.Extended.Iconify.</Description>
+    <Description>This package adds many additional features and utilities for use with SkiaSharp.</Description>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
-    <!-- <PackageIconUrl>https://cdn.rawgit.com/mono/SkiaSharp/v1.53.0/images/skia_256x256.png</PackageIconUrl> -->
-    <PackageTags>skiasharp iconify typicons xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform</PackageTags>
+    <PackageIconUrl>https://cdn.rawgit.com/mono/SkiaSharp/v1.53.0/images/skia_256x256.png</PackageIconUrl>
+    <PackageTags>xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform skiasharp</PackageTags>
     <PackageLicenseUrl>https://github.com/mono/SkiaSharp.Extended/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/mono/SkiaSharp.Extended</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mono/SkiaSharp.Extended</RepositoryUrl>
@@ -55,12 +50,7 @@
     <PackageReference Include="SkiaSharp" Version="1.60.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SkiaSharp.Extended.Iconify\SkiaSharp.Extended.Iconify.csproj" />
-  </ItemGroup>
-
   <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
-  <Import Project="$(MSBuildThisFileDirectory)..\..\..\Signing.targets" />
-  <Import Project="$(MSBuildThisFileDirectory)..\IconifyDownloader.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\Signing.targets" />
 
 </Project>

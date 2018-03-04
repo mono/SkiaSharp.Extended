@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <KeyFileName Condition=" '$(KeyFileName)' == '' ">Open.snk</KeyFileName>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)keys\$(KeyFileName)</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <!--
+    ===================================================================================================================
+    _SignAssembly
+
+    Sign the assembly using sn.
+    ===================================================================================================================
+  -->
+  <Target Name="_SignAssembly" AfterTargets="CoreCompile" Condition=" '$(OS)' != 'Windows_NT' ">
+    <Exec Command="sn -R @(IntermediateAssembly -> '&quot;%(Identity)&quot;') &quot;$(AssemblyOriginatorKeyFile)&quot;" />
+  </Target>
+
+</Project>
