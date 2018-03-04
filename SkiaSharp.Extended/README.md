@@ -41,7 +41,17 @@ canvas.DrawStar(
 
 ## SKPathInterpolation
 
-In addition to basic shapes, there is also a great way to create interpolated paths - this is awesome for creating animated shapes or transitions:
+In addition to basic shapes, there is also a great way to create interpolated 
+paths - this is awesome for creating animated shapes or transitions.
+
+<center>
+
+![Path Interpolation](../images/PathInterpolation.gif)
+
+</center>
+
+The code is also very simple, just create a `SKPathInterpolation` and then ask
+for each step:
 
 ```csharp
 var interpolation = new SKPathInterpolation(startPath, endPath);
