@@ -1,13 +1,13 @@
 using System;
 using System.IO;
-using NUnit.Framework;
 using System.Xml.Linq;
+using Xunit;
 
 namespace SkiaSharp.Extended.Svg.Tests
 {
 	public class SKSvgTest : SKTest
 	{
-		[Test]
+		[Fact]
 		public void LoadSvgCanvasSize()
 		{
 			var path = Path.Combine(PathToImages, "logos.svg");
@@ -15,10 +15,10 @@ namespace SkiaSharp.Extended.Svg.Tests
 			var svg = new SKSvg();
 			svg.Load(path);
 
-			Assert.AreEqual(new SKSize(300, 300), svg.CanvasSize);
+			Assert.Equal(new SKSize(300, 300), svg.CanvasSize);
 		}
 
-		[Test]
+		[Fact]
 		public void LoadSvgCustomCanvasSize()
 		{
 			var path = Path.Combine(PathToImages, "logos.svg");
@@ -26,10 +26,10 @@ namespace SkiaSharp.Extended.Svg.Tests
 			var svg = new SKSvg(new SKSize(150, 150));
 			svg.Load(path);
 
-			Assert.AreEqual(new SKSize(150, 150), svg.CanvasSize);
+			Assert.Equal(new SKSize(150, 150), svg.CanvasSize);
 		}
 
-		[Test]
+		[Fact]
 		public void SvgLoadsToBitmap()
 		{
 			var path = Path.Combine(PathToImages, "logos.svg");
@@ -37,10 +37,10 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 			var bmp = LoadSvgBitmap(path);
 
-			Assert.AreEqual(background, bmp.GetPixel(0, 0));
+			Assert.Equal(background, bmp.GetPixel(0, 0));
 		}
 
-		[Test]
+		[Fact]
 		public void SvgRespectsBaselineShift()
 		{
 			var path = Path.Combine(PathToImages, "baselines.svg");
@@ -49,13 +49,13 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 			var bmp = LoadSvgBitmap(path, background);
 
-			Assert.AreEqual(background, bmp.GetPixel(25, 25));
+			Assert.Equal(background, bmp.GetPixel(25, 25));
 
 			// test for the explicit positioning, the others aren't supported yet
-			Assert.AreEqual(fill, bmp.GetPixel(370, 40));
+			Assert.Equal(fill, bmp.GetPixel(370, 40));
 		}
 
-		[Test]
+		[Fact]
 		public void SvgLoadsLocalEmbeddedImages()
 		{
 			var path = Path.Combine(PathToImages, "embedded.svg");
@@ -64,11 +64,11 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 			var bmp = LoadSvgBitmap(path, background);
 
-			Assert.AreEqual(background, bmp.GetPixel(25, 25));
-			Assert.AreEqual(fill, bmp.GetPixel(35, 50));
+			Assert.Equal(background, bmp.GetPixel(25, 25));
+			Assert.Equal(fill, bmp.GetPixel(35, 50));
 		}
 
-		[Test]
+		[Fact]
 		public void SvgLoadsPolygon()
 		{
 			var path = Path.Combine(PathToImages, "sketch.svg");
@@ -77,35 +77,35 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 			var bmp = LoadSvgBitmap(path, background);
 
-			Assert.AreEqual(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
-			Assert.AreEqual(background, bmp.GetPixel(5, 5));
+			Assert.Equal(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+			Assert.Equal(background, bmp.GetPixel(5, 5));
 		}
 
-		[Test]
+		[Fact]
 		public void SvgLoadsDashes()
 		{
 			var path = Path.Combine(PathToImages, "dashes.svg");
 
 			var bmp = LoadSvgBitmap(path, SKColors.White);
 
-			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 3, 20));
-			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 7, 20));
-			Assert.AreEqual(SKColors.White, bmp.GetPixel(10 + 13, 20));
+			Assert.Equal(SKColors.Black, bmp.GetPixel(10 + 3, 20));
+			Assert.Equal(SKColors.Black, bmp.GetPixel(10 + 7, 20));
+			Assert.Equal(SKColors.White, bmp.GetPixel(10 + 13, 20));
 
-			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 3, 40));
-			Assert.AreEqual(SKColors.White, bmp.GetPixel(10 + 7, 40));
-			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 13, 40));
+			Assert.Equal(SKColors.Black, bmp.GetPixel(10 + 3, 40));
+			Assert.Equal(SKColors.White, bmp.GetPixel(10 + 7, 40));
+			Assert.Equal(SKColors.Black, bmp.GetPixel(10 + 13, 40));
 
-			Assert.AreEqual(SKColors.White, bmp.GetPixel(10 + 3, 60));
-			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 7, 60));
-			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 13, 60));
+			Assert.Equal(SKColors.White, bmp.GetPixel(10 + 3, 60));
+			Assert.Equal(SKColors.Black, bmp.GetPixel(10 + 7, 60));
+			Assert.Equal(SKColors.Black, bmp.GetPixel(10 + 13, 60));
 
-			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 3, 80));
-			Assert.AreEqual(SKColors.Black, bmp.GetPixel(10 + 7, 80));
-			Assert.AreEqual(SKColors.White, bmp.GetPixel(10 + 13, 80));
+			Assert.Equal(SKColors.Black, bmp.GetPixel(10 + 3, 80));
+			Assert.Equal(SKColors.Black, bmp.GetPixel(10 + 7, 80));
+			Assert.Equal(SKColors.White, bmp.GetPixel(10 + 13, 80));
 		}
 
-		[Test]
+		[Fact]
 		public void SvgCanvasCreatesValidDrawing()
 		{
 			using (var stream = new MemoryStream())
@@ -133,27 +133,27 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 				var ns = (XNamespace)"http://www.w3.org/2000/svg";
 
-				Assert.AreEqual(ns, svg.GetDefaultNamespace());
-				Assert.AreEqual("200", svg.Attribute("width").Value);
-				Assert.AreEqual("150", svg.Attribute("height").Value);
+				Assert.Equal(ns, svg.GetDefaultNamespace());
+				Assert.Equal("200", svg.Attribute("width").Value);
+				Assert.Equal("150", svg.Attribute("height").Value);
 
 				var rect = svg.Element(ns + "rect");
-				Assert.AreEqual("rgb(0,0,255)", rect.Attribute("fill").Value);
-				Assert.AreEqual("50", rect.Attribute("x").Value);
-				Assert.AreEqual("70", rect.Attribute("y").Value);
-				Assert.AreEqual("100", rect.Attribute("width").Value);
-				Assert.AreEqual("30", rect.Attribute("height").Value);
+				Assert.Equal("rgb(0,0,255)", rect.Attribute("fill").Value);
+				Assert.Equal("50", rect.Attribute("x").Value);
+				Assert.Equal("70", rect.Attribute("y").Value);
+				Assert.Equal("100", rect.Attribute("width").Value);
+				Assert.Equal("30", rect.Attribute("height").Value);
 
 				var ellipse = svg.Element(ns + "ellipse");
-				Assert.AreEqual("rgb(255,0,0)", ellipse.Attribute("fill").Value);
-				Assert.AreEqual("100", ellipse.Attribute("cx").Value);
-				Assert.AreEqual("85", ellipse.Attribute("cy").Value);
-				Assert.AreEqual("50", ellipse.Attribute("rx").Value);
-				Assert.AreEqual("15", ellipse.Attribute("ry").Value);
+				Assert.Equal("rgb(255,0,0)", ellipse.Attribute("fill").Value);
+				Assert.Equal("100", ellipse.Attribute("cx").Value);
+				Assert.Equal("85", ellipse.Attribute("cy").Value);
+				Assert.Equal("50", ellipse.Attribute("rx").Value);
+				Assert.Equal("15", ellipse.Attribute("ry").Value);
 			}
 		}
 
-		[Test]
+		[Fact]
 		public void SvgCanUnderstandColorNames()
 		{
 			var svg =
@@ -164,10 +164,10 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 			var bmp = CreateSvgBitmap(svg);
 
-			Assert.AreEqual(SKColors.Lime, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+			Assert.Equal(SKColors.Lime, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
 		}
 
-		[Test]
+		[Fact]
 		public void SvgCanUnderstandRgbColors()
 		{
 			var svg =
@@ -178,20 +178,20 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 			var bmp = CreateSvgBitmap(svg);
 
-			Assert.AreEqual(SKColors.Lime, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+			Assert.Equal(SKColors.Lime, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
 		}
 
-		[Test]
+		[Fact]
 		public void RectWithSingleCornerRadius()
 		{
 			var check = new Action<string>(svg =>
 			{
 				var bmp = CreateSvgBitmap(svg, SKColors.White);
 
-				Assert.AreEqual(SKColors.White, bmp.GetPixel(3, 3));
-				Assert.AreEqual(SKColors.White, bmp.GetPixel(97, 3));
-				Assert.AreEqual(SKColors.White, bmp.GetPixel(3, 97));
-				Assert.AreEqual(SKColors.White, bmp.GetPixel(97, 97));
+				Assert.Equal(SKColors.White, bmp.GetPixel(3, 3));
+				Assert.Equal(SKColors.White, bmp.GetPixel(97, 3));
+				Assert.Equal(SKColors.White, bmp.GetPixel(3, 97));
+				Assert.Equal(SKColors.White, bmp.GetPixel(97, 97));
 			});
 
 			check(
@@ -213,7 +213,7 @@ namespace SkiaSharp.Extended.Svg.Tests
 </svg>");
 		}
 
-		[Test]
+		[Fact]
 		public void SvgCanUnderstandPolygon()
 		{
 			var svg =
@@ -224,10 +224,10 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 			var bmp = CreateSvgBitmap(svg);
 
-			Assert.AreEqual(SKColors.Black, bmp.GetPixel(50, 70));
+			Assert.Equal(SKColors.Black, bmp.GetPixel(50, 70));
 		}
 
-		[Test]
+		[Fact]
 		public void SvgCanUnderstandPolyline()
 		{
 			var svg =
@@ -238,10 +238,10 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 			var bmp = CreateSvgBitmap(svg, SKColors.Green);
 
-			Assert.AreEqual(SKColors.Green, bmp.GetPixel(50, 70));
+			Assert.Equal(SKColors.Green, bmp.GetPixel(50, 70));
 		}
 
-		[Test]
+		[Fact]
 		public void SvgStylesAreAlsoUsed()
 		{
 			var path = Path.Combine(PathToImages, "issues-22.svg");
@@ -250,10 +250,10 @@ namespace SkiaSharp.Extended.Svg.Tests
 			svg.Load(path);
 			var bmp = CreateBitmap(svg, SKColors.White);
 
-			Assert.AreEqual(SKColors.White, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+			Assert.Equal(SKColors.White, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
 		}
 
-		[Test]
+		[Fact]
 		public void SvgCanReadFileWithNoXLinkNamespacePrefix()
 		{
 			var path = Path.Combine(PathToImages, "issues-8.svg");
@@ -264,11 +264,11 @@ namespace SkiaSharp.Extended.Svg.Tests
 			svg.Load(path);
 			var bmp = CreateBitmap(svg, background);
 
-			Assert.AreEqual(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
-			Assert.AreEqual(background, bmp.GetPixel(5, 5));
+			Assert.Equal(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+			Assert.Equal(background, bmp.GetPixel(5, 5));
 		}
 
-		[Test]
+		[Fact]
 		public void SvgCanReadFileWithNoXLinkNamespacePrefixFromStreams()
 		{
 			var path = Path.Combine(PathToImages, "issues-8.svg");
@@ -283,12 +283,12 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 			var bmp = CreateBitmap(svg, background);
 
-			Assert.AreEqual(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
-			Assert.AreEqual(background, bmp.GetPixel(5, 5));
+			Assert.Equal(fill, bmp.GetPixel(bmp.Width / 2, bmp.Height / 2));
+			Assert.Equal(background, bmp.GetPixel(5, 5));
 		}
 
 
-		[Test]
+		[Fact]
 		public void SvgRespectsClipPath()
 		{
 			var path = Path.Combine(PathToImages, "clipping.svg");
@@ -309,19 +309,19 @@ namespace SkiaSharp.Extended.Svg.Tests
 			{
 				for (int y = 1; y < 20; y++)
 				{
-					Assert.AreEqual(fill, bmp.GetPixel(x, y));
-					Assert.AreEqual(background, bmp.GetPixel(x + 20, y + 20));
+					Assert.Equal(fill, bmp.GetPixel(x, y));
+					Assert.Equal(background, bmp.GetPixel(x + 20, y + 20));
 				}
 			}
 		}
 
-		[Test]
+		[Fact]
 		public void SvgCanReadFileWithDTD()
 		{
 			var path = Path.Combine(PathToImages, "dtd.svg");
 			var bmp = LoadSvgBitmap(path, SKColors.Red);
 
-			Assert.AreEqual(SKColors.Black, bmp.GetPixel(50, 50));
+			Assert.Equal(SKColors.Black, bmp.GetPixel(50, 50));
 		}
 
 		private static SKBitmap LoadSvgBitmap(string svgPath, SKColor? background = null)
