@@ -11,6 +11,20 @@ interesting projects:
  - [SkiaSharp.Extended.Iconify][iconify] _(iconify library)_
  - [SkiaSharp.Extended.Svg][svg] _(lightweight SVG loader)_
 
+## Building
+
+Each sub-directory has a solution file that can be opened in Visual Studio or
+built by MSBuild. All stripting and tasks are performed by MSBuild, so no 
+external tooling is needed.
+
+There is a single PowerShell script that can be used to build the entire 
+repository:
+
+    > .\build.ps1
+
+The CI server just runs that single file and outputs all the packages, 
+assemblies and test results.
+
 ## License
 
 The code in this repository is licensed under the [MIT License][license].
