@@ -16,12 +16,16 @@ function Build
 {
     Param ([string] $solution, [string] $output)
 
-    & $msbuild "$solution" /m /t:restore /p:Configuration=Release /v:minimal /flp:logfile=".\output\$output\restore.log;verbosity=normal"
+    if ($IsMacOS) {
+        $extraProperties = "/p:Platform=iPhoneSimulator"
+    }
+
+    & $msbuild $solution /m /t:restore /p:Configuration=Release $extraProperties /v:minimal /flp:logfile="./output/$output/restore.log;verbosity=normal"
     if ($lastexitcode -ne 0) {
         exit $lastexitcode
     }
 
-    & $msbuild "$solution" /m /t:build /p:Configuration=Release /v:minimal /flp:logfile=".\output\$output\build.log;verbosity=normal"
+    & $msbuild $solution /m /t:build /p:Configuration=Release $extraProperties /v:minimal /flp:logfile="./output/$output/build.log;verbosity=normal"
     if ($lastexitcode -ne 0) {
         exit $lastexitcode
     }
@@ -33,17 +37,17 @@ function Pack
 
     $dir = [System.IO.Path]::GetDirectoryName($project)
 
-    & $msbuild "$project" /m /t:pack /p:Configuration=Release /p:VersionSuffix=".$env:BUILD_NUMBER" /v:minimal /flp:logfile=".\output\$output\pack.log;verbosity=normal"
+    & $msbuild $project /m /t:pack /p:Configuration=Release /p:VersionSuffix=".$env:BUILD_NUMBER" /v:minimal /flp:logfile="./output/$output/pack.log;verbosity=normal"
     if ($lastexitcode -ne 0) {
         exit $lastexitcode
     }
 
-    & $msbuild "$project" /m /t:pack /p:Configuration=Release /p:VersionSuffix=".$env:BUILD_NUMBER-beta" /v:minimal /flp:logfile=".\output\$output\pack-beta.log;verbosity=normal"
+    & $msbuild $project /m /t:pack /p:Configuration=Release /p:VersionSuffix=".$env:BUILD_NUMBER-beta" /v:minimal /flp:logfile="./output/$output/pack-beta.log;verbosity=normal"
     if ($lastexitcode -ne 0) {
         exit $lastexitcode
     }
 
-    Copy-Item -Path "$dir\bin\Release\" -Destination ".\output\$output\" -Recurse -Force
+    Copy-Item -Path "$dir/bin/Release/" -Destination "./output/$output/" -Recurse -Force
 }
 
 function Test
@@ -52,36 +56,36 @@ function Test
 
     $dir = [System.IO.Path]::GetDirectoryName($project)
 
-    & $msbuild "$project" /m /t:test /p:Configuration=Release /v:minimal /flp:logfile=".\output\$output\test.log;verbosity=normal"
+    & $msbuild $project /m /t:test /p:Configuration=Release /v:minimal /flp:logfile="./output/$output/test.log;verbosity=normal"
     if ($lastexitcode -ne 0) {
         exit $lastexitcode
     }
 
-    Copy-Item -Path "$dir\bin\Release\net47\TestResult.xml" -Destination ".\output\$output\" -Force
+    Copy-Item -Path "$dir/bin/Release/net47/TestResult.xml" -Destination "./output/$output/" -Force
 }
 
 Write-Output "MSBuild path: '$msbuild'"
 
 Write-Output "Building SkiaSharp.Extended..."
-Build ".\SkiaSharp.Extended\SkiaSharp.Extended.sln"                 "SkiaSharp.Extended"
-Pack  ".\SkiaSharp.Extended\source\SkiaSharp.Extended.csproj"       "SkiaSharp.Extended"
-Test  ".\SkiaSharp.Extended\tests\SkiaSharp.Extended.Tests.csproj"  "SkiaSharp.Extended"
+Build "./SkiaSharp.Extended/SkiaSharp.Extended.sln"                 "SkiaSharp.Extended"
+Pack  "./SkiaSharp.Extended/source/SkiaSharp.Extended.csproj"       "SkiaSharp.Extended"
+Test  "./SkiaSharp.Extended/tests/SkiaSharp.Extended.Tests.csproj"  "SkiaSharp.Extended"
 
 Write-Output "Building SkiaSharp.Extended.Iconify..."
-Build ".\SkiaSharp.Extended.Iconify\SkiaSharp.Extended.Iconify.sln"                                                                               "SkiaSharp.Extended.Iconify"
-Pack  ".\SkiaSharp.Extended.Iconify\source\SkiaSharp.Extended.Iconify\SkiaSharp.Extended.Iconify.csproj"                                          "SkiaSharp.Extended.Iconify"
-Pack  ".\SkiaSharp.Extended.Iconify\source\SkiaSharp.Extended.Iconify.FontAwesome\SkiaSharp.Extended.Iconify.FontAwesome.csproj"                  "SkiaSharp.Extended.Iconify"
-Pack  ".\SkiaSharp.Extended.Iconify\source\SkiaSharp.Extended.Iconify.IonIcons\SkiaSharp.Extended.Iconify.IonIcons.csproj"                        "SkiaSharp.Extended.Iconify"
-Pack  ".\SkiaSharp.Extended.Iconify\source\SkiaSharp.Extended.Iconify.MaterialDesignIcons\SkiaSharp.Extended.Iconify.MaterialDesignIcons.csproj"  "SkiaSharp.Extended.Iconify"
-Pack  ".\SkiaSharp.Extended.Iconify\source\SkiaSharp.Extended.Iconify.MaterialIcons\SkiaSharp.Extended.Iconify.MaterialIcons.csproj"              "SkiaSharp.Extended.Iconify"
-Pack  ".\SkiaSharp.Extended.Iconify\source\SkiaSharp.Extended.Iconify.Meteocons\SkiaSharp.Extended.Iconify.Meteocons.csproj"                      "SkiaSharp.Extended.Iconify"
-Pack  ".\SkiaSharp.Extended.Iconify\source\SkiaSharp.Extended.Iconify.SimpleLineIcons\SkiaSharp.Extended.Iconify.SimpleLineIcons.csproj"          "SkiaSharp.Extended.Iconify"
-Pack  ".\SkiaSharp.Extended.Iconify\source\SkiaSharp.Extended.Iconify.Typicons\SkiaSharp.Extended.Iconify.Typicons.csproj"                        "SkiaSharp.Extended.Iconify"
-Pack  ".\SkiaSharp.Extended.Iconify\source\SkiaSharp.Extended.Iconify.WeatherIcons\SkiaSharp.Extended.Iconify.WeatherIcons.csproj"                "SkiaSharp.Extended.Iconify"
+Build "./SkiaSharp.Extended.Iconify/SkiaSharp.Extended.Iconify.sln"                                                                               "SkiaSharp.Extended.Iconify"
+Pack  "./SkiaSharp.Extended.Iconify/source/SkiaSharp.Extended.Iconify/SkiaSharp.Extended.Iconify.csproj"                                          "SkiaSharp.Extended.Iconify"
+Pack  "./SkiaSharp.Extended.Iconify/source/SkiaSharp.Extended.Iconify.FontAwesome/SkiaSharp.Extended.Iconify.FontAwesome.csproj"                  "SkiaSharp.Extended.Iconify"
+Pack  "./SkiaSharp.Extended.Iconify/source/SkiaSharp.Extended.Iconify.IonIcons/SkiaSharp.Extended.Iconify.IonIcons.csproj"                        "SkiaSharp.Extended.Iconify"
+Pack  "./SkiaSharp.Extended.Iconify/source/SkiaSharp.Extended.Iconify.MaterialDesignIcons/SkiaSharp.Extended.Iconify.MaterialDesignIcons.csproj"  "SkiaSharp.Extended.Iconify"
+Pack  "./SkiaSharp.Extended.Iconify/source/SkiaSharp.Extended.Iconify.MaterialIcons/SkiaSharp.Extended.Iconify.MaterialIcons.csproj"              "SkiaSharp.Extended.Iconify"
+Pack  "./SkiaSharp.Extended.Iconify/source/SkiaSharp.Extended.Iconify.Meteocons/SkiaSharp.Extended.Iconify.Meteocons.csproj"                      "SkiaSharp.Extended.Iconify"
+Pack  "./SkiaSharp.Extended.Iconify/source/SkiaSharp.Extended.Iconify.SimpleLineIcons/SkiaSharp.Extended.Iconify.SimpleLineIcons.csproj"          "SkiaSharp.Extended.Iconify"
+Pack  "./SkiaSharp.Extended.Iconify/source/SkiaSharp.Extended.Iconify.Typicons/SkiaSharp.Extended.Iconify.Typicons.csproj"                        "SkiaSharp.Extended.Iconify"
+Pack  "./SkiaSharp.Extended.Iconify/source/SkiaSharp.Extended.Iconify.WeatherIcons/SkiaSharp.Extended.Iconify.WeatherIcons.csproj"                "SkiaSharp.Extended.Iconify"
 
 Write-Output "Building SkiaSharp.Extended.Svg..."
-Build ".\SkiaSharp.Extended.Svg\SkiaSharp.Extended.Svg.sln"                 "SkiaSharp.Extended.Svg"
-Pack  ".\SkiaSharp.Extended.Svg\source\SkiaSharp.Extended.Svg.csproj"       "SkiaSharp.Extended.Svg"
-Test  ".\SkiaSharp.Extended.Svg\tests\SkiaSharp.Extended.Svg.Tests.csproj"  "SkiaSharp.Extended.Svg"
+Build "./SkiaSharp.Extended.Svg/SkiaSharp.Extended.Svg.sln"                 "SkiaSharp.Extended.Svg"
+Pack  "./SkiaSharp.Extended.Svg/source/SkiaSharp.Extended.Svg.csproj"       "SkiaSharp.Extended.Svg"
+Test  "./SkiaSharp.Extended.Svg/tests/SkiaSharp.Extended.Svg.Tests.csproj"  "SkiaSharp.Extended.Svg"
 
 exit $lastexitcode;
