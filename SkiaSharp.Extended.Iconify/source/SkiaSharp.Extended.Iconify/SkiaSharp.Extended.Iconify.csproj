@@ -15,8 +15,7 @@
   <PropertyGroup>
     <PackageId>SkiaSharp.Extended.Iconify</PackageId>
     <Title>SkiaSharp.Extended.Iconify</Title>
-    <PackageVersion>$(Version)$(VersionSuffix)</PackageVersion>
-    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
+    <PackageVersion Condition=" '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
     <Authors>Xamarin Inc.</Authors>
     <Owners>microsoft,Xamarin,XamarinNuGet</Owners>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>

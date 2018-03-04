@@ -1,9 +1,5 @@
 $ErrorActionPreference = "Stop"
 
-if (!$env:BUILD_NUMBER) {
-    $env:BUILD_NUMBER = 0
-}
-
 if ($IsMacOS) {
     $msbuild = "msbuild"
 } else {
@@ -20,33 +16,24 @@ function Build
         $extraProperties = "/p:Platform=iPhoneSimulator"
     }
 
-    & $msbuild $solution /m /t:restore /p:Configuration=Release $extraProperties /v:minimal /flp:logfile="./output/$output/restore.log;verbosity=normal"
-    if ($lastexitcode -ne 0) {
-        exit $lastexitcode
-    }
+    & $msbuild $solution /m /t:restore /p:Configuration=Release $extraProperties
+    if ($lastexitcode -ne 0) { exit $lastexitcode }
 
-    & $msbuild $solution /m /t:build /p:Configuration=Release $extraProperties /v:minimal /flp:logfile="./output/$output/build.log;verbosity=normal"
-    if ($lastexitcode -ne 0) {
-        exit $lastexitcode
-    }
+    & $msbuild $solution /m /t:build /p:Configuration=Release $extraProperties
+    if ($lastexitcode -ne 0) { exit $lastexitcode }
 }
 
 function Pack
 {
     Param ([string] $project, [string] $output)
 
+    & $msbuild $project /m /t:pack /p:Configuration=Release
+    if ($lastexitcode -ne 0) { exit $lastexitcode }
+
+    & $msbuild $project /m /t:pack /p:Configuration=Release /p:VersionSuffix="beta-$env:BUILD_NUMBER"
+    if ($lastexitcode -ne 0) { exit $lastexitcode }
+
     $dir = [System.IO.Path]::GetDirectoryName($project)
-
-    & $msbuild $project /m /t:pack /p:Configuration=Release /p:VersionSuffix=".$env:BUILD_NUMBER" /v:minimal /flp:logfile="./output/$output/pack.log;verbosity=normal"
-    if ($lastexitcode -ne 0) {
-        exit $lastexitcode
-    }
-
-    & $msbuild $project /m /t:pack /p:Configuration=Release /p:VersionSuffix=".$env:BUILD_NUMBER-beta" /v:minimal /flp:logfile="./output/$output/pack-beta.log;verbosity=normal"
-    if ($lastexitcode -ne 0) {
-        exit $lastexitcode
-    }
-
     Copy-Item -Path "$dir/bin/Release/" -Destination "./output/$output/" -Recurse -Force
 }
 
@@ -54,13 +41,10 @@ function Test
 {
     Param ([string] $project, [string] $output)
 
+    & $msbuild $project /m /t:test /p:Configuration=Release
+    if ($lastexitcode -ne 0) { exit $lastexitcode }
+
     $dir = [System.IO.Path]::GetDirectoryName($project)
-
-    & $msbuild $project /m /t:test /p:Configuration=Release /v:minimal /flp:logfile="./output/$output/test.log;verbosity=normal"
-    if ($lastexitcode -ne 0) {
-        exit $lastexitcode
-    }
-
     Copy-Item -Path "$dir/bin/Release/net47/TestResult.xml" -Destination "./output/$output/" -Force
 }
 
