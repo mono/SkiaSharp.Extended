@@ -18,7 +18,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="SkiaSharp.Extended.Svg.Tests\**\*.cs" />
+    <Compile Include="SkiaSharp.Extended.Svg.Tests\**\*.cs" Link="%(RecursiveDir)\%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SkiaSharp.Extended.Svg.Tests\images\*.svg" Link="images\%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <Target Name="Test">
