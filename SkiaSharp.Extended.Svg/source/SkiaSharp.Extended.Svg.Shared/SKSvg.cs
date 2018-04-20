@@ -22,12 +22,12 @@ namespace SkiaSharp.Extended.Svg
 		private static readonly char[] WS = new char[] { ' ', '\t', '\n', '\r' };
 		private static readonly Regex unitRe = new Regex("px|pt|em|ex|pc|cm|mm|in");
 		private static readonly Regex percRe = new Regex("%");
-		private static readonly Regex fillUrlRe = new Regex(@"url\s*\(\s*#([^\)]+)\)");
-		private static readonly Regex clipPathUrlRe = new Regex(@"url\s*\(\s*#([^\)]+)\)");
+		private static readonly Regex urlRe = new Regex(@"url\s*\(\s*#([^\)]+)\)");
 		private static readonly Regex keyValueRe = new Regex(@"\s*([\w-]+)\s*:\s*(.*)");
 		private static readonly Regex WSRe = new Regex(@"\s{2,}");
 
 		private readonly Dictionary<string, XElement> defs = new Dictionary<string, XElement>();
+		private readonly Dictionary<string, SKSvgMask> masks = new Dictionary<string, SKSvgMask>();
 		private readonly XmlReaderSettings xmlReaderSettings = new XmlReaderSettings()
 		{
 			DtdProcessing = DtdProcessing.Ignore,
@@ -139,7 +139,7 @@ namespace SkiaSharp.Extended.Svg
 			// find the defs (gradients) - and follow all hrefs
 			foreach (var d in svg.Descendants())
 			{
-				var id = d.Attribute("id")?.Value?.Trim();
+				string id = ReadId(d);
 				if (!string.IsNullOrEmpty(id))
 					defs[id] = ReadDefinition(d);
 			}
@@ -264,6 +264,7 @@ namespace SkiaSharp.Extended.Svg
 
 			// read style
 			var style = ReadPaints(e, ref stroke, ref fill, isGroup);
+			var mask = ReadMask(style);
 
 			// parse elements
 			switch (elementName)
@@ -305,35 +306,71 @@ namespace SkiaSharp.Extended.Svg
 						var elementPath = ReadElement(e);
 						if (elementPath != null)
 						{
-							if (fill != null)
-								canvas.DrawPath(elementPath, fill);
-							if (stroke != null)
-								canvas.DrawPath(elementPath, stroke);
+							if (mask != null)
+							{
+								canvas.SaveLayer(new SKPaint());
+								foreach (var gElement in mask.Element.Elements())
+								{
+									ReadElement(gElement, canvas, mask.Fill.Clone(), mask.Fill.Clone());
+								}
+								using (var paint = fill.Clone())
+								{
+									paint.BlendMode = SKBlendMode.SrcIn;
+									canvas.DrawPath(elementPath, paint);
+								}
+								canvas.Restore();
+							}
+							else
+							{
+								if (fill != null)
+									canvas.DrawPath(elementPath, fill);
+								if (stroke != null)
+									canvas.DrawPath(elementPath, stroke);
+							}
 						}
 					}
 					break;
 				case "g":
 					if (e.HasElements)
 					{
-						// get current group opacity
-						float groupOpacity = ReadOpacity(style);
-						if (groupOpacity != 1.0f)
+						if (mask != null)
 						{
-							var opacity = (byte)(255 * groupOpacity);
-							var opacityPaint = new SKPaint { Color = SKColors.Black.WithAlpha(opacity) };
+							canvas.SaveLayer(new SKPaint());
+							foreach (var gElement in mask.Element.Elements())
+							{
+								ReadElement(gElement, canvas, mask.Fill.Clone(), mask.Fill.Clone());
+							}
 
-							// apply the opacity
-							canvas.SaveLayer(opacityPaint);
-						}
-
-						foreach (var gElement in e.Elements())
-						{
-							ReadElement(gElement, canvas, stroke?.Clone(), fill?.Clone());
-						}
-
-						// restore state
-						if (groupOpacity != 1.0f)
+							foreach (var gElement in e.Elements())
+							{
+								using (var paint = fill.Clone())
+								{
+									paint.BlendMode = SKBlendMode.SrcIn;
+									ReadElement(gElement, canvas, paint, paint);
+								}
+							}
 							canvas.Restore();
+						}
+						else
+						{
+							SKPaint opacityPaint = null;
+							// get current group opacity
+							float groupOpacity = ReadOpacity(style);
+							if (groupOpacity != 1.0f)
+							{
+								var opacity = (byte)(255 * groupOpacity);
+								opacityPaint = new SKPaint { Color = SKColors.Black.WithAlpha(opacity) };
+								canvas.SaveLayer(opacityPaint);
+							}
+							foreach (var gElement in e.Elements())
+							{
+								ReadElement(gElement, canvas, stroke?.Clone(), fill?.Clone());
+							}
+							if (opacityPaint != null)
+							{
+								canvas.Restore();
+							}
+						}
 					}
 					break;
 				case "use":
@@ -377,6 +414,12 @@ namespace SkiaSharp.Extended.Svg
 								ReadElement(ee, canvas, stroke?.Clone(), fill?.Clone());
 							}
 						}
+					}
+					break;
+				case "mask":
+					if (e.HasElements)
+					{
+						masks.Add(ReadId(e), new SKSvgMask(fill, e));
 					}
 					break;
 				case "defs":
@@ -711,6 +754,27 @@ namespace SkiaSharp.Extended.Svg
 			return Math.Min(Math.Max((int)SKFontStyleWeight.Thin, weight), (int)SKFontStyleWeight.ExtraBlack);
 		}
 
+		private SKSvgMask ReadMask(Dictionary<string, string> style)
+		{
+			SKSvgMask mask = null;
+			var maskID = GetString(style, "mask").Trim();
+			if (!String.IsNullOrEmpty(maskID))
+			{
+				var urlM = urlRe.Match(maskID);
+				if (urlM.Success)
+				{
+					var id = urlM.Groups[1].Value.Trim();
+					masks.TryGetValue(id, out mask);
+				}
+			}
+			return mask;
+		}
+
+		private string ReadId(XElement d)
+		{
+			return d.Attribute("id")?.Value?.Trim();
+		}
+
 		private void LogOrThrow(string message)
 		{
 			if (ThrowOnUnsupportedElement)
@@ -886,7 +950,7 @@ namespace SkiaSharp.Extended.Svg
 					else
 					{
 						var read = false;
-						var urlM = fillUrlRe.Match(fill);
+						var urlM = urlRe.Match(fill);
 						if (urlM.Success)
 						{
 							var id = urlM.Groups[1].Value.Trim();
@@ -1031,7 +1095,7 @@ namespace SkiaSharp.Extended.Svg
 
 			SKPath result = null;
 			var read = false;
-			var urlM = clipPathUrlRe.Match(raw);
+			var urlM = urlRe.Match(raw);
 			if (urlM.Success)
 			{
 				var id = urlM.Groups[1].Value.Trim();
