@@ -379,6 +379,22 @@ namespace SkiaSharp.Extended.Svg
 						}
 					}
 					break;
+				case "mask":
+					if (e.HasElements)
+					{
+						if (fill != null)
+						{
+							fill.ColorFilter = SKColorFilter.CreateBlendMode(fill.Color, SKBlendMode.SrcIn);
+							fill.FilterQuality = SKFilterQuality.Medium;
+							foreach (var gElement in e.Elements())
+							{
+								ReadElement(gElement, canvas, stroke?.Clone(), fill?.Clone());
+							}
+						} else {
+							LogOrThrow($"Fill missing for '{elementName}' element");
+						}
+					}
+					break;
 				case "defs":
 				case "title":
 				case "desc":
