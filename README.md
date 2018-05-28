@@ -13,28 +13,19 @@ interesting projects:
 
 ## Building
 
-The root just contains a build script that will build all the other 
-scripts. To build everything, just run the command-line:
+Each sub-directory has a solution file that can be opened in Visual Studio or
+built by MSBuild. All stripting and tasks are performed by MSBuild, so no 
+external tooling is needed.
 
-Mac/Linux:
+There is a single PowerShell script that can be used to build the entire 
+repository:
 
-    $ ./build.sh -t build --force=true
+    > .\build.ps1
 
-Windows:
+The CI server just runs that single file and outputs all the packages, 
+assemblies and test results.
 
-    > .\build.ps1 -Target build --Force='true'
-
-If only a specific project, or a set of projects, are to be built, 
-then pass a value to the `names` argument:
-
-
-Mac/Linux:
-
-    $ ./build.sh -t build --force=true -names=SkiaSharp.Extended.Iconify
-
-Windows:
-
-    > .\build.ps1 -Target build --Force='true' -Names='SkiaSharp.Extended.Iconify'
+_NOTE: for macOS, you may need to [first install PowerShell][pwsh]._
 
 ## License
 
@@ -47,3 +38,4 @@ The code in this repository is licensed under the [MIT License][license].
 [extended]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended
 [iconify]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended.Iconify
 [svg]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended.Svg
+[pwsh]: https://github.com/PowerShell/PowerShell

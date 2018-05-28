@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -9,34 +8,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-
-namespace SkiaSharp
-{
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	[Obsolete("Use 'SkiaSharp.Extended.Svg.SKSvg' instead. This type will be removed in the future.")]
-	public class SKSvg : SkiaSharp.Extended.Svg.SKSvg
-	{
-		public SKSvg()
-			: base()
-		{
-		}
-
-		public SKSvg(float pixelsPerInch)
-			: base(pixelsPerInch)
-		{
-		}
-
-		public SKSvg(SKSize canvasSize)
-			: base(canvasSize)
-		{
-		}
-
-		public SKSvg(float pixelsPerInch, SKSize canvasSize)
-			: base(pixelsPerInch, canvasSize)
-		{
-		}
-	}
-}
 
 namespace SkiaSharp.Extended.Svg
 {
@@ -57,7 +28,6 @@ namespace SkiaSharp.Extended.Svg
 		private static readonly Regex WSRe = new Regex(@"\s{2,}");
 
 		private readonly Dictionary<string, XElement> defs = new Dictionary<string, XElement>();
-        private Dictionary<string, string> styles;
 		private readonly XmlReaderSettings xmlReaderSettings = new XmlReaderSettings()
 		{
 			DtdProcessing = DtdProcessing.Ignore,
@@ -101,12 +71,19 @@ namespace SkiaSharp.Extended.Svg
 		}
 
 		public float PixelsPerInch { get; set; }
+
 		public bool ThrowOnUnsupportedElement { get; set; }
+
 		public SKRect ViewBox { get; private set; }
+
 		public SKSize CanvasSize { get; private set; }
+
 		public SKPicture Picture { get; private set; }
+
 		public string Description { get; private set; }
+
 		public string Title { get; private set; }
+
 		public string Version { get; private set; }
 
 		public SKPicture Load(string filename)
@@ -291,37 +268,17 @@ namespace SkiaSharp.Extended.Svg
 			// parse elements
 			switch (elementName)
 			{
-                case "style":
-                    {
-                        styles = CssHelpers.ParseSelectors(e.Value);
-                        break;
-                    },
 				case "image":
 					{
-						var uri = ReadHrefString(e);
-						if (uri != null)
+						var image = ReadImage(e);
+						if (image.Bytes != null)
 						{
-							var x = ReadNumber(e.Attribute("x"));
-							var y = ReadNumber(e.Attribute("y"));
-							var width = ReadNumber(e.Attribute("width"));
-							var height = ReadNumber(e.Attribute("height"));
-
-							if (uri.StartsWith("data:"))
+							using (var bitmap = SKBitmap.Decode(image.Bytes))
 							{
-								var bytes = ReadBytes(uri);
-								using (var data = SKData.CreateCopy(bytes))
-								using (var image = SKImage.FromEncodedData(data))
+								if (bitmap != null)
 								{
-									if (image != null)
-									{
-										var rect = SKRect.Create(x, y, width, height);
-										canvas.DrawImage(image, rect);
-									}
+									canvas.DrawBitmap(bitmap, image.Rect);
 								}
-							}
-							else
-							{
-								LogOrThrow($"Remote images are not supported");
 							}
 						}
 						break;
@@ -329,7 +286,11 @@ namespace SkiaSharp.Extended.Svg
 				case "text":
 					if (stroke != null || fill != null)
 					{
-						ReadText(e, canvas, stroke?.Clone(), fill?.Clone());
+						var spans = ReadText(e, stroke?.Clone(), fill?.Clone());
+						if (spans.Any())
+						{
+							canvas.DrawText(spans);
+						}
 					}
 					break;
 				case "rect":
@@ -339,13 +300,16 @@ namespace SkiaSharp.Extended.Svg
 				case "polygon":
 				case "polyline":
 				case "line":
-					var elementPath = ParseElement(e);
-					if ((stroke != null || fill != null) && elementPath != null)
+					if (stroke != null || fill != null)
 					{
-						if (fill != null)
-							canvas.DrawPath(elementPath, fill);
-						if (stroke != null)
-							canvas.DrawPath(elementPath, stroke);
+						var elementPath = ReadElement(e);
+						if (elementPath != null)
+						{
+							if (fill != null)
+								canvas.DrawPath(elementPath, fill);
+							if (stroke != null)
+								canvas.DrawPath(elementPath, stroke);
+						}
 					}
 					break;
 				case "g":
@@ -430,7 +394,33 @@ namespace SkiaSharp.Extended.Svg
 			canvas.Restore();
 		}
 
-		private SKPath ParseElement(XElement e)
+		private SKSvgImage ReadImage(XElement e)
+		{
+			var x = ReadNumber(e.Attribute("x"));
+			var y = ReadNumber(e.Attribute("y"));
+			var width = ReadNumber(e.Attribute("width"));
+			var height = ReadNumber(e.Attribute("height"));
+			var rect = SKRect.Create(x, y, width, height);
+
+			byte[] bytes = null;
+
+			var uri = ReadHrefString(e);
+			if (uri != null)
+			{
+				if (uri.StartsWith("data:"))
+				{
+					bytes = ReadUriBytes(uri);
+				}
+				else
+				{
+					LogOrThrow($"Remote images are not supported");
+				}
+			}
+
+			return new SKSvgImage(rect, uri, bytes);
+		}
+
+		private SKPath ReadElement(XElement e)
 		{
 			var path = new SKPath();
 
@@ -438,18 +428,18 @@ namespace SkiaSharp.Extended.Svg
 			switch (elementName)
 			{
 				case "rect":
-					var rect = ParseRoundedRect(e);
-					if (rect.IsRounded())
+					var rect = ReadRoundedRect(e);
+					if (rect.IsRounded)
 						path.AddRoundedRect(rect.Rect, rect.RadiusX, rect.RadiusY);
 					else
 						path.AddRect(rect.Rect);
 					break;
 				case "ellipse":
-					var oval = ParseOval(e);
+					var oval = ReadOval(e);
 					path.AddOval(oval.BoundingRect);
 					break;
 				case "circle":
-					var circle = ParseCircle(e);
+					var circle = ReadCircle(e);
 					path.AddCircle(circle.Center.X, circle.Center.Y, circle.Radius);
 					break;
 				case "path":
@@ -474,7 +464,7 @@ namespace SkiaSharp.Extended.Svg
 					}
 					break;
 				case "line":
-					var line = ParseLine(e);
+					var line = ReadLine(e);
 					path.MoveTo(line.P1);
 					path.LineTo(line.P2);
 					break;
@@ -487,7 +477,7 @@ namespace SkiaSharp.Extended.Svg
 			return path;
 		}
 
-		private SKOval ParseOval(XElement e)
+		private SKOval ReadOval(XElement e)
 		{
 			var cx = ReadNumber(e.Attribute("cx"));
 			var cy = ReadNumber(e.Attribute("cy"));
@@ -497,7 +487,7 @@ namespace SkiaSharp.Extended.Svg
 			return new SKOval(new SKPoint(cx, cy), rx, ry);
 		}
 
-		private SKCircle ParseCircle(XElement e)
+		private SKCircle ReadCircle(XElement e)
 		{
 			var cx = ReadNumber(e.Attribute("cx"));
 			var cy = ReadNumber(e.Attribute("cy"));
@@ -506,7 +496,7 @@ namespace SkiaSharp.Extended.Svg
 			return new SKCircle(new SKPoint(cx, cy), rr);
 		}
 
-		private SKLine ParseLine(XElement e)
+		private SKLine ReadLine(XElement e)
 		{
 			var x1 = ReadNumber(e.Attribute("x1"));
 			var x2 = ReadNumber(e.Attribute("x2"));
@@ -516,7 +506,7 @@ namespace SkiaSharp.Extended.Svg
 			return new SKLine(new SKPoint(x1, y1), new SKPoint(x2, y2));
 		}
 
-		private SKRoundedRect ParseRoundedRect(XElement e)
+		private SKRoundedRect ReadRoundedRect(XElement e)
 		{
 			var x = ReadNumber(e.Attribute("x"));
 			var y = ReadNumber(e.Attribute("y"));
@@ -529,22 +519,30 @@ namespace SkiaSharp.Extended.Svg
 			return new SKRoundedRect(rect, rx ?? ry ?? 0, ry ?? rx ?? 0);
 		}
 
-		private void ReadText(XElement e, SKCanvas canvas, SKPaint stroke, SKPaint fill)
+		private SKText ReadText(XElement e, SKPaint stroke, SKPaint fill)
 		{
 			// TODO: stroke
 
 			var x = ReadNumber(e.Attribute("x"));
 			var y = ReadNumber(e.Attribute("y"));
 			var xy = new SKPoint(x, y);
+			var textAlign = ReadTextAlignment(e);
+			var baselineShift = ReadBaselineShift(e);
 
 			ReadFontAttributes(e, fill);
-			fill.TextAlign = ReadTextAlignment(e);
 
-			ReadTextSpans(e, canvas, xy, stroke, fill);
+			return ReadTextSpans(e, xy, textAlign, baselineShift, stroke, fill);
 		}
 
-		private void ReadTextSpans(XElement e, SKCanvas canvas, SKPoint location, SKPaint stroke, SKPaint fill)
+		private SKText ReadTextSpans(XElement e, SKPoint xy, SKTextAlign textAlign, float baselineShift, SKPaint stroke, SKPaint fill)
 		{
+			var spans = new SKText(xy, textAlign);
+
+			// textAlign is used for all spans within the <text> element. If different textAligns would be needed, it is necessary to use
+			// several <text> elements instead of <tspan> elements
+			var currentBaselineShift = baselineShift;
+			fill.TextAlign = SKTextAlign.Left;  // fixed alignment for all spans
+
 			var nodes = e.Nodes().ToArray();
 			for (int i = 0; i < nodes.Length; i++)
 			{
@@ -566,9 +564,7 @@ namespace SkiaSharp.Extended.Svg
 							textSegments[count - 1] = textSegments[count - 1].TrimEnd();
 						var text = WSRe.Replace(string.Concat(textSegments), " ");
 
-						canvas.DrawText(text, location.X, location.Y, fill);
-
-						location.X += fill.MeasureText(text);
+						spans.Append(new SKTextSpan(text, fill.Clone(), baselineShift: currentBaselineShift));
 					}
 				}
 				else if (c.NodeType == XmlNodeType.Element)
@@ -576,38 +572,38 @@ namespace SkiaSharp.Extended.Svg
 					var ce = (XElement)c;
 					if (ce.Name.LocalName == "tspan")
 					{
-						var spanFill = fill.Clone();
-
 						// the current span may want to change the cursor position
-						location.X = ReadOptionalNumber(ce.Attribute("x")) ?? location.X;
-						location.Y = ReadOptionalNumber(ce.Attribute("y")) ?? location.Y;
+						var x = ReadOptionalNumber(ce.Attribute("x"));
+						var y = ReadOptionalNumber(ce.Attribute("y"));
+						var text = ce.Value; //.Trim();
 
+						var spanFill = fill.Clone();
 						ReadFontAttributes(ce, spanFill);
 
-						var text = ce.Value.Trim();
+						// Don't read text-anchor from tspans!, Only use enclosing text-anchor from text element!
+						currentBaselineShift = ReadBaselineShift(ce);
 
-						canvas.DrawText(text, location.X, location.Y, spanFill);
-
-						location.X += spanFill.MeasureText(text);
+						spans.Append(new SKTextSpan(text, spanFill, x, y, currentBaselineShift));
 					}
 				}
 			}
+
+			return spans;
 		}
 
 		private void ReadFontAttributes(XElement e, SKPaint paint)
 		{
 			var fontStyle = ReadStyle(e);
 
-			string ffamily;
-			if (!fontStyle.TryGetValue("font-family", out ffamily) || string.IsNullOrWhiteSpace(ffamily))
+			if (!fontStyle.TryGetValue("font-family", out string ffamily) || string.IsNullOrWhiteSpace(ffamily))
 				ffamily = paint.Typeface?.FamilyName;
 			var fweight = ReadFontWeight(fontStyle, paint.Typeface?.FontWeight ?? (int)SKFontStyleWeight.Normal);
 			var fwidth = ReadFontWidth(fontStyle, paint.Typeface?.FontWidth ?? (int)SKFontStyleWidth.Normal);
 			var fstyle = ReadFontStyle(fontStyle, paint.Typeface?.FontSlant ?? SKFontStyleSlant.Upright);
+
 			paint.Typeface = SKTypeface.FromFamilyName(ffamily, fweight, fwidth, fstyle);
 
-			string fsize;
-			if (fontStyle.TryGetValue("font-size", out fsize) && !string.IsNullOrWhiteSpace(fsize))
+			if (fontStyle.TryGetValue("font-size", out string fsize) && !string.IsNullOrWhiteSpace(fsize))
 				paint.TextSize = ReadNumber(fsize);
 		}
 
@@ -615,8 +611,7 @@ namespace SkiaSharp.Extended.Svg
 		{
 			SKFontStyleSlant style = defaultStyle;
 
-			string fstyle;
-			if (fontStyle.TryGetValue("font-style", out fstyle) && !string.IsNullOrWhiteSpace(fstyle))
+			if (fontStyle.TryGetValue("font-style", out string fstyle) && !string.IsNullOrWhiteSpace(fstyle))
 			{
 				switch (fstyle)
 				{
@@ -640,10 +635,8 @@ namespace SkiaSharp.Extended.Svg
 
 		private int ReadFontWidth(Dictionary<string, string> fontStyle, int defaultWidth = (int)SKFontStyleWidth.Normal)
 		{
-			int width = defaultWidth;
-
-			string fwidth;
-			if (fontStyle.TryGetValue("font-stretch", out fwidth) && !string.IsNullOrWhiteSpace(fwidth) && !int.TryParse(fwidth, out width))
+			var width = defaultWidth;
+			if (fontStyle.TryGetValue("font-stretch", out string fwidth) && !string.IsNullOrWhiteSpace(fwidth) && !int.TryParse(fwidth, out width))
 			{
 				switch (fwidth)
 				{
@@ -691,10 +684,9 @@ namespace SkiaSharp.Extended.Svg
 
 		private int ReadFontWeight(Dictionary<string, string> fontStyle, int defaultWeight = (int)SKFontStyleWeight.Normal)
 		{
-			int weight = defaultWeight;
+			var weight = defaultWeight;
 
-			string fweight;
-			if (fontStyle.TryGetValue("font-weight", out fweight) && !string.IsNullOrWhiteSpace(fweight) && !int.TryParse(fweight, out weight))
+			if (fontStyle.TryGetValue("font-weight", out string fweight) && !string.IsNullOrWhiteSpace(fweight) && !int.TryParse(fweight, out weight))
 			{
 				switch (fweight)
 				{
@@ -729,8 +721,7 @@ namespace SkiaSharp.Extended.Svg
 
 		private string GetString(Dictionary<string, string> style, string name, string defaultValue = "")
 		{
-			string v;
-			if (style.TryGetValue(name, out v))
+			if (style.TryGetValue(name, out string v))
 				return v;
 			return defaultValue;
 		}
@@ -752,47 +743,24 @@ namespace SkiaSharp.Extended.Svg
 			return d;
 		}
 
-        private Dictionary<string, string> ReadStyle(XElement e)
-        {
-            // get from local attributes
-            var dic = e.Attributes().Where(a => HasSvgNamespace(a.Name)).ToDictionary(k => k.Name.LocalName, v => v.Value);
+		private Dictionary<string, string> ReadStyle(XElement e)
+		{
+			// get from local attributes
+			var dic = e.Attributes().Where(a => HasSvgNamespace(a.Name)).ToDictionary(k => k.Name.LocalName, v => v.Value);
 
-            string className;
-            string glStyle;
+			var style = e.Attribute("style")?.Value;
+			if (!string.IsNullOrWhiteSpace(style))
+			{
+				// get from stlye attribute
+				var styleDic = ReadStyle(style);
 
-            if (styles != null && styles.TryGetValue(e.Name.LocalName, out glStyle))
-            {
-                // get from stlye attribute
-                var styleDic = ReadStyle(glStyle);
+				// overwrite
+				foreach (var pair in styleDic)
+					dic[pair.Key] = pair.Value;
+			}
 
-                // overwrite
-                foreach (var pair in styleDic)
-                    dic[pair.Key] = pair.Value;
-            }
-            if (styles != null && dic.TryGetValue("class", out className)
-                && styles.TryGetValue("." + className, out glStyle))
-            {
-                // get from stlye attribute
-                var styleDic = ReadStyle(glStyle);
-
-                // overwrite
-                foreach (var pair in styleDic)
-                    dic[pair.Key] = pair.Value;
-            }
-
-            var style = e.Attribute("style")?.Value;
-            if (!string.IsNullOrWhiteSpace(style))
-            {
-                // get from stlye attribute
-                var styleDic = ReadStyle(style);
-
-                // overwrite
-                foreach (var pair in styleDic)
-                    dic[pair.Key] = pair.Value;
-            }
-
-            return dic;
-        }
+			return dic;
+		}
 
 		private static bool HasSvgNamespace(XName name)
 		{
@@ -831,8 +799,7 @@ namespace SkiaSharp.Extended.Svg
 					if (strokePaint == null)
 						strokePaint = CreatePaint(true);
 
-					SKColor color;
-					if (ColorHelper.TryParse(stroke, out color))
+					if (ColorHelper.TryParse(stroke, out SKColor color))
 					{
 						// preserve alpha
 						if (color.Alpha == 255)
@@ -905,10 +872,10 @@ namespace SkiaSharp.Extended.Svg
 				}
 				else
 				{
-					fillPaint = CreatePaint();
+					if (fillPaint == null)
+						fillPaint = CreatePaint();
 
-					SKColor color;
-					if (ColorHelper.TryParse(fill, out color))
+					if (ColorHelper.TryParse(fill, out SKColor color))
 					{
 						// preserve alpha
 						if (color.Alpha == 255)
@@ -924,8 +891,7 @@ namespace SkiaSharp.Extended.Svg
 						{
 							var id = urlM.Groups[1].Value.Trim();
 
-							XElement defE;
-							if (defs.TryGetValue(id, out defE))
+							if (defs.TryGetValue(id, out XElement defE))
 							{
 								var gradientShader = ReadGradient(defE);
 								if (gradientShader != null)
@@ -1070,8 +1036,7 @@ namespace SkiaSharp.Extended.Svg
 			{
 				var id = urlM.Groups[1].Value.Trim();
 
-				XElement defE;
-				if (defs.TryGetValue(id, out defE))
+				if (defs.TryGetValue(id, out XElement defE))
 				{
 					result = ReadClipPathDefinition(defE);
 					if (result != null)
@@ -1104,11 +1069,12 @@ namespace SkiaSharp.Extended.Svg
 
 			foreach (var ce in e.Elements())
 			{
-				var path = ParseElement(ce);
+				var path = ReadElement(ce);
 				if (path != null)
 				{
 					result.AddPath(path);
 				}
+
 				else
 				{
 					LogOrThrow($"SVG element '{ce.Name.LocalName}' is not supported in clipPath.");
@@ -1145,6 +1111,27 @@ namespace SkiaSharp.Extended.Svg
 				default:
 					return SKTextAlign.Left;
 			}
+		}
+
+		private float ReadBaselineShift(XElement element)
+		{
+			string value = null;
+			if (element != null)
+			{
+				var attrib = element.Attribute("baseline-shift");
+				if (attrib != null && !string.IsNullOrWhiteSpace(attrib.Value))
+					value = attrib.Value;
+				else
+				{
+					var style = element.Attribute("style");
+					if (style != null && !string.IsNullOrWhiteSpace(style.Value))
+					{
+						value = GetString(ReadStyle(style.Value), "baseline-shift");
+					}
+				}
+			}
+
+			return ReadNumber(value);
 		}
 
 		private SKShader ReadGradient(XElement defE)
@@ -1236,8 +1223,7 @@ namespace SkiaSharp.Extended.Svg
 		private XElement ReadHref(XElement e)
 		{
 			var href = ReadHrefString(e)?.Substring(1);
-			XElement child;
-			if (string.IsNullOrEmpty(href) || !defs.TryGetValue(href, out child))
+			if (string.IsNullOrEmpty(href) || !defs.TryGetValue(href, out XElement child))
 			{
 				child = null;
 			}
@@ -1262,16 +1248,14 @@ namespace SkiaSharp.Extended.Svg
 				var color = SKColors.Black;
 				byte alpha = 255;
 
-				string stopColor;
-				if (style.TryGetValue("stop-color", out stopColor))
+				if (style.TryGetValue("stop-color", out string stopColor))
 				{
 					// preserve alpha
 					if (ColorHelper.TryParse(stopColor, out color) && color.Alpha == 255)
 						alpha = color.Alpha;
 				}
 
-				string stopOpacity;
-				if (style.TryGetValue("stop-opacity", out stopOpacity))
+				if (style.TryGetValue("stop-opacity", out string stopOpacity))
 				{
 					alpha = (byte)(ReadNumber(stopOpacity) * 255);
 				}
@@ -1291,15 +1275,14 @@ namespace SkiaSharp.Extended.Svg
 		private float ReadNumber(Dictionary<string, string> style, string key, float defaultValue)
 		{
 			float value = defaultValue;
-			string strValue;
-			if (style.TryGetValue(key, out strValue))
+			if (style.TryGetValue(key, out string strValue))
 			{
 				value = ReadNumber(strValue);
 			}
 			return value;
 		}
 
-		private byte[] ReadBytes(string uri)
+		private byte[] ReadUriBytes(string uri)
 		{
 			if (!string.IsNullOrEmpty(uri))
 			{
@@ -1352,11 +1335,11 @@ namespace SkiaSharp.Extended.Svg
 				m = 0.01f;
 			}
 
-			float v;
-			if (!float.TryParse(s, NumberStyles.Float, icult, out v))
+			if (!float.TryParse(s, NumberStyles.Float, icult, out float v))
 			{
 				v = 0;
 			}
+
 			return m * v;
 		}
 
@@ -1377,200 +1360,6 @@ namespace SkiaSharp.Extended.Svg
 			if (p.Length > 3)
 				r.Bottom = r.Top + ReadNumber(p[3]);
 			return r;
-		}
-
-		private static class ColorHelper
-		{
-			private static Dictionary<string, string> hexValues;
-
-			public static bool TryParse(string str, out SKColor color)
-			{
-				if (str.StartsWith("rgb(", StringComparison.Ordinal))
-				{
-					str = str.Substring(4, str.Length - 4).TrimEnd(')');
-					var values = str.Split(',');
-					var r = int.Parse(values[0]);
-					var g = int.Parse(values[1]);
-					var b = int.Parse(values[2]);
-					str = $"#{r:X2}{g:X2}{b:X2}";
-				}
-
-				if (!SKColor.TryParse(str, out color))
-				{
-					string hexString = null;
-					if (HexValues.TryGetValue(str, out hexString))
-					{
-						return SKColor.TryParse(hexString, out color);
-					}
-
-					return false;
-				}
-
-				return true;
-			}
-
-			public static Dictionary<string, string> HexValues
-			{
-				get
-				{
-					if (hexValues == null)
-					{
-						hexValues = new Dictionary<string, string>
-						{
-							{ "aliceblue", "#f0f8ff" },
-							{ "antiquewhite", "#faebd7" },
-							{ "aqua", "#00ffff" },
-							{ "aquamarine", "#7fffd4" },
-							{ "azure", "#f0ffff" },
-							{ "beige", "#f5f5dc" },
-							{ "bisque", "#ffe4c4" },
-							{ "black", "#000000" },
-							{ "blanchedalmond", "#ffebcd" },
-							{ "blue", "#0000ff" },
-							{ "blueviolet", "#8a2be2" },
-							{ "brown", "#a52a2a" },
-							{ "burlywood", "#deb887" },
-							{ "cadetblue", "#5f9ea0" },
-							{ "chartreuse", "#7fff00" },
-							{ "chocolate", "#d2691e" },
-							{ "coral", "#ff7f50" },
-							{ "cornflowerblue", "#6495ed" },
-							{ "cornsilk", "#fff8dc" },
-							{ "crimson", "#dc143c" },
-							{ "cyan", "#00ffff" },
-							{ "darkblue", "#00008b" },
-							{ "darkcyan", "#008b8b" },
-							{ "darkgoldenrod", "#b8860b" },
-							{ "darkgray", "#a9a9a9" },
-							{ "darkgreen", "#006400" },
-							{ "darkgrey", "#a9a9a9" },
-							{ "darkkhaki", "#bdb76b" },
-							{ "darkmagenta", "#8b008b" },
-							{ "darkolivegreen", "#556b2f" },
-							{ "darkorange", "#ff8c00" },
-							{ "darkorchid", "#9932cc" },
-							{ "darkred", "#8b0000" },
-							{ "darksalmon", "#e9967a" },
-							{ "darkseagreen", "#8fbc8f" },
-							{ "darkslateblue", "#483d8b" },
-							{ "darkslategray", "#2f4f4f" },
-							{ "darkslategrey", "#2f4f4f" },
-							{ "darkturquoise", "#00ced1" },
-							{ "darkviolet", "#9400d3" },
-							{ "deeppink", "#ff1493" },
-							{ "deepskyblue", "#00bfff" },
-							{ "dimgray", "#696969" },
-							{ "dimgrey", "#696969" },
-							{ "dodgerblue", "#1e90ff" },
-							{ "firebrick", "#b22222" },
-							{ "floralwhite", "#fffaf0" },
-							{ "forestgreen", "#228b22" },
-							{ "fuchsia", "#ff00ff" },
-							{ "gainsboro", "#dcdcdc" },
-							{ "ghostwhite", "#f8f8ff" },
-							{ "gold", "#ffd700" },
-							{ "goldenrod", "#daa520" },
-							{ "gray", "#808080" },
-							{ "green", "#008000" },
-							{ "greenyellow", "#adff2f" },
-							{ "grey", "#808080" },
-							{ "honeydew", "#f0fff0" },
-							{ "hotpink", "#ff69b4" },
-							{ "indianred", "#cd5c5c" },
-							{ "indigo", "#4b0082" },
-							{ "ivory", "#fffff0" },
-							{ "khaki", "#f0e68c" },
-							{ "lavender", "#e6e6fa" },
-							{ "lavenderblush", "#fff0f5" },
-							{ "lawngreen", "#7cfc00" },
-							{ "lemonchiffon", "#fffacd" },
-							{ "lightblue", "#add8e6" },
-							{ "lightcoral", "#f08080" },
-							{ "lightcyan", "#e0ffff" },
-							{ "lightgoldenrodyellow", "#fafad2" },
-							{ "lightgray", "#d3d3d3" },
-							{ "lightgreen", "#90ee90" },
-							{ "lightgrey", "#d3d3d3" },
-							{ "lightpink", "#ffb6c1" },
-							{ "lightsalmon", "#ffa07a" },
-							{ "lightseagreen", "#20b2aa" },
-							{ "lightskyblue", "#87cefa" },
-							{ "lightslategray", "#778899" },
-							{ "lightslategrey", "#778899" },
-							{ "lightsteelblue", "#b0c4de" },
-							{ "lightyellow", "#ffffe0" },
-							{ "lime", "#00ff00" },
-							{ "limegreen", "#32cd32" },
-							{ "linen", "#faf0e6" },
-							{ "magenta", "#ff00ff" },
-							{ "maroon", "#800000" },
-							{ "mediumaquamarine", "#66cdaa" },
-							{ "mediumblue", "#0000cd" },
-							{ "mediumorchid", "#ba55d3" },
-							{ "mediumpurple", "#9370db" },
-							{ "mediumseagreen", "#3cb371" },
-							{ "mediumslateblue", "#7b68ee" },
-							{ "mediumspringgreen", "#00fa9a" },
-							{ "mediumturquoise", "#48d1cc" },
-							{ "mediumvioletred", "#c71585" },
-							{ "midnightblue", "#191970" },
-							{ "mintcream", "#f5fffa" },
-							{ "mistyrose", "#ffe4e1" },
-							{ "moccasin", "#ffe4b5" },
-							{ "navajowhite", "#ffdead" },
-							{ "navy", "#000080" },
-							{ "oldlace", "#fdf5e6" },
-							{ "olive", "#808000" },
-							{ "olivedrab", "#6b8e23" },
-							{ "orange", "#ffa500" },
-							{ "orangered", "#ff4500" },
-							{ "orchid", "#da70d6" },
-							{ "palegoldenrod", "#eee8aa" },
-							{ "palegreen", "#98fb98" },
-							{ "paleturquoise", "#afeeee" },
-							{ "palevioletred", "#db7093" },
-							{ "papayawhip", "#ffefd5" },
-							{ "peachpuff", "#ffdab9" },
-							{ "peru", "#cd853f" },
-							{ "pink", "#ffc0cb" },
-							{ "plum", "#dda0dd" },
-							{ "powderblue", "#b0e0e6" },
-							{ "purple", "#800080" },
-							{ "rebeccapurple", "#663399" },
-							{ "red", "#ff0000" },
-							{ "rosybrown", "#bc8f8f" },
-							{ "royalblue", "#4169e1" },
-							{ "saddlebrown", "#8b4513" },
-							{ "salmon", "#fa8072" },
-							{ "sandybrown", "#f4a460" },
-							{ "seagreen", "#2e8b57" },
-							{ "seashell", "#fff5ee" },
-							{ "sienna", "#a0522d" },
-							{ "silver", "#c0c0c0" },
-							{ "skyblue", "#87ceeb" },
-							{ "slateblue", "#6a5acd" },
-							{ "slategray", "#708090" },
-							{ "slategrey", "#708090" },
-							{ "snow", "#fffafa" },
-							{ "springgreen", "#00ff7f" },
-							{ "steelblue", "#4682b4" },
-							{ "tan", "#d2b48c" },
-							{ "teal", "#008080" },
-							{ "thistle", "#d8bfd8" },
-							{ "tomato", "#ff6347" },
-							{ "turquoise", "#40e0d0" },
-							{ "violet", "#ee82ee" },
-							{ "wheat", "#f5deb3" },
-							{ "white", "#ffffff" },
-							{ "whitesmoke", "#f5f5f5" },
-							{ "yellow", "#ffff00" },
-							{"yellowgreen","#9acd32"}
-						};
-					}
-
-					return hexValues;
-				}
-			}
 		}
 	}
 }

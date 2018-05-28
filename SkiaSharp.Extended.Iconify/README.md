@@ -8,7 +8,11 @@ characters.
 For example, if we wanted to draw this string using colored characters 
 from FontAwesome (or some other icon font) mixed in with other characters:
 
+<center>
+
 ![FontAwesome](../images/FontAwesome.png)
+
+</center>
 
 To do this using factory SkiaSharp, there would be lots of work that 
 needed doing. But, not anymore.

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace SkiaSharp.Extended.Svg
+﻿namespace SkiaSharp.Extended.Svg
 {
 	internal static class SKCanvasExtensions
 	{
@@ -23,6 +20,42 @@ namespace SkiaSharp.Extended.Svg
 		public static void DrawLine(this SKCanvas canvas, SKLine line, SKPaint paint)
 		{
 			canvas.DrawLine(line.P1.X, line.P1.Y, line.P2.X, line.P2.Y, paint);
+		}
+
+		public static void DrawText(this SKCanvas canvas, SKText text)
+		{
+			var currentX = text.Location.X;
+			var currentY = text.Location.Y;
+
+			var textWidth = text.MeasureTextWidth();
+
+			// For correct alignment of the complete text, we calculate its starting x-position based on the alignment
+			// and draw the complete text starting from that point
+			switch (text.TextAlign)
+			{
+				case SKTextAlign.Left:
+					// currentX is correct position
+					break;
+				case SKTextAlign.Center:
+					currentX -= textWidth / 2;
+					break;
+				case SKTextAlign.Right:
+					currentX -= textWidth;
+					break;
+				default:
+					break;
+			}
+
+			foreach (var span in text)
+			{
+				currentY = span?.Y ?? currentY;
+				currentX = span?.X ?? currentX;
+
+				// we need to subtract baseline shift from currentY, since negative value causes shift to bottom in svg
+				canvas.DrawText(span.Text, currentX, currentY - span?.BaselineShift ?? 0, span.Fill);
+
+				currentX += span.MeasureTextWidth();
+			}
 		}
 	}
 }
