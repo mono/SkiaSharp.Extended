@@ -28,6 +28,8 @@ namespace SkiaSharp.Extended.Svg
 		private static readonly Regex WSRe = new Regex(@"\s{2,}");
 
 		private readonly Dictionary<string, XElement> defs = new Dictionary<string, XElement>();
+		private readonly Dictionary<string, object> fills = new Dictionary<string, object>();
+        private readonly Dictionary<string, string> styles = new Dictionary<string, string>();
 		private readonly XmlReaderSettings xmlReaderSettings = new XmlReaderSettings()
 		{
 			DtdProcessing = DtdProcessing.Ignore,
@@ -300,18 +302,78 @@ namespace SkiaSharp.Extended.Svg
 				case "polygon":
 				case "polyline":
 				case "line":
-					if (stroke != null || fill != null)
 					{
-						var elementPath = ReadElement(e);
-						if (elementPath != null)
-						{
-							if (fill != null)
-								canvas.DrawPath(elementPath, fill);
-							if (stroke != null)
-								canvas.DrawPath(elementPath, stroke);
-						}
-					}
-					break;
+                        var elementPath = ReadElement(e);
+                        if (elementPath == null)
+                            break;
+
+                        string fillId = e.Attribute("fill")?.Value;
+                        object addFill = null;
+                        if (!string.IsNullOrWhiteSpace(fillId) && fills.TryGetValue(fillId, out addFill))
+                        {
+                            var x = ReadNumber(e.Attribute("x"));
+                            var y = ReadNumber(e.Attribute("y"));
+
+                            float width = 0f;
+                            float height = 0f;
+                            var element = e;
+
+                            while (element.Parent != null)
+                            {
+                                if (!(width > 0f))
+                                    width = ReadNumber(element.Attribute("width"));
+
+                                if (!(height > 0f))
+                                    height = ReadNumber(element.Attribute("height"));
+
+                                if (width > 0f && height > 0f)
+                                    break;
+
+                                element = element.Parent;
+                            }
+
+                            if (!(width > 0f && height > 0f))
+                            {
+                                var root = e?.Document?.Root;
+                                width = ReadNumber(root?.Attribute("width"));
+                                height = ReadNumber(root?.Attribute("height"));
+                            }
+
+                            var addFillType = addFill.GetType();
+
+                            if (addFillType == typeof(SKLinearGradient))
+                            {
+                                var gradient = (SKLinearGradient)addFill;
+                                var startPoint = gradient.GetStartPoint(x, y, width, height);
+                                var endPoint = gradient.GetEndPoint(x, y, width, height);
+
+								using (var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, gradient.Colors, gradient.Positions, gradient.TileMode))                        
+								using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true, BlendMode = SKBlendMode.SrcOver })
+								{
+									canvas.DrawPath(elementPath, gradientPaint);
+								}
+                            }
+                            else if (addFillType == typeof(SKRadialGradient))
+                            {
+                                var gradient = (SKRadialGradient)addFill;
+                                var centerPoint = gradient.GetCenterPoint(x, y, width, height);
+                                var radius = gradient.GetRadius(width, height);
+
+								using (var gradientShader = SKShader.CreateRadialGradient(centerPoint, radius, gradient.Colors, gradient.Positions, gradient.TileMode))
+								using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true })
+								{
+									canvas.DrawPath(elementPath, gradientPaint);
+								}
+                            }
+                        }
+
+                        if (fill != null)
+                            canvas.DrawPath(elementPath, fill);
+                        if (stroke != null)
+                            canvas.DrawPath(elementPath, stroke);
+
+                        break;
+                    }
 				case "g":
 					if (e.HasElements)
 					{
@@ -892,17 +954,24 @@ namespace SkiaSharp.Extended.Svg
 							var id = urlM.Groups[1].Value.Trim();
 
 							if (defs.TryGetValue(id, out XElement defE))
-							{
-								var gradientShader = ReadGradient(defE);
-								if (gradientShader != null)
-								{
-									// TODO: multiple shaders
-
-									fillPaint.Shader = gradientShader;
-									read = true;
-								}
-								// else try another type (eg: image)
-							}
+                            {
+                                switch (defE.Name.LocalName)
+                                {
+                                    case "linearGradient":
+                                        fillPaint.Color = SKColors.Transparent;
+                                        if (!fills.ContainsKey(fill))
+                                            fills.Add(fill, ReadLinearGradient(defE));
+                                        read = true;
+                                        break;
+                                    case "radialGradient":
+                                        fillPaint.Color = SKColors.Transparent;
+                                        if (!fills.ContainsKey(fill))
+                                            fills.Add(fill, ReadRadialGradient(defE));
+                                        read = true;
+                                        break;
+                                }
+                                // else try another type (eg: image)
+                            }
 							else
 							{
 								LogOrThrow($"Invalid fill url reference: {id}");
@@ -1134,60 +1203,45 @@ namespace SkiaSharp.Extended.Svg
 			return ReadNumber(value);
 		}
 
-		private SKShader ReadGradient(XElement defE)
-		{
-			switch (defE.Name.LocalName)
-			{
-				case "linearGradient":
-					return ReadLinearGradient(defE);
-				case "radialGradient":
-					return ReadRadialGradient(defE);
-			}
-			return null;
-		}
+		private SKRadialGradient ReadRadialGradient(XElement e)
+        {
+            var cx = e.Attribute("cx");
+            var cy = e.Attribute("cy");
+            var centerX = cx == null ? 0.5f : ReadNumber(cx);
+            var centerY = cy == null ? 0.5f : ReadNumber(cy);
+            //var focusX = ReadOptionalNumber(e.Attribute("fx")) ?? centerX;
+            //var focusY = ReadOptionalNumber(e.Attribute("fy")) ?? centerY;
+            var r = e.Attribute("r");
+            var radius = r == null ? 0.5f : ReadNumber(r);
+            //var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
+            var tileMode = ReadSpreadMethod(e);
+            var stops = ReadStops(e);
 
-		private SKShader ReadRadialGradient(XElement e)
-		{
-			var centerX = ReadNumber(e.Attribute("cx"));
-			var centerY = ReadNumber(e.Attribute("cy"));
-			//var focusX = ReadOptionalNumber(e.Attribute("fx")) ?? centerX;
-			//var focusY = ReadOptionalNumber(e.Attribute("fy")) ?? centerY;
-			var radius = ReadNumber(e.Attribute("r"));
-			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
-			var tileMode = ReadSpreadMethod(e);
-			var stops = ReadStops(e);
+            // TODO: check gradientTransform attribute
+            // TODO: use absolute
 
-			// TODO: check gradientTransform attribute
-			// TODO: use absolute
+            return new SKRadialGradient(centerX, centerY, radius, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode);
+        }
 
-			return SKShader.CreateRadialGradient(
-				new SKPoint(centerX, centerY),
-				radius,
-				stops.Values.ToArray(),
-				stops.Keys.ToArray(),
-				tileMode);
-		}
+        private SKLinearGradient ReadLinearGradient(XElement e)
+        {
+            var startX = ReadNumber(e.Attribute("x1"));
+            var startY = ReadNumber(e.Attribute("y1"));
 
-		private SKShader ReadLinearGradient(XElement e)
-		{
-			var startX = ReadNumber(e.Attribute("x1"));
-			var startY = ReadNumber(e.Attribute("y1"));
-			var endX = ReadNumber(e.Attribute("x2"));
-			var endY = ReadNumber(e.Attribute("y2"));
-			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
-			var tileMode = ReadSpreadMethod(e);
-			var stops = ReadStops(e);
+            var x2 = e.Attribute("x2");
 
-			// TODO: check gradientTransform attribute
-			// TODO: use absolute
+            float endX = x2 == null ? 1f : ReadNumber(x2);
+            float endY = ReadNumber(e.Attribute("y2"));
 
-			return SKShader.CreateLinearGradient(
-				new SKPoint(startX, startY),
-				new SKPoint(endX, endY),
-				stops.Values.ToArray(),
-				stops.Keys.ToArray(),
-				tileMode);
-		}
+            //var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
+            var tileMode = ReadSpreadMethod(e);
+            var stops = ReadStops(e);
+
+            // TODO: check gradientTransform attribute
+            // TODO: use absolute
+
+            return new SKLinearGradient(startX, startY, endX, endY, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode);
+        }
 
 		private static SKShaderTileMode ReadSpreadMethod(XElement e)
 		{
