@@ -872,8 +872,25 @@ namespace SkiaSharp.Extended.Svg
 				}
 
 				// stroke attributes
-				var strokeDashArray = GetString(style, "stroke-dasharray");
-				if (!string.IsNullOrWhiteSpace(strokeDashArray))
+                var strokeDashArray = GetString(style, "stroke-dasharray");
+                var hasStrokeDashArray = !string.IsNullOrWhiteSpace(strokeDashArray);
+
+                var strokeWidth = GetString(style, "stroke-width");
+                var hasStrokeWidth = !string.IsNullOrWhiteSpace(strokeWidth);
+
+                var strokeOpacity = GetString(style, "stroke-opacity");
+                var hasStrokeOpacity = !string.IsNullOrWhiteSpace(strokeOpacity);
+
+                var strokeLineCap = GetString(style, "stroke-linecap");
+                var hasStrokeLineCap = !string.IsNullOrWhiteSpace(strokeLineCap);
+
+                var strokeLineJoin = GetString(style, "stroke-linejoin");
+                var hasStrokeLineJoin = !string.IsNullOrWhiteSpace(strokeLineJoin);
+
+                var strokeMiterLimit = GetString(style, "stroke-miterlimit");
+                var hasStrokeMiterLimit = !string.IsNullOrWhiteSpace(strokeMiterLimit);
+
+				if (hasStrokeDashArray)
 				{
 					if ("none".Equals(strokeDashArray, StringComparison.OrdinalIgnoreCase))
 					{
@@ -897,9 +914,8 @@ namespace SkiaSharp.Extended.Svg
 						strokePaint.PathEffect = SKPathEffect.CreateDash(dashes.ToArray(), strokeDashOffset);
 					}
 				}
-
-				var strokeWidth = GetString(style, "stroke-width");
-				if (!string.IsNullOrWhiteSpace(strokeWidth))
+                
+				if (hasStrokeWidth)
 				{
 					if (strokePaint == null)
 						strokePaint = CreatePaint(true);
@@ -909,14 +925,50 @@ namespace SkiaSharp.Extended.Svg
                 {
                     strokePaint.StrokeWidth = 1f;
                 }
-
-				var strokeOpacity = GetString(style, "stroke-opacity");
-				if (!string.IsNullOrWhiteSpace(strokeOpacity))
+                
+				if (hasStrokeOpacity)
 				{
 					if (strokePaint == null)
 						strokePaint = CreatePaint(true);
 					strokePaint.Color = strokePaint.Color.WithAlpha((byte)(ReadNumber(strokeOpacity) * 255));
 				}
+
+				if (hasStrokeLineCap)
+                {
+                    switch (strokeLineCap)
+                    {
+                        case "butt":
+                            strokePaint.StrokeCap = SKStrokeCap.Butt;
+                            break;
+                        case "round":
+                            strokePaint.StrokeCap = SKStrokeCap.Round;
+                            break;
+                        case "square":
+                            strokePaint.StrokeCap = SKStrokeCap.Square;
+                            break;
+                    }
+                }
+
+                if (hasStrokeLineJoin)
+                {
+                    switch (strokeLineJoin)
+                    {
+                        case "miter":
+                            strokePaint.StrokeJoin = SKStrokeJoin.Miter;
+                            break;
+                        case "round":
+                            strokePaint.StrokeJoin = SKStrokeJoin.Round;
+                            break;
+                        case "bevel":
+                            strokePaint.StrokeJoin = SKStrokeJoin.Bevel;
+                            break;
+                    }
+                }
+
+                if (hasStrokeMiterLimit)
+                {
+                    strokePaint.StrokeMiter = ReadNumber(strokeMiterLimit);
+                }
 
 				if (strokePaint != null)
 				{
@@ -1007,14 +1059,24 @@ namespace SkiaSharp.Extended.Svg
 		}
 
 		private SKPaint CreatePaint(bool stroke = false)
-		{
-			return new SKPaint
-			{
-				IsAntialias = true,
-				IsStroke = stroke,
-				Color = SKColors.Black
-			};
-		}
+        {
+            var strokePaint = new SKPaint
+            {
+                IsAntialias = true,
+                IsStroke = stroke,
+                Color = SKColors.Black
+            };
+
+            if (stroke)
+            {
+                strokePaint.StrokeWidth = 1f;
+                strokePaint.StrokeMiter = 4f;
+                strokePaint.StrokeJoin = SKStrokeJoin.Miter;
+                strokePaint.StrokeCap = SKStrokeCap.Butt;
+            }
+
+            return strokePaint;
+        }
 
 		private SKMatrix ReadTransform(string raw)
 		{
