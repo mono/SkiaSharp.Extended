@@ -29,7 +29,7 @@ namespace SkiaSharp.Extended.Svg
 
 		private readonly Dictionary<string, XElement> defs = new Dictionary<string, XElement>();
 		private readonly Dictionary<string, object> fills = new Dictionary<string, object>();
-        private readonly Dictionary<string, string> styles = new Dictionary<string, string>();
+		private readonly Dictionary<string, string> styles = new Dictionary<string, string>();
 		private readonly XmlReaderSettings xmlReaderSettings = new XmlReaderSettings()
 		{
 			DtdProcessing = DtdProcessing.Ignore,
@@ -303,76 +303,76 @@ namespace SkiaSharp.Extended.Svg
 				case "polyline":
 				case "line":
 					{
-                        var elementPath = ReadElement(e);
-                        if (elementPath == null)
-                            break;
-                                              
-                        string fillId = e.Attribute("fill")?.Value;
-                        object addFill = null;
-                        if (!string.IsNullOrWhiteSpace(fillId) && fills.TryGetValue(fillId, out addFill))
-                        {
-                            var x = ReadNumber(e.Attribute("x"));
-                            var y = ReadNumber(e.Attribute("y"));
+						var elementPath = ReadElement(e);
+						if (elementPath == null)
+							break;
 
-                            float width = 0f;
-                            float height = 0f;
-                            var element = e;
+						string fillId = e.Attribute("fill")?.Value;
+						object addFill = null;
+						if (!string.IsNullOrWhiteSpace(fillId) && fills.TryGetValue(fillId, out addFill))
+						{
+							var x = ReadNumber(e.Attribute("x"));
+							var y = ReadNumber(e.Attribute("y"));
 
-                            while (element.Parent != null)
-                            {
-                                if (!(width > 0f))
-                                    width = ReadNumber(element.Attribute("width"));
+							float width = 0f;
+							float height = 0f;
+							var element = e;
 
-                                if (!(height > 0f))
-                                    height = ReadNumber(element.Attribute("height"));
+							while (element.Parent != null)
+							{
+								if (!(width > 0f))
+									width = ReadNumber(element.Attribute("width"));
 
-                                if (width > 0f && height > 0f)
-                                    break;
+								if (!(height > 0f))
+									height = ReadNumber(element.Attribute("height"));
 
-                                element = element.Parent;
-                            }
+								if (width > 0f && height > 0f)
+									break;
 
-                            if (!(width > 0f && height > 0f))
-                            {
-                                var root = e?.Document?.Root;
-                                width = ReadNumber(root?.Attribute("width"));
-                                height = ReadNumber(root?.Attribute("height"));
-                            }
+								element = element.Parent;
+							}
 
-                            var addFillType = addFill.GetType();
+							if (!(width > 0f && height > 0f))
+							{
+								var root = e?.Document?.Root;
+								width = ReadNumber(root?.Attribute("width"));
+								height = ReadNumber(root?.Attribute("height"));
+							}
 
-                            if (addFillType == typeof(SKLinearGradient))
-                            {
-                                var gradient = (SKLinearGradient)addFill;
-                                var startPoint = gradient.GetStartPoint(x, y, width, height);
-                                var endPoint = gradient.GetEndPoint(x, y, width, height);
+							var addFillType = addFill.GetType();
 
-                                using (var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, gradient.Colors, gradient.Positions, gradient.TileMode))                        
-                                using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true, BlendMode = SKBlendMode.SrcOver })
-                                {
-                                    canvas.DrawPath(elementPath, gradientPaint);
-                                }
-                            }
-                            else if (addFillType == typeof(SKRadialGradient))
-                            {
-                                var gradient = (SKRadialGradient)addFill;
-                                var centerPoint = gradient.GetCenterPoint(x, y, width, height);
-                                var radius = gradient.GetRadius(width, height);
+							if (addFillType == typeof(SKLinearGradient))
+							{
+								var gradient = (SKLinearGradient)addFill;
+								var startPoint = gradient.GetStartPoint(x, y, width, height);
+								var endPoint = gradient.GetEndPoint(x, y, width, height);
+
+								using (var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, gradient.Colors, gradient.Positions, gradient.TileMode))
+								using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true, BlendMode = SKBlendMode.SrcOver })
+								{
+									canvas.DrawPath(elementPath, gradientPaint);
+								}
+							}
+							else if (addFillType == typeof(SKRadialGradient))
+							{
+								var gradient = (SKRadialGradient)addFill;
+								var centerPoint = gradient.GetCenterPoint(x, y, width, height);
+								var radius = gradient.GetRadius(width, height);
 
 								using (var gradientShader = SKShader.CreateRadialGradient(centerPoint, radius, gradient.Colors, gradient.Positions, gradient.TileMode))
-                                using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true })
-                                {
-                                    canvas.DrawPath(elementPath, gradientPaint);
-                                }
-                            }
-                        }
-                        else if (fill != null)
-                            canvas.DrawPath(elementPath, fill);
-                        if (stroke != null)
-                            canvas.DrawPath(elementPath, stroke);
+								using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true })
+								{
+									canvas.DrawPath(elementPath, gradientPaint);
+								}
+							}
+						}
+						else if (fill != null)
+							canvas.DrawPath(elementPath, fill);
+						if (stroke != null)
+							canvas.DrawPath(elementPath, stroke);
 
-                        break;
-                    }
+						break;
+					}
 				case "g":
 					if (e.HasElements)
 					{
@@ -399,28 +399,28 @@ namespace SkiaSharp.Extended.Svg
 					break;
 				case "use":
 					if (e.HasAttributes)
-                    {
-                        var href = ReadHref(e);
-                        if (href != null)
-                        {
-                            // create a deep copy as we will copy attributes
-                            href = new XElement(href);
-                            var attributes = e.Attributes();
-                            foreach (var attribute in attributes)
-                            {
-                                var name = attribute.Name.LocalName;
+					{
+						var href = ReadHref(e);
+						if (href != null)
+						{
+							// create a deep copy as we will copy attributes
+							href = new XElement(href);
+							var attributes = e.Attributes();
+							foreach (var attribute in attributes)
+							{
+								var name = attribute.Name.LocalName;
 
-                                if (!name.Contains("href")
-                                    && !name.Equals("id", StringComparison.OrdinalIgnoreCase)
-                                    && !name.Equals("transform", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    href.SetAttributeValue(attribute.Name, attribute.Value);
-                                }
-                            }
+								if (!name.Contains("href")
+									&& !name.Equals("id", StringComparison.OrdinalIgnoreCase)
+									&& !name.Equals("transform", StringComparison.OrdinalIgnoreCase))
+								{
+									href.SetAttributeValue(attribute.Name, attribute.Value);
+								}
+							}
 
-                            ReadElement(href, canvas, stroke?.Clone(), fill?.Clone());
-                        }
-                    }
+							ReadElement(href, canvas, stroke?.Clone(), fill?.Clone());
+						}
+					}
 					break;
 				case "switch":
 					if (e.HasElements)
@@ -875,32 +875,32 @@ namespace SkiaSharp.Extended.Svg
 				}
 
 				// stroke attributes
-                var strokeDashArray = GetString(style, "stroke-dasharray");
-                var hasStrokeDashArray = !string.IsNullOrWhiteSpace(strokeDashArray);
+				var strokeDashArray = GetString(style, "stroke-dasharray");
+				var hasStrokeDashArray = !string.IsNullOrWhiteSpace(strokeDashArray);
 
-                var strokeWidth = GetString(style, "stroke-width");
-                var hasStrokeWidth = !string.IsNullOrWhiteSpace(strokeWidth);
+				var strokeWidth = GetString(style, "stroke-width");
+				var hasStrokeWidth = !string.IsNullOrWhiteSpace(strokeWidth);
 
-                var strokeOpacity = GetString(style, "stroke-opacity");
-                var hasStrokeOpacity = !string.IsNullOrWhiteSpace(strokeOpacity);
+				var strokeOpacity = GetString(style, "stroke-opacity");
+				var hasStrokeOpacity = !string.IsNullOrWhiteSpace(strokeOpacity);
 
-                var strokeLineCap = GetString(style, "stroke-linecap");
-                var hasStrokeLineCap = !string.IsNullOrWhiteSpace(strokeLineCap);
+				var strokeLineCap = GetString(style, "stroke-linecap");
+				var hasStrokeLineCap = !string.IsNullOrWhiteSpace(strokeLineCap);
 
-                var strokeLineJoin = GetString(style, "stroke-linejoin");
-                var hasStrokeLineJoin = !string.IsNullOrWhiteSpace(strokeLineJoin);
+				var strokeLineJoin = GetString(style, "stroke-linejoin");
+				var hasStrokeLineJoin = !string.IsNullOrWhiteSpace(strokeLineJoin);
 
-                var strokeMiterLimit = GetString(style, "stroke-miterlimit");
-                var hasStrokeMiterLimit = !string.IsNullOrWhiteSpace(strokeMiterLimit);
+				var strokeMiterLimit = GetString(style, "stroke-miterlimit");
+				var hasStrokeMiterLimit = !string.IsNullOrWhiteSpace(strokeMiterLimit);
 
 				if (strokePaint == null)
-                {
-                    if (hasStrokeDashArray || hasStrokeWidth || hasStrokeOpacity
-                        || hasStrokeLineCap || hasStrokeLineJoin)
-                    {
-                        strokePaint = CreatePaint(true);
-                    }
-                }
+				{
+					if (hasStrokeDashArray || hasStrokeWidth || hasStrokeOpacity
+						|| hasStrokeLineCap || hasStrokeLineJoin)
+					{
+						strokePaint = CreatePaint(true);
+					}
+				}
 
 				if (hasStrokeDashArray)
 				{
@@ -926,7 +926,7 @@ namespace SkiaSharp.Extended.Svg
 						strokePaint.PathEffect = SKPathEffect.CreateDash(dashes.ToArray(), strokeDashOffset);
 					}
 				}
-                
+
 				if (hasStrokeWidth)
 				{
 					if (strokePaint == null)
@@ -934,10 +934,10 @@ namespace SkiaSharp.Extended.Svg
 					strokePaint.StrokeWidth = ReadNumber(strokeWidth);
 				}
 				else if (strokePaint != null)
-                {
-                    strokePaint.StrokeWidth = 1f;
-                }
-                
+				{
+					strokePaint.StrokeWidth = 1f;
+				}
+
 				if (hasStrokeOpacity)
 				{
 					if (strokePaint == null)
@@ -946,41 +946,41 @@ namespace SkiaSharp.Extended.Svg
 				}
 
 				if (hasStrokeLineCap)
-                {
-                    switch (strokeLineCap)
-                    {
-                        case "butt":
-                            strokePaint.StrokeCap = SKStrokeCap.Butt;
-                            break;
-                        case "round":
-                            strokePaint.StrokeCap = SKStrokeCap.Round;
-                            break;
-                        case "square":
-                            strokePaint.StrokeCap = SKStrokeCap.Square;
-                            break;
-                    }
-                }
+				{
+					switch (strokeLineCap)
+					{
+						case "butt":
+							strokePaint.StrokeCap = SKStrokeCap.Butt;
+							break;
+						case "round":
+							strokePaint.StrokeCap = SKStrokeCap.Round;
+							break;
+						case "square":
+							strokePaint.StrokeCap = SKStrokeCap.Square;
+							break;
+					}
+				}
 
-                if (hasStrokeLineJoin)
-                {
-                    switch (strokeLineJoin)
-                    {
-                        case "miter":
-                            strokePaint.StrokeJoin = SKStrokeJoin.Miter;
-                            break;
-                        case "round":
-                            strokePaint.StrokeJoin = SKStrokeJoin.Round;
-                            break;
-                        case "bevel":
-                            strokePaint.StrokeJoin = SKStrokeJoin.Bevel;
-                            break;
-                    }
-                }
+				if (hasStrokeLineJoin)
+				{
+					switch (strokeLineJoin)
+					{
+						case "miter":
+							strokePaint.StrokeJoin = SKStrokeJoin.Miter;
+							break;
+						case "round":
+							strokePaint.StrokeJoin = SKStrokeJoin.Round;
+							break;
+						case "bevel":
+							strokePaint.StrokeJoin = SKStrokeJoin.Bevel;
+							break;
+					}
+				}
 
-                if (hasStrokeMiterLimit)
-                {
-                    strokePaint.StrokeMiter = ReadNumber(strokeMiterLimit);
-                }
+				if (hasStrokeMiterLimit)
+				{
+					strokePaint.StrokeMiter = ReadNumber(strokeMiterLimit);
+				}
 
 				if (strokePaint != null)
 				{
@@ -1022,24 +1022,24 @@ namespace SkiaSharp.Extended.Svg
 							var id = urlM.Groups[1].Value.Trim();
 
 							if (defs.TryGetValue(id, out XElement defE))
-                            {
+							{
 								switch (defE.Name.LocalName.ToLower())
-                                {
+								{
 									case "lineargradient":
-                                        fillPaint.Color = SKColors.Transparent;
-                                        if (!fills.ContainsKey(fill))
-                                            fills.Add(fill, ReadLinearGradient(defE));
-                                        read = true;
-                                        break;
+										fillPaint.Color = SKColors.Transparent;
+										if (!fills.ContainsKey(fill))
+											fills.Add(fill, ReadLinearGradient(defE));
+										read = true;
+										break;
 									case "radialgradient":
-                                        fillPaint.Color = SKColors.Transparent;
-                                        if (!fills.ContainsKey(fill))
-                                            fills.Add(fill, ReadRadialGradient(defE));
-                                        read = true;
-                                        break;
-                                }
-                                // else try another type (eg: image)
-                            }
+										fillPaint.Color = SKColors.Transparent;
+										if (!fills.ContainsKey(fill))
+											fills.Add(fill, ReadRadialGradient(defE));
+										read = true;
+										break;
+								}
+								// else try another type (eg: image)
+							}
 							else
 							{
 								LogOrThrow($"Invalid fill url reference: {id}");
@@ -1071,24 +1071,24 @@ namespace SkiaSharp.Extended.Svg
 		}
 
 		private SKPaint CreatePaint(bool stroke = false)
-        {
-            var strokePaint = new SKPaint
-            {
-                IsAntialias = true,
-                IsStroke = stroke,
+		{
+			var strokePaint = new SKPaint
+			{
+				IsAntialias = true,
+				IsStroke = stroke,
 				Color = SKColors.Black
-            };
+			};
 
-            if (stroke)
-            {
-                strokePaint.StrokeWidth = 1f;
-                strokePaint.StrokeMiter = 4f;
-                strokePaint.StrokeJoin = SKStrokeJoin.Miter;
-                strokePaint.StrokeCap = SKStrokeCap.Butt;
-            }
+			if (stroke)
+			{
+				strokePaint.StrokeWidth = 1f;
+				strokePaint.StrokeMiter = 4f;
+				strokePaint.StrokeJoin = SKStrokeJoin.Miter;
+				strokePaint.StrokeCap = SKStrokeCap.Butt;
+			}
 
-            return strokePaint;
-        }
+			return strokePaint;
+		}
 
 		private SKMatrix ReadTransform(string raw)
 		{
@@ -1282,44 +1282,44 @@ namespace SkiaSharp.Extended.Svg
 		}
 
 		private SKRadialGradient ReadRadialGradient(XElement e)
-        {
-            var cx = e.Attribute("cx");
-            var cy = e.Attribute("cy");
-            var centerX = cx == null ? 0.5f : ReadNumber(cx);
-            var centerY = cy == null ? 0.5f : ReadNumber(cy);
-            //var focusX = ReadOptionalNumber(e.Attribute("fx")) ?? centerX;
-            //var focusY = ReadOptionalNumber(e.Attribute("fy")) ?? centerY;
-            var r = e.Attribute("r");
-            var radius = r == null ? 0.5f : ReadNumber(r);
-            //var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
-            var tileMode = ReadSpreadMethod(e);
-            var stops = ReadStops(e);
+		{
+			var cx = e.Attribute("cx");
+			var cy = e.Attribute("cy");
+			var centerX = cx == null ? 0.5f : ReadNumber(cx);
+			var centerY = cy == null ? 0.5f : ReadNumber(cy);
+			//var focusX = ReadOptionalNumber(e.Attribute("fx")) ?? centerX;
+			//var focusY = ReadOptionalNumber(e.Attribute("fy")) ?? centerY;
+			var r = e.Attribute("r");
+			var radius = r == null ? 0.5f : ReadNumber(r);
+			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
+			var tileMode = ReadSpreadMethod(e);
+			var stops = ReadStops(e);
 
-            // TODO: check gradientTransform attribute
-            // TODO: use absolute
+			// TODO: check gradientTransform attribute
+			// TODO: use absolute
 
-            return new SKRadialGradient(centerX, centerY, radius, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode);
-        }
+			return new SKRadialGradient(centerX, centerY, radius, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode);
+		}
 
-        private SKLinearGradient ReadLinearGradient(XElement e)
-        {
-            var startX = ReadNumber(e.Attribute("x1"));
-            var startY = ReadNumber(e.Attribute("y1"));
+		private SKLinearGradient ReadLinearGradient(XElement e)
+		{
+			var startX = ReadNumber(e.Attribute("x1"));
+			var startY = ReadNumber(e.Attribute("y1"));
 
-            var x2 = e.Attribute("x2");
+			var x2 = e.Attribute("x2");
 
-            float endX = x2 == null ? 1f : ReadNumber(x2);
-            float endY = ReadNumber(e.Attribute("y2"));
+			float endX = x2 == null ? 1f : ReadNumber(x2);
+			float endY = ReadNumber(e.Attribute("y2"));
 
-            //var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
-            var tileMode = ReadSpreadMethod(e);
-            var stops = ReadStops(e);
+			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
+			var tileMode = ReadSpreadMethod(e);
+			var stops = ReadStops(e);
 
-            // TODO: check gradientTransform attribute
-            // TODO: use absolute
+			// TODO: check gradientTransform attribute
+			// TODO: use absolute
 
-            return new SKLinearGradient(startX, startY, endX, endY, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode);
-        }
+			return new SKLinearGradient(startX, startY, endX, endY, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode);
+		}
 
 		private static SKShaderTileMode ReadSpreadMethod(XElement e)
 		{
