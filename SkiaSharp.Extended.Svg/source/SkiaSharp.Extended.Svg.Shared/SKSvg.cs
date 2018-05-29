@@ -905,6 +905,10 @@ namespace SkiaSharp.Extended.Svg
 						strokePaint = CreatePaint(true);
 					strokePaint.StrokeWidth = ReadNumber(strokeWidth);
 				}
+				else if (strokePaint != null)
+                {
+                    strokePaint.StrokeWidth = 1f;
+                }
 
 				var strokeOpacity = GetString(style, "stroke-opacity");
 				if (!string.IsNullOrWhiteSpace(strokeOpacity))
