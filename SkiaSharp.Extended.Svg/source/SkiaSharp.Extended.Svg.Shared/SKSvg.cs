@@ -890,6 +890,15 @@ namespace SkiaSharp.Extended.Svg
                 var strokeMiterLimit = GetString(style, "stroke-miterlimit");
                 var hasStrokeMiterLimit = !string.IsNullOrWhiteSpace(strokeMiterLimit);
 
+				if (strokePaint == null)
+                {
+                    if (hasStrokeDashArray || hasStrokeWidth || hasStrokeOpacity
+                        || hasStrokeLineCap || hasStrokeLineJoin)
+                    {
+                        strokePaint = CreatePaint(true);
+                    }
+                }
+
 				if (hasStrokeDashArray)
 				{
 					if ("none".Equals(strokeDashArray, StringComparison.OrdinalIgnoreCase))
