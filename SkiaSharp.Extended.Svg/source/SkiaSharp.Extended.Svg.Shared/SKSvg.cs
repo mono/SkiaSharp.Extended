@@ -306,7 +306,7 @@ namespace SkiaSharp.Extended.Svg
                         var elementPath = ReadElement(e);
                         if (elementPath == null)
                             break;
-
+                                              
                         string fillId = e.Attribute("fill")?.Value;
                         object addFill = null;
                         if (!string.IsNullOrWhiteSpace(fillId) && fills.TryGetValue(fillId, out addFill))
@@ -347,11 +347,11 @@ namespace SkiaSharp.Extended.Svg
                                 var startPoint = gradient.GetStartPoint(x, y, width, height);
                                 var endPoint = gradient.GetEndPoint(x, y, width, height);
 
-								using (var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, gradient.Colors, gradient.Positions, gradient.TileMode))                        
-								using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true, BlendMode = SKBlendMode.SrcOver })
-								{
-									canvas.DrawPath(elementPath, gradientPaint);
-								}
+                                using (var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, gradient.Colors, gradient.Positions, gradient.TileMode))                        
+                                using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true, BlendMode = SKBlendMode.SrcOver })
+                                {
+                                    canvas.DrawPath(elementPath, gradientPaint);
+                                }
                             }
                             else if (addFillType == typeof(SKRadialGradient))
                             {
@@ -360,14 +360,13 @@ namespace SkiaSharp.Extended.Svg
                                 var radius = gradient.GetRadius(width, height);
 
 								using (var gradientShader = SKShader.CreateRadialGradient(centerPoint, radius, gradient.Colors, gradient.Positions, gradient.TileMode))
-								using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true })
-								{
-									canvas.DrawPath(elementPath, gradientPaint);
-								}
+                                using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true })
+                                {
+                                    canvas.DrawPath(elementPath, gradientPaint);
+                                }
                             }
                         }
-
-                        if (fill != null)
+                        else if (fill != null)
                             canvas.DrawPath(elementPath, fill);
                         if (stroke != null)
                             canvas.DrawPath(elementPath, stroke);
@@ -400,24 +399,28 @@ namespace SkiaSharp.Extended.Svg
 					break;
 				case "use":
 					if (e.HasAttributes)
-					{
-						var href = ReadHref(e);
-						if (href != null)
-						{
-							// TODO: copy/process other attributes
+                    {
+                        var href = ReadHref(e);
+                        if (href != null)
+                        {
+                            // create a deep copy as we will copy attributes
+                            href = new XElement(href);
+                            var attributes = e.Attributes();
+                            foreach (var attribute in attributes)
+                            {
+                                var name = attribute.Name.LocalName;
 
-							var x = ReadNumber(e.Attribute("x"));
-							var y = ReadNumber(e.Attribute("y"));
-							var useTransform = SKMatrix.MakeTranslation(x, y);
+                                if (!name.Contains("href")
+                                    && !name.Equals("id", StringComparison.OrdinalIgnoreCase)
+                                    && !name.Equals("transform", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    href.SetAttributeValue(attribute.Name, attribute.Value);
+                                }
+                            }
 
-							canvas.Save();
-							canvas.Concat(ref useTransform);
-
-							ReadElement(href, canvas, stroke?.Clone(), fill?.Clone());
-
-							canvas.Restore();
-						}
-					}
+                            ReadElement(href, canvas, stroke?.Clone(), fill?.Clone());
+                        }
+                    }
 					break;
 				case "switch":
 					if (e.HasElements)
@@ -1020,15 +1023,15 @@ namespace SkiaSharp.Extended.Svg
 
 							if (defs.TryGetValue(id, out XElement defE))
                             {
-                                switch (defE.Name.LocalName)
+								switch (defE.Name.LocalName.ToLower())
                                 {
-                                    case "linearGradient":
+									case "lineargradient":
                                         fillPaint.Color = SKColors.Transparent;
                                         if (!fills.ContainsKey(fill))
                                             fills.Add(fill, ReadLinearGradient(defE));
                                         read = true;
                                         break;
-                                    case "radialGradient":
+									case "radialgradient":
                                         fillPaint.Color = SKColors.Transparent;
                                         if (!fills.ContainsKey(fill))
                                             fills.Add(fill, ReadRadialGradient(defE));
@@ -1073,7 +1076,6 @@ namespace SkiaSharp.Extended.Svg
             {
                 IsAntialias = true,
                 IsStroke = stroke,
-                Color = SKColors.Black
             };
 
             if (stroke)
@@ -1082,6 +1084,11 @@ namespace SkiaSharp.Extended.Svg
                 strokePaint.StrokeMiter = 4f;
                 strokePaint.StrokeJoin = SKStrokeJoin.Miter;
                 strokePaint.StrokeCap = SKStrokeCap.Butt;
+				strokePaint.Color = SKColors.Transparent;
+            }
+            else
+            {
+                strokePaint.Color = SKColors.Black;
             }
 
             return strokePaint;
