@@ -308,43 +308,45 @@ namespace SkiaSharp.Extended.Svg
 							break;
 
 						string fillId = e.Attribute("fill")?.Value;
-						object addFill = null;
-						if (!string.IsNullOrWhiteSpace(fillId) && fills.TryGetValue(fillId, out addFill))
+						if (!string.IsNullOrWhiteSpace(fillId) && fills.TryGetValue(fillId, out object addFill))
 						{
 							var x = ReadNumber(e.Attribute("x"));
 							var y = ReadNumber(e.Attribute("y"));
 							var elementSize = ReadElementSize(e);
-                                                 
+
 							switch (addFill)
-                            {
-                                case SKLinearGradient gradient:
-                                    var startPoint = gradient.GetStartPoint(x, y, elementSize.Width, elementSize.Height);
-                                    var endPoint = gradient.GetEndPoint(x, y, elementSize.Width, elementSize.Height);
+							{
+								case SKLinearGradient gradient:
+									var startPoint = gradient.GetStartPoint(x, y, elementSize.Width, elementSize.Height);
+									var endPoint = gradient.GetEndPoint(x, y, elementSize.Width, elementSize.Height);
 
-                                    using (var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, gradient.Colors, gradient.Positions, gradient.TileMode))
-                                    using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true, BlendMode = SKBlendMode.SrcOver })
-                                    {
-                                        canvas.DrawPath(elementPath, gradientPaint);
-                                    }
-                                    break;
-                                case SKRadialGradient gradient:
-                                    var centerPoint = gradient.GetCenterPoint(x, y, elementSize.Width, elementSize.Height);
-                                    var radius = gradient.GetRadius(elementSize.Width, elementSize.Height);
+									using (var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, gradient.Colors, gradient.Positions, gradient.TileMode))
+									using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true, BlendMode = SKBlendMode.SrcOver })
+									{
+										canvas.DrawPath(elementPath, gradientPaint);
+									}
+									break;
+								case SKRadialGradient gradient:
+									var centerPoint = gradient.GetCenterPoint(x, y, elementSize.Width, elementSize.Height);
+									var radius = gradient.GetRadius(elementSize.Width, elementSize.Height);
 
-                                    using (var gradientShader = SKShader.CreateRadialGradient(centerPoint, radius, gradient.Colors, gradient.Positions, gradient.TileMode))
-                                    using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true })
-                                    {
-                                        canvas.DrawPath(elementPath, gradientPaint);
-                                    }
-                                    break;
-                                default:
-                                    if (fill != null)
-                                        canvas.DrawPath(elementPath, fill);
-                                    break;
-                            }
+									using (var gradientShader = SKShader.CreateRadialGradient(centerPoint, radius, gradient.Colors, gradient.Positions, gradient.TileMode))
+									using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true })
+									{
+										canvas.DrawPath(elementPath, gradientPaint);
+									}
+									break;
+								default:
+									if (fill != null)
+										canvas.DrawPath(elementPath, fill);
+									break;
+							}
 						}
 						else if (fill != null)
+						{
 							canvas.DrawPath(elementPath, fill);
+						}
+
 						if (stroke != null)
 							canvas.DrawPath(elementPath, stroke);
 
