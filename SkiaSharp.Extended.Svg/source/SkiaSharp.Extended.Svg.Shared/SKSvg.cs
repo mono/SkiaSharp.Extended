@@ -321,9 +321,14 @@ namespace SkiaSharp.Extended.Svg
 									var endPoint = gradient.GetEndPoint(x, y, elementSize.Width, elementSize.Height);
 
 									using (var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, gradient.Colors, gradient.Positions, gradient.TileMode))
-									using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true, BlendMode = SKBlendMode.SrcOver })
 									{
-										canvas.DrawPath(elementPath, gradientPaint);
+										var oldColor = fill.Color;
+										var oldShader = fill.Shader;
+										fill.Color = SKColors.Black;
+										fill.Shader = gradientShader;
+										canvas.DrawPath(elementPath, fill);
+										fill.Color = oldColor;
+										fill.Shader = oldShader;
 									}
 									break;
 								case SKRadialGradient gradient:
@@ -331,9 +336,14 @@ namespace SkiaSharp.Extended.Svg
 									var radius = gradient.GetRadius(elementSize.Width, elementSize.Height);
 
 									using (var gradientShader = SKShader.CreateRadialGradient(centerPoint, radius, gradient.Colors, gradient.Positions, gradient.TileMode))
-									using (var gradientPaint = new SKPaint() { Shader = gradientShader, IsAntialias = true })
 									{
-										canvas.DrawPath(elementPath, gradientPaint);
+										var oldColor = fill.Color;
+										var oldShader = fill.Shader;
+										fill.Color = SKColors.Black;
+										fill.Shader = gradientShader;
+										canvas.DrawPath(elementPath, fill);
+										fill.Color = oldColor;
+										fill.Shader = oldShader;
 									}
 									break;
 								default:
@@ -876,7 +886,7 @@ namespace SkiaSharp.Extended.Svg
 					if (ColorHelper.TryParse(stroke, out SKColor color))
 					{
 						// preserve alpha
-						if (color.Alpha == 255)
+						if (color.Alpha == 255 && fillPaint.Color.Alpha > 0)
 							strokePaint.Color = color.WithAlpha(strokePaint.Color.Alpha);
 						else
 							strokePaint.Color = color;
@@ -1017,7 +1027,7 @@ namespace SkiaSharp.Extended.Svg
 					if (ColorHelper.TryParse(fill, out SKColor color))
 					{
 						// preserve alpha
-						if (color.Alpha == 255)
+						if (color.Alpha == 255 && fillPaint.Color.Alpha > 0)
 							fillPaint.Color = color.WithAlpha(fillPaint.Color.Alpha);
 						else
 							fillPaint.Color = color;
