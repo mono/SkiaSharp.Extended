@@ -76,7 +76,7 @@ def createBuilder(host, label) {
                             try {
                                 checkout scm
 
-                                pwsh("build.ps1")
+                                pwsh("./build.ps1")
 
                                 step([
                                     $class: "XUnitPublisher",
