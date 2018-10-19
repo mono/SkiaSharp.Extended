@@ -76,11 +76,7 @@ def createBuilder(host, label) {
                             try {
                                 checkout scm
 
-                                if (isUnix()) {
-                                    sh("pwsh build.ps1")
-                                } else {
-                                    powershell("build.ps1")
-                                }
+                                pwsh("build.ps1")
 
                                 step([
                                     $class: "XUnitPublisher",
@@ -200,11 +196,19 @@ def reportGitHubStatus(context, statusResult, statusResultMessage) {
     ])
 }
 
+def pwsh(script) {
+    if (isUnix()) {
+        return sh("pwsh " + script)
+    } else {
+        return bat("powershell " script)
+    }
+}
+
 def cmd(script) {
     if (isUnix()) {
         return sh(script)
     } else {
-        return powershell(script)
+        return bat(script)
     }
 }
 
@@ -212,7 +216,7 @@ def cmdResult(script) {
     if (isUnix()) {
         return sh(script: script, returnStdout: true)
     } else {
-        return powershell(script: script, returnStdout: true)
+        return bat(script: script, returnStdout: true)
     }
 }
 
