@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\source\SkiaSharp.Extended.csproj" />
+    <ProjectReference Include="..\..\source\SkiaSharp.Extended.Svg.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +32,12 @@
     <EmbeddedResource Update="**\*.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="images\logos.svg" />
+    <EmbeddedResource Include="images\opacity.svg" />
+    <EmbeddedResource Include="images\dashes.svg" />
   </ItemGroup>
 
 </Project>
