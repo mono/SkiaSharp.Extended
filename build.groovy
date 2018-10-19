@@ -200,7 +200,7 @@ def pwsh(script) {
     if (isUnix()) {
         return sh("pwsh " + script)
     } else {
-        return bat("powershell " script)
+        return bat("powershell " + script)
     }
 }
 
