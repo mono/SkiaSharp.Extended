@@ -40,7 +40,6 @@ node("ubuntu-1604-amd64") {
 
             windows: createBuilder("Windows", "components-windows"),
             macos:   createBuilder("macOS",   "components"),
-            linux:   createBuilder("Linux",   "ubuntu-1604-amd64"),
         ])
     }
 
