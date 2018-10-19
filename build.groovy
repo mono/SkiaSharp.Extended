@@ -71,7 +71,7 @@ def createBuilder(host, label) {
         stage(githubContext) {
             node(label) {
                 timestamps {
-                    withEnv(customEnv[host] + ["NODE_LABEL=${label}"]) {
+                    withEnv(customEnv + ["NODE_LABEL=${label}"]) {
                         ws("${getWSRoot()}/build-${host}") {
                             try {
                                 checkout scm
@@ -127,7 +127,7 @@ def createPackager() {
         stage(githubContext) {
             node(label) {
                 timestamps{
-                    withEnv(customEnv[host] + ["NODE_LABEL=${label}"]) {
+                    withEnv(customEnv + ["NODE_LABEL=${label}"]) {
                         ws("${getWSRoot()}/pack-${host}") {
                             try {
                                 checkout scm
@@ -156,7 +156,7 @@ def uploadBlobs() {
         allowAnonymousAccess: true,
         cleanUpContainer: false,
         cntPubAccess: true,
-        containerName: "skiasharp-public-artifacts",
+        containerName: "skiasharp-extended-public-artifacts",
         doNotFailIfArchivingReturnsNothing: false,
         doNotUploadIndividualFiles: false,
         doNotWaitForPreviousBuild: true,
@@ -215,5 +215,5 @@ def cmdResult(script) {
 def getWSRoot() {
     def cleanBranch = branchName.replace("/", "_").replace("\\", "_")
     def wsRoot = isUnix() ? "workspace" : "C:/bld"
-    return "${wsRoot}/SkiaSharp/${cleanBranch}"
+    return "${wsRoot}/SkiaExd/${cleanBranch}"
 }
