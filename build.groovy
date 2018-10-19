@@ -76,7 +76,11 @@ def createBuilder(host, label) {
                             try {
                                 checkout scm
 
-                                cmd("pwsh build.ps1")
+                                if (isUnix()) {
+                                    sh("pwsh build.ps1")
+                                } else {
+                                    powershell("build.ps1")
+                                }
 
                                 step([
                                     $class: "XUnitPublisher",
