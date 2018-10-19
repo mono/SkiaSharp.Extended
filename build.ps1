@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 if (!$env:BUILD_NUMBER) {
     $betaPrefix = "beta"
 } else {
-    $betaPrefix = "beta-$env:BUILD_NUMBER"
+    $betaPrefix = "beta$env:BUILD_NUMBER"
 }
 
 if ($IsMacOS) {
