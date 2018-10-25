@@ -237,7 +237,7 @@ namespace SkiaSharp.Extended.Svg
 		{
 			foreach (var e in elements)
 			{
-				ReadElement(e, canvas, stroke, fill);
+				ReadElement(e, canvas, stroke?.Clone(), fill?.Clone());
 			}
 		}
 
