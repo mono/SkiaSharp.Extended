@@ -939,7 +939,7 @@ namespace SkiaSharp.Extended.Svg
 			{
 				IsAntialias = true,
 				IsStroke = stroke,
-				Color = SKColors.Black
+				Color = stroke ? SKColors.Transparent : SKColors.Black
 			};
 		}
 
@@ -1156,16 +1156,17 @@ namespace SkiaSharp.Extended.Svg
 			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
 			var tileMode = ReadSpreadMethod(e);
 			var stops = ReadStops(e);
+			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
-			// TODO: check gradientTransform attribute
-			// TODO: use absolute
+			// TODO: use absolute	
 
 			return SKShader.CreateRadialGradient(
 				new SKPoint(centerX, centerY),
 				radius,
 				stops.Values.ToArray(),
 				stops.Keys.ToArray(),
-				tileMode);
+				tileMode,
+				matrix);
 		}
 
 		private SKShader ReadLinearGradient(XElement e)
@@ -1177,8 +1178,8 @@ namespace SkiaSharp.Extended.Svg
 			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
 			var tileMode = ReadSpreadMethod(e);
 			var stops = ReadStops(e);
+			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
-			// TODO: check gradientTransform attribute
 			// TODO: use absolute
 
 			return SKShader.CreateLinearGradient(
@@ -1186,7 +1187,8 @@ namespace SkiaSharp.Extended.Svg
 				new SKPoint(endX, endY),
 				stops.Values.ToArray(),
 				stops.Keys.ToArray(),
-				tileMode);
+				tileMode,
+				matrix);
 		}
 
 		private static SKShaderTileMode ReadSpreadMethod(XElement e)
