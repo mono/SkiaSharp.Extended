@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <Target Name="Test">
-    <xunit Assemblies="$(TargetPath)" NUnit="$(TargetDir)TestResult.xml" />
+    <xunit Assemblies="$(TargetPath)" Xml="$(TargetDir)TestResult.xml" />
   </Target>
 
 </Project>
