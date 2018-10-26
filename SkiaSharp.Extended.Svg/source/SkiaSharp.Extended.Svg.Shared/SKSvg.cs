@@ -801,11 +801,7 @@ namespace SkiaSharp.Extended.Svg
 
 					if (ColorHelper.TryParse(stroke, out SKColor color))
 					{
-						// preserve alpha
-						if (color.Alpha == 255)
-							strokePaint.Color = color.WithAlpha(strokePaint.Color.Alpha);
-						else
-							strokePaint.Color = color;
+						strokePaint.Color = color;
 					}
 				}
 
@@ -877,11 +873,7 @@ namespace SkiaSharp.Extended.Svg
 
 					if (ColorHelper.TryParse(fill, out SKColor color))
 					{
-						// preserve alpha
-						if (color.Alpha == 255)
-							fillPaint.Color = color.WithAlpha(fillPaint.Color.Alpha);
-						else
-							fillPaint.Color = color;
+						fillPaint.Color = color;
 					}
 					else
 					{
@@ -939,7 +931,7 @@ namespace SkiaSharp.Extended.Svg
 			{
 				IsAntialias = true,
 				IsStroke = stroke,
-				Color = SKColors.Black
+				Color = stroke ? SKColors.Transparent : SKColors.Black
 			};
 		}
 
@@ -1156,16 +1148,17 @@ namespace SkiaSharp.Extended.Svg
 			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
 			var tileMode = ReadSpreadMethod(e);
 			var stops = ReadStops(e);
+			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
-			// TODO: check gradientTransform attribute
-			// TODO: use absolute
+			// TODO: use absolute	
 
 			return SKShader.CreateRadialGradient(
 				new SKPoint(centerX, centerY),
 				radius,
 				stops.Values.ToArray(),
 				stops.Keys.ToArray(),
-				tileMode);
+				tileMode,
+				matrix);
 		}
 
 		private SKShader ReadLinearGradient(XElement e)
@@ -1177,8 +1170,8 @@ namespace SkiaSharp.Extended.Svg
 			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
 			var tileMode = ReadSpreadMethod(e);
 			var stops = ReadStops(e);
+			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
-			// TODO: check gradientTransform attribute
 			// TODO: use absolute
 
 			return SKShader.CreateLinearGradient(
@@ -1186,7 +1179,8 @@ namespace SkiaSharp.Extended.Svg
 				new SKPoint(endX, endY),
 				stops.Values.ToArray(),
 				stops.Keys.ToArray(),
-				tileMode);
+				tileMode,
+				matrix);
 		}
 
 		private static SKShaderTileMode ReadSpreadMethod(XElement e)
@@ -1250,9 +1244,7 @@ namespace SkiaSharp.Extended.Svg
 
 				if (style.TryGetValue("stop-color", out string stopColor))
 				{
-					// preserve alpha
-					if (ColorHelper.TryParse(stopColor, out color) && color.Alpha == 255)
-						alpha = color.Alpha;
+					ColorHelper.TryParse(stopColor, out color);
 				}
 
 				if (style.TryGetValue("stop-opacity", out string stopOpacity))
