@@ -1,9 +1,9 @@
 $ErrorActionPreference = "Stop"
 
 if (!$env:BUILD_NUMBER) {
-    $betaPrefix = "beta"
+    $betaPrefix = "preview"
 } else {
-    $betaPrefix = "beta$env:BUILD_NUMBER"
+    $betaPrefix = "preview$env:BUILD_NUMBER"
 }
 
 if ($IsMacOS) {
