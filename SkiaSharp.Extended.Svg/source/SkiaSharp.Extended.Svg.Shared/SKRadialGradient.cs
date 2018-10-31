@@ -4,19 +4,17 @@ namespace SkiaSharp.Extended.Svg
 {
 	internal struct SKRadialGradient
 	{
-		public SKRadialGradient(float centerX, float centerY, float radius, float[] positions, SKColor[] colors, SKShaderTileMode tileMode)
+		public SKRadialGradient(SKPoint center, float radius, float[] positions, SKColor[] colors, SKShaderTileMode tileMode, SKMatrix matrix)
 		{
-			CenterX = centerX;
-			CenterY = centerY;
+			Center = center;
 			Radius = radius;
 			Positions = positions;
 			Colors = colors;
 			TileMode = tileMode;
+			Matrix = matrix;
 		}
 
-		public float CenterX { get; set; }
-
-		public float CenterY { get; set; }
+		public SKPoint Center { get; set; }
 
 		public float Radius { get; set; }
 
@@ -24,15 +22,17 @@ namespace SkiaSharp.Extended.Svg
 
 		public SKColor[] Colors { get; set; }
 
+		public SKMatrix Matrix { get; set; }
+
 		public SKShaderTileMode TileMode { get; set; }
 
 		public SKPoint GetCenterPoint(float x, float y, float width, float height)
 		{
-			if (Math.Max(CenterX, CenterY) > 1f)
-				return new SKPoint(CenterX, CenterY);
+			if (Math.Max(Center.X, Center.Y) > 1f)
+				return new SKPoint(Center.X, Center.Y);
 
-			var x0 = x + (CenterX * width);
-			var y0 = y + (CenterY * height);
+			var x0 = x + (Center.X * width);
+			var y0 = y + (Center.Y * height);
 
 			return new SKPoint((float)x0, y0);
 		}

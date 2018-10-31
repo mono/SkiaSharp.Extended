@@ -37,7 +37,7 @@ namespace SkiaSharp.Extended.Svg
 		};
 
 #if PORTABLE
-		// basically use reflection to try and find a method that supports a 
+		// basically use reflection to try and find a method that supports a
 		// file path AND a XmlParserContext...
 		private static readonly MethodInfo createReaderMethod;
 
@@ -320,7 +320,7 @@ namespace SkiaSharp.Extended.Svg
 									var startPoint = gradient.GetStartPoint(x, y, elementSize.Width, elementSize.Height);
 									var endPoint = gradient.GetEndPoint(x, y, elementSize.Width, elementSize.Height);
 
-									using (var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, gradient.Colors, gradient.Positions, gradient.TileMode))
+									using (var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, gradient.Colors, gradient.Positions, gradient.TileMode, gradient.Matrix))
 									{
 										var oldColor = fill.Color;
 										var oldShader = fill.Shader;
@@ -335,7 +335,7 @@ namespace SkiaSharp.Extended.Svg
 									var centerPoint = gradient.GetCenterPoint(x, y, elementSize.Width, elementSize.Height);
 									var radius = gradient.GetRadius(elementSize.Width, elementSize.Height);
 
-									using (var gradientShader = SKShader.CreateRadialGradient(centerPoint, radius, gradient.Colors, gradient.Positions, gradient.TileMode))
+									using (var gradientShader = SKShader.CreateRadialGradient(centerPoint, radius, gradient.Colors, gradient.Positions, gradient.TileMode, gradient.Matrix))
 									{
 										var oldColor = fill.Color;
 										var oldShader = fill.Shader;
@@ -1302,35 +1302,25 @@ namespace SkiaSharp.Extended.Svg
 
 		private SKRadialGradient ReadRadialGradient(XElement e)
 		{
-			var centerX = ReadNumber(e.Attribute("cx"), 0.5f);
-			var centerY = ReadNumber(e.Attribute("cy"), 0.5f);
+			var center = new SKPoint(ReadNumber(e.Attribute("cx"), 0.5f), ReadNumber(e.Attribute("cy"), 0.5f));
 			var radius = ReadNumber(e.Attribute("r"), 0.5f);
 
 			//var focusX = ReadOptionalNumber(e.Attribute("fx")) ?? centerX;
-			//var focusY = ReadOptionalNumber(e.Attribute("fy")) ?? centerY;         
+			//var focusY = ReadOptionalNumber(e.Attribute("fy")) ?? centerY;
 			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
 
 			var tileMode = ReadSpreadMethod(e);
 			var stops = ReadStops(e);
 			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
-			// TODO: use absolute	
-
-			return SKShader.CreateRadialGradient(
-				new SKPoint(centerX, centerY),
-				radius,
-				stops.Values.ToArray(),
-				stops.Keys.ToArray(),
-				tileMode,
-				matrix);
+			// TODO: use absolute
+			return new SKRadialGradient(center, radius, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode, matrix);
 		}
 
 		private SKLinearGradient ReadLinearGradient(XElement e)
 		{
-			var startX = ReadNumber(e.Attribute("x1"));
-			var startY = ReadNumber(e.Attribute("y1"));
-			float endX = ReadNumber(e.Attribute("x2"), 1f);
-			float endY = ReadNumber(e.Attribute("y2"));
+			var start = new SKPoint(ReadNumber(e.Attribute("x1")), ReadNumber(e.Attribute("y1")));
+			var end = new SKPoint(ReadNumber(e.Attribute("x2"), 1f), ReadNumber(e.Attribute("y2")));
 
 			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
 			var tileMode = ReadSpreadMethod(e);
@@ -1338,14 +1328,7 @@ namespace SkiaSharp.Extended.Svg
 			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
 			// TODO: use absolute
-
-			return SKShader.CreateLinearGradient(
-				new SKPoint(startX, startY),
-				new SKPoint(endX, endY),
-				stops.Values.ToArray(),
-				stops.Keys.ToArray(),
-				tileMode,
-				matrix);
+			return new SKLinearGradient(start, end, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode, matrix);
 		}
 
 		private static SKShaderTileMode ReadSpreadMethod(XElement e)
