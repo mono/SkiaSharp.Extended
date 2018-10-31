@@ -239,7 +239,7 @@ namespace SkiaSharp.Extended.Svg
 		{
 			foreach (var e in elements)
 			{
-				ReadElement(e, canvas, stroke, fill);
+				ReadElement(e, canvas, stroke?.Clone(), fill?.Clone());
 			}
 		}
 
@@ -1095,7 +1095,7 @@ namespace SkiaSharp.Extended.Svg
 			{
 				IsAntialias = true,
 				IsStroke = stroke,
-				Color = SKColors.Black
+				Color = stroke ? SKColors.Transparent : SKColors.Black
 			};
 
 			if (stroke)
@@ -1312,11 +1312,17 @@ namespace SkiaSharp.Extended.Svg
 
 			var tileMode = ReadSpreadMethod(e);
 			var stops = ReadStops(e);
+			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
-			// TODO: check gradientTransform attribute
-			// TODO: use absolute
+			// TODO: use absolute	
 
-			return new SKRadialGradient(centerX, centerY, radius, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode);
+			return SKShader.CreateRadialGradient(
+				new SKPoint(centerX, centerY),
+				radius,
+				stops.Values.ToArray(),
+				stops.Keys.ToArray(),
+				tileMode,
+				matrix);
 		}
 
 		private SKLinearGradient ReadLinearGradient(XElement e)
@@ -1329,11 +1335,17 @@ namespace SkiaSharp.Extended.Svg
 			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
 			var tileMode = ReadSpreadMethod(e);
 			var stops = ReadStops(e);
+			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
-			// TODO: check gradientTransform attribute
 			// TODO: use absolute
 
-			return new SKLinearGradient(startX, startY, endX, endY, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode);
+			return SKShader.CreateLinearGradient(
+				new SKPoint(startX, startY),
+				new SKPoint(endX, endY),
+				stops.Values.ToArray(),
+				stops.Keys.ToArray(),
+				tileMode,
+				matrix);
 		}
 
 		private static SKShaderTileMode ReadSpreadMethod(XElement e)
@@ -1397,9 +1409,7 @@ namespace SkiaSharp.Extended.Svg
 
 				if (style.TryGetValue("stop-color", out string stopColor))
 				{
-					// preserve alpha
-					if (ColorHelper.TryParse(stopColor, out color) && color.Alpha == 255)
-						alpha = color.Alpha;
+					ColorHelper.TryParse(stopColor, out color);
 				}
 
 				if (style.TryGetValue("stop-opacity", out string stopOpacity))

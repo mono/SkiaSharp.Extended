@@ -1,9 +1,9 @@
 $ErrorActionPreference = "Stop"
 
 if (!$env:BUILD_NUMBER) {
-    $betaPrefix = "beta"
+    $betaPrefix = "preview"
 } else {
-    $betaPrefix = "beta-$env:BUILD_NUMBER"
+    $betaPrefix = "preview$env:BUILD_NUMBER"
 }
 
 if ($IsMacOS) {
@@ -22,10 +22,10 @@ function Build
         $extraProperties = "/p:Platform=iPhoneSimulator"
     }
 
-    & $msbuild $solution /m /t:restore /p:Configuration=Release $extraProperties
+    & $msbuild $solution /v:m /t:restore /p:Configuration=Release $extraProperties
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
-    & $msbuild $solution /m /t:build /p:Configuration=Release $extraProperties
+    & $msbuild $solution /v:m /t:build /p:Configuration=Release $extraProperties
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 }
 
@@ -33,10 +33,10 @@ function Pack
 {
     Param ([string] $project, [string] $output)
 
-    & $msbuild $project /m /t:pack /p:Configuration=Release
+    & $msbuild $project /v:m /t:pack /p:Configuration=Release
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
-    & $msbuild $project /m /t:pack /p:Configuration=Release /p:VersionSuffix="$betaPrefix"
+    & $msbuild $project /v:m /t:pack /p:Configuration=Release /p:VersionSuffix="$betaPrefix"
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
     $dir = [System.IO.Path]::GetDirectoryName($project)
@@ -48,7 +48,7 @@ function Test
 {
     Param ([string] $project, [string] $output)
 
-    & $msbuild $project /m /t:test /p:Configuration=Release
+    & $msbuild $project /v:m /t:test /p:Configuration=Release
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
     $dir = [System.IO.Path]::GetDirectoryName($project)
