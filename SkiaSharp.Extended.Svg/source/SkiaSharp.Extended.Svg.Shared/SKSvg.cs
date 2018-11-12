@@ -22,8 +22,7 @@ namespace SkiaSharp.Extended.Svg
 		private static readonly char[] WS = new char[] { ' ', '\t', '\n', '\r' };
 		private static readonly Regex unitRe = new Regex("px|pt|em|ex|pc|cm|mm|in");
 		private static readonly Regex percRe = new Regex("%");
-		private static readonly Regex fillUrlRe = new Regex(@"url\s*\(\s*#([^\)]+)\)");
-		private static readonly Regex clipPathUrlRe = new Regex(@"url\s*\(\s*#([^\)]+)\)");
+		private static readonly Regex urlRe = new Regex(@"url\s*\(\s*#([^\)]+)\)");
 		private static readonly Regex keyValueRe = new Regex(@"\s*([\w-]+)\s*:\s*(.*)");
 		private static readonly Regex WSRe = new Regex(@"\s{2,}");
 
@@ -156,9 +155,7 @@ namespace SkiaSharp.Extended.Svg
 			// get the SVG dimensions
 			var viewBoxA = svg.Attribute("viewBox") ?? svg.Attribute("viewPort");
 			if (viewBoxA != null)
-			{
 				ViewBox = ReadRectangle(viewBoxA.Value);
-			}
 
 			if (CanvasSize.IsEmpty)
 			{
@@ -170,21 +167,14 @@ namespace SkiaSharp.Extended.Svg
 				var size = new SKSize(width, height);
 
 				if (widthA == null)
-				{
 					size.Width = ViewBox.Width;
-				}
 				else if (widthA.Value.Contains("%"))
-				{
 					size.Width *= ViewBox.Width;
-				}
+
 				if (heightA == null)
-				{
 					size.Height = ViewBox.Height;
-				}
 				else if (heightA != null && heightA.Value.Contains("%"))
-				{
 					size.Height *= ViewBox.Height;
-				}
 
 				// set the property
 				CanvasSize = size;
@@ -256,9 +246,7 @@ namespace SkiaSharp.Extended.Svg
 			// clip-path
 			var clipPath = ReadClipPath(e.Attribute("clip-path")?.Value ?? string.Empty);
 			if (clipPath != null)
-			{
 				canvas.ClipPath(clipPath);
-			}
 
 			// SVG element
 			var elementName = e.Name.LocalName;
@@ -792,10 +780,10 @@ namespace SkiaSharp.Extended.Svg
 
 			while (element.Parent != null)
 			{
-				if (!(width > 0f))
+				if (width <= 0f)
 					width = ReadNumber(element.Attribute("width"));
 
-				if (!(height > 0f))
+				if (height <= 0f)
 					height = ReadNumber(element.Attribute("height"));
 
 				if (width > 0f && height > 0f)
@@ -957,7 +945,7 @@ namespace SkiaSharp.Extended.Svg
 					else
 					{
 						var read = false;
-						var urlM = fillUrlRe.Match(fill);
+						var urlM = urlRe.Match(fill);
 						if (urlM.Success)
 						{
 							var id = urlM.Groups[1].Value.Trim();
@@ -1142,7 +1130,7 @@ namespace SkiaSharp.Extended.Svg
 
 			SKPath result = null;
 			var read = false;
-			var urlM = clipPathUrlRe.Match(raw);
+			var urlM = urlRe.Match(raw);
 			if (urlM.Success)
 			{
 				var id = urlM.Groups[1].Value.Trim();
