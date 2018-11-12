@@ -357,7 +357,6 @@ namespace SkiaSharp.Extended.Svg.Tests
 		{
 			var path = Path.Combine(PathToImages, "gradient.svg");
 			var bmp = LoadSvgBitmap(path, SKColors.Green);
-			SaveBitmap(bmp);
 
 			// Radial Gradient
 			Assert.Equal(new SKColor(0xfff18886), bmp.GetPixel(33, 33));
@@ -368,6 +367,17 @@ namespace SkiaSharp.Extended.Svg.Tests
 			Assert.Equal(new SKColor(0xfff30600), bmp.GetPixel(33, 180));
 			Assert.Equal(new SKColor(0xffff0000), bmp.GetPixel(20, 180));
 			Assert.Equal(new SKColor(0xffc21f00), bmp.GetPixel(46, 180));
+		}
+
+		[Fact]
+		public void SupportsLineCaps()
+		{
+			var path = Path.Combine(PathToImages, "linecaps.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.White);
+			SaveBitmap(bmp);
+
+			Assert.Equal(new SKColor(0xff000000), bmp.GetPixel(80, 108));
+			Assert.Equal(new SKColor(0xfff4ecce), bmp.GetPixel(65, 100));
 		}
 
 		[Fact]
