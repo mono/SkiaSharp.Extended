@@ -2,7 +2,7 @@
 
 namespace SkiaSharp.Extended.Svg
 {
-	internal struct SKRadialGradient
+	internal struct SKRadialGradient : ISKSvgFill
 	{
 		public SKRadialGradient(SKPoint center, float radius, float[] positions, SKColor[] colors, SKShaderTileMode tileMode, SKMatrix matrix)
 		{
@@ -43,6 +43,17 @@ namespace SkiaSharp.Extended.Svg
 				return Radius;
 
 			return Math.Min(width, height) * Radius;
+		}
+
+		public void ApplyFill(SKPaint fill, SKRect bounds)
+		{
+			var centerPoint = GetCenterPoint(bounds.Left, bounds.Top, bounds.Width, bounds.Height);
+			var radius = GetRadius(bounds.Width, bounds.Height);
+
+			var gradientShader = SKShader.CreateRadialGradient(centerPoint, radius, Colors, Positions, TileMode, Matrix);
+
+			fill.Color = SKColors.Black;
+			fill.Shader = gradientShader;
 		}
 	}
 }

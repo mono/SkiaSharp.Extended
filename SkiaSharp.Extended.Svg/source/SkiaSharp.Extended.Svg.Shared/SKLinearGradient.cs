@@ -2,7 +2,7 @@
 
 namespace SkiaSharp.Extended.Svg
 {
-	internal struct SKLinearGradient
+	internal struct SKLinearGradient : ISKSvgFill
 	{
 		public SKLinearGradient(SKPoint start, SKPoint end, float[] positions, SKColor[] colors, SKShaderTileMode tileMode, SKMatrix matrix)
 		{
@@ -46,6 +46,17 @@ namespace SkiaSharp.Extended.Svg
 			var y0 = y + End.Y * height;
 
 			return new SKPoint(x0, y0);
+		}
+
+		public void ApplyFill(SKPaint fill, SKRect bounds)
+		{
+			var startPoint = GetStartPoint(bounds.Left, bounds.Top, bounds.Width, bounds.Height);
+			var endPoint = GetEndPoint(bounds.Left, bounds.Top, bounds.Width, bounds.Height);
+
+			var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, Colors, Positions, TileMode, Matrix);
+
+			fill.Color = SKColors.Black;
+			fill.Shader = gradientShader;
 		}
 	}
 }
