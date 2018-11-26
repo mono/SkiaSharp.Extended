@@ -9,9 +9,9 @@ import groovy.transform.Field
 @Field def customEnv = []
 
 // compression is incompatible with JEP-210 right now
-//properties([
+properties([
 //    compressBuildLog()
-//])
+])
 
 // ============================================================================
 // Stages
