@@ -8,9 +8,10 @@ import groovy.transform.Field
 @Field def stashes = []
 @Field def customEnv = []
 
-properties([
-    compressBuildLog()
-])
+// compression is incompatible with JEP-210 right now
+//properties([
+//    compressBuildLog()
+//])
 
 // ============================================================================
 // Stages
