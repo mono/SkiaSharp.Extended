@@ -58,10 +58,15 @@ function Test
 
 Write-Output "MSBuild path: '$msbuild'"
 
-Write-Output "Building SkiaSharp.Extended..."
-Build "./SkiaSharp.Extended/SkiaSharp.Extended.sln"                 "SkiaSharp.Extended"
-Pack  "./SkiaSharp.Extended/source/SkiaSharp.Extended.csproj"       "SkiaSharp.Extended"
-Test  "./SkiaSharp.Extended/tests/SkiaSharp.Extended.Tests.csproj"  "SkiaSharp.Extended"
+
+Build  "./SkiaSharp.Extended/source/SkiaSharp.Extended.csproj"  "SkiaSharp.Extended"
+Pack  "./SkiaSharp.Extended/source/SkiaSharp.Extended.csproj"   "SkiaSharp.Extended"
+
+
+# Write-Output "Building SkiaSharp.Extended..."
+# Build "./SkiaSharp.Extended/SkiaSharp.Extended.sln"                 "SkiaSharp.Extended"
+# Pack  "./SkiaSharp.Extended/source/SkiaSharp.Extended.csproj"       "SkiaSharp.Extended"
+# Test  "./SkiaSharp.Extended/tests/SkiaSharp.Extended.Tests.csproj"  "SkiaSharp.Extended"
 
 # Write-Output "Building SkiaSharp.Extended.Iconify..."
 # Build "./SkiaSharp.Extended.Iconify/SkiaSharp.Extended.Iconify.sln"                                                                               "SkiaSharp.Extended.Iconify"
