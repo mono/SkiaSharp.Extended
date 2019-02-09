@@ -59,25 +59,8 @@ jobs:
           testResultsFormat: xUnit
           testResultsFiles: 'output/**/TestResult.xml'
 
-  - job: signing
-    displayName: Signing NuGets
-    dependsOn: build_windows
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
-    pool:
-      name: VSEng-XamarinCustom
-    steps:
-      - task: JenkinsQueueJob@2
-        displayName: 'Sign NuGets'
-        inputs:
-          serverEndpoint: 'Xamarin Code Signing Jenkins'
-          jobName: 'sign-from-vsts'
-          isParameterizedJob: true
-          jobParameters: |
-            REPO=mono/SkiaSharp
-            COMMIT=$(Build.SourceVersion)
-            JOB_ID=10789
-            BUILD_ID=$(Build.BuildId)
-      # - task: TODO (download artifacts from jenkins)
-      # - task: PublishBuildArtifacts@1
-      #   inputs:
-      #     ArtifactName: nugets-signed
+  - template: azure-nuget-signing.yml
+    # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
+    parameters:
+      dependsOn: build_windows
+      sourceRepo: mono/SkiaSharp.Extended
