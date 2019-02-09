@@ -27,7 +27,7 @@ jobs:
       - task: PublishPipelineArtifact@0
         inputs:
           artifactName: nugets-unsigned
-          targetPath: 'output/**/*.nupkg'
+          targetPath: 'output/nugets'
 
   - job: build_macos
     displayName: Build (macOS)

@@ -15,6 +15,7 @@ jobs:
   - job: ${{ parameters.jobName }}
     displayName: Signing NuGets
     dependsOn: ${{ parameters.dependsOn }}
+    checkout: none
     pool:
       name: ${{ parameters.pool }}
     steps:
