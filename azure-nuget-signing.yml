@@ -15,10 +15,10 @@ jobs:
   - job: ${{ parameters.jobName }}
     displayName: Signing NuGets
     dependsOn: ${{ parameters.dependsOn }}
-    checkout: none
     pool:
       name: ${{ parameters.pool }}
     steps:
+      - checkout: none
       - task: JenkinsQueueJob@2
         displayName: 'Request Artifact Signing'
         inputs:
