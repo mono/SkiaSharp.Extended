@@ -19,7 +19,7 @@ jobs:
       - task: PublishTestResults@2
         inputs:
           testResultsFormat: xUnit
-          testResultsFiles: 'output/tests/**/*.xml'
+          testResultsFiles: 'output/**/TestResult.xml'
       - task: PublishPipelineArtifact@0
         inputs:
           artifactName: build_windows
@@ -27,7 +27,7 @@ jobs:
       - task: PublishPipelineArtifact@0
         inputs:
           artifactName: nugets-unsigned
-          targetPath: 'output/nugets'
+          targetPath: 'output/**/*.nupkg'
 
   - job: build_macos
     displayName: Build (macOS)
@@ -57,7 +57,7 @@ jobs:
       - task: PublishTestResults@2
         inputs:
           testResultsFormat: xUnit
-          testResultsFiles: 'output/tests/**/*.xml'
+          testResultsFiles: 'output/**/TestResult.xml'
 
   - job: signing
     displayName: Signing NuGets
