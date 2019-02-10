@@ -42,6 +42,8 @@ function Pack
     $dir = [System.IO.Path]::GetDirectoryName($project)
     New-Item -Path "./output/$output" -ItemType Directory -Force | Out-Null
     Copy-Item -Path "$dir/bin/Release" -Destination "./output/$output" -Recurse -Force
+    New-Item -Path "./output/nugets" -ItemType Directory -Force | Out-Null
+    Copy-Item -Path "$dir/bin/Release/*.nupkg" -Destination "./output/nugets/" -Recurse -Force
 }
 
 function Test
