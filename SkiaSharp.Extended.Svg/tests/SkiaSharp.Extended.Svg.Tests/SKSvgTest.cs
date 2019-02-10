@@ -332,7 +332,7 @@ namespace SkiaSharp.Extended.Svg.Tests
 
 			Assert.Equal(new SKColor(0xff058205), bmp.GetPixel(50, 50));
 			Assert.Equal(new SKColor(0xffffffff), bmp.GetPixel(0, 0));
-			Assert.Equal(new SKColor(0xff9fcf9f), bmp.GetPixel(65, 65));
+			Assert.Equal(new SKColor(0xffa0d0a0), bmp.GetPixel(65, 65));
 		}
 
 		[Fact]
@@ -353,20 +353,31 @@ namespace SkiaSharp.Extended.Svg.Tests
 		}
 
 		[Fact]
+		public void RadialGradientWithPercents()
+		{
+			var path = Path.Combine(PathToImages, "gradient-radial.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.White);
+
+			Assert.Equal(new SKColor(0xffffffff), bmp.GetPixel(60, 5));
+
+			Assert.Equal(new SKColor(0xff0000ff), bmp.GetPixel(20, 20));
+			Assert.Equal(new SKColor(0xfffb0004), bmp.GetPixel(60, 60));
+
+			Assert.Equal(new SKColor(0xff0000ff), bmp.GetPixel(60, 170));
+			Assert.Equal(new SKColor(0xfff80007), bmp.GetPixel(35, 145));
+		}
+
+		[Fact]
 		public void SvgReadGradientTransform()
 		{
-			var path = Path.Combine(PathToImages, "gradient.svg");
-			var bmp = LoadSvgBitmap(path, SKColors.Green);
+			var path = Path.Combine(PathToImages, "gradient-transform.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.White);
 
-			// Radial Gradient
-			Assert.Equal(new SKColor(0xfff18684), bmp.GetPixel(33, 33));
-			Assert.Equal(new SKColor(0xffeb4d52), bmp.GetPixel(20, 33));
-			Assert.Equal(new SKColor(0xffeb4b50), bmp.GetPixel(46, 33));
+			Assert.Equal(new SKColor(0xfff3000c), bmp.GetPixel(10, 10));
+			Assert.Equal(new SKColor(0xff0000ff), bmp.GetPixel(109, 109));
 
-			// Linear Gradient
-			Assert.Equal(new SKColor(0xfff30600), bmp.GetPixel(33, 180));
-			Assert.Equal(new SKColor(0xffff0000), bmp.GetPixel(20, 180));
-			Assert.Equal(new SKColor(0xffc21f00), bmp.GetPixel(46, 180));
+			Assert.Equal(new SKColor(0xffff0000), bmp.GetPixel(10, 170));
+			Assert.Equal(new SKColor(0xff8d0072), bmp.GetPixel(109, 170));
 		}
 
 		[Fact]
@@ -374,7 +385,6 @@ namespace SkiaSharp.Extended.Svg.Tests
 		{
 			var path = Path.Combine(PathToImages, "linecaps.svg");
 			var bmp = LoadSvgBitmap(path, SKColors.White);
-			SaveBitmap(bmp);
 
 			Assert.Equal(new SKColor(0xff000000), bmp.GetPixel(80, 108));
 			Assert.Equal(new SKColor(0xfff4ecce), bmp.GetPixel(65, 100));
