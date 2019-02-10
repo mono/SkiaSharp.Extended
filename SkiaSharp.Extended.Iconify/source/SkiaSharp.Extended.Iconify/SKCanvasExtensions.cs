@@ -27,8 +27,11 @@ namespace SkiaSharp.Extended.Iconify
 					if (run.TextEncoding != null)
 						newPaint.TextEncoding = run.TextEncoding.Value;
 
-					canvas.DrawText(run.Text, x + run.Offset.X, y + run.Offset.Y, newPaint);
-					x += newPaint.MeasureText(run.Text);
+					if (run.Text?.Length > 0)
+					{
+						canvas.DrawText(run.Text, x + run.Offset.X, y + run.Offset.Y, newPaint);
+						x += newPaint.MeasureText(run.Text);
+					}
 				}
 			}
 		}
