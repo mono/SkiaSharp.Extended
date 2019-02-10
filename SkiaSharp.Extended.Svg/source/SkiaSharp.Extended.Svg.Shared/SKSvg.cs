@@ -126,7 +126,9 @@ namespace SkiaSharp.Extended.Svg
 			// get the SVG dimensions
 			var viewBoxA = svg.Attribute("viewBox") ?? svg.Attribute("viewPort");
 			if (viewBoxA != null)
+			{
 				ViewBox = ReadRectangle(viewBoxA.Value);
+			}
 
 			if (CanvasSize.IsEmpty)
 			{
@@ -138,14 +140,21 @@ namespace SkiaSharp.Extended.Svg
 				var size = new SKSize(width, height);
 
 				if (widthA == null)
+				{
 					size.Width = ViewBox.Width;
+				}
 				else if (widthA.Value.Contains("%"))
+				{
 					size.Width *= ViewBox.Width;
-
+				}
 				if (heightA == null)
+				{
 					size.Height = ViewBox.Height;
+				}
 				else if (heightA != null && heightA.Value.Contains("%"))
+				{
 					size.Height *= ViewBox.Height;
+				}
 
 				// set the property
 				CanvasSize = size;
@@ -217,7 +226,9 @@ namespace SkiaSharp.Extended.Svg
 			// clip-path
 			var clipPath = ReadClipPath(e.Attribute("clip-path")?.Value ?? string.Empty);
 			if (clipPath != null)
+			{
 				canvas.ClipPath(clipPath);
+			}
 
 			// SVG element
 			var elementName = e.Name.LocalName;
@@ -385,9 +396,13 @@ namespace SkiaSharp.Extended.Svg
 			if (uri != null)
 			{
 				if (uri.StartsWith("data:"))
+				{
 					bytes = ReadUriBytes(uri);
+				}
 				else
+				{
 					LogOrThrow($"Remote images are not supported");
+				}
 			}
 
 			return new SKSvgImage(rect, uri, bytes);
@@ -1022,7 +1037,9 @@ namespace SkiaSharp.Extended.Svg
 			var t = SKMatrix.MakeIdentity();
 
 			if (string.IsNullOrWhiteSpace(raw))
+			{
 				return t;
+			}
 
 			var calls = raw.Trim().Split(new[] { ')' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (var c in calls)
@@ -1097,7 +1114,9 @@ namespace SkiaSharp.Extended.Svg
 		private SKPath ReadClipPath(string raw)
 		{
 			if (string.IsNullOrWhiteSpace(raw))
+			{
 				return null;
+			}
 
 			SKPath result = null;
 			var read = false;
@@ -1110,7 +1129,9 @@ namespace SkiaSharp.Extended.Svg
 				{
 					result = ReadClipPathDefinition(defE);
 					if (result != null)
+					{
 						read = true;
+					}
 				}
 				else
 				{
@@ -1129,7 +1150,9 @@ namespace SkiaSharp.Extended.Svg
 		private SKPath ReadClipPathDefinition(XElement e)
 		{
 			if (e.Name.LocalName != "clipPath" || !e.HasElements)
+			{
 				return null;
+			}
 
 			var result = new SKPath();
 
@@ -1296,10 +1319,14 @@ namespace SkiaSharp.Extended.Svg
 				byte alpha = 255;
 
 				if (style.TryGetValue("stop-color", out string stopColor))
+				{
 					ColorHelper.TryParse(stopColor, out color);
+				}
 
 				if (style.TryGetValue("stop-opacity", out string stopOpacity))
+				{
 					alpha = (byte)(ReadNumber(stopOpacity) * 255);
+				}
 
 				color = color.WithAlpha(alpha);
 				stops[offset] = color;
@@ -1349,15 +1376,25 @@ namespace SkiaSharp.Extended.Svg
 			if (unitRe.IsMatch(s))
 			{
 				if (s.EndsWith("in", StringComparison.Ordinal))
+				{
 					m = PixelsPerInch;
+				}
 				else if (s.EndsWith("cm", StringComparison.Ordinal))
+				{
 					m = PixelsPerInch / 2.54f;
+				}
 				else if (s.EndsWith("mm", StringComparison.Ordinal))
+				{
 					m = PixelsPerInch / 25.4f;
+				}
 				else if (s.EndsWith("pt", StringComparison.Ordinal))
+				{
 					m = PixelsPerInch / 72.0f;
+				}
 				else if (s.EndsWith("pc", StringComparison.Ordinal))
+				{
 					m = PixelsPerInch / 6.0f;
+				}
 				s = s.Substring(0, s.Length - 2);
 			}
 			else if (percRe.IsMatch(s))
@@ -1367,7 +1404,9 @@ namespace SkiaSharp.Extended.Svg
 			}
 
 			if (!float.TryParse(s, NumberStyles.Float, icult, out float v))
+			{
 				v = 0;
+			}
 
 			return m * v;
 		}
