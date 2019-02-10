@@ -34,20 +34,6 @@ namespace SkiaSharp.Extended.Svg
 			IgnoreComments = true,
 		};
 
-#if PORTABLE
-		// basically use reflection to try and find a method that supports a 
-		// file path AND a XmlParserContext...
-		private static readonly MethodInfo createReaderMethod;
-
-		static SKSvg()
-		{
-			// try and find `Create(string, XmlReaderSettings, XmlParserContext)`
-			createReaderMethod = typeof(XmlReader).GetRuntimeMethod(
-				nameof(XmlReader.Create),
-				new[] { typeof(string), typeof(XmlReaderSettings), typeof(XmlParserContext) });
-		}
-#endif
-
 		public SKSvg()
 			: this(DefaultPPI, SKSize.Empty)
 		{
@@ -88,25 +74,10 @@ namespace SkiaSharp.Extended.Svg
 
 		public SKPicture Load(string filename)
 		{
-#if PORTABLE
-			// PCL does not have the ability to read a file and use a context
-			if (createReaderMethod == null)
-			{
-				return Load(XDocument.Load(filename));
-			}
-
-			// we know that there we can access the method via reflection
-			var args = new object[] { filename, xmlReaderSettings, CreateSvgXmlContext() };
-			using (var reader = (XmlReader)createReaderMethod.Invoke(null, args))
-			{
-				return Load(reader);
-			}
-#else
 			using (var stream = File.OpenRead(filename))
 			{
 				return Load(stream);
 			}
-#endif
 		}
 
 		public SKPicture Load(Stream stream)
@@ -1150,7 +1121,7 @@ namespace SkiaSharp.Extended.Svg
 			var stops = ReadStops(e);
 			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
-			// TODO: use absolute	
+			// TODO: use absolute
 
 			return SKShader.CreateRadialGradient(
 				new SKPoint(centerX, centerY),
