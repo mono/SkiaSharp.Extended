@@ -80,10 +80,11 @@ namespace SkiaSharp.Extended.Iconify
 					}
 				}
 
-				runs.Add(new SKTextRun(pre));
-				SKTypeface typeface;
-				string character;
-				if (lookup.TryLookup(expression, out typeface, out character))
+				if (!string.IsNullOrEmpty(pre))
+				{
+					runs.Add(new SKTextRun(pre));
+				}
+				if (lookup.TryLookup(expression, out var typeface, out var character))
 				{
 					runs.Add(new SKTextRun(character) { Typeface = typeface, Color = color });
 				}

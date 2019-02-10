@@ -145,9 +145,10 @@ namespace {{inject-namespace}}
 					continue;
 				}
 
+				var literal = Encoding.UTF8.GetBytes(pair[1]).Length > 1 ? "u" : "x";
 				var chars = CharacterTemplate
 					.Replace("{{inject-selector}}", pair[0])
-					.Replace("{{inject-value}}", "\\u" + pair[1]);
+					.Replace("{{inject-value}}", "\\" + literal + pair[1]);
 				characters.AppendLine(chars);
 			}
 		}
@@ -175,7 +176,8 @@ namespace {{inject-namespace}}
 				if (primTerm != null)
 				{
 					content = primTerm.Value?.ToString();
-					content = "\\u" + Char.ConvertToUtf32(content, 0).ToString("x");
+					var literal = Encoding.UTF8.GetBytes(content).Length > 1 ? "u" : "x";
+					content = "\\" + literal + Char.ConvertToUtf32(content, 0).ToString("x");
 				}
 				if (string.IsNullOrEmpty(content))
 				{

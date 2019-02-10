@@ -1,5 +1,7 @@
 $ErrorActionPreference = "Stop"
 
+$configuration = "Release"
+
 if (!$env:BUILD_NUMBER) {
     $betaPrefix = "preview"
 } else {
@@ -22,10 +24,10 @@ function Build
         $extraProperties = "/p:Platform=iPhoneSimulator"
     }
 
-    & $msbuild $solution /v:m /t:restore /p:Configuration=Release $extraProperties
+    & $msbuild $solution /v:m /t:restore /p:Configuration=$configuration $extraProperties
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
-    & $msbuild $solution /v:m /t:build /p:Configuration=Release $extraProperties
+    & $msbuild $solution /v:m /t:build /p:Configuration=$configuration $extraProperties
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 }
 
@@ -33,27 +35,29 @@ function Pack
 {
     Param ([string] $project, [string] $output)
 
-    & $msbuild $project /v:m /t:pack /p:Configuration=Release
+    & $msbuild $project /v:m /t:pack /p:Configuration=$configuration
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
-    & $msbuild $project /v:m /t:pack /p:Configuration=Release /p:VersionSuffix="$betaPrefix"
+    & $msbuild $project /v:m /t:pack /p:Configuration=$configuration /p:VersionSuffix="$betaPrefix"
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
     $dir = [System.IO.Path]::GetDirectoryName($project)
     New-Item -Path "./output/$output" -ItemType Directory -Force | Out-Null
-    Copy-Item -Path "$dir/bin/Release" -Destination "./output/$output" -Recurse -Force
+    Copy-Item -Path "$dir/bin/$configuration" -Destination "./output/$output" -Recurse -Force
+    New-Item -Path "./output/nugets" -ItemType Directory -Force | Out-Null
+    Copy-Item -Path "$dir/bin/$configuration/*.nupkg" -Destination "./output/nugets/" -Recurse -Force
 }
 
 function Test
 {
     Param ([string] $project, [string] $output)
 
-    & $msbuild $project /v:m /t:test /p:Configuration=Release
+    & $msbuild $project /v:m /t:test /p:Configuration=$configuration
     if ($lastexitcode -ne 0) { exit $lastexitcode }
 
     $dir = [System.IO.Path]::GetDirectoryName($project)
     New-Item -Path "./output/$output" -ItemType Directory -Force | Out-Null
-    Copy-Item -Path "$dir/bin/Release/net47/TestResult.xml" -Destination "./output/$output" -Force
+    Copy-Item -Path "$dir/bin/$configuration/net47/TestResult.xml" -Destination "./output/$output" -Force
 }
 
 Write-Output "MSBuild path: '$msbuild'"
