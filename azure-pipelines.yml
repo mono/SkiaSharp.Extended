@@ -24,10 +24,10 @@ jobs:
         inputs:
           artifactName: build_windows
           targetPath: 'output'
-      - task: PublishPipelineArtifact@0
+      - task: PublishBuildArtifacts@1
         inputs:
-          artifactName: nugets-unsigned
-          targetPath: 'output/nugets'
+          artifactName: nuget
+          pathToPublish: 'output/nugets'
 
   - job: build_macos
     displayName: Build (macOS)
@@ -58,9 +58,24 @@ jobs:
         inputs:
           testResultsFormat: xUnit
           testResultsFiles: 'output/**/TestResult.xml'
+      - task: PublishPipelineArtifact@0
+        inputs:
+          artifactName: build_macos
+          targetPath: 'output'
 
-  - template: azure-nuget-signing.yml
+  - job: signing
+    displayName: Signing NuGets
+    dependsOn: build_windows
+    pool:
+      name: VSEng-XamarinCustom
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
-    parameters:
-      dependsOn: build_windows
-      sourceRepo: mono/SkiaSharp.Extended
+    steps:
+      - checkout: none
+      - template: azure-templates-sign.yml
+        parameters:
+          sourceRepo: mono/SkiaSharp.Extended
+          targetFolder: 'output/signed'
+      - task: PublishPipelineArtifact@0
+        inputs:
+          artifactName: nuget-signed
+          targetPath: 'output/signed'
