@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using SkiaSharp;
+using SkiaSharp.Extended.Svg;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
