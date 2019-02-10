@@ -330,9 +330,9 @@ namespace SkiaSharp.Extended.Svg.Tests
 			var path = Path.Combine(PathToImages, "simple-gradient.svg");
 			var bmp = LoadSvgBitmap(path, SKColors.White);
 
-			Assert.Equal(new SKColor(0xff058205), bmp.GetPixel(50, 50));
+			Assert.Equal(new SKColor(0xff028102), bmp.GetPixel(100, 100));
 			Assert.Equal(new SKColor(0xffffffff), bmp.GetPixel(0, 0));
-			Assert.Equal(new SKColor(0xffa0d0a0), bmp.GetPixel(65, 65));
+			Assert.Equal(new SKColor(0xffc9e4c9), bmp.GetPixel(50, 50));
 		}
 
 		[Fact]
@@ -409,8 +409,6 @@ namespace SkiaSharp.Extended.Svg.Tests
 			var svg = new SKSvg();
 			svg.Load(path);
 			var bmp = CreateBitmap(svg, SKColors.White);
-
-			SaveBitmap(bmp);
 
 			Assert.Equal(SKColors.White, bmp.GetPixel(11, 20));
 		}
