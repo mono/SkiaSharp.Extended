@@ -2,8 +2,8 @@
 
 [![Build Status](https://devdiv.visualstudio.com/DevDiv/_apis/build/status/Xamarin/Components/SkiaSharp.Extended?branchName=master)](https://devdiv.visualstudio.com/DevDiv/_build/latest?definitionId=10846&branchName=master)  [![Build Status](https://dev.azure.com/SkiaSharp/SkiaSharp/_apis/build/status/SkiaSharp.Extended%20(Public)?branchName=master)](https://dev.azure.com/SkiaSharp/SkiaSharp/_build/latest?definitionId=4&branchName=master)
 
-**SkiaSharp.Extended** is a collection some cool libraries that may be 
-useful to some apps. There are several repositories that may have 
+**SkiaSharp.Extended** is a collection some cool libraries that may be
+useful to some apps. There are several repositories that may have
 interesting projects:
 
  - [SkiaSharp][skiasharp] _(the engine)_
@@ -14,15 +14,15 @@ interesting projects:
 ## Building
 
 Each sub-directory has a solution file that can be opened in Visual Studio or
-built by MSBuild. All stripting and tasks are performed by MSBuild, so no 
+built by MSBuild. All scripting and tasks are performed by MSBuild, so no
 external tooling is needed.
 
-There is a single PowerShell script that can be used to build the entire 
+There is a single PowerShell script that can be used to build the entire
 repository:
 
-    > .\build.ps1
+    PS > .\build.ps1
 
-The CI server just runs that single file and outputs all the packages, 
+The CI server just runs that single file and outputs all the packages,
 assemblies and test results.
 
 _NOTE: for macOS, you may need to [first install PowerShell][pwsh]._
