@@ -1,6 +1,6 @@
 # SkiaSharp.Extended
 
-[![Build Status](https://jenkins.mono-project.com/buildStatus/icon?job=Components-SkiaSharpExtended)](https://jenkins.mono-project.com/view/Components/job/Components-SkiaSharpExtended/)  [![Build Status](https://jenkins.mono-project.com/buildStatus/icon?job=Components-SkiaSharpExtended-Windows)](https://jenkins.mono-project.com/view/Components/job/Components-SkiaSharpExtended-Windows/)
+[![Build Status](https://devdiv.visualstudio.com/DevDiv/_apis/build/status/Xamarin/Components/SkiaSharp.Extended?branchName=master)](https://devdiv.visualstudio.com/DevDiv/_build/latest?definitionId=10846&branchName=master)
 
 **SkiaSharp.Extended** is a collection some cool libraries that may be 
 useful to some apps. There are several repositories that may have 
