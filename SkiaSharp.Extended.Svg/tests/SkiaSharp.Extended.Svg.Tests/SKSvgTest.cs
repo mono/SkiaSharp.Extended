@@ -413,6 +413,16 @@ namespace SkiaSharp.Extended.Svg.Tests
 			Assert.Equal(SKColors.White, bmp.GetPixel(11, 20));
 		}
 
+		[Fact]
+		public void FillRulesAreRespected()
+		{
+			var path = Path.Combine(PathToImages, "fill-rule.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.Green);
+
+			Assert.Equal(SKColors.Black, bmp.GetPixel(60, 60));
+			Assert.Equal(SKColors.Green, bmp.GetPixel(160, 60));
+		}
+
 		private static SKBitmap LoadSvgBitmap(string svgPath, SKColor? background = null)
 		{
 			// open the SVG
