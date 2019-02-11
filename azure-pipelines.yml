@@ -14,8 +14,8 @@ jobs:
     pool:
       vmImage: vs2017-win2016
     steps:
-      - powershell: echo $(GIT_BRANCH_NAME)
       - powershell: echo $(BUILD_NUMBER)
+      - powershell: echo $(GIT_BRANCH_NAME)
 
   # - job: build_windows
   #   displayName: Build (Windows)
