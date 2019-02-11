@@ -11,7 +11,7 @@ Task("build")
     .Does(() =>
 {
     foreach (var subProject in GetDirectories("*")) {
-        foreach (var sln in GetFiles("./*/*.sln")) {
+        foreach (var sln in GetFiles($"{subProject}/*.sln")) {
             MSBuild(sln, c => {
                 c.Configuration = configuration;
                 c.MSBuildPlatform = MSBuildPlatform.x86;
