@@ -14,6 +14,7 @@ Task("build")
         foreach (var sln in GetFiles("./*/*.sln")) {
             MSBuild(sln, c => {
                 c.Configuration = configuration;
+                c.MSBuildPlatform = MSBuildPlatform.x86;
                 c.Restore = true;
                 c.Verbosity = Verbosity.Minimal;
                 if (!IsRunningOnWindows())
@@ -31,6 +32,7 @@ Task("nuget")
         foreach (var csproj in GetFiles($"{subProject}/source/**/*.csproj")) {
             MSBuild(csproj, c => {
                 c.Configuration = configuration;
+                c.MSBuildPlatform = MSBuildPlatform.x86;
                 c.Restore = true;
                 c.Verbosity = Verbosity.Minimal;
                 c.Targets.Clear();
@@ -38,6 +40,7 @@ Task("nuget")
             });
             MSBuild(csproj, c => {
                 c.Configuration = configuration;
+                c.MSBuildPlatform = MSBuildPlatform.x86;
                 c.Restore = true;
                 c.Verbosity = Verbosity.Minimal;
                 c.Targets.Clear();
