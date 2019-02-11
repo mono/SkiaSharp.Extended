@@ -17,15 +17,14 @@ Each sub-directory has a solution file that can be opened in Visual Studio or
 built by MSBuild. All scripting and tasks are performed by MSBuild, so no
 external tooling is needed.
 
-There is a single PowerShell script that can be used to build the entire
+There is a single PowerShell/bash script that can be used to build the entire
 repository:
 
-    PS > .\build.ps1
+    > .\build.ps1
+    $ ./build.sh
 
 The CI server just runs that single file and outputs all the packages,
 assemblies and test results.
-
-_NOTE: for macOS, you may need to [first install PowerShell][pwsh]._
 
 ## License
 
@@ -38,4 +37,3 @@ The code in this repository is licensed under the [MIT License][license].
 [extended]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended
 [iconify]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended.Iconify
 [svg]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended.Svg
-[pwsh]: https://github.com/PowerShell/PowerShell
