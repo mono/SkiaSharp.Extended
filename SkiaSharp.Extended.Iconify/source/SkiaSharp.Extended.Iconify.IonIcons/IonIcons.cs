@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 
 namespace SkiaSharp.Extended.Iconify
 {
@@ -8,24 +7,25 @@ namespace SkiaSharp.Extended.Iconify
 	{
 		public const string ManifestResourceName = "SkiaSharp.Extended.Iconify.ionicons.ttf";
 
-		public static Stream GetFontStream()
-		{
-			var type = typeof(IonIcons).GetTypeInfo();
-			var assembly = type.Assembly;
+		public static Stream GetFontStream() => SKTextRunLookupEntry.GetManifestFontStream(typeof(IonIcons), ManifestResourceName);
 
-			return assembly.GetManifestResourceStream(ManifestResourceName);
-		}
+		public static SKTypeface GetTypeface() => SKTextRunLookupEntry.GetManifestTypeface(typeof(IonIcons), ManifestResourceName);
+	}
 
-		public static SKTypeface GetTypeface()
+	public class IonIconsLookupEntry : SKTextRunLookupEntry
+	{
+		public IonIconsLookupEntry()
+			: base(IonIcons.GetTypeface(), true, IonIcons.Characters)
 		{
-			return SKTypeface.FromStream(GetFontStream());
 		}
+	}
 
-		public static void AddTo(SKTextRunLookup lookup)
-		{
-			if (lookup == null)
-				throw new ArgumentNullException(nameof(lookup));
-			lookup.AddTypeface(GetTypeface(), Characters);
-		}
+	public static class SKTextRunLookupExtensions
+	{
+		private static readonly Lazy<IonIconsLookupEntry> entry = new Lazy<IonIconsLookupEntry>(() => new IonIconsLookupEntry());
+
+		public static void AddIonIcons(this SKTextRunLookup lookup) => lookup.AddTypeface(entry.Value);
+
+		public static void RemoveIonIcons(this SKTextRunLookup lookup) => lookup.RemoveTypeface(entry.Value);
 	}
 }

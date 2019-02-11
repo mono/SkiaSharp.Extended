@@ -1,15 +1,15 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using System.Text;
 
-namespace SkiaSharp
+namespace SkiaSharp.Extended.Svg
 {
 	public class SKSvg
 	{
@@ -18,14 +18,22 @@ namespace SkiaSharp
 
 		private static readonly IFormatProvider icult = CultureInfo.InvariantCulture;
 		private static readonly XNamespace xlink = "http://www.w3.org/1999/xlink";
+		private static readonly XNamespace svg = "http://www.w3.org/2000/svg";
 		private static readonly char[] WS = new char[] { ' ', '\t', '\n', '\r' };
 		private static readonly Regex unitRe = new Regex("px|pt|em|ex|pc|cm|mm|in");
 		private static readonly Regex percRe = new Regex("%");
-		private static readonly Regex fillUrlRe = new Regex(@"url\s*\(\s*#([^\)]+)\)");
+		private static readonly Regex urlRe = new Regex(@"url\s*\(\s*#([^\)]+)\)");
 		private static readonly Regex keyValueRe = new Regex(@"\s*([\w-]+)\s*:\s*(.*)");
 		private static readonly Regex WSRe = new Regex(@"\s{2,}");
 
 		private readonly Dictionary<string, XElement> defs = new Dictionary<string, XElement>();
+		private readonly Dictionary<string, ISKSvgFill> fillDefs = new Dictionary<string, ISKSvgFill>();
+		private readonly Dictionary<XElement, string> elementFills = new Dictionary<XElement, string>();
+		private readonly XmlReaderSettings xmlReaderSettings = new XmlReaderSettings()
+		{
+			DtdProcessing = DtdProcessing.Ignore,
+			IgnoreComments = true,
+		};
 
 		public SKSvg()
 			: this(DefaultPPI, SKSize.Empty)
@@ -50,64 +58,73 @@ namespace SkiaSharp
 		}
 
 		public float PixelsPerInch { get; set; }
+
 		public bool ThrowOnUnsupportedElement { get; set; }
+
 		public SKRect ViewBox { get; private set; }
+
 		public SKSize CanvasSize { get; private set; }
+
 		public SKPicture Picture { get; private set; }
-        public XElement SvgContent { get; private set; }
-        public string PreserveAspectRatio { get; private set; }
+
 		public string Description { get; private set; }
+
 		public string Title { get; private set; }
+
 		public string Version { get; private set; }
 
-		public bool Load(string filename)
+		public SKPicture Load(string filename)
 		{
-			return Load(XDocument.Load(filename));
-		}
-
-		public bool Load(Stream stream)
-		{
-	        return Load(XDocument.Load(stream));
-		}
-
-		private bool Load(XDocument xdoc)
-		{
-			var status = false;
-
-			try
+			using (var stream = File.OpenRead(filename))
 			{
-				status = InternalLoad(xdoc);
+				return Load(stream);
 			}
-			catch (Exception)
-			{ 
-
-			}
-
-			return status;
 		}
 
-		private bool InternalLoad(XDocument xdoc)
+		public SKPicture Load(Stream stream)
 		{
-			SvgContent = xdoc.Root;
-			var ns = SvgContent.Name.Namespace;
+			using (var reader = XmlReader.Create(stream, xmlReaderSettings, CreateSvgXmlContext()))
+			{
+				return Load(reader);
+			}
+		}
+
+		public SKPicture Load(XmlReader reader)
+		{
+			return Load(XDocument.Load(reader));
+		}
+
+		private static XmlParserContext CreateSvgXmlContext()
+		{
+			var table = new NameTable();
+			var manager = new XmlNamespaceManager(table);
+			manager.AddNamespace(string.Empty, svg.NamespaceName);
+			manager.AddNamespace("xlink", xlink.NamespaceName);
+			return new XmlParserContext(null, manager, null, XmlSpace.None);
+		}
+
+		private SKPicture Load(XDocument xdoc)
+		{
+			var svg = xdoc.Root;
+			var ns = svg.Name.Namespace;
 
 			// find the defs (gradients) - and follow all hrefs
-			foreach (var d in SvgContent.Descendants())
+			foreach (var d in svg.Descendants())
 			{
 				var id = d.Attribute("id")?.Value?.Trim();
 				if (!string.IsNullOrEmpty(id))
 					defs[id] = ReadDefinition(d);
 			}
 
-			Version = SvgContent.Attribute("version")?.Value;
-			Title = SvgContent.Element(ns + "title")?.Value;
-			Description = SvgContent.Element(ns + "desc")?.Value ?? SvgContent.Element(ns + "description")?.Value;
+			Version = svg.Attribute("version")?.Value;
+			Title = svg.Element(ns + "title")?.Value;
+			Description = svg.Element(ns + "desc")?.Value ?? svg.Element(ns + "description")?.Value;
 
 			// TODO: parse the "preserveAspectRatio" values properly
-			PreserveAspectRatio = SvgContent.Attribute("preserveAspectRatio")?.Value;
+			var preserveAspectRatio = svg.Attribute("preserveAspectRatio")?.Value;
 
 			// get the SVG dimensions
-			var viewBoxA = SvgContent.Attribute("viewBox") ?? SvgContent.Attribute("viewPort");
+			var viewBoxA = svg.Attribute("viewBox") ?? svg.Attribute("viewPort");
 			if (viewBoxA != null)
 			{
 				ViewBox = ReadRectangle(viewBoxA.Value);
@@ -116,8 +133,8 @@ namespace SkiaSharp
 			if (CanvasSize.IsEmpty)
 			{
 				// get the user dimensions
-				var widthA = SvgContent.Attribute("width");
-				var heightA = SvgContent.Attribute("height");
+				var widthA = svg.Attribute("width");
+				var heightA = svg.Attribute("height");
 				var width = ReadNumber(widthA);
 				var height = ReadNumber(heightA);
 				var size = new SKSize(width, height);
@@ -143,85 +160,75 @@ namespace SkiaSharp
 				CanvasSize = size;
 			}
 
-			return true;
-		}
-
-		private void DrawInCanvas(SKCanvas canvas)
-		{
-			if (!ViewBox.IsEmpty && (ViewBox.Width != CanvasSize.Width || ViewBox.Height != CanvasSize.Height))
-			{
-				if (PreserveAspectRatio == "none")
-				{
-					canvas.Scale(CanvasSize.Width / ViewBox.Width, CanvasSize.Height / ViewBox.Height);
-				}
-				else
-				{
-					// TODO: just center scale for now
-					var scale = Math.Min(CanvasSize.Width / ViewBox.Width, CanvasSize.Height / ViewBox.Height);
-					var centered = SKRect.Create(CanvasSize).AspectFit(ViewBox.Size);
-					canvas.Translate(centered.Left, centered.Top);
-					canvas.Scale(scale, scale);
-				}
-			}
-
-			// translate the canvas by the viewBox origin
-			canvas.Translate(-ViewBox.Left, -ViewBox.Top);
-
-			// if the viewbox was specified, then crop to that
-			if (!ViewBox.IsEmpty)
-			{
-				canvas.ClipRect(ViewBox);
-			}
-
-			LoadElements(SvgContent.Elements(), canvas);
-		}
-
-		public SKPicture CreatePicture()
-		{
-			SKPicture picture = null;
-
+			// create the picture from the elements
 			using (var recorder = new SKPictureRecorder())
 			using (var canvas = recorder.BeginRecording(SKRect.Create(CanvasSize)))
 			{
-				DrawInCanvas(canvas);
-				picture = recorder.EndRecording();
+				// if there is no viewbox, then we don't do anything, otherwise
+				// scale the SVG dimensions to fit inside the user dimensions
+				if (!ViewBox.IsEmpty && (ViewBox.Width != CanvasSize.Width || ViewBox.Height != CanvasSize.Height))
+				{
+					if (preserveAspectRatio == "none")
+					{
+						canvas.Scale(CanvasSize.Width / ViewBox.Width, CanvasSize.Height / ViewBox.Height);
+					}
+					else
+					{
+						// TODO: just center scale for now
+						var scale = Math.Min(CanvasSize.Width / ViewBox.Width, CanvasSize.Height / ViewBox.Height);
+						var centered = SKRect.Create(CanvasSize).AspectFit(ViewBox.Size);
+						canvas.Translate(centered.Left, centered.Top);
+						canvas.Scale(scale, scale);
+					}
+				}
+
+				// translate the canvas by the viewBox origin
+				canvas.Translate(-ViewBox.Left, -ViewBox.Top);
+
+				// if the viewbox was specified, then crop to that
+				if (!ViewBox.IsEmpty)
+				{
+					canvas.ClipRect(ViewBox);
+				}
+
+				// read style
+				SKPaint stroke = null;
+				SKPaint fill = CreatePaint();
+				var style = ReadPaints(svg, ref stroke, ref fill, true);
+
+				// read elements
+				LoadElements(svg.Elements(), canvas, stroke, fill);
+
+				Picture = recorder.EndRecording();
 			}
 
-			return picture;
+			return Picture;
 		}
 
-		public SKBitmap CreateBitmap()
-		{
-			SKBitmap bitmap = new SKBitmap((int)CanvasSize.Width, (int)CanvasSize.Height);
-
-			using (var canvas = new SKCanvas(bitmap))
-			{
-				canvas.Clear();
-				DrawInCanvas(canvas);
-			}
-
-			return bitmap;
-		}
-
-		private void LoadElements(IEnumerable<XElement> elements, SKCanvas canvas)
+		private void LoadElements(IEnumerable<XElement> elements, SKCanvas canvas, SKPaint stroke, SKPaint fill)
 		{
 			foreach (var e in elements)
 			{
-				ReadElement(e, canvas);
+				ReadElement(e, canvas, stroke?.Clone(), fill?.Clone());
 			}
-		}
-
-		private void ReadElement(XElement e, SKCanvas canvas)
-		{
-			ReadElement(e, canvas, null, CreatePaint());
 		}
 
 		private void ReadElement(XElement e, SKCanvas canvas, SKPaint stroke, SKPaint fill)
 		{
+			if (e.Attribute("display")?.Value == "none")
+				return;
+
 			// transform matrix
 			var transform = ReadTransform(e.Attribute("transform")?.Value ?? string.Empty);
 			canvas.Save();
 			canvas.Concat(ref transform);
+
+			// clip-path
+			var clipPath = ReadClipPath(e.Attribute("clip-path")?.Value ?? string.Empty);
+			if (clipPath != null)
+			{
+				canvas.ClipPath(clipPath);
+			}
 
 			// SVG element
 			var elementName = e.Name.LocalName;
@@ -235,110 +242,56 @@ namespace SkiaSharp
 			{
 				case "image":
 					{
-
-                        var x = ReadNumber(e.Attribute("x"));
-                        var y = ReadNumber(e.Attribute("y"));
-						var width = ReadNumber(e.Attribute("width"));
-						var height = ReadNumber(e.Attribute("height"));
-						var bytes = ReadBytes(e.Attributes().FirstOrDefault((arg) => arg.Name.LocalName == "href"));
-
-						using (var data = SKData.CreateCopy(bytes))
-						using (var image = SKImage.FromEncodedData(data))
+						var image = ReadImage(e);
+						if (image.Bytes != null)
 						{
-							if (image != null)
+							using (var bitmap = SKBitmap.Decode(image.Bytes))
 							{
-								var rect = SKRect.Create(x, y, width, height);
-								canvas.DrawImage(image, rect);
+								if (bitmap != null)
+								{
+									canvas.DrawBitmap(bitmap, image.Rect);
+								}
 							}
 						}
-
-						break;
 					}
+					break;
 				case "text":
 					if (stroke != null || fill != null)
 					{
-						ReadText(e, canvas, stroke?.Clone(), fill?.Clone());
+						var spans = ReadText(e, stroke?.Clone(), fill?.Clone());
+						if (spans.Any())
+						{
+							canvas.DrawText(spans);
+						}
 					}
 					break;
 				case "rect":
-					if (stroke != null || fill != null)
-					{
-                        var x = ReadNumber(e.Attribute("x"));
-                        var y = ReadNumber(e.Attribute("y"));
-						var width = ReadNumber(e.Attribute("width"));
-						var height = ReadNumber(e.Attribute("height"));
-						var rx = ReadNumber(e.Attribute("rx"));
-						var ry = ReadNumber(e.Attribute("ry"));
-						var rect = SKRect.Create(x, y, width, height);
-						if (rx > 0 || ry > 0)
-						{
-							if (fill != null)
-								canvas.DrawRoundRect(rect, rx, ry, fill);
-							if (stroke != null)
-								canvas.DrawRoundRect(rect, rx, ry, stroke);
-						}
-						else
-						{
-							if (fill != null)
-								canvas.DrawRect(rect, fill);
-							if (stroke != null)
-								canvas.DrawRect(rect, stroke);
-						}
-					}
-					break;
 				case "ellipse":
-					if (stroke != null || fill != null)
-					{
-						var cx = ReadNumber(e.Attribute("cx"));
-						var cy = ReadNumber(e.Attribute("cy"));
-						var rx = ReadNumber(e.Attribute("rx"));
-						var ry = ReadNumber(e.Attribute("ry"));
-						if (fill != null)
-							canvas.DrawOval(cx, cy, rx, ry, fill);
-						if (stroke != null)
-							canvas.DrawOval(cx, cy, rx, ry, stroke);
-					}
-					break;
 				case "circle":
-					if (stroke != null || fill != null)
-					{
-						var cx = ReadNumber(e.Attribute("cx"));
-						var cy = ReadNumber(e.Attribute("cy"));
-						var rr = ReadNumber(e.Attribute("r"));
-						if (fill != null)
-							canvas.DrawCircle(cx, cy, rr, fill);
-						if (stroke != null)
-							canvas.DrawCircle(cx, cy, rr, stroke);
-					}
-					break;
 				case "path":
-					if (stroke != null || fill != null)
-					{
-						var d = e.Attribute("d")?.Value;
-						if (!string.IsNullOrWhiteSpace(d))
-						{
-							var path = SKPath.ParseSvgPathData(d);
-							if (fill != null)
-								canvas.DrawPath(path, fill);
-							if (stroke != null)
-								canvas.DrawPath(path, stroke);
-						}
-					}
-					break;
 				case "polygon":
 				case "polyline":
+				case "line":
 					if (stroke != null || fill != null)
 					{
-						var close = elementName == "polygon";
-						var p = e.Attribute("points")?.Value;
-						if (!string.IsNullOrWhiteSpace(p))
+						var elementPath = ReadElement(e);
+						if (elementPath == null)
+							break;
+
+						if (elementFills.TryGetValue(e, out var fillId) && fillDefs.TryGetValue(fillId, out var addFill))
 						{
-							var path = ReadPolyPath(p, close);
-							if (fill != null)
-								canvas.DrawPath(path, fill);
-							if (stroke != null)
-								canvas.DrawPath(path, stroke);
+							var x = ReadNumber(e.Attribute("x"));
+							var y = ReadNumber(e.Attribute("y"));
+							var elementSize = ReadElementSize(e);
+							var bounds = SKRect.Create(new SKPoint(x, y), elementSize);
+
+							addFill.ApplyFill(fill, bounds);
 						}
+
+						if (fill != null)
+							canvas.DrawPath(elementPath, fill);
+						if (stroke != null)
+							canvas.DrawPath(elementPath, stroke);
 					}
 					break;
 				case "g":
@@ -349,7 +302,10 @@ namespace SkiaSharp
 						if (groupOpacity != 1.0f)
 						{
 							var opacity = (byte)(255 * groupOpacity);
-							var opacityPaint = new SKPaint { Color = SKColors.Black.WithAlpha(opacity) };
+							var opacityPaint = new SKPaint
+							{
+								Color = SKColors.Black.WithAlpha(opacity)
+							};
 
 							// apply the opacity
 							canvas.SaveLayer(opacityPaint);
@@ -371,29 +327,22 @@ namespace SkiaSharp
 						var href = ReadHref(e);
 						if (href != null)
 						{
-							// TODO: copy/process other attributes
-
-							var x = ReadNumber(e.Attribute("x"));
-							var y = ReadNumber(e.Attribute("y"));
-							var useTransform = SKMatrix.MakeTranslation(x, y);
-
-							canvas.Save();
-							canvas.Concat(ref useTransform);
+							// create a deep copy as we will copy attributes
+							href = new XElement(href);
+							var attributes = e.Attributes();
+							foreach (var attribute in attributes)
+							{
+								var name = attribute.Name.LocalName;
+								if (!name.Equals("href", StringComparison.OrdinalIgnoreCase) &&
+									!name.Equals("id", StringComparison.OrdinalIgnoreCase) &&
+									!name.Equals("transform", StringComparison.OrdinalIgnoreCase))
+								{
+									href.SetAttributeValue(attribute.Name, attribute.Value);
+								}
+							}
 
 							ReadElement(href, canvas, stroke?.Clone(), fill?.Clone());
-
-							canvas.Restore();
 						}
-					}
-					break;
-				case "line":
-					if (stroke != null)
-					{
-						var x1 = ReadNumber(e.Attribute("x1"));
-						var x2 = ReadNumber(e.Attribute("x2"));
-						var y1 = ReadNumber(e.Attribute("y1"));
-						var y2 = ReadNumber(e.Attribute("y2"));
-						canvas.DrawLine(x1, y1, x2, y2, stroke);
 					}
 					break;
 				case "switch":
@@ -433,22 +382,155 @@ namespace SkiaSharp
 			canvas.Restore();
 		}
 
-		private void ReadText(XElement e, SKCanvas canvas, SKPaint stroke, SKPaint fill)
+		private SKSvgImage ReadImage(XElement e)
+		{
+			var x = ReadNumber(e.Attribute("x"));
+			var y = ReadNumber(e.Attribute("y"));
+			var width = ReadNumber(e.Attribute("width"));
+			var height = ReadNumber(e.Attribute("height"));
+			var rect = SKRect.Create(x, y, width, height);
+
+			byte[] bytes = null;
+
+			var uri = ReadHrefString(e);
+			if (uri != null)
+			{
+				if (uri.StartsWith("data:"))
+				{
+					bytes = ReadUriBytes(uri);
+				}
+				else
+				{
+					LogOrThrow($"Remote images are not supported");
+				}
+			}
+
+			return new SKSvgImage(rect, uri, bytes);
+		}
+
+		private SKPath ReadElement(XElement e)
+		{
+			var path = new SKPath();
+
+			var elementName = e.Name.LocalName;
+			switch (elementName)
+			{
+				case "rect":
+					var rect = ReadRoundedRect(e);
+					if (rect.IsRounded)
+						path.AddRoundRect(rect.Rect, rect.RadiusX, rect.RadiusY);
+					else
+						path.AddRect(rect.Rect);
+					break;
+				case "ellipse":
+					var oval = ReadOval(e);
+					path.AddOval(oval.BoundingRect);
+					break;
+				case "circle":
+					var circle = ReadCircle(e);
+					path.AddCircle(circle.Center.X, circle.Center.Y, circle.Radius);
+					break;
+				case "path":
+					var d = e.Attribute("d")?.Value;
+					if (!string.IsNullOrWhiteSpace(d))
+					{
+						path.Dispose();
+						path = SKPath.ParseSvgPathData(d);
+					}
+					break;
+				case "polygon":
+				case "polyline":
+					var close = elementName == "polygon";
+					var p = e.Attribute("points")?.Value;
+					if (!string.IsNullOrWhiteSpace(p))
+					{
+						p = "M" + p;
+						if (close)
+							p += " Z";
+						path.Dispose();
+						path = SKPath.ParseSvgPathData(p);
+					}
+					break;
+				case "line":
+					var line = ReadLine(e);
+					path.MoveTo(line.P1);
+					path.LineTo(line.P2);
+					break;
+				default:
+					path.Dispose();
+					path = null;
+					break;
+			}
+
+			return path;
+		}
+
+		private SKOval ReadOval(XElement e)
+		{
+			var cx = ReadNumber(e.Attribute("cx"));
+			var cy = ReadNumber(e.Attribute("cy"));
+			var rx = ReadNumber(e.Attribute("rx"));
+			var ry = ReadNumber(e.Attribute("ry"));
+
+			return new SKOval(new SKPoint(cx, cy), rx, ry);
+		}
+
+		private SKCircle ReadCircle(XElement e)
+		{
+			var cx = ReadNumber(e.Attribute("cx"));
+			var cy = ReadNumber(e.Attribute("cy"));
+			var rr = ReadNumber(e.Attribute("r"));
+
+			return new SKCircle(new SKPoint(cx, cy), rr);
+		}
+
+		private SKLine ReadLine(XElement e)
+		{
+			var x1 = ReadNumber(e.Attribute("x1"));
+			var x2 = ReadNumber(e.Attribute("x2"));
+			var y1 = ReadNumber(e.Attribute("y1"));
+			var y2 = ReadNumber(e.Attribute("y2"));
+
+			return new SKLine(new SKPoint(x1, y1), new SKPoint(x2, y2));
+		}
+
+		private SKRoundedRect ReadRoundedRect(XElement e)
+		{
+			var x = ReadNumber(e.Attribute("x"));
+			var y = ReadNumber(e.Attribute("y"));
+			var width = ReadNumber(e.Attribute("width"));
+			var height = ReadNumber(e.Attribute("height"));
+			var rx = ReadOptionalNumber(e.Attribute("rx"));
+			var ry = ReadOptionalNumber(e.Attribute("ry"));
+			var rect = SKRect.Create(x, y, width, height);
+
+			return new SKRoundedRect(rect, rx ?? ry ?? 0, ry ?? rx ?? 0);
+		}
+
+		private SKText ReadText(XElement e, SKPaint stroke, SKPaint fill)
 		{
 			// TODO: stroke
 
 			var x = ReadNumber(e.Attribute("x"));
 			var y = ReadNumber(e.Attribute("y"));
 			var xy = new SKPoint(x, y);
+			var textAlign = ReadTextAlignment(e);
+			var baselineShift = ReadBaselineShift(e);
 
 			ReadFontAttributes(e, fill);
-			fill.TextAlign = ReadTextAlignment(e);
 
-			ReadTextSpans(e, canvas, xy, stroke, fill);
+			return ReadTextSpans(e, xy, textAlign, baselineShift, stroke, fill);
 		}
 
-		private void ReadTextSpans(XElement e, SKCanvas canvas, SKPoint location, SKPaint stroke, SKPaint fill)
+		private SKText ReadTextSpans(XElement e, SKPoint xy, SKTextAlign textAlign, float baselineShift, SKPaint stroke, SKPaint fill)
 		{
+			var spans = new SKText(xy, textAlign);
+
+			// textAlign is used for all spans within the <text> element. If different textAligns would be needed, it is necessary to use
+			// several <text> elements instead of <tspan> elements
+			var currentBaselineShift = baselineShift;
+			fill.TextAlign = SKTextAlign.Left;  // fixed alignment for all spans
+
 			var nodes = e.Nodes().ToArray();
 			for (int i = 0; i < nodes.Length; i++)
 			{
@@ -470,9 +552,7 @@ namespace SkiaSharp
 							textSegments[count - 1] = textSegments[count - 1].TrimEnd();
 						var text = WSRe.Replace(string.Concat(textSegments), " ");
 
-						canvas.DrawText(text, location.X, location.Y, fill);
-
-						location.X += fill.MeasureText(text);
+						spans.Append(new SKTextSpan(text, fill.Clone(), baselineShift: currentBaselineShift));
 					}
 				}
 				else if (c.NodeType == XmlNodeType.Element)
@@ -480,47 +560,46 @@ namespace SkiaSharp
 					var ce = (XElement)c;
 					if (ce.Name.LocalName == "tspan")
 					{
-						var spanFill = fill.Clone();
-
 						// the current span may want to change the cursor position
-						location.X = ReadOptionalNumber(ce.Attribute("x")) ?? location.X;
-						location.Y = ReadOptionalNumber(ce.Attribute("y")) ?? location.Y;
+						var x = ReadOptionalNumber(ce.Attribute("x"));
+						var y = ReadOptionalNumber(ce.Attribute("y"));
+						var text = ce.Value; //.Trim();
 
+						var spanFill = fill.Clone();
 						ReadFontAttributes(ce, spanFill);
 
-						var text = ce.Value.Trim();
+						// Don't read text-anchor from tspans!, Only use enclosing text-anchor from text element!
+						currentBaselineShift = ReadBaselineShift(ce);
 
-						canvas.DrawText(text, location.X, location.Y, spanFill);
-
-						location.X += spanFill.MeasureText(text);
+						spans.Append(new SKTextSpan(text, spanFill, x, y, currentBaselineShift));
 					}
 				}
 			}
+
+			return spans;
 		}
 
 		private void ReadFontAttributes(XElement e, SKPaint paint)
 		{
 			var fontStyle = ReadStyle(e);
 
-			string ffamily;
-			if (!fontStyle.TryGetValue("font-family", out ffamily) || string.IsNullOrWhiteSpace(ffamily))
+			if (!fontStyle.TryGetValue("font-family", out string ffamily) || string.IsNullOrWhiteSpace(ffamily))
 				ffamily = paint.Typeface?.FamilyName;
 			var fweight = ReadFontWeight(fontStyle, paint.Typeface?.FontWeight ?? (int)SKFontStyleWeight.Normal);
 			var fwidth = ReadFontWidth(fontStyle, paint.Typeface?.FontWidth ?? (int)SKFontStyleWidth.Normal);
 			var fstyle = ReadFontStyle(fontStyle, paint.Typeface?.FontSlant ?? SKFontStyleSlant.Upright);
+
 			paint.Typeface = SKTypeface.FromFamilyName(ffamily, fweight, fwidth, fstyle);
 
-			string fsize;
-			if (fontStyle.TryGetValue("font-size", out fsize) && !string.IsNullOrWhiteSpace(fsize))
+			if (fontStyle.TryGetValue("font-size", out string fsize) && !string.IsNullOrWhiteSpace(fsize))
 				paint.TextSize = ReadNumber(fsize);
 		}
 
 		private static SKFontStyleSlant ReadFontStyle(Dictionary<string, string> fontStyle, SKFontStyleSlant defaultStyle = SKFontStyleSlant.Upright)
 		{
-			SKFontStyleSlant style = defaultStyle;
+			var style = defaultStyle;
 
-			string fstyle;
-			if (fontStyle.TryGetValue("font-style", out fstyle) && !string.IsNullOrWhiteSpace(fstyle))
+			if (fontStyle.TryGetValue("font-style", out string fstyle) && !string.IsNullOrWhiteSpace(fstyle))
 			{
 				switch (fstyle)
 				{
@@ -544,10 +623,8 @@ namespace SkiaSharp
 
 		private int ReadFontWidth(Dictionary<string, string> fontStyle, int defaultWidth = (int)SKFontStyleWidth.Normal)
 		{
-			int width = defaultWidth;
-
-			string fwidth;
-			if (fontStyle.TryGetValue("font-stretch", out fwidth) && !string.IsNullOrWhiteSpace(fwidth) && !int.TryParse(fwidth, out width))
+			var width = defaultWidth;
+			if (fontStyle.TryGetValue("font-stretch", out string fwidth) && !string.IsNullOrWhiteSpace(fwidth) && !int.TryParse(fwidth, out width))
 			{
 				switch (fwidth)
 				{
@@ -595,10 +672,9 @@ namespace SkiaSharp
 
 		private int ReadFontWeight(Dictionary<string, string> fontStyle, int defaultWeight = (int)SKFontStyleWeight.Normal)
 		{
-			int weight = defaultWeight;
+			var weight = defaultWeight;
 
-			string fweight;
-			if (fontStyle.TryGetValue("font-weight", out fweight) && !string.IsNullOrWhiteSpace(fweight) && !int.TryParse(fweight, out weight))
+			if (fontStyle.TryGetValue("font-weight", out string fweight) && !string.IsNullOrWhiteSpace(fweight) && !int.TryParse(fweight, out weight))
 			{
 				switch (fweight)
 				{
@@ -633,8 +709,7 @@ namespace SkiaSharp
 
 		private string GetString(Dictionary<string, string> style, string name, string defaultValue = "")
 		{
-			string v;
-			if (style.TryGetValue(name, out v))
+			if (style.TryGetValue(name, out string v))
 				return v;
 			return defaultValue;
 		}
@@ -650,17 +725,6 @@ namespace SkiaSharp
 				{
 					var k = m.Groups[1].Value;
 					var v = m.Groups[2].Value;
-
-                    if (v.Contains("rgb(")){
-                        var color = v.Replace("rgb(", "").Replace(")", "");
-                        var values = color.Split(',');
-                        var r = Convert.ToInt32(values[0]).ToString("X2");
-                        var g = Convert.ToInt32(values[1]).ToString("X2");
-                        var b = Convert.ToInt32(values[2]).ToString("X2");
-                        v = $"#{r}{g}{b}";
-                    }
-
-
 					d[k] = v;
 				}
 			}
@@ -670,7 +734,7 @@ namespace SkiaSharp
 		private Dictionary<string, string> ReadStyle(XElement e)
 		{
 			// get from local attributes
-			var dic = e.Attributes().ToDictionary(k => k.Name.LocalName, v => v.Value);
+			var dic = e.Attributes().Where(a => HasSvgNamespace(a.Name)).ToDictionary(k => k.Name.LocalName, v => v.Value);
 
 			var style = e.Attribute("style")?.Value;
 			if (!string.IsNullOrWhiteSpace(style))
@@ -686,15 +750,60 @@ namespace SkiaSharp
 			return dic;
 		}
 
+		private static bool HasSvgNamespace(XName name)
+		{
+			return
+				string.IsNullOrEmpty(name.Namespace?.NamespaceName) ||
+				name.Namespace == svg ||
+				name.Namespace == xlink;
+		}
+
+		private SKSize ReadElementSize(XElement e)
+		{
+			float width = 0f;
+			float height = 0f;
+			var element = e;
+
+			while (element.Parent != null)
+			{
+				if (width <= 0f)
+					width = ReadNumber(element.Attribute("width"));
+
+				if (height <= 0f)
+					height = ReadNumber(element.Attribute("height"));
+
+				if (width > 0f && height > 0f)
+					break;
+
+				element = element.Parent;
+			}
+
+			if (!(width > 0f && height > 0f))
+			{
+				var root = e?.Document?.Root;
+				width = ReadNumber(root?.Attribute("width"));
+				height = ReadNumber(root?.Attribute("height"));
+			}
+
+			return new SKSize(width, height);
+		}
+
 		private Dictionary<string, string> ReadPaints(XElement e, ref SKPaint stroke, ref SKPaint fill, bool isGroup)
 		{
 			var style = ReadStyle(e);
-			ReadPaints(style, ref stroke, ref fill, isGroup);
+
+			ReadPaints(style, ref stroke, ref fill, isGroup, out var fillId);
+
+			if (fillId != null)
+				elementFills[e] = fillId;
+
 			return style;
 		}
 
-		private void ReadPaints(Dictionary<string, string> style, ref SKPaint strokePaint, ref SKPaint fillPaint, bool isGroup)
+		private void ReadPaints(Dictionary<string, string> style, ref SKPaint strokePaint, ref SKPaint fillPaint, bool isGroup, out string fillId)
 		{
+			fillId = null;
+
 			// get current element opacity, but ignore for groups (special case)
 			float elementOpacity = isGroup ? 1.0f : ReadOpacity(style);
 
@@ -715,11 +824,10 @@ namespace SkiaSharp
 					if (strokePaint == null)
 						strokePaint = CreatePaint(true);
 
-					SKColor color;
-					if (SKColor.TryParse(stroke, out color))
+					if (ColorHelper.TryParse(stroke, out SKColor color))
 					{
 						// preserve alpha
-						if (color.Alpha == 255)
+						if (color.Alpha == 255 && strokePaint.Color.Alpha > 0)
 							strokePaint.Color = color.WithAlpha(strokePaint.Color.Alpha);
 						else
 							strokePaint.Color = color;
@@ -727,26 +835,72 @@ namespace SkiaSharp
 				}
 
 				// stroke attributes
+				var strokeDashArray = GetString(style, "stroke-dasharray");
+				var hasStrokeDashArray = !string.IsNullOrWhiteSpace(strokeDashArray);
+
 				var strokeWidth = GetString(style, "stroke-width");
-				if (!string.IsNullOrWhiteSpace(strokeWidth))
-				{
-					if (strokePaint == null)
-						strokePaint = CreatePaint(true);
-					strokePaint.StrokeWidth = ReadNumber(strokeWidth);
-				}
+				var hasStrokeWidth = !string.IsNullOrWhiteSpace(strokeWidth);
 
 				var strokeOpacity = GetString(style, "stroke-opacity");
-				if (!string.IsNullOrWhiteSpace(strokeOpacity))
+				var hasStrokeOpacity = !string.IsNullOrWhiteSpace(strokeOpacity);
+
+				var strokeLineCap = GetString(style, "stroke-linecap");
+				var hasStrokeLineCap = !string.IsNullOrWhiteSpace(strokeLineCap);
+
+				var strokeLineJoin = GetString(style, "stroke-linejoin");
+				var hasStrokeLineJoin = !string.IsNullOrWhiteSpace(strokeLineJoin);
+
+				var strokeMiterLimit = GetString(style, "stroke-miterlimit");
+				var hasStrokeMiterLimit = !string.IsNullOrWhiteSpace(strokeMiterLimit);
+
+				if (strokePaint == null)
 				{
-					if (strokePaint == null)
+					if (hasStrokeDashArray ||
+						hasStrokeWidth ||
+						hasStrokeOpacity ||
+						hasStrokeLineCap ||
+						hasStrokeLineJoin)
+					{
 						strokePaint = CreatePaint(true);
-					strokePaint.Color = strokePaint.Color.WithAlpha((byte)(ReadNumber(strokeOpacity) * 255));
+					}
 				}
 
-				if (strokePaint != null)
+				if (hasStrokeDashArray)
 				{
-					strokePaint.Color = strokePaint.Color.WithAlpha((byte)(strokePaint.Color.Alpha * elementOpacity));
+					if ("none".Equals(strokeDashArray, StringComparison.OrdinalIgnoreCase))
+					{
+						// remove any dash
+						if (strokePaint != null)
+							strokePaint.PathEffect = null;
+					}
+					else
+					{
+						// get the dash
+						var dashesStrings = strokeDashArray.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+						var dashes = dashesStrings.Select(ReadNumber).ToArray();
+						if (dashesStrings.Length % 2 == 1)
+							dashes = dashes.Concat(dashes).ToArray();
+
+						// get the offset
+						var strokeDashOffset = ReadNumber(style, "stroke-dashoffset", 0);
+
+						// set the effect
+						strokePaint.PathEffect = SKPathEffect.CreateDash(dashes.ToArray(), strokeDashOffset);
+					}
 				}
+
+				if (hasStrokeWidth)
+					strokePaint.StrokeWidth = ReadNumber(strokeWidth);
+				if (hasStrokeOpacity)
+					strokePaint.Color = strokePaint.Color.WithAlpha((byte)(ReadNumber(strokeOpacity) * 255));
+				if (hasStrokeLineCap)
+					strokePaint.StrokeCap = ReadLineCap(strokeLineCap);
+				if (hasStrokeLineJoin)
+					strokePaint.StrokeJoin = ReadLineJoin(strokeLineJoin);
+				if (hasStrokeMiterLimit)
+					strokePaint.StrokeMiter = ReadNumber(strokeMiterLimit);
+				if (strokePaint != null)
+					strokePaint.Color = strokePaint.Color.WithAlpha((byte)(strokePaint.Color.Alpha * elementOpacity));
 			}
 
 			// fill
@@ -763,14 +917,12 @@ namespace SkiaSharp
 				}
 				else
 				{
-					if (fillPaint == null)
-						fillPaint = CreatePaint();
+					fillPaint = CreatePaint();
 
-					SKColor color;
-					if (SKColor.TryParse(fill, out color))
+					if (ColorHelper.TryParse(fill, out var color))
 					{
 						// preserve alpha
-						if (color.Alpha == 255)
+						if (color.Alpha == 255 && fillPaint.Color.Alpha > 0)
 							fillPaint.Color = color.WithAlpha(fillPaint.Color.Alpha);
 						else
 							fillPaint.Color = color;
@@ -778,21 +930,24 @@ namespace SkiaSharp
 					else
 					{
 						var read = false;
-						var urlM = fillUrlRe.Match(fill);
+						var urlM = urlRe.Match(fill);
 						if (urlM.Success)
 						{
 							var id = urlM.Groups[1].Value.Trim();
-
-							XElement defE;
-							if (defs.TryGetValue(id, out defE))
+							if (defs.TryGetValue(id, out var defE))
 							{
-								var gradientShader = ReadGradient(defE);
-								if (gradientShader != null)
+								switch (defE.Name.LocalName.ToLower())
 								{
-									// TODO: multiple shaders
-
-									fillPaint.Shader = gradientShader;
-									read = true;
+									case "lineargradient":
+										fillDefs[id] = ReadLinearGradient(defE);
+										fillId = id;
+										read = true;
+										break;
+									case "radialgradient":
+										fillDefs[id] = ReadRadialGradient(defE);
+										fillId = id;
+										read = true;
+										break;
 								}
 								// else try another type (eg: image)
 							}
@@ -826,14 +981,54 @@ namespace SkiaSharp
 			}
 		}
 
+		private SKStrokeCap ReadLineCap(string strokeLineCap, SKStrokeCap def = SKStrokeCap.Butt)
+		{
+			switch (strokeLineCap)
+			{
+				case "butt":
+					return SKStrokeCap.Butt;
+				case "round":
+					return SKStrokeCap.Round;
+				case "square":
+					return SKStrokeCap.Square;
+			}
+
+			return def;
+		}
+
+		private SKStrokeJoin ReadLineJoin(string strokeLineJoin, SKStrokeJoin def = SKStrokeJoin.Miter)
+		{
+			switch (strokeLineJoin)
+			{
+				case "miter":
+					return SKStrokeJoin.Miter;
+				case "round":
+					return SKStrokeJoin.Round;
+				case "bevel":
+					return SKStrokeJoin.Bevel;
+			}
+
+			return def;
+		}
+
 		private SKPaint CreatePaint(bool stroke = false)
 		{
-			return new SKPaint
+			var strokePaint = new SKPaint
 			{
 				IsAntialias = true,
 				IsStroke = stroke,
-				Color = SKColors.Black
+				Color = stroke ? SKColors.Transparent : SKColors.Black
 			};
+
+			if (stroke)
+			{
+				strokePaint.StrokeWidth = 1f;
+				strokePaint.StrokeMiter = 4f;
+				strokePaint.StrokeJoin = SKStrokeJoin.Miter;
+				strokePaint.StrokeCap = SKStrokeCap.Butt;
+			}
+
+			return strokePaint;
 		}
 
 		private SKMatrix ReadTransform(string raw)
@@ -915,39 +1110,65 @@ namespace SkiaSharp
 			return t;
 		}
 
-		private SKPath ReadPolyPath(string pointsData, bool closePath)
+		private SKPath ReadClipPath(string raw)
 		{
-            /// compatibility
-            /// x y,x y,x y and x,y x,y x,y
-
-            var path = new SKPath();
-		    var pointsRaw = pointsData.Split(' ').ToList();
-		    var points = new List<string>();
-
-		    foreach (var point in pointsRaw)
-		    {
-		        var values = point.Split(',');
-		        points.AddRange(values);
-		    }
-
-			for (int i = 0; i < points.Count; i+=2)
+			if (string.IsNullOrWhiteSpace(raw))
 			{
-				var x = ReadNumber(points[i]);
-				var y = ReadNumber(points[i+1]);
-				if (i == 0)
+				return null;
+			}
+
+			SKPath result = null;
+			var read = false;
+			var urlM = urlRe.Match(raw);
+			if (urlM.Success)
+			{
+				var id = urlM.Groups[1].Value.Trim();
+
+				if (defs.TryGetValue(id, out XElement defE))
 				{
-					path.MoveTo(x, y);
+					result = ReadClipPathDefinition(defE);
+					if (result != null)
+					{
+						read = true;
+					}
 				}
 				else
 				{
-					path.LineTo(x, y);
+					LogOrThrow($"Invalid clip-path url reference: {id}");
 				}
 			}
-			if (closePath)
+
+			if (!read)
 			{
-				path.Close();
+				LogOrThrow($"Unsupported clip-path: {raw}");
 			}
-			return path;
+
+			return result;
+		}
+
+		private SKPath ReadClipPathDefinition(XElement e)
+		{
+			if (e.Name.LocalName != "clipPath" || !e.HasElements)
+			{
+				return null;
+			}
+
+			var result = new SKPath();
+
+			foreach (var ce in e.Elements())
+			{
+				var path = ReadElement(ce);
+				if (path != null)
+				{
+					result.AddPath(path);
+				}
+				else
+				{
+					LogOrThrow($"SVG element '{ce.Name.LocalName}' is not supported in clipPath.");
+				}
+			}
+
+			return result;
 		}
 
 		private SKTextAlign ReadTextAlignment(XElement element)
@@ -979,59 +1200,62 @@ namespace SkiaSharp
 			}
 		}
 
-		private SKShader ReadGradient(XElement defE)
+		private float ReadBaselineShift(XElement element)
 		{
-			switch (defE.Name.LocalName)
+			string value = null;
+			if (element != null)
 			{
-				case "linearGradient":
-					return ReadLinearGradient(defE);
-				case "radialGradient":
-					return ReadRadialGradient(defE);
+				var attrib = element.Attribute("baseline-shift");
+				if (attrib != null && !string.IsNullOrWhiteSpace(attrib.Value))
+					value = attrib.Value;
+				else
+				{
+					var style = element.Attribute("style");
+					if (style != null && !string.IsNullOrWhiteSpace(style.Value))
+					{
+						value = GetString(ReadStyle(style.Value), "baseline-shift");
+					}
+				}
 			}
-			return null;
+
+			return ReadNumber(value);
 		}
 
-		private SKShader ReadRadialGradient(XElement e)
+		private SKRadialGradient ReadRadialGradient(XElement e)
 		{
-			var centerX = ReadNumber(e.Attribute("cx"));
-			var centerY = ReadNumber(e.Attribute("cy"));
+			var center = new SKPoint(
+				ReadNumber(e.Attribute("cx"), 0.5f),
+				ReadNumber(e.Attribute("cy"), 0.5f));
+			var radius = ReadNumber(e.Attribute("r"), 0.5f);
+
 			//var focusX = ReadOptionalNumber(e.Attribute("fx")) ?? centerX;
 			//var focusY = ReadOptionalNumber(e.Attribute("fy")) ?? centerY;
-			var radius = ReadNumber(e.Attribute("r"));
 			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
+
 			var tileMode = ReadSpreadMethod(e);
 			var stops = ReadStops(e);
+			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
-			// TODO: check gradientTransform attribute
 			// TODO: use absolute
-
-			return SKShader.CreateRadialGradient(
-				new SKPoint(centerX, centerY),
-				radius,
-				stops.Values.ToArray(),
-				stops.Keys.ToArray(),
-				tileMode);
+			return new SKRadialGradient(center, radius, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode, matrix);
 		}
 
-		private SKShader ReadLinearGradient(XElement e)
+		private SKLinearGradient ReadLinearGradient(XElement e)
 		{
-			var startX = ReadNumber(e.Attribute("x1"));
-			var startY = ReadNumber(e.Attribute("y1"));
-			var endX = ReadNumber(e.Attribute("x2"));
-			var endY = ReadNumber(e.Attribute("y2"));
+			var start = new SKPoint(
+				ReadNumber(e.Attribute("x1"), 0f),
+				ReadNumber(e.Attribute("y1"), 0f));
+			var end = new SKPoint(
+				ReadNumber(e.Attribute("x2"), 1f),
+				ReadNumber(e.Attribute("y2"), 0f));
+
 			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
 			var tileMode = ReadSpreadMethod(e);
 			var stops = ReadStops(e);
+			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
-			// TODO: check gradientTransform attribute
 			// TODO: use absolute
-
-			return SKShader.CreateLinearGradient(
-				new SKPoint(startX, startY),
-				new SKPoint(endX, endY),
-				stops.Values.ToArray(),
-				stops.Keys.ToArray(),
-				tileMode);
+			return new SKLinearGradient(start, end, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode, matrix);
 		}
 
 		private static SKShaderTileMode ReadSpreadMethod(XElement e)
@@ -1067,13 +1291,17 @@ namespace SkiaSharp
 
 		private XElement ReadHref(XElement e)
 		{
-			var href = e.Attribute(xlink + "href")?.Value?.Substring(1);
-			XElement child;
-			if (string.IsNullOrEmpty(href) || !defs.TryGetValue(href, out child))
+			var href = ReadHrefString(e)?.Substring(1);
+			if (string.IsNullOrEmpty(href) || !defs.TryGetValue(href, out XElement child))
 			{
 				child = null;
 			}
 			return child;
+		}
+
+		private static string ReadHrefString(XElement e)
+		{
+			return (e.Attribute("href") ?? e.Attribute(xlink + "href"))?.Value;
 		}
 
 		private SortedDictionary<float, SKColor> ReadStops(XElement e)
@@ -1089,16 +1317,12 @@ namespace SkiaSharp
 				var color = SKColors.Black;
 				byte alpha = 255;
 
-				string stopColor;
-				if (style.TryGetValue("stop-color", out stopColor))
+				if (style.TryGetValue("stop-color", out string stopColor))
 				{
-					// preserve alpha
-					if (SKColor.TryParse(stopColor, out color) && color.Alpha == 255)
-						alpha = color.Alpha;
+					ColorHelper.TryParse(stopColor, out color);
 				}
 
-				string stopOpacity;
-				if (style.TryGetValue("stop-opacity", out stopOpacity))
+				if (style.TryGetValue("stop-opacity", out string stopOpacity))
 				{
 					alpha = (byte)(ReadNumber(stopOpacity) * 255);
 				}
@@ -1118,30 +1342,26 @@ namespace SkiaSharp
 		private float ReadNumber(Dictionary<string, string> style, string key, float defaultValue)
 		{
 			float value = defaultValue;
-			string strValue;
-			if (style.TryGetValue(key, out strValue))
+			if (style.TryGetValue(key, out string strValue))
 			{
 				value = ReadNumber(strValue);
 			}
 			return value;
 		}
 
-		private byte[] ReadBytes(XAttribute a)
+		private byte[] ReadUriBytes(string uri)
 		{
-			if (a == null) return new byte[0];
-
-			var base64 = a.Value.Split(',');
-			byte[] bytes = null;
-
-			if (base64.Length > 1)
+			if (!string.IsNullOrEmpty(uri))
 			{
-				bytes = Convert.FromBase64String(base64[1]);
+				var offset = uri.IndexOf(",");
+				if (offset != -1 && offset - 1 < uri.Length)
+				{
+					uri = uri.Substring(offset + 1);
+					return Convert.FromBase64String(uri);
+				}
 			}
 
-            // image empty
-			bytes = bytes ?? new byte[0];
-
-			return bytes;
+			return null;
 		}
 
 		private float ReadNumber(string raw)
@@ -1182,17 +1402,22 @@ namespace SkiaSharp
 				m = 0.01f;
 			}
 
-			float v;
-			if (!float.TryParse(s, NumberStyles.Float, icult, out v))
+			if (!float.TryParse(s, NumberStyles.Float, icult, out float v))
 			{
 				v = 0;
 			}
+
 			return m * v;
 		}
 
-		private float ReadNumber(XAttribute a) => ReadNumber(a?.Value);
+		private float ReadNumber(XAttribute a, float defaultValue) =>
+			a == null ? defaultValue : ReadNumber(a.Value);
 
-		private float? ReadOptionalNumber(XAttribute a) => a == null ? (float?)null : ReadNumber(a.Value);
+		private float ReadNumber(XAttribute a) =>
+			ReadNumber(a?.Value);
+
+		private float? ReadOptionalNumber(XAttribute a) =>
+			a == null ? (float?)null : ReadNumber(a.Value);
 
 		private SKRect ReadRectangle(string s)
 		{

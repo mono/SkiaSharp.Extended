@@ -6,12 +6,23 @@ namespace SkiaSharp.Extended.Iconify
 {
 	public class SKTextRunLookup : IDisposable
 	{
+		private static readonly Lazy<SKTextRunLookup> instance = new Lazy<SKTextRunLookup>(() => new SKTextRunLookup(true));
+
 		private readonly List<SKTextRunLookupEntry> entries;
+		private readonly bool disposeEntries;
 
 		public SKTextRunLookup()
+			: this(false)
 		{
+		}
+
+		public SKTextRunLookup(bool disposeEntries)
+		{
+			this.disposeEntries = disposeEntries;
 			entries = new List<SKTextRunLookupEntry>();
 		}
+
+		public static SKTextRunLookup Instance => instance.Value;
 
 		public IEnumerable<SKTypeface> Typefaces => entries.Select(l => l.Typeface);
 
@@ -27,7 +38,24 @@ namespace SkiaSharp.Extended.Iconify
 
 		public void AddTypeface(SKTextRunLookupEntry entry)
 		{
-			entries.Add(entry);
+			if (entry == null)
+				throw new ArgumentNullException(nameof(entry));
+
+			if (!entries.Contains(entry))
+			{
+				entries.Add(entry);
+			}
+		}
+
+		public void RemoveTypeface(SKTextRunLookupEntry entry)
+		{
+			if (entry == null)
+				throw new ArgumentNullException(nameof(entry));
+
+			if (entries.Contains(entry))
+			{
+				entries.Remove(entry);
+			}
 		}
 
 		public bool TryLookup(string template, out SKTypeface typeface, out string character)
@@ -49,54 +77,14 @@ namespace SkiaSharp.Extended.Iconify
 
 		protected virtual void Dispose(bool disposing)
 		{
-			foreach (var entry in entries)
+			if (disposeEntries)
 			{
-				entry.Dispose();
+				foreach (var entry in entries)
+				{
+					entry.Dispose();
+				}
 			}
-		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-		}
-	}
-
-	public class SKTextRunLookupEntry : IDisposable
-	{
-		private readonly bool disposeTypeface;
-
-		public SKTextRunLookupEntry(SKTypeface typeface, bool disposeTypeface, IReadOnlyDictionary<string, string> characters)
-		{
-			if (typeface == null)
-				throw new ArgumentNullException(nameof(typeface));
-			if (characters == null)
-				throw new ArgumentNullException(nameof(characters));
-
-			this.disposeTypeface = disposeTypeface;
-			Typeface = typeface;
-			Characters = characters;
-		}
-		public SKTextRunLookupEntry(SKTypeface typeface, IReadOnlyDictionary<string, string> characters)
-		{
-			if (typeface == null)
-				throw new ArgumentNullException(nameof(typeface));
-			if (characters == null)
-				throw new ArgumentNullException(nameof(characters));
-
-			Typeface = typeface;
-			Characters = characters;
-		}
-
-		public SKTypeface Typeface { get; private set; }
-
-		public IReadOnlyDictionary<string, string> Characters { get; private set; }
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposeTypeface)
-			{
-				Typeface?.Dispose();
-			}
+			entries.Clear();
 		}
 
 		public void Dispose()

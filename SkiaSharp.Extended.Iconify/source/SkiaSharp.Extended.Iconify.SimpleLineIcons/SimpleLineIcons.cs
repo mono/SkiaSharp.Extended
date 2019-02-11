@@ -8,24 +8,25 @@ namespace SkiaSharp.Extended.Iconify
 	{
 		public const string ManifestResourceName = "SkiaSharp.Extended.Iconify.Simple-Line-Icons.ttf";
 
-		public static Stream GetFontStream()
-		{
-			var type = typeof(SimpleLineIcons).GetTypeInfo();
-			var assembly = type.Assembly;
+		public static Stream GetFontStream() => SKTextRunLookupEntry.GetManifestFontStream(typeof(SimpleLineIcons), ManifestResourceName);
 
-			return assembly.GetManifestResourceStream(ManifestResourceName);
-		}
+		public static SKTypeface GetTypeface() => SKTextRunLookupEntry.GetManifestTypeface(typeof(SimpleLineIcons), ManifestResourceName);
+	}
 
-		public static SKTypeface GetTypeface()
+	public class SimpleLineIconsLookupEntry : SKTextRunLookupEntry
+	{
+		public SimpleLineIconsLookupEntry()
+			: base(SimpleLineIcons.GetTypeface(), true, SimpleLineIcons.Characters)
 		{
-			return SKTypeface.FromStream(GetFontStream());
 		}
+	}
 
-		public static void AddTo(SKTextRunLookup lookup)
-		{
-			if (lookup == null)
-				throw new ArgumentNullException(nameof(lookup));
-			lookup.AddTypeface(GetTypeface(), Characters);
-		}
+	public static class SKTextRunLookupExtensions
+	{
+		private static readonly Lazy<SimpleLineIconsLookupEntry> entry = new Lazy<SimpleLineIconsLookupEntry>(() => new SimpleLineIconsLookupEntry());
+
+		public static void AddSimpleLineIcons(this SKTextRunLookup lookup) => lookup.AddTypeface(entry.Value);
+
+		public static void RemoveSimpleLineIcons(this SKTextRunLookup lookup) => lookup.RemoveTypeface(entry.Value);
 	}
 }

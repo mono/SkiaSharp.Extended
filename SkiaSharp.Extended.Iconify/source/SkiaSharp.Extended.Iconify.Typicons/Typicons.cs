@@ -8,24 +8,25 @@ namespace SkiaSharp.Extended.Iconify
 	{
 		public const string ManifestResourceName = "SkiaSharp.Extended.Iconify.typicons.ttf";
 
-		public static Stream GetFontStream()
-		{
-			var type = typeof(Typicons).GetTypeInfo();
-			var assembly = type.Assembly;
+		public static Stream GetFontStream() => SKTextRunLookupEntry.GetManifestFontStream(typeof(Typicons), ManifestResourceName);
 
-			return assembly.GetManifestResourceStream(ManifestResourceName);
-		}
+		public static SKTypeface GetTypeface() => SKTextRunLookupEntry.GetManifestTypeface(typeof(Typicons), ManifestResourceName);
+	}
 
-		public static SKTypeface GetTypeface()
+	public class TypiconsLookupEntry : SKTextRunLookupEntry
+	{
+		public TypiconsLookupEntry()
+			: base(Typicons.GetTypeface(), true, Typicons.Characters)
 		{
-			return SKTypeface.FromStream(GetFontStream());
 		}
+	}
 
-		public static void AddTo(SKTextRunLookup lookup)
-		{
-			if (lookup == null)
-				throw new ArgumentNullException(nameof(lookup));
-			lookup.AddTypeface(GetTypeface(), Characters);
-		}
+	public static class SKTextRunLookupExtensions
+	{
+		private static readonly Lazy<TypiconsLookupEntry> entry = new Lazy<TypiconsLookupEntry>(() => new TypiconsLookupEntry());
+
+		public static void AddTypicons(this SKTextRunLookup lookup) => lookup.AddTypeface(entry.Value);
+
+		public static void RemoveTypicons(this SKTextRunLookup lookup) => lookup.RemoveTypeface(entry.Value);
 	}
 }

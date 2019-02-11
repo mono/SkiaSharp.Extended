@@ -1,12 +1,18 @@
 # SkiaSharp.Extended.Iconify
 
+[![SkiaSharp.Extended.Iconify](https://img.shields.io/nuget/vpre/SkiaSharp.Extended.Iconify.svg?maxAge=2592000)](https://www.nuget.org/packages/SkiaSharp.Extended.Iconify)  [![NuGet](https://img.shields.io/nuget/dt/SkiaSharp.Extended.Iconify.svg)](https://www.nuget.org/packages/SkiaSharp.Extended.Iconify)
+
 A simple way to draw a string that contains icons inline with normal 
 characters.
 
 For example, if we wanted to draw this string using colored characters 
 from FontAwesome (or some other icon font) mixed in with other characters:
 
+<center>
+
 ![FontAwesome](../images/FontAwesome.png)
+
+</center>
 
 To do this using factory SkiaSharp, there would be lots of work that 
 needed doing. But, not anymore.
@@ -30,29 +36,23 @@ More optional flags may be added later, but right now there is just the
 `color` flag. This flag can be any value that can be passed to the
 `SKColor.Parse` method.
 
-To draw this text, all we have to do is create a lookup table. At this
-time, we just have FontAwesome, but more can be added later:
+To draw this text, all we have to do is register the icon font in 
+app startup, or whenever we need:
 
 ```csharp
-// create the lookup table
-var lookup = new SKTextRunLookup();
-
-// add FontAwesome
-FontAwesome.AddTo(lookup);
+SKTextRunLookup.Instance.AddFontAwesome();
 ```
 
-Now that we have our table, we can draw the string:
+Now, we can draw the string anywhere in the app:
 
 ```csharp
 // create the paint that represents the default text
 var paint = new SKPaint();
 
 // draw the text, inserting all the FontAwesome characters
-canvas.DrawIconifiedText(text, 10, 100, lookup, paint);
+canvas.DrawIconifiedText(text, 10, 100, paint);
 ```
 
-The lookup table can be re-used, even using just a single table 
-across the entire app.
 
 ## Supported Icon Fonts
 
@@ -71,13 +71,34 @@ These are just what we have now, but it is very simple to add some more.
 All we need is the `.ttf` font file and some mapping from a name to the
 unicode character.
 
+
 ## Advanced
 
-For more advanced text substitutions, there is a way to directly 
-control the creation of these strings:
+If we want to control what fonts are available for a specific 
+draw operation, we can create a lookup table:
 
-Instead of just passing a string to `DrawIconifiedText`, we can
-"cache" or pre-calculate this string using `SKTextRun`:
+```csharp
+// create the lookup table
+var lookup = new SKTextRunLookup();
+
+// add FontAwesome
+lookup.AddTypeface(new FontAwesomeLookupEntry());
+```
+
+Now that we have our table, we can draw the string:
+
+```csharp
+// create the paint that represents the default text
+var paint = new SKPaint();
+
+// draw the text, inserting all the FontAwesome characters
+canvas.DrawIconifiedText(text, 10, 100, lookup, paint);
+```
+
+For more advanced text substitutions, there is a way to directly 
+control the creation of these strings. Instead of just passing a 
+string to `DrawIconifiedText`, we can "cache" or pre-calculate 
+this string using `SKTextRun`:
 
 ```csharp
 // create the text runs

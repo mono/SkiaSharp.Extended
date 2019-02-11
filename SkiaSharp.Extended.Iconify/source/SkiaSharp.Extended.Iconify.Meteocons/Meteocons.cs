@@ -8,24 +8,25 @@ namespace SkiaSharp.Extended.Iconify
 	{
 		public const string ManifestResourceName = "SkiaSharp.Extended.Iconify.meteocons-webfont.ttf";
 
-		public static Stream GetFontStream()
-		{
-			var type = typeof(Meteocons).GetTypeInfo();
-			var assembly = type.Assembly;
+		public static Stream GetFontStream() => SKTextRunLookupEntry.GetManifestFontStream(typeof(Meteocons), ManifestResourceName);
 
-			return assembly.GetManifestResourceStream(ManifestResourceName);
-		}
+		public static SKTypeface GetTypeface() => SKTextRunLookupEntry.GetManifestTypeface(typeof(Meteocons), ManifestResourceName);
+	}
 
-		public static SKTypeface GetTypeface()
+	public class MeteoconsLookupEntry : SKTextRunLookupEntry
+	{
+		public MeteoconsLookupEntry()
+			: base(Meteocons.GetTypeface(), true, Meteocons.Characters)
 		{
-			return SKTypeface.FromStream(GetFontStream());
 		}
+	}
 
-		public static void AddTo(SKTextRunLookup lookup)
-		{
-			if (lookup == null)
-				throw new ArgumentNullException(nameof(lookup));
-			lookup.AddTypeface(GetTypeface(), Characters);
-		}
+	public static class SKTextRunLookupExtensions
+	{
+		private static readonly Lazy<MeteoconsLookupEntry> entry = new Lazy<MeteoconsLookupEntry>(() => new MeteoconsLookupEntry());
+
+		public static void AddMeteocons(this SKTextRunLookup lookup) => lookup.AddTypeface(entry.Value);
+
+		public static void RemoveMeteocons(this SKTextRunLookup lookup) => lookup.RemoveTypeface(entry.Value);
 	}
 }

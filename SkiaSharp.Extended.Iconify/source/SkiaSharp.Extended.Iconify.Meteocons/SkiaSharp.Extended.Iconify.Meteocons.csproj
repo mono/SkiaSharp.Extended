@@ -1,57 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E4E220CE-0F9E-4963-9ECF-43F13B8DEABC}</ProjectGuid>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <UseMSBuildEngine>true</UseMSBuildEngine>
-    <OutputType>Library</OutputType>
-    <RootNamespace>SkiaSharp.Extended.Iconify</RootNamespace>
+    <TargetFrameworks>netstandard2.0;netstandard1.3</TargetFrameworks>
     <AssemblyName>SkiaSharp.Extended.Iconify.Meteocons</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\..\keys\Open.snk</AssemblyOriginatorKeyFile>
+    <RootNamespace>SkiaSharp.Extended.Iconify</RootNamespace>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <AssemblyFileVersion>1.0.0.0</AssemblyFileVersion>
+    <Version>3.0.0</Version>
+    <Product>$(AssemblyName) ($(TargetFramework))</Product>
+    <NeutralLanguage>en</NeutralLanguage>
+    <DefineConstants>$(DefineConstants);</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+
+  <ItemGroup>
+    <DownloadZipFile Include="http://www.alessioatzeni.com/meteocons/res/download/meteocons-font.zip"
+                     Font="meteocons-font\FONT\Font-face\meteocons-webfont.ttf" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.Iconify.Meteocons</PackageId>
+    <Title>Meteocons for SkiaSharp.Extended.Iconify</Title>
+    <PackageVersion Condition=" '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
+    <Authors>Microsoft</Authors>
+    <Owners>Microsoft</Owners>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>The Meteocons font for SkiaSharp.Extended.Iconify.</Description>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <!-- <PackageIconUrl>https://go.microsoft.com/fwlink/?linkid=868516</PackageIconUrl> -->
+    <PackageTags>skiasharp iconify meteocons xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform</PackageTags>
+    <PackageLicenseUrl>https://go.microsoft.com/fwlink/?linkid=2072003</PackageLicenseUrl>
+    <PackageProjectUrl>https://go.microsoft.com/fwlink/?linkid=2071915</PackageProjectUrl>
+    <RepositoryUrl>https://go.microsoft.com/fwlink/?linkid=2071915</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
+    <DefineConstants>$(DefineConstants);NET_STANDARD;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+  <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
+    <DebugType>pdbonly</DebugType>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Meteocons.cs" />
-    <Compile Include="Meteocons.Characters.cs" />
+    <PackageReference Include="MSBuild.Sdk.Extras" Version="1.6.55" PrivateAssets="All" />
+    <PackageReference Include="SkiaSharp" Version="1.68.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="..\..\externals\Meteocons\meteocons-font\FONT\Font-face\meteocons-webfont.ttf">
-      <Link>meteocons-webfont.ttf</Link>
-    </EmbeddedResource>
+    <ProjectReference Include="..\SkiaSharp.Extended.Iconify\SkiaSharp.Extended.Iconify.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="SkiaSharp">
-      <HintPath>..\packages\SkiaSharp.1.58.0\lib\portable-net45+win8+wpa81+wp8\SkiaSharp.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SkiaSharp.Extended.Iconify\SkiaSharp.Extended.Iconify.csproj">
-      <Project>{B32E4823-D151-4A32-8C25-914BC7FB7B2C}</Project>
-      <Name>SkiaSharp.Extended.Iconify</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+
+  <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\..\Signing.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\IconifyDownloader.targets" />
+
 </Project>
