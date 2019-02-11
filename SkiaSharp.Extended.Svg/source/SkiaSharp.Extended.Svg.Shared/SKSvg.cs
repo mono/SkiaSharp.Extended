@@ -274,7 +274,7 @@ namespace SkiaSharp.Extended.Svg
 				case "line":
 					if (stroke != null || fill != null)
 					{
-						var elementPath = ReadElement(e);
+						var elementPath = ReadElement(e, style);
 						if (elementPath == null)
 							break;
 
@@ -408,7 +408,7 @@ namespace SkiaSharp.Extended.Svg
 			return new SKSvgImage(rect, uri, bytes);
 		}
 
-		private SKPath ReadElement(XElement e)
+		private SKPath ReadElement(XElement e, Dictionary<string, string> style = null)
 		{
 			var path = new SKPath();
 
@@ -431,25 +431,25 @@ namespace SkiaSharp.Extended.Svg
 					path.AddCircle(circle.Center.X, circle.Center.Y, circle.Radius);
 					break;
 				case "path":
-					var d = e.Attribute("d")?.Value;
-					if (!string.IsNullOrWhiteSpace(d))
-					{
-						path.Dispose();
-						path = SKPath.ParseSvgPathData(d);
-					}
-					break;
 				case "polygon":
 				case "polyline":
-					var close = elementName == "polygon";
-					var p = e.Attribute("points")?.Value;
-					if (!string.IsNullOrWhiteSpace(p))
+					string data = null;
+					if (elementName == "path")
 					{
-						p = "M" + p;
-						if (close)
-							p += " Z";
-						path.Dispose();
-						path = SKPath.ParseSvgPathData(p);
+						data = e.Attribute("d")?.Value;
 					}
+					else
+					{
+						data = "M" + e.Attribute("points")?.Value;
+						if (elementName == "polygon")
+							data += " Z";
+					}
+					if (!string.IsNullOrWhiteSpace(data))
+					{
+						path.Dispose();
+						path = SKPath.ParseSvgPathData(data);
+					}
+					path.FillType = ReadFillRule(style);
 					break;
 				case "line":
 					var line = ReadLine(e);
@@ -583,7 +583,7 @@ namespace SkiaSharp.Extended.Svg
 		{
 			var fontStyle = ReadStyle(e);
 
-			if (!fontStyle.TryGetValue("font-family", out string ffamily) || string.IsNullOrWhiteSpace(ffamily))
+			if (fontStyle == null || !fontStyle.TryGetValue("font-family", out string ffamily) || string.IsNullOrWhiteSpace(ffamily))
 				ffamily = paint.Typeface?.FamilyName;
 			var fweight = ReadFontWeight(fontStyle, paint.Typeface?.FontWeight ?? (int)SKFontStyleWeight.Normal);
 			var fwidth = ReadFontWidth(fontStyle, paint.Typeface?.FontWidth ?? (int)SKFontStyleWidth.Normal);
@@ -591,15 +591,38 @@ namespace SkiaSharp.Extended.Svg
 
 			paint.Typeface = SKTypeface.FromFamilyName(ffamily, fweight, fwidth, fstyle);
 
-			if (fontStyle.TryGetValue("font-size", out string fsize) && !string.IsNullOrWhiteSpace(fsize))
+			if (fontStyle != null && fontStyle.TryGetValue("font-size", out string fsize) && !string.IsNullOrWhiteSpace(fsize))
 				paint.TextSize = ReadNumber(fsize);
+		}
+
+		private static SKPathFillType ReadFillRule(Dictionary<string, string> style, SKPathFillType defaultFillRule = SKPathFillType.Winding)
+		{
+			var fillRule = defaultFillRule;
+
+			if (style != null && style.TryGetValue("fill-rule", out string rule) && !string.IsNullOrWhiteSpace(rule))
+			{
+				switch (rule)
+				{
+					case "evenodd":
+						fillRule = SKPathFillType.EvenOdd;
+						break;
+					case "nonzero":
+						fillRule = SKPathFillType.Winding;
+						break;
+					default:
+						fillRule = defaultFillRule;
+						break;
+				}
+			}
+
+			return fillRule;
 		}
 
 		private static SKFontStyleSlant ReadFontStyle(Dictionary<string, string> fontStyle, SKFontStyleSlant defaultStyle = SKFontStyleSlant.Upright)
 		{
 			var style = defaultStyle;
 
-			if (fontStyle.TryGetValue("font-style", out string fstyle) && !string.IsNullOrWhiteSpace(fstyle))
+			if (fontStyle != null && fontStyle.TryGetValue("font-style", out string fstyle) && !string.IsNullOrWhiteSpace(fstyle))
 			{
 				switch (fstyle)
 				{
@@ -624,7 +647,7 @@ namespace SkiaSharp.Extended.Svg
 		private int ReadFontWidth(Dictionary<string, string> fontStyle, int defaultWidth = (int)SKFontStyleWidth.Normal)
 		{
 			var width = defaultWidth;
-			if (fontStyle.TryGetValue("font-stretch", out string fwidth) && !string.IsNullOrWhiteSpace(fwidth) && !int.TryParse(fwidth, out width))
+			if (fontStyle != null && fontStyle.TryGetValue("font-stretch", out string fwidth) && !string.IsNullOrWhiteSpace(fwidth) && !int.TryParse(fwidth, out width))
 			{
 				switch (fwidth)
 				{
@@ -674,7 +697,7 @@ namespace SkiaSharp.Extended.Svg
 		{
 			var weight = defaultWeight;
 
-			if (fontStyle.TryGetValue("font-weight", out string fweight) && !string.IsNullOrWhiteSpace(fweight) && !int.TryParse(fweight, out weight))
+			if (fontStyle != null && fontStyle.TryGetValue("font-weight", out string fweight) && !string.IsNullOrWhiteSpace(fweight) && !int.TryParse(fweight, out weight))
 			{
 				switch (fweight)
 				{
@@ -709,7 +732,7 @@ namespace SkiaSharp.Extended.Svg
 
 		private string GetString(Dictionary<string, string> style, string name, string defaultValue = "")
 		{
-			if (style.TryGetValue(name, out string v))
+			if (style != null && style.TryGetValue(name, out string v))
 				return v;
 			return defaultValue;
 		}
@@ -1342,7 +1365,7 @@ namespace SkiaSharp.Extended.Svg
 		private float ReadNumber(Dictionary<string, string> style, string key, float defaultValue)
 		{
 			float value = defaultValue;
-			if (style.TryGetValue(key, out string strValue))
+			if (style != null && style.TryGetValue(key, out string strValue))
 			{
 				value = ReadNumber(strValue);
 			}
