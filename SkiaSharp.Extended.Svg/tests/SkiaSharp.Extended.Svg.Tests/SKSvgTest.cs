@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Xml.Linq;
 using Xunit;
@@ -325,20 +325,69 @@ namespace SkiaSharp.Extended.Svg.Tests
 		}
 
 		[Fact]
+		public void SimpleRadialGradient()
+		{
+			var path = Path.Combine(PathToImages, "simple-gradient.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.White);
+
+			Assert.Equal(new SKColor(0xff028102), bmp.GetPixel(100, 100));
+			Assert.Equal(new SKColor(0xffffffff), bmp.GetPixel(0, 0));
+			Assert.Equal(new SKColor(0xffc9e4c9), bmp.GetPixel(50, 50));
+		}
+
+		[Fact]
+		public void LinearGradientWithPercents()
+		{
+			var path = Path.Combine(PathToImages, "percents.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.White);
+
+			// horizontal
+			Assert.Equal(new SKColor(0xfffd0303), bmp.GetPixel(10, 60));
+			Assert.Equal(new SKColor(0xfffcfcfc), bmp.GetPixel(60, 60));
+			Assert.Equal(new SKColor(0xff0303fd), bmp.GetPixel(109, 60));
+
+			// vertical
+			Assert.Equal(new SKColor(0xfffd0303), bmp.GetPixel(60, 120));
+			Assert.Equal(new SKColor(0xfffcfcfc), bmp.GetPixel(60, 170));
+			Assert.Equal(new SKColor(0xff0303fd), bmp.GetPixel(60, 219));
+		}
+
+		[Fact]
+		public void RadialGradientWithPercents()
+		{
+			var path = Path.Combine(PathToImages, "gradient-radial.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.White);
+
+			Assert.Equal(new SKColor(0xffffffff), bmp.GetPixel(60, 5));
+
+			Assert.Equal(new SKColor(0xff0000ff), bmp.GetPixel(20, 20));
+			Assert.Equal(new SKColor(0xfffb0004), bmp.GetPixel(60, 60));
+
+			Assert.Equal(new SKColor(0xff0000ff), bmp.GetPixel(60, 170));
+			Assert.Equal(new SKColor(0xfff80007), bmp.GetPixel(35, 145));
+		}
+
+		[Fact]
 		public void SvgReadGradientTransform()
 		{
-			var path = Path.Combine(PathToImages, "gradient.svg");
-			var bmp = LoadSvgBitmap(path, SKColors.Green);
+			var path = Path.Combine(PathToImages, "gradient-transform.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.White);
 
-			// Radial Gradient
-			Assert.Equal(new SKColor(0xfff18684), bmp.GetPixel(33, 33));
-			Assert.Equal(new SKColor(0xffeb4d52), bmp.GetPixel(20, 33));
-			Assert.Equal(new SKColor(0xffeb4b50), bmp.GetPixel(46, 33));
+			Assert.Equal(new SKColor(0xfff3000c), bmp.GetPixel(10, 10));
+			Assert.Equal(new SKColor(0xff0000ff), bmp.GetPixel(109, 109));
 
-			// Linear Gradient
-			Assert.Equal(new SKColor(0xfff30600), bmp.GetPixel(33, 180));
-			Assert.Equal(new SKColor(0xffff0000), bmp.GetPixel(20, 180));
-			Assert.Equal(new SKColor(0xffc21f00), bmp.GetPixel(46, 180));
+			Assert.Equal(new SKColor(0xffff0000), bmp.GetPixel(10, 170));
+			Assert.Equal(new SKColor(0xff8d0072), bmp.GetPixel(109, 170));
+		}
+
+		[Fact]
+		public void SupportsLineCaps()
+		{
+			var path = Path.Combine(PathToImages, "linecaps.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.White);
+
+			Assert.Equal(new SKColor(0xff000000), bmp.GetPixel(80, 108));
+			Assert.Equal(new SKColor(0xfff4ecce), bmp.GetPixel(65, 100));
 		}
 
 		[Fact]
@@ -360,8 +409,6 @@ namespace SkiaSharp.Extended.Svg.Tests
 			var svg = new SKSvg();
 			svg.Load(path);
 			var bmp = CreateBitmap(svg, SKColors.White);
-
-			SaveBitmap(bmp);
 
 			Assert.Equal(SKColors.White, bmp.GetPixel(11, 20));
 		}
