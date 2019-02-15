@@ -63,19 +63,20 @@ jobs:
           artifactName: build_macos
           targetPath: 'output'
 
-  - job: signing
-    displayName: Signing NuGets
-    dependsOn: build_windows
-    pool:
-      name: VSEng-XamarinCustom
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
-    steps:
-      - checkout: none
-      - template: azure-templates-sign.yml
-        parameters:
-          sourceRepo: mono/SkiaSharp.Extended
-          targetFolder: 'output/signed'
-      - task: PublishPipelineArtifact@0
-        inputs:
-          artifactName: nuget-signed
-          targetPath: 'output/signed'
+  - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
+    - job: signing
+      displayName: Signing NuGets
+      dependsOn: build_windows
+      pool:
+        name: VSEng-XamarinCustom
+      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
+      steps:
+        - checkout: none
+        - template: azure-templates-sign.yml
+          parameters:
+            sourceRepo: mono/SkiaSharp.Extended
+            targetFolder: 'output/signed'
+        - task: PublishPipelineArtifact@0
+          inputs:
+            artifactName: nuget-signed
+            targetPath: 'output/signed'
