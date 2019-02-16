@@ -74,7 +74,7 @@ jobs:
   # - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
     - job: signing
       displayName: Signing NuGets
-      dependsOn: build_windows
+      # dependsOn: build_windows
       pool:
         name: VSEng-XamarinCustom
       # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
