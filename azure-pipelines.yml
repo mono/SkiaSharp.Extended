@@ -76,7 +76,7 @@ jobs:
       displayName: Signing NuGets
       dependsOn: build_windows
       pool:
-        vmImage: VSEng-XamarinCustom
+        name: VSEng-XamarinCustom
       # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
       steps:
         - checkout: none
