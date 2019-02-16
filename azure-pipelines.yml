@@ -77,7 +77,7 @@ jobs:
       dependsOn: build_windows
       pool:
         name: VSEng-XamarinCustom
-      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/')))
+      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
       steps:
         - checkout: none
         - template: sign-artifacts.yml@xamarin-templates
