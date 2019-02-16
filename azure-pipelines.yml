@@ -9,6 +9,15 @@ variables:
   MONO_VERSION: 5_16_0
   XCODE_VERSION: 10.1
 
+resources:
+  repositories:
+    - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
+      - repository: xamarin-templates
+        type: github
+        name: xamarin/yaml-templates
+        ref: refs/heads/sign-artifacts
+        endpoint: GitHub-Xamarin
+
 jobs:
   - job: build_windows
     displayName: Build (Windows)
@@ -69,14 +78,7 @@ jobs:
       dependsOn: build_windows
       pool:
         name: VSEng-XamarinCustom
-      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
-      resources:
-        repositories:
-          - repository: xamarin-templates
-            type: github
-            name: xamarin/yaml-templates
-            ref: refs/heads/sign-artifacts
-            endpoint: $(TEMPLATES_ENDPOINT)
+      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/')))
       steps:
         - checkout: none
         - template: sign-artifacts.yml@xamarin-templates
