@@ -11,12 +11,11 @@ variables:
 
 resources:
   repositories:
-    - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
-      - repository: xamarin-templates
-        type: github
-        name: xamarin/yaml-templates
-        ref: refs/heads/sign-artifacts
-        endpoint: GitHub-Xamarin
+    - repository: xamarin-templates
+      type: github
+      name: xamarin/yaml-templates
+      ref: refs/heads/sign-artifacts
+      endpoint: GitHub-Xamarin
 
 jobs:
   - job: build_windows
