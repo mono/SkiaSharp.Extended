@@ -86,16 +86,12 @@ jobs:
       dependsOn: build_windows
       pool:
         name: VSEng-XamarinCustom
-      # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
       steps:
         - checkout: none
         - template: sign-artifacts.yml@xamarin-templates
           parameters:
             targetFolder: 'output/signed'
-        - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-          displayName: Component Detection
-          inputs:
-            scanType: LogOnly
         - task: PublishPipelineArtifact@0
           inputs:
             artifactName: nuget-signed
