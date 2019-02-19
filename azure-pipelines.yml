@@ -86,6 +86,8 @@ jobs:
       dependsOn: build_windows
       pool:
         name: VSEng-XamarinCustom
+        demands:
+          - corpnet
       condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
       steps:
         - checkout: none
