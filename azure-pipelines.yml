@@ -1,3 +1,4 @@
+
 trigger:
   - master
 
@@ -9,6 +10,13 @@ variables:
   MONO_VERSION: 5_16_0
   XCODE_VERSION: 10.1
 
+resources:
+  repositories:
+    - repository: xamarin-templates
+      type: github
+      name: xamarin/yaml-templates
+      endpoint: xamarin
+
 jobs:
   - job: build_windows
     displayName: Build (Windows)
@@ -16,6 +24,10 @@ jobs:
       vmImage: vs2017-win2016
     steps:
       - powershell: .\build.ps1
+      - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+        displayName: Component Detection
+        inputs:
+          scanType: LogOnly
       - task: PublishTestResults@2
         inputs:
           testResultsFormat: xUnit
@@ -54,6 +66,10 @@ jobs:
       - bash: echo '##vso[task.setvariable variable=MD_APPLE_SDK_ROOT;]'/Applications/Xcode_$(XCODE_VERSION).app;sudo xcode-select --switch /Applications/Xcode_$(XCODE_VERSION).app/Contents/Developer
         displayName: Switch to the latest Xcode
       - bash: ./build.sh
+      - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+        displayName: Component Detection
+        inputs:
+          scanType: LogOnly
       - task: PublishTestResults@2
         inputs:
           testResultsFormat: xUnit
@@ -69,12 +85,13 @@ jobs:
       dependsOn: build_windows
       pool:
         name: VSEng-XamarinCustom
-      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'],'refs/tags/'))
+        demands:
+          - corpnet
+      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
       steps:
         - checkout: none
-        - template: azure-templates-sign.yml
+        - template: sign-artifacts.yml@xamarin-templates
           parameters:
-            sourceRepo: mono/SkiaSharp.Extended
             targetFolder: 'output/signed'
         - task: PublishPipelineArtifact@0
           inputs:
