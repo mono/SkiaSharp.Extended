@@ -30,6 +30,7 @@ namespace SkiaSharp.Extended.Svg
 		private readonly Dictionary<string, SKSvgMask> masks = new Dictionary<string, SKSvgMask>();
 		private readonly Dictionary<string, ISKSvgFill> fillDefs = new Dictionary<string, ISKSvgFill>();
 		private readonly Dictionary<XElement, string> elementFills = new Dictionary<XElement, string>();
+		private readonly Dictionary<XElement, string> strokeElementFills = new Dictionary<XElement, string>();
 		private readonly XmlReaderSettings xmlReaderSettings = new XmlReaderSettings()
 		{
 			DtdProcessing = DtdProcessing.Ignore,
@@ -167,7 +168,8 @@ namespace SkiaSharp.Extended.Svg
 			{
 				// if there is no viewbox, then we don't do anything, otherwise
 				// scale the SVG dimensions to fit inside the user dimensions
-				if (!ViewBox.IsEmpty && (ViewBox.Width != CanvasSize.Width || ViewBox.Height != CanvasSize.Height))
+				if (!ViewBox.IsEmpty && (Math.Abs(ViewBox.Width - CanvasSize.Width) > float.Epsilon
+					|| Math.Abs(ViewBox.Height - CanvasSize.Height) > float.Epsilon))
 				{
 					if (preserveAspectRatio == "none")
 					{
@@ -219,6 +221,16 @@ namespace SkiaSharp.Extended.Svg
 			if (e.Attribute("display")?.Value == "none")
 				return;
 
+			// SVG element
+			var elementName = e.Name.LocalName;
+			var isGroup = elementName == "g";
+
+			// read style
+			var style = ReadPaints(e, ref stroke, ref fill, isGroup);
+
+			if (style.TryGetValue("display", out var displayStyle) && displayStyle == "none")
+				return;
+
 			// transform matrix
 			var transform = ReadTransform(e.Attribute("transform")?.Value ?? string.Empty);
 			canvas.Save();
@@ -231,12 +243,6 @@ namespace SkiaSharp.Extended.Svg
 				canvas.ClipPath(clipPath);
 			}
 
-			// SVG element
-			var elementName = e.Name.LocalName;
-			var isGroup = elementName == "g";
-
-			// read style
-			var style = ReadPaints(e, ref stroke, ref fill, isGroup);
 			var mask = ReadMask(style);
 
 			// parse elements
@@ -280,13 +286,24 @@ namespace SkiaSharp.Extended.Svg
 						if (elementPath == null)
 							break;
 
-						if (elementFills.TryGetValue(e, out var fillId) && fillDefs.TryGetValue(fillId, out var addFill))
+						if (fill != null && elementFills.TryGetValue(e, out var fillId)
+							&& fillDefs.TryGetValue(fillId, out var addFill))
 						{
 							var points = ReadElementXY(e);
 							var elementSize = ReadElementSize(e);
 							var bounds = SKRect.Create(new SKPoint(points.X, points.Y), elementSize);
 
 							addFill.ApplyFill(fill, bounds);
+						}
+
+						if (stroke != null && strokeElementFills.TryGetValue(e,
+							out var strokeFillId) && fillDefs.TryGetValue(strokeFillId, out var addStrokeFill))
+						{
+							var points = ReadElementXY(e);
+							var elementSize = ReadElementSize(e);
+							var bounds = SKRect.Create(new SKPoint(points.X, points.Y), elementSize);
+
+							addStrokeFill.ApplyFill(stroke, bounds);
 						}
 
 						if (mask != null)
@@ -425,6 +442,12 @@ namespace SkiaSharp.Extended.Svg
 								CssHelpers.ParseSelectors(item.Value, styles);
 							}
 						}
+					}
+					break;
+				case "a":
+					foreach (var child in e.Descendants())
+					{
+						ReadElement(child, canvas, stroke?.Clone(), fill?.Clone());
 					}
 					break;
 				case "clipPath":
@@ -662,21 +685,23 @@ namespace SkiaSharp.Extended.Svg
 
 		private SKText ReadText(XElement e, SKPaint stroke, SKPaint fill)
 		{
-			// TODO: stroke
-
 			var x = ReadNumber(e.Attribute("x"));
 			var y = ReadNumber(e.Attribute("y"));
 			var xy = new SKPoint(x, y);
 			var textAlign = ReadTextAlignment(e);
 			var baselineShift = ReadBaselineShift(e);
 
-			ReadFontAttributes(e, fill);
+			var style = ReadPaints(e, ref stroke, ref fill, false);
+			ReadFontAttributes(style, ref stroke, ref fill);
 
 			var spans = new SKText(xy, textAlign);
 
 			// textAlign is used for all spans within the <text> element. If different textAligns would be needed, it is necessary to use
 			// several <text> elements instead of <tspan> elements
 			fill.TextAlign = SKTextAlign.Left;  // fixed alignment for all spans
+
+			if (stroke != null)
+				stroke.TextAlign = SKTextAlign.Left;  // fixed alignment for all spans
 
 			ReadTextElement(e, spans, textAlign, baselineShift, stroke, fill);
 
@@ -689,7 +714,10 @@ namespace SkiaSharp.Extended.Svg
 			for (int i = 0; i < nodes.Length; i++)
 			{
 				var clonedFill = fill.Clone();
-				ReadFontAttributes(e, clonedFill);
+				var clonedStroke = stroke?.Clone();
+
+				var style = ReadPaints(e, ref clonedStroke, ref clonedFill, false);
+				ReadFontAttributes(style, ref clonedStroke, ref clonedFill);
 
 				var c = nodes[i];
 				if (c.NodeType == XmlNodeType.Text)
@@ -708,7 +736,10 @@ namespace SkiaSharp.Extended.Svg
 							textSegments[count - 1] = textSegments[count - 1].TrimEnd();
 						var text = WSRe.Replace(string.Concat(textSegments), " ");
 
-						spans.Append(new SKTextSpan(text, clonedFill, baselineShift: baselineShift));
+						if (string.IsNullOrEmpty(text))
+							continue;
+
+						spans.Append(new SKTextSpan(text, clonedStroke, clonedFill, baselineShift: baselineShift));
 					}
 				}
 				else if (c is XElement ce && ce.Name.LocalName == "tspan")
@@ -719,41 +750,64 @@ namespace SkiaSharp.Extended.Svg
 					}
 					else
 					{
+						var text = ce.Value;
+
+						if (string.IsNullOrEmpty(text))
+							continue;
+
 						// the current span may want to change the cursor position
 						var x = ReadOptionalNumber(ce.Attribute("x"));
 						var y = ReadOptionalNumber(ce.Attribute("y"));
-						var text = ce.Value; //.Trim();
 
 						// Don't read text-anchor from tspans!, Only use enclosing text-anchor from text element!
 						baselineShift = ReadBaselineShift(ce);
 
-						spans.Append(new SKTextSpan(text, clonedFill, x, y, baselineShift));
+						spans.Append(new SKTextSpan(text, clonedStroke, clonedFill, x, y, baselineShift));
 					}
 				}
 			}
 		}
 
-		private void ReadFontAttributes(XElement e, SKPaint paint)
+		private void ReadFontAttributes(Dictionary<string, string> style, ref SKPaint stroke, ref SKPaint fill)
 		{
-			var fontStyle = ReadStyle(e);
+			var fontFamily = fill.Typeface?.FamilyName ?? SKTypeface.Default.FamilyName;
+			var fontStyle = fill.Typeface?.FontSlant ?? SKFontStyleSlant.Upright;
+			var fontWeight = (SKFontStyleWeight?)fill.Typeface?.FontWeight ?? SKFontStyleWeight.Normal;
+			var fontWidth = (SKFontStyleWidth?)fill.Typeface?.FontWidth ?? SKFontStyleWidth.Normal;
 
-			if (fontStyle == null || !fontStyle.TryGetValue("font-family", out string ffamily) || string.IsNullOrWhiteSpace(ffamily))
-				ffamily = paint.Typeface?.FamilyName;
-			var fweight = ReadFontWeight(fontStyle, paint.Typeface?.FontWeight ?? (int)SKFontStyleWeight.Normal);
-			var fwidth = ReadFontWidth(fontStyle, paint.Typeface?.FontWidth ?? (int)SKFontStyleWidth.Normal);
-			var fstyle = ReadFontStyle(fontStyle, paint.Typeface?.FontSlant ?? SKFontStyleSlant.Upright);
+			if (style.TryGetValue("font-style", out var cssFontStyle))
+				TryParseFontStyle(cssFontStyle, out fontStyle, fontStyle);
 
-			paint.Typeface = SKTypeface.FromFamilyName(ffamily, fweight, fwidth, fstyle);
+			if (style.TryGetValue("font-weight", out var cssFontWeight))
+				TryParseFontWeight(cssFontWeight, out fontWeight, fontWeight);
 
-			if (fontStyle != null && fontStyle.TryGetValue("font-size", out string fsize) && !string.IsNullOrWhiteSpace(fsize))
-				paint.TextSize = ReadNumber(fsize);
+			if (style.TryGetValue("font-stretch", out var cssFontStretch))
+				TryParseFontWidth(cssFontStretch, out fontWidth, fontWidth);
+
+			if (style.TryGetValue("font-family", out var ffamily))
+				fontFamily = ffamily;
+
+			var typeface = SKTypeface.FromFamilyName(fontFamily, fontWeight, fontWidth, fontStyle);
+
+			if (stroke != null)
+				stroke.Typeface = typeface;
+			fill.Typeface = typeface;
+
+			if (style.TryGetValue("font-size", out var fsize))
+			{
+				var size = ReadNumber(fsize);
+
+				if (stroke != null)
+					stroke.TextSize = size;
+				fill.TextSize = size;
+			}
 		}
 
 		private static SKPathFillType ReadFillRule(Dictionary<string, string> style, SKPathFillType defaultFillRule = SKPathFillType.Winding)
 		{
 			var fillRule = defaultFillRule;
 
-			if (style != null && style.TryGetValue("fill-rule", out string rule) && !string.IsNullOrWhiteSpace(rule))
+			if (style != null && style.TryGetValue("fill-rule", out var rule) && !string.IsNullOrWhiteSpace(rule))
 			{
 				switch (rule)
 				{
@@ -772,108 +826,107 @@ namespace SkiaSharp.Extended.Svg
 			return fillRule;
 		}
 
-		private static SKFontStyleSlant ReadFontStyle(Dictionary<string, string> fontStyle, SKFontStyleSlant defaultStyle = SKFontStyleSlant.Upright)
+		private static bool TryParseFontStyle(string value, out SKFontStyleSlant fontStyle, SKFontStyleSlant defaultFontStyle = SKFontStyleSlant.Upright)
 		{
-			var style = defaultStyle;
-
-			if (fontStyle != null && fontStyle.TryGetValue("font-style", out string fstyle) && !string.IsNullOrWhiteSpace(fstyle))
+			switch (value)
 			{
-				switch (fstyle)
-				{
-					case "italic":
-						style = SKFontStyleSlant.Italic;
-						break;
-					case "oblique":
-						style = SKFontStyleSlant.Oblique;
-						break;
-					case "normal":
-						style = SKFontStyleSlant.Upright;
-						break;
-					default:
-						style = defaultStyle;
-						break;
-				}
+				case "italic":
+					fontStyle = SKFontStyleSlant.Italic;
+					return true;
+				case "oblique":
+					fontStyle = SKFontStyleSlant.Oblique;
+					return true;
+				case "normal":
+					fontStyle = SKFontStyleSlant.Upright;
+					return true;
+				default:
+					fontStyle = defaultFontStyle;
+					return false;
 			}
-
-			return style;
 		}
 
-		private int ReadFontWidth(Dictionary<string, string> fontStyle, int defaultWidth = (int)SKFontStyleWidth.Normal)
+		private bool TryParseFontWidth(string value, out SKFontStyleWidth fontStretch, SKFontStyleWidth defaultFontStretch = SKFontStyleWidth.Normal)
 		{
-			var width = defaultWidth;
-			if (fontStyle != null && fontStyle.TryGetValue("font-stretch", out string fwidth) && !string.IsNullOrWhiteSpace(fwidth) && !int.TryParse(fwidth, out width))
+			if (string.IsNullOrWhiteSpace(value))
 			{
-				switch (fwidth)
-				{
-					case "ultra-condensed":
-						width = (int)SKFontStyleWidth.UltraCondensed;
-						break;
-					case "extra-condensed":
-						width = (int)SKFontStyleWidth.ExtraCondensed;
-						break;
-					case "condensed":
-						width = (int)SKFontStyleWidth.Condensed;
-						break;
-					case "semi-condensed":
-						width = (int)SKFontStyleWidth.SemiCondensed;
-						break;
-					case "normal":
-						width = (int)SKFontStyleWidth.Normal;
-						break;
-					case "semi-expanded":
-						width = (int)SKFontStyleWidth.SemiExpanded;
-						break;
-					case "expanded":
-						width = (int)SKFontStyleWidth.Expanded;
-						break;
-					case "extra-expanded":
-						width = (int)SKFontStyleWidth.ExtraExpanded;
-						break;
-					case "ultra-expanded":
-						width = (int)SKFontStyleWidth.UltraExpanded;
-						break;
-					case "wider":
-						width = width + 1;
-						break;
-					case "narrower":
-						width = width - 1;
-						break;
-					default:
-						width = defaultWidth;
-						break;
-				}
+				fontStretch = defaultFontStretch;
+				return false;
 			}
 
-			return Math.Min(Math.Max((int)SKFontStyleWidth.UltraCondensed, width), (int)SKFontStyleWidth.UltraExpanded);
+			switch (value)
+			{
+				case "ultra-condensed":
+					fontStretch = SKFontStyleWidth.UltraCondensed;
+					return true;
+				case "extra-condensed":
+					fontStretch = SKFontStyleWidth.ExtraCondensed;
+					return true;
+				case "condensed":
+					fontStretch = SKFontStyleWidth.Condensed;
+					return true;
+				case "semi-condensed":
+					fontStretch = SKFontStyleWidth.SemiCondensed;
+					return true;
+				case "normal":
+					fontStretch = SKFontStyleWidth.Normal;
+					return true;
+				case "semi-expanded":
+					fontStretch = SKFontStyleWidth.SemiExpanded;
+					return true;
+				case "expanded":
+					fontStretch = SKFontStyleWidth.Expanded;
+					return true;
+				case "extra-expanded":
+					fontStretch = SKFontStyleWidth.ExtraExpanded;
+					return true;
+				case "ultra-expanded":
+					fontStretch = SKFontStyleWidth.UltraExpanded;
+					return true;
+				case "wider":
+					fontStretch = (SKFontStyleWidth)(Math.Min(9, (int)defaultFontStretch + 1));
+					return true;
+				case "narrower":
+					fontStretch = (SKFontStyleWidth)(Math.Max(1, (int)defaultFontStretch - 1));
+					return true;
+
+				default:
+					fontStretch = defaultFontStretch;
+					return false;
+			}
 		}
 
-		private int ReadFontWeight(Dictionary<string, string> fontStyle, int defaultWeight = (int)SKFontStyleWeight.Normal)
+		private bool TryParseFontWeight(string value, out SKFontStyleWeight fontWeight, SKFontStyleWeight defaultFontWeight = SKFontStyleWeight.Normal)
 		{
-			var weight = defaultWeight;
-
-			if (fontStyle != null && fontStyle.TryGetValue("font-weight", out string fweight) && !string.IsNullOrWhiteSpace(fweight) && !int.TryParse(fweight, out weight))
+			if (string.IsNullOrWhiteSpace(value))
 			{
-				switch (fweight)
-				{
-					case "normal":
-						weight = (int)SKFontStyleWeight.Normal;
-						break;
-					case "bold":
-						weight = (int)SKFontStyleWeight.Bold;
-						break;
-					case "bolder":
-						weight = weight + 100;
-						break;
-					case "lighter":
-						weight = weight - 100;
-						break;
-					default:
-						weight = defaultWeight;
-						break;
-				}
+				fontWeight = defaultFontWeight;
+				return false;
 			}
 
-			return Math.Min(Math.Max((int)SKFontStyleWeight.Thin, weight), (int)SKFontStyleWeight.ExtraBlack);
+			if (int.TryParse(value, out var number) && number >= 100 && number <= 1000)
+			{
+				fontWeight = (SKFontStyleWeight)(number / 100 * 100);
+				return true;
+			}
+
+			switch (value)
+			{
+				case "normal":
+					fontWeight = SKFontStyleWeight.Normal;
+					return true;
+				case "bold":
+					fontWeight = SKFontStyleWeight.Bold;
+					return true;
+				case "bolder":
+					fontWeight = (SKFontStyleWeight)Math.Min(1000, (int)defaultFontWeight + 100);
+					return true;
+				case "lighter":
+					fontWeight = (SKFontStyleWeight)Math.Max(100, (int)defaultFontWeight - 100);
+					return true;
+				default:
+					fontWeight = defaultFontWeight;
+					return false;
+			}
 		}
 
 		private void LogOrThrow(string message)
@@ -923,7 +976,15 @@ namespace SkiaSharp.Extended.Svg
 				{
 					var k = m.Groups[1].Value;
 					var v = m.Groups[2].Value;
-					d[k] = v;
+
+					if (k == "font")
+					{
+						CssHelpers.AddFontShorthand(d, v);
+					}
+					else
+					{
+						d[k] = v;
+					}
 				}
 			}
 			return d;
@@ -934,10 +995,7 @@ namespace SkiaSharp.Extended.Svg
 			// get from local attributes
 			var dic = e.Attributes().Where(a => HasSvgNamespace(a.Name)).ToDictionary(k => k.Name.LocalName, v => v.Value);
 
-			string className;
-			string glStyle;
-
-			if (styles != null && styles.TryGetValue(e.Name.LocalName, out glStyle))
+			if (styles.TryGetValue(e.Name.LocalName, out var glStyle))
 			{
 				// get from stlye attribute
 				var styleDic = ReadStyle(glStyle);
@@ -946,8 +1004,7 @@ namespace SkiaSharp.Extended.Svg
 				foreach (var pair in styleDic)
 					dic[pair.Key] = pair.Value;
 			}
-			if (styles != null && dic.TryGetValue("class", out className)
-				&& styles.TryGetValue("." + className, out glStyle))
+			if (dic.TryGetValue("class", out var className) && styles.TryGetValue("." + className, out glStyle))
 			{
 				// get from stlye attribute
 				var styleDic = ReadStyle(glStyle);
@@ -1066,17 +1123,21 @@ namespace SkiaSharp.Extended.Svg
 		{
 			var style = ReadStyle(e);
 
-			ReadPaints(style, ref stroke, ref fill, isGroup, out var fillId);
+			ReadPaints(style, ref stroke, ref fill, isGroup, out var fillId, out var strokeFillId);
 
 			if (fillId != null)
 				elementFills[e] = fillId;
 
+			if (strokeFillId != null)
+				strokeElementFills[e] = strokeFillId;
+
 			return style;
 		}
 
-		private void ReadPaints(Dictionary<string, string> style, ref SKPaint strokePaint, ref SKPaint fillPaint, bool isGroup, out string fillId)
+		private void ReadPaints(Dictionary<string, string> style, ref SKPaint strokePaint, ref SKPaint fillPaint, bool isGroup, out string fillId, out string strokeFillId)
 		{
 			fillId = null;
+			strokeFillId = null;
 
 			// get current element opacity, but ignore for groups (special case)
 			float elementOpacity = isGroup ? 1.0f : ReadOpacity(style);
@@ -1089,13 +1150,13 @@ namespace SkiaSharp.Extended.Svg
 			}
 			else
 			{
-				if (string.IsNullOrEmpty(stroke))
+				if (string.IsNullOrEmpty(stroke) || stroke == "inherit")
 				{
 					// no change
 				}
 				else
 				{
-					if (strokePaint == null)
+					if (strokePaint == null || stroke == "initial")
 						strokePaint = CreatePaint(true);
 
 					if (ColorHelper.TryParse(stroke, out SKColor color))
@@ -1105,6 +1166,39 @@ namespace SkiaSharp.Extended.Svg
 							strokePaint.Color = color.WithAlpha(strokePaint.Color.Alpha);
 						else
 							strokePaint.Color = color;
+					}
+					else
+					{
+						var urlM = urlRe.Match(stroke);
+						if (urlM.Success)
+						{
+							var id = urlM.Groups[1].Value.Trim();
+							if (defs.TryGetValue(id, out var defE))
+							{
+								switch (defE.Name.LocalName.ToLower())
+								{
+									case "lineargradient":
+										fillDefs[id] = ReadLinearGradient(defE);
+										strokeFillId = id;
+										break;
+									case "radialgradient":
+										fillDefs[id] = ReadRadialGradient(defE);
+										strokeFillId = id;
+										break;
+									default:
+										LogOrThrow($"Unsupported stroke fill: {stroke}");
+										break;
+								}
+							}
+							else
+							{
+								LogOrThrow($"Invalid fill url reference: {id}");
+							}
+						}
+						else
+						{
+							LogOrThrow($"Unsupported stroke fill: {stroke}");
+						}
 					}
 				}
 
@@ -1185,9 +1279,13 @@ namespace SkiaSharp.Extended.Svg
 			}
 			else
 			{
-				if (string.IsNullOrEmpty(fill))
+				if (string.IsNullOrEmpty(fill) || fill == "inherit")
 				{
 					// no change
+				}
+				else if (fill == "initial")
+				{
+					fillPaint = CreatePaint();
 				}
 				else
 				{
@@ -1203,7 +1301,6 @@ namespace SkiaSharp.Extended.Svg
 					}
 					else
 					{
-						var read = false;
 						var urlM = urlRe.Match(fill);
 						if (urlM.Success)
 						{
@@ -1215,23 +1312,22 @@ namespace SkiaSharp.Extended.Svg
 									case "lineargradient":
 										fillDefs[id] = ReadLinearGradient(defE);
 										fillId = id;
-										read = true;
 										break;
 									case "radialgradient":
 										fillDefs[id] = ReadRadialGradient(defE);
 										fillId = id;
-										read = true;
+										break;
+									default:
+										LogOrThrow($"Unsupported fill: {fill}");
 										break;
 								}
-								// else try another type (eg: image)
 							}
 							else
 							{
 								LogOrThrow($"Invalid fill url reference: {id}");
 							}
 						}
-
-						if (!read)
+						else
 						{
 							LogOrThrow($"Unsupported fill: {fill}");
 						}
