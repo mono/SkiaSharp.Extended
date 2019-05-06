@@ -306,7 +306,7 @@ namespace SkiaSharp.Extended.Svg
 							addStrokeFill.ApplyFill(stroke, bounds);
 						}
 
-						if (mask != null)
+						if (fill != null && mask != null)
 						{
 							canvas.SaveLayer(new SKPaint());
 							foreach (var gElement in mask.Element.Elements())
@@ -323,6 +323,21 @@ namespace SkiaSharp.Extended.Svg
 						else if (fill != null)
 						{
 							canvas.DrawPath(elementPath, fill);
+						}
+
+						if (stroke != null && mask != null)
+						{
+							canvas.SaveLayer(new SKPaint());
+							foreach (var gElement in mask.Element.Elements())
+							{
+								ReadElement(gElement, canvas, mask.Fill.Clone(), mask.Fill.Clone());
+							}
+							using (var paint = stroke?.Clone() ?? CreatePaint())
+							{
+								paint.BlendMode = SKBlendMode.SrcIn;
+								canvas.DrawPath(elementPath, paint);
+							}
+							canvas.Restore();
 						}
 						else if (stroke != null)
 						{
@@ -516,7 +531,7 @@ namespace SkiaSharp.Extended.Svg
 				case "path":
 				case "polygon":
 				case "polyline":
-					string data = null;
+					string data;
 					if (elementName == "path")
 					{
 						data = e.Attribute("d")?.Value;
@@ -612,7 +627,7 @@ namespace SkiaSharp.Extended.Svg
 		private void ScaleViewBoxToSize(SKCanvas canvas, SKRect viewBox, SKSize size, string aspectRatio)
 		{
 			// if the viewbox is empty, no scaling is required
-			if (viewBox.IsEmpty || Math.Abs(viewBox.Width) == 0f || Math.Abs(viewBox.Height) == 0f)
+			if (viewBox.IsEmpty || Math.Abs(viewBox.Width) < float.Epsilon || Math.Abs(viewBox.Height) < float.Epsilon)
 				return;
 			// we only want to exit if width and height are both empty because if one is missing, the
 			// other will be derived using the aspec ratio
@@ -624,9 +639,9 @@ namespace SkiaSharp.Extended.Svg
 			var scaleY = size.Height / viewBox.Height;
 
 			// if either height or width is zero, set the missing scale to the other dimension
-			if (Math.Abs(size.Width) == 0f)
+			if (Math.Abs(size.Width) < float.Epsilon)
 				scaleX = scaleY;
-			if (Math.Abs(size.Height) == 0f)
+			if (Math.Abs(size.Height) < float.Epsilon)
 				scaleY = scaleX;
 
 			if (!string.Equals(aspectRatio, "none", StringComparison.OrdinalIgnoreCase))
@@ -933,8 +948,8 @@ namespace SkiaSharp.Extended.Svg
 		{
 			if (ThrowOnUnsupportedElement)
 				throw new NotSupportedException(message);
-			else
-				Debug.WriteLine(message);
+
+			Debug.WriteLine(message);
 		}
 
 		private string GetString(Dictionary<string, string> style, string name, string defaultValue = "")
