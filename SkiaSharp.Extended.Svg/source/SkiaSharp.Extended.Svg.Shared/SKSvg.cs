@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -25,6 +26,7 @@ namespace SkiaSharp.Extended.Svg
 		private static readonly Regex urlRe = new Regex(@"url\s*\(\s*#([^\)]+)\)");
 		private static readonly Regex keyValueRe = new Regex(@"\s*([\w-]+)\s*:\s*(.*)");
 		private static readonly Regex WSRe = new Regex(@"\s{2,}");
+
 		private readonly Dictionary<string, string> styles = new Dictionary<string, string>();
 		private readonly Dictionary<string, XElement> defs = new Dictionary<string, XElement>();
 		private readonly Dictionary<string, SKSvgMask> masks = new Dictionary<string, SKSvgMask>();
@@ -75,25 +77,25 @@ namespace SkiaSharp.Extended.Svg
 
 		public string Version { get; private set; }
 
-		public SKPicture Load(string filename)
+		public SKPicture Load(string filename, CancellationToken token = default)
 		{
 			using (var stream = File.OpenRead(filename))
 			{
-				return Load(stream);
+				return Load(stream, token);
 			}
 		}
 
-		public SKPicture Load(Stream stream)
+		public SKPicture Load(Stream stream, CancellationToken token = default)
 		{
 			using (var reader = XmlReader.Create(stream, xmlReaderSettings, CreateSvgXmlContext()))
 			{
-				return Load(reader);
+				return Load(reader, token);
 			}
 		}
 
-		public SKPicture Load(XmlReader reader)
+		public SKPicture Load(XmlReader reader, CancellationToken token = default)
 		{
-			return Load(XDocument.Load(reader));
+			return Load(XDocument.Load(reader), token);
 		}
 
 		private static XmlParserContext CreateSvgXmlContext()
@@ -105,7 +107,7 @@ namespace SkiaSharp.Extended.Svg
 			return new XmlParserContext(null, manager, null, XmlSpace.None);
 		}
 
-		private SKPicture Load(XDocument xdoc)
+		private SKPicture Load(XDocument xdoc, CancellationToken token = default)
 		{
 			var svg = xdoc.Root;
 			var ns = svg.Name.Namespace;
@@ -162,6 +164,8 @@ namespace SkiaSharp.Extended.Svg
 				CanvasSize = size;
 			}
 
+			token.ThrowIfCancellationRequested();
+
 			// create the picture from the elements
 			using (var recorder = new SKPictureRecorder())
 			using (var canvas = recorder.BeginRecording(SKRect.Create(CanvasSize)))
@@ -169,7 +173,7 @@ namespace SkiaSharp.Extended.Svg
 				// if there is no viewbox, then we don't do anything, otherwise
 				// scale the SVG dimensions to fit inside the user dimensions
 				if (!ViewBox.IsEmpty && (Math.Abs(ViewBox.Width - CanvasSize.Width) > float.Epsilon
-					|| Math.Abs(ViewBox.Height - CanvasSize.Height) > float.Epsilon))
+		  || Math.Abs(ViewBox.Height - CanvasSize.Height) > float.Epsilon))
 				{
 					if (preserveAspectRatio == "none")
 					{
@@ -200,7 +204,7 @@ namespace SkiaSharp.Extended.Svg
 				var style = ReadPaints(svg, ref stroke, ref fill, true);
 
 				// read elements
-				LoadElements(svg.Elements(), canvas, stroke, fill);
+				LoadElements(svg.Elements(), canvas, stroke, fill, token);
 
 				Picture = recorder.EndRecording();
 			}
@@ -208,7 +212,7 @@ namespace SkiaSharp.Extended.Svg
 			return Picture;
 		}
 
-		private void LoadElements(IEnumerable<XElement> elements, SKCanvas canvas, SKPaint stroke, SKPaint fill)
+		private void LoadElements(IEnumerable<XElement> elements, SKCanvas canvas, SKPaint stroke, SKPaint fill, CancellationToken token = default)
 		{
 			foreach (var e in elements)
 			{
@@ -216,8 +220,10 @@ namespace SkiaSharp.Extended.Svg
 			}
 		}
 
-		private void ReadElement(XElement e, SKCanvas canvas, SKPaint stroke, SKPaint fill)
+		private void ReadElement(XElement e, SKCanvas canvas, SKPaint stroke, SKPaint fill, bool isMask = false, CancellationToken token = default)
 		{
+			token.ThrowIfCancellationRequested();
+
 			if (e.Attribute("display")?.Value == "none")
 				return;
 
@@ -226,267 +232,267 @@ namespace SkiaSharp.Extended.Svg
 			var isGroup = elementName == "g";
 
 			// read style
-			var style = ReadPaints(e, ref stroke, ref fill, isGroup);
+			var style = ReadPaints(e, ref stroke, ref fill, isGroup, isMask);
 
 			if (style.TryGetValue("display", out var displayStyle) && displayStyle == "none")
 				return;
 
-			// transform matrix
-			var transform = ReadTransform(e.Attribute("transform")?.Value ?? string.Empty);
+			var xy = ReadElementXY(e);
 			canvas.Save();
-			canvas.Concat(ref transform);
 
-			// clip-path
-			var clipPath = ReadClipPath(e.Attribute("clip-path")?.Value ?? string.Empty);
-			if (clipPath != null)
+			try
 			{
-				canvas.ClipPath(clipPath);
-			}
+				var mask = ReadMask(style);
+				if (!isMask && mask != null)
+				{
+					canvas.SaveLayer(new SKPaint());
+					canvas.Clear();
 
-			var mask = ReadMask(style);
-
-			// parse elements
-			switch (elementName)
-			{
-				case "image":
+					try
 					{
-						var image = ReadImage(e);
-						if (image.Bytes != null)
+						using (var strokePaint = mask.Stroke?.Clone())
+						using (var fillPaint = mask.Fill?.Clone())
 						{
-							using (var bitmap = SKBitmap.Decode(image.Bytes))
+							// TODO Is it Skia bug? When the same color is used for fill and mask nothing is drawn
+							if (strokePaint != null && strokePaint.Color == stroke?.Color)
+								strokePaint.Color = new SKColor((byte)~strokePaint.Color.Red, (byte)~strokePaint.Color.Green, (byte)~strokePaint.Color.Blue);
+
+							// TODO Is it Skia bug? When the same color is used for fill and mask nothing is drawn
+							if (fillPaint != null && fillPaint.Color == fill?.Color)
+								fillPaint.Color = new SKColor((byte)~fillPaint.Color.Red, (byte)~fillPaint.Color.Green, (byte)~fillPaint.Color.Blue);
+
+							foreach (var gElement in mask.Element.Elements())
 							{
-								if (bitmap != null)
+								ReadElement(gElement, canvas, strokePaint, fillPaint);
+							}
+						}
+
+						using (var strokePaint = stroke?.Clone())
+						using (var fillPaint = fill?.Clone())
+						{
+							if (strokePaint != null)
+								strokePaint.BlendMode = SKBlendMode.SrcIn;
+
+							if (fillPaint != null)
+								fillPaint.BlendMode = SKBlendMode.SrcIn;
+
+							ReadElement(e, canvas, strokePaint, fillPaint, true);
+						}
+					}
+					finally
+					{
+						canvas.Restore();
+					}
+
+					return;
+				}
+
+				if (elementName != "use")
+				{
+					// transform matrix
+					var transform = ReadTransform(e.Attribute("transform")?.Value ?? string.Empty, xy);
+					canvas.Concat(ref transform);
+				}
+
+				// clip-path
+				var clipPath = ReadClipPath(e.Attribute("clip-path")?.Value ?? string.Empty);
+				if (clipPath != null)
+				{
+					canvas.ClipPath(clipPath);
+				}
+
+				// parse elements
+				switch (elementName)
+				{
+					case "image":
+						{
+							var image = ReadImage(e);
+							if (image.Bytes != null)
+							{
+								using (var bitmap = SKBitmap.Decode(image.Bytes))
 								{
-									canvas.DrawBitmap(bitmap, image.Rect);
+									if (bitmap != null)
+									{
+										canvas.DrawBitmap(bitmap, image.Rect);
+									}
 								}
 							}
 						}
-					}
-					break;
-				case "text":
-					if (stroke != null || fill != null)
-					{
-						var spans = ReadText(e, stroke?.Clone(), fill?.Clone());
-						if (spans.Any())
+						break;
+					case "text":
+						if (stroke != null || fill != null)
 						{
-							canvas.DrawText(spans);
-						}
-					}
-					break;
-				case "rect":
-				case "ellipse":
-				case "circle":
-				case "path":
-				case "polygon":
-				case "polyline":
-				case "line":
-					if (stroke != null || fill != null)
-					{
-						var elementPath = ReadElement(e, style);
-						if (elementPath == null)
-							break;
-
-						if (fill != null && elementFills.TryGetValue(e, out var fillId)
-							&& fillDefs.TryGetValue(fillId, out var addFill))
-						{
-							var points = ReadElementXY(e);
-							var elementSize = ReadElementSize(e);
-							var bounds = SKRect.Create(new SKPoint(points.X, points.Y), elementSize);
-
-							addFill.ApplyFill(fill, bounds);
-						}
-
-						if (stroke != null && strokeElementFills.TryGetValue(e,
-							out var strokeFillId) && fillDefs.TryGetValue(strokeFillId, out var addStrokeFill))
-						{
-							var points = ReadElementXY(e);
-							var elementSize = ReadElementSize(e);
-							var bounds = SKRect.Create(new SKPoint(points.X, points.Y), elementSize);
-
-							addStrokeFill.ApplyFill(stroke, bounds);
-						}
-
-						if (fill != null && mask != null)
-						{
-							canvas.SaveLayer(new SKPaint());
-							foreach (var gElement in mask.Element.Elements())
+							var spans = ReadText(e, stroke?.Clone(), fill?.Clone());
+							if (spans.Any())
 							{
-								ReadElement(gElement, canvas, mask.Fill.Clone(), mask.Fill.Clone());
+								canvas.DrawText(spans);
 							}
-							using (var paint = fill?.Clone() ?? CreatePaint())
-							{
-								paint.BlendMode = SKBlendMode.SrcIn;
-								canvas.DrawPath(elementPath, paint);
-							}
-							canvas.Restore();
 						}
-						else if (fill != null)
+						break;
+					case "rect":
+					case "ellipse":
+					case "circle":
+					case "path":
+					case "polygon":
+					case "polyline":
+					case "line":
+						if (stroke != null || fill != null)
 						{
-							canvas.DrawPath(elementPath, fill);
-						}
+							var elementPath = ReadElement(e, style);
+							if (elementPath == null)
+								break;
 
-						if (stroke != null && mask != null)
-						{
-							canvas.SaveLayer(new SKPaint());
-							foreach (var gElement in mask.Element.Elements())
+							if (fill != null && elementFills.TryGetValue(e, out var fillId)
+							  && fillDefs.TryGetValue(fillId, out var addFill))
 							{
-								ReadElement(gElement, canvas, mask.Fill.Clone(), mask.Fill.Clone());
-							}
-							using (var paint = stroke?.Clone() ?? CreatePaint())
-							{
-								paint.BlendMode = SKBlendMode.SrcIn;
-								canvas.DrawPath(elementPath, paint);
-							}
-							canvas.Restore();
-						}
-						else if (stroke != null)
-						{
-							canvas.DrawPath(elementPath, stroke);
-						}
-					}
-					break;
-				case "g":
-					if (e.HasElements)
-					{
-						if (mask != null)
-						{
-							canvas.SaveLayer(new SKPaint());
-							foreach (var gElement in mask.Element.Elements())
-							{
-								ReadElement(gElement, canvas, mask.Fill.Clone(), mask.Fill.Clone());
+								var elementSize = ReadElementSize(e);
+								var bounds = SKRect.Create(xy, elementSize);
+
+								addFill.ApplyFill(fill, bounds);
 							}
 
-							foreach (var gElement in e.Elements())
+							if (stroke != null && strokeElementFills.TryGetValue(e,
+							  out var strokeFillId) && fillDefs.TryGetValue(strokeFillId, out var addStrokeFill))
 							{
-								using (var paint = fill?.Clone() ?? CreatePaint())
-								{
-									paint.BlendMode = SKBlendMode.SrcIn;
-									ReadElement(gElement, canvas, paint, paint);
-								}
+								var elementSize = ReadElementSize(e);
+								var bounds = SKRect.Create(xy, elementSize);
+
+								addStrokeFill.ApplyFill(stroke, bounds);
 							}
-							canvas.Restore();
+
+							if (fill != null)
+							{
+								canvas.DrawPath(elementPath, fill);
+							}
+							if (stroke != null)
+							{
+								canvas.DrawPath(elementPath, stroke);
+							}
 						}
-						else
+						break;
+					case "g":
+						if (e.HasElements)
 						{
 							// get current group opacity
 							var groupOpacity = ReadOpacity(style);
-							if (groupOpacity != 1.0f)
+							try
 							{
-								var opacity = (byte)(255 * groupOpacity);
-								var opacityPaint = new SKPaint
+								if (groupOpacity != 1.0f)
 								{
-									Color = SKColors.Black.WithAlpha(opacity)
-								};
+									var opacity = (byte)(255 * groupOpacity);
+									var opacityPaint = new SKPaint
+									{
+										Color = SKColors.Black.WithAlpha(opacity)
+									};
 
-								// apply the opacity
-								canvas.SaveLayer(opacityPaint);
+									// apply the opacity
+									canvas.SaveLayer(opacityPaint);
+								}
+
+								foreach (var gElement in e.Elements())
+								{
+									ReadElement(gElement, canvas, stroke?.Clone(), fill?.Clone(), isMask);
+								}
 							}
-
-							foreach (var gElement in e.Elements())
+							finally
 							{
-								ReadElement(gElement, canvas, stroke?.Clone(), fill?.Clone());
+								// restore state
+								if (groupOpacity != 1.0f)
+									canvas.Restore();
 							}
-
-							// restore state
-							if (groupOpacity != 1.0f)
-								canvas.Restore();
 						}
-					}
-					break;
-				case "use":
-					if (e.HasAttributes)
-					{
-						var href = ReadHref(e);
-						if (href != null)
+						break;
+					case "use":
+						if (e.HasAttributes)
 						{
-							// create a deep copy as we will copy attributes
-							href = new XElement(href);
-							var attributes = e.Attributes().ToArray();
-
-							if (string.Equals(href.Name.LocalName, "symbol", StringComparison.OrdinalIgnoreCase))
+							var href = ReadHref(e);
+							if (href != null)
 							{
-								RenderSymbol(href, e, canvas, stroke, fill, attributes);
-							}
-							else
-							{
-								ApplyAttributesToElement(attributes, href, new string[] { "href", "id", "transform" });
-								ReadElement(href, canvas, stroke?.Clone(), fill?.Clone());
+								if (string.Equals(href.Name.LocalName, "symbol", StringComparison.OrdinalIgnoreCase))
+								{
+									RenderSymbol(href, e, canvas, stroke?.Clone(), fill?.Clone(), e.Attributes());
+								}
+								else
+								{
+									ApplyAttributesToElement(e.Attributes(), href, new string[] { "href", "id" });
+									ReadElement(href, canvas, stroke?.Clone(), fill?.Clone(), isMask);
+								}
 							}
 						}
-					}
-					break;
-				case "switch":
-					if (e.HasElements)
-					{
-						foreach (var ee in e.Elements())
+						break;
+					case "switch":
+						if (e.HasElements)
 						{
-							var requiredFeatures = ee.Attribute("requiredFeatures");
-							var requiredExtensions = ee.Attribute("requiredExtensions");
-							var systemLanguage = ee.Attribute("systemLanguage");
-
-							// TODO: evaluate requiredFeatures, requiredExtensions and systemLanguage
-							var isVisible =
-								requiredFeatures == null &&
-								requiredExtensions == null &&
-								systemLanguage == null;
-
-							if (isVisible)
+							foreach (var ee in e.Elements())
 							{
-								ReadElement(ee, canvas, stroke?.Clone(), fill?.Clone());
+								var requiredFeatures = ee.Attribute("requiredFeatures");
+								var requiredExtensions = ee.Attribute("requiredExtensions");
+								var systemLanguage = ee.Attribute("systemLanguage");
+
+								// TODO: evaluate requiredFeatures, requiredExtensions and systemLanguage
+								var isVisible =
+								  requiredFeatures == null &&
+								  requiredExtensions == null &&
+								  systemLanguage == null;
+
+								if (isVisible)
+								{
+									ReadElement(ee, canvas, stroke?.Clone(), fill?.Clone(), isMask);
+								}
 							}
 						}
-					}
-					break;
-				case "mask":
-					if (e.HasElements)
-					{
-						masks.Add(ReadId(e), new SKSvgMask(fill, e));
-					}
-					break;
-				case "style":
-					CssHelpers.ParseSelectors(e.Value, styles);
-					break;
-				case "defs":
-					var styleNodes = e.Descendants();
-					if (styleNodes != null)
-					{
-						foreach (var item in styleNodes)
+						break;
+					case "mask":
+						if (e.HasElements)
 						{
-							if (item.Name.LocalName == "style")
+							masks.Add(ReadId(e), new SKSvgMask(stroke, fill, e));
+						}
+						break;
+					case "style":
+						CssHelpers.ParseSelectors(e.Value, styles);
+						break;
+					case "defs":
+						var styleNodes = e.Descendants();
+						if (styleNodes != null)
+						{
+							foreach (var item in styleNodes)
 							{
-								CssHelpers.ParseSelectors(item.Value, styles);
+								if (item.Name.LocalName == "style")
+								{
+									CssHelpers.ParseSelectors(item.Value, styles);
+								}
 							}
 						}
-					}
-					break;
-				case "a":
-					foreach (var child in e.Descendants())
-					{
-						ReadElement(child, canvas, stroke?.Clone(), fill?.Clone());
-					}
-					break;
-				case "clipPath":
-				case "title":
-				case "desc":
-				case "description":
-					// already read earlier
-					break;
-				default:
-					LogOrThrow($"SVG element '{elementName}' is not supported");
-					break;
+						break;
+					case "a":
+						foreach (var child in e.Descendants())
+						{
+							ReadElement(child, canvas, stroke?.Clone(), fill?.Clone(), isMask);
+						}
+						break;
+					case "clipPath":
+					case "title":
+					case "desc":
+					case "description":
+						// already read earlier
+						break;
+					default:
+						LogOrThrow($"SVG element '{elementName}' is not supported");
+						break;
+				}
 			}
-
-			// restore matrix
-			canvas.Restore();
+			finally
+			{
+				// restore matrix
+				canvas.Restore();
+			}
 		}
 
 		private SKSvgImage ReadImage(XElement e)
 		{
-			var x = ReadNumber(e.Attribute("x"));
-			var y = ReadNumber(e.Attribute("y"));
 			var width = ReadNumber(e.Attribute("width"));
 			var height = ReadNumber(e.Attribute("height"));
-			var rect = SKRect.Create(x, y, width, height);
+			var rect = SKRect.Create(width, height);
 
 			byte[] bytes = null;
 
@@ -563,7 +569,7 @@ namespace SkiaSharp.Extended.Svg
 			return path;
 		}
 
-		private void RenderSymbol(XElement symbol, XElement use, SKCanvas canvas, SKPaint stroke, SKPaint fill, XAttribute[] attributes)
+		private void RenderSymbol(XElement symbol, XElement use, SKCanvas canvas, SKPaint stroke, SKPaint fill, IEnumerable<XAttribute> attributes)
 		{
 			if (symbol == null || use == null)
 				return;
@@ -599,7 +605,7 @@ namespace SkiaSharp.Extended.Svg
 
 		}
 
-		private static void ApplyAttributesToElement(XAttribute[] attributes, XElement e, string[] ignoreAttributes)
+		private static void ApplyAttributesToElement(IEnumerable<XAttribute> attributes, XElement e, string[] ignoreAttributes)
 		{
 			if (e == null || attributes == null)
 				return;
@@ -687,29 +693,24 @@ namespace SkiaSharp.Extended.Svg
 
 		private SKRoundedRect ReadRoundedRect(XElement e)
 		{
-			var x = ReadNumber(e.Attribute("x"));
-			var y = ReadNumber(e.Attribute("y"));
 			var width = ReadNumber(e.Attribute("width"));
 			var height = ReadNumber(e.Attribute("height"));
 			var rx = ReadOptionalNumber(e.Attribute("rx"));
 			var ry = ReadOptionalNumber(e.Attribute("ry"));
-			var rect = SKRect.Create(x, y, width, height);
+			var rect = SKRect.Create(width, height);
 
 			return new SKRoundedRect(rect, rx ?? ry ?? 0, ry ?? rx ?? 0);
 		}
 
 		private SKText ReadText(XElement e, SKPaint stroke, SKPaint fill)
 		{
-			var x = ReadNumber(e.Attribute("x"));
-			var y = ReadNumber(e.Attribute("y"));
-			var xy = new SKPoint(x, y);
 			var textAlign = ReadTextAlignment(e);
 			var baselineShift = ReadBaselineShift(e);
 
 			var style = ReadPaints(e, ref stroke, ref fill, false);
 			ReadFontAttributes(style, ref stroke, ref fill);
 
-			var spans = new SKText(xy, textAlign);
+			var spans = new SKText(new SKPoint(), textAlign);
 
 			// textAlign is used for all spans within the <text> element. If different textAligns would be needed, it is necessary to use
 			// several <text> elements instead of <tspan> elements
@@ -1054,10 +1055,14 @@ namespace SkiaSharp.Extended.Svg
 		private SKPoint ReadElementXY(XElement e)
 		{
 			if (e == null)
-				return SKPoint.Empty;
+				return default;
 
 			var xAttr = e.Attribute("x");
 			var yAttr = e.Attribute("y");
+
+			if (xAttr == null && yAttr == null)
+				return default;
+
 			var x = ReadNumber(xAttr);
 			var y = ReadNumber(yAttr);
 			return new SKPoint(x, y);
@@ -1134,11 +1139,20 @@ namespace SkiaSharp.Extended.Svg
 			return new SKSize(width, height);
 		}
 
-		private Dictionary<string, string> ReadPaints(XElement e, ref SKPaint stroke, ref SKPaint fill, bool isGroup)
+		private Dictionary<string, string> ReadPaints(XElement e, ref SKPaint stroke, ref SKPaint fill, bool isGroup, bool isMask = false)
 		{
 			var style = ReadStyle(e);
 
 			ReadPaints(style, ref stroke, ref fill, isGroup, out var fillId, out var strokeFillId);
+
+			if (isMask)
+			{
+				if (stroke != null)
+					stroke.BlendMode = SKBlendMode.SrcIn;
+
+				if (fill != null)
+					fill.BlendMode = SKBlendMode.SrcIn;
+			}
 
 			if (fillId != null)
 				elementFills[e] = fillId;
@@ -1260,9 +1274,9 @@ namespace SkiaSharp.Extended.Svg
 					{
 						// get the dash
 						var dashesStrings = strokeDashArray.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
-						var dashes = dashesStrings.Select(ReadNumber).ToArray();
+						var dashes = dashesStrings.Select(ReadNumber);
 						if (dashesStrings.Length % 2 == 1)
-							dashes = dashes.Concat(dashes).ToArray();
+							dashes = dashes.Concat(dashes);
 
 						// get the offset
 						var strokeDashOffset = ReadNumber(style, "stroke-dashoffset", 0);
@@ -1416,9 +1430,15 @@ namespace SkiaSharp.Extended.Svg
 			return strokePaint;
 		}
 
-		private SKMatrix ReadTransform(string raw)
+		private SKMatrix ReadTransform(string raw, SKPoint xy = default)
 		{
 			var t = SKMatrix.MakeIdentity();
+
+			if (xy != default && (string.IsNullOrWhiteSpace(raw) || !raw.Contains("translate")))
+			{
+				var m = SKMatrix.MakeTranslation(xy.X, xy.Y);
+				SKMatrix.Concat(ref t, t, m);
+			}
 
 			if (string.IsNullOrWhiteSpace(raw))
 			{
@@ -1450,11 +1470,11 @@ namespace SkiaSharp.Extended.Svg
 					case "translate":
 						if (args.Length >= 3)
 						{
-							nt = SKMatrix.MakeTranslation(ReadNumber(args[1]), ReadNumber(args[2]));
+							nt = SKMatrix.MakeTranslation(ReadNumber(args[1]) + xy.X, ReadNumber(args[2]) + xy.Y);
 						}
 						else if (args.Length >= 2)
 						{
-							nt = SKMatrix.MakeTranslation(ReadNumber(args[1]), 0);
+							nt = SKMatrix.MakeTranslation(ReadNumber(args[1]) + xy.X, xy.Y);
 						}
 						break;
 					case "scale":
@@ -1684,11 +1704,13 @@ namespace SkiaSharp.Extended.Svg
 		private XElement ReadHref(XElement e)
 		{
 			var href = ReadHrefString(e)?.Substring(1);
-			if (string.IsNullOrEmpty(href) || !defs.TryGetValue(href, out XElement child))
+
+			if (!string.IsNullOrEmpty(href) && defs.TryGetValue(href, out var child))
 			{
-				child = null;
+				return new XElement(child);
 			}
-			return child;
+
+			return null;
 		}
 
 		private static string ReadHrefString(XElement e)

@@ -5,11 +5,14 @@ namespace SkiaSharp.Extended.Svg
 {
 	internal class SKSvgMask
 	{
-		public SKSvgMask(SKPaint fill, XElement element)
+		public SKSvgMask(SKPaint stroke, SKPaint fill, XElement element)
 		{
-			Fill = fill.Clone();
+			Stroke = stroke?.Clone();
+			Fill = fill?.Clone();
 			Element = element;
 		}
+
+		public SKPaint Stroke { get; }
 
 		public SKPaint Fill { get; }
 
