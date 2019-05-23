@@ -41,6 +41,12 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MSBuild.Sdk.Extras" Version="1.6.55" PrivateAssets="All" />
     <PackageReference Include="SkiaSharp" Version="1.68.0" />
