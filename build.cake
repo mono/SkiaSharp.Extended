@@ -5,7 +5,7 @@ var configuration = Argument("c", Argument("configuration", "Release"));
 
 var BUILD_NUMBER = EnvironmentVariable("BUILD_NUMBER");
 
-var previewTag = $"preview{BUILD_NUMBER}";
+var previewTag = $"preview.{BUILD_NUMBER}";
 
 Task("build")
     .Does(() =>
