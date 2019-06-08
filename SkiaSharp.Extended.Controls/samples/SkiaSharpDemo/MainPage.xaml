@@ -2,7 +2,22 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:SkiaSharpDemo"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.Controls;assembly=SkiaSharp.Extended.Controls"
              x:Class="SkiaSharpDemo.MainPage"
              Title="SkiaSharp">
+
+    <Grid Padding="0" Margin="0">
+
+        <controls:SKDynamicSurfaceView x:Name="dynamicSurface"
+                                       PaintSurface="OnPainting"
+                                       IsHardwareAccelerated="{Binding UseHardware}" />
+
+        <StackLayout Padding="10" Margin="0" Spacing="5" HorizontalOptions="Start">
+            <Label Text="Use Hardware Acceleration:" />
+            <Switch IsToggled="{Binding UseHardware}" />
+            <BoxView Color="Gray" HeightRequest="1" Margin="-5,0" />
+        </StackLayout>
+
+    </Grid>
 
 </ContentPage>
