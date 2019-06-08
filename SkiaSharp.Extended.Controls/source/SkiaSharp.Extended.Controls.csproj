@@ -10,7 +10,6 @@
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <NeutralLanguage>en</NeutralLanguage>
     <DefineConstants>$(DefineConstants);</DefineConstants>
-    <KeyFileName>mono.snk</KeyFileName>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -48,6 +47,5 @@
   </ItemGroup>
 
   <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
-  <Import Project="$(MSBuildThisFileDirectory)..\..\Signing.targets" />
 
 </Project>
