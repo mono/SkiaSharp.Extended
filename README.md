@@ -8,6 +8,7 @@ interesting projects:
 
  - [SkiaSharp][skiasharp] _(the engine)_
  - [SkiaSharp.Extended][extended] _(additional APIs)_
+ - [SkiaSharp.Extended.Controls][controls] _(aditional controls)_
  - [SkiaSharp.Extended.Iconify][iconify] _(iconify library)_
  - [SkiaSharp.Extended.Svg][svg] _(lightweight SVG loader)_
 
@@ -35,5 +36,6 @@ The code in this repository is licensed under the [MIT License][license].
 
 [skiasharp]: https://github.com/mono/SkiaSharp
 [extended]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended
+[controls]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended.Controls
 [iconify]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended.Iconify
 [svg]: https://github.com/mono/SkiaSharp.Extended/tree/master/SkiaSharp.Extended.Svg
