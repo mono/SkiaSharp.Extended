@@ -2,15 +2,22 @@
 
 var target = Argument("t", Argument("target", "Default"));
 var configuration = Argument("c", Argument("configuration", "Release"));
+var project = Argument("p", Argument("project", ""));
 
-var BUILD_NUMBER = EnvironmentVariable("BUILD_NUMBER");
+var BUILD_NUMBER = Argument("build-number", EnvironmentVariable("BUILD_NUMBER")) ?? "0";
+var PREVIEW_LABEL = Argument("preview-label", EnvironmentVariable("PREVIEW_LABEL")) ?? "preview";
 
-var previewTag = $"preview.{BUILD_NUMBER}";
+var previewTag = $"{PREVIEW_LABEL}.{BUILD_NUMBER}";
+
+var directories = string.IsNullOrWhiteSpace(project)
+    ? GetDirectories("SkiaSharp.*")
+    : new DirectoryPathCollection(new [] { new DirectoryPath(project) });
 
 Task("build")
     .Does(() =>
 {
-    foreach (var subProject in GetDirectories("*")) {
+    foreach (var subProject in directories) {
+        Information($"Building {subProject}...");
         foreach (var sln in GetFiles($"{subProject}/*.sln")) {
             MSBuild(sln, c => {
                 c.Configuration = configuration;
@@ -28,7 +35,8 @@ Task("nuget")
     .IsDependentOn("build")
     .Does(() =>
 {
-    foreach (var subProject in GetDirectories("*")) {
+    foreach (var subProject in directories) {
+        Information($"Packing {subProject}...");
         foreach (var csproj in GetFiles($"{subProject}/source/**/*.csproj")) {
             MSBuild(csproj, c => {
                 c.Configuration = configuration;
@@ -64,7 +72,8 @@ Task("test")
     .IsDependentOn("build")
     .Does(() =>
 {
-    foreach (var subProject in GetDirectories("*")) {
+    foreach (var subProject in directories) {
+        Information($"Testing {subProject}...");
         foreach (var csproj in GetFiles($"{subProject}/tests/**/*.csproj")) {
             MSBuild(csproj, c => {
                 c.Configuration = configuration;

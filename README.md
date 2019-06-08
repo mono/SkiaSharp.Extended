@@ -1,6 +1,6 @@
 # SkiaSharp.Extended
 
-[![Build Status](https://devdiv.visualstudio.com/DevDiv/_apis/build/status/Xamarin/Components/SkiaSharp.Extended?branchName=master)](https://devdiv.visualstudio.com/DevDiv/_build/latest?definitionId=10846&branchName=master)  [![Build Status](https://dev.azure.com/SkiaSharp/SkiaSharp/_apis/build/status/SkiaSharp.Extended%20(Public)?branchName=master)](https://dev.azure.com/SkiaSharp/SkiaSharp/_build/latest?definitionId=4&branchName=master)
+[![Build Status](https://dev.azure.com/devdiv/DevDiv/_apis/build/status/Xamarin/Components/SkiaSharp.Extended?branchName=master)](https://dev.azure.com/devdiv/DevDiv/_build/latest?definitionId=10846&branchName=master)  [![Build Status](https://dev.azure.com/xamarin/public/_apis/build/status/mono/SkiaSharp/SkiaSharp.Extended%20(Public)?branchName=master)](https://dev.azure.com/xamarin/public/_build/latest?definitionId=6&branchName=master)
 
 **SkiaSharp.Extended** is a collection some cool libraries that may be
 useful to some apps. There are several repositories that may have
