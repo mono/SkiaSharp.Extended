@@ -13,6 +13,13 @@ namespace SkiaSharp.Extended.Controls
 			false,
 			propertyChanged: OnIsHardwareAcceleratedChanged);
 
+		public static readonly BindableProperty EnableTouchEventsProperty = BindableProperty.Create(
+			nameof(EnableTouchEvents),
+			typeof(bool),
+			typeof(SKDynamicSurfaceView),
+			false,
+			propertyChanged: OnEnableTouchEventsChanged);
+
 		private SKCanvasView canvasView;
 		private SKGLView glView;
 
@@ -27,7 +34,18 @@ namespace SkiaSharp.Extended.Controls
 			set => SetValue(IsHardwareAcceleratedProperty, value);
 		}
 
+		public bool EnableTouchEvents
+		{
+			get => (bool)GetValue(EnableTouchEventsProperty);
+			set => SetValue(EnableTouchEventsProperty, value);
+		}
+
 		public event EventHandler<SKPaintDynamicSurfaceEventArgs> PaintSurface;
+
+		public event EventHandler<SKTouchEventArgs> Touch;
+
+		public SKSize CanvasSize => canvasView?.CanvasSize ?? glView?.CanvasSize ?? SKSize.Empty;
+
 
 		public void InvalidateSurface()
 		{
@@ -55,17 +73,23 @@ namespace SkiaSharp.Extended.Controls
 		protected virtual void OnPaintSurface(SKPaintDynamicSurfaceEventArgs e) =>
 			PaintSurface?.Invoke(this, e);
 
+		protected virtual void OnTouch(SKTouchEventArgs e) =>
+			Touch?.Invoke(this, e);
+
 		private void SwapSurface(bool hardware)
 		{
 			if (hardware)
 			{
 				glView = new SKGLView();
 				glView.PaintSurface += OnPaintSurfaceHandler;
+				glView.Touch += OnTouchHandler;
+				glView.EnableTouchEvents = EnableTouchEvents;
 				Children.Insert(0, glView);
 
 				if (canvasView != null)
 				{
 					canvasView.PaintSurface -= OnPaintSurfaceHandler;
+					canvasView.Touch -= OnTouchHandler;
 					canvasView.IsVisible = false;
 					Children.Remove(canvasView);
 					canvasView = null;
@@ -75,17 +99,23 @@ namespace SkiaSharp.Extended.Controls
 			{
 				canvasView = new SKCanvasView();
 				canvasView.PaintSurface += OnPaintSurfaceHandler;
+				canvasView.Touch += OnTouchHandler;
+				canvasView.EnableTouchEvents = EnableTouchEvents;
 				Children.Insert(0, canvasView);
 
 				if (glView != null)
 				{
 					glView.PaintSurface -= OnPaintSurfaceHandler;
+					glView.Touch -= OnTouchHandler;
 					glView.IsVisible = false;
 					Children.Remove(glView);
 					glView = null;
 				}
 			}
 		}
+
+		private void OnTouchHandler(object sender, SKTouchEventArgs e) =>
+			OnTouch(e);
 
 		private void OnPaintSurfaceHandler(object sender, SKPaintSurfaceEventArgs e) =>
 			OnPaintSurface(new SKPaintDynamicSurfaceEventArgs(e));
@@ -97,6 +127,17 @@ namespace SkiaSharp.Extended.Controls
 		{
 			if (bindable is SKDynamicSurfaceView view && newValue is bool hardware)
 				view.SwapSurface(hardware);
+		}
+
+		private static void OnEnableTouchEventsChanged(BindableObject bindable, object oldValue, object newValue)
+		{
+			if (bindable is SKDynamicSurfaceView view && newValue is bool enable)
+			{
+				if (view.canvasView != null)
+					view.canvasView.EnableTouchEvents = enable;
+				if (view.glView != null)
+					view.glView.EnableTouchEvents = enable;
+			}
 		}
 	}
 }
