@@ -46,7 +46,6 @@ namespace SkiaSharp.Extended.Controls
 
 		public SKSize CanvasSize => canvasView?.CanvasSize ?? glView?.CanvasSize ?? SKSize.Empty;
 
-
 		public void InvalidateSurface()
 		{
 			if (canvasView?.IsVisible == true)
