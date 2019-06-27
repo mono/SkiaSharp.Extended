@@ -4,8 +4,9 @@ namespace SkiaSharp.Extended.Svg
 {
 	internal struct SKRadialGradient : ISKSvgFill
 	{
-		public SKRadialGradient(SKPoint center, float radius, float[] positions, SKColor[] colors, SKShaderTileMode tileMode, SKMatrix matrix)
+		public SKRadialGradient(SKPoint center, float radius, float[] positions, SKColor[] colors, SKShaderTileMode tileMode, SKMatrix matrix, bool absolute)
 		{
+			Absolute = absolute;
 			Center = center;
 			Radius = radius;
 			Positions = positions;
@@ -13,6 +14,8 @@ namespace SkiaSharp.Extended.Svg
 			TileMode = tileMode;
 			Matrix = matrix;
 		}
+
+		public bool Absolute { get; set; }
 
 		public SKPoint Center { get; set; }
 
@@ -47,8 +50,19 @@ namespace SkiaSharp.Extended.Svg
 
 		public void ApplyFill(SKPaint fill, SKRect bounds)
 		{
-			var centerPoint = GetCenterPoint(bounds.Left, bounds.Top, bounds.Width, bounds.Height);
-			var radius = GetRadius(bounds.Width, bounds.Height);
+			SKPoint centerPoint;
+			float radius;
+
+			if (Absolute)
+			{
+				centerPoint = Center;
+				radius = Radius;
+			}
+			else
+			{
+				centerPoint = GetCenterPoint(bounds.Left, bounds.Top, bounds.Width, bounds.Height);
+				radius = GetRadius(bounds.Width, bounds.Height);	
+			}
 
 			var gradientShader = SKShader.CreateRadialGradient(centerPoint, radius, Colors, Positions, TileMode, Matrix);
 

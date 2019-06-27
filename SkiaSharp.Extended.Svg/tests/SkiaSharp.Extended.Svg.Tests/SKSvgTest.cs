@@ -380,6 +380,25 @@ namespace SkiaSharp.Extended.Svg.Tests
 			Assert.Equal(new SKColor(0xff8d0072), bmp.GetPixel(109, 170));
 		}
 
+		
+		[Fact]
+		public void SvgReadAbsoluteGradientTransform()
+		{
+			var path = Path.Combine(PathToImages, "gradient.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.Green);
+
+			// Radial Gradient
+			Assert.Equal(new SKColor(0xfff18684), bmp.GetPixel(33, 33));
+			Assert.Equal(new SKColor(0xffeb4d52), bmp.GetPixel(20, 33));
+			Assert.Equal(new SKColor(0xffeb4b50), bmp.GetPixel(46, 33));
+
+			// Linear Gradient
+			Assert.Equal(new SKColor(0xfff30600), bmp.GetPixel(33, 180));
+			Assert.Equal(new SKColor(0xffff0000), bmp.GetPixel(20, 180));
+			Assert.Equal(new SKColor(0xffc21f00), bmp.GetPixel(46, 180));
+		}
+
+
 		[Fact]
 		public void SupportsLineCaps()
 		{

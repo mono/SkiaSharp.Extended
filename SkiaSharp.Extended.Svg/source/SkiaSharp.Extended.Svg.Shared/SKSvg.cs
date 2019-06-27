@@ -1253,14 +1253,14 @@ namespace SkiaSharp.Extended.Svg
 
 			//var focusX = ReadOptionalNumber(e.Attribute("fx")) ?? centerX;
 			//var focusY = ReadOptionalNumber(e.Attribute("fy")) ?? centerY;
-			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
+			var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
 
 			var tileMode = ReadSpreadMethod(e);
 			var stops = ReadStops(e);
 			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
 			// TODO: use absolute
-			return new SKRadialGradient(center, radius, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode, matrix);
+			return new SKRadialGradient(center, radius, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode, matrix, absolute);
 		}
 
 		private SKLinearGradient ReadLinearGradient(XElement e)
@@ -1272,13 +1272,13 @@ namespace SkiaSharp.Extended.Svg
 				ReadNumber(e.Attribute("x2"), 1f),
 				ReadNumber(e.Attribute("y2"), 0f));
 
-			//var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
+			var absolute = e.Attribute("gradientUnits")?.Value == "userSpaceOnUse";
 			var tileMode = ReadSpreadMethod(e);
 			var stops = ReadStops(e);
 			var matrix = ReadTransform(e.Attribute("gradientTransform")?.Value ?? string.Empty);
 
 			// TODO: use absolute
-			return new SKLinearGradient(start, end, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode, matrix);
+			return new SKLinearGradient(start, end, stops.Keys.ToArray(), stops.Values.ToArray(), tileMode, matrix, absolute);
 		}
 
 		private static SKShaderTileMode ReadSpreadMethod(XElement e)
