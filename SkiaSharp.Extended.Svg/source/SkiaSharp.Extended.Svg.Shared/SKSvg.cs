@@ -882,7 +882,8 @@ namespace SkiaSharp.Extended.Svg
 						hasStrokeWidth ||
 						hasStrokeOpacity ||
 						hasStrokeLineCap ||
-						hasStrokeLineJoin)
+						hasStrokeLineJoin ||
+						hasStrokeMiterLimit)
 					{
 						strokePaint = CreatePaint(true);
 					}

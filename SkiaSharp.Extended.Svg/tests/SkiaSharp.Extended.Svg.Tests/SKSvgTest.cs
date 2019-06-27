@@ -398,6 +398,15 @@ namespace SkiaSharp.Extended.Svg.Tests
 			Assert.Equal(new SKColor(0xffc21f00), bmp.GetPixel(46, 180));
 		}
 
+		[Fact]
+		public void SvgReadMiterLimitWithoutCrash()
+		{
+			var path = Path.Combine(PathToImages, "miterlimit.svg");
+			var bmp = LoadSvgBitmap(path, SKColors.Green);
+
+			Assert.Equal(new SKColor(0xff1d1d1b), bmp.GetPixel(33, 33));
+		}
+
 
 		[Fact]
 		public void SupportsLineCaps()
