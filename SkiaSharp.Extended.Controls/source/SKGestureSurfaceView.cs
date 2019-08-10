@@ -2,43 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using SkiaSharp.Views.Forms;
-using Xamarin.Forms;
 
 namespace SkiaSharp.Extended.Controls
 {
 	public partial class SKGestureSurfaceView : SKDynamicSurfaceView
 	{
-
-		public static readonly BindableProperty EnableTouchEventsProperty = BindableProperty.Create(
-			nameof(EnableTouchEvents),
-			typeof(bool),
-			typeof(SKDynamicSurfaceView),
-			false,
-			propertyChanged: OnEnableTouchEventsChanged);
-
-		public bool EnableTouchEvents
-		{
-			get => (bool)GetValue(EnableTouchEventsProperty);
-			set => SetValue(EnableTouchEventsProperty, value);
-		}
-
-
-
-
-		private readonly Dictionary<long, TouchEvent> touches = new Dictionary<long, TouchEvent>();
-		private readonly FlingTracker flingTracker = new FlingTracker();
-		private SKPoint initialTouch = SKPoint.Empty;
-		private System.Threading.Timer doubleTapTimer;
-		private int tapCount = 0;
-		private TouchMode touchMode = TouchMode.None;
-		private PinchValue previousValues;
-
 		private const int shortTap = 125;
 		private const int shortClick = 250;
 		private const int delayTap = 200;
 		private const int longTap = 500;
 		private const int touchSlop = 8;
 		private const int flingVelocity = 200;
+
+		private readonly Dictionary<long, TouchEvent> touches = new Dictionary<long, TouchEvent>();
+		private readonly FlingTracker flingTracker = new FlingTracker();
+		private SKPoint initialTouch = SKPoint.Empty;
+		private System.Threading.Timer multiTapTimer;
+		private int tapCount = 0;
+		private TouchMode touchMode = TouchMode.None;
+		private PinchValue previousValues;
 
 		public SKGestureSurfaceView()
 		{
@@ -77,7 +59,7 @@ namespace SkiaSharp.Extended.Controls
 		protected virtual void OnFlingDetected(SKFlingDetectedEventArgs e) =>
 			FlingDetected?.Invoke(this, e);
 
-		private void OnTransformDetected(SKTransformDetectedEventArgs e) =>
+		protected virtual void OnTransformDetected(SKTransformDetectedEventArgs e) =>
 			TransformDetected?.Invoke(this, e);
 
 		protected virtual void OnGestureStarted(SKGestureEventArgs e) =>
@@ -112,14 +94,15 @@ namespace SkiaSharp.Extended.Controls
 
 			initialTouch = location;
 			touches[e.Id] = new TouchEvent(e.Id, location, ticks, e.InContact);
+
+			// update the fling tracker
 			flingTracker.Clear();
 
-			// Do we have a doubleTapTestTimer running?
-			// If yes, stop it and increment _numOfTaps
-			if (doubleTapTimer != null)
+			// if we are in the middle of a multi-tap, then restart with more taps
+			if (multiTapTimer != null)
 			{
-				doubleTapTimer.Dispose();
-				doubleTapTimer = null;
+				multiTapTimer.Dispose();
+				multiTapTimer = null;
 				tapCount++;
 			}
 			else
@@ -129,13 +112,16 @@ namespace SkiaSharp.Extended.Controls
 
 			var handled = false;
 
-			var touchPoints = GetTouchPoints();
+			// start detecting once a finger is on the screen
+			var touchPoints = GetInContactTouchPoints();
 			if (touchPoints.Length > 0)
 			{
+				// try start a gesture
 				var args = new SKGestureEventArgs(touchPoints);
 				OnGestureStarted(args);
 				handled = args.Handled;
 
+				// if no gesture was detected, then we will handle it
 				if (!handled)
 				{
 					if (touchPoints.Length == 2)
@@ -155,9 +141,6 @@ namespace SkiaSharp.Extended.Controls
 			return handled;
 		}
 
-		private SKPoint[] GetTouchPoints() =>
-			touches.Values.Where(t => t.InContact).Select(t => t.Location).ToArray();
-
 		private bool OnTouchMoved(SKTouchEventArgs e)
 		{
 			var ticks = DateTime.Now.Ticks;
@@ -165,9 +148,11 @@ namespace SkiaSharp.Extended.Controls
 
 			touches[e.Id] = new TouchEvent(e.Id, location, ticks, e.InContact);
 
+			// update the fling tracker
 			if (e.InContact)
 				flingTracker.AddEvent(e.Id, location, ticks);
 
+			// if this is a mouse or pen hover, then raise an event
 			if (!e.InContact)
 			{
 				var args = new SKHoverDetectedEventArgs(e.Location);
@@ -175,7 +160,7 @@ namespace SkiaSharp.Extended.Controls
 				return args.Handled;
 			}
 
-			var touchPoints = GetTouchPoints();
+			var touchPoints = GetInContactTouchPoints();
 
 			// TODO: potentially handle move events before gestures
 
@@ -234,12 +219,13 @@ namespace SkiaSharp.Extended.Controls
 
 			touches.Remove(e.Id);
 
-			// Is this a fling or swipe?
-			if (touches.Count == 0)
-			{
-				var velocity = flingTracker.CalculateVelocity(e.Id, ticks);
+			var points = GetInContactTouchPoints();
 
-				// This was the last finger on screen, so this is a fling
+			// no more fingers on the screen
+			if (points.Length == 0)
+			{
+				// check to see if it was a fling
+				var velocity = flingTracker.CalculateVelocity(e.Id, ticks);
 				if (Math.Abs(velocity.X) > flingVelocity || Math.Abs(velocity.Y) > flingVelocity)
 				{
 					var args = new SKFlingDetectedEventArgs(velocity.X, velocity.Y);
@@ -247,16 +233,11 @@ namespace SkiaSharp.Extended.Controls
 					handled = args.Handled;
 				}
 
-				// While tapping on screen, there could be a small movement of the finger
-				// (especially on Samsung). So check, if touch start location isn't more 
-				// than a number of pixels away from touch end location.
+				// when tapping, the finger never goes to exactly the same location
 				var isAround = SKPoint.Distance(releasedTouch.Location, initialTouch) < touchSlop;
-
-				// If touch start and end is in the same area and the touch time is shorter
-				// than longTap, than we have a tap.
 				if (isAround && (ticks - releasedTouch.Tick) < (e.DeviceType == SKTouchDeviceType.Mouse ? shortClick : longTap) * 10000)
 				{
-					// Start a timer with timeout delayTap ms. If than isn't arrived another tap, than it is a single
+					// add a timer to detect the type of tap (single or multi)
 					void TimerHandler(object state)
 					{
 						var l = (SKPoint)state;
@@ -276,13 +257,14 @@ namespace SkiaSharp.Extended.Controls
 							}
 						}
 						tapCount = 1;
-						doubleTapTimer?.Dispose();
-						doubleTapTimer = null;
+						multiTapTimer?.Dispose();
+						multiTapTimer = null;
 					};
-					doubleTapTimer = new System.Threading.Timer(TimerHandler, location, delayTap, -1);
+					multiTapTimer = new System.Threading.Timer(TimerHandler, location, delayTap, -1);
 				}
 				else if (isAround && (ticks - releasedTouch.Tick) >= longTap * 10000)
 				{
+					// if the finger was down for a long time, then it is a long tap
 					if (!handled)
 					{
 						var args = new SKTapDetectedEventArgs(location);
@@ -292,16 +274,17 @@ namespace SkiaSharp.Extended.Controls
 				}
 			}
 
+			// update the fling tracker
 			flingTracker.RemoveId(e.Id);
-
-			var points = GetTouchPoints();
 
 			if (points.Length == 1)
 			{
+				// if there is still 1 finger on the screen, then try start a new gesture
 				var args = new SKGestureEventArgs(points);
 				OnGestureStarted(args);
 				handled = args.Handled;
 
+				// if no gesture was started, then we will handle it
 				if (!handled)
 				{
 					touchMode = TouchMode.Single;
@@ -312,6 +295,7 @@ namespace SkiaSharp.Extended.Controls
 
 			if (!handled)
 			{
+				// the gesture was not handled, so end it
 				var args = new SKGestureEventArgs(points);
 				OnGestureEnded(args);
 				handled = args.Handled;
@@ -328,5 +312,8 @@ namespace SkiaSharp.Extended.Controls
 			touches.Remove(e.Id);
 			return false;
 		}
+
+		private SKPoint[] GetInContactTouchPoints() =>
+			touches.Values.Where(t => t.InContact).Select(t => t.Location).ToArray();
 	}
 }
