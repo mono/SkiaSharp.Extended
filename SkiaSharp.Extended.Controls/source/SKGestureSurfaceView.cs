@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using SkiaSharp.Views.Forms;
 
 namespace SkiaSharp.Extended.Controls
 {
 	public partial class SKGestureSurfaceView : SKDynamicSurfaceView
 	{
-		private const int shortTap = 125;
-		private const int shortClick = 250;
-		private const int delayTap = 200;
-		private const int longTap = 500;
-		private const int touchSlop = 8;
-		private const int flingVelocity = 200;
+		private const long shortTapTicks = 125 * TimeSpan.TicksPerMillisecond;
+		private const long shortClickTicks = 250 * TimeSpan.TicksPerMillisecond;
+		private const int delayTapMilliseconds = 200;
+		private const long longTapTicks = 500 * TimeSpan.TicksPerMillisecond;
+		private const int touchSlopPixels = 8;
+		private const int flingVelocityThreshold = 200; // pixels per second
 
 		private readonly Dictionary<long, TouchEvent> touches = new Dictionary<long, TouchEvent>();
 		private readonly FlingTracker flingTracker = new FlingTracker();
 		private SKPoint initialTouch = SKPoint.Empty;
-		private System.Threading.Timer multiTapTimer;
+		private Timer multiTapTimer;
 		private int tapCount = 0;
 		private TouchMode touchMode = TouchMode.None;
 		private PinchValue previousValues;
@@ -226,7 +227,7 @@ namespace SkiaSharp.Extended.Controls
 			{
 				// check to see if it was a fling
 				var velocity = flingTracker.CalculateVelocity(e.Id, ticks);
-				if (Math.Abs(velocity.X) > flingVelocity || Math.Abs(velocity.Y) > flingVelocity)
+				if (Math.Abs(velocity.X * velocity.Y) > (flingVelocityThreshold * flingVelocityThreshold))
 				{
 					var args = new SKFlingDetectedEventArgs(velocity.X, velocity.Y);
 					OnFlingDetected(args);
@@ -234,8 +235,8 @@ namespace SkiaSharp.Extended.Controls
 				}
 
 				// when tapping, the finger never goes to exactly the same location
-				var isAround = SKPoint.Distance(releasedTouch.Location, initialTouch) < touchSlop;
-				if (isAround && (ticks - releasedTouch.Tick) < (e.DeviceType == SKTouchDeviceType.Mouse ? shortClick : longTap) * 10000)
+				var isAround = SKPoint.Distance(releasedTouch.Location, initialTouch) < touchSlopPixels;
+				if (isAround && (ticks - releasedTouch.Tick) < (e.DeviceType == SKTouchDeviceType.Mouse ? shortClickTicks : longTapTicks))
 				{
 					// add a timer to detect the type of tap (single or multi)
 					void TimerHandler(object state)
@@ -260,9 +261,9 @@ namespace SkiaSharp.Extended.Controls
 						multiTapTimer?.Dispose();
 						multiTapTimer = null;
 					};
-					multiTapTimer = new System.Threading.Timer(TimerHandler, location, delayTap, -1);
+					multiTapTimer = new Timer(TimerHandler, location, delayTapMilliseconds, -1);
 				}
-				else if (isAround && (ticks - releasedTouch.Tick) >= longTap * 10000)
+				else if (isAround && (ticks - releasedTouch.Tick) >= longTapTicks)
 				{
 					// if the finger was down for a long time, then it is a long tap
 					if (!handled)

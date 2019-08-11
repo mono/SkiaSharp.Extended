@@ -31,17 +31,28 @@ namespace SkiaSharpDemo
 
 			BindingContext = this;
 
-			//gestureSurface.FlingDetected += (sender, e) =>
-			//{
-			//	gestureSurface.InvalidateSurface();
-			//};
+			gestureSurface.FlingDetected += (sender, e) =>
+			{
+				var easing = Easing.SinOut;
+
+				var ratio = e.VelocityX / e.VelocityY;
+
+				gestureSurface.AbortAnimation("Fling");
+				var animation = new Animation(v => Transform(new SKPoint((float)(v * ratio), (float)v), SKPoint.Empty, 1, 0), e.VelocityY * 0.01f, 0, easing);
+				animation.Commit(gestureSurface, "Fling", 16, 1000);
+			};
+
 			gestureSurface.TransformDetected += (sender, e) =>
 			{
+				gestureSurface.AbortAnimation("Fling");
+
 				Transform(e.Center, e.PreviousCenter, e.ScaleDelta, e.RotationDelta);
 			};
 
 			gestureSurface.DoubleTapDetected += (sender, e) =>
 			{
+				gestureSurface.AbortAnimation("Fling");
+
 				Transform(e.Location, e.Location, 1.5f, 0);
 			};
 		}

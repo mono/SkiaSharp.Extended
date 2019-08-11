@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SkiaSharp.Extended.Controls
 {
@@ -6,7 +7,7 @@ namespace SkiaSharp.Extended.Controls
 	{
 		private class FlingTracker
 		{
-			private const long maxTicks = 200 * 10000;  // Use only events from the last 200 ms
+			private const long thresholdTicks = 200 * TimeSpan.TicksPerMillisecond;  // Use only events from the last 200 ms
 
 			private const int maxSize = 2;
 
@@ -50,12 +51,13 @@ namespace SkiaSharp.Extended.Controls
 				var nowItem = array[1];
 
 				// use last 2 events
-				if (now - lastItem.Time < maxTicks)
+				if (now - lastItem.TimeTicks < thresholdTicks)
 				{
-					velocityX = (nowItem.X - lastItem.X) * 10000000 / (nowItem.Time - lastItem.Time);
-					velocityY = (nowItem.Y - lastItem.Y) * 10000000 / (nowItem.Time - lastItem.Time);
+					velocityX = (nowItem.X - lastItem.X) * TimeSpan.TicksPerSecond / (nowItem.TimeTicks - lastItem.TimeTicks);
+					velocityY = (nowItem.Y - lastItem.Y) * TimeSpan.TicksPerSecond / (nowItem.TimeTicks - lastItem.TimeTicks);
 				}
 
+				// return the velocity in pixels per second
 				return new SKPoint(velocityX, velocityY);
 			}
 		}

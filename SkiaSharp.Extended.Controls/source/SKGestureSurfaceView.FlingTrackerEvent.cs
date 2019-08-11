@@ -4,18 +4,18 @@
 	{
 		private struct FlingTrackerEvent
 		{
-			public FlingTrackerEvent(float x, float y, long time)
+			public FlingTrackerEvent(float x, float y, long timeTicks)
 			{
 				X = x;
 				Y = y;
-				Time = time;
+				TimeTicks = timeTicks;
 			}
 
 			public float X { get; }
 
 			public float Y { get; }
 
-			public long Time { get; }
+			public long TimeTicks { get; }
 		}
 	}
 }
