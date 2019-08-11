@@ -127,6 +127,39 @@ namespace SkiaSharpDemo
 			canvas.DrawRect(300, 300, 200, 200, paint);
 			canvas.DrawRect(700, 200, 200, 200, paint);
 			canvas.DrawRect(200, 600, 200, 200, paint);
+
+			canvas.ResetMatrix();
+
+			var r = (float)height / (float)width;
+			var w = 250.0f;
+			var h = w * r;
+
+			var previewMatrix = SKMatrix.MakeIdentity();
+			var s = SKMatrix.MakeScale(w / width, w / width);
+			SKMatrix.Concat(ref previewMatrix, ref s, ref previewMatrix);
+			var t = SKMatrix.MakeTranslation(width - w, height - h);
+			SKMatrix.Concat(ref previewMatrix, ref t, ref previewMatrix);
+
+			canvas.SetMatrix(previewMatrix);
+
+			var previewRect = SKRect.Create(width, height);
+
+			canvas.ClipRect(previewRect);
+
+			canvas.Save();
+
+			paint.Color = SKColors.White.WithAlpha(128);
+			canvas.DrawRect(previewRect, paint);
+
+			if (totalMatrix.TryInvert(out var inv))
+			{
+				SKMatrix.Concat(ref inv, ref previewMatrix, ref inv);
+				canvas.SetMatrix(inv);
+			}
+
+			paint.Color = SKColors.Black.WithAlpha(128);
+			var viewportRect = SKRect.Create(width, height);
+			canvas.DrawRect(viewportRect, paint);
 		}
 	}
 }
