@@ -13,7 +13,7 @@ using System.Xml.Linq;
 namespace SkiaSharp.Extended.Svg
 {
 	/// <summary>
-	/// Instances of SKSvg are not meant to be reused.
+	/// Instances of SKSvg are not meant to be reused by calling Load multiple times.
 	/// </summary>
 	public class SKSvg
 	{
