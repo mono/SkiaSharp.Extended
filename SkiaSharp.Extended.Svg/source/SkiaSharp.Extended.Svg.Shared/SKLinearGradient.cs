@@ -4,8 +4,9 @@ namespace SkiaSharp.Extended.Svg
 {
 	internal struct SKLinearGradient : ISKSvgFill
 	{
-		public SKLinearGradient(SKPoint start, SKPoint end, float[] positions, SKColor[] colors, SKShaderTileMode tileMode, SKMatrix matrix)
+		public SKLinearGradient(SKPoint start, SKPoint end, float[] positions, SKColor[] colors, SKShaderTileMode tileMode, SKMatrix matrix, bool absolute)
 		{
+			Absolute = absolute;
 			Start = start;
 			End = end;
 			Positions = positions;
@@ -13,6 +14,8 @@ namespace SkiaSharp.Extended.Svg
 			TileMode = tileMode;
 			Matrix = matrix;
 		}
+
+		public bool Absolute { get; set; }
 
 		public SKPoint Start { get; set; }
 
@@ -50,8 +53,19 @@ namespace SkiaSharp.Extended.Svg
 
 		public void ApplyFill(SKPaint fill, SKRect bounds)
 		{
-			var startPoint = GetStartPoint(bounds.Left, bounds.Top, bounds.Width, bounds.Height);
-			var endPoint = GetEndPoint(bounds.Left, bounds.Top, bounds.Width, bounds.Height);
+			SKPoint startPoint;
+			SKPoint endPoint;
+
+			if (Absolute)
+			{
+				startPoint = Start;
+				endPoint = End;
+			}
+			else
+			{
+				startPoint = GetStartPoint(bounds.Left, bounds.Top, bounds.Width, bounds.Height);
+				endPoint = GetEndPoint(bounds.Left, bounds.Top, bounds.Width, bounds.Height);	
+			}
 
 			var gradientShader = SKShader.CreateLinearGradient(startPoint, endPoint, Colors, Positions, TileMode, Matrix);
 
