@@ -12,6 +12,9 @@ using System.Xml.Linq;
 
 namespace SkiaSharp.Extended.Svg
 {
+	/// <summary>
+	/// Instances of SKSvg are not meant to be reused.
+	/// </summary>
 	public class SKSvg
 	{
 		private const float DefaultPPI = 160f;
