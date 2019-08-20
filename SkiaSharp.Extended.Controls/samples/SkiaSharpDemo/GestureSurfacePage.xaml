@@ -1,0 +1,26 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.Controls;assembly=SkiaSharp.Extended.Controls"
+             xmlns:local="clr-namespace:SkiaSharpDemo"
+             mc:Ignorable="d"
+             x:Class="SkiaSharpDemo.GestureSurfacePage"
+             Title="Gesture Surface">
+
+    <Grid Padding="10" Margin="0">
+
+        <controls:SKGestureSurfaceView x:Name="gestureSurface"
+                                       PaintSurface="OnPainting"
+                                       IsHardwareAccelerated="{Binding UseHardware}" />
+
+        <StackLayout Padding="10" Margin="0" Spacing="5"
+                     HorizontalOptions="Start" VerticalOptions="Start"
+                     BackgroundColor="#80FFFFFF">
+            <Label Text="Use Hardware Acceleration:" />
+            <Switch IsToggled="{Binding UseHardware}" />
+        </StackLayout>
+
+    </Grid>
+
+</ContentPage>
