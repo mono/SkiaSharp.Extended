@@ -9,6 +9,12 @@ namespace SkiaSharp.Extended.Svg
 
 		public static bool TryParse(string str, out SKColor color)
 		{
+			if (str == "transparent")
+			{
+				color = SKColors.Transparent;
+				return true;
+			}
+
 			if (str.StartsWith("rgb(", StringComparison.Ordinal))
 			{
 				str = str.Substring(4, str.Length - 4).TrimEnd(')');
