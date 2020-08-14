@@ -1,0 +1,32 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:controls="clr-namespace:SkiaSharpDemo.Controls"
+             x:Class="SkiaSharpDemo.MainPage"
+             mc:Ignorable="d"
+             Title="SkiaSharp Extended">
+
+    <CollectionView x:Name="collectionView"
+                    ItemsSource="{Binding Demos}"
+                    IsGrouped="True"
+                    SelectionChanged="OnSelectionChanged" SelectionMode="Single">
+        <CollectionView.Footer>
+            <Grid HeightRequest="6" />
+        </CollectionView.Footer>
+        <CollectionView.GroupHeaderTemplate>
+            <DataTemplate>
+                <Label Text="{Binding Name}" FontSize="16" TextColor="Gray" Padding="18,12,18,6" />
+            </DataTemplate>
+        </CollectionView.GroupHeaderTemplate>
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Grid Padding="12,3,6,3">
+                    <controls:DemoListItem FontSize="16" Color="{Binding Color}"
+                                           Title="{Binding Title}" Description="{Binding Description}" />
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+
+</ContentPage>

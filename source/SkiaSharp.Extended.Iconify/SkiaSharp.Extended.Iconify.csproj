@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard1.3</TargetFrameworks>
+    <AssemblyName>SkiaSharp.Extended.Iconify</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended.Iconify</RootNamespace>
+    <AssemblyVersion>2.80.0.0</AssemblyVersion>
+    <AssemblyFileVersion>2.80.1.0</AssemblyFileVersion>
+    <Version>2.80.1</Version>
+    <Product>$(AssemblyName) ($(TargetFramework))</Product>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.Iconify</PackageId>
+    <Title>SkiaSharp.Extended.Iconify</Title>
+    <PackageVersion Condition=" '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
+    <Authors>Microsoft</Authors>
+    <Owners>Microsoft</Owners>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>A simple way to draw a string that contains icons inline with normal characters.</Description>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <!-- <PackageIconUrl>https://go.microsoft.com/fwlink/?linkid=868516</PackageIconUrl> -->
+    <PackageTags>xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform skiasharp</PackageTags>
+    <PackageLicenseUrl>https://go.microsoft.com/fwlink/?linkid=2072003</PackageLicenseUrl>
+    <PackageProjectUrl>https://go.microsoft.com/fwlink/?linkid=2071915</PackageProjectUrl>
+    <RepositoryUrl>https://go.microsoft.com/fwlink/?linkid=2071915</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.80.1" />
+  </ItemGroup>
+
+</Project>

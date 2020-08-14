@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard1.3</TargetFrameworks>
+    <AssemblyName>SkiaSharp.Extended.Iconify.FontAwesome</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended.Iconify</RootNamespace>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyFileVersion>4.7.0.0</AssemblyFileVersion>
+    <Version>6.0.0</Version>
+    <Product>$(AssemblyName) ($(TargetFramework))</Product>
+    <NeutralLanguage>en</NeutralLanguage>
+    <FontAwesomeVersion>4.7.0</FontAwesomeVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <RemoteFontFile Include="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/v$(FontAwesomeVersion)/fonts/fontawesome-webfont.ttf" />
+    <RemoteStyleSheet Include="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/v$(FontAwesomeVersion)/css/font-awesome.min.css" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.Iconify.FontAwesome</PackageId>
+    <Title>Font Awesome (v$(FontAwesomeVersion)) for SkiaSharp.Extended.Iconify</Title>
+    <PackageVersion Condition=" '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
+    <Authors>Microsoft</Authors>
+    <Owners>Microsoft</Owners>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>The Font Awesome font for SkiaSharp.Extended.Iconify.</Description>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <!-- <PackageIconUrl>https://go.microsoft.com/fwlink/?linkid=868516</PackageIconUrl> -->
+    <PackageTags>skiasharp iconify fontawesome xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform</PackageTags>
+    <PackageLicenseUrl>https://go.microsoft.com/fwlink/?linkid=2072003</PackageLicenseUrl>
+    <PackageProjectUrl>https://go.microsoft.com/fwlink/?linkid=2071915</PackageProjectUrl>
+    <RepositoryUrl>https://go.microsoft.com/fwlink/?linkid=2071915</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.80.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SkiaSharp.Extended.Iconify\SkiaSharp.Extended.Iconify.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\IconifyDownloader.targets" />
+
+</Project>

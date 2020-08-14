@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard1.3</TargetFrameworks>
+    <AssemblyName>SkiaSharp.Extended.Iconify.Typicons</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended.Iconify</RootNamespace>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyFileVersion>2.0.9.0</AssemblyFileVersion>
+    <Version>4.0.0</Version>
+    <Product>$(AssemblyName) ($(TargetFramework))</Product>
+    <NeutralLanguage>en</NeutralLanguage>
+    <TypiconsVersion>2.0.9</TypiconsVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <RemoteFontFile Include="https://raw.githubusercontent.com/stephenhutchings/typicons.font/v$(TypiconsVersion)/src/font/typicons.ttf" />
+    <RemoteStyleSheet Include="https://raw.githubusercontent.com/stephenhutchings/typicons.font/v$(TypiconsVersion)/src/font/typicons.min.css" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.Iconify.Typicons</PackageId>
+    <Title>Typicons (v$(TypiconsVersion)) for SkiaSharp.Extended.Iconify</Title>
+    <PackageVersion Condition=" '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
+    <Authors>Microsoft</Authors>
+    <Owners>Microsoft</Owners>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>The Typicons font for SkiaSharp.Extended.Iconify.</Description>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <!-- <PackageIconUrl>https://go.microsoft.com/fwlink/?linkid=868516</PackageIconUrl> -->
+    <PackageTags>skiasharp iconify typicons xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform</PackageTags>
+    <PackageLicenseUrl>https://go.microsoft.com/fwlink/?linkid=2072003</PackageLicenseUrl>
+    <PackageProjectUrl>https://go.microsoft.com/fwlink/?linkid=2071915</PackageProjectUrl>
+    <RepositoryUrl>https://go.microsoft.com/fwlink/?linkid=2071915</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.80.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SkiaSharp.Extended.Iconify\SkiaSharp.Extended.Iconify.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\IconifyDownloader.targets" />
+
+</Project>

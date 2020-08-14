@@ -1,133 +1,59 @@
-#addin nuget:?package=Xamarin.Nuget.Validator&version=1.1.1
+var TARGET = Argument("t", Argument("target", "ci"));
 
-var target = Argument("t", Argument("target", "Default"));
-var configuration = Argument("c", Argument("configuration", "Release"));
-var project = Argument("p", Argument("project", ""));
-
-var BUILD_NUMBER = Argument("build-number", EnvironmentVariable("BUILD_NUMBER")) ?? "0";
-var PREVIEW_LABEL = Argument("preview-label", EnvironmentVariable("PREVIEW_LABEL")) ?? "preview";
-
-var previewTag = $"{PREVIEW_LABEL}.{BUILD_NUMBER}";
-
-var directories = string.IsNullOrWhiteSpace(project)
-    ? GetDirectories("SkiaSharp.*")
-    : new DirectoryPathCollection(new [] { new DirectoryPath(project) });
-
-Task("build")
-    .Does(() =>
+Task("libs")
+	.Does(() =>
 {
-    foreach (var subProject in directories) {
-        Information($"Building {subProject}...");
-        foreach (var sln in GetFiles($"{subProject}/*.sln")) {
-            MSBuild(sln, c => {
-                c.Configuration = configuration;
-                c.MSBuildPlatform = MSBuildPlatform.x86;
-                c.Restore = true;
-                c.Verbosity = Verbosity.Minimal;
-                if (!IsRunningOnWindows())
-                    c.Properties["Platform"] = new [] { "iPhoneSimulator" };
-            });
-        }
-    }
+	MSBuild("./SkiaSharp.Extended.sln", new MSBuildSettings()
+		.EnableBinaryLogger("./output/binlogs/libs.binlog")
+		.SetConfiguration("Release")
+		.WithRestore());
 });
 
 Task("nuget")
-    .IsDependentOn("build")
-    .Does(() =>
+	.IsDependentOn("libs")
+	.Does(() =>
 {
-    foreach (var subProject in directories) {
-        Information($"Packing {subProject}...");
-        foreach (var csproj in GetFiles($"{subProject}/source/**/*.csproj")) {
-            MSBuild(csproj, c => {
-                c.Configuration = configuration;
-                c.MSBuildPlatform = MSBuildPlatform.x86;
-                c.Restore = true;
-                c.Verbosity = Verbosity.Minimal;
-                c.Targets.Clear();
-                c.Targets.Add("Pack");
-            });
-            MSBuild(csproj, c => {
-                c.Configuration = configuration;
-                c.MSBuildPlatform = MSBuildPlatform.x86;
-                c.Restore = true;
-                c.Verbosity = Verbosity.Minimal;
-                c.Targets.Clear();
-                c.Targets.Add("Pack");
-                c.Properties["VersionSuffix"] = new [] { previewTag };
-            });
-
-            var output = $"output/{subProject.GetDirectoryName()}";
-            EnsureDirectoryExists(output);
-
-            var bin = csproj.GetDirectory().Combine($"bin/{configuration}/");
-            CopyDirectory(bin, output);
-
-            EnsureDirectoryExists("output/nugets");
-            CopyFiles($"{bin}/*.nupkg", "output/nugets");
-        }
-    }
+	MSBuild("./source/source.sln", new MSBuildSettings()
+		.EnableBinaryLogger("./output/binlogs/nuget.binlog")
+		.SetConfiguration("Release")
+		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/")).FullPath)
+		.WithTarget("Pack"));
 });
 
-Task("test")
-    .IsDependentOn("build")
-    .Does(() =>
+Task("tests")
+	.IsDependentOn("libs")
+	.Does(() =>
 {
-    foreach (var subProject in directories) {
-        Information($"Testing {subProject}...");
-        foreach (var csproj in GetFiles($"{subProject}/tests/**/*.csproj")) {
-            MSBuild(csproj, c => {
-                c.Configuration = configuration;
-                c.MSBuildPlatform = MSBuildPlatform.x86;
-                c.Restore = true;
-                c.Verbosity = Verbosity.Minimal;
-                c.Targets.Clear();
-                c.Targets.Add("Test");
-            });
+	foreach (var csproj in GetFiles("./tests/*/*.csproj")) {
+		try {
+			DotNetCoreTest(csproj.FullPath, new DotNetCoreTestSettings {
+				Configuration = "Release",
+				Logger = $"trx;LogFileName={csproj.GetFilenameWithoutExtension()}.trx",
+			});
+		} catch (Exception ex) {
+			
+		}
+	}
 
-            var output = $"output/{subProject.GetDirectoryName()}";
-            EnsureDirectoryExists(output);
-
-            var bin = csproj.GetDirectory().Combine($"bin/{configuration}/");
-            CopyFiles($"{bin}/**/TestResult.xml", output);
-        }
-    }
+	var output = $"./output/test-results/";
+	EnsureDirectoryExists(output);
+	CopyFiles($"./tests/**/TestResults/*.trx", output);
 });
 
-Task("nuget-validation")
-    .IsDependentOn("nuget")
-    .Does(() =>
+Task("samples")
+	.IsDependentOn("nuget")
+	.Does(() =>
 {
-    var options = new Xamarin.Nuget.Validator.NugetValidatorOptions {
-        Copyright = "© Microsoft Corporation. All rights reserved.",
-        Author = "Microsoft",
-        Owner = "Microsoft",
-        NeedsProjectUrl = true,
-        NeedsLicenseUrl = true,
-        ValidateRequireLicenseAcceptance = true,
-        ValidPackageNamespace = new [] { "SkiaSharp" },
-    };
-
-    var nupkgFiles = GetFiles("./output/nugets/*.nupkg");
-    Information("Found ({0}) NuGets to validate", nupkgFiles.Count());
-    foreach (var nupkgFile in nupkgFiles) {
-        Information("Verifiying Metadata of {0}...", nupkgFile.GetFilename());
-
-        var result = Xamarin.Nuget.Validator.NugetValidator.Validate(MakeAbsolute(nupkgFile).FullPath, options);
-        if (!result.Success) {
-            Information("Metadata validation failed for: {0} \n\n", nupkgFile.GetFilename());
-            Information(string.Join("\n    ", result.ErrorMessages));
-            throw new Exception($"Invalid Metadata for: {nupkgFile.GetFilename()}");
-
-        } else {
-            Information("Metadata validation passed for: {0}", nupkgFile.GetFilename());
-        }
-    }
+	MSBuild("./SkiaSharp.Extended.sln", new MSBuildSettings()
+		.EnableBinaryLogger("./output/binlogs/samples.binlog")
+		.SetConfiguration("Release")
+		.WithRestore());
 });
 
-Task("Default")
-    .IsDependentOn("build")
-    .IsDependentOn("nuget")
-    .IsDependentOn("nuget-validation")
-    .IsDependentOn("test");
+Task("ci")
+	.IsDependentOn("libs")
+	.IsDependentOn("nuget")
+	.IsDependentOn("tests")
+	.IsDependentOn("samples");
 
-RunTarget(target);
+RunTarget(TARGET);

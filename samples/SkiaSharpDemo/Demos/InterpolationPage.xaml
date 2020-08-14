@@ -1,0 +1,19 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             x:Class="SkiaSharpDemo.Demos.InterpolationPage"
+             Title="Path Interpolation"
+             Padding="12">
+    <StackLayout Spacing="12">
+
+        <Label Text="{Binding Interpolation, StringFormat='{}{0:0}%'}" HorizontalOptions="Center" />
+        <Slider Minimum="0" Maximum="100" Value="{Binding Interpolation}"
+                MinimumTrackColor="Black" MaximumTrackColor="Black"
+                ThumbColor="Black" />
+
+        <Button Text="Toggle Animation" Command="{Binding AnimateCommand}" />
+
+        <views:SKCanvasView x:Name="interpolationCanvas" PaintSurface="OnPaintSurface" VerticalOptions="FillAndExpand" />
+
+    </StackLayout>
+</ContentPage>
