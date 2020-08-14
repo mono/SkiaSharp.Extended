@@ -3,10 +3,13 @@ var TARGET = Argument("t", Argument("target", "ci"));
 Task("libs")
 	.Does(() =>
 {
-	MSBuild("./SkiaSharp.Extended.sln", new MSBuildSettings()
+	var settings = new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/libs.binlog")
 		.SetConfiguration("Release")
-		.WithRestore());
+		.WithRestore();
+	if (!IsRunningOnWindows())
+		settings = settings.WithProperty("Platform", "iPhone");
+	MSBuild("./SkiaSharp.Extended.sln", settings);
 });
 
 Task("nuget")
@@ -47,12 +50,16 @@ Task("tests")
 
 Task("samples")
 	.IsDependentOn("nuget")
+	.WithCriteria(Context.Environment.Platform.Family != PlatformFamily.Linux)
 	.Does(() =>
 {
-	MSBuild("./SkiaSharp.Extended.sln", new MSBuildSettings()
+	var settings = new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/samples.binlog")
 		.SetConfiguration("Release")
-		.WithRestore());
+		.WithRestore();
+	if (!IsRunningOnWindows())
+		settings = settings.WithProperty("Platform", "iPhone");
+	MSBuild("./SkiaSharp.Extended.sln", settings);
 });
 
 Task("ci")
