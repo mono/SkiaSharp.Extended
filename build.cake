@@ -1,6 +1,7 @@
 var TARGET = Argument("t", Argument("target", "ci"));
 
 Task("libs")
+	.WithCriteria(Context.Environment.Platform.Family != PlatformFamily.Linux)
 	.Does(() =>
 {
 	var settings = new MSBuildSettings()
