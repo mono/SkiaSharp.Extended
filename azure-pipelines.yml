@@ -54,3 +54,4 @@ jobs:
     - template: sign-artifacts/jobs/v1.yml@internal-templates
       parameters:
         dependsOn: [ 'build' ]
+        additionalConditions: eq(variables['Build.SourceBranch'], 'refs/heads/main')
