@@ -44,7 +44,6 @@ jobs:
           Write-Host "Build label: $label"
           Write-Host "##vso[build.updatebuildnumber]$label"
         displayName: Update the build number with a more readable one
-        condition: ${{ parameters.updateBuild }}
   - template: .ci/build.yml@components
     parameters:
       areaPath: 'DevDiv\Xamarin SDK\SkiaSharp'
