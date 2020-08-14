@@ -17,7 +17,34 @@ resources:
       endpoint: xamarin
       ref: refs/heads/dev/updates
 
+variables:
+  SKIASHARP_VERSION: 2.80.1
+  PREVIEW_LABEL: 'preview'
+  BUILD_NUMBER: $[counter(format('{0}_{1}_{2}', variables['SKIASHARP_VERSION'], variables['Build.SourceBranch'], variables['PREVIEW_LABEL']), 1)]
+
 jobs:
+  - job: prepare
+    displayName: Prepare Build
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: none
+      - pwsh: |
+          $pr = "pr." + $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
+          Write-Host "Preview label: $pr"
+          Write-Host "##vso[task.setvariable variable=PREVIEW_LABEL]$pr"
+        displayName: Use a special preview label for PRs
+        condition: eq(variables['Build.Reason'], 'PullRequest')
+      - pwsh: |
+          $label = ""
+          if ($env:BUILD_REASON -ne "PullRequest") {
+            $label = "+" + $env:BUILD_SOURCEBRANCHNAME
+          }
+          $label = "$env:SKIASHARP_VERSION-$env:PREVIEW_LABEL.$env:BUILD_NUMBER$label"
+          Write-Host "Build label: $label"
+          Write-Host "##vso[build.updatebuildnumber]$label"
+        displayName: Update the build number with a more readable one
+        condition: ${{ parameters.updateBuild }}
   - template: .ci/build.yml@components
     parameters:
       areaPath: 'DevDiv\Xamarin SDK\SkiaSharp'
