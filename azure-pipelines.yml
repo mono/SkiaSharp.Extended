@@ -20,6 +20,7 @@ jobs:
   - template: .ci/build.yml@components
     parameters:
       areaPath: 'DevDiv\Xamarin SDK\SkiaSharp'
+      dotnet: '3.1.x'
       # linuxImage: 'Hosted Ubuntu 1604'
       validPackagePrefixes: 
         - SkiaSharp
