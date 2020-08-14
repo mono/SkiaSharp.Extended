@@ -21,7 +21,7 @@ jobs:
   - template: .ci/build.yml@components
     parameters:
       areaPath: 'DevDiv\Xamarin SDK\SkiaSharp'
-      # linuxImage: 'Hosted Ubuntu 1604'
+      linuxImage: 'ubuntu-latest'
       validPackagePrefixes: 
         - SkiaSharp
   - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
