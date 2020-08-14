@@ -20,6 +20,7 @@ Task("nuget")
 	MSBuild("./source/source.sln", new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/nuget.binlog")
 		.SetConfiguration("Release")
+		.WithRestore()
 		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/")).FullPath)
 		.WithTarget("Pack"));
 });
