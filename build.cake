@@ -24,20 +24,25 @@ Task("tests")
 	.IsDependentOn("libs")
 	.Does(() =>
 {
+	var failed = 0;
+
 	foreach (var csproj in GetFiles("./tests/*/*.csproj")) {
 		try {
 			DotNetCoreTest(csproj.FullPath, new DotNetCoreTestSettings {
 				Configuration = "Release",
 				Logger = $"trx;LogFileName={csproj.GetFilenameWithoutExtension()}.trx",
 			});
-		} catch (Exception ex) {
-			
+		} catch (Exception) {
+			failed++;
 		}
 	}
 
 	var output = $"./output/test-results/";
 	EnsureDirectoryExists(output);
 	CopyFiles($"./tests/**/TestResults/*.trx", output);
+
+	if (failed > 0)
+		throw new Exception($"{failed} tests have failed.");
 });
 
 Task("samples")
