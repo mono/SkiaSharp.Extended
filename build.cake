@@ -1,5 +1,10 @@
 var TARGET = Argument("t", Argument("target", "ci"));
 
+var PREVIEW_LABEL = Argument ("previewLabel", EnvironmentVariable ("PREVIEW_LABEL") ?? "preview");
+var BUILD_NUMBER = EnvironmentVariable ("BUILD_NUMBER") ?? "0";
+var GIT_SHA = Argument ("gitSha", EnvironmentVariable ("GIT_SHA") ?? "");
+var GIT_BRANCH_NAME = Argument ("gitBranch", EnvironmentVariable ("GIT_BRANCH_NAME") ?? "");
+
 Task("libs")
 	.WithCriteria(Context.Environment.Platform.Family != PlatformFamily.Linux)
 	.Does(() =>
@@ -13,15 +18,28 @@ Task("libs")
 	MSBuild("./SkiaSharp.Extended.sln", settings);
 });
 
-Task("nuget")
+Task("nugets")
 	.IsDependentOn("libs")
 	.Does(() =>
 {
 	MSBuild("./source/source.sln", new MSBuildSettings()
-		.EnableBinaryLogger("./output/binlogs/nuget.binlog")
+		.EnableBinaryLogger("./output/binlogs/nugets.binlog")
 		.SetConfiguration("Release")
 		.WithRestore()
 		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/")).FullPath)
+		.WithTarget("Pack"));
+
+	var preview = PREVIEW_LABEL;
+	if (!string.IsNullOrEmpty (BUILD_NUMBER)) {
+		preview += $".{BUILD_NUMBER}";
+	}
+
+	MSBuild("./source/source.sln", new MSBuildSettings()
+		.EnableBinaryLogger("./output/binlogs/nugets-preview.binlog")
+		.SetConfiguration("Release")
+		.WithRestore()
+		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/")).FullPath)
+		.WithProperty("VersionSuffix", preview)
 		.WithTarget("Pack"));
 });
 
@@ -51,7 +69,7 @@ Task("tests")
 });
 
 Task("samples")
-	.IsDependentOn("nuget")
+	.IsDependentOn("nugets")
 	.WithCriteria(Context.Environment.Platform.Family != PlatformFamily.Linux)
 	.Does(() =>
 {
@@ -66,7 +84,7 @@ Task("samples")
 
 Task("ci")
 	.IsDependentOn("libs")
-	.IsDependentOn("nuget")
+	.IsDependentOn("nugets")
 	.IsDependentOn("tests")
 	.IsDependentOn("samples");
 
