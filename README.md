@@ -8,8 +8,13 @@ interesting projects:
 
  - [SkiaSharp][skiasharp] _(the engine)_
  - [SkiaSharp.Extended][extended] _(additional APIs)_
- - ~~[SkiaSharp.Extended.Iconify][iconify] _(iconify library)_~~
- - ~~[SkiaSharp.Extended.Svg][svg] _(lightweight SVG loader)_~~
+
+**Deprecated / Unmaintained Libraries**
+
+ - ~~[SkiaSharp.Extended.Iconify][iconify]~~ _(iconify library)_  
+   Use https://github.com/toptensoftware/RichTextKit instead.
+ - ~~[SkiaSharp.Extended.Svg][svg]~~ _(lightweight SVG loader)_  
+   Use https://github.com/wieslawsoltes/Svg.Skia instead.
 
 ## Building
 
