@@ -21,7 +21,7 @@ interesting projects:
 To build the projects and samples, just open `SkiaSharp.Extended.sln` 
 in Visual Studio 2019.
 
-The CI server just runs `dotnet cake`` and outputs all the packages,
+The CI server just runs `dotnet cake` and outputs all the packages,
 assemblies and test results. This can also be used to build everything
 locally.
 
