@@ -1,9 +1,16 @@
 trigger:
   - main
   - refs/tags/*
-  
+
 pr:
   - main
+
+  variables:
+    SKIASHARP_VERSION: 2.80.1
+    PREVIEW_LABEL: 'preview'
+    BUILD_NUMBER: $[counter(format('{0}_{1}_{2}', variables['SKIASHARP_VERSION'], variables['Build.SourceBranch'], variables['PREVIEW_LABEL']), 1)]
+    GIT_SHA: $(Build.SourceVersion)
+    GIT_BRANCH_NAME: $(Build.SourceBranchName)
 
 resources:
   repositories:
@@ -16,13 +23,6 @@ resources:
       name: xamarin/XamarinComponents
       endpoint: xamarin
       ref: refs/heads/dev/updates
-
-variables:
-  SKIASHARP_VERSION: 2.80.1
-  PREVIEW_LABEL: 'preview'
-  BUILD_NUMBER: $[counter(format('{0}_{1}_{2}', variables['SKIASHARP_VERSION'], variables['Build.SourceBranch'], variables['PREVIEW_LABEL']), 1)]
-  GIT_SHA: $(Build.SourceVersion)
-  GIT_BRANCH_NAME: $(Build.SourceBranchName)
 
 jobs:
   - job: prepare
@@ -50,7 +50,7 @@ jobs:
     parameters:
       areaPath: 'DevDiv\Xamarin SDK\SkiaSharp'
       linuxImage: 'ubuntu-latest'
-      validPackagePrefixes: 
+      validPackagePrefixes:
         - SkiaSharp
   - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
     - template: sign-artifacts/jobs/v1.yml@internal-templates
