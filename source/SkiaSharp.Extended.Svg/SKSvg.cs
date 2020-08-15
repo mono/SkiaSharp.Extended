@@ -418,7 +418,7 @@ namespace SkiaSharp.Extended.Svg
 				case "rect":
 					var rect = ReadRoundedRect(e);
 					if (rect.IsRounded)
-						path.AddRoundRect(rect.Rect, rect.RadiusX, rect.RadiusY);
+						path.AddRoundedRect(rect.Rect, rect.RadiusX, rect.RadiusY);
 					else
 						path.AddRect(rect.Rect);
 					break;
