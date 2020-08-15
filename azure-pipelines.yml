@@ -22,7 +22,6 @@ resources:
       type: github
       name: xamarin/XamarinComponents
       endpoint: xamarin
-      ref: refs/heads/dev/updates
 
 jobs:
   - job: prepare
