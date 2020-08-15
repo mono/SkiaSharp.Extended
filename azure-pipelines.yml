@@ -5,12 +5,12 @@ trigger:
 pr:
   - main
 
-  variables:
-    SKIASHARP_VERSION: 2.80.1
-    PREVIEW_LABEL: 'preview'
-    BUILD_NUMBER: $[counter(format('{0}_{1}_{2}', variables['SKIASHARP_VERSION'], variables['Build.SourceBranch'], variables['PREVIEW_LABEL']), 1)]
-    GIT_SHA: $(Build.SourceVersion)
-    GIT_BRANCH_NAME: $(Build.SourceBranchName)
+variables:
+  SKIASHARP_VERSION: 2.80.1
+  PREVIEW_LABEL: 'preview'
+  BUILD_NUMBER: $[counter(format('{0}_{1}_{2}', variables['SKIASHARP_VERSION'], variables['Build.SourceBranch'], variables['PREVIEW_LABEL']), 1)]
+  GIT_SHA: $(Build.SourceVersion)
+  GIT_BRANCH_NAME: $(Build.SourceBranchName)
 
 resources:
   repositories:
