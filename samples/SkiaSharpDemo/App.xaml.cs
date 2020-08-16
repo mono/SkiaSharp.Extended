@@ -26,7 +26,8 @@ namespace SkiaSharpDemo
 			// register all the fonts for RichTextKit
 			FontMapper.Default = new DemoFontMapper();
 
-			MainPage = new NavigationPage(new MainPage());
+			//MainPage = new NavigationPage(new MainPage());
+			MainPage = new NavigationPage(new Demos.PlaygroundPage());
 		}
 
 		private class DemoFontMapper : FontMapper

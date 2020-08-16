@@ -10,6 +10,8 @@
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <NeutralLanguage>en</NeutralLanguage>
     <KeyFileName>mono.snk</KeyFileName>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -31,5 +33,9 @@
   <ItemGroup>
     <PackageReference Include="SkiaSharp" Version="2.80.1" />
   </ItemGroup>
+
+  <!-- <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <PackageReference Include="LiveSharp" Version="1.5.66" />
+  </ItemGroup> -->
 
 </Project>

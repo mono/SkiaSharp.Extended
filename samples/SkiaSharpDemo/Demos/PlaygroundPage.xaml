@@ -4,7 +4,16 @@
              x:Class="SkiaSharpDemo.Demos.PlaygroundPage">
 
     <Grid>
-        <controls:SKConfettiView />
+
+        <controls:SKConfettiView x:Name="confettiView">
+            <controls:SKConfettiView.Systems>
+                <controls:SKConfettiSystem />
+            </controls:SKConfettiView.Systems>
+            <controls:SKConfettiView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnTapped" />
+            </controls:SKConfettiView.GestureRecognizers>
+        </controls:SKConfettiView>
+
     </Grid>
 
 </ContentPage>

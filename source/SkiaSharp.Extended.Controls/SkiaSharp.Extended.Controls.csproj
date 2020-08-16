@@ -10,6 +10,8 @@
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <NeutralLanguage>en</NeutralLanguage>
     <SignAssembly>false</SignAssembly>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -33,5 +35,9 @@
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.1" />
     <PackageReference Include="Xamarin.Forms" Version="4.8.0.1269" />
   </ItemGroup>
+
+  <!-- <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <PackageReference Include="LiveSharp" Version="1.5.66" />
+  </ItemGroup> -->
 
 </Project>

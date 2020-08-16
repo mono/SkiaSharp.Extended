@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using System;
+using SkiaSharp.Extended.Controls;
+using Xamarin.Forms;
 
 namespace SkiaSharpDemo.Demos
 {
@@ -7,6 +9,11 @@ namespace SkiaSharpDemo.Demos
 		public PlaygroundPage()
 		{
 			InitializeComponent();
+		}
+
+		private void OnTapped(object sender, EventArgs e)
+		{
+			confettiView.Systems.Add(new SKConfettiSystem());
 		}
 	}
 }
