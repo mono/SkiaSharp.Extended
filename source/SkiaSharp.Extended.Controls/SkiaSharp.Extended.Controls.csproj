@@ -2,24 +2,24 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>SkiaSharp.Extended</AssemblyName>
-    <RootNamespace>SkiaSharp.Extended</RootNamespace>
+    <AssemblyName>SkiaSharp.Extended.Controls</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended.Controls</RootNamespace>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <AssemblyFileVersion>1.0.0.0</AssemblyFileVersion>
     <Version>2.0.0</Version>
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <NeutralLanguage>en</NeutralLanguage>
-    <KeyFileName>mono.snk</KeyFileName>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>SkiaSharp.Extended</PackageId>
-    <Title>SkiaSharp.Extended</Title>
+    <PackageId>SkiaSharp.Extended.Controls</PackageId>
+    <Title>Additional Controls for SkiaSharp.Views.Forms</Title>
     <PackageVersion Condition=" '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
     <Authors>Microsoft</Authors>
     <Owners>Microsoft</Owners>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Description>This package adds many additional features and utilities for use with SkiaSharp.</Description>
+    <Description>This package adds additional controls to SkiaSharp.Views.Forms.</Description>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <PackageIconUrl>https://go.microsoft.com/fwlink/?linkid=868516</PackageIconUrl>
     <PackageTags>xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform skiasharp</PackageTags>
@@ -30,6 +30,8 @@
 
   <ItemGroup>
     <PackageReference Include="SkiaSharp" Version="2.80.1" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.1" />
+    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1269" />
   </ItemGroup>
 
 </Project>
