@@ -90,8 +90,6 @@ namespace SkiaSharp.Extended.Controls
 
 		private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
 		{
-			Console.WriteLine("OnPaintSurface");
-
 			if (lastTime == TimeSpan.Zero)
 				lastTime = TimeSpan.FromMilliseconds(Environment.TickCount);
 

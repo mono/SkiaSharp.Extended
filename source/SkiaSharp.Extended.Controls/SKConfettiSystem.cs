@@ -8,7 +8,6 @@ namespace SkiaSharp.Extended.Controls
 	public class SKConfettiSystem : BindableObject
 	{
 		private readonly Random random = new Random();
-		private readonly SKPoint gravity = new SKPoint(0, 0.0005f);
 		private readonly List<SKConfettiParticle> particles = new List<SKConfettiParticle>();
 
 		private SKConfettiEmitter? emitter;
@@ -17,12 +16,12 @@ namespace SkiaSharp.Extended.Controls
 
 		public SKConfettiSystem()
 		{
-			Emitter = SKConfettiEmitter.Burst(200);
+			Emitter = SKConfettiEmitter.Infinite(200);
 		}
 
 		public bool IsRunning { get; set; } = true;
 
-		public SKConfettiSystemBounds EmitterBounds { get; set; } = SKConfettiSystemBounds.Center;
+		public SKConfettiSystemBounds EmitterBounds { get; set; } = SKConfettiSystemBounds.Top;
 
 		public SKConfettiEmitter? Emitter
 		{
@@ -68,17 +67,17 @@ namespace SkiaSharp.Extended.Controls
 
 		public double EndAngle { get; set; } = 360;
 
-		public double MinimumInitialVelocity { get; set; } = 0.01;
+		public double MinimumInitialVelocity { get; set; } = 10;
 
-		public double MaximumInitialVelocity { get; set; } = 0.25;
+		public double MaximumInitialVelocity { get; set; } = 250;
 
-		public double MinimumRotationVelocity { get; set; } = 0.01;
+		public double MinimumRotationVelocity { get; set; } = 10;
 
-		public double MaximumRotationVelocity { get; set; } = 0.05;
+		public double MaximumRotationVelocity { get; set; } = 50;
 
 		public double MaximumAcceleration { get; set; } = 0;
 
-		public int Lifetime { get; set; } = 3000;
+		public double Lifetime { get; set; } = 3;
 
 		public bool Rotate { get; set; } = true;
 
@@ -90,16 +89,20 @@ namespace SkiaSharp.Extended.Controls
 			particles.Count == 0 &&
 			(Emitter?.IsComplete != false || !IsRunning);
 
+		public Point Gravity { get; set; } = new Point(0, 0.98f);
+
 		public void Draw(SKCanvas canvas, TimeSpan deltaTime)
 		{
 			if (IsRunning)
 				Emitter?.Update(deltaTime);
 
+			var g = Gravity.ToSKPoint();
+
 			for (var i = particles.Count - 1; i >= 0; i--)
 			{
 				var particle = particles[i];
 
-				particle.ApplyForce(gravity);
+				particle.ApplyForce(g);
 
 				particle.Draw(canvas, deltaTime);
 

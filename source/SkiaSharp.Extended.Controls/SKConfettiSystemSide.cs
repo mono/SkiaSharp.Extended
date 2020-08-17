@@ -6,7 +6,9 @@
 		Left,
 		Right,
 		Bottom,
+
 		Center,
+
 		Bounds,
 	}
 }

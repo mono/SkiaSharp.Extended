@@ -12,10 +12,10 @@ namespace SkiaSharp.Extended.Controls
 
 		public SKPoint Location { get; set; }
 
-		public SKColor Color
+		public SKColorF Color
 		{
-			get => paint.Color;
-			set => paint.Color = value;
+			get => paint.ColorF;
+			set => paint.ColorF = value;
 		}
 
 		public SKConfettiPhysics? Physics { get; set; }
@@ -34,7 +34,7 @@ namespace SkiaSharp.Extended.Controls
 
 		public bool FadeOut { get; set; }
 
-		public int Lifetime { get; set; }
+		public double Lifetime { get; set; }
 
 
 		public bool IsComplete { get; private set; } = false;
@@ -45,22 +45,20 @@ namespace SkiaSharp.Extended.Controls
 			if (IsComplete || Physics == null || Shape == null)
 				return;
 
-			var ms = (float)deltaTime.TotalMilliseconds;
+			var secs = (float)deltaTime.TotalSeconds;
 			Location = new SKPoint(
-				Location.X + Velocity.X * ms,
-				Location.Y + Velocity.Y * ms);
+				Location.X + Velocity.X * secs,
+				Location.Y + Velocity.Y * secs);
 
-			Lifetime -= (int)deltaTime.TotalMilliseconds;
+			Lifetime -= deltaTime.TotalSeconds;
 			if (Lifetime <= 0)
 			{
 				if (FadeOut)
 				{
 					var c = Color;
-					float alpha = c.Alpha - (0.255f * ms);
-
+					var alpha = c.Alpha - secs;
+					Color = c.WithAlpha(alpha);
 					IsComplete = alpha <= 0;
-					if (!IsComplete)
-						Color = c.WithAlpha((byte)alpha);
 				}
 				else
 				{
@@ -76,7 +74,7 @@ namespace SkiaSharp.Extended.Controls
 
 			if (Rotate)
 			{
-				var rv = RotationVelocity * ms;
+				var rv = RotationVelocity * secs;
 
 				rotation += rv;
 				if (rotation >= 360)
