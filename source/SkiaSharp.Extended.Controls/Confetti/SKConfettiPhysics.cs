@@ -9,6 +9,7 @@ namespace SkiaSharp.Extended.Controls
 		}
 
 		public SKConfettiPhysics(float size, float mass)
+			: this()
 		{
 			Size = size;
 			Mass = mass;

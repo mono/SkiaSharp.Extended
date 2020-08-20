@@ -2,6 +2,7 @@
 
 namespace SkiaSharp.Extended.Controls
 {
+	[TypeConverter(typeof(SKConfettiSystemBoundsTypeConverter))]
 	public struct SKConfettiSystemBounds
 	{
 		public SKConfettiSystemBounds(SKConfettiSystemSide side)
@@ -41,5 +42,8 @@ namespace SkiaSharp.Extended.Controls
 
 		public static SKConfettiSystemBounds Bounds(Rect rect) =>
 			new SKConfettiSystemBounds(rect);
+
+		public static SKConfettiSystemBounds Location(Point point) =>
+			new SKConfettiSystemBounds(new Rect(point, Size.Zero));
 	}
 }
