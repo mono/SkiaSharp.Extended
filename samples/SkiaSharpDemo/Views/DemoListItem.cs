@@ -3,7 +3,7 @@ using SkiaSharp.Views.Forms;
 using Topten.RichTextKit;
 using Xamarin.Forms;
 
-namespace SkiaSharpDemo.Controls
+namespace SkiaSharpDemo.Views
 {
 	public class DemoListItem : SKCanvasView
 	{

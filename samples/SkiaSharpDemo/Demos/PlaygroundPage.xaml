@@ -3,14 +3,4 @@
              xmlns:controls="clr-namespace:SkiaSharp.Extended.Controls;assembly=SkiaSharp.Extended.Controls"
              x:Class="SkiaSharpDemo.Demos.PlaygroundPage">
 
-    <Grid>
-
-        <controls:SKConfettiView x:Name="confettiView">
-            <controls:SKConfettiView.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnTapped" />
-            </controls:SKConfettiView.GestureRecognizers>
-        </controls:SKConfettiView>
-
-    </Grid>
-
 </ContentPage>

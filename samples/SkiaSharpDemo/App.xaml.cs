@@ -27,7 +27,7 @@ namespace SkiaSharpDemo
 			FontMapper.Default = new DemoFontMapper();
 
 			//MainPage = new NavigationPage(new MainPage());
-			MainPage = new NavigationPage(new Demos.PlaygroundPage());
+			MainPage = new NavigationPage(new Demos.ConfettiPage());
 		}
 
 		private class DemoFontMapper : FontMapper

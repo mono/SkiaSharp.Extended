@@ -16,9 +16,9 @@
     <PackageReference Include="Xamarin.Forms" Version="4.8.0.1269" />
   </ItemGroup>
 
-  <!-- <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+  <!--<ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <PackageReference Include="LiveSharp" Version="1.5.66" />
-  </ItemGroup> -->
+  </ItemGroup>-->
 
   <ItemGroup>
     <ProjectReference Include="..\..\source\SkiaSharp.Extended.Controls\SkiaSharp.Extended.Controls.csproj" />

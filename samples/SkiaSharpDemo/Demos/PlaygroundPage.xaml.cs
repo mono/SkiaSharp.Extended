@@ -10,13 +10,5 @@ namespace SkiaSharpDemo.Demos
 		{
 			InitializeComponent();
 		}
-
-		private void OnTapped(object sender, EventArgs e)
-		{
-			confettiView.Systems.Add(new SKConfettiSystem
-			{
-				Emitter = SKConfettiEmitter.Burst(200)
-			});
-		}
 	}
 }

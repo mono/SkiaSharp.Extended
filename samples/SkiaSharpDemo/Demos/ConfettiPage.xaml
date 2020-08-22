@@ -1,0 +1,139 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.Controls;assembly=SkiaSharp.Extended.Controls"
+             xmlns:views="clr-namespace:SkiaSharpDemo.Views"
+             x:Class="SkiaSharpDemo.Demos.ConfettiPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="StackLayout">
+                <Setter Property="Spacing" Value="0" />
+            </Style>
+            <Style TargetType="Grid">
+                <Setter Property="ColumnSpacing" Value="0" />
+                <Setter Property="RowSpacing" Value="0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+
+        <Label Text="Tap to Drop 🎊" FontSize="32" FontAttributes="Bold"
+               HorizontalOptions="Center" VerticalOptions="Center" />
+
+        <controls:SKConfettiView x:Name="confettiView">
+            <controls:SKConfettiView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnTapped" />
+            </controls:SKConfettiView.GestureRecognizers>
+        </controls:SKConfettiView>
+
+        <StackLayout VerticalOptions="End">
+            <BoxView Color="LightGray" HeightRequest="1" />
+
+            <StackLayout x:Name="tabBar" Orientation="Horizontal">
+                <StackLayout.Resources>
+                    <ResourceDictionary>
+                        <Style TargetType="views:TapLabel">
+                            <Setter Property="FontFamily" Value="FontAwesome" />
+                            <Setter Property="FontSize" Value="20" />
+                            <Setter Property="Padding" Value="8,8" />
+                            <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+                            <Setter Property="HorizontalTextAlignment" Value="Center" />
+                            <Setter Property="Command" Value="{Binding TabTappedCommand}" />
+                            <Setter Property="CommandParameter" Value="{Binding Source={RelativeSource Self}}" />
+                        </Style>
+                    </ResourceDictionary>
+                </StackLayout.Resources>
+
+                <views:TapLabel Text="&#xf04b;" />
+                <views:TapLabel Text="&#xf53f;" />
+                <views:TapLabel Text="&#xf61f;" />
+                <views:TapLabel Text="&#xf3fd;" />
+                <views:TapLabel Text="&#xf017;" />
+                <views:TapLabel Text="&#xf0ad;" />
+            </StackLayout>
+
+            <BoxView x:Name="selector" Color="Orange"
+                     WidthRequest="{Binding Children[0].Width, Source={Reference tabBar}}" HeightRequest="3"
+                     HorizontalOptions="Start" />
+
+            <Grid x:Name="pages" Padding="12" HeightRequest="100">
+                <Grid.Resources>
+                    <ResourceDictionary>
+                        <Style TargetType="Grid">
+                            <Setter Property="HorizontalOptions" Value="Center" />
+                            <Setter Property="VerticalOptions" Value="Center" />
+                        </Style>
+                        <Style TargetType="StackLayout">
+                            <Setter Property="HorizontalOptions" Value="Center" />
+                            <Setter Property="VerticalOptions" Value="Center" />
+                        </Style>
+                    </ResourceDictionary>
+                </Grid.Resources>
+
+                <StackLayout Orientation="Horizontal">
+                    <Button Text="Top" />
+                    <Button Text="Center" />
+                    <Button Text="Touch" />
+                </StackLayout>
+                <Grid RowSpacing="12" ColumnSpacing="12">
+                    <Grid.Resources>
+                        <ResourceDictionary>
+                            <Style TargetType="Button">
+                                <Setter Property="WidthRequest" Value="48" />
+                                <Setter Property="HeightRequest" Value="32" />
+                                <Setter Property="CornerRadius" Value="3" />
+                                <Setter Property="VisualStateManager.VisualStateGroups">
+                                    <VisualStateGroupList>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal" />
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Scale" Value="0.8" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                        <VisualStateGroup x:Name="SelectedStates">
+                                            <VisualState x:Name="Unselected" />
+                                            <VisualState x:Name="Selected">
+                                                <VisualState.Setters>
+                                                    <Setter Property="BorderColor" Value="Black" />
+                                                    <Setter Property="BorderWidth" Value="3" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateGroupList>
+                                </Setter>
+                                <Setter Property="Command" Value="{Binding ColorTappedCommand}" />
+                                <Setter Property="CommandParameter" Value="{Binding Source={RelativeSource Self}}" />
+                            </Style>
+                        </ResourceDictionary>
+                    </Grid.Resources>
+
+                    <Button BackgroundColor="#fffce18a" Grid.Column="0" Grid.Row="0" />
+                    <Button BackgroundColor="#ffff726d" Grid.Column="1" Grid.Row="0" />
+                    <Button BackgroundColor="#fff4306d" Grid.Column="3" Grid.Row="0" />
+                    <Button BackgroundColor="#ffb48def" Grid.Column="2" Grid.Row="0" />
+                    <Button BackgroundColor="#ff38ba9e" Grid.Column="1" Grid.Row="1" />
+                    <Button BackgroundColor="#ff3aaab8" Grid.Column="0" Grid.Row="1" />
+                    <Button BackgroundColor="#ffbb3d72" Grid.Column="2" Grid.Row="1" />
+                    <Button BackgroundColor="#ff006ded" Grid.Column="3" Grid.Row="1" />
+                </Grid>
+                <Grid>
+                    <Label Text="Content 3" />
+                </Grid>
+                <Grid>
+                    <Label Text="Content 4" />
+                </Grid>
+                <Grid>
+                    <Label Text="Content 5" />
+                </Grid>
+                <Grid>
+                    <Label Text="Content 6" />
+                </Grid>
+            </Grid>
+        </StackLayout>
+
+    </Grid>
+
+</ContentPage>
