@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using SkiaSharp.Extended.Controls;
 using Xamarin.Forms;
 
@@ -11,52 +12,33 @@ namespace SkiaSharpDemo.Demos
 		{
 			InitializeComponent();
 
-			TabTappedCommand = new Command<View>(OnTabTapped);
-			ColorTappedCommand = new Command<View>(OnColorTapped);
+			OptionTappedCommand = new Command<View>(OnOptionTapped);
 
 			BindingContext = this;
 		}
 
-		public Command<View> TabTappedCommand { get; }
+		public Command<View> OptionTappedCommand { get; }
 
-		public Command<View> ColorTappedCommand { get; }
-
-		protected override void OnAppearing()
-		{
-			base.OnAppearing();
-
-			OnTabTapped(tabBar.Children[0]);
-		}
-
-		private void OnTabTapped(View tab)
-		{
-			var idx = tabBar.Children.IndexOf(tab);
-			var newPage = pages.Children[idx];
-
-			selector.LayoutTo(new Rectangle(tab.X, tab.Height, tab.Width, 3));
-
-			foreach (var page in pages.Children)
-			{
-				var p = page;
-				if (p != newPage && p.IsVisible)
-					p.FadeTo(0, 100).ContinueWith(t => p.IsVisible = false);
-			}
-
-			if (!newPage.IsVisible)
-			{
-				newPage.IsVisible = true;
-				newPage.FadeTo(1, 100);
-			}
-		}
-
-		private void OnColorTapped(View button)
+		private void OnOptionTapped(View button)
 		{
 			var vsg = VisualStateManager.GetVisualStateGroups(button);
 			var common = vsg.FirstOrDefault(g => g.Name == "SelectedStates");
-			var newState = common?.CurrentState?.Name == "Selected"
+			if (common == null)
+				return;
+
+			var isSingle = button.Parent.ClassId == "SingleSelect";
+			if (isSingle)
+			{
+				foreach (var btn in ((Layout<View>)button.Parent).Children)
+				{
+					if (btn != button)
+						VisualStateManager.GoToState(btn, "Unselected");
+				}
+			}
+
+			var newState = common.CurrentState?.Name == "Selected"
 				? "Unselected"
 				: "Selected";
-
 			VisualStateManager.GoToState(button, newState);
 		}
 
