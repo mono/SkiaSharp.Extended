@@ -6,6 +6,15 @@
                     mc:Ignorable="d"
                     x:Class="SkiaSharpDemo.Views.BottomTabBarResources">
 
+    <DataTemplate x:Key="BottomTabBarHeaderContentTemplate">
+        <views:TapLabel Text="{Binding Title}"
+                        FontFamily="FontAwesome" FontSize="20" HorizontalTextAlignment="Center"
+                        Padding="8"
+                        HorizontalOptions="FillAndExpand"
+                        Command="{Binding TabTappedCommand, Source={RelativeSource TemplatedParent}}"
+                        CommandParameter="{Binding Source={RelativeSource Self}}" />
+    </DataTemplate>
+
     <!-- the bottom tab bar control template -->
     <ControlTemplate x:Key="BottomTabBarControlTemplate">
         <StackLayout Padding="0" Spacing="0">
@@ -13,18 +22,8 @@
 
             <StackLayout x:Name="PART_TabBar"
                          Padding="0" Spacing="0" Orientation="Horizontal"
-                         BindableLayout.ItemsSource="{Binding Tabs, Source={RelativeSource TemplatedParent}}">
-                <BindableLayout.ItemTemplate>
-                    <DataTemplate>
-                        <views:TapLabel Text="{Binding Title}"
-                                        FontFamily="FontAwesome" FontSize="20" HorizontalTextAlignment="Center"
-                                        Padding="8"
-                                        HorizontalOptions="FillAndExpand"
-                                        Command="{Binding TabTappedCommand, Source={RelativeSource TemplatedParent}}"
-                                        CommandParameter="{Binding Source={RelativeSource Self}}" />
-                    </DataTemplate>
-                </BindableLayout.ItemTemplate>
-            </StackLayout>
+                         BindableLayout.ItemsSource="{Binding Tabs, Source={RelativeSource TemplatedParent}}"
+                         BindableLayout.ItemTemplate="{Binding HeaderContentTemplate, Source={RelativeSource TemplatedParent}}" />
 
             <BoxView x:Name="PART_Selector" Color="Orange"
                      WidthRequest="100" HeightRequest="3"
@@ -49,6 +48,8 @@
     <Style x:Key="BottomTabBarStyle" TargetType="views:BottomTabBar">
         <Setter Property="ControlTemplate"
                 Value="{StaticResource BottomTabBarControlTemplate}" />
+        <Setter Property="HeaderContentTemplate"
+                Value="{StaticResource BottomTabBarHeaderContentTemplate}" />
         <Setter Property="VerticalOptions"
                 Value="End" />
     </Style>

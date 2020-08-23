@@ -31,6 +31,12 @@ namespace SkiaSharpDemo.Views
 			typeof(BottomTabBar),
 			LayoutOptions.Fill);
 
+		public static readonly BindableProperty HeaderContentTemplateProperty = BindableProperty.Create(
+			nameof(HeaderContentTemplate),
+			typeof(DataTemplate),
+			typeof(BottomTabBar),
+			null);
+
 		private Layout<View>? tabBar;
 		private Layout<View>? pages;
 		private View? selector;
@@ -62,6 +68,12 @@ namespace SkiaSharpDemo.Views
 		{
 			get => (LayoutOptions)GetValue(VerticalContentAlignmentProperty);
 			set => SetValue(VerticalContentAlignmentProperty, value);
+		}
+
+		public DataTemplate? HeaderContentTemplate
+		{
+			get => (DataTemplate?)GetValue(HeaderContentTemplateProperty);
+			set => SetValue(HeaderContentTemplateProperty, value);
 		}
 
 		// TODO: this probably should not be a public property...

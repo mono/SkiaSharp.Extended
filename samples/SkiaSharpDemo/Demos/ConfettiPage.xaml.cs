@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using SkiaSharp.Extended.Controls;
 using Xamarin.Forms;
 
