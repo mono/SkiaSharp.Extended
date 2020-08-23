@@ -31,6 +31,16 @@ namespace SkiaSharpDemo
 						Color = Color.LightPink,
 					},
 				},
+				new DemoGroup("CONTROLS")
+				{
+					new Demo
+					{
+						Title = "Confetti",
+						Description = "Yeaaahhhhh! Throw that confetti! Woooooaaaaahhhh! We are the winners! Celebration words! Congrats! Yay!",
+						PageType = typeof(ConfettiPage),
+						Color = Color.SteelBlue,
+					},
+				},
 				new DemoGroup("ICONIFY")
 				{
 					new Demo

@@ -1,12 +1,12 @@
 ﻿using Xamarin.Forms;
 
-namespace SkiaSharp.Extended.Controls.Themes
+namespace SkiaSharp.Extended.Controls
 {
-	public partial class Generic : ResourceDictionary
+	public partial class SKConfettiViewResources : ResourceDictionary
 	{
 		private static bool registered;
 
-		public Generic()
+		public SKConfettiViewResources()
 		{
 			InitializeComponent();
 		}
@@ -21,7 +21,7 @@ namespace SkiaSharp.Extended.Controls.Themes
 			{
 				foreach (var dic in merged)
 				{
-					if (dic.GetType() == typeof(Generic))
+					if (dic.GetType() == typeof(SKConfettiViewResources))
 					{
 						registered = true;
 						break;
@@ -30,7 +30,7 @@ namespace SkiaSharp.Extended.Controls.Themes
 
 				if (!registered)
 				{
-					merged.Add(new Generic());
+					merged.Add(new SKConfettiViewResources());
 					registered = true;
 				}
 			}

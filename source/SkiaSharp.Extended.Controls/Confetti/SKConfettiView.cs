@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Specialized;
-using SkiaSharp.Extended.Controls.Themes;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
@@ -48,7 +47,7 @@ namespace SkiaSharp.Extended.Controls
 		{
 			DebugUtils.LogPropertyChanged(this);
 
-			Generic.EnsureRegistered();
+			SKConfettiViewResources.EnsureRegistered();
 
 			SizeChanged += OnSizeChanged;
 
