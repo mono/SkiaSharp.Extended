@@ -7,12 +7,6 @@ namespace SkiaSharp.Extended.Controls
 {
 	public class SKConfettiView : TemplatedView
 	{
-		private static SKConfettiSystemCollection DefaultSystems =>
-			new SKConfettiSystemCollection
-			{
-				new SKConfettiSystem()
-			};
-
 		public static readonly BindableProperty IsRunningProperty = BindableProperty.Create(
 			nameof(IsRunning),
 			typeof(bool),
@@ -32,8 +26,9 @@ namespace SkiaSharp.Extended.Controls
 			nameof(Systems),
 			typeof(SKConfettiSystemCollection),
 			typeof(SKConfettiView),
-			DefaultSystems,
-			propertyChanged: OnSystemsPropertyChanged);
+			null,
+			propertyChanged: OnSystemsPropertyChanged,
+			defaultValueCreator: _ => CreateDefaultSystems());
 
 		private readonly SKFrameCounter frameCounter = new SKFrameCounter();
 
@@ -210,5 +205,11 @@ namespace SkiaSharp.Extended.Controls
 
 			IsComplete = isComplete;
 		}
+
+		private static SKConfettiSystemCollection CreateDefaultSystems() =>
+			new SKConfettiSystemCollection
+			{
+				new SKConfettiSystem()
+			};
 	}
 }

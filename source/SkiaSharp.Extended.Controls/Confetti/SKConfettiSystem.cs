@@ -7,36 +7,6 @@ namespace SkiaSharp.Extended.Controls
 {
 	public class SKConfettiSystem : BindableObject
 	{
-		private static SKConfettiColorCollection DefaultColors =>
-			new SKConfettiColorCollection
-			{
-				Color.FromUint(0xfffce18a),
-				Color.FromUint(0xffff726d),
-				Color.FromUint(0xffb48def),
-				Color.FromUint(0xfff4306d),
-				Color.FromUint(0xff3aaab8),
-				Color.FromUint(0xff38ba9e),
-				Color.FromUint(0xffbb3d72),
-				Color.FromUint(0xff006ded),
-			};
-
-		private static SKConfettiPhysicsCollection DefaultPhysics =>
-			new SKConfettiPhysicsCollection
-			{
-				new SKConfettiPhysics(12, 5),
-				new SKConfettiPhysics(16, 6),
-			};
-
-		private static SKConfettiShapeCollection DefaultShapes =>
-			new SKConfettiShapeCollection
-			{
-				new SKConfettiSquare(),
-				new SKConfettiCircle(),
-				new SKConfettiRect(0.5),
-				new SKConfettiOval(0.5),
-				new SKConfettiRect(0.1),
-			};
-
 		public static readonly BindableProperty EmitterBoundsProperty = BindableProperty.Create(
 			nameof(EmitterBounds),
 			typeof(SKConfettiSystemBounds),
@@ -47,26 +17,30 @@ namespace SkiaSharp.Extended.Controls
 			nameof(Emitter),
 			typeof(SKConfettiEmitter),
 			typeof(SKConfettiSystem),
-			new SKConfettiEmitter(),
-			propertyChanged: OnEmitterChanged);
+			null,
+			propertyChanged: OnEmitterChanged,
+			defaultValueCreator: _ => new SKConfettiEmitter());
 
 		public static readonly BindableProperty ColorsProperty = BindableProperty.Create(
 			nameof(Colors),
 			typeof(SKConfettiColorCollection),
 			typeof(SKConfettiSystem),
-			DefaultColors);
+			null,
+			defaultValueCreator: _ => CreateDefaultColors());
 
 		public static readonly BindableProperty PhysicsProperty = BindableProperty.Create(
 			nameof(Physics),
 			typeof(SKConfettiPhysicsCollection),
 			typeof(SKConfettiSystem),
-			DefaultPhysics);
+			null,
+			defaultValueCreator: _ => CreateDefaultPhysics());
 
 		public static readonly BindableProperty ShapesProperty = BindableProperty.Create(
 			nameof(Shapes),
 			typeof(SKConfettiShapeCollection),
 			typeof(SKConfettiSystem),
-			DefaultShapes);
+			null,
+			defaultValueCreator: _ => CreateDefaultShapes());
 
 		private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
 			nameof(IsComplete),
@@ -297,5 +271,35 @@ namespace SkiaSharp.Extended.Controls
 			IsComplete =
 				particles.Count == 0 &&
 				(Emitter?.IsComplete != false || !IsRunning);
+
+		private static SKConfettiColorCollection CreateDefaultColors() =>
+			new SKConfettiColorCollection
+			{
+				Color.FromUint(0xfffce18a),
+				Color.FromUint(0xffff726d),
+				Color.FromUint(0xffb48def),
+				Color.FromUint(0xfff4306d),
+				Color.FromUint(0xff3aaab8),
+				Color.FromUint(0xff38ba9e),
+				Color.FromUint(0xffbb3d72),
+				Color.FromUint(0xff006ded),
+			};
+
+		private static SKConfettiPhysicsCollection CreateDefaultPhysics() =>
+			new SKConfettiPhysicsCollection
+			{
+				new SKConfettiPhysics(12, 5),
+				new SKConfettiPhysics(16, 6),
+			};
+
+		private static SKConfettiShapeCollection CreateDefaultShapes() =>
+			new SKConfettiShapeCollection
+			{
+				new SKConfettiSquare(),
+				new SKConfettiCircle(),
+				new SKConfettiRect(0.5),
+				new SKConfettiOval(0.5),
+				new SKConfettiRect(0.1),
+			};
 	}
 }
