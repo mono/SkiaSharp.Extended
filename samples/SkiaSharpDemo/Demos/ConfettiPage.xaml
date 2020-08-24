@@ -5,42 +5,6 @@
              x:Class="SkiaSharpDemo.Demos.ConfettiPage"
              Title="Confetti">
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <Style x:Key="OptionButtonStyle" TargetType="Button">
-                <Setter Property="CornerRadius" Value="3" />
-                <Setter Property="VisualStateManager.VisualStateGroups">
-                    <VisualStateGroupList>
-                        <VisualStateGroup x:Name="CommonStates">
-                            <VisualState x:Name="Normal" />
-                            <VisualState x:Name="Pressed">
-                                <VisualState.Setters>
-                                    <Setter Property="Scale" Value="0.8" />
-                                </VisualState.Setters>
-                            </VisualState>
-                        </VisualStateGroup>
-                        <VisualStateGroup x:Name="SelectedStates">
-                            <VisualState x:Name="Unselected" />
-                            <VisualState x:Name="Selected">
-                                <VisualState.Setters>
-                                    <Setter Property="BorderColor" Value="Black" />
-                                    <Setter Property="BorderWidth" Value="3" />
-                                </VisualState.Setters>
-                            </VisualState>
-                        </VisualStateGroup>
-                    </VisualStateGroupList>
-                </Setter>
-                <Setter Property="Command" Value="{Binding OptionTappedCommand}" />
-                <Setter Property="CommandParameter" Value="{Binding Source={RelativeSource Self}}" />
-            </Style>
-            <Style x:Key="DefaultOptionButtonStyle" TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
-                <Setter Property="BackgroundColor" Value="Accent" />
-                <Setter Property="TextColor" Value="White" />
-                <Setter Property="Padding" Value="24,12" />
-            </Style>
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
     <Grid>
 
         <Label Text="Tap to Drop 🎊" FontSize="32" FontAttributes="Bold"
@@ -58,10 +22,12 @@
 
                 <!-- "add type" -->
                 <views:BottomTab Title="&#xf04b;">
-                    <StackLayout Orientation="Horizontal" Spacing="12" ClassId="SingleSelect">
+                    <StackLayout Orientation="Horizontal" Spacing="12" views:OptionButtons.SelectionMode="Single">
                         <StackLayout.Resources>
                             <ResourceDictionary>
-                                <Style TargetType="Button" BasedOn="{StaticResource DefaultOptionButtonStyle}" />
+                                <Style TargetType="Button" BasedOn="{StaticResource TextOptionButtonStyle}">
+                                    <Setter Property="BindingContext" Value="{Binding BackgroundColor, Source={RelativeSource Self}}" />
+                                </Style>
                             </ResourceDictionary>
                         </StackLayout.Resources>
 
@@ -73,12 +39,13 @@
 
                 <!-- colors -->
                 <views:BottomTab Title="&#xf53f;">
-                    <Grid RowSpacing="12" ColumnSpacing="12">
+                    <Grid RowSpacing="12" ColumnSpacing="12" views:OptionButtons.SelectionMode="Multiple">
                         <Grid.Resources>
                             <ResourceDictionary>
                                 <Style TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
                                     <Setter Property="WidthRequest" Value="48" />
                                     <Setter Property="HeightRequest" Value="32" />
+                                    <Setter Property="BindingContext" Value="{Binding BackgroundColor, Source={RelativeSource Self}}" />
                                 </Style>
                             </ResourceDictionary>
                         </Grid.Resources>
@@ -96,10 +63,10 @@
 
                 <!-- shapes -->
                 <views:BottomTab Title="&#xf61f;">
-                    <Grid>
-                        <Grid.Resources>
+                    <StackLayout Orientation="Horizontal" Spacing="12" views:OptionButtons.SelectionMode="Multiple">
+                        <StackLayout.Resources>
                             <ResourceDictionary>
-                                <Style TargetType="Button" BasedOn="{StaticResource DefaultOptionButtonStyle}">
+                                <Style TargetType="Button" BasedOn="{StaticResource TextOptionButtonStyle}">
                                     <Setter Property="FontFamily" Value="FontAwesome" />
                                     <Setter Property="FontSize" Value="20" />
                                     <Setter Property="Padding" Value="0" />
@@ -107,14 +74,14 @@
                                     <Setter Property="HeightRequest" Value="48" />
                                 </Style>
                             </ResourceDictionary>
-                        </Grid.Resources>
+                        </StackLayout.Resources>
 
-                        <Button Text="&#xf0c8;" Grid.Column="0" Grid.Row="0" />
-                        <Button Text="&#xf111;" Grid.Column="1" Grid.Row="0" />
-                        <Button Text="&#xf068;" Grid.Column="2" Grid.Row="0" />
-                        <Button Text="&#xf004;" Grid.Column="3" Grid.Row="0" />
-                        <Button Text="&#xf005;" Grid.Column="4" Grid.Row="0" />
-                    </Grid>
+                        <Button Text="&#xf0c8;" BindingContext="Square" />
+                        <Button Text="&#xf111;" BindingContext="Circle" />
+                        <Button Text="&#xf068;" BindingContext="Line" />
+                        <Button Text="&#xf004;" BindingContext="Heart" />
+                        <Button Text="&#xf005;" BindingContext="Star" />
+                    </StackLayout>
                 </views:BottomTab>
 
                 <views:BottomTab Title="&#xf3fd;">
