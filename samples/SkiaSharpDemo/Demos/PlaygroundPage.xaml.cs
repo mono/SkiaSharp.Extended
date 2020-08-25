@@ -1,5 +1,4 @@
 ﻿using System;
-using SkiaSharp.Extended.Controls;
 using Xamarin.Forms;
 
 namespace SkiaSharpDemo.Demos
