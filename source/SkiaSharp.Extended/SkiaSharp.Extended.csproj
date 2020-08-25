@@ -1,15 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard1.3</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SkiaSharp.Extended</AssemblyName>
     <RootNamespace>SkiaSharp.Extended</RootNamespace>
-    <AssemblyVersion>2.80.0.0</AssemblyVersion>
-    <AssemblyFileVersion>2.80.1.0</AssemblyFileVersion>
-    <Version>2.80.1</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <AssemblyFileVersion>1.0.0.0</AssemblyFileVersion>
+    <Version>2.0.0</Version>
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <NeutralLanguage>en</NeutralLanguage>
     <KeyFileName>mono.snk</KeyFileName>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -31,5 +33,9 @@
   <ItemGroup>
     <PackageReference Include="SkiaSharp" Version="2.80.1" />
   </ItemGroup>
+
+  <!-- <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <PackageReference Include="LiveSharp" Version="1.5.66" />
+  </ItemGroup> -->
 
 </Project>

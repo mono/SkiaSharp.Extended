@@ -17,4 +17,8 @@
     <ProjectReference Include="..\..\source\SkiaSharp.Extended\SkiaSharp.Extended.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="TestResults\**\*" />
+  </ItemGroup>
+
 </Project>

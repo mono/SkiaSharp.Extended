@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-             xmlns:controls="clr-namespace:SkiaSharpDemo.Controls"
+             xmlns:views="clr-namespace:SkiaSharpDemo.Views"
              x:Class="SkiaSharpDemo.MainPage"
              mc:Ignorable="d"
              Title="SkiaSharp Extended">
@@ -22,8 +22,8 @@
         <CollectionView.ItemTemplate>
             <DataTemplate>
                 <Grid Padding="12,3,6,3">
-                    <controls:DemoListItem FontSize="16" Color="{Binding Color}"
-                                           Title="{Binding Title}" Description="{Binding Description}" />
+                    <views:DemoListItem FontSize="16" Color="{Binding Color}"
+                                        Title="{Binding Title}" Description="{Binding Description}" />
                 </Grid>
             </DataTemplate>
         </CollectionView.ItemTemplate>

@@ -65,6 +65,16 @@ namespace SkiaSharpDemo
 						Color = Color.LightSeaGreen.AddLuminosity(0.2),
 					},
 				},
+				new DemoGroup("PLAYGROUND")
+				{
+					new Demo
+					{
+						Title = "Playground",
+						Description = "The ground for playing.",
+						PageType = typeof(PlaygroundPage),
+						Color = Color.Silver,
+					},
+				},
 			};
 
 			BindingContext = this;
