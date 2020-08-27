@@ -8,7 +8,6 @@ namespace SkiaSharp.Extended.Controls
 			new SKObjectPool<SKPaint>(() => new SKPaint { IsAntialias = true });
 
 		private SKPoint acceleration = SKPoint.Empty;
-		private float rotation = 0f;
 		private float rotationWidth = 0f;
 		private float scaleX = 1f;
 
@@ -36,6 +35,8 @@ namespace SkiaSharp.Extended.Controls
 		}
 
 		public float Mass { get; set; }
+
+		public float Rotation { get; set; }
 
 		public SKColorF Color { get; set; }
 
@@ -69,7 +70,7 @@ namespace SkiaSharp.Extended.Controls
 
 			if (Rotate)
 			{
-				canvas.RotateDegrees(rotation);
+				canvas.RotateDegrees(Rotation);
 				canvas.Scale(scaleX, 1f);
 			}
 
@@ -127,9 +128,9 @@ namespace SkiaSharp.Extended.Controls
 			{
 				var rv = RotationVelocity * secs;
 
-				rotation += rv;
-				if (rotation >= 360)
-					rotation = 0f;
+				Rotation += rv;
+				if (Rotation >= 360)
+					Rotation = 0f;
 
 				rotationWidth -= rv;
 				if (rotationWidth < 0)

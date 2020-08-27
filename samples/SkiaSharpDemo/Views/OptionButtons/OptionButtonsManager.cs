@@ -5,10 +5,14 @@ namespace SkiaSharpDemo.Views
 {
 	internal class OptionButtonsManager
 	{
+		private const string SelectedState = "Selected";
+		private const string UnselectedState = "Unselected";
+
 		private bool isSubscribed;
 
-		public void Update(Layout<View> layout, SelectionMode mode)
+		public void Update(Layout<View> layout)
 		{
+			var mode = OptionButtons.GetSelectionMode(layout);
 			if (mode == SelectionMode.None)
 			{
 				foreach (var child in layout.Children)
@@ -35,6 +39,28 @@ namespace SkiaSharpDemo.Views
 
 				isSubscribed = true;
 			}
+
+			UpdateSelection(layout);
+		}
+
+		private static void UpdateSelection(Layout<View> layout)
+		{
+			var mode = OptionButtons.GetSelectionMode(layout);
+			var allowNone = OptionButtons.GetAllowNone(layout);
+			var selectedItems = OptionButtons.GetSelectedItems(layout);
+
+			var selectedAny = false;
+			foreach (var child in layout.Children)
+			{
+				if (child is Button button)
+				{
+					if (selectedItems?.Contains(child.BindingContext) == true)
+					{
+						selectedAny = true;
+						VisualStateManager.GoToState(button, SelectedState);
+					}
+				}
+			}
 		}
 
 		private static void OnChildAdded(object sender, ElementEventArgs e)
@@ -51,22 +77,30 @@ namespace SkiaSharpDemo.Views
 
 		private static void OnButtonClicked(object sender, EventArgs e)
 		{
-			const string Selected = "Selected";
-			const string Unselected = "Unselected";
-
 			if (!(sender is Button button) ||
 				!(button?.Parent is Layout<View> parent) ||
 				!(button.BindingContext is object item))
 				return;
 
-			var style = OptionButtons.GetSelectionMode(parent);
-			if (style == SelectionMode.None)
+			var mode = OptionButtons.GetSelectionMode(parent);
+			if (mode == SelectionMode.None)
 				return;
 
+			var allowNone = OptionButtons.GetAllowNone(parent);
 			var selectedItems = OptionButtons.GetSelectedItems(parent);
 
+			if (!allowNone)
+			{
+				if (selectedItems != null)
+				{
+					// do not unselect a single item if we are not allowed
+					if (selectedItems.Count == 1 && item.Equals(selectedItems[0]))
+						return;
+				}
+			}
+
 			// clear the list if we are not a multi-select list
-			if (style != SelectionMode.Multiple)
+			if (mode != SelectionMode.Multiple)
 			{
 				if (selectedItems != null)
 				{
@@ -82,7 +116,7 @@ namespace SkiaSharpDemo.Views
 				foreach (var btn in parent.Children)
 				{
 					if (btn != button)
-						VisualStateManager.GoToState(btn, Unselected);
+						VisualStateManager.GoToState(btn, UnselectedState);
 				}
 			}
 
@@ -101,7 +135,7 @@ namespace SkiaSharpDemo.Views
 			// updated the selected item
 			OptionButtons.SetSelectedItem(parent, item);
 
-			VisualStateManager.GoToState(button, shouldSelect ? Selected : Unselected);
+			VisualStateManager.GoToState(button, shouldSelect ? SelectedState : UnselectedState);
 		}
 	}
 }

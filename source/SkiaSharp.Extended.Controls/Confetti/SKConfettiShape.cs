@@ -99,4 +99,30 @@ namespace SkiaSharp.Extended.Controls
 				? Math.Max(0, Math.Min(ratio, 1.0))
 				: (object)1.0;
 	}
+
+	public class SKConfettiPath: SKConfettiShape
+	{
+		public SKConfettiPath(SKPath path)
+		{
+			Path = path ?? throw new ArgumentNullException(nameof(path));
+			BaseSize = Path.TightBounds.Size;
+		}
+
+		public SKPath Path { get; }
+
+		public SKSize BaseSize { get; }
+
+		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
+		{
+			if (BaseSize.Width <= 0 || BaseSize.Height <= 0)
+				return;
+
+			canvas.Save();
+			canvas.Scale(size / BaseSize.Width, size / BaseSize.Height);
+
+			canvas.DrawPath(Path, paint);
+
+			canvas.Restore();
+		}
+	}
 }

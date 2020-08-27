@@ -22,11 +22,14 @@
 
                 <!-- "add type" -->
                 <views:BottomTab Title="&#xf04b;">
-                    <StackLayout Orientation="Horizontal" Spacing="12" views:OptionButtons.SelectionMode="Single">
+                    <StackLayout Orientation="Horizontal" Spacing="12"
+                                 views:OptionButtons.AllowNone="False"
+                                 views:OptionButtons.SelectionMode="Single"
+                                 views:OptionButtons.SelectedItems="{Binding AddTypes}">
                         <StackLayout.Resources>
                             <ResourceDictionary>
                                 <Style TargetType="Button" BasedOn="{StaticResource TextOptionButtonStyle}">
-                                    <Setter Property="BindingContext" Value="{Binding BackgroundColor, Source={RelativeSource Self}}" />
+                                    <Setter Property="BindingContext" Value="{Binding Text, Source={RelativeSource Self}}" />
                                 </Style>
                             </ResourceDictionary>
                         </StackLayout.Resources>
@@ -39,7 +42,10 @@
 
                 <!-- colors -->
                 <views:BottomTab Title="&#xf53f;">
-                    <Grid RowSpacing="12" ColumnSpacing="12" views:OptionButtons.SelectionMode="Multiple">
+                    <Grid RowSpacing="12" ColumnSpacing="12"
+                          views:OptionButtons.AllowNone="False"
+                          views:OptionButtons.SelectionMode="Multiple"
+                          views:OptionButtons.SelectedItems="{Binding Colors}">
                         <Grid.Resources>
                             <ResourceDictionary>
                                 <Style TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
@@ -63,7 +69,10 @@
 
                 <!-- shapes -->
                 <views:BottomTab Title="&#xf61f;">
-                    <StackLayout Orientation="Horizontal" Spacing="12" views:OptionButtons.SelectionMode="Multiple">
+                    <StackLayout Orientation="Horizontal" Spacing="12"
+                                 views:OptionButtons.AllowNone="False"
+                                 views:OptionButtons.SelectionMode="Multiple"
+                                 views:OptionButtons.SelectedItems="{Binding Shapes}">
                         <StackLayout.Resources>
                             <ResourceDictionary>
                                 <Style TargetType="Button" BasedOn="{StaticResource TextOptionButtonStyle}">

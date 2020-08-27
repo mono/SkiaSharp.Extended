@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace SkiaSharpDemo.Views
@@ -15,7 +16,7 @@ namespace SkiaSharpDemo.Views
 			typeof(OptionButtonsManager),
 			typeof(Layout<View>),
 			null,
-			defaultValueCreator: b => new OptionButtonsManager());
+			defaultValueCreator: _ => new OptionButtonsManager());
 
 		// SelectionMode
 
@@ -30,22 +31,38 @@ namespace SkiaSharpDemo.Views
 			typeof(SelectionMode),
 			typeof(Layout<View>),
 			SelectionMode.None,
-			propertyChanged: OnSelectionModeChanged);
+			propertyChanged: OnPropertyChanged);
+
+		// AllowNone
+
+		public static bool GetAllowNone(BindableObject obj) =>
+			(bool)obj.GetValue(AllowNoneProperty);
+
+		public static void SetAllowNone(BindableObject obj, bool value) =>
+			obj.SetValue(AllowNoneProperty, value);
+
+		public static readonly BindableProperty AllowNoneProperty = BindableProperty.CreateAttached(
+			"AllowNone",
+			typeof(bool),
+			typeof(Layout<View>),
+			true,
+			propertyChanged: OnPropertyChanged);
 
 		// SelectedItems
 
-		public static IList<object>? GetSelectedItems(BindableObject obj) =>
-			(IList<object>?)obj.GetValue(SelectedItemsProperty);
+		public static IList? GetSelectedItems(BindableObject obj) =>
+			(IList?)obj.GetValue(SelectedItemsProperty);
 
-		public static void SetSelectedItems(BindableObject obj, IList<object>? value) =>
+		public static void SetSelectedItems(BindableObject obj, IList? value) =>
 			obj.SetValue(SelectedItemsProperty, value);
 
 		public static readonly BindableProperty SelectedItemsProperty = BindableProperty.CreateAttached(
 			"SelectedItems",
-			typeof(IList<object>),
+			typeof(IList),
 			typeof(Layout<View>),
 			null,
-			defaultValueCreator: b => new List<object>());
+			propertyChanged: OnPropertyChanged,
+			defaultValueCreator: _ => new List<object>());
 
 		// SelectedItem
 
@@ -60,18 +77,18 @@ namespace SkiaSharpDemo.Views
 			typeof(object),
 			typeof(Layout<View>),
 			null,
+			propertyChanged: OnPropertyChanged,
 			defaultBindingMode: BindingMode.TwoWay);
 
 		//
 
-		private static void OnSelectionModeChanged(BindableObject bindable, object oldValue, object newValue)
+		private static void OnPropertyChanged(BindableObject bindable, object oldValue, object newValue)
 		{
 			if (!(bindable is Layout<View> layout) ||
-				!(GetOptionButtonsManager(bindable) is OptionButtonsManager manager) ||
-				!(newValue is SelectionMode mode))
+				!(GetOptionButtonsManager(bindable) is OptionButtonsManager manager))
 				return;
 
-			manager.Update(layout, mode);
+			manager.Update(layout);
 		}
 	}
 }

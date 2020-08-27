@@ -201,12 +201,13 @@ namespace SkiaSharp.Extended.Controls
 				{
 					Location = GetNewLocation().ToSKPoint(),
 					Velocity = GetNewVelocity().ToSKPoint(),
-					RotationVelocity = (float)GetNewRotation(),
+					RotationVelocity = (float)GetNewRotationVelocity(),
 
 					Color = c.ToSKColor(),
 					Size = p.Size,
 					Mass = p.Mass,
 					Shape = s,
+					Rotation = (float)GetNewRotation(),
 
 					MaxAcceleration = new Point(MaximumAcceleration, MaximumAcceleration).ToSKPoint(),
 					Accelerate = Accelerate,
@@ -240,8 +241,11 @@ namespace SkiaSharp.Extended.Controls
 				return new Point(vx, vy);
 			}
 
-			double GetNewRotation() =>
+			double GetNewRotationVelocity() =>
 				MinimumRotationVelocity + random.NextDouble() * (MaximumRotationVelocity - MinimumRotationVelocity);
+
+			double GetNewRotation() =>
+				random.NextDouble() * 360.0;
 
 		}
 
