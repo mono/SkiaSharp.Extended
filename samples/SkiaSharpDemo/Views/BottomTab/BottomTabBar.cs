@@ -17,7 +17,8 @@ namespace SkiaSharpDemo.Views
 			typeof(int),
 			typeof(BottomTabBar),
 			-1,
-			propertyChanged: InSelectedIndexChanged);
+			defaultBindingMode: BindingMode.TwoWay,
+			propertyChanged: OnSelectedIndexChanged);
 
 		public static readonly BindableProperty HorizontalContentAlignmentProperty = BindableProperty.Create(
 			nameof(HorizontalContentAlignment),
@@ -94,6 +95,8 @@ namespace SkiaSharpDemo.Views
 
 			if (Tabs?.Count > 0 && SelectedIndex == -1)
 				SelectedIndex = 0;
+			else
+				UpdateSelectedTab();
 		}
 
 		private void OnTabTapped(View tab) =>
@@ -105,6 +108,12 @@ namespace SkiaSharpDemo.Views
 				return;
 
 			var index = SelectedIndex;
+
+			if (index < 0)
+				index = 0;
+			if (index >= tabBar.Children.Count)
+				index = tabBar.Children.Count - 1;
+
 			var tab = tabBar.Children[index];
 			var newPage = pages.Children[index];
 
@@ -137,7 +146,7 @@ namespace SkiaSharpDemo.Views
 			}
 		}
 
-		private static void InSelectedIndexChanged(BindableObject bindable, object oldValue, object newValue)
+		private static void OnSelectedIndexChanged(BindableObject bindable, object oldValue, object newValue)
 		{
 			if (bindable is BottomTabBar control)
 				control.UpdateSelectedTab();

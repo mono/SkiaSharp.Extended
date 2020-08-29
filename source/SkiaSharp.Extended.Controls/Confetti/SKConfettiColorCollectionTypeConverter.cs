@@ -1,7 +1,7 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace SkiaSharp.Extended.Controls
+namespace SkiaSharp.Extended.Controls.Converters
 {
 	[TypeConversion(typeof(SKConfettiColorCollection))]
 	public class SKConfettiColorCollectionTypeConverter : TypeConverter

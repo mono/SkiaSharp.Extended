@@ -9,9 +9,9 @@ namespace SkiaSharp.Extended.Controls
 	{
 		public static readonly BindableProperty EmitterBoundsProperty = BindableProperty.Create(
 			nameof(EmitterBounds),
-			typeof(SKConfettiSystemBounds),
+			typeof(SKConfettiEmitterBounds),
 			typeof(SKConfettiSystem),
-			SKConfettiSystemBounds.Top);
+			SKConfettiEmitterBounds.Top);
 
 		public static readonly BindableProperty EmitterProperty = BindableProperty.Create(
 			nameof(Emitter),
@@ -61,7 +61,7 @@ namespace SkiaSharp.Extended.Controls
 		private readonly List<SKConfettiParticle> particles = new List<SKConfettiParticle>();
 
 		private SKRect lastViewBounds;
-		private SKConfettiSystemBounds actualEmitterBounds;
+		private SKConfettiEmitterBounds actualEmitterBounds;
 
 		public SKConfettiSystem()
 		{
@@ -76,9 +76,9 @@ namespace SkiaSharp.Extended.Controls
 			set => SetValue(IsRunningProperty, value);
 		}
 
-		public SKConfettiSystemBounds EmitterBounds
+		public SKConfettiEmitterBounds EmitterBounds
 		{
-			get => (SKConfettiSystemBounds)GetValue(EmitterBoundsProperty);
+			get => (SKConfettiEmitterBounds)GetValue(EmitterBoundsProperty);
 			set => SetValue(EmitterBoundsProperty, value);
 		}
 
@@ -116,7 +116,7 @@ namespace SkiaSharp.Extended.Controls
 
 		public double MinimumRotationVelocity { get; set; } = 10;
 
-		public double MaximumRotationVelocity { get; set; } = 50;
+		public double MaximumRotationVelocity { get; set; } = 75;
 
 		public double MaximumAcceleration { get; set; } = 0;
 
@@ -173,15 +173,15 @@ namespace SkiaSharp.Extended.Controls
 
 			var rect = EmitterBounds.Side switch
 			{
-				SKConfettiSystemSide.Top => new Rect(-50, -50, width + 100, 0),
-				SKConfettiSystemSide.Left => new Rect(-50, -50, 0, height + 100),
-				SKConfettiSystemSide.Right => new Rect(width + 50, -50, 0, height + 100),
-				SKConfettiSystemSide.Bottom => new Rect(-50, height + 50, width + 100, 0),
-				SKConfettiSystemSide.Center => new Rect(width / 2, height / 2, 0, 0),
+				SKConfettiEmitterSide.Top => new Rect(-50, -50, width + 100, 0),
+				SKConfettiEmitterSide.Left => new Rect(-50, -50, 0, height + 100),
+				SKConfettiEmitterSide.Right => new Rect(width + 50, -50, 0, height + 100),
+				SKConfettiEmitterSide.Bottom => new Rect(-50, height + 50, width + 100, 0),
+				SKConfettiEmitterSide.Center => new Rect(width / 2, height / 2, 0, 0),
 				_ => EmitterBounds.Rect,
 			};
 
-			actualEmitterBounds = new SKConfettiSystemBounds(rect, EmitterBounds.Side);
+			actualEmitterBounds = new SKConfettiEmitterBounds(rect, EmitterBounds.Side);
 		}
 
 		private void OnCreateParticle(int count)
@@ -246,7 +246,6 @@ namespace SkiaSharp.Extended.Controls
 
 			double GetNewRotation() =>
 				random.NextDouble() * 360.0;
-
 		}
 
 		private static void OnEmitterChanged(BindableObject bindable, object? oldValue, object? newValue)
@@ -292,18 +291,18 @@ namespace SkiaSharp.Extended.Controls
 		private static SKConfettiPhysicsCollection CreateDefaultPhysics() =>
 			new SKConfettiPhysicsCollection
 			{
-				new SKConfettiPhysics(12, 5),
-				new SKConfettiPhysics(16, 6),
+				new SKConfettiPhysics(12, 2),
+				new SKConfettiPhysics(16, 3),
 			};
 
 		private static SKConfettiShapeCollection CreateDefaultShapes() =>
 			new SKConfettiShapeCollection
 			{
-				new SKConfettiSquare(),
-				new SKConfettiCircle(),
-				new SKConfettiRect(0.5),
-				new SKConfettiOval(0.5),
-				new SKConfettiRect(0.1),
+				new SKConfettiSquareShape(),
+				new SKConfettiCircleShape(),
+				new SKConfettiRectShape(0.5),
+				new SKConfettiOvalShape(0.5),
+				new SKConfettiRectShape(0.1),
 			};
 	}
 }

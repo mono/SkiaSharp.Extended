@@ -3,7 +3,7 @@ using Xamarin.Forms;
 
 namespace SkiaSharp.Extended.Controls
 {
-	[TypeConverter(typeof(SKConfettiColorCollectionTypeConverter))]
+	[TypeConverter(typeof(Converters.SKConfettiColorCollectionTypeConverter))]
 	public class SKConfettiColorCollection : List<Color>
 	{
 		public SKConfettiColorCollection()

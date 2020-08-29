@@ -2,10 +2,10 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace SkiaSharp.Extended.Controls
+namespace SkiaSharp.Extended.Controls.Converters
 {
-	[TypeConversion(typeof(SKConfettiSystemBounds))]
-	public class SKConfettiSystemBoundsTypeConverter : TypeConverter
+	[TypeConversion(typeof(SKConfettiEmitterBounds))]
+	public class SKConfettiEmitterBoundsTypeConverter : TypeConverter
 	{
 		public override object? ConvertFromInvariantString(string? value)
 		{
@@ -15,30 +15,30 @@ namespace SkiaSharp.Extended.Controls
 			value = value?.Trim();
 
 			if (string.Compare(value, "top", StringComparison.OrdinalIgnoreCase) == 0)
-				return SKConfettiSystemBounds.Top;
+				return SKConfettiEmitterBounds.Top;
 
 			if (string.Compare(value, "left", StringComparison.OrdinalIgnoreCase) == 0)
-				return SKConfettiSystemBounds.Left;
+				return SKConfettiEmitterBounds.Left;
 
 			if (string.Compare(value, "right", StringComparison.OrdinalIgnoreCase) == 0)
-				return SKConfettiSystemBounds.Right;
+				return SKConfettiEmitterBounds.Right;
 
 			if (string.Compare(value, "bottom", StringComparison.OrdinalIgnoreCase) == 0)
-				return SKConfettiSystemBounds.Bottom;
+				return SKConfettiEmitterBounds.Bottom;
 
 			if (string.Compare(value, "center", StringComparison.OrdinalIgnoreCase) == 0)
-				return SKConfettiSystemBounds.Center;
+				return SKConfettiEmitterBounds.Center;
 
 			if (value?.IndexOf(',') == value?.LastIndexOf(','))
 			{
 				var pointConverter = new PointTypeConverter();
 				var point = (Point)pointConverter.ConvertFromInvariantString(value);
-				return SKConfettiSystemBounds.Location(point);
+				return SKConfettiEmitterBounds.Point(point);
 			}
 
 			var rectConverter = new RectTypeConverter();
 			var rect = (Rect)rectConverter.ConvertFromInvariantString(value);
-			return SKConfettiSystemBounds.Bounds(rect);
+			return SKConfettiEmitterBounds.Bounds(rect);
 		}
 	}
 }

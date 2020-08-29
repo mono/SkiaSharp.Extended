@@ -9,7 +9,7 @@ namespace SkiaSharp.Extended.Controls
 			nameof(ParticleRate),
 			typeof(int),
 			typeof(SKConfettiEmitter),
-			200);
+			400);
 
 		public static readonly BindableProperty MaxParticlesProperty = BindableProperty.Create(
 			nameof(MaxParticles),

@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using SkiaSharp.Extended.Controls.Converters;
+using Xamarin.Forms;
 using Xunit;
 
 namespace SkiaSharp.Extended.Controls.Tests

@@ -41,7 +41,7 @@ namespace SkiaSharpDemo
 						Color = Color.SteelBlue,
 					},
 				},
-				new DemoGroup("ICONIFY")
+				new DemoGroup("TEXT & EMOJI")
 				{
 					new Demo
 					{

@@ -42,7 +42,7 @@ namespace SkiaSharp.Extended.Controls
 		{
 			DebugUtils.LogPropertyChanged(this);
 
-			SKConfettiViewResources.EnsureRegistered();
+			Themes.SKConfettiViewResources.EnsureRegistered();
 
 			SizeChanged += OnSizeChanged;
 

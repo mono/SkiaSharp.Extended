@@ -8,7 +8,7 @@ namespace SkiaSharp.Extended.Controls
 		public abstract void Draw(SKCanvas canvas, SKPaint paint, float size);
 	}
 
-	public class SKConfettiSquare : SKConfettiShape
+	public class SKConfettiSquareShape : SKConfettiShape
 	{
 		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
 		{
@@ -18,7 +18,7 @@ namespace SkiaSharp.Extended.Controls
 		}
 	}
 
-	public class SKConfettiCircle : SKConfettiShape
+	public class SKConfettiCircleShape : SKConfettiShape
 	{
 		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
 		{
@@ -26,20 +26,20 @@ namespace SkiaSharp.Extended.Controls
 		}
 	}
 
-	public class SKConfettiRect : SKConfettiShape
+	public class SKConfettiRectShape : SKConfettiShape
 	{
 		public static readonly BindableProperty HeightRatioProperty = BindableProperty.Create(
 			nameof(HeightRatio),
 			typeof(double),
-			typeof(SKConfettiRect),
+			typeof(SKConfettiRectShape),
 			0.5,
 			coerceValue: OnCoerceHeightRatio);
 
-		public SKConfettiRect()
+		public SKConfettiRectShape()
 		{
 		}
 
-		public SKConfettiRect(double heightRatio)
+		public SKConfettiRectShape(double heightRatio)
 		{
 			HeightRatio = heightRatio;
 		}
@@ -63,20 +63,20 @@ namespace SkiaSharp.Extended.Controls
 				: (object)1.0;
 	}
 
-	public class SKConfettiOval : SKConfettiShape
+	public class SKConfettiOvalShape : SKConfettiShape
 	{
 		public static readonly BindableProperty HeightRatioProperty = BindableProperty.Create(
 			nameof(HeightRatio),
 			typeof(double),
-			typeof(SKConfettiOval),
+			typeof(SKConfettiOvalShape),
 			0.5,
 			coerceValue: OnCoerceHeightRatio);
 
-		public SKConfettiOval()
+		public SKConfettiOvalShape()
 		{
 		}
 
-		public SKConfettiOval(double heightRatio)
+		public SKConfettiOvalShape(double heightRatio)
 		{
 			HeightRatio = heightRatio;
 		}
@@ -100,9 +100,9 @@ namespace SkiaSharp.Extended.Controls
 				: (object)1.0;
 	}
 
-	public class SKConfettiPath: SKConfettiShape
+	public class SKConfettiPathShape : SKConfettiShape
 	{
-		public SKConfettiPath(SKPath path)
+		public SKConfettiPathShape(SKPath path)
 		{
 			Path = path ?? throw new ArgumentNullException(nameof(path));
 			BaseSize = Path.TightBounds.Size;

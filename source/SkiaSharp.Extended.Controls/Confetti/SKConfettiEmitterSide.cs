@@ -1,6 +1,6 @@
 ﻿namespace SkiaSharp.Extended.Controls
 {
-	public enum SKConfettiSystemSide
+	public enum SKConfettiEmitterSide
 	{
 		Top,
 		Left,

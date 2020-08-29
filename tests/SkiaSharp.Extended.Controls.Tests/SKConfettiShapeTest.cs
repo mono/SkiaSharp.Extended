@@ -21,7 +21,7 @@ namespace SkiaSharp.Extended.Controls.Tests
 		{
 			using var paint = new SKPaint();
 
-			var shape = new SKConfettiSquare();
+			var shape = new SKConfettiSquareShape();
 
 			EqualDrawing(new SKSizeI(24, 24),
 				canvas =>
@@ -40,7 +40,7 @@ namespace SkiaSharp.Extended.Controls.Tests
 		{
 			using var paint = new SKPaint();
 
-			var shape = new SKConfettiCircle();
+			var shape = new SKConfettiCircleShape();
 
 			EqualDrawing(new SKSizeI(24, 24),
 				canvas =>
@@ -59,7 +59,7 @@ namespace SkiaSharp.Extended.Controls.Tests
 		{
 			using var paint = new SKPaint();
 
-			var shape = new SKConfettiOval(0.5);
+			var shape = new SKConfettiOvalShape(0.5);
 
 			EqualDrawing(new SKSizeI(24, 24),
 				canvas =>
@@ -78,7 +78,7 @@ namespace SkiaSharp.Extended.Controls.Tests
 		{
 			using var paint = new SKPaint();
 
-			var shape = new SKConfettiRect(0.5);
+			var shape = new SKConfettiRectShape(0.5);
 
 			EqualDrawing(new SKSizeI(24, 24),
 				canvas =>

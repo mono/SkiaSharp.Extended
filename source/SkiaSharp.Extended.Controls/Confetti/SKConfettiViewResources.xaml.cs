@@ -1,6 +1,6 @@
 ﻿using Xamarin.Forms;
 
-namespace SkiaSharp.Extended.Controls
+namespace SkiaSharp.Extended.Controls.Themes
 {
 	public partial class SKConfettiViewResources : ResourceDictionary
 	{

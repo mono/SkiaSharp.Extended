@@ -48,16 +48,26 @@ namespace SkiaSharpDemo.Views
 			var mode = OptionButtons.GetSelectionMode(layout);
 			var allowNone = OptionButtons.GetAllowNone(layout);
 			var selectedItems = OptionButtons.GetSelectedItems(layout);
+			var selectedItem = OptionButtons.GetSelectedItem(layout);
 
-			var selectedAny = false;
-			foreach (var child in layout.Children)
+			for (var i = 0; i < layout.Children.Count; i++)
 			{
-				if (child is Button button)
+				var child = (View?)layout.Children[i];
+				if (child is Button button && child.BindingContext is object item)
 				{
-					if (selectedItems?.Contains(child.BindingContext) == true)
+					if (mode == SelectionMode.Multiple)
 					{
-						selectedAny = true;
-						VisualStateManager.GoToState(button, SelectedState);
+						if (selectedItems?.Contains(item) == true)
+							VisualStateManager.GoToState(button, SelectedState);
+						else
+							VisualStateManager.GoToState(button, UnselectedState);
+					}
+					else if (mode == SelectionMode.Single)
+					{
+						if (selectedItem == item)
+							VisualStateManager.GoToState(button, SelectedState);
+						else
+							VisualStateManager.GoToState(button, UnselectedState);
 					}
 				}
 			}
