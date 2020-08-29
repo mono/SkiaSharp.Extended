@@ -101,6 +101,10 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.10" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\source\SkiaSharp.Extended.Controls\SkiaSharp.Extended.Controls.csproj">
+      <Project>{afcc1db4-0405-4da7-bcee-d78f524a1f05}</Project>
+      <Name>SkiaSharp.Extended.Controls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SkiaSharpDemo\SkiaSharpDemo.csproj">
       <Project>{A2563433-9CE0-42ED-BB51-640A0FFA9D0F}</Project>
       <Name>SkiaSharpDemo</Name>
