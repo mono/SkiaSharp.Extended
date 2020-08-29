@@ -273,7 +273,8 @@ namespace SkiaSharp.Extended.Controls
 		private bool UpdateIsComplete() =>
 			IsComplete =
 				particles.Count == 0 &&
-				(Emitter?.IsComplete != false || !IsRunning);
+				Emitter?.IsComplete != false &&
+				IsRunning;
 
 		private static SKConfettiColorCollection CreateDefaultColors() =>
 			new SKConfettiColorCollection

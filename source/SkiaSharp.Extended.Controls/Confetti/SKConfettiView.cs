@@ -182,6 +182,8 @@ namespace SkiaSharp.Extended.Controls
 					}
 				}
 
+				cv.frameCounter.Reset();
+
 				Device.StartTimer(TimeSpan.FromMilliseconds(16), () =>
 				{
 					cv.Invalidate();
