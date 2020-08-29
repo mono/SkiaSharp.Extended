@@ -17,7 +17,7 @@
             </controls:SKConfettiView.GestureRecognizers>
         </controls:SKConfettiView>
 
-        <views:BottomTabBar SelectedIndex="{Binding SelectedTab}">
+        <views:BottomTabBar SelectedIndex="{Binding SelectedTab}" PagePadding="12,6">
             <views:BottomTabCollection>
 
                 <!-- "add type" -->
@@ -98,7 +98,7 @@
                         <Label Text="Min"
                                Grid.Column="0" Grid.Row="0"
                                HorizontalOptions="End" VerticalOptions="Center" />
-                        <Slider Maximum="250" Minimum="10" Value="{Binding CurrentConfig.MinSpeed, Converter={StaticResource RoundToInt}}"
+                        <Slider Maximum="500" Minimum="10" Value="{Binding CurrentConfig.MinSpeed, Converter={StaticResource RoundToInt}}"
                                 Grid.Column="1" Grid.Row="0"
                                 VerticalOptions="Center"
                                 MinimumTrackColor="Accent" MaximumTrackColor="Accent"
@@ -110,7 +110,7 @@
                         <Label Text="Max"
                                Grid.Column="0" Grid.Row="1"
                                HorizontalOptions="End" VerticalOptions="Center" />
-                        <Slider Maximum="250" Minimum="10" Value="{Binding CurrentConfig.MaxSpeed, Converter={StaticResource RoundToInt}}"
+                        <Slider Maximum="500" Minimum="10" Value="{Binding CurrentConfig.MaxSpeed, Converter={StaticResource RoundToInt}}"
                                 Grid.Column="1" Grid.Row="1"
                                 VerticalOptions="Center"
                                 MinimumTrackColor="Accent" MaximumTrackColor="Accent"
@@ -121,7 +121,7 @@
                     </Grid>
                 </views:BottomTab>
 
-                <views:BottomTab Title="&#xf017;">
+                <views:BottomTab Title="&#xf017;" HorizontalOptions="Fill" VerticalOptions="Center">
                     <Grid ColumnDefinitions="Auto,*,30" ColumnSpacing="12" RowSpacing="12" Padding="12">
                         <Label Text="Lifetime"
                                Grid.Column="0" Grid.Row="0"

@@ -88,7 +88,7 @@ namespace SkiaSharpDemo.Demos
 				var system = new SKConfettiSystem
 				{
 					Lifetime = Lifetime,
-					Emitter = SKConfettiEmitter.Stream(200, Duration),
+					Emitter = SKConfettiEmitter.Stream(100, Duration),
 					EmitterBounds = SKConfettiEmitterBounds.Top,
 					Colors = new SKConfettiColorCollection(Colors),
 					Shapes = new SKConfettiShapeCollection(GetShapes(Shapes).SelectMany(s => s)),

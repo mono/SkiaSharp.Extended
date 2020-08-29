@@ -9,7 +9,7 @@ namespace SkiaSharp.Extended.Controls
 			nameof(ParticleRate),
 			typeof(int),
 			typeof(SKConfettiEmitter),
-			400);
+			100);
 
 		public static readonly BindableProperty MaxParticlesProperty = BindableProperty.Create(
 			nameof(MaxParticles),
@@ -21,7 +21,7 @@ namespace SkiaSharp.Extended.Controls
 			nameof(Duration),
 			typeof(double),
 			typeof(SKConfettiEmitter),
-			0.0);
+			5.0);
 
 		private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
 			nameof(IsComplete),

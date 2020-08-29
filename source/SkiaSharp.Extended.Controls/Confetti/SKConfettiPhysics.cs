@@ -1,22 +1,18 @@
-﻿using Xamarin.Forms;
+﻿using System.ComponentModel;
 
 namespace SkiaSharp.Extended.Controls
 {
-	public class SKConfettiPhysics : BindableObject
+	[TypeConverter(typeof(Converters.SKConfettiPhysicsTypeConverter))]
+	public struct SKConfettiPhysics
 	{
-		public SKConfettiPhysics()
-		{
-		}
-
-		public SKConfettiPhysics(float size, float mass)
-			: this()
+		public SKConfettiPhysics(double size, double mass)
 		{
 			Size = size;
 			Mass = mass;
 		}
 
-		public float Size { get; set; }
+		public double Size { get; set; }
 
-		public float Mass { get; set; }
+		public double Mass { get; set; }
 	}
 }

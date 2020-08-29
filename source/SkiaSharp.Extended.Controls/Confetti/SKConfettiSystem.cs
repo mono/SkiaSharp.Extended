@@ -110,9 +110,9 @@ namespace SkiaSharp.Extended.Controls
 
 		public double EndAngle { get; set; } = 360;
 
-		public double MinimumInitialVelocity { get; set; } = 10;
+		public double MinimumInitialVelocity { get; set; } = 100;
 
-		public double MaximumInitialVelocity { get; set; } = 250;
+		public double MaximumInitialVelocity { get; set; } = 200;
 
 		public double MinimumRotationVelocity { get; set; } = 10;
 
@@ -120,7 +120,7 @@ namespace SkiaSharp.Extended.Controls
 
 		public double MaximumAcceleration { get; set; } = 0;
 
-		public double Lifetime { get; set; } = 3;
+		public double Lifetime { get; set; } = 2;
 
 		public bool Rotate { get; set; } = true;
 
@@ -173,10 +173,10 @@ namespace SkiaSharp.Extended.Controls
 
 			var rect = EmitterBounds.Side switch
 			{
-				SKConfettiEmitterSide.Top => new Rect(-50, -50, width + 100, 0),
-				SKConfettiEmitterSide.Left => new Rect(-50, -50, 0, height + 100),
-				SKConfettiEmitterSide.Right => new Rect(width + 50, -50, 0, height + 100),
-				SKConfettiEmitterSide.Bottom => new Rect(-50, height + 50, width + 100, 0),
+				SKConfettiEmitterSide.Top => new Rect(0, -10, width, 0),
+				SKConfettiEmitterSide.Left => new Rect(-10, 0, 0, height),
+				SKConfettiEmitterSide.Right => new Rect(width + 10, 0, 0, height),
+				SKConfettiEmitterSide.Bottom => new Rect(0, height + 10, width, 0),
 				SKConfettiEmitterSide.Center => new Rect(width / 2, height / 2, 0, 0),
 				_ => EmitterBounds.Rect,
 			};
@@ -204,8 +204,8 @@ namespace SkiaSharp.Extended.Controls
 					RotationVelocity = (float)GetNewRotationVelocity(),
 
 					Color = c.ToSKColor(),
-					Size = p.Size,
-					Mass = p.Mass,
+					Size = (float)p.Size,
+					Mass = (float)p.Mass,
 					Shape = s,
 					Rotation = (float)GetNewRotation(),
 

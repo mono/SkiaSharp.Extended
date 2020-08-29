@@ -43,6 +43,9 @@ namespace SkiaSharp.Extended.Controls
 		public static SKConfettiEmitterBounds Bounds(Rect rect) =>
 			new SKConfettiEmitterBounds(rect);
 
+		public static SKConfettiEmitterBounds Point(double x, double y) =>
+			Point(new Point(x, y));
+
 		public static SKConfettiEmitterBounds Point(Point point) =>
 			new SKConfettiEmitterBounds(new Rect(point, Size.Zero));
 	}

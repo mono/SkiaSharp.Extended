@@ -30,7 +30,7 @@
                      HorizontalOptions="Start" AnchorX="0" />
 
             <Grid x:Name="PART_PagesContainer"
-                  Padding="12" RowSpacing="0" ColumnSpacing="0"
+                  Padding="{Binding PagePadding, Source={RelativeSource TemplatedParent}}" RowSpacing="0" ColumnSpacing="0"
                   HeightRequest="100"
                   BindableLayout.ItemsSource="{Binding Tabs, Source={RelativeSource TemplatedParent}}">
                 <BindableLayout.ItemTemplate>

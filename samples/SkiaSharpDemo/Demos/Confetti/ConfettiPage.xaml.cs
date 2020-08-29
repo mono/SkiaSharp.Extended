@@ -20,6 +20,44 @@ namespace SkiaSharpDemo.Demos
 		{
 			InitializeComponent();
 
+			Configs = new Dictionary<string, ConfettiConfig>
+			{
+				["Top"] = new ConfettiConfig(),
+				["Center"] = new ConfettiConfig
+				{
+					MinSpeed = 30,
+					MaxSpeed = 150,
+					Duration = 0,
+					OnCreateSystem = (i, system) =>
+					{
+						system.Emitter = SKConfettiEmitter.Burst(100);
+						system.EmitterBounds = SKConfettiEmitterBounds.Center;
+					}
+				},
+				["Sides"] = new ConfettiConfig(2)
+				{
+					MinSpeed = 50,
+					MaxSpeed = 400,
+					Duration = 0,
+					OnCreateSystem = (i, system) =>
+					{
+						system.Emitter = SKConfettiEmitter.Burst(100);
+						if (i % 2 == 0)
+						{
+							system.EmitterBounds = SKConfettiEmitterBounds.Point(0, Height);
+							system.StartAngle = -85;
+							system.EndAngle = -35;
+						}
+						else
+						{
+							system.EmitterBounds = SKConfettiEmitterBounds.Point(Width, Height);
+							system.StartAngle = 265;
+							system.EndAngle = 215;
+						}
+					}
+				},
+			};
+
 			BindingContext = this;
 		}
 
@@ -37,24 +75,7 @@ namespace SkiaSharpDemo.Demos
 			}
 		}
 
-		public Dictionary<string, ConfettiConfig> Configs { get; } = new Dictionary<string, ConfettiConfig>
-		{
-			["Top"] = new ConfettiConfig(),
-			["Center"] = new ConfettiConfig
-			{
-				MinSpeed = 30,
-				MaxSpeed = 150,
-				Lifetime = 4,
-				OnCreateSystem = (i, system) =>
-				{
-					system.Emitter = SKConfettiEmitter.Burst(100);
-					system.EmitterBounds = SKConfettiEmitterBounds.Center;
-				}
-			},
-			["Sides"] = new ConfettiConfig
-			{
-			},
-		};
+		public Dictionary<string, ConfettiConfig> Configs { get; }
 
 		public ConfettiConfig CurrentConfig => Configs[ConfigName];
 

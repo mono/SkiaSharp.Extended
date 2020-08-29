@@ -38,6 +38,12 @@ namespace SkiaSharpDemo.Views
 			typeof(BottomTabBar),
 			null);
 
+		public static readonly BindableProperty PagePaddingProperty = BindableProperty.Create(
+			nameof(PagePadding),
+			typeof(Thickness),
+			typeof(BottomTabBar),
+			new Thickness());
+
 		private Layout<View>? tabBar;
 		private Layout<View>? pages;
 		private View? selector;
@@ -75,6 +81,12 @@ namespace SkiaSharpDemo.Views
 		{
 			get => (DataTemplate?)GetValue(HeaderContentTemplateProperty);
 			set => SetValue(HeaderContentTemplateProperty, value);
+		}
+
+		public Thickness PagePadding
+		{
+			get => (Thickness)GetValue(PagePaddingProperty);
+			set => SetValue(PagePaddingProperty, value);
 		}
 
 		// TODO: this probably should not be a public property...
