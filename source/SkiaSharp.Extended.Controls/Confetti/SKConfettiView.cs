@@ -37,6 +37,7 @@ namespace SkiaSharp.Extended.Controls
 #endif
 
 		private SKCanvasView? canvasView;
+		private SKGLView? glView;
 
 		public SKConfettiView()
 		{
@@ -78,21 +79,39 @@ namespace SkiaSharp.Extended.Controls
 				canvasView = null;
 			}
 
+			if (glView != null)
+			{
+				glView.PaintSurface -= OnPaintSurface;
+				glView = null;
+			}
+
 			if (templateChild is SKCanvasView view)
 			{
 				canvasView = view;
 				canvasView.PaintSurface += OnPaintSurface;
 			}
+
+			if (templateChild is SKGLView gl)
+			{
+				glView = gl;
+				glView.PaintSurface += OnPaintSurface;
+			}
 		}
 
-		private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
+		private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e) =>
+			OnPaintSurface(e.Surface, e.Info.Size);
+
+		private void OnPaintSurface(object sender, SKPaintGLSurfaceEventArgs e) =>
+			OnPaintSurface(e.Surface, e.BackendRenderTarget.Size);
+
+		private void OnPaintSurface(SKSurface surface, SKSize size)
 		{
 			var deltaTime = frameCounter.NextFrame();
 
-			var canvas = e.Surface.Canvas;
+			var canvas = surface.Canvas;
 
 			canvas.Clear(SKColors.Transparent);
-			canvas.Scale(e.Info.Width / (float)Width);
+			canvas.Scale(size.Width / (float)Width);
 
 			var particles = 0;
 			if (Systems != null)
@@ -132,6 +151,7 @@ namespace SkiaSharp.Extended.Controls
 		private void Invalidate()
 		{
 			canvasView?.InvalidateSurface();
+			glView?.InvalidateSurface();
 		}
 
 		private void OnSystemsChanged(object sender, NotifyCollectionChangedEventArgs e)
