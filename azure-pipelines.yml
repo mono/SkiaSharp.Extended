@@ -45,12 +45,14 @@ jobs:
           Write-Host "Build label: $label"
           Write-Host "##vso[build.updatebuildnumber]$label"
         displayName: Update the build number with a more readable one
+
   - template: .ci/build.yml@components
     parameters:
       areaPath: 'DevDiv\Xamarin SDK\SkiaSharp'
       linuxImage: 'ubuntu-latest'
       validPackagePrefixes:
         - SkiaSharp
+
   - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
     - template: sign-artifacts/jobs/v1.yml@internal-templates
       parameters:
