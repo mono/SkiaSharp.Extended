@@ -42,6 +42,66 @@ namespace SkiaSharp.Extended.Controls
 			null,
 			defaultValueCreator: _ => CreateDefaultShapes());
 
+		public static readonly BindableProperty StartAngleProperty = BindableProperty.Create(
+			nameof(StartAngle),
+			typeof(double),
+			typeof(SKConfettiSystem),
+			0.0);
+
+		public static readonly BindableProperty EndAngleProperty = BindableProperty.Create(
+			nameof(EndAngle),
+			typeof(double),
+			typeof(SKConfettiSystem),
+			360.0);
+
+		public static readonly BindableProperty MinimumInitialVelocityProperty = BindableProperty.Create(
+			nameof(MinimumInitialVelocity),
+			typeof(double),
+			typeof(SKConfettiSystem),
+			100.0);
+
+		public static readonly BindableProperty MaximumInitialVelocityProperty = BindableProperty.Create(
+			nameof(MaximumInitialVelocity),
+			typeof(double),
+			typeof(SKConfettiSystem),
+			200.0);
+
+		public static readonly BindableProperty MinimumRotationVelocityProperty = BindableProperty.Create(
+			nameof(MinimumRotationVelocity),
+			typeof(double),
+			typeof(SKConfettiSystem),
+			10.0);
+
+		public static readonly BindableProperty MaximumRotationVelocityProperty = BindableProperty.Create(
+			nameof(MaximumRotationVelocity),
+			typeof(double),
+			typeof(SKConfettiSystem),
+			75.0);
+
+		public static readonly BindableProperty MaximumVelocityProperty = BindableProperty.Create(
+			nameof(MaximumVelocity),
+			typeof(double),
+			typeof(SKConfettiSystem),
+			0.0);
+
+		public static readonly BindableProperty LifetimeProperty = BindableProperty.Create(
+			nameof(Lifetime),
+			typeof(double),
+			typeof(SKConfettiSystem),
+			2.0);
+
+		public static readonly BindableProperty FadeOutProperty = BindableProperty.Create(
+			nameof(FadeOut),
+			typeof(bool),
+			typeof(SKConfettiSystem),
+			true);
+
+		public static readonly BindableProperty GravityProperty = BindableProperty.Create(
+			nameof(Gravity),
+			typeof(Point),
+			typeof(SKConfettiSystem),
+			new Point(0, 9.81f));
+
 		private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
 			nameof(IsComplete),
 			typeof(bool),
@@ -106,29 +166,65 @@ namespace SkiaSharp.Extended.Controls
 			set => SetValue(ShapesProperty, value);
 		}
 
-		public double StartAngle { get; set; } = 0;
+		public double StartAngle
+		{
+			get => (double)GetValue(StartAngleProperty);
+			set => SetValue(StartAngleProperty, value);
+		}
 
-		public double EndAngle { get; set; } = 360;
+		public double EndAngle
+		{
+			get => (double)GetValue(EndAngleProperty);
+			set => SetValue(EndAngleProperty, value);
+		}
 
-		public double MinimumInitialVelocity { get; set; } = 100;
+		public double MinimumInitialVelocity
+		{
+			get => (double)GetValue(MinimumInitialVelocityProperty);
+			set => SetValue(MinimumInitialVelocityProperty, value);
+		}
 
-		public double MaximumInitialVelocity { get; set; } = 200;
+		public double MaximumInitialVelocity
+		{
+			get => (double)GetValue(MaximumInitialVelocityProperty);
+			set => SetValue(MaximumInitialVelocityProperty, value);
+		}
 
-		public double MinimumRotationVelocity { get; set; } = 10;
+		public double MinimumRotationVelocity
+		{
+			get => (double)GetValue(MinimumRotationVelocityProperty);
+			set => SetValue(MinimumRotationVelocityProperty, value);
+		}
 
-		public double MaximumRotationVelocity { get; set; } = 75;
+		public double MaximumRotationVelocity
+		{
+			get => (double)GetValue(MaximumRotationVelocityProperty);
+			set => SetValue(MaximumRotationVelocityProperty, value);
+		}
 
-		public double MaximumAcceleration { get; set; } = 0;
+		public double MaximumVelocity
+		{
+			get => (double)GetValue(MaximumVelocityProperty);
+			set => SetValue(MaximumVelocityProperty, value);
+		}
 
-		public double Lifetime { get; set; } = 2;
+		public double Lifetime
+		{
+			get => (double)GetValue(LifetimeProperty);
+			set => SetValue(LifetimeProperty, value);
+		}
 
-		public bool Rotate { get; set; } = true;
+		public bool FadeOut
+		{
+			get => (bool)GetValue(FadeOutProperty);
+			set => SetValue(FadeOutProperty, value);
+		}
 
-		public bool Accelerate { get; set; } = true;
-
-		public bool FadeOut { get; set; } = true;
-
-		public Point Gravity { get; set; } = new Point(0, 9.81f);
+		public Point Gravity
+		{
+			get => (Point)GetValue(GravityProperty);
+			set => SetValue(GravityProperty, value);
+		}
 
 		public bool IsComplete
 		{
@@ -209,9 +305,7 @@ namespace SkiaSharp.Extended.Controls
 					Shape = s,
 					Rotation = (float)GetNewRotation(),
 
-					MaxAcceleration = new Point(MaximumAcceleration, MaximumAcceleration).ToSKPoint(),
-					Accelerate = Accelerate,
-					Rotate = Rotate,
+					MaximumVelocity = new Point(MaximumVelocity, MaximumVelocity).ToSKPoint(),
 					FadeOut = FadeOut,
 					Lifetime = Lifetime,
 				};
@@ -241,8 +335,13 @@ namespace SkiaSharp.Extended.Controls
 				return new Point(vx, vy);
 			}
 
-			double GetNewRotationVelocity() =>
-				MinimumRotationVelocity + random.NextDouble() * (MaximumRotationVelocity - MinimumRotationVelocity);
+			double GetNewRotationVelocity()
+			{
+				if (MaximumRotationVelocity < MinimumRotationVelocity)
+					return 0;
+
+				return MinimumRotationVelocity + random.NextDouble() * (MaximumRotationVelocity - MinimumRotationVelocity);
+			}
 
 			double GetNewRotation() =>
 				random.NextDouble() * 360.0;

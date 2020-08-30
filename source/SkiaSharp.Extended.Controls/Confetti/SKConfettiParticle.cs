@@ -46,11 +46,7 @@ namespace SkiaSharp.Extended.Controls
 
 		public float RotationVelocity { get; set; }
 
-		public SKPoint MaxAcceleration { get; set; }
-
-		public bool Accelerate { get; set; }
-
-		public bool Rotate { get; set; }
+		public SKPoint MaximumVelocity { get; set; }
 
 		public bool FadeOut { get; set; }
 
@@ -68,7 +64,7 @@ namespace SkiaSharp.Extended.Controls
 			canvas.Save();
 			canvas.Translate(Location);
 
-			if (Rotate)
+			if (Rotation != 0)
 			{
 				canvas.RotateDegrees(Rotation);
 				canvas.Scale(scaleX, 1f);
@@ -86,23 +82,31 @@ namespace SkiaSharp.Extended.Controls
 
 		public void ApplyForce(SKPoint force, TimeSpan deltaTime)
 		{
-			if (IsComplete || !Accelerate)
+			if (IsComplete)
 				return;
 
 			var secs = (float)deltaTime.TotalSeconds;
 			force.X = (force.X / Mass) * secs;
 			force.Y = (force.Y / Mass) * secs;
 
-			acceleration += force;
-
-			if (MaxAcceleration != SKPoint.Empty)
-			{
-				acceleration = new SKPoint(
-					Math.Min(acceleration.X, MaxAcceleration.X),
-					Math.Min(acceleration.Y, MaxAcceleration.Y));
-			}
+			if (force != SKPoint.Empty)
+				acceleration += force;
 
 			Velocity += acceleration;
+			if (MaximumVelocity != SKPoint.Empty)
+			{
+				var vx = Velocity.X;
+				var vy = Velocity.Y;
+
+				vx = vx < 0
+					? Math.Max(vx, -MaximumVelocity.X)
+					: Math.Min(vx, MaximumVelocity.X);
+				vy = vy < 0
+					? Math.Max(vy, -MaximumVelocity.Y)
+					: Math.Min(vy, MaximumVelocity.Y);
+
+				Velocity = new SKPoint(vx, vy);
+			}
 
 			Location = new SKPoint(
 				Location.X + Velocity.X * secs,
@@ -124,7 +128,7 @@ namespace SkiaSharp.Extended.Controls
 				}
 			}
 
-			if (Rotate)
+			if (RotationVelocity != 0)
 			{
 				var rv = RotationVelocity * secs;
 
