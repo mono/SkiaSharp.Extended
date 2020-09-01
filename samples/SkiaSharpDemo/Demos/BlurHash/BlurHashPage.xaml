@@ -11,10 +11,12 @@
             <StackLayout Orientation="Horizontal" Padding="0" Spacing="12">
                 <Button Text="Custom Image"
                         VerticalOptions="Center" HorizontalOptions="FillAndExpand" />
-                <Entry Keyboard="Numeric" HorizontalTextAlignment="Center"
+                <Entry Text="{Binding ComponentsX}"
+                       Keyboard="Numeric" HorizontalTextAlignment="Center"
                        WidthRequest="40" VerticalOptions="Center" />
                 <Label Text="×" VerticalOptions="Center" />
-                <Entry Keyboard="Numeric" HorizontalTextAlignment="Center"
+                <Entry Text="{Binding ComponentsY}"
+                       Keyboard="Numeric" HorizontalTextAlignment="Center"
                        WidthRequest="40" VerticalOptions="Center" />
             </StackLayout>
 

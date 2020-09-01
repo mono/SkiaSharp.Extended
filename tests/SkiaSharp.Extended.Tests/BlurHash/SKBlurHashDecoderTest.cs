@@ -3,7 +3,7 @@ using Xunit;
 
 namespace SkiaSharp.Extended.Tests
 {
-	public class SKBlurHashTest
+	public class SKBlurHashDecoderTest
 	{
 		private const string Image1 = "LEHV6nWB2yk8pyo0adR*.7kCMdnj";
 		private const string Image1_8x6 = "qEHV6nWB2yk8$NxujFNGpyoJadR*=ss:I[R%.7kCMdnjx]S2NHs:S#M|%1%2ENRis9a$Sis.slNHW:WBxZ%2ogaekBW;ofo0NHS4";
@@ -17,7 +17,7 @@ namespace SkiaSharp.Extended.Tests
 		[Fact]
 		public void NullDecodeThrows()
 		{
-			var blur = new SKBlurHash();
+			var blur = new SKBlurHashDecoder();
 
 			Assert.Throws<ArgumentNullException>(() => blur.DecodeBitmap(null, 20, 10));
 		}
@@ -29,7 +29,7 @@ namespace SkiaSharp.Extended.Tests
 		[InlineData("1234567890")]
 		public void InvalidDataThrows(string encoded)
 		{
-			var blur = new SKBlurHash();
+			var blur = new SKBlurHashDecoder();
 
 			Assert.Throws<ArgumentException>(() => blur.DecodeBitmap(encoded, 20, 10));
 		}
@@ -45,7 +45,7 @@ namespace SkiaSharp.Extended.Tests
 		[InlineData(Image7)]
 		public void GeometryGeneratesRectPath(string encoded)
 		{
-			var blur = new SKBlurHash();
+			var blur = new SKBlurHashDecoder();
 
 			var bmp = blur.DecodeBitmap(encoded, 20, 10);
 

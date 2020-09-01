@@ -1,20 +1,23 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
+using System.Numerics;
+using System.Threading;
 
 namespace SkiaSharp.Extended
 {
 	internal class Base83
 	{
-		private const string CharSet = @"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz#$%*+,-.:;=?@[]^_{|}~";
+		public const string Charset = @"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz#$%*+,-.:;=?@[]^_{|}~";
 
 		private static readonly Dictionary<char, int> Lookup;
 
 		static Base83()
 		{
 			var dic = new Dictionary<char, int>();
-			for (var i = 0; i < CharSet.Length; i++)
+			for (var i = 0; i < Charset.Length; i++)
 			{
-				var c = CharSet[i];
+				var c = Charset[i];
 				dic[c] = i;
 			}
 
@@ -58,6 +61,36 @@ namespace SkiaSharp.Extended
 			}
 
 			return result;
+		}
+
+		public static string Encode(int data, int length)
+		{
+			var result = ArrayPool<char>.Shared.Rent(length);
+
+			Encode(data, length, result);
+
+			var str = new string(result, 0, length);
+
+			ArrayPool<char>.Shared.Return(result);
+
+			return str;
+		}
+
+		public static void Encode(int data, int length, Span<char> chars, int start = 0)
+		{
+			if (start > 0)
+				chars = chars.Slice(start);
+
+			if (chars.Length < length)
+				throw new ArgumentOutOfRangeException(nameof(length));
+
+			for (var i = 0; i < length; i++)
+			{
+				var digit = data % 83;
+				data /= 83;
+
+				chars[length - 1 - i] = Charset[digit];
+			}
 		}
 	}
 }
