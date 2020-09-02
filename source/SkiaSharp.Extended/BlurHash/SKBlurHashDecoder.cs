@@ -11,7 +11,7 @@ namespace SkiaSharp.Extended
 		{
 		}
 
-		public SKBitmap? DecodeBitmap(string? blurHash, int width, int height, float punch = 1f)
+		public SKBitmap DecodeBitmap(string? blurHash, int width, int height, float punch = 1f)
 		{
 			if (blurHash == null)
 				throw new ArgumentNullException(nameof(blurHash));
@@ -19,7 +19,7 @@ namespace SkiaSharp.Extended
 			return DecodeBitmap(blurHash.AsSpan(), width, height, punch);
 		}
 
-		public SKBitmap? DecodeBitmap(ReadOnlySpan<char> blurHash, int width, int height, float punch = 1f)
+		public SKBitmap DecodeBitmap(ReadOnlySpan<char> blurHash, int width, int height, float punch = 1f)
 		{
 			var data = ParseData(blurHash, punch);
 
@@ -31,6 +31,23 @@ namespace SkiaSharp.Extended
 			data.Return();
 
 			return bitmap;
+		}
+
+		public SKImage DecodeImage(string? blurHash, int width, int height, float punch = 1f)
+		{
+			if (blurHash == null)
+				throw new ArgumentNullException(nameof(blurHash));
+
+			using var bmp = DecodeBitmap(blurHash, width, height, punch);
+			bmp.SetImmutable();
+			return SKImage.FromBitmap(bmp);
+		}
+
+		public SKImage DecodeImage(ReadOnlySpan<char> blurHash, int width, int height, float punch = 1f)
+		{
+			using var bmp = DecodeBitmap(blurHash, width, height, punch);
+			bmp.SetImmutable();
+			return SKImage.FromBitmap(bmp);
 		}
 
 		private void CreatePixelData(SKPixmap pixmap, Data data)

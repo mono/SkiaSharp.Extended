@@ -53,6 +53,9 @@ namespace SkiaSharp.Extended.Controls
 		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
 		{
 			var height = size * (float)HeightRatio;
+			if (size <= 0 || height <= 0)
+				return;
+
 			var rect = SKRect.Create(-size / 2f, -height / 2f, size, height);
 			canvas.DrawRect(rect, paint);
 		}
@@ -90,6 +93,9 @@ namespace SkiaSharp.Extended.Controls
 		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
 		{
 			var height = size * (float)HeightRatio;
+			if (size <= 0 || height <= 0)
+				return;
+
 			var rect = SKRect.Create(-size / 2f, -height / 2f, size, height);
 			canvas.DrawOval(rect, paint);
 		}
@@ -102,27 +108,43 @@ namespace SkiaSharp.Extended.Controls
 
 	public class SKConfettiPathShape : SKConfettiShape
 	{
+		public static readonly BindableProperty PathProperty = BindableProperty.Create(
+			nameof(Path),
+			typeof(SKPath),
+			typeof(SKConfettiPathShape),
+			null,
+			propertyChanged: OnPathChanged);
+
+		private SKSize baseSize;
+
 		public SKConfettiPathShape(SKPath path)
 		{
 			Path = path ?? throw new ArgumentNullException(nameof(path));
-			BaseSize = Path.TightBounds.Size;
 		}
 
-		public SKPath Path { get; }
-
-		public SKSize BaseSize { get; }
+		public SKPath? Path
+		{
+			get => (SKPath?)GetValue(PathProperty);
+			set => SetValue(PathProperty, value);
+		}
 
 		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
 		{
-			if (BaseSize.Width <= 0 || BaseSize.Height <= 0)
+			if (baseSize.Width <= 0 || baseSize.Height <= 0 || Path == null)
 				return;
 
 			canvas.Save();
-			canvas.Scale(size / BaseSize.Width, size / BaseSize.Height);
+			canvas.Scale(size / baseSize.Width, size / baseSize.Height);
 
 			canvas.DrawPath(Path, paint);
 
 			canvas.Restore();
+		}
+
+		private static void OnPathChanged(BindableObject bindable, object oldValue, object newValue)
+		{
+			if (bindable is SKConfettiPathShape shape && newValue is SKPath path)
+				shape.baseSize = path.TightBounds.Size;
 		}
 	}
 }

@@ -3,7 +3,7 @@
 namespace SkiaSharp.Extended.Controls
 {
 	[TypeConverter(typeof(Converters.SKConfettiPhysicsTypeConverter))]
-	public struct SKConfettiPhysics
+	public readonly struct SKConfettiPhysics
 	{
 		public SKConfettiPhysics(double size, double mass)
 		{
@@ -11,8 +11,8 @@ namespace SkiaSharp.Extended.Controls
 			Mass = mass;
 		}
 
-		public double Size { get; set; }
+		public double Size { get; }
 
-		public double Mass { get; set; }
+		public double Mass { get; }
 	}
 }

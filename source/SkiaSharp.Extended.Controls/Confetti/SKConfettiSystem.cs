@@ -121,7 +121,7 @@ namespace SkiaSharp.Extended.Controls
 		private readonly List<SKConfettiParticle> particles = new List<SKConfettiParticle>();
 
 		private SKRect lastViewBounds;
-		private SKConfettiEmitterBounds actualEmitterBounds;
+		private Rect actualEmitterBounds;
 
 		public SKConfettiSystem()
 		{
@@ -267,7 +267,7 @@ namespace SkiaSharp.Extended.Controls
 		{
 			lastViewBounds = new SKRect(0, 0, (float)width, (float)height);
 
-			var rect = EmitterBounds.Side switch
+			actualEmitterBounds = EmitterBounds.Side switch
 			{
 				SKConfettiEmitterSide.Top => new Rect(0, -10, width, 0),
 				SKConfettiEmitterSide.Left => new Rect(-10, 0, 0, height),
@@ -276,8 +276,6 @@ namespace SkiaSharp.Extended.Controls
 				SKConfettiEmitterSide.Center => new Rect(width / 2, height / 2, 0, 0),
 				_ => EmitterBounds.Rect,
 			};
-
-			actualEmitterBounds = new SKConfettiEmitterBounds(rect, EmitterBounds.Side);
 		}
 
 		private void OnCreateParticle(int count)
@@ -317,7 +315,7 @@ namespace SkiaSharp.Extended.Controls
 
 			Point GetNewLocation()
 			{
-				var rect = actualEmitterBounds.Rect;
+				var rect = actualEmitterBounds;
 				return new Point(
 					rect.Left + random.NextDouble() * rect.Width,
 					rect.Top + random.NextDouble() * rect.Height);

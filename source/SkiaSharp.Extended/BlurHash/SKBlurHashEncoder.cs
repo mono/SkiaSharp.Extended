@@ -32,6 +32,19 @@ namespace SkiaSharp.Extended
 			if (componentsY < 0)
 				throw new ArgumentOutOfRangeException(nameof(componentsY));
 
+			using var wrapper = SKImage.FromPixels(image);
+			return Encode(wrapper, componentsX, componentsY);
+		}
+
+		public string Encode(SKImage image, int componentsX, int componentsY)
+		{
+			if (image == null)
+				throw new ArgumentNullException(nameof(image));
+			if (componentsX < 0)
+				throw new ArgumentOutOfRangeException(nameof(componentsX));
+			if (componentsY < 0)
+				throw new ArgumentOutOfRangeException(nameof(componentsY));
+
 			var width = image.Width;
 			var height = image.Height;
 			var linearPixels = GetLinearPixels(image);
@@ -82,7 +95,7 @@ namespace SkiaSharp.Extended
 			return hash;
 		}
 
-		private static Pixel[] GetLinearPixels(SKPixmap image)
+		private static Pixel[] GetLinearPixels(SKImage image)
 		{
 			var height = image.Height;
 			var width = image.Width;
@@ -92,9 +105,8 @@ namespace SkiaSharp.Extended
 			using (var bitmap = new SKBitmap(new SKImageInfo(width, height, SKColorType.Bgra8888)))
 			{
 				using (var canvas = new SKCanvas(bitmap))
-				using (var wrapper = SKImage.FromPixels(image))
 				{
-					canvas.DrawImage(wrapper, 0, 0);
+					canvas.DrawImage(image, 0, 0);
 				}
 
 				using (var pixmap = bitmap.PeekPixels())
