@@ -71,6 +71,7 @@ namespace SkiaSharp.Extended.Controls
 			}
 
 			var paint = paintPool.Get();
+			paint.Reset();
 			paint.ColorF = Color;
 
 			Shape.Draw(canvas, paint, Size);

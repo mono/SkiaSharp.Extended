@@ -5,12 +5,17 @@ namespace SkiaSharp.Extended.Controls
 {
 	public abstract class SKConfettiShape : BindableObject
 	{
-		public abstract void Draw(SKCanvas canvas, SKPaint paint, float size);
+		public void Draw(SKCanvas canvas, SKPaint paint, float size)
+		{
+			OnDraw(canvas, paint, size);
+		}
+
+		protected abstract void OnDraw(SKCanvas canvas, SKPaint paint, float size);
 	}
 
 	public class SKConfettiSquareShape : SKConfettiShape
 	{
-		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
+		protected override void OnDraw(SKCanvas canvas, SKPaint paint, float size)
 		{
 			var offset = -size / 2f;
 			var rect = SKRect.Create(offset, offset, size, size);
@@ -20,7 +25,7 @@ namespace SkiaSharp.Extended.Controls
 
 	public class SKConfettiCircleShape : SKConfettiShape
 	{
-		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
+		protected override void OnDraw(SKCanvas canvas, SKPaint paint, float size)
 		{
 			canvas.DrawCircle(0, 0, size / 2f, paint);
 		}
@@ -50,7 +55,7 @@ namespace SkiaSharp.Extended.Controls
 			set => SetValue(HeightRatioProperty, value);
 		}
 
-		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
+		protected override void OnDraw(SKCanvas canvas, SKPaint paint, float size)
 		{
 			var height = size * (float)HeightRatio;
 			if (size <= 0 || height <= 0)
@@ -90,7 +95,7 @@ namespace SkiaSharp.Extended.Controls
 			set => SetValue(HeightRatioProperty, value);
 		}
 
-		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
+		protected override void OnDraw(SKCanvas canvas, SKPaint paint, float size)
 		{
 			var height = size * (float)HeightRatio;
 			if (size <= 0 || height <= 0)
@@ -117,6 +122,10 @@ namespace SkiaSharp.Extended.Controls
 
 		private SKSize baseSize;
 
+		public SKConfettiPathShape()
+		{
+		}
+
 		public SKConfettiPathShape(SKPath path)
 		{
 			Path = path ?? throw new ArgumentNullException(nameof(path));
@@ -128,7 +137,7 @@ namespace SkiaSharp.Extended.Controls
 			set => SetValue(PathProperty, value);
 		}
 
-		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
+		protected override void OnDraw(SKCanvas canvas, SKPaint paint, float size)
 		{
 			if (baseSize.Width <= 0 || baseSize.Height <= 0 || Path == null)
 				return;

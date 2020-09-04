@@ -13,7 +13,7 @@ namespace SkiaSharpDemo.Demos
 
 		public int Points { get; }
 
-		public override void Draw(SKCanvas canvas, SKPaint paint, float size)
+		protected override void OnDraw(SKCanvas canvas, SKPaint paint, float size)
 		{
 			using var star = SKGeometry.CreateRegularStarPath(size, size / 2, Points);
 
