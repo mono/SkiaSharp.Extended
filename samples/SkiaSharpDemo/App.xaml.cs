@@ -12,6 +12,8 @@ namespace SkiaSharpDemo
 	{
 		public App()
 		{
+			Device.SetFlags(new[] { "CarouselView_Experimental" });
+
 			InitializeComponent();
 
 			// register the default fonts that we want for Iconify
