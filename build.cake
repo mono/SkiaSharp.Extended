@@ -16,7 +16,7 @@ Task("libs")
 
 	var sln = IsRunningOnWindows()
 		? "./SkiaSharp.Extended.sln"
-		: "./SkiaSharp.Extended.macOS.sln";
+		: "./SkiaSharp.Extended.Unix.sln";
 
 	MSBuild(sln, settings);
 });
@@ -27,7 +27,7 @@ Task("nugets")
 {
 	var sln = IsRunningOnWindows()
 		? "./source/Source.sln"
-		: "./source/Source.macOS.sln";
+		: "./source/Source.Unix.sln";
 
 	MSBuild(sln, new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/nugets.binlog")
@@ -57,6 +57,10 @@ Task("tests")
 	var failed = 0;
 
 	foreach (var csproj in GetFiles("./tests/*/*.csproj")) {
+		// skip WPF on non-Windows
+		if (!IsRunningOnWindows() && csproj.GetFilename().FullPath.Contains(".WPF."))
+			continue;
+
 		try {
 			DotNetCoreTest(csproj.FullPath, new DotNetCoreTestSettings {
 				Configuration = "Release",
@@ -87,7 +91,7 @@ Task("samples")
 
 	var sln = IsRunningOnWindows()
 		? "./SkiaSharp.Extended.sln"
-		: "./SkiaSharp.Extended.macOS.sln";
+		: "./SkiaSharp.Extended.Unix.sln";
 
 	MSBuild(sln, settings);
 });
