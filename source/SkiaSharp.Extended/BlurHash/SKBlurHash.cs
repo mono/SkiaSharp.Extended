@@ -6,7 +6,7 @@ namespace SkiaSharp.Extended
 	{
 		// Deserialize
 
-		public static SKBitmap DeserializeBitmap(string? blurHash, int width, int height, float punch = 1f)
+		public static SKBitmap DeserializeBitmap(string blurHash, int width, int height, float punch = 1f)
 		{
 			if (blurHash == null)
 				throw new ArgumentNullException(nameof(blurHash));
@@ -28,7 +28,7 @@ namespace SkiaSharp.Extended
 			return SKBlurHashDeserializer.DeserializeBitmap(blurHash, width, height, punch);
 		}
 
-		public static SKImage DeserializeImage(string? blurHash, int width, int height, float punch = 1f)
+		public static SKImage DeserializeImage(string blurHash, int width, int height, float punch = 1f)
 		{
 			if (blurHash == null)
 				throw new ArgumentNullException(nameof(blurHash));
@@ -52,7 +52,7 @@ namespace SkiaSharp.Extended
 
 		// Serialize
 
-		public static string Serialize(SKBitmap? bitmap, int componentsX, int componentsY)
+		public static string Serialize(SKBitmap bitmap, int componentsX, int componentsY)
 		{
 			if (bitmap == null)
 				throw new ArgumentNullException(nameof(bitmap));
@@ -64,7 +64,7 @@ namespace SkiaSharp.Extended
 			return SKBlurHashSerializer.Serialize(bitmap, componentsX, componentsY);
 		}
 
-		public static string Serialize(SKImage? image, int componentsX, int componentsY)
+		public static string Serialize(SKImage image, int componentsX, int componentsY)
 		{
 			if (image == null)
 				throw new ArgumentNullException(nameof(image));
@@ -76,7 +76,7 @@ namespace SkiaSharp.Extended
 			return SKBlurHashSerializer.Serialize(image, componentsX, componentsY);
 		}
 
-		public static string Serialize(SKPixmap? pixmap, int componentsX, int componentsY)
+		public static string Serialize(SKPixmap pixmap, int componentsX, int componentsY)
 		{
 			if (pixmap == null)
 				throw new ArgumentNullException(nameof(pixmap));
