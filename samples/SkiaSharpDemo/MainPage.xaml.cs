@@ -31,7 +31,7 @@ namespace SkiaSharpDemo
 						Color = Color.LightPink,
 					},
 				},
-				new DemoGroup("ICONIFY")
+				new DemoGroup("TEXT & EMOJI")
 				{
 					new Demo
 					{
@@ -86,11 +86,25 @@ namespace SkiaSharpDemo
 		{
 			if (e.CurrentSelection.FirstOrDefault() is Demo demo)
 			{
-				var page = Activator.CreateInstance(demo.PageType) as Page;
-				Navigation.PushAsync(page);
-
+				NavigateTo(demo);
 				collectionView.SelectedItem = null;
 			}
+		}
+
+		private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+		{
+			if (e.SelectedItem is Demo demo)
+			{
+				NavigateTo(demo);
+				listView.SelectedItem = null;
+			}
+		}
+
+		private void NavigateTo(Demo demo)
+		{
+			var page = Activator.CreateInstance(demo.PageType) as Page;
+
+			Navigation.PushAsync(page);
 		}
 	}
 }

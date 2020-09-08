@@ -8,7 +8,7 @@ interesting projects:
 
  - [SkiaSharp][skiasharp] _(the engine)_
  - [SkiaSharp.Extended][extended] _(additional APIs)_
- - [SkiaSharp.Extended.Controls][controls] _(additional Xamarin.Forms controls)_
+ - [SkiaSharp.Extended.UI][controls] _(additional Xamarin.Forms controls)_
 
 **Deprecated / Unmaintained Libraries**
 
@@ -35,6 +35,6 @@ The code in this repository is licensed under the [MIT License][license].
 
 [skiasharp]: https://github.com/mono/SkiaSharp
 [extended]: https://github.com/mono/SkiaSharp.Extended/wiki/SkiaSharp.Extended
-[controls]: https://github.com/mono/SkiaSharp.Extended/wiki/SkiaSharp.Extended.Controls
+[controls]: https://github.com/mono/SkiaSharp.Extended/wiki/SkiaSharp.Extended.UI
 [iconify]: https://github.com/mono/SkiaSharp.Extended/wiki/SkiaSharp.Extended.Iconify
 [svg]: https://github.com/mono/SkiaSharp.Extended/wiki/SkiaSharp.Extended.Svg

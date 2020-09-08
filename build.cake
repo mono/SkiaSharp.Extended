@@ -13,16 +13,23 @@ Task("libs")
 		.EnableBinaryLogger("./output/binlogs/libs.binlog")
 		.SetConfiguration("Release")
 		.WithRestore();
-	if (!IsRunningOnWindows())
-		settings = settings.WithProperty("Platform", "iPhone");
-	MSBuild("./SkiaSharp.Extended.sln", settings);
+
+	var sln = IsRunningOnWindows()
+		? "./SkiaSharp.Extended.sln"
+		: "./SkiaSharp.Extended.macOS.sln";
+
+	MSBuild(sln, settings);
 });
 
 Task("nugets")
 	.IsDependentOn("libs")
 	.Does(() =>
 {
-	MSBuild("./source/source.sln", new MSBuildSettings()
+	var sln = IsRunningOnWindows()
+		? "./source/Source.sln"
+		: "./source/Source.macOS.sln";
+
+	MSBuild(sln, new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/nugets.binlog")
 		.SetConfiguration("Release")
 		.WithRestore()
@@ -34,7 +41,7 @@ Task("nugets")
 		preview += $".{BUILD_NUMBER}";
 	}
 
-	MSBuild("./source/source.sln", new MSBuildSettings()
+	MSBuild(sln, new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/nugets-preview.binlog")
 		.SetConfiguration("Release")
 		.WithRestore()
@@ -69,17 +76,20 @@ Task("tests")
 });
 
 Task("samples")
-	.IsDependentOn("nugets")
 	.WithCriteria(Context.Environment.Platform.Family != PlatformFamily.Linux)
+	.IsDependentOn("nugets")
 	.Does(() =>
 {
 	var settings = new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/samples.binlog")
 		.SetConfiguration("Release")
 		.WithRestore();
-	if (!IsRunningOnWindows())
-		settings = settings.WithProperty("Platform", "iPhone");
-	MSBuild("./SkiaSharp.Extended.sln", settings);
+
+	var sln = IsRunningOnWindows()
+		? "./SkiaSharp.Extended.sln"
+		: "./SkiaSharp.Extended.macOS.sln";
+
+	MSBuild(sln, settings);
 });
 
 Task("ci")

@@ -8,40 +8,40 @@ namespace SkiaSharpDemo.Views
 	public class DemoListItem : SKCanvasView
 	{
 		public static readonly BindableProperty TitleProperty = BindableProperty.Create(
-			nameof(Title), typeof(string), typeof(DemoListItem), (string)null,
-			propertyChanged: Invalidate);
+			nameof(Title), typeof(string), typeof(DemoListItem), null,
+			propertyChanged: OnTitleUpdated);
 
 		public static readonly BindableProperty DescriptionProperty = BindableProperty.Create(
-			nameof(Description), typeof(string), typeof(DemoListItem), (string)null,
-			propertyChanged: Invalidate);
+			nameof(Description), typeof(string), typeof(DemoListItem), null,
+			propertyChanged: OnDescriptionUpdated);
 
 		public static readonly BindableProperty SpacingProperty = BindableProperty.Create(
 			nameof(Spacing), typeof(double), typeof(DemoListItem), 12.0,
-			propertyChanged: Invalidate);
+			propertyChanged: OnInvalidate);
 
 		public static readonly BindableProperty ShadowSizeProperty = BindableProperty.Create(
 			nameof(ShadowSize), typeof(double), typeof(DemoListItem), 6.0,
-			propertyChanged: Invalidate);
+			propertyChanged: OnInvalidate);
 
 		public static readonly BindableProperty ShadowColorProperty = BindableProperty.Create(
 			nameof(ShadowColor), typeof(Color), typeof(DemoListItem), Color.Black.MultiplyAlpha(0.2),
-			propertyChanged: Invalidate);
+			propertyChanged: OnInvalidate);
 
 		public static readonly BindableProperty ColorProperty = BindableProperty.Create(
 			nameof(Color), typeof(Color), typeof(DemoListItem), Color.Gray,
-			propertyChanged: Invalidate);
+			propertyChanged: OnInvalidate);
 
 		public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(
 			nameof(FontSize), typeof(double), typeof(DemoListItem), 16.0,
-			propertyChanged: Invalidate);
+			propertyChanged: OnInvalidate);
 
 		// TODO: make these bindable properties
 		private const float CornerRadius = 12f;
 		private const int LineCount = 3;
 		private const float BorderWidth = 1f;
 
-		private RichString descString;
-		private RichString titleString;
+		private RichString? descString;
+		private RichString? titleString;
 
 		public string Title
 		{
@@ -143,37 +143,30 @@ namespace SkiaSharpDemo.Views
 			var imageRect = SKRect.Create(rect.Height * 0.75f, rect.Height);
 			canvas.DrawRect(imageRect, imagePaint);
 
-			// title
-			var titlePos = new SKPoint(imageRect.Right + padding, padding);
-			titleString.Paint(canvas, titlePos);
+			if (titleString != null)
+			{
+				// title
+				var titlePos = new SKPoint(imageRect.Right + padding, padding);
+				titleString.Paint(canvas, titlePos);
 
-			// description
-			descString.MaxWidth = rect.Width - padding - padding - imageRect.Right;
-			var descPos = new SKPoint(titlePos.X, titlePos.Y + titleString.MeasuredHeight + padding / 2);
-			descString.Paint(canvas, descPos);
+				if (descString != null)
+				{
+					// description
+					descString.MaxWidth = rect.Width - padding - padding - imageRect.Right;
+					var descPos = new SKPoint(titlePos.X, titlePos.Y + titleString.MeasuredHeight + padding / 2);
+					descString.Paint(canvas, descPos);
+				}
+			}
 		}
 
 		protected override SizeRequest OnMeasure(double widthConstraint, double heightConstraint)
 		{
-			titleString = new RichString()
-				.FontFamily("Segoe UI")
-				.Bold()
-				.FontSize((float)FontSize)
-				.Add(Title);
-
-			descString = new RichString()
-				.FontFamily("Segoe UI")
-				.LineHeight(1.1f)
-				.FontSize((float)FontSize)
-				.Add(Description);
-			descString.MaxLines = LineCount;
-
 			heightConstraint =
 				BorderWidth +
 				Spacing +
-				titleString.MeasuredHeight +
+				(titleString?.MeasuredHeight ?? 0) +
 				Spacing / 2 +
-				descString.MeasuredHeight * LineCount +
+				(descString?.MeasuredHeight ?? 0) * LineCount +
 				ShadowSize +
 				Spacing +
 				BorderWidth;
@@ -181,7 +174,36 @@ namespace SkiaSharpDemo.Views
 			return new SizeRequest(new Size(widthConstraint, heightConstraint));
 		}
 
-		private static void Invalidate(BindableObject bindable, object oldValue, object newValue)
+		private static void OnTitleUpdated(BindableObject bindable, object oldValue, object newValue)
+		{
+			if (bindable is DemoListItem item)
+			{
+				item.titleString = new RichString()
+					.FontFamily("Segoe UI")
+					.Bold()
+					.FontSize((float)item.FontSize)
+					.Add(item.Title);
+			}
+
+			OnInvalidate(bindable, oldValue, newValue);
+		}
+
+		private static void OnDescriptionUpdated(BindableObject bindable, object oldValue, object newValue)
+		{
+			if (bindable is DemoListItem item)
+			{
+				item.descString = new RichString()
+					.FontFamily("Segoe UI")
+					.LineHeight(1.1f)
+					.FontSize((float)item.FontSize)
+					.Add(item.Description);
+				item.descString.MaxLines = LineCount;
+			}
+
+			OnInvalidate(bindable, oldValue, newValue);
+		}
+
+		private static void OnInvalidate(BindableObject bindable, object oldValue, object newValue)
 		{
 			if (bindable is DemoListItem item)
 			{

@@ -18,7 +18,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="images\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="TestResults\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\source\SkiaSharp.Extended\Utils\**\*.cs" Link="Utils\%(RecursiveDir)\%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>
