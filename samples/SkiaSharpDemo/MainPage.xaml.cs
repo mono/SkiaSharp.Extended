@@ -31,6 +31,23 @@ namespace SkiaSharpDemo
 						Color = Color.LightPink,
 					},
 				},
+				new DemoGroup("CONTROLS")
+				{
+					new Demo
+					{
+						Title = "Dynamic Surface",
+						Description = "In most cases, you don't really need to have two separate views for CPU and GPU rendering. A toggle would be nice.",
+						PageType = typeof(DynamicSurfacePage),
+						Color = Color.Orange,
+					},
+					new Demo
+					{
+						Title = "Gesture Surface",
+						Description = "When you have a surface, you will need to pan, pinch, fling, rotate, and lots more. So, use the gesture view",
+						PageType = typeof(GestureSurfacePage),
+						Color = Color.DarkOliveGreen,
+					},
+				},
 				new DemoGroup("ICONIFY")
 				{
 					new Demo
