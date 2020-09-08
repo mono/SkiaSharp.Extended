@@ -5,12 +5,15 @@ using System.Threading.Tasks;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
-namespace SkiaSharp.Extended.UI
+namespace SkiaSharp.Extended.UI.Extensions
 {
 	public static partial class SKImageSourceExtensions
 	{
 		public static Task<SKImage?> ToSKImageAsync(this ImageSource imageSource, CancellationToken cancellationToken = default)
 		{
+			if (imageSource == null)
+				throw new ArgumentNullException(nameof(imageSource));
+
 			return imageSource switch
 			{
 				// 1. first try SkiaSharp sources

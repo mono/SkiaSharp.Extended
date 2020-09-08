@@ -10,7 +10,7 @@ using SkiaSharp.Views.Mac;
 using Xamarin.Forms.Platform.MacOS;
 #endif
 
-namespace SkiaSharp.Extended.UI
+namespace SkiaSharp.Extended.UI.Extensions
 {
 	public static partial class SKImageSourceExtensions
 	{
