@@ -1,0 +1,73 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.UI;assembly=SkiaSharp.Extended.UI"
+             xmlns:views="clr-namespace:SkiaSharpDemo.Views"
+             x:Class="SkiaSharpDemo.Demos.BlurHashPage"
+             Title="BlurHash">
+
+    <ScrollView>
+        <StackLayout Spacing="12" Padding="12">
+
+            <StackLayout Orientation="Horizontal" Padding="0" Spacing="12">
+                <Button Text="Custom Image" Command="{Binding PickImageCommand}"
+                        VerticalOptions="Center" HorizontalOptions="FillAndExpand" />
+                <Entry Text="{Binding ComponentsX}"
+                       Keyboard="Numeric" HorizontalTextAlignment="Center"
+                       WidthRequest="40" VerticalOptions="Center" />
+                <Label Text="×" VerticalOptions="Center" />
+                <Entry Text="{Binding ComponentsY}"
+                       Keyboard="Numeric" HorizontalTextAlignment="Center"
+                       WidthRequest="40" VerticalOptions="Center" />
+            </StackLayout>
+
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="Android,iOS">
+                    <CarouselView HorizontalOptions="Fill"
+                                  VerticalOptions="FillAndExpand"
+                                  HeightRequest="1" MinimumHeightRequest="100"
+                                  ItemsSource="{Binding Sources}" CurrentItem="{Binding Source}"
+                                  PeekAreaInsets="24,0"
+                                  Margin="-12,0">
+                        <CarouselView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="6,0">
+                                    <Image Source="{Binding}" Aspect="AspectFit" />
+                                </Grid>
+                            </DataTemplate>
+                        </CarouselView.ItemTemplate>
+                    </CarouselView>
+                </On>
+                <On Platform="UWP,WPF">
+                    <ListView HorizontalOptions="Fill"
+                              VerticalOptions="FillAndExpand"
+                              HeightRequest="1"
+                              ItemsSource="{Binding Sources}" SelectedItem="{Binding Source}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Grid Padding="6">
+                                        <Image Source="{Binding}" Aspect="AspectFit" WidthRequest="200" />
+                                    </Grid>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </On>
+            </OnPlatform>
+
+            <StackLayout Orientation="Horizontal" Padding="0" Spacing="12">
+                <Entry Text="{Binding BlurHash}"
+                       VerticalOptions="Center" HorizontalOptions="FillAndExpand" />
+                <Entry Text="{Binding Punch}"
+                       Keyboard="Numeric" HorizontalTextAlignment="Center"
+                       WidthRequest="40" VerticalOptions="Center" />
+            </StackLayout>
+
+            <Image Source="{Binding BlurImage}" Aspect="AspectFit"
+                   HeightRequest="1" MinimumHeightRequest="100"
+                   HorizontalOptions="Fill" VerticalOptions="FillAndExpand" />
+
+        </StackLayout>
+    </ScrollView>
+    
+</ContentPage>

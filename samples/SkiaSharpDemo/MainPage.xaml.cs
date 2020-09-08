@@ -30,6 +30,13 @@ namespace SkiaSharpDemo
 						PageType = typeof(InterpolationPage),
 						Color = Color.LightPink,
 					},
+					new Demo
+					{
+						Title = "BlurHash",
+						Description = "That time you wanted a compact representation of a placeholder for an image, but as a short data string.",
+						PageType = typeof(BlurHashPage),
+						Color = Color.LightSkyBlue,
+					},
 				},
 				new DemoGroup("TEXT & EMOJI")
 				{
