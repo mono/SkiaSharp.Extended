@@ -45,12 +45,22 @@ jobs:
           Write-Host "Build label: $label"
           Write-Host "##vso[build.updatebuildnumber]$label"
         displayName: Update the build number with a more readable one
+
   - template: .ci/build.yml@components
     parameters:
       areaPath: 'DevDiv\Xamarin SDK\SkiaSharp'
       linuxImage: 'ubuntu-latest'
+      publishJob: 'windows'
       validPackagePrefixes:
         - SkiaSharp
+      preBuildSteps:
+        - bash: |
+            cd /opt/hostedtoolcache/dotnet/sdk/3.1.302/Sdks/Microsoft.NET.Sdk.WindowsDesktop/targets && \
+              mv Microsoft.WinFx.props Microsoft.WinFX.props && \
+              mv Microsoft.WinFx.targets Microsoft.WinFX.targets
+          condition: eq(variables['System.JobName'], 'linux')
+          displayName: Fix the casing bug for files in .NET Core SDK on Linux
+
   - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
     - template: sign-artifacts/jobs/v1.yml@internal-templates
       parameters:

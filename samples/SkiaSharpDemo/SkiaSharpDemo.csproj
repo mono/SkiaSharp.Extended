@@ -12,15 +12,17 @@
     <PackageReference Include="SkiaSharp" Version="2.80.1" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.1" />
     <PackageReference Include="Svg.Skia" Version="0.4.1" />
-    <PackageReference Include="Topten.RichTextKit" Version="0.3.129" />
-    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1269" />
+    <PackageReference Include="Topten.RichTextKit" Version="0.3.133" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
+    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1364" />
   </ItemGroup>
 
   <!--<ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <PackageReference Include="LiveSharp" Version="1.5.66" />
+    <PackageReference Include="LiveSharp" Version="1.5.75" />
   </ItemGroup>-->
 
   <ItemGroup>
+    <ProjectReference Include="..\..\source\SkiaSharp.Extended.UI\SkiaSharp.Extended.UI.csproj" />
     <ProjectReference Include="..\..\source\SkiaSharp.Extended.Iconify.FontAwesome\SkiaSharp.Extended.Iconify.FontAwesome.csproj" />
     <ProjectReference Include="..\..\source\SkiaSharp.Extended.Iconify.IonIcons\SkiaSharp.Extended.Iconify.IonIcons.csproj" />
     <ProjectReference Include="..\..\source\SkiaSharp.Extended.Iconify.MaterialDesignIcons\SkiaSharp.Extended.Iconify.MaterialDesignIcons.csproj" />

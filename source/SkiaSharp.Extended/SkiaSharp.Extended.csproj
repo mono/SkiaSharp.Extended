@@ -7,7 +7,6 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <AssemblyFileVersion>1.0.0.0</AssemblyFileVersion>
     <Version>2.0.0</Version>
-    <Product>$(AssemblyName) ($(TargetFramework))</Product>
     <NeutralLanguage>en</NeutralLanguage>
     <KeyFileName>mono.snk</KeyFileName>
     <LangVersion>8.0</LangVersion>
@@ -17,17 +16,7 @@
   <PropertyGroup>
     <PackageId>SkiaSharp.Extended</PackageId>
     <Title>SkiaSharp.Extended</Title>
-    <PackageVersion Condition=" '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
-    <Authors>Microsoft</Authors>
-    <Owners>Microsoft</Owners>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>This package adds many additional features and utilities for use with SkiaSharp.</Description>
-    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
-    <PackageIconUrl>https://go.microsoft.com/fwlink/?linkid=868516</PackageIconUrl>
-    <PackageTags>xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform skiasharp</PackageTags>
-    <PackageLicenseUrl>https://go.microsoft.com/fwlink/?linkid=2072003</PackageLicenseUrl>
-    <PackageProjectUrl>https://go.microsoft.com/fwlink/?linkid=2071915</PackageProjectUrl>
-    <RepositoryUrl>https://go.microsoft.com/fwlink/?linkid=2071915</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,7 +24,7 @@
   </ItemGroup>
 
   <!-- <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <PackageReference Include="LiveSharp" Version="1.5.66" />
+    <PackageReference Include="LiveSharp" Version="1.5.75" />
   </ItemGroup> -->
 
 </Project>

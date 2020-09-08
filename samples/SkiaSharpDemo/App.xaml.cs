@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using SkiaSharp;
 using SkiaSharp.Extended.Iconify;
@@ -27,6 +28,14 @@ namespace SkiaSharpDemo
 			FontMapper.Default = new DemoFontMapper();
 
 			MainPage = new NavigationPage(new MainPage());
+			//MainPage = new NavigationPage(new Demos.PlaygroundPage());
+		}
+
+		public static Stream GetImageResourceStream(string name)
+		{
+			var assembly = typeof(App).Assembly;
+
+			return assembly.GetManifestResourceStream("SkiaSharpDemo.images." + name);
 		}
 
 		private class DemoFontMapper : FontMapper

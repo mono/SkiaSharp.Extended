@@ -8,6 +8,8 @@ namespace SkiaSharpDemo.Demos
 		public PlaygroundPage()
 		{
 			InitializeComponent();
+
+			BindingContext = this;
 		}
 	}
 }

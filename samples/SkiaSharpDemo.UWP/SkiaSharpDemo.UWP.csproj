@@ -96,11 +96,16 @@
     <PackageReference Include="SkiaSharp" Version="2.80.1" />
     <PackageReference Include="SkiaSharp.Views" Version="2.80.1" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.1" />
-    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1269" />
-    <PackageReference Include="Topten.RichTextKit" Version="0.3.129" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
+    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1364" />
+    <PackageReference Include="Topten.RichTextKit" Version="0.3.133" />
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.10" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\source\SkiaSharp.Extended.UI\SkiaSharp.Extended.UI.csproj">
+      <Project>{afcc1db4-0405-4da7-bcee-d78f524a1f05}</Project>
+      <Name>SkiaSharp.Extended.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SkiaSharpDemo\SkiaSharpDemo.csproj">
       <Project>{A2563433-9CE0-42ED-BB51-640A0FFA9D0F}</Project>
       <Name>SkiaSharpDemo</Name>
@@ -121,6 +126,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="logo.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

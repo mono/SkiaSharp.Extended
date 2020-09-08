@@ -7,26 +7,54 @@
              mc:Ignorable="d"
              Title="SkiaSharp Extended">
 
-    <CollectionView x:Name="collectionView"
-                    ItemsSource="{Binding Demos}"
-                    IsGrouped="True"
-                    SelectionChanged="OnSelectionChanged" SelectionMode="Single">
-        <CollectionView.Footer>
-            <Grid HeightRequest="6" />
-        </CollectionView.Footer>
-        <CollectionView.GroupHeaderTemplate>
-            <DataTemplate>
-                <Label Text="{Binding Name}" FontSize="16" TextColor="Gray" Padding="18,12,18,6" />
-            </DataTemplate>
-        </CollectionView.GroupHeaderTemplate>
-        <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <Grid Padding="12,3,6,3">
-                    <views:DemoListItem FontSize="16" Color="{Binding Color}"
-                                        Title="{Binding Title}" Description="{Binding Description}" />
-                </Grid>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
-
+    <OnPlatform x:TypeArguments="View">
+        <On Platform="Android,iOS,UWP">
+            <CollectionView x:Name="collectionView"
+                            ItemsSource="{Binding Demos}"
+                            IsGrouped="True"
+                            SelectionChanged="OnSelectionChanged" SelectionMode="Single">
+                <CollectionView.Footer>
+                    <Grid HeightRequest="6" />
+                </CollectionView.Footer>
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <Label Text="{Binding Name}" FontSize="16" TextColor="Gray" Padding="18,12,18,6" />
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="12,3,6,3">
+                            <views:DemoListItem FontSize="16" Color="{Binding Color}"
+                                                Title="{Binding Title}" Description="{Binding Description}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </On>
+        <On Platform="WPF">
+            <ListView x:Name="listView"
+                      ItemsSource="{Binding Demos}"
+                      IsGroupingEnabled="True" HasUnevenRows="True"
+                      ItemSelected="OnItemSelected" SelectionMode="Single">
+                <ListView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label Text="{Binding Name}" FontSize="16" TextColor="Gray" Padding="18,12,18,6" />
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.GroupHeaderTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="12,3,6,3">
+                                <views:DemoListItem FontSize="16" Color="{Binding Color}"
+                                                    Title="{Binding Title}" Description="{Binding Description}" />
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </On>
+    </OnPlatform>
+    
 </ContentPage>
