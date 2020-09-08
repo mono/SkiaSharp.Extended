@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:local="clr-namespace:SkiaSharp.Extended.UI.Controls"
+                    xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+                    x:Class="SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources">
+
+    <!-- the control template for SKConfettiView -->
+    <ControlTemplate x:Key="SKConfettiViewControlTemplate">
+        <skia:SKCanvasView x:Name="PART_DrawingSurface" />
+    </ControlTemplate>
+
+    <!-- the explicit style that allows for extension -->
+    <Style x:Key="SKConfettiViewStyle" TargetType="local:SKConfettiView">
+        <Setter Property="ControlTemplate"
+                Value="{StaticResource SKConfettiViewControlTemplate}" />
+    </Style>
+
+    <!-- the implicit style that applies to all controls -->
+    <Style TargetType="local:SKConfettiView"
+           BasedOn="{StaticResource SKConfettiViewStyle}" />
+
+</ResourceDictionary>
