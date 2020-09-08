@@ -1,7 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWpf>true</UseWpf>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -16,11 +17,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\source\SkiaSharp.Extended.UI\SkiaSharp.Extended.UI.csproj" />
+    <ProjectReference Include="..\..\source\SkiaSharp.Extended.UI.WPF\SkiaSharp.Extended.UI.WPF.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="TestResults\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="images\logo.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
