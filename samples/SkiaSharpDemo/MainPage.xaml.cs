@@ -47,6 +47,13 @@ namespace SkiaSharpDemo
 						PageType = typeof(ConfettiPage),
 						Color = Color.SteelBlue,
 					},
+					new Demo
+					{
+						Title = "ToImage",
+						Description = "You have that ImageSource and you really want an actual image... What do you do? Well, you ToSKImageAsync that puppy!",
+						PageType = typeof(ImageSourceToImagePage),
+						Color = Color.Orange,
+					},
 				},
 				new DemoGroup("TEXT & EMOJI")
 				{
