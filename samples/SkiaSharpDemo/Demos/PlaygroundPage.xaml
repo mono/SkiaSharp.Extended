@@ -1,7 +1,30 @@
 ﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:SkiaSharpDemo.Views"
+             xmlns:local="clr-namespace:SkiaSharpDemo"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             xmlns:media="clr-namespace:SkiaSharp.Extended.UI.Media;assembly=SkiaSharp.Extended.UI"
              x:Class="SkiaSharpDemo.Demos.PlaygroundPage"
              Title="Play">
+    <StackLayout Padding="12" Spacing="12">
 
+        <Image Source="{Binding Image}" HeightRequest="250" />
+
+        <controls:SKFilteredImage Source="{Binding Image}" HeightRequest="250">
+            <controls:SKFilteredImage.Pipeline>
+                <media:SKFilterPipeline>
+                    <media:SKInvertFilter />
+                    <media:SKBlurFilter SigmaX="{Binding Value, Source={x:Reference sigmaXSlider}}"
+                                        SigmaY="{Binding Value, Source={x:Reference sigmaYSlider}}" />
+                    <media:SKSepiaFilter />
+                    <media:SKHighContrastFilter />
+                </media:SKFilterPipeline>
+            </controls:SKFilteredImage.Pipeline>
+        </controls:SKFilteredImage>
+
+        <Slider x:Name="sigmaXSlider" Minimum="0" Maximum="10" Value="7" />
+
+        <Slider x:Name="sigmaYSlider" Minimum="0" Maximum="10" Value="7" />
+
+    </StackLayout>
 </ContentPage>

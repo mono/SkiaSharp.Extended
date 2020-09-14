@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkiaSharp;
+using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
 namespace SkiaSharpDemo.Demos
@@ -9,7 +10,14 @@ namespace SkiaSharpDemo.Demos
 		{
 			InitializeComponent();
 
+			Image = new SKImageImageSource
+			{
+				Image = SKImage.FromEncodedData(App.GetImageResourceStream("img1.jpg"))
+			};
+
 			BindingContext = this;
 		}
+
+		public ImageSource Image { get; }
 	}
 }

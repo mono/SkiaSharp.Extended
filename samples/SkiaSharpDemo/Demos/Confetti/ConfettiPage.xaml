@@ -100,9 +100,7 @@
                                HorizontalOptions="End" VerticalOptions="Center" />
                         <Slider Maximum="500" Minimum="10" Value="{Binding CurrentConfig.MinSpeed, Converter={StaticResource RoundToInt}}"
                                 Grid.Column="1" Grid.Row="0"
-                                VerticalOptions="Center"
-                                MinimumTrackColor="Accent" MaximumTrackColor="Accent"
-                                ThumbColor="Accent" />
+                                VerticalOptions="Center" />
                         <Label Text="{Binding CurrentConfig.MinSpeed}"
                                Grid.Column="2" Grid.Row="0"
                                HorizontalOptions="Start" VerticalOptions="Center" />
@@ -112,9 +110,7 @@
                                HorizontalOptions="End" VerticalOptions="Center" />
                         <Slider Maximum="500" Minimum="10" Value="{Binding CurrentConfig.MaxSpeed, Converter={StaticResource RoundToInt}}"
                                 Grid.Column="1" Grid.Row="1"
-                                VerticalOptions="Center"
-                                MinimumTrackColor="Accent" MaximumTrackColor="Accent"
-                                ThumbColor="Accent" />
+                                VerticalOptions="Center" />
                         <Label Text="{Binding CurrentConfig.MaxSpeed}"
                                Grid.Column="2" Grid.Row="1"
                                HorizontalOptions="Start" VerticalOptions="Center" />
@@ -128,9 +124,7 @@
                                HorizontalOptions="End" VerticalOptions="Center" />
                         <Slider Maximum="6" Minimum="0" Value="{Binding CurrentConfig.Lifetime, Converter={StaticResource RoundTo}, ConverterParameter=1}"
                                 Grid.Column="1" Grid.Row="0"
-                                VerticalOptions="Center"
-                                MinimumTrackColor="Accent" MaximumTrackColor="Accent"
-                                ThumbColor="Accent" />
+                                VerticalOptions="Center" />
                         <Label Text="{Binding CurrentConfig.Lifetime, StringFormat='{}{0}s'}"
                                Grid.Column="2" Grid.Row="0"
                                HorizontalOptions="Start" VerticalOptions="Center" />
@@ -140,9 +134,7 @@
                                HorizontalOptions="End" VerticalOptions="Center" />
                         <Slider Maximum="6" Minimum="0" Value="{Binding CurrentConfig.Duration, Converter={StaticResource RoundTo}, ConverterParameter=1}"
                                 Grid.Column="1" Grid.Row="1"
-                                VerticalOptions="Center"
-                                MinimumTrackColor="Accent" MaximumTrackColor="Accent"
-                                ThumbColor="Accent" />
+                                VerticalOptions="Center" />
                         <Label Text="{Binding CurrentConfig.Duration, StringFormat='{}{0}s'}"
                                Grid.Column="2" Grid.Row="1"
                                HorizontalOptions="Start" VerticalOptions="Center" />
