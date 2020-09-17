@@ -9,7 +9,8 @@ namespace SkiaSharp.Extended.UI.Media
 			nameof(IsEnabled),
 			typeof(bool),
 			typeof(SKBlurFilter),
-			true);
+			true,
+			propertyChanged: OnFilterChanged);
 
 		public bool IsEnabled
 		{
@@ -26,6 +27,13 @@ namespace SkiaSharp.Extended.UI.Media
 		protected virtual void OnFilterChanged()
 		{
 			FilterChanged?.Invoke(this, new SKFilterChangedEventArgs(this));
+		}
+
+		private static void OnFilterChanged(BindableObject bindable, object? oldValue, object? newValue)
+		{
+			var filter = (SKFilter)bindable;
+
+			filter.OnFilterChanged();
 		}
 	}
 }

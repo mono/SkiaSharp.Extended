@@ -32,26 +32,25 @@ namespace SkiaSharp.Extended.UI.Media
 			set => SetValue(SigmaYProperty, value);
 		}
 
-		private static void OnFilterChanged(BindableObject bindable, object oldValue, object newValue)
+		private static void OnFilterChanged(BindableObject bindable, object? oldValue, object? newValue)
 		{
-			if (bindable is SKBlurFilter blur)
-			{
-				var sigmaX = (float)blur.SigmaX;
-				var sigmaY = (float)blur.SigmaY;
-				if (sigmaX <= 0)
-					sigmaX = 0;
-				if (sigmaY <= 0)
-					sigmaY = 0;
+			var filter = (SKBlurFilter)bindable;
 
-				blur.imageFilter?.Dispose();
-				blur.imageFilter = (sigmaX >= 0 && sigmaY >= 0)
-					? SKImageFilter.CreateBlur(sigmaX, sigmaY)
-					: null;
+			var sigmaX = (float)filter.SigmaX;
+			var sigmaY = (float)filter.SigmaY;
+			if (sigmaX <= 0)
+				sigmaX = 0;
+			if (sigmaY <= 0)
+				sigmaY = 0;
 
-				blur.Paint.ImageFilter = blur.imageFilter;
+			filter.imageFilter?.Dispose();
+			filter.imageFilter = (sigmaX >= 0 && sigmaY >= 0)
+				? SKImageFilter.CreateBlur(sigmaX, sigmaY)
+				: null;
 
-				blur.OnFilterChanged();
-			}
+			filter.Paint.ImageFilter = filter.imageFilter;
+
+			filter.OnFilterChanged();
 		}
 	}
 }

@@ -1,36 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SkiaSharp.Extended.UI.Media;
-using SkiaSharp.Extended.UI.Media.Extensions;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
 namespace SkiaSharp.Extended.UI.Controls
 {
-	public class SKFilteredImage : ContentView
+	[ContentProperty(nameof(Pipeline))]
+	public class SKFilteredImage : TemplatedView
 	{
 		public static readonly BindableProperty PipelineProperty = BindableProperty.Create(
 			nameof(Pipeline),
 			typeof(SKFilterPipeline),
 			typeof(SKFilteredImage),
 			null,
-			propertyChanged: OnFiltersChanged);
+			propertyChanged: OnPipelineChanged);
 
-		public static readonly BindableProperty SourceProperty = BindableProperty.Create(
-			nameof(Source),
-			typeof(ImageSource),
-			typeof(SKFilteredImage),
-			null,
-			propertyChanged: OnSourceChanged);
+		private (SKImageInfo Info, SKSurface? Surface) tempSurface1;
+		private (SKImageInfo Info, SKSurface? Surface) tempSurface2;
 
-		private SKCanvasView canvasView;
-		private SKImage? image;
+		private SKCanvasView? canvasView;
+		private SKGLView? glView;
 
 		public SKFilteredImage()
 		{
-			canvasView = new SKCanvasView();
-			canvasView.PaintSurface += OnPaintSurface;
+			DebugUtils.LogPropertyChanged(this);
 
-			Content = canvasView;
+			Themes.SKFilteredImageResources.EnsureRegistered();
 		}
 
 		public SKFilterPipeline? Pipeline
@@ -39,27 +35,108 @@ namespace SkiaSharp.Extended.UI.Controls
 			set => SetValue(PipelineProperty, value);
 		}
 
-		public ImageSource? Source
+		protected override void OnApplyTemplate()
 		{
-			get => (ImageSource?)GetValue(SourceProperty);
-			set => SetValue(SourceProperty, value);
+			var templateChild = GetTemplateChild("PART_DrawingSurface");
+
+			if (canvasView != null)
+			{
+				canvasView.PaintSurface -= OnPaintSurface;
+				canvasView = null;
+			}
+
+			if (glView != null)
+			{
+				glView.PaintSurface -= OnPaintSurface;
+				glView = null;
+			}
+
+			tempSurface1.Surface?.Dispose();
+			tempSurface1 = default;
+
+			tempSurface2.Surface?.Dispose();
+			tempSurface2 = default;
+
+			if (templateChild is SKCanvasView view)
+			{
+				canvasView = view;
+				canvasView.PaintSurface += OnPaintSurface;
+			}
+
+			if (templateChild is SKGLView gl)
+			{
+				glView = gl;
+				glView.PaintSurface += OnPaintSurface;
+			}
+		}
+
+		protected override void OnBindingContextChanged()
+		{
+			base.OnBindingContextChanged();
+
+			Pipeline?.SetInheritedBindingContext(BindingContext);
+		}
+
+		private void OnPaintSurface(object sender, SKPaintGLSurfaceEventArgs e)
+		{
+			var view = (SKGLView)sender;
+			var brt = e.BackendRenderTarget;
+			var canvas = e.Surface.Canvas;
+
+			OnPaintSurface(canvas, brt.Rect, (newSize) =>
+			{
+				var newInfo = new SKImageInfo(newSize.Width, newSize.Height, e.ColorType);
+
+				EnsureTemporarySurface(view.GRContext, newInfo, ref tempSurface1);
+				EnsureTemporarySurface(view.GRContext, newInfo, ref tempSurface2);
+			});
+
+			void EnsureTemporarySurface(GRContext context, SKImageInfo newInfo, ref (SKImageInfo Info, SKSurface? Surface) temp)
+			{
+				if (temp.Info != newInfo || temp.Surface == null)
+				{
+					temp.Surface?.Dispose();
+					temp = (newInfo, SKSurface.Create(context, true, newInfo, brt!.SampleCount, e.Origin));
+				}
+			}
 		}
 
 		private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
 		{
+			var view = (SKCanvasView)sender;
 			var info = e.Info;
 			var canvas = e.Surface.Canvas;
 
+			OnPaintSurface(canvas, info.Rect, (newSize) =>
+			{
+				var newInfo = info.WithSize(newSize);
+
+				EnsureTemporarySurface(newInfo, ref tempSurface1);
+				EnsureTemporarySurface(newInfo, ref tempSurface2);
+			});
+
+			void EnsureTemporarySurface(SKImageInfo newInfo, ref (SKImageInfo Info, SKSurface? Surface) temp)
+			{
+				if (temp.Info != newInfo || temp.Surface == null)
+				{
+					temp.Surface?.Dispose();
+					temp = (newInfo, SKSurface.Create(newInfo));
+				}
+			}
+		}
+
+		private void OnPaintSurface(SKCanvas canvas, SKRectI viewRect, Action<SKSizeI> EnsureTemporarySurfaces)
+		{
 			canvas.Clear(SKColors.Transparent);
 
-			if (image != null)
+			if (Pipeline?.Image is SKImage image)
 			{
-				var rect = info.Rect.AspectFit(new SKSizeI(image.Width, image.Height));
+				var rect = viewRect.AspectFit(new SKSizeI(image.Width, image.Height));
 
-				if (Pipeline?.Count > 0)
+				if (Pipeline?.Filters?.Count > 0)
 				{
-					var enabled = new List<SKFilter>(Pipeline.Count);
-					foreach (var filter in Pipeline)
+					var enabled = new List<SKFilter>(Pipeline.Filters.Count);
+					foreach (var filter in Pipeline.Filters)
 					{
 						if (filter.IsEnabled)
 							enabled.Add(filter);
@@ -71,17 +148,14 @@ namespace SkiaSharp.Extended.UI.Controls
 					}
 					else if (enabled.Count >= 2)
 					{
-						var newInfo = info.WithSize(rect.Size);
-						EnsureTemporarySurface(newInfo, ref temp1);
-						EnsureTemporarySurface(newInfo, ref temp2);
+						EnsureTemporarySurfaces(rect.Size);
 
 						var tempDest = SKRectI.Create(SKPointI.Empty, rect.Size);
 
-						var prevSurface = temp2.Surface;
-						var surface = temp1.Surface;
+						var prevSurface = tempSurface2.Surface!;
+						var surface = tempSurface1.Surface!;
 
-						int i;
-						for (i = 0; i < enabled.Count; i++)
+						for (var i = 0; i < enabled.Count; i++)
 						{
 							var filter = enabled[i];
 							var paint = filter.GetPaint();
@@ -108,49 +182,39 @@ namespace SkiaSharp.Extended.UI.Controls
 					canvas.DrawImage(image, rect);
 				}
 			}
-
-			void EnsureTemporarySurface(SKImageInfo newInfo, ref (SKImageInfo Info, SKSurface Surface) temp)
-			{
-				if (temp.Info != newInfo || temp.Surface == null)
-				{
-					temp.Surface?.Dispose();
-					temp = (newInfo, SKSurface.Create(newInfo));
-				}
-			}
 		}
 
-		(SKImageInfo Info, SKSurface Surface) temp1;
-		(SKImageInfo Info, SKSurface Surface) temp2;
-
-		private static void OnFiltersChanged(BindableObject bindable, object oldValue, object newValue)
+		private static void OnPipelineChanged(BindableObject bindable, object? oldValue, object? newValue)
 		{
-			if (bindable is SKFilteredImage view)
-			{
-				if (oldValue is SKFilterPipeline oldCollection)
-					oldCollection.PipelineChanged -= view.OnFilterChanged;
-				if (newValue is SKFilterPipeline newCollection)
-					newCollection.PipelineChanged += view.OnFilterChanged;
+			var view = (SKFilteredImage)bindable;
 
-				view.canvasView.InvalidateSurface();
+			if (oldValue is SKFilterPipeline oldPipeline)
+			{
+				oldPipeline.PipelineChanged -= OnPipelineChanged;
+				oldPipeline.FilterChanged -= OnFilterChanged;
+				oldPipeline.SetInheritedBindingContext(null);
 			}
+
+			if (newValue is SKFilterPipeline newPipeline)
+			{
+				newPipeline.SetInheritedBindingContext(view.BindingContext);
+				newPipeline.PipelineChanged += OnPipelineChanged;
+				newPipeline.FilterChanged += OnFilterChanged;
+			}
+
+			view.InvalidateSurface();
+
+			void OnPipelineChanged(object sender, EventArgs e) =>
+				view.InvalidateSurface();
+
+			void OnFilterChanged(object sender, SKFilterChangedEventArgs e) =>
+				view.InvalidateSurface();
 		}
 
-		private static async void OnSourceChanged(BindableObject bindable, object oldValue, object newValue)
+		private void InvalidateSurface()
 		{
-			if (bindable is SKFilteredImage view)
-			{
-				if (newValue is ImageSource source)
-					view.image = await source.ToSKImageAsync();
-				else
-					view.image = null;
-
-				view.canvasView.InvalidateSurface();
-			}
-		}
-
-		private void OnFilterChanged(object sender, SKFilterChangedEventArgs e)
-		{
-			canvasView.InvalidateSurface();
+			canvasView?.InvalidateSurface();
+			glView?.InvalidateSurface();
 		}
 	}
 }
