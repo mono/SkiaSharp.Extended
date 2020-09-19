@@ -31,6 +31,13 @@ namespace SkiaSharp.Extended.UI.Media
 
 		public static readonly BindableProperty ImageProperty = ImagePropertyKey.BindableProperty;
 
+		public static readonly BindableProperty IsEnabledProperty = BindableProperty.Create(
+			nameof(IsEnabled),
+			typeof(bool),
+			typeof(SKFilterPipeline),
+			true,
+			propertyChanged: OnIsEnabledChanged);
+
 		public SKFilterPipeline()
 		{
 			DebugUtils.LogPropertyChanged(this);
@@ -52,6 +59,12 @@ namespace SkiaSharp.Extended.UI.Media
 		{
 			get => (SKImage?)GetValue(ImageProperty);
 			private set => SetValue(ImagePropertyKey, value);
+		}
+
+		public bool IsEnabled
+		{
+			get => (bool)GetValue(IsEnabledProperty);
+			set => SetValue(IsEnabledProperty, value);
 		}
 
 		public event EventHandler? PipelineChanged;
@@ -127,6 +140,13 @@ namespace SkiaSharp.Extended.UI.Media
 			{
 				oldSource?.SetInheritedBindingContext(pipeline.BindingContext);
 			}
+
+			pipeline.OnPipelineChanged();
+		}
+
+		private static void OnIsEnabledChanged(BindableObject bindable, object? oldValue, object? newValue)
+		{
+			var pipeline = (SKFilterPipeline)bindable;
 
 			pipeline.OnPipelineChanged();
 		}

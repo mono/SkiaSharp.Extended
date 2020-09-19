@@ -6,6 +6,7 @@ using System.Windows.Input;
 using SkiaSharp;
 using SkiaSharp.Extended;
 using SkiaSharp.Views.Forms;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace SkiaSharpDemo.Demos
@@ -161,24 +162,20 @@ namespace SkiaSharpDemo.Demos
 
 		private async void OnPickImage()
 		{
-			//var options = new MediaPickerOptions
-			//{
-			//	Title = "Custom Image",
-			//};
+			var options = new MediaPickerOptions
+			{
+				Title = "Custom Image",
+			};
 
-			//var picker = MediaPicker.IsCaptureSupported
-			//	? MediaPicker.CapturePhotoAsync(options)
-			//	: MediaPicker.PickPhotoAsync(options);
+			var image = await MediaPicker.PickPhotoAsync(options);
 
-			//var image = await picker;
+			if (image != null)
+			{
+				var newSource = new StreamImageSource { Stream = _ => image.OpenReadAsync() };
 
-			//if (image != null)
-			//{
-			//	var newSource = new StreamImageSource { Stream = _ => image.OpenReadAsync() };
-
-			//	Sources[Sources.Count - 1] = newSource;
-			//	Source = newSource;
-			//}
+				Sources[Sources.Count - 1] = newSource;
+				Source = newSource;
+			}
 		}
 	}
 }

@@ -13,6 +13,10 @@
             <converters:RoundToConverter x:Key="RoundTo" />
             <converters:DebugConverter x:Key="Debug" />
 
+            <Style TargetType="Page" ApplyToDerivedTypes="True">
+                <Setter Property="BackgroundColor" Value="White" />
+            </Style>
+            
             <Style TargetType="StackLayout">
                 <Setter Property="Spacing" Value="0" />
                 <Setter Property="Padding" Value="0" />

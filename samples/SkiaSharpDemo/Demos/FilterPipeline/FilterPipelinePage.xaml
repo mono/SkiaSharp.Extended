@@ -1,0 +1,171 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             xmlns:media="clr-namespace:SkiaSharp.Extended.UI.Media;assembly=SkiaSharp.Extended.UI"
+             xmlns:demos="clr-namespace:SkiaSharpDemo.Demos"
+             x:Class="SkiaSharpDemo.Demos.FilterPipelinePage"
+             Title="Filter Pipeline"
+             BackgroundColor="White">
+
+    <StackLayout Padding="12" Spacing="12">
+
+        <controls:SKFilteredImage HeightRequest="200">
+            <media:SKFilterPipeline x:Name="pipeline" Source="{Binding Image}" IsEnabled="{Binding EnableFilters}">
+                <media:SKInvertFilter IsEnabled="False" />
+                <media:SKBlurFilter SigmaX="{Binding BlurSigma}" SigmaY="{Binding Value, Source={x:Reference sigmaYSlider}}" />
+                <media:SKSepiaFilter />
+                <media:SKHighContrastFilter Factor="{Binding Value, Source={x:Reference highContrastSlider}}" />
+            </media:SKFilterPipeline>
+            <controls:SKFilteredImage.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding ToggleFilterCommand}"/>
+            </controls:SKFilteredImage.GestureRecognizers>
+        </controls:SKFilteredImage>
+
+        <Label Text="(tap to toggle filters)"
+               HorizontalOptions="Center" Margin="0,-9,0,0"
+               FontSize="Caption" FontAttributes="Italic" />
+
+        <Label Text="Filters" FontAttributes="Bold" />
+
+        <Grid VerticalOptions="FillAndExpand"
+              ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,*"
+              ColumnSpacing="6" RowSpacing="6">
+
+            <Grid.Resources>
+                <ResourceDictionary>
+
+                    <demos:EnabledOpacityConverter x:Key="EnabledOpacity" />
+
+                    <Style TargetType="Button">
+                        <Setter Property="WidthRequest" Value="35" />
+                        <Setter Property="HeightRequest" Value="35" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="CornerRadius" Value="3" />
+                    </Style>
+
+                    <Style TargetType="Label">
+                        <Setter Property="Opacity" Value="{Binding ., Converter={StaticResource EnabledOpacity}}" />
+                        <Setter Property="Padding" Value="12,0,0,0" />
+                    </Style>
+
+                    <Style TargetType="BoxView">
+                        <Setter Property="HeightRequest" Value="1" />
+                        <Setter Property="Color" Value="LightGray" />
+                    </Style>
+
+                    <Style TargetType="ContentView" x:Key="FilterItemStyle">
+                        <Setter Property="ControlTemplate">
+                            <ControlTemplate>
+                                <StackLayout>
+                                    <SwipeView BackgroundColor="{Binding BackgroundColor, Source={RelativeSource TemplatedParent}}">
+                                        <SwipeView.LeftItems>
+                                            <SwipeItem Text="Toggle" BackgroundColor="Gold" />
+                                        </SwipeView.LeftItems>
+                                        <SwipeView.RightItems>
+                                            <SwipeItem Text="Remove" BackgroundColor="DarkRed" />
+                                        </SwipeView.RightItems>
+                                        <ContentPresenter HeightRequest="40" />
+                                    </SwipeView>
+                                    <BoxView />
+                                </StackLayout>
+                            </ControlTemplate>
+                        </Setter>
+                        <Setter Property="VisualStateManager.VisualStateGroups">
+                            <VisualStateGroupList>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor" Value="{Binding BackgroundColor, Source={RelativeSource AncestorType={x:Type demos:FilterPipelinePage}}}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor" Value="Orange" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateGroupList>
+                        </Setter>
+                    </Style>
+
+                </ResourceDictionary>
+            </Grid.Resources>
+
+            <CollectionView Grid.RowSpan="5" HeightRequest="100"
+                            ItemsSource="{Binding Filters, Source={Reference pipeline}}"
+                            SelectionMode="Single" SelectedItem="{Binding SelectedFilter}">
+                <CollectionView.Header>
+                    <BoxView />
+                </CollectionView.Header>
+                <CollectionView.ItemTemplate>
+                    <demos:FilterDataTemplateSelector>
+                        <demos:FilterDataTemplateSelector.Unknown>
+                            <Label Text="{Binding .}" VerticalTextAlignment="Center" />
+                        </demos:FilterDataTemplateSelector.Unknown>
+                        <demos:FilterDataTemplateSelector.Templates>
+                            <demos:FilterDataTemplate FilterType="{x:Type media:SKBlurFilter}">
+                                <ContentView Style="{StaticResource FilterItemStyle}">
+                                    <Label VerticalTextAlignment="Center">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Blur (" />
+                                                <Span Text="{Binding SigmaX, StringFormat='{}{0:0.##}'}" />
+                                                <Span Text=", " />
+                                                <Span Text="{Binding SigmaY, StringFormat='{}{0:0.##}'}" />
+                                                <Span Text=")" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </ContentView>
+                            </demos:FilterDataTemplate>
+                            <demos:FilterDataTemplate FilterType="{x:Type media:SKHighContrastFilter}">
+                                <ContentView Style="{StaticResource FilterItemStyle}">
+                                    <Label VerticalTextAlignment="Center">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="High Contrast (" />
+                                                <Span Text="{Binding Factor, StringFormat='{}{0:0.##}'}" />
+                                                <Span Text=")" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </ContentView>
+                            </demos:FilterDataTemplate>
+                            <demos:FilterDataTemplate FilterType="{x:Type media:SKSepiaFilter}">
+                                <ContentView Style="{StaticResource FilterItemStyle}">
+                                    <Label Text="Sepia" VerticalTextAlignment="Center" />
+                                </ContentView>
+                            </demos:FilterDataTemplate>
+                            <demos:FilterDataTemplate FilterType="{x:Type media:SKInvertFilter}">
+                                <ContentView Style="{StaticResource FilterItemStyle}">
+                                    <Label Text="Invert" VerticalTextAlignment="Center" />
+                                </ContentView>
+                            </demos:FilterDataTemplate>
+                        </demos:FilterDataTemplateSelector.Templates>
+                    </demos:FilterDataTemplateSelector>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="＋" Grid.Row="0" Grid.Column="1" />
+            <Button Text="▲" Grid.Row="1" Grid.Column="1" />
+            <Button Text="▼" Grid.Row="2" Grid.Column="1" />
+
+        </Grid>
+
+        <Label Text="Options" FontAttributes="Bold" />
+
+        <StackLayout Spacing="6">
+
+            <Label Text="{Binding SelectedFilter}" />
+
+            <Slider x:Name="sigmaXSlider" Minimum="0" Maximum="10" Value="{Binding BlurSigma}" />
+
+            <Slider x:Name="sigmaYSlider" Minimum="0" Maximum="10" Value="5" />
+
+            <Slider x:Name="highContrastSlider" Minimum="-1" Maximum="1" Value="0" />
+
+        </StackLayout>
+
+    </StackLayout>
+</ContentPage>

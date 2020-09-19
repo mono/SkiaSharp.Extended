@@ -16,6 +16,13 @@ namespace SkiaSharp.Extended.UI.Controls
 			null,
 			propertyChanged: OnPipelineChanged);
 
+		public static readonly BindableProperty AspectProperty = BindableProperty.Create(
+			nameof(Aspect),
+			typeof(Aspect),
+			typeof(SKFilteredImage),
+			Aspect.AspectFit,
+			propertyChanged: OnAspectChanged);
+
 		private (SKImageInfo Info, SKSurface? Surface) tempSurface1;
 		private (SKImageInfo Info, SKSurface? Surface) tempSurface2;
 
@@ -33,6 +40,12 @@ namespace SkiaSharp.Extended.UI.Controls
 		{
 			get => (SKFilterPipeline?)GetValue(PipelineProperty);
 			set => SetValue(PipelineProperty, value);
+		}
+
+		public Aspect Aspect
+		{
+			get => (Aspect)GetValue(AspectProperty);
+			set => SetValue(AspectProperty, value);
 		}
 
 		protected override void OnApplyTemplate()
@@ -131,9 +144,16 @@ namespace SkiaSharp.Extended.UI.Controls
 
 			if (Pipeline?.Image is SKImage image)
 			{
-				var rect = viewRect.AspectFit(new SKSizeI(image.Width, image.Height));
+				var imageSize = new SKSizeI(image.Width, image.Height);
+				var rect = Aspect switch
+				{
+					Aspect.AspectFit => viewRect.AspectFit(imageSize),
+					Aspect.AspectFill => viewRect.AspectFill(imageSize),
+					Aspect.Fill => viewRect,
+					_ => throw new ArgumentOutOfRangeException(nameof(Aspect)),
+				};
 
-				if (Pipeline?.Filters?.Count > 0)
+				if (Pipeline?.Filters?.Count > 0 && Pipeline?.IsEnabled == true)
 				{
 					var enabled = new List<SKFilter>(Pipeline.Filters.Count);
 					foreach (var filter in Pipeline.Filters)
@@ -209,6 +229,13 @@ namespace SkiaSharp.Extended.UI.Controls
 
 			void OnFilterChanged(object sender, SKFilterChangedEventArgs e) =>
 				view.InvalidateSurface();
+		}
+
+		private static void OnAspectChanged(BindableObject bindable, object oldValue, object newValue)
+		{
+			var view = (SKFilteredImage)bindable;
+
+			view.InvalidateSurface();
 		}
 
 		private void InvalidateSurface()
