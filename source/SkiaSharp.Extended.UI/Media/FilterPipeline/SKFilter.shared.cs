@@ -8,7 +8,7 @@ namespace SkiaSharp.Extended.UI.Media
 		public static readonly BindableProperty IsEnabledProperty = BindableProperty.Create(
 			nameof(IsEnabled),
 			typeof(bool),
-			typeof(SKBlurFilter),
+			typeof(SKFilter),
 			true,
 			propertyChanged: OnFilterChanged);
 

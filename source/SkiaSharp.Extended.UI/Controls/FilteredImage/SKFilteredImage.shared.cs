@@ -153,20 +153,14 @@ namespace SkiaSharp.Extended.UI.Controls
 					_ => throw new ArgumentOutOfRangeException(nameof(Aspect)),
 				};
 
-				if (Pipeline?.Filters?.Count > 0 && Pipeline?.IsEnabled == true)
+				var enabledFilters = GetEnabledFilters();
+				if (enabledFilters?.Count > 0)
 				{
-					var enabled = new List<SKFilter>(Pipeline.Filters.Count);
-					foreach (var filter in Pipeline.Filters)
+					if (enabledFilters.Count == 1)
 					{
-						if (filter.IsEnabled)
-							enabled.Add(filter);
+						canvas.DrawImage(image, rect, enabledFilters[0].GetPaint());
 					}
-
-					if (enabled.Count == 1)
-					{
-						canvas.DrawImage(image, rect, enabled[0].GetPaint());
-					}
-					else if (enabled.Count >= 2)
+					else if (enabledFilters.Count >= 2)
 					{
 						EnsureTemporarySurfaces(rect.Size);
 
@@ -175,9 +169,9 @@ namespace SkiaSharp.Extended.UI.Controls
 						var prevSurface = tempSurface2.Surface!;
 						var surface = tempSurface1.Surface!;
 
-						for (var i = 0; i < enabled.Count; i++)
+						for (var i = 0; i < enabledFilters.Count; i++)
 						{
-							var filter = enabled[i];
+							var filter = enabledFilters[i];
 							var paint = filter.GetPaint();
 
 							var tempCanvas = surface.Canvas;
@@ -202,6 +196,33 @@ namespace SkiaSharp.Extended.UI.Controls
 					canvas.DrawImage(image, rect);
 				}
 			}
+		}
+
+		private List<SKFilter>? GetEnabledFilters()
+		{
+			if (Pipeline?.Filters == null || Pipeline?.IsEnabled != true)
+				return null;
+
+			List<SKFilter>? enabled = null;
+
+			var count = Pipeline.Filters.Count;
+			if (count > 0)
+			{
+				enabled = new List<SKFilter>(count);
+				foreach (var filter in Pipeline.Filters)
+				{
+					if (filter.IsEnabled)
+						enabled.Add(filter);
+				}
+			}
+
+			return enabled;
+		}
+
+		private void InvalidateSurface()
+		{
+			canvasView?.InvalidateSurface();
+			glView?.InvalidateSurface();
 		}
 
 		private static void OnPipelineChanged(BindableObject bindable, object? oldValue, object? newValue)
@@ -236,12 +257,6 @@ namespace SkiaSharp.Extended.UI.Controls
 			var view = (SKFilteredImage)bindable;
 
 			view.InvalidateSurface();
-		}
-
-		private void InvalidateSurface()
-		{
-			canvasView?.InvalidateSurface();
-			glView?.InvalidateSurface();
 		}
 	}
 }

@@ -7,7 +7,7 @@ namespace SkiaSharp.Extended.UI.Media
 		public static readonly BindableProperty FactorProperty = BindableProperty.Create(
 			nameof(Factor),
 			typeof(double),
-			typeof(SKBlurFilter),
+			typeof(SKHighContrastFilter),
 			0.0,
 			propertyChanged: OnFilterChanged);
 

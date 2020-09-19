@@ -12,6 +12,8 @@
             <converters:RoundToIntConverter x:Key="RoundToInt" />
             <converters:RoundToConverter x:Key="RoundTo" />
             <converters:DebugConverter x:Key="Debug" />
+            <converters:EnabledOpacityConverter x:Key="EnabledOpacity" />
+            <converters:EnabledDisabledConverter x:Key="EnabledDisabled" />
 
             <Style TargetType="Page" ApplyToDerivedTypes="True">
                 <Setter Property="BackgroundColor" Value="White" />
