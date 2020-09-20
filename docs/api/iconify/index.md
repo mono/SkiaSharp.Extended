@@ -7,6 +7,6 @@
   <p>This set of libraries are deprecated. <br />Use <a href="https://github.com/toptensoftware/RichTextKit">https://github.com/toptensoftware/RichTextKit</a> instead.</p>
 </div>
 
-## Iconify
+## SkiaSharp.Extended.Iconify
 
 [**See more...**](iconify)
