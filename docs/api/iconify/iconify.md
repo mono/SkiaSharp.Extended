@@ -2,7 +2,7 @@
 
 <div class="IMPORTANT">
   <h5>IMPORTANT</h5>
-  <p>This set of libraries are deprecated. Use https://github.com/toptensoftware/RichTextKit instead.</p>
+  <p>This set of libraries are deprecated. <br />Use <a href="https://github.com/toptensoftware/RichTextKit">https://github.com/toptensoftware/RichTextKit</a> instead.</p>
 </div>
 
 A simple way to draw a string that contains icons inline with normal 
