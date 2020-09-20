@@ -1,7 +1,9 @@
 # SkiaSharp.Extended.Iconify
 
-> [!IMPORTANT]
->     This set of libraries are deprecated. Use https://github.com/toptensoftware/RichTextKit instead.
+<div class="IMPORTANT">
+  <h5>IMPORTANT</h5>
+  <p>This set of libraries are deprecated. Use https://github.com/toptensoftware/RichTextKit instead.</p>
+</div>
 
 A simple way to draw a string that contains icons inline with normal 
 characters.
