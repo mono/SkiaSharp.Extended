@@ -2,7 +2,9 @@
 
 **SKPathInterpolation** can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths.
 
-![Path Interpolation][interpolation]
+| Path Interpolation |
+| :----------------: |
+| ![Path Interpolation][interpolation] |
 
 The code is also very simple, just create a `SKPathInterpolation` instance and then ask for each step:
 

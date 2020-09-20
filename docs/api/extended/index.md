@@ -6,25 +6,23 @@
 
 ## SKBlurHash
 
-**SKBlurHash** is a compact representation of a placeholder for an image.
+**SKBlurHash** is a compact representation of a placeholder for an image. [**See more...**](skblurhash)
 
- ![][blur-img]
-
-[See more...](skblurhash)
+| Preview |
+| :-----: |
+| ![BlurHash][blur-img] |
 
 ## SKGeometry
 
-**SKGeometry** provides several helper methods that can be used to create common geometric shapes.
-
-[See more...](skgeometry)
+**SKGeometry** provides several helper methods that can be used to create common geometric shapes. [**See more...**](skgeometry)
 
 ## SKPathInterpolation
 
-SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths.
+SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. [**See more...**](skimagesourceextensions)
 
-[See more...](skimagesourceextensions)
-
-![Path Interpolation][interpolation]
+| Preview |
+| :-----: |
+| ![Path Interpolation][interpolation] |
 
 
 [blur-img]: ../../images/extended/skblurhash/blur-small.png
