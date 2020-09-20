@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>javascript | SkiaSharp.Extended </title>
+    <title>SKPathInterpolation | SkiaSharp.Extended </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="javascript | SkiaSharp.Extended ">
+    <meta name="title" content="SKPathInterpolation | SkiaSharp.Extended ">
     <meta name="generator" content="docfx 2.45.1.0">
     
     <link rel="shortcut icon" href="../../images/logo.ico">
@@ -77,9 +77,32 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
-<h1 id="javascript">javascript</h1>
+<h1 id="skpathinterpolation">SKPathInterpolation</h1>
 
-<p><a href="https://github.com/csharpfritz/TAML/issues/2">Issue 2</a></p>
+<p><strong>SKPathInterpolation</strong> can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths.</p>
+<p><img src="../../images/extended/skpathinterpolation/interpolation.gif" alt="Path Interpolation"></p>
+<p>The code is also very simple, just create a <code>SKPathInterpolation</code> instance and then ask for each step:</p>
+<pre><code class="lang-csharp">var interpolation = new SKPathInterpolation(startPath, endPath);
+
+var halfWayPath = interpolation.Interpolate(0.5f);
+var almostTherePath = interpolation.Interpolate(0.9f);
+</code></pre>
+<h2 id="methods">Methods</h2>
+<p>There are a few helper methods that can be used to create geometric shapes in the <code>SKGeometry</code> type:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Interpolate</strong></td>
+<td style="text-align: left;">Creates a new path interpolated between the start and end paths.</td>
+</tr>
+</tbody>
+</table>
 </article>
           </div>
           

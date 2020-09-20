@@ -13,36 +13,15 @@
       "is_incremental": false
     },
     {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
       "type": "Conceptual",
       "source_relative_path": "api/extended/index.md",
       "output": {
         ".html": {
           "relative_path": "api/extended/index.html",
-          "hash": "qcIr1qmt6Zuvyrmq/2Mn1A=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Conceptual",
-      "source_relative_path": "api/extended/javascript.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/extended/javascript.html",
-          "hash": "l744qQCgVRvxKxPgawIK1Q=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Conceptual",
-      "source_relative_path": "api/extended/python.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/extended/python.html",
-          "hash": "BrJGsJ2HJoBW3YGjx19PAw=="
+          "hash": "f0zcdDmttPmPeabHBspaiQ=="
         }
       },
       "is_incremental": false,
@@ -55,6 +34,30 @@
         ".html": {
           "relative_path": "api/extended/skblurhash.html",
           "hash": "vodUg+Oq+jTcrV3Ns13RnA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/extended/skgeometry.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/extended/skgeometry.html",
+          "hash": "Db5fnv6LiNdYp+dVD/5XqQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/extended/skpathinterpolation.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/extended/skpathinterpolation.html",
+          "hash": "BJAMhpH9qtx+ZgTUr7bRIw=="
         }
       },
       "is_incremental": false,
@@ -117,7 +120,7 @@
       "output": {
         ".html": {
           "relative_path": "api/index.html",
-          "hash": "2yrouPMVW/yzR5unuRe0dQ=="
+          "hash": "Lqh4W6/NLsPJNN+Vq2O6pw=="
         }
       },
       "is_incremental": false,
@@ -177,7 +180,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "aU1CEZ0h1TEyK4SAzQ4WYw=="
+          "hash": "a0MaznhjPuI1wo3QOTJYGw=="
         }
       },
       "is_incremental": false,
@@ -197,35 +200,23 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "api/ui/javascript.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/ui/javascript.html",
-          "hash": "Yezxcd3XYCy6HJjljE885g=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Conceptual",
-      "source_relative_path": "api/ui/python.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/ui/python.html",
-          "hash": "wOM9X6MxkzX/UPbLL2ocfA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Conceptual",
       "source_relative_path": "api/ui/skconfettiview.md",
       "output": {
         ".html": {
           "relative_path": "api/ui/skconfettiview.html",
-          "hash": "PH1OYL9wwi+ZjNC/d1ptew=="
+          "hash": "9ABzgqVuGTYgCkUF+Mh3YQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/ui/skimagesourceextensions.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/ui/skimagesourceextensions.html",
+          "hash": "RA9CC27r2CzxMd4VHwcFUg=="
         }
       },
       "is_incremental": false,
@@ -233,10 +224,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "images/extended/PathInterpolation.gif",
+      "source_relative_path": "images/extended/skblurhash/blur-small.png",
       "output": {
         "resource": {
-          "relative_path": "images/extended/PathInterpolation.gif"
+          "relative_path": "images/extended/skblurhash/blur-small.png"
         }
       },
       "is_incremental": false,
@@ -270,6 +261,17 @@
       "output": {
         "resource": {
           "relative_path": "images/extended/skblurhash/logo.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/extended/skpathinterpolation/interpolation.gif",
+      "output": {
+        "resource": {
+          "relative_path": "images/extended/skpathinterpolation/interpolation.gif"
         }
       },
       "is_incremental": false,
@@ -377,17 +379,17 @@
         "full_build_reason_code": "NoAvailableBuildCache"
       },
       "processors": {
-        "ConceptualDocumentProcessor": {
-          "can_incremental": false,
-          "incrementalPhase": "build",
-          "total_file_count": 18,
-          "skipped_file_count": 0
-        },
         "ResourceDocumentProcessor": {
           "can_incremental": false,
           "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build",
           "total_file_count": 0,
+          "skipped_file_count": 0
+        },
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 17,
           "skipped_file_count": 0
         },
         "TocDocumentProcessor": {

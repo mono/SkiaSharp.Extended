@@ -90,9 +90,9 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: center;"><img src="https://raw.githubusercontent.com/mono/SkiaSharp.Extended/main/images/controls/skconfettiview/top-stream.gif" alt=""></td>
-<td style="text-align: center;"><img src="https://raw.githubusercontent.com/mono/SkiaSharp.Extended/main/images/controls/skconfettiview/center-burst.gif" alt=""></td>
-<td style="text-align: center;"><img src="https://raw.githubusercontent.com/mono/SkiaSharp.Extended/main/images/controls/skconfettiview/sides-spray.gif" alt=""></td>
+<td style="text-align: center;"><img src="../../images/ui/controls/skconfettiview/top-stream.gif" alt=""></td>
+<td style="text-align: center;"><img src="../../images/ui/controls/skconfettiview/center-burst.gif" alt=""></td>
+<td style="text-align: center;"><img src="../../images/ui/controls/skconfettiview/sides-spray.gif" alt=""></td>
 </tr>
 </tbody>
 </table>
@@ -275,6 +275,7 @@
 </tr>
 </tbody>
 </table>
+<h2 id="helper-emitters">Helper Emitters</h2>
 <p>To make creating emitters easier, there are a few static helper methods on the <code>SKConfettiEmitter</code> type:</p>
 <table>
 <thead>
@@ -331,6 +332,7 @@
 </tr>
 </tbody>
 </table>
+<h2 id="advanced-shapes">Advanced Shapes</h2>
 <p>In addition to those, there is also a way to have custom paths as a shape:</p>
 <table>
 <thead>
@@ -354,6 +356,7 @@
 </tbody>
 </table>
 <p>When making a custom shape, the instance is re-used, so all state needs to be set before drawing. The provided <code>SKPaint</code> instance is reset, so any properties set needs to be re-set.</p>
+<h2 id="custom-shapes">Custom Shapes</h2>
 <pre><code class="lang-csharp">public class ConfettiStar : SKConfettiShape
 {
 	private readonly int points;
