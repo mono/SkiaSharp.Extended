@@ -14,11 +14,11 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "api/extended/dotnet.md",
+      "source_relative_path": "api/extended/blurhash.md",
       "output": {
         ".html": {
-          "relative_path": "api/extended/dotnet.html",
-          "hash": "i3HXfZtCYQvxRbWNR4M75Q=="
+          "relative_path": "api/extended/blurhash.html",
+          "hash": "HPZ3YpUip/3/C8ca7c/hDw=="
         }
       },
       "is_incremental": false,
@@ -109,12 +109,15 @@
       "version": ""
     },
     {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
       "type": "Conceptual",
       "source_relative_path": "api/index.md",
       "output": {
         ".html": {
           "relative_path": "api/index.html",
-          "hash": "FRB4WGZFi7kL7tFefEpDcg=="
+          "hash": "2yrouPMVW/yzR5unuRe0dQ=="
         }
       },
       "is_incremental": false,
@@ -174,7 +177,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "QfLIn+wgdyvyvTbsgy7N7w=="
+          "hash": "tq7lzUk2oJcIVGLZMqv1+g=="
         }
       },
       "is_incremental": false,
@@ -230,6 +233,61 @@
     },
     {
       "type": "Resource",
+      "source_relative_path": "images/extended/PathInterpolation.gif",
+      "output": {
+        "resource": {
+          "relative_path": "images/extended/PathInterpolation.gif"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/extended/skblurhash/blur.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/extended/skblurhash/blur.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/extended/skblurhash/images.json",
+      "output": {
+        "resource": {
+          "relative_path": "images/extended/skblurhash/images.json"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/extended/skblurhash/logo.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/extended/skblurhash/logo.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/iconify/FontAwesome.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/iconify/FontAwesome.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
       "source_relative_path": "images/logo.ico",
       "output": {
         "resource": {
@@ -245,6 +303,39 @@
       "output": {
         "resource": {
           "relative_path": "images/logo.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/ui/controls/skconfettiview/center-burst.gif",
+      "output": {
+        "resource": {
+          "relative_path": "images/ui/controls/skconfettiview/center-burst.gif"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/ui/controls/skconfettiview/sides-spray.gif",
+      "output": {
+        "resource": {
+          "relative_path": "images/ui/controls/skconfettiview/sides-spray.gif"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/ui/controls/skconfettiview/top-stream.gif",
+      "output": {
+        "resource": {
+          "relative_path": "images/ui/controls/skconfettiview/top-stream.gif"
         }
       },
       "is_incremental": false,
