@@ -15,13 +15,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: docfx-action
+      - name: DocFX
         uses: nikeee/docfx-action@v0.1.0
         with:
           args: docs/docfx.json
 
       - name: Deploy
-        # if: github.ref == 'ref/head/main'
+        if: github.ref == 'ref/head/main'
         uses: peaceiris/actions-gh-pages@v3.6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
