@@ -29,18 +29,3 @@ Some useful extensions for the abstract `ImageSource` type. [**See more...**](ui
 ### SKConfettiView
 
 The confetti view is a container for one or more systems of confetti particles. [**See more...**](ui/skconfettiview)
-
-# Deprecated / Unmaintained Libraries
-
-<div class="IMPORTANT">
-  <h5>IMPORTANT</h5>
-  <p>Some parts of these libraries are deprecated.</p>
-</div>
-
-## SkiaSharp.Extended.Iconify
-
-[**See more...**](iconify/index)
-
-## SkiaSharp.Extended.Svg
-
-[**See more...**](svg/index)
