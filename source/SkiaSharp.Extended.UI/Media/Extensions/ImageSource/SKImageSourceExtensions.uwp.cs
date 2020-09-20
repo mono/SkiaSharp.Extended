@@ -7,7 +7,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Platform.UWP;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
 
-namespace SkiaSharp.Extended.UI.Extensions
+namespace SkiaSharp.Extended.UI.Media.Extensions
 {
 	public static partial class SKImageSourceExtensions
 	{

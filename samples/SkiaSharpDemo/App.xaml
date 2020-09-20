@@ -11,7 +11,14 @@
 
             <converters:RoundToIntConverter x:Key="RoundToInt" />
             <converters:RoundToConverter x:Key="RoundTo" />
+            <converters:DebugConverter x:Key="Debug" />
+            <converters:EnabledOpacityConverter x:Key="EnabledOpacity" />
+            <converters:EnabledDisabledConverter x:Key="EnabledDisabled" />
 
+            <Style TargetType="Page" ApplyToDerivedTypes="True">
+                <Setter Property="BackgroundColor" Value="White" />
+            </Style>
+            
             <Style TargetType="StackLayout">
                 <Setter Property="Spacing" Value="0" />
                 <Setter Property="Padding" Value="0" />
@@ -20,6 +27,12 @@
                 <Setter Property="RowSpacing" Value="0" />
                 <Setter Property="ColumnSpacing" Value="0" />
                 <Setter Property="Padding" Value="0" />
+            </Style>
+
+            <Style TargetType="Slider">
+                <Setter Property="MinimumTrackColor" Value="Accent" />
+                <Setter Property="MaximumTrackColor" Value="Gray" />
+                <Setter Property="ThumbColor" Value="Accent" />
             </Style>
 
             <!-- OptionButton styles -->

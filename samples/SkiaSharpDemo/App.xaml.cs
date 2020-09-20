@@ -12,7 +12,7 @@ namespace SkiaSharpDemo
 	{
 		public App()
 		{
-			Device.SetFlags(new[] { "CarouselView_Experimental" });
+			Device.SetFlags(new[] { "CarouselView_Experimental", "SwipeView_Experimental" });
 
 			InitializeComponent();
 

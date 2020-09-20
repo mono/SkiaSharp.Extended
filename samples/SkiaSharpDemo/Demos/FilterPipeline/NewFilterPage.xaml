@@ -1,0 +1,42 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SkiaSharpDemo.Demos.NewFilterPage"
+             Title="New Filter">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <Style TargetType="BoxView">
+                <Setter Property="HeightRequest" Value="1" />
+                <Setter Property="Color" Value="LightGray" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <StackLayout>
+
+        <Label Text="Pick a filter type to add:" FontAttributes="Bold" Margin="12" />
+
+        <CollectionView x:Name="collectionView"
+                        ItemsSource="{Binding PotentialFilters}"
+                        SelectionMode="Single"
+                        SelectionChangedCommand="{Binding PickedCommand}"
+                        SelectionChangedCommandParameter="{Binding SelectedItem.Value, Source={x:Reference collectionView}}"
+                        VerticalOptions="FillAndExpand">
+            <CollectionView.Header>
+                <BoxView />
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout>
+                        <Label Text="{Binding Key}" Padding="12" />
+                        <BoxView />
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </StackLayout>
+
+</ContentPage>

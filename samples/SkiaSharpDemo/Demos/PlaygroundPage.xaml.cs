@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SkiaSharp;
+using SkiaSharp.Extended.UI;
+using SkiaSharp.Extended.UI.Media;
+using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
 namespace SkiaSharpDemo.Demos

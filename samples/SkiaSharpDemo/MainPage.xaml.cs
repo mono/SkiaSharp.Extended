@@ -49,6 +49,13 @@ namespace SkiaSharpDemo
 					},
 					new Demo
 					{
+						Title = "Filter Image",
+						Description = "Making your own instant \"gram\" app... view... thing... Yeah!",
+						PageType = typeof(FilterPipelinePage),
+						Color = Color.Aquamarine,
+					},
+					new Demo
+					{
 						Title = "ToImage",
 						Description = "You have that ImageSource and you really want an actual image... What do you do? Well, you ToSKImageAsync that puppy!",
 						PageType = typeof(ImageSourceToImagePage),
