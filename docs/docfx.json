@@ -3,16 +3,12 @@
     "content": [
       {
         "files": [
-          "api/**.yml",
-          "api/index.md"
-        ]
-      },
-      {
-        "files": [
-          "articles/**.md",
-          "articles/**/toc.yml",
+          "api/**/*.md",
+          "api/**/toc.yml",
+          "guides/**/*.md",
+          "guides/**/toc.yml",
           "toc.yml",
-          "*.md"
+          "index.md"
         ]
       }
     ],
@@ -25,9 +21,6 @@
     ],
     "overwrite": [
       {
-        "files": [
-          "apidoc/**.md"
-        ],
         "exclude": [
           "obj/**",
           "_site/**"
@@ -41,17 +34,23 @@
       "default",
       "templates/material"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "ExtractSearchIndex"
+    ],
     "markdownEngineName": "markdig",
     "noLangKeyword": false,
     "keepFileLink": false,
     "cleanupCacheHistory": false,
     "disableGitFeatures": false,
     "globalMetadata": {
-      "_appTitle": "TAML",
+      "_appTitle": "SkiaSharp.Extended",
       "_enableSearch": true,
-      "_appLogoPath": "images/FritzAndFriends.png",
-      "_appFaviconPath": "images/FritzAndFriends.ico"
+      "_appLogoPath": "images/logo.png",
+      "_appFaviconPath": "images/logo.ico",
+      "_gitContribute": {
+        "repo": "https://github.com/mono/SkiaSharp.Extended"
+      },
+      "_gitUrlPattern": "github"
     }
   }
 }

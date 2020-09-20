@@ -1,3 +1,1 @@
-# Official Documentation for TAML - Tab Annotated Markup Language
-
-### Coming Soon!
+View the docs online at https://mono.github.io/SkiaSharp.Extended
