@@ -14,11 +14,11 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "README.md",
+      "source_relative_path": "api/README.md",
       "output": {
         ".html": {
-          "relative_path": "README.html",
-          "hash": "3vywA6BdVnwG2tvcUHxAew=="
+          "relative_path": "api/README.html",
+          "hash": "5McOlAUG4v8La+CwI7wOew=="
         }
       },
       "is_incremental": false,
@@ -26,11 +26,11 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "articles/README.md",
+      "source_relative_path": "api/interpreters/dotnet.md",
       "output": {
         ".html": {
-          "relative_path": "articles/README.html",
-          "hash": "dhAJN6XlecLK/TB1ut+WYg=="
+          "relative_path": "api/interpreters/dotnet.html",
+          "hash": "ZcSf/J7LdKVMTWq4qLqASQ=="
         }
       },
       "is_incremental": false,
@@ -38,11 +38,11 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "articles/interpreters/dotnet.md",
+      "source_relative_path": "api/interpreters/javascript.md",
       "output": {
         ".html": {
-          "relative_path": "articles/interpreters/dotnet.html",
-          "hash": "7s/bdLf/n6bYlc6vjnHDhg=="
+          "relative_path": "api/interpreters/javascript.html",
+          "hash": "3/2FSPeszwb21ZoyCHZkew=="
         }
       },
       "is_incremental": false,
@@ -50,23 +50,11 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "articles/interpreters/javascript.md",
+      "source_relative_path": "api/interpreters/python.md",
       "output": {
         ".html": {
-          "relative_path": "articles/interpreters/javascript.html",
-          "hash": "qzWeIn27Bz4ocnEsX+OicA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Conceptual",
-      "source_relative_path": "articles/interpreters/python.md",
-      "output": {
-        ".html": {
-          "relative_path": "articles/interpreters/python.html",
-          "hash": "311qrgS5Rg8mifigYrckXA=="
+          "relative_path": "api/interpreters/python.html",
+          "hash": "aetGoXUXU5xyYmbsQomLBg=="
         }
       },
       "is_incremental": false,
@@ -74,10 +62,70 @@
     },
     {
       "type": "Toc",
-      "source_relative_path": "articles/toc.yml",
+      "source_relative_path": "api/toc.yml",
       "output": {
         ".html": {
-          "relative_path": "articles/toc.html",
+          "relative_path": "api/toc.html",
+          "hash": "D0zAvzwY9/wvAV+VlZjSGA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/README.html",
+          "hash": "B5V0Lna4ALfbVtT/7OBlbg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/interpreters/dotnet.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/interpreters/dotnet.html",
+          "hash": "TuvCqA30yjHPdIS0+D6Tdw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/interpreters/javascript.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/interpreters/javascript.html",
+          "hash": "AmpwwE08iQFYCHjYpAMnhQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "guides/interpreters/python.md",
+      "output": {
+        ".html": {
+          "relative_path": "guides/interpreters/python.html",
+          "hash": "QRmDrO8LhE2+Owk6Iagk1Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "guides/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "guides/toc.html",
           "hash": "D0zAvzwY9/wvAV+VlZjSGA=="
         }
       },
@@ -86,10 +134,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "images/FritzAndFriends.ico",
+      "source_relative_path": "images/logo.ico",
       "output": {
         "resource": {
-          "relative_path": "images/FritzAndFriends.ico"
+          "relative_path": "images/logo.ico"
         }
       },
       "is_incremental": false,
@@ -97,22 +145,25 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "images/FritzAndFriends.png",
+      "source_relative_path": "images/logo.png",
       "output": {
         "resource": {
-          "relative_path": "images/FritzAndFriends.png"
+          "relative_path": "images/logo.png"
         }
       },
       "is_incremental": false,
       "version": ""
     },
     {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
       "type": "Conceptual",
       "source_relative_path": "index.md",
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "tVg72+dfdd3yyOvoNGskoQ=="
+          "hash": "zPp93FkA/GW9gPMdFlJs3A=="
         }
       },
       "is_incremental": false,
@@ -124,7 +175,7 @@
       "output": {
         ".html": {
           "relative_path": "toc.html",
-          "hash": "eidipDkh4gQgkcABI3X3OQ=="
+          "hash": "rbA2oJnTKqeQsw9vSKkm5g=="
         }
       },
       "is_incremental": false,
@@ -142,17 +193,17 @@
         "full_build_reason_code": "NoAvailableBuildCache"
       },
       "processors": {
-        "ConceptualDocumentProcessor": {
-          "can_incremental": false,
-          "incrementalPhase": "build",
-          "total_file_count": 6,
-          "skipped_file_count": 0
-        },
         "ResourceDocumentProcessor": {
           "can_incremental": false,
           "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build",
           "total_file_count": 0,
+          "skipped_file_count": 0
+        },
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 9,
           "skipped_file_count": 0
         },
         "TocDocumentProcessor": {
