@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>SkiaSharp.Extended.Iconify | SkiaSharp.Extended </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="SkiaSharp.Extended.Iconify | SkiaSharp.Extended ">
+    <meta name="generator" content="docfx 2.45.1.0">
+    
+    <link rel="shortcut icon" href="../../images/logo.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+  </head>  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="skiasharpextendediconify">SkiaSharp.Extended.Iconify</h1>
+
+<div class="IMPORTANT">
+<h5>Important</h5>
+<pre><code>This set of libraries are deprecated. Use https://github.com/toptensoftware/RichTextKit instead.
+</code></pre>
+</div>
+<p>A simple way to draw a string that contains icons inline with normal
+characters.</p>
+<p>For example, if we wanted to draw this string using colored characters
+from FontAwesome (or some other icon font) mixed in with other characters:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Preview</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img src="../../images/iconify/fontawesome.png" alt="FontAwesome"></td>
+</tr>
+</tbody>
+</table>
+<p>To do this using factory SkiaSharp, there would be lots of work that
+needed doing. But, not anymore.</p>
+<p>First, we can use nice templated strings:</p>
+<pre><code class="lang-csharp">var text = &quot;I {{fa-heart-o color=ff0000}} to {{fa-code}} on {{fa-windows color=1BA1E2}}!&quot;;
+</code></pre>
+<p>There are a few things that make this work:</p>
+<ul>
+<li>The <code>{{...}}</code> double curly braces tell the engine that this is a
+special character.</li>
+<li>The first part of the block is CSS class name of the FontAwesome
+icon. In the case of the red heart outline, this is the <code>fa-heart-o</code>.</li>
+<li>The second part is optional, and can be specified to control the
+color <code>color=ff0000</code>. In this case, we are specifying red using
+the hex color code, <code>#FF0000</code>.</li>
+</ul>
+<p>More optional flags may be added later, but right now there is just the
+<code>color</code> flag. This flag can be any value that can be passed to the
+<code>SKColor.Parse</code> method.</p>
+<p>To draw this text, all we have to do is register the icon font in
+app startup, or whenever we need:</p>
+<pre><code class="lang-csharp">SKTextRunLookup.Instance.AddFontAwesome();
+</code></pre>
+<p>Now, we can draw the string anywhere in the app:</p>
+<pre><code class="lang-csharp">// create the paint that represents the default text
+var paint = new SKPaint();
+
+// draw the text, inserting all the FontAwesome characters
+canvas.DrawIconifiedText(text, 10, 100, paint);
+</code></pre>
+<h2 id="supported-icon-fonts">Supported Icon Fonts</h2>
+<p>There are several icon fonts that are currently supported:</p>
+<ul>
+<li><strong>FontAwesome</strong> - <a href="http://fontawesome.io/">http://fontawesome.io/</a></li>
+<li><strong>IonIcons</strong> - <a href="http://ionicons.com/">http://ionicons.com/</a></li>
+<li><strong>Material Design Icons</strong> (community) - <a href="https://materialdesignicons.com/">https://materialdesignicons.com/</a></li>
+<li><strong>Material Icons</strong> (Google) - <a href="https://material.io/icons/">https://material.io/icons/</a></li>
+<li><strong>Meteocons</strong> - <a href="http://www.alessioatzeni.com/meteocons/">http://www.alessioatzeni.com/meteocons/</a></li>
+<li><strong>Simple Line Icons</strong> - <a href="http://simplelineicons.com/">http://simplelineicons.com/</a></li>
+<li><strong>Typicons</strong> - <a href="http://www.typicons.com/">http://www.typicons.com/</a></li>
+<li><strong>WeatherIcons</strong> - <a href="http://weathericons.io/">http://weathericons.io/</a></li>
+</ul>
+<p>These are just what we have now, but it is very simple to add some more.
+All we need is the <code>.ttf</code> font file and some mapping from a name to the
+unicode character.</p>
+<h2 id="advanced">Advanced</h2>
+<p>If we want to control what fonts are available for a specific
+draw operation, we can create a lookup table:</p>
+<pre><code class="lang-csharp">// create the lookup table
+var lookup = new SKTextRunLookup();
+
+// add FontAwesome
+lookup.AddTypeface(new FontAwesomeLookupEntry());
+</code></pre>
+<p>Now that we have our table, we can draw the string:</p>
+<pre><code class="lang-csharp">// create the paint that represents the default text
+var paint = new SKPaint();
+
+// draw the text, inserting all the FontAwesome characters
+canvas.DrawIconifiedText(text, 10, 100, lookup, paint);
+</code></pre>
+<p>For more advanced text substitutions, there is a way to directly
+control the creation of these strings. Instead of just passing a
+string to <code>DrawIconifiedText</code>, we can &quot;cache&quot; or pre-calculate
+this string using <code>SKTextRun</code>:</p>
+<pre><code class="lang-csharp">// create the text runs
+IEnumerable&lt;SKTextRun&gt; runs = SKTextRun.Create(text, lookup);
+
+// draw the text
+canvas.DrawText(runs, 10, 100, paint);
+</code></pre>
+<p>Another way to work with this is to directly create the text runs:</p>
+<pre><code class="lang-csharp">var runs = new [] {
+    new SKTextRun(&quot;I &quot;),
+    new SKTextRun(&quot;\uf08a&quot;) {
+        Color = SKColors.Red,
+        Typeface = SKTypeface.FromFamilyName(&quot;FontAwesome&quot;),
+        TextSize = 50
+    },
+    new SKTextRun(&quot; to &quot;),
+    // ...
+};
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

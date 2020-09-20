@@ -65,47 +65,26 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "api/iconify/dotnet.md",
+      "source_relative_path": "api/iconify/iconify.md",
       "output": {
         ".html": {
-          "relative_path": "api/iconify/dotnet.html",
-          "hash": "WFE0w+aBrWd0zYVGGYj2rA=="
+          "relative_path": "api/iconify/iconify.html",
+          "hash": "gsLo1cqvYm9I19hAmYkDyw=="
         }
       },
       "is_incremental": false,
       "version": ""
     },
     {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
       "type": "Conceptual",
       "source_relative_path": "api/iconify/index.md",
       "output": {
         ".html": {
           "relative_path": "api/iconify/index.html",
-          "hash": "P+h3REl73hz3eTCk+sVyPQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Conceptual",
-      "source_relative_path": "api/iconify/javascript.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/iconify/javascript.html",
-          "hash": "Zk3MgMjB8D5AGjvOUfloog=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Conceptual",
-      "source_relative_path": "api/iconify/python.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/iconify/python.html",
-          "hash": "GAS33Ooal0bzmdoAzOttaw=="
+          "hash": "Xk4tgRuIobBzpCwISTUOww=="
         }
       },
       "is_incremental": false,
@@ -180,7 +159,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "a0MaznhjPuI1wo3QOTJYGw=="
+          "hash": "4zFX1Ut7iAO7jQoC95yrbQ=="
         }
       },
       "is_incremental": false,
@@ -279,10 +258,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "images/iconify/FontAwesome.png",
+      "source_relative_path": "images/iconify/fontawesome.png",
       "output": {
         "resource": {
-          "relative_path": "images/iconify/FontAwesome.png"
+          "relative_path": "images/iconify/fontawesome.png"
         }
       },
       "is_incremental": false,
@@ -361,7 +340,7 @@
       "output": {
         ".html": {
           "relative_path": "toc.html",
-          "hash": "anFeaAStW07Nt7KX+KZSrQ=="
+          "hash": "LUIztZDqer144MssoN8WAQ=="
         }
       },
       "is_incremental": false,
@@ -379,6 +358,12 @@
         "full_build_reason_code": "NoAvailableBuildCache"
       },
       "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 15,
+          "skipped_file_count": 0
+        },
         "ResourceDocumentProcessor": {
           "can_incremental": false,
           "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
@@ -391,12 +376,6 @@
           "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build",
           "total_file_count": 0,
-          "skipped_file_count": 0
-        },
-        "ConceptualDocumentProcessor": {
-          "can_incremental": false,
-          "incrementalPhase": "build",
-          "total_file_count": 17,
           "skipped_file_count": 0
         }
       }
