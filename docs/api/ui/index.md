@@ -2,7 +2,7 @@
 
 # Overview
 
-**SkiaSharp.Extended.Controls** is a collection some great Xamarin.Forms controls
+**SkiaSharp.Extended.UI** is a collection some great Xamarin.Forms controls
 that may be useful to some apps.
 
 ## SKImageSourceExtensions

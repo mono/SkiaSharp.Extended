@@ -18,7 +18,8 @@ interesting projects. [**See more...**](api/extended/index)
 
 # SkiaSharp.Extended.UI
 
-[**See more...**](api/ui/index)
+**SkiaSharp.Extended.UI** is a collection some great Xamarin.Forms controls
+that may be useful to some apps. [**See more...**](api/ui/index)
 
 ## SKImageSourceExtensions
 
