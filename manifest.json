@@ -177,19 +177,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "/OO99uGnx2A6BFiH6VbZ/g=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Conceptual",
-      "source_relative_path": "api/ui/dotnet.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/ui/dotnet.html",
-          "hash": "rHiUtHpIM33dnKoSnSiGoA=="
+          "hash": "aU1CEZ0h1TEyK4SAzQ4WYw=="
         }
       },
       "is_incremental": false,
@@ -226,6 +214,18 @@
         ".html": {
           "relative_path": "api/ui/python.html",
           "hash": "wOM9X6MxkzX/UPbLL2ocfA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/ui/skconfettiview.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/ui/skconfettiview.html",
+          "hash": "PH1OYL9wwi+ZjNC/d1ptew=="
         }
       },
       "is_incremental": false,
@@ -377,17 +377,17 @@
         "full_build_reason_code": "NoAvailableBuildCache"
       },
       "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 18,
+          "skipped_file_count": 0
+        },
         "ResourceDocumentProcessor": {
           "can_incremental": false,
           "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build",
           "total_file_count": 0,
-          "skipped_file_count": 0
-        },
-        "ConceptualDocumentProcessor": {
-          "can_incremental": false,
-          "incrementalPhase": "build",
-          "total_file_count": 18,
           "skipped_file_count": 0
         },
         "TocDocumentProcessor": {
