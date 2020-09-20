@@ -2,6 +2,6 @@
 
 ## Interpreters
 
-- [dotNET](interpreters/dotnet.md)
-- [javascript](interpreters/javascript.md)
-- [python](interpreters/python.md)
+- [dotNET](extended/dotnet.md)
+- [javascript](extended/javascript.md)
+- [python](extended/python.md)
