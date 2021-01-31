@@ -17,6 +17,14 @@ interesting projects:
  - ~~[SkiaSharp.Extended.Svg][svg]~~ _(lightweight SVG loader)_  
    Use https://github.com/wieslawsoltes/Svg.Skia instead.
 
+## Using
+
+There is an early access feed that you can use to get the latest and greatest, before it goes out to the public:
+
+```
+https://aka.ms/skiasharp-eap/index.json
+```
+
 ## Building
 
 To build the projects and samples, just open `SkiaSharp.Extended.sln` 
