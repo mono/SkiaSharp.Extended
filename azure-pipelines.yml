@@ -68,6 +68,9 @@ stages:
               displayName: Install the Cake .NET tool
             - pwsh: dotnet cake
               displayName: Build everything
+            - publish: output
+              artifact: windows
+              displayName: Upload Logs
 
   # Only build the NuGets on the release pipeline
   - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
@@ -89,12 +92,16 @@ stages:
               displayName: Install the Cake .NET tool
             - pwsh: dotnet cake --target=pack
               displayName: Pack NuGets
+            - publish: output
+              artifact: nuget
+              displayName: Upload NuGets
     - stage: signing
       displayName: Sign NuGets
       dependsOn: pack
       jobs:
         - template: sign-artifacts/jobs/v2.yml@internal-templates
           parameters:
+            usePipelineArtifactTasks: true
             ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
               signType: 'Real'
             ${{ if not(eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
