@@ -1,4 +1,4 @@
-﻿namespace SkiaSharp.Extended.UI.Controls
+﻿namespace SkiaSharp.Extended.UI.Forms.Controls
 {
 	public enum SKConfettiEmitterSide
 	{

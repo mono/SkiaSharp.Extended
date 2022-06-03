@@ -1,36 +1,25 @@
-var TARGET = Argument("t", Argument("target", "ci"));
-
+var TARGET = Argument("t", Argument("target", "Default"));
 var PREVIEW_LABEL = Argument ("previewLabel", EnvironmentVariable ("PREVIEW_LABEL") ?? "preview");
 var BUILD_NUMBER = EnvironmentVariable ("BUILD_NUMBER") ?? "0";
 var GIT_SHA = Argument ("gitSha", EnvironmentVariable ("GIT_SHA") ?? "");
 var GIT_BRANCH_NAME = Argument ("gitBranch", EnvironmentVariable ("GIT_BRANCH_NAME") ?? "");
 
-Task("libs")
-	.WithCriteria(Context.Environment.Platform.Family != PlatformFamily.Linux)
+Task("build")
 	.Does(() =>
 {
 	var settings = new MSBuildSettings()
-		.EnableBinaryLogger("./output/binlogs/libs.binlog")
+		.EnableBinaryLogger("./output/binlogs/build.binlog")
 		.SetConfiguration("Release")
 		.WithRestore();
 
-	var sln = IsRunningOnWindows()
-		? "./SkiaSharp.Extended.sln"
-		: "./SkiaSharp.Extended.Unix.sln";
-
-	MSBuild(sln, settings);
+	MSBuild("SkiaSharp.Extended.sln", settings);
 });
 
-Task("nugets")
-	.IsDependentOn("libs")
+Task("pack")
 	.Does(() =>
 {
-	var sln = IsRunningOnWindows()
-		? "./source/Source.sln"
-		: "./source/Source.Unix.sln";
-
-	MSBuild(sln, new MSBuildSettings()
-		.EnableBinaryLogger("./output/binlogs/nugets.binlog")
+	MSBuild("SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
+		.EnableBinaryLogger("./output/binlogs/pack.binlog")
 		.SetConfiguration("Release")
 		.WithRestore()
 		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/")).FullPath)
@@ -41,8 +30,8 @@ Task("nugets")
 		preview += $".{BUILD_NUMBER}";
 	}
 
-	MSBuild(sln, new MSBuildSettings()
-		.EnableBinaryLogger("./output/binlogs/nugets-preview.binlog")
+	MSBuild("SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
+		.EnableBinaryLogger("./output/binlogs/pack-preview.binlog")
 		.SetConfiguration("Release")
 		.WithRestore()
 		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/")).FullPath)
@@ -51,7 +40,6 @@ Task("nugets")
 });
 
 Task("tests")
-	.IsDependentOn("libs")
 	.Does(() =>
 {
 	var failed = 0;
@@ -79,27 +67,9 @@ Task("tests")
 		throw new Exception($"{failed} tests have failed.");
 });
 
-Task("samples")
-	.WithCriteria(Context.Environment.Platform.Family != PlatformFamily.Linux)
-	.IsDependentOn("nugets")
-	.Does(() =>
-{
-	var settings = new MSBuildSettings()
-		.EnableBinaryLogger("./output/binlogs/samples.binlog")
-		.SetConfiguration("Release")
-		.WithRestore();
-
-	var sln = IsRunningOnWindows()
-		? "./SkiaSharp.Extended.sln"
-		: "./SkiaSharp.Extended.Unix.sln";
-
-	MSBuild(sln, settings);
-});
-
-Task("ci")
-	.IsDependentOn("libs")
-	.IsDependentOn("nugets")
-	.IsDependentOn("tests")
-	.IsDependentOn("samples");
+Task("Default")
+	.IsDependentOn("build")
+	.IsDependentOn("pack")
+	.IsDependentOn("tests");
 
 RunTarget(TARGET);

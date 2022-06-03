@@ -2,36 +2,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <PackageVersion Condition=" '$(Version)' != '' and '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
   </PropertyGroup>
-
-  <!--
-    ===================================================================================================================
-    _SignAssembly
-
-    Sign the assembly using sn.
-    ===================================================================================================================
-  -->
-  <Target Name="_SignAssembly" AfterTargets="CoreCompile" Condition=" '$(OS)' != 'Windows_NT' and '$(SignAssembly)' == 'True' ">
-    <Exec Command="sn -R @(IntermediateAssembly -> '&quot;%(Identity)&quot;') &quot;$(AssemblyOriginatorKeyFile)&quot;" />
-  </Target>
-
-  <!--
-    ===================================================================================================================
-    _AdjustContents
-
-    Make things that are refs, refs.
-    ===================================================================================================================
-  -->
-  <Target Name="_AdjustContents" BeforeTargets="_GetPackageFiles" Condition=" '$(ReferenceAssemblyTargetFramework)' != '' ">
-    <ItemGroup>
-      <!-- add to refs -->
-      <None Include="@(_BuildOutputInPackage)" PackagePath="ref/%(_BuildOutputInPackage.TargetFramework)" Pack="true" />
-      <!-- remove libs -->
-      <_BuildOutputInPackage Remove="@(_BuildOutputInPackage)" Condition="'%(_BuildOutputInPackage.TargetFramework)' == '$(ReferenceAssemblyTargetFramework)'" />
-      <!-- remove pdbs -->
-      <_TargetPathsToSymbols Remove="@(_TargetPathsToSymbols)" Condition="'%(_TargetPathsToSymbols.TargetFramework)' == '$(ReferenceAssemblyTargetFramework)'" />
-    </ItemGroup>
-  </Target>
 
 </Project>

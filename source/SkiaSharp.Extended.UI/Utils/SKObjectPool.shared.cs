@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace SkiaSharp.Extended.UI
+namespace SkiaSharp.Extended.UI.Forms
 {
 	internal class SKObjectPool<T>
 	{

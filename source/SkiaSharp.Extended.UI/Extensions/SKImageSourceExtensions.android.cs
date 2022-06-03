@@ -6,7 +6,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.Android;
 
-namespace SkiaSharp.Extended.UI.Extensions
+namespace SkiaSharp.Extended.UI.Forms.Extensions
 {
 	public static partial class SKImageSourceExtensions
 	{

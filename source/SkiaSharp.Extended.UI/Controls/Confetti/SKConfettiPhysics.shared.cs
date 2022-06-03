@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace SkiaSharp.Extended.UI.Controls
+namespace SkiaSharp.Extended.UI.Forms.Controls
 {
 	[TypeConverter(typeof(Converters.SKConfettiPhysicsTypeConverter))]
 	public readonly struct SKConfettiPhysics

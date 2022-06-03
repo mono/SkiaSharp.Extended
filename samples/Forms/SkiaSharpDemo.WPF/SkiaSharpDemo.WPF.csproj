@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <!--
+    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">netcoreapp3.1;net462;</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">net462;</TargetFrameworks>
+    -->
+    <TargetFramework>net462</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <LangVersion>8.0</LangVersion>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HarfBuzzSharp" Version="2.6.1.7" />
+    <PackageReference Include="SkiaSharp" Version="2.80.4" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.80.4" />
+    <PackageReference Include="SkiaSharp.Views.Forms.WPF" Version="2.80.4" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+    <PackageReference Include="Xamarin.Forms.Platform.WPF" Version="5.0.0.2401" />
+    <PackageReference Include="Topten.RichTextKit" Version="0.4.137" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\source\SkiaSharp.Extended.UI.Forms\SkiaSharp.Extended.UI.Forms.csproj" IncludeAssets="none" />
+    <ProjectReference Include="..\..\..\source\SkiaSharp.Extended.UI.Forms.WPF\SkiaSharp.Extended.UI.Forms.WPF.csproj" />
+    <ProjectReference Include="..\SkiaSharpDemo\SkiaSharpDemo.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="**\*.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="logo.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

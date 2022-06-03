@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
-namespace SkiaSharp.Extended.UI.Controls
+namespace SkiaSharp.Extended.UI.Forms.Controls
 {
 	public class SKConfettiSystem : BindableObject
 	{

@@ -1,6 +1,6 @@
 ﻿using Xamarin.Forms;
 
-namespace SkiaSharp.Extended.UI.Controls
+namespace SkiaSharp.Extended.UI.Forms.Controls
 {
 	[TypeConverter(typeof(Converters.SKConfettiEmitterBoundsTypeConverter))]
 	public readonly struct SKConfettiEmitterBounds

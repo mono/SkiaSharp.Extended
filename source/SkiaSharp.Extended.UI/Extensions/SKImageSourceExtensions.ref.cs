@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace SkiaSharp.Extended.UI.Extensions
+namespace SkiaSharp.Extended.UI.Forms.Extensions
 {
 	public static partial class SKImageSourceExtensions
 	{

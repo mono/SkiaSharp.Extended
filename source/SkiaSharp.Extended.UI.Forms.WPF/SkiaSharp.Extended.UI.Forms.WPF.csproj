@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFrameworks>net462;netcoreapp3.1</TargetFrameworks>
+    <UseWpf>true</UseWpf>
+    <AssemblyName>SkiaSharp.Extended.UI.Forms</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended.UI.Forms</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.UI.Forms.WPF</PackageId>
+    <Title>Additional Controls for SkiaSharp.Views.Forms</Title>
+    <Description>This package adds additional controls to SkiaSharp.Views.Forms.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.80.4" />
+    <PackageReference Include="SkiaSharp.Views.Forms.WPF" Version="2.80.4" />
+    <PackageReference Include="Xamarin.Forms.Platform.WPF" Version="5.0.0.2401" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SkiaSharp.Extended\SkiaSharp.Extended.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\SkiaSharp.Extended.UI\**\*.shared.cs" />
+    <Compile Include="..\SkiaSharp.Extended.UI\**\*.shared.*.cs" />
+    <EmbeddedResource Include="..\SkiaSharp.Extended.UI\**\*.shared.xaml" />
+    <EmbeddedResource Include="..\SkiaSharp.Extended.UI\**\*.shared.*.xaml" />
+    <Compile Include="..\SkiaSharp.Extended.UI\**\*.wpf.cs" />
+    <Compile Include="..\SkiaSharp.Extended.UI\**\*.wpf.*.cs" />
+  </ItemGroup>
+
+</Project>

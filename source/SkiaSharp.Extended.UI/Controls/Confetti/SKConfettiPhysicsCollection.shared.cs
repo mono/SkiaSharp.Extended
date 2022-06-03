@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SkiaSharp.Extended.UI.Controls
+namespace SkiaSharp.Extended.UI.Forms.Controls
 {
 	public class SKConfettiPhysicsCollection : List<SKConfettiPhysics>
 	{
