@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="$(IsMacOS) or $(IsWindows)">$(TargetFrameworks);MonoAndroid10.0;Xamarin.iOS10;Xamarin.Mac20;tizen40</TargetFrameworks>
-    <TargetFrameworks Condition="$(IsWindows)">$(TargetFrameworks);uap10.0.16299</TargetFrameworks>
+    <TargetFrameworks Condition="$(IsWindows)">$(TargetFrameworks);uap10.0.19041</TargetFrameworks>
     <AssemblyName>SkiaSharp.Extended.UI</AssemblyName>
     <RootNamespace>SkiaSharp.Extended.UI</RootNamespace>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
