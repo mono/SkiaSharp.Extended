@@ -1,8 +1,8 @@
-﻿using SkiaSharp.Extended.UI.Forms.Controls.Converters;
+﻿using SkiaSharp.Extended.UI.Controls.Converters;
 using Xamarin.Forms;
 using Xunit;
 
-namespace SkiaSharp.Extended.UI.Forms.Controls.Tests
+namespace SkiaSharp.Extended.UI.Controls.Tests
 {
 	public class SKConfettiColorCollectionTypeConverterTest
 	{

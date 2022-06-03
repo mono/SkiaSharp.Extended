@@ -1,6 +1,6 @@
 ﻿using Xamarin.Forms;
 
-namespace SkiaSharp.Extended.UI.Forms.WPF.Tests
+namespace SkiaSharp.Extended.UI.WPF.Tests
 {
 	public static class TestUtils
 	{

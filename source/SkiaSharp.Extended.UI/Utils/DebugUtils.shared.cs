@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Xamarin.Forms;
 
-namespace SkiaSharp.Extended.UI.Forms
+namespace SkiaSharp.Extended.UI
 {
 	internal static class DebugUtils
 	{

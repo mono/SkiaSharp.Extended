@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
-namespace SkiaSharp.Extended.UI.Forms.Controls
+namespace SkiaSharp.Extended.UI.Controls
 {
 	public class SKConfettiView : TemplatedView
 	{

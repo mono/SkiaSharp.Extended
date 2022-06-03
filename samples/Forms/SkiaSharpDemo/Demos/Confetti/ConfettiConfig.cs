@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using SkiaSharp;
-using SkiaSharp.Extended.UI.Forms.Controls;
+using SkiaSharp.Extended.UI.Controls;
 using Xamarin.Forms;
 
 namespace SkiaSharpDemo.Demos

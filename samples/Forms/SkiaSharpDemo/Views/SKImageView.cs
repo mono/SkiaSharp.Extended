@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using SkiaSharp;
-using SkiaSharp.Extended.UI.Forms;
-using SkiaSharp.Extended.UI.Forms.Extensions;
+using SkiaSharp.Extended.UI;
+using SkiaSharp.Extended.UI.Extensions;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 

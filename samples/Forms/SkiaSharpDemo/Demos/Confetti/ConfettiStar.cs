@@ -1,6 +1,6 @@
 ﻿using SkiaSharp;
 using SkiaSharp.Extended;
-using SkiaSharp.Extended.UI.Forms.Controls;
+using SkiaSharp.Extended.UI.Controls;
 
 namespace SkiaSharpDemo.Demos
 {

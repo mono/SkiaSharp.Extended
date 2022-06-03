@@ -4,8 +4,8 @@
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="$(IsMacOS) or $(IsWindows)">$(TargetFrameworks);MonoAndroid10.0;Xamarin.iOS10;Xamarin.Mac20;tizen40</TargetFrameworks>
     <TargetFrameworks Condition="$(IsWindows)">$(TargetFrameworks);uap10.0.16299</TargetFrameworks>
-    <AssemblyName>SkiaSharp.Extended.UI.Forms</AssemblyName>
-    <RootNamespace>SkiaSharp.Extended.UI.Forms</RootNamespace>
+    <AssemblyName>SkiaSharp.Extended.UI</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended.UI</RootNamespace>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <ReferenceAssemblyTargetFramework>netstandard2.0</ReferenceAssemblyTargetFramework>
   </PropertyGroup>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SkiaSharp.Extended.UI.Forms.Controls
+namespace SkiaSharp.Extended.UI.Controls
 {
 	internal class SKConfettiParticle
 	{

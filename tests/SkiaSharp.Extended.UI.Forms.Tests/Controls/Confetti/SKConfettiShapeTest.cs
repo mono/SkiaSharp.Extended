@@ -2,7 +2,7 @@
 using System.IO;
 using Xunit;
 
-namespace SkiaSharp.Extended.UI.Forms.Controls.Tests
+namespace SkiaSharp.Extended.UI.Controls.Tests
 {
 	public class SKConfettiShapeTest
 	{

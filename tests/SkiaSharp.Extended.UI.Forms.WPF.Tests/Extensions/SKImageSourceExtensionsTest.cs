@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SkiaSharp.Extended.UI.Forms.WPF.Tests;
+using SkiaSharp.Extended.UI.WPF.Tests;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 using Xunit;
 
-namespace SkiaSharp.Extended.UI.Forms.Extensions.Tests
+namespace SkiaSharp.Extended.UI.Extensions.Tests
 {
 	public class SKImageSourceExtensionsTest
 	{

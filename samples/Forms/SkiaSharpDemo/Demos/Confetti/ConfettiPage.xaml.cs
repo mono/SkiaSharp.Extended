@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using SkiaSharp.Extended.UI.Forms.Controls;
+using SkiaSharp.Extended.UI.Controls;
 using Xamarin.Forms;
 
 namespace SkiaSharpDemo.Demos
