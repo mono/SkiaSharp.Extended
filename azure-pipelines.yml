@@ -44,8 +44,8 @@ jobs:
           Write-Host "##vso[build.updatebuildnumber]$label"
         displayName: Update the build number with a more readable one
 
-  - job: prepare
-    displayName: Prepare Build
+  - job: build
+    displayName: Build
     pool:
       vmImage: windows-latest
     steps:
