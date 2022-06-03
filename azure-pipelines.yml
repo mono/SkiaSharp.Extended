@@ -64,12 +64,31 @@ stages:
           - pwsh: dotnet tool update -g cake.tool
             displayName: Install the Cake .NET tool
           - pwsh: dotnet cake
-            displayName: Build and pack everything
+            displayName: Build everything
+
+  - stage: pack
+    displayName: Pack NuGets
+    dependsOn: prepare
+    jobs:
+      - job: pack
+        displayName: Pack NuGets
+        pool:
+          vmImage: windows-latest
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: 'sdk'
+              version: 3.1.x
+            displayName: Install .NET Core 3.1.x
+          - pwsh: dotnet tool update -g cake.tool
+            displayName: Install the Cake .NET tool
+          - pwsh: dotnet cake --target=pack
+            displayName: Pack NuGets
 
   - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
     - stage: signing
       displayName: Sign NuGets
-      dependsOn: build
+      dependsOn: pack
       jobs:
         - template: sign-artifacts/jobs/v2.yml@internal-templates
           parameters:
