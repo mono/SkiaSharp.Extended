@@ -20,49 +20,60 @@ resources:
       endpoint: xamarin
       ref: refs/heads/main
 
-jobs:
+stages:
 
-  - job: prepare
+  - stage: prepare
     displayName: Prepare Build
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-      - checkout: none
-      - pwsh: |
-          $pr = "pr." + $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
-          Write-Host "Preview label: $pr"
-          Write-Host "##vso[task.setvariable variable=PREVIEW_LABEL]$pr"
-        displayName: Use a special preview label for PRs
-        condition: eq(variables['Build.Reason'], 'PullRequest')
-      - pwsh: |
-          $label = ""
-          if ($env:BUILD_REASON -ne "PullRequest") {
-            $label = "+" + $env:BUILD_SOURCEBRANCHNAME
-          }
-          $label = "$env:BASE_VERSION-$env:PREVIEW_LABEL.$env:BUILD_NUMBER$label"
-          Write-Host "Build label: $label"
-          Write-Host "##vso[build.updatebuildnumber]$label"
-        displayName: Update the build number with a more readable one
+    jobs:
+      - job: prepare
+        displayName: Prepare Build
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: none
+          - pwsh: |
+              $pr = "pr." + $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
+              Write-Host "Preview label: $pr"
+              Write-Host "##vso[task.setvariable variable=PREVIEW_LABEL]$pr"
+            displayName: Use a special preview label for PRs
+            condition: eq(variables['Build.Reason'], 'PullRequest')
+          - pwsh: |
+              $label = ""
+              if ($env:BUILD_REASON -ne "PullRequest") {
+                $label = "+" + $env:BUILD_SOURCEBRANCHNAME
+              }
+              $label = "$env:BASE_VERSION-$env:PREVIEW_LABEL.$env:BUILD_NUMBER$label"
+              Write-Host "Build label: $label"
+              Write-Host "##vso[build.updatebuildnumber]$label"
+            displayName: Update the build number with a more readable one
 
-  - job: build
+  - stage: build
     displayName: Build
-    pool:
-      vmImage: windows-latest
-    steps:
-      - task: UseDotNet@2
-        inputs:
-          packageType: 'sdk'
-          version: 3.1.x
-        displayName: Install .NET Core 3.1.x
-      - pwsh: dotnet tool update -g cake.tool
-        displayName: Install the Cake .NET tool
-      - pwsh: dotnet cake
-        displayName: Build and pack everything
+    dependsOn: prepare
+    jobs:
+      - job: build
+        displayName: Build
+        pool:
+          vmImage: windows-latest
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: 'sdk'
+              version: 3.1.x
+            displayName: Install .NET Core 3.1.x
+          - pwsh: dotnet tool update -g cake.tool
+            displayName: Install the Cake .NET tool
+          - pwsh: dotnet cake
+            displayName: Build and pack everything
 
   - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
-    - template: sign-artifacts/jobs/v2.yml@internal-templates
-      parameters:
-        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-          signType: 'Real'
-        ${{ if not(eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
-          signType: 'Test'
+    - stage: signing
+      displayName: Sign NuGets
+      dependsOn: build
+      jobs:
+        - template: sign-artifacts/jobs/v2.yml@internal-templates
+          parameters:
+            ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+              signType: 'Real'
+            ${{ if not(eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+              signType: 'Test'
