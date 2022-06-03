@@ -63,8 +63,10 @@ stages:
             displayName: Install .NET Core 3.1.x
           - pwsh: dotnet tool update -g cake.tool
             displayName: Install the Cake .NET tool
-          - pwsh: dotnet cake
+          - pwsh: dotnet cake --target=build
             displayName: Build everything
+          - pwsh: dotnet cake --target=test
+            displayName: Test everything
 
   - stage: pack
     displayName: Pack NuGets

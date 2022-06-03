@@ -39,7 +39,7 @@ Task("pack")
 		.WithTarget("Pack"));
 });
 
-Task("tests")
+Task("test")
 	.Does(() =>
 {
 	var failed = 0;
@@ -70,6 +70,6 @@ Task("tests")
 Task("Default")
 	.IsDependentOn("build")
 	.IsDependentOn("pack")
-	.IsDependentOn("tests");
+	.IsDependentOn("test");
 
 RunTarget(TARGET);
