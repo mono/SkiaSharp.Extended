@@ -8,7 +8,7 @@ namespace SkiaSharp.Extended.UI.WPF.Tests
 		{
 			var app = new System.Windows.Application();
 
-			Xamarin.Forms.Init();
+			Forms.Init();
 		}
 
 		public static void EnsureFormsInit()
