@@ -1,6 +1,5 @@
 trigger:
   - main
-  - refs/tags/*
 
 pr:
   - main
@@ -48,8 +47,7 @@ stages:
             displayName: Update the build number with a more readable one
 
   # Only build the samples and run tests on the public pipeline
-  # - ${{ if ne(variables['System.TeamProject'], 'devdiv') }}:
-  - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
+  - ${{ if ne(variables['System.TeamProject'], 'devdiv') }}:
     - stage: build
       displayName: Build
       dependsOn: prepare

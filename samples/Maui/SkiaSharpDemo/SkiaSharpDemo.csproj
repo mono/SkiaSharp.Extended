@@ -61,30 +61,4 @@
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Resources\Raw\img1.jpg" />
-    <None Remove="Resources\Raw\img2.jpg" />
-    <None Remove="Resources\Raw\img3.jpg" />
-    <None Remove="Resources\Raw\img4.jpg" />
-    <None Remove="Resources\Raw\img5.jpg" />
-    <None Remove="Resources\Raw\img6.png" />
-    <None Remove="Resources\Raw\img7.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AndroidResource Include="Resources\Raw\img1.jpg" />
-    <AndroidResource Include="Resources\Raw\img2.jpg" />
-    <AndroidResource Include="Resources\Raw\img3.jpg" />
-    <AndroidResource Include="Resources\Raw\img4.jpg" />
-    <AndroidResource Include="Resources\Raw\img5.jpg" />
-    <AndroidResource Include="Resources\Raw\img6.png" />
-    <AndroidResource Include="Resources\Raw\img7.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <MauiXaml Update="Demos\BlurHash\BlurHashPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-  </ItemGroup>
-
 </Project>
