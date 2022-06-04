@@ -10,13 +10,6 @@ interesting projects:
  - [SkiaSharp.Extended][extended] _(additional APIs)_
  - [SkiaSharp.Extended.UI.Forms][ui] _(additional Xamarin.Forms controls)_
 
-**Deprecated / Unmaintained Libraries**
-
- - ~~[SkiaSharp.Extended.Iconify][iconify]~~ _(iconify library)_  
-   Use https://github.com/toptensoftware/RichTextKit instead.
- - ~~[SkiaSharp.Extended.Svg][svg]~~ _(lightweight SVG loader)_  
-   Use https://github.com/wieslawsoltes/Svg.Skia instead.
-
 ## Using
 
 There is an early access feed that you can use to get the latest and greatest, before it goes out to the public:
@@ -44,5 +37,3 @@ The code in this repository is licensed under the [MIT License][license].
 [skiasharp]: https://github.com/mono/SkiaSharp
 [extended]: https://mono.github.io/SkiaSharp.Extended/api/extended
 [ui]: https://mono.github.io/SkiaSharp.Extended/api/ui
-[iconify]: https://mono.github.io/SkiaSharp.Extended/api/iconify
-[svg]: https://mono.github.io/SkiaSharp.Extended/api/svg
