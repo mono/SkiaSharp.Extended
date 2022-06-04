@@ -12,13 +12,13 @@ Task("build")
 		.SetConfiguration("Release")
 		.WithRestore();
 
-	MSBuild("SkiaSharp.Extended.sln", settings);
+	MSBuild("./SkiaSharp.Extended.sln", settings);
 });
 
 Task("pack")
 	.Does(() =>
 {
-	MSBuild("SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
+	MSBuild("./.Extended-Pack.slnf", new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/pack.binlog")
 		.SetConfiguration("Release")
 		.WithRestore()
@@ -30,13 +30,15 @@ Task("pack")
 		preview += $".{BUILD_NUMBER}";
 	}
 
-	MSBuild("SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
+	MSBuild("./SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/pack-preview.binlog")
 		.SetConfiguration("Release")
 		.WithRestore()
 		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/")).FullPath)
 		.WithProperty("VersionSuffix", preview)
 		.WithTarget("Pack"));
+
+	CopyFileToDirectory("./source/SignList.xml", "./output/");
 });
 
 Task("test")
