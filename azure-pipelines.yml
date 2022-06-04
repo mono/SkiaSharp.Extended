@@ -96,7 +96,14 @@ stages:
               inputs:
                 packageType: 'sdk'
                 version: 3.1.x
-              displayName: Install .NET Core 3.1.x
+              displayName: Install .NET Core 3.1
+            - task: UseDotNet@2
+              inputs:
+                packageType: 'sdk'
+                version: 6.0.x
+              displayName: Install .NET 6.0
+            - pwsh: dotnet workload install maui
+              displayName: Install .NET MAUI
             - pwsh: dotnet tool update -g cake.tool
               displayName: Install the Cake .NET tool
             - pwsh: dotnet cake --target=pack
