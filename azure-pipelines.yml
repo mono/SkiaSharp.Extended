@@ -68,6 +68,10 @@ stages:
               displayName: Install the Cake .NET tool
             - pwsh: dotnet cake
               displayName: Build everything
+            - task: PublishTestResults@2
+              inputs:
+                testResultsFormat: VSTest
+                testResultsFiles: ./output/test-results/**/*.trx
             - publish: output
               artifact: windows
               displayName: Upload Logs
