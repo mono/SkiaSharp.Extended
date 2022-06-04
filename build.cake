@@ -18,7 +18,7 @@ Task("build")
 Task("pack")
 	.Does(() =>
 {
-	MSBuild("./.Extended-Pack.slnf", new MSBuildSettings()
+	MSBuild("./SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/pack.binlog")
 		.SetConfiguration("Release")
 		.WithRestore()
