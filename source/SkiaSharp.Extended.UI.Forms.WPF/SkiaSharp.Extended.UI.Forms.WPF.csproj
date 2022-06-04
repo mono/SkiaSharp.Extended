@@ -5,6 +5,7 @@
     <UseWpf>true</UseWpf>
     <AssemblyName>SkiaSharp.Extended.UI</AssemblyName>
     <RootNamespace>SkiaSharp.Extended.UI</RootNamespace>
+    <DefineConstants>$(DefineConstants);XAMARIN_FORMS</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -24,12 +25,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="System" />
+    <Using Include="System.Collections.Generic" />
+    <Using Include="System.IO" />
+    <Using Include="System.Threading" />
+    <Using Include="System.Threading.Tasks" />
+    <Using Include="Xamarin.Forms" />
+    <Using Include="Xamarin.Forms.Internals" />
+    <Using Include="Xamarin.Forms.Xaml" />
+    <Using Include="SkiaSharp.Views.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.shared.cs" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.shared.*.cs" />
     <EmbeddedResource Include="..\SkiaSharp.Extended.UI\**\*.shared.xaml" />
     <EmbeddedResource Include="..\SkiaSharp.Extended.UI\**\*.shared.*.xaml" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.wpf.cs" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.wpf.*.cs" />
+    <Compile Include="..\SkiaSharp.Extended.UI.Forms\**\*.shared.cs" Exclude="..\SkiaSharp.Extended.UI.Forms\obj\**;bin\**" />
+    <Compile Include="..\SkiaSharp.Extended.UI.Forms\**\*.shared.*.cs" Exclude="..\SkiaSharp.Extended.UI.Forms\obj\**;bin\**" />
+    <EmbeddedResource Include="..\SkiaSharp.Extended.UI.Forms\**\*.shared.xaml" Exclude="..\SkiaSharp.Extended.UI.Forms\obj\**;bin\**" />
+    <EmbeddedResource Include="..\SkiaSharp.Extended.UI.Forms\**\*.shared.*.xaml" Exclude="..\SkiaSharp.Extended.UI.Forms\obj\**;bin\**" />
   </ItemGroup>
 
 </Project>

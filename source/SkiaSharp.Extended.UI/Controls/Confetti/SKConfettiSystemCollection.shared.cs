@@ -1,22 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
-namespace SkiaSharp.Extended.UI.Controls
+namespace SkiaSharp.Extended.UI.Controls;
+
+public class SKConfettiSystemCollection : ObservableCollection<SKConfettiSystem>
 {
-	public class SKConfettiSystemCollection : ObservableCollection<SKConfettiSystem>
+	public SKConfettiSystemCollection()
 	{
-		public SKConfettiSystemCollection()
-		{
-		}
+	}
 
-		public SKConfettiSystemCollection(IEnumerable<SKConfettiSystem> collection)
-			: base(collection)
-		{
-		}
+	public SKConfettiSystemCollection(IEnumerable<SKConfettiSystem> collection)
+		: base(collection)
+	{
+	}
 
-		public SKConfettiSystemCollection(List<SKConfettiSystem> list)
-			: base(list)
-		{
-		}
+	public SKConfettiSystemCollection(List<SKConfettiSystem> list)
+		: base(list)
+	{
 	}
 }

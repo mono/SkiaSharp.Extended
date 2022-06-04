@@ -6,14 +6,14 @@
     <TargetFrameworks Condition="$(IsWindows)">$(TargetFrameworks);uap10.0.19041</TargetFrameworks>
     <AssemblyName>SkiaSharp.Extended.UI</AssemblyName>
     <RootNamespace>SkiaSharp.Extended.UI</RootNamespace>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <ReferenceAssemblyTargetFramework>netstandard2.0</ReferenceAssemblyTargetFramework>
+    <DefineConstants>$(DefineConstants);XAMARIN_FORMS</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageId>SkiaSharp.Extended.UI.Forms</PackageId>
-    <Title>Additional Controls for SkiaSharp.Views.Forms</Title>
-    <Description>This package adds additional controls to SkiaSharp.Views.Forms.</Description>
+    <Title>Additional SkiaSharp controls for Xamarin.Forms</Title>
+    <Description>This package adds additional SkiaSharp controls to Xamarin.Forms.</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,6 +27,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="System" />
+    <Using Include="System.Collections.Generic" />
+    <Using Include="System.IO" />
+    <Using Include="System.Threading" />
+    <Using Include="System.Threading.Tasks" />
+    <Using Include="Xamarin.Forms" />
+    <Using Include="Xamarin.Forms.Internals" />
+    <Using Include="Xamarin.Forms.Xaml" />
+    <Using Include="SkiaSharp.Views.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.shared.cs" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.shared.*.cs" />
     <EmbeddedResource Include="..\SkiaSharp.Extended.UI\**\*.shared.xaml" />
@@ -37,25 +49,36 @@
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.ref.*.cs" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('MonoAndroid')) ">
+    <Using Include="Xamarin.Forms.Platform.Android" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.android.cs" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.android.*.cs" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('Xamarin.iOS')) ">
+    <Using Include="Xamarin.Forms.Platform.iOS" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.ios.cs" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.ios.*.cs" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('Xamarin.Mac')) ">
     <Reference Include="netstandard" Condition=" '$(IsWindows)' == 'true' " />
+    <Using Include="Xamarin.Forms.Platform.MacOS" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.macos.cs" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.macos.*.cs" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('tizen')) ">
+    <Using Include="Xamarin.Forms.Platform.Tizen" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.tizen.cs" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.tizen.*.cs" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
+    <Using Include="Xamarin.Forms.Platform.UWP" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.uwp.cs" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.uwp.*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\SkiaSharp.Extended.UI\**\*.cs" Exclude="@(Compile)" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="..\SkiaSharp.Extended.UI\Controls\ExtendedTypeConverter2.cs" />
   </ItemGroup>
 
 </Project>

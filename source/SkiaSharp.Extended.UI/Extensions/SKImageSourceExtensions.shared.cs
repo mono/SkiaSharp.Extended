@@ -1,64 +1,59 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using SkiaSharp.Views.Forms;
-using Xamarin.Forms;
+﻿namespace SkiaSharp.Extended.UI.Extensions;
 
-namespace SkiaSharp.Extended.UI.Extensions
+public static partial class SKImageSourceExtensions
 {
-	public static partial class SKImageSourceExtensions
+	public static Task<SKImage?> ToSKImageAsync(this ImageSource imageSource, CancellationToken cancellationToken = default)
 	{
-		public static Task<SKImage?> ToSKImageAsync(this ImageSource imageSource, CancellationToken cancellationToken = default)
+		if (imageSource == null)
+			throw new ArgumentNullException(nameof(imageSource));
+
+		return imageSource switch
 		{
-			if (imageSource == null)
-				throw new ArgumentNullException(nameof(imageSource));
+			// 1. first try SkiaSharp sources
+			SKImageImageSource iis => FromSkia(iis.Image),
+			SKBitmapImageSource bis => FromSkia(SKImage.FromBitmap(bis.Bitmap)),
+			SKPixmapImageSource xis => FromSkia(SKImage.FromPixels(xis.Pixmap)),
+			SKPictureImageSource pis => FromSkia(SKImage.FromPicture(pis.Picture, pis.Dimensions)),
 
-			return imageSource switch
-			{
-				// 1. first try SkiaSharp sources
-				SKImageImageSource iis => FromSkia(iis.Image),
-				SKBitmapImageSource bis => FromSkia(SKImage.FromBitmap(bis.Bitmap)),
-				SKPixmapImageSource xis => FromSkia(SKImage.FromPixels(xis.Pixmap)),
-				SKPictureImageSource pis => FromSkia(SKImage.FromPicture(pis.Picture, pis.Dimensions)),
+			// 2. then try Stream sources
+			StreamImageSource stream => FromStream(stream.Stream.Invoke(cancellationToken)),
+			IStreamImageSource stream => FromStream(stream.GetStreamAsync(cancellationToken)),
+#if XAMARIN_FORMS
+			UriImageSource uri => FromStream(uri.GetStreamAsync(cancellationToken)),
+#endif
 
-				// 2. then try Stream sources
-				StreamImageSource stream => FromStream(stream.Stream.Invoke(cancellationToken)),
-				UriImageSource uri => FromStream(uri.GetStreamAsync(cancellationToken)),
+			// 3. finally, use the handlers
+			FileImageSource file => FromHandler(PlatformToSKImageAsync(file, cancellationToken)),
+			FontImageSource font => FromHandler(PlatformToSKImageAsync(font, cancellationToken)),
 
-				// 3. finally, use the handlers
-				FileImageSource file => FromHandler(PlatformToSKImageAsync(file, cancellationToken)),
-				FontImageSource font => FromHandler(PlatformToSKImageAsync(font, cancellationToken)),
+			// 4. all is lost
+			_ => throw new ArgumentException("Unable to determine the type of image source.", nameof(imageSource))
+		};
 
-				// 4. all is lost
-				_ => throw new ArgumentException("Unable to determine the type of image source.", nameof(imageSource))
-			};
+		static Task<SKImage?> FromSkia(SKImage? image)
+		{
+			return Task.FromResult(image);
+		}
 
-			static Task<SKImage?> FromSkia(SKImage? image)
-			{
-				return Task.FromResult(image);
-			}
+		static Task<SKImage?> FromHandler(Task<SKImage?> handlerTask)
+		{
+			if (handlerTask == null)
+				return Task.FromResult<SKImage?>(null);
 
-			static Task<SKImage?> FromHandler(Task<SKImage?> handlerTask)
-			{
-				if (handlerTask == null)
-					return Task.FromResult<SKImage?>(null);
+			return handlerTask;
+		}
 
-				return handlerTask;
-			}
+		static async Task<SKImage?> FromStream(Task<Stream> streamTask)
+		{
+			if (streamTask == null)
+				return null;
 
-			static async Task<SKImage?> FromStream(Task<Stream> streamTask)
-			{
-				if (streamTask == null)
-					return null;
+			var stream = await streamTask.ConfigureAwait(false);
+			if (stream == null)
+				return null;
 
-				var stream = await streamTask.ConfigureAwait(false);
-				if (stream == null)
-					return null;
-
-				var image = SKImage.FromEncodedData(stream);
-				return image;
-			}
+			var image = SKImage.FromEncodedData(stream);
+			return image;
 		}
 	}
 }

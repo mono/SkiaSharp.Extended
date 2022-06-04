@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <NeutralLanguage>en</NeutralLanguage>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <DebugType>portable</DebugType>
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
@@ -55,6 +55,10 @@
 
   <ItemGroup Condition=" '$(Configuration)'=='Release' ">
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>
