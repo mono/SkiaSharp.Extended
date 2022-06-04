@@ -8,7 +8,7 @@ interesting projects:
 
  - [SkiaSharp][skiasharp] _(the engine)_
  - [SkiaSharp.Extended][extended] _(additional APIs)_
- - [SkiaSharp.Extended.UI][ui] _(additional Xamarin.Forms controls)_
+ - [SkiaSharp.Extended.UI.Forms][ui] _(additional Xamarin.Forms controls)_
 
 **Deprecated / Unmaintained Libraries**
 

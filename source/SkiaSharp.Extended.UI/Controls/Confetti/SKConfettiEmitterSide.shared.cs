@@ -1,14 +1,13 @@
-﻿namespace SkiaSharp.Extended.UI.Controls
+﻿namespace SkiaSharp.Extended.UI.Controls;
+
+public enum SKConfettiEmitterSide
 {
-	public enum SKConfettiEmitterSide
-	{
-		Top,
-		Left,
-		Right,
-		Bottom,
+	Top,
+	Left,
+	Right,
+	Bottom,
 
-		Center,
+	Center,
 
-		Bounds,
-	}
+	Bounds,
 }

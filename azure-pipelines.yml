@@ -19,51 +19,94 @@ resources:
       name: xamarin/yaml-templates
       endpoint: xamarin
       ref: refs/heads/main
-    - repository: components
-      type: github
-      name: xamarin/XamarinComponents
-      endpoint: xamarin
 
-jobs:
-  - job: prepare
+stages:
+
+  - stage: prepare
     displayName: Prepare Build
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-      - checkout: none
-      - pwsh: |
-          $pr = "pr." + $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
-          Write-Host "Preview label: $pr"
-          Write-Host "##vso[task.setvariable variable=PREVIEW_LABEL]$pr"
-        displayName: Use a special preview label for PRs
-        condition: eq(variables['Build.Reason'], 'PullRequest')
-      - pwsh: |
-          $label = ""
-          if ($env:BUILD_REASON -ne "PullRequest") {
-            $label = "+" + $env:BUILD_SOURCEBRANCHNAME
-          }
-          $label = "$env:BASE_VERSION-$env:PREVIEW_LABEL.$env:BUILD_NUMBER$label"
-          Write-Host "Build label: $label"
-          Write-Host "##vso[build.updatebuildnumber]$label"
-        displayName: Update the build number with a more readable one
+    jobs:
+      - job: prepare
+        displayName: Prepare Build
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: none
+          - pwsh: |
+              $pr = "pr." + $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
+              Write-Host "Preview label: $pr"
+              Write-Host "##vso[task.setvariable variable=PREVIEW_LABEL]$pr"
+            displayName: Use a special preview label for PRs
+            condition: eq(variables['Build.Reason'], 'PullRequest')
+          - pwsh: |
+              $label = ""
+              if ($env:BUILD_REASON -ne "PullRequest") {
+                $label = "+" + $env:BUILD_SOURCEBRANCHNAME
+              }
+              $label = "$env:BASE_VERSION-$env:PREVIEW_LABEL.$env:BUILD_NUMBER$label"
+              Write-Host "Build label: $label"
+              Write-Host "##vso[build.updatebuildnumber]$label"
+            displayName: Update the build number with a more readable one
 
-  - template: .ci/build.yml@components
-    parameters:
-      areaPath: 'DevDiv\Xamarin SDK\SkiaSharp'
-      linuxImage: 'ubuntu-latest'
-      publishJob: 'windows'
-      validPackagePrefixes:
-        - SkiaSharp
-      preBuildSteps:
-        - bash: |
-            cd /opt/hostedtoolcache/dotnet/sdk/3.1.302/Sdks/Microsoft.NET.Sdk.WindowsDesktop/targets && \
-              mv Microsoft.WinFx.props Microsoft.WinFX.props && \
-              mv Microsoft.WinFx.targets Microsoft.WinFX.targets
-          condition: eq(variables['System.JobName'], 'linux')
-          displayName: Fix the casing bug for files in .NET Core SDK on Linux
-
+  # Only build the samples and run tests on the public pipeline
+  # - ${{ if ne(variables['System.TeamProject'], 'devdiv') }}:
   - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
-    - template: sign-artifacts/jobs/v1.yml@internal-templates
-      parameters:
-        dependsOn: [ 'build' ]
-        additionalConditions: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    - stage: build
+      displayName: Build
+      dependsOn: prepare
+      jobs:
+        - job: build
+          displayName: Build
+          pool:
+            vmImage: windows-latest
+          steps:
+            - task: UseDotNet@2
+              inputs:
+                packageType: 'sdk'
+                version: 3.1.x
+              displayName: Install .NET Core 3.1.x
+            - pwsh: dotnet tool update -g cake.tool
+              displayName: Install the Cake .NET tool
+            - pwsh: dotnet cake
+              displayName: Build everything
+            - task: PublishTestResults@2
+              inputs:
+                testResultsFormat: VSTest
+                testResultsFiles: ./output/test-results/**/*.trx
+            - publish: output
+              artifact: windows
+              displayName: Upload Logs
+
+  # Only build the NuGets on the release pipeline
+  - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
+    - stage: pack
+      displayName: Pack NuGets
+      dependsOn: prepare
+      jobs:
+        - job: pack
+          displayName: Pack NuGets
+          pool:
+            vmImage: windows-latest
+          steps:
+            - task: UseDotNet@2
+              inputs:
+                packageType: 'sdk'
+                version: 3.1.x
+              displayName: Install .NET Core 3.1.x
+            - pwsh: dotnet tool update -g cake.tool
+              displayName: Install the Cake .NET tool
+            - pwsh: dotnet cake --target=pack
+              displayName: Pack NuGets
+            - publish: output
+              artifact: nuget
+              displayName: Upload NuGets
+    - stage: signing
+      displayName: Sign NuGets
+      dependsOn: pack
+      jobs:
+        - template: sign-artifacts/jobs/v2.yml@internal-templates
+          parameters:
+            usePipelineArtifactTasks: true
+            ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+              signType: 'Real'
+            ${{ if not(eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+              signType: 'Test'

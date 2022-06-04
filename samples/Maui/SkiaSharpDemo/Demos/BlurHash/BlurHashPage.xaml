@@ -1,0 +1,58 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.UI;assembly=SkiaSharp.Extended.UI"
+             xmlns:views="clr-namespace:SkiaSharpDemo.Views"
+             x:Class="SkiaSharpDemo.Demos.BlurHashPage"
+             Title="BlurHash">
+
+    <Grid RowSpacing="12" Padding="12" RowDefinitions="Auto,*,Auto,*">
+
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto,Auto"
+              Padding="0" ColumnSpacing="3">
+            <Button Grid.Column="0"
+                    Text="Custom Image" Command="{Binding PickImageCommand}"
+                    VerticalOptions="Center" />
+            <Entry Grid.Column="2"
+                   Text="{Binding ComponentsX}"
+                   Keyboard="Numeric" HorizontalTextAlignment="Center"
+                   WidthRequest="35" VerticalOptions="Center" />
+            <Label Grid.Column="3"
+                   Text="×" VerticalOptions="Center" />
+            <Entry Grid.Column="4"
+                   Text="{Binding ComponentsY}"
+                   Keyboard="Numeric" HorizontalTextAlignment="Center"
+                   WidthRequest="35" VerticalOptions="Center" />
+        </Grid>
+
+        <CarouselView Grid.Row="1"
+                      HeightRequest="1" MinimumHeightRequest="100"
+                      ItemsSource="{Binding Sources}" CurrentItem="{Binding Source}"
+                      PeekAreaInsets="24,0"
+                      Margin="-12,0">
+            <CarouselView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="6,0">
+                        <Image Source="{Binding}" Aspect="AspectFit" />
+                    </Grid>
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto"
+              Padding="0" ColumnSpacing="3">
+            <Entry Grid.Column="0"
+                   Text="{Binding BlurHash}"
+                   VerticalOptions="Center" />
+            <Entry Grid.Column="1"
+                   Text="{Binding Punch}"
+                   Keyboard="Numeric" HorizontalTextAlignment="Center"
+                   WidthRequest="40" VerticalOptions="Center" />
+        </Grid>
+
+        <Image Grid.Row="3"
+               Source="{Binding BlurImage}" Aspect="AspectFit"
+               HeightRequest="1" MinimumHeightRequest="100" />
+
+    </Grid>
+
+</ContentPage>

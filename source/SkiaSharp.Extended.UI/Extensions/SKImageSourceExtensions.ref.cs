@@ -1,13 +1,7 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Xamarin.Forms;
+﻿namespace SkiaSharp.Extended.UI.Extensions;
 
-namespace SkiaSharp.Extended.UI.Extensions
+public static partial class SKImageSourceExtensions
 {
-	public static partial class SKImageSourceExtensions
-	{
-		private static Task<SKImage?> PlatformToSKImageAsync(ImageSource imageSource, CancellationToken cancellationToken = default) =>
-			throw new NotImplementedException();
-	}
+	private static Task<SKImage?> PlatformToSKImageAsync(ImageSource imageSource, CancellationToken cancellationToken = default) =>
+		throw new NotImplementedException();
 }

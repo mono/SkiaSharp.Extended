@@ -18,9 +18,9 @@ interesting projects. [**See more...**](extended/index)
 
 `SKPathInterpolation` can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. [**See more...**](extended/skpathinterpolation)
 
-## SkiaSharp.Extended.UI
+## SkiaSharp.Extended.UI.Forms
 
-**SkiaSharp.Extended.UI** is a collection some great Xamarin.Forms controls
+**SkiaSharp.Extended.UI.Forms** is a collection some great Xamarin.Forms controls
 that may be useful to some apps. [**See more...**](ui/index)
 
 ### SKImageSourceExtensions

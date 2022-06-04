@@ -1,30 +1,23 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Xamarin.Forms;
+﻿namespace SkiaSharp.Extended.UI.Extensions;
 
-namespace SkiaSharp.Extended.UI.Extensions
+public static partial class SKImageSourceExtensions
 {
-	public static partial class SKImageSourceExtensions
+	private static async Task<SKImage?> PlatformToSKImageAsync(FileImageSource imageSource, CancellationToken cancellationToken = default)
 	{
-		private static async Task<SKImage?> PlatformToSKImageAsync(FileImageSource imageSource, CancellationToken cancellationToken = default)
-		{
-			if (string.IsNullOrEmpty(imageSource.File))
-				return null;
+		if (string.IsNullOrEmpty(imageSource.File))
+			return null;
 
-			var filePath = imageSource.File;
+		var filePath = imageSource.File;
 
-			using var stream = File.OpenRead(filePath);
+		using var stream = File.OpenRead(filePath);
 
-			var image = SKImage.FromEncodedData(stream);
+		var image = SKImage.FromEncodedData(stream);
 
-			return image;
-		}
+		return image;
+	}
 
-		private static async Task<SKImage?> PlatformToSKImageAsync(FontImageSource imageSource, CancellationToken cancellationToken = default)
-		{
-			throw new NotSupportedException();
-		}
+	private static async Task<SKImage?> PlatformToSKImageAsync(FontImageSource imageSource, CancellationToken cancellationToken = default)
+	{
+		throw new NotSupportedException();
 	}
 }
