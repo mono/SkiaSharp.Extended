@@ -1,0 +1,155 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             xmlns:views="clr-namespace:SkiaSharpDemo.Views"
+             x:Class="SkiaSharpDemo.Demos.ConfettiPage"
+             Title="Confetti">
+
+    <Grid>
+
+        <Label Text="{Binding Message}" FontSize="32" FontAttributes="Bold"
+               Margin="0,-150,0,0"
+               HorizontalOptions="Center" VerticalOptions="Center" />
+
+        <controls:SKConfettiView x:Name="confettiView">
+            <controls:SKConfettiView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnTapped" />
+            </controls:SKConfettiView.GestureRecognizers>
+        </controls:SKConfettiView>
+
+        <views:BottomTabBar SelectedIndex="{Binding SelectedTab}" PagePadding="12,6">
+            <views:BottomTabCollection>
+
+                <!-- "add type" -->
+                <views:BottomTab Title="&#xf04b;" HorizontalOptions="Center" VerticalOptions="Center">
+                    <StackLayout Orientation="Horizontal" Spacing="12"
+                                 views:OptionButtons.AllowNone="False"
+                                 views:OptionButtons.SelectionMode="Single"
+                                 views:OptionButtons.SelectedItem="{Binding ConfigName}">
+                        <StackLayout.Resources>
+                            <ResourceDictionary>
+                                <Style TargetType="Button" BasedOn="{StaticResource TextOptionButtonStyle}">
+                                    <Setter Property="BindingContext" Value="{Binding Text, Source={RelativeSource Self}}" />
+                                </Style>
+                            </ResourceDictionary>
+                        </StackLayout.Resources>
+
+                        <Button Text="Top" />
+                        <Button Text="Center" />
+                        <Button Text="Sides" />
+                    </StackLayout>
+                </views:BottomTab>
+
+                <!-- colors -->
+                <views:BottomTab Title="&#xf53f;" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Grid RowSpacing="12" ColumnSpacing="12"
+                          ColumnDefinitions="Auto,Auto,Auto,Auto"
+                          RowDefinitions="Auto,Auto"
+                          views:OptionButtons.AllowNone="False"
+                          views:OptionButtons.SelectionMode="Multiple"
+                          views:OptionButtons.SelectedItems="{Binding CurrentConfig.Colors}">
+                        <Grid.Resources>
+                            <ResourceDictionary>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
+                                    <Setter Property="WidthRequest" Value="48" />
+                                    <Setter Property="HeightRequest" Value="32" />
+                                    <Setter Property="BindingContext" Value="{Binding BackgroundColor, Source={RelativeSource Self}}" />
+                                </Style>
+                            </ResourceDictionary>
+                        </Grid.Resources>
+
+                        <Button BackgroundColor="#fffce18a" Grid.Column="0" Grid.Row="0" />
+                        <Button BackgroundColor="#ffff726d" Grid.Column="1" Grid.Row="0" />
+                        <Button BackgroundColor="#fff4306d" Grid.Column="2" Grid.Row="0" />
+                        <Button BackgroundColor="#ffb48def" Grid.Column="3" Grid.Row="0" />
+                        <Button BackgroundColor="#ff38ba9e" Grid.Column="0" Grid.Row="1" />
+                        <Button BackgroundColor="#ff3aaab8" Grid.Column="1" Grid.Row="1" />
+                        <Button BackgroundColor="#ffbb3d72" Grid.Column="2" Grid.Row="1" />
+                        <Button BackgroundColor="#ff006ded" Grid.Column="3" Grid.Row="1" />
+                    </Grid>
+                </views:BottomTab>
+
+                <!-- shapes -->
+                <views:BottomTab Title="&#xf61f;" HorizontalOptions="Center" VerticalOptions="Center">
+                    <StackLayout Orientation="Horizontal" Spacing="12"
+                                 views:OptionButtons.AllowNone="False"
+                                 views:OptionButtons.SelectionMode="Multiple"
+                                 views:OptionButtons.SelectedItems="{Binding CurrentConfig.Shapes}">
+                        <StackLayout.Resources>
+                            <ResourceDictionary>
+                                <Style TargetType="Button" BasedOn="{StaticResource TextOptionButtonStyle}">
+                                    <Setter Property="FontFamily" Value="FontAwesome" />
+                                    <Setter Property="FontSize" Value="20" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="WidthRequest" Value="48" />
+                                    <Setter Property="HeightRequest" Value="48" />
+                                </Style>
+                            </ResourceDictionary>
+                        </StackLayout.Resources>
+
+                        <Button Text="&#xf0c8;" BindingContext="Square" />
+                        <Button Text="&#xf111;" BindingContext="Circle" />
+                        <Button Text="&#xf068;" BindingContext="Line" />
+                        <Button Text="&#xf004;" BindingContext="Heart" />
+                        <Button Text="&#xf005;" BindingContext="Star" />
+                    </StackLayout>
+                </views:BottomTab>
+
+                <views:BottomTab Title="&#xf3fd;" HorizontalOptions="Fill" VerticalOptions="Center">
+                    <Grid ColumnDefinitions="Auto,*,30"
+                          RowDefinitions="Auto,Auto"
+                          ColumnSpacing="12" RowSpacing="12" Padding="12">
+                        <Label Text="Min"
+                               Grid.Column="0" Grid.Row="0"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                        <Slider Maximum="500" Minimum="10" Value="{Binding CurrentConfig.MinSpeed, Converter={StaticResource RoundToInt}}"
+                                Grid.Column="1" Grid.Row="0"
+                                VerticalOptions="Center" />
+                        <Label Text="{Binding CurrentConfig.MinSpeed}"
+                               Grid.Column="2" Grid.Row="0"
+                               HorizontalOptions="Start" VerticalOptions="Center" />
+
+                        <Label Text="Max"
+                               Grid.Column="0" Grid.Row="1"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                        <Slider Maximum="500" Minimum="10" Value="{Binding CurrentConfig.MaxSpeed, Converter={StaticResource RoundToInt}}"
+                                Grid.Column="1" Grid.Row="1"
+                                VerticalOptions="Center" />
+                        <Label Text="{Binding CurrentConfig.MaxSpeed}"
+                               Grid.Column="2" Grid.Row="1"
+                               HorizontalOptions="Start" VerticalOptions="Center" />
+                    </Grid>
+                </views:BottomTab>
+
+                <views:BottomTab Title="&#xf017;" HorizontalOptions="Fill" VerticalOptions="Center">
+                    <Grid ColumnDefinitions="Auto,*,30"
+                          RowDefinitions="Auto,Auto"
+                          ColumnSpacing="12" RowSpacing="12" Padding="12">
+                        <Label Text="Lifetime"
+                               Grid.Column="0" Grid.Row="0"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                        <Slider Maximum="6" Minimum="0" Value="{Binding CurrentConfig.Lifetime, Converter={StaticResource RoundTo}, ConverterParameter=1}"
+                                Grid.Column="1" Grid.Row="0"
+                                VerticalOptions="Center" />
+                        <Label Text="{Binding CurrentConfig.Lifetime, StringFormat='{}{0}s'}"
+                               Grid.Column="2" Grid.Row="0"
+                               HorizontalOptions="Start" VerticalOptions="Center" />
+
+                        <Label Text="Duration"
+                               Grid.Column="0" Grid.Row="1"
+                               HorizontalOptions="End" VerticalOptions="Center" />
+                        <Slider Maximum="6" Minimum="0" Value="{Binding CurrentConfig.Duration, Converter={StaticResource RoundTo}, ConverterParameter=1}"
+                                Grid.Column="1" Grid.Row="1"
+                                VerticalOptions="Center" />
+                        <Label Text="{Binding CurrentConfig.Duration, StringFormat='{}{0}s'}"
+                               Grid.Column="2" Grid.Row="1"
+                               HorizontalOptions="Start" VerticalOptions="Center" />
+                    </Grid>
+                </views:BottomTab>
+
+            </views:BottomTabCollection>
+        </views:BottomTabBar>
+
+    </Grid>
+
+</ContentPage>
