@@ -13,14 +13,14 @@ public static class ExtendedDemos
 				{
 					Title = "Shapes",
 					Description = "The rectangle and circle provided by SkiaSharp are very nice, but sometimes you need a bit more.",
-					//PageType = typeof(ShapesPage),
+					PageType = typeof(ShapesPage),
 					Color = Colors.CornflowerBlue,
 				},
 				new Demo
 				{
 					Title = "Path Interpolation",
 					Description = "There is also a few things that might be nice if we could interpolate from one path to another.",
-					//PageType = typeof(InterpolationPage),
+					PageType = typeof(InterpolationPage),
 					Color = Colors.LightPink,
 				},
 				new Demo
@@ -37,16 +37,16 @@ public static class ExtendedDemos
 				{
 					Title = "Confetti",
 					Description = "Yeaaahhhhh! Throw that confetti! Woooooaaaaahhhh! We are the winners! Celebration words! Congrats! Yay!",
-					//PageType = typeof(ConfettiPage),
+					PageType = typeof(ConfettiPage),
 					Color = Colors.SteelBlue,
 				},
-				new Demo
-				{
-					Title = "ToImage",
-					Description = "You have that ImageSource and you really want an actual image... What do you do? Well, you ToSKImageAsync that puppy!",
-					//PageType = typeof(ImageSourceToImagePage),
-					Color = Colors.Orange,
-				},
+				//new Demo
+				//{
+				//	Title = "ToImage",
+				//	Description = "You have that ImageSource and you really want an actual image... What do you do? Well, you ToSKImageAsync that puppy!",
+				//	//PageType = typeof(ImageSourceToImagePage),
+				//	Color = Colors.Orange,
+				//},
 			},
 			new DemoGroup("TEXT & EMOJI")
 			{
@@ -54,7 +54,7 @@ public static class ExtendedDemos
 				{
 					Title = "RichTextKit",
 					Description = "Doing text the right way.",
-					//PageType = typeof(RichTextKitPage),
+					PageType = typeof(RichTextKitPage),
 					Color = Colors.YellowGreen,
 				},
 			},
@@ -64,7 +64,7 @@ public static class ExtendedDemos
 				{
 					Title = "SVG (Svg.Skia)",
 					Description = "Everyone wants to load SVG files. Literally everyone. So use a great library: Svg.Skia",
-					//PageType = typeof(SvgPage),
+					PageType = typeof(SvgPage),
 					Color = Colors.LightSeaGreen,
 				},
 			},

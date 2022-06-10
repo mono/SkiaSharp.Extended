@@ -1,0 +1,47 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+                    xmlns:views="clr-namespace:SkiaSharpDemo.Views"
+                    mc:Ignorable="d"
+                    x:Class="SkiaSharpDemo.Views.OptionButtonsResources">
+
+    <Style x:Key="OptionButtonStyle" TargetType="Button">
+        <Setter Property="CornerRadius" Value="3" />
+        <Setter Property="BorderColor" Value="Black" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="Scale" Value="1" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="Scale" Value="0.8" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+                <VisualStateGroup x:Name="SelectedStates">
+                    <VisualState x:Name="Unselected">
+                        <VisualState.Setters>
+                            <Setter Property="BorderWidth" Value="{OnPlatform WinUI=1, Default=0}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Selected">
+                        <VisualState.Setters>
+                            <Setter Property="BorderWidth" Value="3" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TextOptionButtonStyle" TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="Padding" Value="24,12" />
+    </Style>
+
+</ResourceDictionary>

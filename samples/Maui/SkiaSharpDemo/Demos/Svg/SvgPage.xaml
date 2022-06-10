@@ -1,0 +1,19 @@
+﻿<TabbedPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:views="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
+            x:Class="SkiaSharpDemo.Demos.SvgPage"
+            Title="SVG (Svg.Skia)">
+
+    <ContentPage Title="Logos" Appearing="OnPageAppearing" AutomationId="logos.svg">
+        <views:SKCanvasView PaintSurface="OnPainting" />
+    </ContentPage>
+
+    <ContentPage Title="Transparency" Appearing="OnPageAppearing" AutomationId="opacity.svg">
+        <views:SKCanvasView PaintSurface="OnPainting" />
+    </ContentPage>
+
+    <ContentPage Title="Dashes" Appearing="OnPageAppearing" AutomationId="dashes.svg">
+        <views:SKCanvasView PaintSurface="OnPainting" />
+    </ContentPage>
+
+</TabbedPage>
