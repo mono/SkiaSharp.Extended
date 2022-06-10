@@ -66,8 +66,10 @@ public class SKSurfaceView : TemplatedView
 		canvas.Clear(SKColors.Transparent);
 		canvas.Scale(size.Width / (float)Width);
 
+#if DEBUG
 		debugStatusOffset = DebugStatusMargin;
 		debugStatusCanvas = canvas;
+#endif
 
 		OnPaintSurface(canvas, size, deltaTime);
 
