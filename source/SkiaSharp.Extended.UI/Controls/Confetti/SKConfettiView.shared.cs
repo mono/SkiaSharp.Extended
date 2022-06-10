@@ -2,7 +2,7 @@
 
 namespace SkiaSharp.Extended.UI.Controls;
 
-public class SKConfettiView : SKAnimatedSurfaceTemplatedView
+public class SKConfettiView : SKAnimatedSurfaceView
 {
 	private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
 		nameof(IsComplete),

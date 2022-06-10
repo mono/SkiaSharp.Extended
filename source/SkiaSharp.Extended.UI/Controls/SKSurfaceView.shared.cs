@@ -1,6 +1,6 @@
 ﻿namespace SkiaSharp.Extended.UI.Controls;
 
-public class SKSurfaceTemplatedView : TemplatedView
+public class SKSurfaceView : TemplatedView
 {
 	internal readonly SKFrameCounter frameCounter = new SKFrameCounter();
 
@@ -17,7 +17,7 @@ public class SKSurfaceTemplatedView : TemplatedView
 	private SKCanvas? debugStatusCanvas;
 #endif
 
-	internal SKSurfaceTemplatedView()
+	internal SKSurfaceView()
 	{
 		DebugUtils.LogPropertyChanged(this);
 	}

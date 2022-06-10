@@ -4,16 +4,16 @@ using Microsoft.Maui.Dispatching;
 
 namespace SkiaSharp.Extended.UI.Controls;
 
-public class SKAnimatedSurfaceTemplatedView : SKSurfaceTemplatedView
+public class SKAnimatedSurfaceView : SKSurfaceView
 {
 	public static readonly BindableProperty IsRunningProperty = BindableProperty.Create(
 		nameof(IsRunning),
 		typeof(bool),
-		typeof(SKAnimatedSurfaceTemplatedView),
+		typeof(SKAnimatedSurfaceView),
 		false,
 		propertyChanged: OnIsRunningPropertyChanged);
 
-	internal SKAnimatedSurfaceTemplatedView()
+	internal SKAnimatedSurfaceView()
 	{
 	}
 
@@ -25,7 +25,7 @@ public class SKAnimatedSurfaceTemplatedView : SKSurfaceTemplatedView
 
 	private static void OnIsRunningPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
 	{
-		if (bindable is not SKAnimatedSurfaceTemplatedView view || newValue is not bool isRunning)
+		if (bindable is not SKAnimatedSurfaceView view || newValue is not bool isRunning)
 			return;
 
 		view.frameCounter.Reset();
