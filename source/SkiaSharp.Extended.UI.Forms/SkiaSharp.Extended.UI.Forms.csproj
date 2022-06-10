@@ -77,8 +77,5 @@
   <ItemGroup>
     <None Include="..\SkiaSharp.Extended.UI\**\*.cs" Exclude="@(Compile)" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="..\SkiaSharp.Extended.UI\Controls\ExtendedTypeConverter2.cs" />
-  </ItemGroup>
 
 </Project>

@@ -2,15 +2,8 @@
 
 namespace SkiaSharp.Extended.UI.Controls;
 
-public class SKConfettiView : TemplatedView
+public class SKConfettiView : SKAnimatedSurfaceTemplatedView
 {
-	public static readonly BindableProperty IsRunningProperty = BindableProperty.Create(
-		nameof(IsRunning),
-		typeof(bool),
-		typeof(SKConfettiView),
-		true,
-		propertyChanged: OnIsRunningPropertyChanged);
-
 	private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
 		nameof(IsComplete),
 		typeof(bool),
@@ -27,31 +20,20 @@ public class SKConfettiView : TemplatedView
 		propertyChanged: OnSystemsPropertyChanged,
 		defaultValueCreator: _ => CreateDefaultSystems());
 
-	private readonly SKFrameCounter frameCounter = new SKFrameCounter();
-
-#if DEBUG
-	private readonly SKPaint fpsPaint = new SKPaint { IsAntialias = true };
-#endif
-
-	private SKCanvasView? canvasView;
-	private SKGLView? glView;
-
 	public SKConfettiView()
 	{
-		DebugUtils.LogPropertyChanged(this);
-
 		Themes.SKConfettiViewResources.EnsureRegistered();
 
 		SizeChanged += OnSizeChanged;
+		PropertyChanged += (_, e) =>
+		{
+			if (nameof(IsRunning).Equals(e.PropertyName, StringComparison.OrdinalIgnoreCase))
+				OnIsRunningPropertyChanged();
+		};
 
-		OnIsRunningPropertyChanged(this, false, IsRunning);
+		IsRunning = true;
+
 		OnSystemsPropertyChanged(this, null, Systems);
-	}
-
-	public bool IsRunning
-	{
-		get => (bool)GetValue(IsRunningProperty);
-		set => SetValue(IsRunningProperty, value);
 	}
 
 	public bool IsComplete
@@ -66,52 +48,11 @@ public class SKConfettiView : TemplatedView
 		set => SetValue(SystemsProperty, value);
 	}
 
-	protected override void OnApplyTemplate()
+	protected override void OnPaintSurface(SKCanvas canvas, SKSize size, TimeSpan deltaTime)
 	{
-		var templateChild = GetTemplateChild("PART_DrawingSurface");
-
-		if (canvasView != null)
-		{
-			canvasView.PaintSurface -= OnPaintSurface;
-			canvasView = null;
-		}
-
-		if (glView != null)
-		{
-			glView.PaintSurface -= OnPaintSurface;
-			glView = null;
-		}
-
-		if (templateChild is SKCanvasView view)
-		{
-			canvasView = view;
-			canvasView.PaintSurface += OnPaintSurface;
-		}
-
-		if (templateChild is SKGLView gl)
-		{
-			glView = gl;
-			glView.PaintSurface += OnPaintSurface;
-		}
-	}
-
-	private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e) =>
-		OnPaintSurface(e.Surface, e.Info.Size);
-
-	private void OnPaintSurface(object? sender, SKPaintGLSurfaceEventArgs e) =>
-		OnPaintSurface(e.Surface, e.BackendRenderTarget.Size);
-
-	private void OnPaintSurface(SKSurface surface, SKSize size)
-	{
-		var deltaTime = frameCounter.NextFrame();
-
-		var canvas = surface.Canvas;
-
-		canvas.Clear(SKColors.Transparent);
-		canvas.Scale(size.Width / (float)Width);
-
 		var particles = 0;
-		if (Systems != null)
+
+		if (Systems is not null)
 		{
 			for (var i = Systems.Count - 1; i >= 0; i--)
 			{
@@ -126,34 +67,24 @@ public class SKConfettiView : TemplatedView
 		}
 
 #if DEBUG
-		canvas.DrawText($"{frameCounter.Rate:0.0}", 10f, fpsPaint.TextSize + 10f, fpsPaint);
-		canvas.DrawText($"{particles}", 10f, fpsPaint.TextSize * 2 + 20f, fpsPaint);
+		WriteDebugStatus($"Particles: {particles}");
 #endif
-
-		if (Systems != null && Systems.Count == 0)
-			frameCounter.Reset();
 	}
 
 	private void OnSizeChanged(object? sender, EventArgs e)
 	{
-		if (Systems != null)
-		{
-			foreach (var system in Systems)
-			{
-				system.UpdateEmitterBounds(Width, Height);
-			}
-		}
-	}
+		if (Systems is null)
+			return;
 
-	private void Invalidate()
-	{
-		canvasView?.InvalidateSurface();
-		glView?.InvalidateSurface();
+		foreach (var system in Systems)
+		{
+			system.UpdateEmitterBounds(Width, Height);
+		}
 	}
 
 	private void OnSystemsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 	{
-		if (e.NewItems != null)
+		if (e.NewItems is not null)
 		{
 			foreach (SKConfettiSystem system in e.NewItems)
 			{
@@ -167,46 +98,34 @@ public class SKConfettiView : TemplatedView
 		UpdateIsComplete();
 	}
 
-	private static void OnIsRunningPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
+	private void OnIsRunningPropertyChanged()
 	{
-		if (bindable is SKConfettiView cv && newValue is bool isRunning)
+		if (Systems is null)
+			return;
+
+		foreach (var system in Systems)
 		{
-			if (cv.Systems != null)
-			{
-				foreach (var system in cv.Systems)
-				{
-					system.IsRunning = isRunning;
-				}
-			}
-
-			cv.frameCounter.Reset();
-
-			Device.StartTimer(TimeSpan.FromMilliseconds(16), () =>
-			{
-				cv.Invalidate();
-
-				return cv.IsRunning;
-			});
+			system.IsRunning = IsRunning;
 		}
 	}
 
 	private static void OnSystemsPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
 	{
-		if (bindable is SKConfettiView cv)
-		{
-			if (oldValue is SKConfettiSystemCollection oldCollection)
-				oldCollection.CollectionChanged -= cv.OnSystemsChanged;
+		if (bindable is not SKConfettiView cv)
+			return;
 
-			if (newValue is SKConfettiSystemCollection newCollection)
-				newCollection.CollectionChanged += cv.OnSystemsChanged;
+		if (oldValue is SKConfettiSystemCollection oldCollection)
+			oldCollection.CollectionChanged -= cv.OnSystemsChanged;
 
-			cv.UpdateIsComplete();
-		}
+		if (newValue is SKConfettiSystemCollection newCollection)
+			newCollection.CollectionChanged += cv.OnSystemsChanged;
+
+		cv.UpdateIsComplete();
 	}
 
 	private void UpdateIsComplete()
 	{
-		if (Systems == null || Systems.Count == 0)
+		if (Systems is null || Systems.Count == 0)
 		{
 			IsComplete = true;
 			return;
