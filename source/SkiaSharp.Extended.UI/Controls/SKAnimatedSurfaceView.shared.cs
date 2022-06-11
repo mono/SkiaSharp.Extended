@@ -11,10 +11,14 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 		typeof(bool),
 		typeof(SKAnimatedSurfaceView),
 		false,
+		BindingMode.TwoWay,
 		propertyChanged: OnIsRunningPropertyChanged);
+
+	private readonly SKFrameCounter frameCounter = new SKFrameCounter();
 
 	internal SKAnimatedSurfaceView()
 	{
+		Loaded += OnLoaded;
 	}
 
 	public bool IsRunning
@@ -23,27 +27,64 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 		set => SetValue(IsRunningProperty, value);
 	}
 
-	private static void OnIsRunningPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
+	public virtual void Update(TimeSpan deltaTime)
 	{
-		if (bindable is not SKAnimatedSurfaceView view || newValue is not bool isRunning)
+	}
+
+	internal override void OnPaintSurfaceCore(SKSurface surface, SKSize size)
+	{
+		base.OnPaintSurfaceCore(surface, size);
+
+#if DEBUG
+		WriteDebugStatus($"FPS: {frameCounter.Rate:0.0}");
+#endif
+	}
+
+	internal override void InvalidateCore()
+	{
+		UpdateCore();
+
+		base.InvalidateCore();
+	}
+
+	private void UpdateCore()
+	{
+		var deltaTime = IsRunning
+			? frameCounter.NextFrame()
+			: TimeSpan.Zero;
+
+		Update(deltaTime);
+	}
+
+	private static void OnIsRunningPropertyChanged(BindableObject bindable, object? oldValue, object? newValue) =>
+		(bindable as SKAnimatedSurfaceView)?.UpdateIsRunning();
+
+	private void OnLoaded(object? sender, EventArgs e)
+	{
+		UpdateIsRunning();
+	}
+
+	private void UpdateIsRunning()
+	{
+		if (!IsLoaded)
 			return;
 
-		view.frameCounter.Reset();
+		frameCounter.Reset();
 
-		if (!isRunning)
+		if (!IsRunning)
 			return;
 
 #if XAMARIN_FORMS
 		Device.StartTimer(
 #else
-		view.Dispatcher.StartTimer(
+		Dispatcher.StartTimer(
 #endif
 			TimeSpan.FromMilliseconds(16),
 			() =>
 			{
-				view.Invalidate();
+				Invalidate();
 
-				return view.IsRunning;
+				return IsRunning;
 			});
 	}
 }

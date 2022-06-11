@@ -48,19 +48,30 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		set => SetValue(SystemsProperty, value);
 	}
 
-	protected override void OnPaintSurface(SKCanvas canvas, SKSize size, TimeSpan deltaTime)
+	public override void Update(TimeSpan deltaTime)
+	{
+		if (Systems is null)
+			return;
+
+		for (var i = Systems.Count - 1; i >= 0; i--)
+		{
+			var system = Systems[i];
+			system.Update(deltaTime);
+
+			if (system.IsComplete)
+				Systems.RemoveAt(i);
+		}
+	}
+
+	protected override void OnPaintSurface(SKCanvas canvas, SKSize size)
 	{
 		var particles = 0;
 
 		if (Systems is not null)
 		{
-			for (var i = Systems.Count - 1; i >= 0; i--)
+			foreach (var system in Systems)
 			{
-				var system = Systems[i];
-				system.Draw(canvas, deltaTime);
-
-				if (system.IsComplete)
-					Systems.RemoveAt(i);
+				system.Draw(canvas);
 
 				particles += system.ParticleCount;
 			}

@@ -54,7 +54,7 @@ internal class SKConfettiParticle
 
 	public bool IsComplete { get; private set; }
 
-	public void Draw(SKCanvas canvas, TimeSpan deltaTime)
+	public void Draw(SKCanvas canvas)
 	{
 		if (IsComplete || Shape == null)
 			return;

@@ -229,7 +229,7 @@ public class SKConfettiSystem : BindableObject
 
 	internal int ParticleCount => particles.Count;
 
-	public void Draw(SKCanvas canvas, TimeSpan deltaTime)
+	public void Update(TimeSpan deltaTime)
 	{
 		if (IsRunning)
 			Emitter?.Update(deltaTime);
@@ -243,11 +243,7 @@ public class SKConfettiSystem : BindableObject
 
 			particle.ApplyForce(g, deltaTime);
 
-			if (!particle.IsComplete && lastViewBounds.IntersectsWith(particle.Bounds))
-			{
-				particle.Draw(canvas, deltaTime);
-			}
-			else
+			if (particle.IsComplete || !lastViewBounds.IntersectsWith(particle.Bounds))
 			{
 				particles.RemoveAt(i);
 				removed = true;
@@ -256,6 +252,14 @@ public class SKConfettiSystem : BindableObject
 
 		if (removed)
 			UpdateIsComplete();
+	}
+
+	public void Draw(SKCanvas canvas)
+	{
+		foreach (var particle in particles)
+		{
+			particle.Draw(canvas);
+		}
 	}
 
 	public void UpdateEmitterBounds(double width, double height)

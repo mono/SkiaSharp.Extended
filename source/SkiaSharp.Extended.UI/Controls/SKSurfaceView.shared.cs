@@ -2,20 +2,15 @@
 
 public class SKSurfaceView : TemplatedView
 {
-	internal readonly SKFrameCounter frameCounter = new SKFrameCounter();
-
 #if DEBUG
 	private const float DebugStatusMargin = 10f;
-	private readonly SKPaint fpsPaint = new SKPaint { IsAntialias = true };
+	private readonly SKPaint debugStatusPaint = new SKPaint { IsAntialias = true };
+	private float debugStatusOffset;
+	private SKCanvas? debugStatusCanvas;
 #endif
 
 	private SKCanvasView? canvasView;
 	private SKGLView? glView;
-
-#if DEBUG
-	private float debugStatusOffset;
-	private SKCanvas? debugStatusCanvas;
-#endif
 
 	internal SKSurfaceView()
 	{
@@ -51,50 +46,51 @@ public class SKSurfaceView : TemplatedView
 		}
 	}
 
+	protected virtual void OnPaintSurface(SKCanvas canvas, SKSize size)
+	{
+	}
+
+	public void Invalidate()
+	{
+		InvalidateCore();
+	}
+
 	private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e) =>
 		OnPaintSurfaceCore(e.Surface, e.Info.Size);
 
 	private void OnPaintSurface(object? sender, SKPaintGLSurfaceEventArgs e) =>
 		OnPaintSurfaceCore(e.Surface, e.BackendRenderTarget.Size);
 
-	private void OnPaintSurfaceCore(SKSurface surface, SKSize size)
+	internal virtual void OnPaintSurfaceCore(SKSurface surface, SKSize size)
 	{
-		var deltaTime = frameCounter.NextFrame();
-
 		var canvas = surface.Canvas;
+		var scale = size.Width / (float)Width;
+		var canvasSize = new SKSize(size.Width / scale, size.Height / scale);
 
 		canvas.Clear(SKColors.Transparent);
-		canvas.Scale(size.Width / (float)Width);
+		canvas.Scale(scale);
 
 #if DEBUG
 		debugStatusOffset = DebugStatusMargin;
 		debugStatusCanvas = canvas;
 #endif
 
-		OnPaintSurface(canvas, size, deltaTime);
-
-#if DEBUG
-		WriteDebugStatus($"FPS: {frameCounter.Rate:0.0}");
-#endif
-	}
-
-	protected virtual void OnPaintSurface(SKCanvas canvas, SKSize size, TimeSpan deltaTime)
-	{
+		OnPaintSurface(canvas, canvasSize);
 	}
 
 #if DEBUG
-	protected internal virtual void WriteDebugStatus(string statusMessage)
+	internal void WriteDebugStatus(string statusMessage)
 	{
 		if (debugStatusCanvas is null)
 			return;
 
-		debugStatusCanvas.DrawText(statusMessage, DebugStatusMargin, debugStatusOffset, fpsPaint);
+		debugStatusCanvas.DrawText(statusMessage, DebugStatusMargin, debugStatusOffset, debugStatusPaint);
 
-		debugStatusOffset += fpsPaint.TextSize;
+		debugStatusOffset += debugStatusPaint.TextSize;
 	}
 #endif
 
-	public void Invalidate()
+	internal virtual void InvalidateCore()
 	{
 #if !XAMARIN_FORMS
 		if (canvasView?.IsLoaded == true)
