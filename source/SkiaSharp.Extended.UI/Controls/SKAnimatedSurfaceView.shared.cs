@@ -1,8 +1,4 @@
-﻿#if !XAMARIN_FORMS
-using Microsoft.Maui.Dispatching;
-#endif
-
-namespace SkiaSharp.Extended.UI.Controls;
+﻿namespace SkiaSharp.Extended.UI.Controls;
 
 public class SKAnimatedSurfaceView : SKSurfaceView
 {
@@ -66,7 +62,7 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 
 	private void UpdateIsRunning()
 	{
-		if (!IsLoaded)
+		if (!this.IsLoadedEx())
 			return;
 
 		frameCounter.Reset();
@@ -74,11 +70,7 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 		if (!IsRunning)
 			return;
 
-#if XAMARIN_FORMS
-		Device.StartTimer(
-#else
 		Dispatcher.StartTimer(
-#endif
 			TimeSpan.FromMilliseconds(16),
 			() =>
 			{

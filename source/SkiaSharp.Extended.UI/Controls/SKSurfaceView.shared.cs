@@ -3,8 +3,13 @@
 public class SKSurfaceView : TemplatedView
 {
 #if DEBUG
-	private const float DebugStatusMargin = 10f;
-	private readonly SKPaint debugStatusPaint = new SKPaint { IsAntialias = true };
+	private const float DebugStatusMargin = 12f;
+	private readonly SKPaint debugStatusPaint =
+		new SKPaint
+		{
+			IsAntialias = true,
+			TextSize = 12
+		};
 	private float debugStatusOffset;
 	private SKCanvas? debugStatusCanvas;
 #endif
@@ -15,7 +20,18 @@ public class SKSurfaceView : TemplatedView
 	internal SKSurfaceView()
 	{
 		DebugUtils.LogPropertyChanged(this);
+
+#if XAMARIN_FORMS
+		this.RegisterLoadedUnloaded(
+			() => Loaded?.Invoke(this, EventArgs.Empty),
+			() => Unloaded?.Invoke(this, EventArgs.Empty));
+#endif
 	}
+
+#if XAMARIN_FORMS
+	internal event EventHandler? Loaded;
+	internal event EventHandler? Unloaded;
+#endif
 
 	protected override void OnApplyTemplate()
 	{
@@ -84,22 +100,18 @@ public class SKSurfaceView : TemplatedView
 		if (debugStatusCanvas is null)
 			return;
 
-		debugStatusCanvas.DrawText(statusMessage, DebugStatusMargin, debugStatusOffset, debugStatusPaint);
-
 		debugStatusOffset += debugStatusPaint.TextSize;
+
+		debugStatusCanvas.DrawText(statusMessage, DebugStatusMargin, debugStatusOffset, debugStatusPaint);
 	}
 #endif
 
 	internal virtual void InvalidateCore()
 	{
-#if !XAMARIN_FORMS
-		if (canvasView?.IsLoaded == true)
-#endif
+		if (canvasView?.IsLoadedEx() == true)
 			canvasView?.InvalidateSurface();
 
-#if !XAMARIN_FORMS
-		if (glView?.IsLoaded == true)
-#endif
+		if (glView?.IsLoadedEx() == true)
 			glView?.InvalidateSurface();
 	}
 }
