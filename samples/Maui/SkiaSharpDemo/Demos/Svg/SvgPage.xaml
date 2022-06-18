@@ -4,16 +4,25 @@
             x:Class="SkiaSharpDemo.Demos.SvgPage"
             Title="SVG (Svg.Skia)">
 
-    <ContentPage Title="Logos" Appearing="OnPageAppearing" AutomationId="logos.svg">
-        <views:SKCanvasView PaintSurface="OnPainting" />
+    <ContentPage Title="Logos" AutomationId="logos.svg"
+                 Appearing="OnPageAppearing" SizeChanged="OnPageSizeChanged">
+        <ScrollView>
+            <views:SKCanvasView PaintSurface="OnPainting" />
+        </ScrollView>
     </ContentPage>
 
-    <ContentPage Title="Transparency" Appearing="OnPageAppearing" AutomationId="opacity.svg">
-        <views:SKCanvasView PaintSurface="OnPainting" />
+    <ContentPage Title="Transparency" AutomationId="opacity.svg"
+                 Appearing="OnPageAppearing" SizeChanged="OnPageSizeChanged">
+        <ScrollView>
+            <views:SKCanvasView PaintSurface="OnPainting" />
+        </ScrollView>
     </ContentPage>
 
-    <ContentPage Title="Dashes" Appearing="OnPageAppearing" AutomationId="dashes.svg">
-        <views:SKCanvasView PaintSurface="OnPainting" />
+    <ContentPage Title="Dashes" AutomationId="dashes.svg"
+                 Appearing="OnPageAppearing" SizeChanged="OnPageSizeChanged">
+        <ScrollView>
+            <views:SKCanvasView PaintSurface="OnPainting" />
+        </ScrollView>
     </ContentPage>
 
 </TabbedPage>

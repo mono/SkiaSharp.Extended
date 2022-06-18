@@ -1,0 +1,45 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             xmlns:views="clr-namespace:SkiaSharpDemo.Views"
+             x:Class="SkiaSharpDemo.Demos.LottiePage"
+             Title="Lottie">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <controls:SKLottieView x:Name="lottieView"
+                               Source="Lottie/trophy.json"
+                               Duration="{Binding Duration}"
+                               Progress="{Binding Progress}"
+                               IsRunning="{Binding IsBusy}"/>
+
+        <BoxView Color="Green" Opacity="0.5" CornerRadius="12"
+                 WidthRequest="25" HeightRequest="24" Margin="24"
+                 HorizontalOptions="End" VerticalOptions="Start"
+                 IsVisible="{Binding IsComplete, Source={Reference lottieView}}" />
+
+        <StackLayout Spacing="12" Padding="12" Grid.Row="1">
+
+            <Slider Minimum="0"
+                    Maximum="{Binding Duration, Converter={StaticResource TimeSpanToDouble}, ConverterParameter=1}"
+                    Value="{Binding Progress, Converter={StaticResource TimeSpanToDouble}}" />
+
+            <Grid ColumnDefinitions="*,*" Margin="0,-12,0,0">
+                <Label Grid.Column="0"
+                       Text="{Binding Progress, StringFormat='{}{0:mm\\:ss\\.fff}'}" />
+                <Label Grid.Column="1" HorizontalOptions="End"
+                       Text="{Binding Duration, StringFormat='{}{0:mm\\:ss\\.fff}'}" />
+            </Grid>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="6">
+                <Button Text="Reset" Command="{Binding ResetCommand}" />
+                <Button Text="-100ms" Command="{Binding StepCommand}" CommandParameter="-100" />
+                <Button Text="Play/Pause" Command="{Binding PlayPauseCommand}" />
+                <Button Text="+100ms" Command="{Binding StepCommand}" CommandParameter="100" />
+                <Button Text="End" Command="{Binding EndCommand}" />
+            </StackLayout>
+
+        </StackLayout>
+    </Grid>
+
+</ContentPage>

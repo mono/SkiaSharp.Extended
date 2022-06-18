@@ -33,3 +33,48 @@ internal static class PlatformExtensions
 		};
 	}
 }
+
+internal static class FileSystem
+{
+	internal static Task<Stream> OpenAppPackageFileAsync(string filename)
+	{
+		if (string.IsNullOrEmpty(filename))
+			throw new ArgumentNullException(nameof(filename));
+
+		filename = NormalizePath(filename);
+
+#if __ANDROID__
+		try
+		{
+			return Task.FromResult(Android.App.Application.Context.Assets!.Open(filename));
+		}
+		catch (Java.IO.FileNotFoundException ex)
+		{
+			throw new FileNotFoundException(ex.Message, filename, ex);
+		}
+#elif __IOS__ || __MACOS__
+		var root = Foundation.NSBundle.MainBundle.BundlePath;
+#if __MACOS__
+		root = Path.Combine(root, "Contents", "Resources");
+#endif
+		var file = Path.Combine(root, filename);
+		return Task.FromResult((Stream)System.IO.File.OpenRead(file));
+#elif __TIZEN__ || TIZEN
+		var root = Tizen.Applications.Application.Current.DirectoryInfo.Resource;
+		var file = Path.Combine(root, filename);
+		return Task.FromResult((Stream)System.IO.File.OpenRead(file));
+#elif WINDOWS_UWP
+		var package = Windows.ApplicationModel.Package.Current;
+		return package.InstalledLocation.OpenStreamForReadAsync(filename);
+#elif NETCOREAPP || NET45_OR_GREATER
+		return Task.FromResult((Stream)System.IO.File.OpenRead(filename));
+#elif NETSTANDARD
+		throw new NotImplementedException();
+#endif
+	}
+
+	private static string NormalizePath(string filename) =>
+		filename
+			.Replace('\\', Path.DirectorySeparatorChar)
+			.Replace('/', Path.DirectorySeparatorChar);
+}

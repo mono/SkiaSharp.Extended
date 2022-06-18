@@ -40,6 +40,13 @@ public static class ExtendedDemos
 					PageType = typeof(ConfettiPage),
 					Color = Colors.SteelBlue,
 				},
+				new Demo
+				{
+					Title = "Lottie",
+					Description = "Ooooh! Lottie animations are really cool and now super easy to do!",
+					PageType = typeof(LottiePage),
+					Color = Colors.SteelBlue,
+				},
 				//new Demo
 				//{
 				//	Title = "ToImage",

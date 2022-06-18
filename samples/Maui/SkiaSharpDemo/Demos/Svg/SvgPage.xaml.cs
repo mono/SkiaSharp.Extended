@@ -14,25 +14,46 @@ public partial class SvgPage : TabbedPage
 		InitializeComponent();
 	}
 
-	private async Task LoadSvgAsync(string svgName)
+	private async Task<SKSvg> LoadSvgAsync(string svgName)
 	{
 		// create a new SVG object
-		svg = new SKSvg();
+		var svg = new SKSvg();
 
 		// load the SVG document from a stream
-		using var stream = await FileSystem.OpenAppPackageFileAsync(svgName);
+		using var stream = await FileSystem.OpenAppPackageFileAsync("SVG/" + svgName);
 		svg.Load(stream);
+
+		return svg;
 	}
 
 	private async void OnPageAppearing(object sender, EventArgs e)
 	{
-		svg = null;
-
 		var page = (ContentPage)sender;
-		await LoadSvgAsync(page.AutomationId);
+		var scrollView = (ScrollView)page.Content;
+		var canvas = (SKCanvasView)scrollView.Content;
 
-		var canvas = (SKCanvasView)page.Content;
+		svg = null;
+		svg = await LoadSvgAsync(page.AutomationId);
+
+		UpdateCanvasSize(page);
+
 		canvas.InvalidateSurface();
+	}
+
+	private void UpdateCanvasSize(ContentPage page)
+	{
+		var scrollView = (ScrollView)page.Content;
+		var canvas = (SKCanvasView)scrollView.Content;
+
+		canvas.HeightRequest = svg?.Picture?.CullRect is SKRect rect && rect.Width > 0 && rect.Height > 0
+			? canvas.Width * (rect.Height / rect.Width)
+			: -1;
+	}
+
+	private void OnPageSizeChanged(object sender, EventArgs e)
+	{
+		var page = (ContentPage)sender;
+		UpdateCanvasSize(page);
 	}
 
 	private void OnPainting(object sender, SKPaintSurfaceEventArgs e)

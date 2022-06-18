@@ -6,8 +6,8 @@ namespace SkiaSharp.Extended
 {
 	public class SKPathInterpolation
 	{
-		private List<SKPoint> pointsFrom;
-		private List<SKPoint> pointsTo;
+		private List<SKPoint>? pointsFrom;
+		private List<SKPoint>? pointsTo;
 
 		public SKPathInterpolation(SKPath from, SKPath to, float maxSegmentLength = 5f)
 		{
@@ -31,6 +31,10 @@ namespace SkiaSharp.Extended
 		{
 			pointsFrom = NormalizePath(From, MaxSegmentLength);
 			pointsTo = NormalizePath(To, MaxSegmentLength);
+
+			if (pointsFrom is null || pointsTo is null)
+				throw new ArgumentException("Unable to normalize paths.");
+
 			InterpolatePath(pointsFrom, pointsTo);
 		}
 
@@ -41,14 +45,14 @@ namespace SkiaSharp.Extended
 				Prepare();
 			}
 
-			var points = Interpolate(pointsFrom, pointsTo, t);
+			var points = Interpolate(pointsFrom!, pointsTo!, t);
 
 			var path = new SKPath();
 			path.AddPoly(points.ToArray());
 			return path;
 		}
 
-		private static List<SKPoint> NormalizePath(SKPath parsed, float maxSegmentLength)
+		private static List<SKPoint>? NormalizePath(SKPath parsed, float maxSegmentLength)
 		{
 			var skipBisect = false;
 			var points = CreateLinearPathPoints(parsed);
@@ -85,7 +89,7 @@ namespace SkiaSharp.Extended
 			return points;
 		}
 
-		private static List<SKPoint> CreateLinearPathPoints(SKPath path)
+		private static List<SKPoint>? CreateLinearPathPoints(SKPath path)
 		{
 			var ring = new List<SKPoint>();
 
@@ -154,7 +158,7 @@ namespace SkiaSharp.Extended
 				var b = i == ring.Count - 1 ? ring[0] : ring[i + 1];
 
 				// could splice the whole set for a segment instead, but a bit messy
-				while (SKGeometry.Distance(a, b) > maxSegmentLength)
+				while (SKPoint.Distance(a, b) > maxSegmentLength)
 				{
 					b = SKGeometry.PointAlong(a, b, 0.5f);
 					ring.Insert(i + 1, b);
@@ -175,7 +179,7 @@ namespace SkiaSharp.Extended
 			{
 				var a = path[i];
 				var b = path[(i + 1) % path.Count];
-				var segment = SKGeometry.Distance(a, b);
+				var segment = SKPoint.Distance(a, b);
 
 				if (insertAt <= cursor + segment)
 				{
@@ -200,7 +204,7 @@ namespace SkiaSharp.Extended
 				var sumOfSquares = 0.0f;
 				for (var i = 0; i < len; i++)
 				{
-					var d = SKGeometry.Distance(from[(offset + i) % len], to[i]);
+					var d = SKPoint.Distance(from[(offset + i) % len], to[i]);
 					sumOfSquares += d * d;
 				}
 
