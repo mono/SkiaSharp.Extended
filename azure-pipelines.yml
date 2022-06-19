@@ -77,7 +77,7 @@ stages:
               condition: always()
               inputs:
                 testResultsFormat: VSTest
-                testResultsFiles: ./output/test-results/**/*.trx
+                testResultsFiles: output/test-results/*.trx
             - publish: output
               artifact: windows
               condition: always()
