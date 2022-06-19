@@ -19,7 +19,7 @@ namespace SkiaSharp.Extended.Tests
 		[InlineData("img2.jpg", 8, 6, SKBlurHashTest.Image2_8x6)]
 		[InlineData("img3.jpg", 4, 3, SKBlurHashTest.Image3)]
 		[InlineData("img4.jpg", 4, 3, SKBlurHashTest.Image4)]
-		[InlineData("img6.png", 4, 3, SKBlurHashTest.Image6_cs)]
+		[InlineData("img6.png", 4, 3, SKBlurHashTest.Image6)]
 		[InlineData("img7.png", 4, 3, SKBlurHashTest.Image7)]
 		public void CanEncodeImage(string source, int compX, int compY, string expected)
 		{
