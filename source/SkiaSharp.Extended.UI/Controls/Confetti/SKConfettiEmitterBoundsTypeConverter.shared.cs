@@ -5,7 +5,7 @@
 #endif
 public class SKConfettiEmitterBoundsTypeConverter : StringTypeConverter
 {
-	protected override object? Convert(string? value)
+	protected override object? ConvertFromStringCore(string? value)
 	{
 		if (value == null)
 			return null;

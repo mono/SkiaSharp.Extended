@@ -2,13 +2,17 @@
 
 public abstract class StringTypeConverter : TypeConverter
 {
+	internal StringTypeConverter()
+	{
+	}
+
 	public override object? ConvertFromInvariantString(string? value) =>
-		Convert(value);
+		ConvertFromStringCore(value);
 
 	public override string? ConvertToInvariantString(object? value) =>
-		ConvertTo(value);
+		ConvertToStringCore(value);
 
-	protected abstract object? Convert(string? value);
+	protected abstract object? ConvertFromStringCore(string? value);
 
-	protected virtual string? ConvertTo(object? value) => throw new NotImplementedException();
+	protected virtual string? ConvertToStringCore(object? value) => throw new NotImplementedException();
 }
