@@ -80,6 +80,7 @@ stages:
                 testResultsFiles: ./output/test-results/**/*.trx
             - publish: output
               artifact: windows
+              condition: always()
               displayName: Upload Logs
 
   # Only build the NuGets on the release pipeline
