@@ -67,7 +67,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 	{
 		var particles = 0;
 
-		if (Systems is not null)
+		if (Systems?.Count > 0)
 		{
 			foreach (var system in Systems)
 			{
@@ -93,7 +93,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		}
 	}
 
-	private void OnSystemsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+	private void OnSystemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
 	{
 		if (e.NewItems is not null)
 		{
@@ -126,10 +126,10 @@ public class SKConfettiView : SKAnimatedSurfaceView
 			return;
 
 		if (oldValue is SKConfettiSystemCollection oldCollection)
-			oldCollection.CollectionChanged -= cv.OnSystemsChanged;
+			oldCollection.CollectionChanged -= cv.OnSystemsCollectionChanged;
 
 		if (newValue is SKConfettiSystemCollection newCollection)
-			newCollection.CollectionChanged += cv.OnSystemsChanged;
+			newCollection.CollectionChanged += cv.OnSystemsCollectionChanged;
 
 		cv.UpdateIsComplete();
 	}

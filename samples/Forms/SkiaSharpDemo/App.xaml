@@ -7,6 +7,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <views:BottomTabBarResources />
+                <views:OptionButtonsResources />
             </ResourceDictionary.MergedDictionaries>
 
             <converters:RoundToIntConverter x:Key="RoundToInt" />
@@ -22,41 +23,8 @@
                 <Setter Property="Padding" Value="0" />
             </Style>
 
-            <!-- OptionButton styles -->
-            <ResourceDictionary>
-                <Style x:Key="OptionButtonStyle" TargetType="Button">
-                    <Setter Property="CornerRadius" Value="3" />
-                    <Setter Property="VisualStateManager.VisualStateGroups">
-                        <VisualStateGroupList>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="Pressed">
-                                    <VisualState.Setters>
-                                        <Setter Property="Scale" Value="0.8" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="SelectedStates">
-                                <VisualState x:Name="Unselected" />
-                                <VisualState x:Name="Selected">
-                                    <VisualState.Setters>
-                                        <Setter Property="BorderColor" Value="Black" />
-                                        <Setter Property="BorderWidth" Value="3" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateGroupList>
-                    </Setter>
-                </Style>
-                <Style x:Key="TextOptionButtonStyle" TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
-                    <Setter Property="BackgroundColor" Value="Accent" />
-                    <Setter Property="TextColor" Value="White" />
-                    <Setter Property="Padding" Value="24,12" />
-                </Style>
-            </ResourceDictionary>
+            <!-- Application resource dictionary -->
+
         </ResourceDictionary>
-
-        <!-- Application resource dictionary -->
-
     </Application.Resources>
 </Application>

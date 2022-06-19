@@ -17,6 +17,11 @@
             </controls:SKConfettiView.GestureRecognizers>
         </controls:SKConfettiView>
 
+        <BoxView Color="Green" Opacity="0.5" CornerRadius="12"
+                 WidthRequest="25" HeightRequest="24" Margin="24"
+                 HorizontalOptions="End" VerticalOptions="Start"
+                 IsVisible="{Binding IsComplete, Source={Reference confettiView}}" />
+
         <views:BottomTabBar SelectedIndex="{Binding SelectedTab}" PagePadding="12,6">
             <views:BottomTabCollection>
 
