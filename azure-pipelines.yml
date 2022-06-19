@@ -74,11 +74,13 @@ stages:
             - pwsh: dotnet cake
               displayName: Build everything
             - task: PublishTestResults@2
+              condition: always()
               inputs:
                 testResultsFormat: VSTest
                 testResultsFiles: ./output/test-results/**/*.trx
             - publish: output
               artifact: windows
+              condition: always()
               displayName: Upload Logs
 
   # Only build the NuGets on the release pipeline
