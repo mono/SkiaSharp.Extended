@@ -3,9 +3,9 @@
 #if XAMARIN_FORMS
 [TypeConversion(typeof(SKConfettiPhysics))]
 #endif
-public class SKConfettiPhysicsTypeConverter : ExtendedTypeConverter
+public class SKConfettiPhysicsTypeConverter : StringTypeConverter
 {
-	protected override object? Convert(string? value)
+	protected override object? ConvertFromStringCore(string? value)
 	{
 		if (value == null)
 			return null;

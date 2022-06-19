@@ -3,9 +3,9 @@
 #if XAMARIN_FORMS
 [TypeConversion(typeof(SKConfettiColorCollection))]
 #endif
-public class SKConfettiColorCollectionTypeConverter : ExtendedTypeConverter
+public class SKConfettiColorCollectionTypeConverter : StringTypeConverter
 {
-	protected override object? Convert(string? value)
+	protected override object? ConvertFromStringCore(string? value)
 	{
 		if (value == null)
 			return null;
