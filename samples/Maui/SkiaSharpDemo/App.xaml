@@ -17,6 +17,7 @@
 
             <converters:RoundToIntConverter x:Key="RoundToInt" />
             <converters:RoundToConverter x:Key="RoundTo" />
+            <converters:TimeSpanToDoubleConverter x:Key="TimeSpanToDouble" />
 
         </ResourceDictionary>
     </Application.Resources>
