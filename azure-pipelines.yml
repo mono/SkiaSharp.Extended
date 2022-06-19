@@ -74,6 +74,7 @@ stages:
             - pwsh: dotnet cake
               displayName: Build everything
             - task: PublishTestResults@2
+              condition: always()
               inputs:
                 testResultsFormat: VSTest
                 testResultsFiles: ./output/test-results/**/*.trx
