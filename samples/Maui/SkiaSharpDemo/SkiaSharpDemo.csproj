@@ -61,32 +61,4 @@
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
-  <ItemGroup>
-    <MauiAsset Remove="Resources\Raw\dashes.svg" />
-    <MauiAsset Remove="Resources\Raw\img1.jpg" />
-    <MauiAsset Remove="Resources\Raw\img2.jpg" />
-    <MauiAsset Remove="Resources\Raw\img3.jpg" />
-    <MauiAsset Remove="Resources\Raw\img4.jpg" />
-    <MauiAsset Remove="Resources\Raw\img5.jpg" />
-    <MauiAsset Remove="Resources\Raw\img6.png" />
-    <MauiAsset Remove="Resources\Raw\img7.png" />
-    <MauiAsset Remove="Resources\Raw\logo.png" />
-    <MauiAsset Remove="Resources\Raw\logos.svg" />
-    <MauiAsset Remove="Resources\Raw\opacity.svg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AndroidResource Include="Resources\Raw\dashes.svg" />
-    <AndroidResource Include="Resources\Raw\img1.jpg" />
-    <AndroidResource Include="Resources\Raw\img2.jpg" />
-    <AndroidResource Include="Resources\Raw\img3.jpg" />
-    <AndroidResource Include="Resources\Raw\img4.jpg" />
-    <AndroidResource Include="Resources\Raw\img5.jpg" />
-    <AndroidResource Include="Resources\Raw\img6.png" />
-    <AndroidResource Include="Resources\Raw\img7.png" />
-    <AndroidResource Include="Resources\Raw\logo.png" />
-    <AndroidResource Include="Resources\Raw\logos.svg" />
-    <AndroidResource Include="Resources\Raw\opacity.svg" />
-  </ItemGroup>
-
 </Project>
