@@ -66,7 +66,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		private set => SetValue(IsCompletePropertyKey, value);
 	}
 
-	public override void Update(TimeSpan deltaTime)
+	protected override void Update(TimeSpan deltaTime)
 	{
 		if (animation is null)
 			return;
