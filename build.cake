@@ -10,6 +10,7 @@ Task("build")
 	var settings = new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/build.binlog")
 		.SetConfiguration("Release")
+                .SetMaxCpuCount(0)
 		.WithRestore();
 
 	MSBuild("./SkiaSharp.Extended.sln", settings);
@@ -21,6 +22,7 @@ Task("pack")
 	MSBuild("./SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/pack.binlog")
 		.SetConfiguration("Release")
+                .SetMaxCpuCount(0)
 		.WithRestore()
 		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/")).FullPath)
 		.WithTarget("Pack"));
@@ -33,6 +35,7 @@ Task("pack")
 	MSBuild("./SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
 		.EnableBinaryLogger("./output/binlogs/pack-preview.binlog")
 		.SetConfiguration("Release")
+                .SetMaxCpuCount(0)
 		.WithRestore()
 		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/")).FullPath)
 		.WithProperty("VersionSuffix", preview)
@@ -54,7 +57,7 @@ Task("test")
 		try {
 			DotNetCoreTest(csproj.FullPath, new DotNetCoreTestSettings {
 				Configuration = "Release",
-				Logger = $"trx;LogFileName={csproj.GetFilenameWithoutExtension()}.trx",
+				Loggers = new [] { $"trx;LogFileName={csproj.GetFilenameWithoutExtension()}.trx" },
 			});
 		} catch (Exception) {
 			failed++;
