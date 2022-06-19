@@ -24,13 +24,13 @@ public partial class BlurHashPage : ContentPage
 
 		Sources = new ObservableCollection<StreamImageSource?>
 		{
-			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("img1.jpg") },
-			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("img2.jpg") },
-			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("img3.jpg") },
-			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("img4.jpg") },
-			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("img5.jpg") },
-			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("img6.png") },
-			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("img7.png") },
+			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("BlurHash/img1.jpg") },
+			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("BlurHash/img2.jpg") },
+			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("BlurHash/img3.jpg") },
+			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("BlurHash/img4.jpg") },
+			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("BlurHash/img5.jpg") },
+			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("BlurHash/img6.png") },
+			new StreamImageSource { Stream = token => FileSystem.OpenAppPackageFileAsync("BlurHash/img7.png") },
 			null,
 		};
 

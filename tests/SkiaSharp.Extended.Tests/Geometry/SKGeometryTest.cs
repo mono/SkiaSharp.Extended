@@ -56,14 +56,6 @@ namespace SkiaSharp.Extended.Tests
 		}
 
 		[Fact]
-		public void DistanceCalculation()
-		{
-			var dist = SKGeometry.Distance(new SKPoint(10, 10), new SKPoint(10, 40));
-
-			Assert.Equal(30f, dist);
-		}
-
-		[Fact]
 		public void CreateInterpolationReturnsOriginals()
 		{
 			var path1 = new SKPath();
