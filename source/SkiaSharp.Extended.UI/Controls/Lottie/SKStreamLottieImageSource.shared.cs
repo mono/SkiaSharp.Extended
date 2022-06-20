@@ -13,9 +13,9 @@ public class SKStreamLottieImageSource : SKLottieImageSource
 
 		using var stream = await Stream.Invoke(cancellationToken);
 
-		if (!Skottie.Animation.TryCreate(stream, out var animation))
-			throw new ArgumentException($"Unable to load Lottie animation.");
+		if (stream is null)
+			return null;
 
-		return animation;
+		return Skottie.Animation.Create(stream);
 	}
 }

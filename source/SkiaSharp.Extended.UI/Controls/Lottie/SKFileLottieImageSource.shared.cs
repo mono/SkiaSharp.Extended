@@ -16,10 +16,10 @@ public class SKFileLottieImageSource : SKLottieImageSource
 		{
 			using var stream = await FileSystem.OpenAppPackageFileAsync(File!);
 
-			if (!Skottie.Animation.TryCreate(stream, out var animation))
-				throw new ArgumentException($"Unable to load Lottie animation \"{File}\".");
+			if (stream is null)
+				return null;
 
-			return animation;
+			return Skottie.Animation.Create(stream);
 		}
 		catch (Exception ex)
 		{

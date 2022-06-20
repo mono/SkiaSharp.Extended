@@ -126,7 +126,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		animation = newAnimation;
 
 		Progress = TimeSpan.Zero;
-		Duration = TimeSpan.FromSeconds(animation?.Duration ?? 0);
+		Duration = animation?.Duration ?? TimeSpan.Zero;
 
 		if (!IsRunning)
 			Invalidate();
