@@ -13,7 +13,8 @@ public class SKLottieView : SKAnimatedSurfaceView
 		nameof(Duration),
 		typeof(TimeSpan),
 		typeof(SKLottieView),
-		TimeSpan.Zero);
+		TimeSpan.Zero,
+		propertyChanged: OnProgressDurationPropertyChanged);
 
 	public static readonly BindableProperty DurationProperty = DurationPropertyKey.BindableProperty;
 
@@ -23,7 +24,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		typeof(SKLottieView),
 		TimeSpan.Zero,
 		BindingMode.TwoWay,
-		propertyChanged: OnProgressPropertyChanged);
+		propertyChanged: OnProgressDurationPropertyChanged);
 
 	private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
 		nameof(IsComplete),
@@ -33,7 +34,21 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 	public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 
+	public static readonly BindableProperty RepeatCountProperty = BindableProperty.Create(
+		nameof(RepeatCount),
+		typeof(int),
+		typeof(SKLottieView),
+		0);
+
+	public static readonly BindableProperty RepeatModeProperty = BindableProperty.Create(
+		nameof(RepeatMode),
+		typeof(SKLottieRepeatMode),
+		typeof(SKLottieView),
+		SKLottieRepeatMode.Restart);
+
 	Skottie.Animation? animation;
+	bool playForwards = true;
+	int repeatsCompleted = 0;
 
 	public SKLottieView()
 	{
@@ -66,10 +81,28 @@ public class SKLottieView : SKAnimatedSurfaceView
 		private set => SetValue(IsCompletePropertyKey, value);
 	}
 
+	public int RepeatCount
+	{
+		get => (int)GetValue(RepeatCountProperty);
+		set => SetValue(RepeatCountProperty, value);
+	}
+
+	public SKLottieRepeatMode RepeatMode
+	{
+		get => (SKLottieRepeatMode)GetValue(RepeatModeProperty);
+		set => SetValue(RepeatModeProperty, value);
+	}
+
 	protected override void Update(TimeSpan deltaTime)
 	{
 		if (animation is null)
 			return;
+
+		// TODO: handle case where a repeat or revers cases the progress
+		//       to either wrap or start the next round
+
+		if (!playForwards)
+			deltaTime = -deltaTime;
 
 		var newProgress = Progress + deltaTime;
 		if (newProgress > Duration)
@@ -86,24 +119,88 @@ public class SKLottieView : SKAnimatedSurfaceView
 			return;
 
 		animation.Render(canvas, SKRect.Create(SKPoint.Empty, size));
-	}
 
-	private static void OnProgressPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
-	{
-		if (bindable is not SKLottieView lv || newValue is not TimeSpan progress)
-			return;
-
-		lv.UpdateProgress(progress);
+		WriteDebugStatus($"Repeats: {repeatsCompleted}/{RepeatCount}");
+		WriteDebugStatus($"Forward: {playForwards} ({RepeatMode})");
 	}
 
 	private void UpdateProgress(TimeSpan progress)
 	{
 		if (animation is null)
+		{
+			IsComplete = true;
 			return;
+		}
 
 		animation.SeekFrameTime(progress.TotalSeconds);
 
-		UpdateIsComplete();
+		var repeatMode = RepeatMode;
+		var duration = Duration;
+
+		// have we reached the end of this run
+		var atStart = !playForwards && progress <= TimeSpan.Zero;
+		var atEnd = playForwards && progress >= duration;
+		var isFinishedRun = repeatMode == SKLottieRepeatMode.Restart ? atEnd : atStart;
+
+		// maybe the direction changed
+		var needsFlip =
+			(atEnd && repeatMode == SKLottieRepeatMode.Reverse) ||
+			(atStart && repeatMode == SKLottieRepeatMode.Restart);
+
+		if (needsFlip)
+		{
+			// we need to reverse to finish the run
+			playForwards = !playForwards;
+
+			IsComplete = false;
+		}
+		else
+		{
+			// make sure repeats are positive to make things easier
+			var totalRepeatCount = RepeatCount;
+			if (totalRepeatCount < 0)
+				totalRepeatCount = int.MaxValue;
+
+			// infinite
+			var infinite = totalRepeatCount == int.MaxValue;
+			if (infinite)
+				repeatsCompleted = 0;
+
+			// if we are at the end and we are repeating, then repeat
+			if (isFinishedRun && repeatsCompleted < totalRepeatCount)
+			{
+				if (!infinite)
+					repeatsCompleted++;
+
+				isFinishedRun = false;
+
+				if (repeatMode == SKLottieRepeatMode.Restart)
+					Progress = TimeSpan.Zero;
+				else if (repeatMode == SKLottieRepeatMode.Reverse)
+					playForwards = !playForwards;
+			}
+
+			IsComplete =
+				isFinishedRun &&
+				repeatsCompleted >= totalRepeatCount;
+		}
+
+		if (!IsRunning)
+			Invalidate();
+	}
+
+	private async Task LoadAnimationAsync(SKLottieImageSource? imageSource, CancellationToken cancellationToken = default)
+	{
+		var newAnimation = imageSource is not null
+			? await imageSource.LoadAnimationAsync(cancellationToken)
+			: null;
+
+		animation = newAnimation;
+		playForwards = true;
+		repeatsCompleted = 0;
+
+		Progress = TimeSpan.Zero;
+		Duration = animation?.Duration ?? TimeSpan.Zero;
 
 		if (!IsRunning)
 			Invalidate();
@@ -117,29 +214,11 @@ public class SKLottieView : SKAnimatedSurfaceView
 		await lv.LoadAnimationAsync(newValue as SKLottieImageSource);
 	}
 
-	private async Task LoadAnimationAsync(SKLottieImageSource? imageSource, CancellationToken cancellationToken = default)
+	private static void OnProgressDurationPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
 	{
-		var newAnimation = imageSource is not null
-			? await imageSource.LoadAnimationAsync(cancellationToken)
-			: null;
-
-		animation = newAnimation;
-
-		Progress = TimeSpan.Zero;
-		Duration = animation?.Duration ?? TimeSpan.Zero;
-
-		if (!IsRunning)
-			Invalidate();
-	}
-
-	private void UpdateIsComplete()
-	{
-		if (animation is null)
-		{
-			IsComplete = true;
+		if (bindable is not SKLottieView lv)
 			return;
-		}
 
-		IsComplete = Progress >= Duration;
+		lv.UpdateProgress(lv.Progress);
 	}
 }
