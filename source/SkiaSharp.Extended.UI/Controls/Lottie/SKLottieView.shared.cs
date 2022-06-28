@@ -124,8 +124,10 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 		animation.Render(canvas, SKRect.Create(SKPoint.Empty, size));
 
+#if DEBUG
 		WriteDebugStatus($"Repeats: {repeatsCompleted}/{RepeatCount}");
 		WriteDebugStatus($"Forward: {playForwards} ({RepeatMode})");
+#endif
 	}
 
 	private void UpdateProgress(TimeSpan progress)
