@@ -8,6 +8,7 @@ Task("build")
 	.Does(() =>
 {
 	var settings = new MSBuildSettings()
+		{ AllowPreviewVersion = true }
 		.EnableBinaryLogger("./output/binlogs/build.binlog")
 		.SetConfiguration("Release")
 		.SetMaxCpuCount(0)
@@ -20,6 +21,7 @@ Task("pack")
 	.Does(() =>
 {
 	MSBuild("./SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
+		{ AllowPreviewVersion = true }
 		.EnableBinaryLogger("./output/binlogs/pack.binlog")
 		.SetConfiguration("Release")
 		.SetMaxCpuCount(0)
@@ -33,6 +35,7 @@ Task("pack")
 	}
 
 	MSBuild("./SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
+		{ AllowPreviewVersion = true }
 		.EnableBinaryLogger("./output/binlogs/pack-preview.binlog")
 		.SetConfiguration("Release")
 		.SetMaxCpuCount(0)
