@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <DefineConstants>$(DefineConstants);XAMARIN_FORMS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,26 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\source\SkiaSharp.Extended.UI.Forms\SkiaSharp.Extended.UI.Forms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="System" />
+    <Using Include="System.Collections.Generic" />
+    <Using Include="System.IO" />
+    <Using Include="System.Net.Http" />
+    <Using Include="System.Threading" />
+    <Using Include="System.Threading.Tasks" />
+    <Using Include="Xamarin.Forms" />
+    <Using Include="Xamarin.Forms.Internals" />
+    <Using Include="Xamarin.Forms.Xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\SkiaSharp.Extended.UI.Tests\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\SkiaSharp.Extended.UI.Tests\TestAssets\**" Link="TestAssets\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

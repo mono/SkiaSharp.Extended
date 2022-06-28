@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWpf>true</UseWpf>
+    <DefineConstants>$(DefineConstants);XAMARIN_FORMS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
