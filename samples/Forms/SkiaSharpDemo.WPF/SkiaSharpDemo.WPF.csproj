@@ -15,9 +15,9 @@
 
   <ItemGroup>
     <PackageReference Include="HarfBuzzSharp" Version="2.8.2" />
-    <PackageReference Include="SkiaSharp" Version="2.88.1-preview.71" />
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.1-preview.71" />
-    <PackageReference Include="SkiaSharp.Views.Forms.WPF" Version="2.88.1-preview.71" />
+    <PackageReference Include="SkiaSharp" Version="2.88.1-preview.75" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.1-preview.75" />
+    <PackageReference Include="SkiaSharp.Views.Forms.WPF" Version="2.88.1-preview.75" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
     <PackageReference Include="Xamarin.Forms.Platform.WPF" Version="5.0.0.2401" />
     <PackageReference Include="Topten.RichTextKit" Version="0.4.137" />
@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <Content Include="logo.png" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="Lottie\trophy.json" />
+    <Content Include="Lottie\trophy.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

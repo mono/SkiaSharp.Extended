@@ -32,6 +32,9 @@ internal static class PlatformExtensions
 				loaded?.Invoke();
 		};
 	}
+
+	internal static Task<Stream> ReadAsStreamAsync(this HttpContent httpContent, CancellationToken cancellationToken) =>
+		httpContent.ReadAsStreamAsync();
 }
 
 internal static class FileSystem
@@ -46,7 +49,8 @@ internal static class FileSystem
 #if __ANDROID__
 		try
 		{
-			return Task.FromResult(Android.App.Application.Context.Assets!.Open(filename));
+			var stream = Android.App.Application.Context.Assets!.Open(filename);
+			return Task.FromResult(stream);
 		}
 		catch (Java.IO.FileNotFoundException ex)
 		{

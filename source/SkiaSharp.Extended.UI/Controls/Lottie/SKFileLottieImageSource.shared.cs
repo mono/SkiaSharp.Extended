@@ -2,7 +2,15 @@
 
 public class SKFileLottieImageSource : SKLottieImageSource
 {
-	public string? File { get; set; }
+	public static BindableProperty FileProperty = BindableProperty.Create(
+		nameof(File), typeof(string), typeof(SKFileLottieImageSource),
+		propertyChanged: OnSourceChanged);
+
+	public string? File
+	{
+		get => (string?)GetValue(FileProperty);
+		set => SetValue(FileProperty, value);
+	}
 
 	public override bool IsEmpty =>
 		string.IsNullOrEmpty(File);
@@ -14,7 +22,7 @@ public class SKFileLottieImageSource : SKLottieImageSource
 
 		try
 		{
-			using var stream = await FileSystem.OpenAppPackageFileAsync(File!);
+			using var stream = await LoadFile(File);
 
 			if (stream is null)
 				return null;
@@ -29,6 +37,20 @@ public class SKFileLottieImageSource : SKLottieImageSource
 #else
 			throw new ArgumentException($"Unable to load Lottie animation \"{File}\".", ex);
 #endif
+		}
+	}
+
+	private static async Task<Stream> LoadFile(string filename)
+	{
+		try
+		{
+			return await FileSystem.OpenAppPackageFileAsync(filename).ConfigureAwait(false);
+		}
+		catch (NotImplementedException)
+		{
+			var root = AppContext.BaseDirectory;
+			var path = Path.Combine(root, filename);
+			return System.IO.File.OpenRead(path);
 		}
 	}
 }

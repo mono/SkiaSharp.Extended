@@ -1,6 +1,5 @@
 ﻿using System;
 using SkiaSharp.Extended.UI.Controls.Converters;
-using Xamarin.Forms;
 using Xunit;
 
 namespace SkiaSharp.Extended.UI.Controls.Tests

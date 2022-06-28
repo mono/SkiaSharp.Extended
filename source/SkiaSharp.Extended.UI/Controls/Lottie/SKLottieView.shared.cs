@@ -93,6 +93,10 @@ public class SKLottieView : SKAnimatedSurfaceView
 		set => SetValue(RepeatModeProperty, value);
 	}
 
+	public event EventHandler? AnimationFailed;
+
+	public event EventHandler? AnimationLoaded;
+
 	protected override void Update(TimeSpan deltaTime)
 	{
 		if (animation is null)
@@ -191,11 +195,29 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 	private async Task LoadAnimationAsync(SKLottieImageSource? imageSource, CancellationToken cancellationToken = default)
 	{
-		var newAnimation = imageSource is not null
-			? await imageSource.LoadAnimationAsync(cancellationToken)
-			: null;
+		// TODO: better error messaging/handling
 
-		animation = newAnimation;
+		if (imageSource is null || imageSource.IsEmpty)
+		{
+			animation = null;
+		}
+		else
+		{
+			try
+			{
+				animation = await imageSource.LoadAnimationAsync(cancellationToken);
+			}
+			catch
+			{
+				animation = null;
+			}
+
+			if (animation is null)
+				AnimationFailed?.Invoke(this, EventArgs.Empty);
+			else
+				AnimationLoaded?.Invoke(this, EventArgs.Empty);
+		}
+
 		playForwards = true;
 		repeatsCompleted = 0;
 
@@ -211,7 +233,17 @@ public class SKLottieView : SKAnimatedSurfaceView
 		if (bindable is not SKLottieView lv)
 			return;
 
+		if (oldValue is SKLottieImageSource oldSource)
+			oldSource.SourceChanged -= lv.OnSourceChanged;
+		if (newValue is SKLottieImageSource newSource)
+			newSource.SourceChanged += lv.OnSourceChanged;
+
 		await lv.LoadAnimationAsync(newValue as SKLottieImageSource);
+	}
+
+	private async void OnSourceChanged(object? sender, EventArgs e)
+	{
+		await LoadAnimationAsync(sender as SKLottieImageSource);
 	}
 
 	private static void OnProgressDurationPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)

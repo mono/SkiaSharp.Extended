@@ -1,7 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <TargetFrameworks Condition="$(IsMacOS) or $(IsWindows)">$(TargetFrameworks);MonoAndroid10.0;Xamarin.iOS10;Xamarin.Mac20;tizen40</TargetFrameworks>
     <TargetFrameworks Condition="$(IsWindows)">$(TargetFrameworks);uap10.0.19041</TargetFrameworks>
     <AssemblyName>SkiaSharp.Extended.UI</AssemblyName>
@@ -17,9 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SkiaSharp" Version="2.88.1-preview.71" />
-    <PackageReference Include="SkiaSharp.Skottie" Version="2.88.1-preview.71" />
-    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.1-preview.71" />
+    <PackageReference Include="SkiaSharp" Version="2.88.1-preview.75" />
+    <PackageReference Include="SkiaSharp.Skottie" Version="2.88.1-preview.75" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.1-preview.75" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2401" />
   </ItemGroup>
 
@@ -31,6 +31,7 @@
     <Using Include="System" />
     <Using Include="System.Collections.Generic" />
     <Using Include="System.IO" />
+    <Using Include="System.Net.Http" />
     <Using Include="System.Threading" />
     <Using Include="System.Threading.Tasks" />
     <Using Include="Xamarin.Forms" />

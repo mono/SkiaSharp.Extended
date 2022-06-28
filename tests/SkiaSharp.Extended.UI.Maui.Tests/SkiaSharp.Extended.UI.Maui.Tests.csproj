@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <DefineConstants>$(DefineConstants);XAMARIN_FORMS</DefineConstants>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseMaui>true</UseMaui>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,19 +16,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\source\SkiaSharp.Extended.UI.Forms\SkiaSharp.Extended.UI.Forms.csproj" />
+    <ProjectReference Include="..\..\source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="System" />
-    <Using Include="System.Collections.Generic" />
-    <Using Include="System.IO" />
-    <Using Include="System.Net.Http" />
-    <Using Include="System.Threading" />
-    <Using Include="System.Threading.Tasks" />
-    <Using Include="Xamarin.Forms" />
-    <Using Include="Xamarin.Forms.Internals" />
-    <Using Include="Xamarin.Forms.Xaml" />
+    <Using Include="System.ComponentModel" />
+    <Using Include="Microsoft.Maui.Graphics" />
+    <Using Include="Microsoft.Maui.Graphics.Converters" />
+    <Using Include="Microsoft.Maui.Dispatching" />
+    <Using Include="Microsoft.Maui.Controls.Xaml" />
   </ItemGroup>
 
   <ItemGroup>

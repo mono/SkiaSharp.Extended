@@ -9,6 +9,8 @@ namespace SkiaSharp.Extended.UI.Extensions.Tests
 {
 	public class SKImageSourceExtensionsTest
 	{
+		private const string LogoPng = "TestAssets/Images/logo.png";
+
 		[Fact]
 		public async Task NullThrows()
 		{
@@ -82,7 +84,7 @@ namespace SkiaSharp.Extended.UI.Extensions.Tests
 		{
 			TestUtils.EnsureFormsInit();
 
-			using var image = SKImage.FromEncodedData("images/logo.png");
+			using var image = SKImage.FromEncodedData(LogoPng);
 			var info = new SKImageInfo(image.Width, image.Height, image.ColorType, image.AlphaType, image.ColorSpace);
 
 			var source = new UriImageSource { Uri = new Uri("https://raw.githubusercontent.com/mono/SkiaSharp.Extended/main/images/logo.png") };
@@ -98,10 +100,10 @@ namespace SkiaSharp.Extended.UI.Extensions.Tests
 		[Fact]
 		public async Task FileReturnsSimilarImage()
 		{
-			using var image = SKImage.FromEncodedData("images/logo.png");
+			using var image = SKImage.FromEncodedData(LogoPng);
 			var info = new SKImageInfo(image.Width, image.Height, image.ColorType, image.AlphaType, image.ColorSpace);
 
-			var source = new FileImageSource { File = "images/logo.png" };
+			var source = new FileImageSource { File = LogoPng };
 
 			var result = await source.ToSKImageAsync();
 			Assert.NotNull(result);

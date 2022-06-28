@@ -1,6 +1,9 @@
 ﻿using SkiaSharp.Extended.UI.Controls.Converters;
-using Xamarin.Forms;
 using Xunit;
+
+#if XAMARIN_FORMS
+using Colors = Xamarin.Forms.Color;
+#endif
 
 namespace SkiaSharp.Extended.UI.Controls.Tests
 {
@@ -22,7 +25,7 @@ namespace SkiaSharp.Extended.UI.Controls.Tests
 
 			Assert.NotNull(collection);
 			var color = Assert.Single(collection);
-			Assert.Equal(Color.Red, color);
+			Assert.Equal(Colors.Red, color);
 		}
 
 		[Theory]
@@ -40,7 +43,7 @@ namespace SkiaSharp.Extended.UI.Controls.Tests
 			var collection = Assert.IsType<SKConfettiColorCollection>(result);
 
 			Assert.NotNull(collection);
-			Assert.Equal(new[] { Color.Red, Color.Red, Color.Blue }, collection);
+			Assert.Equal(new[] { Colors.Red, Colors.Red, Colors.Blue }, collection);
 		}
 	}
 }
