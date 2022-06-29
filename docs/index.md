@@ -18,8 +18,8 @@ interesting projects. [**See more...**](api/extended/index)
 
 # SkiaSharp.Extended.UI.Maui
 
-**SkiaSharp.Extended.UI.Forms** is a collection some great .NET MAUI controls
-that may be useful to some apps. [**See more...**](api/ui-forms/index)
+**SkiaSharp.Extended.UI.Maui** is a collection some great .NET MAUI controls
+that may be useful to some apps. [**See more...**](api/ui-maui/index)
 
 ## SKConfettiView
 
