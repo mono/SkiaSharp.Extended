@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWpf>true</UseWpf>
-    <DefineConstants>$(DefineConstants);XAMARIN_FORMS</DefineConstants>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseMaui>true</UseMaui>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,15 +16,27 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\source\SkiaSharp.Extended.UI.Forms.WPF\SkiaSharp.Extended.UI.Forms.WPF.csproj" />
+    <ProjectReference Include="..\..\source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="TestResults\**\*" />
+    <Using Include="System.ComponentModel" />
+    <Using Include="Microsoft.Maui.Graphics" />
+    <Using Include="Microsoft.Maui.Graphics.Converters" />
+    <Using Include="Microsoft.Maui.Dispatching" />
+    <Using Include="Microsoft.Maui.Controls.Xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\SkiaSharp.Extended.UI.Tests\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\SkiaSharp.Extended.UI.Tests\TestAssets\**" Link="TestAssets\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="TestResults\**\*" />
   </ItemGroup>
 
 </Project>

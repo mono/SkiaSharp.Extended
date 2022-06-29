@@ -23,7 +23,7 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 		set => SetValue(IsRunningProperty, value);
 	}
 
-	public virtual void Update(TimeSpan deltaTime)
+	protected virtual void Update(TimeSpan deltaTime)
 	{
 	}
 

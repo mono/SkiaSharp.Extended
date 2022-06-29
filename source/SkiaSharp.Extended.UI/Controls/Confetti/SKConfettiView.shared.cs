@@ -48,7 +48,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		set => SetValue(SystemsProperty, value);
 	}
 
-	public override void Update(TimeSpan deltaTime)
+	protected override void Update(TimeSpan deltaTime)
 	{
 		if (Systems is null)
 			return;
