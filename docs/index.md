@@ -19,12 +19,12 @@ interesting projects. [**See more...**](api/extended/index)
 # SkiaSharp.Extended.UI.Forms
 
 **SkiaSharp.Extended.UI.Forms** is a collection some great Xamarin.Forms controls
-that may be useful to some apps. [**See more...**](api/ui/index)
+that may be useful to some apps. [**See more...**](api/ui-forms/index)
 
 ## SKImageSourceExtensions
 
-Some useful extensions for the abstract `ImageSource` type. [**See more...**](api/ui/skimagesourceextensions)
+Some useful extensions for the abstract `ImageSource` type. [**See more...**](api/ui-forms/skimagesourceextensions)
 
 ## SKConfettiView
 
-The confetti view is a container for one or more systems of confetti particles. [**See more...**](api/ui/skconfettiview)
+The confetti view is a container for one or more systems of confetti particles. [**See more...**](api/ui-forms/skconfettiview)
