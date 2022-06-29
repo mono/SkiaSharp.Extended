@@ -1,23 +1,13 @@
 {
-  "api/extended/skgeometry.html": {
-    "href": "api/extended/skgeometry.html",
-    "title": "SKGeometry | SkiaSharp.Extended",
-    "keywords": "SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. Methods There are a few helper methods that can be used to create geometric shapes in the SKGeometry type: Method Description CreateSectorPath Creates a path with the shape of sector/section of a doughnut/pie chart. CreatePiePath Creates a path with the shape of a doughnut/pie chart. CreateSquarePath Creates a path with the shape of a square. CreateRectanglePath Creates a path with the shape of a rectangle. CreateTrianglePath Creates a path with the shape of a triangle. CreateRegularPolygonPath Creates a path with the shape of some regular polygon. CreateRegularStarPath Creates a path with the shape of a square. Extension Methods Some of these shapes can also be draw directly on a SKCanvas using the extensions methods: SKCanvas canvas = ... canvas.DrawStar( 100, 100, // x, y 100, // outer radius 50, // inner radius 5); // points"
-  },
-  "index.html": {
-    "href": "index.html",
-    "title": "SkiaSharp.Extended | SkiaSharp.Extended",
-    "keywords": "SkiaSharp.Extended SkiaSharp.Extended is a collection some cool libraries that may be useful to some apps. There are several repositories that may have interesting projects. See more... SKBlurHash SKBlurHash is a compact representation of a placeholder for an image. See more... SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. See more... SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. See more... SkiaSharp.Extended.UI.Forms SkiaSharp.Extended.UI.Forms is a collection some great Xamarin.Forms controls that may be useful to some apps. See more... SKImageSourceExtensions Some useful extensions for the abstract ImageSource type. See more... SKConfettiView The confetti view is a container for one or more systems of confetti particles. See more..."
-  },
-  "api/extended/skpathinterpolation.html": {
-    "href": "api/extended/skpathinterpolation.html",
-    "title": "SKPathInterpolation | SkiaSharp.Extended",
-    "keywords": "SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. Path Interpolation The code is also very simple, just create a SKPathInterpolation instance and then ask for each step: var interpolation = new SKPathInterpolation(startPath, endPath); var halfWayPath = interpolation.Interpolate(0.5f); var almostTherePath = interpolation.Interpolate(0.9f); Methods There are a few helper methods that can be used to create geometric shapes in the SKGeometry type: Method Description Interpolate Creates a new path interpolated between the start and end paths."
-  },
   "api/extended/index.html": {
     "href": "api/extended/index.html",
     "title": "Overview | SkiaSharp.Extended",
     "keywords": "Overview SkiaSharp.Extended is a collection some cool functions that may be useful to some apps. SKBlurHash SKBlurHash is a compact representation of a placeholder for an image. See more... Preview SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. See more... SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. See more... Preview"
+  },
+  "api/extended/skgeometry.html": {
+    "href": "api/extended/skgeometry.html",
+    "title": "SKGeometry | SkiaSharp.Extended",
+    "keywords": "SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. Methods There are a few helper methods that can be used to create geometric shapes in the SKGeometry type: Method Description CreateSectorPath Creates a path with the shape of sector/section of a doughnut/pie chart. CreatePiePath Creates a path with the shape of a doughnut/pie chart. CreateSquarePath Creates a path with the shape of a square. CreateRectanglePath Creates a path with the shape of a rectangle. CreateTrianglePath Creates a path with the shape of a triangle. CreateRegularPolygonPath Creates a path with the shape of some regular polygon. CreateRegularStarPath Creates a path with the shape of a square. Extension Methods Some of these shapes can also be draw directly on a SKCanvas using the extensions methods: SKCanvas canvas = ... canvas.DrawStar( 100, 100, // x, y 100, // outer radius 50, // inner radius 5); // points"
   },
   "api/ui-forms/skimagesourceextensions.html": {
     "href": "api/ui-forms/skimagesourceextensions.html",
@@ -39,9 +29,19 @@
     "title": "Overview | SkiaSharp.Extended",
     "keywords": "Overview SkiaSharp.Extended SkiaSharp.Extended is a collection some cool libraries that may be useful to some apps. There are several repositories that may have interesting projects. See more... SKBlurHash SKBlurHash is a compact representation of a placeholder for an image. See more... SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. See more... SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. See more... SkiaSharp.Extended.UI.Forms SkiaSharp.Extended.UI.Forms is a collection some great Xamarin.Forms controls that may be useful to some apps. See more... SKImageSourceExtensions Some useful extensions for the abstract ImageSource type. See more... SKConfettiView The confetti view is a container for one or more systems of confetti particles. See more..."
   },
+  "index.html": {
+    "href": "index.html",
+    "title": "SkiaSharp.Extended | SkiaSharp.Extended",
+    "keywords": "SkiaSharp.Extended SkiaSharp.Extended is a collection some cool libraries that may be useful to some apps. There are several repositories that may have interesting projects. See more... SKBlurHash SKBlurHash is a compact representation of a placeholder for an image. See more... SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. See more... SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. See more... SkiaSharp.Extended.UI.Forms SkiaSharp.Extended.UI.Forms is a collection some great Xamarin.Forms controls that may be useful to some apps. See more... SKImageSourceExtensions Some useful extensions for the abstract ImageSource type. See more... SKConfettiView The confetti view is a container for one or more systems of confetti particles. See more..."
+  },
   "api/extended/skblurhash.html": {
     "href": "api/extended/skblurhash.html",
     "title": "SKBlurHash | SkiaSharp.Extended",
     "keywords": "SKBlurHash A BlurHash is a compact representation of a placeholder for an image. For example, the SkiaSharp logo can be reduced to a tiny string: LjPsbRxG%gx^aJxuM|W=?^X8Mxn$ Original (79.7 KB) BlurHash (36 bytes) Methods TODO"
+  },
+  "api/extended/skpathinterpolation.html": {
+    "href": "api/extended/skpathinterpolation.html",
+    "title": "SKPathInterpolation | SkiaSharp.Extended",
+    "keywords": "SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. Path Interpolation The code is also very simple, just create a SKPathInterpolation instance and then ask for each step: var interpolation = new SKPathInterpolation(startPath, endPath); var halfWayPath = interpolation.Interpolate(0.5f); var almostTherePath = interpolation.Interpolate(0.9f); Methods There are a few helper methods that can be used to create geometric shapes in the SKGeometry type: Method Description Interpolate Creates a new path interpolated between the start and end paths."
   }
 }
