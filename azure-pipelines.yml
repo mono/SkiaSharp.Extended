@@ -1,8 +1,24 @@
 trigger:
-  - main
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - README.md
+      - CODE-OF-CONDUCT.md
+      - LICENSE
+      - .github
 
 pr:
-  - main
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - README.md
+      - CODE-OF-CONDUCT.md
+      - LICENSE
+      - .github
 
 variables:
   BASE_VERSION: 2.0.0
