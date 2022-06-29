@@ -17,21 +17,6 @@
         "InvalidFileLink"
       ],
       "type": "Conceptual",
-      "source_relative_path": "api/deprecated.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/deprecated.html",
-          "hash": "l6vNcWvemDgLdtMwXnlw5A=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "log_codes": [
-        "InvalidFileLink"
-      ],
-      "type": "Conceptual",
       "source_relative_path": "api/extended/index.md",
       "output": {
         ".html": {
@@ -79,33 +64,6 @@
       "version": ""
     },
     {
-      "type": "Conceptual",
-      "source_relative_path": "api/iconify/iconify.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/iconify/iconify.html",
-          "hash": "n+myxKb0AjHIwuzHBPA1EQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "log_codes": [
-        "InvalidFileLink"
-      ],
-      "type": "Conceptual",
-      "source_relative_path": "api/iconify/index.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/iconify/index.html",
-          "hash": "rPbNmlpXq5c8s3Ho9cz9AQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
       "log_codes": [
         "InvalidFileLink"
       ],
@@ -114,34 +72,7 @@
       "output": {
         ".html": {
           "relative_path": "api/index.html",
-          "hash": "tQA3YJEoQrozf0X0UzhJGw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "log_codes": [
-        "InvalidFileLink"
-      ],
-      "type": "Conceptual",
-      "source_relative_path": "api/svg/index.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/svg/index.html",
-          "hash": "Lz9kq0hO+2gshtiG/u/JVQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Conceptual",
-      "source_relative_path": "api/svg/svg.md",
-      "output": {
-        ".html": {
-          "relative_path": "api/svg/svg.html",
-          "hash": "cPjaTT7Yq0h7WLBH2ZZsZw=="
+          "hash": "u6vYRPIXn2aEharWBrTpmA=="
         }
       },
       "is_incremental": false,
@@ -153,7 +84,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "pSOcRiu94ukGml8LLA9xrg=="
+          "hash": "bTQduItUaps55LTvRovxuA=="
         }
       },
       "is_incremental": false,
@@ -164,11 +95,11 @@
         "InvalidFileLink"
       ],
       "type": "Conceptual",
-      "source_relative_path": "api/ui/index.md",
+      "source_relative_path": "api/ui-forms/index.md",
       "output": {
         ".html": {
-          "relative_path": "api/ui/index.html",
-          "hash": "QvUU7KCcgufNvGN+xhPjyw=="
+          "relative_path": "api/ui-forms/index.html",
+          "hash": "oAmzZcFGHITfh2WTwCaWOw=="
         }
       },
       "is_incremental": false,
@@ -176,11 +107,11 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "api/ui/skconfettiview.md",
+      "source_relative_path": "api/ui-forms/skconfettiview.md",
       "output": {
         ".html": {
-          "relative_path": "api/ui/skconfettiview.html",
-          "hash": "9ABzgqVuGTYgCkUF+Mh3YQ=="
+          "relative_path": "api/ui-forms/skconfettiview.html",
+          "hash": "Rd3IgJw3nywvVOkqI2qQ8w=="
         }
       },
       "is_incremental": false,
@@ -188,11 +119,11 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "api/ui/skimagesourceextensions.md",
+      "source_relative_path": "api/ui-forms/skimagesourceextensions.md",
       "output": {
         ".html": {
-          "relative_path": "api/ui/skimagesourceextensions.html",
-          "hash": "o5Ei8v1E6ezd1firV+JLIg=="
+          "relative_path": "api/ui-forms/skimagesourceextensions.html",
+          "hash": "4SGrMtP8vmWlKSJYRuQYSA=="
         }
       },
       "is_incremental": false,
@@ -248,17 +179,6 @@
       "output": {
         "resource": {
           "relative_path": "images/extended/skpathinterpolation/interpolation.gif"
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Resource",
-      "source_relative_path": "images/iconify/fontawesome.png",
-      "output": {
-        "resource": {
-          "relative_path": "images/iconify/fontawesome.png"
         }
       },
       "is_incremental": false,
@@ -328,7 +248,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "c3x8aThI7YLbTMOgQWsShQ=="
+          "hash": "TzdyK2iRl9b/H7K8Sv/5Vw=="
         }
       },
       "is_incremental": false,
@@ -358,9 +278,9 @@
         "full_build_reason_code": "NoAvailableBuildCache"
       },
       "processors": {
-        "ResourceDocumentProcessor": {
+        "TocDocumentProcessor": {
           "can_incremental": false,
-          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build",
           "total_file_count": 0,
           "skipped_file_count": 0
@@ -368,12 +288,12 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 14,
+          "total_file_count": 9,
           "skipped_file_count": 0
         },
-        "TocDocumentProcessor": {
+        "ResourceDocumentProcessor": {
           "can_incremental": false,
-          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build",
           "total_file_count": 0,
           "skipped_file_count": 0
