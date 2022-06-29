@@ -7,7 +7,8 @@ trigger:
       - README.md
       - CODE-OF-CONDUCT.md
       - LICENSE
-      - .github
+      - .github/
+      - docs/
 
 pr:
   branches:
@@ -18,7 +19,8 @@ pr:
       - README.md
       - CODE-OF-CONDUCT.md
       - LICENSE
-      - .github
+      - .github/
+      - docs/
 
 variables:
   BASE_VERSION: 2.0.0
