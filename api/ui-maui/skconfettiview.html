@@ -1,0 +1,434 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>SKConfettiView | SkiaSharp.Extended </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="SKConfettiView | SkiaSharp.Extended ">
+    <meta name="generator" content="docfx 2.45.1.0">
+    
+    <link rel="shortcut icon" href="../../images/logo.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+  </head>  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="skconfettiview">SKConfettiView</h1>
+
+<p>The confetti view is a container for one or more systems of particles.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Top + Stream</th>
+<th style="text-align: center;">Center + Burst</th>
+<th style="text-align: center;">Sides + Multiple</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img src="../../images/ui/controls/skconfettiview/top-stream.gif" alt=""></td>
+<td style="text-align: center;"><img src="../../images/ui/controls/skconfettiview/center-burst.gif" alt=""></td>
+<td style="text-align: center;"><img src="../../images/ui/controls/skconfettiview/sides-spray.gif" alt=""></td>
+</tr>
+</tbody>
+</table>
+<h2 id="properties">Properties</h2>
+<p>The main property of a confetti view is the <code>Systems</code> property:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Systems</strong></td>
+<td style="text-align: left;"><code>SKConfettiSystemCollection</code></td>
+<td style="text-align: left;">The collection of <a href="#system">systems</a> in the view.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IsRunning</strong></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Controls whether the all systems are running or not.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IsComplete</strong></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">A value that indicates whether all systems are complete.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="parts">Parts</h2>
+<p>In addition to the properties on the view and all the systems, there is the overall control template that can directly influence the visual appearance of the view. The default template is defined as:</p>
+<pre><code class="lang-xaml">&lt;ControlTemplate x:Key=&quot;SKConfettiViewControlTemplate&quot;&gt;
+    &lt;skia:SKCanvasView x:Name=&quot;PART_DrawingSurface&quot; /&gt;
+&lt;/ControlTemplate&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Part</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>PART_DrawingSurface</strong></td>
+<td style="text-align: left;">This part can either be a <code>SKCanvasView</code> or a <code>SKGLView</code> and describes the actual rendering surface for the confetti.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="system">System</h1>
+<p>Every confetti view consists up one or more systems (<code>SKConfettiSystem</code>). Each system is a container for an <a href="#emitter">emitter</a> (<code>SKConfettiEmitter</code>) along with many properties on how the system runs.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Emitter</strong></td>
+<td style="text-align: left;"><code>SKConfettiEmitter</code></td>
+<td style="text-align: left;">An <a href="#emitter">emitter</a> controls how the confetti particles are generated and at what rate for how long.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>EmitterBounds</strong></td>
+<td style="text-align: left;"><code>SKConfettiEmitterBounds</code></td>
+<td style="text-align: left;">The emitter bounds controls where in the view the particles appear. This can be from a side (left, right, top, bottom), a point or a rectangular region.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Gravity</strong></td>
+<td style="text-align: left;"><code>Point</code></td>
+<td style="text-align: left;">The gravity is a acceleration vector that indicates the direction and strength of the gravity in the system.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Colors</strong></td>
+<td style="text-align: left;"><code>SKConfettiColorCollection</code></td>
+<td style="text-align: left;">A collection of <code>Color</code> instances that determine the available colors for the confetti.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Physics</strong></td>
+<td style="text-align: left;"><code>SKConfettiPhysicsCollection</code></td>
+<td style="text-align: left;">A collection of <a href="#physics"><code>SKConfettiPhysics</code></a> instances that determine the &quot;base&quot; mass and size of each confetti particle.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Shapes</strong></td>
+<td style="text-align: left;"><code>SKConfettiShapeCollection</code></td>
+<td style="text-align: left;">A collection of <a href="#shape"><code>SKConfettiShape</code></a> instances that determine what each confetti particle looks like.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>StartAngle</strong></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">The angle (in degrees) to form the start of the emission region.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>EndAngle</strong></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">The angle (in degrees) to form the end of the emission region.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>MinimumInitialVelocity</strong></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">The minimum initial velocity of the confetti particles.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>MaximumInitialVelocity</strong></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">The maximum initial velocity of the confetti particles.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>MinimumRotationVelocity</strong></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">The minimum initial rotation velocity of the confetti particles.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>MaximumRotationVelocity</strong></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">The maximum initial rotation velocity of the confetti particles.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>MaximumVelocity</strong></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">The maximum velocity the confetti particle can reach.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>FadeOut</strong></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Whether or not the particle should fade out at the end of its life.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Lifetime</strong></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">The duration in seconds for how long the particle is allowed to live.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IsRunning</strong></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Controls whether the system is running or not.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IsComplete</strong></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">A value that indicates whether the system is complete and all systems and particles are also complete.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="emitter">Emitter</h1>
+<p>Each system has an emitter instance that controls how the confetti particles are generated and at what rate for how long.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>ParticleRate</strong></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">The number of particles to generate each second.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>MaxParticles</strong></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">The maximum number of particles allowed by the emitter. A value of <code>-1</code> indicates no limit.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Duration</strong></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">The duration in seconds of how long the emitter runs for. A value of <code>0</code> indicates that all particles are emitted instantly.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IsComplete</strong></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">A value that indicates whether the emitter has generated all the particles and they have all disappeared.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="helper-emitters">Helper Emitters</h2>
+<p>To make creating emitters easier, there are a few static helper methods on the <code>SKConfettiEmitter</code> type:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Burst</strong></td>
+<td style="text-align: left;">Create an emitter that generates the specified number of the particles instantly.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Infinite</strong></td>
+<td style="text-align: left;">Create an emitter that releases the specified number of particles each second.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Stream</strong></td>
+<td style="text-align: left;">Create an emitter that releases the specified number of particles for the specified amount of time.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="shapes">Shapes</h1>
+<p>There are several simple types of &quot;shapes&quot; that the confetti can come in:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Circle</strong></td>
+<td style="text-align: left;"><code>SKConfettiCircleShape</code></td>
+<td style="text-align: left;">This is a simple circle shape.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Square</strong></td>
+<td style="text-align: left;"><code>SKConfettiSquareShape</code></td>
+<td style="text-align: left;">This is a simple square with equal length sides.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Oval</strong></td>
+<td style="text-align: left;"><code>SKConfettiOvalShape</code></td>
+<td style="text-align: left;">This is the stretched circle or ellipse shape. <br> This has a useful property <code>HeightRatio</code> that can be used to control the width/height ratio in the range of [0..1].</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Rectangle</strong></td>
+<td style="text-align: left;"><code>SKConfettiRectShape</code></td>
+<td style="text-align: left;">This is a rectangle. <br> This has a useful property <code>HeightRatio</code> that can be used to control the width/height ratio in the range of [0..1].</td>
+</tr>
+</tbody>
+</table>
+<h2 id="advanced-shapes">Advanced Shapes</h2>
+<p>In addition to those, there is also a way to have custom paths as a shape:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Paths</strong></td>
+<td style="text-align: left;"><code>SKConfettiPathShape</code></td>
+<td style="text-align: left;">This is a generic shape that supports any <code>SKPath</code> instance</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Custom</strong></td>
+<td style="text-align: left;"><code>SKConfettiShape</code></td>
+<td style="text-align: left;">This is the base type for shapes. Custom drawing code can be used by deriving from this type and overriding the <code>OnDraw</code> method.</td>
+</tr>
+</tbody>
+</table>
+<p>When making a custom shape, the instance is re-used, so all state needs to be set before drawing. The provided <code>SKPaint</code> instance is reset, so any properties set needs to be re-set.</p>
+<h2 id="custom-shapes">Custom Shapes</h2>
+<pre><code class="lang-csharp">public class ConfettiStar : SKConfettiShape
+{
+	private readonly int points;
+
+	public ConfettiStar(int points)
+	{
+		this.points = points;
+	}
+
+	protected override void OnDraw(SKCanvas canvas, SKPaint paint, float size)
+	{
+		using var star = SKGeometry.CreateRegularStarPath(size, size / 2, points);
+		canvas.DrawPath(star, paint);
+	}
+}
+</code></pre>
+<h1 id="physics">Physics</h1>
+<p>Each particle can have a size and mass, and the emitter can select one of them randomly:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Mass</strong></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">The mass of the particle which resists the force of gravity.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Size</strong></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">The physical size of the particle rendered.</td>
+</tr>
+</tbody>
+</table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>
