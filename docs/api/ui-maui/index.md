@@ -12,3 +12,11 @@ The confetti view is a container for one or more systems of confetti particles. 
 | Preivew |
 | :-----: |
 | ![top-stream](../../images/ui/controls/skconfettiview/top-stream.gif) |
+
+## SKLottieView
+
+The Lottie view is a animated view that can playback Lottie files. [**See more...**](sklottieview)
+
+| Preivew |
+| :-----: |
+| ![lottie](../../images/ui/controls/sklottieview/lottie.gif) |
