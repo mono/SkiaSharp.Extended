@@ -84,7 +84,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "SHBayww7DiiCOJOLo+3Scg=="
+          "hash": "kx3cXh2fHe/hFJy4nZMuAw=="
         }
       },
       "is_incremental": false,
@@ -99,7 +99,7 @@
       "output": {
         ".html": {
           "relative_path": "api/ui-forms/index.html",
-          "hash": "oAmzZcFGHITfh2WTwCaWOw=="
+          "hash": "VxvWm2UOyO0GBf9aj/Jx2Q=="
         }
       },
       "is_incremental": false,
@@ -130,6 +130,18 @@
       "version": ""
     },
     {
+      "type": "Conceptual",
+      "source_relative_path": "api/ui-forms/sklottieview.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/ui-forms/sklottieview.html",
+          "hash": "U4o6RBNiKUYD4TbLra7tdA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
       "log_codes": [
         "InvalidFileLink"
       ],
@@ -138,7 +150,7 @@
       "output": {
         ".html": {
           "relative_path": "api/ui-maui/index.html",
-          "hash": "FJN1IKo+L1wO1Vey2SczEw=="
+          "hash": "S0biqtYibGpH4JjgyQoBlQ=="
         }
       },
       "is_incremental": false,
@@ -151,6 +163,18 @@
         ".html": {
           "relative_path": "api/ui-maui/skconfettiview.html",
           "hash": "QgJEHbhEKQXI/ceG4fQC7A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/ui-maui/sklottieview.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/ui-maui/sklottieview.html",
+          "hash": "tcDYpF9S5hS5UO07Qrrvqg=="
         }
       },
       "is_incremental": false,
@@ -267,6 +291,17 @@
       "version": ""
     },
     {
+      "type": "Resource",
+      "source_relative_path": "images/ui/controls/sklottieview/lottie.gif",
+      "output": {
+        "resource": {
+          "relative_path": "images/ui/controls/sklottieview/lottie.gif"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
       "log_codes": [
         "InvalidFileLink"
       ],
@@ -315,7 +350,7 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 11,
+          "total_file_count": 13,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {

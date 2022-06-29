@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Overview | SkiaSharp.Extended </title>
+    <title>SKLottieView | SkiaSharp.Extended </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Overview | SkiaSharp.Extended ">
+    <meta name="title" content="SKLottieView | SkiaSharp.Extended ">
     <meta name="generator" content="docfx 2.45.1.0">
     
     <link rel="shortcut icon" href="../../images/logo.ico">
@@ -77,29 +77,9 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
+<h1 id="sklottieview">SKLottieView</h1>
 
-<p><a href="https://www.nuget.org/packages/SkiaSharp.Extended.UI.Forms"><img src="https://img.shields.io/nuget/vpre/SkiaSharp.Extended.UI.Forms.svg?maxAge=2592000" alt="SkiaSharp.Extended.UI.Forms"></a>  <a href="https://www.nuget.org/packages/SkiaSharp.Extended.UI.Forms"><img src="https://img.shields.io/nuget/dt/SkiaSharp.Extended.UI.Forms.svg" alt="NuGet"></a></p>
-<h1 id="overview">Overview</h1>
-<p><strong>SkiaSharp.Extended.UI.Forms</strong> is a collection some great Xamarin.Forms controls
-that may be useful to some apps.</p>
-<h2 id="skimagesourceextensions">SKImageSourceExtensions</h2>
-<p>Some useful extensions for the abstract <code>ImageSource</code> type. <a href="skimagesourceextensions"><strong>See more...</strong></a></p>
-<h2 id="skconfettiview">SKConfettiView</h2>
-<p>The confetti view is a container for one or more systems of confetti particles. <a href="skconfettiview"><strong>See more...</strong></a></p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">Preivew</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;"><img src="../../images/ui/controls/skconfettiview/top-stream.gif" alt="top-stream"></td>
-</tr>
-</tbody>
-</table>
-<h2 id="sklottieview">SKLottieView</h2>
-<p>The Lottie view is a animated view that can playback Lottie files. <a href="sklottieview"><strong>See more...</strong></a></p>
+<p>The Lottie view is a animated view that can playback Lottie files.</p>
 <table>
 <thead>
 <tr>
@@ -109,6 +89,97 @@ that may be useful to some apps.</p>
 <tbody>
 <tr>
 <td style="text-align: center;"><img src="../../images/ui/controls/sklottieview/lottie.gif" alt="lottie"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="properties">Properties</h2>
+<p>There are several properties that can be used to control th animation playback:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Source</strong></td>
+<td style="text-align: left;"><code>SKLottieImageSource</code></td>
+<td style="text-align: left;">The Lottie <a href="#source">image source</a> to playback in the view.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Duration</strong></td>
+<td style="text-align: left;"><code>TimeSpan</code></td>
+<td style="text-align: left;">A value indicating the total duration of the animation.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Progress</strong></td>
+<td style="text-align: left;"><code>TimeSpan</code></td>
+<td style="text-align: left;">The current playback progress of the animation.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>RepeatCount</strong></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">The number of times to repeat the animation. Default is 0 (no repeat).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>RepeatMode</strong></td>
+<td style="text-align: left;"><code>SKLottieRepeatMode</code></td>
+<td style="text-align: left;">The way in which to repeat the animation. Default is <code>Restart</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IsRunning</strong></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Controls whether the all systems are running or not.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IsComplete</strong></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">A value that indicates whether all systems are complete.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="events">Events</h2>
+<p>There are a few events that can be used to be notified of animation loading events:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Event</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>AnimationLoaded</strong></td>
+<td style="text-align: left;"><code>EventHandler</code></td>
+<td style="text-align: left;">Invoked when the animation has loaded successfully.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>AnimationFailed</strong></td>
+<td style="text-align: left;"><code>EventHandler</code></td>
+<td style="text-align: left;">Invoked when there was an error loading the animation.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="parts">Parts</h2>
+<p>In addition to the properties on the view, there is the overall control template that can directly influence the visual appearance of the view. The default template is defined as:</p>
+<pre><code class="lang-xaml">&lt;ControlTemplate x:Key=&quot;SKLottieViewControlTemplate&quot;&gt;
+    &lt;skia:SKCanvasView x:Name=&quot;PART_DrawingSurface&quot; /&gt;
+&lt;/ControlTemplate&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Part</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>PART_DrawingSurface</strong></td>
+<td style="text-align: left;">This part can either be a <code>SKCanvasView</code> or a <code>SKGLView</code> and describes the actual rendering surface for the animation.</td>
 </tr>
 </tbody>
 </table>
