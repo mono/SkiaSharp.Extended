@@ -8,6 +8,10 @@
              BackgroundColor="White"
              x:Name="page">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Snap" Command="{Binding SnapCommand}" />
+    </ContentPage.ToolbarItems>
+
     <StackLayout Padding="12" Spacing="12">
 
         <controls:SKFilteredImage HeightRequest="200">

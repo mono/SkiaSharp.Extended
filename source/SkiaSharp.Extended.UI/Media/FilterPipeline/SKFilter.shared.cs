@@ -12,6 +12,11 @@ namespace SkiaSharp.Extended.UI.Media
 			true,
 			propertyChanged: OnFilterChanged);
 
+		protected SKFilter()
+		{
+			DebugUtils.LogPropertyChanged(this);
+		}
+
 		public bool IsEnabled
 		{
 			get => (bool)GetValue(IsEnabledProperty);

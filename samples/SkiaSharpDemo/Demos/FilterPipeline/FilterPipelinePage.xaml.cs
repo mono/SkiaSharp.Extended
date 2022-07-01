@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using SkiaSharp;
+using SkiaSharp.Extended.UI.Controls;
 using SkiaSharp.Extended.UI.Media;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
@@ -34,6 +35,8 @@ namespace SkiaSharpDemo.Demos
 			MoveDownCommand = new Command(OnMoveDown,
 				() => SelectedFilter != null && Filters.IndexOf(SelectedFilter) < Filters.Count - 1);
 
+			SnapCommand = new Command(OnSnap);
+
 			Filters.CollectionChanged += OnFiltersCollectionChanged;
 
 			BindingContext = this;
@@ -52,6 +55,8 @@ namespace SkiaSharpDemo.Demos
 		public Command MoveUpCommand { get; }
 
 		public Command MoveDownCommand { get; }
+
+		public Command SnapCommand { get; }
 
 		public SKFilterCollection Filters { get; } = new SKFilterCollection
 		{
@@ -154,6 +159,24 @@ namespace SkiaSharpDemo.Demos
 				return;
 
 			Filters.Move(idx, idx + 1);
+		}
+
+		private void OnSnap()
+		{
+			//Navigation.PushAsync(new ContentPage
+			//{
+			//	Content = new Image
+			//	{
+			//		Source = new SKFilterPipelineImageSource
+			//		{
+			//			Pipeline = new SKFilterPipeline
+			//			{
+			//				Source = Image,
+			//				Filters = Filters,
+			//			}
+			//		}
+			//	}
+			//});
 		}
 
 		private void OnFiltersCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

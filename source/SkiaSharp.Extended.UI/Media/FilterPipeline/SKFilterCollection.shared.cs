@@ -9,11 +9,13 @@ namespace SkiaSharp.Extended.UI.Media
 	{
 		public SKFilterCollection()
 		{
+			DebugUtils.LogPropertyChanged(this);
 		}
 
 		public SKFilterCollection(IEnumerable<SKFilter> collection)
 			: base(collection)
 		{
+			DebugUtils.LogPropertyChanged(this);
 		}
 
 		public event EventHandler<SKFilterChangedEventArgs>? FilterChanged;

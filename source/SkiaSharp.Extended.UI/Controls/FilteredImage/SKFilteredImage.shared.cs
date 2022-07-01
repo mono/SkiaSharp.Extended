@@ -4,6 +4,13 @@ using SkiaSharp.Extended.UI.Media;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 
+namespace SkiaSharp.Extended.UI.Media
+{
+	//public class SKFilterPipelineImageSource : IMageSource
+
+}
+
+
 namespace SkiaSharp.Extended.UI.Controls
 {
 	[ContentProperty(nameof(Pipeline))]

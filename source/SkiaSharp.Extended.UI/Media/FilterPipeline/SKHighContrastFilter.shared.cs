@@ -27,7 +27,7 @@ namespace SkiaSharp.Extended.UI.Media
 
 			var factor = (float)filter.Factor + 1.0f;
 			if (factor > 1)
-				factor = factor * factor * factor * factor;
+				factor = factor * factor * factor;
 
 			filter.colorFilter?.Dispose();
 			filter.colorFilter = SKColorFilter.CreateColorMatrix(new float[SKColorFilter.ColorMatrixSize]

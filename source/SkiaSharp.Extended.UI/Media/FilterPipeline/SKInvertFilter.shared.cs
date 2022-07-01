@@ -1,8 +1,10 @@
-﻿namespace SkiaSharp.Extended.UI.Media
+﻿using System;
+
+namespace SkiaSharp.Extended.UI.Media
 {
-	public class SKInvertFilter : SKColorMatrixFilter
+	public class SKInvertFilter : SKFilter
 	{
-		private static readonly float[] matrix = new float[SKColorFilter.ColorMatrixSize]
+		private static readonly float[] colorMatrix = new float[SKColorFilter.ColorMatrixSize]
 		{
 			-1f,  0f,  0f, 0f, 1f,
 			 0f, -1f,  0f, 0f, 1f,
@@ -10,9 +12,15 @@
 			 0f,  0f,  0f, 1f, 0f
 		};
 
+		private SKColorFilter colorFilter;
+
 		public SKInvertFilter()
-			: base(matrix)
 		{
+			if (colorMatrix == null)
+				throw new ArgumentNullException(nameof(colorMatrix));
+
+			colorFilter = SKColorFilter.CreateColorMatrix(colorMatrix);
+			Paint.ColorFilter = colorFilter;
 		}
 	}
 }

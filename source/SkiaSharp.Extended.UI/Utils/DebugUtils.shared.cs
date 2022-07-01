@@ -7,7 +7,7 @@ namespace SkiaSharp.Extended.UI
 	internal static class DebugUtils
 	{
 		[Conditional("DEBUG")]
-		public static void LogPropertyChanged(BindableObject bindable)
+		public static void LogPropertyChanged(INotifyPropertyChanged bindable)
 		{
 			bindable.PropertyChanged += OnPropertyChanged;
 
