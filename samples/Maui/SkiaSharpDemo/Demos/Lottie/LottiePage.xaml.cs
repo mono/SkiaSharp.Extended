@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Diagnostics;
+using System.Windows.Input;
 
 namespace SkiaSharpDemo.Demos;
 
@@ -60,4 +61,14 @@ public partial class LottiePage : ContentPage
 
 	private void OnPlayPause() =>
 		IsBusy = !IsBusy;
+
+	private void OnAnimationFailed(object sender, EventArgs e)
+	{
+		Debug.WriteLine("Failed to load Lottie animation.");
+	}
+
+	private void OnAnimationLoaded(object sender, EventArgs e)
+	{
+		Debug.WriteLine("Lottie animation loaded.");
+	}
 }

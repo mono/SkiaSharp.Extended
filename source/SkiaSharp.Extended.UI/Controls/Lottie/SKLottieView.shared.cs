@@ -207,7 +207,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		{
 			try
 			{
-				animation = await imageSource.LoadAnimationAsync(cancellationToken);
+				animation = await Task.Run(() => imageSource.LoadAnimationAsync(cancellationToken));
 			}
 			catch
 			{
