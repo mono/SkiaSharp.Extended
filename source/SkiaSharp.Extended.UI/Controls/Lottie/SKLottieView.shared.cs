@@ -1,4 +1,6 @@
-﻿namespace SkiaSharp.Extended.UI.Controls;
+﻿using Microsoft.Maui.Dispatching;
+
+namespace SkiaSharp.Extended.UI.Controls;
 
 public class SKLottieView : SKAnimatedSurfaceView
 {
@@ -207,7 +209,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		{
 			try
 			{
-				animation = await imageSource.LoadAnimationAsync(cancellationToken);
+				animation = await Task.Run(() => imageSource.LoadAnimationAsync(cancellationToken));
 			}
 			catch
 			{
