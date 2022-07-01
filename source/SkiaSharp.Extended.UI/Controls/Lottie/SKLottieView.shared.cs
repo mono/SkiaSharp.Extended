@@ -1,6 +1,4 @@
-﻿using Microsoft.Maui.Dispatching;
-
-namespace SkiaSharp.Extended.UI.Controls;
+﻿namespace SkiaSharp.Extended.UI.Controls;
 
 public class SKLottieView : SKAnimatedSurfaceView
 {
