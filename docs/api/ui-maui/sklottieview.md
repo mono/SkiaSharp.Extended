@@ -2,7 +2,7 @@
 
 The Lottie view is a animated view that can playback Lottie files.
 
-| Preivew |
+| Preview |
 | :-----: |
 | ![lottie](../../images/ui/controls/sklottieview/lottie.gif) |
 
