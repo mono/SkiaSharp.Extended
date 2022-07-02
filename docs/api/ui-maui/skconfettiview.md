@@ -10,11 +10,11 @@ The confetti view is a container for one or more systems of particles.
 
 The main property of a confetti view is the `Systems` property:
 
-| Property        | Type                          | Description |
-| :-------------- | :---------------------------- | :---------- |
-| **Systems**     | `SKConfettiSystemCollection`  | The collection of [systems](#system) in the view. |
-| **IsRunning**   | `bool`                        | Controls whether the all systems are running or not. |
-| **IsComplete**  | `bool`                        | A value that indicates whether all systems are complete. |
+| Property               | Type                          | Description |
+| :--------------------- | :---------------------------- | :---------- |
+| **Systems**            | `SKConfettiSystemCollection`  | The collection of [systems](#system) in the view. |
+| **IsAnimationEnabled** | `bool`                        | Determines whether the control will play the animation provided. |
+| **IsComplete**         | `bool`                        | A value that indicates whether all systems are complete. |
 
 ## Parts
 
