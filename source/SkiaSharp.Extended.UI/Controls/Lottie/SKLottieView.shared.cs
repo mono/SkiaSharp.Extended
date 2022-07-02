@@ -54,7 +54,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 	{
 		Themes.SKLottieViewResources.EnsureRegistered();
 
-		IsRunning = true;
+		IsAnimationEnabled = true;
 	}
 
 	public SKLottieImageSource? Source
@@ -191,7 +191,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 				repeatsCompleted >= totalRepeatCount;
 		}
 
-		if (!IsRunning)
+		if (!IsAnimationEnabled)
 			Invalidate();
 	}
 
@@ -226,7 +226,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		Progress = TimeSpan.Zero;
 		Duration = animation?.Duration ?? TimeSpan.Zero;
 
-		if (!IsRunning)
+		if (!IsAnimationEnabled)
 			Invalidate();
 	}
 

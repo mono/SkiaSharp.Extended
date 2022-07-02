@@ -2,13 +2,13 @@
 
 public class SKAnimatedSurfaceView : SKSurfaceView
 {
-	public static readonly BindableProperty IsRunningProperty = BindableProperty.Create(
-		nameof(IsRunning),
+	public static readonly BindableProperty IsAnimationEnabledProperty = BindableProperty.Create(
+		nameof(IsAnimationEnabled),
 		typeof(bool),
 		typeof(SKAnimatedSurfaceView),
 		false,
-		BindingMode.TwoWay,
-		propertyChanged: OnIsRunningPropertyChanged);
+		BindingMode.OneWay,
+		propertyChanged: OnIsAnimationEnabledPropertyChanged);
 
 	private readonly SKFrameCounter frameCounter = new SKFrameCounter();
 
@@ -17,10 +17,13 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 		Loaded += OnLoaded;
 	}
 
-	public bool IsRunning
+	/// <summary>
+	/// Gets or sets a value indicating whether this control will play the animation provided.
+	/// </summary>
+	public bool IsAnimationEnabled
 	{
-		get => (bool)GetValue(IsRunningProperty);
-		set => SetValue(IsRunningProperty, value);
+		get => (bool)GetValue(IsAnimationEnabledProperty);
+		set => SetValue(IsAnimationEnabledProperty, value);
 	}
 
 	protected virtual void Update(TimeSpan deltaTime)
@@ -45,29 +48,29 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 
 	private void UpdateCore()
 	{
-		var deltaTime = IsRunning
+		var deltaTime = IsAnimationEnabled
 			? frameCounter.NextFrame()
 			: TimeSpan.Zero;
 
 		Update(deltaTime);
 	}
 
-	private static void OnIsRunningPropertyChanged(BindableObject bindable, object? oldValue, object? newValue) =>
-		(bindable as SKAnimatedSurfaceView)?.UpdateIsRunning();
+	private static void OnIsAnimationEnabledPropertyChanged(BindableObject bindable, object? oldValue, object? newValue) =>
+		(bindable as SKAnimatedSurfaceView)?.UpdateIsAnimationEnabled();
 
 	private void OnLoaded(object? sender, EventArgs e)
 	{
-		UpdateIsRunning();
+		UpdateIsAnimationEnabled();
 	}
 
-	private void UpdateIsRunning()
+	private void UpdateIsAnimationEnabled()
 	{
 		if (!this.IsLoadedEx())
 			return;
 
 		frameCounter.Reset();
 
-		if (!IsRunning)
+		if (!IsAnimationEnabled)
 			return;
 
 		Dispatcher.StartTimer(
@@ -76,7 +79,7 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 			{
 				Invalidate();
 
-				return IsRunning;
+				return IsAnimationEnabled;
 			});
 	}
 }
