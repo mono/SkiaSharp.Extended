@@ -28,7 +28,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		PropertyChanged += (_, e) =>
 		{
 			if (nameof(IsAnimationEnabled).Equals(e.PropertyName, StringComparison.OrdinalIgnoreCase))
-				OnIsRunningPropertyChanged();
+				OnIsAnimationEnabledPropertyChanged();
 		};
 
 		IsAnimationEnabled = true;
@@ -109,7 +109,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		UpdateIsComplete();
 	}
 
-	private void OnIsRunningPropertyChanged()
+	private void OnIsAnimationEnabledPropertyChanged()
 	{
 		if (Systems is null)
 			return;
