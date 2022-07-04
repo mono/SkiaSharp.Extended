@@ -202,6 +202,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		if (imageSource is null || imageSource.IsEmpty)
 		{
 			animation = null;
+			Reset();
 		}
 		else
 		{
@@ -214,20 +215,25 @@ public class SKLottieView : SKAnimatedSurfaceView
 				animation = null;
 			}
 
+			Reset();
+
 			if (animation is null)
 				AnimationFailed?.Invoke(this, EventArgs.Empty);
 			else
 				AnimationLoaded?.Invoke(this, EventArgs.Empty);
 		}
 
-		playForwards = true;
-		repeatsCompleted = 0;
-
-		Progress = TimeSpan.Zero;
-		Duration = animation?.Duration ?? TimeSpan.Zero;
-
 		if (!IsRunning)
 			Invalidate();
+
+		void Reset()
+		{
+			playForwards = true;
+			repeatsCompleted = 0;
+
+			Progress = TimeSpan.Zero;
+			Duration = animation?.Duration ?? TimeSpan.Zero;
+		}
 	}
 
 	private static async void OnSourcePropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
