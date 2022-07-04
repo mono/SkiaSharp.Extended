@@ -11,7 +11,7 @@
                                Source="Lottie/trophy.json"
                                Duration="{Binding Duration}"
                                Progress="{Binding Progress}"
-                               IsRunning="{Binding IsBusy}"/>
+                               IsAnimationEnabled="{Binding IsBusy}"/>
 
         <BoxView Color="Green" Opacity="0.5" CornerRadius="12"
                  WidthRequest="25" HeightRequest="24" Margin="24"

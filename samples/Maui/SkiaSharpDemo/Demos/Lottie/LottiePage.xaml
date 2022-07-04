@@ -11,7 +11,7 @@
                                Source="Lottie/trophy.json"
                                Duration="{Binding Duration}"
                                Progress="{Binding Progress}"
-                               IsRunning="{Binding IsBusy}"
+                               IsAnimationEnabled="{Binding IsBusy}"
                                AnimationFailed="OnAnimationFailed"
                                AnimationLoaded="OnAnimationLoaded" />
 

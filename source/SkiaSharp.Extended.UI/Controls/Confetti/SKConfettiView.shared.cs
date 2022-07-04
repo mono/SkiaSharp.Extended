@@ -27,11 +27,11 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		SizeChanged += OnSizeChanged;
 		PropertyChanged += (_, e) =>
 		{
-			if (nameof(IsRunning).Equals(e.PropertyName, StringComparison.OrdinalIgnoreCase))
-				OnIsRunningPropertyChanged();
+			if (nameof(IsAnimationEnabled).Equals(e.PropertyName, StringComparison.OrdinalIgnoreCase))
+				OnIsAnimationEnabledPropertyChanged();
 		};
 
-		IsRunning = true;
+		IsAnimationEnabled = true;
 
 		OnSystemsPropertyChanged(this, null, Systems);
 	}
@@ -100,7 +100,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 			foreach (SKConfettiSystem system in e.NewItems)
 			{
 				system.UpdateEmitterBounds(Width, Height);
-				system.IsRunning = IsRunning;
+				system.IsAnimationEnabled = IsAnimationEnabled;
 			}
 
 			Invalidate();
@@ -109,14 +109,14 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		UpdateIsComplete();
 	}
 
-	private void OnIsRunningPropertyChanged()
+	private void OnIsAnimationEnabledPropertyChanged()
 	{
 		if (Systems is null)
 			return;
 
 		foreach (var system in Systems)
 		{
-			system.IsRunning = IsRunning;
+			system.IsAnimationEnabled = IsAnimationEnabled;
 		}
 	}
 
