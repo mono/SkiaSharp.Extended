@@ -100,7 +100,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 			foreach (SKConfettiSystem system in e.NewItems)
 			{
 				system.UpdateEmitterBounds(Width, Height);
-				system.IsRunning = IsAnimationEnabled;
+				system.IsAnimationEnabled = IsAnimationEnabled;
 			}
 
 			Invalidate();
@@ -116,7 +116,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 
 		foreach (var system in Systems)
 		{
-			system.IsRunning = IsAnimationEnabled;
+			system.IsAnimationEnabled = IsAnimationEnabled;
 		}
 	}
 

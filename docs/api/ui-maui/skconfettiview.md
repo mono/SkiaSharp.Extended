@@ -51,7 +51,7 @@ Every confetti view consists up one or more systems (`SKConfettiSystem`). Each s
 | **MaximumVelocity**           | `double`                       | The maximum velocity the confetti particle can reach. |
 | **FadeOut**                   | `bool`                         | Whether or not the particle should fade out at the end of its life. |
 | **Lifetime**                  | `double`                       | The duration in seconds for how long the particle is allowed to live. |
-| **IsRunning**                 | `bool`                         | Controls whether the system is running or not. |
+| **IsAnimationEnabled**        | `bool`                         | Controls whether the system is running or not. |
 | **IsComplete**                | `bool`                         | A value that indicates whether the system is complete and all systems and particles are also complete. |
 
 # Emitter

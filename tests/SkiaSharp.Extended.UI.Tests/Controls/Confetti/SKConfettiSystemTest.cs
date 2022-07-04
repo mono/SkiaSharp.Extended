@@ -10,7 +10,7 @@ namespace SkiaSharp.Extended.UI.Controls.Tests
 		{
 			var system = new SKConfettiSystem();
 
-			Assert.True(system.IsRunning);
+			Assert.True(system.IsAnimationEnabled);
 			Assert.False(system.IsComplete);
 		}
 
@@ -18,9 +18,9 @@ namespace SkiaSharp.Extended.UI.Controls.Tests
 		public void NotRunningIsNotComplete()
 		{
 			var system = new SKConfettiSystem();
-			system.IsRunning = false;
+			system.IsAnimationEnabled = false;
 
-			Assert.False(system.IsRunning);
+			Assert.False(system.IsAnimationEnabled);
 			Assert.False(system.IsComplete);
 		}
 	}

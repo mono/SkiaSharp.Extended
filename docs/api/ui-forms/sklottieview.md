@@ -10,15 +10,15 @@ The Lottie view is a animated view that can playback Lottie files.
 
 There are several properties that can be used to control th animation playback:
 
-| Property         | Type                   | Description |
-| :--------------- | :--------------------- | :---------- |
-| **Source**       | `SKLottieImageSource`  | The Lottie [image source](#source) to playback in the view. |
-| **Duration**     | `TimeSpan`             | A value indicating the total duration of the animation. |
-| **Progress**     | `TimeSpan`             | The current playback progress of the animation. |
-| **RepeatCount**  | `int`                  | The number of times to repeat the animation. Default is 0 (no repeat). |
-| **RepeatMode**   | `SKLottieRepeatMode`   | The way in which to repeat the animation. Default is `Restart`. |
-| **IsRunning**    | `bool`                 | Controls whether the all systems are running or not. |
-| **IsComplete**   | `bool`                 | A value that indicates whether all systems are complete. |
+| Property               | Type                   | Description |
+| :--------------------- | :--------------------- | :---------- |
+| **Source**             | `SKLottieImageSource`  | The Lottie [image source](#source) to playback in the view. |
+| **Duration**           | `TimeSpan`             | A value indicating the total duration of the animation. |
+| **Progress**           | `TimeSpan`             | The current playback progress of the animation. |
+| **RepeatCount**        | `int`                  | The number of times to repeat the animation. Default is 0 (no repeat). |
+| **RepeatMode**         | `SKLottieRepeatMode`   | The way in which to repeat the animation. Default is `Restart`. |
+| **IsAnimationEnabled** | `bool`                 | Determines whether the control will play the animation provided. |
+| **IsComplete**         | `bool`                 | A value that indicates whether all systems are complete. |
 
 ## Events
 

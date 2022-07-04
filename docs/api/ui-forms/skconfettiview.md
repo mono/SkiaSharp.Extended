@@ -10,11 +10,11 @@ The confetti view is a container for one or more systems of particles.
 
 The main property of a confetti view is the `Systems` property:
 
-| Property        | Type                          | Description |
-| :-------------- | :---------------------------- | :---------- |
-| **Systems**     | `SKConfettiSystemCollection`  | The collection of [systems](#system) in the view. |
-| **IsRunning**   | `bool`                        | Controls whether the all systems are running or not. |
-| **IsComplete**  | `bool`                        | A value that indicates whether all systems are complete. |
+| Property               | Type                          | Description |
+| :--------------------- | :---------------------------- | :---------- |
+| **Systems**            | `SKConfettiSystemCollection`  | The collection of [systems](#system) in the view. |
+| **IsAnimationEnabled** | `bool`                        | Determines whether the control will play the animation provided. |
+| **IsComplete**         | `bool`                        | A value that indicates whether all systems are complete. |
 
 ## Parts
 
@@ -51,7 +51,7 @@ Every confetti view consists up one or more systems (`SKConfettiSystem`). Each s
 | **MaximumVelocity**           | `double`                       | The maximum velocity the confetti particle can reach. |
 | **FadeOut**                   | `bool`                         | Whether or not the particle should fade out at the end of its life. |
 | **Lifetime**                  | `double`                       | The duration in seconds for how long the particle is allowed to live. |
-| **IsRunning**                 | `bool`                         | Controls whether the system is running or not. |
+| **IsAnimationEnabled**        | `bool`                         | Controls whether the system is running or not. |
 | **IsComplete**                | `bool`                         | A value that indicates whether the system is complete and all systems and particles are also complete. |
 
 # Emitter

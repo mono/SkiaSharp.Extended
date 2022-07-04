@@ -105,12 +105,12 @@ public class SKConfettiSystem : BindableObject
 
 	public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 
-	public static readonly BindableProperty IsRunningProperty = BindableProperty.Create(
-		nameof(IsRunning),
+	public static readonly BindableProperty IsAnimationEnabledProperty = BindableProperty.Create(
+		nameof(IsAnimationEnabled),
 		typeof(bool),
 		typeof(SKConfettiSystem),
 		true,
-		propertyChanged: OnIsRunningPropertyChanged);
+		propertyChanged: OnIsAnimationEnabledPropertyChanged);
 
 	private readonly Random random = new Random();
 	private readonly List<SKConfettiParticle> particles = new List<SKConfettiParticle>();
@@ -125,10 +125,10 @@ public class SKConfettiSystem : BindableObject
 		OnEmitterChanged(this, null, Emitter);
 	}
 
-	public bool IsRunning
+	public bool IsAnimationEnabled
 	{
-		get => (bool)GetValue(IsRunningProperty);
-		set => SetValue(IsRunningProperty, value);
+		get => (bool)GetValue(IsAnimationEnabledProperty);
+		set => SetValue(IsAnimationEnabledProperty, value);
 	}
 
 	public SKConfettiEmitterBounds EmitterBounds
@@ -231,7 +231,7 @@ public class SKConfettiSystem : BindableObject
 
 	public void Update(TimeSpan deltaTime)
 	{
-		if (IsRunning)
+		if (IsAnimationEnabled)
 			Emitter?.Update(deltaTime);
 
 		var g = Gravity.ToSKPoint();
@@ -358,7 +358,7 @@ public class SKConfettiSystem : BindableObject
 		}
 	}
 
-	private static void OnIsRunningPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+	private static void OnIsAnimationEnabledPropertyChanged(BindableObject bindable, object oldValue, object newValue)
 	{
 		if (bindable is SKConfettiSystem system)
 		{
@@ -370,7 +370,7 @@ public class SKConfettiSystem : BindableObject
 		IsComplete =
 			particles.Count == 0 &&
 			Emitter?.IsComplete != false &&
-			IsRunning;
+			IsAnimationEnabled;
 
 	private static SKConfettiColorCollection CreateDefaultColors() =>
 		new SKConfettiColorCollection
