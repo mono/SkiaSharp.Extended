@@ -65,6 +65,9 @@ namespace SkiaSharp.Extended.UI.Controls
 			set => SetValue(DurationProperty, value);
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether confetti is being emitted.
+		/// </summary>
 		public bool IsRunning
 		{
 			get => (bool)GetValue(IsRunningProperty);

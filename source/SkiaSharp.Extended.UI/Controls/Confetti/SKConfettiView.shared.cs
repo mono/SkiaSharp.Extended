@@ -37,6 +37,13 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		OnSystemsPropertyChanged(this, null, Systems);
 	}
 
+	/// <summary>
+	/// Gets a value indicating whether the confetti emission is running.
+	/// </summary>
+	/// <remarks>
+	/// NOTE this is a <see cref="BindingMode.OneWayToSource"/> property, if you wish to control whether the animation is
+	/// enabled refer to the <see cref="SKAnimatedSurfaceView.IsAnimationEnabled"/> property.
+	/// </remarks>
 	public bool IsRunning
 	{
 		get => (bool)GetValue(IsRunningProperty);
