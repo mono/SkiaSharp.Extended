@@ -28,13 +28,13 @@ namespace SkiaSharp.Extended.UI.Controls.Tests
 
 			Assert.Equal(100, totalCreated);
 			Assert.Equal(1, totalInvoke);
-			Assert.True(emitter.IsComplete);
+			Assert.False(emitter.IsRunning);
 
 			emitter.Update(dt);
 
 			Assert.Equal(100, totalCreated);
 			Assert.Equal(1, totalInvoke);
-			Assert.True(emitter.IsComplete);
+			Assert.False(emitter.IsRunning);
 		}
 
 		[Theory]
@@ -60,13 +60,13 @@ namespace SkiaSharp.Extended.UI.Controls.Tests
 
 			Assert.Equal(50, totalCreated);
 			Assert.Equal(1, totalInvoke);
-			Assert.True(emitter.IsComplete);
+			Assert.False(emitter.IsRunning);
 
 			emitter.Update(dt);
 
 			Assert.Equal(50, totalCreated);
 			Assert.Equal(1, totalInvoke);
-			Assert.True(emitter.IsComplete);
+			Assert.False(emitter.IsRunning);
 		}
 
 		[Theory]
@@ -92,22 +92,22 @@ namespace SkiaSharp.Extended.UI.Controls.Tests
 
 			Assert.Equal(100, totalCreated);
 			Assert.Equal(1, totalInvoke);
-			Assert.True(emitter.IsComplete);
+			Assert.False(emitter.IsRunning);
 
 			emitter.Update(dt);
 
 			Assert.Equal(100, totalCreated);
 			Assert.Equal(1, totalInvoke);
-			Assert.True(emitter.IsComplete);
+			Assert.False(emitter.IsRunning);
 		}
 
 		[Theory]
-		[InlineData(0, 0, 0, false, false)]
-		[InlineData(10, 1, 2, false, false)]
-		[InlineData(500, 50, 100, false, true)]
-		[InlineData(1000, 100, 100, true, true)]
-		[InlineData(10000, 100, 100, true, true)]
-		public void ParticleRateNoMaxOneMin(int milliseconds, int expectedCreated, int expectedCreated2, bool complete, bool complete2)
+		[InlineData(0, 0, 0, true, true)]
+		[InlineData(10, 1, 2, true, true)]
+		[InlineData(500, 50, 100, true, false)]
+		[InlineData(1000, 100, 100, false, false)]
+		[InlineData(10000, 100, 100, false, false)]
+		public void ParticleRateNoMaxOneMin(int milliseconds, int expectedCreated, int expectedCreated2, bool isRunning, bool isRunning2)
 		{
 			var dt = TimeSpan.FromMilliseconds(milliseconds);
 
@@ -125,16 +125,16 @@ namespace SkiaSharp.Extended.UI.Controls.Tests
 
 			Assert.Equal(expectedCreated, totalCreated);
 			Assert.Equal(1, totalInvoke);
-			Assert.Equal(complete, emitter.IsComplete);
+			Assert.Equal(isRunning, emitter.IsRunning);
 
 			emitter.Update(dt);
 
 			Assert.Equal(expectedCreated2, totalCreated);
-			if (complete)
+			if (!isRunning)
 				Assert.Equal(1, totalInvoke);
 			else
 				Assert.Equal(2, totalInvoke);
-			Assert.Equal(complete2, emitter.IsComplete);
+			Assert.Equal(isRunning2, emitter.IsRunning);
 		}
 	}
 }
