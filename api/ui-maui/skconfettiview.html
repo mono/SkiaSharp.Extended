@@ -118,9 +118,9 @@
 <td style="text-align: left;">Determines whether the control will play the animation provided.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>IsComplete</strong></td>
+<td style="text-align: left;"><strong>IsRunning</strong></td>
 <td style="text-align: left;"><code>bool</code></td>
-<td style="text-align: left;">A value that indicates whether all systems are complete.</td>
+<td style="text-align: left;">Determines whether the control is currently rendering confetti.</td>
 </tr>
 </tbody>
 </table>
@@ -236,9 +236,9 @@
 <td style="text-align: left;">Controls whether the system is running or not.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>IsComplete</strong></td>
+<td style="text-align: left;"><strong>IsRunning</strong></td>
 <td style="text-align: left;"><code>bool</code></td>
-<td style="text-align: left;">A value that indicates whether the system is complete and all systems and particles are also complete.</td>
+<td style="text-align: left;">Determines whether the system is complete and all systems and particles are also complete.</td>
 </tr>
 </tbody>
 </table>
@@ -269,9 +269,14 @@
 <td style="text-align: left;">The duration in seconds of how long the emitter runs for. A value of <code>0</code> indicates that all particles are emitted instantly.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>IsComplete</strong></td>
+<td style="text-align: left;"><strong>IsRunning</strong></td>
 <td style="text-align: left;"><code>bool</code></td>
-<td style="text-align: left;">A value that indicates whether the emitter has generated all the particles and they have all disappeared.</td>
+<td style="text-align: left;">Determines whether the control is currently rendering confetti.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IsRunning</strong></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Determines whether the emitter has generated all the particles and they have all disappeared.</td>
 </tr>
 </tbody>
 </table>
