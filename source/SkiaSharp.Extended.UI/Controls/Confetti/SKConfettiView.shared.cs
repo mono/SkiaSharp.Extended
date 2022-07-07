@@ -4,13 +4,14 @@ namespace SkiaSharp.Extended.UI.Controls;
 
 public class SKConfettiView : SKAnimatedSurfaceView
 {
-	private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
-		nameof(IsComplete),
+	private static readonly BindablePropertyKey IsRunningPropertyKey = BindableProperty.CreateReadOnly(
+		nameof(IsRunning),
 		typeof(bool),
 		typeof(SKConfettiView),
-		false);
+		false,
+		defaultBindingMode: BindingMode.OneWayToSource);
 
-	public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
+	public static readonly BindableProperty IsRunningProperty = IsRunningPropertyKey.BindableProperty;
 
 	public static readonly BindableProperty SystemsProperty = BindableProperty.Create(
 		nameof(Systems),
@@ -36,10 +37,17 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		OnSystemsPropertyChanged(this, null, Systems);
 	}
 
-	public bool IsComplete
+	/// <summary>
+	/// Gets a value indicating whether the confetti emission is running.
+	/// </summary>
+	/// <remarks>
+	/// NOTE this is a <see cref="BindingMode.OneWayToSource"/> property, if you wish to control whether the animation is
+	/// enabled refer to the <see cref="SKAnimatedSurfaceView.IsAnimationEnabled"/> property.
+	/// </remarks>
+	public bool IsRunning
 	{
-		get => (bool)GetValue(IsCompleteProperty);
-		private set => SetValue(IsCompletePropertyKey, value);
+		get => (bool)GetValue(IsRunningProperty);
+		private set => SetValue(IsRunningPropertyKey, value);
 	}
 
 	public SKConfettiSystemCollection? Systems
@@ -58,7 +66,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 			var system = Systems[i];
 			system.Update(deltaTime);
 
-			if (system.IsComplete)
+			if (!system.IsRunning)
 				Systems.RemoveAt(i);
 		}
 	}
@@ -106,7 +114,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 			Invalidate();
 		}
 
-		UpdateIsComplete();
+		UpdateIsRunning();
 	}
 
 	private void OnIsAnimationEnabledPropertyChanged()
@@ -131,28 +139,28 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		if (newValue is SKConfettiSystemCollection newCollection)
 			newCollection.CollectionChanged += cv.OnSystemsCollectionChanged;
 
-		cv.UpdateIsComplete();
+		cv.UpdateIsRunning();
 	}
 
-	private void UpdateIsComplete()
+	private void UpdateIsRunning()
 	{
 		if (Systems is null || Systems.Count == 0)
 		{
-			IsComplete = true;
+			IsRunning = false;
 			return;
 		}
 
-		var isComplete = false;
+		var isRunning = true;
 		foreach (var system in Systems)
 		{
-			if (system.IsComplete)
+			if (!system.IsRunning)
 			{
-				isComplete = true;
+				isRunning = false;
 				break;
 			}
 		}
 
-		IsComplete = isComplete;
+		IsRunning = isRunning;
 	}
 
 	private static SKConfettiSystemCollection CreateDefaultSystems() =>

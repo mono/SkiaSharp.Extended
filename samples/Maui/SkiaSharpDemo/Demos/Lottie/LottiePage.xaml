@@ -1,9 +1,14 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             xmlns:converters="clr-namespace:SkiaSharpDemo.Converters"
              xmlns:views="clr-namespace:SkiaSharpDemo.Views"
              x:Class="SkiaSharpDemo.Demos.LottiePage"
              Title="Lottie">
+
+    <ContentPage.Resources>
+        <converters:InvertedBooleanConverter x:Key="InvertedBooleanConverter" />
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="*,Auto">
 
@@ -18,7 +23,7 @@
         <BoxView Color="Green" Opacity="0.5" CornerRadius="12"
                  WidthRequest="25" HeightRequest="24" Margin="24"
                  HorizontalOptions="End" VerticalOptions="Start"
-                 IsVisible="{Binding IsComplete, Source={Reference lottieView}}" />
+                 IsVisible="{Binding IsRunning, Source={Reference confettiView}, Converter={StaticResource InvertedBooleanConverter}}" />
 
         <VerticalStackLayout Spacing="12" Padding="12" Grid.Row="1">
 

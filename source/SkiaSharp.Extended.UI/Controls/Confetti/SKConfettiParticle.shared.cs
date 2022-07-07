@@ -52,11 +52,11 @@ internal class SKConfettiParticle
 
 	public SKRect Bounds { get; private set; }
 
-	public bool IsComplete { get; private set; }
+	public bool IsRunning { get; private set; } = true;
 
 	public void Draw(SKCanvas canvas)
 	{
-		if (IsComplete || Shape == null)
+		if (!IsRunning || Shape == null)
 			return;
 
 		canvas.Save();
@@ -81,7 +81,7 @@ internal class SKConfettiParticle
 
 	public void ApplyForce(SKPoint force, TimeSpan deltaTime)
 	{
-		if (IsComplete)
+		if (!IsRunning)
 			return;
 
 		var secs = (float)deltaTime.TotalSeconds;
@@ -119,11 +119,11 @@ internal class SKConfettiParticle
 				var c = Color;
 				var alpha = c.Alpha - secs;
 				Color = c.WithAlpha(alpha);
-				IsComplete = alpha <= 0;
+				IsRunning = alpha > 0;
 			}
 			else
 			{
-				IsComplete = true;
+				IsRunning = false;
 			}
 		}
 
