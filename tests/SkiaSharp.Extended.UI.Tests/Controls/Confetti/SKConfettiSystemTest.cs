@@ -1,26 +1,27 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace SkiaSharp.Extended.UI.Controls.Tests
 {
 	public class SKConfettiSystemTest
 	{
 		[Fact]
-		public void DefaultIsNotRunning()
+		public void DefaultIsNotComplete()
 		{
 			var system = new SKConfettiSystem();
 
 			Assert.True(system.IsAnimationEnabled);
-			Assert.False(system.IsRunning);
+			Assert.False(system.IsComplete);
 		}
 
 		[Fact]
-		public void NotRunningIsReallyNotRunning()
+		public void NotRunningIsNotComplete()
 		{
 			var system = new SKConfettiSystem();
 			system.IsAnimationEnabled = false;
 
 			Assert.False(system.IsAnimationEnabled);
-			Assert.False(system.IsRunning);
+			Assert.False(system.IsComplete);
 		}
 	}
 }
