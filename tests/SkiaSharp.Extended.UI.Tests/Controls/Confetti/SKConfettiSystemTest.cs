@@ -15,7 +15,7 @@ namespace SkiaSharp.Extended.UI.Controls.Tests
 		}
 
 		[Fact]
-		public void NotRunningIsNotComplete()
+		public void NotEnabledIsStillNotComplete()
 		{
 			var system = new SKConfettiSystem();
 			system.IsAnimationEnabled = false;

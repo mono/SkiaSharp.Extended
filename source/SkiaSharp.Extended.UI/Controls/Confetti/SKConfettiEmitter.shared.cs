@@ -26,7 +26,8 @@ namespace SkiaSharp.Extended.UI.Controls
 			nameof(IsComplete),
 			typeof(bool),
 			typeof(SKConfettiEmitter),
-			false);
+			false,
+			defaultBindingMode: BindingMode.OneWayToSource);
 
 		public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 
