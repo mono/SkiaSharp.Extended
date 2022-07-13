@@ -1,15 +1,10 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
-             xmlns:converters="clr-namespace:SkiaSharpDemo.Converters"
              xmlns:views="clr-namespace:SkiaSharpDemo.Views"
              x:Class="SkiaSharpDemo.Demos.ConfettiPage"
              Title="Confetti">
 
-    <ContentPage.Resources>
-        <converters:InvertedBooleanConverter x:Key="InvertedBooleanConverter" />
-    </ContentPage.Resources>
-    
     <Grid>
 
         <Label Text="{Binding Message}" FontSize="32" FontAttributes="Bold"
@@ -25,7 +20,7 @@
         <BoxView Color="Green" Opacity="0.5" CornerRadius="12"
                  WidthRequest="25" HeightRequest="24" Margin="24"
                  HorizontalOptions="End" VerticalOptions="Start"
-                 IsVisible="{Binding IsRunning, Source={Reference confettiView}, Converter={StaticResource InvertedBooleanConverter}}" />
+                 IsVisible="{Binding IsComplete, Source={Reference confettiView}}" />
 
         <views:BottomTabBar SelectedIndex="{Binding SelectedTab}" PagePadding="12,6">
             <views:BottomTabCollection>

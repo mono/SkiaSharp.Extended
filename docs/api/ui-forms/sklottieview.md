@@ -18,7 +18,7 @@ There are several properties that can be used to control th animation playback:
 | **RepeatCount**        | `int`                  | The number of times to repeat the animation. Default is 0 (no repeat). |
 | **RepeatMode**         | `SKLottieRepeatMode`   | The way in which to repeat the animation. Default is `Restart`. |
 | **IsAnimationEnabled** | `bool`                 | Determines whether the control will play the animation provided. |
-| **IsRunning**          | `bool`                 | Determines whether the control is currently rendering the animation. |
+| **IsComplete**         | `bool`                 | A value that indicates whether all systems are complete. |
 
 ## Events
 

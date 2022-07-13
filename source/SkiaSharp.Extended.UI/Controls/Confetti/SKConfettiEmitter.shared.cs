@@ -22,14 +22,13 @@ namespace SkiaSharp.Extended.UI.Controls
 			typeof(SKConfettiEmitter),
 			5.0);
 
-		private static readonly BindablePropertyKey IsRunningPropertyKey = BindableProperty.CreateReadOnly(
-			nameof(IsRunning),
+		private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
+			nameof(IsComplete),
 			typeof(bool),
 			typeof(SKConfettiEmitter),
-			true,
-			defaultBindingMode: BindingMode.OneWayToSource);
+			false);
 
-		public static readonly BindableProperty IsRunningProperty = IsRunningPropertyKey.BindableProperty;
+		public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 
 		private int totalParticles = 0;
 		private double totalDuration = 0;
@@ -65,20 +64,17 @@ namespace SkiaSharp.Extended.UI.Controls
 			set => SetValue(DurationProperty, value);
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether confetti is being emitted.
-		/// </summary>
-		public bool IsRunning
+		public bool IsComplete
 		{
-			get => (bool)GetValue(IsRunningProperty);
-			private set => SetValue(IsRunningPropertyKey, value);
+			get => (bool)GetValue(IsCompleteProperty);
+			private set => SetValue(IsCompletePropertyKey, value);
 		}
 
 		public event Action<int>? ParticlesCreated;
 
 		public void Update(TimeSpan deltaTime)
 		{
-			if (!IsRunning)
+			if (IsComplete)
 				return;
 
 			var prevDuration = totalDuration;
@@ -100,7 +96,10 @@ namespace SkiaSharp.Extended.UI.Controls
 
 			ParticlesCreated?.Invoke(particles);
 
-			UpdateIsRunning();
+			IsComplete =
+				Duration == 0 || // burst mode
+				(MaxParticles > 0 && totalParticles >= MaxParticles) || // reached the max particles
+				(Duration > 0 && totalDuration >= Duration); // reached the max duration
 		}
 
 		public static SKConfettiEmitter Burst(int particles) =>
@@ -114,13 +113,5 @@ namespace SkiaSharp.Extended.UI.Controls
 
 		public static SKConfettiEmitter Infinite(int particleRate, int maxParticles) =>
 			new SKConfettiEmitter(particleRate, maxParticles, -1);
-
-		private void UpdateIsRunning()
-		{
-			IsRunning =
-				Duration != 0 && // burst mode
-				(MaxParticles > 0 && totalParticles < MaxParticles) || // reached the max particles
-				(Duration > 0 && totalDuration < Duration); // reached the max duration
-		}
 	}
 }

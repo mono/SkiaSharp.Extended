@@ -26,14 +26,13 @@ public class SKLottieView : SKAnimatedSurfaceView
 		BindingMode.TwoWay,
 		propertyChanged: OnProgressDurationPropertyChanged);
 
-	private static readonly BindablePropertyKey IsRunningPropertyKey = BindableProperty.CreateReadOnly(
-		nameof(IsRunning),
+	private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
+		nameof(IsComplete),
 		typeof(bool),
 		typeof(SKLottieView),
-		false,
-		defaultBindingMode: BindingMode.OneWayToSource);
+		false);
 
-	public static readonly BindableProperty IsRunningProperty = IsRunningPropertyKey.BindableProperty;
+	public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 
 	public static readonly BindableProperty RepeatCountProperty = BindableProperty.Create(
 		nameof(RepeatCount),
@@ -76,10 +75,10 @@ public class SKLottieView : SKAnimatedSurfaceView
 		set => SetValue(ProgressProperty, value);
 	}
 
-	public bool IsRunning
+	public bool IsComplete
 	{
-		get => (bool)GetValue(IsRunningProperty);
-		private set => SetValue(IsRunningPropertyKey, value);
+		get => (bool)GetValue(IsCompleteProperty);
+		private set => SetValue(IsCompletePropertyKey, value);
 	}
 
 	public int RepeatCount
@@ -135,7 +134,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 	{
 		if (animation is null)
 		{
-			IsRunning = false;
+			IsComplete = true;
 			return;
 		}
 
@@ -159,7 +158,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 			// we need to reverse to finish the run
 			playForwards = !playForwards;
 
-			IsRunning = true;
+			IsComplete = false;
 		}
 		else
 		{
@@ -187,9 +186,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 					playForwards = !playForwards;
 			}
 
-			IsRunning =
-				!isFinishedRun &&
-				repeatsCompleted < totalRepeatCount;
+			IsComplete =
+				isFinishedRun &&
+				repeatsCompleted >= totalRepeatCount;
 		}
 
 		if (!IsAnimationEnabled)

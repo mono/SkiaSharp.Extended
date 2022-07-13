@@ -14,7 +14,7 @@ The main property of a confetti view is the `Systems` property:
 | :--------------------- | :---------------------------- | :---------- |
 | **Systems**            | `SKConfettiSystemCollection`  | The collection of [systems](#system) in the view. |
 | **IsAnimationEnabled** | `bool`                        | Determines whether the control will play the animation provided. |
-| **IsRunning**          | `bool`                        | Determines whether the control is currently rendering confetti. |
+| **IsComplete**         | `bool`                        | A value that indicates whether all systems are complete. |
 
 ## Parts
 
@@ -52,7 +52,7 @@ Every confetti view consists up one or more systems (`SKConfettiSystem`). Each s
 | **FadeOut**                   | `bool`                         | Whether or not the particle should fade out at the end of its life. |
 | **Lifetime**                  | `double`                       | The duration in seconds for how long the particle is allowed to live. |
 | **IsAnimationEnabled**        | `bool`                         | Controls whether the system is running or not. |
-| **IsRunning**                 | `bool`                         | Determines whether the system is complete and all systems and particles are also complete. |
+| **IsComplete**                | `bool`                         | A value that indicates whether the system is complete and all systems and particles are also complete. |
 
 # Emitter
 
@@ -63,8 +63,7 @@ Each system has an emitter instance that controls how the confetti particles are
 | **ParticleRate**  | `int`     | The number of particles to generate each second. |
 | **MaxParticles**  | `int`     | The maximum number of particles allowed by the emitter. A value of `-1` indicates no limit. |
 | **Duration**      | `double`  | The duration in seconds of how long the emitter runs for. A value of `0` indicates that all particles are emitted instantly. |
-| **IsRunning**     | `bool`    | Determines whether the control is currently rendering confetti. |
-| **IsRunning**     | `bool`    | Determines whether the emitter has generated all the particles and they have all disappeared. |
+| **IsComplete**    | `bool`    | A value that indicates whether the emitter has generated all the particles and they have all disappeared. |
 
 ## Helper Emitters
 

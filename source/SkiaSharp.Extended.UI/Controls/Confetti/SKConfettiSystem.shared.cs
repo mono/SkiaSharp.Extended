@@ -97,14 +97,13 @@ public class SKConfettiSystem : BindableObject
 		typeof(SKConfettiSystem),
 		new Point(0, 9.81f));
 
-	private static readonly BindablePropertyKey IsRunningPropertyKey = BindableProperty.CreateReadOnly(
-		nameof(IsRunning),
+	private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
+		nameof(IsComplete),
 		typeof(bool),
 		typeof(SKConfettiSystem),
-		true,
-		defaultBindingMode: BindingMode.OneWayToSource);
+		false);
 
-	public static readonly BindableProperty IsRunningProperty = IsRunningPropertyKey.BindableProperty;
+	public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 
 	public static readonly BindableProperty IsAnimationEnabledProperty = BindableProperty.Create(
 		nameof(IsAnimationEnabled),
@@ -222,10 +221,10 @@ public class SKConfettiSystem : BindableObject
 		set => SetValue(GravityProperty, value);
 	}
 
-	public bool IsRunning
+	public bool IsComplete
 	{
-		get => (bool)GetValue(IsRunningProperty);
-		private set => SetValue(IsRunningPropertyKey, value);
+		get => (bool)GetValue(IsCompleteProperty);
+		private set => SetValue(IsCompletePropertyKey, value);
 	}
 
 	internal int ParticleCount => particles.Count;
@@ -244,7 +243,7 @@ public class SKConfettiSystem : BindableObject
 
 			particle.ApplyForce(g, deltaTime);
 
-			if (!particle.IsRunning || !lastViewBounds.IntersectsWith(particle.Bounds))
+			if (particle.IsComplete || !lastViewBounds.IntersectsWith(particle.Bounds))
 			{
 				particles.RemoveAt(i);
 				removed = true;
@@ -252,7 +251,7 @@ public class SKConfettiSystem : BindableObject
 		}
 
 		if (removed)
-			UpdateIsRunning();
+			UpdateIsComplete();
 	}
 
 	public void Draw(SKCanvas canvas)
@@ -311,7 +310,7 @@ public class SKConfettiSystem : BindableObject
 			particles.Add(particle);
 		}
 
-		UpdateIsRunning();
+		UpdateIsComplete();
 
 		Point GetNewLocation()
 		{
@@ -355,7 +354,7 @@ public class SKConfettiSystem : BindableObject
 			if (newValue is SKConfettiEmitter newE)
 				newE.ParticlesCreated += system.OnCreateParticle;
 
-			system.UpdateIsRunning();
+			system.UpdateIsComplete();
 		}
 	}
 
@@ -363,14 +362,14 @@ public class SKConfettiSystem : BindableObject
 	{
 		if (bindable is SKConfettiSystem system)
 		{
-			system.UpdateIsRunning();
+			system.UpdateIsComplete();
 		}
 	}
 
-	private bool UpdateIsRunning() =>
-		IsRunning =
-			particles.Count != 0 &&
-			Emitter?.IsRunning == true &&
+	private bool UpdateIsComplete() =>
+		IsComplete =
+			particles.Count == 0 &&
+			Emitter?.IsComplete != false &&
 			IsAnimationEnabled;
 
 	private static SKConfettiColorCollection CreateDefaultColors() =>
