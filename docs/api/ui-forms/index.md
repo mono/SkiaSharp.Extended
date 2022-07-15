@@ -1,4 +1,4 @@
-[![SkiaSharp.Extended.UI.Forms](https://img.shields.io/nuget/vpre/SkiaSharp.Extended.UI.Forms.svg?maxAge=2592000)](https://www.nuget.org/packages/SkiaSharp.Extended.UI.Forms)  [![NuGet](https://img.shields.io/nuget/dt/SkiaSharp.Extended.UI.Forms.svg)](https://www.nuget.org/packages/SkiaSharp.Extended.UI.Forms)
+[![SkiaSharp.Extended.UI.Forms](https://img.shields.io/nuget/vpre/SkiaSharp.Extended.UI.Forms.svg?cacheSeconds=3600)](https://www.nuget.org/packages/SkiaSharp.Extended.UI.Forms)  [![NuGet](https://img.shields.io/nuget/dt/SkiaSharp.Extended.UI.Forms.svg)](https://www.nuget.org/packages/SkiaSharp.Extended.UI.Forms)
 
 # Overview
 

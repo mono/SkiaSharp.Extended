@@ -1,4 +1,4 @@
-[![SkiaSharp.Extended.UI.Maui](https://img.shields.io/nuget/vpre/SkiaSharp.Extended.UI.Maui.svg?maxAge=2592000)](https://www.nuget.org/packages/SkiaSharp.Extended.UI.Maui)  [![NuGet](https://img.shields.io/nuget/dt/SkiaSharp.Extended.UI.Maui.svg)](https://www.nuget.org/packages/SkiaSharp.Extended.UI.Maui)
+[![SkiaSharp.Extended.UI.Maui](https://img.shields.io/nuget/vpre/SkiaSharp.Extended.UI.Maui.svg?cacheSeconds=3600)](https://www.nuget.org/packages/SkiaSharp.Extended.UI.Maui)  [![NuGet](https://img.shields.io/nuget/dt/SkiaSharp.Extended.UI.Maui.svg)](https://www.nuget.org/packages/SkiaSharp.Extended.UI.Maui)
 
 # Overview
 
