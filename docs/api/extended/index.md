@@ -1,4 +1,4 @@
-[![SkiaSharp.Extended](https://img.shields.io/nuget/vpre/SkiaSharp.Extended.svg?cacheSeconds=3600)](https://www.nuget.org/packages/SkiaSharp.Extended)  [![NuGet](https://img.shields.io/nuget/dt/SkiaSharp.Extended.svg)](https://www.nuget.org/packages/SkiaSharp.Extended)
+[![SkiaSharp.Extended](https://img.shields.io/nuget/vpre/SkiaSharp.Extended.svg?cacheSeconds=3600)](https://www.nuget.org/packages/SkiaSharp.Extended)  [![NuGet](https://img.shields.io/nuget/dt/SkiaSharp.Extended.svg?cacheSeconds=3600)](https://www.nuget.org/packages/SkiaSharp.Extended)
 
 # Overview
 
