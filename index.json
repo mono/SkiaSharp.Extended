@@ -1,4 +1,24 @@
 {
+  "api/extended/skgeometry.html": {
+    "href": "api/extended/skgeometry.html",
+    "title": "SKGeometry | SkiaSharp.Extended",
+    "keywords": "SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. Methods There are a few helper methods that can be used to create geometric shapes in the SKGeometry type: Method Description CreateSectorPath Creates a path with the shape of sector/section of a doughnut/pie chart. CreatePiePath Creates a path with the shape of a doughnut/pie chart. CreateSquarePath Creates a path with the shape of a square. CreateRectanglePath Creates a path with the shape of a rectangle. CreateTrianglePath Creates a path with the shape of a triangle. CreateRegularPolygonPath Creates a path with the shape of some regular polygon. CreateRegularStarPath Creates a path with the shape of a square. Extension Methods Some of these shapes can also be draw directly on a SKCanvas using the extensions methods: SKCanvas canvas = ... canvas.DrawStar( 100, 100, // x, y 100, // outer radius 50, // inner radius 5); // points"
+  },
+  "api/extended/index.html": {
+    "href": "api/extended/index.html",
+    "title": "Overview | SkiaSharp.Extended",
+    "keywords": "Overview SkiaSharp.Extended is a collection some cool functions that may be useful to some apps. SKBlurHash SKBlurHash is a compact representation of a placeholder for an image. See more... Preview SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. See more... SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. See more... Preview"
+  },
+  "api/extended/skblurhash.html": {
+    "href": "api/extended/skblurhash.html",
+    "title": "SKBlurHash | SkiaSharp.Extended",
+    "keywords": "SKBlurHash A BlurHash is a compact representation of a placeholder for an image. For example, the SkiaSharp logo can be reduced to a tiny string: LjPsbRxG%gx^aJxuM|W=?^X8Mxn$ Original (79.7 KB) BlurHash (36 bytes) Methods TODO"
+  },
+  "api/ui-forms/sklottieview.html": {
+    "href": "api/ui-forms/sklottieview.html",
+    "title": "SKLottieView | SkiaSharp.Extended",
+    "keywords": "SKLottieView The Lottie view is a animated view that can playback Lottie files. Preview Properties There are several properties that can be used to control th animation playback: Property Type Description Source SKLottieImageSource The Lottie image source to playback in the view. Duration TimeSpan A value indicating the total duration of the animation. Progress TimeSpan The current playback progress of the animation. RepeatCount int The number of times to repeat the animation. Default is 0 (no repeat). RepeatMode SKLottieRepeatMode The way in which to repeat the animation. Default is Restart . IsAnimationEnabled bool Determines whether the control will play the animation provided. IsComplete bool A value that indicates whether all systems are complete. Events There are a few events that can be used to be notified of animation loading events: Event Type Description AnimationLoaded EventHandler Invoked when the animation has loaded successfully. AnimationFailed EventHandler Invoked when there was an error loading the animation. Parts In addition to the properties on the view, there is the overall control template that can directly influence the visual appearance of the view. The default template is defined as: <ControlTemplate x:Key=\"SKLottieViewControlTemplate\"> <skia:SKCanvasView x:Name=\"PART_DrawingSurface\" /> </ControlTemplate> Part Description PART_DrawingSurface This part can either be a SKCanvasView or a SKGLView and describes the actual rendering surface for the animation."
+  },
   "api/ui-forms/index.html": {
     "href": "api/ui-forms/index.html",
     "title": "Overview | SkiaSharp.Extended",
@@ -19,6 +39,11 @@
     "title": "Overview | SkiaSharp.Extended",
     "keywords": "Overview SkiaSharp.Extended SkiaSharp.Extended is a collection some cool libraries that may be useful to some apps. There are several repositories that may have interesting projects. See more... SKBlurHash SKBlurHash is a compact representation of a placeholder for an image. See more... SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. See more... SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. See more... SkiaSharp.Extended.UI.Maui SkiaSharp.Extended.UI.Maui is a collection some great .NET MAUI controls that may be useful to some apps. See more... SKConfettiView The confetti view is a container for one or more systems of confetti particles. See more... SKLottieView The Lottie view is a animated view that can playback Lottie files. See more... SkiaSharp.Extended.UI.Forms SkiaSharp.Extended.UI.Forms is a collection some great Xamarin.Forms controls that may be useful to some apps. See more... SKImageSourceExtensions Some useful extensions for the abstract ImageSource type. See more... SKConfettiView The confetti view is a container for one or more systems of confetti particles. See more... SKLottieView The Lottie view is a animated view that can playback Lottie files. See more..."
   },
+  "index.html": {
+    "href": "index.html",
+    "title": "SkiaSharp.Extended | SkiaSharp.Extended",
+    "keywords": "SkiaSharp.Extended SkiaSharp.Extended is a collection some cool libraries that may be useful to some apps. There are several repositories that may have interesting projects. See more... SKBlurHash SKBlurHash is a compact representation of a placeholder for an image. See more... SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. See more... SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. See more... SkiaSharp.Extended.UI.Maui SkiaSharp.Extended.UI.Maui is a collection some great .NET MAUI controls that may be useful to some apps. See more... SKConfettiView The confetti view is a container for one or more systems of confetti particles. See more... SkiaSharp.Extended.UI.Forms SkiaSharp.Extended.UI.Forms is a collection some great Xamarin.Forms controls that may be useful to some apps. See more... SKImageSourceExtensions Some useful extensions for the abstract ImageSource type. See more... SKConfettiView The confetti view is a container for one or more systems of confetti particles. See more..."
+  },
   "api/ui-maui/sklottieview.html": {
     "href": "api/ui-maui/sklottieview.html",
     "title": "SKLottieView | SkiaSharp.Extended",
@@ -38,30 +63,5 @@
     "href": "api/extended/skpathinterpolation.html",
     "title": "SKPathInterpolation | SkiaSharp.Extended",
     "keywords": "SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. Path Interpolation The code is also very simple, just create a SKPathInterpolation instance and then ask for each step: var interpolation = new SKPathInterpolation(startPath, endPath); var halfWayPath = interpolation.Interpolate(0.5f); var almostTherePath = interpolation.Interpolate(0.9f); Methods There are a few helper methods that can be used to create geometric shapes in the SKGeometry type: Method Description Interpolate Creates a new path interpolated between the start and end paths."
-  },
-  "api/extended/skgeometry.html": {
-    "href": "api/extended/skgeometry.html",
-    "title": "SKGeometry | SkiaSharp.Extended",
-    "keywords": "SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. Methods There are a few helper methods that can be used to create geometric shapes in the SKGeometry type: Method Description CreateSectorPath Creates a path with the shape of sector/section of a doughnut/pie chart. CreatePiePath Creates a path with the shape of a doughnut/pie chart. CreateSquarePath Creates a path with the shape of a square. CreateRectanglePath Creates a path with the shape of a rectangle. CreateTrianglePath Creates a path with the shape of a triangle. CreateRegularPolygonPath Creates a path with the shape of some regular polygon. CreateRegularStarPath Creates a path with the shape of a square. Extension Methods Some of these shapes can also be draw directly on a SKCanvas using the extensions methods: SKCanvas canvas = ... canvas.DrawStar( 100, 100, // x, y 100, // outer radius 50, // inner radius 5); // points"
-  },
-  "api/extended/skblurhash.html": {
-    "href": "api/extended/skblurhash.html",
-    "title": "SKBlurHash | SkiaSharp.Extended",
-    "keywords": "SKBlurHash A BlurHash is a compact representation of a placeholder for an image. For example, the SkiaSharp logo can be reduced to a tiny string: LjPsbRxG%gx^aJxuM|W=?^X8Mxn$ Original (79.7 KB) BlurHash (36 bytes) Methods TODO"
-  },
-  "api/extended/index.html": {
-    "href": "api/extended/index.html",
-    "title": "Overview | SkiaSharp.Extended",
-    "keywords": "Overview SkiaSharp.Extended is a collection some cool functions that may be useful to some apps. SKBlurHash SKBlurHash is a compact representation of a placeholder for an image. See more... Preview SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. See more... SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. See more... Preview"
-  },
-  "index.html": {
-    "href": "index.html",
-    "title": "SkiaSharp.Extended | SkiaSharp.Extended",
-    "keywords": "SkiaSharp.Extended SkiaSharp.Extended is a collection some cool libraries that may be useful to some apps. There are several repositories that may have interesting projects. See more... SKBlurHash SKBlurHash is a compact representation of a placeholder for an image. See more... SKGeometry SKGeometry provides several helper methods that can be used to create common geometric shapes. See more... SKPathInterpolation SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. See more... SkiaSharp.Extended.UI.Maui SkiaSharp.Extended.UI.Maui is a collection some great .NET MAUI controls that may be useful to some apps. See more... SKConfettiView The confetti view is a container for one or more systems of confetti particles. See more... SkiaSharp.Extended.UI.Forms SkiaSharp.Extended.UI.Forms is a collection some great Xamarin.Forms controls that may be useful to some apps. See more... SKImageSourceExtensions Some useful extensions for the abstract ImageSource type. See more... SKConfettiView The confetti view is a container for one or more systems of confetti particles. See more..."
-  },
-  "api/ui-forms/sklottieview.html": {
-    "href": "api/ui-forms/sklottieview.html",
-    "title": "SKLottieView | SkiaSharp.Extended",
-    "keywords": "SKLottieView The Lottie view is a animated view that can playback Lottie files. Preview Properties There are several properties that can be used to control th animation playback: Property Type Description Source SKLottieImageSource The Lottie image source to playback in the view. Duration TimeSpan A value indicating the total duration of the animation. Progress TimeSpan The current playback progress of the animation. RepeatCount int The number of times to repeat the animation. Default is 0 (no repeat). RepeatMode SKLottieRepeatMode The way in which to repeat the animation. Default is Restart . IsAnimationEnabled bool Determines whether the control will play the animation provided. IsComplete bool A value that indicates whether all systems are complete. Events There are a few events that can be used to be notified of animation loading events: Event Type Description AnimationLoaded EventHandler Invoked when the animation has loaded successfully. AnimationFailed EventHandler Invoked when there was an error loading the animation. Parts In addition to the properties on the view, there is the overall control template that can directly influence the visual appearance of the view. The default template is defined as: <ControlTemplate x:Key=\"SKLottieViewControlTemplate\"> <skia:SKCanvasView x:Name=\"PART_DrawingSurface\" /> </ControlTemplate> Part Description PART_DrawingSurface This part can either be a SKCanvasView or a SKGLView and describes the actual rendering surface for the animation."
   }
 }
