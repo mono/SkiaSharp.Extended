@@ -18,6 +18,7 @@ public class SKLottieViewTest
 		// test
 		Assert.Equal(TimeSpan.Zero, lottie.Progress);
 		Assert.Equal(TimeSpan.FromSeconds(2.3666665), lottie.Duration);
+		Assert.False(lottie.IsComplete);
 	}
 
 	[Fact]
@@ -36,6 +37,7 @@ public class SKLottieViewTest
 
 		// test
 		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+		Assert.False(lottie.IsComplete);
 	}
 
 	[Fact]
@@ -51,6 +53,7 @@ public class SKLottieViewTest
 
 		// test
 		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Progress);
+		Assert.False(lottie.IsComplete);
 	}
 
 	[Fact]
@@ -64,14 +67,17 @@ public class SKLottieViewTest
 		// update & test
 		lottie.CallUpdate(TimeSpan.FromSeconds(1));
 		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Progress);
+		Assert.False(lottie.IsComplete);
 
 		// update & test
 		lottie.CallUpdate(TimeSpan.FromSeconds(1));
 		Assert.Equal(TimeSpan.FromSeconds(2), lottie.Progress);
+		Assert.False(lottie.IsComplete);
 
 		// update & test
 		lottie.CallUpdate(TimeSpan.FromSeconds(1));
 		Assert.Equal(TimeSpan.FromSeconds(2.3666665), lottie.Progress);
+		Assert.True(lottie.IsComplete);
 	}
 
 	[Fact]
@@ -87,6 +93,7 @@ public class SKLottieViewTest
 
 		// test
 		Assert.Equal(TimeSpan.FromSeconds(2.3666665), lottie.Progress);
+		Assert.True(lottie.IsComplete);
 	}
 
 	[Fact]
@@ -102,6 +109,7 @@ public class SKLottieViewTest
 
 		// test
 		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+		Assert.False(lottie.IsComplete);
 	}
 
 	[Fact]
@@ -119,6 +127,7 @@ public class SKLottieViewTest
 
 		// test
 		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Progress);
+		Assert.False(lottie.IsComplete);
 	}
 
 	[Theory]
@@ -149,23 +158,24 @@ public class SKLottieViewTest
 
 		// test
 		Assert.Equal(TimeSpan.FromSeconds(progress), lottie.Progress);
+		Assert.False(lottie.IsComplete);
 	}
 
 	[Theory]
-	[InlineData(SKLottieRepeatMode.Restart, 1, 1)]
-	[InlineData(SKLottieRepeatMode.Restart, 2, 2)]
-	[InlineData(SKLottieRepeatMode.Restart, 3, 2.3666665)]
-	[InlineData(SKLottieRepeatMode.Restart, 4, 2.3666665)]
-	[InlineData(SKLottieRepeatMode.Restart, 5, 2.3666665)]
-	[InlineData(SKLottieRepeatMode.Reverse, 1, 1)]
-	[InlineData(SKLottieRepeatMode.Reverse, 2, 2)]
-	[InlineData(SKLottieRepeatMode.Reverse, 3, 2.3666665)]
-	[InlineData(SKLottieRepeatMode.Reverse, 4, 1.3666665)]
-	[InlineData(SKLottieRepeatMode.Reverse, 5, 0.3666665)]
-	[InlineData(SKLottieRepeatMode.Reverse, 6, 0)]
-	[InlineData(SKLottieRepeatMode.Reverse, 7, 0)]
-	[InlineData(SKLottieRepeatMode.Reverse, 8, 0)]
-	public async Task ReachingTheEndAndThenMoreWithRepeatModeButZeroCount(SKLottieRepeatMode repeatMode, int steps, double progress)
+	[InlineData(SKLottieRepeatMode.Restart, 1, 1, false)]
+	[InlineData(SKLottieRepeatMode.Restart, 2, 2, false)]
+	[InlineData(SKLottieRepeatMode.Restart, 3, 2.3666665, true)]
+	[InlineData(SKLottieRepeatMode.Restart, 4, 2.3666665, true)]
+	[InlineData(SKLottieRepeatMode.Restart, 5, 2.3666665, true)]
+	[InlineData(SKLottieRepeatMode.Reverse, 1, 1, false)]
+	[InlineData(SKLottieRepeatMode.Reverse, 2, 2, false)]
+	[InlineData(SKLottieRepeatMode.Reverse, 3, 2.3666665, false)]
+	[InlineData(SKLottieRepeatMode.Reverse, 4, 1.3666665, false)]
+	[InlineData(SKLottieRepeatMode.Reverse, 5, 0.3666665, false)]
+	[InlineData(SKLottieRepeatMode.Reverse, 6, 0, true)]
+	[InlineData(SKLottieRepeatMode.Reverse, 7, 0, true)]
+	[InlineData(SKLottieRepeatMode.Reverse, 8, 0, true)]
+	public async Task ReachingTheEndAndThenMoreWithRepeatModeButZeroCount(SKLottieRepeatMode repeatMode, int steps, double progress, bool isComplete)
 	{
 		// create
 		var source = new SKFileLottieImageSource { File = TrophyJson };
@@ -178,5 +188,6 @@ public class SKLottieViewTest
 
 		// test
 		Assert.Equal(TimeSpan.FromSeconds(progress), lottie.Progress);
+		Assert.Equal(isComplete, lottie.IsComplete);
 	}
 }

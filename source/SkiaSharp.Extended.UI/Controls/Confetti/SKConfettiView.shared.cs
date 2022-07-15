@@ -8,7 +8,8 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		nameof(IsComplete),
 		typeof(bool),
 		typeof(SKConfettiView),
-		false);
+		false,
+		defaultBindingMode: BindingMode.OneWayToSource);
 
 	public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 

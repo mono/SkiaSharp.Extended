@@ -101,7 +101,8 @@ public class SKConfettiSystem : BindableObject
 		nameof(IsComplete),
 		typeof(bool),
 		typeof(SKConfettiSystem),
-		false);
+		false,
+		defaultBindingMode: BindingMode.OneWayToSource);
 
 	public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 

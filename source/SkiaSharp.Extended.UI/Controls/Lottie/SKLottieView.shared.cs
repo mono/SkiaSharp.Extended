@@ -14,6 +14,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		typeof(TimeSpan),
 		typeof(SKLottieView),
 		TimeSpan.Zero,
+		defaultBindingMode: BindingMode.OneWayToSource,
 		propertyChanged: OnProgressDurationPropertyChanged);
 
 	public static readonly BindableProperty DurationProperty = DurationPropertyKey.BindableProperty;
@@ -30,7 +31,8 @@ public class SKLottieView : SKAnimatedSurfaceView
 		nameof(IsComplete),
 		typeof(bool),
 		typeof(SKLottieView),
-		false);
+		false,
+		defaultBindingMode: BindingMode.OneWayToSource);
 
 	public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 
