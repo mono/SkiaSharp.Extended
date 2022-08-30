@@ -14,10 +14,15 @@ namespace SkiaSharp.Extended.Tests
 		public const string Image6 = "LlMF%n00%#MwS|WCWEM{R*bbWBbH";
 		public const string Image7 = "LjIY5?00?bIUofWBWBM{WBofWBj[";
 
+		public static readonly string BaseImages = Path.Combine("images", "BlurHash");
+
+		public static string GetImagePath(string filename) =>
+			Path.Combine(BaseImages, filename);
+
 		[Fact]
 		public void CanEncodeAndDecode()
 		{
-			using var img = SKBitmap.Decode(Path.Combine("images", "img1.jpg"));
+			using var img = SKBitmap.Decode(GetImagePath("img1.jpg"));
 
 			var encoded = SKBlurHash.Serialize(img, 4, 3);
 
