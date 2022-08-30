@@ -85,7 +85,7 @@ namespace SkiaSharp.Extended.Tests
 		[InlineData(pngFirst, pngFirst)]
 		[InlineData(jpgSecond, jpgSecond)]
 		[InlineData(pngSecond, pngSecond)]
-		public void SameFilesReportNoDifference(string first, string second)
+		public void SameImagesReportNoDifference(string first, string second)
 		{
 			using var firstImage = SKImage.FromEncodedData(GetImagePath(first));
 			using var secondImage = SKImage.FromEncodedData(GetImagePath(second));
@@ -102,6 +102,18 @@ namespace SkiaSharp.Extended.Tests
 		[InlineData(pngFirst, pngSecond, 2249290, 12570, 0.041885479700370536)]
 		public void SimilarFilesAreSimilar(string first, string second, int expAbsError, int expPixError, double expPixPercent)
 		{
+			var result = SKPixelComparer.Compare(GetImagePath(first), GetImagePath(second));
+
+			Assert.Equal(expAbsError, result.AbsoluteError);
+			Assert.Equal(expPixError, result.ErrorPixelCount);
+			Assert.Equal(expPixPercent, result.ErrorPixelPercentage);
+		}
+
+		[Theory]
+		[InlineData(jpgFirst, jpgSecond, 2259184, 15870, 0.05288166768853464)]
+		[InlineData(pngFirst, pngSecond, 2249290, 12570, 0.041885479700370536)]
+		public void SimilarImagesAreSimilar(string first, string second, int expAbsError, int expPixError, double expPixPercent)
+		{
 			using var firstImage = SKImage.FromEncodedData(GetImagePath(first));
 			using var secondImage = SKImage.FromEncodedData(GetImagePath(second));
 
@@ -116,6 +128,18 @@ namespace SkiaSharp.Extended.Tests
 		[InlineData(jpgFirst, pngFirst, 884487, 231040, 0.7698664462986164)]
 		[InlineData(jpgSecond, pngSecond, 873399, 221697, 0.7387339055793991)]
 		public void SimilarFilesAreCompressedDifferent(string first, string second, int expAbsError, int expPixError, double expPixPercent)
+		{
+			var result = SKPixelComparer.Compare(GetImagePath(first), GetImagePath(second));
+
+			Assert.Equal(expAbsError, result.AbsoluteError);
+			Assert.Equal(expPixError, result.ErrorPixelCount);
+			Assert.Equal(expPixPercent, result.ErrorPixelPercentage);
+		}
+
+		[Theory]
+		[InlineData(jpgFirst, pngFirst, 884487, 231040, 0.7698664462986164)]
+		[InlineData(jpgSecond, pngSecond, 873399, 221697, 0.7387339055793991)]
+		public void SimilarImagesAreCompressedDifferent(string first, string second, int expAbsError, int expPixError, double expPixPercent)
 		{
 			using var firstImage = SKImage.FromEncodedData(GetImagePath(first));
 			using var secondImage = SKImage.FromEncodedData(GetImagePath(second));

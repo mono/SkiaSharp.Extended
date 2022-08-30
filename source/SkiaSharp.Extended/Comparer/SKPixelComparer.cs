@@ -4,6 +4,13 @@ namespace SkiaSharp.Extended
 {
 	public static class SKPixelComparer
 	{
+		public static SKPixelComparisonResult Compare(string firstFilename, string secondFilename)
+		{
+			using var first = SKImage.FromEncodedData(firstFilename);
+			using var second = SKImage.FromEncodedData(secondFilename);
+			return Compare(first, second);
+		}
+
 		public static SKPixelComparisonResult Compare(SKBitmap first, SKBitmap second)
 		{
 			using var firstPixmap = first.PeekPixels();
@@ -53,6 +60,14 @@ namespace SkiaSharp.Extended
 			}
 
 			return new SKPixelComparisonResult(totalPixels, errorPixels, absoluteError);
+		}
+
+		public static SKPixelComparisonResult Compare(string firstFilename, string secondFilename, string maskFilename)
+		{
+			using var first = SKImage.FromEncodedData(firstFilename);
+			using var second = SKImage.FromEncodedData(secondFilename);
+			using var mask = SKImage.FromEncodedData(maskFilename);
+			return Compare(first, second, mask);
 		}
 
 		public static SKPixelComparisonResult Compare(SKBitmap first, SKBitmap second, SKBitmap mask)
@@ -119,6 +134,13 @@ namespace SkiaSharp.Extended
 			}
 
 			return new SKPixelComparisonResult(totalPixels, errorPixels, absoluteError);
+		}
+
+		public static SKImage GenerateDifferenceMask(string firstFilename, string secondFilename)
+		{
+			using var first = SKImage.FromEncodedData(firstFilename);
+			using var second = SKImage.FromEncodedData(secondFilename);
+			return GenerateDifferenceMask(first, second);
 		}
 
 		public static SKImage GenerateDifferenceMask(SKBitmap first, SKBitmap second)
