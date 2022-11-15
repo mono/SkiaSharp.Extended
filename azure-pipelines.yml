@@ -29,6 +29,7 @@ variables:
   GIT_SHA: $(Build.SourceVersion)
   GIT_BRANCH_NAME: $(Build.SourceBranchName)
   Codeql.Enabled: true
+  Codeql.TSAEnabled: true
 
 resources:
   repositories:
