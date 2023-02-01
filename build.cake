@@ -1,6 +1,6 @@
 var TARGET = Argument("t", Argument("target", "Default"));
 var PREVIEW_LABEL = Argument ("previewLabel", EnvironmentVariable ("PREVIEW_LABEL") ?? "preview");
-var BUILD_NUMBER = EnvironmentVariable ("BUILD_NUMBER") ?? "0";
+var BUILD_NUMBER = Argument ("buildNumber", EnvironmentVariable ("BUILD_NUMBER") ?? "0");
 var GIT_SHA = Argument ("gitSha", EnvironmentVariable ("GIT_SHA") ?? "");
 var GIT_BRANCH_NAME = Argument ("gitBranch", EnvironmentVariable ("GIT_BRANCH_NAME") ?? "");
 
@@ -58,7 +58,7 @@ Task("test")
 			continue;
 
 		try {
-			DotNetCoreTest(csproj.FullPath, new DotNetCoreTestSettings {
+			DotNetTest(csproj.FullPath, new DotNetTestSettings {
 				Configuration = "Release",
 				Loggers = new [] { $"trx;LogFileName={csproj.GetFilenameWithoutExtension()}.trx" },
 			});

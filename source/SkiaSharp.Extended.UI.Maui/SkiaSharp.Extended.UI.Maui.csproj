@@ -1,15 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net6.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFrameworks>net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
     <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-    <!-- <TargetFrameworks>$(TargetFrameworks);net6.0-tizen</TargetFrameworks> -->
+    <!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
     <UseMaui>true</UseMaui>
     <SingleProject>true</SingleProject>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>SkiaSharp.Extended.UI</AssemblyName>
     <RootNamespace>SkiaSharp.Extended.UI</RootNamespace>
+    <PublishReadyToRun>false</PublishReadyToRun>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -53,7 +54,7 @@
     <EmbeddedResource Include="..\SkiaSharp.Extended.UI\**\*.shared.xaml" />
     <EmbeddedResource Include="..\SkiaSharp.Extended.UI\**\*.shared.*.xaml" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.ref.cs" />
     <Compile Include="..\SkiaSharp.Extended.UI\**\*.ref.*.cs" />
   </ItemGroup>
@@ -84,11 +85,6 @@
   <ItemGroup>
     <Compile Remove="..\SkiaSharp.Extended.UI\Extensions\SKImageSourceExtensions.*.cs" />
     <None Remove="..\SkiaSharp.Extended.UI\Extensions\SKImageSourceExtensions.*.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-      <PackageReference Include="Microsoft.Maui.Dependencies" Version="$(MauiVersion)" PrivateAssets="all" />
-      <PackageReference Include="Microsoft.Maui.Extensions" Version="$(MauiVersion)" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

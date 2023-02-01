@@ -21,6 +21,7 @@ pr:
       - LICENSE
       - .github/
       - docs/
+      - images/
 
 variables:
   BASE_VERSION: 2.0.0
@@ -74,12 +75,12 @@ stages:
           - task: UseDotNet@2
             inputs:
               packageType: 'sdk'
-              version: 6.0.x
-            displayName: Install .NET 6.0
+              version: 7.0.x
+            displayName: Install .NET 7.0
           - pwsh: dotnet workload install maui
             displayName: Install .NET MAUI
-          - pwsh: dotnet tool update -g cake.tool
-            displayName: Install the Cake .NET tool
+          - pwsh: dotnet tool restore
+            displayName: Restore the dotnet tools
           # PUBLIC ONLY: build everything and run tests
           - ${{ if ne(variables['System.TeamProject'], 'devdiv') }}:
             - pwsh: dotnet cake
