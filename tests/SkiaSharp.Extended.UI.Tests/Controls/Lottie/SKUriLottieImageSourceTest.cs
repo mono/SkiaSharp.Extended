@@ -2,8 +2,8 @@
 
 public class SKUriLottieImageSourceTest : SKLottieImageSourceTest<SKUriLottieImageSource>
 {
-	private const string TrophyJson = "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/main/tests/SkiaSharp.Extended.UI.Tests/TestAssets/Lottie/trophy.json";
-	private const string LoloJson = "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/main/lottie/tests/SkiaSharp.Extended.UI.Tests/TestAssets/Lottie/lolo.json";
+	private const string TrophyJson = "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/5d259235cff2f12e4f1c803ce18af082eca43ea8/tests/SkiaSharp.Extended.UI.Tests/TestAssets/Lottie/trophy.json";
+	private const string LoloJson = "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/5d259235cff2f12e4f1c803ce18af082eca43ea8/tests/SkiaSharp.Extended.UI.Tests/TestAssets/Lottie/lolo.json";
 
 	protected override SKUriLottieImageSource CreateEmptyImageSource() =>
 		new SKUriLottieImageSource { };
