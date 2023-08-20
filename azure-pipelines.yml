@@ -75,6 +75,7 @@ stages:
           - pwsh: |
               dotnet workload install maui
               dotnet workload list
+              dotnet workload --info
               dotnet --info
             displayName: Install .NET MAUI
           - pwsh: dotnet tool restore
