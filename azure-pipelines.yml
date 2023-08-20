@@ -78,6 +78,12 @@ stages:
               dotnet workload --info
               dotnet --info
             displayName: Install .NET MAUI
+          - pwsh: |
+              dotnet build source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj
+            displayName: TEST
+          - pwsh: |
+              msbuild /restore source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj
+            displayName: TEST
           - pwsh: dotnet tool restore
             displayName: Restore the dotnet tools
           # PUBLIC ONLY: build everything and run tests
