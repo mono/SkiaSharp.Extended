@@ -70,14 +70,12 @@ stages:
           - task: UseDotNet@2
             inputs:
               packageType: 'sdk'
-              version: 3.1.x
-            displayName: Install .NET Core 3.1
-          - task: UseDotNet@2
-            inputs:
-              packageType: 'sdk'
-              version: 7.0.x
+              version: 7.x
             displayName: Install .NET 7.0
-          - pwsh: dotnet workload install maui
+          - pwsh: |
+              dotnet workload install maui
+              dotnwt workload list
+              dotnet --info
             displayName: Install .NET MAUI
           - pwsh: dotnet tool restore
             displayName: Restore the dotnet tools
