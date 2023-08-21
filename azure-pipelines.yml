@@ -78,13 +78,13 @@ stages:
               dotnet workload --info
               dotnet --info
             displayName: Install .NET MAUI
-          - pwsh: |
-              dotnet build source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj
-            displayName: TEST
+          # - pwsh: |
+          #     dotnet build source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj
+          #   displayName: TEST
           - task: MSBuild@1
             inputs:
               solution: source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj
-              msbuildArguments: /restore
+              msbuildArguments: /restore /bl:output\msbuild.binlog
             displayName: TEST
           - pwsh: dotnet tool restore
             displayName: Restore the dotnet tools
