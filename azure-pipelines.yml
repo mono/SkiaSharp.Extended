@@ -85,19 +85,19 @@ stages:
           - task: MSBuild@1
             inputs:
               solution: source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj
-              msbuildArguments: /restore /bl:output\msbuild.binlog
+              msbuildArguments: /restore /bl:D:\a\1\s\output\msbuild.binlog
             displayName: TEST
-          - pwsh: dotnet tool restore
-            displayName: Restore the dotnet tools
+          # - pwsh: dotnet tool restore
+          #   displayName: Restore the dotnet tools
           # PUBLIC ONLY: build everything and run tests
           - ${{ if ne(variables['System.TeamProject'], 'devdiv') }}:
-            - pwsh: dotnet cake
-              displayName: Build everything
-            - task: PublishTestResults@2
-              condition: always()
-              inputs:
-                testResultsFormat: VSTest
-                testResultsFiles: output/test-results/*.trx
+            # - pwsh: dotnet cake
+            #   displayName: Build everything
+            # - task: PublishTestResults@2
+            #   condition: always()
+            #   inputs:
+            #     testResultsFormat: VSTest
+            #     testResultsFiles: output/test-results/*.trx
             - publish: output
               artifact: windows
               condition: always()
