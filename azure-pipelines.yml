@@ -67,17 +67,17 @@ stages:
               Write-Host "##vso[build.updatebuildnumber]$label"
             displayName: Update the build number with a more readable one
           # install tools
-          - task: UseDotNet@2
-            inputs:
-              packageType: 'sdk'
-              version: 7.x
-            displayName: Install .NET 7.0
-          - pwsh: |
-              dotnet workload install maui
-              dotnet workload list
-              dotnet workload --info
-              dotnet --info
-            displayName: Install .NET MAUI
+          # - task: UseDotNet@2
+          #   inputs:
+          #     packageType: 'sdk'
+          #     version: 7.x
+          #   displayName: Install .NET 7.0
+          # - pwsh: |
+          #     dotnet workload install maui
+          #     dotnet workload list
+          #     dotnet workload --info
+          #     dotnet --info
+          #   displayName: Install .NET MAUI
           # - pwsh: |
           #     dotnet build source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj
           #   displayName: TEST
