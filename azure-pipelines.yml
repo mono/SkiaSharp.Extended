@@ -82,10 +82,9 @@ stages:
               dotnet --info
               dotnet workload update --print-rollback
               dotnet workload search
-              dir C:\hostedtoolcache\windows\dotnet
-              dir C:\hostedtoolcache\windows\dotnet\sdk-manifests
-              dir C:\hostedtoolcache\windows\dotnet\packs
-              Get-Content 'C:\hostedtoolcache\windows\dotnet\sdk\7.0.400\.version'
+              Get-Content C:\hostedtoolcache\windows\dotnet\sdk\7.0.400\.version
+              tree C:\hostedtoolcache\windows\dotnet\sdk-manifests /f
+              tree C:\hostedtoolcache\windows\dotnet\packs /f
             displayName: .NET INFO
           # - pwsh: |
           #     dotnet build source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj
