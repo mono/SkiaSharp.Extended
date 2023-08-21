@@ -91,7 +91,7 @@ stages:
           #   displayName: TEST
           - task: MSBuild@1
             inputs:
-              solution: source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj
+              solution: ./AndroidApp/AndroidApp.csproj
               msbuildArguments: /restore /bl:D:\a\1\s\output\msbuild.binlog
             displayName: TEST
           # - pwsh: dotnet tool restore
