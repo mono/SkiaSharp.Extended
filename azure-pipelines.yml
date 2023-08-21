@@ -75,10 +75,18 @@ stages:
             displayName: Install .NET 7.0
           - pwsh: |
               dotnet workload install maui
+            displayName: Install .NET MAUI
+          - pwsh: |
               dotnet workload list
               dotnet workload --info
               dotnet --info
-            displayName: Install .NET MAUI
+              dotnet workload update --print-rollback
+              dotnet workload search
+              dir C:\hostedtoolcache\windows\dotnet
+              dir C:\hostedtoolcache\windows\dotnet\sdk-manifests
+              dir C:\hostedtoolcache\windows\dotnet\packs
+              Get-Content 'C:\hostedtoolcache\windows\dotnet\sdk\7.0.400\.version'
+            displayName: .NET INFO
           # - pwsh: |
           #     dotnet build source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj
           #   displayName: TEST
