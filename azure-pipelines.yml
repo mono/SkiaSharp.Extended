@@ -83,7 +83,7 @@ stages:
             displayName: TEST
           - task: MSBuild@1
             inputs:
-              solution: ./SkiaSharp.Extended.sln
+              solution: source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj
               msbuildArguments: /restore
             displayName: TEST
           - pwsh: dotnet tool restore
