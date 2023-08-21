@@ -1,4 +1,5 @@
 var TARGET = Argument("t", Argument("target", "Default"));
+var CONFIGURATION = Argument("c", Argument("configuration", "Release"));
 var PREVIEW_LABEL = Argument ("previewLabel", EnvironmentVariable ("PREVIEW_LABEL") ?? "preview");
 var BUILD_NUMBER = Argument ("buildNumber", EnvironmentVariable ("BUILD_NUMBER") ?? "0");
 var GIT_SHA = Argument ("gitSha", EnvironmentVariable ("GIT_SHA") ?? "");
@@ -10,7 +11,7 @@ Task("build")
 	var settings = new MSBuildSettings()
 		{ AllowPreviewVersion = true }
 		.EnableBinaryLogger("./output/binlogs/build.binlog")
-		.SetConfiguration("Release")
+		.SetConfiguration(CONFIGURATION)
 		.SetMaxCpuCount(0)
 		.WithRestore();
 
@@ -23,10 +24,10 @@ Task("pack")
 	MSBuild("./SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
 		{ AllowPreviewVersion = true }
 		.EnableBinaryLogger("./output/binlogs/pack.binlog")
-		.SetConfiguration("Release")
+		.SetConfiguration(CONFIGURATION)
 		.SetMaxCpuCount(0)
 		.WithRestore()
-		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/")).FullPath)
+		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/nugets")).FullPath)
 		.WithTarget("Pack"));
 
 	var preview = PREVIEW_LABEL;
@@ -37,14 +38,14 @@ Task("pack")
 	MSBuild("./SkiaSharp.Extended-Pack.slnf", new MSBuildSettings()
 		{ AllowPreviewVersion = true }
 		.EnableBinaryLogger("./output/binlogs/pack-preview.binlog")
-		.SetConfiguration("Release")
+		.SetConfiguration(CONFIGURATION)
 		.SetMaxCpuCount(0)
 		.WithRestore()
-		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/")).FullPath)
+		.WithProperty("PackageOutputPath", MakeAbsolute(new FilePath("./output/nugets")).FullPath)
 		.WithProperty("VersionSuffix", preview)
 		.WithTarget("Pack"));
 
-	CopyFileToDirectory("./source/SignList.xml", "./output/");
+	CopyFileToDirectory("./source/SignList.xml", "./output/nugets");
 });
 
 Task("test")
@@ -59,7 +60,7 @@ Task("test")
 
 		try {
 			DotNetTest(csproj.FullPath, new DotNetTestSettings {
-				Configuration = "Release",
+				Configuration = CONFIGURATION,
 				Loggers = new [] { $"trx;LogFileName={csproj.GetFilenameWithoutExtension()}.trx" },
 			});
 		} catch (Exception) {
