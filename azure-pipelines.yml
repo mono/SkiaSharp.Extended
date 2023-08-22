@@ -66,19 +66,6 @@ stages:
               Write-Host "Build label: $label"
               Write-Host "##vso[build.updatebuildnumber]$label"
             displayName: Update the build number with a more readable one
-          # install tools
-          - task: UseDotNet@2
-            inputs:
-              packageType: 'sdk'
-              version: 3.1.x
-            displayName: Install .NET Core 3.1
-          - task: UseDotNet@2
-            inputs:
-              packageType: 'sdk'
-              version: 7.0.x
-            displayName: Install .NET 7.0
-          - pwsh: dotnet workload install maui
-            displayName: Install .NET MAUI
           - pwsh: dotnet tool restore
             displayName: Restore the dotnet tools
           # PUBLIC ONLY: build everything and run tests
@@ -98,7 +85,7 @@ stages:
           - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
             - pwsh: dotnet cake --target=pack
               displayName: Pack NuGets
-            - publish: output
+            - publish: output/nugets
               artifact: nuget
               displayName: Upload NuGets
 
