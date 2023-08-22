@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HarfBuzzSharp" Version="2.8.2.1" />
+    <PackageReference Include="HarfBuzzSharp" Version="2.8.2.3" />
     <PackageReference Include="NLipsum" Version="1.1.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.1" />
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.1" />

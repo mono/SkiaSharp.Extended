@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">netcoreapp3.1;net462</TargetFrameworks>
@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HarfBuzzSharp" Version="2.8.2.1" />
+    <PackageReference Include="HarfBuzzSharp" Version="2.8.2.3" />
     <PackageReference Include="SkiaSharp" Version="2.88.1" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.1" />
     <PackageReference Include="SkiaSharp.Views.Forms.WPF" Version="2.88.1" />
