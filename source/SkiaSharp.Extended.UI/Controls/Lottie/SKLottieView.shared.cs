@@ -54,7 +54,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 	public SKLottieView()
 	{
-		Themes.SKLottieViewResources.EnsureRegistered();
+		ResourceLoader<Themes.SKLottieViewResources>.EnsureRegistered(this);
 
 		IsAnimationEnabled = true;
 	}

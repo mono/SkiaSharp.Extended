@@ -23,7 +23,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 
 	public SKConfettiView()
 	{
-		Themes.SKConfettiViewResources.EnsureRegistered();
+		ResourceLoader<Themes.SKConfettiViewResources>.EnsureRegistered(this);
 
 		SizeChanged += OnSizeChanged;
 		PropertyChanged += (_, e) =>
