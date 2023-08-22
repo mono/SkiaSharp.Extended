@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HarfBuzzSharp" Version="2.8.2.1" />
+    <PackageReference Include="HarfBuzzSharp" Version="2.8.2.4" />
     <PackageReference Include="NLipsum" Version="1.1.0" />
-    <PackageReference Include="SkiaSharp" Version="2.88.1" />
-    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.1" />
+    <PackageReference Include="SkiaSharp" Version="2.88.4" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.4" />
     <PackageReference Include="Svg.Skia" Version="0.5.0" />
     <PackageReference Include="Topten.RichTextKit" Version="0.4.137" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
