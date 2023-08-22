@@ -2,7 +2,7 @@
 
 public class SKFileLottieImageSource : SKLottieImageSource
 {
-	public static BindableProperty FileProperty = BindableProperty.Create(
+	public static readonly BindableProperty FileProperty = BindableProperty.Create(
 		nameof(File), typeof(string), typeof(SKFileLottieImageSource),
 		propertyChanged: OnSourceChanged);
 
@@ -15,7 +15,7 @@ public class SKFileLottieImageSource : SKLottieImageSource
 	public override bool IsEmpty =>
 		string.IsNullOrEmpty(File);
 
-	internal override async Task<Skottie.Animation?> LoadAnimationAsync(CancellationToken cancellationToken = default)
+	public override async Task<Skottie.Animation?> LoadAnimationAsync(CancellationToken cancellationToken = default)
 	{
 		if (IsEmpty || string.IsNullOrEmpty(File))
 			return null;

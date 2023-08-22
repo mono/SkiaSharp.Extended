@@ -2,7 +2,7 @@
 
 public class SKStreamLottieImageSource : SKLottieImageSource
 {
-	public static BindableProperty StreamProperty = BindableProperty.Create(
+	public static readonly BindableProperty StreamProperty = BindableProperty.Create(
 		nameof(Stream), typeof(Func<CancellationToken, Task<Stream?>>), typeof(SKStreamLottieImageSource),
 		propertyChanged: OnSourceChanged);
 
@@ -14,7 +14,7 @@ public class SKStreamLottieImageSource : SKLottieImageSource
 
 	public override bool IsEmpty => Stream is null;
 
-	internal override async Task<Skottie.Animation?> LoadAnimationAsync(CancellationToken cancellationToken = default)
+	public override async Task<Skottie.Animation?> LoadAnimationAsync(CancellationToken cancellationToken = default)
 	{
 		if (IsEmpty || Stream is null)
 			return null;
