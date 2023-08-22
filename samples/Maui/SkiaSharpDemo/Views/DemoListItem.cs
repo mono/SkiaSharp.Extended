@@ -144,7 +144,7 @@ public class DemoListItem : SKCanvasView
 		{
 			Color = Color.ToSKColor(),
 		};
-		var imageRect = SKRect.Create(100, rect.Height);
+		var imageRect = SKRect.Create(60, rect.Height);
 		canvas.DrawRect(imageRect, imagePaint);
 
 		if (titleString != null)
@@ -152,6 +152,7 @@ public class DemoListItem : SKCanvasView
 			// title
 			var titlePos = new SKPoint(imageRect.Right + padding, padding);
 			titleString.Paint(canvas, titlePos);
+			titleString.Paint(canvas, titlePos + new SKPoint(0.5f, 0.5f));
 
 			if (descString != null)
 			{
@@ -175,7 +176,9 @@ public class DemoListItem : SKCanvasView
 			Spacing +
 			BorderWidth;
 
-		return new Size(widthConstraint, heightConstraint);
+		DesiredSize = new Size(widthConstraint, heightConstraint);
+
+		return DesiredSize;
 	}
 
 	private static void OnTitleUpdated(BindableObject bindable, object oldValue, object newValue)
