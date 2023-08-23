@@ -2,7 +2,7 @@
 
 public class SKUriLottieImageSource : SKLottieImageSource
 {
-	public static BindableProperty UriProperty = BindableProperty.Create(
+	public static readonly BindableProperty UriProperty = BindableProperty.Create(
 		nameof(Uri), typeof(Uri), typeof(SKUriLottieImageSource),
 		propertyChanged: OnSourceChanged);
 
@@ -14,7 +14,7 @@ public class SKUriLottieImageSource : SKLottieImageSource
 
 	public override bool IsEmpty => Uri is null;
 
-	internal override async Task<Skottie.Animation?> LoadAnimationAsync(CancellationToken cancellationToken = default)
+	public override async Task<Skottie.Animation?> LoadAnimationAsync(CancellationToken cancellationToken = default)
 	{
 		if (IsEmpty || Uri is null)
 			return null;
