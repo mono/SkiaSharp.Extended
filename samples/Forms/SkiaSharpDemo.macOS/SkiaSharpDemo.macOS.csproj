@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -50,13 +50,13 @@
     <Reference Include="Xamarin.Mac" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="HarfBuzzSharp" Version="2.8.2.4" />
-    <PackageReference Include="SkiaSharp" Version="2.88.4" />
-    <PackageReference Include="SkiaSharp.Views" Version="2.88.4" />
-    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.4" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2401" />
-    <PackageReference Include="Topten.RichTextKit" Version="0.4.137" />
+    <PackageReference Include="HarfBuzzSharp" Version="2.8.2.5" />
+    <PackageReference Include="SkiaSharp" Version="2.88.5" />
+    <PackageReference Include="SkiaSharp.Views" Version="2.88.5" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.5" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.8.0" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2612" />
+    <PackageReference Include="Topten.RichTextKit" Version="0.4.166" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\source\SkiaSharp.Extended.UI.Forms\SkiaSharp.Extended.UI.Forms.csproj">
