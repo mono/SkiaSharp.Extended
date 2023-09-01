@@ -24,10 +24,11 @@ There are several properties that can be used to control th animation playback:
 
 There are a few events that can be used to be notified of animation loading events:
 
-| Event                | Type            | Description |
-| :------------------- | :-------------- | :---------- |
-| **AnimationLoaded**  | `EventHandler`  | Invoked when the animation has loaded successfully. |
-| **AnimationFailed**  | `EventHandler`  | Invoked when there was an error loading the animation. |
+| Event                   | Type            | Description |
+| :---------------------- | :-------------- | :---------- |
+| **AnimationLoaded**     | `EventHandler`  | Invoked when the animation has loaded successfully. |
+| **AnimationFailed**     | `EventHandler`  | Invoked when there was an error loading the animation. |
+| **AnimationCompleted**  | `EventHandler`  | Invoked when the animation is finished playing (after all the repeats). Infinite animations never complete so will not trigger the event. |
 
 ## Parts
 
