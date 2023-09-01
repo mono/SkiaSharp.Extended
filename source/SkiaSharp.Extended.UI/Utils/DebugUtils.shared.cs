@@ -17,4 +17,16 @@ internal static class DebugUtils
 			Debug.WriteLine($"PropertyChanged: {sender.GetType().Name}.{e.PropertyName} = {value}");
 		}
 	}
+
+	[Conditional("DEBUG")]
+	public static void LogMessage(string message, params object[] args)
+	{
+		Debug.WriteLine($"{message} [{string.Join(", ", args.Select(a => a?.ToString()))}]");
+	}
+
+	[Conditional("DEBUG")]
+	public static void LogEvent(string eventName, params object[] args)
+	{
+		Debug.WriteLine($"Event: {eventName}({string.Join(", ", args.Select(a => a?.ToString()))})");
+	}
 }

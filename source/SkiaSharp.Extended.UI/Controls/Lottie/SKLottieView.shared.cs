@@ -57,6 +57,12 @@ public class SKLottieView : SKAnimatedSurfaceView
 		ResourceLoader<Themes.SKLottieViewResources>.EnsureRegistered(this);
 
 		IsAnimationEnabled = true;
+
+#if DEBUG
+		AnimationCompleted += (s, e) => DebugUtils.LogEvent(nameof(AnimationCompleted));
+		AnimationFailed += (s, e) => DebugUtils.LogEvent(nameof(AnimationFailed));
+		AnimationLoaded += (s, e) => DebugUtils.LogEvent(nameof(AnimationLoaded));
+#endif
 	}
 
 	public SKLottieImageSource? Source
@@ -98,6 +104,8 @@ public class SKLottieView : SKAnimatedSurfaceView
 	public event EventHandler? AnimationFailed;
 
 	public event EventHandler? AnimationLoaded;
+
+	public event EventHandler? AnimationCompleted;
 
 	protected override void Update(TimeSpan deltaTime)
 	{
@@ -191,6 +199,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 			IsComplete =
 				isFinishedRun &&
 				repeatsCompleted >= totalRepeatCount;
+
+			if (IsComplete)
+				AnimationCompleted?.Invoke(this, EventArgs.Empty);
 		}
 
 		if (!IsAnimationEnabled)
