@@ -6,14 +6,14 @@
     xmlns:local="clr-namespace:SkiaSharpDemo"
     xmlns:demos="clr-namespace:SkiaSharpDemo.Demos">
 
-    <!--<ShellContent
+    <ShellContent
         Title="Play"
         ContentTemplate="{DataTemplate demos:PlaygroundPage}"
-        Route="Demos/Play" />-->
+        Route="Demos/Play" />
 
-    <ShellContent
+    <!--<ShellContent
         Title="SkiaSharp Extended Demos"
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="Demos" />
+        Route="Demos" />-->
 
 </Shell>

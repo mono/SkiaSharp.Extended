@@ -1,4 +1,7 @@
-﻿namespace SkiaSharpDemo.Demos;
+﻿using SkiaSharp;
+using SkiaSharp.Views.Maui;
+
+namespace SkiaSharpDemo.Demos;
 
 public partial class PlaygroundPage : ContentPage
 {
