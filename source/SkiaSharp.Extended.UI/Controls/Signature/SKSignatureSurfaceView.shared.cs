@@ -63,6 +63,8 @@ public class SKSignatureSurfaceView : SKSurfaceView
 	public SKSignatureSurfaceView()
 	{
 		ResourceLoader<Themes.SKSignatureSurfaceViewResources>.EnsureRegistered(this);
+
+		EnableTouchEvents = true;
 	}
 
 	public bool IsBlank => inkPaths.Count == 0;
@@ -129,15 +131,18 @@ public class SKSignatureSurfaceView : SKSurfaceView
 			canvas.DrawPath(current, inkPaint);
 	}
 
-	private void OnTouch(object sender, SKTouchEventArgs e)
+	protected override void OnTouch(SKTouchEventArgs e)
 	{
 		switch (e.ActionType)
 		{
 			case SKTouchAction.Pressed:
 			case SKTouchAction.Moved:
-				DrawStroke(e.Location, false);
-				e.Handled = true;
-				Invalidate();
+				if (e.InContact)
+				{
+					DrawStroke(e.Location, false);
+					e.Handled = true;
+					Invalidate();
+				}
 				break;
 			case SKTouchAction.Released:
 				DrawStroke(e.Location, false);
@@ -151,6 +156,8 @@ public class SKSignatureSurfaceView : SKSurfaceView
 				Invalidate();
 				break;
 		}
+
+		base.OnTouch(e);
 	}
 
 	private void DrawStroke(SKPoint point, bool isLastPoint)

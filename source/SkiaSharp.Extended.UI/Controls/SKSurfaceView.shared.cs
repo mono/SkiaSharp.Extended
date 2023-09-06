@@ -16,6 +16,8 @@ public class SKSurfaceView : TemplatedView
 
 	private SKCanvasView? canvasView;
 	private SKGLView? glView;
+	private bool enableTouchEvents;
+	private float lastScale = 1f;
 
 	internal SKSurfaceView()
 	{
@@ -33,6 +35,19 @@ public class SKSurfaceView : TemplatedView
 	internal event EventHandler? Unloaded;
 #endif
 
+	protected bool EnableTouchEvents
+	{
+		get => enableTouchEvents;
+		set
+		{
+			enableTouchEvents = value;
+			if (canvasView is not null)
+				canvasView.EnableTouchEvents = value;
+			if (glView is not null)
+				glView.EnableTouchEvents = value;
+		}
+	}
+
 	protected override void OnApplyTemplate()
 	{
 		var templateChild = GetTemplateChild("PART_DrawingSurface");
@@ -40,12 +55,14 @@ public class SKSurfaceView : TemplatedView
 		if (canvasView is not null)
 		{
 			canvasView.PaintSurface -= OnPaintSurface;
+			canvasView.Touch -= OnTouch;
 			canvasView = null;
 		}
 
 		if (glView is not null)
 		{
 			glView.PaintSurface -= OnPaintSurface;
+			glView.Touch -= OnTouch;
 			glView = null;
 		}
 
@@ -53,16 +70,25 @@ public class SKSurfaceView : TemplatedView
 		{
 			canvasView = view;
 			canvasView.PaintSurface += OnPaintSurface;
+			canvasView.Touch += OnTouch;
 		}
 
 		if (templateChild is SKGLView gl)
 		{
 			glView = gl;
 			glView.PaintSurface += OnPaintSurface;
+			glView.Touch += OnTouch;
 		}
+
+		// re-apply the property
+		EnableTouchEvents = enableTouchEvents;
 	}
 
 	protected virtual void OnPaintSurface(SKCanvas canvas, SKSize size)
+	{
+	}
+
+	protected virtual void OnTouch(SKTouchEventArgs e)
 	{
 	}
 
@@ -70,6 +96,19 @@ public class SKSurfaceView : TemplatedView
 	{
 		InvalidateCore();
 	}
+
+	private void OnTouch(object? sender, SKTouchEventArgs e) =>
+		OnTouch(new SKTouchEventArgs(
+			e.Id,
+			e.ActionType,
+			e.MouseButton,
+			e.DeviceType,
+			new SKPoint(
+				e.Location.X / lastScale,
+				e.Location.Y / lastScale),
+			e.InContact,
+			e.WheelDelta,
+			e.Pressure));
 
 	private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e) =>
 		OnPaintSurfaceCore(e.Surface, e.Info.Size);
@@ -80,11 +119,11 @@ public class SKSurfaceView : TemplatedView
 	internal virtual void OnPaintSurfaceCore(SKSurface surface, SKSize size)
 	{
 		var canvas = surface.Canvas;
-		var scale = size.Width / (float)Width;
-		var canvasSize = new SKSize(size.Width / scale, size.Height / scale);
+		lastScale = size.Width / (float)Width;
+		var canvasSize = new SKSize(size.Width / lastScale, size.Height / lastScale);
 
 		canvas.Clear(SKColors.Transparent);
-		canvas.Scale(scale);
+		canvas.Scale(lastScale);
 
 #if DEBUG
 		debugStatusOffset = DebugStatusMargin;

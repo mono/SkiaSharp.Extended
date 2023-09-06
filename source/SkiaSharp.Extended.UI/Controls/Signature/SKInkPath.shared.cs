@@ -1,10 +1,10 @@
-namespace SkiaSharp.Extended.UI.Controls;
+﻿namespace SkiaSharp.Extended.UI.Controls;
 
 internal class SKInkPath
 {
 	// Implementation adapted from @colinta on StackOverflow: https://stackoverflow.com/a/35229104
 
-	const float MinimumPointDistance = 5.0f;
+	const float MinimumPointDistance = 2.0f;
 
 	LinkedList<SKPoint> currentInkPathPoints = new();
 
