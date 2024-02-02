@@ -13,7 +13,8 @@
                                Progress="{Binding Progress}"
                                IsAnimationEnabled="{Binding IsBusy}"
                                AnimationFailed="OnAnimationFailed"
-                               AnimationLoaded="OnAnimationLoaded" />
+                               AnimationLoaded="OnAnimationLoaded"
+                               AnimationCompleted="OnAnimationCompleted" />
 
         <BoxView Color="Green" Opacity="0.5" CornerRadius="12"
                  WidthRequest="25" HeightRequest="24" Margin="24"

@@ -71,4 +71,9 @@ public partial class LottiePage : ContentPage
 	{
 		Debug.WriteLine("Lottie animation loaded.");
 	}
+
+	private void OnAnimationCompleted(object sender, EventArgs e)
+	{
+		Debug.WriteLine("Lottie animation finished playing.");
+	}
 }

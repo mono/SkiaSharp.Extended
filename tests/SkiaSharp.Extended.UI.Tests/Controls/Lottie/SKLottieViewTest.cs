@@ -46,6 +46,8 @@ public class SKLottieViewTest
 		// create
 		var source = new SKFileLottieImageSource { File = TrophyJson };
 		var lottie = new WaitingLottieView { Source = source };
+		var animationCompleted = 0;
+		lottie.AnimationCompleted += (s, e) => animationCompleted++;
 		await lottie.LoadedTask;
 
 		// update
@@ -54,6 +56,7 @@ public class SKLottieViewTest
 		// test
 		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Progress);
 		Assert.False(lottie.IsComplete);
+		Assert.Equal(0, animationCompleted);
 	}
 
 	[Fact]
@@ -62,22 +65,27 @@ public class SKLottieViewTest
 		// create
 		var source = new SKFileLottieImageSource { File = TrophyJson };
 		var lottie = new WaitingLottieView { Source = source };
+		var animationCompleted = 0;
+		lottie.AnimationCompleted += (s, e) => animationCompleted++;
 		await lottie.LoadedTask;
 
 		// update & test
 		lottie.CallUpdate(TimeSpan.FromSeconds(1));
 		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Progress);
 		Assert.False(lottie.IsComplete);
+		Assert.Equal(0, animationCompleted);
 
 		// update & test
 		lottie.CallUpdate(TimeSpan.FromSeconds(1));
 		Assert.Equal(TimeSpan.FromSeconds(2), lottie.Progress);
 		Assert.False(lottie.IsComplete);
+		Assert.Equal(0, animationCompleted);
 
 		// update & test
 		lottie.CallUpdate(TimeSpan.FromSeconds(1));
 		Assert.Equal(TimeSpan.FromSeconds(2.3666665), lottie.Progress);
 		Assert.True(lottie.IsComplete);
+		Assert.Equal(1, animationCompleted);
 	}
 
 	[Fact]
@@ -86,6 +94,8 @@ public class SKLottieViewTest
 		// create
 		var source = new SKFileLottieImageSource { File = TrophyJson };
 		var lottie = new WaitingLottieView { Source = source };
+		var animationCompleted = 0;
+		lottie.AnimationCompleted += (s, e) => animationCompleted++;
 		await lottie.LoadedTask;
 
 		// update
@@ -94,6 +104,7 @@ public class SKLottieViewTest
 		// test
 		Assert.Equal(TimeSpan.FromSeconds(2.3666665), lottie.Progress);
 		Assert.True(lottie.IsComplete);
+		Assert.Equal(1, animationCompleted);
 	}
 
 	[Fact]
@@ -102,6 +113,8 @@ public class SKLottieViewTest
 		// create
 		var source = new SKFileLottieImageSource { File = TrophyJson };
 		var lottie = new WaitingLottieView { Source = source };
+		var animationCompleted = 0;
+		lottie.AnimationCompleted += (s, e) => animationCompleted++;
 		await lottie.LoadedTask;
 
 		// update
@@ -110,6 +123,7 @@ public class SKLottieViewTest
 		// test
 		Assert.Equal(TimeSpan.Zero, lottie.Progress);
 		Assert.False(lottie.IsComplete);
+		Assert.Equal(0, animationCompleted);
 	}
 
 	[Fact]
@@ -118,6 +132,8 @@ public class SKLottieViewTest
 		// create
 		var source = new SKFileLottieImageSource { File = TrophyJson };
 		var lottie = new WaitingLottieView { Source = source };
+		var animationCompleted = 0;
+		lottie.AnimationCompleted += (s, e) => animationCompleted++;
 		await lottie.LoadedTask;
 
 		// update
@@ -128,6 +144,7 @@ public class SKLottieViewTest
 		// test
 		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Progress);
 		Assert.False(lottie.IsComplete);
+		Assert.Equal(0, animationCompleted);
 	}
 
 	[Theory]
@@ -150,6 +167,8 @@ public class SKLottieViewTest
 		// create
 		var source = new SKFileLottieImageSource { File = TrophyJson };
 		var lottie = new WaitingLottieView { Source = source, RepeatMode = repeatMode, RepeatCount = -1 };
+		var animationCompleted = 0;
+		lottie.AnimationCompleted += (s, e) => animationCompleted++;
 		await lottie.LoadedTask;
 
 		// update
@@ -159,6 +178,7 @@ public class SKLottieViewTest
 		// test
 		Assert.Equal(TimeSpan.FromSeconds(progress), lottie.Progress);
 		Assert.False(lottie.IsComplete);
+		Assert.Equal(0, animationCompleted);
 	}
 
 	[Theory]
@@ -180,6 +200,8 @@ public class SKLottieViewTest
 		// create
 		var source = new SKFileLottieImageSource { File = TrophyJson };
 		var lottie = new WaitingLottieView { Source = source, RepeatMode = repeatMode, RepeatCount = 0 };
+		var animationCompleted = 0;
+		lottie.AnimationCompleted += (s, e) => animationCompleted++;
 		await lottie.LoadedTask;
 
 		// update
@@ -189,5 +211,9 @@ public class SKLottieViewTest
 		// test
 		Assert.Equal(TimeSpan.FromSeconds(progress), lottie.Progress);
 		Assert.Equal(isComplete, lottie.IsComplete);
+		if (isComplete)
+			Assert.Equal(1, animationCompleted);
+		else
+			Assert.Equal(0, animationCompleted);
 	}
 }
