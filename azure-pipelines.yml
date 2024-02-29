@@ -71,7 +71,9 @@ extends:
           parameters:
             windowsPoolName: AzurePipelines-EO
             windowsImageOverride: 1ESPT-Windows2022
-            stageDependsOn: build
-            scanArtifacts: nuget
+            stageDependsOn:
+             - build
+            scanArtifacts:
+             - nuget
             apiScanSoftwareName: SkiaSharp
             apiScanSoftwareVersionNum: $(MAJOR_VERSION)
