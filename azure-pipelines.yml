@@ -64,11 +64,12 @@ extends:
               ${{ else }}:
                 signType: 'Test'
 
-      - template: security/apiscan/v0.yml@xamarin-templates
-        parameters:
-          windowsPoolName: AzurePipelines-EO
-          windowsImageOverride: 1ESPT-Windows2022
-          stageDependsOn: build
-          scanArtifacts: nuget
-          apiScanSoftwareName: SkiaSharp
-          apiScanSoftwareVersionNum: $(MAJOR_VERSION)
+      - ${{ if or( eq(variables['Build.Reason'], 'Schedule'), parameters.runCompliance ) }}:
+        - template: security/apiscan/v0.yml@xamarin-templates
+          parameters:
+            windowsPoolName: AzurePipelines-EO
+            windowsImageOverride: 1ESPT-Windows2022
+            stageDependsOn: build
+            scanArtifacts: nuget
+            apiScanSoftwareName: SkiaSharp
+            apiScanSoftwareVersionNum: $(MAJOR_VERSION)
