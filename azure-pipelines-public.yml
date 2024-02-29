@@ -1,0 +1,49 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - README.md
+      - CODE-OF-CONDUCT.md
+      - LICENSE
+      - .github/
+      - docs/
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - README.md
+      - CODE-OF-CONDUCT.md
+      - LICENSE
+      - .github/
+      - docs/
+      - images/
+
+variables:
+  - template: /scripts/azure-pipelines-variables.yml@self
+
+pool:
+  vmImage: windows-latest
+
+jobs:
+  - job: build
+    displayName: Build
+    steps:
+      - template: /scripts/azure-pipelines-steps-prepare.yml@self
+      - pwsh: dotnet cake
+        displayName: Build everything
+        env:
+          JavaSdkDirectory: $(JAVA_HOME)
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testResultsFormat: VSTest
+          testResultsFiles: output/test-results/*.trx
+      - publish: output
+        artifact: windows
+        condition: always()
+        displayName: Upload Logs
