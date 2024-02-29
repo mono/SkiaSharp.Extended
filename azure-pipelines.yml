@@ -50,6 +50,8 @@ extends:
               - template: /scripts/azure-pipelines-steps-prepare.yml@self
               - pwsh: dotnet cake --target=pack
                 displayName: Pack NuGets
+                env:
+                  JavaSdkDirectory: $(JAVA_HOME)
 
       - stage: signing
         displayName: Sign NuGets

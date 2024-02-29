@@ -36,6 +36,8 @@ jobs:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: dotnet cake
         displayName: Build everything
+        env:
+          JavaSdkDirectory: $(JAVA_HOME)
       - task: PublishTestResults@2
         condition: always()
         inputs:
