@@ -1,0 +1,28 @@
+steps:
+
+  - pwsh: |
+      $pr = "pr." + $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
+      Write-Host "Preview label: $pr"
+      Write-Host "##vso[task.setvariable variable=PREVIEW_LABEL]$pr"
+    displayName: Use a special preview label for PRs
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+
+  - pwsh: |
+      $label = ""
+      if ($env:BUILD_REASON -ne "PullRequest") {
+        $label = "+" + $env:BUILD_SOURCEBRANCHNAME
+      }
+      $label = "$env:BASE_VERSION-$env:PREVIEW_LABEL.$env:BUILD_NUMBER$label"
+      Write-Host "Build label: $label"
+      Write-Host "##vso[build.updatebuildnumber]$label"
+    displayName: Update the build number with a more readable one
+
+  - task: JavaToolInstaller@0
+    displayName: Select JDK
+    inputs:
+      versionSpec: '17'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+
+  - pwsh: dotnet tool restore
+    displayName: Restore the dotnet tools

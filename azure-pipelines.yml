@@ -1,36 +1,15 @@
-trigger:
-  branches:
-    include:
-      - main
-  paths:
-    exclude:
-      - README.md
-      - CODE-OF-CONDUCT.md
-      - LICENSE
-      - .github/
-      - docs/
+# Overridden in the UI
+trigger: none
+pr: none
 
-pr:
-  branches:
-    include:
-      - main
-  paths:
-    exclude:
-      - README.md
-      - CODE-OF-CONDUCT.md
-      - LICENSE
-      - .github/
-      - docs/
-      - images/
+parameters:
+  - name: runCompliance
+    displayName: 'Run post-build compliance tasks (such as API Scan)'
+    type: boolean
+    default: false
 
 variables:
-  BASE_VERSION: 2.0.0
-  PREVIEW_LABEL: 'preview'
-  BUILD_NUMBER: $[counter(format('{0}_{1}_{2}', variables['BASE_VERSION'], variables['Build.SourceBranch'], variables['PREVIEW_LABEL']), 1)]
-  GIT_SHA: $(Build.SourceVersion)
-  GIT_BRANCH_NAME: $(Build.SourceBranchName)
-  Codeql.Enabled: true
-  Codeql.TSAEnabled: true
+  - template: /scripts/azure-pipelines-variables.yml@self
 
 resources:
   repositories:
@@ -39,66 +18,65 @@ resources:
       name: xamarin/yaml-templates
       endpoint: xamarin
       ref: refs/heads/main
+    - repository: 1ESPipelineTemplates
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
 
-stages:
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: AzurePipelines-EO
+      image: 1ESPT-Windows2022
+      os: windows
+    customBuildTags:
+      - ES365AIMigrationTooling
+    stages:
 
-  - stage: build
-    displayName: Build
-    jobs:
-      - job: build
+      - stage: build
         displayName: Build
-        pool:
-          vmImage: windows-latest
-        steps:
-          # prepare
-          - pwsh: |
-              $pr = "pr." + $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
-              Write-Host "Preview label: $pr"
-              Write-Host "##vso[task.setvariable variable=PREVIEW_LABEL]$pr"
-            displayName: Use a special preview label for PRs
-            condition: eq(variables['Build.Reason'], 'PullRequest')
-          - pwsh: |
-              $label = ""
-              if ($env:BUILD_REASON -ne "PullRequest") {
-                $label = "+" + $env:BUILD_SOURCEBRANCHNAME
-              }
-              $label = "$env:BASE_VERSION-$env:PREVIEW_LABEL.$env:BUILD_NUMBER$label"
-              Write-Host "Build label: $label"
-              Write-Host "##vso[build.updatebuildnumber]$label"
-            displayName: Update the build number with a more readable one
-          - pwsh: dotnet tool restore
-            displayName: Restore the dotnet tools
-          # PUBLIC ONLY: build everything and run tests
-          - ${{ if ne(variables['System.TeamProject'], 'devdiv') }}:
-            - pwsh: dotnet cake
-              displayName: Build everything
-            - task: PublishTestResults@2
-              condition: always()
-              inputs:
-                testResultsFormat: VSTest
-                testResultsFiles: output/test-results/*.trx
-            - publish: output
-              artifact: windows
-              condition: always()
-              displayName: Upload Logs
-          # INTERNAL ONLY: just pack nugets
-          - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
-            - pwsh: dotnet cake --target=pack
-              displayName: Pack NuGets
-            - publish: output/nugets
-              artifact: nuget
-              displayName: Upload NuGets
+        jobs:
+          - job: build
+            displayName: Build
+            templateContext:
+              sdl:
+                spotBugs:
+                  enabled: false
+              outputParentDirectory: 'output'
+              outputs:
+                - output: pipelineArtifact
+                  displayName: 'Upload NuGets'
+                  artifactName: 'nuget'
+                  targetPath: 'output/nugets'
+            steps:
+              - template: /scripts/azure-pipelines-steps-prepare.yml@self
+              - pwsh: dotnet cake --target=pack
+                displayName: Pack NuGets
+                env:
+                  JavaSdkDirectory: $(JAVA_HOME)
 
-  # sign the nugets
-  - ${{ if eq(variables['System.TeamProject'], 'devdiv') }}:
-    - stage: signing
-      displayName: Sign NuGets
-      dependsOn: build
-      jobs:
-        - template: sign-artifacts/jobs/v2.yml@internal-templates
+      - stage: signing
+        displayName: Sign NuGets
+        dependsOn: build
+        jobs:
+          - template: sign-artifacts/jobs/v2.yml@internal-templates
+            parameters:
+              usePipelineArtifactTasks: true
+              use1ESTemplate: true
+              ${{ if or( eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/') ) }}:
+                signType: 'Real'
+              ${{ else }}:
+                signType: 'Test'
+
+      - ${{ if or( eq(variables['Build.Reason'], 'Schedule'), parameters.runCompliance ) }}:
+        - template: security/apiscan/v0.yml@internal-templates
           parameters:
-            usePipelineArtifactTasks: true
-            ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-              signType: 'Real'
-            ${{ if not(eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
-              signType: 'Test'
+            windowsPoolName: AzurePipelines-EO
+            windowsImageOverride: 1ESPT-Windows2022
+            stageDependsOn:
+             - build
+            scanArtifacts:
+             - nuget
+            apiScanSoftwareName: SkiaSharp
+            apiScanSoftwareVersionNum: $(MAJOR_VERSION)
