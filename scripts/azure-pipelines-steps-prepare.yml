@@ -17,5 +17,12 @@ steps:
       Write-Host "##vso[build.updatebuildnumber]$label"
     displayName: Update the build number with a more readable one
 
+  - task: JavaToolInstaller@0
+    displayName: Select JDK
+    inputs:
+      versionSpec: '21'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+
   - pwsh: dotnet tool restore
     displayName: Restore the dotnet tools
