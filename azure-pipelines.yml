@@ -59,7 +59,7 @@ extends:
             parameters:
               usePipelineArtifactTasks: true
               use1ESTemplate: true
-              ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+              ${{ if or( eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/') ) }}:
                 signType: 'Real'
               ${{ else }}:
                 signType: 'Test'
