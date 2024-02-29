@@ -67,7 +67,7 @@ extends:
                 signType: 'Test'
 
       - ${{ if or( eq(variables['Build.Reason'], 'Schedule'), parameters.runCompliance ) }}:
-        - template: security/apiscan/v0.yml@xamarin-templates
+        - template: security/apiscan/v0.yml@internal-templates
           parameters:
             windowsPoolName: AzurePipelines-EO
             windowsImageOverride: 1ESPT-Windows2022
