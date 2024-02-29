@@ -40,6 +40,9 @@ extends:
           - job: build
             displayName: Build
             templateContext:
+              sdl:
+                spotBugs:
+                  enabled: false
               outputParentDirectory: 'output'
               outputs:
                 - output: pipelineArtifact
