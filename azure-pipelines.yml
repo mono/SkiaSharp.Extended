@@ -74,6 +74,7 @@ extends:
           parameters:
             windowsPoolName: AzurePipelines-EO
             windowsImageOverride: 1ESPT-Windows2022
+            timeoutInMinutes: 480
             stageDependsOn:
              - build
             scanArtifacts:
