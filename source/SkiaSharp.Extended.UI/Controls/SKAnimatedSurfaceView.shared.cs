@@ -12,7 +12,7 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 
 	private readonly SKFrameCounter frameCounter = new SKFrameCounter();
 
-	internal SKAnimatedSurfaceView()
+	public SKAnimatedSurfaceView()
 	{
 		Loaded += OnLoaded;
 	}
@@ -73,13 +73,18 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 		if (!IsAnimationEnabled)
 			return;
 
+		var weakThis = new WeakReference<SKAnimatedSurfaceView>(this);
+
 		Dispatcher.StartTimer(
 			TimeSpan.FromMilliseconds(16),
 			() =>
 			{
-				Invalidate();
+				if (!weakThis.TryGetTarget(out var strongThis))
+					return false;
 
-				return IsAnimationEnabled;
+				strongThis.Invalidate();
+
+				return strongThis.IsAnimationEnabled;
 			});
 	}
 }
