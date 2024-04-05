@@ -27,7 +27,7 @@ extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     pool:
-      name: AzurePipelines-EO
+      name: Maui-1ESPT
       image: 1ESPT-Windows2022
       os: windows
     customBuildTags:
@@ -41,6 +41,17 @@ extends:
             displayName: Build
             templateContext:
               sdl:
+                apiscan:
+                  enabled: true
+                binskim:
+                  enabled: true
+                  break: false
+                codeInspector:
+                  enabled: true
+                credscan:
+                  enabled: true
+                policheck:
+                  enabled: true
                 spotBugs:
                   enabled: false
               outputParentDirectory: 'output'
