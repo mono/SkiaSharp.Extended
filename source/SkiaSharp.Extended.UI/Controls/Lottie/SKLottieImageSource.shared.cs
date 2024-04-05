@@ -1,4 +1,5 @@
-﻿namespace SkiaSharp.Extended.UI.Controls;
+﻿
+namespace SkiaSharp.Extended.UI.Controls;
 
 [TypeConverter(typeof(Converters.SKLottieImageSourceConverter))]
 public abstract class SKLottieImageSource : Element
@@ -7,7 +8,7 @@ public abstract class SKLottieImageSource : Element
 
 	public virtual bool IsEmpty => true;
 
-	public abstract Task<Skottie.Animation?> LoadAnimationAsync(CancellationToken cancellationToken = default);
+	public abstract Task<SKLottieAnimation> LoadAnimationAsync(CancellationToken cancellationToken = default);
 
 	public static object FromUri(Uri uri) =>
 		new SKUriLottieImageSource { Uri = uri };

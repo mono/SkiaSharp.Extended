@@ -15,28 +15,26 @@ public class SKFileLottieImageSource : SKLottieImageSource
 	public override bool IsEmpty =>
 		string.IsNullOrEmpty(File);
 
-	public override async Task<Skottie.Animation?> LoadAnimationAsync(CancellationToken cancellationToken = default)
+	public override async Task<SKLottieAnimation> LoadAnimationAsync(CancellationToken cancellationToken = default)
 	{
 		if (IsEmpty || string.IsNullOrEmpty(File))
-			return null;
+			return new SKLottieAnimation();
 
 		try
 		{
 			using var stream = await LoadFile(File);
-
 			if (stream is null)
-				return null;
+				throw new FileLoadException($"Unable to load Lottie animation file \"{File}\".");
 
-			return Skottie.Animation.Create(stream);
+			var animation = Skottie.Animation.Create(stream);
+			if (animation is null)
+				throw new FileLoadException($"Unable to parse Lottie animation \"{File}\".");
+
+			return new SKLottieAnimation(animation);
 		}
 		catch (Exception ex)
 		{
-#if XAMARIN_FORMS
-			Xamarin.Forms.Internals.Log.Warning(nameof(SKFileLottieImageSource), $"Unable to load Lottie animation \"{File}\": " + ex.Message);
-			return null;
-#else
-			throw new ArgumentException($"Unable to load Lottie animation \"{File}\".", ex);
-#endif
+			throw new FileLoadException($"Error loading Lottie animation file \"{File}\".", ex);
 		}
 	}
 
