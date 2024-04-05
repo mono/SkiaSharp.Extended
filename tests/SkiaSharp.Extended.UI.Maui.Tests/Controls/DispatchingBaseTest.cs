@@ -9,8 +9,11 @@ public class DispatchingBaseTest : IDisposable
 		DispatcherProvider.SetCurrent(dipatcherProvider = new MockDispatcherProvider());
 	}
 
-	public void Dispose() =>
+	public void Dispose()
+	{
+		DispatcherProvider.SetCurrent(null);
 		dipatcherProvider.Dispose();
+	}
 
 	private class MockDispatcherProvider : IDispatcherProvider, IDisposable
 	{
