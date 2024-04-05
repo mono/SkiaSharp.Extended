@@ -81,3 +81,4 @@ extends:
              - nuget
             apiScanSoftwareName: SkiaSharp
             apiScanSoftwareVersionNum: $(MAJOR_VERSION)
+            apiScanAuthConnectionString: 'runAs=App;AppId=$(ApiScanClientId)'
