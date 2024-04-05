@@ -7,6 +7,13 @@ parameters:
     displayName: 'Run post-build compliance tasks (such as API Scan)'
     type: boolean
     default: false
+  - name: buildAgent
+    displayName: 'The build agent to use'
+    type: object
+    default:
+      name: Maui-1ESPT
+      image: 1ESPT-Windows2022
+      os: windows
 
 variables:
   - template: /scripts/azure-pipelines-variables.yml@self
@@ -26,10 +33,7 @@ resources:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
-    pool:
-      name: AzurePipelines-EO
-      image: 1ESPT-Windows2022
-      os: windows
+    pool: ${{ parameters.buildAgent }}
     customBuildTags:
       - ES365AIMigrationTooling
     stages:
@@ -41,6 +45,17 @@ extends:
             displayName: Build
             templateContext:
               sdl:
+                apiscan:
+                  enabled: true
+                binskim:
+                  enabled: true
+                  break: false
+                codeInspector:
+                  enabled: true
+                credscan:
+                  enabled: true
+                policheck:
+                  enabled: true
                 spotBugs:
                   enabled: false
               outputParentDirectory: 'output'
@@ -72,8 +87,8 @@ extends:
       - ${{ if or( eq(variables['Build.Reason'], 'Schedule'), parameters.runCompliance ) }}:
         - template: security/apiscan/v0.yml@internal-templates
           parameters:
-            windowsPoolName: AzurePipelines-EO
-            windowsImageOverride: 1ESPT-Windows2022
+            windowsPoolName: ${{ parameters.buildAgent.name }}
+            windowsImageOverride: ${{ parameters.buildAgent.image }}
             timeoutInMinutes: 480
             stageDependsOn:
              - build
@@ -81,3 +96,15 @@ extends:
              - nuget
             apiScanSoftwareName: SkiaSharp
             apiScanSoftwareVersionNum: $(MAJOR_VERSION)
+            apiScanAuthConnectionString: 'runAs=App;AppId=$(ApiScanClientId)'
+            preScanSteps:
+              - pwsh: |
+                  $nupkgs = (Get-ChildItem "$(Build.ArtifactStagingDirectory)\binaries-to-scan\*\*.*nupkg")
+                  foreach ($nupkg in $nupkgs) {
+                    $filename = $nupkg.Name.TrimEnd('.nupkg')
+                    $dest = "$(Build.ArtifactStagingDirectory)\binaries-to-scan\nuget_symbols-extracted\$filename"
+                    Write-Host "Extracting '$nupkg' to '$dest'..."
+                    Expand-Archive $nupkg $dest
+                    Remove-Item $nupkg
+                  }
+                displayName: Extract all the .nupkg files
