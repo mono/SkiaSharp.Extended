@@ -14,10 +14,10 @@ public class SKUriLottieImageSource : SKLottieImageSource
 
 	public override bool IsEmpty => Uri is null;
 
-	public override async Task<Skottie.Animation?> LoadAnimationAsync(CancellationToken cancellationToken = default)
+	public override async Task<SKLottieAnimation> LoadAnimationAsync(CancellationToken cancellationToken = default)
 	{
 		if (IsEmpty || Uri is null)
-			return null;
+			return new SKLottieAnimation();
 
 		try
 		{
@@ -28,18 +28,17 @@ public class SKUriLottieImageSource : SKLottieImageSource
 
 			using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 			if (stream is null)
-				return null;
+				throw new FileLoadException($"Unable to load Lottie animation uri \"{Uri}\".");
 
-			return Skottie.Animation.Create(stream);
+			var animation = Skottie.Animation.Create(stream);
+			if (animation is null)
+				throw new FileLoadException($"Unable to parse Lottie animation \"{Uri}\".");
+
+			return new SKLottieAnimation(animation);
 		}
 		catch (Exception ex)
 		{
-#if XAMARIN_FORMS
-			Xamarin.Forms.Internals.Log.Warning(nameof(SKUriLottieImageSource), $"Unable to load Lottie animation \"{Uri}\": " + ex.Message);
-			return null;
-#else
-			throw new ArgumentException($"Unable to load Lottie animation \"{Uri}\".", ex);
-#endif
+			throw new FileLoadException($"Error loading Lottie animation uri \"{Uri}\".", ex);
 		}
 	}
 }

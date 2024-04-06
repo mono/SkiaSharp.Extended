@@ -14,16 +14,19 @@ public class SKStreamLottieImageSource : SKLottieImageSource
 
 	public override bool IsEmpty => Stream is null;
 
-	public override async Task<Skottie.Animation?> LoadAnimationAsync(CancellationToken cancellationToken = default)
+	public override async Task<SKLottieAnimation> LoadAnimationAsync(CancellationToken cancellationToken = default)
 	{
 		if (IsEmpty || Stream is null)
-			return null;
+			return new SKLottieAnimation();
 
 		using var stream = await Stream.Invoke(cancellationToken).ConfigureAwait(false);
-
 		if (stream is null)
-			return null;
+			throw new FileLoadException($"Unable to load Lottie animation stream.");
 
-		return Skottie.Animation.Create(stream);
+		var animation = Skottie.Animation.Create(stream);
+		if (animation is null)
+			throw new FileLoadException($"Unable to parse Lottie animation.");
+
+		return new SKLottieAnimation(animation);
 	}
 }
