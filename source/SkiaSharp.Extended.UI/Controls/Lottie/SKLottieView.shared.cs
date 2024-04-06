@@ -101,9 +101,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 		set => SetValue(RepeatModeProperty, value);
 	}
 
-	public event EventHandler? AnimationFailed;
+	public event EventHandler<SKLottieAnimationFailedEventArgs>? AnimationFailed;
 
-	public event EventHandler? AnimationLoaded;
+	public event EventHandler<SKLottieAnimationLoadedEventArgs>? AnimationLoaded;
 
 	public event EventHandler? AnimationCompleted;
 
@@ -219,21 +219,26 @@ public class SKLottieView : SKAnimatedSurfaceView
 		}
 		else
 		{
+			Exception? exception;
 			try
 			{
-				animation = await Task.Run(() => imageSource.LoadAnimationAsync(cancellationToken));
+				var loadResult = await Task.Run(() => imageSource.LoadAnimationAsync(cancellationToken));
+
+				exception = null;
+				animation = loadResult.Animation;
 			}
-			catch
+			catch (Exception ex)
 			{
+				exception = ex;
 				animation = null;
 			}
 
 			Reset();
 
 			if (animation is null)
-				AnimationFailed?.Invoke(this, EventArgs.Empty);
+				AnimationFailed?.Invoke(this, new SKLottieAnimationFailedEventArgs(exception));
 			else
-				AnimationLoaded?.Invoke(this, EventArgs.Empty);
+				AnimationLoaded?.Invoke(this, SKLottieAnimationLoadedEventArgs.Create(animation));
 		}
 
 		if (!IsAnimationEnabled)
