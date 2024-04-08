@@ -20,7 +20,7 @@
     <Authors>Microsoft</Authors>
     <Owners>Microsoft</Owners>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
-    <PackageIconUrl>https://go.microsoft.com/fwlink/?linkid=2130524</PackageIconUrl>
+    <PackageIcon>logo.png</PackageIcon>
     <PackageTags>xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform skiasharp skiasharp.extended</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -29,6 +29,7 @@
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyFileVersion>2.0.0.0</AssemblyFileVersion>
     <Version>2.0.0</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageVersion Condition=" '$(Version)' != '' and '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
   </PropertyGroup>
 
@@ -48,6 +49,8 @@
 
   <ItemGroup>
     <None Include="..\..\LICENSE" PackagePath="" Pack="true" />
+    <None Include="README.md" PackagePath="" Pack="true" />
+    <None Include="..\..\images\logo.png" PackagePath="" Pack="true" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
