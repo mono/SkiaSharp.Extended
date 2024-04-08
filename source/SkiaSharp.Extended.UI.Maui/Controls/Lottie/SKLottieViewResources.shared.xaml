@@ -17,6 +17,7 @@
 
     <!-- the implicit style that applies to all controls -->
     <Style TargetType="local:SKLottieView"
+           ApplyToDerivedTypes="True"
            BasedOn="{StaticResource SKLottieViewStyle}" />
 
 </ResourceDictionary>
