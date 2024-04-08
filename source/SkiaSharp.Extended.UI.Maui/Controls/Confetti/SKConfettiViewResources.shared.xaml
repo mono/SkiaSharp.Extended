@@ -17,6 +17,7 @@
 
     <!-- the implicit style that applies to all controls -->
     <Style TargetType="local:SKConfettiView"
+           ApplyToDerivedTypes="True"
            BasedOn="{StaticResource SKConfettiViewStyle}" />
 
 </ResourceDictionary>
