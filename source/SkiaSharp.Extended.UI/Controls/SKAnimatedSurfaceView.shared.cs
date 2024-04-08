@@ -82,6 +82,12 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 				if (!weakThis.TryGetTarget(out var strongThis))
 					return false;
 
+				if (strongThis.Window is null)
+					return false;
+
+				if (!strongThis.IsLoadedEx())
+					return false;
+
 				strongThis.Invalidate();
 
 				return strongThis.IsAnimationEnabled;
