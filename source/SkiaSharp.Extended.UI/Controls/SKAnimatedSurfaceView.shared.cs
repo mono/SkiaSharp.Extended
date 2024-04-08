@@ -82,8 +82,10 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 				if (!weakThis.TryGetTarget(out var strongThis))
 					return false;
 
+#if !XAMARIN_FORMS
 				if (strongThis.Window is null)
 					return false;
+#endif
 
 				if (!strongThis.IsLoadedEx())
 					return false;
