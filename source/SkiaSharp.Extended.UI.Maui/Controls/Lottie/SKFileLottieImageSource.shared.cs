@@ -26,7 +26,7 @@ public class SKFileLottieImageSource : SKLottieImageSource
 			if (stream is null)
 				throw new FileLoadException($"Unable to load Lottie animation file \"{File}\".");
 
-			var animation = Skottie.Animation.Create(stream);
+			var animation = CreateAnimationBuilder().Build(stream);
 			if (animation is null)
 				throw new FileLoadException($"Unable to parse Lottie animation \"{File}\".");
 
