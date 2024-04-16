@@ -1,4 +1,5 @@
-﻿
+﻿using SkiaSharp.Resources;
+
 namespace SkiaSharp.Extended.UI.Controls;
 
 [TypeConverter(typeof(Converters.SKLottieImageSourceConverter))]
@@ -9,6 +10,11 @@ public abstract class SKLottieImageSource : Element
 	public virtual bool IsEmpty => true;
 
 	public abstract Task<SKLottieAnimation> LoadAnimationAsync(CancellationToken cancellationToken = default);
+
+	internal Skottie.AnimationBuilder CreateAnimationBuilder() =>
+		Skottie.Animation.CreateBuilder()
+			.SetResourceProvider(new CachingResourceProvider(new DataUriResourceProvider()))
+			.SetFontManager(SKFontManager.Default);
 
 	public static object FromUri(Uri uri) =>
 		new SKUriLottieImageSource { Uri = uri };

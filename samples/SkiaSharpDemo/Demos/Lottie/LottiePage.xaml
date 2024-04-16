@@ -8,7 +8,7 @@
     <Grid RowDefinitions="*,Auto">
 
         <controls:SKLottieView x:Name="lottieView"
-                               Source="Lottie/trophy.json"
+                               Source="Lottie/dotnetbot.json"
                                Duration="{Binding Duration}"
                                Progress="{Binding Progress}"
                                IsAnimationEnabled="{Binding IsBusy}"
