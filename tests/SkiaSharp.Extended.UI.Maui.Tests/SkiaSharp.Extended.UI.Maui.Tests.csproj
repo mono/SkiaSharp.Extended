@@ -31,11 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\SkiaSharp.Extended.UI.Tests\**\*.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="..\SkiaSharp.Extended.UI.Tests\TestAssets\**" Link="TestAssets\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="TestAssets\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
