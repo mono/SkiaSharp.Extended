@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="TestAssets\**" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="TestAssets\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
