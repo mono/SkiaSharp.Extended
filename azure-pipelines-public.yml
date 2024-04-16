@@ -34,8 +34,34 @@ jobs:
     displayName: Build
     steps:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
-      - pwsh: dotnet cake
+      - pwsh: dotnet cake --target=build
         displayName: Build everything
+        env:
+          JavaSdkDirectory: $(JAVA_HOME)
+      - publish: output
+        artifact: build
+        condition: always()
+        displayName: Upload Logs
+
+  - job: pack
+    displayName: Pack
+    steps:
+      - template: /scripts/azure-pipelines-steps-prepare.yml@self
+      - pwsh: dotnet cake --target=pack
+        displayName: Pack NuGet packages
+        env:
+          JavaSdkDirectory: $(JAVA_HOME)
+      - publish: output
+        artifact: pack
+        condition: always()
+        displayName: Upload Logs
+
+  - job: test
+    displayName: Test
+    steps:
+      - template: /scripts/azure-pipelines-steps-prepare.yml@self
+      - pwsh: dotnet cake --target=test
+        displayName: Run tests
         env:
           JavaSdkDirectory: $(JAVA_HOME)
       - task: PublishTestResults@2
@@ -44,6 +70,6 @@ jobs:
           testResultsFormat: VSTest
           testResultsFiles: output/test-results/*.trx
       - publish: output
-        artifact: windows
+        artifact: test
         condition: always()
         displayName: Upload Logs
