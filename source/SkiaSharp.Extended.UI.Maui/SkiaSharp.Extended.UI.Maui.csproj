@@ -48,43 +48,34 @@
     <Using Include="SkiaSharp.Views.Maui.Controls" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.shared.cs" />
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.shared.*.cs" />
-    <EmbeddedResource Include="..\SkiaSharp.Extended.UI\**\*.shared.xaml" />
-    <EmbeddedResource Include="..\SkiaSharp.Extended.UI\**\*.shared.*.xaml" />
+  <ItemGroup Condition=" '$(TargetFramework)' != 'net7.0' ">
+    <Compile Remove="**\*.ref.cs" />
+    <Compile Remove="**\*.ref.*.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.ref.cs" />
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.ref.*.cs" />
+  <ItemGroup Condition=" !$(TargetFramework.Contains('-android')) ">
+    <Compile Remove="**\*.android.cs" />
+    <Compile Remove="**\*.android.*.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" $(TargetFramework.Contains('-android')) ">
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.android.cs" />
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.android.*.cs" />
+  <ItemGroup Condition=" !$(TargetFramework.Contains('-ios')) ">
+    <Compile Remove="**\*.ios.cs" />
+    <Compile Remove="**\*.ios.*.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" $(TargetFramework.Contains('-ios')) ">
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.ios.cs" />
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.ios.*.cs" />
+  <ItemGroup Condition=" !$(TargetFramework.Contains('-maccatalyst')) ">
+    <Compile Remove="**\*.macos.cs" />
+    <Compile Remove="**\*.macos.*.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" $(TargetFramework.Contains('-maccatalyst')) ">
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.macos.cs" />
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.macos.*.cs" />
+  <ItemGroup Condition=" !$(TargetFramework.Contains('-tizen')) ">
+    <Compile Remove="**\*.tizen.cs" />
+    <Compile Remove="**\*.tizen.*.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" $(TargetFramework.Contains('-tizen')) ">
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.tizen.cs" />
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.tizen.*.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" $(TargetFramework.Contains('-windows')) ">
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.uwp.cs" />
-    <Compile Include="..\SkiaSharp.Extended.UI\**\*.uwp.*.cs" />
+  <ItemGroup Condition=" !$(TargetFramework.Contains('-windows')) ">
+    <Compile Remove="**\*.uwp.cs" />
+    <Compile Remove="**\*.uwp.*.cs" />
+    <Compile Remove="**\*.windows.cs" />
+    <Compile Remove="**\*.windows.*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\SkiaSharp.Extended.UI\**\*.cs" Exclude="@(Compile)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="..\SkiaSharp.Extended.UI\Extensions\SKImageSourceExtensions.*.cs" />
-    <None Remove="..\SkiaSharp.Extended.UI\Extensions\SKImageSourceExtensions.*.cs" />
+    <None Include="**\*.cs" Exclude="@(Compile);bin\**;obj\**" />
   </ItemGroup>
 
 </Project>
