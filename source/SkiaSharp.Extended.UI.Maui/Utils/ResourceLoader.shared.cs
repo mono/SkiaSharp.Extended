@@ -3,12 +3,9 @@
 internal static class ResourceLoader<T>
 	where T : ResourceDictionary, new()
 {
-	private static bool registered;
-
 	internal static void EnsureRegistered(VisualElement? element = null)
 	{
-		if (registered)
-			return;
+		bool registered = false;
 
 		// try register with the current app
 		var merged = Application.Current?.Resources?.MergedDictionaries;
