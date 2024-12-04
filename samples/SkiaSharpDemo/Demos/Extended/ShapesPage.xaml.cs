@@ -65,6 +65,7 @@ public partial class ShapesPage : ContentPage
 		{
 			IsAntialias = true,
 			TextSize = 12,
+			Color = ((SolidColorBrush)App.Current!.Resources["ForegroundBrush"]).Color.ToSKColor(),
 		};
 
 		// create the paint for the shapes

@@ -7,7 +7,7 @@ public class BottomTabBar : TemplatedView
 		nameof(Tabs),
 		typeof(BottomTabCollection),
 		typeof(BottomTabBar),
-		new BottomTabCollection());
+		defaultValueCreator: _ => new BottomTabCollection());
 
 	public static readonly BindableProperty SelectedIndexProperty = BindableProperty.Create(
 		nameof(SelectedIndex),
@@ -39,7 +39,7 @@ public class BottomTabBar : TemplatedView
 		nameof(PagePadding),
 		typeof(Thickness),
 		typeof(BottomTabBar),
-		new Thickness());
+		Thickness.Zero);
 
 	private Layout? tabBar;
 	private Layout? pages;

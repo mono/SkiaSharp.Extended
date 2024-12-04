@@ -1,4 +1,6 @@
-﻿namespace SkiaSharpDemo;
+﻿using SkiaSharpDemo.Views;
+
+namespace SkiaSharpDemo;
 
 public partial class App : Application
 {
@@ -6,6 +8,10 @@ public partial class App : Application
 	{
 		InitializeComponent();
 
-		MainPage = new AppShell();
+		Resources.MergedDictionaries.Add(new OptionButtonsResources());
+		Resources.MergedDictionaries.Add(new BottomTabBarResources());
 	}
+
+	protected override Window CreateWindow(IActivationState? activationState) =>
+		new Window(new AppShell());
 }

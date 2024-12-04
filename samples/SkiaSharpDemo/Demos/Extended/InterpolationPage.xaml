@@ -7,9 +7,7 @@
     <StackLayout Spacing="12">
 
         <Label Text="{Binding Interpolation, StringFormat='{}{0:0}%'}" HorizontalOptions="Center" />
-        <Slider Minimum="0" Maximum="100" Value="{Binding Interpolation}"
-                MinimumTrackColor="Black" MaximumTrackColor="Black"
-                ThumbColor="Black" />
+        <Slider Minimum="0" Maximum="100" Value="{Binding Interpolation}" />
 
         <Button Text="Toggle Animation" Command="{Binding AnimateCommand}" />
 
