@@ -17,8 +17,10 @@ public class SKSurfaceView : TemplatedView
 	private SKCanvasView? canvasView;
 	private SKGLView? glView;
 
-	internal SKSurfaceView()
+	public SKSurfaceView()
 	{
+		ResourceLoader<Themes.SKSurfaceViewResources>.EnsureRegistered(this);
+
 		DebugUtils.LogPropertyChanged(this);
 	}
 
