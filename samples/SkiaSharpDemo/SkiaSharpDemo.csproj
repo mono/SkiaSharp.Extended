@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
     <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-    <!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
+    <!-- <TargetFrameworks>$(TargetFrameworks);net9.0-tizen</TargetFrameworks> -->
     <OutputType>Exe</OutputType>
     <RootNamespace>SkiaSharpDemo</RootNamespace>
     <UseMaui>true</UseMaui>
@@ -13,11 +13,10 @@
     <Nullable>enable</Nullable>
 
     <!-- Display name -->
-    <ApplicationTitle>SkiaSharpDemo</ApplicationTitle>
+    <ApplicationTitle>EkiaSharp Ex.</ApplicationTitle>
 
     <!-- App Identifier -->
     <ApplicationId>com.companyname.skiasharpdemo</ApplicationId>
-    <ApplicationIdGuid>954102ed-ac59-4330-b3c7-312d3691d65b</ApplicationIdGuid>
 
     <!-- Versions -->
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -32,10 +31,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HarfBuzzSharp" Version="8.3.0-preview.6.1" />
+    <PackageReference Include="HarfBuzzSharp" Version="8.3.0" />
     <PackageReference Include="NLipsum" Version="1.1.0" />
     <PackageReference Include="Svg.Skia" Version="2.0.0.2" />
     <PackageReference Include="Topten.RichTextKit" Version="0.4.166" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
   </ItemGroup>
 
   <ItemGroup>
