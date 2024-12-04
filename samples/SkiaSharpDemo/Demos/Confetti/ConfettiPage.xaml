@@ -22,7 +22,7 @@
                  HorizontalOptions="End" VerticalOptions="Start"
                  IsVisible="{Binding IsComplete, Source={Reference confettiView}}" />
 
-        <views:BottomTabBar SelectedIndex="{Binding SelectedTab}" PagePadding="12,6">
+        <views:BottomTabBar SelectedIndex="{Binding SelectedTab}" PagePadding="12" Background="{StaticResource BackgroundBrush}">
             <views:BottomTabCollection>
 
                 <!-- "add type" -->
@@ -101,7 +101,7 @@
                 </views:BottomTab>
 
                 <views:BottomTab Title="&#xf3fd;" HorizontalOptions="Fill" VerticalOptions="Center">
-                    <Grid ColumnDefinitions="Auto,*,30"
+                    <Grid ColumnDefinitions="Auto,*,Auto"
                           RowDefinitions="Auto,Auto"
                           ColumnSpacing="12" RowSpacing="12" Padding="12">
                         <Label Text="Min"
@@ -127,7 +127,7 @@
                 </views:BottomTab>
 
                 <views:BottomTab Title="&#xf017;" HorizontalOptions="Fill" VerticalOptions="Center">
-                    <Grid ColumnDefinitions="Auto,*,30"
+                    <Grid ColumnDefinitions="Auto,*,Auto"
                           RowDefinitions="Auto,Auto"
                           ColumnSpacing="12" RowSpacing="12" Padding="12">
                         <Label Text="Lifetime"

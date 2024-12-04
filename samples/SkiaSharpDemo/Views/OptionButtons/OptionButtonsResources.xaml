@@ -8,7 +8,7 @@
 
     <Style x:Key="OptionButtonStyle" TargetType="Button">
         <Setter Property="CornerRadius" Value="3" />
-        <Setter Property="BorderColor" Value="Black" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -40,7 +40,6 @@
     </Style>
 
     <Style x:Key="TextOptionButtonStyle" TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
-        <Setter Property="TextColor" Value="White" />
         <Setter Property="Padding" Value="24,12" />
     </Style>
 
