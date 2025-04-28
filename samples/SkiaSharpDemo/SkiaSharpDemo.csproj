@@ -13,7 +13,7 @@
     <Nullable>enable</Nullable>
 
     <!-- Display name -->
-    <ApplicationTitle>EkiaSharp Ex.</ApplicationTitle>
+    <ApplicationTitle>SkiaSharp Ex.</ApplicationTitle>
 
     <!-- App Identifier -->
     <ApplicationId>com.companyname.skiasharpdemo</ApplicationId>
@@ -31,9 +31,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HarfBuzzSharp" Version="8.3.0" />
+    <PackageReference Include="HarfBuzzSharp" Version="8.3.0.1" />
     <PackageReference Include="NLipsum" Version="1.1.0" />
-    <PackageReference Include="Svg.Skia" Version="2.0.0.2" />
+    <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
     <PackageReference Include="Topten.RichTextKit" Version="0.4.166" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
   </ItemGroup>
