@@ -7,14 +7,6 @@ var GIT_BRANCH_NAME = Argument("gitBranch", EnvironmentVariable("GIT_BRANCH_NAME
 
 var OUTPUT_ROOT = MakeAbsolute((DirectoryPath)"./output/");
 
-Teardown(context =>
-{
-	DeleteDirectory(OUTPUT_ROOT.Combine("msbuildlogger"), new DeleteDirectorySettings {
-		Recursive = true,
-		Force = true
-	});
-});
-
 ProcessArgumentBuilder AppendForwardingLogger(ProcessArgumentBuilder args)
 {
 	if (BuildSystem.IsLocalBuild)
