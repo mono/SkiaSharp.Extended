@@ -49,10 +49,8 @@ extends:
         enabled: true
       credscan:
         enabled: true
-        # suppressionsFile: $(Build.SourcesDirectory)/scripts/guardian/CredScanSuppressions.json
       policheck:
         enabled: true
-        exclusionsFile: $(Build.SourcesDirectory)/scripts/guardian/PoliCheckExclusions.xml
       spotBugs:
         enabled: false
     stages:
