@@ -25,6 +25,7 @@ steps:
       jdkSourceOption: 'PreInstalled'
 
   - pwsh: |
+      echo "JavaSdkDirectory is being set to: $env:JAVA_HOME"
       ##vso[task.setvariable variable=JavaSdkDirectory]$env:JAVA_HOME"
     displayName: Set Java SDK Directory
 

@@ -15,7 +15,8 @@ ProcessArgumentBuilder AppendForwardingLogger(ProcessArgumentBuilder args)
 	// URL copied from https://github.com/microsoft/azure-pipelines-tasks/blob/7faf3e8146d43753b9f360edfae3d2e75ad78c76/Tasks/DotNetCoreCLIV2/make.json
 	var loggerUrl = "https://vstsagenttools.blob.core.windows.net/tools/msbuildlogger/3/msbuildlogger.zip";
 
-	var loggerDir = OUTPUT_ROOT.Combine("msbuildlogger");
+	var AGENT_TEMPDIRECTORY = (DirectoryPath)GetEnvironmentVariable("AGENT_TEMPDIRECTORY");
+	var loggerDir = AGENT_TEMPDIRECTORY.Combine("msbuildlogger");
 	EnsureDirectoryExists(loggerDir);
 
 	var loggerZip = loggerDir.CombineWithFilePath("msbuildlogger.zip");
