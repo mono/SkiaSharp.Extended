@@ -24,5 +24,9 @@ steps:
       jdkArchitectureOption: 'x64'
       jdkSourceOption: 'PreInstalled'
 
+  - pwsh: |
+      ##vso[task.setvariable variable=JavaSdkDirectory]$env:JAVA_HOME"
+    displayName: Set Java SDK Directory
+
   - pwsh: dotnet tool restore
     displayName: Restore the dotnet tools

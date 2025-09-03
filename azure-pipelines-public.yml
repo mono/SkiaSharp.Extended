@@ -36,8 +36,6 @@ jobs:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: dotnet cake --target=build
         displayName: Build everything
-        env:
-          JavaSdkDirectory: $(JAVA_HOME)
       - publish: output
         artifact: build
         condition: always()
@@ -49,8 +47,6 @@ jobs:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: dotnet cake --target=pack
         displayName: Pack NuGet packages
-        env:
-          JavaSdkDirectory: $(JAVA_HOME)
       - publish: output
         artifact: pack
         condition: always()
@@ -62,8 +58,6 @@ jobs:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: dotnet cake --target=test
         displayName: Run tests
-        env:
-          JavaSdkDirectory: $(JAVA_HOME)
       - task: PublishTestResults@2
         condition: always()
         inputs:

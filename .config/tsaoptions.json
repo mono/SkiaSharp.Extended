@@ -1,10 +1,11 @@
 {
+    "codebaseName": "SkiaSharpExtended_main",
+    "notificationAliases": [
+        "dotnet-maui-eng@microsoft.com"
+    ],
     "instanceUrl": "https://devdiv.visualstudio.com/",
-    "template": "TFSDEVDIV",
-    "projectName": "DEVDIV",
-    "areaPath": "DevDiv\\VS Client - Runtime SDKs\\SkiaSharp",
+    "projectName": "DevDiv",
+    "areaPath": "DevDiv\\.NET MAUI\\SkiaSharp",
     "iterationPath": "DevDiv",
-    "notificationAliases": [ "runtimerepo-infra@microsoft.com" ],
-    "repositoryName": "SkiaSharp.Extended",
-    "codebaseName": "SkiaSharp.Extended"
+    "allTools": true
 }
