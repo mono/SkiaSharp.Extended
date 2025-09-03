@@ -19,7 +19,7 @@ public class SKSurfaceView : TemplatedView
 
 	public SKSurfaceView()
 	{
-		ResourceLoader<Themes.SKSurfaceViewResources>.EnsureRegistered(this);
+		ResourceLoader<Themes.SKSurf aceViewResources>.EnsureRegistered(this);
 
 		DebugUtils.LogPropertyChanged(this);
 	}
