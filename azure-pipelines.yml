@@ -94,6 +94,8 @@ extends:
             windowsPoolName: ${{ parameters.buildAgent.name }}
             windowsImageOverride: ${{ parameters.buildAgent.image }}
             timeoutInMinutes: 480
+            tsaConfigFile: $(Build.SourcesDirectory)/.config/tsaoptions.json
+            tsaUploadEnabled: true
             stageDependsOn:
              - build
             scanArtifacts:
