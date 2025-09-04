@@ -42,9 +42,20 @@ extends:
       sourceRepositoriesToScan:
         exclude:
         - repository: yaml-templates
-      enableAllTools: true
       binskim:
+        enabled: true
         break: false
+      codeInspector:
+        enabled: true
+      codeql:
+        compiled:
+          enabled: true
+      credscan:
+        enabled: true
+      policheck:
+        enabled: true
+      spotBugs:
+        enabled: false
       tsa:
         enabled: true
         configFile: $(Build.SourcesDirectory)/.config/tsaoptions.json
