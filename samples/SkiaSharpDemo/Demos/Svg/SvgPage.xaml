@@ -1,28 +1,36 @@
-﻿<TabbedPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-            xmlns:views="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
-            x:Class="SkiaSharpDemo.Demos.SvgPage"
-            Title="SVG (Svg.Skia)">
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
+             xmlns:views="clr-namespace:SkiaSharpDemo.Views"
+             x:Class="SkiaSharpDemo.Demos.SvgPage"
+             Title="SVG (Svg.Skia)">
 
-    <ContentPage Title="Logos" AutomationId="logos.svg"
-                 Appearing="OnPageAppearing" SizeChanged="OnPageSizeChanged">
-        <ScrollView>
-            <views:SKCanvasView PaintSurface="OnPainting" />
-        </ScrollView>
-    </ContentPage>
+    <views:BottomTabBar PagePadding="12"
+                        VerticalOptions="Fill" HorizontalOptions="Fill"
+                        VerticalContentAlignment="Fill" HorizontalContentAlignment="Fill"
+                        Background="{StaticResource BackgroundBrush}"
+                        SelectedTabChanged="OnSelectedTabChanged"
+                        x:Name="tabBar">
 
-    <ContentPage Title="Transparency" AutomationId="opacity.svg"
-                 Appearing="OnPageAppearing" SizeChanged="OnPageSizeChanged">
-        <ScrollView>
-            <views:SKCanvasView PaintSurface="OnPainting" />
-        </ScrollView>
-    </ContentPage>
+        <views:BottomTabBar.Resources>
+            <ResourceDictionary>
+                <Style TargetType="views:BottomTab" BasedOn="{StaticResource BottomTabStyle}">
+                    <Setter Property="MinimumHeightRequest" Value="100" />
+                    <Setter Property="ControlTemplate">
+                        <ControlTemplate>
+                            <VerticalStackLayout SizeChanged="OnTabBarSizeChanged">
+                                <skia:SKCanvasView PaintSurface="OnPainting" HorizontalOptions="Fill" />
+                            </VerticalStackLayout>
+                        </ControlTemplate>
+                    </Setter>
+                </Style>
+            </ResourceDictionary>
+        </views:BottomTabBar.Resources>
 
-    <ContentPage Title="Dashes" AutomationId="dashes.svg"
-                 Appearing="OnPageAppearing" SizeChanged="OnPageSizeChanged">
-        <ScrollView>
-            <views:SKCanvasView PaintSurface="OnPainting" />
-        </ScrollView>
-    </ContentPage>
+        <views:BottomTab Title="Logos" AutomationId="logos.svg" />
+        <views:BottomTab Title="Transparency" AutomationId="opacity.svg" />
+        <views:BottomTab Title="Dashes" AutomationId="dashes.svg" />
 
-</TabbedPage>
+    </views:BottomTabBar>
+
+</ContentPage>

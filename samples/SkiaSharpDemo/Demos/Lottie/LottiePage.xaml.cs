@@ -8,6 +8,7 @@ public partial class LottiePage : ContentPage
 {
 	private TimeSpan duration;
 	private TimeSpan progress;
+	private bool isPlaying;
 
 	public LottiePage()
 	{
@@ -18,7 +19,7 @@ public partial class LottiePage : ContentPage
 		EndCommand = new Command(OnEnd);
 		PlayPauseCommand = new Command(OnPlayPause);
 
-		IsBusy = true;
+		IsPlaying = true;
 
 		BindingContext = this;
 	}
@@ -43,6 +44,16 @@ public partial class LottiePage : ContentPage
 		}
 	}
 
+	public bool IsPlaying
+	{
+		get => isPlaying;
+		set
+		{
+			isPlaying = value;
+			OnPropertyChanged();
+		}
+	}
+
 	public ICommand ResetCommand { get; }
 
 	public ICommand StepCommand { get; }
@@ -61,7 +72,7 @@ public partial class LottiePage : ContentPage
 		Progress = Duration;
 
 	private void OnPlayPause() =>
-		IsBusy = !IsBusy;
+		IsPlaying = !IsPlaying;
 
 	private void OnAnimationFailed(object sender, SKLottieAnimationFailedEventArgs e)
 	{

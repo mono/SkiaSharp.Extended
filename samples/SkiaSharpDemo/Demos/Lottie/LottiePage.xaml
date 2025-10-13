@@ -11,7 +11,7 @@
                                Source="Lottie/dotnetbot.json"
                                Duration="{Binding Duration}"
                                Progress="{Binding Progress}"
-                               IsAnimationEnabled="{Binding IsBusy}"
+                               IsAnimationEnabled="{Binding IsPlaying}"
                                AnimationFailed="OnAnimationFailed"
                                AnimationLoaded="OnAnimationLoaded"
                                AnimationCompleted="OnAnimationCompleted" />

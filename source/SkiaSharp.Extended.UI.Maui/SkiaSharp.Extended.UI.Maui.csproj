@@ -65,10 +65,6 @@
     <Compile Remove="**\*.macos.cs" />
     <Compile Remove="**\*.macos.*.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" !$(TargetFramework.Contains('-tizen')) ">
-    <Compile Remove="**\*.tizen.cs" />
-    <Compile Remove="**\*.tizen.*.cs" />
-  </ItemGroup>
   <ItemGroup Condition=" !$(TargetFramework.Contains('-windows')) ">
     <Compile Remove="**\*.uwp.cs" />
     <Compile Remove="**\*.uwp.*.cs" />
