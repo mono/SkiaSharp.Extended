@@ -11,14 +11,6 @@ interesting projects:
  - [SkiaSharp.Extended.UI.Forms][ui-forms] _(additional Xamarin.Forms controls)_
  - [SkiaSharp.Extended.UI.Maui][ui-maui] _(additional .NET MAUI controls)_
 
-## Using
-
-There is an early access feed that you can use to get the latest and greatest, before it goes out to the public:
-
-```
-https://aka.ms/skiasharp-eap/index.json
-```
-
 ## Building
 
 To build the projects and samples, just open `SkiaSharp.Extended.sln` 
