@@ -33,7 +33,6 @@ assignees: ''
   - iOS:  <!-- the version of the iOS SDK you are compiling against, e.g. 11.1 -->
   - Linux:  <!-- The version and distro of linux that you are building for, e.g. Ubuntu 16.04 -->
   - macOS:  <!-- The version of macOS you are building for, e.g. 10.10 -->
-  - Tizen:  <!-- the version of the Tizen SDK you are compiling against, e.g. 4.0 --> 
   - tvOS:  <!-- the version of the tvOS SDK you are compiling against, e.g. 11.1 -->
   - UWP:  <!-- the version of the UWP SDK you are compiling against, e.g. 16299 --> 
   - watchOS:  <!-- the version of the watchOS SDK you are compiling against, e.g. 11.1 -->

@@ -9,7 +9,7 @@
                     IsGrouped="True"
                     ItemsSource="{Binding Demos}"
                     SelectionChanged="OnSelectionChanged" SelectionMode="Single">
-        <!--<VisualStateManager.VisualStateGroups>
+        <!-- <VisualStateManager.VisualStateGroups>
             <VisualStateGroupList>
                 <VisualStateGroup>
                     <VisualState x:Name="Wide">
@@ -20,7 +20,6 @@
                             <Setter Property="ItemsLayout">
                                 <GridItemsLayout Span="2" Orientation="Vertical" />
                             </Setter>
-                            <Setter Property="Opacity" Value="0.3" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Narrow">
@@ -31,16 +30,14 @@
                             <Setter Property="ItemsLayout">
                                 <GridItemsLayout Span="1" Orientation="Vertical" />
                             </Setter>
-                            <Setter Property="Background" Value="Green" />
-                            <Setter Property="Opacity" Value="0.7" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateGroupList>
-        </VisualStateManager.VisualStateGroups>-->
-        <!--<CollectionView.ItemsLayout>
+        </VisualStateManager.VisualStateGroups> -->
+        <!-- <CollectionView.ItemsLayout>
             <GridItemsLayout Span="2" Orientation="Vertical" />
-        </CollectionView.ItemsLayout>-->
+        </CollectionView.ItemsLayout> -->
         <CollectionView.Footer>
             <Grid HeightRequest="100" />
         </CollectionView.Footer>

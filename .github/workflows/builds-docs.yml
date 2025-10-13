@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: DocFX
-        uses: nikeee/docfx-action@v0.1.0
+        uses: nunit/docfx-action@v4.1.0
         with:
           args: docs/docfx.json
 

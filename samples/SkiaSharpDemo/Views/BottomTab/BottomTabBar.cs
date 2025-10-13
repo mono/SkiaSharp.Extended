@@ -50,9 +50,9 @@ public class BottomTabBar : TemplatedView
 		TabTappedCommand = new Command<View>(OnTabTapped);
 	}
 
-	public BottomTabCollection? Tabs
+	public BottomTabCollection Tabs
 	{
-		get => (BottomTabCollection?)GetValue(TabsProperty);
+		get => (BottomTabCollection)GetValue(TabsProperty);
 		set => SetValue(TabsProperty, value);
 	}
 
@@ -88,6 +88,8 @@ public class BottomTabBar : TemplatedView
 
 	// TODO: this probably should not be a public property...
 	public Command<View> TabTappedCommand { get; }
+
+	public event EventHandler<SelectedItemChangedEventArgs>? SelectedTabChanged;
 
 	protected override void OnApplyTemplate()
 	{
@@ -140,6 +142,8 @@ public class BottomTabBar : TemplatedView
 			else
 				_ = ShowTab(page);
 		}
+
+		SelectedTabChanged?.Invoke(this, new SelectedItemChangedEventArgs(Tabs[index], index));
 
 		static async Task HideTab(VisualElement page)
 		{

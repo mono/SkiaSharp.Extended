@@ -1,11 +1,12 @@
 ﻿using SkiaSharp;
 using SkiaSharp.Views.Maui;
 using SkiaSharp.Views.Maui.Controls;
+using SkiaSharpDemo.Views;
 using Svg.Skia;
 
 namespace SkiaSharpDemo.Demos;
 
-public partial class SvgPage : TabbedPage
+public partial class SvgPage : ContentPage
 {
 	private SKSvg? svg;
 
@@ -14,7 +15,57 @@ public partial class SvgPage : TabbedPage
 		InitializeComponent();
 	}
 
-	private async Task<SKSvg> LoadSvgAsync(string svgName)
+	protected override void OnAppearing()
+	{
+		base.OnAppearing();
+
+		// HACK: force a layout pass to work around an issue where the first tab is not
+		//       properly laid out when the page appears
+		Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(100), () =>
+		{
+			tabBar.Padding = new Thickness(1);
+			tabBar.Padding = new Thickness(0);
+		});
+	}
+
+	private async void OnSelectedTabChanged(object sender, SelectedItemChangedEventArgs e)
+	{
+		var tab = (BottomTab)e.SelectedItem;
+
+		svg = null;
+		svg = await LoadSvgAsync(tab.AutomationId);
+
+		UpdateCanvasSize(tab);
+	}
+
+	private void OnTabBarSizeChanged(object sender, EventArgs e)
+	{
+		var view = (VisualElement)sender;
+		var tab = (BottomTab)view.Parent;
+		UpdateCanvasSize(tab);
+	}
+
+	private void UpdateCanvasSize(BottomTab tab)
+	{
+		if (!tab.IsVisible)
+			return;
+
+		var canvas = tab.GetVisualTreeDescendants()
+			.OfType<SKCanvasView>()
+			.FirstOrDefault();
+		if (canvas is null)
+			return;
+
+		canvas.HeightRequest = svg?.Picture?.CullRect is SKRect rect && rect.Width > 0 && rect.Height > 0
+			? canvas.Width * (rect.Height / rect.Width)
+			: -1;
+
+		canvas.InvalidateMeasure();
+
+		canvas.InvalidateSurface();
+	}
+
+	private static async Task<SKSvg> LoadSvgAsync(string svgName)
 	{
 		// create a new SVG object
 		var svg = new SKSvg();
@@ -24,36 +75,6 @@ public partial class SvgPage : TabbedPage
 		svg.Load(stream);
 
 		return svg;
-	}
-
-	private async void OnPageAppearing(object sender, EventArgs e)
-	{
-		var page = (ContentPage)sender;
-		var scrollView = (ScrollView)page.Content;
-		var canvas = (SKCanvasView)scrollView.Content;
-
-		svg = null;
-		svg = await LoadSvgAsync(page.AutomationId);
-
-		UpdateCanvasSize(page);
-
-		canvas.InvalidateSurface();
-	}
-
-	private void UpdateCanvasSize(ContentPage page)
-	{
-		var scrollView = (ScrollView)page.Content;
-		var canvas = (SKCanvasView)scrollView.Content;
-
-		canvas.HeightRequest = svg?.Picture?.CullRect is SKRect rect && rect.Width > 0 && rect.Height > 0
-			? canvas.Width * (rect.Height / rect.Width)
-			: -1;
-	}
-
-	private void OnPageSizeChanged(object sender, EventArgs e)
-	{
-		var page = (ContentPage)sender;
-		UpdateCanvasSize(page);
 	}
 
 	private void OnPainting(object sender, SKPaintSurfaceEventArgs e)
@@ -72,12 +93,12 @@ public partial class SvgPage : TabbedPage
 			return;
 
 		// calculate the scaling need to fit to screen
-		float canvasMin = Math.Min(width, height);
-		float svgMax = Math.Max(svg.Picture.CullRect.Width, svg.Picture.CullRect.Height);
-		float scale = canvasMin / svgMax;
+		var canvasMin = Math.Min(width, height);
+		var svgMax = Math.Max(svg.Picture.CullRect.Width, svg.Picture.CullRect.Height);
+		var scale = canvasMin / svgMax;
 		var matrix = SKMatrix.CreateScale(scale, scale);
 
 		// draw the svg
-		canvas.DrawPicture(svg.Picture, ref matrix);
+		canvas.DrawPicture(svg.Picture, matrix);
 	}
 }
