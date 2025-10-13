@@ -36,9 +36,11 @@ jobs:
       with:
         dotnet-version: 8.x
 
-    - run: dotnet tool update -g docfx
+    - name: Restore .NET tools
+      run: dotnet tool restore
 
-    - run: docfx docs/docfx.json
+    - name: Build docs
+      run: docfx docs/docfx.json
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
