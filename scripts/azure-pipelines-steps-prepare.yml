@@ -17,10 +17,15 @@ steps:
       Write-Host "##vso[build.updatebuildnumber]$label"
     displayName: Update the build number with a more readable one
 
+  - task: UseDotNet@2
+    inputs:
+      version: '9.x'
+      performMultiLevelLookup: true
+
   - task: JavaToolInstaller@0
     displayName: Select JDK
     inputs:
-      versionSpec: '17'
+      versionSpec: '21'
       jdkArchitectureOption: 'x64'
       jdkSourceOption: 'PreInstalled'
 
@@ -31,3 +36,6 @@ steps:
 
   - pwsh: dotnet tool restore
     displayName: Restore the dotnet tools
+
+  - pwsh: dotnet workload install maui
+    displayName: Install the .NET MAUI workload
