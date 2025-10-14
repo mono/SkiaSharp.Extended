@@ -28,7 +28,7 @@
     <RepositoryUrl>https://go.microsoft.com/fwlink/?linkid=2071915</RepositoryUrl>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyFileVersion>2.0.0.0</AssemblyFileVersion>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageVersion Condition=" '$(Version)' != '' and '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
   </PropertyGroup>
