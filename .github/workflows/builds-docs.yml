@@ -19,10 +19,13 @@ jobs:
     - name: .NET Setup
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.x
+        dotnet-version: 9.x
 
     - name: Restore .NET tools
       run: dotnet tool restore
+
+    - name: Build the assemblies
+      run: dotnet cake --target=pack
 
     - name: Build docs
       run: dotnet docfx docs/docfx.json

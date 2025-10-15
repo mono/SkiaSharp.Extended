@@ -1,8 +1,97 @@
-- name: Overview
-  href: index.md
-- name: SkiaSharp.Extended
-  href: extended/toc.yml
-  topicHref: extended/index.md
-- name: SkiaSharp.Extended.UI.Maui
-  href: ui-maui/toc.yml
-  topicHref: ui-maui/index.md
+### YamlMime:TableOfContent
+items:
+- uid: SkiaSharp.Extended
+  name: SkiaSharp.Extended
+  items:
+  - uid: SkiaSharp.Extended.SKBlurHash
+    name: SKBlurHash
+  - uid: SkiaSharp.Extended.SKGeometry
+    name: SKGeometry
+  - uid: SkiaSharp.Extended.SKGeometryExtensions
+    name: SKGeometryExtensions
+  - uid: SkiaSharp.Extended.SKPathInterpolation
+    name: SKPathInterpolation
+  - uid: SkiaSharp.Extended.SKPixelComparer
+    name: SKPixelComparer
+  - uid: SkiaSharp.Extended.SKPixelComparisonResult
+    name: SKPixelComparisonResult
+- uid: SkiaSharp.Extended.UI.Controls
+  name: SkiaSharp.Extended.UI.Controls
+  items:
+  - uid: SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView
+    name: SKAnimatedSurfaceView
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape
+    name: SKConfettiCircleShape
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection
+    name: SKConfettiColorCollection
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiEmitter
+    name: SKConfettiEmitter
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+    name: SKConfettiEmitterBounds
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide
+    name: SKConfettiEmitterSide
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape
+    name: SKConfettiOvalShape
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiPathShape
+    name: SKConfettiPathShape
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiPhysics
+    name: SKConfettiPhysics
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection
+    name: SKConfettiPhysicsCollection
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiRectShape
+    name: SKConfettiRectShape
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiShape
+    name: SKConfettiShape
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection
+    name: SKConfettiShapeCollection
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape
+    name: SKConfettiSquareShape
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiSystem
+    name: SKConfettiSystem
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiSystemCollection
+    name: SKConfettiSystemCollection
+  - uid: SkiaSharp.Extended.UI.Controls.SKConfettiView
+    name: SKConfettiView
+  - uid: SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource
+    name: SKFileLottieImageSource
+  - uid: SkiaSharp.Extended.UI.Controls.SKLottieAnimation
+    name: SKLottieAnimation
+  - uid: SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs
+    name: SKLottieAnimationFailedEventArgs
+  - uid: SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs
+    name: SKLottieAnimationLoadedEventArgs
+  - uid: SkiaSharp.Extended.UI.Controls.SKLottieImageSource
+    name: SKLottieImageSource
+  - uid: SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode
+    name: SKLottieRepeatMode
+  - uid: SkiaSharp.Extended.UI.Controls.SKLottieView
+    name: SKLottieView
+  - uid: SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource
+    name: SKStreamLottieImageSource
+  - uid: SkiaSharp.Extended.UI.Controls.SKSurfaceView
+    name: SKSurfaceView
+  - uid: SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource
+    name: SKUriLottieImageSource
+- uid: SkiaSharp.Extended.UI.Controls.Converters
+  name: SkiaSharp.Extended.UI.Controls.Converters
+  items:
+  - uid: SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter
+    name: SKConfettiColorCollectionTypeConverter
+  - uid: SkiaSharp.Extended.UI.Controls.Converters.SKConfettiEmitterBoundsTypeConverter
+    name: SKConfettiEmitterBoundsTypeConverter
+  - uid: SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter
+    name: SKConfettiPhysicsTypeConverter
+  - uid: SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter
+    name: SKLottieImageSourceConverter
+  - uid: SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter
+    name: StringTypeConverter
+- uid: SkiaSharp.Extended.UI.Controls.Themes
+  name: SkiaSharp.Extended.UI.Controls.Themes
+  items:
+  - uid: SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources
+    name: SKConfettiViewResources
+  - uid: SkiaSharp.Extended.UI.Controls.Themes.SKLottieViewResources
+    name: SKLottieViewResources
+  - uid: SkiaSharp.Extended.UI.Controls.Themes.SKSurfaceViewResources
+    name: SKSurfaceViewResources
+memberLayout: SeparatePages

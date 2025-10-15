@@ -24,4 +24,4 @@ There are a few helper methods that can be used to create geometric shapes in th
 | **Interpolate**  | Creates a new path interpolated between the start and end paths. |
 
 
-[interpolation]: ../../images/extended/skpathinterpolation/interpolation.gif
+[interpolation]: ../images/extended/skpathinterpolation/interpolation.gif

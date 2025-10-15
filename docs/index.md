@@ -1,26 +1,52 @@
 # SkiaSharp.Extended
 
-**SkiaSharp.Extended** is a collection some cool libraries that may be
-useful to some apps. There are several repositories that may have
-interesting projects. [**See more...**](api/extended/index)
+## SkiaSharp.Extended
 
-## SKBlurHash
+**SkiaSharp.Extended** is a collection some cool libraries.
 
-`SKBlurHash` is a compact representation of a placeholder for an image. [**See more...**](api/extended/skblurhash)
+### SKBlurHash
 
-## SKGeometry
+**SKBlurHash** is a compact representation of a placeholder for an image.
 
-`SKGeometry` provides several helper methods that can be used to create common geometric shapes. [**See more...**](api/extended/skgeometry)
+| Preview |
+| :-----: |
+| ![BlurHash][blur-img] |
 
-## SKPathInterpolation
+### SKGeometry
 
-`SKPathInterpolation` can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths. [**See more...**](api/extended/skpathinterpolation)
+**SKGeometry** provides several helper methods that can be used to create common geometric shapes.
 
-# SkiaSharp.Extended.UI.Maui
+### SKPathInterpolation
 
-**SkiaSharp.Extended.UI.Maui** is a collection some great .NET MAUI controls
-that may be useful to some apps. [**See more...**](api/ui-maui/index)
+SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths.
 
-## SKConfettiView
+| Preview |
+| :-----: |
+| ![Path Interpolation][interpolation-img] |
 
-The confetti view is a container for one or more systems of confetti particles. [**See more...**](api/ui-maui/skconfettiview)
+
+## SkiaSharp.Extended.UI.Maui
+
+**SkiaSharp.Extended.UI.Maui** is a collection some great .NET MAUI controls.
+
+### SKConfettiView
+
+The confetti view is a container for one or more systems of confetti particles.
+
+| Preview |
+| :-----: |
+| ![top-stream][confetti-img] |
+
+### SKLottieView
+
+The Lottie view is a animated view that can playback Lottie files.
+
+| Preview |
+| :-----: |
+| ![lottie][lottie-img] |
+
+
+[blur-img]: images/extended/skblurhash/blur-small.png
+[interpolation-img]: images/extended/skpathinterpolation/interpolation.gif
+[lottie-img]: images/ui/controls/sklottieview/lottie.gif
+[confetti-img]: images/ui/controls/skconfettiview/top-stream.gif

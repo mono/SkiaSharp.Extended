@@ -41,7 +41,7 @@ Every confetti view consists up one or more systems (`SKConfettiSystem`). Each s
 | **Gravity**                   | `Point`                        | The gravity is a acceleration vector that indicates the direction and strength of the gravity in the system. |
 | **Colors**                    | `SKConfettiColorCollection`    | A collection of `Color` instances that determine the available colors for the confetti. |
 | **Physics**                   | `SKConfettiPhysicsCollection`  | A collection of [`SKConfettiPhysics`](#physics) instances that determine the "base" mass and size of each confetti particle. |
-| **Shapes**                    | `SKConfettiShapeCollection`    | A collection of [`SKConfettiShape`](#shape) instances that determine what each confetti particle looks like. |
+| **Shapes**                    | `SKConfettiShapeCollection`    | A collection of [`SKConfettiShape`](#shapes) instances that determine what each confetti particle looks like. |
 | **StartAngle**                | `double`                       | The angle (in degrees) to form the start of the emission region. |
 | **EndAngle**                  | `double`                       | The angle (in degrees) to form the end of the emission region. |
 | **MinimumInitialVelocity**    | `double`                       | The minimum initial velocity of the confetti particles. |
@@ -126,6 +126,6 @@ Each particle can have a size and mass, and the emitter can select one of them r
 | **Mass**  | `double`  | The mass of the particle which resists the force of gravity. |
 | **Size**  | `double`  | The physical size of the particle rendered. |
 
-[top-stream]: ../../images/ui/controls/skconfettiview/top-stream.gif
-[center-burst]: ../../images/ui/controls/skconfettiview/center-burst.gif
-[sides-spray]: ../../images/ui/controls/skconfettiview/sides-spray.gif
+[top-stream]: ../images/ui/controls/skconfettiview/top-stream.gif
+[center-burst]: ../images/ui/controls/skconfettiview/center-burst.gif
+[sides-spray]: ../images/ui/controls/skconfettiview/sides-spray.gif

@@ -1,14 +1,29 @@
 {
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "**/bin/Release/net9.0/**.dll"
+          ],
+          "src": "../source/"
+        }
+      ],
+      "output": "api",
+      "outputFormat": "mref",
+      "memberLayout": "separatePages"
+    }
+  ],
   "build": {
     "content": [
       {
         "files": [
-          "api/**/*.md",
-          "api/**/toc.yml",
-          "guides/**/*.md",
-          "guides/**/toc.yml",
-          "toc.yml",
-          "index.md"
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**",
+          "obj/**"
         ]
       }
     ],
@@ -19,15 +34,7 @@
         ]
       }
     ],
-    "overwrite": [
-      {
-        "exclude": [
-          "obj/**",
-          "_site/**"
-        ]
-      }
-    ],
-    "dest": "_site",
+    "output": "_site",
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [
@@ -38,10 +45,6 @@
     "postProcessors": [
       "ExtractSearchIndex"
     ],
-    "markdownEngineName": "markdig",
-    "noLangKeyword": false,
-    "keepFileLink": false,
-    "cleanupCacheHistory": false,
     "disableGitFeatures": false,
     "globalMetadata": {
       "_appTitle": "SkiaSharp.Extended",
