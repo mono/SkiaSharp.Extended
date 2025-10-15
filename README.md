@@ -8,6 +8,7 @@ interesting projects:
 
  - [SkiaSharp][skiasharp] _(the engine)_
  - [SkiaSharp.Extended][extended] _(additional APIs)_
+ - [SkiaSharp.Extended.UI.Forms][ui-forms] _(additional Xamarin.Forms controls)_
  - [SkiaSharp.Extended.UI.Maui][ui-maui] _(additional .NET MAUI controls)_
 
 ## Building
@@ -28,4 +29,5 @@ The code in this repository is licensed under the [MIT License][license].
 
 [skiasharp]: https://github.com/mono/SkiaSharp
 [extended]: https://mono.github.io/SkiaSharp.Extended/api/extended
+[ui-forms]: https://mono.github.io/SkiaSharp.Extended/api/ui-forms
 [ui-maui]: https://mono.github.io/SkiaSharp.Extended/api/ui-maui

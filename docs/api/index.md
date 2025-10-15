@@ -30,3 +30,20 @@ The confetti view is a container for one or more systems of confetti particles. 
 ### SKLottieView
 
 The Lottie view is a animated view that can playback Lottie files. [**See more...**](ui-maui/sklottieview)
+
+## SkiaSharp.Extended.UI.Forms
+
+**SkiaSharp.Extended.UI.Forms** is a collection some great Xamarin.Forms controls
+that may be useful to some apps. [**See more...**](ui-forms/index)
+
+### SKImageSourceExtensions
+
+Some useful extensions for the abstract `ImageSource` type. [**See more...**](ui-forms/skimagesourceextensions)
+
+### SKConfettiView
+
+The confetti view is a container for one or more systems of confetti particles. [**See more...**](ui-forms/skconfettiview)
+
+### SKLottieView
+
+The Lottie view is a animated view that can playback Lottie files. [**See more...**](ui-forms/sklottieview)
