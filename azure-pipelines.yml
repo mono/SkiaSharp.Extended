@@ -1,5 +1,8 @@
-# Overridden in the UI
-trigger: none
+trigger:
+  branches:
+    include:
+      - main
+
 pr: none
 
 parameters:
