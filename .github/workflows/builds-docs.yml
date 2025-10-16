@@ -25,7 +25,7 @@ jobs:
       run: dotnet tool restore
 
     - name: Build the assemblies
-      run: dotnet cake --target=pack
+      run: dotnet build scripts/SkiaSharp.Extended-Pack.slnf -c Release
 
     - name: Build docs
       run: dotnet docfx docs/docfx.json
