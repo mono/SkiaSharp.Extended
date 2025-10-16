@@ -10,19 +10,17 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
 
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: .NET Setup
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.x
-
     - name: Restore .NET tools
       run: dotnet tool restore
+
+    - name: Build the assemblies
+      run: dotnet build scripts/SkiaSharp.Extended-Pack.slnf -c Release -f net9.0
 
     - name: Build docs
       run: dotnet docfx docs/docfx.json

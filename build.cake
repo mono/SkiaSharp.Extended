@@ -9,7 +9,7 @@ var OUTPUT_ROOT = MakeAbsolute((DirectoryPath)"./output/");
 
 ProcessArgumentBuilder AppendForwardingLogger(ProcessArgumentBuilder args)
 {
-	if (BuildSystem.IsLocalBuild)
+	if (!BuildSystem.IsRunningOnAzurePipelines)
 	    return args;
 
 	// URL copied from https://github.com/microsoft/azure-pipelines-tasks/blob/7faf3e8146d43753b9f360edfae3d2e75ad78c76/Tasks/DotNetCoreCLIV2/make.json

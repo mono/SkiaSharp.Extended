@@ -17,5 +17,5 @@ LjPsbRxG%gx^aJxuM|W=?^X8Mxn$
 
 TODO
 
-[orig-img]: ../../images/extended/skblurhash/logo.png
-[blur-img]: ../../images/extended/skblurhash/blur.png
+[orig-img]: ../images/extended/skblurhash/logo.png
+[blur-img]: ../images/extended/skblurhash/blur.png

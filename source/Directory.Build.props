@@ -1,11 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <PropertyGroup>
-    <IsWindows>$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))</IsWindows>
-    <IsMacOS>$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))</IsMacOS>
-    <IsLinux>$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))</IsLinux>
-  </PropertyGroup>
+<Project>
 
   <PropertyGroup>
     <NeutralLanguage>en</NeutralLanguage>
@@ -40,7 +33,7 @@
   <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)'=='Release' and '$(IsWindows)' == 'true' ">
+  <PropertyGroup Condition=" '$(Configuration)'=='Release' and $([MSBuild]::IsOSPlatform('windows')) ">
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
@@ -59,9 +52,5 @@
   <ItemGroup Condition=" '$(Configuration)'=='Release' ">
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
-
-  <!-- <ItemGroup>
-    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" PrivateAssets="all" />
-  </ItemGroup> -->
 
 </Project>
