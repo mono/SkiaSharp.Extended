@@ -25,7 +25,7 @@ jobs:
       run: dotnet tool restore
 
     - name: Build the assemblies
-      run: dotnet build scripts/SkiaSharp.Extended-Pack.slnf -c Release
+      run: dotnet build scripts/SkiaSharp.Extended-Pack.slnf -c Release -f net9.0
 
     - name: Build docs
       run: dotnet docfx docs/docfx.json
