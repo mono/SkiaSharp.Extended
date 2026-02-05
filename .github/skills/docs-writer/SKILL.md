@@ -246,36 +246,49 @@ Verify pages render correctly:
 curl -s http://localhost:8080/docs/blurhash.html | grep -o '<h1[^>]*>.*</h1>'
 ```
 
+## Code Block Language Tags
+
+Use consistent language tags for syntax highlighting:
+- **`xml`** for XAML/XML content (not `xaml` - docfx highlights `xml` better)
+- **`csharp`** for C# code
+- **`bash`** for shell commands
+- **`yaml`** for YAML files
+
 ## TOC Structure
 
-The docs TOC uses friendly names with proper nesting:
+For small documentation sites, use a **flat TOC** with section headings:
 
 ```yaml
 items:
 - name: Overview
   href: ../index.md
 
-- name: SkiaSharp.Extended
-  items:
-  - name: Blur Hash
-    href: blurhash.md
-  - name: Geometry Helpers
-    href: skgeometry.md
-  - name: Path Interpolation
-    href: skpathinterpolation.md
+- name: SkiaSharp.Extended      # Heading only (no href = visual separator)
+- name: Blur Hash
+  href: blurhash.md
+- name: Geometry Helpers
+  href: geometry.md
+- name: Path Interpolation
+  href: path-interpolation.md
 
-- name: SkiaSharp.Extended.UI.Maui
-  items:
-  - name: Confetti Effects
-    href: skconfettiview.md
-  - name: Lottie Animations
-    href: sklottieview.md
+- name: SkiaSharp.Extended.UI.Maui  # Heading only
+- name: Confetti Effects
+  href: confetti.md
+- name: Lottie Animations
+  href: lottie.md
 
+- name: Resources               # Catch-all for non-essential items
 - name: Migration Guides
   items:
   - name: SVG Migration
     href: svg-migration.md
 ```
+
+### TOC Guidelines
+- **Headings without href** become visual section separators
+- Use **friendly feature names** (not type names)
+- Put migration guides and other non-essential content under a "Resources" heading
+- Nested items only when there are true sub-pages (like Migration Guides)
 
 ## File Naming
 
@@ -364,3 +377,17 @@ Before finalizing a doc page:
 - [ ] **All code snippets tested in /tmp/ project**
 - [ ] Build docs and verify no warnings
 - [ ] Check rendered page in browser
+
+## CI and Deployment
+
+### Workflow Requirements
+The docs workflow (`builds-docs.yml`) requires:
+- MAUI workloads installed with explicit nuget.org source:
+  ```yaml
+  dotnet workload install maui --source https://api.nuget.org/v3/index.json
+  ```
+
+### PR Best Practices
+- **Never merge with failing CI** - always wait for green checks
+- Workflow failures related to workload installation often need the nuget.org source fix
+- Check job logs to understand the actual failure before dismissing as transient
