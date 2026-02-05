@@ -363,4 +363,61 @@ public class SKLottieViewTest
 		// test - progress should have decreased by 1 second (0.5s * 2x speed in reverse)
 		Assert.Equal(duration - TimeSpan.FromSeconds(1), lottie.Progress);
 	}
+
+	[Fact]
+	public async Task NegativeAnimationSpeedCompletesAndFiresEvent()
+	{
+		// create with negative speed and start at end
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView
+		{
+			Source = source,
+			AnimationSpeed = -1.0,
+			RepeatCount = 0  // no repeats, should complete
+		};
+		await lottie.LoadedTask;
+
+		var duration = lottie.Duration;
+		var completedFired = false;
+		lottie.AnimationCompleted += (s, e) => completedFired = true;
+
+		// set progress to end
+		lottie.Progress = duration;
+
+		// update enough to reach the start
+		lottie.CallUpdate(duration + TimeSpan.FromSeconds(1));
+
+		// test - should be at start and completed
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+		Assert.True(lottie.IsComplete);
+		Assert.True(completedFired);
+	}
+
+	[Fact]
+	public async Task NegativeAnimationSpeedWithRepeatModeRestartLoops()
+	{
+		// create with negative speed and RepeatMode.Restart with infinite repeats
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView
+		{
+			Source = source,
+			AnimationSpeed = -1.0,
+			RepeatMode = SKLottieRepeatMode.Restart,
+			RepeatCount = -1  // infinite repeats
+		};
+		await lottie.LoadedTask;
+
+		var duration = lottie.Duration;
+
+		// set progress to end (where negative speed animations start)
+		lottie.Progress = duration;
+		Assert.False(lottie.IsComplete);
+
+		// Run multiple times - should never complete with infinite repeats
+		for (int i = 0; i < 5; i++)
+		{
+			lottie.CallUpdate(duration);
+			Assert.False(lottie.IsComplete);
+		}
+	}
 }
