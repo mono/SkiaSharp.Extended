@@ -230,7 +230,7 @@ public class SKLottieViewTest
 	}
 
 	[Fact]
-	public async Task AnimationSpeedDoublesMakesItTwiceAsFast()
+	public async Task AnimationSpeedDoubleMakesItTwiceAsFast()
 	{
 		// create
 		var source = new SKFileLottieImageSource { File = TrophyJson };
