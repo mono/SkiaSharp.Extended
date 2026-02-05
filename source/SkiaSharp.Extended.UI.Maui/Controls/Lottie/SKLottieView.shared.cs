@@ -48,6 +48,12 @@ public class SKLottieView : SKAnimatedSurfaceView
 		typeof(SKLottieView),
 		SKLottieRepeatMode.Restart);
 
+	public static readonly BindableProperty AnimationSpeedProperty = BindableProperty.Create(
+		nameof(AnimationSpeed),
+		typeof(double),
+		typeof(SKLottieView),
+		1.0);
+
 	Skottie.Animation? animation;
 	bool playForwards = true;
 	int repeatsCompleted = 0;
@@ -101,6 +107,12 @@ public class SKLottieView : SKAnimatedSurfaceView
 		set => SetValue(RepeatModeProperty, value);
 	}
 
+	public double AnimationSpeed
+	{
+		get => (double)GetValue(AnimationSpeedProperty);
+		set => SetValue(AnimationSpeedProperty, value);
+	}
+
 	public event EventHandler<SKLottieAnimationFailedEventArgs>? AnimationFailed;
 
 	public event EventHandler<SKLottieAnimationLoadedEventArgs>? AnimationLoaded;
@@ -114,6 +126,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 		// TODO: handle case where a repeat or revers cases the progress
 		//       to either wrap or start the next round
+
+		// Apply animation speed
+		deltaTime = TimeSpan.FromTicks((long)(deltaTime.Ticks * AnimationSpeed));
 
 		if (!playForwards)
 			deltaTime = -deltaTime;
