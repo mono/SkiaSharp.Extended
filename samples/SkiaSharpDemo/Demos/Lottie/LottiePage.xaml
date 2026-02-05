@@ -42,6 +42,16 @@
                 <Button Text="End" Command="{Binding EndCommand}" />
             </HorizontalStackLayout>
 
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                <Button Text="Frame 0" Command="{Binding SeekToFrameCommand}" CommandParameter="0" />
+                <Button Text="Frame 30" Command="{Binding SeekToFrameCommand}" CommandParameter="30" />
+                <Button Text="50%" Command="{Binding SeekToProgressCommand}" CommandParameter="0.5" />
+                <Button Text="Last Frame" Command="{Binding SeekToLastFrameCommand}" />
+            </HorizontalStackLayout>
+
+            <Label HorizontalOptions="Center"
+                   Text="{Binding CurrentFrameInfo}" />
+
         </VerticalStackLayout>
     </Grid>
 
