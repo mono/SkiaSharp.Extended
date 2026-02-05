@@ -216,4 +216,85 @@ public class SKLottieViewTest
 		else
 			Assert.Equal(0, animationCompleted);
 	}
+
+	[Fact]
+	public async Task DefaultAnimationSpeedIsOne()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// test
+		Assert.Equal(1.0, lottie.AnimationSpeed);
+	}
+
+	[Fact]
+	public async Task AnimationSpeedDoublesMakesItTwiceAsFast()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = 2.0 };
+		await lottie.LoadedTask;
+
+		// update with 1 second, but should progress 2 seconds
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+
+		// test
+		Assert.Equal(TimeSpan.FromSeconds(2), lottie.Progress);
+		Assert.False(lottie.IsComplete);
+	}
+
+	[Fact]
+	public async Task AnimationSpeedHalfMakesItTwiceAsSlow()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = 0.5 };
+		await lottie.LoadedTask;
+
+		// update with 1 second, but should progress 0.5 seconds
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+
+		// test
+		Assert.Equal(TimeSpan.FromSeconds(0.5), lottie.Progress);
+		Assert.False(lottie.IsComplete);
+	}
+
+	[Fact]
+	public async Task AnimationSpeedZeroStopsAnimation()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = 0 };
+		await lottie.LoadedTask;
+
+		// update with 1 second, but should not progress
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+
+		// test
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+		Assert.False(lottie.IsComplete);
+	}
+
+	[Fact]
+	public async Task AnimationSpeedCanBeChangedDynamically()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = 1.0 };
+		await lottie.LoadedTask;
+
+		// update with normal speed
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Progress);
+
+		// change speed to 2x
+		lottie.AnimationSpeed = 2.0;
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+
+		// test - should now be at 3 seconds (1 + 2)
+		Assert.Equal(TimeSpan.FromSeconds(3), lottie.Progress);
+		Assert.False(lottie.IsComplete);
+	}
 }
