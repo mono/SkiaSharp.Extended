@@ -98,27 +98,34 @@ public partial class LottiePage : ContentPage
 
 	private void OnSeekToFrame(string frameStr)
 	{
-		var frame = int.Parse(frameStr);
-		lottieView.SeekToFrame(frame, stopPlayback: true);
-		IsPlaying = false;
+		if (lottieView is not null && int.TryParse(frameStr, out var frame))
+		{
+			lottieView.SeekToFrame(frame, stopPlayback: true);
+			IsPlaying = false;
+		}
 	}
 
 	private void OnSeekToProgress(string progressStr)
 	{
-		var prog = double.Parse(progressStr);
-		lottieView.SeekToProgress(prog, stopPlayback: true);
-		IsPlaying = false;
+		if (lottieView is not null && double.TryParse(progressStr, out var prog))
+		{
+			lottieView.SeekToProgress(prog, stopPlayback: true);
+			IsPlaying = false;
+		}
 	}
 
 	private void OnSeekToLastFrame()
 	{
-		lottieView.SeekToFrame(lottieView.FrameCount - 1, stopPlayback: true);
-		IsPlaying = false;
+		if (lottieView?.FrameCount > 0)
+		{
+			lottieView.SeekToFrame(lottieView.FrameCount - 1, stopPlayback: true);
+			IsPlaying = false;
+		}
 	}
 
 	private void UpdateFrameInfo()
 	{
-		if (lottieView.FrameCount > 0)
+		if (lottieView?.FrameCount > 0)
 		{
 			CurrentFrameInfo = $"Frame: {lottieView.CurrentFrame} / {lottieView.FrameCount} ({lottieView.Fps:F1} fps)";
 		}

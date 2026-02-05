@@ -172,7 +172,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 			return;
 
 		// Clamp frame number to valid range
-		var frame = Math.Clamp(frameNumber, 0, Math.Max(0, FrameCount - 1));
+		var frame = Math.Clamp(frameNumber, 0, FrameCount - 1);
 		
 		// Convert frame to time
 		var timeInSeconds = frame / Fps;
