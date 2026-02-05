@@ -55,7 +55,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		1.0);
 
 	Skottie.Animation? animation;
-	bool playForwards = true;
+	bool isInForwardPhase = true;
 	int repeatsCompleted = 0;
 
 	public SKLottieView()
@@ -107,6 +107,12 @@ public class SKLottieView : SKAnimatedSurfaceView
 		set => SetValue(RepeatModeProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the animation playback speed multiplier.
+	/// Default is 1.0 (normal speed). Values greater than 1.0 speed up the animation,
+	/// values between 0 and 1.0 slow it down. Use 0 to pause the animation.
+	/// Negative values reverse the playback direction.
+	/// </summary>
 	public double AnimationSpeed
 	{
 		get => (double)GetValue(AnimationSpeedProperty);
@@ -127,10 +133,15 @@ public class SKLottieView : SKAnimatedSurfaceView
 		// TODO: handle case where a repeat or revers cases the progress
 		//       to either wrap or start the next round
 
-		// Apply animation speed
-		deltaTime = TimeSpan.FromTicks((long)(deltaTime.Ticks * AnimationSpeed));
+		// Apply animation speed with overflow protection
+		var scaledTicks = deltaTime.Ticks * AnimationSpeed;
+		if (scaledTicks > TimeSpan.MaxValue.Ticks)
+			scaledTicks = TimeSpan.MaxValue.Ticks;
+		else if (scaledTicks < TimeSpan.MinValue.Ticks)
+			scaledTicks = TimeSpan.MinValue.Ticks;
+		deltaTime = TimeSpan.FromTicks((long)scaledTicks);
 
-		if (!playForwards)
+		if (!isInForwardPhase)
 			deltaTime = -deltaTime;
 
 		var newProgress = Progress + deltaTime;
@@ -151,7 +162,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 #if DEBUG
 		WriteDebugStatus($"Repeats: {repeatsCompleted}/{RepeatCount}");
-		WriteDebugStatus($"Forward: {playForwards} ({RepeatMode})");
+		WriteDebugStatus($"Forward: {isInForwardPhase} ({RepeatMode})");
 #endif
 	}
 
@@ -169,8 +180,8 @@ public class SKLottieView : SKAnimatedSurfaceView
 		var duration = Duration;
 
 		// have we reached the end of this run
-		var atStart = !playForwards && progress <= TimeSpan.Zero;
-		var atEnd = playForwards && progress >= duration;
+		var atStart = !isInForwardPhase && progress <= TimeSpan.Zero;
+		var atEnd = isInForwardPhase && progress >= duration;
 		var isFinishedRun = repeatMode == SKLottieRepeatMode.Restart ? atEnd : atStart;
 
 		// maybe the direction changed
@@ -181,7 +192,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		if (needsFlip)
 		{
 			// we need to reverse to finish the run
-			playForwards = !playForwards;
+			isInForwardPhase = !isInForwardPhase;
 
 			IsComplete = false;
 		}
@@ -208,7 +219,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 				if (repeatMode == SKLottieRepeatMode.Restart)
 					Progress = TimeSpan.Zero;
 				else if (repeatMode == SKLottieRepeatMode.Reverse)
-					playForwards = !playForwards;
+					isInForwardPhase = !isInForwardPhase;
 			}
 
 			IsComplete =
@@ -261,7 +272,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 		void Reset()
 		{
-			playForwards = true;
+			isInForwardPhase = true;
 			repeatsCompleted = 0;
 
 			Progress = TimeSpan.Zero;
