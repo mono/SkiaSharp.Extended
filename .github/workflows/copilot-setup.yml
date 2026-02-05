@@ -4,9 +4,15 @@ on:
   workflow_dispatch:
   # This workflow can be triggered manually to set up the development environment
 
+# Limit the permissions of the GITHUB_TOKEN
+permissions:
+  contents: read
+
 jobs:
   setup-dotnet-maui:
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     
     strategy:
       matrix:
@@ -53,6 +59,8 @@ jobs:
   verify-environment:
     runs-on: ubuntu-latest
     needs: setup-dotnet-maui
+    permissions:
+      contents: read
     
     steps:
     - name: Checkout repository

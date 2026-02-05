@@ -308,8 +308,10 @@ public partial class SKGestureSurfaceView : SKDynamicSurfaceView
 		if (points.Length == 0)
 		{
 			// Check to see if it was a fling
+			// Use squared magnitude for proper velocity comparison (handles opposite sign velocities correctly)
 			var velocity = flingTracker.CalculateVelocity(e.Id, ticks);
-			if (Math.Abs(velocity.X * velocity.Y) > (FlingVelocityThreshold * FlingVelocityThreshold))
+			var velocityMagnitudeSquared = velocity.X * velocity.X + velocity.Y * velocity.Y;
+			if (velocityMagnitudeSquared > (FlingVelocityThreshold * FlingVelocityThreshold))
 			{
 				var args = new SKFlingDetectedEventArgs(velocity.X, velocity.Y);
 				OnFlingDetected(args);
@@ -323,11 +325,12 @@ public partial class SKGestureSurfaceView : SKDynamicSurfaceView
 			if (isAround && touchDuration < (e.DeviceType == SKTouchDeviceType.Mouse ? ShortClickTicks : LongTapTicks))
 			{
 				// Add a timer to detect the type of tap (single or multi)
+				// The timer callback dispatches to UI thread for thread safety
 				var tapLocation = location;
 				var currentTapCount = tapCount;
 
 				multiTapTimer = new Timer(
-					_ => DispatchTapHandler(tapLocation, currentTapCount, ref handled),
+					_ => DispatchTapHandler(tapLocation, currentTapCount),
 					null,
 					DelayTapMilliseconds,
 					Timeout.Infinite);
@@ -377,41 +380,36 @@ public partial class SKGestureSurfaceView : SKDynamicSurfaceView
 		return handled;
 	}
 
-	private void DispatchTapHandler(SKPoint location, int currentTapCount, ref bool handled)
+	private void DispatchTapHandler(SKPoint location, int currentTapCount)
 	{
-		// Dispatch to UI thread
+		// Dispatch to UI thread for thread safety
 		var currentDispatcher = dispatcher;
 		if (currentDispatcher is null)
 		{
-			HandleTap(location, currentTapCount, ref handled);
+			HandleTap(location, currentTapCount);
 			return;
 		}
 
-		var localHandled = handled;
 		currentDispatcher.Dispatch(() =>
 		{
-			HandleTap(location, currentTapCount, ref localHandled);
+			HandleTap(location, currentTapCount);
 		});
 	}
 
-	private void HandleTap(SKPoint location, int currentTapCount, ref bool handled)
+	private void HandleTap(SKPoint location, int currentTapCount)
 	{
-		if (!handled)
+		if (currentTapCount > 1)
 		{
-			if (currentTapCount > 1)
-			{
-				var args = new SKTapDetectedEventArgs(location, currentTapCount);
-				OnDoubleTapDetected(args);
-				handled = args.Handled;
-			}
-			else
-			{
-				var args = new SKTapDetectedEventArgs(location);
-				OnSingleTapDetected(args);
-				handled = args.Handled;
-			}
+			var args = new SKTapDetectedEventArgs(location, currentTapCount);
+			OnDoubleTapDetected(args);
+		}
+		else
+		{
+			var args = new SKTapDetectedEventArgs(location);
+			OnSingleTapDetected(args);
 		}
 
+		// Reset tap count for next gesture (thread-safe since we're on UI thread)
 		tapCount = 1;
 		multiTapTimer?.Dispose();
 		multiTapTimer = null;
