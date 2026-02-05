@@ -294,6 +294,63 @@ When documenting external technologies:
 5. What problem does it solve?
 6. Are there alternatives? (mention if relevant)
 
+## Testing Doc Code Snippets
+
+**Always test code snippets before including in docs.**
+
+### Create a Test Project
+For each doc page, create a minimal test project in `/tmp/`:
+
+```bash
+mkdir -p /tmp/docs-code-test
+cd /tmp/docs-code-test
+```
+
+Create .csproj:
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="/path/to/source/SkiaSharp.Extended/SkiaSharp.Extended.csproj" />
+  </ItemGroup>
+</Project>
+```
+
+### Test All Code Snippets
+Create Program.cs that exercises all code from the doc page:
+
+```csharp
+// Test all code snippets from [Feature] docs
+using SkiaSharp;
+using SkiaSharp.Extended;
+
+Console.WriteLine("Testing [Feature] doc code snippets...\n");
+
+// === Quick Start: Encode ===
+Console.WriteLine("1. Quick Start - Encode:");
+// Copy code from docs here
+// Verify it compiles and runs
+
+// === Quick Start: Decode ===
+Console.WriteLine("2. Quick Start - Decode:");
+// Copy code from docs here
+
+Console.WriteLine("\n✅ All code snippets compile and run correctly!");
+```
+
+Run the test:
+```bash
+dotnet run
+```
+
+### For MAUI Code
+Test in a separate MAUI project (see MAUI Integration Examples section).
+
 ## Quality Checklist
 
 Before finalizing a doc page:
@@ -304,5 +361,6 @@ Before finalizing a doc page:
 - [ ] Customization options explained
 - [ ] MAUI integration example (if applicable)
 - [ ] Learn More links (official resources + API reference)
+- [ ] **All code snippets tested in /tmp/ project**
 - [ ] Build docs and verify no warnings
 - [ ] Check rendered page in browser
