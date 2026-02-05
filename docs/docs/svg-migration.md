@@ -95,9 +95,9 @@ SkiaSharp.SKMatrix SkiaSharp.SKMatrix.MakeTranslation(single,single)
 If you're experiencing package conflicts, ensure all SkiaSharp-related packages are aligned to compatible versions:
 
 ```xml
-<PackageReference Include="SkiaSharp" Version="3.x.x" />
-<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.x.x" />
-<PackageReference Include="Svg.Skia" Version="2.x.x" />
+<PackageReference Include="SkiaSharp" Version="3.119.0" />
+<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
+<PackageReference Include="Svg.Skia" Version="3.4.1" />
 ```
 
 ## Example: Complete Migration

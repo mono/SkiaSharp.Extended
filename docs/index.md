@@ -1,11 +1,5 @@
 # SkiaSharp.Extended
 
-## ⚠️ Important Notice for SVG Users
-
-**SkiaSharp.Extended.Svg has been deprecated**. If you're using `SkiaSharp.Extended.Svg` and encountering errors with .NET 9 or recent SkiaSharp versions (such as `MissingMethodException: Method not found: SKMatrix.MakeTranslation`), please see the [SVG Migration Guide](docs/svg-migration.md) for instructions on migrating to [Svg.Skia](https://github.com/wieslawsoltes/Svg.Skia).
-
----
-
 ## SkiaSharp.Extended
 
 **SkiaSharp.Extended** is a collection some cool libraries.
