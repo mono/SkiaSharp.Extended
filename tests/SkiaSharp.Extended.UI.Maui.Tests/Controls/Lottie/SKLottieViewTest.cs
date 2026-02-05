@@ -150,7 +150,7 @@ public class SKLottieViewTest
 	[Fact]
 	public async Task AnimationFailedContainsException()
 	{
-		// create
+		// create - empty source will fail to load
 		var source = new SKFileLottieImageSource();
 		var lottie = new SKLottieView { Source = source };
 		
@@ -166,7 +166,8 @@ public class SKLottieViewTest
 		// wait for animation to fail
 		var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(2000));
 		
-		// test - verify the failure event was triggered
+		// test - verify the failure event was triggered with proper event args
+		// Note: Exception property may be null if animation returns null without throwing
 		Assert.Equal(tcs.Task, completedTask);
 		Assert.NotNull(failedEventArgs);
 		Assert.IsType<SKLottieAnimationFailedEventArgs>(failedEventArgs);
