@@ -127,7 +127,7 @@ Or create your own in Adobe After Effects using the [Bodymovin plugin](https://g
 
 You can customize the rendering surface by overriding the control template:
 
-```xaml
+```xml
 <skia:SKLottieView Source="animation.json">
     <skia:SKLottieView.ControlTemplate>
         <ControlTemplate>
