@@ -202,7 +202,7 @@ public class SKInkStroke
 			path.LineTo(rightPoints[i]);
 		}
 
-		// Add rounded start cap
+		// Add rounded start cap (direction is reversed since we're drawing back to start)
 		var startRadius = GetStrokeWidth(smoothedPoints[0].Pressure) / 2f;
 		var startCenter = smoothedPoints[0].Point;
 		var startTangent = Normalize(smoothedPoints[0].Point - smoothedPoints[1].Point);

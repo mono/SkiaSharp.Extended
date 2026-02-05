@@ -407,7 +407,7 @@ public class SKSignaturePadView : SKSurfaceView
 	/// </summary>
 	private void OnCanvasTouch(object? sender, SKTouchEventArgs e)
 	{
-		var scale = (float)(canvasView?.CanvasSize.Width / Width ?? 1);
+		var scale = Width > 0 ? (float)(canvasView?.CanvasSize.Width / Width ?? 1) : 1f;
 		var location = new SKPoint(e.Location.X / scale, e.Location.Y / scale);
 		var pressure = e.Pressure;
 
