@@ -83,6 +83,10 @@ public partial class LottiePage : ContentPage
 		{
 			lottieView.SeekToFrame(frameNumber);
 		}
+		else
+		{
+			Debug.WriteLine($"Invalid frame number: {frame}");
+		}
 	}
 
 	private void OnAnimationFailed(object sender, SKLottieAnimationFailedEventArgs e)

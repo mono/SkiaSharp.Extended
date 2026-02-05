@@ -80,22 +80,58 @@ lottieView.IsAnimationEnabled = true;
 For creating a switch using a Lottie animation (as mentioned in the feature request):
 
 ```csharp
+private bool isOn = false;
+
 private void OnSwitchToggled(object sender, EventArgs e)
 {
     if (isOn)
     {
-        // Play from start to middle frame (switch OFF)
-        lottieView.SeekToFrameAndPlay(0);
+        // Go to "off" state (e.g., first frame)
+        lottieView.SeekToFrameAndStop(0);
     }
     else
     {
-        // Play from middle to end frame (switch ON)
-        lottieView.SeekToFrameAndPlay(lottieView.FrameCount / 2);
+        // Go to "on" state (e.g., last frame)
+        lottieView.SeekToFrameAndStop(lottieView.FrameCount - 1);
     }
     
     isOn = !isOn;
 }
 ```
+
+For animated transitions between states:
+
+```csharp
+private bool isOn = false;
+
+private async void OnSwitchToggled(object sender, EventArgs e)
+{
+    if (isOn)
+    {
+        // Animate from current position to "off" state
+        lottieView.RepeatCount = 0;  // Play once
+        lottieView.SeekToFrameAndPlay(lottieView.FrameCount / 2);
+        
+        // Wait for animation to complete
+        await Task.Delay(lottieView.Duration / 2);
+        lottieView.IsAnimationEnabled = false;
+    }
+    else
+    {
+        // Animate from current position to "on" state  
+        lottieView.RepeatCount = 0;  // Play once
+        lottieView.SeekToFrameAndPlay(0);
+        
+        // Wait for animation to complete
+        await Task.Delay(lottieView.Duration / 2);
+        lottieView.IsAnimationEnabled = false;
+    }
+    
+    isOn = !isOn;
+}
+```
+
+**Note**: The animation should be designed with the switch states at specific frames (e.g., frame 0 for "off", last frame for "on").
 
 ## Parts
 
