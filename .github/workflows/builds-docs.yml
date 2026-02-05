@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Install MAUI workload
-      run: dotnet workload install maui
+      run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
 
     - name: Restore .NET tools
       run: dotnet tool restore
