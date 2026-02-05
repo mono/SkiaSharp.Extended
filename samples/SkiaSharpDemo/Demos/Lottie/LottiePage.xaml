@@ -34,12 +34,30 @@
                        Text="{Binding Duration, StringFormat='{}{0:mm\\:ss\\.fff}'}" />
             </Grid>
 
+            <!-- Frame-based controls -->
+            <Grid ColumnDefinitions="*,*" Margin="0,6,0,0">
+                <Label Grid.Column="0"
+                       Text="{Binding CurrentFrame, Source={Reference lottieView}, StringFormat='Frame: {0}'}"
+                       HorizontalOptions="Start" />
+                <Label Grid.Column="1"
+                       Text="{Binding FrameCount, Source={Reference lottieView}, StringFormat='Total: {0}'}"
+                       HorizontalOptions="End" />
+            </Grid>
+
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
                 <Button Text="Reset" Command="{Binding ResetCommand}" />
                 <Button Text="-100ms" Command="{Binding StepCommand}" CommandParameter="-100" />
                 <Button Text="Play/Pause" Command="{Binding PlayPauseCommand}" />
                 <Button Text="+100ms" Command="{Binding StepCommand}" CommandParameter="100" />
                 <Button Text="End" Command="{Binding EndCommand}" />
+            </HorizontalStackLayout>
+
+            <!-- Frame-based seeking buttons -->
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="6" Margin="0,6,0,0">
+                <Button Text="Frame 0" Command="{Binding SeekFrameCommand}" CommandParameter="0" />
+                <Button Text="Frame 30" Command="{Binding SeekFrameCommand}" CommandParameter="30" />
+                <Button Text="Frame 60" Command="{Binding SeekFrameCommand}" CommandParameter="60" />
+                <Button Text="Frame 90" Command="{Binding SeekFrameCommand}" CommandParameter="90" />
             </HorizontalStackLayout>
 
         </VerticalStackLayout>

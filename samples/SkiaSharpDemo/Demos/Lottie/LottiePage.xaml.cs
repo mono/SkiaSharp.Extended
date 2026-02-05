@@ -18,6 +18,7 @@ public partial class LottiePage : ContentPage
 		StepCommand = new Command<string>(OnStep);
 		EndCommand = new Command(OnEnd);
 		PlayPauseCommand = new Command(OnPlayPause);
+		SeekFrameCommand = new Command<string>(OnSeekFrame);
 
 		IsPlaying = true;
 
@@ -62,6 +63,8 @@ public partial class LottiePage : ContentPage
 
 	public ICommand EndCommand { get; }
 
+	public ICommand SeekFrameCommand { get; }
+
 	private void OnReset() =>
 		Progress = TimeSpan.Zero;
 
@@ -73,6 +76,18 @@ public partial class LottiePage : ContentPage
 
 	private void OnPlayPause() =>
 		IsPlaying = !IsPlaying;
+
+	private void OnSeekFrame(string frame)
+	{
+		if (int.TryParse(frame, out var frameNumber))
+		{
+			lottieView.SeekToFrame(frameNumber);
+		}
+		else
+		{
+			Debug.WriteLine($"Invalid frame number: {frame}");
+		}
+	}
 
 	private void OnAnimationFailed(object sender, SKLottieAnimationFailedEventArgs e)
 	{

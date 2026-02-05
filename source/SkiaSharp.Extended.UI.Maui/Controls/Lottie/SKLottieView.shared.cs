@@ -101,11 +101,86 @@ public class SKLottieView : SKAnimatedSurfaceView
 		set => SetValue(RepeatModeProperty, value);
 	}
 
+	/// <summary>
+	/// Gets the total number of frames in the animation.
+	/// Returns 0 if no animation is loaded.
+	/// </summary>
+	public int FrameCount
+	{
+		get
+		{
+			if (animation is null)
+				return 0;
+
+			return (int)Math.Round(Duration.TotalSeconds * animation.Fps);
+		}
+	}
+
+	/// <summary>
+	/// Gets the current frame of the animation based on the current progress.
+	/// Returns 0 if no animation is loaded.
+	/// </summary>
+	public int CurrentFrame
+	{
+		get
+		{
+			if (animation is null)
+				return 0;
+
+			return (int)Math.Round(Progress.TotalSeconds * animation.Fps);
+		}
+	}
+
 	public event EventHandler<SKLottieAnimationFailedEventArgs>? AnimationFailed;
 
 	public event EventHandler<SKLottieAnimationLoadedEventArgs>? AnimationLoaded;
 
 	public event EventHandler? AnimationCompleted;
+
+	/// <summary>
+	/// Seeks the animation to a specific frame.
+	/// The animation will continue playing from this frame if IsAnimationEnabled is true.
+	/// </summary>
+	/// <param name="frameNumber">The frame number to seek to (0-based).</param>
+	public void SeekToFrame(int frameNumber)
+	{
+		if (animation is null)
+			return;
+
+		// Clamp frame number to valid range (0 to FrameCount - 1)
+		if (frameNumber < 0)
+			frameNumber = 0;
+
+		var maxFrame = FrameCount - 1;
+		if (frameNumber > maxFrame)
+			frameNumber = maxFrame;
+
+		// Convert frame to time
+		var seconds = frameNumber / animation.Fps;
+		Progress = TimeSpan.FromSeconds(seconds);
+	}
+
+	/// <summary>
+	/// Seeks the animation to a specific frame and stops playback.
+	/// This is equivalent to Lottie's goToAndStop method.
+	/// </summary>
+	/// <param name="frameNumber">The frame number to seek to (0-based).</param>
+	public void SeekToFrameAndStop(int frameNumber)
+	{
+		SeekToFrame(frameNumber);
+		IsAnimationEnabled = false;
+	}
+
+	/// <summary>
+	/// Seeks the animation to a specific frame and starts playback.
+	/// This is equivalent to Lottie's goToAndPlay method.
+	/// </summary>
+	/// <param name="frameNumber">The frame number to seek to (0-based).</param>
+	public void SeekToFrameAndPlay(int frameNumber)
+	{
+		SeekToFrame(frameNumber);
+		IsAnimationEnabled = true;
+	}
 
 	protected override void Update(TimeSpan deltaTime)
 	{
