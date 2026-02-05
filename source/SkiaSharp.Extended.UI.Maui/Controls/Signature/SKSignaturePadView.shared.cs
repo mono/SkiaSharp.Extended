@@ -7,7 +7,7 @@ namespace SkiaSharp.Extended.UI.Controls;
 /// Supports stylus/pen pressure for variable stroke width (harder pressure = thicker lines).
 /// Uses quadratic Bezier curves to smooth jagged input from finger or pen movement.
 /// </summary>
-public class SKSignaturePadView : SKSurfaceView
+public class SKSignaturePadView : SKSurfaceView, IDisposable
 {
 	/// <summary>
 	/// Bindable property for the stroke color.
@@ -105,6 +105,9 @@ public class SKSignaturePadView : SKSurfaceView
 	private SKColor skStrokeColor = SKColors.Black;
 	private SKColor skBackgroundColor = SKColors.White;
 	private SKCanvasView? canvasView;
+	private SKGLView? glView;
+	private long? activeTouchId;
+	private bool isDisposed;
 
 	/// <summary>
 	/// Creates a new signature pad view.
@@ -369,7 +372,20 @@ public class SKSignaturePadView : SKSurfaceView
 	{
 		base.OnApplyTemplate();
 
-		// Get access to the underlying canvas view to enable touch events
+		// Unsubscribe from previous views to prevent event handler accumulation
+		if (canvasView is not null)
+		{
+			canvasView.Touch -= OnCanvasTouch;
+			canvasView = null;
+		}
+
+		if (glView is not null)
+		{
+			glView.Touch -= OnGLViewTouch;
+			glView = null;
+		}
+
+		// Get access to the underlying drawing surface to enable touch events
 		var templateChild = GetTemplateChild("PART_DrawingSurface");
 
 		if (templateChild is SKCanvasView view)
@@ -377,6 +393,12 @@ public class SKSignaturePadView : SKSurfaceView
 			canvasView = view;
 			canvasView.EnableTouchEvents = true;
 			canvasView.Touch += OnCanvasTouch;
+		}
+		else if (templateChild is SKGLView gl)
+		{
+			glView = gl;
+			glView.EnableTouchEvents = true;
+			glView.Touch += OnGLViewTouch;
 		}
 	}
 
@@ -403,22 +425,54 @@ public class SKSignaturePadView : SKSurfaceView
 	}
 
 	/// <summary>
-	/// Handles touch events on the canvas.
+	/// Handles touch events on the canvas view.
 	/// </summary>
 	private void OnCanvasTouch(object? sender, SKTouchEventArgs e)
 	{
 		var scale = Width > 0 ? (float)(canvasView?.CanvasSize.Width / Width ?? 1) : 1f;
+		HandleTouchEvent(e, scale);
+	}
+
+	/// <summary>
+	/// Handles touch events on the GL view.
+	/// </summary>
+	private void OnGLViewTouch(object? sender, SKTouchEventArgs e)
+	{
+		var scale = Width > 0 ? (float)(glView?.CanvasSize.Width / Width ?? 1) : 1f;
+		HandleTouchEvent(e, scale);
+	}
+
+	/// <summary>
+	/// Common touch event handling logic.
+	/// </summary>
+	private void HandleTouchEvent(SKTouchEventArgs e, float scale)
+	{
 		var location = new SKPoint(e.Location.X / scale, e.Location.Y / scale);
 		var pressure = e.Pressure;
+		var touchId = e.Id;
 
 		switch (e.ActionType)
 		{
 			case SKTouchAction.Pressed:
+				// Only accept the first touch - reject multi-touch
+				if (activeTouchId.HasValue)
+				{
+					// Already have an active touch, ignore this one but mark as handled
+					e.Handled = true;
+					return;
+				}
+				activeTouchId = touchId;
 				StartStroke(location, pressure);
 				e.Handled = true;
 				break;
 
 			case SKTouchAction.Moved:
+				// Only process if this is our active touch
+				if (activeTouchId != touchId)
+				{
+					e.Handled = true;
+					return;
+				}
 				if (e.InContact)
 				{
 					ContinueStroke(location, pressure);
@@ -427,11 +481,25 @@ public class SKSignaturePadView : SKSurfaceView
 				break;
 
 			case SKTouchAction.Released:
+				// Only process if this is our active touch
+				if (activeTouchId != touchId)
+				{
+					e.Handled = true;
+					return;
+				}
+				activeTouchId = null;
 				EndStroke(location, pressure);
 				e.Handled = true;
 				break;
 
 			case SKTouchAction.Cancelled:
+				// Only process if this is our active touch
+				if (activeTouchId != touchId)
+				{
+					e.Handled = true;
+					return;
+				}
+				activeTouchId = null;
 				CancelStroke();
 				e.Handled = true;
 				break;
@@ -523,5 +591,56 @@ public class SKSignaturePadView : SKSurfaceView
 				(byte)(color.Alpha * 255));
 			view.Invalidate();
 		}
+	}
+
+	/// <summary>
+	/// Releases all resources used by this control.
+	/// </summary>
+	public void Dispose()
+	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+
+	/// <summary>
+	/// Releases the unmanaged resources used by the control and optionally releases the managed resources.
+	/// </summary>
+	/// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+	protected virtual void Dispose(bool disposing)
+	{
+		if (isDisposed)
+			return;
+
+		if (disposing)
+		{
+			// Unsubscribe from touch events
+			if (canvasView is not null)
+			{
+				canvasView.Touch -= OnCanvasTouch;
+				canvasView = null;
+			}
+
+			if (glView is not null)
+			{
+				glView.Touch -= OnGLViewTouch;
+				glView = null;
+			}
+
+			// Dispose all strokes
+			foreach (var stroke in strokes)
+			{
+				stroke.Dispose();
+			}
+			strokes.Clear();
+
+			// Dispose current stroke
+			currentStroke?.Dispose();
+			currentStroke = null;
+
+			// Dispose paint
+			strokePaint.Dispose();
+		}
+
+		isDisposed = true;
 	}
 }

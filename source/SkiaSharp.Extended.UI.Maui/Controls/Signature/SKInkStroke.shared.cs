@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.UI.Controls;
 /// Uses quadratic Bezier curves for smooth path interpolation and renders
 /// variable-width strokes as filled polygons based on pressure data.
 /// </summary>
-public class SKInkStroke
+public class SKInkStroke : IDisposable
 {
 	// Implementation adapted from @colinta on StackOverflow: https://stackoverflow.com/a/35229104
 	// Enhanced with pressure sensitivity for fluid ink rendering
