@@ -20,9 +20,6 @@ dotnet test tests/SkiaSharp.Extended.Tests --filter "FullyQualifiedName~CanEncod
 
 # Build specific project (useful for MAUI on Linux - only Android supported)
 dotnet build source/SkiaSharp.Extended.UI.Maui/SkiaSharp.Extended.UI.Maui.csproj -f net9.0-android35.0
-
-# If NuGet restore fails with Azure DevOps feed errors, use public source:
-dotnet restore --source https://api.nuget.org/v3/index.json
 ```
 
 ## Architecture
