@@ -10,6 +10,10 @@ interesting projects:
  - [SkiaSharp.Extended][extended] _(additional APIs)_
  - [SkiaSharp.Extended.UI.Maui][ui-maui] _(additional .NET MAUI controls)_
 
+## ⚠️ Important Notice for SVG Users
+
+**SkiaSharp.Extended.Svg has been deprecated**. If you're using `SkiaSharp.Extended.Svg` and encountering errors like `MissingMethodException: Method not found: SKMatrix.MakeTranslation`, please see our [SVG Migration Guide](https://mono.github.io/SkiaSharp.Extended/docs/svg-migration.html) for instructions on migrating to [Svg.Skia](https://github.com/wieslawsoltes/Svg.Skia).
+
 ## Building
 
 To build the projects and samples, just open `SkiaSharp.Extended.sln` 
