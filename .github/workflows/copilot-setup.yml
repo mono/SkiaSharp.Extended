@@ -1,0 +1,84 @@
+name: Copilot Setup
+
+on:
+  workflow_dispatch:
+  # This workflow can be triggered manually to set up the development environment
+
+# Limit the permissions of the GITHUB_TOKEN
+permissions:
+  contents: read
+
+jobs:
+  setup-dotnet-maui:
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            workload: maui-android
+          - os: windows-latest
+            workload: maui
+          - os: macos-latest
+            workload: maui
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          9.0.x
+        dotnet-quality: 'ga'
+    
+    - name: Display .NET version
+      run: dotnet --version
+    
+    - name: Install MAUI workload
+      run: dotnet workload install ${{ matrix.workload }} --source https://api.nuget.org/v3/index.json
+    
+    - name: List installed workloads
+      run: dotnet workload list
+    
+    - name: Restore dependencies
+      run: dotnet restore source/SkiaSharp.Extended.UI.Maui/SkiaSharp.Extended.UI.Maui.csproj --source https://api.nuget.org/v3/index.json
+    
+    - name: Build library (Android)
+      if: matrix.os == 'ubuntu-latest'
+      run: dotnet build source/SkiaSharp.Extended.UI.Maui/SkiaSharp.Extended.UI.Maui.csproj -f net9.0-android35.0 --no-restore
+    
+    - name: Build library (all platforms)
+      if: matrix.os != 'ubuntu-latest'
+      run: dotnet build source/SkiaSharp.Extended.UI.Maui/SkiaSharp.Extended.UI.Maui.csproj --no-restore
+
+  verify-environment:
+    runs-on: ubuntu-latest
+    needs: setup-dotnet-maui
+    permissions:
+      contents: read
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Install Android workload
+      run: dotnet workload install maui-android --source https://api.nuget.org/v3/index.json
+    
+    - name: Verify build
+      run: |
+        dotnet restore --source https://api.nuget.org/v3/index.json
+        dotnet build source/SkiaSharp.Extended/SkiaSharp.Extended.csproj -c Release
+    
+    - name: Run tests
+      run: dotnet test tests/SkiaSharp.Extended.Tests/SkiaSharp.Extended.Tests.csproj --no-restore
+      continue-on-error: true
