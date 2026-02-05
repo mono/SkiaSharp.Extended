@@ -17,6 +17,16 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 		Loaded += OnLoaded;
 	}
 
+	protected override void OnPropertyChanged(string? propertyName = null)
+	{
+		base.OnPropertyChanged(propertyName);
+
+		if (propertyName == nameof(Window))
+		{
+			UpdateIsAnimationEnabled();
+		}
+	}
+
 	/// <summary>
 	/// Gets or sets a value indicating whether this control will play the animation provided.
 	/// </summary>
@@ -66,6 +76,9 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 	private void UpdateIsAnimationEnabled()
 	{
 		if (!this.IsLoadedEx())
+			return;
+
+		if (Window is null)
 			return;
 
 		frameCounter.Reset();
