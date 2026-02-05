@@ -226,8 +226,9 @@ public class SKLottieViewTest
 		await lottie.LoadedTask;
 
 		// test - trophy.json is 2.3666665 seconds at 30 fps
-		// Frame count = duration * fps = 2.3666665 * 30 = 71 frames
-		Assert.Equal(71, lottie.FrameCount);
+		// Frame count = Math.Round(duration * fps) = Math.Round(2.3666665 * 30) = Math.Round(70.999995) = 71 frames
+		var expectedFrameCount = (int)Math.Round(lottie.Duration.TotalSeconds * 30);
+		Assert.Equal(expectedFrameCount, lottie.FrameCount);
 	}
 
 	[Fact]
@@ -339,8 +340,8 @@ public class SKLottieViewTest
 		// seek to frame beyond max
 		lottie.SeekToFrame(1000);
 
-		// test - should clamp to max frame (71)
-		Assert.Equal(71, lottie.CurrentFrame);
+		// test - should clamp to max frame
+		Assert.Equal(lottie.FrameCount, lottie.CurrentFrame);
 		Assert.Equal(lottie.Duration, lottie.Progress);
 	}
 

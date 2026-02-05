@@ -79,8 +79,10 @@ public partial class LottiePage : ContentPage
 
 	private void OnSeekFrame(string frame)
 	{
-		var frameNumber = int.Parse(frame);
-		lottieView.SeekToFrame(frameNumber);
+		if (int.TryParse(frame, out var frameNumber))
+		{
+			lottieView.SeekToFrame(frameNumber);
+		}
 	}
 
 	private void OnAnimationFailed(object sender, SKLottieAnimationFailedEventArgs e)

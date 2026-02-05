@@ -112,7 +112,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 			if (animation is null)
 				return 0;
 
-			return (int)(Duration.TotalSeconds * animation.Fps);
+			return (int)Math.Round(Duration.TotalSeconds * animation.Fps);
 		}
 	}
 
@@ -127,7 +127,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 			if (animation is null)
 				return 0;
 
-			return (int)(Progress.TotalSeconds * animation.Fps);
+			return (int)Math.Round(Progress.TotalSeconds * animation.Fps);
 		}
 	}
 
