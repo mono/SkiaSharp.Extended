@@ -1,0 +1,266 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Migrating from SkiaSharp.Extended.Svg to Svg.Skia | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Migrating from SkiaSharp.Extended.Svg to Svg.Skia | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/main/docs/docs/svg-migration.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="migrating-from-skiasharpextendedsvg-to-svgskia">Migrating from SkiaSharp.Extended.Svg to Svg.Skia</h1>
+
+<h2 id="overview">Overview</h2>
+<p><code>SkiaSharp.Extended.Svg</code> has been deprecated and is no longer maintained. Due to breaking changes in SkiaSharp (specifically the removal of <code>SKMatrix.MakeTranslation</code> method), the old library is incompatible with .NET 9 and recent versions of SkiaSharp.</p>
+<p><strong>The recommended migration path is to use the <a href="https://github.com/wieslawsoltes/Svg.Skia">Svg.Skia</a> library</strong>, which is actively maintained and fully compatible with modern SkiaSharp versions.</p>
+<h2 id="why-migrate">Why Migrate?</h2>
+<ul>
+<li>⚠️ <code>SkiaSharp.Extended.Svg</code> is <strong>no longer maintained</strong></li>
+<li>❌ Incompatible with .NET 9 and recent SkiaSharp versions</li>
+<li>🚫 Causes runtime errors: <code>MissingMethodException: Method not found: SkiaSharp.SKMatrix.MakeTranslation</code></li>
+<li>✅ <code>Svg.Skia</code> is actively maintained with regular updates</li>
+<li>✅ Full SVG specification support</li>
+<li>✅ Compatible with latest SkiaSharp releases</li>
+</ul>
+<h2 id="migration-steps">Migration Steps</h2>
+<h3 id="1-update-nuget-packages">1. Update NuGet Packages</h3>
+<p>Remove the old package and install Svg.Skia:</p>
+<pre><code class="lang-bash"># Remove the old package
+dotnet remove package SkiaSharp.Extended.Svg
+
+# Add Svg.Skia
+dotnet add package Svg.Skia
+</code></pre>
+<h3 id="2-update-using-statements">2. Update Using Statements</h3>
+<p>Replace the old namespace with the new one:</p>
+<pre><code class="lang-csharp">// OLD - Remove this
+using SkiaSharp.Extended.Svg;
+
+// NEW - Add this
+using Svg.Skia;
+</code></pre>
+<h3 id="3-update-code-usage">3. Update Code Usage</h3>
+<p>The good news is that <code>Svg.Skia</code> provides a very similar API, so most code will work with minimal changes:</p>
+<h4 id="loading-svg-from-stream">Loading SVG from Stream</h4>
+<pre><code class="lang-csharp">// Both old and new code look the same!
+var svg = new SKSvg();
+
+using (var stream = GetType().Assembly.GetManifestResourceStream(resourceId))
+{
+    if (stream != null)
+    {
+        svg.Load(stream);
+    }
+}
+</code></pre>
+<h4 id="drawing-svg-on-canvas">Drawing SVG on Canvas</h4>
+<pre><code class="lang-csharp">// Drawing the SVG picture
+if (svg?.Picture != null)
+{
+    canvas.Clear(SKColors.White);
+    
+    // Calculate scaling to fit canvas
+    var canvasMin = Math.Min(width, height);
+    var svgMax = Math.Max(svg.Picture.CullRect.Width, svg.Picture.CullRect.Height);
+    var scale = canvasMin / svgMax;
+    var matrix = SKMatrix.CreateScale(scale, scale);
+    
+    canvas.DrawPicture(svg.Picture, matrix);
+}
+</code></pre>
+<h2 id="common-issues-and-solutions">Common Issues and Solutions</h2>
+<h3 id="issue-missingmethodexception-for-maketranslation">Issue: MissingMethodException for MakeTranslation</h3>
+<p><strong>Error:</strong></p>
+<pre><code>System.MissingMethodException: Method not found: 
+SkiaSharp.SKMatrix SkiaSharp.SKMatrix.MakeTranslation(single,single)
+</code></pre>
+<p><strong>Solution:</strong> This error occurs when using <code>SkiaSharp.Extended.Svg</code> with modern SkiaSharp versions. Migrate to <code>Svg.Skia</code> as described above.</p>
+<h3 id="issue-package-version-conflicts">Issue: Package Version Conflicts</h3>
+<p>If you're experiencing package conflicts, ensure all SkiaSharp-related packages are aligned to compatible versions:</p>
+<pre><code class="lang-xml">&lt;PackageReference Include=&quot;SkiaSharp&quot; Version=&quot;3.119.0&quot; /&gt;
+&lt;PackageReference Include=&quot;SkiaSharp.Views.Maui.Controls&quot; Version=&quot;3.119.0&quot; /&gt;
+&lt;PackageReference Include=&quot;Svg.Skia&quot; Version=&quot;3.4.1&quot; /&gt;
+</code></pre>
+<h2 id="example-complete-migration">Example: Complete Migration</h2>
+<h3 id="before-skiasharpextendedsvg">Before (SkiaSharp.Extended.Svg)</h3>
+<pre><code class="lang-csharp">using SkiaSharp;
+using SkiaSharp.Extended.Svg;
+using SkiaSharp.Views.Maui;
+using SkiaSharp.Views.Maui.Controls;
+
+namespace MyApp
+{
+    public partial class MyPage : ContentPage
+    {
+        private SKSvg? svg;
+
+        private void LoadSvg()
+        {
+            svg = new SKSvg();
+            using var stream = FileSystem.OpenAppPackageFileAsync(&quot;image.svg&quot;).Result;
+            svg.Load(stream);
+        }
+
+        private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
+        {
+            var canvas = e.Surface.Canvas;
+            canvas.Clear(SKColors.White);
+            
+            if (svg?.Picture != null)
+            {
+                canvas.DrawPicture(svg.Picture);
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="after-svgskia">After (Svg.Skia)</h3>
+<pre><code class="lang-csharp">using SkiaSharp;
+using Svg.Skia;  // Changed this line
+using SkiaSharp.Views.Maui;
+using SkiaSharp.Views.Maui.Controls;
+
+namespace MyApp
+{
+    public partial class MyPage : ContentPage
+    {
+        private SKSvg? svg;
+
+        private void LoadSvg()
+        {
+            svg = new SKSvg();
+            using var stream = FileSystem.OpenAppPackageFileAsync(&quot;image.svg&quot;).Result;
+            svg.Load(stream);  // Same API!
+        }
+
+        private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
+        {
+            var canvas = e.Surface.Canvas;
+            canvas.Clear(SKColors.White);
+            
+            if (svg?.Picture != null)
+            {
+                canvas.DrawPicture(svg.Picture);  // Same API!
+            }
+        }
+    }
+}
+</code></pre>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="https://github.com/wieslawsoltes/Svg.Skia">Svg.Skia GitHub Repository</a></li>
+<li><a href="https://www.nuget.org/packages/Svg.Skia">Svg.Skia NuGet Package</a></li>
+<li><a href="https://learn.microsoft.com/en-us/dotnet/maui/migration/skiasharp">Microsoft MAUI SkiaSharp Migration Guide</a></li>
+<li><a href="https://learn.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/">SkiaSharp Documentation</a></li>
+</ul>
+<h2 id="need-help">Need Help?</h2>
+<p>If you encounter issues during migration:</p>
+<ol>
+<li>Check that all SkiaSharp packages are using compatible versions</li>
+<li>Review the <a href="https://github.com/wieslawsoltes/Svg.Skia/tree/main/samples">Svg.Skia examples</a></li>
+<li>Open an issue on the <a href="https://github.com/wieslawsoltes/Svg.Skia/issues">Svg.Skia repository</a> for library-specific questions</li>
+<li>Open an issue on the <a href="https://github.com/mono/SkiaSharp.Extended/issues">SkiaSharp.Extended repository</a> for general guidance</li>
+</ol>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/main/docs/docs/svg-migration.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

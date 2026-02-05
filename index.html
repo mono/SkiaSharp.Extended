@@ -86,68 +86,66 @@
         <article data-uid="">
 <h1 id="skiasharpextended">SkiaSharp.Extended</h1>
 
+<p>SkiaSharp.Extended brings powerful graphics utilities and .NET MAUI controls to your SkiaSharp projects—from blur hash placeholders to Lottie animations and confetti effects.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>Install via NuGet:</p>
+<pre><code class="lang-bash"># Core utilities
+dotnet add package SkiaSharp.Extended
+
+# MAUI controls (includes core)
+dotnet add package SkiaSharp.Extended.UI.Maui
+</code></pre>
+<p>For MAUI projects, register the handler in <code>MauiProgram.cs</code>:</p>
+<pre><code class="lang-csharp">public static MauiApp CreateMauiApp()
+{
+    var builder = MauiApp.CreateBuilder();
+    builder
+        .UseMauiApp&lt;App&gt;()
+        .UseSkiaSharp();  // Add this line
+    
+    return builder.Build();
+}
+</code></pre>
+<hr>
 <h2 id="skiasharpextended-1">SkiaSharp.Extended</h2>
-<p><strong>SkiaSharp.Extended</strong> is a collection some cool libraries.</p>
-<h3 id="skblurhash">SKBlurHash</h3>
-<p><strong>SKBlurHash</strong> is a compact representation of a placeholder for an image.</p>
+<p>Core utilities for image processing, geometry, and path manipulation.</p>
+<h3 id="blur-hash"><a href="docs/blurhash.html">Blur Hash</a></h3>
+<p>Compact placeholder representations for images. Perfect for showing a beautiful blur while the full image loads.</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: center;">Preview</th>
+<th style="text-align: center;">Original</th>
+<th style="text-align: center;">Placeholder</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: center;"><img src="images/extended/skblurhash/blur-small.png" alt="BlurHash"></td>
+<td style="text-align: center;"><img src="images/extended/skblurhash/logo.png" alt="Original"></td>
+<td style="text-align: center;"><img src="images/extended/skblurhash/blur.png" alt="Blur"></td>
 </tr>
 </tbody>
 </table>
-<h3 id="skgeometry">SKGeometry</h3>
-<p><strong>SKGeometry</strong> provides several helper methods that can be used to create common geometric shapes.</p>
-<h3 id="skpathinterpolation">SKPathInterpolation</h3>
-<p>SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">Preview</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;"><img src="images/extended/skpathinterpolation/interpolation.gif" alt="Path Interpolation"></td>
-</tr>
-</tbody>
-</table>
+<h3 id="geometry-helpers"><a href="docs/geometry.html">Geometry Helpers</a></h3>
+<p>Create regular polygons, stars, and other shapes with simple method calls.</p>
+<h3 id="path-interpolation"><a href="docs/path-interpolation.html">Path Interpolation</a></h3>
+<p>Smoothly morph between two paths for shape transitions and animations.</p>
+<p><img src="images/extended/skpathinterpolation/interpolation.gif" alt="Path Interpolation"></p>
+<hr>
 <h2 id="skiasharpextendeduimaui">SkiaSharp.Extended.UI.Maui</h2>
-<p><strong>SkiaSharp.Extended.UI.Maui</strong> is a collection some great .NET MAUI controls.</p>
-<h3 id="skconfettiview">SKConfettiView</h3>
-<p>The confetti view is a container for one or more systems of confetti particles.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">Preview</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;"><img src="images/ui/controls/skconfettiview/top-stream.gif" alt="top-stream"></td>
-</tr>
-</tbody>
-</table>
-<h3 id="sklottieview">SKLottieView</h3>
-<p>The Lottie view is a animated view that can playback Lottie files.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">Preview</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;"><img src="images/ui/controls/sklottieview/lottie.gif" alt="lottie"></td>
-</tr>
-</tbody>
-</table>
+<p>Ready-to-use .NET MAUI controls for rich visual effects.</p>
+<h3 id="lottie-animations"><a href="docs/lottie.html">Lottie Animations</a></h3>
+<p>Play designer-created After Effects animations exported as Lottie JSON files.</p>
+<p><img src="images/ui/controls/sklottieview/lottie.gif" alt="Lottie Animation"></p>
+<h3 id="confetti-effects"><a href="docs/confetti.html">Confetti Effects</a></h3>
+<p>Celebrate achievements with customizable particle explosions.</p>
+<p><img src="images/ui/controls/skconfettiview/top-stream.gif" alt="Confetti"></p>
+<hr>
+<h2 id="resources">Resources</h2>
+<ul>
+<li><a href="https://github.com/mono/SkiaSharp.Extended">GitHub Repository</a></li>
+<li><a href="https://www.nuget.org/packages?q=SkiaSharp.Extended">NuGet Packages</a></li>
+<li><a href="https://docs.microsoft.com/en-us/dotnet/api/skiasharp">SkiaSharp Documentation</a></li>
+</ul>
 
 </article>
 

@@ -1,0 +1,235 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Blur Hash | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Blur Hash | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/main/docs/docs/blurhash.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="blur-hash">Blur Hash</h1>
+
+<p>Blur Hash is a compact representation of an image placeholder. Instead of loading a grey box while your image loads, you can show a colorful blur that hints at the final image—all from a tiny string that's only 20-30 characters.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Original</th>
+<th style="text-align: center;">Blur Hash Placeholder</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><img src="../images/extended/skblurhash/logo.png" alt="Original"></td>
+<td style="text-align: center;"><img src="../images/extended/skblurhash/blur.png" alt="BlurHash"></td>
+</tr>
+</tbody>
+</table>
+<p>The hash for this image is just 28 characters: <code>LjPsbRxG%gx^aJxuM|W=?^X8Mxn$</code></p>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="encode-an-image">Encode an image</h3>
+<pre><code class="lang-csharp">using SkiaSharp;
+using SkiaSharp.Extended;
+
+using var bitmap = SKBitmap.Decode(&quot;photo.jpg&quot;);
+string hash = SKBlurHash.Serialize(bitmap, 4, 3);
+// Returns something like: &quot;LjPsbRxG%gx^aJxuM|W=?^X8Mxn$&quot;
+</code></pre>
+<h3 id="decode-a-placeholder">Decode a placeholder</h3>
+<pre><code class="lang-csharp">var placeholder = SKBlurHash.DeserializeBitmap(hash, 32, 32);
+// Use this blurred bitmap while the real image loads
+</code></pre>
+<h2 id="how-it-works">How It Works</h2>
+<p>Blur Hash uses a technique similar to JPEG compression called the <a href="https://en.wikipedia.org/wiki/Discrete_cosine_transform">Discrete Cosine Transform</a> (DCT). It extracts the dominant color patterns from an image and encodes them into a short ASCII string.</p>
+<p>The <code>componentsX</code> and <code>componentsY</code> parameters control how much detail is captured:</p>
+<p><img src="../images/extended/skblurhash/components-comparison.png" alt="Components comparison"></p>
+<p>More components = more detail, but a longer string. For most use cases, <strong>4x3 is a good default</strong>.</p>
+<h2 id="customization">Customization</h2>
+<h3 id="components">Components</h3>
+<p>The component count (1-9 for each axis) determines the level of detail:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Components</th>
+<th style="text-align: center;">String Length</th>
+<th style="text-align: left;">Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">2x2</td>
+<td style="text-align: center;">~12 chars</td>
+<td style="text-align: left;">Simple gradients</td>
+</tr>
+<tr>
+<td style="text-align: center;">4x3</td>
+<td style="text-align: center;">~28 chars</td>
+<td style="text-align: left;">Most images (recommended)</td>
+</tr>
+<tr>
+<td style="text-align: center;">6x6</td>
+<td style="text-align: center;">~76 chars</td>
+<td style="text-align: left;">Complex images with fine detail</td>
+</tr>
+</tbody>
+</table>
+<h3 id="punch">Punch</h3>
+<p>The <code>punch</code> parameter adjusts the contrast of the decoded image. Values greater than 1.0 make colors more vibrant:</p>
+<p><img src="../images/extended/skblurhash/punch-comparison.png" alt="Punch comparison"></p>
+<pre><code class="lang-csharp">// Default punch (1.0)
+var normal = SKBlurHash.DeserializeBitmap(hash, 32, 32);
+
+// More vibrant (1.5)
+var vibrant = SKBlurHash.DeserializeBitmap(hash, 32, 32, punch: 1.5f);
+</code></pre>
+<h3 id="placeholder-size">Placeholder Size</h3>
+<p>The decoded placeholder doesn't need to match your final image size. A small size like 32x32 is usually sufficient—it will be scaled up and displayed blurred anyway.</p>
+<h2 id="usage-patterns">Usage Patterns</h2>
+<h3 id="include-in-api-responses">Include in API responses</h3>
+<p>Pre-compute hashes on your server and include them with image URLs:</p>
+<pre><code class="lang-json">{
+  &quot;imageUrl&quot;: &quot;https://example.com/photo.jpg&quot;,
+  &quot;blurHash&quot;: &quot;LjPsbRxG%gx^aJxuM|W=?^X8Mxn$&quot;,
+  &quot;width&quot;: 1920,
+  &quot;height&quot;: 1080
+}
+</code></pre>
+<h3 id="maui-value-converter">MAUI value converter</h3>
+<p>Create a converter to decode blur hashes directly in XAML bindings:</p>
+<pre><code class="lang-csharp">using System.Globalization;
+using SkiaSharp;
+using SkiaSharp.Extended;
+using SkiaSharp.Views.Maui.Controls;
+
+public class BlurHashConverter : IValueConverter
+{
+    public int Width { get; set; } = 32;
+    public int Height { get; set; } = 32;
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is string hash &amp;&amp; !string.IsNullOrEmpty(hash))
+        {
+            var bitmap = SKBlurHash.DeserializeBitmap(hash, Width, Height);
+            return (SKBitmapImageSource)bitmap;
+        }
+        return null;
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        =&gt; throw new NotImplementedException();
+}
+</code></pre>
+<p>Then use it in XAML:</p>
+<pre><code class="lang-xml">&lt;Image Source=&quot;{Binding BlurHash, Converter={StaticResource BlurHashConverter}}&quot; /&gt;
+</code></pre>
+<h2 id="learn-more">Learn More</h2>
+<ul>
+<li><a href="https://blurha.sh/">BlurHash.sh</a> — Official demo and explanation</li>
+<li><a href="https://github.com/woltapp/blurhash">BlurHash GitHub</a> — Original algorithm by Dag Ågren at Wolt</li>
+<li><a href="https://careers.wolt.com/en/blog/tech/how-we-came-to-create-a-new-image-placeholder-algorithm-blurhash">How Wolt created BlurHash</a> — The origin story</li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKBlurHash.html">API Reference</a> — Full method documentation</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/main/docs/docs/blurhash.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

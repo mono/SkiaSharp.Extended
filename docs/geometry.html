@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Geometry Helpers | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Geometry Helpers | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/main/docs/docs/geometry.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="geometry-helpers">Geometry Helpers</h1>
+
+<p>Geometry Helpers provide simple methods to create common geometric shapes as <code>SKPath</code> objects. Instead of manually calculating points and angles, you can generate squares, triangles, polygons, and stars with a single method call.</p>
+<p><img src="../images/extended/geometry/shapes-overview.png" alt="Shapes overview"></p>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="create-a-shape-path">Create a shape path</h3>
+<pre><code class="lang-csharp">using SkiaSharp;
+using SkiaSharp.Extended;
+
+// Create a 5-pointed star
+var starPath = SKGeometry.CreateRegularStarPath(
+    outerRadius: 100,
+    innerRadius: 40,
+    points: 5);
+
+// Draw it on a canvas
+canvas.DrawPath(starPath, paint);
+</code></pre>
+<h3 id="use-canvas-extension-methods">Use canvas extension methods</h3>
+<pre><code class="lang-csharp">// Draw shapes directly on a canvas
+canvas.DrawStar(100, 100, outerRadius: 50, innerRadius: 20, points: 5, paint);
+canvas.DrawRegularPolygon(200, 100, radius: 40, points: 6, paint);
+canvas.DrawTriangle(300, 100, radius: 40, paint);
+</code></pre>
+<h2 id="available-shapes">Available Shapes</h2>
+<h3 id="basic-shapes">Basic Shapes</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>CreateSquarePath(side)</code></td>
+<td style="text-align: left;">Square centered at origin</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>CreateRectanglePath(width, height)</code></td>
+<td style="text-align: left;">Rectangle centered at origin</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>CreateTrianglePath(width, height)</code></td>
+<td style="text-align: left;">Isoceles triangle pointing up</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>CreateTrianglePath(radius)</code></td>
+<td style="text-align: left;">Equilateral triangle inscribed in circle</td>
+</tr>
+</tbody>
+</table>
+<h3 id="regular-polygons">Regular Polygons</h3>
+<p>Create any regular polygon by specifying the number of sides:</p>
+<p><img src="../images/extended/geometry/polygon-variations.png" alt="Polygon variations"></p>
+<pre><code class="lang-csharp">// Pentagon (5 sides)
+var pentagon = SKGeometry.CreateRegularPolygonPath(radius: 50, points: 5);
+
+// Hexagon (6 sides)
+var hexagon = SKGeometry.CreateRegularPolygonPath(radius: 50, points: 6);
+
+// Octagon (8 sides)
+var octagon = SKGeometry.CreateRegularPolygonPath(radius: 50, points: 8);
+</code></pre>
+<h3 id="stars">Stars</h3>
+<p>Create stars with any number of points by specifying outer and inner radii:</p>
+<p><img src="../images/extended/geometry/star-variations.png" alt="Star variations"></p>
+<pre><code class="lang-csharp">// Classic 5-pointed star
+var star5 = SKGeometry.CreateRegularStarPath(
+    outerRadius: 50,
+    innerRadius: 20,
+    points: 5);
+
+// Star of David (6-pointed)
+var star6 = SKGeometry.CreateRegularStarPath(
+    outerRadius: 50,
+    innerRadius: 30,
+    points: 6);
+</code></pre>
+<p>The <code>innerRadius</code> controls how &quot;pointy&quot; the star is—smaller values create sharper points.</p>
+<h2 id="canvas-extension-methods">Canvas Extension Methods</h2>
+<p>For convenience, you can draw shapes directly on a canvas without creating path objects:</p>
+<pre><code class="lang-csharp">using SkiaSharp;
+using SkiaSharp.Extended;
+
+// Square
+canvas.DrawSquare(cx: 50, cy: 50, side: 40, paint);
+
+// Triangle (by radius)
+canvas.DrawTriangle(cx: 150, cy: 50, radius: 30, paint);
+
+// Regular polygon
+canvas.DrawRegularPolygon(cx: 250, cy: 50, radius: 30, points: 6, paint);
+
+// Star
+canvas.DrawStar(cx: 350, cy: 50, outerRadius: 30, innerRadius: 12, points: 5, paint);
+</code></pre>
+<h2 id="utility-methods">Utility Methods</h2>
+<p>The <code>SKGeometry</code> class also provides utility methods for geometric calculations:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>CirclePoint(radius, radians)</code></td>
+<td style="text-align: left;">Get a point on a circle at the given angle</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Area(polygon)</code></td>
+<td style="text-align: left;">Calculate the area of a polygon from its points</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Perimeter(polygon)</code></td>
+<td style="text-align: left;">Calculate the perimeter of a polygon</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>PointAlong(a, b, pct)</code></td>
+<td style="text-align: left;">Get a point along a line between two points</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-csharp">// Get a point on a circle
+var point = SKGeometry.CirclePoint(radius: 100, radians: Math.PI / 4);
+
+// Calculate polygon area
+var points = new[] { new SKPoint(0, 0), new SKPoint(100, 0), new SKPoint(50, 100) };
+var area = SKGeometry.Area(points);
+</code></pre>
+<h2 id="customization">Customization</h2>
+<h3 id="path-direction">Path Direction</h3>
+<p>All shape methods accept an optional <code>SKPathDirection</code> parameter to control winding order:</p>
+<pre><code class="lang-csharp">// Clockwise (default)
+var cwPath = SKGeometry.CreateSquarePath(50, SKPathDirection.Clockwise);
+
+// Counter-clockwise
+var ccwPath = SKGeometry.CreateSquarePath(50, SKPathDirection.CounterClockwise);
+</code></pre>
+<p>This is useful when combining paths or creating holes with path operations.</p>
+<h3 id="centering">Centering</h3>
+<p>All paths are created centered at the origin (0, 0). To position them, use <code>Offset</code>:</p>
+<pre><code class="lang-csharp">var path = SKGeometry.CreateRegularStarPath(50, 20, 5);
+path.Offset(centerX, centerY);
+canvas.DrawPath(path, paint);
+</code></pre>
+<p>Or use the canvas extension methods which take position parameters directly.</p>
+<h2 id="learn-more">Learn More</h2>
+<ul>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKGeometry.html">API Reference</a> — Full method documentation</li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKGeometryExtensions.html">SKGeometryExtensions</a> — Canvas extension methods</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/main/docs/docs/geometry.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
