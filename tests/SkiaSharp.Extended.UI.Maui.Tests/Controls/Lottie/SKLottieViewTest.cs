@@ -285,16 +285,82 @@ public class SKLottieViewTest
 		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = 1.0 };
 		await lottie.LoadedTask;
 
-		// update with normal speed
-		lottie.CallUpdate(TimeSpan.FromSeconds(1));
-		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Progress);
+		// update with normal speed (0.5 seconds)
+		lottie.CallUpdate(TimeSpan.FromSeconds(0.5));
+		Assert.Equal(TimeSpan.FromSeconds(0.5), lottie.Progress);
 
 		// change speed to 2x
 		lottie.AnimationSpeed = 2.0;
+		lottie.CallUpdate(TimeSpan.FromSeconds(0.5));
+
+		// test - should now be at 1.5 seconds (0.5 + 1.0 at 2x speed)
+		Assert.Equal(TimeSpan.FromSeconds(1.5), lottie.Progress);
+		Assert.False(lottie.IsComplete);
+	}
+
+	[Fact]
+	public async Task NegativeAnimationSpeedReversesPlayback()
+	{
+		// create - start at Progress = Duration to play backwards
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = -1.0 };
+		await lottie.LoadedTask;
+
+		// set progress to end of animation
+		lottie.Progress = lottie.Duration;
+		var startProgress = lottie.Progress;
+
+		// update with 1 second - should go backwards
 		lottie.CallUpdate(TimeSpan.FromSeconds(1));
 
-		// test - should now be at 3 seconds (1 + 2)
-		Assert.Equal(TimeSpan.FromSeconds(3), lottie.Progress);
-		Assert.False(lottie.IsComplete);
+		// test - progress should have decreased
+		Assert.Equal(startProgress - TimeSpan.FromSeconds(1), lottie.Progress);
+	}
+
+	[Fact]
+	public async Task NegativeAnimationSpeedFromStartClampsToZero()
+	{
+		// create - start at Progress = 0 with negative speed
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = -1.0 };
+		await lottie.LoadedTask;
+
+		// progress starts at 0
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+
+		// update with 1 second - should try to go backwards but clamp to 0
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+
+		// test - progress should still be 0 (clamped)
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+	}
+
+	[Fact]
+	public async Task AnimationSpeedWorksWithRepeatModeReverse()
+	{
+		// create with RepeatMode.Reverse and 2x speed
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView
+		{
+			Source = source,
+			AnimationSpeed = 2.0,
+			RepeatMode = SKLottieRepeatMode.Reverse,
+			RepeatCount = 1
+		};
+		await lottie.LoadedTask;
+
+		var duration = lottie.Duration;
+
+		// update to slightly past the end to ensure we hit the boundary and reverse
+		lottie.CallUpdate(TimeSpan.FromTicks((duration.Ticks / 2) + 1));
+
+		// should be at the end (clamped)
+		Assert.Equal(duration, lottie.Progress);
+
+		// update again - should now be playing in reverse at 2x speed (0.5 seconds of real time = 1 second at 2x)
+		lottie.CallUpdate(TimeSpan.FromSeconds(0.5));
+
+		// test - progress should have decreased by 1 second (0.5s * 2x speed in reverse)
+		Assert.Equal(duration - TimeSpan.FromSeconds(1), lottie.Progress);
 	}
 }
