@@ -216,4 +216,173 @@ public class SKLottieViewTest
 		else
 			Assert.Equal(0, animationCompleted);
 	}
+
+	[Fact]
+	public async Task EnsureFramePropertiesAreSet()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// test
+		Assert.True(lottie.Fps > 0);
+		Assert.True(lottie.FrameCount > 0);
+		Assert.Equal(0, lottie.CurrentFrame);
+	}
+
+	[Fact]
+	public async Task CurrentFrameUpdatesWithProgress()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// update progress
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+
+		// test - should be at approximately frame = 1 second * fps
+		var expectedFrame = (int)Math.Floor(lottie.Fps);
+		Assert.Equal(expectedFrame, lottie.CurrentFrame);
+	}
+
+	[Fact]
+	public async Task SeekToFrameMovesToCorrectPosition()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// seek to frame 30
+		lottie.SeekToFrame(30);
+
+		// test
+		Assert.Equal(30, lottie.CurrentFrame);
+		var expectedTime = TimeSpan.FromSeconds(30.0 / lottie.Fps);
+		Assert.Equal(expectedTime, lottie.Progress);
+	}
+
+	[Fact]
+	public async Task SeekToFrameWithStopPlaybackPausesAnimation()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// animation should be enabled by default
+		Assert.True(lottie.IsAnimationEnabled);
+
+		// seek to frame 30 and stop
+		lottie.SeekToFrame(30, stopPlayback: true);
+
+		// test
+		Assert.Equal(30, lottie.CurrentFrame);
+		Assert.False(lottie.IsAnimationEnabled);
+	}
+
+	[Fact]
+	public async Task SeekToProgressMovesToCorrectPosition()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// seek to 50% progress
+		lottie.SeekToProgress(0.5);
+
+		// test
+		var expectedTime = TimeSpan.FromSeconds(lottie.Duration.TotalSeconds * 0.5);
+		Assert.Equal(expectedTime, lottie.Progress);
+	}
+
+	[Fact]
+	public async Task SeekToTimeMovesToCorrectPosition()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// seek to 1 second
+		var targetTime = TimeSpan.FromSeconds(1);
+		lottie.SeekToTime(targetTime);
+
+		// test
+		Assert.Equal(targetTime, lottie.Progress);
+	}
+
+	[Fact]
+	public async Task PauseStopsAnimation()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// animation should be enabled by default
+		Assert.True(lottie.IsAnimationEnabled);
+
+		// pause
+		lottie.Pause();
+
+		// test
+		Assert.False(lottie.IsAnimationEnabled);
+	}
+
+	[Fact]
+	public async Task ResumeStartsAnimation()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// pause first
+		lottie.Pause();
+		Assert.False(lottie.IsAnimationEnabled);
+
+		// resume
+		lottie.Resume();
+
+		// test
+		Assert.True(lottie.IsAnimationEnabled);
+	}
+
+	[Fact]
+	public async Task SeekToFrameClampsToBounds()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// seek to negative frame
+		lottie.SeekToFrame(-10);
+		Assert.Equal(0, lottie.CurrentFrame);
+
+		// seek to frame beyond count
+		lottie.SeekToFrame(lottie.FrameCount + 100);
+		Assert.Equal(lottie.FrameCount - 1, lottie.CurrentFrame);
+	}
+
+	[Fact]
+	public async Task SeekToProgressClampsToBounds()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// seek to negative progress
+		lottie.SeekToProgress(-0.5);
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+
+		// seek to progress > 1.0
+		lottie.SeekToProgress(1.5);
+		Assert.Equal(lottie.Duration, lottie.Progress);
+	}
 }

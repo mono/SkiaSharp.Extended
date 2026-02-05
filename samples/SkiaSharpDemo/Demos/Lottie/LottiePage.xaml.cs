@@ -9,6 +9,7 @@ public partial class LottiePage : ContentPage
 	private TimeSpan duration;
 	private TimeSpan progress;
 	private bool isPlaying;
+	private string currentFrameInfo = string.Empty;
 
 	public LottiePage()
 	{
@@ -18,6 +19,9 @@ public partial class LottiePage : ContentPage
 		StepCommand = new Command<string>(OnStep);
 		EndCommand = new Command(OnEnd);
 		PlayPauseCommand = new Command(OnPlayPause);
+		SeekToFrameCommand = new Command<string>(OnSeekToFrame);
+		SeekToProgressCommand = new Command<string>(OnSeekToProgress);
+		SeekToLastFrameCommand = new Command(OnSeekToLastFrame);
 
 		IsPlaying = true;
 
@@ -31,6 +35,7 @@ public partial class LottiePage : ContentPage
 		{
 			duration = value;
 			OnPropertyChanged();
+			UpdateFrameInfo();
 		}
 	}
 
@@ -41,6 +46,7 @@ public partial class LottiePage : ContentPage
 		{
 			progress = value;
 			OnPropertyChanged();
+			UpdateFrameInfo();
 		}
 	}
 
@@ -54,6 +60,16 @@ public partial class LottiePage : ContentPage
 		}
 	}
 
+	public string CurrentFrameInfo
+	{
+		get => currentFrameInfo;
+		set
+		{
+			currentFrameInfo = value;
+			OnPropertyChanged();
+		}
+	}
+
 	public ICommand ResetCommand { get; }
 
 	public ICommand StepCommand { get; }
@@ -61,6 +77,12 @@ public partial class LottiePage : ContentPage
 	public ICommand PlayPauseCommand { get; }
 
 	public ICommand EndCommand { get; }
+
+	public ICommand SeekToFrameCommand { get; }
+
+	public ICommand SeekToProgressCommand { get; }
+
+	public ICommand SeekToLastFrameCommand { get; }
 
 	private void OnReset() =>
 		Progress = TimeSpan.Zero;
@@ -74,6 +96,34 @@ public partial class LottiePage : ContentPage
 	private void OnPlayPause() =>
 		IsPlaying = !IsPlaying;
 
+	private void OnSeekToFrame(string frameStr)
+	{
+		var frame = int.Parse(frameStr);
+		lottieView.SeekToFrame(frame, stopPlayback: true);
+		IsPlaying = false;
+	}
+
+	private void OnSeekToProgress(string progressStr)
+	{
+		var prog = double.Parse(progressStr);
+		lottieView.SeekToProgress(prog, stopPlayback: true);
+		IsPlaying = false;
+	}
+
+	private void OnSeekToLastFrame()
+	{
+		lottieView.SeekToFrame(lottieView.FrameCount - 1, stopPlayback: true);
+		IsPlaying = false;
+	}
+
+	private void UpdateFrameInfo()
+	{
+		if (lottieView.FrameCount > 0)
+		{
+			CurrentFrameInfo = $"Frame: {lottieView.CurrentFrame} / {lottieView.FrameCount} ({lottieView.Fps:F1} fps)";
+		}
+	}
+
 	private void OnAnimationFailed(object sender, SKLottieAnimationFailedEventArgs e)
 	{
 		Debug.WriteLine($"Failed to load Lottie animation: {e.Exception}");
@@ -82,6 +132,7 @@ public partial class LottiePage : ContentPage
 	private void OnAnimationLoaded(object sender, SKLottieAnimationLoadedEventArgs e)
 	{
 		Debug.WriteLine($"Lottie animation loaded: {e.Size}; {e.Duration}; {e.Fps}");
+		UpdateFrameInfo();
 	}
 
 	private void OnAnimationCompleted(object sender, EventArgs e)
