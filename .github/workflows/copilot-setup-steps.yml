@@ -1,0 +1,42 @@
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android --source https://api.nuget.org/v3/index.json
+
+      - name: Restore dependencies
+        run: dotnet restore --source https://api.nuget.org/v3/index.json
+
+      - name: Restore local tools
+        run: dotnet tool restore
+
+      - name: Verify core library builds
+        run: dotnet build source/SkiaSharp.Extended/SkiaSharp.Extended.csproj --no-restore
+
+      - name: Verify MAUI library builds
+        run: dotnet build source/SkiaSharp.Extended.UI.Maui/SkiaSharp.Extended.UI.Maui.csproj -f net9.0-android35.0 --no-restore
