@@ -1,52 +1,85 @@
 # SkiaSharp.Extended
 
+SkiaSharp.Extended brings powerful graphics utilities and .NET MAUI controls to your SkiaSharp projects—from blur hash placeholders to Lottie animations and confetti effects.
+
+## Getting Started
+
+Install via NuGet:
+
+```bash
+# Core utilities
+dotnet add package SkiaSharp.Extended
+
+# MAUI controls (includes core)
+dotnet add package SkiaSharp.Extended.UI.Maui
+```
+
+For MAUI projects, register the handler in `MauiProgram.cs`:
+
+```csharp
+public static MauiApp CreateMauiApp()
+{
+    var builder = MauiApp.CreateBuilder();
+    builder
+        .UseMauiApp<App>()
+        .UseSkiaSharp();  // Add this line
+    
+    return builder.Build();
+}
+```
+
+---
+
 ## SkiaSharp.Extended
 
-**SkiaSharp.Extended** is a collection some cool libraries.
+Core utilities for image processing, geometry, and path manipulation.
 
-### SKBlurHash
+### [Blur Hash](docs/blurhash.md)
 
-**SKBlurHash** is a compact representation of a placeholder for an image.
+Compact placeholder representations for images. Perfect for showing a beautiful blur while the full image loads.
 
-| Preview |
-| :-----: |
-| ![BlurHash][blur-img] |
+| Original | Placeholder |
+| :------: | :---------: |
+| ![Original][blur-original] | ![Blur][blur-placeholder] |
 
-### SKGeometry
+### [Geometry Helpers](docs/geometry.md)
 
-**SKGeometry** provides several helper methods that can be used to create common geometric shapes.
+Create regular polygons, stars, and other shapes with simple method calls.
 
-### SKPathInterpolation
+### [Path Interpolation](docs/path-interpolation.md)
 
-SKPathInterpolation can be used to create interpolated paths. This is awesome when creating animated shapes or transitions between two paths.
+Smoothly morph between two paths for shape transitions and animations.
 
-| Preview |
-| :-----: |
-| ![Path Interpolation][interpolation-img] |
+![Path Interpolation][interpolation-img]
 
+---
 
 ## SkiaSharp.Extended.UI.Maui
 
-**SkiaSharp.Extended.UI.Maui** is a collection some great .NET MAUI controls.
+Ready-to-use .NET MAUI controls for rich visual effects.
 
-### SKConfettiView
+### [Lottie Animations](docs/lottie.md)
 
-The confetti view is a container for one or more systems of confetti particles.
+Play designer-created After Effects animations exported as Lottie JSON files.
 
-| Preview |
-| :-----: |
-| ![top-stream][confetti-img] |
+![Lottie Animation][lottie-img]
 
-### SKLottieView
+### [Confetti Effects](docs/confetti.md)
 
-The Lottie view is a animated view that can playback Lottie files.
+Celebrate achievements with customizable particle explosions.
 
-| Preview |
-| :-----: |
-| ![lottie][lottie-img] |
+![Confetti][confetti-img]
 
+---
 
-[blur-img]: images/extended/skblurhash/blur-small.png
+## Resources
+
+- [GitHub Repository](https://github.com/mono/SkiaSharp.Extended)
+- [NuGet Packages](https://www.nuget.org/packages?q=SkiaSharp.Extended)
+- [SkiaSharp Documentation](https://docs.microsoft.com/en-us/dotnet/api/skiasharp)
+
+[blur-original]: images/extended/skblurhash/logo.png
+[blur-placeholder]: images/extended/skblurhash/blur.png
 [interpolation-img]: images/extended/skpathinterpolation/interpolation.gif
 [lottie-img]: images/ui/controls/sklottieview/lottie.gif
 [confetti-img]: images/ui/controls/skconfettiview/top-stream.gif
