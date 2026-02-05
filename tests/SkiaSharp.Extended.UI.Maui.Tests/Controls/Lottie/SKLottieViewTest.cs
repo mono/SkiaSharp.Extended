@@ -164,12 +164,11 @@ public class SKLottieViewTest
 		};
 
 		// wait for animation to fail
-		await Task.WhenAny(tcs.Task, Task.Delay(2000));
-
-		// test
+		var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(2000));
+		
+		// test - verify the failure event was triggered
+		Assert.Equal(tcs.Task, completedTask);
 		Assert.NotNull(failedEventArgs);
-		// The exception may or may not be set depending on the failure mode,
-		// but the event args should always be of the correct type
 		Assert.IsType<SKLottieAnimationFailedEventArgs>(failedEventArgs);
 	}
 
