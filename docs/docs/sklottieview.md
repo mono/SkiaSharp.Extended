@@ -19,6 +19,18 @@ There are several properties that can be used to control th animation playback:
 | **RepeatMode**         | `SKLottieRepeatMode`   | The way in which to repeat the animation. Default is `Restart`. |
 | **IsAnimationEnabled** | `bool`                 | Determines whether the control will play the animation provided. |
 | **IsComplete**         | `bool`                 | A value that indicates whether all systems are complete. |
+| **FrameCount**         | `int`                  | The total number of frames in the animation. Returns 0 if no animation is loaded. |
+| **CurrentFrame**       | `int`                  | The current frame of the animation based on the current progress. Returns 0 if no animation is loaded. |
+
+## Methods
+
+There are several methods for frame-based playback control:
+
+| Method                           | Description |
+| :------------------------------- | :---------- |
+| **SeekToFrame(int frameNumber)** | Seeks the animation to a specific frame (0-based). The animation will continue playing from this frame if `IsAnimationEnabled` is true. |
+| **SeekToFrameAndStop(int frameNumber)** | Seeks the animation to a specific frame and stops playback. This is equivalent to Lottie's `goToAndStop` method. |
+| **SeekToFrameAndPlay(int frameNumber)** | Seeks the animation to a specific frame and starts playback. This is equivalent to Lottie's `goToAndPlay` method. |
 
 ## Events
 
@@ -29,6 +41,61 @@ There are a few events that can be used to be notified of animation loading even
 | **AnimationLoaded**     | `EventHandler`  | Invoked when the animation has loaded successfully. |
 | **AnimationFailed**     | `EventHandler`  | Invoked when there was an error loading the animation. |
 | **AnimationCompleted**  | `EventHandler`  | Invoked when the animation is finished playing (after all the repeats). Infinite animations never complete so will not trigger the event. |
+
+## Usage Examples
+
+### Frame-Based Playback
+
+You can use frame-based methods to create interactive animations, such as switches, toggles, or scrubbers:
+
+```csharp
+// Seek to a specific frame (e.g., for a switch animation)
+lottieView.SeekToFrameAndStop(30);
+
+// Jump to frame and continue playing
+lottieView.SeekToFrameAndPlay(0);
+
+// Check current frame and total frames
+int current = lottieView.CurrentFrame;
+int total = lottieView.FrameCount;
+```
+
+### Time-Based Playback
+
+You can also use time-based properties for smooth playback control:
+
+```csharp
+// Set progress to middle of animation
+lottieView.Progress = TimeSpan.FromSeconds(lottieView.Duration.TotalSeconds / 2);
+
+// Stop animation
+lottieView.IsAnimationEnabled = false;
+
+// Resume animation
+lottieView.IsAnimationEnabled = true;
+```
+
+### Creating a Switch Animation
+
+For creating a switch using a Lottie animation (as mentioned in the feature request):
+
+```csharp
+private void OnSwitchToggled(object sender, EventArgs e)
+{
+    if (isOn)
+    {
+        // Play from start to middle frame (switch OFF)
+        lottieView.SeekToFrameAndPlay(0);
+    }
+    else
+    {
+        // Play from middle to end frame (switch ON)
+        lottieView.SeekToFrameAndPlay(lottieView.FrameCount / 2);
+    }
+    
+    isOn = !isOn;
+}
+```
 
 ## Parts
 
