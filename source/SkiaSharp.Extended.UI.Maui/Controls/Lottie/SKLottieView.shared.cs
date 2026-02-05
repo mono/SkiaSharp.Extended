@@ -147,11 +147,11 @@ public class SKLottieView : SKAnimatedSurfaceView
 		if (animation is null)
 			return;
 
-		// Clamp frame number to valid range
+		// Clamp frame number to valid range (0 to FrameCount - 1)
 		if (frameNumber < 0)
 			frameNumber = 0;
 
-		var maxFrame = FrameCount;
+		var maxFrame = FrameCount - 1;
 		if (frameNumber > maxFrame)
 			frameNumber = maxFrame;
 

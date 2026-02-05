@@ -340,9 +340,24 @@ public class SKLottieViewTest
 		// seek to frame beyond max
 		lottie.SeekToFrame(1000);
 
-		// test - should clamp to max frame
-		Assert.Equal(lottie.FrameCount, lottie.CurrentFrame);
-		Assert.Equal(lottie.Duration, lottie.Progress);
+		// test - should clamp to max valid frame (FrameCount - 1, since frames are 0-based)
+		Assert.Equal(lottie.FrameCount - 1, lottie.CurrentFrame);
+	}
+
+	[Fact]
+	public async Task SeekToLastFrameWorksCorrectly()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// seek to last valid frame (FrameCount - 1)
+		var lastFrame = lottie.FrameCount - 1;
+		lottie.SeekToFrame(lastFrame);
+
+		// test
+		Assert.Equal(lastFrame, lottie.CurrentFrame);
 	}
 
 	[Fact]
