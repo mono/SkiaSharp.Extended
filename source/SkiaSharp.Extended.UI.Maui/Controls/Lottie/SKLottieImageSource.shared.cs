@@ -32,9 +32,10 @@ public abstract class SKLottieImageSource : Element
 		ResourceProvider resourceProvider;
 		if (!string.IsNullOrEmpty(ImageAssetsFolder))
 		{
-			// Chain FileResourceProvider with DataUriResourceProvider
-			// FileResourceProvider loads external image files from the specified folder
-			// DataUriResourceProvider handles base64 embedded images
+			// Chain DataUriResourceProvider with FileResourceProvider
+			// DataUriResourceProvider first handles base64 embedded images (data: URIs)
+			// FileResourceProvider (fallback) loads external image files from the specified folder
+			// This allows animations to use both embedded and external images
 			resourceProvider = new CachingResourceProvider(
 				new DataUriResourceProvider(
 					new FileResourceProvider(ImageAssetsFolder)));

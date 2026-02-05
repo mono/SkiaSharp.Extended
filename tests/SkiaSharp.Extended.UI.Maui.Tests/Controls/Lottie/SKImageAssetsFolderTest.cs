@@ -27,7 +27,7 @@ public class SKImageAssetsFolderTest
 	}
 
 	[Fact]
-	public async Task ImageAssetsFolderPropertyCanBeSetOnSource()
+	public void ImageAssetsFolderPropertyCanBeSetOnSource()
 	{
 		// create source
 		var source = new SKFileLottieImageSource
@@ -43,7 +43,7 @@ public class SKImageAssetsFolderTest
 	}
 
 	[Fact]
-	public async Task UpdatingImageAssetsFolderTriggersReload()
+	public async Task LottieLoadsAfterUpdatingImageAssetsFolder()
 	{
 		// create source
 		var source = new SKFileLottieImageSource
@@ -56,7 +56,7 @@ public class SKImageAssetsFolderTest
 		lottie.ResetTask();
 		source.ImageAssetsFolder = ImageAssetsFolder;
 
-		// test - should trigger reload
+		// test - should load successfully
 		await lottie.LoadedTask;
 		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Duration);
 	}
