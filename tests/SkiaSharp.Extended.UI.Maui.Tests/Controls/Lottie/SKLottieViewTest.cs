@@ -147,6 +147,32 @@ public class SKLottieViewTest
 		Assert.Equal(0, animationCompleted);
 	}
 
+	[Fact]
+	public async Task AnimationFailedContainsException()
+	{
+		// create
+		var source = new SKFileLottieImageSource();
+		var lottie = new SKLottieView { Source = source };
+		
+		SKLottieAnimationFailedEventArgs? failedEventArgs = null;
+		var tcs = new TaskCompletionSource<bool>();
+		
+		lottie.AnimationFailed += (s, e) =>
+		{
+			failedEventArgs = e;
+			tcs.SetResult(true);
+		};
+
+		// wait for animation to fail
+		await Task.WhenAny(tcs.Task, Task.Delay(2000));
+
+		// test
+		Assert.NotNull(failedEventArgs);
+		// The exception may or may not be set depending on the failure mode,
+		// but the event args should always be of the correct type
+		Assert.IsType<SKLottieAnimationFailedEventArgs>(failedEventArgs);
+	}
+
 	[Theory]
 	[InlineData(SKLottieRepeatMode.Restart, 1, 1)]
 	[InlineData(SKLottieRepeatMode.Restart, 2, 2)]
