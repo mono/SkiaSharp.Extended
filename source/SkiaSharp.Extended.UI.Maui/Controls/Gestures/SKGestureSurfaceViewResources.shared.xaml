@@ -1,0 +1,29 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:local="clr-namespace:SkiaSharp.Extended.UI.Controls"
+                    xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
+                    x:Class="SkiaSharp.Extended.UI.Controls.Themes.SKGestureSurfaceViewResources">
+
+    <!-- 
+        Control template for SKGestureSurfaceView.
+        Inherits the same template structure as SKDynamicSurfaceView.
+    -->
+    <ControlTemplate x:Key="SKGestureSurfaceViewControlTemplate">
+        <Grid>
+            <skia:SKCanvasView x:Name="PART_CanvasSurface" />
+            <skia:SKGLView x:Name="PART_GLSurface" IsVisible="False" />
+        </Grid>
+    </ControlTemplate>
+
+    <!-- The explicit style that allows for extension -->
+    <Style x:Key="SKGestureSurfaceViewStyle" TargetType="local:SKGestureSurfaceView">
+        <Setter Property="ControlTemplate"
+                Value="{StaticResource SKGestureSurfaceViewControlTemplate}" />
+    </Style>
+
+    <!-- The implicit style that applies to all controls -->
+    <Style TargetType="local:SKGestureSurfaceView"
+           ApplyToDerivedTypes="True"
+           BasedOn="{StaticResource SKGestureSurfaceViewStyle}" />
+
+</ResourceDictionary>
