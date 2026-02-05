@@ -55,10 +55,26 @@ public class SKAnimatedSurfaceViewTest : DispatchingBaseTest
 
 		// Assign the Window - this should trigger animation to start
 		var window = new Window { Page = page };
-		await Task.Delay(50);
+
+		// Poll for animation to start with timeout
+		var started = await PollForConditionAsync(
+			() => view.UpdateCount > 0,
+			timeout: TimeSpan.FromSeconds(1));
 
 		// Now updates should be occurring
-		Assert.True(view.UpdateCount > 0, "Animation should start after Window is assigned");
+		Assert.True(started, "Animation should start after Window is assigned");
+	}
+
+	private static async Task<bool> PollForConditionAsync(Func<bool> condition, TimeSpan timeout)
+	{
+		var endTime = DateTime.UtcNow + timeout;
+		while (DateTime.UtcNow < endTime)
+		{
+			if (condition())
+				return true;
+			await Task.Delay(10);
+		}
+		return false;
 	}
 
 	private class TestAnimatedSurfaceView : SKAnimatedSurfaceView
@@ -68,6 +84,8 @@ public class SKAnimatedSurfaceViewTest : DispatchingBaseTest
 		protected override void Update(TimeSpan deltaTime)
 		{
 			base.Update(deltaTime);
+			// Only count actual animation updates (deltaTime > 0)
+			// Zero delta time occurs when animation is disabled
 			if (deltaTime > TimeSpan.Zero)
 				UpdateCount++;
 		}
