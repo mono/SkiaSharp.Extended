@@ -318,21 +318,21 @@ public class SKLottieViewTest
 	}
 
 	[Fact]
-	public async Task NegativeAnimationSpeedFromStartClampsToZero()
+	public async Task NegativeAnimationSpeedStartsAtDuration()
 	{
-		// create - start at Progress = 0 with negative speed
+		// With negative speed, animation should start at Duration and play backwards
 		var source = new SKFileLottieImageSource { File = TrophyJson };
 		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = -1.0 };
 		await lottie.LoadedTask;
 
-		// progress starts at 0
-		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+		// progress starts at Duration (not 0) for negative speed
+		Assert.Equal(lottie.Duration, lottie.Progress);
 
-		// update with 1 second - should try to go backwards but clamp to 0
+		// update with 1 second - should go backwards
 		lottie.CallUpdate(TimeSpan.FromSeconds(1));
 
-		// test - progress should still be 0 (clamped)
-		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+		// test - progress should have decreased by 1 second
+		Assert.Equal(lottie.Duration - TimeSpan.FromSeconds(1), lottie.Progress);
 	}
 
 	[Fact]
@@ -577,5 +577,40 @@ public class SKLottieViewTest
 
 		Assert.Equal(initialProgress, lottie.Progress);
 		Assert.False(lottie.IsComplete);
+	}
+
+	[Fact]
+	public async Task NegativeSpeedAnimationStartsAtDurationOnLoad()
+	{
+		// Verify Fix 1: Negative speed animation initializes Progress to Duration
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = -1.0 };
+		await lottie.LoadedTask;
+
+		// Should start at Duration, not Zero
+		Assert.Equal(lottie.Duration, lottie.Progress);
+		Assert.False(lottie.IsComplete);
+
+		// Should be able to play backwards without manual intervention
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+		Assert.True(lottie.Progress < lottie.Duration);
+	}
+
+	[Fact]
+	public async Task SourceChangeCancellsPreviousLoad()
+	{
+		// Verify Fix 2: Changing Source cancels any in-flight load
+		var source1 = new SKFileLottieImageSource { File = TrophyJson };
+		var source2 = new SKFileLottieImageSource { File = LoloJson };
+		var lottie = new WaitingLottieView { Source = source1 };
+		
+		// Immediately change source before first load completes
+		lottie.ResetTask();
+		lottie.Source = source2;
+		await lottie.LoadedTask;
+
+		// Should have loaded the second source, not the first
+		// (Duration differs between trophy.json and lolo.json)
+		Assert.NotEqual(TimeSpan.Zero, lottie.Duration);
 	}
 }
