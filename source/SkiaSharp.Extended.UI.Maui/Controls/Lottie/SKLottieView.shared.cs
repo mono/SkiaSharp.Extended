@@ -66,11 +66,21 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 		IsAnimationEnabled = true;
 
+		Unloaded += OnUnloaded;
+
 #if DEBUG
 		AnimationCompleted += (s, e) => DebugUtils.LogEvent(nameof(AnimationCompleted));
 		AnimationFailed += (s, e) => DebugUtils.LogEvent(nameof(AnimationFailed));
 		AnimationLoaded += (s, e) => DebugUtils.LogEvent(nameof(AnimationLoaded));
 #endif
+	}
+
+	private void OnUnloaded(object? sender, EventArgs e)
+	{
+		// Cancel and dispose any in-flight load when view is removed from tree
+		loadCancellation?.Cancel();
+		loadCancellation?.Dispose();
+		loadCancellation = null;
 	}
 
 	public SKLottieImageSource? Source
@@ -266,9 +276,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 	private async Task LoadAnimationAsync(SKLottieImageSource? imageSource)
 	{
-		// Cancel and dispose any in-flight load
-		loadCancellation?.Cancel();
-		loadCancellation?.Dispose();
+		// Cancel any in-flight load (but don't dispose - task may still be using the token)
+		var oldCts = loadCancellation;
+		oldCts?.Cancel();
 		loadCancellation = new CancellationTokenSource();
 		var cancellationToken = loadCancellation.Token;
 
@@ -320,6 +330,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 			{
 				isInForwardPhase = true;
 				repeatsCompleted = 0;
+				IsComplete = false;
 
 				// Initialize Progress based on AnimationSpeed:
 				// - Positive/zero speed: start at 0, move toward Duration
