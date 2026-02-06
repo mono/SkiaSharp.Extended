@@ -745,4 +745,60 @@ public class SKLottieViewTest
 		Assert.True(lottie.Progress > midProgress, 
 			$"Progress should increase after speed flip, was {midProgress}, now {lottie.Progress}");
 	}
+
+	[Fact]
+	public async Task AnimationSpeedNaNTreatedAsZero()
+	{
+		// NaN speed should result in no movement (treated as 0)
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = double.NaN };
+		await lottie.LoadedTask;
+
+		var initialProgress = lottie.Progress;
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+
+		// Progress should not change with NaN speed
+		Assert.Equal(initialProgress, lottie.Progress);
+		Assert.False(lottie.IsComplete);
+	}
+
+	[Fact]
+	public async Task AnimationSpeedPositiveInfinityClampedToMax()
+	{
+		// Positive infinity should be clamped and not crash
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView 
+		{ 
+			Source = source, 
+			AnimationSpeed = double.PositiveInfinity,
+			RepeatCount = 0
+		};
+		await lottie.LoadedTask;
+
+		// Should not throw, should complete immediately
+		lottie.CallUpdate(TimeSpan.FromMilliseconds(1));
+		
+		Assert.True(lottie.IsComplete);
+	}
+
+	[Fact]
+	public async Task AnimationSpeedNegativeInfinityClampedToMin()
+	{
+		// Negative infinity should be clamped and not crash
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView 
+		{ 
+			Source = source, 
+			AnimationSpeed = double.NegativeInfinity,
+			RepeatCount = 0
+		};
+		await lottie.LoadedTask;
+
+		// Should not throw, animation starts at Duration for negative speed
+		Assert.Equal(lottie.Duration, lottie.Progress);
+		
+		// Update should complete immediately (goes to 0)
+		lottie.CallUpdate(TimeSpan.FromMilliseconds(1));
+		Assert.True(lottie.IsComplete);
+	}
 }

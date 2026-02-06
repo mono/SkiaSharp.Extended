@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.Windows.Input;
 using SkiaSharp.Extended.UI.Controls;
 
@@ -111,7 +112,7 @@ public partial class LottiePage : ContentPage
 		IsPlaying = !IsPlaying;
 
 	private void OnSetSpeed(string speed) =>
-		AnimationSpeed = double.Parse(speed);
+		AnimationSpeed = double.Parse(speed, CultureInfo.InvariantCulture);
 
 	private void OnAnimationFailed(object sender, SKLottieAnimationFailedEventArgs e)
 	{

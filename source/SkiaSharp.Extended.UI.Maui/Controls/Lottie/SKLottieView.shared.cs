@@ -147,8 +147,12 @@ public class SKLottieView : SKAnimatedSurfaceView
 		var scaledTicks = deltaTime.Ticks * AnimationSpeed;
 		const long SafeMax = long.MaxValue - 1;  // Avoid overflow when casting from double
 		const long SafeMin = long.MinValue + 2;  // Avoid overflow when negating TimeSpan
-		if (!double.IsFinite(scaledTicks))
-			scaledTicks = double.IsNaN(scaledTicks) || scaledTicks < 0 ? SafeMin : SafeMax;
+		if (double.IsNaN(scaledTicks))
+			scaledTicks = 0;  // NaN means no movement
+		else if (double.IsNegativeInfinity(scaledTicks))
+			scaledTicks = SafeMin;
+		else if (double.IsPositiveInfinity(scaledTicks))
+			scaledTicks = SafeMax;
 		else if (scaledTicks > SafeMax)
 			scaledTicks = SafeMax;
 		else if (scaledTicks < SafeMin)
