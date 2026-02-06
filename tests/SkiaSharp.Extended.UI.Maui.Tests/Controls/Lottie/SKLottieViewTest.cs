@@ -420,4 +420,162 @@ public class SKLottieViewTest
 			Assert.False(lottie.IsComplete);
 		}
 	}
+
+	// ===========================================
+	// Edge Case Tests (from multi-model review)
+	// ===========================================
+
+	[Fact]
+	public async Task AnimationCompletedEventFiresOnlyOnce()
+	{
+		// Verify AnimationCompleted doesn't spam every frame
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, RepeatCount = 0 };
+		await lottie.LoadedTask;
+
+		var completedCount = 0;
+		lottie.AnimationCompleted += (s, e) => completedCount++;
+
+		// Play to completion
+		lottie.CallUpdate(lottie.Duration + TimeSpan.FromSeconds(1));
+		Assert.True(lottie.IsComplete);
+		Assert.Equal(1, completedCount);
+
+		// Call update several more times - event should NOT fire again
+		for (int i = 0; i < 5; i++)
+		{
+			lottie.CallUpdate(TimeSpan.FromSeconds(0.1));
+		}
+		Assert.Equal(1, completedCount);
+	}
+
+	[Fact]
+	public async Task ManualProgressSetDoesNotIncrementRepeatCount()
+	{
+		// Manually setting Progress to a boundary should not trigger repeat logic
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView 
+		{ 
+			Source = source, 
+			RepeatCount = 5,
+			RepeatMode = SKLottieRepeatMode.Restart
+		};
+		await lottie.LoadedTask;
+
+		var duration = lottie.Duration;
+
+		// Manually scrub to end multiple times
+		lottie.Progress = duration;
+		lottie.Progress = TimeSpan.Zero;
+		lottie.Progress = duration;
+		lottie.Progress = TimeSpan.Zero;
+
+		// Now play normally - should still have all 5 repeats available
+		// (repeatsCompleted should still be 0)
+		lottie.CallUpdate(duration);
+		Assert.False(lottie.IsComplete);
+	}
+
+	[Fact]
+	public async Task SwitchingRepeatModeFromReverseToRestartMidAnimation()
+	{
+		// Verify animation doesn't get stuck when switching modes
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView 
+		{ 
+			Source = source, 
+			RepeatCount = -1,  // infinite
+			RepeatMode = SKLottieRepeatMode.Reverse
+		};
+		await lottie.LoadedTask;
+
+		var duration = lottie.Duration;
+
+		// Play to end and start reversing
+		lottie.CallUpdate(duration);
+		Assert.Equal(duration, lottie.Progress);
+
+		// Play partway back
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+		var midProgress = lottie.Progress;
+		Assert.True(midProgress < duration);
+
+		// Switch to Restart mode
+		lottie.RepeatMode = SKLottieRepeatMode.Restart;
+
+		// Continue playing - should still be able to move
+		lottie.CallUpdate(TimeSpan.FromSeconds(0.5));
+		
+		// Progress should have changed (not stuck)
+		Assert.NotEqual(midProgress, lottie.Progress);
+	}
+
+	[Fact]
+	public async Task ProgressOutOfBoundsIsAccepted()
+	{
+		// CURRENT BEHAVIOR: Out-of-bounds Progress values are accepted without clamping
+		// This test documents the current behavior - a future fix should add clamping
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		var duration = lottie.Duration;
+
+		// Set negative progress - currently accepted (should ideally be clamped)
+		lottie.Progress = TimeSpan.FromSeconds(-100);
+		// Verify the animation doesn't crash
+		Assert.NotNull(lottie);
+
+		// Set progress beyond duration - currently accepted
+		lottie.Progress = duration + TimeSpan.FromSeconds(100);
+		// Verify the animation doesn't crash
+		Assert.NotNull(lottie);
+	}
+
+	[Fact]
+	public async Task ChangingAnimationSpeedToNegativeMidPlayback()
+	{
+		// Verify animation continues correctly when speed changes sign
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView 
+		{ 
+			Source = source, 
+			AnimationSpeed = 1.0,
+			RepeatCount = -1  // infinite
+		};
+		await lottie.LoadedTask;
+
+		// Play forward partway
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+		var progress1 = lottie.Progress;
+		Assert.Equal(TimeSpan.FromSeconds(1), progress1);
+
+		// Change to negative speed
+		lottie.AnimationSpeed = -1.0;
+
+		// Continue - should now play backward
+		lottie.CallUpdate(TimeSpan.FromSeconds(0.5));
+		var progress2 = lottie.Progress;
+		Assert.True(progress2 < progress1);
+	}
+
+	[Fact]
+	public async Task ZeroAnimationSpeedPausesAnimation()
+	{
+		// Verify zero speed pauses without side effects
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = 0 };
+		await lottie.LoadedTask;
+
+		var initialProgress = lottie.Progress;
+
+		// Multiple updates should not change progress
+		for (int i = 0; i < 10; i++)
+		{
+			lottie.CallUpdate(TimeSpan.FromSeconds(1));
+		}
+
+		Assert.Equal(initialProgress, lottie.Progress);
+		Assert.False(lottie.IsComplete);
+	}
 }
