@@ -244,6 +244,8 @@ public class SKLottieView : SKAnimatedSurfaceView
 					// Restart at the beginning of the movement direction:
 					// - Positive speed: restart at 0, move toward Duration
 					// - Negative speed: restart at Duration, move toward 0
+					// Also reset the phase to match the speed direction
+					isInForwardPhase = true;
 					Progress = AnimationSpeed >= 0 ? TimeSpan.Zero : Duration;
 				}
 				else if (repeatMode == SKLottieRepeatMode.Reverse)

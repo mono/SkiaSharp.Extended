@@ -613,4 +613,44 @@ public class SKLottieViewTest
 		// (Duration differs between trophy.json and lolo.json)
 		Assert.NotEqual(TimeSpan.Zero, lottie.Duration);
 	}
+
+	[Fact]
+	public async Task SwitchingFromReverseToRestartWhileInReversePhaseResetsDirection()
+	{
+		// BUG: When in Reverse mode during the reverse phase (playing backward),
+		// switching to Restart mode would leave isInForwardPhase=false, causing
+		// the animation to keep playing backward and get stuck at 0.
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView 
+		{ 
+			Source = source, 
+			RepeatCount = -1,  // infinite
+			RepeatMode = SKLottieRepeatMode.Reverse
+		};
+		await lottie.LoadedTask;
+
+		var duration = lottie.Duration;
+
+		// Play to end (triggers flip to reverse phase)
+		lottie.CallUpdate(duration);
+		Assert.Equal(duration, lottie.Progress);
+
+		// Play partway back (still in reverse phase, not at 0 yet)
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+		var midProgress = lottie.Progress;
+		Assert.True(midProgress < duration && midProgress > TimeSpan.Zero);
+		
+		// Switch to Restart mode while mid-reverse
+		lottie.RepeatMode = SKLottieRepeatMode.Restart;
+
+		// Play until we reach 0 (should trigger restart)
+		lottie.CallUpdate(duration);  // This should go to 0 and restart forward
+		
+		// Continue playing a bit more
+		lottie.CallUpdate(TimeSpan.FromSeconds(0.5));
+		
+		// Progress should be positive (moved forward from 0), not stuck at 0
+		Assert.True(lottie.Progress > TimeSpan.Zero, 
+			$"Animation should move forward after restart, but Progress={lottie.Progress}");
+	}
 }
