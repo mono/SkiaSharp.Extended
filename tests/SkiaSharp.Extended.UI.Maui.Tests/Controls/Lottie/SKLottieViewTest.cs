@@ -216,4 +216,29 @@ public class SKLottieViewTest
 		else
 			Assert.Equal(0, animationCompleted);
 	}
+
+	[Fact]
+	public async Task CanEnableAnimationAfterStartingDisabled()
+	{
+		// create with animation disabled
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, IsAnimationEnabled = false };
+		await lottie.LoadedTask;
+
+		// verify initial state
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+		Assert.False(lottie.IsAnimationEnabled);
+
+		// enable animation
+		lottie.IsAnimationEnabled = true;
+
+		// verify animation is now enabled
+		Assert.True(lottie.IsAnimationEnabled);
+
+		// simulate updates (in real scenario, timer would do this)
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+
+		// verify progress updated
+		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Progress);
+	}
 }
