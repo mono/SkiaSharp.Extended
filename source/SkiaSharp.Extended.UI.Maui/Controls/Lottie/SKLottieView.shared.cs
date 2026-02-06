@@ -57,6 +57,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 	Skottie.Animation? animation;
 	bool isInForwardPhase = true;
 	int repeatsCompleted = 0;
+	CancellationTokenSource? loadCancellation;
 
 	public SKLottieView()
 	{
@@ -129,9 +130,6 @@ public class SKLottieView : SKAnimatedSurfaceView
 	{
 		if (animation is null)
 			return;
-
-		// TODO: handle case where a repeat or revers cases the progress
-		//       to either wrap or start the next round
 
 		// Apply animation speed with overflow protection
 		// Handle NaN and Infinity explicitly, and use safe bounds for long cast
@@ -254,9 +252,12 @@ public class SKLottieView : SKAnimatedSurfaceView
 			Invalidate();
 	}
 
-	private async Task LoadAnimationAsync(SKLottieImageSource? imageSource, CancellationToken cancellationToken = default)
+	private async Task LoadAnimationAsync(SKLottieImageSource? imageSource)
 	{
-		// TODO: better error messaging/handling
+		// Cancel any in-flight load
+		loadCancellation?.Cancel();
+		loadCancellation = new CancellationTokenSource();
+		var cancellationToken = loadCancellation.Token;
 
 		if (imageSource is null || imageSource.IsEmpty)
 		{
@@ -268,10 +269,19 @@ public class SKLottieView : SKAnimatedSurfaceView
 			Exception? exception;
 			try
 			{
-				var loadResult = await Task.Run(() => imageSource.LoadAnimationAsync(cancellationToken));
+				var loadResult = await Task.Run(() => imageSource.LoadAnimationAsync(cancellationToken), cancellationToken);
+
+				// Check if cancelled before applying result
+				if (cancellationToken.IsCancellationRequested)
+					return;
 
 				exception = null;
 				animation = loadResult.Animation;
+			}
+			catch (OperationCanceledException)
+			{
+				// Load was cancelled, don't update state
+				return;
 			}
 			catch (Exception ex)
 			{
@@ -295,8 +305,11 @@ public class SKLottieView : SKAnimatedSurfaceView
 			isInForwardPhase = true;
 			repeatsCompleted = 0;
 
-			Progress = TimeSpan.Zero;
+			// Initialize Progress based on AnimationSpeed:
+			// - Positive/zero speed: start at 0, move toward Duration
+			// - Negative speed: start at Duration, move toward 0
 			Duration = animation?.Duration ?? TimeSpan.Zero;
+			Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
 		}
 	}
 
