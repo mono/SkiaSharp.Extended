@@ -9,6 +9,9 @@ public partial class LottiePage : ContentPage
 	private TimeSpan duration;
 	private TimeSpan progress;
 	private bool isPlaying;
+	private double animationSpeed = 1.0;
+	private SKLottieRepeatMode repeatMode = SKLottieRepeatMode.Restart;
+	private int repeatCount = -1;
 
 	public LottiePage()
 	{
@@ -18,6 +21,7 @@ public partial class LottiePage : ContentPage
 		StepCommand = new Command<string>(OnStep);
 		EndCommand = new Command(OnEnd);
 		PlayPauseCommand = new Command(OnPlayPause);
+		SetSpeedCommand = new Command<string>(OnSetSpeed);
 
 		IsPlaying = true;
 
@@ -54,6 +58,36 @@ public partial class LottiePage : ContentPage
 		}
 	}
 
+	public double AnimationSpeed
+	{
+		get => animationSpeed;
+		set
+		{
+			animationSpeed = value;
+			OnPropertyChanged();
+		}
+	}
+
+	public SKLottieRepeatMode RepeatMode
+	{
+		get => repeatMode;
+		set
+		{
+			repeatMode = value;
+			OnPropertyChanged();
+		}
+	}
+
+	public int RepeatCount
+	{
+		get => repeatCount;
+		set
+		{
+			repeatCount = value;
+			OnPropertyChanged();
+		}
+	}
+
 	public ICommand ResetCommand { get; }
 
 	public ICommand StepCommand { get; }
@@ -61,6 +95,8 @@ public partial class LottiePage : ContentPage
 	public ICommand PlayPauseCommand { get; }
 
 	public ICommand EndCommand { get; }
+
+	public ICommand SetSpeedCommand { get; }
 
 	private void OnReset() =>
 		Progress = TimeSpan.Zero;
@@ -73,6 +109,9 @@ public partial class LottiePage : ContentPage
 
 	private void OnPlayPause() =>
 		IsPlaying = !IsPlaying;
+
+	private void OnSetSpeed(string speed) =>
+		AnimationSpeed = double.Parse(speed);
 
 	private void OnAnimationFailed(object sender, SKLottieAnimationFailedEventArgs e)
 	{

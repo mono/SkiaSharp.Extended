@@ -12,6 +12,9 @@
                                Duration="{Binding Duration}"
                                Progress="{Binding Progress}"
                                IsAnimationEnabled="{Binding IsPlaying}"
+                               AnimationSpeed="{Binding AnimationSpeed}"
+                               RepeatMode="{Binding RepeatMode}"
+                               RepeatCount="{Binding RepeatCount}"
                                AnimationFailed="OnAnimationFailed"
                                AnimationLoaded="OnAnimationLoaded"
                                AnimationCompleted="OnAnimationCompleted" />
@@ -32,6 +35,34 @@
                        Text="{Binding Progress, StringFormat='{}{0:mm\\:ss\\.fff}'}" />
                 <Label Grid.Column="1" HorizontalOptions="End"
                        Text="{Binding Duration, StringFormat='{}{0:mm\\:ss\\.fff}'}" />
+            </Grid>
+
+            <!-- Speed Controls -->
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Label Text="Speed:" VerticalOptions="Center" />
+                <Slider Grid.Column="1" Minimum="-2" Maximum="2" Value="{Binding AnimationSpeed}" />
+                <Label Grid.Column="2" Text="{Binding AnimationSpeed, StringFormat='{0:F1}x'}" WidthRequest="40" />
+            </Grid>
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                <Button Text="-1x" Command="{Binding SetSpeedCommand}" CommandParameter="-1" />
+                <Button Text="0.5x" Command="{Binding SetSpeedCommand}" CommandParameter="0.5" />
+                <Button Text="1x" Command="{Binding SetSpeedCommand}" CommandParameter="1" />
+                <Button Text="2x" Command="{Binding SetSpeedCommand}" CommandParameter="2" />
+            </HorizontalStackLayout>
+
+            <!-- Repeat Controls -->
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+                <Label Text="Repeat:" VerticalOptions="Center" />
+                <Picker Grid.Column="1" SelectedItem="{Binding RepeatMode}">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type controls:SKLottieRepeatMode}">
+                            <controls:SKLottieRepeatMode>Restart</controls:SKLottieRepeatMode>
+                            <controls:SKLottieRepeatMode>Reverse</controls:SKLottieRepeatMode>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+                <Label Grid.Column="2" Text="Count:" VerticalOptions="Center" />
+                <Entry Grid.Column="3" Text="{Binding RepeatCount}" Keyboard="Numeric" WidthRequest="60" />
             </Grid>
 
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
