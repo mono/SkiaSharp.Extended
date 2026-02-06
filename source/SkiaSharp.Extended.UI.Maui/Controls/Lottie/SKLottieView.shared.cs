@@ -58,6 +58,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 	bool isInForwardPhase = true;
 	int repeatsCompleted = 0;
 	CancellationTokenSource? loadCancellation;
+	bool isResetting;
 
 	public SKLottieView()
 	{
@@ -180,6 +181,10 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 		animation.SeekFrameTime(progress.TotalSeconds);
 
+		// Skip completion/repeat logic during Reset to avoid spurious events
+		if (isResetting)
+			return;
+
 		var repeatMode = RepeatMode;
 		var duration = Duration;
 
@@ -193,14 +198,19 @@ public class SKLottieView : SKAnimatedSurfaceView
 		
 		// A run is "finished" based on RepeatMode:
 		// - Restart: finished when reaching the destination (end for forward, start for backward)
-		// - Reverse: finished when returning to start after bouncing from end
+		// - Reverse: finished when completing full cycle (forward + back to start, or backward + back to end)
+		//   With positive speed: start -> end -> start (finish at start)
+		//   With negative speed: end -> start -> end (finish at end)
+		var reverseFinishPoint = AnimationSpeed >= 0 ? atStart : atEnd;
 		var isFinishedRun = repeatMode == SKLottieRepeatMode.Restart 
 			? (movingForward ? atEnd : atStart)
-			: atStart;
+			: reverseFinishPoint;
 
-		// For Reverse mode: flip at end to start the return journey
-		// (but not at start - that's where we complete)
-		var needsFlip = repeatMode == SKLottieRepeatMode.Reverse && atEnd;
+		// For Reverse mode: flip direction when hitting a boundary (but not the finish boundary)
+		// With positive speed: flip at end (start going back toward start)
+		// With negative speed: flip at start (start going back toward end)
+		var needsFlip = repeatMode == SKLottieRepeatMode.Reverse && 
+			(AnimationSpeed >= 0 ? atEnd : atStart) && !isFinishedRun;
 
 		if (needsFlip)
 		{
@@ -254,8 +264,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 	private async Task LoadAnimationAsync(SKLottieImageSource? imageSource)
 	{
-		// Cancel any in-flight load
+		// Cancel and dispose any in-flight load
 		loadCancellation?.Cancel();
+		loadCancellation?.Dispose();
 		loadCancellation = new CancellationTokenSource();
 		var cancellationToken = loadCancellation.Token;
 
@@ -302,14 +313,22 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 		void Reset()
 		{
-			isInForwardPhase = true;
-			repeatsCompleted = 0;
+			isResetting = true;
+			try
+			{
+				isInForwardPhase = true;
+				repeatsCompleted = 0;
 
-			// Initialize Progress based on AnimationSpeed:
-			// - Positive/zero speed: start at 0, move toward Duration
-			// - Negative speed: start at Duration, move toward 0
-			Duration = animation?.Duration ?? TimeSpan.Zero;
-			Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
+				// Initialize Progress based on AnimationSpeed:
+				// - Positive/zero speed: start at 0, move toward Duration
+				// - Negative speed: start at Duration, move toward 0
+				Duration = animation?.Duration ?? TimeSpan.Zero;
+				Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
+			}
+			finally
+			{
+				isResetting = false;
+			}
 		}
 	}
 
