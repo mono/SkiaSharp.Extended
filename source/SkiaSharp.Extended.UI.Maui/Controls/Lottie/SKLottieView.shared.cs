@@ -51,6 +51,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 	Skottie.Animation? animation;
 	bool playForwards = true;
 	int repeatsCompleted = 0;
+	bool animationCompletedFired = false;
 
 	public SKLottieView()
 	{
@@ -169,6 +170,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 			playForwards = !playForwards;
 
 			IsComplete = false;
+			animationCompletedFired = false;
 		}
 		else
 		{
@@ -189,6 +191,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 					repeatsCompleted++;
 
 				isFinishedRun = false;
+				animationCompletedFired = false;
 
 				if (repeatMode == SKLottieRepeatMode.Restart)
 					Progress = TimeSpan.Zero;
@@ -200,8 +203,13 @@ public class SKLottieView : SKAnimatedSurfaceView
 				isFinishedRun &&
 				repeatsCompleted >= totalRepeatCount;
 
-			if (IsComplete)
-				AnimationCompleted?.Invoke(this, EventArgs.Empty);
+			// Only fire the AnimationCompleted event once per animation completion
+			// and dispatch it asynchronously to ensure it's processed in the correct context
+			if (IsComplete && !animationCompletedFired)
+			{
+				animationCompletedFired = true;
+				Dispatcher.Dispatch(() => AnimationCompleted?.Invoke(this, EventArgs.Empty));
+			}
 		}
 
 		if (!IsAnimationEnabled)
@@ -248,6 +256,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		{
 			playForwards = true;
 			repeatsCompleted = 0;
+			animationCompletedFired = false;
 
 			Progress = TimeSpan.Zero;
 			Duration = animation?.Duration ?? TimeSpan.Zero;

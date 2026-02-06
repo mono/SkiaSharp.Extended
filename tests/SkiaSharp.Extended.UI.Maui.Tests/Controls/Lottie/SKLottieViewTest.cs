@@ -2,7 +2,7 @@
 
 namespace SkiaSharp.Extended.UI.Controls.Tests;
 
-public class SKLottieViewTest
+public class SKLottieViewTest : DispatchingBaseTest
 {
 	private const string TrophyJson = "TestAssets/Lottie/trophy.json";
 	private const string LoloJson = "TestAssets/Lottie/lolo.json";
