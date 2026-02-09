@@ -17,6 +17,20 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 		Loaded += OnLoaded;
 	}
 
+	protected override void OnPropertyChanged(string? propertyName = null)
+	{
+		base.OnPropertyChanged(propertyName);
+
+		if (propertyName == nameof(Window))
+		{
+			// Restart animation when Window becomes available
+			// This handles scenarios like CarouselView where views may be created
+			// before Window is assigned, or Window becomes null and then reassigned
+			if (Window is not null)
+				UpdateIsAnimationEnabled();
+		}
+	}
+
 	/// <summary>
 	/// Gets or sets a value indicating whether this control will play the animation provided.
 	/// </summary>
