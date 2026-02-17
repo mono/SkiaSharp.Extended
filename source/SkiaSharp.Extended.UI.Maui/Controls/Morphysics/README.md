@@ -3,6 +3,9 @@
 ## Overview
 The Morphysics micro-engine is a SkiaSharp-powered physics and animation library for .NET MAUI applications. It provides a complete framework for creating interactive, animated, physics-driven scenes with vector morphing capabilities.
 
+![Feature Overview](../../../../../docs/images/morphysics/feature-overview.png)
+*Morphysics feature overview showing all major components*
+
 ## Current Status: Phase 1-4 Complete ✅
 
 ### Implemented Components
