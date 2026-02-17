@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.Gif
 {
 	/// <summary>
 	/// Decodes GIF files (GIF87a and GIF89a) to SKBitmap frames.
-	/// API aligned with SKCodec patterns for consistency.
+	/// API aligned with SKCodec and SKRuntimeEffect patterns for consistency.
 	/// </summary>
 	public class SKGifDecoder : IDisposable
 	{
@@ -41,6 +41,61 @@ namespace SkiaSharp.Extended.Gif
 		public SKGifFrameInfo[] FrameInfo { get; private set; } = null!;
 
 		/// <summary>
+		/// Creates a GIF decoder from a stream, returning detailed error information if decoding fails.
+		/// Pattern aligned with SKRuntimeEffect.Create* methods.
+		/// </summary>
+		/// <param name="stream">The stream containing the GIF data.</param>
+		/// <param name="errors">Detailed error message if decoding fails, or null if successful.</param>
+		/// <returns>A new SKGifDecoder instance, or null if decoding failed.</returns>
+		public static SKGifDecoder? CreateDecoder(Stream stream, out string? errors)
+		{
+			if (stream == null)
+			{
+				errors = "Stream cannot be null.";
+				return null;
+			}
+
+			try
+			{
+				var decoder = new SKGifDecoder(stream);
+				decoder.Initialize();
+				errors = null;
+				return decoder;
+			}
+			catch (InvalidDataException ex)
+			{
+				errors = ex.Message;
+				return null;
+			}
+			catch (Exception ex)
+			{
+				errors = $"Unexpected error decoding GIF: {ex.Message}";
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Creates a GIF decoder from a stream, throwing an exception if decoding fails.
+		/// Pattern aligned with SKRuntimeEffect.Build* methods.
+		/// </summary>
+		/// <param name="stream">The stream containing the GIF data.</param>
+		/// <returns>A new SKGifDecoder instance.</returns>
+		/// <exception cref="ArgumentNullException">Thrown when stream is null.</exception>
+		/// <exception cref="InvalidDataException">Thrown when the stream does not contain valid GIF data.</exception>
+		public static SKGifDecoder BuildDecoder(Stream stream)
+		{
+			var decoder = CreateDecoder(stream, out var errors);
+			if (decoder == null)
+			{
+				if (string.IsNullOrEmpty(errors))
+					throw new InvalidDataException("Failed to decode GIF file. There was an unknown error.");
+				else
+					throw new InvalidDataException($"Failed to decode GIF file: {errors}");
+			}
+			return decoder;
+		}
+
+		/// <summary>
 		/// Creates a new GIF decoder from a stream.
 		/// Factory pattern aligned with SKCodec.Create.
 		/// </summary>
@@ -48,12 +103,7 @@ namespace SkiaSharp.Extended.Gif
 		/// <returns>A new SKGifDecoder instance.</returns>
 		/// <exception cref="ArgumentNullException">Thrown when stream is null.</exception>
 		/// <exception cref="InvalidDataException">Thrown when the stream does not contain valid GIF data.</exception>
-		public static SKGifDecoder Create(Stream stream)
-		{
-			var decoder = new SKGifDecoder(stream);
-			decoder.Initialize();
-			return decoder;
-		}
+		public static SKGifDecoder Create(Stream stream) => BuildDecoder(stream);
 
 		/// <summary>
 		/// Gets information about a specific frame.

@@ -8,23 +8,56 @@ GIF encoder and decoder for SkiaSharp with API aligned to SkiaSharp conventions.
 - **Full GIF89a support** - All extensions including animation, transparency, disposal methods
 - **High compatibility** - Behavior validated against giflib, libnsgif, and cgif
 - **Easy to use** - Simple API aligned with SkiaSharp patterns
-- **SkiaSharp Integration** - API design consistent with SKCodec patterns
+- **SkiaSharp Integration** - API design consistent with SKCodec and SKRuntimeEffect patterns
+- **Flexible Error Handling** - Create* methods for graceful handling, Build* methods for fail-fast
 
 ## Usage
 
-### Decoding GIFs
+### Decoding GIFs - Two Error Handling Options
+
+#### Option 1: Fail-Fast (Build* Pattern - Like SKRuntimeEffect)
 
 ```csharp
 using SkiaSharp.Extended.Gif;
 
-// Decode a GIF file (factory pattern like SKCodec.Create)
+// BuildDecoder throws exception if GIF is invalid (recommended for most cases)
 using var stream = File.OpenRead("animation.gif");
-using var decoder = SKGifDecoder.Create(stream);
+using var decoder = SKGifDecoder.BuildDecoder(stream);  // Throws on error
 
 // Get image info (like SKCodec.Info)
 var info = decoder.Info;
 Console.WriteLine($"Size: {info.Width}x{info.Height}");
+```
 
+#### Option 2: Graceful Error Handling (Create* Pattern - Like SKRuntimeEffect)
+
+```csharp
+using SkiaSharp.Extended.Gif;
+
+// CreateDecoder returns null with error details if GIF is invalid
+using var stream = File.OpenRead("animation.gif");
+var decoder = SKGifDecoder.CreateDecoder(stream, out var errors);
+
+if (decoder == null)
+{
+    Console.WriteLine($"Failed to decode GIF: {errors}");
+    return;
+}
+
+using (decoder)
+{
+    // Use decoder...
+}
+```
+
+#### Option 3: Original Create Method (Backwards Compatible)
+
+```csharp
+// Original Create method still works (delegates to BuildDecoder)
+using var decoder = SKGifDecoder.Create(stream);  // Throws on error
+```
+
+### Working with Decoded GIFs
 // Get GIF-specific metadata
 var gifInfo = decoder.GifInfo;
 Console.WriteLine($"Frames: {gifInfo.FrameCount}");
@@ -48,19 +81,62 @@ for (int i = 0; i < gifInfo.FrameCount; i++)
 }
 ```
 
-### Encoding GIFs
+### Encoding GIFs - Two Error Handling Options
+
+#### Option 1: Fail-Fast (Build* Pattern - Like SKRuntimeEffect)
 
 ```csharp
 using SkiaSharp.Extended.Gif;
 
-// Create an encoder
+// BuildEncoder throws exception if stream is invalid
+using var stream = File.Create("output.gif");
+using var encoder = SKGifEncoder.BuildEncoder(stream);  // Throws on error
+
+// Configure animation
+encoder.SetLoopCount(0); // 0 = infinite loop
+
+// Add frames with duration (aligned with SKCodecFrameInfo.Duration)
+encoder.AddFrame(bitmap1, duration: 100);
+encoder.AddFrame(bitmap2, duration: 100);
+
+// Finalize the GIF
+encoder.Encode();
+```
+
+#### Option 2: Graceful Error Handling (Create* Pattern - Like SKRuntimeEffect)
+
+```csharp
+using SkiaSharp.Extended.Gif;
+
+// CreateEncoder returns null with error details if stream is invalid
+using var stream = File.Create("output.gif");
+var encoder = SKGifEncoder.CreateEncoder(stream, out var errors);
+
+if (encoder == null)
+{
+    Console.WriteLine($"Failed to create encoder: {errors}");
+    return;
+}
+
+using (encoder)
+{
+    encoder.SetLoopCount(0);
+    encoder.AddFrame(bitmap, duration: 100);
+    encoder.Encode();
+}
+```
+
+#### Option 3: Constructor (Traditional)
+
+```csharp
+// Create an encoder using constructor (throws on error)
 using var stream = File.Create("output.gif");
 using var encoder = new SKGifEncoder(stream);
 
 // Configure animation
 encoder.SetLoopCount(0); // 0 = infinite loop
 
-// Add frames with duration (aligned with SKCodecFrameInfo.Duration)
+// Add frames
 encoder.AddFrame(bitmap1, duration: 100);
 encoder.AddFrame(bitmap2, duration: 100);
 encoder.AddFrame(bitmap3, duration: 100);
@@ -75,6 +151,36 @@ encoder.AddFrame(bitmap4, frameInfo);
 
 // Finalize the GIF
 encoder.Encode();
+```
+
+## API Pattern - Following SKRuntimeEffect
+
+This library follows SkiaSharp's `SKRuntimeEffect` pattern for operations that can fail:
+
+### Create* Methods (Graceful Error Handling)
+- Return `null` if operation fails
+- Provide detailed error message via `out string? errors` parameter
+- Use when you want to handle errors gracefully
+- Better for user input validation
+
+```csharp
+var decoder = SKGifDecoder.CreateDecoder(stream, out var errors);
+if (decoder == null)
+{
+    // Handle error gracefully
+    ShowError(errors);
+}
+```
+
+### Build* Methods (Fail-Fast)
+- Throw exception if operation fails
+- Use when errors are exceptional
+- Cleaner code when you expect success
+- Better for internal operations
+
+```csharp
+var decoder = SKGifDecoder.BuildDecoder(stream);  // Throws on error
+// Continue with valid decoder
 ```
 
 ## API Alignment with SkiaSharp
