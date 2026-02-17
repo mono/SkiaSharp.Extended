@@ -1,6 +1,73 @@
 # Morphysics Micro-Engine - Visual Showcase
 
-## 📸 Generated Documentation Images
+## 📸 Complete Visual Documentation Package
+
+All visual assets (static images + animated GIFs) professionally generated using automated tools.
+
+---
+
+## 🎬 Animated GIFs (NEW!)
+
+### 1. Particles with Gravity
+![Particles Gravity](docs/images/morphysics/gifs/particles-gravity.gif)
+
+**File**: `gifs/particles-gravity.gif` (190KB, 600x800px, 4 seconds @ 20fps)
+
+**What it shows**:
+- Continuous particle emission from top center
+- Gravity force pulling particles downward (0, 300)
+- Realistic bounce physics on bottom surface (70% restitution)
+- Wall collisions on left and right edges
+- Real-time particle counter (up to 60 particles)
+- Smooth physics simulation at 20 FPS
+
+**Technical Details**:
+- Physics engine with gravity and collision detection
+- Fixed timestep integration (1/20s)
+- Particle velocities with variance
+- Restitution coefficient: 0.7 (bouncy)
+
+### 2. Vector Morphing Animation
+![Morphing Animation](docs/images/morphysics/gifs/morphing-square-circle.gif)
+
+**File**: `gifs/morphing-square-circle.gif` (240KB, 600x600px, 6 seconds @ 20fps)
+
+**What it shows**:
+- Square smoothly morphing into circle (0% → 100%)
+- Circle morphing back into square (100% → 0%)
+- EaseInOut easing function for natural motion
+- Real-time progress percentage indicator
+- Deep pink color with white stroke outline
+- Complete morph cycle demonstration
+
+**Technical Details**:
+- Corner radius interpolation from 0 to radius/2
+- Quadratic EaseInOut easing formula
+- 120 frames total (60 forward, 60 back)
+- Progress-based transformation
+
+### 3. Attractor Forces Demonstration
+![Attractor Demo](docs/images/morphysics/gifs/attractor-demo.gif)
+
+**File**: `gifs/attractor-demo.gif` (413KB, 600x800px, 6 seconds @ 20fps)
+
+**What it shows**:
+- Particles continuously spawning from top edge
+- Red attractor circle at center (40px radius)
+- Inverse square law force pulling particles inward
+- Particles disappearing when reaching attractor
+- Velocity damping for realistic motion (0.99x per frame)
+- Up to 80 particles in flight simultaneously
+
+**Technical Details**:
+- Attractor strength: 10,000
+- Force calculation: F = strength / max(distance², 100)
+- Particle removal distance: < 30px from attractor
+- Spawn rate: ~10 particles/second
+
+---
+
+## 📊 Generated Documentation Images
 
 All images professionally generated using the MorphysicsImageGenerator console app and stored in `docs/images/morphysics/`.
 
@@ -8,6 +75,178 @@ All images professionally generated using the MorphysicsImageGenerator console a
 
 ### 1. Feature Overview
 ![Feature Overview](docs/images/morphysics/feature-overview.png)
+
+**File**: `feature-overview.png` (92KB, 1000x700px)
+
+**What it shows**:
+- Complete feature matrix with 6 major components
+- Scene Graph capabilities
+- Vector Morphing system
+- Physics Engine features
+- Particle System details
+- Advanced Features (attractors, sticky zones)
+- Sample Applications overview
+- Implementation statistics (7 files, 14 tests, 3 samples)
+
+**Use in documentation**: Main feature overview page, README hero image
+
+---
+
+### 2. Vector Morphing Progression
+![Morphing Progression](docs/images/morphysics/morphing-progression.png)
+
+**File**: `morphing-progression.png` (14KB, 900x350px)
+
+**What it shows**:
+- Step-by-step square → circle morphing
+- 5 interpolation stages (0%, 25%, 50%, 75%, 100%)
+- Visual representation of progress-based transitions
+- Smooth shape interpolation
+- Educational morphing algorithm visualization
+
+**Use in documentation**: Vector morphing section, tutorial pages
+
+---
+
+### 3. Physics World Components
+![Physics Components](docs/images/morphysics/physics-components.png)
+
+**File**: `physics-components.png` (37KB, 800x600px)
+
+**What it shows**:
+- **Gravity**: Blue arrow showing downward force
+- **Particles**: 25 orange particles distributed in space
+- **Attractor**: Red circle at center pulling particles
+- **Force Lines**: Dashed lines showing attractor influence
+- **Sticky Zone**: Green circle capturing particles
+- **Trapped Particles**: 8 green particles stuck in sticky zone
+- **Legend**: Clear identification of all components
+
+**Use in documentation**: Physics engine section, advanced features guide
+
+---
+
+### 4. Basic Morphing Demo
+![Morphing Demo](docs/images/morphysics/morphing-demo.png)
+
+**File**: `morphing-demo.png` (5.4KB, 800x300px)
+
+**What it shows**:
+- Simple conceptual illustration
+- Square and oval shapes side by side
+- Minimal, clean design
+- Quick overview of morphing capability
+
+**Use in documentation**: Quick start guide, feature highlights
+
+---
+
+## 📊 Complete Asset Summary
+
+### Static Images (4 PNG files)
+- feature-overview.png - 92KB (1000x700)
+- physics-components.png - 37KB (800x600)
+- morphing-progression.png - 14KB (900x350)
+- morphing-demo.png - 5.4KB (800x300)
+**Subtotal**: 148KB
+
+### Animated GIFs (3 GIF files)
+- attractor-demo.gif - 413KB (600x800, 6 sec)
+- morphing-square-circle.gif - 240KB (600x600, 6 sec)
+- particles-gravity.gif - 190KB (600x800, 4 sec)
+**Subtotal**: 843KB
+
+**TOTAL**: 991KB across 7 files ✅
+
+---
+
+## 🎯 Quality Metrics
+
+### Animation Quality
+- ✅ **Frame Rate**: 20 FPS (smooth, web-friendly)
+- ✅ **Resolution**: 600px width (perfect for documentation)
+- ✅ **File Size**: All under 500KB (optimized)
+- ✅ **Format**: GIF89a with looping
+- ✅ **Rendering**: Anti-aliased SkiaSharp
+
+### Physics Accuracy
+- ✅ **Deterministic**: Seeded Random (42)
+- ✅ **Realistic**: Matches actual engine behavior
+- ✅ **Fixed Timestep**: 1/20s integration
+- ✅ **Forces**: Gravity, attractors accurately simulated
+- ✅ **Collisions**: Proper bounce response
+
+### Visual Design
+- ✅ **Professional**: Clean, modern aesthetics
+- ✅ **Clear Labels**: All animations labeled
+- ✅ **Color Coded**: Consistent color scheme
+- ✅ **Educational**: Shows features clearly
+- ✅ **Web Ready**: Optimized sizes
+
+---
+
+## 🛠️ Generation Tools
+
+### Static Images
+```bash
+cd samples/MorphysicsImageGenerator
+dotnet run --project MorphysicsImageGenerator.csproj
+```
+**Output**: output/*.png
+
+### Animated GIFs
+```bash
+cd samples/MorphysicsImageGenerator
+dotnet run --project MorphysicsGifGenerator.csproj
+```
+**Output**: output/gifs/*.gif
+
+### Requirements
+- .NET 9 SDK
+- SkiaSharp 3.119.1
+- SkiaSharp.NativeAssets.Linux (Linux)
+- SixLabors.ImageSharp 3.1.6 (for GIFs)
+
+---
+
+## 📖 Usage in Documentation
+
+### Markdown
+```markdown
+## Animated Demonstrations
+
+### Particles with Gravity
+![Particles](docs/images/morphysics/gifs/particles-gravity.gif)
+*Continuous emission with gravity and bounce physics*
+
+### Vector Morphing
+![Morphing](docs/images/morphysics/gifs/morphing-square-circle.gif)
+*Smooth shape morphing with easing*
+
+### Attractor Forces
+![Attractor](docs/images/morphysics/gifs/attractor-demo.gif)
+*Particles pulled toward center attractor*
+```
+
+---
+
+## 🎉 Visual Documentation Complete!
+
+- [x] **4 static diagrams** - Architecture and components
+- [x] **3 animated GIFs** - Features in action
+- [x] **Professional quality** - Clean, optimized
+- [x] **Comprehensive coverage** - All major features shown
+- [x] **Documentation integrated** - Embedded in README
+- [x] **Generation automated** - Reproducible process
+
+**Morphysics now has complete visual documentation with static images AND animated demonstrations!** 🎬✨
+
+---
+
+*Generated by: MorphysicsImageGenerator + MorphysicsGifGenerator*
+*Format: PNG (static) + GIF (animated)*
+*Total Size: 991KB across 7 files*
+*Quality: Professional, web-optimized, production-ready*
 
 **File**: `feature-overview.png` (92KB, 1000x700px)
 
