@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using SkiaSharp.Extended.Inking;
 
 namespace SkiaSharp.Extended.UI.Controls;
 
@@ -99,9 +100,8 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 	/// </summary>
 	public static readonly BindableProperty IsBlankProperty = IsBlankPropertyKey.BindableProperty;
 
-	private readonly List<SKInkStroke> strokes = new();
+	private readonly SKInkCanvas inkCanvas;
 	private readonly SKPaint strokePaint;
-	private SKInkStroke? currentStroke;
 	private SKColor skStrokeColor = SKColors.Black;
 	private SKColor skBackgroundColor = SKColors.White;
 	private SKCanvasView? canvasView;
@@ -115,6 +115,11 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 	public SKSignaturePadView()
 	{
 		ResourceLoader<Themes.SKSignaturePadViewResources>.EnsureRegistered(this);
+
+		inkCanvas = new SKInkCanvas(1f, 8f);
+		inkCanvas.Invalidated += OnInkCanvasInvalidated;
+		inkCanvas.Cleared += OnInkCanvasCleared;
+		inkCanvas.StrokeCompleted += OnInkCanvasStrokeCompleted;
 
 		strokePaint = new SKPaint
 		{
@@ -133,6 +138,11 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 	/// Occurs when a stroke is completed.
 	/// </summary>
 	public event EventHandler<SKSignatureStrokeCompletedEventArgs>? StrokeCompleted;
+
+	/// <summary>
+	/// Gets the underlying ink canvas engine.
+	/// </summary>
+	public SKInkCanvas InkCanvas => inkCanvas;
 
 	/// <summary>
 	/// Gets whether the signature pad is blank (has no strokes).
@@ -218,31 +228,14 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 	/// <summary>
 	/// Gets the number of strokes in the signature.
 	/// </summary>
-	public int StrokeCount => strokes.Count;
+	public int StrokeCount => inkCanvas.StrokeCount;
 
 	/// <summary>
 	/// Clears all strokes from the signature pad.
 	/// </summary>
 	public void Clear()
 	{
-		foreach (var stroke in strokes)
-		{
-			stroke.Dispose();
-		}
-		strokes.Clear();
-
-		currentStroke?.Dispose();
-		currentStroke = null;
-
-		UpdateIsBlank();
-		Invalidate();
-
-		Cleared?.Invoke(this, EventArgs.Empty);
-
-		if (ClearedCommand?.CanExecute(ClearedCommandParameter) == true)
-		{
-			ClearedCommand.Execute(ClearedCommandParameter);
-		}
+		inkCanvas.Clear();
 	}
 
 	/// <summary>
@@ -251,17 +244,7 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 	/// <returns>True if a stroke was removed, false if there were no strokes.</returns>
 	public bool Undo()
 	{
-		if (strokes.Count == 0)
-			return false;
-
-		var lastStroke = strokes[^1];
-		strokes.RemoveAt(strokes.Count - 1);
-		lastStroke.Dispose();
-
-		UpdateIsBlank();
-		Invalidate();
-
-		return true;
+		return inkCanvas.Undo();
 	}
 
 	/// <summary>
@@ -270,19 +253,7 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 	/// <returns>An SKPath containing all strokes, or null if the pad is blank.</returns>
 	public SKPath? ToPath()
 	{
-		if (strokes.Count == 0)
-			return null;
-
-		var combinedPath = new SKPath();
-		foreach (var stroke in strokes)
-		{
-			if (stroke.Path is SKPath path)
-			{
-				combinedPath.AddPath(path);
-			}
-		}
-
-		return combinedPath;
+		return inkCanvas.ToPath();
 	}
 
 	/// <summary>
@@ -294,48 +265,7 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 	/// <returns>An SKImage containing the rendered signature.</returns>
 	public SKImage? ToImage(int width, int height, SKColor? backgroundColor = null)
 	{
-		if (strokes.Count == 0)
-			return null;
-
-		var info = new SKImageInfo(width, height, SKColorType.Rgba8888, SKAlphaType.Premul);
-		using var surface = SKSurface.Create(info);
-
-		if (surface == null)
-			return null;
-
-		var canvas = surface.Canvas;
-
-		if (backgroundColor.HasValue)
-		{
-			canvas.Clear(backgroundColor.Value);
-		}
-		else
-		{
-			canvas.Clear(SKColors.Transparent);
-		}
-
-		// Calculate scale to fit the signature in the image
-		var bounds = GetStrokeBounds();
-		if (bounds.IsEmpty)
-			return null;
-
-		var scale = Math.Min(width / bounds.Width, height / bounds.Height) * 0.9f;
-		var offsetX = (width - bounds.Width * scale) / 2f - bounds.Left * scale;
-		var offsetY = (height - bounds.Height * scale) / 2f - bounds.Top * scale;
-
-		canvas.Translate(offsetX, offsetY);
-		canvas.Scale(scale);
-
-		// Draw all strokes
-		foreach (var stroke in strokes)
-		{
-			if (stroke.Path is SKPath path)
-			{
-				canvas.DrawPath(path, strokePaint);
-			}
-		}
-
-		return surface.Snapshot();
+		return inkCanvas.ToImage(width, height, skStrokeColor, backgroundColor);
 	}
 
 	/// <summary>
@@ -344,27 +274,7 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 	/// <returns>The bounding rectangle.</returns>
 	public SKRect GetStrokeBounds()
 	{
-		if (strokes.Count == 0)
-			return SKRect.Empty;
-
-		var bounds = SKRect.Empty;
-		foreach (var stroke in strokes)
-		{
-			if (stroke.Path is SKPath path)
-			{
-				var pathBounds = path.Bounds;
-				if (bounds.IsEmpty)
-				{
-					bounds = pathBounds;
-				}
-				else
-				{
-					bounds = SKRect.Union(bounds, pathBounds);
-				}
-			}
-		}
-
-		return bounds;
+		return inkCanvas.GetBounds();
 	}
 
 	/// <inheritdoc/>
@@ -408,20 +318,8 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 		// Clear with background color
 		canvas.Clear(skBackgroundColor);
 
-		// Draw all completed strokes
-		foreach (var stroke in strokes)
-		{
-			if (stroke.Path is SKPath path)
-			{
-				canvas.DrawPath(path, strokePaint);
-			}
-		}
-
-		// Draw the current stroke being drawn
-		if (currentStroke?.Path is SKPath currentPath)
-		{
-			canvas.DrawPath(currentPath, strokePaint);
-		}
+		// Draw all strokes using the ink canvas
+		inkCanvas.Draw(canvas, strokePaint);
 	}
 
 	/// <summary>
@@ -462,7 +360,7 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 					return;
 				}
 				activeTouchId = touchId;
-				StartStroke(location, pressure);
+				inkCanvas.StartStroke(location, pressure);
 				e.Handled = true;
 				break;
 
@@ -475,7 +373,7 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 				}
 				if (e.InContact)
 				{
-					ContinueStroke(location, pressure);
+					inkCanvas.ContinueStroke(location, pressure);
 					e.Handled = true;
 				}
 				break;
@@ -488,7 +386,7 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 					return;
 				}
 				activeTouchId = null;
-				EndStroke(location, pressure);
+				inkCanvas.EndStroke(location, pressure);
 				e.Handled = true;
 				break;
 
@@ -500,64 +398,41 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 					return;
 				}
 				activeTouchId = null;
-				CancelStroke();
+				inkCanvas.CancelStroke();
 				e.Handled = true;
 				break;
 		}
 	}
 
-	private void StartStroke(SKPoint point, float pressure)
+	private void OnInkCanvasInvalidated(object? sender, EventArgs e)
 	{
-		currentStroke = new SKInkStroke(MinStrokeWidth, MaxStrokeWidth);
-		currentStroke.AddPoint(point, pressure);
+		UpdateIsBlank();
 		Invalidate();
 	}
 
-	private void ContinueStroke(SKPoint point, float pressure)
+	private void OnInkCanvasCleared(object? sender, EventArgs e)
 	{
-		currentStroke?.AddPoint(point, pressure);
-		Invalidate();
-	}
+		Cleared?.Invoke(this, EventArgs.Empty);
 
-	private void EndStroke(SKPoint point, float pressure)
-	{
-		if (currentStroke != null)
+		if (ClearedCommand?.CanExecute(ClearedCommandParameter) == true)
 		{
-			currentStroke.AddPoint(point, pressure, isLastPoint: true);
-
-			if (!currentStroke.IsEmpty)
-			{
-				strokes.Add(currentStroke);
-				UpdateIsBlank();
-
-				StrokeCompleted?.Invoke(this, new SKSignatureStrokeCompletedEventArgs(strokes.Count));
-
-				if (StrokeCompletedCommand?.CanExecute(StrokeCompletedCommandParameter) == true)
-				{
-					StrokeCompletedCommand.Execute(StrokeCompletedCommandParameter);
-				}
-			}
-			else
-			{
-				currentStroke.Dispose();
-			}
-
-			currentStroke = null;
+			ClearedCommand.Execute(ClearedCommandParameter);
 		}
-
-		Invalidate();
 	}
 
-	private void CancelStroke()
+	private void OnInkCanvasStrokeCompleted(object? sender, SKInkStrokeCompletedEventArgs e)
 	{
-		currentStroke?.Dispose();
-		currentStroke = null;
-		Invalidate();
+		StrokeCompleted?.Invoke(this, new SKSignatureStrokeCompletedEventArgs(e.StrokeCount));
+
+		if (StrokeCompletedCommand?.CanExecute(StrokeCompletedCommandParameter) == true)
+		{
+			StrokeCompletedCommand.Execute(StrokeCompletedCommandParameter);
+		}
 	}
 
 	private void UpdateIsBlank()
 	{
-		IsBlank = strokes.Count == 0;
+		IsBlank = inkCanvas.IsBlank;
 	}
 
 	private static void OnStrokeColorChanged(BindableObject bindable, object oldValue, object newValue)
@@ -576,8 +451,11 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 
 	private static void OnStrokeWidthChanged(BindableObject bindable, object oldValue, object newValue)
 	{
-		// Stroke width changes will affect new strokes only
-		// No need to invalidate existing strokes
+		if (bindable is SKSignaturePadView view)
+		{
+			view.inkCanvas.MinStrokeWidth = view.MinStrokeWidth;
+			view.inkCanvas.MaxStrokeWidth = view.MaxStrokeWidth;
+		}
 	}
 
 	private static void OnPadBackgroundColorChanged(BindableObject bindable, object oldValue, object newValue)
@@ -626,16 +504,13 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 				glView = null;
 			}
 
-			// Dispose all strokes
-			foreach (var stroke in strokes)
-			{
-				stroke.Dispose();
-			}
-			strokes.Clear();
+			// Unsubscribe from ink canvas events
+			inkCanvas.Invalidated -= OnInkCanvasInvalidated;
+			inkCanvas.Cleared -= OnInkCanvasCleared;
+			inkCanvas.StrokeCompleted -= OnInkCanvasStrokeCompleted;
 
-			// Dispose current stroke
-			currentStroke?.Dispose();
-			currentStroke = null;
+			// Dispose ink canvas
+			inkCanvas.Dispose();
 
 			// Dispose paint
 			strokePaint.Dispose();

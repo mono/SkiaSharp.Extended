@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net9.0</TargetFrameworks>
+    <AssemblyName>SkiaSharp.Extended.Inking</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended.Inking</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.Inking</PackageId>
+    <Title>SkiaSharp.Extended.Inking</Title>
+    <Description>A pressure-sensitive digital inking engine for SkiaSharp. Provides smooth, variable-width stroke rendering with quadratic Bézier interpolation.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="3.119.1" />
+  </ItemGroup>
+
+</Project>
