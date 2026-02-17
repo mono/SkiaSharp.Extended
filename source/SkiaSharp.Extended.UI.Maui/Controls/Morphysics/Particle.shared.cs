@@ -45,7 +45,7 @@ public class Particle
 	/// <summary>
 	/// Gets whether this particle is dead (lifetime expired).
 	/// </summary>
-	public bool IsDead => Lifetime >= 0 && Lifetime <= 0;
+	public bool IsDead => Lifetime >= -0.1f && Lifetime <= 0.0001f && Lifetime != -1f; // Allow some overshoot but not infinite (-1)
 
 	/// <summary>
 	/// Updates the particle's lifetime.
