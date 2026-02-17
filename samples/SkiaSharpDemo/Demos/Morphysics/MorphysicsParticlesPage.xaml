@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             x:Class="SkiaSharpDemo.Demos.Morphysics.MorphysicsParticlesPage"
+             Title="Particles Demo">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <!-- Particle Canvas -->
+        <controls:AnimatedCanvasView x:Name="canvasView" />
+
+        <!-- Controls -->
+        <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="12" BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#202020}">
+            
+            <!-- Particle Count Display -->
+            <Label Text="{Binding ParticleCount, StringFormat='Particles: {0}'}" 
+                   FontSize="16" FontAttributes="Bold" />
+
+            <!-- Emission Rate -->
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Label Text="Rate:" VerticalOptions="Center" />
+                <Slider Grid.Column="1" 
+                        Minimum="0" Maximum="120" 
+                        Value="{Binding EmissionRate}" />
+                <Label Grid.Column="2" 
+                       Text="{Binding EmissionRate, StringFormat='{0}/s'}" 
+                       WidthRequest="50" />
+            </Grid>
+
+            <!-- Gravity -->
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Label Text="Gravity:" VerticalOptions="Center" />
+                <Slider Grid.Column="1" 
+                        Minimum="-200" Maximum="500" 
+                        Value="{Binding GravityY}" />
+                <Label Grid.Column="2" 
+                       Text="{Binding GravityY, StringFormat='{0:F0}'}" 
+                       WidthRequest="50" />
+            </Grid>
+
+            <!-- Bounciness -->
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Label Text="Bounce:" VerticalOptions="Center" />
+                <Slider Grid.Column="1" 
+                        Minimum="0" Maximum="1" 
+                        Value="{Binding Restitution}" />
+                <Label Grid.Column="2" 
+                       Text="{Binding Restitution, StringFormat='{0:F2}'}" 
+                       WidthRequest="50" />
+            </Grid>
+
+            <!-- Collisions Toggle -->
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                <Label Text="Collisions:" VerticalOptions="Center" />
+                <Switch Grid.Column="1" 
+                        IsToggled="{Binding CollisionsEnabled}" 
+                        HorizontalOptions="Start" />
+            </Grid>
+
+            <!-- Action Buttons -->
+            <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
+                <Button Text="Burst (100)" 
+                        Clicked="OnBurstClicked" 
+                        WidthRequest="120" />
+                <Button Text="Clear" 
+                        Clicked="OnClearClicked" 
+                        WidthRequest="120" />
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+
+    </Grid>
+
+</ContentPage>

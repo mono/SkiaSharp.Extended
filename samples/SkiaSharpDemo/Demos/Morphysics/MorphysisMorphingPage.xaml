@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             x:Class="SkiaSharpDemo.Demos.Morphysics.MorphysisMorphingPage"
+             Title="Vector Morphing">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <!-- Morphing Canvas -->
+        <controls:AnimatedCanvasView x:Name="canvasView" 
+                                     BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1A1A1A}" />
+
+        <!-- Controls -->
+        <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="12" BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#202020}">
+            
+            <!-- Progress Slider -->
+            <Label Text="Morph Progress" FontSize="14" FontAttributes="Bold" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Slider Grid.Column="0" 
+                        Minimum="0" Maximum="1" 
+                        Value="{Binding MorphProgress}" />
+                <Label Grid.Column="1" 
+                       Text="{Binding MorphProgress, StringFormat='{0:P0}'}" 
+                       WidthRequest="50" 
+                       VerticalOptions="Center" />
+            </Grid>
+
+            <!-- Shape Selection -->
+            <Label Text="Source → Target Shapes" FontSize="14" FontAttributes="Bold" Margin="0,8,0,0" />
+            <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="8">
+                <Picker Grid.Column="0" 
+                        SelectedItem="{Binding SelectedSource}">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Square</x:String>
+                            <x:String>Circle</x:String>
+                            <x:String>Triangle</x:String>
+                            <x:String>Star</x:String>
+                            <x:String>Heart</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+                
+                <Label Grid.Column="1" 
+                       Text="→" 
+                       FontSize="20" 
+                       VerticalOptions="Center" 
+                       HorizontalOptions="Center" />
+                
+                <Picker Grid.Column="2" 
+                        SelectedItem="{Binding SelectedTarget}">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Circle</x:String>
+                            <x:String>Square</x:String>
+                            <x:String>Triangle</x:String>
+                            <x:String>Star</x:String>
+                            <x:String>Heart</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+            </Grid>
+
+            <!-- Easing Function -->
+            <Label Text="Easing Function" FontSize="14" FontAttributes="Bold" Margin="0,8,0,0" />
+            <Picker SelectedItem="{Binding SelectedEasing}">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Linear</x:String>
+                        <x:String>EaseIn</x:String>
+                        <x:String>EaseOut</x:String>
+                        <x:String>EaseInOut</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <!-- Animate Button -->
+            <Button Text="Animate Morph" 
+                    Clicked="OnAnimateClicked" 
+                    Margin="0,8,0,0" />
+
+        </VerticalStackLayout>
+
+    </Grid>
+
+</ContentPage>

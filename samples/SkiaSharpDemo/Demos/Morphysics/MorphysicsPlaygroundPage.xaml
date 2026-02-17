@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             x:Class="SkiaSharpDemo.Demos.Morphysics.MorphysicsPlaygroundPage"
+             Title="Physics Playground">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <!-- Physics Canvas -->
+        <controls:AnimatedCanvasView x:Name="canvasView" 
+                                     BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#0A0A0A}" />
+
+        <!-- Info Overlay -->
+        <Label Grid.Row="0"
+               Text="{Binding ParticleCount, StringFormat='Particles: {0}'}" 
+               FontSize="18" 
+               FontAttributes="Bold"
+               TextColor="White"
+               BackgroundColor="#80000000"
+               Padding="12,8"
+               Margin="16"
+               HorizontalOptions="Start"
+               VerticalOptions="Start" />
+
+        <!-- Controls -->
+        <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="12" BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#202020}">
+            
+            <Label Text="Interactive Physics Controls" FontSize="16" FontAttributes="Bold" />
+
+            <!-- Emission Rate -->
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Label Text="Emit Rate:" VerticalOptions="Center" />
+                <Slider Grid.Column="1" 
+                        Minimum="0" Maximum="100" 
+                        Value="{Binding EmissionRate}" />
+                <Label Grid.Column="2" 
+                       Text="{Binding EmissionRate, StringFormat='{0}/s'}" 
+                       WidthRequest="50" />
+            </Grid>
+
+            <!-- Gravity -->
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Label Text="Gravity:" VerticalOptions="Center" />
+                <Slider Grid.Column="1" 
+                        Minimum="-300" Maximum="500" 
+                        Value="{Binding GravityY}" />
+                <Label Grid.Column="2" 
+                       Text="{Binding GravityY, StringFormat='{0:F0}'}" 
+                       WidthRequest="50" />
+            </Grid>
+
+            <!-- Attractor Strength -->
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Label Text="Attractor:" VerticalOptions="Center" />
+                <Slider Grid.Column="1" 
+                        Minimum="0" Maximum="1000" 
+                        Value="{Binding AttractorStrength}" />
+                <Label Grid.Column="2" 
+                       Text="{Binding AttractorStrength, StringFormat='{0:F0}'}" 
+                       WidthRequest="50" />
+            </Grid>
+
+            <!-- Sticky Zone Toggle -->
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                <Label Text="Sticky Zone:" VerticalOptions="Center" />
+                <Switch Grid.Column="1" 
+                        IsToggled="{Binding StickyZoneEnabled}" 
+                        HorizontalOptions="Start" />
+            </Grid>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,8,0,0">
+                <Button Grid.Column="0"
+                        Text="Spawn Burst" 
+                        Clicked="OnSpawnBurstClicked" />
+                <Button Grid.Column="1"
+                        Text="Reset" 
+                        Clicked="OnResetClicked" />
+            </Grid>
+
+            <!-- Instructions -->
+            <Label Text="💡 The attractor pulls particles toward the center. Enable sticky zone to capture them!" 
+                   FontSize="12" 
+                   TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}"
+                   Margin="0,8,0,0" />
+
+        </VerticalStackLayout>
+
+    </Grid>
+
+</ContentPage>
