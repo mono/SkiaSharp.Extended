@@ -3,7 +3,7 @@ using System;
 namespace SkiaSharp.Extended.Gif
 {
 	/// <summary>
-	/// Represents a single frame from a GIF file.
+	/// Represents a single decoded frame from a GIF file.
 	/// </summary>
 	public class SKGifFrame : IDisposable
 	{
@@ -13,34 +13,9 @@ namespace SkiaSharp.Extended.Gif
 		public SKBitmap Bitmap { get; internal set; } = null!;
 
 		/// <summary>
-		/// Gets the delay in milliseconds before displaying the next frame.
+		/// Gets the frame information including duration, disposal method, and bounds.
 		/// </summary>
-		public int DelayMs { get; internal set; }
-
-		/// <summary>
-		/// Gets the disposal method for this frame.
-		/// </summary>
-		public SKGifDisposalMethod DisposalMethod { get; internal set; }
-
-		/// <summary>
-		/// Gets the X offset of this frame within the logical screen.
-		/// </summary>
-		public int Left { get; internal set; }
-
-		/// <summary>
-		/// Gets the Y offset of this frame within the logical screen.
-		/// </summary>
-		public int Top { get; internal set; }
-
-		/// <summary>
-		/// Gets the width of this frame.
-		/// </summary>
-		public int Width { get; internal set; }
-
-		/// <summary>
-		/// Gets the height of this frame.
-		/// </summary>
-		public int Height { get; internal set; }
+		public SKGifFrameInfo FrameInfo { get; internal set; }
 
 		/// <summary>
 		/// Disposes the frame and releases the bitmap.
@@ -53,7 +28,48 @@ namespace SkiaSharp.Extended.Gif
 	}
 
 	/// <summary>
+	/// Contains information about a GIF frame (aligned with SKCodecFrameInfo pattern).
+	/// </summary>
+	public struct SKGifFrameInfo
+	{
+		/// <summary>
+		/// Gets or sets the duration in milliseconds to show this frame.
+		/// Aligned with SKCodecFrameInfo.Duration.
+		/// </summary>
+		public int Duration { get; set; }
+
+		/// <summary>
+		/// Gets or sets the disposal method indicating how the frame should be modified before decoding the next one.
+		/// Aligned with SKCodecFrameInfo.DisposalMethod.
+		/// </summary>
+		public SKGifDisposalMethod DisposalMethod { get; set; }
+
+		/// <summary>
+		/// Gets or sets the frame that this frame needs to be blended with, or -1 if independent.
+		/// Aligned with SKCodecFrameInfo.RequiredFrame.
+		/// </summary>
+		public int RequiredFrame { get; set; }
+
+		/// <summary>
+		/// Gets or sets the rectangle occupied by this frame within the logical screen.
+		/// Aligned with SKCodecFrameInfo.FrameRect.
+		/// </summary>
+		public SKRectI FrameRect { get; set; }
+
+		/// <summary>
+		/// Gets or sets whether this frame has transparency.
+		/// </summary>
+		public bool HasTransparency { get; set; }
+
+		/// <summary>
+		/// Gets or sets the transparent color for this frame, if any.
+		/// </summary>
+		public SKColor? TransparentColor { get; set; }
+	}
+
+	/// <summary>
 	/// Specifies how a frame should be disposed before rendering the next frame.
+	/// Values aligned with SKCodecAnimationDisposalMethod for consistency.
 	/// </summary>
 	public enum SKGifDisposalMethod
 	{
@@ -63,17 +79,20 @@ namespace SkiaSharp.Extended.Gif
 		None = 0,
 
 		/// <summary>
-		/// Do not dispose. The graphic is to be left in place.
+		/// Do not dispose. The next frame should be drawn on top of this one.
+		/// Corresponds to SKCodecAnimationDisposalMethod.Keep.
 		/// </summary>
 		DoNotDispose = 1,
 
 		/// <summary>
-		/// Restore to background color. The area used by the graphic must be restored to the background color.
+		/// Restore to background color. The area used by the graphic must be cleared to the background color before drawing the next frame.
+		/// Corresponds to SKCodecAnimationDisposalMethod.RestoreBackgroundColor.
 		/// </summary>
 		RestoreToBackground = 2,
 
 		/// <summary>
-		/// Restore to previous. The decoder is required to restore the area overwritten by the graphic with what was there prior to rendering the graphic.
+		/// Restore to previous. The decoder is required to restore the area to what was there prior to rendering the graphic.
+		/// Corresponds to SKCodecAnimationDisposalMethod.RestorePrevious.
 		/// </summary>
 		RestoreToPrevious = 3
 	}

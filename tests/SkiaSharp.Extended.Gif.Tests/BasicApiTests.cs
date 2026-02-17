@@ -2,6 +2,7 @@ namespace SkiaSharp.Extended.Gif.Tests;
 
 /// <summary>
 /// Basic tests to verify the GIF project structure and API surface.
+/// API aligned with SkiaSharp patterns.
 /// </summary>
 public class BasicApiTests
 {
@@ -26,8 +27,8 @@ public class BasicApiTests
 		using var stream = new MemoryStream();
 		using var encoder = new SKGifEncoder(stream);
 
-		// Act & Assert
-		Assert.Throws<ArgumentNullException>(() => encoder.AddFrame(null!));
+		// Act & Assert - using explicit duration parameter
+		Assert.Throws<ArgumentNullException>(() => encoder.AddFrame(null!, 100));
 	}
 
 	[Fact]
@@ -41,12 +42,35 @@ public class BasicApiTests
 	}
 
 	[Fact]
-	public void SKGifMetadata_CanBeCreated()
+	public void SKGifInfo_CanBeCreated()
 	{
 		// Arrange & Act
-		var metadata = new SKGifMetadata();
+		var info = new SKGifInfo();
 
 		// Assert
-		Assert.NotNull(metadata);
+		Assert.NotNull(info);
+	}
+
+	[Fact]
+	public void SKGifDisposalMethod_HasCorrectValues()
+	{
+		// Verify enum values align with SKCodecAnimationDisposalMethod
+		Assert.Equal(0, (int)SKGifDisposalMethod.None);
+		Assert.Equal(1, (int)SKGifDisposalMethod.DoNotDispose);
+		Assert.Equal(2, (int)SKGifDisposalMethod.RestoreToBackground);
+		Assert.Equal(3, (int)SKGifDisposalMethod.RestoreToPrevious);
+	}
+
+	[Fact]
+	public void SKGifFrameInfo_DurationProperty_Exists()
+	{
+		// Arrange
+		var frameInfo = new SKGifFrameInfo
+		{
+			Duration = 100
+		};
+
+		// Assert - verify Duration property exists (aligned with SKCodecFrameInfo)
+		Assert.Equal(100, frameInfo.Duration);
 	}
 }

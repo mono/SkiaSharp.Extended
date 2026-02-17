@@ -32,12 +32,12 @@ namespace SkiaSharp.Extended.Gif
 		}
 
 		/// <summary>
-		/// Adds a frame to the GIF.
+		/// Adds a frame to the GIF with detailed frame information.
 		/// </summary>
 		/// <param name="bitmap">The bitmap to encode as a frame.</param>
-		/// <param name="delayMs">The delay in milliseconds before displaying the next frame (default: 100ms).</param>
+		/// <param name="frameInfo">Optional frame information (duration, disposal, etc.).</param>
 		/// <exception cref="ArgumentNullException">Thrown when bitmap is null.</exception>
-		public void AddFrame(SKBitmap bitmap, int delayMs = 100)
+		public void AddFrame(SKBitmap bitmap, SKGifFrameInfo? frameInfo = null)
 		{
 			if (bitmap == null)
 				throw new ArgumentNullException(nameof(bitmap));
@@ -47,9 +47,21 @@ namespace SkiaSharp.Extended.Gif
 		}
 
 		/// <summary>
-		/// Saves the GIF to the stream.
+		/// Adds a frame to the GIF with a simple duration.
 		/// </summary>
-		public void Save()
+		/// <param name="bitmap">The bitmap to encode as a frame.</param>
+		/// <param name="duration">The duration in milliseconds to show this frame (default: 100ms). Aligned with SKCodecFrameInfo.Duration.</param>
+		/// <exception cref="ArgumentNullException">Thrown when bitmap is null.</exception>
+		public void AddFrame(SKBitmap bitmap, int duration = 100)
+		{
+			var frameInfo = new SKGifFrameInfo { Duration = duration };
+			AddFrame(bitmap, frameInfo);
+		}
+
+		/// <summary>
+		/// Encodes and finalizes the GIF file.
+		/// </summary>
+		public void Encode()
 		{
 			// TODO: Implement GIF file writing
 			throw new NotImplementedException("GIF encoding is not yet implemented. This is a placeholder for the project structure.");
