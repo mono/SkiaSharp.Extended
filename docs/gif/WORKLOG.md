@@ -52,7 +52,36 @@ This document tracks the detailed progress of the GIF encoder/decoder implementa
 - Code coverage: High (all methods tested)
 - Ready for LZW codec implementation
 
-**Next**: Implement LZW codec (decompressor + compressor)
+### 20:12 - LZW Decoder Implementation
+**Goal**: Implement LZW decompression with comprehensive tests
+
+**Actions**:
+- ✅ Implemented `Codec/LzwDecoder.cs` - Full LZW decompressor:
+  - Variable bit-width code reading (3-12 bits)
+  - Clear code and end-of-information code handling
+  - Dynamic code table growth
+  - Sub-block chain reading from stream
+  - Uses `ArrayPool<T>` for memory efficiency
+  - Proper disposal with pooled array returns
+  - 200+ lines of optimized code
+- ✅ Created comprehensive test suite `Codec/LzwDecoderTests.cs` with 9 tests:
+  - Constructor validation (valid/invalid code sizes)
+  - Simple decompression patterns
+  - Clear code reset handling
+  - Empty stream handling
+  - Multiple data blocks
+  - Incremental reading
+  - All minimum code sizes (2-8)
+  - Disposal safety
+- ✅ All 27 tests passing (18 previous + 9 new)
+
+**Results**:
+- LZW decoder complete and tested
+- Memory efficient using ArrayPool
+- Handles all edge cases
+- Ready for real-world GIF decoding
+
+**Next**: Implement LZW encoder for GIF generation
 
 ---
 
