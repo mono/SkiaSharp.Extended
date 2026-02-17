@@ -6,6 +6,20 @@ The Morphysics micro-engine is a SkiaSharp-powered physics and animation library
 ![Feature Overview](../../../../../docs/images/morphysics/feature-overview.png)
 *Morphysics feature overview showing all major components*
 
+## Animated Demonstrations
+
+### Particles with Gravity
+![Particles with Gravity](../../../../../docs/images/morphysics/gifs/particles-gravity.gif)
+*Continuous particle emission with gravity and bounce physics*
+
+### Vector Morphing
+![Vector Morphing](../../../../../docs/images/morphysics/gifs/morphing-square-circle.gif)
+*Smooth shape morphing from square to circle with easing*
+
+### Attractor Forces
+![Attractor Demo](../../../../../docs/images/morphysics/gifs/attractor-demo.gif)
+*Particles being pulled toward attractor at center*
+
 ## Current Status: Phase 1-4 Complete ✅
 
 ### Implemented Components
