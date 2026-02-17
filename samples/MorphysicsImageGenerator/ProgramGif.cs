@@ -16,6 +16,8 @@ class ProgramGif
             GifGeneratorImageSharp.GenerateParticlesGravityGif(Path.Combine(outputDir, "particles-gravity.gif"));
             GifGeneratorImageSharp.GenerateMorphingGif(Path.Combine(outputDir, "morphing-square-circle.gif"));
             GifGeneratorImageSharp.GenerateAttractorGif(Path.Combine(outputDir, "attractor-demo.gif"));
+            GifGeneratorImageSharp.GenerateMultiAttractorGif(Path.Combine(outputDir, "multi-attractor-demo.gif"));
+            GifGeneratorImageSharp.GenerateStickyZoneGif(Path.Combine(outputDir, "sticky-zone-demo.gif"));
             
             Console.WriteLine($"\n✅ All animated GIFs generated successfully!");
             Console.WriteLine($"📁 Output directory: {outputDir}");
