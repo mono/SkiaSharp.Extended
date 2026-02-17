@@ -37,7 +37,8 @@ public class VectorNode : SceneNode
 		0f,
 		propertyChanged: OnMorphProgressChanged);
 
-	private SKPath? path;
+	private SKPath? originalPath;  // Keep original path for morphing
+	private SKPath? currentPath;   // Current rendered path (may be morphed)
 	private MorphTarget? currentMorphTarget;
 
 	/// <summary>
@@ -96,7 +97,8 @@ public class VectorNode : SceneNode
 
 	protected override void OnRender(SKCanvas canvas, SKSize size)
 	{
-		if (path == null || path.PointCount == 0)
+		var pathToRender = currentPath ?? originalPath;
+		if (pathToRender == null || pathToRender.PointCount == 0)
 			return;
 
 		// Fill
@@ -108,7 +110,7 @@ public class VectorNode : SceneNode
 				Color = FillColor.ToSKColor(),
 				IsAntialias = true
 			};
-			canvas.DrawPath(path, fillPaint);
+			canvas.DrawPath(pathToRender, fillPaint);
 		}
 
 		// Stroke
@@ -121,7 +123,7 @@ public class VectorNode : SceneNode
 				StrokeWidth = StrokeWidth,
 				IsAntialias = true
 			};
-			canvas.DrawPath(path, strokePaint);
+			canvas.DrawPath(pathToRender, strokePaint);
 		}
 	}
 
@@ -129,8 +131,14 @@ public class VectorNode : SceneNode
 	{
 		if (bindable is VectorNode node)
 		{
-			node.path?.Dispose();
-			node.path = string.IsNullOrEmpty(node.PathData) ? null : SKPath.ParseSvgPathData(node.PathData);
+			// Dispose old paths
+			node.originalPath?.Dispose();
+			node.currentPath?.Dispose();
+			
+			// Parse new path and keep it as original
+			node.originalPath = string.IsNullOrEmpty(node.PathData) ? null : SKPath.ParseSvgPathData(node.PathData);
+			node.currentPath = null;  // Will be set by UpdateMorphedPath if morphing
+			
 			node.UpdateMorphedPath();
 		}
 	}
@@ -145,12 +153,21 @@ public class VectorNode : SceneNode
 
 	private void UpdateMorphedPath()
 	{
-		if (currentMorphTarget == null || path == null)
-			return;
+		// Dispose previous morphed path
+		if (currentPath != null && currentPath != originalPath)
+		{
+			currentPath.Dispose();
+			currentPath = null;
+		}
 
-		// Apply morphing if we have a target
-		var morphedPath = currentMorphTarget.Interpolate(path, MorphProgress);
-		path?.Dispose();
-		path = morphedPath;
+		// If no morph target or no original path, use original as current
+		if (currentMorphTarget == null || originalPath == null)
+		{
+			currentPath = originalPath;
+			return;
+		}
+
+		// Apply morphing - ALWAYS from original path, never from previous morph!
+		currentPath = currentMorphTarget.Interpolate(originalPath, MorphProgress);
 	}
 }
