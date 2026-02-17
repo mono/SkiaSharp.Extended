@@ -131,14 +131,16 @@ public class PhysicsWorld
 			// Apply gravity
 			var force = Gravity * particle.Mass;
 
-			// Apply attractors
+			// Apply attractors (inverse square law)
 			foreach (var attractor in attractors)
 			{
 				var direction = attractor.Position - particle.Position;
 				var distanceSq = direction.LengthSquared();
 				if (distanceSq > 0.1f)
 				{
-					var attractorForce = direction / (float)Math.Sqrt(distanceSq) * attractor.Strength;
+					var distance = (float)Math.Sqrt(distanceSq);
+					// Inverse square law: F = k * (1/r²), with minimum distance to prevent extreme forces
+					var attractorForce = (direction / distance) * (attractor.Strength / Math.Max(distanceSq, 100f));
 					force += attractorForce;
 				}
 			}
