@@ -7,6 +7,8 @@ public partial class MorphysicsPlaygroundPage : ContentPage
 {
 	private readonly AnimatedCanvasView canvas;
 	private readonly ParticleEmitter emitter;
+	private readonly Random particleRandom = new Random();
+	private IDispatcherTimer? updateTimer;
 
 	public MorphysicsPlaygroundPage()
 	{
@@ -74,7 +76,8 @@ public partial class MorphysicsPlaygroundPage : ContentPage
 			}
 			else
 			{
-				// Clear sticky zones (no remove method, so we'd need to add one)
+				// TODO: PhysicsWorld.RemoveStickyZone() not yet implemented
+				// Sticky zone remains active until canvas is reset
 			}
 			OnPropertyChanged();
 		}
@@ -105,20 +108,26 @@ public partial class MorphysicsPlaygroundPage : ContentPage
 		base.OnAppearing();
 		
 		// Update positions when page appears
-		var timer = Dispatcher.CreateTimer();
-		timer.Interval = TimeSpan.FromMilliseconds(100);
-		timer.Tick += (s, e) =>
+		updateTimer = Dispatcher.CreateTimer();
+		updateTimer.Interval = TimeSpan.FromMilliseconds(100);
+		updateTimer.Tick += (s, e) =>
 		{
 			if (!IsLoaded)
 			{
-				timer.Stop();
+				updateTimer?.Stop();
 				return;
 			}
 
 			emitter.SpawnPosition = new Vector2((float)(Width / 2), 50);
 			OnPropertyChanged(nameof(ParticleCount));
 		};
-		timer.Start();
+		updateTimer.Start();
+	}
+
+	protected override void OnDisappearing()
+	{
+		base.OnDisappearing();
+		updateTimer?.Stop();
 	}
 
 	private void OnSpawnBurstClicked(object sender, EventArgs e)
@@ -126,11 +135,10 @@ public partial class MorphysicsPlaygroundPage : ContentPage
 		var particles = emitter.EmitBurst(50);
 		foreach (var particle in particles)
 		{
-			// Randomize spawn position
-			var random = new Random();
+			// Randomize spawn position using class-level Random instance
 			particle.Position = new Vector2(
-				(float)(random.NextDouble() * Width),
-				(float)(random.NextDouble() * Height / 2));
+				(float)(particleRandom.NextDouble() * Width),
+				(float)(particleRandom.NextDouble() * Height / 2));
 			canvas.Physics.AddParticle(particle);
 		}
 	}

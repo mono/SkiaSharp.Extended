@@ -7,6 +7,7 @@ public partial class MorphysicsParticlesPage : ContentPage
 {
 	private readonly AnimatedCanvasView canvas;
 	private readonly ParticleEmitter emitter;
+	private IDispatcherTimer? updateTimer;
 
 	public MorphysicsParticlesPage()
 	{
@@ -84,20 +85,26 @@ public partial class MorphysicsParticlesPage : ContentPage
 		base.OnAppearing();
 		
 		// Update spawn position when page appears
-		var timer = Dispatcher.CreateTimer();
-		timer.Interval = TimeSpan.FromMilliseconds(100);
-		timer.Tick += (s, e) =>
+		updateTimer = Dispatcher.CreateTimer();
+		updateTimer.Interval = TimeSpan.FromMilliseconds(100);
+		updateTimer.Tick += (s, e) =>
 		{
 			if (!IsLoaded)
 			{
-				timer.Stop();
+				updateTimer?.Stop();
 				return;
 			}
 
 			emitter.SpawnPosition = new Vector2((float)(Width / 2), 50);
 			OnPropertyChanged(nameof(ParticleCount));
 		};
-		timer.Start();
+		updateTimer.Start();
+	}
+
+	protected override void OnDisappearing()
+	{
+		base.OnDisappearing();
+		updateTimer?.Stop();
 	}
 
 	private void OnBurstClicked(object sender, EventArgs e)

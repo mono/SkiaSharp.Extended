@@ -121,22 +121,29 @@ public partial class MorphysisMorphingPage : ContentPage
 
 	private async void OnAnimateClicked(object sender, EventArgs e)
 	{
-		// Animate morph progress from 0 to 1
-		var duration = 2000; // 2 seconds
-		var steps = 60;
-		var stepDelay = duration / steps;
-
-		for (int i = 0; i <= steps; i++)
+		try
 		{
-			MorphProgress = (float)i / steps;
-			await Task.Delay(stepDelay);
+			// Animate morph progress from 0 to 1
+			var duration = 2000; // 2 seconds
+			var steps = 60;
+			var stepDelay = duration / steps;
+
+			for (int i = 0; i <= steps; i++)
+			{
+				MorphProgress = (float)i / steps;
+				await Task.Delay(stepDelay);
+			}
+
+			// Animate back
+			for (int i = steps; i >= 0; i--)
+			{
+				MorphProgress = (float)i / steps;
+				await Task.Delay(stepDelay);
+			}
 		}
-
-		// Animate back
-		for (int i = steps; i >= 0; i--)
+		catch (Exception ex)
 		{
-			MorphProgress = (float)i / steps;
-			await Task.Delay(stepDelay);
+			System.Diagnostics.Debug.WriteLine($"Animation error: {ex.Message}");
 		}
 	}
 }
