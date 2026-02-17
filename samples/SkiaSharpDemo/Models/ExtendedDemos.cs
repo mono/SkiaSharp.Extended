@@ -1,4 +1,5 @@
 ﻿using SkiaSharpDemo.Demos;
+using SkiaSharpDemo.Demos.Morphysics;
 
 namespace SkiaSharpDemo;
 
@@ -46,6 +47,27 @@ public static class ExtendedDemos
 					Description = "Ooooh! Lottie animations are really cool and now super easy to do!",
 					PageType = typeof(LottiePage),
 					Color = Colors.SteelBlue,
+				},
+				new Demo
+				{
+					Title = "Morphysics: Particles",
+					Description = "Physics simulation with particles, gravity, and bounce collisions. Adjust emission rate, gravity strength, and collision settings.",
+					PageType = typeof(MorphysicsParticlesPage),
+					Color = Colors.DeepSkyBlue,
+				},
+				new Demo
+				{
+					Title = "Morphysics: Vector Morphing",
+					Description = "Smooth shape morphing between different vector paths with multiple easing functions. Watch squares transform into circles!",
+					PageType = typeof(MorphysisMorphingPage),
+					Color = Colors.DeepPink,
+				},
+				new Demo
+				{
+					Title = "Morphysics: Physics Playground",
+					Description = "Interactive physics playground with attractors, sticky zones, and particle systems. Explore advanced physics interactions!",
+					PageType = typeof(MorphysicsPlaygroundPage),
+					Color = Colors.Orange,
 				},
 				//new Demo
 				//{
