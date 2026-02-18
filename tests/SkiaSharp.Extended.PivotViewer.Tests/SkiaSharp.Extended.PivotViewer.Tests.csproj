@@ -22,7 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="TestData\**" />
+    <EmbeddedResource Include="..\..\resources\collections\conceptcars\conceptcars.cxml" Link="TestData\conceptcars.cxml" />
+    <EmbeddedResource Include="..\..\resources\collections\msdnmagazine\msdnmagazine.cxml" Link="TestData\msdnmagazine.cxml" />
+    <EmbeddedResource Include="..\..\resources\collections\venues\venues.cxml" Link="TestData\venues.cxml" />
   </ItemGroup>
 
 </Project>

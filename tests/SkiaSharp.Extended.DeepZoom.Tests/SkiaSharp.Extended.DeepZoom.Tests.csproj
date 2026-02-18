@@ -22,7 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="TestData\**" />
+    <EmbeddedResource Include="..\..\resources\collections\conceptcars\deepzoom\conceptcars.dzc" Link="TestData\conceptcars.dzc" />
+    <EmbeddedResource Include="..\..\resources\collections\sample\deepzoom\sample.dzi" Link="TestData\sample.dzi" />
+    <EmbeddedResource Include="..\..\resources\collections\sample\deepzoom\sample_files\**" Link="TestData\sample_files\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>
