@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This file describes the .cxml file format used for ascribing metadata to images (especially for deep zoom collections).-->
+<!--When extending this schema, use the extension nodes to achieve forwards and backwards compatibility.-->
+<!--When changing this schema in a backwards compatible way, the minor version number (the number after the decimal point) should be increased.-->
+<!--When changing the schema in a manner that breaks backwards compatibility the major version number (the number before the decimal point) should be incramented, and the minor version number should be set to 0.-->
+<xs:schema targetNamespace="http://schemas.microsoft.com/collection/metadata/2009"
+           xmlns="http://schemas.microsoft.com/collection/metadata/2009"
+           elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:p="http://schemas.microsoft.com/livelabs/pivot/collection/2009"
+           version="1.0">
+    <xs:import namespace="http://schemas.microsoft.com/livelabs/pivot/collection/2009"/>
+    <!--The root object containing item groups and an optional list of self describing facets.-->
+    <xs:element name="Collection">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="FacetCategories" type="facetCategoryList" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="Items" type="itemList" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="p:collectionExtension"/>
+                <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <!--An optional name for the collection-->
+            <xs:attribute name="Name" type="nonEmptyString" use="optional"/>
+            <!--The schema version the xml instance file is written for. Differences between the version number of the instance and this schema
+            are backwards compatible if the major version number (the number before the decimal point) are the same.-->
+            <xs:attribute name="SchemaVersion" type="xs:decimal" use="required"/>
+            <xs:attribute ref="p:CollectionPage" />
+            <xs:attribute ref="p:Icon"/>
+            <xs:attribute ref="p:BrandImage"/>
+            <xs:attribute ref="p:Supplement"/>
+            <xs:attribute ref="p:AdditionalSearchText"/>
+            <xs:anyAttribute namespace="##other" processContents="lax"/>
+        </xs:complexType>
+    </xs:element>
+    <!--A list of facet categories.-->
+    <xs:complexType name="facetCategoryList">
+        <xs:sequence>
+            <xs:element name="FacetCategory" type="facetCategory" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="extensionType"/>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+    <!--A facet category. This is used to provide metadata on the items in the collection.-->
+    <!--Each facet consists of the display name, the type, and a format string for non-strings.-->
+    <xs:complexType name="facetCategory">
+        <xs:sequence>
+            <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="p:facetCategoryExtension"/>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <!--The name of the facet must be unique (case insensitive) for a collection-->
+        <xs:attribute name="Name" type="nonEmptyString" use="required"/>
+        <!--A format string to use for displaying numeric types.  The format is defined by the -->
+        <!--.Net format string spec found here: http://msdn.microsoft.com/en-us/library/26etazsy.aspx -->
+        <xs:attribute name="Format" type="nonEmptyString" use="optional"/>
+        <xs:attribute name="Type" type="facetType" use="required"/>
+        
+        <xs:attribute ref="p:IsFilterVisible" use="optional"/>
+        <xs:attribute ref="p:IsMetaDataVisible" use="optional"/>
+        <xs:attribute ref="p:IsWordWheelVisible" use="optional"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+    <!-- This simple type is used to restrict the valid types for Facets on an item. -->
+    <xs:simpleType name="facetType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="String"/>
+            <xs:enumeration value="LongString"/>
+            <xs:enumeration value="Number"/>
+            <xs:enumeration value="DateTime"/>
+            <xs:enumeration value="Link"/>
+            <xs:enumeration value=".*"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!-- The list of items in the collection. -->
+    <xs:complexType name="itemList">
+        <xs:sequence>
+            <xs:element name="Item" type="item" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="p:itemListExtension"/>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <!--The base uri for the Img field on all items.  This can be a collection file which contains many images (e.g. ImgBase="pictures.dzc") or a path or server page.-->
+        <xs:attribute name="ImgBase" type="lengthLimitedUri" use="optional"/>
+        <xs:attribute name="HrefBase" type="lengthLimitedUri" use="optional"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+    <!--An item in the collection.-->
+    <xs:complexType name="item">
+        <xs:sequence>
+            <xs:element name="Description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Facets" type="facetList" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Tags" type="tagList" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="p:itemExtension"/>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <!--The uri for the image for this item.-->
+        <!--If the uri is not absolute, it is relative to either the instance xml file's path or, if specified, ImgBase.-->
+        <!--Note: If the image is in an image collection, the uri should be the path to the-->
+        <!--image collection and the fragment of the uri is used for the id in the image collection.  The fragment part of-->
+        <!--the URI is everything after the '#'.-->
+        <!--Conistent with uri behavior, if the base, ImgBase, is specified, then a full uri-->
+        <!--is not necessary and Img can just have a value of '#' followed by the image collection ID.  (e.g. Img="pictures.dzc#14"-->
+        <!--would be image id 14 in the pictures.dzc.  If ImgBase="pictures.dzc" on Collection, then Img="#14" would also-->
+        <!--be image 14 in pictures.dzc)-->
+        <xs:attribute name="Img" type="lengthLimitedUri" use="optional"/>
+        <!--A unique id for the item.  This must unique with respect to all other items in this list.  This is not the image collection ID.-->
+        <xs:attribute name="Id" type="nonEmptyString" use="required"/>
+        <!--An url that is associated with this item-->
+        <xs:attribute name="Href" type="lengthLimitedUri" use="optional"/>
+        <!--A title for the item-->
+        <xs:attribute name="Name" type="nonEmptyString" use="optional"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+    <!-- A list of facets for an item. -->
+    <xs:complexType name="facetList">
+        <xs:sequence>
+            <xs:element name="Facet" type="facet"  minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="extensionType"/>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+    <!-- A facet on an item.  The facet name must already be defined in the facet categories. -->
+    <xs:complexType name="facet">
+        <xs:sequence>
+            <xs:element name="String" type="stringType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="LongString" type="stringType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Number" type="numberType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="DateTime" type="dateTimeType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Link" type="linkType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="extensionType"/>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Name" type="nonEmptyString" use="required"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+    <!--The value for a string facet-->
+    <xs:complexType name="stringType">
+        <xs:sequence>
+            <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="extensionType"/>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Value" type="nonEmptyString" use="required"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+    <!--The value for a number facet-->
+    <xs:complexType name="numberType">
+        <xs:sequence>
+            <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="extensionType"/>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Value" type="xs:decimal" use="required"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+    <!--The value for a date time facet-->
+    <xs:complexType name="dateTimeType">
+        <xs:sequence>
+            <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="extensionType"/>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Value" type="xs:dateTime" use="required"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+    <!--The value for a link facet.  The uri goes in the href attribute and the display text goes in the name attribute-->
+    <xs:complexType name="linkType">
+        <xs:sequence>
+            <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="extensionType"/>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Href" type="lengthLimitedUri" use="optional"/>
+        <xs:attribute name="Name" type="nonEmptyString" use="required"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+
+    <!--A tag for an item.-->
+    <xs:complexType name="tag">
+        <xs:simpleContent>
+            <xs:extension base="nonEmptyString">
+                <xs:anyAttribute namespace="##other" processContents="lax"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <!--A list of tags for an item. A tag can only contain the tag value, nothing else.-->
+    <xs:complexType name="tagList">
+        <xs:sequence>
+            <xs:element name="Tag" type="tag" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="Extension" minOccurs="0" maxOccurs="1" type="extensionType"/>
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+    <!--All uris must be limited to 2048 characters-->
+    <xs:simpleType name="lengthLimitedUri">
+        <xs:restriction base="xs:anyURI">
+            <xs:minLength value="1" id="minurilengthid"/>
+            <xs:maxLength value="2048" id="maxurilengthid"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!--If a value is specified it cannot be empty-->
+    <xs:simpleType name="nonEmptyString">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" id="nonemptystringlengthid"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!--An object placeholder for extending this schema.-->
+    <xs:complexType name="extensionType">
+        <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##any" processContents="lax"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
