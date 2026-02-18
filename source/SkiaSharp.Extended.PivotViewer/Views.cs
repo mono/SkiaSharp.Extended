@@ -67,10 +67,27 @@ namespace SkiaSharp.Extended.PivotViewer
     /// </summary>
     public sealed class PivotViewerGraphView : PivotViewerView
     {
+        private PivotViewerProperty? _groupByProperty;
+        private PivotViewerProperty? _stackByProperty;
+
         public PivotViewerGraphView()
         {
             Id = "GraphView";
             Name = "Graph";
+        }
+
+        /// <summary>Property to group items by (X-axis categories).</summary>
+        public PivotViewerProperty? GroupByProperty
+        {
+            get => _groupByProperty;
+            set { _groupByProperty = value; OnPropertyChanged(nameof(GroupByProperty)); }
+        }
+
+        /// <summary>Optional property to stack/color items within each group.</summary>
+        public PivotViewerProperty? StackByProperty
+        {
+            get => _stackByProperty;
+            set { _stackByProperty = value; OnPropertyChanged(nameof(StackByProperty)); }
         }
     }
 }

@@ -262,6 +262,41 @@ enum CxmlCollectionState { Initialized, Loading, Loaded, Failed }
 5. **Added**: Async-first loading with `CancellationToken`.
 6. **Added**: `IDisposable` throughout for proper cleanup.
 
+## Zoom and Pan
+
+The grid view supports interactive zoom (0.0 = fit all items, 1.0 = single item detail) and panning:
+
+```csharp
+// Programmatic zoom
+controller.ZoomLevel = 0.5;  // Half-zoom: fewer, larger items
+
+// Zoom about a point (pinch-to-zoom)
+controller.ZoomAbout(1.5, screenX, screenY);  // Keeps focal point stable
+
+// Pan (scroll through zoomed content)
+controller.Pan(deltaX, deltaY);
+```
+
+The MAUI view handles pinch and pan gestures automatically.
+
+## Item Images from DZC
+
+When your CXML references a DZC collection (`ImgBase="collection.dzc"` and items with `Img="#N"`), you can load thumbnails from the DZC composite tiles:
+
+```csharp
+var dzc = DzcTileSource.Parse(dzcXml);
+var fetcher = new HttpTileFetcher(httpClient);
+var imageProvider = new CollectionImageProvider(dzc, fetcher, "collection_files");
+
+// Load thumbnails for visible items
+await imageProvider.LoadThumbnailsAsync(controller.InScopeItems);
+
+// Wire into the controller
+controller.ImageProvider = imageProvider;
+
+// Now the MAUI view will render actual thumbnails instead of colored rectangles
+```
+
 ## Learn More
 
 - [Silverlight PivotViewer Documentation](https://learn.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/hh390416) — Microsoft Learn (archived)
