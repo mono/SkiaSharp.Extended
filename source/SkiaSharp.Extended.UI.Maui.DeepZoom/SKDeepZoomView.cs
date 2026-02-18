@@ -38,6 +38,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             _controller.InvalidateRequired += (s, e) =>
                 MainThread.BeginInvokeOnMainThread(() => _canvasView.InvalidateSurface());
             _controller.MotionFinished += (s, e) => MotionFinished?.Invoke(this, EventArgs.Empty);
+            _controller.ViewportChanged += (s, e) => ViewportChanged?.Invoke(this, EventArgs.Empty);
             _controller.ImageOpenSucceeded += (s, e) => ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
             _controller.ImageOpenFailed += (s, e) => ImageOpenFailed?.Invoke(this, e);
 
@@ -99,6 +100,9 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
 
         /// <summary>Fired when spring animation completes.</summary>
         public event EventHandler? MotionFinished;
+
+        /// <summary>Fired when the viewport position or zoom level changes.</summary>
+        public event EventHandler? ViewportChanged;
 
         // --- Methods ---
 
