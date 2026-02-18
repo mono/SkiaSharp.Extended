@@ -118,6 +118,40 @@ public class AnimatedCanvasView : SKAnimatedSurfaceView
 			particlePaint.Color = particle.Color;
 			canvas.DrawCircle(particle.Position.X, particle.Position.Y, particle.Radius, particlePaint);
 		}
+		
+		// Render attractors (as red circles)
+		using var attractorPaint = new SKPaint
+		{
+			Style = SKPaintStyle.Stroke,
+			Color = new SKColor(255, 0, 0, 128),  // Semi-transparent red
+			StrokeWidth = 2f,
+			IsAntialias = true
+		};
+		using var attractorCenterPaint = new SKPaint
+		{
+			Color = new SKColor(255, 0, 0, 200),  // More opaque red
+			IsAntialias = true
+		};
+		foreach (var attractor in physics.Attractors)
+		{
+			// Draw center dot
+			canvas.DrawCircle(attractor.Position.X, attractor.Position.Y, 6f, attractorCenterPaint);
+			// Draw influence circle
+			canvas.DrawCircle(attractor.Position.X, attractor.Position.Y, 40f, attractorPaint);
+		}
+		
+		// Render sticky zones (as green circles)
+		using var stickyPaint = new SKPaint
+		{
+			Style = SKPaintStyle.Stroke,
+			Color = new SKColor(0, 255, 0, 100),  // Semi-transparent green
+			StrokeWidth = 3f,
+			IsAntialias = true
+		};
+		foreach (var zone in physics.StickyZones)
+		{
+			canvas.DrawCircle(zone.Position.X, zone.Position.Y, zone.Radius, stickyPaint);
+		}
 	}
 
 	private static T? FindNodeByIdRecursive<T>(SceneNode node, string id) where T : SceneNode

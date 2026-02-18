@@ -33,6 +33,16 @@ public class PhysicsWorld
 	/// Gets the list of active particles.
 	/// </summary>
 	public IReadOnlyList<Particle> Particles => particles;
+	
+	/// <summary>
+	/// Gets the list of attractors in the simulation.
+	/// </summary>
+	public IReadOnlyList<Attractor> Attractors => attractors;
+	
+	/// <summary>
+	/// Gets the list of sticky zones in the simulation.
+	/// </summary>
+	public IReadOnlyList<StickyZone> StickyZones => stickyZones;
 
 	/// <summary>
 	/// Sets the random seed for deterministic simulation.
@@ -131,7 +141,7 @@ public class PhysicsWorld
 			// Apply gravity
 			var force = Gravity * particle.Mass;
 
-			// Apply attractors (inverse square law)
+			// Apply attractors (linear falloff for visible UI effect)
 			foreach (var attractor in attractors)
 			{
 				var direction = attractor.Position - particle.Position;
@@ -139,8 +149,9 @@ public class PhysicsWorld
 				if (distanceSq > 0.1f)
 				{
 					var distance = (float)Math.Sqrt(distanceSq);
-					// Inverse square law: F = k * (1/r²), with minimum distance to prevent extreme forces
-					var attractorForce = (direction / distance) * (attractor.Strength / Math.Max(distanceSq, 100f));
+					// Linear falloff: F = k / r (better for UI than inverse square)
+					// Using linear instead of quadratic makes attractors strong enough to be visible
+					var attractorForce = (direction / distance) * (attractor.Strength / Math.Max(distance, 10f));
 					force += attractorForce;
 				}
 			}

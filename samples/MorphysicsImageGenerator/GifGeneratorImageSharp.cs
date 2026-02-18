@@ -171,8 +171,8 @@ public static class GifGeneratorImageSharp
                 if (distanceSq > 1f)
                 {
                     var distance = (float)Math.Sqrt(distanceSq);
-                    // Inverse square law: force = (direction / distance) * (strength / max(distance², minDist²))
-                    var force = toAttractor / distance * (attractorStrength / Math.Max(distanceSq, 100f));
+                    // Linear falloff: F = k / r (better for UI visibility than inverse square)
+                    var force = toAttractor / distance * (attractorStrength / Math.Max(distance, 10f));
                     particle.Velocity += force * dt;
                 }
                 
@@ -249,7 +249,8 @@ public static class GifGeneratorImageSharp
                     if (distanceSq > 1f)
                     {
                         var distance = (float)Math.Sqrt(distanceSq);
-                        var force = toAttractor / distance * (attractorStrength / Math.Max(distanceSq, 100f));
+                        // Linear falloff: F = k / r (better for UI visibility than inverse square)
+                        var force = toAttractor / distance * (attractorStrength / Math.Max(distance, 10f));
                         particle.Velocity += force * dt;
                     }
                 }
