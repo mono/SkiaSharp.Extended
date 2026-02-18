@@ -111,6 +111,7 @@ namespace SkiaSharp.Extended.DeepZoom
             _fetcher = fetcher;
 
             // Reset viewport to show the full image
+            _viewport.AspectRatio = tileSource.AspectRatio;
             _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
             _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
             _viewport.ViewportOriginX = 0;
@@ -132,6 +133,8 @@ namespace SkiaSharp.Extended.DeepZoom
             _cts = new CancellationTokenSource();
             _pendingTiles.Clear();
 
+            // DZC is a collection, not a single image — clear single-image state
+            _tileSource = null!;
             _subImages = new List<DeepZoomSubImage>();
             foreach (var item in dzcTileSource.Items)
             {

@@ -68,7 +68,11 @@ namespace SkiaSharp.Extended.PivotViewer
         {
             _order = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < orderedValues.Count; i++)
-                _order[orderedValues[i]] = i;
+            {
+                // First occurrence wins — ignore duplicates
+                if (!_order.ContainsKey(orderedValues[i]))
+                    _order[orderedValues[i]] = i;
+            }
         }
 
         public int Compare(string? x, string? y)
