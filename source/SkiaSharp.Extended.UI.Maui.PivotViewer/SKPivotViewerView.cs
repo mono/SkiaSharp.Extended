@@ -401,10 +401,23 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             foreach (var col in layout.Columns)
             {
                 // Draw column label
+                _labelFont.Size = 12;
                 var textWidth = _labelFont.MeasureText(col.Label, out _);
 
                 float labelX = (float)(col.X + (col.Width - textWidth) / 2);
                 canvas.DrawText(col.Label, labelX, info.Height - 4, SKTextAlign.Left, _labelFont, _labelPaint);
+
+                // Draw item count above column
+                if (col.Items.Length > 0)
+                {
+                    _textFont.Size = 10;
+                    string countLabel = col.Items.Length.ToString();
+                    float topItemY = col.Items.Min(p => (float)p.Y);
+                    using var countPaint = new SKPaint { Color = new SKColor(100, 100, 100) };
+                    canvas.DrawText(countLabel,
+                        (float)(col.X + col.Width / 2), topItemY - 4,
+                        SKTextAlign.Center, _textFont, countPaint);
+                }
 
                 // Draw items
                 foreach (var pos in col.Items)
@@ -543,11 +556,55 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 }
                 else if (category.Property.PropertyType == PivotViewerPropertyType.Decimal)
                 {
-                    // Numeric range — show min/max
+                    // Numeric range — render a mini histogram
                     _textFont.Size = 11;
-                    using var rangePaint = new SKPaint { Color = new SKColor(80, 80, 80) };
-                    canvas.DrawText("Range filter", Padding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
-                    y += lineHeight;
+                    var numericValues = new List<double>();
+                    foreach (var item in _controller.InScopeItems)
+                    {
+                        var vals = item[category.Property.Id];
+                        if (vals != null)
+                        {
+                            foreach (var v in vals)
+                            {
+                                if (v is double d) numericValues.Add(d);
+                                else if (v is IConvertible c)
+                                {
+                                    try { numericValues.Add(c.ToDouble(null)); } catch { }
+                                }
+                            }
+                        }
+                    }
+
+                    if (numericValues.Count > 0)
+                    {
+                        var buckets = HistogramBucketer.CreateNumericBuckets(numericValues);
+                        float histH = 40f;
+                        float barWidth = (width - Padding * 2 - 16) / Math.Max(1, buckets.Count);
+                        int maxCount = buckets.Max(b => b.Count);
+
+                        for (int i = 0; i < buckets.Count; i++)
+                        {
+                            float barHeight = maxCount > 0 ? (float)buckets[i].Count / maxCount * histH : 0;
+                            float barX = Padding + 8 + i * barWidth;
+                            float barY = y + histH - barHeight;
+
+                            using var barPaint = new SKPaint { Color = new SKColor(100, 149, 237, 180) };
+                            canvas.DrawRect(barX, barY, barWidth - 1, barHeight, barPaint);
+                        }
+                        y += histH + 4;
+
+                        // Min/max label
+                        using var rangePaint = new SKPaint { Color = new SKColor(120, 120, 120) };
+                        string rangeLabel = $"{numericValues.Min():F0} – {numericValues.Max():F0}";
+                        canvas.DrawText(rangeLabel, Padding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
+                        y += lineHeight;
+                    }
+                    else
+                    {
+                        using var emptyPaint = new SKPaint { Color = SKColors.Gray };
+                        canvas.DrawText("(no numeric data)", Padding + 8, y + 12, SKTextAlign.Left, _textFont, emptyPaint);
+                        y += lineHeight;
+                    }
                 }
                 else if (category.Property.PropertyType == PivotViewerPropertyType.DateTime)
                 {

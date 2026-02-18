@@ -302,3 +302,75 @@ controller.ImageProvider = imageProvider;
 - [Silverlight PivotViewer Documentation](https://learn.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/hh390416) — Microsoft Learn (archived)
 - [OpenLink HTML5 PivotViewer](https://github.com/openlink/html5pivotviewer) — Open-source JavaScript implementation
 - [CXML Schema](https://github.com/mattleibow/PivotViewPlayground/tree/main/resources/schemas) — XSD schemas for CXML format
+
+## Events
+
+The controller fires events for major state changes:
+
+| Event | Fired When |
+|---|---|
+| `CollectionChanged` | Items or properties replaced |
+| `SelectionChanged` | `SelectedItem` changes |
+| `FilterChanged` | Any filter added/removed/cleared |
+| `SortPropertyChanged` | Sort property changes |
+| `ViewChanged` | Grid ↔ Graph view switch |
+
+```csharp
+controller.FilterChanged += (s, e) => {
+    // Update filter pane badge count
+    int active = controller.FilterEngine.Predicates.Count;
+    badge.Text = active > 0 ? $"({active})" : "";
+};
+```
+
+## Blazor Integration
+
+The Blazor WASM sample in `samples/BlazorPivotViewer/` demonstrates full PivotViewer functionality. The core library works identically in Blazor — only the rendering differs:
+
+```csharp
+@using SkiaSharp.Views.Blazor
+
+<SKCanvasView @ref="_canvasView" OnPaintSurface="OnPaintSurface"
+              style="width:100%;height:600px;" />
+
+@code {
+    private PivotViewerController _controller = new();
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        var canvas = e.Surface.Canvas;
+        canvas.Clear(SKColors.White);
+
+        foreach (var pos in _controller.GridLayout!.Positions)
+        {
+            canvas.DrawRect(
+                (float)pos.X, (float)pos.Y,
+                (float)pos.Width, (float)pos.Height, _itemPaint);
+        }
+    }
+}
+```
+
+## Headless Testing
+
+The core library is fully testable without any UI framework:
+
+```csharp
+var controller = new PivotViewerController();
+controller.LoadCollection(CxmlCollectionSource.Parse(xml));
+controller.SetAvailableSize(1024, 768);
+
+// Filter
+controller.FilterEngine.AddStringFilter("Type", "Sports");
+Assert.True(controller.InScopeItems.Count < controller.Items.Count);
+
+// Layout
+Assert.NotNull(controller.GridLayout);
+Assert.True(controller.GridLayout.Positions.Length > 0);
+
+// Render to bitmap
+using var surface = SKSurface.Create(new SKImageInfo(1024, 768));
+foreach (var pos in controller.GridLayout.Positions)
+    surface.Canvas.DrawRect((float)pos.X, (float)pos.Y,
+        (float)pos.Width, (float)pos.Height, paint);
+```
