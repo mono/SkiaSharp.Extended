@@ -135,7 +135,42 @@ public interface ITileFetcher : IDisposable
 }
 ```
 
-Built-in implementations: `HttpTileFetcher` (HTTP), `FileTileFetcher` (local files).
+Built-in implementations: `HttpTileFetcher` (HTTP), `FileTileFetcher` (local files), `MemoryTileFetcher` (testing).
+
+## Events
+
+| Event | Fired When |
+|---|---|
+| `ImageOpenSucceeded` | DZI/DZC source loaded successfully |
+| `ImageOpenFailed` | Source load failed (args: `Exception`) |
+| `MotionFinished` | Spring animation settled — all tiles at rest |
+| `TileFailed` | Individual tile download failed (args: `TileId`) |
+| `InvalidateRequired` | New tiles loaded — view needs repaint |
+
+## Headless Testing
+
+The core library works without any UI framework:
+
+```csharp
+var dzi = DziTileSource.Parse(File.ReadAllText("photo.dzi"), baseUrl);
+using var controller = new DeepZoomController();
+controller.SetControlSize(800, 600);
+controller.Load(dzi, new MemoryTileFetcher());
+
+// Pre-populate cache with test tiles
+var scheduler = controller.Scheduler;
+var tiles = scheduler.GetVisibleTiles(dzi, controller.Viewport);
+foreach (var req in tiles)
+    controller.Cache.Put(req.TileId, new SKBitmap(256, 256));
+
+// Render to bitmap
+using var surface = SKSurface.Create(new SKImageInfo(800, 600));
+controller.Render(surface.Canvas);
+```
+
+## Thread Safety
+
+The `TileCache` is fully thread-safe with internal locking. Multiple async tile loads can safely access the cache concurrently. The `DeepZoomController.Dispose()` cancels all pending tile loads.
 
 ## Learn More
 
