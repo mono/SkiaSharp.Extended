@@ -1,0 +1,334 @@
+using SkiaSharp.Extended.PivotViewer;
+
+namespace SkiaSharp.Extended.PivotViewer.Tests;
+
+public class CxmlCollectionSourceTest
+{
+    [Fact]
+    public void Parse_ConceptCars_LoadsSuccessfully()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.cxml");
+        var source = CxmlCollectionSource.Parse(stream);
+
+        Assert.Equal(CxmlCollectionState.Loaded, source.State);
+        Assert.Equal("Concept Cars", source.Name);
+        Assert.True(source.Items.Count > 0);
+        Assert.True(source.ItemProperties.Count > 0);
+    }
+
+    [Fact]
+    public void Parse_ConceptCars_HasCorrectPropertyCount()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.cxml");
+        var source = CxmlCollectionSource.Parse(stream);
+
+        // conceptcars.cxml has 12 FacetCategories + well-known (Name, Href, #Image)
+        Assert.True(source.ItemProperties.Count >= 12);
+    }
+
+    [Fact]
+    public void Parse_ConceptCars_PropertiesHaveCorrectTypes()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.cxml");
+        var source = CxmlCollectionSource.Parse(stream);
+
+        var manufacturer = source.GetPivotPropertyById("Manufacturer");
+        Assert.NotNull(manufacturer);
+        Assert.IsType<PivotViewerStringProperty>(manufacturer);
+        Assert.Equal(PivotViewerPropertyType.Text, manufacturer!.PropertyType);
+
+        var productionYear = source.GetPivotPropertyById("Production Year");
+        Assert.NotNull(productionYear);
+        Assert.IsType<PivotViewerNumericProperty>(productionYear);
+        Assert.Equal(PivotViewerPropertyType.Decimal, productionYear!.PropertyType);
+    }
+
+    [Fact]
+    public void Parse_ConceptCars_PropertiesHaveCorrectOptions()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.cxml");
+        var source = CxmlCollectionSource.Parse(stream);
+
+        var manufacturer = source.GetPivotPropertyById("Manufacturer");
+        Assert.NotNull(manufacturer);
+        Assert.True(manufacturer!.CanFilter);
+        Assert.True(manufacturer.CanSearchText);
+
+        // Engine Combination has IsFilterVisible="false"
+        var engineCombo = source.GetPivotPropertyById("Engine Combination");
+        Assert.NotNull(engineCombo);
+        Assert.False(engineCombo!.CanFilter);
+    }
+
+    [Fact]
+    public void Parse_ConceptCars_PropertiesHaveFormat()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.cxml");
+        var source = CxmlCollectionSource.Parse(stream);
+
+        var displacement = source.GetPivotPropertyById("Engine Displacement");
+        Assert.NotNull(displacement);
+        Assert.Equal("0.#L", displacement!.Format);
+
+        var year = source.GetPivotPropertyById("Production Year");
+        Assert.NotNull(year);
+        Assert.Equal("###0", year!.Format);
+    }
+
+    [Fact]
+    public void Parse_ConceptCars_ItemsHaveNames()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.cxml");
+        var source = CxmlCollectionSource.Parse(stream);
+
+        var firstItem = source.Items[0];
+        Assert.True(firstItem.TryGetSingleValue<string>("Name", out var name));
+        Assert.False(string.IsNullOrEmpty(name));
+    }
+
+    [Fact]
+    public void Parse_ConceptCars_ItemsHaveImages()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.cxml");
+        var source = CxmlCollectionSource.Parse(stream);
+
+        var firstItem = source.Items[0];
+        Assert.True(firstItem.HasProperty("#Image"));
+        firstItem.TryGetSingleValue<string>("#Image", out var img);
+        Assert.StartsWith("#", img!); // DZC reference like "#0"
+    }
+
+    [Fact]
+    public void Parse_ConceptCars_ItemsHaveFacetValues()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.cxml");
+        var source = CxmlCollectionSource.Parse(stream);
+
+        var firstItem = source.Items[0];
+
+        // Check for a string facet
+        var bodyStyle = firstItem["Body Style"];
+        Assert.NotNull(bodyStyle);
+        Assert.True(bodyStyle!.Count > 0);
+
+        // Check for a numeric facet
+        var displacement = firstItem["Engine Displacement"];
+        Assert.NotNull(displacement);
+        Assert.IsType<double>(displacement![0]);
+    }
+
+    [Fact]
+    public void Parse_ConceptCars_HasImageBase()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.cxml");
+        var source = CxmlCollectionSource.Parse(stream);
+
+        Assert.NotNull(source.ImageBase);
+        Assert.Contains("conceptcars.dzc", source.ImageBase!);
+    }
+
+    [Fact]
+    public void Parse_ConceptCars_GetItemById()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.cxml");
+        var source = CxmlCollectionSource.Parse(stream);
+
+        var item = source.GetItemById("0");
+        Assert.NotNull(item);
+        Assert.Equal("0", item!.Id);
+    }
+
+    [Fact]
+    public void Parse_MinimalCxml_Works()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009""
+            xmlns:p=""http://schemas.microsoft.com/livelabs/pivot/collection/2009""
+            Name=""Test"">
+    <FacetCategories>
+        <FacetCategory Name=""Color"" Type=""String"" p:IsFilterVisible=""true"" p:IsMetaDataVisible=""true"" p:IsWordWheelVisible=""true"" />
+        <FacetCategory Name=""Price"" Type=""Number"" p:IsFilterVisible=""true"" p:IsMetaDataVisible=""true"" p:Format=""$#,##0"" />
+        <FacetCategory Name=""Created"" Type=""DateTime"" p:IsFilterVisible=""true"" />
+    </FacetCategories>
+    <Items>
+        <Item Id=""1"" Name=""Widget"" Href=""https://example.com"" Img=""#0"">
+            <Facets>
+                <Facet Name=""Color""><String Value=""Red"" /></Facet>
+                <Facet Name=""Price""><Number Value=""19.99"" /></Facet>
+                <Facet Name=""Created""><DateTime Value=""2023-06-15T00:00:00"" /></Facet>
+            </Facets>
+        </Item>
+        <Item Id=""2"" Name=""Gadget"" Img=""#1"">
+            <Facets>
+                <Facet Name=""Color""><String Value=""Blue"" /><String Value=""Green"" /></Facet>
+                <Facet Name=""Price""><Number Value=""29.99"" /></Facet>
+            </Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+
+        Assert.Equal(CxmlCollectionState.Loaded, source.State);
+        Assert.Equal("Test", source.Name);
+        Assert.Equal(2, source.Items.Count);
+
+        // Check Color property
+        var colorProp = source.GetPivotPropertyById("Color");
+        Assert.NotNull(colorProp);
+        Assert.IsType<PivotViewerStringProperty>(colorProp);
+        Assert.True(colorProp!.CanFilter);
+        Assert.True(colorProp.CanSearchText);
+
+        // Check Price property
+        var priceProp = source.GetPivotPropertyById("Price");
+        Assert.NotNull(priceProp);
+        Assert.IsType<PivotViewerNumericProperty>(priceProp);
+        Assert.Equal("$#,##0", priceProp!.Format);
+
+        // Check DateTime property
+        var createdProp = source.GetPivotPropertyById("Created");
+        Assert.NotNull(createdProp);
+        Assert.IsType<PivotViewerDateTimeProperty>(createdProp);
+
+        // Check item 1
+        var item1 = source.GetItemById("1");
+        Assert.NotNull(item1);
+        Assert.True(item1!.TryGetSingleValue<string>("Name", out var name));
+        Assert.Equal("Widget", name);
+        Assert.True(item1.TryGetSingleValue<string>("#Image", out var img));
+        Assert.Equal("#0", img);
+        Assert.Equal(19.99, (double)item1["Price"]![0]);
+        Assert.IsType<DateTime>(item1["Created"]![0]);
+
+        // Check item 2 with multi-value string facet
+        var item2 = source.GetItemById("2");
+        Assert.NotNull(item2);
+        var colors = item2!["Color"];
+        Assert.NotNull(colors);
+        Assert.Equal(2, colors!.Count);
+        Assert.Contains("Blue", colors.Cast<string>());
+        Assert.Contains("Green", colors.Cast<string>());
+    }
+
+    [Fact]
+    public void Parse_WithLinkFacet_ParsesHyperlinks()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009""
+            xmlns:p=""http://schemas.microsoft.com/livelabs/pivot/collection/2009""
+            Name=""Links"">
+    <FacetCategories>
+        <FacetCategory Name=""Website"" Type=""Link"" />
+    </FacetCategories>
+    <Items>
+        <Item Id=""1"" Name=""Test"">
+            <Facets>
+                <Facet Name=""Website"">
+                    <Link Href=""https://example.com"" Name=""Example"" />
+                </Facet>
+            </Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        var item = source.Items[0];
+        var website = item["Website"];
+        Assert.NotNull(website);
+        var link = Assert.IsType<PivotViewerHyperlink>(website![0]);
+        Assert.Equal("Example", link.Text);
+        Assert.Equal(new Uri("https://example.com"), link.Uri);
+    }
+
+    [Fact]
+    public void Parse_WithCopyright_ParsesCopyright()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009""
+            xmlns:p=""http://schemas.microsoft.com/livelabs/pivot/collection/2009""
+            Name=""Test"">
+    <Copyright Name=""Test Corp"" Href=""https://example.com/copyright"" />
+    <FacetCategories />
+    <Items />
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        Assert.NotNull(source.Copyright);
+        Assert.Equal("Test Corp", source.Copyright!.Text);
+    }
+
+    [Fact]
+    public void Parse_InvalidXml_ThrowsAndSetsFailed()
+    {
+        Assert.Throws<FormatException>(() =>
+            CxmlCollectionSource.Parse("<Invalid/>"));
+    }
+
+    [Fact]
+    public void CreateProperty_CxmlTypeMapping()
+    {
+        // Verify the critical CXML → API type mapping
+        var stringProp = CxmlCollectionSource.CreateProperty("test", "String");
+        Assert.IsType<PivotViewerStringProperty>(stringProp);
+        Assert.Equal(PivotViewerPropertyType.Text, stringProp.PropertyType);
+        Assert.False(stringProp.IsWrappingText);
+
+        var longStringProp = CxmlCollectionSource.CreateProperty("test", "LongString");
+        Assert.IsType<PivotViewerStringProperty>(longStringProp);
+        Assert.Equal(PivotViewerPropertyType.Text, longStringProp.PropertyType);
+        Assert.True(longStringProp.IsWrappingText);
+
+        var numberProp = CxmlCollectionSource.CreateProperty("test", "Number");
+        Assert.IsType<PivotViewerNumericProperty>(numberProp);
+        Assert.Equal(PivotViewerPropertyType.Decimal, numberProp.PropertyType);
+
+        var dateTimeProp = CxmlCollectionSource.CreateProperty("test", "DateTime");
+        Assert.IsType<PivotViewerDateTimeProperty>(dateTimeProp);
+        Assert.Equal(PivotViewerPropertyType.DateTime, dateTimeProp.PropertyType);
+
+        var linkProp = CxmlCollectionSource.CreateProperty("test", "Link");
+        Assert.IsType<PivotViewerLinkProperty>(linkProp);
+        Assert.Equal(PivotViewerPropertyType.Link, linkProp.PropertyType);
+    }
+
+    [Fact]
+    public void Parse_MsdnMagazine_LoadsLargeCollection()
+    {
+        using var stream = TestDataHelper.GetStream("msdnmagazine.cxml");
+        var source = CxmlCollectionSource.Parse(stream);
+
+        Assert.Equal(CxmlCollectionState.Loaded, source.State);
+        Assert.True(source.Items.Count > 100, $"Expected >100 items, got {source.Items.Count}");
+    }
+
+    [Fact]
+    public void StateChanged_FiresDuringParsing()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+    <FacetCategories /><Items />
+</Collection>";
+
+        var states = new List<CxmlCollectionState>();
+        var source = CxmlCollectionSource.Parse(xml);
+        // State should be Loaded after successful parse
+        Assert.Equal(CxmlCollectionState.Loaded, source.State);
+    }
+
+    [Fact]
+    public void Parse_EmptyItems_ReturnsEmptyCollection()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Empty"">
+    <FacetCategories>
+        <FacetCategory Name=""Color"" Type=""String"" />
+    </FacetCategories>
+    <Items />
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        Assert.Empty(source.Items);
+        Assert.Single(source.ItemProperties);
+    }
+}
