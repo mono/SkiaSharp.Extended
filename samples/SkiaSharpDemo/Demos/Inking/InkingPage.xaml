@@ -5,57 +5,240 @@
              x:Class="SkiaSharpDemo.Demos.Inking.InkingPage"
              Title="Digital Inking">
 
-    <Grid RowDefinitions="Auto,*,Auto" Padding="16">
-        
-        <!-- Header -->
-        <VerticalStackLayout Grid.Row="0" Spacing="8" Margin="0,0,0,16">
-            <Label Text="Digital Inking Demo" 
-                   FontSize="24" 
-                   FontAttributes="Bold" 
-                   HorizontalOptions="Center"/>
-            <Label Text="Sign below or tap 'Play Signature' to see animated playback" 
-                   FontSize="14" 
-                   TextColor="Gray" 
-                   HorizontalOptions="Center"/>
-        </VerticalStackLayout>
+    <ScrollView>
+        <Grid RowDefinitions="Auto,*,Auto,Auto" Padding="16">
+            
+            <!-- Header -->
+            <VerticalStackLayout Grid.Row="0" Spacing="8" Margin="0,0,0,16">
+                <Label Text="Digital Inking Demo" 
+                       FontSize="24" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center"/>
+                <Label Text="Sign below or tap 'Play Signature' to see animated playback" 
+                       FontSize="14" 
+                       TextColor="Gray" 
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
 
-        <!-- Signature Pad -->
-        <Border Grid.Row="1" 
-                StrokeThickness="2" 
-                Stroke="Gray"
-                Padding="0"
-                Margin="0,0,0,16">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="8"/>
-            </Border.StrokeShape>
-            <skia:SKSignaturePadView x:Name="signaturePad"
-                                     StrokeColor="DarkBlue"
-                                     MinStrokeWidth="2"
-                                     MaxStrokeWidth="10"
-                                     PadBackgroundColor="Ivory"
-                                     StrokeCompleted="OnStrokeCompleted"/>
-        </Border>
+            <!-- Signature Pad -->
+            <Border Grid.Row="1" 
+                    StrokeThickness="2" 
+                    Stroke="Gray"
+                    Padding="0"
+                    Margin="0,0,0,16"
+                    MinimumHeightRequest="250">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8"/>
+                </Border.StrokeShape>
+                <skia:SKSignaturePadView x:Name="signaturePad"
+                                         StrokeColor="DarkBlue"
+                                         MinStrokeWidth="2"
+                                         MaxStrokeWidth="10"
+                                         PadBackgroundColor="Ivory"
+                                         StrokeCompleted="OnStrokeCompleted"/>
+            </Border>
 
-        <!-- Controls -->
-        <Grid Grid.Row="2" ColumnDefinitions="*,*,*" ColumnSpacing="8">
-            <Button Grid.Column="0" 
-                    Text="Clear" 
-                    Clicked="OnClearClicked"
-                    BackgroundColor="LightGray"
-                    TextColor="Black"/>
-            <Button Grid.Column="1" 
-                    Text="Undo" 
-                    Clicked="OnUndoClicked"
-                    BackgroundColor="LightGray"
-                    TextColor="Black"/>
-            <Button Grid.Column="2" 
-                    x:Name="playButton"
-                    Text="Play Signature" 
-                    Clicked="OnPlaySignatureClicked"
-                    BackgroundColor="DarkBlue"
-                    TextColor="White"/>
+            <!-- Customization Options -->
+            <Border Grid.Row="2" 
+                    StrokeThickness="1" 
+                    Stroke="LightGray"
+                    Padding="12"
+                    Margin="0,0,0,16"
+                    BackgroundColor="#F8F8F8">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8"/>
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Stroke Settings" 
+                           FontSize="16" 
+                           FontAttributes="Bold"/>
+                    
+                    <!-- Stroke Color -->
+                    <Grid ColumnDefinitions="100,*">
+                        <Label Text="Color:" 
+                               VerticalOptions="Center"/>
+                        <HorizontalStackLayout Grid.Column="1" 
+                                               Spacing="8"
+                                               x:Name="colorPicker">
+                            <Border x:Name="colorBlack" 
+                                    BackgroundColor="Black" 
+                                    WidthRequest="32" 
+                                    HeightRequest="32"
+                                    StrokeThickness="3"
+                                    Stroke="DodgerBlue">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="4"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnColorTapped" CommandParameter="Black"/>
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Border x:Name="colorDarkBlue" 
+                                    BackgroundColor="DarkBlue" 
+                                    WidthRequest="32" 
+                                    HeightRequest="32"
+                                    StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="4"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnColorTapped" CommandParameter="DarkBlue"/>
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Border x:Name="colorRed" 
+                                    BackgroundColor="Red" 
+                                    WidthRequest="32" 
+                                    HeightRequest="32"
+                                    StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="4"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnColorTapped" CommandParameter="Red"/>
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Border x:Name="colorGreen" 
+                                    BackgroundColor="Green" 
+                                    WidthRequest="32" 
+                                    HeightRequest="32"
+                                    StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="4"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnColorTapped" CommandParameter="Green"/>
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Border x:Name="colorPurple" 
+                                    BackgroundColor="Purple" 
+                                    WidthRequest="32" 
+                                    HeightRequest="32"
+                                    StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="4"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnColorTapped" CommandParameter="Purple"/>
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Border x:Name="colorOrange" 
+                                    BackgroundColor="Orange" 
+                                    WidthRequest="32" 
+                                    HeightRequest="32"
+                                    StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="4"/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnColorTapped" CommandParameter="Orange"/>
+                                </Border.GestureRecognizers>
+                            </Border>
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <!-- Stroke Width -->
+                    <Grid ColumnDefinitions="100,*,40" RowDefinitions="Auto,Auto">
+                        <Label Text="Min Width:" 
+                               VerticalOptions="Center"/>
+                        <Slider Grid.Column="1" 
+                                x:Name="minWidthSlider"
+                                Minimum="1" 
+                                Maximum="10" 
+                                Value="2"
+                                ValueChanged="OnMinWidthChanged"/>
+                        <Label Grid.Column="2" 
+                               x:Name="minWidthLabel"
+                               Text="2" 
+                               VerticalOptions="Center"/>
+                        
+                        <Label Grid.Row="1" 
+                               Text="Max Width:" 
+                               VerticalOptions="Center"/>
+                        <Slider Grid.Row="1" 
+                                Grid.Column="1" 
+                                x:Name="maxWidthSlider"
+                                Minimum="2" 
+                                Maximum="20" 
+                                Value="10"
+                                ValueChanged="OnMaxWidthChanged"/>
+                        <Label Grid.Row="1" 
+                               Grid.Column="2" 
+                               x:Name="maxWidthLabel"
+                               Text="10" 
+                               VerticalOptions="Center"/>
+                    </Grid>
+
+                    <!-- Cap Style -->
+                    <Grid ColumnDefinitions="100,*">
+                        <Label Text="Cap Style:" 
+                               VerticalOptions="Center"/>
+                        <HorizontalStackLayout Grid.Column="1" Spacing="8">
+                            <Button x:Name="capRound"
+                                    Text="Round"
+                                    Clicked="OnCapStyleTapped"
+                                    BackgroundColor="DodgerBlue"
+                                    TextColor="White"
+                                    WidthRequest="80"
+                                    HeightRequest="36"
+                                    Padding="8,0"/>
+                            <Button x:Name="capFlat"
+                                    Text="Flat"
+                                    Clicked="OnCapStyleTapped"
+                                    BackgroundColor="LightGray"
+                                    TextColor="Black"
+                                    WidthRequest="80"
+                                    HeightRequest="36"
+                                    Padding="8,0"/>
+                            <Button x:Name="capTapered"
+                                    Text="Tapered"
+                                    Clicked="OnCapStyleTapped"
+                                    BackgroundColor="LightGray"
+                                    TextColor="Black"
+                                    WidthRequest="80"
+                                    HeightRequest="36"
+                                    Padding="8,0"/>
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <!-- Smoothing Factor -->
+                    <Grid ColumnDefinitions="100,*,40">
+                        <Label Text="Smoothing:" 
+                               VerticalOptions="Center"/>
+                        <Slider Grid.Column="1" 
+                                x:Name="smoothingSlider"
+                                Minimum="1" 
+                                Maximum="10" 
+                                Value="4"
+                                ValueChanged="OnSmoothingChanged"/>
+                        <Label Grid.Column="2" 
+                               x:Name="smoothingLabel"
+                               Text="4" 
+                               VerticalOptions="Center"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Controls -->
+            <Grid Grid.Row="3" ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                <Button Grid.Column="0" 
+                        Text="Clear" 
+                        Clicked="OnClearClicked"
+                        BackgroundColor="LightGray"
+                        TextColor="Black"/>
+                <Button Grid.Column="1" 
+                        Text="Undo" 
+                        Clicked="OnUndoClicked"
+                        BackgroundColor="LightGray"
+                        TextColor="Black"/>
+                <Button Grid.Column="2" 
+                        x:Name="playButton"
+                        Text="Play Signature" 
+                        Clicked="OnPlaySignatureClicked"
+                        BackgroundColor="DarkBlue"
+                        TextColor="White"/>
+            </Grid>
+            
         </Grid>
-        
-    </Grid>
+    </ScrollView>
 
 </ContentPage>

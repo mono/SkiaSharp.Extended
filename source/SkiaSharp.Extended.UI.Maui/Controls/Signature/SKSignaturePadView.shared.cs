@@ -445,6 +445,7 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 				(byte)(color.Blue * 255),
 				(byte)(color.Alpha * 255));
 			view.strokePaint.Color = view.skStrokeColor;
+			view.inkCanvas.StrokeColor = view.skStrokeColor;
 			view.Invalidate();
 		}
 	}

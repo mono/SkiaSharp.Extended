@@ -1,3 +1,4 @@
+using SkiaSharp;
 using SkiaSharp.Extended.Inking;
 using SkiaSharp.Extended.UI.Controls;
 
@@ -8,16 +9,145 @@ public partial class InkingPage : ContentPage
     private SKInkPlayer? player;
     private bool isAnimating;
     private CancellationTokenSource? animationCts;
+    private SKColor currentColor = SKColors.Black;
+    private SKStrokeCapStyle currentCapStyle = SKStrokeCapStyle.Round;
+    private string selectedColorName = "Black";
+    private readonly Dictionary<string, Border> colorBorders = new();
 
     public InkingPage()
     {
         InitializeComponent();
+        
+        // Initialize color borders dictionary
+        colorBorders["Black"] = colorBlack;
+        colorBorders["DarkBlue"] = colorDarkBlue;
+        colorBorders["Red"] = colorRed;
+        colorBorders["Green"] = colorGreen;
+        colorBorders["Purple"] = colorPurple;
+        colorBorders["Orange"] = colorOrange;
+        
+        // Set initial selection
+        UpdateColorSelection("Black");
     }
 
     private void OnStrokeCompleted(object? sender, SKSignatureStrokeCompletedEventArgs e)
     {
         // Update UI when stroke is completed
         System.Diagnostics.Debug.WriteLine($"Stroke completed. Total strokes: {e.StrokeCount}");
+    }
+
+    private void OnColorTapped(object? sender, TappedEventArgs e)
+    {
+        if (e.Parameter is string colorName)
+        {
+            UpdateColorSelection(colorName);
+            ApplySettings();
+        }
+    }
+
+    private void UpdateColorSelection(string colorName)
+    {
+        selectedColorName = colorName;
+        
+        // Update color
+        currentColor = colorName switch
+        {
+            "Black" => SKColors.Black,
+            "DarkBlue" => SKColor.Parse("#00008B"),
+            "Red" => SKColors.Red,
+            "Green" => SKColor.Parse("#008000"),
+            "Purple" => SKColor.Parse("#800080"),
+            "Orange" => SKColor.Parse("#FFA500"),
+            _ => SKColors.Black
+        };
+
+        // Update border visual selection
+        foreach (var (name, border) in colorBorders)
+        {
+            border.StrokeThickness = name == colorName ? 3 : 0;
+            border.Stroke = name == colorName ? Colors.DodgerBlue : Colors.Transparent;
+        }
+    }
+
+    private void OnMinWidthChanged(object? sender, ValueChangedEventArgs e)
+    {
+        var value = (int)Math.Round(e.NewValue);
+        minWidthLabel.Text = value.ToString();
+        
+        // Ensure max is always >= min
+        if (maxWidthSlider.Value < value)
+        {
+            maxWidthSlider.Value = value;
+        }
+        
+        ApplySettings();
+    }
+
+    private void OnMaxWidthChanged(object? sender, ValueChangedEventArgs e)
+    {
+        var value = (int)Math.Round(e.NewValue);
+        maxWidthLabel.Text = value.ToString();
+        
+        // Ensure min is always <= max
+        if (minWidthSlider.Value > value)
+        {
+            minWidthSlider.Value = value;
+        }
+        
+        ApplySettings();
+    }
+
+    private void OnCapStyleTapped(object? sender, EventArgs e)
+    {
+        if (sender is Button button)
+        {
+            // Update cap style based on button
+            currentCapStyle = button.Text switch
+            {
+                "Round" => SKStrokeCapStyle.Round,
+                "Flat" => SKStrokeCapStyle.Flat,
+                "Tapered" => SKStrokeCapStyle.Tapered,
+                _ => SKStrokeCapStyle.Round
+            };
+
+            // Update button visual state
+            capRound.BackgroundColor = currentCapStyle == SKStrokeCapStyle.Round ? Colors.DodgerBlue : Colors.LightGray;
+            capRound.TextColor = currentCapStyle == SKStrokeCapStyle.Round ? Colors.White : Colors.Black;
+            
+            capFlat.BackgroundColor = currentCapStyle == SKStrokeCapStyle.Flat ? Colors.DodgerBlue : Colors.LightGray;
+            capFlat.TextColor = currentCapStyle == SKStrokeCapStyle.Flat ? Colors.White : Colors.Black;
+            
+            capTapered.BackgroundColor = currentCapStyle == SKStrokeCapStyle.Tapered ? Colors.DodgerBlue : Colors.LightGray;
+            capTapered.TextColor = currentCapStyle == SKStrokeCapStyle.Tapered ? Colors.White : Colors.Black;
+
+            ApplySettings();
+        }
+    }
+
+    private void OnSmoothingChanged(object? sender, ValueChangedEventArgs e)
+    {
+        var value = (int)Math.Round(e.NewValue);
+        smoothingLabel.Text = value.ToString();
+        ApplySettings();
+    }
+
+    private void ApplySettings()
+    {
+        // Convert SKColor to MAUI Color for the bindable property
+        var mauiColor = Color.FromRgba(
+            currentColor.Red / 255.0,
+            currentColor.Green / 255.0,
+            currentColor.Blue / 255.0,
+            currentColor.Alpha / 255.0);
+        
+        // Apply settings to the signature pad's bindable properties
+        signaturePad.StrokeColor = mauiColor;
+        signaturePad.MinStrokeWidth = (float)minWidthSlider.Value;
+        signaturePad.MaxStrokeWidth = (float)maxWidthSlider.Value;
+        
+        // Apply to ink canvas directly for cap style and smoothing
+        signaturePad.InkCanvas.CapStyle = currentCapStyle;
+        signaturePad.InkCanvas.SmoothingFactor = (int)Math.Round(smoothingSlider.Value);
     }
 
     private void OnClearClicked(object? sender, EventArgs e)
