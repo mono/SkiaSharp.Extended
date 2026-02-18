@@ -34,10 +34,13 @@ namespace SkiaSharp.Extended.Gif.Encoding
                 var result = colors.ToArray();
                 // Pad to power of 2
                 int targetSize = 2;
-                while (targetSize < result.Length)
+                while (targetSize < maxColors)
                     targetSize *= 2;
                 
-                if (targetSize != result.Length)
+                // Use the smaller of targetSize or maxColors to avoid over-allocation
+                targetSize = Math.Min(targetSize, 256);
+                
+                if (targetSize > result.Length)
                 {
                     Array.Resize(ref result, targetSize);
                     // Fill remaining slots with black
@@ -78,14 +81,22 @@ namespace SkiaSharp.Extended.Gif.Encoding
             while (boxes.Count < maxColors)
             {
                 // Find box with largest range
-                var boxToSplit = boxes.OrderByDescending(b => b.Range).First();
+                var boxToSplit = boxes.OrderByDescending(b => b.Range).FirstOrDefault();
+                if (boxToSplit == null || boxToSplit.Colors.Count <= 1)
+                    break;
+                
                 boxes.Remove(boxToSplit);
                 
                 var (box1, box2) = boxToSplit.Split();
-                boxes.Add(box1);
-                boxes.Add(box2);
                 
-                if (box1.Colors.Count == 0 || box2.Colors.Count == 0)
+                // Only add non-empty boxes
+                if (box1.Colors.Count > 0)
+                    boxes.Add(box1);
+                if (box2.Colors.Count > 0)
+                    boxes.Add(box2);
+                
+                // Safety: if we didn't make progress, stop
+                if (box1.Colors.Count == 0 && box2.Colors.Count == 0)
                     break;
             }
             
