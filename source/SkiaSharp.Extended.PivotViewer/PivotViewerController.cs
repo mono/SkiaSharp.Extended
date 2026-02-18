@@ -35,6 +35,8 @@ namespace SkiaSharp.Extended.PivotViewer
         private double _zoomLevel = 0.0; // 0.0 = fit all, 1.0 = single item
         private double _panOffsetX;
         private double _panOffsetY;
+        private string _searchText = "";
+        private HashSet<string>? _textFilteredItemIds;
 
         public PivotViewerController()
         {
@@ -199,6 +201,21 @@ namespace SkiaSharp.Extended.PivotViewer
 
         /// <summary>Pan offset Y.</summary>
         public double PanOffsetY => _panOffsetY;
+
+        /// <summary>
+        /// Text filter from the search box. Items not matching the search text
+        /// are excluded from InScopeItems.
+        /// </summary>
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (_searchText == value) return;
+                _searchText = value ?? "";
+                ApplySearchFilter();
+            }
+        }
 
         /// <summary>Pans by the given screen-space delta.</summary>
         public void Pan(double deltaX, double deltaY)
@@ -448,6 +465,20 @@ namespace SkiaSharp.Extended.PivotViewer
 
         // --- Internal ---
 
+        private void ApplySearchFilter()
+        {
+            if (string.IsNullOrWhiteSpace(_searchText))
+            {
+                _textFilteredItemIds = null;
+            }
+            else
+            {
+                var matchingItems = _wordWheel.GetMatchingItems(_searchText);
+                _textFilteredItemIds = new HashSet<string>(matchingItems.Select(i => i.Id));
+            }
+            UpdateInScopeItems();
+        }
+
         private void OnFiltersChanged()
         {
             UpdateInScopeItems();
@@ -457,6 +488,12 @@ namespace SkiaSharp.Extended.PivotViewer
         private void UpdateInScopeItems()
         {
             var filtered = _filterEngine.GetFilteredItems();
+
+            // Apply text search filter if active
+            if (_textFilteredItemIds != null)
+            {
+                filtered = filtered.Where(i => _textFilteredItemIds.Contains(i.Id)).ToList();
+            }
 
             // Apply sort
             if (_sortProperty != null)

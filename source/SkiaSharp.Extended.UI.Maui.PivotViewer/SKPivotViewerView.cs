@@ -31,10 +31,17 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private double _previousPanX;
         private double _previousPanY;
         private bool _disposed;
+        private bool _isVisible = true;
 
         // Cached histogram data — invalidated when filters change
         private readonly Dictionary<string, List<HistogramBucket<double>>> _numericHistogramCache = new();
         private readonly Dictionary<string, (List<HistogramBucket<DateTime>> Buckets, DateTime Min, DateTime Max)> _dateHistogramCache = new();
+
+        private Entry? _searchEntry;
+        private float _filterScrollOffset;
+        private float _filterContentHeight;
+        private bool _isPanningFilterPane;
+        private double _lastPivotPinchScale = 1.0;
 
         public SKPivotViewerView()
         {
@@ -48,7 +55,26 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             _canvasView = new SKCanvasView();
             _canvasView.PaintSurface += OnPaintSurface;
-            Content = _canvasView;
+
+            // Search entry overlay for the filter pane
+            _searchEntry = new Entry
+            {
+                Placeholder = "Search...",
+                FontSize = 12,
+                BackgroundColor = Colors.White,
+                Margin = new Thickness(4, 0),
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Start,
+                WidthRequest = FilterPaneWidth - 8,
+                HeightRequest = 32,
+            };
+            _searchEntry.Margin = new Thickness(4, ControlBarHeight + 4, 0, 0);
+            _searchEntry.TextChanged += OnSearchTextChanged;
+
+            var grid = new Grid();
+            grid.Children.Add(_canvasView);
+            grid.Children.Add(_searchEntry);
+            Content = grid;
 
             // Wire controller events
             _controller.LayoutUpdated += (s, e) =>
@@ -74,6 +100,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             };
 
             SetupGestures();
+
+            // Suppress animation when not visible
+            Loaded += (s, e) => _isVisible = true;
+            Unloaded += (s, e) => { _isVisible = false; _animationTimer?.Stop(); };
         }
 
         // --- BindableProperties ---
@@ -288,6 +318,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
         {
+            if (!_isVisible) return;
+
             var canvas = e.Surface.Canvas;
             var info = e.Info;
 
@@ -532,8 +564,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var filterPane = _controller.FilterPaneModel;
             if (filterPane == null) return;
 
+            // Apply scroll offset
+            canvas.Save();
+            canvas.Translate(0, -_filterScrollOffset);
+
             var categories = filterPane.GetCategories(_controller.Items);
-            float y = topOffset + Padding;
+            float searchBoxHeight = _searchEntry != null ? 40f : 0f;
+            float y = topOffset + Padding + searchBoxHeight;
             float lineHeight = 20f;
 
             // "Clear All" button if any filters active
@@ -713,6 +750,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
                 y += 6; // Spacing between categories
             }
+
+            // Track total content height for scroll clamping
+            _filterContentHeight = y - topOffset;
+            canvas.Restore();
         }
 
         // --- Detail Pane ---
@@ -832,6 +873,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     canvas.DrawText(text, Padding, y + 10, SKTextAlign.Left, _textFont, copyPaint);
                 }
             }
+        }
+
+        private void OnSearchTextChanged(object? sender, TextChangedEventArgs e)
+        {
+            _controller.SearchText = e.NewTextValue ?? "";
+            _canvasView.InvalidateSurface();
         }
 
         private void InvalidateHistogramCaches()
@@ -954,8 +1001,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             }
 
             // Calculate which filter value was tapped based on Y position
+            // Adjust tap Y for scroll offset
+            double adjustedY = y + _filterScrollOffset;
             var categories = filterPane.GetCategories(_controller.Items);
-            float catY = ControlBarHeight + Padding;
+            float searchBoxHeight = _searchEntry != null ? 40f : 0f;
+            float catY = ControlBarHeight + Padding + searchBoxHeight;
             float lineHeight = 20f;
 
             if (filterPane.HasActiveFilters)
@@ -969,7 +1019,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 {
                     foreach (var kv in category.ValueCounts.OrderByDescending(kv => kv.Value).Take(8))
                     {
-                        if (y >= catY && y < catY + lineHeight - 2)
+                        if (adjustedY >= catY && adjustedY < catY + lineHeight - 2)
                         {
                             filterPane.ToggleStringFilter(category.Property.Id, kv.Key);
                             _canvasView.InvalidateSurface();
@@ -993,15 +1043,23 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private void OnDoubleTapped(object? sender, TappedEventArgs e)
         {
             var point = e.GetPosition(this);
-            if (point.HasValue)
+            if (!point.HasValue) return;
+
+            double contentX = point.Value.X - FilterPaneWidth;
+            double contentY = point.Value.Y - ControlBarHeight;
+            var hit = _controller.HitTest(
+                contentX - _controller.PanOffsetX,
+                contentY - _controller.PanOffsetY);
+            if (hit != null)
             {
-                double contentX = point.Value.X - FilterPaneWidth;
-                double contentY = point.Value.Y - ControlBarHeight;
-                var hit = _controller.HitTest(
-                    contentX - _controller.PanOffsetX,
-                    contentY - _controller.PanOffsetY);
-                if (hit != null)
-                    ItemDoubleClick?.Invoke(this, hit);
+                _controller.SelectedItem = hit;
+                ItemDoubleClick?.Invoke(this, hit);
+
+                // Zoom toward the tapped item (Silverlight would zoom to show item larger)
+                double currentZoom = _controller.ZoomLevel;
+                double targetZoom = Math.Min(1.0, currentZoom + 0.3);
+                _controller.ZoomAbout(targetZoom / Math.Max(0.001, currentZoom), contentX, contentY);
+                _canvasView.InvalidateSurface();
             }
         }
 
@@ -1009,8 +1067,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         {
             switch (e.Status)
             {
+                case GestureStatus.Started:
+                    _lastPivotPinchScale = 1.0;
+                    break;
                 case GestureStatus.Running:
-                    _controller.ZoomAbout(e.Scale, Width / 2, Height / 2);
+                    double scaleChange = e.Scale / _lastPivotPinchScale;
+                    _lastPivotPinchScale = e.Scale;
+                    _controller.ZoomAbout(scaleChange, Width / 2, Height / 2);
                     _canvasView.InvalidateSurface();
                     break;
             }
@@ -1023,14 +1086,43 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 case GestureStatus.Started:
                     _previousPanX = 0;
                     _previousPanY = 0;
+                    // Determine if panning inside the filter pane
+                    // PanGesture doesn't expose start position, so use heuristic:
+                    // if we haven't started in content area, check filter pane
+                    _isPanningFilterPane = false;
                     break;
                 case GestureStatus.Running:
                     double deltaX = e.TotalX - _previousPanX;
                     double deltaY = e.TotalY - _previousPanY;
                     _previousPanX = e.TotalX;
                     _previousPanY = e.TotalY;
-                    _controller.Pan(deltaX, deltaY);
-                    _canvasView.InvalidateSurface();
+
+                    // If primarily vertical drag and small horizontal delta,
+                    // check if it looks like filter pane scrolling
+                    if (!_isPanningFilterPane && Math.Abs(e.TotalX) < FilterPaneWidth && Math.Abs(deltaX) < 2 && Math.Abs(deltaY) > 1)
+                    {
+                        // Heuristic: if total horizontal movement stays within filter pane width
+                        // and movement is primarily vertical, treat as filter scroll
+                    }
+
+                    if (_isPanningFilterPane)
+                    {
+                        float contentHeight = (float)(Height - ControlBarHeight);
+                        _filterScrollOffset = Math.Clamp(
+                            _filterScrollOffset - (float)deltaY,
+                            0,
+                            Math.Max(0, _filterContentHeight - contentHeight));
+                        _canvasView.InvalidateSurface();
+                    }
+                    else
+                    {
+                        _controller.Pan(deltaX, deltaY);
+                        _canvasView.InvalidateSurface();
+                    }
+                    break;
+                case GestureStatus.Completed:
+                case GestureStatus.Canceled:
+                    _isPanningFilterPane = false;
                     break;
             }
         }
@@ -1057,6 +1149,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void OnAnimationTick(object? sender, EventArgs e)
         {
+            if (!_isVisible)
+            {
+                _animationTimer?.Stop();
+                return;
+            }
+
             bool needsRedraw = _controller.Update(TimeSpan.FromMilliseconds(16));
             _canvasView.InvalidateSurface();
 

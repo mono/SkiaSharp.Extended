@@ -19,6 +19,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         private readonly Stopwatch _stopwatch;
         private TimeSpan _lastFrameTime;
         private bool _disposed;
+        private bool _isVisible = true;
 
         // Gesture state
         private double _lastPanX, _lastPanY;
@@ -44,6 +45,10 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
 
             // Set up gestures
             SetupGestures();
+
+            // Suppress animation when not visible
+            Loaded += (s, e) => _isVisible = true;
+            Unloaded += (s, e) => _isVisible = false;
         }
 
         // --- BindableProperties ---
@@ -149,6 +154,8 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
 
         private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
         {
+            if (!_isVisible) return;
+
             var now = _stopwatch.Elapsed;
             var delta = now - _lastFrameTime;
             _lastFrameTime = now;
@@ -157,7 +164,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             bool needsRepaint = _controller.Update(delta);
             _controller.Render(e.Surface.Canvas);
 
-            if (needsRepaint)
+            if (needsRepaint && _isVisible)
             {
                 MainThread.BeginInvokeOnMainThread(() => _canvasView.InvalidateSurface());
             }
