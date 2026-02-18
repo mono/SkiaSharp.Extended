@@ -50,7 +50,10 @@ controller.LoadItems(items, new[] { nameP, yearP });
 ### MAUI View
 
 ```xml
-<pivotviewer:SKPivotViewerView x:Name="pvView" AccentColor="CornflowerBlue" />
+<pivotviewer:SKPivotViewerView x:Name="pvView"
+    AccentColor="CornflowerBlue"
+    View="grid"
+    SelectedItem="{Binding Selected, Mode=TwoWay}" />
 ```
 
 ```csharp
@@ -58,6 +61,19 @@ var source = CxmlCollectionSource.Parse(cxmlXml);
 pvView.LoadCollection(source);
 pvView.SelectionChanged += (s, e) => ShowDetails(e.NewItem);
 ```
+
+#### BindableProperties (SL5 API)
+
+| Property | Type | Binding | Notes |
+|---|---|---|---|
+| `ItemsSource` | `IEnumerable<PivotViewerItem>` | OneWay | Bind items directly |
+| `PivotProperties` | `IEnumerable<PivotViewerProperty>` | OneWay | Facet definitions |
+| `SelectedItem` | `PivotViewerItem?` | TwoWay | Currently selected |
+| `SelectedIndex` | `int` | TwoWay | Index of selected |
+| `SortPivotProperty` | `PivotViewerProperty?` | TwoWay | Active sort facet |
+| `View` | `string` | TwoWay | "grid" or "graph" |
+| `AccentColor` | `Color` | OneWay | UI accent color |
+| `ItemCulture` | `CultureInfo` | OneWay | Date/number locale |
 
 ## CXML File Format
 
@@ -144,17 +160,83 @@ controller.SetViewerState(state);
 
 ```
 SkiaSharp.Extended.PivotViewer (core, netstandard2.0 + net9.0)
-├── CxmlCollectionSource   — CXML parser with type mapping
-├── PivotViewerItem        — Item with string indexer + typed accessors
-├── PivotViewerProperty    — Property hierarchy (String, Numeric, DateTime, Link)
-├── FilterEngine           — AND/OR filtering + in-scope counts + histograms
-├── GridLayoutEngine       — Grid + histogram layout computation
-├── WordWheelIndex         — Prefix search with CharBucket grouping
-├── ViewerStateSerializer  — URL-safe state round-trip
-└── PivotViewerController  — Orchestrator: filter → sort → layout → state
+├── CxmlCollectionSource        — CXML parser with type mapping
+├── PivotViewerItem             — Item with string indexer + typed accessors
+├── PivotViewerProperty         — Property hierarchy (String, Numeric, DateTime, Link)
+├── FilterEngine                — AND/OR filtering + in-scope counts + histograms
+├── GridLayoutEngine            — Grid + histogram layout computation
+├── WordWheelIndex              — Prefix search with CharBucket grouping
+├── ViewerStateSerializer       — URL-safe state round-trip
+├── PivotViewerController       — Orchestrator: filter → sort → layout → state
+├── FilterPaneModel             — Core model for filter pane UI
+├── DetailPaneModel             — Core model for detail pane display
+├── LayoutTransitionManager     — Animated layout transitions (EaseOutCubic)
+├── HistogramBucketer           — Numeric/DateTime/String bucketing for graphs
+├── PivotViewerCollectionBuilder — Fluent API for programmatic collection creation
+├── BatchObservableCollection   — Bulk Add/Replace/Remove operations
+├── GradualObservableCollection — Incremental loading with ItemsPerCycle
+├── PivotViewerItemAdorner      — Item hover/selection adorner
+├── PivotViewerGridView         — Grid view (sealed)
+└── PivotViewerGraphView        — Graph/histogram view (sealed)
 
 SkiaSharp.Extended.UI.Maui.PivotViewer (MAUI)
-└── SKPivotViewerView      — ContentView with grid/graph rendering + gestures
+└── SKPivotViewerView           — ContentView with full BindableProperties + gestures
+```
+
+## Programmatic Collection Builder
+
+Create collections in code without CXML:
+
+```csharp
+using SkiaSharp.Extended.PivotViewer;
+
+var (items, properties) = new PivotViewerCollectionBuilder()
+    .AddStringProperty("Name", "Name", PivotViewerPropertyOptions.CanFilter | PivotViewerPropertyOptions.CanSearchText)
+    .AddNumericProperty("Year", "Year", "###0", PivotViewerPropertyOptions.CanFilter)
+    .AddItem("1", b => b.Set("Name", "Ferrari Enzo").Set("Year", 2002.0))
+    .AddItem("2", b => b.Set("Name", "Lamborghini Murciélago").Set("Year", 2001.0))
+    .Build();
+
+controller.LoadItems(items, properties);
+```
+
+## Filter Pane Model
+
+The `FilterPaneModel` provides the data structure for building filter pane UIs:
+
+```csharp
+var categories = controller.FilterPaneModel!.GetCategories(controller.Items);
+foreach (var category in categories)
+{
+    Console.WriteLine($"{category.Property.DisplayName}:");
+    foreach (var kv in category.ValueCounts!)
+        Console.WriteLine($"  {kv.Key}: {kv.Value} items");
+}
+
+// Toggle a filter
+controller.FilterPaneModel.ToggleStringFilter("Manufacturer", "BMW");
+```
+
+## Detail Pane Model
+
+The `DetailPaneModel` provides facet display data for selected items:
+
+```csharp
+controller.SelectedItem = someItem;
+
+foreach (var facet in controller.DetailPane.FacetValues)
+    Console.WriteLine($"{facet.DisplayName}: {string.Join(", ", facet.Values)}");
+```
+
+## Layout Transitions
+
+When the layout changes (filtering, resizing, view switching), items smoothly animate from their old positions to new positions using cubic easing:
+
+```csharp
+// In your render loop:
+bool needsRedraw = controller.Update(deltaTime);
+var bounds = controller.GetItemBounds(item);
+// bounds.X, bounds.Y, bounds.Width, bounds.Height are interpolated during transition
 ```
 
 ## API Reference (Silverlight SL5 Compatibility)
