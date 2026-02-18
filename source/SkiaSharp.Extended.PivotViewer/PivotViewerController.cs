@@ -225,11 +225,14 @@ namespace SkiaSharp.Extended.PivotViewer
             LayoutUpdated?.Invoke(this, EventArgs.Empty);
         }
 
-        /// <summary>Zooms about a screen point, keeping the point under the cursor stable.</summary>
+        /// <summary>Zooms about a screen point, keeping the point under the cursor stable.
+        /// Factor > 1 zooms in, &lt; 1 zooms out. The magnitude controls zoom speed.</summary>
         public void ZoomAbout(double factor, double screenX, double screenY)
         {
             double oldZoom = _zoomLevel;
-            double newZoom = Math.Max(0.0, Math.Min(1.0, _zoomLevel + (factor > 1 ? 0.1 : -0.1)));
+            // Use factor proportionally: factor=2.0 means double the zoom, factor=0.5 means halve it
+            double delta = (factor - 1.0) * 0.5; // Scale sensitivity (0.5 feels natural)
+            double newZoom = Math.Max(0.0, Math.Min(1.0, _zoomLevel + delta));
 
             if (Math.Abs(newZoom - oldZoom) > 0.001)
             {
@@ -276,6 +279,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
             _filterEngine.SetSource(_allItems, _properties);
             _wordWheel.Build(_allItems, _properties);
+            ApplySearchFilter(); // Re-apply search text to new data
 
             _filterPaneModel = new FilterPaneModel(_filterEngine, _properties);
 
@@ -298,6 +302,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
             _filterEngine.SetSource(_allItems, _properties);
             _wordWheel.Build(_allItems, _properties);
+            ApplySearchFilter(); // Re-apply search text to new data
 
             _filterPaneModel = new FilterPaneModel(_filterEngine, _properties);
 

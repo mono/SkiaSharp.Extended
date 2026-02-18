@@ -41,6 +41,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private float _filterScrollOffset;
         private float _filterContentHeight;
         private bool _isPanningFilterPane;
+        private double _lastPointerX = double.NaN; // Track last known pointer X for pan origin detection
         private double _lastPivotPinchScale = 1.0;
 
         public SKPivotViewerView()
@@ -62,13 +63,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 Placeholder = "Search...",
                 FontSize = 12,
                 BackgroundColor = Colors.White,
-                Margin = new Thickness(4, 0),
+                Margin = new Thickness(4, ControlBarHeight + 4, 0, 0),
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Start,
                 WidthRequest = FilterPaneWidth - 8,
                 HeightRequest = 32,
             };
-            _searchEntry.Margin = new Thickness(4, ControlBarHeight + 4, 0, 0);
             _searchEntry.TextChanged += OnSearchTextChanged;
 
             var grid = new Grid();
@@ -906,6 +906,16 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var panGesture = new PanGestureRecognizer();
             panGesture.PanUpdated += OnPanUpdated;
             GestureRecognizers.Add(panGesture);
+
+            // Track pointer position to determine pan origin (filter pane vs content)
+            var pointerGesture = new PointerGestureRecognizer();
+            pointerGesture.PointerPressed += (s, e) =>
+            {
+                var pos = e.GetPosition(this);
+                if (pos.HasValue)
+                    _lastPointerX = pos.Value.X;
+            };
+            GestureRecognizers.Add(pointerGesture);
         }
 
         private void OnTapped(object? sender, TappedEventArgs e)
@@ -992,8 +1002,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var filterPane = _controller.FilterPaneModel;
             if (filterPane == null) return;
 
-            // Check "Clear All" button
-            if (filterPane.HasActiveFilters && y < ControlBarHeight + Padding + 24)
+            // Adjust tap Y for scroll offset
+            double adjustedY = y + _filterScrollOffset;
+
+            // Check "Clear All" button (only responds when visible = not scrolled past)
+            float searchBoxOffset = 40f;
+            if (filterPane.HasActiveFilters && adjustedY < ControlBarHeight + searchBoxOffset + Padding + 24)
             {
                 filterPane.ClearAllFilters();
                 _canvasView.InvalidateSurface();
@@ -1001,8 +1015,6 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             }
 
             // Calculate which filter value was tapped based on Y position
-            // Adjust tap Y for scroll offset
-            double adjustedY = y + _filterScrollOffset;
             var categories = filterPane.GetCategories(_controller.Items);
             float searchBoxHeight = _searchEntry != null ? 40f : 0f;
             float catY = ControlBarHeight + Padding + searchBoxHeight;
@@ -1055,10 +1067,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 _controller.SelectedItem = hit;
                 ItemDoubleClick?.Invoke(this, hit);
 
-                // Zoom toward the tapped item (Silverlight would zoom to show item larger)
-                double currentZoom = _controller.ZoomLevel;
-                double targetZoom = Math.Min(1.0, currentZoom + 0.3);
-                _controller.ZoomAbout(targetZoom / Math.Max(0.001, currentZoom), contentX, contentY);
+                // Zoom toward the tapped item (+0.3 zoom level)
+                // ZoomAbout uses delta = (factor - 1.0) * 0.5, so factor = 1.6 → delta = 0.3
+                _controller.ZoomAbout(1.6, contentX, contentY);
                 _canvasView.InvalidateSurface();
             }
         }
@@ -1086,24 +1097,14 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 case GestureStatus.Started:
                     _previousPanX = 0;
                     _previousPanY = 0;
-                    // Determine if panning inside the filter pane
-                    // PanGesture doesn't expose start position, so use heuristic:
-                    // if we haven't started in content area, check filter pane
-                    _isPanningFilterPane = false;
+                    // Use last pointer position to determine if pan started in filter pane
+                    _isPanningFilterPane = !double.IsNaN(_lastPointerX) && _lastPointerX < FilterPaneWidth;
                     break;
                 case GestureStatus.Running:
                     double deltaX = e.TotalX - _previousPanX;
                     double deltaY = e.TotalY - _previousPanY;
                     _previousPanX = e.TotalX;
                     _previousPanY = e.TotalY;
-
-                    // If primarily vertical drag and small horizontal delta,
-                    // check if it looks like filter pane scrolling
-                    if (!_isPanningFilterPane && Math.Abs(e.TotalX) < FilterPaneWidth && Math.Abs(deltaX) < 2 && Math.Abs(deltaY) > 1)
-                    {
-                        // Heuristic: if total horizontal movement stays within filter pane width
-                        // and movement is primarily vertical, treat as filter scroll
-                    }
 
                     if (_isPanningFilterPane)
                     {
@@ -1123,6 +1124,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 case GestureStatus.Completed:
                 case GestureStatus.Canceled:
                     _isPanningFilterPane = false;
+                    _lastPointerX = double.NaN;
                     break;
             }
         }

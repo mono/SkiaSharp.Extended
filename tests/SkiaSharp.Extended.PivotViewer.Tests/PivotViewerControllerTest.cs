@@ -612,4 +612,56 @@ public class PivotViewerControllerTest
         // Should not throw on double dispose
         controller.Dispose();
     }
+
+    [Fact]
+    public void SearchText_FiltersItems()
+    {
+        var (controller, _) = CreateTestController();
+        int totalItems = controller.InScopeItems.Count;
+
+        // Use a manufacturer name prefix that exists in conceptcars
+        controller.SearchText = "bmw";
+        Assert.True(controller.InScopeItems.Count <= totalItems);
+        Assert.True(controller.InScopeItems.Count > 0, "Search for 'bmw' should match some items");
+
+        controller.SearchText = "";
+        Assert.Equal(totalItems, controller.InScopeItems.Count);
+    }
+
+    [Fact]
+    public void SearchText_SurvivesCollectionReload()
+    {
+        var (controller, source) = CreateTestController();
+        controller.SearchText = "bmw";
+        int filtered = controller.InScopeItems.Count;
+        Assert.True(filtered > 0, "Search for 'bmw' should match some items");
+
+        // Reload same collection — search should be reapplied
+        controller.LoadCollection(source);
+        Assert.Equal(filtered, controller.InScopeItems.Count);
+    }
+
+    [Fact]
+    public void SearchText_NoMatch_ReturnsEmpty()
+    {
+        var (controller, _) = CreateTestController();
+        controller.SearchText = "zzzzxyznonexistent";
+        Assert.Empty(controller.InScopeItems);
+    }
+
+    [Fact]
+    public void ZoomAbout_ProportionalFactor()
+    {
+        var (controller, _) = CreateTestController();
+
+        // Factor 1.6 should give ~0.3 delta (sensitivity 0.5)
+        controller.ZoomAbout(1.6, 512, 384);
+        Assert.True(Math.Abs(controller.ZoomLevel - 0.3) < 0.01,
+            $"Expected ~0.3, got {controller.ZoomLevel}");
+
+        // Factor < 1 zooms out
+        double before = controller.ZoomLevel;
+        controller.ZoomAbout(0.8, 512, 384);
+        Assert.True(controller.ZoomLevel < before);
+    }
 }
