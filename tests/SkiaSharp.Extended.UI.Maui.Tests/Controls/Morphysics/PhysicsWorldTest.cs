@@ -64,9 +64,10 @@ public class PhysicsWorldTest
 	}
 
 	[Fact]
-	public void PhysicsWorld_Attractor_InverseSquareLaw_ForceDimishesWithDistance()
+	public void PhysicsWorld_Attractor_LinearFalloff_ForceDimishesWithDistance()
 	{
-		// Test that attractor force follows inverse square law: F ∝ 1/r²
+		// Test that attractor force uses linear falloff: F ∝ 1/r
+		// (Changed from inverse square for better UI visibility)
 		var world1 = new PhysicsWorld();
 		world1.Gravity = Vector2.Zero;
 		world1.AddAttractor("test", new Vector2(100, 0), 10000f);
@@ -88,11 +89,11 @@ public class PhysicsWorldTest
 		world2.Step(1 / 60f);
 		var velocity2 = particle2.Velocity.X;
 
-		// Force at 2x distance should be ~1/4 the force at 1x distance (inverse square law)
-		// velocity is proportional to force, so velocity2 should be ~1/4 of velocity1
+		// Force at 2x distance should be ~1/2 the force at 1x distance (linear falloff)
+		// velocity is proportional to force, so velocity2 should be ~1/2 of velocity1
 		var ratio = velocity2 / velocity1;
-		Assert.True(ratio > 0.2f && ratio < 0.3f, 
-			$"Velocity ratio should be ~0.25 (inverse square law) but was {ratio:F3}. " +
+		Assert.True(ratio > 0.45f && ratio < 0.55f, 
+			$"Velocity ratio should be ~0.5 (linear falloff) but was {ratio:F3}. " +
 			$"velocity1={velocity1:F3}, velocity2={velocity2:F3}");
 	}
 

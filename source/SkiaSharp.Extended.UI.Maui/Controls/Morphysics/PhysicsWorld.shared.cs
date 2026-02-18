@@ -216,8 +216,8 @@ public class PhysicsWorld
 			var relativeVelocity = b.Velocity - a.Velocity;
 			var velocityAlongNormal = Vector2.Dot(relativeVelocity, normal);
 
-			if (velocityAlongNormal < 0)
-				return; // Particles are separating
+			if (velocityAlongNormal > 0)
+				return; // Particles are separating (fixed: was < 0, should be > 0)
 
 			var impulse = -(1 + Restitution) * velocityAlongNormal / (1f / a.Mass + 1f / b.Mass);
 			var impulseVector = normal * impulse;
