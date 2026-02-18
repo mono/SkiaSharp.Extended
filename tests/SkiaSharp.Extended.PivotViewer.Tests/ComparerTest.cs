@@ -75,4 +75,94 @@ public class ComparerTest
 
         Assert.True(comparer.Compare("Known", "Unknown") < 0); // Known=1, Unknown=0
     }
+
+    [Fact]
+    public void CardinalityComparer_IDictionary_Constructor()
+    {
+        IDictionary<string, int> counts = new Dictionary<string, int>
+        {
+            ["Alpha"] = 5,
+            ["Beta"] = 10,
+            ["Gamma"] = 5
+        };
+        var comparer = new PivotViewerPropertyCardinalityComparer(counts);
+
+        // Beta (10) sorts first, then Alpha/Gamma alphabetically
+        Assert.True(comparer.Compare("Beta", "Alpha") < 0);
+        Assert.True(comparer.Compare("Alpha", "Gamma") < 0); // equal count, alphabetical
+    }
+
+    [Fact]
+    public void CardinalityComparer_EqualCardinalities_SortAlphabetically()
+    {
+        var counts = new Dictionary<string, int>
+        {
+            ["Zebra"] = 3,
+            ["Apple"] = 3,
+            ["Mango"] = 3
+        };
+        var comparer = new PivotViewerPropertyCardinalityComparer(counts);
+
+        var sorted = counts.Keys.OrderBy(k => k, comparer).ToList();
+        Assert.Equal("Apple", sorted[0]);
+        Assert.Equal("Mango", sorted[1]);
+        Assert.Equal("Zebra", sorted[2]);
+    }
+
+    [Fact]
+    public void CardinalityComparer_Compare_BothNull_ReturnsZero()
+    {
+        var comparer = new PivotViewerPropertyCardinalityComparer(new[] { "A" });
+        Assert.Equal(0, comparer.Compare(null, null));
+    }
+
+    [Fact]
+    public void CustomSortOrderComparer_EmptyOrderedValues()
+    {
+        var comparer = new CustomSortOrderComparer(new List<string>());
+
+        // Both unknown, alphabetical
+        Assert.True(comparer.Compare("Apple", "Banana") < 0);
+        Assert.True(comparer.Compare("Banana", "Apple") > 0);
+        Assert.Equal(0, comparer.Compare("Same", "Same"));
+    }
+
+    [Fact]
+    public void CustomSortOrderComparer_NullHandling()
+    {
+        var comparer = new CustomSortOrderComparer(new[] { "A", "B" });
+
+        Assert.Equal(0, comparer.Compare(null, null));
+        Assert.True(comparer.Compare(null, "A") > 0);  // null sorts after
+        Assert.True(comparer.Compare("A", null) < 0);   // non-null sorts before
+    }
+
+    [Fact]
+    public void CustomSortOrderComparer_DuplicatesInOrder_FirstOccurrenceWins()
+    {
+        var comparer = new CustomSortOrderComparer(new[] { "X", "Y", "X", "Z" });
+
+        // X is at index 0, Y at 1, Z at 3 (second X ignored)
+        Assert.True(comparer.Compare("X", "Y") < 0);
+        Assert.True(comparer.Compare("Y", "Z") < 0);
+    }
+
+    [Fact]
+    public void CustomSortOrderComparer_KnownBeforeUnknown()
+    {
+        var comparer = new CustomSortOrderComparer(new[] { "Known" });
+
+        Assert.True(comparer.Compare("Known", "Unknown") < 0);
+        Assert.True(comparer.Compare("Unknown", "Known") > 0);
+    }
+
+    [Fact]
+    public void CustomSortOrderComparer_BothUnknown_Alphabetical()
+    {
+        var comparer = new CustomSortOrderComparer(new[] { "X" });
+
+        Assert.True(comparer.Compare("Alpha", "Beta") < 0);
+        Assert.True(comparer.Compare("Beta", "Alpha") > 0);
+        Assert.Equal(0, comparer.Compare("Same", "SAME")); // case insensitive
+    }
 }

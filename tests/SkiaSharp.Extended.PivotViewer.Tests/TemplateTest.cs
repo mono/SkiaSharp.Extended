@@ -105,4 +105,115 @@ public class TemplateTest
         template.RenderAction!(surface.Canvas, new PivotViewerItem("test"), new SKRect(0, 0, 100, 100));
         Assert.True(called);
     }
+
+    [Fact]
+    public void ItemTemplate_MaxWidth_DefaultIsZero()
+    {
+        var template = new PivotViewerItemTemplate();
+        Assert.Equal(0, template.MaxWidth);
+    }
+
+    [Fact]
+    public void ItemTemplate_RenderAction_DefaultIsNull()
+    {
+        var template = new PivotViewerItemTemplate();
+        Assert.Null(template.RenderAction);
+    }
+
+    [Fact]
+    public void ItemTemplate_MaxWidth_SetAndGet()
+    {
+        var template = new PivotViewerItemTemplate { MaxWidth = 512 };
+        Assert.Equal(512, template.MaxWidth);
+    }
+
+    [Fact]
+    public void MultiSizeImage_Stretch_DefaultIsUniform()
+    {
+        var img = new PivotViewerMultiSizeImage();
+        Assert.Equal(PivotViewerStretch.Uniform, img.Stretch);
+    }
+
+    [Fact]
+    public void MultiSizeImage_Stretch_CanBeChanged()
+    {
+        var img = new PivotViewerMultiSizeImage();
+        img.Stretch = PivotViewerStretch.Fill;
+        Assert.Equal(PivotViewerStretch.Fill, img.Stretch);
+    }
+
+    [Fact]
+    public void MultiSizeImage_Sources_CanAddItems()
+    {
+        var img = new PivotViewerMultiSizeImage();
+        img.Sources.Add(new PivotViewerMultiSizeImageSource { UriSource = "a.jpg", MaxWidth = 100, MaxHeight = 100 });
+        img.Sources.Add(new PivotViewerMultiSizeImageSource { UriSource = "b.jpg", MaxWidth = 200, MaxHeight = 200 });
+
+        Assert.Equal(2, img.Sources.Count);
+        Assert.Equal("a.jpg", img.Sources[0].UriSource);
+        Assert.Equal("b.jpg", img.Sources[1].UriSource);
+    }
+
+    [Fact]
+    public void MultiSizeImageSource_AllProperties()
+    {
+        var src = new PivotViewerMultiSizeImageSource();
+        Assert.Null(src.UriSource);
+        Assert.Equal(0, src.MaxWidth);
+        Assert.Equal(0, src.MaxHeight);
+
+        src.UriSource = "http://example.com/img.png";
+        src.MaxWidth = 640;
+        src.MaxHeight = 480;
+
+        Assert.Equal("http://example.com/img.png", src.UriSource);
+        Assert.Equal(640, src.MaxWidth);
+        Assert.Equal(480, src.MaxHeight);
+    }
+
+    [Fact]
+    public void MultiScaleSubImageHost_DefaultStretchIsUniform()
+    {
+        var host = new PivotViewerMultiScaleSubImageHost();
+        Assert.Equal(PivotViewerStretch.Uniform, host.Stretch);
+    }
+
+    [Fact]
+    public void MultiScaleSubImageHost_AllProperties()
+    {
+        var host = new PivotViewerMultiScaleSubImageHost();
+
+        Assert.Null(host.CollectionSource);
+        Assert.Null(host.ImageId);
+        Assert.Equal(PivotViewerStretch.Uniform, host.Stretch);
+
+        host.ImageId = "#10";
+        host.Stretch = PivotViewerStretch.UniformToFill;
+
+        Assert.Equal("#10", host.ImageId);
+        Assert.Equal(PivotViewerStretch.UniformToFill, host.Stretch);
+    }
+
+    [Fact]
+    public void MultiScaleSubImageHost_CollectionSource_CanBeSet()
+    {
+        var host = new PivotViewerMultiScaleSubImageHost();
+        var source = CxmlCollectionSource.Parse(
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+            <Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+                <FacetCategories /><Items />
+            </Collection>");
+
+        host.CollectionSource = source;
+        Assert.Same(source, host.CollectionSource);
+    }
+
+    [Fact]
+    public void PivotViewerStretch_EnumValues()
+    {
+        Assert.Equal(0, (int)PivotViewerStretch.None);
+        Assert.Equal(1, (int)PivotViewerStretch.Fill);
+        Assert.Equal(2, (int)PivotViewerStretch.Uniform);
+        Assert.Equal(3, (int)PivotViewerStretch.UniformToFill);
+    }
 }

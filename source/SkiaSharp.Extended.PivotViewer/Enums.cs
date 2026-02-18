@@ -62,4 +62,23 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>Loading failed.</summary>
         Failed
     }
+
+    /// <summary>
+    /// Describes how content is resized to fill its allocated space.
+    /// Matches Silverlight's Stretch enum.
+    /// </summary>
+    public enum PivotViewerStretch
+    {
+        /// <summary>Content preserves its original size.</summary>
+        None = 0,
+
+        /// <summary>Content fills the destination, aspect ratio not preserved.</summary>
+        Fill = 1,
+
+        /// <summary>Content fits within the destination, preserving aspect ratio.</summary>
+        Uniform = 2,
+
+        /// <summary>Content fills the destination, preserving aspect ratio. Clips if necessary.</summary>
+        UniformToFill = 3
+    }
 }

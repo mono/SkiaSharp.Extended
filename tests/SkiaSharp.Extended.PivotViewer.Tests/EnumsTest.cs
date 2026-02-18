@@ -42,4 +42,46 @@ public class EnumsTest
         Assert.Equal(2, (int)CxmlCollectionState.Loaded);
         Assert.Equal(3, (int)CxmlCollectionState.Failed);
     }
+
+    [Fact]
+    public void PivotViewerStretch_Values()
+    {
+        Assert.Equal(0, (int)PivotViewerStretch.None);
+        Assert.Equal(1, (int)PivotViewerStretch.Fill);
+        Assert.Equal(2, (int)PivotViewerStretch.Uniform);
+        Assert.Equal(3, (int)PivotViewerStretch.UniformToFill);
+    }
+
+    [Fact]
+    public void PivotViewerStretch_HasFourValues()
+    {
+        var values = Enum.GetValues<PivotViewerStretch>();
+        Assert.Equal(4, values.Length);
+    }
+
+    [Fact]
+    public void PivotViewerPropertyOptions_FlagsCombinations()
+    {
+        var filterAndSearch = PivotViewerPropertyOptions.CanFilter | PivotViewerPropertyOptions.CanSearchText;
+        Assert.Equal(6, (int)filterAndSearch);
+        Assert.True(filterAndSearch.HasFlag(PivotViewerPropertyOptions.CanFilter));
+        Assert.True(filterAndSearch.HasFlag(PivotViewerPropertyOptions.CanSearchText));
+        Assert.False(filterAndSearch.HasFlag(PivotViewerPropertyOptions.Private));
+        Assert.False(filterAndSearch.HasFlag(PivotViewerPropertyOptions.WrappingText));
+
+        var all = PivotViewerPropertyOptions.Private
+            | PivotViewerPropertyOptions.CanFilter
+            | PivotViewerPropertyOptions.CanSearchText
+            | PivotViewerPropertyOptions.WrappingText;
+        Assert.Equal(15, (int)all);
+        Assert.True(all.HasFlag(PivotViewerPropertyOptions.Private));
+        Assert.True(all.HasFlag(PivotViewerPropertyOptions.WrappingText));
+    }
+
+    [Fact]
+    public void PivotViewerPropertyOptions_None_IsDefault()
+    {
+        PivotViewerPropertyOptions opts = default;
+        Assert.Equal(PivotViewerPropertyOptions.None, opts);
+    }
 }

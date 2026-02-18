@@ -60,6 +60,12 @@ namespace SkiaSharp.Extended.PivotViewer
     public class PivotViewerMultiSizeImage
     {
         public PivotViewerMultiSizeImageSourceCollection Sources { get; } = new PivotViewerMultiSizeImageSourceCollection();
+
+        /// <summary>
+        /// How the image is stretched to fill the available space.
+        /// Matches Silverlight's PivotViewerMultiSizeImage.Stretch. Default is Uniform.
+        /// </summary>
+        public PivotViewerStretch Stretch { get; set; } = PivotViewerStretch.Uniform;
     }
 
     /// <summary>
@@ -89,5 +95,11 @@ namespace SkiaSharp.Extended.PivotViewer
 
         /// <summary>Image ID (from CXML Item Img attribute, e.g. "#5").</summary>
         public string? ImageId { get; set; }
+
+        /// <summary>
+        /// How the sub-image is stretched to fill the available space.
+        /// Matches Silverlight's PivotViewerMultiScaleSubImageHost.Stretch. Default is Uniform.
+        /// </summary>
+        public PivotViewerStretch Stretch { get; set; } = PivotViewerStretch.Uniform;
     }
 }

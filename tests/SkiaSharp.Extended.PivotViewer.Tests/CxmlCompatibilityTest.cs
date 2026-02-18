@@ -248,4 +248,65 @@ public class CxmlCompatibilityTest
 
         // Not all collections have Href on items, but ones that do should parse correctly
     }
+
+    [Fact]
+    public void Parse_ShapesArea_LoadsCorrectly()
+    {
+        var source = TestDataHelper.LoadCxml("area.cxml");
+
+        Assert.Equal(CxmlCollectionState.Loaded, source.State);
+        Assert.Equal("SPARQL Query Results", source.Name);
+        Assert.Equal(9, source.Items.Count);
+        Assert.True(source.ItemProperties.Count >= 7,
+            $"Expected >= 7 facet categories, got {source.ItemProperties.Count}");
+
+        // Verify expected facet categories exist
+        Assert.NotNull(source.GetPivotPropertyById("virtcxml:FacetArea"));
+        Assert.NotNull(source.GetPivotPropertyById("virtcxml:FacetLabel"));
+        Assert.NotNull(source.GetPivotPropertyById("virtcxml:FacetLatitude"));
+        Assert.NotNull(source.GetPivotPropertyById("virtcxml:FacetLongitude"));
+        Assert.NotNull(source.GetPivotPropertyById("virtcxml:FacetType"));
+    }
+
+    [Fact]
+    public void Parse_ShapesGeometry_LoadsCorrectly()
+    {
+        var source = TestDataHelper.LoadCxml("geometry.cxml");
+
+        Assert.Equal(CxmlCollectionState.Loaded, source.State);
+        Assert.Equal("SPARQL Query Results", source.Name);
+        Assert.Equal(9, source.Items.Count);
+        Assert.True(source.ItemProperties.Count >= 6,
+            $"Expected >= 6 facet categories, got {source.ItemProperties.Count}");
+
+        // Verify expected facet categories exist
+        Assert.NotNull(source.GetPivotPropertyById("virtcxml:FacetGeometry"));
+        Assert.NotNull(source.GetPivotPropertyById("virtcxml:FacetLabel"));
+        Assert.NotNull(source.GetPivotPropertyById("virtcxml:FacetLatitude"));
+        Assert.NotNull(source.GetPivotPropertyById("virtcxml:FacetLongitude"));
+    }
+
+    [Fact]
+    public void Parse_ShapesArea_HasNumericProperties()
+    {
+        var source = TestDataHelper.LoadCxml("area.cxml");
+
+        var latProp = source.GetPivotPropertyById("virtcxml:FacetLatitude");
+        Assert.NotNull(latProp);
+        Assert.Equal(PivotViewerPropertyType.Decimal, latProp!.PropertyType);
+
+        var lonProp = source.GetPivotPropertyById("virtcxml:FacetLongitude");
+        Assert.NotNull(lonProp);
+        Assert.Equal(PivotViewerPropertyType.Decimal, lonProp!.PropertyType);
+    }
+
+    [Fact]
+    public void Parse_ShapesGeometry_HasStringProperties()
+    {
+        var source = TestDataHelper.LoadCxml("geometry.cxml");
+
+        var geomProp = source.GetPivotPropertyById("virtcxml:FacetGeometry");
+        Assert.NotNull(geomProp);
+        Assert.Equal(PivotViewerPropertyType.Text, geomProp!.PropertyType);
+    }
 }
