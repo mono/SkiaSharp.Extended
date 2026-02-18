@@ -17,14 +17,12 @@ namespace SkiaSharp.Extended.Gif.Encoding
             // Collect all unique colors from the bitmap
             var colors = new HashSet<SKColor>();
             
-            unsafe
+            // Use GetPixel for safer access (slower but more compatible)
+            for (int y = 0; y < bitmap.Height; y++)
             {
-                var pixels = (uint*)bitmap.GetPixels().ToPointer();
-                int pixelCount = bitmap.Width * bitmap.Height;
-                
-                for (int i = 0; i < pixelCount; i++)
+                for (int x = 0; x < bitmap.Width; x++)
                 {
-                    colors.Add(new SKColor(pixels[i]));
+                    colors.Add(bitmap.GetPixel(x, y));
                 }
             }
             
@@ -108,14 +106,13 @@ namespace SkiaSharp.Extended.Gif.Encoding
             int pixelCount = bitmap.Width * bitmap.Height;
             var indices = new byte[pixelCount];
             
-            unsafe
+            int index = 0;
+            for (int y = 0; y < bitmap.Height; y++)
             {
-                var pixels = (uint*)bitmap.GetPixels().ToPointer();
-                
-                for (int i = 0; i < pixelCount; i++)
+                for (int x = 0; x < bitmap.Width; x++)
                 {
-                    var color = new SKColor(pixels[i]);
-                    indices[i] = FindNearestColorIndex(color, palette);
+                    var color = bitmap.GetPixel(x, y);
+                    indices[index++] = FindNearestColorIndex(color, palette);
                 }
             }
             
