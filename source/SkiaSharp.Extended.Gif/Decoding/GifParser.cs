@@ -166,7 +166,10 @@ if (LocalColorTable != null)
 return LocalColorTable;
 if (GlobalColorTable != null)
 return GlobalColorTable;
-throw new InvalidDataException("Frame has no color table.");
+
+// Fallback for broken GIFs with no color table
+// Return a simple black and white palette
+return new[] { SKColors.Black, SKColors.White };
 }
 }
 }

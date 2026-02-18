@@ -136,15 +136,18 @@ namespace SkiaSharp.Extended.Gif.Codec
 				// Decode the code (traverse the string table backwards)
 				while (code >= clearCode)
 				{
-					pixelStack[stackPointer++] = suffixTable[code];
-					code = codeTable[code];
-
-					// Safety check for circular reference
+					// Bounds check
+					if (code >= 4096)
+						throw new InvalidDataException($"LZW decompression error: invalid code {code}");
 					if (stackPointer >= pixelStack.Length - 1)
 						throw new InvalidDataException("LZW decompression error: stack overflow.");
+					
+					pixelStack[stackPointer++] = suffixTable[code];
+					code = codeTable[code];
 				}
 
-				firstByte = suffixTable[code];
+				// Code is now < clearCode, it's a direct color value
+				firstByte = (byte)code;
 				pixelStack[stackPointer++] = firstByte;
 
 				// Output the decoded string (reverse order from stack)
