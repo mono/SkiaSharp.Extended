@@ -300,6 +300,14 @@ namespace SkiaSharp.Extended.PivotViewer
                 {
                     source.ImageBase = itemsElement.Attribute("ImgBase")?.Value;
                     source._items = ParseItems(itemsElement, facetCategories);
+
+                    // Sync implicit properties (Name, Href, Description, #Image) back to _properties
+                    var existingIds = new HashSet<string>(source._properties.Select(p => p.Id), StringComparer.Ordinal);
+                    foreach (var prop in facetCategories.Values)
+                    {
+                        if (!existingIds.Contains(prop.Id))
+                            source._properties.Add(prop);
+                    }
                 }
 
                 // Parse RelatedCollections

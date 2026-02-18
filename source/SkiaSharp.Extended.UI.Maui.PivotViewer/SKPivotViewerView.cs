@@ -444,7 +444,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     var thumbnail = imgProvider.GetThumbnailForItem(pos.Item);
                     if (thumbnail != null)
                     {
-                        canvas.DrawBitmap(thumbnail, rect);
+                        // Apply Uniform stretch to preserve aspect ratio within the grid cell
+                        var destRect = FitUniform(thumbnail.Width, thumbnail.Height, rect);
+                        canvas.DrawBitmap(thumbnail, destRect);
                         drewImage = true;
                     }
                 }
@@ -574,6 +576,28 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _textFont.Size = 18;
             using var paint = new SKPaint { Color = new SKColor(128, 128, 128) };
             canvas.DrawText(message, width / 2, height / 2, SKTextAlign.Center, _textFont, paint);
+        }
+
+        /// <summary>Fit source dimensions into dest rect preserving aspect ratio (Uniform stretch).</summary>
+        private static SKRect FitUniform(int srcW, int srcH, SKRect dest)
+        {
+            if (srcW <= 0 || srcH <= 0) return dest;
+            float srcAspect = (float)srcW / srcH;
+            float destAspect = dest.Width / dest.Height;
+            float w, h;
+            if (srcAspect > destAspect)
+            {
+                w = dest.Width;
+                h = w / srcAspect;
+            }
+            else
+            {
+                h = dest.Height;
+                w = h * srcAspect;
+            }
+            float x = dest.Left + (dest.Width - w) / 2;
+            float y = dest.Top + (dest.Height - h) / 2;
+            return new SKRect(x, y, x + w, y + h);
         }
 
         // --- Control Bar ---
@@ -1114,21 +1138,27 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             }
 
             // Graph view: if no item was hit, check if a histogram column label area was tapped
+            // Only trigger if the tap is in the bottom label area (last 30 logical pixels)
             if (_controller.CurrentView == "graph" && _controller.HistogramLayout != null && _controller.SortProperty != null)
             {
                 var layout = _controller.HistogramLayout;
                 double hitX = contentX - _controller.PanOffsetX;
-                foreach (var col in layout.Columns)
+                double hitY = contentY - _controller.PanOffsetY;
+                double contentHeight = Height - ControlBarHeight;
+                if (hitY >= contentHeight - 30)
                 {
-                    if (hitX >= col.X && hitX < col.X + col.Width)
+                    foreach (var col in layout.Columns)
                     {
-                        // Don't filter on synthesized "(No value)" label
-                        if (col.Label != "(No value)")
+                        if (hitX >= col.X && hitX < col.X + col.Width)
                         {
-                            _controller.FilterPaneModel?.ToggleStringFilter(_controller.SortProperty.Id, col.Label);
+                            // Don't filter on synthesized "(No value)" label
+                            if (col.Label != "(No value)")
+                            {
+                                _controller.FilterPaneModel?.ToggleStringFilter(_controller.SortProperty.Id, col.Label);
+                            }
+                            _canvasView.InvalidateSurface();
+                            return;
                         }
-                        _canvasView.InvalidateSurface();
-                        return;
                     }
                 }
             }

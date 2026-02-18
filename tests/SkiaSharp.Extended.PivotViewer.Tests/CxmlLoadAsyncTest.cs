@@ -75,7 +75,8 @@ public class CxmlLoadAsyncTest
         Assert.Equal(CxmlCollectionState.Loaded, source.State);
         Assert.Equal("Test", source.Name);
         Assert.Single(source.Items);
-        Assert.Equal(2, source.ItemProperties.Count);
+        // 2 explicit FacetCategories + 1 implicit "Name" from Item Name="" attribute
+        Assert.Equal(3, source.ItemProperties.Count);
         Assert.Equal(1, handler.RequestCount);
     }
 
