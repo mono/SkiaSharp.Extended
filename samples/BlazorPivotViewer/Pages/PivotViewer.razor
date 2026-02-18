@@ -1,0 +1,328 @@
+@page "/pivotviewer"
+@using SkiaSharp
+@using SkiaSharp.Extended.DeepZoom
+@using SkiaSharp.Extended.PivotViewer
+@using SkiaSharp.Views.Blazor
+@inject HttpClient Http
+
+<h3>PivotViewer Demo</h3>
+
+<div class="toolbar">
+    <button class="btn btn-sm btn-primary" @onclick="SwitchToGrid">Grid View</button>
+    <button class="btn btn-sm btn-primary" @onclick="SwitchToGraph">Graph View</button>
+
+    @if (_properties != null)
+    {
+        <select @onchange="OnSortChanged" class="form-select form-select-sm" style="width:200px;display:inline-block">
+            <option value="">Sort by...</option>
+            @foreach (var prop in _properties)
+            {
+                <option value="@prop.Id">@prop.DisplayName</option>
+            }
+        </select>
+    }
+
+    @if (_filterableProperties != null)
+    {
+        <select @onchange="OnFilterPropertyChanged" class="form-select form-select-sm" style="width:200px;display:inline-block">
+            <option value="">Filter by...</option>
+            @foreach (var prop in _filterableProperties)
+            {
+                <option value="@prop.Id">@prop.DisplayName</option>
+            }
+        </select>
+    }
+
+    @if (_filterValues != null)
+    {
+        <select @onchange="OnFilterValueChanged" class="form-select form-select-sm" style="width:200px;display:inline-block">
+            <option value="">Select value...</option>
+            @foreach (var kv in _filterValues)
+            {
+                <option value="@kv.Key">@kv.Key (@kv.Value)</option>
+            }
+        </select>
+    }
+
+    <button class="btn btn-sm btn-outline-secondary" @onclick="ClearFilters">Clear Filters</button>
+</div>
+
+<div class="status-bar">
+    <span>Items: @_inScopeCount / @_totalCount</span>
+    @if (_selectedItemName != null)
+    {
+        <span> | Selected: @_selectedItemName</span>
+    }
+    <span> | View: @_currentView</span>
+</div>
+
+<div class="canvas-container" @onclick="OnCanvasClick" @ondblclick="OnCanvasDoubleClick">
+    <SKCanvasView @ref="_canvasView"
+                  OnPaintSurface="OnPaintSurface"
+                  style="width:100%;height:600px;" />
+</div>
+
+@if (_selectedItem != null)
+{
+    <div class="detail-pane">
+        <h4>@GetItemDisplayName(_selectedItem)</h4>
+        @foreach (var facet in _controller.DetailPane.FacetValues)
+        {
+            <div class="facet-row">
+                <strong>@facet.DisplayName:</strong>
+                <span>@string.Join(", ", facet.Values)</span>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private SKCanvasView? _canvasView;
+    private PivotViewerController _controller = new();
+    private CxmlCollectionSource? _source;
+    private IReadOnlyList<PivotViewerProperty>? _properties;
+    private IReadOnlyList<PivotViewerProperty>? _filterableProperties;
+    private Dictionary<string, int>? _filterValues;
+    private string? _selectedFilterProperty;
+    private PivotViewerItem? _selectedItem;
+    private string? _selectedItemName;
+    private int _totalCount;
+    private int _inScopeCount;
+    private string _currentView = "grid";
+
+    private SKPaint _itemPaint = new() { IsAntialias = true, Color = SKColors.CornflowerBlue };
+    private SKPaint _selectedPaint = new() { IsAntialias = true, Color = SKColors.Orange, IsStroke = true, StrokeWidth = 3 };
+    private SKPaint _textPaint = new() { IsAntialias = true, Color = SKColors.White };
+    private SKPaint _labelPaint = new() { IsAntialias = true, Color = SKColors.DarkGray };
+    private SKFont _textFont = new() { Size = 12 };
+    private SKFont _labelFont = new() { Size = 14 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var xml = await Http.GetStringAsync("data/conceptcars.cxml");
+            LoadFromXml(xml);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load CXML: {ex.Message}");
+        }
+    }
+
+    private void LoadFromXml(string xml)
+    {
+        _source = CxmlCollectionSource.Parse(xml);
+        _controller.LoadCollection(_source);
+        _controller.SetAvailableSize(1024, 600);
+
+        _properties = _controller.Properties;
+        _filterableProperties = _controller.Properties
+            .Where(p => p.Options.HasFlag(PivotViewerPropertyOptions.CanFilter))
+            .ToList();
+
+        _totalCount = _controller.Items.Count;
+        _inScopeCount = _controller.InScopeItems.Count;
+    }
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        var canvas = e.Surface.Canvas;
+        var info = e.Info;
+
+        canvas.Clear(SKColors.White);
+
+        _controller.SetAvailableSize(info.Width, info.Height);
+
+        if (_controller.CurrentView == "graph" && _controller.HistogramLayout != null)
+        {
+            RenderHistogramView(canvas, info, _controller.HistogramLayout);
+        }
+        else if (_controller.GridLayout != null)
+        {
+            RenderGridView(canvas, info, _controller.GridLayout);
+        }
+    }
+
+    private void RenderGridView(SKCanvas canvas, SKImageInfo info, GridLayout layout)
+    {
+        foreach (var pos in layout.Positions)
+        {
+            var rect = new SKRect(
+                (float)pos.X + 1, (float)pos.Y + 1,
+                (float)(pos.X + pos.Width) - 1, (float)(pos.Y + pos.Height) - 1);
+
+            canvas.DrawRect(rect, _itemPaint);
+
+            if (pos.Height > 20)
+            {
+                var name = GetItemDisplayName(pos.Item);
+                if (name != null)
+                {
+                    _textFont.Size = Math.Min(12, (float)pos.Height / 4);
+                    var textWidth = _textFont.MeasureText(name, out _);
+                    if (textWidth < rect.Width - 4)
+                    {
+                        canvas.DrawText(name, rect.Left + 4, rect.Bottom - 4, SKTextAlign.Left, _textFont, _textPaint);
+                    }
+                }
+            }
+
+            if (pos.Item == _selectedItem)
+            {
+                canvas.DrawRect(rect, _selectedPaint);
+            }
+        }
+    }
+
+    private void RenderHistogramView(SKCanvas canvas, SKImageInfo info, HistogramLayout layout)
+    {
+        foreach (var col in layout.Columns)
+        {
+            var textWidth = _labelFont.MeasureText(col.Label, out _);
+            float labelX = (float)(col.X + (col.Width - textWidth) / 2);
+            canvas.DrawText(col.Label, labelX, info.Height - 4, SKTextAlign.Left, _labelFont, _labelPaint);
+
+            foreach (var pos in col.Items)
+            {
+                var rect = new SKRect(
+                    (float)pos.X + 1, (float)pos.Y + 1,
+                    (float)(pos.X + pos.Width) - 1, (float)(pos.Y + pos.Height) - 1);
+
+                canvas.DrawRect(rect, _itemPaint);
+
+                if (pos.Item == _selectedItem)
+                {
+                    canvas.DrawRect(rect, _selectedPaint);
+                }
+            }
+        }
+    }
+
+    private void OnCanvasClick(MouseEventArgs e)
+    {
+        var hit = _controller.HitTest(e.OffsetX, e.OffsetY);
+        _selectedItem = hit;
+        _controller.SelectedItem = hit;
+        _selectedItemName = hit != null ? GetItemDisplayName(hit) : null;
+        _inScopeCount = _controller.InScopeItems.Count;
+        _canvasView?.Invalidate();
+        StateHasChanged();
+    }
+
+    private void OnCanvasDoubleClick(MouseEventArgs e)
+    {
+        var hit = _controller.HitTest(e.OffsetX, e.OffsetY);
+        if (hit != null)
+        {
+            _selectedItem = hit;
+            _controller.SelectedItem = hit;
+            _selectedItemName = GetItemDisplayName(hit);
+            StateHasChanged();
+        }
+    }
+
+    private void SwitchToGrid()
+    {
+        _controller.CurrentView = "grid";
+        _currentView = "grid";
+        _canvasView?.Invalidate();
+    }
+
+    private void SwitchToGraph()
+    {
+        _controller.CurrentView = "graph";
+        _currentView = "graph";
+        _canvasView?.Invalidate();
+    }
+
+    private void OnSortChanged(ChangeEventArgs e)
+    {
+        var propId = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(propId))
+        {
+            var prop = _controller.Properties.FirstOrDefault(p => p.Id == propId);
+            _controller.SortProperty = prop;
+        }
+        else
+        {
+            _controller.SortProperty = null;
+        }
+        _inScopeCount = _controller.InScopeItems.Count;
+        _canvasView?.Invalidate();
+    }
+
+    private void OnFilterPropertyChanged(ChangeEventArgs e)
+    {
+        _selectedFilterProperty = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(_selectedFilterProperty))
+        {
+            _filterValues = _controller.GetFilterCounts(_selectedFilterProperty);
+        }
+        else
+        {
+            _filterValues = null;
+        }
+    }
+
+    private void OnFilterValueChanged(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(_selectedFilterProperty) && !string.IsNullOrEmpty(value))
+        {
+            _controller.FilterEngine.AddStringFilter(_selectedFilterProperty, value);
+            _inScopeCount = _controller.InScopeItems.Count;
+            _filterValues = _controller.GetFilterCounts(_selectedFilterProperty);
+            _canvasView?.Invalidate();
+        }
+    }
+
+    private void ClearFilters()
+    {
+        _controller.FilterEngine.ClearAll();
+        _inScopeCount = _controller.InScopeItems.Count;
+        _filterValues = null;
+        _selectedFilterProperty = null;
+        _canvasView?.Invalidate();
+    }
+
+    private static string? GetItemDisplayName(PivotViewerItem item)
+    {
+        var name = item["Name"];
+        if (name != null && name.Count > 0)
+            return name[0]?.ToString();
+        return item.Id;
+    }
+}
+
+<style>
+    .toolbar {
+        margin-bottom: 8px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .status-bar {
+        padding: 4px 8px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        font-size: 0.9em;
+    }
+    .canvas-container {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .detail-pane {
+        margin-top: 12px;
+        padding: 12px;
+        background: #f8f8f8;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+    .facet-row {
+        margin: 4px 0;
+    }
+</style>
