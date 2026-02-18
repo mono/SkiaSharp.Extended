@@ -2,6 +2,8 @@
 
 A platform-independent digital inking engine for SkiaSharp that provides smooth, pressure-sensitive stroke rendering.
 
+![SkiaSharp Signature Animation](../images/inking/skiasharp-signature.gif)
+
 ## Overview
 
 The inking engine consists of three main components:
