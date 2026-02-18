@@ -188,4 +188,37 @@ public class WordWheelIndexTest
         var results = index.Search("Car");
         Assert.NotEmpty(results);
     }
+
+    [Fact]
+    public void Build_IndexesAdditionalSearchText()
+    {
+        var nameP = new PivotViewerStringProperty("Name")
+        {
+            DisplayName = "Name",
+            Options = PivotViewerPropertyOptions.CanSearchText
+        };
+
+        var item = new PivotViewerItem("1");
+        item.Set(nameP, new object[] { "Widget" });
+        item.AdditionalSearchText = "bonus keyword";
+
+        var index = new WordWheelIndex();
+        index.Build(new[] { item }, new PivotViewerProperty[] { nameP });
+
+        // Should find "Widget" from property
+        Assert.NotEmpty(index.Search("Widget"));
+
+        // Should find "bonus" from AdditionalSearchText
+        var bonusResults = index.Search("bonus");
+        Assert.NotEmpty(bonusResults);
+
+        // Should find "keyword" from AdditionalSearchText
+        var keywordResults = index.Search("keyword");
+        Assert.NotEmpty(keywordResults);
+
+        // Matching items should include the item
+        var matching = index.GetMatchingItems("bonus");
+        Assert.Single(matching);
+        Assert.Equal("1", matching[0].Id);
+    }
 }

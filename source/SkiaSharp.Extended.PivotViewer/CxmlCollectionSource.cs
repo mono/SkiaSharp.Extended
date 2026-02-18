@@ -72,6 +72,9 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>Collection icon URI.</summary>
         public string? Icon { get; private set; }
 
+        /// <summary>Related collections parsed from CXML.</summary>
+        public IReadOnlyList<(string Name, string Href)> RelatedCollections { get; private set; } = Array.Empty<(string, string)>();
+
         /// <summary>Current loading state.</summary>
         public CxmlCollectionState State
         {
@@ -240,6 +243,23 @@ namespace SkiaSharp.Extended.PivotViewer
                 {
                     source.ImageBase = itemsElement.Attribute("ImgBase")?.Value;
                     source._items = ParseItems(itemsElement, facetCategories);
+                }
+
+                // Parse RelatedCollections
+                var relatedElement = collectionElement.Element(PivotNs + "RelatedCollections")
+                    ?? collectionElement.Element(CollectionNs + "RelatedCollections");
+                if (relatedElement != null)
+                {
+                    var related = new List<(string Name, string Href)>();
+                    foreach (var rc in relatedElement.Elements(PivotNs + "RelatedCollection")
+                        .Concat(relatedElement.Elements(CollectionNs + "RelatedCollection")))
+                    {
+                        string? rcName = rc.Attribute("Name")?.Value;
+                        string? rcHref = rc.Attribute("Href")?.Value;
+                        if (rcName != null && rcHref != null)
+                            related.Add((rcName, rcHref));
+                    }
+                    source.RelatedCollections = related;
                 }
 
                 source.State = CxmlCollectionState.Loaded;
@@ -417,6 +437,17 @@ namespace SkiaSharp.Extended.PivotViewer
                 {
                     var descProp = GetOrCreateProperty(properties, "Description", "LongString");
                     item.Add(descProp, descElement.Value);
+                }
+
+                // Parse AdditionalSearchText from Extension element
+                var extElement = itemElement.Element(CollectionNs + "Extension");
+                if (extElement != null)
+                {
+                    var searchTextElement = extElement.Element(PivotNs + "AdditionalSearchText");
+                    if (searchTextElement != null && !string.IsNullOrWhiteSpace(searchTextElement.Value))
+                    {
+                        item.AdditionalSearchText = searchTextElement.Value.Trim();
+                    }
                 }
 
                 items.Add(item);

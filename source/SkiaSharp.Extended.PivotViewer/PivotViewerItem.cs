@@ -161,6 +161,9 @@ namespace SkiaSharp.Extended.PivotViewer
         public bool HasProperty(string propertyId) =>
             _values.TryGetValue(propertyId, out var list) && list.Count > 0;
 
+        /// <summary>Additional search text from CXML Extension elements.</summary>
+        public string? AdditionalSearchText { get; set; }
+
         /// <summary>Fired when property values change.</summary>
         public event EventHandler<PivotViewerPropertyChangedEventArgs>? PropertyChanged;
 

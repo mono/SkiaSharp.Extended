@@ -397,4 +397,76 @@ public class CxmlCollectionSourceTest
         Assert.True(comparer.Compare("Low", "Unknown") < 0); // known < unknown
         Assert.True(comparer.Compare("Apple", "Banana") < 0); // unknown sorts alphabetically
     }
+
+    [Fact]
+    public void Parse_WithRelatedCollections_ParsesCorrectly()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009""
+            xmlns:p=""http://schemas.microsoft.com/livelabs/pivot/collection/2009""
+            Name=""Test"">
+    <FacetCategories />
+    <Items />
+    <p:RelatedCollections>
+        <p:RelatedCollection Name=""Cars"" Href=""cars.cxml"" />
+        <p:RelatedCollection Name=""Trucks"" Href=""trucks.cxml"" />
+    </p:RelatedCollections>
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        Assert.Equal(2, source.RelatedCollections.Count);
+        Assert.Equal("Cars", source.RelatedCollections[0].Name);
+        Assert.Equal("cars.cxml", source.RelatedCollections[0].Href);
+        Assert.Equal("Trucks", source.RelatedCollections[1].Name);
+        Assert.Equal("trucks.cxml", source.RelatedCollections[1].Href);
+    }
+
+    [Fact]
+    public void Parse_WithoutRelatedCollections_ReturnsEmpty()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+    <FacetCategories /><Items />
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        Assert.Empty(source.RelatedCollections);
+    }
+
+    [Fact]
+    public void Parse_WithAdditionalSearchText_ParsesCorrectly()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009""
+            xmlns:p=""http://schemas.microsoft.com/livelabs/pivot/collection/2009""
+            Name=""Test"">
+    <FacetCategories>
+        <FacetCategory Name=""Color"" Type=""String"" p:IsWordWheelVisible=""true"" />
+    </FacetCategories>
+    <Items>
+        <Item Id=""1"" Name=""Widget"">
+            <Extension>
+                <p:AdditionalSearchText>bonus keyword searchable</p:AdditionalSearchText>
+            </Extension>
+            <Facets>
+                <Facet Name=""Color""><String Value=""Red"" /></Facet>
+            </Facets>
+        </Item>
+        <Item Id=""2"" Name=""Gadget"">
+            <Facets>
+                <Facet Name=""Color""><String Value=""Blue"" /></Facet>
+            </Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        var item1 = source.GetItemById("1");
+        Assert.NotNull(item1);
+        Assert.Equal("bonus keyword searchable", item1!.AdditionalSearchText);
+
+        var item2 = source.GetItemById("2");
+        Assert.NotNull(item2);
+        Assert.Null(item2!.AdditionalSearchText);
+    }
 }

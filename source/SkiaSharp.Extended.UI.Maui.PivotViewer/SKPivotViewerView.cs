@@ -44,6 +44,14 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private double _lastPointerX = double.NaN; // Track last known pointer X for pan origin detection
         private double _lastPivotPinchScale = 1.0;
 
+        // Sort dropdown state
+        private bool _showSortDropdown;
+        private SKRect _sortDropdownRect;
+
+        // Zoom slider
+        private Slider? _zoomSlider;
+        private bool _suppressZoomSliderUpdate;
+
         public SKPivotViewerView()
         {
             _controller = new PivotViewerController();
@@ -71,9 +79,28 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             };
             _searchEntry.TextChanged += OnSearchTextChanged;
 
+            _zoomSlider = new Slider
+            {
+                Minimum = 0,
+                Maximum = 1,
+                Value = 0,
+                HorizontalOptions = LayoutOptions.End,
+                VerticalOptions = LayoutOptions.Start,
+                WidthRequest = 150,
+                HeightRequest = 30,
+                Margin = new Thickness(0, 6, DetailPaneWidth + 10, 0),
+            };
+            _zoomSlider.ValueChanged += (s, e) =>
+            {
+                if (_suppressZoomSliderUpdate) return;
+                _controller.ZoomLevel = e.NewValue;
+                _canvasView.InvalidateSurface();
+            };
+
             var grid = new Grid();
             grid.Children.Add(_canvasView);
             grid.Children.Add(_searchEntry);
+            grid.Children.Add(_zoomSlider);
             Content = grid;
 
             // Wire controller events
@@ -369,6 +396,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 RenderDetailPane(canvas, detailWidth, contentHeight);
                 canvas.Restore();
             }
+
+            // Sort dropdown overlay (rendered last so it draws on top)
+            RenderSortDropdown(canvas, info);
         }
 
         private void RenderGridView(SKCanvas canvas, SKImageInfo info, GridLayout layout)
@@ -545,12 +575,58 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             string countText = $"{_controller.InScopeItems.Count} of {_controller.Items.Count} items";
             canvas.DrawText(countText, countX, barHeight / 2 + 5, SKTextAlign.Left, _textFont, whitePaint);
 
-            // Sort indicator
-            if (_controller.SortProperty != null)
+            // Sort indicator (clickable)
             {
                 float sortX = info.Width / 2;
-                string sortText = $"Sort: {_controller.SortProperty.DisplayName}";
+                string sortText = _controller.SortProperty != null
+                    ? $"Sort: {_controller.SortProperty.DisplayName} ▼"
+                    : "Sort ▼";
                 canvas.DrawText(sortText, sortX, barHeight / 2 + 5, SKTextAlign.Center, _textFont, whitePaint);
+            }
+        }
+
+        private void RenderSortDropdown(SKCanvas canvas, SKImageInfo info)
+        {
+            if (!_showSortDropdown) return;
+
+            var properties = _controller.Properties;
+            if (properties.Count == 0) return;
+
+            float dropdownWidth = 200;
+            float rowHeight = 28;
+            float dropdownHeight = properties.Count * rowHeight + 8;
+            float dropdownX = info.Width / 2 - dropdownWidth / 2;
+            float dropdownY = ControlBarHeight;
+
+            _sortDropdownRect = new SKRect(dropdownX, dropdownY, dropdownX + dropdownWidth, dropdownY + dropdownHeight);
+
+            // Background
+            using var bgPaint = new SKPaint { Color = SKColors.White };
+            using var shadowPaint = new SKPaint { Color = new SKColor(0, 0, 0, 60) };
+            canvas.DrawRect(_sortDropdownRect.Left + 2, _sortDropdownRect.Top + 2,
+                dropdownWidth, dropdownHeight, shadowPaint);
+            canvas.DrawRect(_sortDropdownRect, bgPaint);
+
+            // Border
+            using var borderPaint = new SKPaint { Color = new SKColor(180, 180, 180), IsStroke = true, StrokeWidth = 1 };
+            canvas.DrawRect(_sortDropdownRect, borderPaint);
+
+            // Rows
+            _textFont.Size = 13;
+            using var textPaint = new SKPaint { Color = new SKColor(30, 30, 30) };
+            using var selectedTextPaint = new SKPaint { Color = SKColors.CornflowerBlue };
+            using var hoverPaint = new SKPaint { Color = new SKColor(230, 240, 255) };
+
+            float y = dropdownY + 4;
+            foreach (var prop in properties)
+            {
+                bool isSelected = _controller.SortProperty?.Id == prop.Id;
+                if (isSelected)
+                    canvas.DrawRect(dropdownX, y, dropdownWidth, rowHeight, hoverPaint);
+
+                canvas.DrawText(prop.DisplayName ?? prop.Id, dropdownX + 10, y + rowHeight / 2 + 5,
+                    SKTextAlign.Left, _textFont, isSelected ? selectedTextPaint : textPaint);
+                y += rowHeight;
             }
         }
 
@@ -936,6 +1012,26 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             double x = point.Value.X;
             double y = point.Value.Y;
 
+            // Handle sort dropdown interactions
+            if (_showSortDropdown)
+            {
+                if (x >= _sortDropdownRect.Left && x <= _sortDropdownRect.Right &&
+                    y >= _sortDropdownRect.Top && y <= _sortDropdownRect.Bottom)
+                {
+                    // Determine which property was tapped
+                    float rowHeight = 28;
+                    int index = (int)((y - _sortDropdownRect.Top - 4) / rowHeight);
+                    var properties = _controller.Properties;
+                    if (index >= 0 && index < properties.Count)
+                    {
+                        _controller.SortProperty = properties[index];
+                    }
+                }
+                _showSortDropdown = false;
+                _canvasView.InvalidateSurface();
+                return;
+            }
+
             // Control bar interactions
             if (y < ControlBarHeight)
             {
@@ -987,6 +1083,16 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void HandleControlBarTap(double x, double y)
         {
+            // Sort dropdown region (center of control bar)
+            float totalWidth = (float)Width;
+            float sortCenter = totalWidth / 2;
+            if (x > sortCenter - 100 && x < sortCenter + 100)
+            {
+                _showSortDropdown = !_showSortDropdown;
+                _canvasView.InvalidateSurface();
+                return;
+            }
+
             // View switcher region (after filter pane width)
             if (x > FilterPaneWidth && x < FilterPaneWidth + 200)
             {
@@ -1082,6 +1188,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 // Zoom toward the tapped item (+0.3 zoom level)
                 // ZoomAbout uses delta = (factor - 1.0) * 0.5, so factor = 1.6 → delta = 0.3
                 _controller.ZoomAbout(1.6, contentX, contentY);
+                SyncZoomSlider();
                 _canvasView.InvalidateSurface();
             }
         }
@@ -1097,6 +1204,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     double scaleChange = e.Scale / _lastPivotPinchScale;
                     _lastPivotPinchScale = e.Scale;
                     _controller.ZoomAbout(scaleChange, Width / 2, Height / 2);
+                    SyncZoomSlider();
                     _canvasView.InvalidateSurface();
                     break;
             }
@@ -1142,6 +1250,14 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         }
 
         // --- Animation ---
+
+        private void SyncZoomSlider()
+        {
+            if (_zoomSlider == null) return;
+            _suppressZoomSliderUpdate = true;
+            _zoomSlider.Value = _controller.ZoomLevel;
+            _suppressZoomSliderUpdate = false;
+        }
 
         private void StartAnimationIfNeeded()
         {

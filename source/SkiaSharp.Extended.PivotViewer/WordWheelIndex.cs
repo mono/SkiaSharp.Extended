@@ -60,6 +60,18 @@ namespace SkiaSharp.Extended.PivotViewer
                         }
                     }
                 }
+
+                // Index AdditionalSearchText if present
+                if (!string.IsNullOrWhiteSpace(item.AdditionalSearchText))
+                {
+                    var words = item.AdditionalSearchText.Split(new[] { ' ', '-', ',', '/', '\\', '(', ')' },
+                        StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var word in words)
+                    {
+                        if (word.Length > 0)
+                            AddEntry(word, item);
+                    }
+                }
             }
 
             // Sort entries for binary search
