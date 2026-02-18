@@ -17,6 +17,7 @@ namespace SkiaSharp.Extended.PivotViewer
         private readonly LayoutTransitionManager _layoutTransition;
         private FilterPaneModel? _filterPaneModel;
         private DetailPaneModel? _detailPaneModel;
+        private CollectionImageProvider? _imageProvider;
         private bool _disposed;
 
         private List<PivotViewerItem> _allItems = new List<PivotViewerItem>();
@@ -156,6 +157,13 @@ namespace SkiaSharp.Extended.PivotViewer
 
         /// <summary>Current histogram layout (when in graph view).</summary>
         public HistogramLayout? HistogramLayout => _currentHistogramLayout;
+
+        /// <summary>Image provider for DZC-backed item thumbnails.</summary>
+        public CollectionImageProvider? ImageProvider
+        {
+            get => _imageProvider;
+            set => _imageProvider = value;
+        }
 
         /// <summary>
         /// Zoom level: 0.0 = fit all items, 1.0 = single item detail.
@@ -468,6 +476,8 @@ namespace SkiaSharp.Extended.PivotViewer
             {
                 _disposed = true;
                 _layoutTransition.CancelTransition();
+                _imageProvider?.Dispose();
+                _imageProvider = null;
             }
         }
     }

@@ -290,13 +290,38 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 ? _controller.LayoutTransition.GetCurrentPositions()
                 : layout.Positions;
 
+            // Apply pan offset
+            float panX = (float)_controller.PanOffsetX;
+            float panY = (float)_controller.PanOffsetY;
+            if (panX != 0 || panY != 0)
+            {
+                canvas.Save();
+                canvas.Translate(panX, panY);
+            }
+
             foreach (var pos in positions)
             {
                 var rect = new SKRect(
                     (float)pos.X + 1, (float)pos.Y + 1,
                     (float)(pos.X + pos.Width) - 1, (float)(pos.Y + pos.Height) - 1);
 
-                canvas.DrawRect(rect, _itemPaint);
+                // Try to draw thumbnail from DZC
+                bool drewImage = false;
+                var imgProvider = _controller.ImageProvider;
+                if (imgProvider != null)
+                {
+                    var thumbnail = imgProvider.GetThumbnailForItem(pos.Item);
+                    if (thumbnail != null)
+                    {
+                        canvas.DrawBitmap(thumbnail, rect);
+                        drewImage = true;
+                    }
+                }
+
+                if (!drewImage)
+                {
+                    canvas.DrawRect(rect, _itemPaint);
+                }
 
                 // Draw item name if space allows
                 if (pos.Height > 20)
@@ -321,6 +346,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     canvas.DrawRect(rect, _selectedPaint);
                 }
             }
+
+            if (panX != 0 || panY != 0)
+                canvas.Restore();
         }
 
         private void RenderHistogramView(SKCanvas canvas, SKImageInfo info, HistogramLayout layout)
