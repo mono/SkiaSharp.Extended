@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<coverage line-rate="0.7792" branch-rate="0.6992" version="1.9" timestamp="1771415933" lines-covered="967" lines-valid="1241" branches-covered="286" branches-valid="409">
+<coverage line-rate="0.7848" branch-rate="0.6992" version="1.9" timestamp="1771416098" lines-covered="974" lines-valid="1241" branches-covered="286" branches-valid="409">
   <sources>
     <source>/home/runner/work/SkiaSharp.Extended/SkiaSharp.Extended/source/SkiaSharp.Extended.Gif/</source>
   </sources>
   <packages>
-    <package name="SkiaSharp.Extended.Gif" line-rate="0.7792" branch-rate="0.6992" complexity="496">
+    <package name="SkiaSharp.Extended.Gif" line-rate="0.7848" branch-rate="0.6992" complexity="496">
       <classes>
         <class name="SkiaSharp.Extended.Gif.SKGifDecoder" filename="SKGifDecoder.cs" line-rate="0.9029" branch-rate="0.7434999999999999" complexity="44">
           <methods>
@@ -906,70 +906,70 @@
             <line number="67" hits="21" branch="False" />
           </lines>
         </class>
-        <class name="SkiaSharp.Extended.Gif.SKGifInfo" filename="SKGifMetadata.cs" line-rate="0.3" branch-rate="1" complexity="10">
+        <class name="SkiaSharp.Extended.Gif.SKGifInfo" filename="SKGifMetadata.cs" line-rate="1" branch-rate="1" complexity="10">
           <methods>
             <method name="get_ImageInfo" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="15" hits="16" branch="False" />
+                <line number="15" hits="26" branch="False" />
               </lines>
             </method>
-            <method name="get_Width" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name="get_Width" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="21" hits="0" branch="False" />
+                <line number="21" hits="3" branch="False" />
               </lines>
             </method>
-            <method name="get_Height" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name="get_Height" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="27" hits="0" branch="False" />
+                <line number="27" hits="3" branch="False" />
               </lines>
             </method>
             <method name="get_FrameCount" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="33" hits="37" branch="False" />
+                <line number="33" hits="43" branch="False" />
               </lines>
             </method>
-            <method name="get_IsAnimated" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name="get_IsAnimated" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="38" hits="0" branch="False" />
+                <line number="38" hits="2" branch="False" />
               </lines>
             </method>
-            <method name="get_BackgroundColor" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name="get_BackgroundColor" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="43" hits="0" branch="False" />
+                <line number="43" hits="4" branch="False" />
               </lines>
             </method>
             <method name="get_LoopCount" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="49" hits="56" branch="False" />
+                <line number="49" hits="69" branch="False" />
               </lines>
             </method>
-            <method name="get_Comment" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name="get_Comment" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="54" hits="0" branch="False" />
+                <line number="54" hits="6" branch="False" />
               </lines>
             </method>
-            <method name="get_ApplicationData" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name="get_ApplicationData" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="59" hits="0" branch="False" />
+                <line number="59" hits="4" branch="False" />
               </lines>
             </method>
-            <method name="get_ApplicationIdentifier" signature="()" line-rate="0" branch-rate="1" complexity="1">
+            <method name="get_ApplicationIdentifier" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="64" hits="0" branch="False" />
+                <line number="64" hits="4" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="15" hits="16" branch="False" />
-            <line number="21" hits="0" branch="False" />
-            <line number="27" hits="0" branch="False" />
-            <line number="33" hits="37" branch="False" />
-            <line number="38" hits="0" branch="False" />
-            <line number="43" hits="0" branch="False" />
-            <line number="49" hits="56" branch="False" />
-            <line number="54" hits="0" branch="False" />
-            <line number="59" hits="0" branch="False" />
-            <line number="64" hits="0" branch="False" />
+            <line number="15" hits="26" branch="False" />
+            <line number="21" hits="3" branch="False" />
+            <line number="27" hits="3" branch="False" />
+            <line number="33" hits="43" branch="False" />
+            <line number="38" hits="2" branch="False" />
+            <line number="43" hits="4" branch="False" />
+            <line number="49" hits="69" branch="False" />
+            <line number="54" hits="6" branch="False" />
+            <line number="59" hits="4" branch="False" />
+            <line number="64" hits="4" branch="False" />
           </lines>
         </class>
         <class name="SkiaSharp.Extended.Gif.IO.GifReader" filename="IO/GifReader.cs" line-rate="0.8491" branch-rate="0.6304" complexity="54">
