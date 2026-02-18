@@ -381,11 +381,29 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     }
                 }
 
-                // Highlight selected item
+                // Highlight selected item with adorner
                 if (pos.Item == _controller.SelectedItem)
                 {
                     _selectedPaint.Color = SKColors.Orange;
+                    _selectedPaint.StrokeWidth = 3;
                     canvas.DrawRect(rect, _selectedPaint);
+
+                    // Draw adorner info bar at bottom of selected item
+                    if (pos.Height > 30)
+                    {
+                        float infoH = Math.Min(24f, (float)pos.Height * 0.3f);
+                        var infoRect = new SKRect(rect.Left, rect.Bottom - infoH, rect.Right, rect.Bottom);
+                        using var infoBg = new SKPaint { Color = new SKColor(0, 0, 0, 160) };
+                        canvas.DrawRect(infoRect, infoBg);
+
+                        var name = GetItemDisplayName(pos.Item);
+                        if (name != null)
+                        {
+                            _textFont.Size = Math.Min(11, infoH - 4);
+                            canvas.DrawText(name, infoRect.Left + 4, infoRect.Bottom - 4,
+                                SKTextAlign.Left, _textFont, _textPaint);
+                        }
+                    }
                 }
             }
 
