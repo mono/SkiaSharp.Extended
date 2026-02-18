@@ -300,8 +300,8 @@ controller.ImageProvider = imageProvider;
 ## Learn More
 
 - [Silverlight PivotViewer Documentation](https://learn.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/hh390416) — Microsoft Learn (archived)
-- [OpenLink HTML5 PivotViewer](https://github.com/openlink/html5pivotviewer) — Open-source JavaScript implementation
-- [CXML Schema](https://github.com/mattleibow/PivotViewPlayground/tree/main/resources/schemas) — XSD schemas for CXML format
+- [CXML & DeepZoom Schemas](../../resources/schemas/) — XSD schemas for CXML and DZI/DZC formats
+- [Test Collections](../../resources/testdata/) — Sample CXML collections with DeepZoom tiles
 
 ## Events
 

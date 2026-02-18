@@ -5,16 +5,13 @@ namespace SkiaSharpDemo.Demos;
 
 public partial class PivotViewerPage : ContentPage
 {
-	// Publicly hosted CXML from OpenLink's html5pivotviewer samples
-	private const string RemoteCxmlUrl =
-		"https://raw.githubusercontent.com/openlink/html5pivotviewer/develop/samples/data/simple_ski.cxml";
-
 	private HttpClient? _httpClient;
 
 	public PivotViewerPage()
 	{
 		InitializeComponent();
-		urlEntry.Text = RemoteCxmlUrl;
+		// Load the built-in sample by default
+		LoadBuiltInSample();
 	}
 
 	private void OnLoadClicked(object? sender, EventArgs e)
@@ -31,8 +28,11 @@ public partial class PivotViewerPage : ContentPage
 
 	private void OnRemoteSampleClicked(object? sender, EventArgs e)
 	{
-		urlEntry.Text = RemoteCxmlUrl;
-		LoadFromUrl(RemoteCxmlUrl);
+		var url = urlEntry.Text?.Trim();
+		if (!string.IsNullOrEmpty(url))
+			LoadFromUrl(url);
+		else
+			statusLabel.Text = "Enter a CXML URL first";
 	}
 
 	private void LoadBuiltInSample()
