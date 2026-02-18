@@ -17,7 +17,7 @@ namespace SkiaSharp.Extended.Gif.IO
 		public GifReader(Stream stream)
 		{
 			this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
-			this.reader = new BinaryReader(stream, Encoding.ASCII, leaveOpen: true);
+			this.reader = new BinaryReader(stream, System.Text.Encoding.ASCII, leaveOpen: true);
 		}
 
 		/// <summary>
@@ -29,8 +29,8 @@ namespace SkiaSharp.Extended.Gif.IO
 			if (bytes.Length < 6)
 				throw new InvalidDataException("Unexpected end of stream reading GIF header.");
 
-			var signature = Encoding.ASCII.GetString(bytes, 0, 3);
-			var version = Encoding.ASCII.GetString(bytes, 3, 3);
+			var signature = System.Text.Encoding.ASCII.GetString(bytes, 0, 3);
+			var version = System.Text.Encoding.ASCII.GetString(bytes, 3, 3);
 
 			var header = new GifHeader
 			{
@@ -148,7 +148,7 @@ namespace SkiaSharp.Extended.Gif.IO
 			if (blockSize != 11)
 				throw new InvalidDataException($"Application Extension block size must be 11, got {blockSize}.");
 
-			var appId = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd('\0');
+			var appId = System.Text.Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd('\0');
 			var authCode = reader.ReadBytes(3);
 
 			// Read application data sub-blocks
@@ -168,7 +168,7 @@ namespace SkiaSharp.Extended.Gif.IO
 		public string ReadCommentExtension()
 		{
 			var data = ReadDataSubBlocks();
-			return Encoding.ASCII.GetString(data);
+			return System.Text.Encoding.ASCII.GetString(data);
 		}
 
 		/// <summary>
