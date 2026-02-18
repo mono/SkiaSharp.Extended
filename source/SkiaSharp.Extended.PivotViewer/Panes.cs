@@ -305,13 +305,15 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>Raised when a filter action is triggered from the detail pane.</summary>
         public event EventHandler<PivotViewerFilterEventArgs>? ApplyFilter;
 
-        internal void OnLinkClicked(Uri uri)
+        /// <summary>Triggers the LinkClicked event.</summary>
+        public void OnLinkClicked(Uri uri)
         {
             var args = new PivotViewerLinkEventArgs(uri);
             LinkClicked?.Invoke(this, args);
         }
 
-        internal void OnApplyFilter(string filter)
+        /// <summary>Triggers the ApplyFilter event.</summary>
+        public void OnApplyFilter(string filter)
         {
             var args = new PivotViewerFilterEventArgs(filter);
             ApplyFilter?.Invoke(this, args);

@@ -883,6 +883,15 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 return;
             }
 
+            // Detail pane interactions (right side when showing)
+            float totalWidth = (float)Width;
+            float detailWidth = _controller.DetailPane.IsShowing ? DetailPaneWidth : 0;
+            if (detailWidth > 0 && x > totalWidth - detailWidth)
+            {
+                HandleDetailPaneTap(x - (totalWidth - detailWidth), y - ControlBarHeight);
+                return;
+            }
+
             // Main content area — adjust for content region offset
             double contentX = x - FilterPaneWidth;
             double contentY = y - ControlBarHeight;
@@ -890,6 +899,23 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var hit = _controller.HitTest(contentX - _controller.PanOffsetX, contentY - _controller.PanOffsetY);
             _controller.SelectedItem = hit;
             _canvasView.InvalidateSurface();
+        }
+
+        private void HandleDetailPaneTap(double localX, double localY)
+        {
+            // If the selected item has an Href, treat taps as link clicks
+            var item = _controller.DetailPane.SelectedItem;
+            if (item == null) return;
+
+            var hrefValues = item["Href"];
+            if (hrefValues != null && hrefValues.Count > 0)
+            {
+                var href = hrefValues[0]?.ToString();
+                if (!string.IsNullOrEmpty(href) && Uri.TryCreate(href, UriKind.Absolute, out var uri))
+                {
+                    _controller.DefaultDetails.OnLinkClicked(uri);
+                }
+            }
         }
 
         private void HandleControlBarTap(double x, double y)
