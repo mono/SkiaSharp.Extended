@@ -1104,7 +1104,16 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             double contentX = x - FilterPaneWidth;
             double contentY = y - ControlBarHeight;
 
-            // Graph view: check if a histogram column was tapped for filtering
+            // Try item hit test first (works for both grid and graph views)
+            var hit = _controller.HitTest(contentX - _controller.PanOffsetX, contentY - _controller.PanOffsetY);
+            if (hit != null)
+            {
+                _controller.SelectedItem = hit;
+                _canvasView.InvalidateSurface();
+                return;
+            }
+
+            // Graph view: if no item was hit, check if a histogram column label area was tapped
             if (_controller.CurrentView == "graph" && _controller.HistogramLayout != null && _controller.SortProperty != null)
             {
                 var layout = _controller.HistogramLayout;
@@ -1113,15 +1122,19 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 {
                     if (hitX >= col.X && hitX < col.X + col.Width)
                     {
-                        _controller.FilterPaneModel?.ToggleStringFilter(_controller.SortProperty.Id, col.Label);
+                        // Don't filter on synthesized "(No value)" label
+                        if (col.Label != "(No value)")
+                        {
+                            _controller.FilterPaneModel?.ToggleStringFilter(_controller.SortProperty.Id, col.Label);
+                        }
                         _canvasView.InvalidateSurface();
                         return;
                     }
                 }
             }
 
-            var hit = _controller.HitTest(contentX - _controller.PanOffsetX, contentY - _controller.PanOffsetY);
-            _controller.SelectedItem = hit;
+            // No item or column hit — deselect
+            _controller.SelectedItem = null;
             _canvasView.InvalidateSurface();
         }
 
@@ -1258,7 +1271,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                             int barIndex = (int)((x - Padding - 8) / barWidth);
                             if (barIndex >= 0 && barIndex < buckets.Count)
                             {
-                                filterPane.SetNumericRangeFilter(category.Property.Id, buckets[barIndex].Min, buckets[barIndex].Max);
+                                double min = buckets[barIndex].Min;
+                                // Use exclusive upper bound for non-last buckets to match histogram grouping
+                                double max = barIndex < buckets.Count - 1
+                                    ? buckets[barIndex].Max - 1e-10
+                                    : buckets[barIndex].Max;
+                                filterPane.SetNumericRangeFilter(category.Property.Id, min, max);
                                 _canvasView.InvalidateSurface();
                                 return;
                             }
@@ -1285,7 +1303,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                             int barIndex = (int)((x - Padding - 8) / barWidth);
                             if (barIndex >= 0 && barIndex < dtBuckets.Count)
                             {
-                                filterPane.SetDateTimeRangeFilter(category.Property.Id, dtBuckets[barIndex].Min, dtBuckets[barIndex].Max);
+                                var dtMin = dtBuckets[barIndex].Min;
+                                // Use exclusive upper bound for non-last buckets
+                                var dtMax = barIndex < dtBuckets.Count - 1
+                                    ? dtBuckets[barIndex].Max.AddTicks(-1)
+                                    : dtBuckets[barIndex].Max;
+                                filterPane.SetDateTimeRangeFilter(category.Property.Id, dtMin, dtMax);
                                 _canvasView.InvalidateSurface();
                                 return;
                             }
