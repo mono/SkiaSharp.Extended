@@ -79,6 +79,13 @@ namespace SkiaSharp.Extended.PivotViewer
             }
         }
 
+        /// <summary>
+        /// Configuration for the default detail pane appearance.
+        /// Matches Silverlight's PivotViewerDefaultDetails for controlling
+        /// which sections are visible.
+        /// </summary>
+        public PivotViewerDefaultDetails DefaultDetails { get; } = new PivotViewerDefaultDetails();
+
         // --- Selection ---
 
         /// <summary>Currently selected item.</summary>

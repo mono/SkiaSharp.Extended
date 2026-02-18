@@ -250,4 +250,76 @@ namespace SkiaSharp.Extended.PivotViewer
         public IReadOnlyList<string> Values { get; }
         public PivotViewerProperty Property { get; }
     }
+
+    /// <summary>
+    /// Configuration for the default detail pane appearance.
+    /// Matches Silverlight's PivotViewerDefaultDetails class for controlling
+    /// which sections are visible in the item detail view.
+    /// </summary>
+    public class PivotViewerDefaultDetails : INotifyPropertyChanged
+    {
+        private bool _isNameHidden;
+        private bool _isDescriptionHidden;
+        private bool _isFacetCategoriesHidden;
+        private bool _isRelatedCollectionsHidden;
+        private bool _isCopyrightHidden;
+
+        /// <summary>Whether the item name is hidden in the detail pane.</summary>
+        public bool IsNameHidden
+        {
+            get => _isNameHidden;
+            set { _isNameHidden = value; OnPropertyChanged(nameof(IsNameHidden)); }
+        }
+
+        /// <summary>Whether the item description is hidden.</summary>
+        public bool IsDescriptionHidden
+        {
+            get => _isDescriptionHidden;
+            set { _isDescriptionHidden = value; OnPropertyChanged(nameof(IsDescriptionHidden)); }
+        }
+
+        /// <summary>Whether the facet categories section is hidden.</summary>
+        public bool IsFacetCategoriesHidden
+        {
+            get => _isFacetCategoriesHidden;
+            set { _isFacetCategoriesHidden = value; OnPropertyChanged(nameof(IsFacetCategoriesHidden)); }
+        }
+
+        /// <summary>Whether the related collections section is hidden.</summary>
+        public bool IsRelatedCollectionsHidden
+        {
+            get => _isRelatedCollectionsHidden;
+            set { _isRelatedCollectionsHidden = value; OnPropertyChanged(nameof(IsRelatedCollectionsHidden)); }
+        }
+
+        /// <summary>Whether the copyright section is hidden.</summary>
+        public bool IsCopyrightHidden
+        {
+            get => _isCopyrightHidden;
+            set { _isCopyrightHidden = value; OnPropertyChanged(nameof(IsCopyrightHidden)); }
+        }
+
+        /// <summary>Raised when a link in the detail pane is clicked.</summary>
+        public event EventHandler<PivotViewerLinkEventArgs>? LinkClicked;
+
+        /// <summary>Raised when a filter action is triggered from the detail pane.</summary>
+        public event EventHandler<PivotViewerFilterEventArgs>? ApplyFilter;
+
+        internal void OnLinkClicked(Uri uri)
+        {
+            var args = new PivotViewerLinkEventArgs(uri);
+            LinkClicked?.Invoke(this, args);
+        }
+
+        internal void OnApplyFilter(string filter)
+        {
+            var args = new PivotViewerFilterEventArgs(filter);
+            ApplyFilter?.Invoke(this, args);
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
