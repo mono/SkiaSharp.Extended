@@ -47,6 +47,16 @@
     <button class="btn btn-sm btn-outline-secondary" @onclick="ClearFilters">Clear Filters</button>
 </div>
 
+<div class="toolbar">
+    <input type="text" class="form-control form-control-sm" style="width:250px;display:inline-block"
+           placeholder="Search..." @oninput="OnSearchInput" value="@_searchText" />
+    <button class="btn btn-sm btn-outline-primary" @onclick="ZoomIn" title="Zoom In">🔍+</button>
+    <button class="btn btn-sm btn-outline-primary" @onclick="ZoomOut" title="Zoom Out">🔍−</button>
+    <input type="range" min="0" max="100" value="@((int)(_controller.ZoomLevel * 100))"
+           @oninput="OnZoomSlider" style="width:150px;vertical-align:middle" />
+    <span class="zoom-label">@((_controller.ZoomLevel * 100).ToString("F0"))%</span>
+</div>
+
 <div class="status-bar">
     <span>Items: @_inScopeCount / @_totalCount</span>
     @if (_selectedItemName != null)
@@ -54,6 +64,10 @@
         <span> | Selected: @_selectedItemName</span>
     }
     <span> | View: @_currentView</span>
+    @if (_searchResults != null && _searchResults.Count > 0)
+    {
+        <span> | Search: @_searchResults.Count results</span>
+    }
 </div>
 
 <div class="canvas-container" @onclick="OnCanvasClick" @ondblclick="OnCanvasDoubleClick">
@@ -89,6 +103,8 @@
     private int _totalCount;
     private int _inScopeCount;
     private string _currentView = "grid";
+    private string _searchText = "";
+    private IReadOnlyList<SearchResult>? _searchResults;
 
     private SKPaint _itemPaint = new() { IsAntialias = true, Color = SKColors.CornflowerBlue };
     private SKPaint _selectedPaint = new() { IsAntialias = true, Color = SKColors.Orange, IsStroke = true, StrokeWidth = 3 };
@@ -293,6 +309,40 @@
             return name[0]?.ToString();
         return item.Id;
     }
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        _searchText = e.Value?.ToString() ?? "";
+        if (_searchText.Length >= 2)
+        {
+            _searchResults = _controller.Search(_searchText);
+        }
+        else
+        {
+            _searchResults = null;
+        }
+    }
+
+    private void ZoomIn()
+    {
+        _controller.ZoomLevel = Math.Min(1.0, _controller.ZoomLevel + 0.1);
+        _canvasView?.Invalidate();
+    }
+
+    private void ZoomOut()
+    {
+        _controller.ZoomLevel = Math.Max(0.0, _controller.ZoomLevel - 0.1);
+        _canvasView?.Invalidate();
+    }
+
+    private void OnZoomSlider(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out double val))
+        {
+            _controller.ZoomLevel = val / 100.0;
+            _canvasView?.Invalidate();
+        }
+    }
 }
 
 <style>
@@ -309,6 +359,12 @@
         border-radius: 4px;
         margin-bottom: 8px;
         font-size: 0.9em;
+    }
+    .zoom-label {
+        font-size: 0.85em;
+        color: #666;
+        min-width: 40px;
+        display: inline-block;
     }
     .canvas-container {
         border: 1px solid #ccc;
