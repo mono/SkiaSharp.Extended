@@ -235,6 +235,64 @@ namespace SkiaSharp.Extended.Gif.IO
 		}
 
 		/// <summary>
+		/// Reads a color table as byte array (RGB triplets).
+		/// </summary>
+		/// <param name="colorTableSize">The size field from the GIF header (0-7).</param>
+		public byte[] ReadColorTableBytes(int colorTableSize)
+		{
+			int count = 1 << (colorTableSize + 1);
+			int byteCount = count * 3; // RGB triplets
+			
+			var data = reader.ReadBytes(byteCount);
+			if (data.Length < byteCount)
+				throw new InvalidDataException($"Unexpected end of stream reading color table (expected {byteCount} bytes, got {data.Length}).");
+			
+			return data;
+		}
+
+		/// <summary>
+		/// Reads multiple bytes.
+		/// </summary>
+		public byte[] ReadBytes(int count)
+		{
+			var bytes = reader.ReadBytes(count);
+			if (bytes.Length < count)
+				throw new InvalidDataException($"Unexpected end of stream (expected {count} bytes, got {bytes.Length}).");
+			return bytes;
+		}
+
+		/// <summary>
+		/// Reads the next block type.
+		/// </summary>
+		public BlockType ReadBlockType()
+		{
+			var b = reader.ReadByte();
+			return b switch
+			{
+				0x21 => BlockType.Extension,
+				0x2C => BlockType.ImageDescriptor,
+				0x3B => BlockType.Trailer,
+				_ => throw new InvalidDataException($"Unknown block type: 0x{b:X2}")
+			};
+		}
+
+		/// <summary>
+		/// Reads the extension type (after reading Extension block type).
+		/// </summary>
+		public ExtensionType ReadExtensionType()
+		{
+			var b = reader.ReadByte();
+			return b switch
+			{
+				0xF9 => ExtensionType.GraphicsControl,
+				0xFE => ExtensionType.Comment,
+				0x01 => ExtensionType.PlainText,
+				0xFF => ExtensionType.Application,
+				_ => ExtensionType.Unknown
+			};
+		}
+
+		/// <summary>
 		/// Gets the current stream position.
 		/// </summary>
 		public long Position => stream.Position;
@@ -247,5 +305,38 @@ namespace SkiaSharp.Extended.Gif.IO
 				disposed = true;
 			}
 		}
+	}
+
+	/// <summary>
+	/// GIF block types.
+	/// </summary>
+	internal enum BlockType
+	{
+		Extension,
+		ImageDescriptor,
+		Trailer
+	}
+
+	/// <summary>
+	/// GIF extension types.
+	/// </summary>
+	internal enum ExtensionType
+	{
+		GraphicsControl,
+		Comment,
+		PlainText,
+		Application,
+		Unknown
+	}
+
+	/// <summary>
+	/// GIF disposal methods.
+	/// </summary>
+	internal enum DisposalMethod : byte
+	{
+		None = 0,
+		DoNotDispose = 1,
+		RestoreToBackground = 2,
+		RestoreToPrevious = 3
 	}
 }

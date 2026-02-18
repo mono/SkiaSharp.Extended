@@ -66,6 +66,11 @@ namespace SkiaSharp.Extended.Gif.IO
 		/// Calculates the number of colors in the local color table.
 		/// </summary>
 		public int LocalColorTableLength => HasLocalColorTable ? (1 << (LocalColorTableSize + 1)) : 0;
+
+		/// <summary>
+		/// Gets whether this image is interlaced.
+		/// </summary>
+		public bool IsInterlaced => InterlaceFlag;
 	}
 
 	/// <summary>
@@ -83,6 +88,11 @@ namespace SkiaSharp.Extended.Gif.IO
 		/// Gets the delay in milliseconds.
 		/// </summary>
 		public int DelayMs => DelayTime * 10;
+
+		/// <summary>
+		/// Gets whether this frame has transparency.
+		/// </summary>
+		public bool HasTransparency => TransparencyFlag;
 	}
 
 	/// <summary>
@@ -107,18 +117,18 @@ namespace SkiaSharp.Extended.Gif.IO
 
 		/// <summary>
 		/// Gets the loop count from NETSCAPE extension (0 = infinite).
-		/// Returns -1 if not a NETSCAPE extension or invalid.
+		/// Returns null if not a NETSCAPE extension or invalid.
 		/// </summary>
-		public int LoopCount
+		public int? LoopCount
 		{
 			get
 			{
 				if (!IsNetscapeExtension || Data == null || Data.Length < 3)
-					return -1;
+					return null;
 				
 				// NETSCAPE format: byte 0 = 1 (sub-block ID), bytes 1-2 = loop count (little endian)
 				if (Data[0] != 1)
-					return -1;
+					return null;
 				
 				return Data[1] | (Data[2] << 8);
 			}

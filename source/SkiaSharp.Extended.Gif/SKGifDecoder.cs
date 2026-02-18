@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using SkiaSharp.Extended.Gif.Decoding;
 
 namespace SkiaSharp.Extended.Gif
 {
@@ -10,11 +11,15 @@ namespace SkiaSharp.Extended.Gif
 	public class SKGifDecoder : IDisposable
 	{
 		private readonly Stream stream;
+		private readonly GifImageDecoder decoder;
+		private readonly GifFrameCompositor compositor;
 		private bool disposed;
 
 		private SKGifDecoder(Stream stream)
 		{
 			this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
+			this.decoder = new GifImageDecoder(stream);
+			this.compositor = null!; // Initialized in Initialize()
 		}
 
 		/// <summary>
@@ -80,8 +85,24 @@ namespace SkiaSharp.Extended.Gif
 			if (index < 0 || index >= FrameCount)
 				throw new ArgumentOutOfRangeException(nameof(index));
 
-			// TODO: Implement frame decoding
-			throw new NotImplementedException("GIF decoding is not yet implemented. This is a placeholder for the project structure.");
+			// Decompress frame data
+			var frameData = decoder.GetFrameData(index);
+			var indexedPixels = decoder.DecompressFrameData(index);
+			var colorTable = decoder.GetColorTableForFrame(index);
+
+			// Render frame with compositing
+			var bitmap = compositor.RenderFrame(
+				index,
+				indexedPixels,
+				frameData.ImageDescriptor,
+				colorTable,
+				frameData.GraphicsControl);
+
+			return new SKGifFrame
+			{
+				Bitmap = bitmap,
+				FrameInfo = FrameInfo[index]
+			};
 		}
 
 		/// <summary>
@@ -97,8 +118,19 @@ namespace SkiaSharp.Extended.Gif
 			if (index < 0 || index >= FrameCount)
 				throw new ArgumentOutOfRangeException(nameof(index));
 
-			// TODO: Implement direct pixel decoding
-			throw new NotImplementedException("GIF decoding is not yet implemented. This is a placeholder for the project structure.");
+			try
+			{
+				using var frame = GetFrame(index);
+				
+				// Copy pixels to buffer
+				frame.Bitmap.CopyPixelsTo(pixels, info.RowBytes * info.Height, info.RowBytes);
+				
+				return SKCodecResult.Success;
+			}
+			catch
+			{
+				return SKCodecResult.InvalidInput;
+			}
 		}
 
 		/// <summary>
@@ -108,7 +140,7 @@ namespace SkiaSharp.Extended.Gif
 		{
 			if (!disposed)
 			{
-				// TODO: Clean up resources
+				compositor?.Dispose();
 				disposed = true;
 			}
 
@@ -117,16 +149,64 @@ namespace SkiaSharp.Extended.Gif
 
 		private void Initialize()
 		{
-			// TODO: Implement GIF header parsing and metadata extraction
-			Info = new SKImageInfo(0, 0, SKColorType.Rgba8888, SKAlphaType.Premul);
+			// Parse the GIF file
+			decoder.Parse();
+
+			// Set up image info
+			Info = new SKImageInfo(
+				decoder.Width,
+				decoder.Height,
+				SKColorType.Rgba8888,
+				SKAlphaType.Premul);
+
+			// Build frame info array
+			var frameInfoList = new SKGifFrameInfo[decoder.FrameCount];
+			
+			for (int i = 0; i < decoder.FrameCount; i++)
+			{
+				var frameData = decoder.GetFrameData(i);
+				var imageDesc = frameData.ImageDescriptor;
+				var gce = frameData.GraphicsControl;
+
+				frameInfoList[i] = new SKGifFrameInfo
+				{
+					Duration = gce?.DelayTime ?? 0,
+					DisposalMethod = ConvertDisposalMethod(gce?.DisposalMethod ?? IO.DisposalMethod.None),
+					RequiredFrame = i > 0 ? i - 1 : -1, // Simple dependency for now
+					FrameRect = new SKRectI(imageDesc.Left, imageDesc.Top, imageDesc.Left + imageDesc.Width, imageDesc.Top + imageDesc.Height),
+					HasTransparency = gce?.HasTransparency ?? false,
+					TransparentColor = null // Color not stored, just index
+				};
+			}
+
+			FrameInfo = frameInfoList;
+
+			// Set GIF-specific info
 			GifInfo = new SKGifInfo
 			{
 				ImageInfo = Info,
-				FrameCount = 0
+				FrameCount = decoder.FrameCount,
+				Width = decoder.Width,
+				Height = decoder.Height,
+				LoopCount = decoder.LoopCount
 			};
-			FrameInfo = Array.Empty<SKGifFrameInfo>();
 
-			throw new NotImplementedException("GIF decoding is not yet implemented. This is a placeholder for the project structure.");
+			// Initialize compositor with global properties
+			var compositorField = typeof(SKGifDecoder).GetField("compositor", 
+				System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+			compositorField?.SetValue(this, new GifFrameCompositor(decoder.Width, decoder.Height, decoder.BackgroundColorIndex));
+		}
+
+		private SKGifDisposalMethod ConvertDisposalMethod(IO.DisposalMethod method)
+		{
+			return method switch
+			{
+				IO.DisposalMethod.None => SKGifDisposalMethod.None,
+				IO.DisposalMethod.DoNotDispose => SKGifDisposalMethod.DoNotDispose,
+				IO.DisposalMethod.RestoreToBackground => SKGifDisposalMethod.RestoreToBackground,
+				IO.DisposalMethod.RestoreToPrevious => SKGifDisposalMethod.RestoreToPrevious,
+				_ => SKGifDisposalMethod.None
+			};
 		}
 	}
 }
