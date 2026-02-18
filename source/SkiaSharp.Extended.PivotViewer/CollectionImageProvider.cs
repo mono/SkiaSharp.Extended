@@ -20,6 +20,7 @@ namespace SkiaSharp.Extended.PivotViewer
         private readonly ITileFetcher _fetcher;
         private readonly TileCache _cache;
         private readonly ConcurrentDictionary<int, SKBitmap?> _thumbnailCache;
+        private readonly ConcurrentDictionary<int, SemaphoreSlim> _loadLocks;
         private readonly string _basePath;
         private bool _disposed;
 
@@ -36,6 +37,7 @@ namespace SkiaSharp.Extended.PivotViewer
             _basePath = basePath ?? throw new ArgumentNullException(nameof(basePath));
             _cache = new TileCache(512);
             _thumbnailCache = new ConcurrentDictionary<int, SKBitmap?>();
+            _loadLocks = new ConcurrentDictionary<int, SemaphoreSlim>();
         }
 
         /// <summary>Number of cached thumbnails.</summary>
@@ -82,93 +84,104 @@ namespace SkiaSharp.Extended.PivotViewer
         /// </summary>
         public async Task<SKBitmap?> LoadThumbnailAsync(int itemIndex, int targetSize = 128, CancellationToken ct = default)
         {
+            if (_disposed) return null;
+
             if (_thumbnailCache.TryGetValue(itemIndex, out var cached))
                 return cached;
 
             if (itemIndex < 0 || itemIndex >= _dzc.ItemCount)
                 return null;
 
-            var subImage = _dzc.Items.FirstOrDefault(i => i.Id == itemIndex);
-            if (subImage == null)
-                return null;
-
-            // Find the best level for the target thumbnail size
-            // DZC composite tiles contain all items arranged in a Morton grid
-            int gridSize = _dzc.GetMortonGridSize();
-            if (gridSize == 0) return null;
-
-            // Choose a level where each item is roughly targetSize pixels
-            int bestLevel = 0;
-            for (int level = 0; level <= _dzc.MaxLevel; level++)
+            // Use per-item lock to prevent duplicate bitmap creation
+            var loadLock = _loadLocks.GetOrAdd(itemIndex, _ => new SemaphoreSlim(1, 1));
+            await loadLock.WaitAsync(ct).ConfigureAwait(false);
+            try
             {
-                // At this level, the composite image width is tileSize * 2^level / gridSize per item
-                int levelWidth = _dzc.TileSize * (1 << level);
-                double itemPixelSize = (double)levelWidth / gridSize;
-                if (itemPixelSize >= targetSize)
+                // Double-check after acquiring lock
+                if (_disposed) return null;
+                if (_thumbnailCache.TryGetValue(itemIndex, out cached))
+                    return cached;
+
+                var subImage = _dzc.Items.FirstOrDefault(i => i.Id == itemIndex);
+                if (subImage == null)
+                    return null;
+
+                int gridSize = _dzc.GetMortonGridSize();
+                if (gridSize == 0) return null;
+
+                // Choose a level where each item is roughly targetSize pixels
+                int bestLevel = 0;
+                for (int level = 0; level <= _dzc.MaxLevel; level++)
                 {
+                    int levelWidth = _dzc.TileSize * (1 << level);
+                    double itemPixelSize = (double)levelWidth / gridSize;
+                    if (itemPixelSize >= targetSize)
+                    {
+                        bestLevel = level;
+                        break;
+                    }
                     bestLevel = level;
-                    break;
                 }
-                bestLevel = level;
+
+                var (col, row) = DzcTileSource.MortonToGrid(subImage.MortonIndex);
+
+                int levelTotalWidth = _dzc.TileSize * (1 << bestLevel);
+                double itemPixWidth = (double)levelTotalWidth / gridSize;
+                double itemPixHeight = itemPixWidth / subImage.AspectRatio;
+
+                double itemPxX = col * itemPixWidth;
+                double itemPxY = row * itemPixWidth;
+
+                int tileCol = (int)(itemPxX / _dzc.TileSize);
+                int tileRow = (int)(itemPxY / _dzc.TileSize);
+
+                var tileId = new TileId(bestLevel, tileCol, tileRow);
+                SKBitmap? tileBitmap;
+
+                if (!_cache.TryGet(tileId, out tileBitmap))
+                {
+                    string url = $"{_basePath}/{_dzc.GetCompositeTileUrl(bestLevel, tileCol, tileRow)}";
+                    tileBitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
+
+                    if (_disposed) return null;
+                    if (tileBitmap != null)
+                        _cache.Put(tileId, tileBitmap);
+                }
+
+                if (tileBitmap == null)
+                {
+                    _thumbnailCache[itemIndex] = null;
+                    return null;
+                }
+
+                double localX = itemPxX - tileCol * _dzc.TileSize;
+                double localY = itemPxY - tileRow * _dzc.TileSize;
+
+                int srcX = Math.Max(0, (int)localX);
+                int srcY = Math.Max(0, (int)localY);
+                int srcW = Math.Min((int)Math.Ceiling(itemPixWidth), tileBitmap.Width - srcX);
+                int srcH = Math.Min((int)Math.Ceiling(itemPixHeight), tileBitmap.Height - srcY);
+
+                if (srcW <= 0 || srcH <= 0)
+                {
+                    _thumbnailCache[itemIndex] = null;
+                    return null;
+                }
+
+                var srcRect = new SKRectI(srcX, srcY, srcX + srcW, srcY + srcH);
+                var thumbnail = new SKBitmap(srcW, srcH);
+                using (var canvas = new SKCanvas(thumbnail))
+                {
+                    canvas.DrawBitmap(tileBitmap, srcRect, new SKRect(0, 0, srcW, srcH));
+                }
+
+                _thumbnailCache[itemIndex] = thumbnail;
+                return thumbnail;
             }
-
-            // Convert Morton index to grid position
-            var (col, row) = DzcTileSource.MortonToGrid(subImage.MortonIndex);
-
-            // Determine which composite tile(s) this item falls on
-            int levelTotalWidth = _dzc.TileSize * (1 << bestLevel);
-            double itemPixWidth = (double)levelTotalWidth / gridSize;
-            double itemPixHeight = itemPixWidth / subImage.AspectRatio;
-
-            double itemPxX = col * itemPixWidth;
-            double itemPxY = row * itemPixWidth; // Grid cells are square
-
-            int tileCol = (int)(itemPxX / _dzc.TileSize);
-            int tileRow = (int)(itemPxY / _dzc.TileSize);
-
-            // Fetch the composite tile
-            var tileId = new TileId(bestLevel, tileCol, tileRow);
-            SKBitmap? tileBitmap;
-
-            if (!_cache.TryGet(tileId, out tileBitmap))
+            finally
             {
-                string url = $"{_basePath}/{_dzc.GetCompositeTileUrl(bestLevel, tileCol, tileRow)}";
-                tileBitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
-                if (tileBitmap != null)
-                    _cache.Put(tileId, tileBitmap);
+                loadLock.Release();
             }
-
-            if (tileBitmap == null)
-            {
-                _thumbnailCache[itemIndex] = null;
-                return null;
-            }
-
-            // Extract the sub-image region from the composite tile
-            double localX = itemPxX - tileCol * _dzc.TileSize;
-            double localY = itemPxY - tileRow * _dzc.TileSize;
-
-            int srcX = Math.Max(0, (int)localX);
-            int srcY = Math.Max(0, (int)localY);
-            int srcW = Math.Min((int)Math.Ceiling(itemPixWidth), tileBitmap.Width - srcX);
-            int srcH = Math.Min((int)Math.Ceiling(itemPixHeight), tileBitmap.Height - srcY);
-
-            if (srcW <= 0 || srcH <= 0)
-            {
-                _thumbnailCache[itemIndex] = null;
-                return null;
-            }
-
-            // Create a new bitmap with just the sub-image
-            var srcRect = new SKRectI(srcX, srcY, srcX + srcW, srcY + srcH);
-            var thumbnail = new SKBitmap(srcW, srcH);
-            using (var canvas = new SKCanvas(thumbnail))
-            {
-                canvas.DrawBitmap(tileBitmap, srcRect, new SKRect(0, 0, srcW, srcH));
-            }
-
-            _thumbnailCache[itemIndex] = thumbnail;
-            return thumbnail;
         }
 
         /// <summary>

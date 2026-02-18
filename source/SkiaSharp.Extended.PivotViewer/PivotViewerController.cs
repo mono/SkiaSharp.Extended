@@ -205,8 +205,24 @@ namespace SkiaSharp.Extended.PivotViewer
 
             if (Math.Abs(newZoom - oldZoom) > 0.001)
             {
+                // Adjust pan to keep the screen point stable
+                // Before zoom, the screen point maps to world coordinate:
+                // worldX = screenX - panOffsetX
+                // After zoom, the layout changes. We need to adjust pan so
+                // the same world point remains at the same screen position.
+                double worldX = screenX - _panOffsetX;
+                double worldY = screenY - _panOffsetY;
+
                 _zoomLevel = newZoom;
                 UpdateLayout();
+
+                // The layout changed (items resized), so the world coordinate
+                // at (worldX, worldY) may have shifted. Adjust pan offset.
+                double zoomRatio = (1.0 - newZoom) / (1.0 - oldZoom + 0.001);
+                double newWorldX = worldX * zoomRatio;
+                double newWorldY = worldY * zoomRatio;
+                _panOffsetX += worldX - newWorldX;
+                _panOffsetY += worldY - newWorldY;
             }
         }
 

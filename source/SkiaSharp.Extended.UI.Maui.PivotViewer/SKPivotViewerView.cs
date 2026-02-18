@@ -28,6 +28,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private readonly SKFont _textFont;
         private readonly SKFont _labelFont;
         private IDispatcherTimer? _animationTimer;
+        private double _previousPanX;
+        private double _previousPanY;
         private bool _disposed;
 
         public SKPivotViewerView()
@@ -695,8 +697,16 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         {
             switch (e.StatusType)
             {
+                case GestureStatus.Started:
+                    _previousPanX = 0;
+                    _previousPanY = 0;
+                    break;
                 case GestureStatus.Running:
-                    _controller.Pan(e.TotalX, e.TotalY);
+                    double deltaX = e.TotalX - _previousPanX;
+                    double deltaY = e.TotalY - _previousPanY;
+                    _previousPanX = e.TotalX;
+                    _previousPanY = e.TotalY;
+                    _controller.Pan(deltaX, deltaY);
                     _canvasView.InvalidateSurface();
                     break;
             }
@@ -708,6 +718,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         {
             if (!_controller.LayoutTransition.IsAnimating) return;
             if (_animationTimer != null && _animationTimer.IsRunning) return;
+
+            // Clean up old timer if any
+            if (_animationTimer != null)
+            {
+                _animationTimer.Tick -= OnAnimationTick;
+                _animationTimer.Stop();
+            }
 
             _animationTimer = Dispatcher.CreateTimer();
             _animationTimer.Interval = TimeSpan.FromMilliseconds(16); // ~60fps
@@ -733,7 +750,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             if (_disposed) return;
             _disposed = true;
 
-            _animationTimer?.Stop();
+            if (_animationTimer != null)
+            {
+                _animationTimer.Stop();
+                _animationTimer.Tick -= OnAnimationTick;
+            }
             _canvasView.PaintSurface -= OnPaintSurface;
             _controller.Dispose();
             _itemPaint.Dispose();
