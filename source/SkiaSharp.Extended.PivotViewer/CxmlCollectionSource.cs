@@ -116,25 +116,28 @@ namespace SkiaSharp.Extended.PivotViewer
 
         /// <summary>
         /// Merges supplemental data from another parsed CXML into this collection.
-        /// Items are matched by Id; new properties and values are added to existing items.
+        /// Items are matched by Id; only new property values are added (existing values are not duplicated).
         /// </summary>
         public void MergeSupplementalData(CxmlCollectionSource supplement)
         {
             if (supplement == null)
                 throw new ArgumentNullException(nameof(supplement));
 
+            // Build lookup for canonical property instances
+            var propLookup = new Dictionary<string, PivotViewerProperty>(StringComparer.Ordinal);
+            foreach (var p in _properties) propLookup[p.Id] = p;
+
             // Add any new properties from the supplement
-            var existingIds = new HashSet<string>(_properties.Select(p => p.Id), StringComparer.Ordinal);
             foreach (var prop in supplement.ItemProperties)
             {
-                if (!existingIds.Contains(prop.Id))
+                if (!propLookup.ContainsKey(prop.Id))
                 {
                     _properties.Add(prop);
-                    existingIds.Add(prop.Id);
+                    propLookup[prop.Id] = prop;
                 }
             }
 
-            // Merge item data
+            // Merge item data — only add values for properties the item doesn't already have
             foreach (var suppItem in supplement.Items)
             {
                 var target = GetItemById(suppItem.Id);
@@ -142,10 +145,16 @@ namespace SkiaSharp.Extended.PivotViewer
 
                 foreach (var prop in suppItem.Properties)
                 {
+                    // Skip if the target already has values for this property
+                    if (target.HasProperty(prop.Id))
+                        continue;
+
                     var values = suppItem[prop];
                     if (values != null && values.Count > 0)
                     {
-                        target.Add(prop, values.ToArray());
+                        // Use canonical property instance from main collection
+                        var canonicalProp = propLookup.TryGetValue(prop.Id, out var cp) ? cp : prop;
+                        target.Add(canonicalProp, values.ToArray());
                     }
                 }
             }

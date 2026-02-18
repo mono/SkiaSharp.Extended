@@ -612,4 +612,48 @@ public class CxmlCollectionSourceTest
         var item = main.GetItemById("1");
         Assert.Null(item!["Extra"]);
     }
+
+    [Fact]
+    public void MergeSupplementalData_DoesNotDuplicateExistingValues()
+    {
+        var mainXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Main'>
+    <FacetCategories>
+        <FacetCategory Name='Color' Type='String' />
+    </FacetCategories>
+    <Items>
+        <Item Id='1' Name='Alpha'>
+            <Facets><Facet Name='Color'><String Value='Red'/></Facet></Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var suppXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Supp'>
+    <FacetCategories>
+        <FacetCategory Name='Color' Type='String' />
+    </FacetCategories>
+    <Items>
+        <Item Id='1'>
+            <Facets><Facet Name='Color'><String Value='Blue'/></Facet></Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var main = CxmlCollectionSource.Parse(mainXml);
+        var supp = CxmlCollectionSource.Parse(suppXml);
+        main.MergeSupplementalData(supp);
+
+        // Should keep original "Red", not add "Blue"
+        var item = main.GetItemById("1");
+        Assert.NotNull(item);
+        var colorValues = item!["Color"];
+        Assert.NotNull(colorValues);
+        Assert.Single(colorValues!);
+        Assert.Equal("Red", colorValues![0]?.ToString());
+    }
 }

@@ -227,4 +227,19 @@ public class PanesTest
         item.Add(prop, new[] { value });
         return item;
     }
+
+    [Fact]
+    public void DetailPane_FacetValues_UsesDecimalPlaces()
+    {
+        var prop = new PivotViewerNumericProperty("Price") { DecimalPlaces = 2 };
+        var item = new PivotViewerItem("1");
+        item.Add(prop, 3.14159m);
+
+        var detail = new DetailPaneModel();
+        detail.SelectedItem = item;
+
+        var facets = detail.FacetValues;
+        Assert.Single(facets);
+        Assert.Equal("3.14", facets[0].Values[0]);
+    }
 }

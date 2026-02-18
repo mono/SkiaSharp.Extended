@@ -225,9 +225,19 @@ namespace SkiaSharp.Extended.PivotViewer
 
         private static string FormatValue(object value, PivotViewerProperty property)
         {
-            if (property.Format != null && value is IFormattable formattable)
+            // Use DecimalPlaces if set on numeric properties and no explicit format
+            if (property is PivotViewerNumericProperty numProp && numProp.DecimalPlaces >= 0 && property.Format == null)
             {
-                try { return formattable.ToString(property.Format, null); }
+                if (value is IFormattable formattable)
+                {
+                    try { return formattable.ToString("F" + numProp.DecimalPlaces, System.Globalization.CultureInfo.InvariantCulture); }
+                    catch { /* fallback */ }
+                }
+            }
+
+            if (property.Format != null && value is IFormattable f)
+            {
+                try { return f.ToString(property.Format, System.Globalization.CultureInfo.InvariantCulture); }
                 catch { /* fallback */ }
             }
             return value.ToString() ?? "";
