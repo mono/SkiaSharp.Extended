@@ -129,6 +129,11 @@ namespace SkiaSharp.Extended.Gif.Encoding
             return bestIndex;
         }
         
+        public static byte FindNearestColor(SKColor color, SKColor[] palette)
+        {
+            return FindNearestColorIndex(color, palette);
+        }
+        
         private static int ColorDistance(SKColor a, SKColor b)
         {
             int dr = a.Red - b.Red;
@@ -237,17 +242,6 @@ namespace SkiaSharp.Extended.Gif.Encoding
                     new ColorBox(sorted.Skip(median).ToList())
                 );
             }
-        }
-    }
-}
-        
-        public static byte FindNearestColor(SKColor color, SKColor[] palette)
-        {
-            return FindNearestColorIndex(color, palette);
-        
-        public static byte FindNearestColor(SKColor color, SKColor[] palette)
-        {
-            return FindNearestColorIndex(color, palette);
         }
     }
 }

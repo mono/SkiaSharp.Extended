@@ -53,6 +53,9 @@ namespace SkiaSharp.Extended.Gif
         /// <param name="duration">Frame duration in milliseconds (default 100ms).</param>
         public void AddFrame(SKBitmap bitmap, int duration = 100)
         {
+            if (bitmap == null)
+                throw new ArgumentNullException(nameof(bitmap));
+            
             AddFrame(bitmap, new SKGifFrameInfo
             {
                 Duration = duration,
@@ -220,8 +223,11 @@ namespace SkiaSharp.Extended.Gif
         private class FrameData
         {
             public SKBitmap Bitmap { get; set; } = null!;
+        private class FrameData
+        {
+            public SKBitmap Bitmap { get; set; } = null!;
             public SKGifFrameInfo FrameInfo { get; set; }
         }
-        }
     }
+}
 }
