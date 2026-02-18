@@ -63,4 +63,21 @@ public class ViewsTest
     {
         Assert.True(typeof(PivotViewerGraphView).IsSealed);
     }
+
+    [Fact]
+    public void GraphView_GroupByAndStackBy_FirePropertyChanged()
+    {
+        var view = new PivotViewerGraphView();
+        var changed = new List<string>();
+        view.PropertyChanged += (s, e) => changed.Add(e.PropertyName!);
+
+        var prop = new PivotViewerStringProperty("Category");
+        view.GroupByProperty = prop;
+        view.StackByProperty = prop;
+
+        Assert.Contains("GroupByProperty", changed);
+        Assert.Contains("StackByProperty", changed);
+        Assert.Same(prop, view.GroupByProperty);
+        Assert.Same(prop, view.StackByProperty);
+    }
 }
