@@ -91,6 +91,9 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>Fired when spring animation completes.</summary>
         public event EventHandler? MotionFinished;
 
+        /// <summary>Fired when the viewport position or zoom level changes.</summary>
+        public event EventHandler? ViewportChanged;
+
         /// <summary>Fired when a tile fails to load.</summary>
         public event EventHandler<TileId>? TileFailed;
 
@@ -225,6 +228,7 @@ namespace SkiaSharp.Extended.DeepZoom
                 _spring.SetTarget(state.OriginX, state.OriginY, state.ViewportWidth);
                 _spring.SnapToTarget();
             }
+            ViewportChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -238,9 +242,17 @@ namespace SkiaSharp.Extended.DeepZoom
 
             // Apply spring state to viewport
             var state = _spring.GetCurrentState();
+            bool viewportMoved = state.OriginX != _viewport.ViewportOriginX ||
+                                 state.OriginY != _viewport.ViewportOriginY ||
+                                 state.ViewportWidth != _viewport.ViewportWidth;
             _viewport.ViewportOriginX = state.OriginX;
             _viewport.ViewportOriginY = state.OriginY;
             _viewport.ViewportWidth = state.ViewportWidth;
+
+            if (viewportMoved)
+            {
+                ViewportChanged?.Invoke(this, EventArgs.Empty);
+            }
 
             if (!wasSettled && _spring.IsSettled)
             {
