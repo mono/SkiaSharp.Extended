@@ -341,4 +341,119 @@ public class PivotViewerControllerTest
         controller.SetAvailableSize(1200, 900);
         Assert.True(fired);
     }
+
+    [Fact]
+    public void FilterPaneModel_CreatedOnLoad()
+    {
+        var (controller, _) = CreateTestController();
+        Assert.NotNull(controller.FilterPaneModel);
+    }
+
+    [Fact]
+    public void FilterPaneModel_HasCategories()
+    {
+        var (controller, _) = CreateTestController();
+        var categories = controller.FilterPaneModel!.GetCategories(controller.Items);
+        Assert.NotEmpty(categories);
+    }
+
+    [Fact]
+    public void DetailPane_CreatedLazily()
+    {
+        var controller = new PivotViewerController();
+        Assert.NotNull(controller.DetailPane);
+        Assert.Null(controller.DetailPane.SelectedItem);
+    }
+
+    [Fact]
+    public void DetailPane_UpdatedOnSelection()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[0];
+        Assert.Equal(controller.InScopeItems[0], controller.DetailPane.SelectedItem);
+        Assert.True(controller.DetailPane.IsShowing);
+    }
+
+    [Fact]
+    public void DetailPane_ClearedOnDeselection()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[0];
+        Assert.True(controller.DetailPane.IsShowing);
+
+        controller.SelectedItem = null;
+        Assert.Null(controller.DetailPane.SelectedItem);
+    }
+
+    [Fact]
+    public void LayoutTransition_Accessible()
+    {
+        var controller = new PivotViewerController();
+        Assert.NotNull(controller.LayoutTransition);
+        Assert.False(controller.LayoutTransition.IsAnimating);
+    }
+
+    [Fact]
+    public void Update_ReturnsFalseWhenNotAnimating()
+    {
+        var controller = new PivotViewerController();
+        bool needsRedraw = controller.Update(TimeSpan.FromMilliseconds(16));
+        Assert.False(needsRedraw);
+    }
+
+    [Fact]
+    public void GetItemBounds_ReturnsPositionForItem()
+    {
+        var (controller, _) = CreateTestController();
+
+        if (controller.InScopeItems.Count > 0)
+        {
+            var item = controller.InScopeItems[0];
+            var bounds = controller.GetItemBounds(item);
+            Assert.True(bounds.Width > 0, "Width should be positive");
+            Assert.True(bounds.Height > 0, "Height should be positive");
+        }
+    }
+
+    [Fact]
+    public void GetItemBounds_ReturnsZeroForUnknownItem()
+    {
+        var (controller, _) = CreateTestController();
+
+        var unknown = new PivotViewerItem("unknown");
+        var bounds = controller.GetItemBounds(unknown);
+        Assert.Equal(0, bounds.X);
+        Assert.Equal(0, bounds.Width);
+    }
+
+    [Fact]
+    public void ResizeTriggersLayoutTransition()
+    {
+        var (controller, _) = CreateTestController();
+
+        // First layout is computed on load. Resize triggers a new layout.
+        controller.SetAvailableSize(500, 400);
+
+        // The transition should have been started
+        Assert.True(controller.LayoutTransition.IsAnimating);
+    }
+
+    [Fact]
+    public void LoadItems_CreatesFilterPaneModel()
+    {
+        var controller = new PivotViewerController();
+        var nameP = new PivotViewerStringProperty("Name") { DisplayName = "Name" };
+        var items = new List<PivotViewerItem>();
+        for (int i = 0; i < 5; i++)
+        {
+            var item = new PivotViewerItem(i.ToString());
+            item.Set(nameP, new object[] { $"Item {i}" });
+            items.Add(item);
+        }
+
+        controller.LoadItems(items, new[] { nameP });
+        Assert.NotNull(controller.FilterPaneModel);
+    }
 }

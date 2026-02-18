@@ -9,11 +9,15 @@ namespace SkiaSharp.Extended.PivotViewer
     /// Orchestrates the PivotViewer: filtering, sorting, layout, selection, and state.
     /// Platform-agnostic — no MAUI dependency. Can be driven from tests or any UI.
     /// </summary>
-    public class PivotViewerController
+    public class PivotViewerController : IDisposable
     {
         private readonly FilterEngine _filterEngine;
         private readonly GridLayoutEngine _layoutEngine;
         private readonly WordWheelIndex _wordWheel;
+        private readonly LayoutTransitionManager _layoutTransition;
+        private FilterPaneModel? _filterPaneModel;
+        private DetailPaneModel? _detailPaneModel;
+        private bool _disposed;
 
         private List<PivotViewerItem> _allItems = new List<PivotViewerItem>();
         private List<PivotViewerProperty> _properties = new List<PivotViewerProperty>();
@@ -32,6 +36,7 @@ namespace SkiaSharp.Extended.PivotViewer
             _filterEngine = new FilterEngine();
             _layoutEngine = new GridLayoutEngine();
             _wordWheel = new WordWheelIndex();
+            _layoutTransition = new LayoutTransitionManager();
 
             _filterEngine.FiltersChanged += (s, e) => OnFiltersChanged();
         }
@@ -53,6 +58,23 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>The word wheel search index.</summary>
         public WordWheelIndex WordWheel => _wordWheel;
 
+        /// <summary>The layout transition manager for animated transitions.</summary>
+        public LayoutTransitionManager LayoutTransition => _layoutTransition;
+
+        /// <summary>The filter pane model. Created after loading items.</summary>
+        public FilterPaneModel? FilterPaneModel => _filterPaneModel;
+
+        /// <summary>The detail pane model.</summary>
+        public DetailPaneModel DetailPane
+        {
+            get
+            {
+                if (_detailPaneModel == null)
+                    _detailPaneModel = new DetailPaneModel();
+                return _detailPaneModel;
+            }
+        }
+
         // --- Selection ---
 
         /// <summary>Currently selected item.</summary>
@@ -65,6 +87,7 @@ namespace SkiaSharp.Extended.PivotViewer
                 {
                     var old = _selectedItem;
                     _selectedItem = value;
+                    DetailPane.SelectedItem = value;
                     SelectionChanged?.Invoke(this, new SelectionChangedEventArgs(old, value));
                 }
             }
@@ -153,6 +176,8 @@ namespace SkiaSharp.Extended.PivotViewer
             _filterEngine.SetSource(_allItems, _properties);
             _wordWheel.Build(_allItems, _properties);
 
+            _filterPaneModel = new FilterPaneModel(_filterEngine, _properties);
+
             _selectedItem = null;
             _sortProperty = null;
 
@@ -172,6 +197,8 @@ namespace SkiaSharp.Extended.PivotViewer
 
             _filterEngine.SetSource(_allItems, _properties);
             _wordWheel.Build(_allItems, _properties);
+
+            _filterPaneModel = new FilterPaneModel(_filterEngine, _properties);
 
             _selectedItem = null;
             _sortProperty = null;
@@ -265,6 +292,38 @@ namespace SkiaSharp.Extended.PivotViewer
             return _wordWheel.Search(text);
         }
 
+        /// <summary>
+        /// Updates animation state. Call from the render loop.
+        /// </summary>
+        public bool Update(TimeSpan deltaTime)
+        {
+            return _layoutTransition.Update(deltaTime.TotalSeconds);
+        }
+
+        /// <summary>
+        /// Gets the interpolated layout position for an item during transitions.
+        /// Returns the final position if no transition is active.
+        /// </summary>
+        public (double X, double Y, double Width, double Height) GetItemBounds(PivotViewerItem item)
+        {
+            if (_layoutTransition.IsAnimating && _currentGridLayout != null)
+            {
+                var positions = _layoutTransition.GetCurrentPositions();
+                var pos = positions.FirstOrDefault(p => p.Item == item);
+                if (pos.Item != null)
+                    return (pos.X, pos.Y, pos.Width, pos.Height);
+            }
+
+            if (_currentGridLayout != null)
+            {
+                var pos = _currentGridLayout.Positions.FirstOrDefault(p => p.Item == item);
+                if (pos.Item != null)
+                    return (pos.X, pos.Y, pos.Width, pos.Height);
+            }
+
+            return (0, 0, 0, 0);
+        }
+
         // --- Internal ---
 
         private void OnFiltersChanged()
@@ -327,6 +386,8 @@ namespace SkiaSharp.Extended.PivotViewer
                 return;
             }
 
+            GridLayout? oldGrid = _currentGridLayout;
+
             if (_currentView == "graph" && _sortProperty != null)
             {
                 _currentHistogramLayout = _layoutEngine.ComputeHistogramLayout(
@@ -335,12 +396,28 @@ namespace SkiaSharp.Extended.PivotViewer
             }
             else
             {
-                _currentGridLayout = _layoutEngine.ComputeLayout(
+                var newLayout = _layoutEngine.ComputeLayout(
                     _inScopeItems, _availableWidth, _availableHeight);
+
+                // Start transition animation if we had a previous layout
+                if (oldGrid != null && oldGrid.Positions.Length > 0)
+                    _layoutTransition.BeginTransition(oldGrid.Positions, newLayout.Positions);
+
+                _currentGridLayout = newLayout;
                 _currentHistogramLayout = null;
             }
 
             LayoutUpdated?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>Disposes resources held by the controller.</summary>
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                _disposed = true;
+                _layoutTransition.CancelTransition();
+            }
         }
     }
 
