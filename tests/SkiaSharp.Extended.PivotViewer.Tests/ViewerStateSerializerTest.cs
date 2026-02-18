@@ -154,4 +154,59 @@ public class ViewerStateSerializerTest
         Assert.Single(restored.StringPredicates);
         Assert.Contains("Sports & Racing", restored.StringPredicates[0].Values);
     }
+
+    [Fact]
+    public void Deserialize_NumericRangePredicate_ParsesCorrectly()
+    {
+        var serialized = "Price=GE(100)AND(LE(500))&$view=grid";
+        var state = ViewerStateSerializer.Deserialize(serialized);
+
+        Assert.Single(state.RangePredicates);
+        Assert.Equal("Price", state.RangePredicates[0].PropertyId);
+        Assert.Contains("GE(100)", state.RangePredicates[0].Expression);
+        Assert.Equal("grid", state.ViewId);
+    }
+
+    [Fact]
+    public void RoundTrip_NumericRange_PreservesValues()
+    {
+        var state = new ViewerState
+        {
+            ViewId = "grid",
+            Predicates = new FilterPredicate[]
+            {
+                new NumericRangeFilterPredicate("Price", 100.5, 500.0)
+            }
+        };
+
+        var serialized = ViewerStateSerializer.Serialize(state);
+        Assert.Contains("GE(100.5)", serialized);
+        Assert.Contains("LE(500)", serialized);
+
+        var restored = ViewerStateSerializer.Deserialize(serialized);
+        Assert.Single(restored.RangePredicates);
+        Assert.Equal("Price", restored.RangePredicates[0].PropertyId);
+    }
+
+    [Fact]
+    public void RoundTrip_DateTimeRange_PreservesValues()
+    {
+        var min = new DateTime(2020, 1, 15, 0, 0, 0, DateTimeKind.Utc);
+        var max = new DateTime(2023, 12, 31, 0, 0, 0, DateTimeKind.Utc);
+        var state = new ViewerState
+        {
+            Predicates = new FilterPredicate[]
+            {
+                new DateTimeRangeFilterPredicate("Created", min, max)
+            }
+        };
+
+        var serialized = ViewerStateSerializer.Serialize(state);
+        Assert.Contains("GE(2020-01-15", serialized);
+        Assert.Contains("LE(2023-12-31", serialized);
+
+        var restored = ViewerStateSerializer.Deserialize(serialized);
+        Assert.Single(restored.RangePredicates);
+        Assert.Equal("Created", restored.RangePredicates[0].PropertyId);
+    }
 }

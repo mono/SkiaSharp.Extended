@@ -171,10 +171,10 @@ namespace SkiaSharp.Extended.PivotViewer
             double gap = 2; // pixels between items
             int maxItemsInColumn = sortedGroups.Max(g => g.Value.Count);
 
-            double itemHeight = Math.Min(
+            double itemHeight = Math.Max(1.0, Math.Min(
                 colWidth / itemAspectRatio,
-                (availableHeight - gap * maxItemsInColumn) / maxItemsInColumn);
-            double itemWidth = itemHeight * itemAspectRatio;
+                (availableHeight - gap * maxItemsInColumn) / maxItemsInColumn));
+            double itemWidth = Math.Max(1.0, itemHeight * itemAspectRatio);
 
             if (itemWidth > colWidth - gap * 2)
             {

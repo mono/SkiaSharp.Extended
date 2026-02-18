@@ -31,7 +31,7 @@ namespace SkiaSharp.Extended.PivotViewer
                     }
                     else if (pred is NumericRangeFilterPredicate nrp)
                     {
-                        parts.Add($"{Encode(pred.PropertyId)}=GE({nrp.Min})AND(LE({nrp.Max}))");
+                        parts.Add($"{Encode(pred.PropertyId)}=GE({nrp.Min.ToString(System.Globalization.CultureInfo.InvariantCulture)})AND(LE({nrp.Max.ToString(System.Globalization.CultureInfo.InvariantCulture)}))");
                     }
                     else if (pred is DateTimeRangeFilterPredicate drp)
                     {

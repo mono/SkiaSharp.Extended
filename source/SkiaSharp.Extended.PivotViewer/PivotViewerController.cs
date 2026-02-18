@@ -347,6 +347,12 @@ namespace SkiaSharp.Extended.PivotViewer
                     _filterEngine.AddStringFilter(pred.PropertyId, v);
             }
 
+            // Apply deserialized range filters
+            foreach (var (propertyId, expression) in state.RangePredicates)
+            {
+                TryApplyRangeFilter(propertyId, expression);
+            }
+
             // Apply view
             if (!string.IsNullOrEmpty(state.ViewId))
                 _currentView = state.ViewId;
@@ -360,6 +366,36 @@ namespace SkiaSharp.Extended.PivotViewer
                 _selectedItem = _allItems.FirstOrDefault(i => i.Id == state.SelectedItemId);
 
             UpdateInScopeItems();
+        }
+
+        private void TryApplyRangeFilter(string propertyId, string expression)
+        {
+            // Parse format: GE(min)AND(LE(max))
+            try
+            {
+                int geStart = expression.IndexOf("GE(") + 3;
+                int geEnd = expression.IndexOf(")AND(");
+                if (geStart < 3 || geEnd < 0) return;
+                string minStr = expression.Substring(geStart, geEnd - geStart);
+
+                int leStart = expression.IndexOf("LE(") + 3;
+                int leEnd = expression.LastIndexOf("))");
+                if (leStart < 3 || leEnd < 0) return;
+                string maxStr = expression.Substring(leStart, leEnd - leStart);
+
+                // Try numeric first, then DateTime
+                if (double.TryParse(minStr, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double numMin)
+                 && double.TryParse(maxStr, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double numMax))
+                {
+                    _filterEngine.AddNumericRangeFilter(propertyId, numMin, numMax);
+                }
+                else if (DateTime.TryParse(minStr, null, System.Globalization.DateTimeStyles.RoundtripKind, out var dtMin)
+                      && DateTime.TryParse(maxStr, null, System.Globalization.DateTimeStyles.RoundtripKind, out var dtMax))
+                {
+                    _filterEngine.AddDateTimeRangeFilter(propertyId, dtMin, dtMax);
+                }
+            }
+            catch { /* Ignore malformed expressions */ }
         }
 
         /// <summary>
