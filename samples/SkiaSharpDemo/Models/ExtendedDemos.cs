@@ -7,7 +7,24 @@ public static class ExtendedDemos
 	public static List<DemoGroup> GetAllDemos() =>
 		new()
 		{
-			new DemoGroup("EXTENDED")
+			new DemoGroup("DEEP ZOOM & PIVOTVIEWER")
+		{
+			new Demo
+			{
+				Title = "Deep Zoom",
+				Description = "Explore massive high-resolution images with smooth zoom and pan using tiled image pyramids.",
+				PageType = typeof(DeepZoomPage),
+				Color = Colors.Teal,
+			},
+			new Demo
+			{
+				Title = "PivotViewer",
+				Description = "Browse, filter, and sort large collections with interactive grid and graph views — just like Silverlight!",
+				PageType = typeof(PivotViewerPage),
+				Color = Colors.Indigo,
+			},
+		},
+		new DemoGroup("EXTENDED")
 			{
 				new Demo
 				{

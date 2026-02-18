@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:dz="clr-namespace:SkiaSharp.Extended.UI.Maui.DeepZoom;assembly=SkiaSharp.Extended.UI.Maui.DeepZoom"
+             x:Class="SkiaSharpDemo.Demos.DeepZoomPage"
+             Title="Deep Zoom">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Header -->
+        <Label Grid.Row="0" x:Name="statusLabel"
+               Text="Pinch to zoom, pan to scroll, double-tap to zoom in"
+               FontSize="12" TextColor="Gray"
+               HorizontalTextAlignment="Center"
+               Padding="8" />
+
+        <!-- Deep Zoom View -->
+        <dz:SKDeepZoomView Grid.Row="1"
+                           x:Name="deepZoomView"
+                           BackgroundColor="Black" />
+
+        <!-- Controls -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto"
+              Padding="8" ColumnSpacing="8">
+            <Label Grid.Column="0" x:Name="zoomLabel"
+                   Text="Zoom: 1.0x"
+                   VerticalTextAlignment="Center" FontSize="12" />
+            <Button Grid.Column="1" Text="Reset"
+                    Clicked="OnResetClicked"
+                    FontSize="12" Padding="8,4" />
+            <Button Grid.Column="2" Text="Zoom In"
+                    Clicked="OnZoomInClicked"
+                    FontSize="12" Padding="8,4" />
+            <Button Grid.Column="3" Text="Zoom Out"
+                    Clicked="OnZoomOutClicked"
+                    FontSize="12" Padding="8,4" />
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

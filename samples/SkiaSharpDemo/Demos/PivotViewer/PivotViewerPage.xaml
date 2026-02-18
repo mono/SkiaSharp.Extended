@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pv="clr-namespace:SkiaSharp.Extended.UI.Maui.PivotViewer;assembly=SkiaSharp.Extended.UI.Maui.PivotViewer"
+             x:Class="SkiaSharpDemo.Demos.PivotViewerPage"
+             Title="PivotViewer">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Header with URL bar -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto"
+              Padding="8" ColumnSpacing="8">
+            <Entry Grid.Column="0" x:Name="urlEntry"
+                   Placeholder="Enter CXML URL or use built-in sample"
+                   FontSize="12"
+                   ReturnCommand="{x:Null}" />
+            <Button Grid.Column="1" Text="Load"
+                    Clicked="OnLoadClicked"
+                    FontSize="12" Padding="8,4" />
+        </Grid>
+
+        <!-- PivotViewer -->
+        <pv:SKPivotViewerView Grid.Row="1"
+                               x:Name="pivotViewerView"
+                               BackgroundColor="#F0F0F0" />
+
+        <!-- Status bar -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto"
+              Padding="8" ColumnSpacing="8">
+            <Label Grid.Column="0" x:Name="statusLabel"
+                   Text="Ready — tap Load to load a collection"
+                   FontSize="12" TextColor="Gray"
+                   VerticalTextAlignment="Center" />
+            <Button Grid.Column="1" Text="Built-in Sample"
+                    Clicked="OnBuiltInSampleClicked"
+                    FontSize="12" Padding="8,4" />
+            <Button Grid.Column="2" Text="Remote Sample"
+                    Clicked="OnRemoteSampleClicked"
+                    FontSize="12" Padding="8,4" />
+        </Grid>
+
+    </Grid>
+
+</ContentPage>
