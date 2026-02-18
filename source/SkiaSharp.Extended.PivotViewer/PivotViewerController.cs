@@ -296,6 +296,8 @@ namespace SkiaSharp.Extended.PivotViewer
         /// </summary>
         public void SetAvailableSize(double width, double height)
         {
+            if (Math.Abs(_availableWidth - width) < 0.5 && Math.Abs(_availableHeight - height) < 0.5)
+                return;
             _availableWidth = width;
             _availableHeight = height;
             UpdateLayout();

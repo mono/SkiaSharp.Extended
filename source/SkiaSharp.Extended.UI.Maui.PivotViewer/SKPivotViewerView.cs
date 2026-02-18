@@ -995,7 +995,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var point = e.GetPosition(this);
             if (point.HasValue)
             {
-                var hit = _controller.HitTest(point.Value.X, point.Value.Y);
+                double contentX = point.Value.X - FilterPaneWidth;
+                double contentY = point.Value.Y - ControlBarHeight;
+                var hit = _controller.HitTest(
+                    contentX - _controller.PanOffsetX,
+                    contentY - _controller.PanOffsetY);
                 if (hit != null)
                     ItemDoubleClick?.Invoke(this, hit);
             }

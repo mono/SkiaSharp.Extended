@@ -1,5 +1,6 @@
 using SkiaSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private readonly TileCache _cache;
         private readonly DeepZoomRenderer _renderer;
         private ITileFetcher? _fetcher;
-        private readonly HashSet<TileId> _pendingTiles = new HashSet<TileId>();
+        private readonly ConcurrentDictionary<TileId, byte> _pendingTiles = new ConcurrentDictionary<TileId, byte>();
         private CancellationTokenSource? _cts;
         private bool _disposed;
 
@@ -228,10 +229,10 @@ namespace SkiaSharp.Extended.DeepZoom
             foreach (var request in visibleTiles)
             {
                 var tileId = request.TileId;
-                if (_cache.Contains(tileId) || _pendingTiles.Contains(tileId))
+                if (_cache.Contains(tileId) || _pendingTiles.ContainsKey(tileId))
                     continue;
 
-                _pendingTiles.Add(tileId);
+                _pendingTiles.TryAdd(tileId, 0);
                 _ = LoadTileAsync(tileId, ct);
             }
         }
@@ -248,21 +249,21 @@ namespace SkiaSharp.Extended.DeepZoom
                 if (bitmap != null && !ct.IsCancellationRequested)
                 {
                     _cache.Put(tileId, bitmap);
-                    _pendingTiles.Remove(tileId);
+                    _pendingTiles.TryRemove(tileId, out _);
                     InvalidateRequired?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
-                    _pendingTiles.Remove(tileId);
+                    _pendingTiles.TryRemove(tileId, out _);
                 }
             }
             catch (OperationCanceledException)
             {
-                _pendingTiles.Remove(tileId);
+                _pendingTiles.TryRemove(tileId, out _);
             }
             catch (Exception)
             {
-                _pendingTiles.Remove(tileId);
+                _pendingTiles.TryRemove(tileId, out _);
                 TileFailed?.Invoke(this, tileId);
             }
         }
