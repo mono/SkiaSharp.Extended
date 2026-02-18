@@ -32,7 +32,7 @@ namespace SkiaSharp.Extended.PivotViewer
     /// Loads and parses a CXML (Collection XML) file, producing a collection of
     /// PivotViewerItems with typed properties. Matches Silverlight SL5 CxmlCollectionSource.
     /// </summary>
-    public class CxmlCollectionSource
+    public class CxmlCollectionSource : System.ComponentModel.INotifyPropertyChanged
     {
         private static readonly XNamespace CollectionNs = "http://schemas.microsoft.com/collection/metadata/2009";
         private static readonly XNamespace PivotNs = "http://schemas.microsoft.com/livelabs/pivot/collection/2009";
@@ -47,6 +47,12 @@ namespace SkiaSharp.Extended.PivotViewer
             _items = new List<PivotViewerItem>();
             _properties = new List<PivotViewerProperty>();
         }
+
+        /// <summary>Raised when a property value changes. Matches Silverlight INotifyPropertyChanged.</summary>
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
 
         /// <summary>Source URI of the CXML file.</summary>
         public Uri? UriSource { get; set; }
@@ -89,6 +95,7 @@ namespace SkiaSharp.Extended.PivotViewer
                     var old = _state;
                     _state = value;
                     StateChanged?.Invoke(this, new CxmlCollectionStateChangedEventArgs(old, value));
+                    OnPropertyChanged(nameof(State));
                 }
             }
         }

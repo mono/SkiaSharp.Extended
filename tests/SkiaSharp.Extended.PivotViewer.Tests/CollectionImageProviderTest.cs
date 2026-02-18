@@ -534,6 +534,36 @@ public class CollectionImageProviderTest
 
     #endregion
 
+    #region Non-square aspect ratio
+
+    [Fact]
+    public async Task LoadThumbnailAsync_Composite_NonSquareAspectRatio_UsesCorrectYOffset()
+    {
+        var items = new List<DzcSubImage>();
+        for (int i = 0; i < 4; i++)
+        {
+            var sub = new DzcSubImage(i, i, 512, 256, null)
+            {
+                ViewportWidth = 1.0,
+                ViewportX = 0,
+                ViewportY = 0,
+            };
+            items.Add(sub);
+        }
+        var dzc = new DzcTileSource(8, 256, "jpg", items);
+
+        var fetcher = new TrackingTileFetcher();
+        fetcher.AddWildcard();
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        var result = await provider.LoadThumbnailAsync(0, 64);
+        Assert.NotNull(result);
+        Assert.True(result!.Width >= result.Height,
+            $"Non-square aspect 2:1 should produce wider-than-tall thumbnail: {result.Width}x{result.Height}");
+    }
+
+    #endregion
+
     #region Concurrent access
 
     [Fact]

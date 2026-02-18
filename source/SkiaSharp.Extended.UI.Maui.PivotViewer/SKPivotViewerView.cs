@@ -48,6 +48,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private bool _showSortDropdown;
         private SKRect _sortDropdownRect;
 
+        // Detail pane link hit regions (populated during RenderDetailPane)
+        private List<(SKRect Bounds, Uri Href)> _detailLinkHitRects = new();
+
         // Zoom slider
         private Slider? _zoomSlider;
         private bool _suppressZoomSliderUpdate;
@@ -870,6 +873,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void RenderDetailPane(SKCanvas canvas, float width, float height)
         {
+            _detailLinkHitRects.Clear();
+
             using var bgPaint = new SKPaint { Color = new SKColor(250, 250, 250) };
             canvas.DrawRect(0, 0, width, height, bgPaint);
 
@@ -951,6 +956,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     // Values — use blue + underline for Link-type properties
                     bool isLinkType = facet.Property is PivotViewerLinkProperty;
                     using var valuePaint = new SKPaint { Color = isLinkType ? new SKColor(0, 102, 204) : SKColors.Black };
+                    var rawValues = isLinkType ? item[facet.Property] : null;
+                    int valIdx = 0;
                     foreach (var val in facet.Values.Take(3))
                     {
                         if (y > height - 20) break;
@@ -961,8 +968,15 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                         {
                             // Draw underline for link values
                             canvas.DrawLine(Padding + 4, y + 14, Padding + 4 + textWidth, y + 14, valuePaint);
+
+                            // Record hit rect for link tap handling
+                            if (rawValues != null && valIdx < rawValues.Count && rawValues[valIdx] is PivotViewerHyperlink hl)
+                            {
+                                _detailLinkHitRects.Add((new SKRect(Padding + 4, y, Padding + 4 + textWidth, y + 16), hl.Uri));
+                            }
                         }
                         y += 16;
+                        valIdx++;
                     }
 
                     if (facet.Values.Count > 3)
@@ -1090,6 +1104,22 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             double contentX = x - FilterPaneWidth;
             double contentY = y - ControlBarHeight;
 
+            // Graph view: check if a histogram column was tapped for filtering
+            if (_controller.CurrentView == "graph" && _controller.HistogramLayout != null && _controller.SortProperty != null)
+            {
+                var layout = _controller.HistogramLayout;
+                double hitX = contentX - _controller.PanOffsetX;
+                foreach (var col in layout.Columns)
+                {
+                    if (hitX >= col.X && hitX < col.X + col.Width)
+                    {
+                        _controller.FilterPaneModel?.ToggleStringFilter(_controller.SortProperty.Id, col.Label);
+                        _canvasView.InvalidateSurface();
+                        return;
+                    }
+                }
+            }
+
             var hit = _controller.HitTest(contentX - _controller.PanOffsetX, contentY - _controller.PanOffsetY);
             _controller.SelectedItem = hit;
             _canvasView.InvalidateSurface();
@@ -1097,7 +1127,18 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void HandleDetailPaneTap(double localX, double localY)
         {
-            // If the selected item has an Href, treat taps as link clicks
+            // Check link hit rects first (populated during RenderDetailPane)
+            foreach (var (bounds, href) in _detailLinkHitRects)
+            {
+                if (localX >= bounds.Left && localX <= bounds.Right &&
+                    localY >= bounds.Top && localY <= bounds.Bottom)
+                {
+                    _controller.DetailPane.OnLinkClicked(href);
+                    return;
+                }
+            }
+
+            // Fallback: if the selected item has an Href, treat taps as link clicks
             var item = _controller.DetailPane.SelectedItem;
             if (item == null) return;
 
@@ -1203,6 +1244,59 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
                     if (category.ValueCounts.Count > 8)
                         catY += lineHeight - 2;
+                }
+                else if (category.Property.PropertyType == PivotViewerPropertyType.Decimal)
+                {
+                    // Numeric histogram tap handling
+                    if (_numericHistogramCache.TryGetValue(category.Property.Id, out var buckets) && buckets.Count > 0)
+                    {
+                        float histH = 40f;
+                        float barWidth = (FilterPaneWidth - Padding * 2 - 16) / Math.Max(1, buckets.Count);
+
+                        if (adjustedY >= catY && adjustedY < catY + histH)
+                        {
+                            int barIndex = (int)((x - Padding - 8) / barWidth);
+                            if (barIndex >= 0 && barIndex < buckets.Count)
+                            {
+                                filterPane.SetNumericRangeFilter(category.Property.Id, buckets[barIndex].Min, buckets[barIndex].Max);
+                                _canvasView.InvalidateSurface();
+                                return;
+                            }
+                        }
+                        catY += histH + 4;
+                        catY += lineHeight; // range label
+                    }
+                    else
+                    {
+                        catY += lineHeight; // "(no numeric data)"
+                    }
+                }
+                else if (category.Property.PropertyType == PivotViewerPropertyType.DateTime)
+                {
+                    // DateTime histogram tap handling
+                    if (_dateHistogramCache.TryGetValue(category.Property.Id, out var dateData) && dateData.Buckets.Count > 0)
+                    {
+                        var dtBuckets = dateData.Buckets;
+                        float histH = 40f;
+                        float barWidth = (FilterPaneWidth - Padding * 2 - 16) / Math.Max(1, dtBuckets.Count);
+
+                        if (adjustedY >= catY && adjustedY < catY + histH)
+                        {
+                            int barIndex = (int)((x - Padding - 8) / barWidth);
+                            if (barIndex >= 0 && barIndex < dtBuckets.Count)
+                            {
+                                filterPane.SetDateTimeRangeFilter(category.Property.Id, dtBuckets[barIndex].Min, dtBuckets[barIndex].Max);
+                                _canvasView.InvalidateSurface();
+                                return;
+                            }
+                        }
+                        catY += histH + 4;
+                        catY += lineHeight; // range label
+                    }
+                    else
+                    {
+                        catY += lineHeight; // "(no date data)"
+                    }
                 }
                 else
                 {

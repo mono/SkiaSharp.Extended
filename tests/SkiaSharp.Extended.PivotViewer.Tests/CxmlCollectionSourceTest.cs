@@ -661,6 +661,23 @@ public class CxmlCollectionSourceTest
     }
 
     [Fact]
+    public void PropertyChanged_FiresWhenStateChanges()
+    {
+        var source = new CxmlCollectionSource();
+        var changedProps = new List<string>();
+        source.PropertyChanged += (s, e) => changedProps.Add(e.PropertyName!);
+
+        // State setter is private; use reflection to trigger a state change
+        typeof(CxmlCollectionSource)
+            .GetProperty(nameof(CxmlCollectionSource.State))!
+            .GetSetMethod(nonPublic: true)!
+            .Invoke(source, new object[] { CxmlCollectionState.Loading });
+
+        Assert.Single(changedProps);
+        Assert.Equal("State", changedProps[0]);
+    }
+
+    [Fact]
     public void MergeSupplementalData_DoesNotDuplicateExistingValues()
     {
         var mainXml = @"<?xml version='1.0' encoding='utf-8'?>

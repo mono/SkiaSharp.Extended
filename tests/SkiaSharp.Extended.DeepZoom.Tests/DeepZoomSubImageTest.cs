@@ -104,6 +104,29 @@ public class DeepZoomSubImageTest
     }
 
     [Fact]
+    public void ParentToLocal_NonSquareAspect_YUsesHeight()
+    {
+        var sub = new DeepZoomSubImage(0, 0, 2.0, null); // width:height = 2:1
+        sub.ViewportWidth = 10;
+        sub.ViewportOriginX = 0;
+        sub.ViewportOriginY = 0;
+
+        var (_, _, mw, mh) = sub.GetMosaicBounds();
+        Assert.Equal(0.1, mw, 6);
+        Assert.Equal(0.05, mh, 6);
+
+        // Point at (0.05, 0.025) should map to (0.5, 0.5) in local space
+        var (lx, ly) = sub.ParentToLocal(0.05, 0.025);
+        Assert.Equal(0.5, lx, 6);
+        Assert.Equal(0.5, ly, 6);
+
+        // Round-trip back to parent
+        var (px, py) = sub.LocalToParent(0.5, 0.5);
+        Assert.Equal(0.05, px, 6);
+        Assert.Equal(0.025, py, 6);
+    }
+
+    [Fact]
     public void ZIndex_Settable()
     {
         var sub = new DeepZoomSubImage(0, 0, 1.0, null);

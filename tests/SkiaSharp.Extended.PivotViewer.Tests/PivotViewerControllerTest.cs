@@ -650,6 +650,81 @@ public class PivotViewerControllerTest
     }
 
     [Fact]
+    public void SerializeViewerState_PreservesFilterAndSort()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.FilterEngine.AddStringFilter("Manufacturer", "Alfa Romeo");
+        var yearProp = controller.Properties.FirstOrDefault(p => p.Id == "Production Year");
+        Assert.NotNull(yearProp);
+        controller.SortProperty = yearProp;
+
+        var state = controller.SerializeViewerState();
+
+        controller.FilterEngine.ClearAll();
+        controller.SortProperty = null;
+        Assert.Equal(controller.Items.Count, controller.InScopeItems.Count);
+        Assert.Null(controller.SortProperty);
+
+        controller.SetViewerState(state);
+
+        Assert.True(controller.InScopeItems.Count < controller.Items.Count);
+        Assert.NotNull(controller.SortProperty);
+        Assert.Equal("Production Year", controller.SortProperty!.Id);
+    }
+
+    [Fact]
+    public void LoadCollection_FromParsedCxmlString_PopulatesItemsAndProperties()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009""
+            xmlns:p=""http://schemas.microsoft.com/livelabs/pivot/collection/2009""
+            Name=""TestCars"">
+    <FacetCategories>
+        <FacetCategory Name=""Make"" Type=""String"" p:IsFilterVisible=""true"" p:IsWordWheelVisible=""true"" />
+        <FacetCategory Name=""Year"" Type=""Number"" p:IsFilterVisible=""true"" />
+    </FacetCategories>
+    <Items>
+        <Item Id=""1"" Name=""Model A"">
+            <Facets>
+                <Facet Name=""Make""><String Value=""Ford"" /></Facet>
+                <Facet Name=""Year""><Number Value=""2020"" /></Facet>
+            </Facets>
+        </Item>
+        <Item Id=""2"" Name=""Model B"">
+            <Facets>
+                <Facet Name=""Make""><String Value=""Toyota"" /></Facet>
+                <Facet Name=""Year""><Number Value=""2021"" /></Facet>
+            </Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        var controller = new PivotViewerController();
+        controller.LoadCollection(source);
+
+        Assert.Equal(2, controller.Items.Count);
+        Assert.True(controller.Properties.Count >= 2);
+        Assert.Equal(2, controller.InScopeItems.Count);
+    }
+
+    [Fact]
+    public void HitTest_ReturnsCorrectItemForGridPosition()
+    {
+        var (controller, _) = CreateTestController();
+
+        Assert.NotNull(controller.GridLayout);
+        Assert.True(controller.GridLayout!.Positions.Length > 1);
+
+        var pos = controller.GridLayout.Positions[1];
+        var hit = controller.HitTest(pos.X + pos.Width / 2, pos.Y + pos.Height / 2);
+
+        Assert.NotNull(hit);
+        Assert.Equal(controller.InScopeItems[1], hit);
+    }
+
+    [Fact]
     public void ZoomAbout_ProportionalFactor()
     {
         var (controller, _) = CreateTestController();
