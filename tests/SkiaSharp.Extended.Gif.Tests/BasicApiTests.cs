@@ -10,8 +10,7 @@ public class BasicApiTests
 	public void SKGifDecoder_Create_RequiresNonNullStream()
 	{
 		// Arrange & Act & Assert
-		// With SKRuntimeEffect pattern, Create/Build throw InvalidDataException with details
-		Assert.Throws<InvalidDataException>(() => SKGifDecoder.Create(null!));
+		Assert.Throws<ArgumentNullException>(() => SKGifDecoder.Create(null!));
 	}
 
 	[Fact]
