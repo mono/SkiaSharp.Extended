@@ -161,6 +161,20 @@ namespace SkiaSharp.Extended.PivotViewer
         public bool HasProperty(string propertyId) =>
             _values.TryGetValue(propertyId, out var list) && list.Count > 0;
 
+        /// <summary>
+        /// Returns true if this item has values for all defined properties.
+        /// Matches Silverlight's PivotViewerItem.HasAllProperties.
+        /// </summary>
+        public bool HasAllProperties(IEnumerable<PivotViewerProperty> allProperties)
+        {
+            foreach (var prop in allProperties)
+            {
+                if (!HasProperty(prop.Id))
+                    return false;
+            }
+            return true;
+        }
+
         /// <summary>Additional search text from CXML Extension elements.</summary>
         public string? AdditionalSearchText { get; set; }
 

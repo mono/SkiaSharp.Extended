@@ -220,4 +220,18 @@ public class PivotViewerPropertyTest
         var str = range.ToString();
         Assert.Contains("2020", str);
     }
+
+    [Fact]
+    public void NumericProperty_DecimalPlaces_DefaultIsNegativeOne()
+    {
+        var prop = new PivotViewerNumericProperty("Price");
+        Assert.Equal(-1, prop.DecimalPlaces);
+    }
+
+    [Fact]
+    public void NumericProperty_DecimalPlaces_CanBeSet()
+    {
+        var prop = new PivotViewerNumericProperty("Price") { DecimalPlaces = 2 };
+        Assert.Equal(2, prop.DecimalPlaces);
+    }
 }

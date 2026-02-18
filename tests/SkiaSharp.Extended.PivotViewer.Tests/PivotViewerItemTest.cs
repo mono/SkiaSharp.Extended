@@ -200,6 +200,34 @@ public class PivotViewerItemTest
     }
 
     [Fact]
+    public void HasAllProperties_True()
+    {
+        var prop1 = new PivotViewerStringProperty("A");
+        var prop2 = new PivotViewerNumericProperty("B");
+        var item = new PivotViewerItem("1");
+        item.Add(prop1, "val");
+        item.Add(prop2, 42.0m);
+        Assert.True(item.HasAllProperties(new PivotViewerProperty[] { prop1, prop2 }));
+    }
+
+    [Fact]
+    public void HasAllProperties_False_MissingOne()
+    {
+        var prop1 = new PivotViewerStringProperty("A");
+        var prop2 = new PivotViewerNumericProperty("B");
+        var item = new PivotViewerItem("1");
+        item.Add(prop1, "val");
+        Assert.False(item.HasAllProperties(new PivotViewerProperty[] { prop1, prop2 }));
+    }
+
+    [Fact]
+    public void HasAllProperties_EmptyProperties()
+    {
+        var item = new PivotViewerItem("1");
+        Assert.True(item.HasAllProperties(Array.Empty<PivotViewerProperty>()));
+    }
+
+    [Fact]
     public void GetPivotPropertyById()
     {
         var item = new PivotViewerItem("1");

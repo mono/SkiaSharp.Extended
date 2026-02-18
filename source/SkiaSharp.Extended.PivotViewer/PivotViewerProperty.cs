@@ -110,6 +110,12 @@ namespace SkiaSharp.Extended.PivotViewer
     public class PivotViewerNumericProperty : PivotViewerProperty
     {
         public PivotViewerNumericProperty(string id) : base(id, PivotViewerPropertyType.Decimal) { }
+
+        /// <summary>
+        /// Number of decimal places for display formatting.
+        /// Matches Silverlight's PivotViewerNumericProperty.DecimalPlaces.
+        /// </summary>
+        public int DecimalPlaces { get; set; } = -1; // -1 = auto (use Format string or default)
     }
 
     /// <summary>

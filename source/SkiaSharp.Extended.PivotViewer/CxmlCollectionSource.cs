@@ -75,6 +75,9 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>Related collections parsed from CXML.</summary>
         public IReadOnlyList<(string Name, string Href)> RelatedCollections { get; private set; } = Array.Empty<(string, string)>();
 
+        /// <summary>URI of supplemental CXML file that provides additional item data.</summary>
+        public string? SupplementUri { get; private set; }
+
         /// <summary>Current loading state.</summary>
         public CxmlCollectionState State
         {
@@ -109,6 +112,43 @@ namespace SkiaSharp.Extended.PivotViewer
         public PivotViewerItem? GetItemById(string itemId)
         {
             return _items.FirstOrDefault(i => i.Id == itemId);
+        }
+
+        /// <summary>
+        /// Merges supplemental data from another parsed CXML into this collection.
+        /// Items are matched by Id; new properties and values are added to existing items.
+        /// </summary>
+        public void MergeSupplementalData(CxmlCollectionSource supplement)
+        {
+            if (supplement == null)
+                throw new ArgumentNullException(nameof(supplement));
+
+            // Add any new properties from the supplement
+            var existingIds = new HashSet<string>(_properties.Select(p => p.Id), StringComparer.Ordinal);
+            foreach (var prop in supplement.ItemProperties)
+            {
+                if (!existingIds.Contains(prop.Id))
+                {
+                    _properties.Add(prop);
+                    existingIds.Add(prop.Id);
+                }
+            }
+
+            // Merge item data
+            foreach (var suppItem in supplement.Items)
+            {
+                var target = GetItemById(suppItem.Id);
+                if (target == null) continue;
+
+                foreach (var prop in suppItem.Properties)
+                {
+                    var values = suppItem[prop];
+                    if (values != null && values.Count > 0)
+                    {
+                        target.Add(prop, values.ToArray());
+                    }
+                }
+            }
         }
 
         /// <summary>Parses a CXML XML string.</summary>
@@ -208,6 +248,7 @@ namespace SkiaSharp.Extended.PivotViewer
                 source.Icon = collectionElement.Attribute(PivotNs + "Icon")?.Value;
 
                 var supplementAttr = collectionElement.Attribute(PivotNs + "Supplement");
+                source.SupplementUri = supplementAttr?.Value;
                 source.AdditionalSearchUri = collectionElement.Attribute(PivotNs + "AdditionalSearchUri")?.Value;
 
                 // Parse FacetCategories
@@ -331,6 +372,14 @@ namespace SkiaSharp.Extended.PivotViewer
                             }
                         }
                     }
+                }
+
+                // Parse DecimalPlaces for Numeric properties
+                if (property is PivotViewerNumericProperty numProp)
+                {
+                    var dp = fc.Attribute(PivotNs + "DecimalPlaces")?.Value;
+                    if (dp != null && int.TryParse(dp, out int decimalPlaces))
+                        numProp.DecimalPlaces = decimalPlaces;
                 }
 
                 // Lock after configuration

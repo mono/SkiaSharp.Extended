@@ -411,6 +411,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 ? _controller.LayoutTransition.GetCurrentPositions()
                 : layout.Positions;
 
+            // Show "no results" when filters produce 0 items
+            if (positions.Length == 0)
+            {
+                RenderNoResultsMessage(canvas, info.Width, info.Height);
+                return;
+            }
+
             // Apply pan offset
             float panX = (float)_controller.PanOffsetX;
             float panY = (float)_controller.PanOffsetY;
@@ -495,6 +502,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var accentColor = ToSKColor(AccentColor);
             _itemPaint.Color = accentColor;
 
+            // Show "no results" when filters produce 0 items
+            if (layout.Columns.Length == 0)
+            {
+                RenderNoResultsMessage(canvas, info.Width, info.Height);
+                return;
+            }
+
             foreach (var col in layout.Columns)
             {
                 // Draw column label
@@ -549,6 +563,14 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 (byte)(color.Green * 255),
                 (byte)(color.Blue * 255),
                 (byte)(color.Alpha * 255));
+        }
+
+        private void RenderNoResultsMessage(SKCanvas canvas, float width, float height)
+        {
+            const string message = "No results found";
+            _textFont.Size = 18;
+            using var paint = new SKPaint { Color = new SKColor(128, 128, 128) };
+            canvas.DrawText(message, width / 2, height / 2, SKTextAlign.Center, _textFont, paint);
         }
 
         // --- Control Bar ---
@@ -926,13 +948,20 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     canvas.DrawText(facet.DisplayName, Padding, y + 12, SKTextAlign.Left, _textFont, propPaint);
                     y += 16;
 
-                    // Values
-                    using var valuePaint = new SKPaint { Color = SKColors.Black };
+                    // Values — use blue + underline for Link-type properties
+                    bool isLinkType = facet.Property is PivotViewerLinkProperty;
+                    using var valuePaint = new SKPaint { Color = isLinkType ? new SKColor(0, 102, 204) : SKColors.Black };
                     foreach (var val in facet.Values.Take(3))
                     {
                         if (y > height - 20) break;
                         string displayVal = val.Length > 40 ? val.Substring(0, 37) + "..." : val;
+                        float textWidth = _textFont.MeasureText(displayVal, out _);
                         canvas.DrawText(displayVal, Padding + 4, y + 12, SKTextAlign.Left, _textFont, valuePaint);
+                        if (isLinkType)
+                        {
+                            // Draw underline for link values
+                            canvas.DrawLine(Padding + 4, y + 14, Padding + 4 + textWidth, y + 14, valuePaint);
+                        }
                         y += 16;
                     }
 

@@ -496,4 +496,120 @@ public class CxmlCollectionSourceTest
         Assert.NotNull(item1);
         Assert.Equal("fallback text", item1!.AdditionalSearchText);
     }
+
+    [Fact]
+    public void Parse_SupplementUri()
+    {
+        var xml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Test' p:Supplement='descriptions.cxml'>
+    <FacetCategories />
+    <Items />
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        Assert.Equal("descriptions.cxml", source.SupplementUri);
+    }
+
+    [Fact]
+    public void Parse_DecimalPlaces_FromAttribute()
+    {
+        var xml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Test'>
+    <FacetCategories>
+        <FacetCategory Name='Price' Type='Number' p:DecimalPlaces='2' />
+    </FacetCategories>
+    <Items />
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        var priceProp = source.ItemProperties.First(p => p.Id == "Price");
+        var numProp = Assert.IsType<PivotViewerNumericProperty>(priceProp);
+        Assert.Equal(2, numProp.DecimalPlaces);
+    }
+
+    [Fact]
+    public void MergeSupplementalData_AddsNewProperties()
+    {
+        var mainXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Main'>
+    <FacetCategories>
+        <FacetCategory Name='Name' Type='String' />
+    </FacetCategories>
+    <Items>
+        <Item Id='1' Name='Alpha'>
+            <Facets><Facet Name='Name'><String Value='Alpha'/></Facet></Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var suppXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Supplement'>
+    <FacetCategories>
+        <FacetCategory Name='Desc' Type='LongString' />
+    </FacetCategories>
+    <Items>
+        <Item Id='1'>
+            <Facets><Facet Name='Desc'><String Value='A description'/></Facet></Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var main = CxmlCollectionSource.Parse(mainXml);
+        var supp = CxmlCollectionSource.Parse(suppXml);
+        main.MergeSupplementalData(supp);
+
+        // The Desc property should now exist on the item
+        var item = main.GetItemById("1");
+        Assert.NotNull(item);
+        var descValues = item!["Desc"];
+        Assert.NotNull(descValues);
+        Assert.Single(descValues!);
+        Assert.Equal("A description", descValues![0]?.ToString());
+    }
+
+    [Fact]
+    public void MergeSupplementalData_IgnoresUnmatchedItems()
+    {
+        var mainXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Main'>
+    <FacetCategories><FacetCategory Name='Name' Type='String' /></FacetCategories>
+    <Items>
+        <Item Id='1' Name='Alpha'>
+            <Facets><Facet Name='Name'><String Value='Alpha'/></Facet></Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var suppXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Supp'>
+    <FacetCategories><FacetCategory Name='Extra' Type='String' /></FacetCategories>
+    <Items>
+        <Item Id='999'>
+            <Facets><Facet Name='Extra'><String Value='Ghost'/></Facet></Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var main = CxmlCollectionSource.Parse(mainXml);
+        var supp = CxmlCollectionSource.Parse(suppXml);
+        main.MergeSupplementalData(supp);
+
+        // Item 999 does not exist in main, so it should be ignored
+        Assert.Null(main.GetItemById("999"));
+        // Item 1 should not have Extra
+        var item = main.GetItemById("1");
+        Assert.Null(item!["Extra"]);
+    }
 }
