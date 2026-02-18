@@ -286,6 +286,33 @@ namespace SkiaSharp.Extended.PivotViewer
 
                 property.Options |= options;
 
+                // Parse SortOrder extension for String properties
+                if (property is PivotViewerStringProperty strProp)
+                {
+                    var extension = fc.Element(CollectionNs + "Extension");
+                    if (extension != null)
+                    {
+                        foreach (var sortOrder in extension.Elements(PivotNs + "SortOrder"))
+                        {
+                            string? sortName = sortOrder.Attribute("Name")?.Value;
+                            if (sortName == null) continue;
+
+                            var sortValues = new List<string>();
+                            foreach (var sv in sortOrder.Elements(PivotNs + "SortValue"))
+                            {
+                                string? val = sv.Attribute("Value")?.Value;
+                                if (val != null) sortValues.Add(val);
+                            }
+
+                            if (sortValues.Count > 0)
+                            {
+                                var comparer = new CustomSortOrderComparer(sortValues);
+                                strProp.Sorts.Add(new KeyValuePair<string, IComparer<string>>(sortName, comparer));
+                            }
+                        }
+                    }
+                }
+
                 // Lock after configuration
                 property.Lock();
                 properties[name] = property;

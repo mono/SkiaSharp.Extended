@@ -209,4 +209,73 @@ public class ViewerStateSerializerTest
         Assert.Single(restored.RangePredicates);
         Assert.Equal("Created", restored.RangePredicates[0].PropertyId);
     }
+
+    [Fact]
+    public void Deserialize_EmptyString_ReturnsValidState()
+    {
+        var state = ViewerStateSerializer.Deserialize("");
+        Assert.NotNull(state);
+        Assert.Null(state.ViewId);
+        Assert.Empty(state.StringPredicates);
+        Assert.Empty(state.RangePredicates);
+    }
+
+    [Fact]
+    public void Deserialize_HashOnly_ReturnsValidState()
+    {
+        var state = ViewerStateSerializer.Deserialize("#");
+        Assert.NotNull(state);
+        Assert.Null(state.ViewId);
+    }
+
+    [Fact]
+    public void Deserialize_TripleHash_ReturnsValidState()
+    {
+        var state = ViewerStateSerializer.Deserialize("###");
+        Assert.NotNull(state);
+        Assert.Null(state.ViewId);
+    }
+
+    [Fact]
+    public void Deserialize_TruncatedKeyOnly_ReturnsValidState()
+    {
+        var state = ViewerStateSerializer.Deserialize("key=");
+        Assert.NotNull(state);
+        // key= has empty value — should not throw
+    }
+
+    [Fact]
+    public void Deserialize_TruncatedValueOnly_ReturnsValidState()
+    {
+        // =value has empty key (eq == 0), should be skipped
+        var state = ViewerStateSerializer.Deserialize("=value");
+        Assert.NotNull(state);
+        Assert.Null(state.ViewId);
+    }
+
+    [Fact]
+    public void Deserialize_NoEqualsSign_ReturnsValidState()
+    {
+        var state = ViewerStateSerializer.Deserialize("noequalssign");
+        Assert.NotNull(state);
+        Assert.Null(state.ViewId);
+    }
+
+    [Fact]
+    public void Deserialize_DoubleEncodedValues_ReturnsValidState()
+    {
+        // Double-encoded: %2520 (% → %25, then space → 20)
+        var state = ViewerStateSerializer.Deserialize("Name%3DHello%2520World");
+        Assert.NotNull(state);
+    }
+
+    [Fact]
+    public void Deserialize_ExtraAmpersands_ReturnsValidState()
+    {
+        var state = ViewerStateSerializer.Deserialize("&&filter=val&&");
+        Assert.NotNull(state);
+        // Should parse filter=val and skip empty segments
+        Assert.Single(state.StringPredicates);
+        Assert.Equal("val", state.StringPredicates[0].Values.First());
+    }
 }

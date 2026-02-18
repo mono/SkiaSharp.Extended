@@ -250,4 +250,46 @@ public class ViewportTest
         Assert.NotEqual(a, c);
         Assert.True(a != c);
     }
+
+    [Fact]
+    public void GetZoomRect_InitialViewport_ReturnsFullWidth()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            AspectRatio = 2.0,
+            ViewportWidth = 1.0,
+            ViewportOriginX = 0.0,
+            ViewportOriginY = 0.0
+        };
+
+        var (x, y, w, h) = vp.GetZoomRect(vp.ViewportWidth);
+        Assert.Equal(0.0, x);
+        Assert.Equal(0.0, y);
+        Assert.Equal(1.0, w);
+        Assert.Equal(0.5, h, 6); // 1.0 / 2.0
+    }
+
+    [Fact]
+    public void GetZoomRect_AfterZoom_ReturnsSmallerRect()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            AspectRatio = 1.0,
+            ViewportWidth = 1.0,
+            ViewportOriginX = 0.0,
+            ViewportOriginY = 0.0
+        };
+
+        // Zoom in 2x
+        vp.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
+
+        var (x, y, w, h) = vp.GetZoomRect(vp.ViewportWidth);
+        Assert.Equal(0.5, w, 6); // 1.0 / 2.0
+        Assert.Equal(0.5, h, 6); // 0.5 / 1.0
+        Assert.True(w < 1.0);
+    }
 }

@@ -128,6 +128,16 @@ namespace SkiaSharp.Extended.DeepZoom
             _viewportOriginY -= deltaY / scale;
         }
 
+        /// <summary>
+        /// Returns the logical rectangle visible at a given ViewportWidth.
+        /// Mirrors Silverlight's MultiScaleImage.GetZoomRect().
+        /// </summary>
+        public (double X, double Y, double Width, double Height) GetZoomRect(double viewportWidth)
+        {
+            double height = viewportWidth / AspectRatio;
+            return (ViewportOriginX, ViewportOriginY, viewportWidth, height);
+        }
+
         /// <summary>Gets the logical bounds of the current viewport.</summary>
         public (double Left, double Top, double Right, double Bottom) GetLogicalBounds()
         {

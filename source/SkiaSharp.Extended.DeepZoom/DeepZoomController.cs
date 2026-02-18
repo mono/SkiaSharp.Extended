@@ -19,6 +19,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private readonly TileScheduler _scheduler;
         private readonly TileCache _cache;
         private readonly DeepZoomRenderer _renderer;
+        private List<DeepZoomSubImage> _subImages = new List<DeepZoomSubImage>();
         private ITileFetcher? _fetcher;
         private readonly ConcurrentDictionary<TileId, byte> _pendingTiles = new ConcurrentDictionary<TileId, byte>();
         private CancellationTokenSource? _cts;
@@ -51,6 +52,9 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>The loaded tile source, or null if not loaded.</summary>
         public DziTileSource? TileSource => _tileSource;
 
+        /// <summary>The sub-images from the loaded DZC, or empty if not loaded from a DZC.</summary>
+        public IReadOnlyList<DeepZoomSubImage> SubImages => _subImages;
+
         /// <summary>Whether spring animations are enabled. Default true.</summary>
         public bool UseSprings { get; set; } = true;
 
@@ -63,6 +67,13 @@ namespace SkiaSharp.Extended.DeepZoom
         /// Whether the controller is idle (no pending tile loads and no active animation).
         /// </summary>
         public bool IsIdle => _pendingTiles.Count == 0 && _spring.IsSettled;
+
+        /// <summary>
+        /// Returns the logical rectangle visible at the current viewport state.
+        /// Convenience method that uses the current ViewportWidth.
+        /// </summary>
+        public (double X, double Y, double Width, double Height) GetZoomRect()
+            => _viewport.GetZoomRect(_viewport.ViewportWidth);
 
         /// <summary>Show tile borders for debugging.</summary>
         public bool ShowTileBorders
@@ -94,11 +105,48 @@ namespace SkiaSharp.Extended.DeepZoom
             _cts?.Cancel();
             _cts = new CancellationTokenSource();
             _pendingTiles.Clear();
+            _subImages.Clear();
 
             _tileSource = tileSource;
             _fetcher = fetcher;
 
             // Reset viewport to show the full image
+            _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
+            _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
+            _viewport.ViewportOriginX = 0;
+            _viewport.ViewportOriginY = 0;
+            _viewport.ViewportWidth = 1.0;
+
+            var state = _viewport.GetState();
+            _spring.Reset(state.OriginX, state.OriginY, state.ViewportWidth);
+
+            ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Loads a DZC tile source, populates SubImages, and sets up the tile fetcher.
+        /// </summary>
+        public void Load(DzcTileSource dzcTileSource, ITileFetcher fetcher)
+        {
+            _cts?.Cancel();
+            _cts = new CancellationTokenSource();
+            _pendingTiles.Clear();
+
+            _subImages = new List<DeepZoomSubImage>();
+            foreach (var item in dzcTileSource.Items)
+            {
+                var sub = new DeepZoomSubImage(item.Id, item.MortonIndex, item.AspectRatio, item.Source)
+                {
+                    ViewportWidth = item.ViewportWidth,
+                    ViewportOriginX = item.ViewportX,
+                    ViewportOriginY = item.ViewportY,
+                };
+                _subImages.Add(sub);
+            }
+
+            _fetcher = fetcher;
+
+            // Reset viewport
             _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
             _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
             _viewport.ViewportOriginX = 0;

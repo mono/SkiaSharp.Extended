@@ -292,4 +292,74 @@ public class GridLayoutEngineTest
             Assert.True(pos.Height > 0);
         }
     }
+
+    [Fact]
+    public void ComputeLayout_VeryWideAspectRatio_NoDegeneratePositions()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(12);
+        var layout = engine.ComputeLayout(items, 800, 600, itemAspectRatio: 10.0);
+
+        Assert.Equal(12, layout.Positions.Length);
+        Assert.True(layout.ItemWidth > 0);
+        Assert.True(layout.ItemHeight > 0);
+        foreach (var pos in layout.Positions)
+        {
+            Assert.True(pos.X >= 0, $"Negative X: {pos.X}");
+            Assert.True(pos.Y >= 0, $"Negative Y: {pos.Y}");
+            Assert.True(pos.Width > 0);
+            Assert.True(pos.Height > 0);
+        }
+    }
+
+    [Fact]
+    public void ComputeLayout_VeryTallAspectRatio_NoDegeneratePositions()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(12);
+        var layout = engine.ComputeLayout(items, 800, 600, itemAspectRatio: 0.1);
+
+        Assert.Equal(12, layout.Positions.Length);
+        Assert.True(layout.ItemWidth > 0);
+        Assert.True(layout.ItemHeight > 0);
+        foreach (var pos in layout.Positions)
+        {
+            Assert.True(pos.X >= 0, $"Negative X: {pos.X}");
+            Assert.True(pos.Y >= 0, $"Negative Y: {pos.Y}");
+            Assert.True(pos.Width > 0);
+            Assert.True(pos.Height > 0);
+        }
+    }
+
+    [Fact]
+    public void ComputeLayout_SingleItem_HasValidPosition()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(1);
+        var layout = engine.ComputeLayout(items, 800, 600, itemAspectRatio: 1.5);
+
+        Assert.Single(layout.Positions);
+        var pos = layout.Positions[0];
+        Assert.True(pos.X >= 0);
+        Assert.True(pos.Y >= 0);
+        Assert.True(pos.Width > 0);
+        Assert.True(pos.Height > 0);
+    }
+
+    [Fact]
+    public void ComputeLayout_VeryLargeCollection_AllItemsPlacedWithValidPositions()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(1000);
+        var layout = engine.ComputeLayout(items, 1920, 1080);
+
+        Assert.Equal(1000, layout.Positions.Length);
+        foreach (var pos in layout.Positions)
+        {
+            Assert.True(pos.X >= 0, $"Negative X: {pos.X}");
+            Assert.True(pos.Y >= 0, $"Negative Y: {pos.Y}");
+            Assert.True(pos.Width > 0);
+            Assert.True(pos.Height > 0);
+        }
+    }
 }

@@ -360,4 +360,41 @@ public class CxmlCollectionSourceTest
             // Exception propagated, which is also acceptable
         }
     }
+
+    [Fact]
+    public async Task ParseCxml_MsdnMagazine_ParsesSortOrder()
+    {
+        using var stream = TestDataHelper.GetStream("msdnmagazine.cxml");
+        var source = await CxmlCollectionSource.LoadAsync(stream);
+        Assert.Equal(CxmlCollectionState.Loaded, source.State);
+
+        var popularity = source.ItemProperties.FirstOrDefault(p => p.Id == "Popularity");
+        Assert.NotNull(popularity);
+        Assert.IsType<PivotViewerStringProperty>(popularity);
+
+        var strProp = (PivotViewerStringProperty)popularity;
+        Assert.True(strProp.Sorts.Count > 0, "Sorts should be populated from SortOrder extension");
+
+        var sort = strProp.Sorts[0];
+        Assert.Equal("Popularity Group", sort.Key);
+
+        // Verify the sort order: "Viewed Often" < "Viewed Occasionally" < "Viewed Infrequently"
+        var comparer = sort.Value;
+        Assert.True(comparer.Compare("Viewed Often", "Viewed Occasionally") < 0);
+        Assert.True(comparer.Compare("Viewed Occasionally", "Viewed Infrequently") < 0);
+        Assert.True(comparer.Compare("Viewed Often", "Viewed Infrequently") < 0);
+    }
+
+    [Fact]
+    public void CustomSortOrderComparer_SortsKnownValuesFirst()
+    {
+        var comparer = new CustomSortOrderComparer(new[] { "High", "Medium", "Low" });
+
+        Assert.True(comparer.Compare("High", "Medium") < 0);
+        Assert.True(comparer.Compare("Medium", "Low") < 0);
+        Assert.True(comparer.Compare("High", "Low") < 0);
+        Assert.Equal(0, comparer.Compare("High", "HIGH")); // case insensitive
+        Assert.True(comparer.Compare("Low", "Unknown") < 0); // known < unknown
+        Assert.True(comparer.Compare("Apple", "Banana") < 0); // unknown sorts alphabetically
+    }
 }

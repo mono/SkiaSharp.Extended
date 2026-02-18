@@ -51,4 +51,41 @@ namespace SkiaSharp.Extended.PivotViewer
             return string.Compare(x, y, StringComparison.OrdinalIgnoreCase);
         }
     }
+
+    /// <summary>
+    /// Sorts string values by a predefined order from CXML SortOrder extension.
+    /// Values not in the predefined order sort after all known values, alphabetically.
+    /// </summary>
+    public class CustomSortOrderComparer : IComparer<string>
+    {
+        private readonly Dictionary<string, int> _order;
+
+        /// <summary>
+        /// Creates a comparer from an ordered list of values.
+        /// The first value in the list sorts first.
+        /// </summary>
+        public CustomSortOrderComparer(IList<string> orderedValues)
+        {
+            _order = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < orderedValues.Count; i++)
+                _order[orderedValues[i]] = i;
+        }
+
+        public int Compare(string? x, string? y)
+        {
+            if (x == null && y == null) return 0;
+            if (x == null) return 1;
+            if (y == null) return -1;
+
+            bool hasX = _order.TryGetValue(x, out int indexX);
+            bool hasY = _order.TryGetValue(y, out int indexY);
+
+            if (hasX && hasY) return indexX.CompareTo(indexY);
+            if (hasX) return -1; // Known values sort before unknown
+            if (hasY) return 1;
+
+            // Both unknown: alphabetical
+            return string.Compare(x, y, StringComparison.OrdinalIgnoreCase);
+        }
+    }
 }

@@ -331,6 +331,33 @@ public class DeepZoomControllerTest
     }
 
     [Fact]
+    public void SubImages_EmptyByDefault()
+    {
+        using var controller = new DeepZoomController();
+        Assert.Empty(controller.SubImages);
+    }
+
+    [Fact]
+    public void Load_DzcTileSource_PopulatesSubImages()
+    {
+        using var controller = new DeepZoomController();
+        var items = new List<DzcSubImage>
+        {
+            new DzcSubImage(0, 0, 256, 128, null) { ViewportWidth = 2.0, ViewportX = -0.5, ViewportY = -0.25 },
+            new DzcSubImage(1, 1, 512, 512, "img1.dzi") { ViewportWidth = 1.0, ViewportX = 0, ViewportY = 0 },
+        };
+        var dzc = new DzcTileSource(8, 256, "jpg", items);
+        using var fetcher = new MemoryTileFetcher();
+
+        controller.Load(dzc, fetcher);
+
+        Assert.Equal(2, controller.SubImages.Count);
+        Assert.Equal(0, controller.SubImages[0].Id);
+        Assert.Equal(2.0, controller.SubImages[0].AspectRatio, 6);
+        Assert.Equal("img1.dzi", controller.SubImages[1].Source);
+    }
+
+    [Fact]
     public async Task TileScheduling_FetchesTiles()
     {
         using var controller = new DeepZoomController();

@@ -533,6 +533,67 @@ public class CollectionImageProviderTest
     }
 
     #endregion
+
+    #region Concurrent access
+
+    [Fact]
+    public async Task LoadThumbnailAsync_ParallelDifferentIndices_AllSucceed()
+    {
+        var dzc = CreateCompositeDzc(10);
+        var fetcher = new TrackingTileFetcher();
+        fetcher.AddWildcard();
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        var tasks = Enumerable.Range(0, 10)
+            .Select(i => provider.LoadThumbnailAsync(i, 64))
+            .ToArray();
+        var results = await Task.WhenAll(tasks);
+
+        Assert.All(results, r => Assert.NotNull(r));
+        Assert.Equal(10, provider.CachedThumbnailCount);
+    }
+
+    [Fact]
+    public async Task LoadThumbnailAsync_ParallelSameIndex_UseSemaphoreCorrectly()
+    {
+        var dzc = CreateCompositeDzc(4);
+        var fetcher = new TrackingTileFetcher();
+        fetcher.AddWildcard();
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        // 5 parallel calls for the same index
+        var tasks = Enumerable.Range(0, 5)
+            .Select(_ => provider.LoadThumbnailAsync(0, 64))
+            .ToArray();
+        var results = await Task.WhenAll(tasks);
+
+        // All should return the same bitmap instance (cached after first load)
+        Assert.All(results, r => Assert.NotNull(r));
+        Assert.Equal(1, provider.CachedThumbnailCount);
+        var first = results[0];
+        Assert.All(results, r => Assert.Same(first, r));
+    }
+
+    [Fact]
+    public async Task LoadThumbnailAsync_ParallelMixed_CacheCountMatchesExpected()
+    {
+        var dzc = CreateCompositeDzc(8);
+        var fetcher = new TrackingTileFetcher();
+        fetcher.AddWildcard();
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        // Mix of different and duplicate indices
+        var indices = new[] { 0, 1, 2, 0, 1, 3, 2, 3, 4, 4 };
+        var tasks = indices
+            .Select(i => provider.LoadThumbnailAsync(i, 64))
+            .ToArray();
+        await Task.WhenAll(tasks);
+
+        // Only unique indices should be cached: 0,1,2,3,4 = 5
+        Assert.Equal(5, provider.CachedThumbnailCount);
+    }
+
+    #endregion
 }
 
 /// <summary>
