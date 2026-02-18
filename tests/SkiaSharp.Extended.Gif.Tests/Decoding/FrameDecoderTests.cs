@@ -48,15 +48,21 @@ namespace SkiaSharp.Extended.Gif.Tests.Decoding
         }
         
         [Fact]
-        public void ParsedFrame_GetColorTable_ThrowsWhenNone()
+        public void ParsedFrame_GetColorTable_FallsBackToBlackWhite()
         {
+            // Changed to test fallback behavior instead of throwing
+            // Per fix for broken GIFs with no color table
             var frame = new ParsedFrame
             {
                 GlobalColorTable = null,
                 LocalColorTable = null
             };
             
-            Assert.Throws<InvalidDataException>(() => frame.GetColorTable());
+            var colorTable = frame.GetColorTable();
+            Assert.NotNull(colorTable);
+            Assert.Equal(2, colorTable.Length);
+            Assert.Equal(SKColors.Black, colorTable[0]);
+            Assert.Equal(SKColors.White, colorTable[1]);
         }
     }
 }
