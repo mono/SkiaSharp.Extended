@@ -27,6 +27,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private readonly SKPaint _labelPaint;
         private readonly SKFont _textFont;
         private readonly SKFont _labelFont;
+        private bool _suppressPropertySync;
         private IDispatcherTimer? _animationTimer;
         private double _previousPanX;
         private double _previousPanY;
@@ -114,6 +115,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             };
             _controller.SelectionChanged += (s, e) =>
             {
+                // Sync two-way bindable properties back from controller
+                _suppressPropertySync = true;
+                SetValue(SelectedItemProperty, _controller.SelectedItem);
+                SetValue(SelectedIndexProperty, _controller.SelectedIndex);
+                _suppressPropertySync = false;
                 SelectionChanged?.Invoke(this, e);
                 MainThread.BeginInvokeOnMainThread(() => _canvasView.InvalidateSurface());
             };
@@ -122,7 +128,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 InvalidateHistogramCaches();
                 FilterChanged?.Invoke(this, EventArgs.Empty);
             };
-            _controller.ViewChanged += (s, e) => ViewChanged?.Invoke(this, EventArgs.Empty);
+            _controller.ViewChanged += (s, e) =>
+            {
+                _suppressPropertySync = true;
+                SetValue(ViewProperty, _controller.CurrentView);
+                _suppressPropertySync = false;
+                ViewChanged?.Invoke(this, EventArgs.Empty);
+            };
             _controller.CollectionChanged += (s, e) =>
             {
                 InvalidateHistogramCaches();
@@ -259,7 +271,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private static void OnSelectedItemChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is SKPivotViewerView view)
+            if (bindable is SKPivotViewerView view && !view._suppressPropertySync)
             {
                 view._controller.SelectedItem = newValue as PivotViewerItem;
             }
@@ -267,7 +279,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private static void OnSelectedIndexChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is SKPivotViewerView view && newValue is int index)
+            if (bindable is SKPivotViewerView view && !view._suppressPropertySync && newValue is int index)
             {
                 view._controller.SelectedIndex = index;
             }
@@ -275,7 +287,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private static void OnSortPivotPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is SKPivotViewerView view)
+            if (bindable is SKPivotViewerView view && !view._suppressPropertySync)
             {
                 view._controller.SortProperty = newValue as PivotViewerProperty;
             }
@@ -283,7 +295,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private static void OnViewChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is SKPivotViewerView view && newValue is string viewMode)
+            if (bindable is SKPivotViewerView view && !view._suppressPropertySync && newValue is string viewMode)
             {
                 view._controller.CurrentView = viewMode;
             }

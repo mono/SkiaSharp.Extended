@@ -111,6 +111,10 @@ namespace SkiaSharp.Extended.DeepZoom
             _pendingTiles.Clear();
             _subImages.Clear();
 
+            // Dispose previous fetcher if it's a different instance
+            if (_fetcher != null && !ReferenceEquals(_fetcher, fetcher))
+                (_fetcher as IDisposable)?.Dispose();
+
             _tileSource = tileSource;
             _fetcher = fetcher;
 
@@ -151,6 +155,10 @@ namespace SkiaSharp.Extended.DeepZoom
                 };
                 _subImages.Add(sub);
             }
+
+            // Dispose previous fetcher if it's a different instance
+            if (_fetcher != null && !ReferenceEquals(_fetcher, fetcher))
+                (_fetcher as IDisposable)?.Dispose();
 
             _fetcher = fetcher;
 
@@ -340,6 +348,7 @@ namespace SkiaSharp.Extended.DeepZoom
 
             _cts?.Cancel();
             _cts?.Dispose();
+            (_fetcher as IDisposable)?.Dispose();
             _cache.Dispose();
             _renderer.Dispose();
         }

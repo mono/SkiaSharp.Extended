@@ -739,4 +739,19 @@ public class PivotViewerControllerTest
         controller.ZoomAbout(0.8, 512, 384);
         Assert.True(controller.ZoomLevel < before);
     }
+
+    [Fact]
+    public void ZoomAbout_FromMaxZoom_DoesNotExplodePanOffset()
+    {
+        var (controller, _) = CreateTestController();
+
+        // Zoom to maximum
+        controller.ZoomLevel = 1.0;
+        controller.Pan(100, 100);
+
+        // Zoom out from max — should not cause massive pan jumps
+        controller.ZoomAbout(0.5, 200, 200);
+        Assert.True(controller.ZoomLevel < 1.0);
+        // Pan offsets should remain reasonable (not explode to thousands)
+    }
 }

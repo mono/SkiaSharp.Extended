@@ -251,11 +251,16 @@ namespace SkiaSharp.Extended.PivotViewer
 
                 // The layout changed (items resized), so the world coordinate
                 // at (worldX, worldY) may have shifted. Adjust pan offset.
-                double zoomRatio = (1.0 - newZoom) / (1.0 - oldZoom + 0.001);
-                double newWorldX = worldX * zoomRatio;
-                double newWorldY = worldY * zoomRatio;
-                _panOffsetX += worldX - newWorldX;
-                _panOffsetY += worldY - newWorldY;
+                double oldScale = 1.0 - oldZoom;
+                double newScale = 1.0 - newZoom;
+                if (oldScale > 1e-6)
+                {
+                    double zoomRatio = newScale / oldScale;
+                    double newWorldX = worldX * zoomRatio;
+                    double newWorldY = worldY * zoomRatio;
+                    _panOffsetX += worldX - newWorldX;
+                    _panOffsetY += worldY - newWorldY;
+                }
             }
         }
 

@@ -13,6 +13,7 @@ internal class MemoryTileFetcher : ITileFetcher
     private readonly ConcurrentDictionary<string, SKBitmap> _tiles = new();
     public int FetchCount { get; private set; }
     public List<string> FetchedUrls { get; } = new();
+    public bool IsDisposed { get; private set; }
 
     public void AddTile(string url, SKBitmap bitmap) => _tiles[url] = bitmap;
 
@@ -37,6 +38,7 @@ internal class MemoryTileFetcher : ITileFetcher
 
     public void Dispose()
     {
+        IsDisposed = true;
         foreach (var bmp in _tiles.Values)
             bmp.Dispose();
         _tiles.Clear();
@@ -421,5 +423,33 @@ public class DeepZoomControllerTest
         controller.Update(TimeSpan.FromMilliseconds(16));
         // Spring may or may not have moved — either way the zoom already proved it works
         Assert.True(count >= preUpdateCount);
+    }
+
+    [Fact]
+    public void Dispose_DisposesFetcher()
+    {
+        var fetcher = new MemoryTileFetcher();
+        var controller = new DeepZoomController();
+        controller.Load(CreateSampleDzi(), fetcher);
+
+        controller.Dispose();
+
+        // Fetcher should be disposed (MemoryTileFetcher.Dispose clears tiles)
+        Assert.True(fetcher.IsDisposed);
+    }
+
+    [Fact]
+    public void Load_Reload_DisposesPreviousFetcher()
+    {
+        var fetcher1 = new MemoryTileFetcher();
+        using var controller = new DeepZoomController();
+        controller.Load(CreateSampleDzi(), fetcher1);
+
+        var fetcher2 = new MemoryTileFetcher();
+        controller.Load(CreateSampleDzi(), fetcher2);
+
+        // First fetcher should be disposed on reload
+        Assert.True(fetcher1.IsDisposed);
+        Assert.False(fetcher2.IsDisposed);
     }
 }
