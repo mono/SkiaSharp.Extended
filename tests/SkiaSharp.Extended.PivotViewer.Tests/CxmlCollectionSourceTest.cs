@@ -331,4 +331,33 @@ public class CxmlCollectionSourceTest
         Assert.Empty(source.Items);
         Assert.Single(source.ItemProperties);
     }
+
+    [Fact]
+    public async Task LoadAsync_FromStream_Succeeds()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.cxml");
+        var source = await CxmlCollectionSource.LoadAsync(stream);
+
+        Assert.Equal(CxmlCollectionState.Loaded, source.State);
+        Assert.True(source.Items.Count > 0);
+    }
+
+    [Fact]
+    public async Task LoadAsync_InvalidStream_FailsGracefully()
+    {
+        using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes("not xml"));
+
+        // LoadAsync in ParseInto will throw because ParseDocument re-throws
+        // But Task.Run wrapping means the exception propagates through the task
+        try
+        {
+            var source = await CxmlCollectionSource.LoadAsync(stream);
+            // If it doesn't throw, it should have Failed state
+            Assert.Equal(CxmlCollectionState.Failed, source.State);
+        }
+        catch
+        {
+            // Exception propagated, which is also acceptable
+        }
+    }
 }

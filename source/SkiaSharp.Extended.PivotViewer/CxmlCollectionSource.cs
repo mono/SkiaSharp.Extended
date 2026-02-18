@@ -122,10 +122,76 @@ namespace SkiaSharp.Extended.PivotViewer
             return ParseDocument(doc);
         }
 
-        private static CxmlCollectionSource ParseDocument(XDocument doc)
+        /// <summary>
+        /// Asynchronously loads and parses a CXML from a URI using the provided HttpClient.
+        /// Matches Silverlight's async loading pattern with state machine.
+        /// </summary>
+        public static async System.Threading.Tasks.Task<CxmlCollectionSource> LoadAsync(
+            Uri uri, System.Net.Http.HttpClient httpClient,
+            System.Threading.CancellationToken cancellationToken = default)
+        {
+            var source = new CxmlCollectionSource { UriSource = uri };
+
+            try
+            {
+                source.State = CxmlCollectionState.Loading;
+                var xml = await httpClient.GetStringAsync(uri
+#if NET5_0_OR_GREATER
+                    , cancellationToken
+#endif
+                    );
+
+                var doc = XDocument.Parse(xml);
+                ParseInto(source, doc);
+                source.State = CxmlCollectionState.Loaded;
+            }
+            catch (Exception ex) when (!(ex is OperationCanceledException))
+            {
+                source.State = CxmlCollectionState.Failed;
+                source.StateChanged?.Invoke(source,
+                    new CxmlCollectionStateChangedEventArgs(CxmlCollectionState.Loading, CxmlCollectionState.Failed,
+                        ex.Message, ex));
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// Asynchronously loads a CXML from a stream.
+        /// </summary>
+        public static async System.Threading.Tasks.Task<CxmlCollectionSource> LoadAsync(
+            Stream stream, System.Threading.CancellationToken cancellationToken = default)
         {
             var source = new CxmlCollectionSource();
 
+            try
+            {
+                source.State = CxmlCollectionState.Loading;
+                var doc = await System.Threading.Tasks.Task.Run(
+                    () => XDocument.Load(stream), cancellationToken);
+                ParseInto(source, doc);
+                source.State = CxmlCollectionState.Loaded;
+            }
+            catch (Exception ex) when (!(ex is OperationCanceledException))
+            {
+                source.State = CxmlCollectionState.Failed;
+                source.StateChanged?.Invoke(source,
+                    new CxmlCollectionStateChangedEventArgs(CxmlCollectionState.Loading, CxmlCollectionState.Failed,
+                        ex.Message, ex));
+            }
+
+            return source;
+        }
+
+        private static CxmlCollectionSource ParseDocument(XDocument doc)
+        {
+            var source = new CxmlCollectionSource();
+            ParseInto(source, doc);
+            return source;
+        }
+
+        private static void ParseInto(CxmlCollectionSource source, XDocument doc)
+        {
             try
             {
                 source.State = CxmlCollectionState.Loading;
@@ -185,8 +251,6 @@ namespace SkiaSharp.Extended.PivotViewer
                     CxmlCollectionState.Loading, CxmlCollectionState.Failed, ex.Message, ex));
                 throw;
             }
-
-            return source;
         }
 
         private static Dictionary<string, PivotViewerProperty> ParseFacetCategories(XElement collectionElement)
