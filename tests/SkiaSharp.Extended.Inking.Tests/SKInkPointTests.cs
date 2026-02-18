@@ -75,4 +75,83 @@ public class SKInkPointTests
         Assert.Contains("20", result);
         Assert.Contains("0.50", result);
     }
+
+    [Fact]
+    public void Equals_WithObject_ReturnsTrue_WhenEqual()
+    {
+        var point1 = new SKInkPoint(10f, 20f, 0.5f, 100);
+        object point2 = new SKInkPoint(10f, 20f, 0.5f, 100);
+
+        Assert.True(point1.Equals(point2));
+    }
+
+    [Fact]
+    public void Equals_WithObject_ReturnsFalse_WhenNotEqual()
+    {
+        var point1 = new SKInkPoint(10f, 20f, 0.5f, 100);
+        object point2 = new SKInkPoint(10f, 21f, 0.5f, 100);
+
+        Assert.False(point1.Equals(point2));
+    }
+
+    [Fact]
+    public void Equals_WithNull_ReturnsFalse()
+    {
+        var point = new SKInkPoint(10f, 20f, 0.5f, 100);
+
+        Assert.False(point.Equals(null));
+    }
+
+    [Fact]
+    public void Equals_WithDifferentType_ReturnsFalse()
+    {
+        var point = new SKInkPoint(10f, 20f, 0.5f, 100);
+
+        Assert.False(point.Equals("not a point"));
+    }
+
+    [Fact]
+    public void GetHashCode_SamePoints_ReturnSameHashCode()
+    {
+        var point1 = new SKInkPoint(10f, 20f, 0.5f, 100);
+        var point2 = new SKInkPoint(10f, 20f, 0.5f, 100);
+
+        Assert.Equal(point1.GetHashCode(), point2.GetHashCode());
+    }
+
+    [Fact]
+    public void GetHashCode_DifferentPoints_ReturnDifferentHashCode()
+    {
+        var point1 = new SKInkPoint(10f, 20f, 0.5f, 100);
+        var point2 = new SKInkPoint(30f, 40f, 0.8f, 200);
+
+        // Hash codes can theoretically collide, but these should be different
+        Assert.NotEqual(point1.GetHashCode(), point2.GetHashCode());
+    }
+
+    [Fact]
+    public void Equality_DifferentPressure_AreNotEqual()
+    {
+        var point1 = new SKInkPoint(10f, 20f, 0.5f, 100);
+        var point2 = new SKInkPoint(10f, 20f, 0.7f, 100);
+
+        Assert.NotEqual(point1, point2);
+    }
+
+    [Fact]
+    public void Equality_DifferentTimestamp_AreNotEqual()
+    {
+        var point1 = new SKInkPoint(10f, 20f, 0.5f, 100);
+        var point2 = new SKInkPoint(10f, 20f, 0.5f, 200);
+
+        Assert.NotEqual(point1, point2);
+    }
+
+    [Fact]
+    public void Constructor_DefaultTimestamp_IsZero()
+    {
+        var point = new SKInkPoint(10f, 20f, 0.5f);
+
+        Assert.Equal(0, point.Timestamp);
+    }
 }

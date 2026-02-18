@@ -254,6 +254,11 @@ public class RecordedStroke
     /// <param name="maxStrokeWidth">Maximum stroke width.</param>
     public RecordedStroke(float minStrokeWidth, float maxStrokeWidth)
     {
+        if (minStrokeWidth < 0)
+            throw new ArgumentOutOfRangeException(nameof(minStrokeWidth), "Minimum stroke width must be non-negative.");
+        if (maxStrokeWidth < minStrokeWidth)
+            throw new ArgumentOutOfRangeException(nameof(maxStrokeWidth), "Maximum stroke width must be greater than or equal to minimum stroke width.");
+
         MinStrokeWidth = minStrokeWidth;
         MaxStrokeWidth = maxStrokeWidth;
     }

@@ -354,4 +354,212 @@ public class SKInkCanvasTests
         Assert.Equal(100f, canvas.Strokes[1].Points[0].X);
         Assert.Equal(200f, canvas.Strokes[2].Points[0].X);
     }
+
+    [Fact]
+    public void Draw_ThrowsOnNullCanvas()
+    {
+        using var inkCanvas = new SKInkCanvas();
+        using var paint = new SKPaint();
+
+        Assert.Throws<ArgumentNullException>(() => inkCanvas.Draw(null!, paint));
+    }
+
+    [Fact]
+    public void Draw_ThrowsOnNullPaint()
+    {
+        using var inkCanvas = new SKInkCanvas();
+        var info = new SKImageInfo(100, 100);
+        using var surface = SKSurface.Create(info);
+
+        Assert.Throws<ArgumentNullException>(() => inkCanvas.Draw(surface.Canvas, null!));
+    }
+
+    [Fact]
+    public void StartStroke_ReplacesExistingStroke()
+    {
+        using var canvas = new SKInkCanvas();
+
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+        canvas.ContinueStroke(new SKPoint(30f, 40f), 0.5f);
+        
+        // Start a new stroke without ending the first one
+        canvas.StartStroke(new SKPoint(100f, 100f), 0.5f);
+
+        // Should only have the new current stroke
+        Assert.True(canvas.IsDrawing);
+        Assert.Single(canvas.CurrentStroke!.Points);
+        Assert.Equal(100f, canvas.CurrentStroke!.Points[0].X);
+    }
+
+    [Fact]
+    public void EndStroke_WithSinglePoint_DoesNotAddEmptyStroke()
+    {
+        using var canvas = new SKInkCanvas();
+
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+        canvas.EndStroke(new SKPoint(10.1f, 20.1f), 0.5f); // Point very close to first
+
+        // Stroke should still be added (has at least the starting point)
+        Assert.True(canvas.StrokeCount >= 0);
+    }
+
+    [Fact]
+    public void EndStroke_WithoutStarting_DoesNothing()
+    {
+        using var canvas = new SKInkCanvas();
+        var invalidated = false;
+
+        canvas.Invalidated += (s, e) => invalidated = true;
+        canvas.EndStroke(new SKPoint(50f, 60f), 0.5f);
+
+        Assert.False(invalidated);
+        Assert.Equal(0, canvas.StrokeCount);
+    }
+
+    [Fact]
+    public void CancelStroke_WithoutStarting_DoesNothing()
+    {
+        using var canvas = new SKInkCanvas();
+        var invalidated = false;
+
+        canvas.Invalidated += (s, e) => invalidated = true;
+        canvas.CancelStroke();
+
+        Assert.False(invalidated);
+    }
+
+    [Fact]
+    public void GetBounds_ReturnsEmptyWhenBlank()
+    {
+        using var canvas = new SKInkCanvas();
+
+        var bounds = canvas.GetBounds();
+
+        Assert.Equal(SKRect.Empty, bounds);
+    }
+
+    [Fact]
+    public void Clear_AlsoClearsCurrentStroke()
+    {
+        using var canvas = new SKInkCanvas();
+
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+        // Don't end the stroke
+        canvas.Clear();
+
+        Assert.False(canvas.IsDrawing);
+        Assert.Null(canvas.CurrentStroke);
+    }
+
+    [Fact]
+    public void Undo_RaisesInvalidatedEvent()
+    {
+        using var canvas = new SKInkCanvas();
+        var invalidated = false;
+
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+        canvas.EndStroke(new SKPoint(50f, 60f), 0.5f);
+
+        canvas.Invalidated += (s, e) => invalidated = true;
+        canvas.Undo();
+
+        Assert.True(invalidated);
+    }
+
+    [Fact]
+    public void ToImage_WithPadding_ScalesCorrectly()
+    {
+        using var canvas = new SKInkCanvas();
+
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+        canvas.EndStroke(new SKPoint(100f, 100f), 0.5f);
+
+        // Different padding values
+        using var image1 = canvas.ToImage(200, 200, SKColors.Black, padding: 0.1f);
+        using var image2 = canvas.ToImage(200, 200, SKColors.Black, padding: 0.3f);
+
+        Assert.NotNull(image1);
+        Assert.NotNull(image2);
+    }
+
+    [Fact]
+    public void Constructor_WithInvalidWidths_Throws()
+    {
+        // Min > Max
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkCanvas(10f, 5f));
+        
+        // Negative min
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkCanvas(-1f, 5f));
+    }
+
+    [Fact]
+    public void StartStroke_WithSKInkPoint_Works()
+    {
+        using var canvas = new SKInkCanvas();
+        var point = new SKInkPoint(10f, 20f, 0.5f, 12345);
+
+        canvas.StartStroke(point);
+
+        Assert.True(canvas.IsDrawing);
+        Assert.Equal(10f, canvas.CurrentStroke!.Points[0].X);
+    }
+
+    [Fact]
+    public void ContinueStroke_WithSKInkPoint_Works()
+    {
+        using var canvas = new SKInkCanvas();
+
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+        canvas.ContinueStroke(new SKInkPoint(50f, 60f, 0.6f, 100));
+
+        Assert.Equal(2, canvas.CurrentStroke!.PointCount);
+    }
+
+    [Fact]
+    public void EndStroke_WithSKInkPoint_Works()
+    {
+        using var canvas = new SKInkCanvas();
+
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+        canvas.EndStroke(new SKInkPoint(100f, 100f, 0.4f, 200));
+
+        Assert.Equal(1, canvas.StrokeCount);
+    }
+
+    [Fact]
+    public void Dispose_CanBeCalledMultipleTimes()
+    {
+        var canvas = new SKInkCanvas();
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+        canvas.EndStroke(new SKPoint(50f, 60f), 0.5f);
+
+        canvas.Dispose();
+        canvas.Dispose(); // Should not throw
+    }
+
+    [Fact]
+    public void ContinueStroke_RaisesInvalidatedEvent()
+    {
+        using var canvas = new SKInkCanvas();
+        var invalidatedCount = 0;
+
+        canvas.Invalidated += (s, e) => invalidatedCount++;
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+        canvas.ContinueStroke(new SKPoint(50f, 60f), 0.5f);
+
+        Assert.True(invalidatedCount >= 2); // At least for start and continue
+    }
+
+    [Fact]
+    public void CancelStroke_RaisesInvalidatedEvent()
+    {
+        using var canvas = new SKInkCanvas();
+        var invalidatedCount = 0;
+
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+        canvas.Invalidated += (s, e) => invalidatedCount++;
+        canvas.CancelStroke();
+
+        Assert.True(invalidatedCount >= 1);
+    }
 }

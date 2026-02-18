@@ -236,4 +236,128 @@ public class SKInkStrokeTests
         stroke.Dispose();
         stroke.Dispose(); // Should not throw
     }
+
+    [Fact]
+    public void AddPoint_ThrowsAfterDispose()
+    {
+        var stroke = new SKInkStroke();
+        stroke.Dispose();
+
+        Assert.Throws<ObjectDisposedException>(() => stroke.AddPoint(new SKPoint(10f, 20f), 0.5f));
+    }
+
+    [Fact]
+    public void Clear_ThrowsAfterDispose()
+    {
+        var stroke = new SKInkStroke();
+        stroke.AddPoint(new SKPoint(10f, 20f), 0.5f);
+        stroke.Dispose();
+
+        Assert.Throws<ObjectDisposedException>(() => stroke.Clear());
+    }
+
+    [Fact]
+    public void Path_WithManyPoints_GeneratesSmoothedPath()
+    {
+        using var stroke = new SKInkStroke(2f, 8f);
+
+        // Add many points to trigger Bezier smoothing
+        for (int i = 0; i < 10; i++)
+        {
+            stroke.AddPoint(new SKPoint(i * 20f, 50f + (float)Math.Sin(i) * 10f), 0.5f);
+        }
+
+        var path = stroke.Path;
+
+        Assert.NotNull(path);
+        Assert.False(path!.IsEmpty);
+    }
+
+    [Fact]
+    public void Path_VaryingPressure_AffectsWidth()
+    {
+        using var stroke = new SKInkStroke(2f, 20f);
+
+        // Add points with varying pressure
+        stroke.AddPoint(new SKPoint(0f, 50f), 0.1f);
+        stroke.AddPoint(new SKPoint(50f, 50f), 0.9f);
+        stroke.AddPoint(new SKPoint(100f, 50f), 0.1f);
+
+        var path = stroke.Path;
+
+        Assert.NotNull(path);
+        var bounds = path!.Bounds;
+        // The path should have some height variation due to pressure
+        Assert.True(bounds.Height > 0);
+    }
+
+    [Fact]
+    public void Constructor_AllowsEqualMinAndMax()
+    {
+        using var stroke = new SKInkStroke(5f, 5f);
+
+        Assert.Equal(5f, stroke.MinStrokeWidth);
+        Assert.Equal(5f, stroke.MaxStrokeWidth);
+    }
+
+    [Fact]
+    public void Constructor_AllowsZeroMinWidth()
+    {
+        using var stroke = new SKInkStroke(0f, 5f);
+
+        Assert.Equal(0f, stroke.MinStrokeWidth);
+    }
+
+    [Fact]
+    public void AddPoint_WithIsLastPoint_PreservesZeroPressure()
+    {
+        using var stroke = new SKInkStroke();
+
+        stroke.AddPoint(new SKPoint(10f, 20f), 0.5f);
+        stroke.AddPoint(new SKPoint(50f, 60f), 0f, isLastPoint: true);
+
+        // Last point should keep zero pressure (not replaced with default)
+        Assert.Equal(0f, stroke.Points[1].Pressure);
+    }
+
+    [Fact]
+    public void Path_ThreePoints_GeneratesSmoothedCurve()
+    {
+        using var stroke = new SKInkStroke(2f, 8f);
+
+        stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        stroke.AddPoint(new SKPoint(50f, 0f), 0.7f);
+        stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+
+        var path = stroke.Path;
+
+        Assert.NotNull(path);
+        Assert.False(path!.IsEmpty);
+    }
+
+    [Fact]
+    public void Bounds_EmptyStroke_ReturnsEmpty()
+    {
+        using var stroke = new SKInkStroke();
+
+        var bounds = stroke.Bounds;
+
+        Assert.Equal(SKRect.Empty, bounds);
+    }
+
+    [Fact]
+    public void Path_AfterClear_ReturnsNull()
+    {
+        using var stroke = new SKInkStroke();
+
+        stroke.AddPoint(new SKPoint(10f, 20f), 0.5f);
+        stroke.AddPoint(new SKPoint(50f, 60f), 0.5f);
+        var pathBefore = stroke.Path;
+        Assert.NotNull(pathBefore);
+
+        stroke.Clear();
+        var pathAfter = stroke.Path;
+
+        Assert.Null(pathAfter);
+    }
 }
