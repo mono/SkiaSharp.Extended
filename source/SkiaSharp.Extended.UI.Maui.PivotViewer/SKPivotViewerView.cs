@@ -630,22 +630,39 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 if (!string.IsNullOrEmpty(_controller.SearchText))
                     activeFilters.Add($"\"{_controller.SearchText}\"");
 
-                // Check each property for active filters via the filter engine
+                // Check each property for any active predicate (string, numeric, or datetime)
+                var predicates = _controller.FilterEngine.Predicates;
                 foreach (var prop in _controller.Properties)
                 {
-                    var active = _controller.FilterEngine.GetActiveFilters(prop.Id);
-                    if (active != null && active.Count > 0)
+                    bool hasFilter = false;
+                    for (int i = 0; i < predicates.Count; i++)
+                    {
+                        if (predicates[i].PropertyId == prop.Id)
+                        {
+                            hasFilter = true;
+                            break;
+                        }
+                    }
+                    if (hasFilter)
                         activeFilters.Add(prop.DisplayName ?? prop.Id);
                 }
 
                 if (activeFilters.Count > 0)
                 {
+                    // Measure graphLabel at original size (14) before changing font
+                    float graphLabelWidth = _textFont.MeasureText(graphLabel, out _);
                     _textFont.Size = 11;
                     using var breadcrumbPaint = new SKPaint { Color = new SKColor(180, 200, 255) };
                     string breadcrumb = string.Join(" › ", activeFilters);
-                    if (breadcrumb.Length > 40) breadcrumb = breadcrumb.Substring(0, 37) + "...";
-                    float bx = x + _textFont.MeasureText(graphLabel, out _) + 20;
-                    canvas.DrawText(breadcrumb, bx, barHeight / 2 + 4, SKTextAlign.Left, _textFont, breadcrumbPaint);
+                    float bx = x + graphLabelWidth + 20;
+                    float maxWidth = info.Width / 2 - bx - 60; // leave room for sort label
+                    if (maxWidth > 40)
+                    {
+                        // Truncate based on pixel width
+                        while (_textFont.MeasureText(breadcrumb, out _) > maxWidth && breadcrumb.Length > 4)
+                            breadcrumb = breadcrumb.Substring(0, breadcrumb.Length - 4) + "...";
+                        canvas.DrawText(breadcrumb, bx, barHeight / 2 + 4, SKTextAlign.Left, _textFont, breadcrumbPaint);
+                    }
                     _textFont.Size = 14;
                 }
             }
