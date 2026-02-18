@@ -63,12 +63,19 @@ public partial class InkingPage : ContentPage
         playButton.Text = "Stop";
         player.Play();
 
-        // Animation loop
+        // Animation loop with frame timing
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         while (isAnimating && player.IsPlaying)
         {
+            var frameStart = stopwatch.ElapsedMilliseconds;
+            
             player.Update();
             signaturePad.Invalidate();
-            await Task.Delay(16); // ~60 FPS
+            
+            // Calculate remaining time to maintain ~60 FPS
+            var elapsed = stopwatch.ElapsedMilliseconds - frameStart;
+            var delay = Math.Max(1, 16 - (int)elapsed);
+            await Task.Delay(delay);
         }
 
         if (!player.IsPlaying)

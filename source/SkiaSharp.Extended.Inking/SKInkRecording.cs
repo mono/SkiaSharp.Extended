@@ -467,7 +467,8 @@ public class SKInkPlayer
     private static long GetTickCount64()
     {
 #if NETSTANDARD2_0
-        return DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+        // Use Stopwatch for monotonic timing (more reliable than DateTime)
+        return System.Diagnostics.Stopwatch.GetTimestamp() * 1000 / System.Diagnostics.Stopwatch.Frequency;
 #else
         return Environment.TickCount64;
 #endif
