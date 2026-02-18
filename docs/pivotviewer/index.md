@@ -323,30 +323,24 @@ controller.FilterChanged += (s, e) => {
 };
 ```
 
-## Blazor Integration
+## Other UI Framework Integration
 
-The Blazor WASM sample in `samples/BlazorPivotViewer/` demonstrates full PivotViewer functionality. The core library works identically in Blazor — only the rendering differs:
+The core library works with any SkiaSharp rendering surface. Here's an example with `SKCanvasView` (works in Blazor, WPF, WinForms, etc.):
 
 ```csharp
-@using SkiaSharp.Views.Blazor
+// Any platform with SkiaSharp rendering:
+var controller = new PivotViewerController();
+controller.LoadCollection(source);
+controller.SetAvailableSize(width, height);
 
-<SKCanvasView @ref="_canvasView" OnPaintSurface="OnPaintSurface"
-              style="width:100%;height:600px;" />
-
-@code {
-    private PivotViewerController _controller = new();
-
-    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+void OnPaintSurface(SKCanvas canvas)
+{
+    canvas.Clear(SKColors.White);
+    foreach (var pos in controller.GridLayout!.Positions)
     {
-        var canvas = e.Surface.Canvas;
-        canvas.Clear(SKColors.White);
-
-        foreach (var pos in _controller.GridLayout!.Positions)
-        {
-            canvas.DrawRect(
-                (float)pos.X, (float)pos.Y,
-                (float)pos.Width, (float)pos.Height, _itemPaint);
-        }
+        canvas.DrawRect(
+            (float)pos.X, (float)pos.Y,
+            (float)pos.Width, (float)pos.Height, itemPaint);
     }
 }
 ```
