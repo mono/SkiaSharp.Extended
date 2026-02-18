@@ -124,13 +124,13 @@ namespace SkiaSharp.Extended.Gif.Encoding
             byte bestIndex = 0;
             int bestDistance = int.MaxValue;
             
-            for (byte i = 0; i < palette.Length; i++)
+            for (int i = 0; i < palette.Length; i++)
             {
                 int distance = ColorDistance(color, palette[i]);
                 if (distance < bestDistance)
                 {
                     bestDistance = distance;
-                    bestIndex = i;
+                    bestIndex = (byte)i;
                 }
             }
             

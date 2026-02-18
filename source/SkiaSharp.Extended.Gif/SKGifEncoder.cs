@@ -97,21 +97,16 @@ namespace SkiaSharp.Extended.Gif
         /// </summary>
         public void Encode()
         {
-            System.Diagnostics.Debug.WriteLine("Encode: Starting");
             if (frames.Count == 0)
                 throw new InvalidOperationException("No frames added");
             
-            System.Diagnostics.Debug.WriteLine($"Encode: Generating palette from {frames.Count} frames");
             // Generate global color palette from all frames
             globalPalette = GenerateGlobalPalette();
-            System.Diagnostics.Debug.WriteLine($"Encode: Palette generated with {globalPalette.Length} colors");
             
             // Write header
-            System.Diagnostics.Debug.WriteLine("Encode: Writing header");
             writer.WriteHeader(useGif89a: true);
             
             // Write logical screen descriptor
-            System.Diagnostics.Debug.WriteLine("Encode: Writing logical screen descriptor");
             writer.WriteLogicalScreenDescriptor(
                 width,
                 height,
@@ -120,57 +115,44 @@ namespace SkiaSharp.Extended.Gif
                 backgroundColorIndex: 0);
             
             // Write global color table
-            System.Diagnostics.Debug.WriteLine("Encode: Writing color table");
             writer.WriteColorTable(globalPalette);
             
             // Write NETSCAPE loop extension if needed
             if (loopCount >= 0)
             {
-                System.Diagnostics.Debug.WriteLine($"Encode: Writing loop extension (count={loopCount})");
                 writer.WriteNetscapeLoopExtension(loopCount);
             }
             
             headerWritten = true;
             
             // Write each frame
-            System.Diagnostics.Debug.WriteLine($"Encode: Writing {frames.Count} frames");
             for (int i = 0; i < frames.Count; i++)
             {
-                System.Diagnostics.Debug.WriteLine($"Encode: Writing frame {i}");
                 WriteFrame(frames[i]);
-                System.Diagnostics.Debug.WriteLine($"Encode: Frame {i} written");
             }
             
             // Write trailer
-            System.Diagnostics.Debug.WriteLine("Encode: Writing trailer");
             writer.WriteTrailer();
-            System.Diagnostics.Debug.WriteLine("Encode: Flushing");
             writer.Flush();
-            System.Diagnostics.Debug.WriteLine("Encode: Complete");
         }
         
         private SKColor[] GenerateGlobalPalette()
         {
-            System.Diagnostics.Debug.WriteLine("GenerateGlobalPalette: Starting");
             // For simplicity, quantize the first frame
             // A better implementation would collect colors from all frames
             var firstFrame = frames[0].Bitmap;
-            System.Diagnostics.Debug.WriteLine($"GenerateGlobalPalette: Quantizing {firstFrame.Width}x{firstFrame.Height} bitmap");
             var palette = ColorQuantizer.QuantizeColors(firstFrame, 256);
-            System.Diagnostics.Debug.WriteLine($"GenerateGlobalPalette: Returned {palette.Length} colors");
             return palette;
         }
         
         private void WriteFrame(FrameData frameData)
         {
-            System.Diagnostics.Debug.WriteLine("WriteFrame: Starting");
             var bitmap = frameData.Bitmap;
             var frameInfo = frameData.FrameInfo;
             
             // Write Graphics Control Extension if needed
             if (frameInfo.Duration > 0 || frameInfo.HasTransparency)
             {
-                System.Diagnostics.Debug.WriteLine("WriteFrame: Writing GCE");
                 byte transparentIndex = 0;
                 if (frameInfo.HasTransparency && frameInfo.TransparentColor.HasValue)
                 {
@@ -187,7 +169,6 @@ namespace SkiaSharp.Extended.Gif
             }
             
             // Write image descriptor (no local color table)
-            System.Diagnostics.Debug.WriteLine("WriteFrame: Writing image descriptor");
             writer.WriteImageDescriptor(
                 left: 0,
                 top: 0,
@@ -198,20 +179,14 @@ namespace SkiaSharp.Extended.Gif
                 isInterlaced: false);
             
             // Map bitmap pixels to palette indices
-            System.Diagnostics.Debug.WriteLine($"WriteFrame: Mapping {bitmap.Width}x{bitmap.Height} pixels to palette");
             var indexedData = ColorQuantizer.MapBitmapToPalette(bitmap, globalPalette!);
-            System.Diagnostics.Debug.WriteLine($"WriteFrame: Mapped to {indexedData.Length} bytes");
             
             // Compress with LZW
-            System.Diagnostics.Debug.WriteLine("WriteFrame: Compressing data");
             var compressedData = CompressData(indexedData);
-            System.Diagnostics.Debug.WriteLine($"WriteFrame: Compressed to {compressedData.Length} bytes");
             
             // Write compressed image data
             byte minCodeSize = CalculateMinCodeSize(globalPalette!.Length);
-            System.Diagnostics.Debug.WriteLine($"WriteFrame: Writing image data (minCodeSize={minCodeSize})");
             writer.WriteImageData(compressedData, minCodeSize);
-            System.Diagnostics.Debug.WriteLine("WriteFrame: Complete");
         }
         
         private byte[] CompressData(byte[] data)
