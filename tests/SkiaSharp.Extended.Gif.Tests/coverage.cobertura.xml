@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<coverage line-rate="0.6494" branch-rate="0.5111" version="1.9" timestamp="1771411807" lines-covered="793" lines-valid="1221" branches-covered="206" branches-valid="403">
+<coverage line-rate="0.6502" branch-rate="0.5334" version="1.9" timestamp="1771412000" lines-covered="794" lines-valid="1221" branches-covered="215" branches-valid="403">
   <sources>
     <source>/home/runner/work/SkiaSharp.Extended/SkiaSharp.Extended/source/SkiaSharp.Extended.Gif/</source>
   </sources>
   <packages>
-    <package name="SkiaSharp.Extended.Gif" line-rate="0.6494" branch-rate="0.5111" complexity="490">
+    <package name="SkiaSharp.Extended.Gif" line-rate="0.6502" branch-rate="0.5334" complexity="490">
       <classes>
         <class name="SkiaSharp.Extended.Gif.SKGifDecoder" filename="SKGifDecoder.cs" line-rate="0.7766" branch-rate="0.3846" complexity="44">
           <methods>
@@ -1558,17 +1558,17 @@
           <methods>
             <method name="get_Signature" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="13" hits="15" branch="False" />
+                <line number="13" hits="21" branch="False" />
               </lines>
             </method>
             <method name="get_Version" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="18" hits="21" branch="False" />
+                <line number="18" hits="29" branch="False" />
               </lines>
             </method>
             <method name="get_IsValid" signature="()" line-rate="1" branch-rate="1" complexity="4">
               <lines>
-                <line number="23" hits="8" branch="True" condition-coverage="100% (4/4)">
+                <line number="23" hits="11" branch="True" condition-coverage="100% (4/4)">
                   <conditions>
                     <condition number="16" type="jump" coverage="100%" />
                     <condition number="34" type="jump" coverage="100%" />
@@ -1578,23 +1578,23 @@
             </method>
             <method name="get_IsGif89a" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="28" hits="2" branch="False" />
+                <line number="28" hits="4" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="13" hits="15" branch="False" />
-            <line number="18" hits="21" branch="False" />
-            <line number="23" hits="8" branch="True" condition-coverage="100% (4/4)">
+            <line number="13" hits="21" branch="False" />
+            <line number="18" hits="29" branch="False" />
+            <line number="23" hits="11" branch="True" condition-coverage="100% (4/4)">
               <conditions>
                 <condition number="16" type="jump" coverage="100%" />
                 <condition number="34" type="jump" coverage="100%" />
               </conditions>
             </line>
-            <line number="28" hits="2" branch="False" />
+            <line number="28" hits="4" branch="False" />
           </lines>
         </class>
-        <class name="SkiaSharp.Extended.Gif.IO.LogicalScreenDescriptor" filename="IO/GifStructures.cs" line-rate="1" branch-rate="0.5" complexity="10">
+        <class name="SkiaSharp.Extended.Gif.IO.LogicalScreenDescriptor" filename="IO/GifStructures.cs" line-rate="1" branch-rate="1" complexity="10">
           <methods>
             <method name="get_Width" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
@@ -1608,7 +1608,7 @@
             </method>
             <method name="get_HasGlobalColorTable" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="38" hits="9" branch="False" />
+                <line number="38" hits="13" branch="False" />
               </lines>
             </method>
             <method name="get_ColorResolution" signature="()" line-rate="1" branch-rate="1" complexity="1">
@@ -1623,7 +1623,7 @@
             </method>
             <method name="get_GlobalColorTableSize" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="41" hits="7" branch="False" />
+                <line number="41" hits="9" branch="False" />
               </lines>
             </method>
             <method name="get_BackgroundColorIndex" signature="()" line-rate="1" branch-rate="1" complexity="1">
@@ -1636,11 +1636,11 @@
                 <line number="43" hits="4" branch="False" />
               </lines>
             </method>
-            <method name="get_GlobalColorTableLength" signature="()" line-rate="1" branch-rate="0.5" complexity="2">
+            <method name="get_GlobalColorTableLength" signature="()" line-rate="1" branch-rate="1" complexity="2">
               <lines>
-                <line number="48" hits="3" branch="True" condition-coverage="50% (1/2)">
+                <line number="48" hits="5" branch="True" condition-coverage="100% (2/2)">
                   <conditions>
-                    <condition number="6" type="jump" coverage="50%" />
+                    <condition number="6" type="jump" coverage="100%" />
                   </conditions>
                 </line>
               </lines>
@@ -1649,15 +1649,15 @@
           <lines>
             <line number="36" hits="7" branch="False" />
             <line number="37" hits="7" branch="False" />
-            <line number="38" hits="9" branch="False" />
+            <line number="38" hits="13" branch="False" />
             <line number="39" hits="4" branch="False" />
             <line number="40" hits="4" branch="False" />
-            <line number="41" hits="7" branch="False" />
+            <line number="41" hits="9" branch="False" />
             <line number="42" hits="4" branch="False" />
             <line number="43" hits="4" branch="False" />
-            <line number="48" hits="3" branch="True" condition-coverage="50% (1/2)">
+            <line number="48" hits="5" branch="True" condition-coverage="100% (2/2)">
               <conditions>
-                <condition number="6" type="jump" coverage="50%" />
+                <condition number="6" type="jump" coverage="100%" />
               </conditions>
             </line>
           </lines>
@@ -1686,7 +1686,7 @@
             </method>
             <method name="get_HasLocalColorTable" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="60" hits="7" branch="False" />
+                <line number="60" hits="9" branch="False" />
               </lines>
             </method>
             <method name="get_InterlaceFlag" signature="()" line-rate="1" branch-rate="1" complexity="1">
@@ -1701,12 +1701,12 @@
             </method>
             <method name="get_LocalColorTableSize" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="63" hits="5" branch="False" />
+                <line number="63" hits="7" branch="False" />
               </lines>
             </method>
             <method name="get_LocalColorTableLength" signature="()" line-rate="1" branch-rate="0.5" complexity="2">
               <lines>
-                <line number="68" hits="1" branch="True" condition-coverage="50% (1/2)">
+                <line number="68" hits="2" branch="True" condition-coverage="50% (1/2)">
                   <conditions>
                     <condition number="6" type="jump" coverage="50%" />
                   </conditions>
@@ -1724,11 +1724,11 @@
             <line number="57" hits="7" branch="False" />
             <line number="58" hits="8" branch="False" />
             <line number="59" hits="8" branch="False" />
-            <line number="60" hits="7" branch="False" />
+            <line number="60" hits="9" branch="False" />
             <line number="61" hits="5" branch="False" />
             <line number="62" hits="4" branch="False" />
-            <line number="63" hits="5" branch="False" />
-            <line number="68" hits="1" branch="True" condition-coverage="50% (1/2)">
+            <line number="63" hits="7" branch="False" />
+            <line number="68" hits="2" branch="True" condition-coverage="50% (1/2)">
               <conditions>
                 <condition number="6" type="jump" coverage="50%" />
               </conditions>
@@ -1755,7 +1755,7 @@
             </method>
             <method name="get_DelayTime" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="84" hits="3" branch="False" />
+                <line number="84" hits="5" branch="False" />
               </lines>
             </method>
             <method name="get_TransparentColorIndex" signature="()" line-rate="1" branch-rate="1" complexity="1">
@@ -1765,7 +1765,7 @@
             </method>
             <method name="get_DelayMs" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="90" hits="1" branch="False" />
+                <line number="90" hits="2" branch="False" />
               </lines>
             </method>
             <method name="get_HasTransparency" signature="()" line-rate="0" branch-rate="1" complexity="1">
@@ -1778,104 +1778,104 @@
             <line number="81" hits="2" branch="False" />
             <line number="82" hits="2" branch="False" />
             <line number="83" hits="2" branch="False" />
-            <line number="84" hits="3" branch="False" />
+            <line number="84" hits="5" branch="False" />
             <line number="85" hits="2" branch="False" />
-            <line number="90" hits="1" branch="False" />
+            <line number="90" hits="2" branch="False" />
             <line number="95" hits="0" branch="False" />
           </lines>
         </class>
-        <class name="SkiaSharp.Extended.Gif.IO.ApplicationExtension" filename="IO/GifStructures.cs" line-rate="0.875" branch-rate="0.5" complexity="21">
+        <class name="SkiaSharp.Extended.Gif.IO.ApplicationExtension" filename="IO/GifStructures.cs" line-rate="0.9375" branch-rate="0.9444" complexity="21">
           <methods>
             <method name="get_ApplicationIdentifier" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="103" hits="4" branch="False" />
+                <line number="103" hits="11" branch="False" />
               </lines>
             </method>
             <method name="get_AuthenticationCode" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="104" hits="11" branch="False" />
+                <line number="104" hits="28" branch="False" />
               </lines>
             </method>
             <method name="get_Data" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="105" hits="6" branch="False" />
+                <line number="105" hits="18" branch="False" />
               </lines>
             </method>
-            <method name="get_IsNetscapeExtension" signature="()" line-rate="1" branch-rate="0.5" complexity="10">
+            <method name="get_IsNetscapeExtension" signature="()" line-rate="1" branch-rate="1" complexity="10">
               <lines>
-                <line number="111" hits="2" branch="True" condition-coverage="50% (5/10)">
+                <line number="111" hits="7" branch="True" condition-coverage="100% (10/10)">
                   <conditions>
-                    <condition number="16" type="jump" coverage="50%" />
-                    <condition number="24" type="jump" coverage="50%" />
-                    <condition number="35" type="jump" coverage="50%" />
-                    <condition number="47" type="jump" coverage="50%" />
-                    <condition number="59" type="jump" coverage="50%" />
+                    <condition number="16" type="jump" coverage="100%" />
+                    <condition number="24" type="jump" coverage="100%" />
+                    <condition number="35" type="jump" coverage="100%" />
+                    <condition number="47" type="jump" coverage="100%" />
+                    <condition number="59" type="jump" coverage="100%" />
                   </conditions>
                 </line>
-                <line number="112" hits="2" branch="False" />
-                <line number="113" hits="2" branch="False" />
-                <line number="114" hits="2" branch="False" />
-                <line number="115" hits="2" branch="False" />
-                <line number="116" hits="2" branch="False" />
+                <line number="112" hits="7" branch="False" />
+                <line number="113" hits="7" branch="False" />
+                <line number="114" hits="7" branch="False" />
+                <line number="115" hits="7" branch="False" />
+                <line number="116" hits="7" branch="False" />
               </lines>
             </method>
-            <method name="get_LoopCount" signature="()" line-rate="0.7142000000000001" branch-rate="0.5" complexity="8">
+            <method name="get_LoopCount" signature="()" line-rate="0.8571" branch-rate="0.875" complexity="8">
               <lines>
-                <line number="125" hits="1" branch="False" />
-                <line number="126" hits="1" branch="True" condition-coverage="50% (3/6)">
+                <line number="125" hits="4" branch="False" />
+                <line number="126" hits="4" branch="True" condition-coverage="100% (6/6)">
                   <conditions>
-                    <condition number="7" type="jump" coverage="50%" />
-                    <condition number="15" type="jump" coverage="50%" />
-                    <condition number="33" type="jump" coverage="50%" />
+                    <condition number="7" type="jump" coverage="100%" />
+                    <condition number="15" type="jump" coverage="100%" />
+                    <condition number="33" type="jump" coverage="100%" />
                   </conditions>
                 </line>
-                <line number="127" hits="0" branch="False" />
-                <line number="130" hits="1" branch="True" condition-coverage="50% (1/2)">
+                <line number="127" hits="1" branch="False" />
+                <line number="130" hits="3" branch="True" condition-coverage="50% (1/2)">
                   <conditions>
                     <condition number="63" type="jump" coverage="50%" />
                   </conditions>
                 </line>
                 <line number="131" hits="0" branch="False" />
-                <line number="133" hits="1" branch="False" />
-                <line number="134" hits="1" branch="False" />
+                <line number="133" hits="3" branch="False" />
+                <line number="134" hits="4" branch="False" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="103" hits="4" branch="False" />
-            <line number="104" hits="11" branch="False" />
-            <line number="105" hits="6" branch="False" />
-            <line number="111" hits="2" branch="True" condition-coverage="50% (5/10)">
+            <line number="103" hits="11" branch="False" />
+            <line number="104" hits="28" branch="False" />
+            <line number="105" hits="18" branch="False" />
+            <line number="111" hits="7" branch="True" condition-coverage="100% (10/10)">
               <conditions>
-                <condition number="16" type="jump" coverage="50%" />
-                <condition number="24" type="jump" coverage="50%" />
-                <condition number="35" type="jump" coverage="50%" />
-                <condition number="47" type="jump" coverage="50%" />
-                <condition number="59" type="jump" coverage="50%" />
+                <condition number="16" type="jump" coverage="100%" />
+                <condition number="24" type="jump" coverage="100%" />
+                <condition number="35" type="jump" coverage="100%" />
+                <condition number="47" type="jump" coverage="100%" />
+                <condition number="59" type="jump" coverage="100%" />
               </conditions>
             </line>
-            <line number="112" hits="2" branch="False" />
-            <line number="113" hits="2" branch="False" />
-            <line number="114" hits="2" branch="False" />
-            <line number="115" hits="2" branch="False" />
-            <line number="116" hits="2" branch="False" />
-            <line number="125" hits="1" branch="False" />
-            <line number="126" hits="1" branch="True" condition-coverage="50% (3/6)">
+            <line number="112" hits="7" branch="False" />
+            <line number="113" hits="7" branch="False" />
+            <line number="114" hits="7" branch="False" />
+            <line number="115" hits="7" branch="False" />
+            <line number="116" hits="7" branch="False" />
+            <line number="125" hits="4" branch="False" />
+            <line number="126" hits="4" branch="True" condition-coverage="100% (6/6)">
               <conditions>
-                <condition number="7" type="jump" coverage="50%" />
-                <condition number="15" type="jump" coverage="50%" />
-                <condition number="33" type="jump" coverage="50%" />
+                <condition number="7" type="jump" coverage="100%" />
+                <condition number="15" type="jump" coverage="100%" />
+                <condition number="33" type="jump" coverage="100%" />
               </conditions>
             </line>
-            <line number="127" hits="0" branch="False" />
-            <line number="130" hits="1" branch="True" condition-coverage="50% (1/2)">
+            <line number="127" hits="1" branch="False" />
+            <line number="130" hits="3" branch="True" condition-coverage="50% (1/2)">
               <conditions>
                 <condition number="63" type="jump" coverage="50%" />
               </conditions>
             </line>
             <line number="131" hits="0" branch="False" />
-            <line number="133" hits="1" branch="False" />
-            <line number="134" hits="1" branch="False" />
+            <line number="133" hits="3" branch="False" />
+            <line number="134" hits="4" branch="False" />
           </lines>
         </class>
         <class name="SkiaSharp.Extended.Gif.Encoding.ColorQuantizer" filename="Encoding/ColorQuantizer.cs" line-rate="0.6701" branch-rate="0.475" complexity="42">
