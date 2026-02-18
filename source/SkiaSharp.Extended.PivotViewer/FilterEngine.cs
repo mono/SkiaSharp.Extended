@@ -110,6 +110,55 @@ namespace SkiaSharp.Extended.PivotViewer
             FiltersChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>Whether any filters are active.</summary>
+        public bool HasActiveFilters => _predicates.Count > 0;
+
+        /// <summary>Check if a specific string filter value is active.</summary>
+        public bool HasStringFilter(string propertyId, string value)
+        {
+            var pred = _predicates.FirstOrDefault(p => p.PropertyId == propertyId) as StringFilterPredicate;
+            return pred != null && pred.Values.Contains(value);
+        }
+
+        /// <summary>Get active filter values for a property.</summary>
+        public IReadOnlyList<string> GetActiveFilters(string propertyId)
+        {
+            var pred = _predicates.FirstOrDefault(p => p.PropertyId == propertyId) as StringFilterPredicate;
+            if (pred != null)
+                return pred.Values.ToList();
+            return Array.Empty<string>();
+        }
+
+        /// <summary>Remove all filters for a specific property (alias for RemoveFilter).</summary>
+        public void RemoveAllFilters(string propertyId) => RemoveFilter(propertyId);
+
+        /// <summary>
+        /// Computes in-scope counts using a specific set of items (for external use).
+        /// </summary>
+        public Dictionary<string, int> ComputeInScopeCounts(string propertyId, IReadOnlyList<PivotViewerItem> items)
+        {
+            // Get items filtered by ALL other predicates (excluding this property)
+            var otherPredicates = _predicates.Where(p => p.PropertyId != propertyId).ToList();
+            var inScopeItems = items.Where(item =>
+                otherPredicates.All(p => p.Matches(item))).ToList();
+
+            var counts = new Dictionary<string, int>();
+            foreach (var item in inScopeItems)
+            {
+                var values = item[propertyId];
+                if (values == null) continue;
+                foreach (var value in values)
+                {
+                    string key = value?.ToString() ?? "";
+                    if (counts.ContainsKey(key))
+                        counts[key]++;
+                    else
+                        counts[key] = 1;
+                }
+            }
+            return counts;
+        }
+
         /// <summary>
         /// Returns the items that match all active filter predicates (AND across properties).
         /// </summary>
