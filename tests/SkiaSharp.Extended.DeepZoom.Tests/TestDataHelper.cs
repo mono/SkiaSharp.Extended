@@ -1,32 +1,14 @@
-using System.Reflection;
-using SkiaSharp.Extended.DeepZoom;
-
 namespace SkiaSharp.Extended.DeepZoom.Tests;
 
-/// <summary>Helper for loading embedded test data resources.</summary>
+/// <summary>Helper for loading test data files from the output directory.</summary>
 internal static class TestDataHelper
 {
-    private static readonly Assembly TestAssembly = typeof(TestDataHelper).Assembly;
+    private static string GetPath(string resourceName) =>
+        Path.Combine(AppContext.BaseDirectory, "TestData", resourceName);
 
-    public static Stream GetStream(string resourceName)
-    {
-        string fullName = $"SkiaSharp.Extended.DeepZoom.Tests.TestData.{resourceName}";
-        var stream = TestAssembly.GetManifestResourceStream(fullName);
-        if (stream == null)
-        {
-            // Try finding it by suffix
-            var names = TestAssembly.GetManifestResourceNames();
-            var match = names.FirstOrDefault(n => n.EndsWith(resourceName, StringComparison.OrdinalIgnoreCase));
-            if (match != null)
-                stream = TestAssembly.GetManifestResourceStream(match);
-        }
-        return stream ?? throw new FileNotFoundException($"Embedded resource not found: {fullName}. Available: {string.Join(", ", TestAssembly.GetManifestResourceNames())}");
-    }
+    public static Stream GetStream(string resourceName) =>
+        File.OpenRead(GetPath(resourceName));
 
-    public static string GetString(string resourceName)
-    {
-        using var stream = GetStream(resourceName);
-        using var reader = new StreamReader(stream);
-        return reader.ReadToEnd();
-    }
+    public static string GetString(string resourceName) =>
+        File.ReadAllText(GetPath(resourceName));
 }

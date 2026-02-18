@@ -22,9 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\..\resources\collections\conceptcars\conceptcars.cxml" Link="TestData\conceptcars.cxml" />
-    <EmbeddedResource Include="..\..\resources\collections\msdnmagazine\msdnmagazine.cxml" Link="TestData\msdnmagazine.cxml" />
-    <EmbeddedResource Include="..\..\resources\collections\venues\venues.cxml" Link="TestData\venues.cxml" />
+    <Content Include="..\..\resources\collections\conceptcars\conceptcars.cxml" Link="TestData\conceptcars.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\msdnmagazine\msdnmagazine.cxml" Link="TestData\msdnmagazine.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\venues\venues.cxml" Link="TestData\venues.cxml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
