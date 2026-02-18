@@ -128,4 +128,96 @@ public class PivotViewerPropertyTest
         Assert.NotNull(prop.Sorts);
         Assert.Empty(prop.Sorts);
     }
+
+    // --- DateTimeProperty Presets ---
+
+    [Fact]
+    public void DateTimeProperty_HasDefaultPresetProvider()
+    {
+        var prop = new PivotViewerDateTimeProperty("Date");
+        Assert.NotNull(prop.PresetProvider);
+    }
+
+    [Fact]
+    public void DateTimeProperty_Presets_EmptyByDefault()
+    {
+        var prop = new PivotViewerDateTimeProperty("Date");
+        Assert.Empty(prop.Presets);
+    }
+
+    [Fact]
+    public void DateTimeProperty_AutogeneratePresets_Years()
+    {
+        var prop = new PivotViewerDateTimeProperty("Date");
+        var values = new[]
+        {
+            new DateTime(2000, 1, 1),
+            new DateTime(2005, 6, 15),
+            new DateTime(2010, 12, 31)
+        };
+
+        var presets = PivotViewerDateTimeProperty.AutogenerateCalendarDateRangePresets(null!, prop, values);
+        Assert.NotEmpty(presets);
+        Assert.True(presets.Count >= 1, "Should generate at least one level of presets");
+    }
+
+    [Fact]
+    public void DateTimeProperty_AutogeneratePresets_Decades()
+    {
+        var prop = new PivotViewerDateTimeProperty("Date");
+        var values = new[]
+        {
+            new DateTime(1990, 1, 1),
+            new DateTime(2000, 6, 15),
+            new DateTime(2020, 12, 31)
+        };
+
+        var presets = PivotViewerDateTimeProperty.AutogenerateCalendarDateRangePresets(null!, prop, values);
+        Assert.NotEmpty(presets);
+        // Should generate decades + months
+        Assert.True(presets.Count >= 2, "Should generate multiple levels for wide range");
+    }
+
+    [Fact]
+    public void DateTimeProperty_AutogeneratePresets_Empty()
+    {
+        var prop = new PivotViewerDateTimeProperty("Date");
+        var presets = PivotViewerDateTimeProperty.AutogenerateCalendarDateRangePresets(null!, prop, Array.Empty<DateTime>());
+        Assert.Empty(presets);
+    }
+
+    [Fact]
+    public void DateTimeProperty_GetStaticAndAutoPresets_IncludesCustom()
+    {
+        var prop = new PivotViewerDateTimeProperty("Date");
+        prop.Presets.Add(new DateRange(new DateTime(2020, 1, 1), new DateTime(2020, 12, 31)));
+
+        var values = new[] { new DateTime(2020, 3, 15), new DateTime(2020, 7, 20) };
+        var presets = PivotViewerDateTimeProperty.GetStaticAndAutoCalendarDateRangePresets(null!, prop, values);
+
+        // First level should be the static presets
+        Assert.True(presets.Count >= 1);
+        Assert.Contains(presets[0], r => r.Start == new DateTime(2020, 1, 1));
+    }
+
+    [Fact]
+    public void DateTimeProperty_GetStaticPresets_OnlyStatic()
+    {
+        var prop = new PivotViewerDateTimeProperty("Date");
+        prop.Presets.Add(new DateRange(new DateTime(2020, 1, 1), new DateTime(2020, 12, 31)));
+
+        var values = new[] { new DateTime(2020, 3, 15) };
+        var presets = PivotViewerDateTimeProperty.GetStaticCalendarDateRangePresets(null!, prop, values);
+
+        Assert.Single(presets);
+        Assert.Single(presets[0]);
+    }
+
+    [Fact]
+    public void DateRange_ToString_ReturnsRange()
+    {
+        var range = new DateRange(new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
+        var str = range.ToString();
+        Assert.Contains("2020", str);
+    }
 }
