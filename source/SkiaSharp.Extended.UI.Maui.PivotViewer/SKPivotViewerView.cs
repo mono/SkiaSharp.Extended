@@ -32,6 +32,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private double _previousPanY;
         private bool _disposed;
 
+        // Cached histogram data — invalidated when filters change
+        private readonly Dictionary<string, List<HistogramBucket<double>>> _numericHistogramCache = new();
+        private readonly Dictionary<string, (List<HistogramBucket<DateTime>> Buckets, DateTime Min, DateTime Max)> _dateHistogramCache = new();
+
         public SKPivotViewerView()
         {
             _controller = new PivotViewerController();
@@ -57,9 +61,17 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 SelectionChanged?.Invoke(this, e);
                 MainThread.BeginInvokeOnMainThread(() => _canvasView.InvalidateSurface());
             };
-            _controller.FiltersChanged += (s, e) => FilterChanged?.Invoke(this, EventArgs.Empty);
+            _controller.FiltersChanged += (s, e) =>
+            {
+                InvalidateHistogramCaches();
+                FilterChanged?.Invoke(this, EventArgs.Empty);
+            };
             _controller.ViewChanged += (s, e) => ViewChanged?.Invoke(this, EventArgs.Empty);
-            _controller.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, EventArgs.Empty);
+            _controller.CollectionChanged += (s, e) =>
+            {
+                InvalidateHistogramCaches();
+                CollectionChanged?.Invoke(this, EventArgs.Empty);
+            };
 
             SetupGestures();
         }
@@ -579,28 +591,34 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 }
                 else if (category.Property.PropertyType == PivotViewerPropertyType.Decimal)
                 {
-                    // Numeric range — render a mini histogram
+                    // Numeric range — render a cached mini histogram
                     _textFont.Size = 11;
-                    var numericValues = new List<double>();
-                    foreach (var item in _controller.InScopeItems)
+                    if (!_numericHistogramCache.TryGetValue(category.Property.Id, out var buckets))
                     {
-                        var vals = item[category.Property.Id];
-                        if (vals != null)
+                        var numericValues = new List<double>();
+                        foreach (var item in _controller.InScopeItems)
                         {
-                            foreach (var v in vals)
+                            var vals = item[category.Property.Id];
+                            if (vals != null)
                             {
-                                if (v is double d) numericValues.Add(d);
-                                else if (v is IConvertible c)
+                                foreach (var v in vals)
                                 {
-                                    try { numericValues.Add(c.ToDouble(null)); } catch { }
+                                    if (v is double d) numericValues.Add(d);
+                                    else if (v is IConvertible c)
+                                    {
+                                        try { numericValues.Add(c.ToDouble(null)); } catch { }
+                                    }
                                 }
                             }
                         }
+                        buckets = numericValues.Count > 0
+                            ? HistogramBucketer.CreateNumericBuckets(numericValues)
+                            : new List<HistogramBucket<double>>();
+                        _numericHistogramCache[category.Property.Id] = buckets;
                     }
 
-                    if (numericValues.Count > 0)
+                    if (buckets.Count > 0)
                     {
-                        var buckets = HistogramBucketer.CreateNumericBuckets(numericValues);
                         float histH = 40f;
                         float barWidth = (width - Padding * 2 - 16) / Math.Max(1, buckets.Count);
                         int maxCount = buckets.Max(b => b.Count);
@@ -618,7 +636,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
                         // Min/max label
                         using var rangePaint = new SKPaint { Color = new SKColor(120, 120, 120) };
-                        string rangeLabel = $"{numericValues.Min():F0} – {numericValues.Max():F0}";
+                        string rangeLabel = $"{buckets[0].Label} – {buckets[buckets.Count - 1].Label}";
                         canvas.DrawText(rangeLabel, Padding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
                         y += lineHeight;
                     }
@@ -631,33 +649,47 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 }
                 else if (category.Property.PropertyType == PivotViewerPropertyType.DateTime)
                 {
-                    // DateTime range — render mini histogram like numeric
+                    // DateTime range — render cached mini histogram
                     _textFont.Size = 11;
-                    var dateValues = new List<DateTime>();
-                    foreach (var item in _controller.InScopeItems)
+                    if (!_dateHistogramCache.TryGetValue(category.Property.Id, out var dateData))
                     {
-                        var vals = item[category.Property.Id];
-                        if (vals != null)
+                        var dateValues = new List<DateTime>();
+                        foreach (var item in _controller.InScopeItems)
                         {
-                            foreach (var v in vals)
+                            var vals = item[category.Property.Id];
+                            if (vals != null)
                             {
-                                if (v is DateTime dt) dateValues.Add(dt);
-                                else if (v is string s && DateTime.TryParse(s, out var parsed))
-                                    dateValues.Add(parsed);
+                                foreach (var v in vals)
+                                {
+                                    if (v is DateTime dt) dateValues.Add(dt);
+                                    else if (v is string s && DateTime.TryParse(s, out var parsed))
+                                        dateValues.Add(parsed);
+                                }
                             }
                         }
+
+                        if (dateValues.Count > 0)
+                        {
+                            var dtBuckets = HistogramBucketer.CreateDateTimeBuckets(dateValues);
+                            dateData = (dtBuckets, dateValues.Min(), dateValues.Max());
+                        }
+                        else
+                        {
+                            dateData = (new List<HistogramBucket<DateTime>>(), DateTime.MinValue, DateTime.MaxValue);
+                        }
+                        _dateHistogramCache[category.Property.Id] = dateData;
                     }
 
-                    if (dateValues.Count > 0)
+                    if (dateData.Buckets.Count > 0)
                     {
-                        var buckets = HistogramBucketer.CreateDateTimeBuckets(dateValues);
+                        var dtBuckets = dateData.Buckets;
                         float histH = 40f;
-                        float barWidth = (width - Padding * 2 - 16) / Math.Max(1, buckets.Count);
-                        int maxCount = buckets.Max(b => b.Count);
+                        float barWidth = (width - Padding * 2 - 16) / Math.Max(1, dtBuckets.Count);
+                        int maxCount = dtBuckets.Max(b => b.Count);
 
-                        for (int i = 0; i < buckets.Count; i++)
+                        for (int i = 0; i < dtBuckets.Count; i++)
                         {
-                            float barHeight = maxCount > 0 ? (float)buckets[i].Count / maxCount * histH : 0;
+                            float barHeight = maxCount > 0 ? (float)dtBuckets[i].Count / maxCount * histH : 0;
                             float barX = Padding + 8 + i * barWidth;
                             float barY = y + histH - barHeight;
 
@@ -666,11 +698,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                         }
                         y += histH + 4;
 
-                        // Date range label
-                        var minDate = dateValues.Min();
-                        var maxDate = dateValues.Max();
                         using var rangePaint = new SKPaint { Color = new SKColor(120, 120, 120) };
-                        string rangeLabel = $"{minDate:MMM yyyy} – {maxDate:MMM yyyy}";
+                        string rangeLabel = $"{dateData.Min:MMM yyyy} – {dateData.Max:MMM yyyy}";
                         canvas.DrawText(rangeLabel, Padding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
                         y += lineHeight;
                     }
@@ -803,6 +832,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     canvas.DrawText(text, Padding, y + 10, SKTextAlign.Left, _textFont, copyPaint);
                 }
             }
+        }
+
+        private void InvalidateHistogramCaches()
+        {
+            _numericHistogramCache.Clear();
+            _dateHistogramCache.Clear();
         }
 
         // --- Gestures ---

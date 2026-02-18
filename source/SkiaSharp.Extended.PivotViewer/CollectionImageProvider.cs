@@ -131,28 +131,31 @@ namespace SkiaSharp.Extended.PivotViewer
         {
             // For IsPath items, the source is a .dzi file. The tile pyramid is at
             // {basePath}/{source.Replace(".dzi","_files")}/{level}/{col}_{row}.{format}
-            // We find the lowest level >= targetSize and load that single tile.
+            // We find the lowest level where the image fits in a single tile (0_0)
+            // and is at least targetSize pixels.
             var source = subImage.Source!;
             var filesDir = source.Replace(".dzi", "_files");
 
-            // Compute the best level based on the image dimensions
             int maxDim = Math.Max(subImage.Width, subImage.Height);
             int maxLevel = maxDim > 0 ? (int)Math.Ceiling(Math.Log(maxDim) / Math.Log(2)) : 0;
 
-            // Find level where the full image fits in ~targetSize pixels
+            // Cap the level so the entire image fits within one tile.
+            // At level L, the image is (1 << L) pixels on its longest side.
+            // The tile size is _dzc.TileSize (typically 256). If the image at
+            // this level exceeds the tile size, tile 0_0 is only a crop.
+            int tileSize = _dzc.TileSize > 0 ? _dzc.TileSize : 256;
+            int maxSingleTileLevel = (int)Math.Floor(Math.Log(tileSize) / Math.Log(2));
+
             int bestLevel = 0;
-            for (int level = 0; level <= maxLevel; level++)
+            int effectiveMax = Math.Min(maxLevel, maxSingleTileLevel);
+            for (int level = 0; level <= effectiveMax; level++)
             {
+                bestLevel = level;
                 int levelDim = 1 << level;
                 if (levelDim >= targetSize)
-                {
-                    bestLevel = level;
                     break;
-                }
-                bestLevel = level;
             }
 
-            // At low levels, the entire image fits in one tile (0_0)
             string url = $"{_basePath}/{filesDir}/{bestLevel}/0_0.{_dzc.Format}";
             var tileBitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
 

@@ -17,7 +17,7 @@ public partial class PivotViewerPage : ContentPage
 			"Collections/nigeria-state/deepzoom/images.dzc"),
 	];
 
-	private AppPackageImageProvider? _imageProvider;
+	private CancellationTokenSource? _thumbnailCts;
 
 	public PivotViewerPage()
 	{
@@ -50,6 +50,12 @@ public partial class PivotViewerPage : ContentPage
 		{
 			statusLabel.Text = "Loading collection...";
 
+			// Cancel any in-flight thumbnail loading
+			_thumbnailCts?.Cancel();
+			_thumbnailCts?.Dispose();
+			_thumbnailCts = new CancellationTokenSource();
+			var ct = _thumbnailCts.Token;
+
 			// Parse CXML
 			using var stream = await FileSystem.OpenAppPackageFileAsync(info.CxmlPath);
 			var source = await CxmlCollectionSource.LoadAsync(stream);
@@ -60,24 +66,25 @@ public partial class PivotViewerPage : ContentPage
 				return;
 			}
 
+			// Dispose previous ImageProvider before creating new one
+			pivotViewerView.Controller.ImageProvider?.Dispose();
+			pivotViewerView.Controller.ImageProvider = null;
+
 			pivotViewerView.LoadCollection(source);
 
 			// Set up image provider from DZC
-			_imageProvider?.Dispose();
 			try
 			{
 				using var dzcStream = await FileSystem.OpenAppPackageFileAsync(info.DzcPath);
 				var dzc = DzcTileSource.Parse(dzcStream);
-				// Base path is the directory containing the DZC file
 				var dzcDir = info.DzcPath.Substring(0, info.DzcPath.LastIndexOf('/'));
 				var fetcher = new AppPackageTileFetcher();
 
-				_imageProvider = new AppPackageImageProvider(dzc, fetcher, dzcDir);
 				pivotViewerView.Controller.ImageProvider =
 					new CollectionImageProvider(dzc, fetcher, dzcDir);
 
-				// Start loading thumbnails for visible items
-				_ = LoadThumbnailsAsync(source);
+				// Start loading thumbnails with cancellation support
+				_ = LoadThumbnailsAsync(source, ct);
 			}
 			catch (Exception ex)
 			{
@@ -96,16 +103,18 @@ public partial class PivotViewerPage : ContentPage
 		}
 	}
 
-	private async Task LoadThumbnailsAsync(CxmlCollectionSource source)
+	private async Task LoadThumbnailsAsync(CxmlCollectionSource source, CancellationToken ct)
 	{
 		var imgProvider = pivotViewerView.Controller.ImageProvider;
 		if (imgProvider == null) return;
 
 		try
 		{
-			await imgProvider.LoadThumbnailsAsync(source.Items, 128);
-			pivotViewerView.InvalidateSurface();
+			await imgProvider.LoadThumbnailsAsync(source.Items, 128, ct);
+			if (!ct.IsCancellationRequested)
+				pivotViewerView.InvalidateSurface();
 		}
+		catch (OperationCanceledException) { }
 		catch (Exception ex)
 		{
 			System.Diagnostics.Debug.WriteLine($"Thumbnail load: {ex.Message}");
@@ -142,7 +151,8 @@ public partial class PivotViewerPage : ContentPage
 	protected override void OnDisappearing()
 	{
 		base.OnDisappearing();
-		_imageProvider?.Dispose();
+		_thumbnailCts?.Cancel();
+		_thumbnailCts?.Dispose();
 		pivotViewerView.Dispose();
 	}
 
@@ -168,24 +178,5 @@ public partial class PivotViewerPage : ContentPage
 		}
 
 		public void Dispose() { }
-	}
-
-	/// <summary>
-	/// Simple wrapper to track disposal.
-	/// </summary>
-	private class AppPackageImageProvider : IDisposable
-	{
-		private readonly DzcTileSource _dzc;
-		private readonly ITileFetcher _fetcher;
-		private readonly string _basePath;
-
-		public AppPackageImageProvider(DzcTileSource dzc, ITileFetcher fetcher, string basePath)
-		{
-			_dzc = dzc;
-			_fetcher = fetcher;
-			_basePath = basePath;
-		}
-
-		public void Dispose() => _fetcher.Dispose();
 	}
 }
