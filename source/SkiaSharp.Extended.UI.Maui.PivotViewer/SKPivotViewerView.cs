@@ -624,6 +624,32 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             string countText = $"{_controller.InScopeItems.Count} of {_controller.Items.Count} items";
             canvas.DrawText(countText, countX, barHeight / 2 + 5, SKTextAlign.Left, _textFont, whitePaint);
 
+            // Active filter breadcrumbs (between view switcher and sort)
+            {
+                var activeFilters = new List<string>();
+                if (!string.IsNullOrEmpty(_controller.SearchText))
+                    activeFilters.Add($"\"{_controller.SearchText}\"");
+
+                // Check each property for active filters via the filter engine
+                foreach (var prop in _controller.Properties)
+                {
+                    var active = _controller.FilterEngine.GetActiveFilters(prop.Id);
+                    if (active != null && active.Count > 0)
+                        activeFilters.Add(prop.DisplayName ?? prop.Id);
+                }
+
+                if (activeFilters.Count > 0)
+                {
+                    _textFont.Size = 11;
+                    using var breadcrumbPaint = new SKPaint { Color = new SKColor(180, 200, 255) };
+                    string breadcrumb = string.Join(" › ", activeFilters);
+                    if (breadcrumb.Length > 40) breadcrumb = breadcrumb.Substring(0, 37) + "...";
+                    float bx = x + _textFont.MeasureText(graphLabel, out _) + 20;
+                    canvas.DrawText(breadcrumb, bx, barHeight / 2 + 4, SKTextAlign.Left, _textFont, breadcrumbPaint);
+                    _textFont.Size = 14;
+                }
+            }
+
             // Sort indicator (clickable)
             {
                 float sortX = info.Width / 2;
@@ -726,8 +752,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 }
                 y += lineHeight + 2;
 
-                // Value list (for string/text categories)
-                if (category.ValueCounts != null && category.Property.PropertyType == PivotViewerPropertyType.Text)
+                // Value list (for string/text/link categories — all use checkbox UI)
+                if (category.ValueCounts != null && (
+                    category.Property.PropertyType == PivotViewerPropertyType.Text ||
+                    category.Property.PropertyType == PivotViewerPropertyType.Link))
                 {
                     _textFont.Size = 11;
                     int shown = 0;
@@ -1272,7 +1300,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             {
                 catY += lineHeight + 2; // Header
 
-                if (category.ValueCounts != null && category.Property.PropertyType == PivotViewerPropertyType.Text)
+                if (category.ValueCounts != null && (
+                    category.Property.PropertyType == PivotViewerPropertyType.Text ||
+                    category.Property.PropertyType == PivotViewerPropertyType.Link))
                 {
                     foreach (var kv in category.ValueCounts.OrderByDescending(kv => kv.Value).Take(8))
                     {

@@ -15,6 +15,7 @@ namespace SkiaSharp.Extended.PivotViewer
         private readonly GridLayoutEngine _layoutEngine;
         private readonly WordWheelIndex _wordWheel;
         private readonly LayoutTransitionManager _layoutTransition;
+        private readonly EventHandler _onFiltersChangedHandler;
         private FilterPaneModel? _filterPaneModel;
         private DetailPaneModel? _detailPaneModel;
         private CollectionImageProvider? _imageProvider;
@@ -45,7 +46,8 @@ namespace SkiaSharp.Extended.PivotViewer
             _wordWheel = new WordWheelIndex();
             _layoutTransition = new LayoutTransitionManager();
 
-            _filterEngine.FiltersChanged += (s, e) => OnFiltersChanged();
+            _onFiltersChangedHandler = (s, e) => OnFiltersChanged();
+            _filterEngine.FiltersChanged += _onFiltersChangedHandler;
         }
 
         // --- Data ---
@@ -584,6 +586,7 @@ namespace SkiaSharp.Extended.PivotViewer
             if (!_disposed)
             {
                 _disposed = true;
+                _filterEngine.FiltersChanged -= _onFiltersChangedHandler;
                 _layoutTransition.CancelTransition();
                 _imageProvider?.Dispose();
                 _imageProvider = null;
