@@ -248,6 +248,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         }
 
         /// <summary>
+        /// Invalidates the surface to trigger a redraw.
+        /// </summary>
+        public void InvalidateSurface() => _canvasView.InvalidateSurface();
+
+        /// <summary>
         /// Serializes the current viewer state.
         /// </summary>
         public string SerializeViewerState() => _controller.SerializeViewerState();
@@ -626,10 +631,55 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 }
                 else if (category.Property.PropertyType == PivotViewerPropertyType.DateTime)
                 {
+                    // DateTime range — render mini histogram like numeric
                     _textFont.Size = 11;
-                    using var datePaint = new SKPaint { Color = new SKColor(80, 80, 80) };
-                    canvas.DrawText("Date range", Padding + 8, y + 12, SKTextAlign.Left, _textFont, datePaint);
-                    y += lineHeight;
+                    var dateValues = new List<DateTime>();
+                    foreach (var item in _controller.InScopeItems)
+                    {
+                        var vals = item[category.Property.Id];
+                        if (vals != null)
+                        {
+                            foreach (var v in vals)
+                            {
+                                if (v is DateTime dt) dateValues.Add(dt);
+                                else if (v is string s && DateTime.TryParse(s, out var parsed))
+                                    dateValues.Add(parsed);
+                            }
+                        }
+                    }
+
+                    if (dateValues.Count > 0)
+                    {
+                        var buckets = HistogramBucketer.CreateDateTimeBuckets(dateValues);
+                        float histH = 40f;
+                        float barWidth = (width - Padding * 2 - 16) / Math.Max(1, buckets.Count);
+                        int maxCount = buckets.Max(b => b.Count);
+
+                        for (int i = 0; i < buckets.Count; i++)
+                        {
+                            float barHeight = maxCount > 0 ? (float)buckets[i].Count / maxCount * histH : 0;
+                            float barX = Padding + 8 + i * barWidth;
+                            float barY = y + histH - barHeight;
+
+                            using var barPaint = new SKPaint { Color = new SKColor(144, 190, 109, 180) };
+                            canvas.DrawRect(barX, barY, barWidth - 1, barHeight, barPaint);
+                        }
+                        y += histH + 4;
+
+                        // Date range label
+                        var minDate = dateValues.Min();
+                        var maxDate = dateValues.Max();
+                        using var rangePaint = new SKPaint { Color = new SKColor(120, 120, 120) };
+                        string rangeLabel = $"{minDate:MMM yyyy} – {maxDate:MMM yyyy}";
+                        canvas.DrawText(rangeLabel, Padding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
+                        y += lineHeight;
+                    }
+                    else
+                    {
+                        using var emptyPaint = new SKPaint { Color = SKColors.Gray };
+                        canvas.DrawText("(no date data)", Padding + 8, y + 12, SKTextAlign.Left, _textFont, emptyPaint);
+                        y += lineHeight;
+                    }
                 }
 
                 y += 6; // Spacing between categories
@@ -651,16 +701,20 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var item = detail.SelectedItem;
             if (item == null) return;
 
+            var defaults = _controller.DefaultDetails;
             float y = Padding;
 
-            // Item name
-            var name = GetItemDisplayName(item) ?? "Unknown";
-            _textFont.Size = 16;
-            using var titlePaint = new SKPaint { Color = SKColors.Black };
-            canvas.DrawText(name, Padding, y + 16, SKTextAlign.Left, _textFont, titlePaint);
-            y += 28;
+            // Item name (respects DefaultDetails.IsNameHidden)
+            if (!defaults.IsNameHidden)
+            {
+                var name = GetItemDisplayName(item) ?? "Unknown";
+                _textFont.Size = 16;
+                using var titlePaint = new SKPaint { Color = SKColors.Black };
+                canvas.DrawText(name, Padding, y + 16, SKTextAlign.Left, _textFont, titlePaint);
+                y += 28;
+            }
 
-            // Thumbnail placeholder
+            // Thumbnail
             var imgProvider = _controller.ImageProvider;
             if (imgProvider != null)
             {
@@ -676,42 +730,78 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 }
             }
 
+            // Description (respects DefaultDetails.IsDescriptionHidden)
+            if (!defaults.IsDescriptionHidden)
+            {
+                var descValues = item["Description"];
+                if (descValues != null && descValues.Count > 0)
+                {
+                    var desc = descValues[0]?.ToString();
+                    if (!string.IsNullOrEmpty(desc))
+                    {
+                        _textFont.Size = 11;
+                        using var descPaint = new SKPaint { Color = new SKColor(80, 80, 80) };
+                        // Truncate long descriptions
+                        if (desc!.Length > 120) desc = desc.Substring(0, 117) + "...";
+                        canvas.DrawText(desc, Padding, y + 12, SKTextAlign.Left, _textFont, descPaint);
+                        y += 20;
+                    }
+                }
+            }
+
             // Separator
             y += 4;
             canvas.DrawLine(Padding, y, width - Padding, y, sepPaint);
             y += 8;
 
-            // Facet values
-            var facets = detail.FacetValues;
-            _textFont.Size = 11;
-            foreach (var facet in facets)
+            // Facet values (respects DefaultDetails.IsFacetCategoriesHidden)
+            if (!defaults.IsFacetCategoriesHidden)
             {
-                if (y > height - 20) break;
-
-                // Property name
-                using var propPaint = new SKPaint { Color = new SKColor(100, 100, 100) };
-                canvas.DrawText(facet.DisplayName, Padding, y + 12, SKTextAlign.Left, _textFont, propPaint);
-                y += 16;
-
-                // Values
-                using var valuePaint = new SKPaint { Color = SKColors.Black };
-                foreach (var val in facet.Values.Take(3))
+                var facets = detail.FacetValues;
+                _textFont.Size = 11;
+                foreach (var facet in facets)
                 {
                     if (y > height - 20) break;
-                    string displayVal = val.Length > 40 ? val.Substring(0, 37) + "..." : val;
-                    canvas.DrawText(displayVal, Padding + 4, y + 12, SKTextAlign.Left, _textFont, valuePaint);
-                    y += 16;
-                }
 
-                if (facet.Values.Count > 3)
+                    // Property name
+                    using var propPaint = new SKPaint { Color = new SKColor(100, 100, 100) };
+                    canvas.DrawText(facet.DisplayName, Padding, y + 12, SKTextAlign.Left, _textFont, propPaint);
+                    y += 16;
+
+                    // Values
+                    using var valuePaint = new SKPaint { Color = SKColors.Black };
+                    foreach (var val in facet.Values.Take(3))
+                    {
+                        if (y > height - 20) break;
+                        string displayVal = val.Length > 40 ? val.Substring(0, 37) + "..." : val;
+                        canvas.DrawText(displayVal, Padding + 4, y + 12, SKTextAlign.Left, _textFont, valuePaint);
+                        y += 16;
+                    }
+
+                    if (facet.Values.Count > 3)
+                    {
+                        using var morePaint = new SKPaint { Color = SKColors.Gray };
+                        canvas.DrawText($"+{facet.Values.Count - 3} more",
+                            Padding + 4, y + 12, SKTextAlign.Left, _textFont, morePaint);
+                        y += 16;
+                    }
+
+                    y += 4;
+                }
+            }
+
+            // Copyright (respects DefaultDetails.IsCopyrightHidden)
+            if (!defaults.IsCopyrightHidden)
+            {
+                var copyright = _controller.CollectionSource?.Copyright;
+                if (copyright != null && y < height - 30)
                 {
-                    using var morePaint = new SKPaint { Color = SKColors.Gray };
-                    canvas.DrawText($"+{facet.Values.Count - 3} more",
-                        Padding + 4, y + 12, SKTextAlign.Left, _textFont, morePaint);
-                    y += 16;
+                    y = height - 24;
+                    _textFont.Size = 9;
+                    using var copyPaint = new SKPaint { Color = SKColors.Gray };
+                    var text = copyright.Text ?? "©";
+                    canvas.DrawText(text, Padding, y + 10, SKTextAlign.Left, _textFont, copyPaint);
                 }
-
-                y += 4;
             }
         }
 

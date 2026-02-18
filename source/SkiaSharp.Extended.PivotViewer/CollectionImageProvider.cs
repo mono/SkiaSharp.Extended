@@ -106,73 +106,16 @@ namespace SkiaSharp.Extended.PivotViewer
                 if (subImage == null)
                     return null;
 
-                int gridSize = _dzc.GetMortonGridSize();
-                if (gridSize == 0) return null;
-
-                // Choose a level where each item is roughly targetSize pixels
-                int bestLevel = 0;
-                for (int level = 0; level <= _dzc.MaxLevel; level++)
+                SKBitmap? thumbnail;
+                if (subImage.Source != null)
                 {
-                    int levelWidth = _dzc.TileSize * (1 << level);
-                    double itemPixelSize = (double)levelWidth / gridSize;
-                    if (itemPixelSize >= targetSize)
-                    {
-                        bestLevel = level;
-                        break;
-                    }
-                    bestLevel = level;
+                    // IsPath items: load from individual DZI tile pyramid
+                    thumbnail = await LoadIsPathThumbnailAsync(subImage, targetSize, ct).ConfigureAwait(false);
                 }
-
-                var (col, row) = DzcTileSource.MortonToGrid(subImage.MortonIndex);
-
-                int levelTotalWidth = _dzc.TileSize * (1 << bestLevel);
-                double itemPixWidth = (double)levelTotalWidth / gridSize;
-                double itemPixHeight = itemPixWidth / subImage.AspectRatio;
-
-                double itemPxX = col * itemPixWidth;
-                double itemPxY = row * itemPixWidth;
-
-                int tileCol = (int)(itemPxX / _dzc.TileSize);
-                int tileRow = (int)(itemPxY / _dzc.TileSize);
-
-                var tileId = new TileId(bestLevel, tileCol, tileRow);
-                SKBitmap? tileBitmap;
-
-                if (!_cache.TryGet(tileId, out tileBitmap))
+                else
                 {
-                    string url = $"{_basePath}/{_dzc.GetCompositeTileUrl(bestLevel, tileCol, tileRow)}";
-                    tileBitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
-
-                    if (_disposed) return null;
-                    if (tileBitmap != null)
-                        _cache.Put(tileId, tileBitmap);
-                }
-
-                if (tileBitmap == null)
-                {
-                    _thumbnailCache[itemIndex] = null;
-                    return null;
-                }
-
-                double localX = itemPxX - tileCol * _dzc.TileSize;
-                double localY = itemPxY - tileRow * _dzc.TileSize;
-
-                int srcX = Math.Max(0, (int)localX);
-                int srcY = Math.Max(0, (int)localY);
-                int srcW = Math.Min((int)Math.Ceiling(itemPixWidth), tileBitmap.Width - srcX);
-                int srcH = Math.Min((int)Math.Ceiling(itemPixHeight), tileBitmap.Height - srcY);
-
-                if (srcW <= 0 || srcH <= 0)
-                {
-                    _thumbnailCache[itemIndex] = null;
-                    return null;
-                }
-
-                var srcRect = new SKRectI(srcX, srcY, srcX + srcW, srcY + srcH);
-                var thumbnail = new SKBitmap(srcW, srcH);
-                using (var canvas = new SKCanvas(thumbnail))
-                {
-                    canvas.DrawBitmap(tileBitmap, srcRect, new SKRect(0, 0, srcW, srcH));
+                    // Composite mosaic: extract from DZC composite tiles
+                    thumbnail = await LoadCompositeThumbnailAsync(subImage, targetSize, ct).ConfigureAwait(false);
                 }
 
                 _thumbnailCache[itemIndex] = thumbnail;
@@ -182,6 +125,106 @@ namespace SkiaSharp.Extended.PivotViewer
             {
                 loadLock.Release();
             }
+        }
+
+        private async Task<SKBitmap?> LoadIsPathThumbnailAsync(DzcSubImage subImage, int targetSize, CancellationToken ct)
+        {
+            // For IsPath items, the source is a .dzi file. The tile pyramid is at
+            // {basePath}/{source.Replace(".dzi","_files")}/{level}/{col}_{row}.{format}
+            // We find the lowest level >= targetSize and load that single tile.
+            var source = subImage.Source!;
+            var filesDir = source.Replace(".dzi", "_files");
+
+            // Compute the best level based on the image dimensions
+            int maxDim = Math.Max(subImage.Width, subImage.Height);
+            int maxLevel = maxDim > 0 ? (int)Math.Ceiling(Math.Log(maxDim) / Math.Log(2)) : 0;
+
+            // Find level where the full image fits in ~targetSize pixels
+            int bestLevel = 0;
+            for (int level = 0; level <= maxLevel; level++)
+            {
+                int levelDim = 1 << level;
+                if (levelDim >= targetSize)
+                {
+                    bestLevel = level;
+                    break;
+                }
+                bestLevel = level;
+            }
+
+            // At low levels, the entire image fits in one tile (0_0)
+            string url = $"{_basePath}/{filesDir}/{bestLevel}/0_0.{_dzc.Format}";
+            var tileBitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
+
+            return tileBitmap;
+        }
+
+        private async Task<SKBitmap?> LoadCompositeThumbnailAsync(DzcSubImage subImage, int targetSize, CancellationToken ct)
+        {
+            int gridSize = _dzc.GetMortonGridSize();
+            if (gridSize == 0) return null;
+
+            // Choose a level where each item is roughly targetSize pixels
+            int bestLevel = 0;
+            for (int level = 0; level <= _dzc.MaxLevel; level++)
+            {
+                int levelWidth = _dzc.TileSize * (1 << level);
+                double itemPixelSize = (double)levelWidth / gridSize;
+                if (itemPixelSize >= targetSize)
+                {
+                    bestLevel = level;
+                    break;
+                }
+                bestLevel = level;
+            }
+
+            var (col, row) = DzcTileSource.MortonToGrid(subImage.MortonIndex);
+
+            int levelTotalWidth = _dzc.TileSize * (1 << bestLevel);
+            double itemPixWidth = (double)levelTotalWidth / gridSize;
+            double itemPixHeight = itemPixWidth / subImage.AspectRatio;
+
+            double itemPxX = col * itemPixWidth;
+            double itemPxY = row * itemPixWidth;
+
+            int tileCol = (int)(itemPxX / _dzc.TileSize);
+            int tileRow = (int)(itemPxY / _dzc.TileSize);
+
+            var tileId = new TileId(bestLevel, tileCol, tileRow);
+            SKBitmap? tileBitmap;
+
+            if (!_cache.TryGet(tileId, out tileBitmap))
+            {
+                string url = $"{_basePath}/{_dzc.GetCompositeTileUrl(bestLevel, tileCol, tileRow)}";
+                tileBitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
+
+                if (_disposed) return null;
+                if (tileBitmap != null)
+                    _cache.Put(tileId, tileBitmap);
+            }
+
+            if (tileBitmap == null)
+                return null;
+
+            double localX = itemPxX - tileCol * _dzc.TileSize;
+            double localY = itemPxY - tileRow * _dzc.TileSize;
+
+            int srcX = Math.Max(0, (int)localX);
+            int srcY = Math.Max(0, (int)localY);
+            int srcW = Math.Min((int)Math.Ceiling(itemPixWidth), tileBitmap.Width - srcX);
+            int srcH = Math.Min((int)Math.Ceiling(itemPixHeight), tileBitmap.Height - srcY);
+
+            if (srcW <= 0 || srcH <= 0)
+                return null;
+
+            var srcRect = new SKRectI(srcX, srcY, srcX + srcW, srcY + srcH);
+            var thumbnail = new SKBitmap(srcW, srcH);
+            using (var canvas = new SKCanvas(thumbnail))
+            {
+                canvas.DrawBitmap(tileBitmap, srcRect, new SKRect(0, 0, srcW, srcH));
+            }
+
+            return thumbnail;
         }
 
         /// <summary>

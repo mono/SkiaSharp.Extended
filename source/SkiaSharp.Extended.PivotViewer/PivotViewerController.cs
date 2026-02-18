@@ -18,6 +18,7 @@ namespace SkiaSharp.Extended.PivotViewer
         private FilterPaneModel? _filterPaneModel;
         private DetailPaneModel? _detailPaneModel;
         private CollectionImageProvider? _imageProvider;
+        private CxmlCollectionSource? _collectionSource;
         private bool _disposed;
 
         private List<PivotViewerItem> _allItems = new List<PivotViewerItem>();
@@ -172,6 +173,9 @@ namespace SkiaSharp.Extended.PivotViewer
             set => _imageProvider = value;
         }
 
+        /// <summary>The loaded CXML collection source, if any.</summary>
+        public CxmlCollectionSource? CollectionSource => _collectionSource;
+
         /// <summary>
         /// Zoom level: 0.0 = fit all items, 1.0 = single item detail.
         /// Affects the item size in the grid layout.
@@ -249,6 +253,7 @@ namespace SkiaSharp.Extended.PivotViewer
         /// </summary>
         public void LoadCollection(CxmlCollectionSource source)
         {
+            _collectionSource = source;
             _allItems = new List<PivotViewerItem>(source.Items);
             _properties = new List<PivotViewerProperty>(source.ItemProperties);
 
