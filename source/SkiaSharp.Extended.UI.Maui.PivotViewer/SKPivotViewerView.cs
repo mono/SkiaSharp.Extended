@@ -261,6 +261,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         // --- Rendering ---
 
+        // Layout constants
+        private const float FilterPaneWidth = 220f;
+        private const float DetailPaneWidth = 280f;
+        private const float ControlBarHeight = 40f;
+        private const float Padding = 8f;
+
         private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
         {
             var canvas = e.Surface.Canvas;
@@ -268,15 +274,49 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             canvas.Clear(SKColors.White);
 
-            _controller.SetAvailableSize(info.Width, info.Height);
+            // Layout regions
+            float filterWidth = FilterPaneWidth;
+            float detailWidth = _controller.DetailPane.IsShowing ? DetailPaneWidth : 0;
+            float contentLeft = filterWidth;
+            float contentWidth = info.Width - filterWidth - detailWidth;
+            float contentTop = ControlBarHeight;
+            float contentHeight = info.Height - ControlBarHeight;
 
+            // Update controller with content area size
+            _controller.SetAvailableSize(contentWidth, contentHeight);
+
+            // Render control bar
+            RenderControlBar(canvas, info, ControlBarHeight);
+
+            // Render filter pane
+            canvas.Save();
+            canvas.ClipRect(new SKRect(0, ControlBarHeight, filterWidth, info.Height));
+            RenderFilterPane(canvas, filterWidth, contentHeight, ControlBarHeight);
+            canvas.Restore();
+
+            // Render main content
+            canvas.Save();
+            canvas.ClipRect(new SKRect(contentLeft, contentTop, contentLeft + contentWidth, info.Height));
+            canvas.Translate(contentLeft, contentTop);
             if (_controller.CurrentView == "graph" && _controller.HistogramLayout != null)
             {
-                RenderHistogramView(canvas, info, _controller.HistogramLayout);
+                RenderHistogramView(canvas, new SKImageInfo((int)contentWidth, (int)contentHeight), _controller.HistogramLayout);
             }
             else if (_controller.GridLayout != null)
             {
-                RenderGridView(canvas, info, _controller.GridLayout);
+                RenderGridView(canvas, new SKImageInfo((int)contentWidth, (int)contentHeight), _controller.GridLayout);
+            }
+            canvas.Restore();
+
+            // Render detail pane
+            if (_controller.DetailPane.IsShowing)
+            {
+                float detailLeft = info.Width - detailWidth;
+                canvas.Save();
+                canvas.ClipRect(new SKRect(detailLeft, ControlBarHeight, info.Width, info.Height));
+                canvas.Translate(detailLeft, ControlBarHeight);
+                RenderDetailPane(canvas, detailWidth, contentHeight);
+                canvas.Restore();
             }
         }
 
@@ -397,6 +437,205 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 (byte)(color.Green * 255),
                 (byte)(color.Blue * 255),
                 (byte)(color.Alpha * 255));
+        }
+
+        // --- Control Bar ---
+
+        private void RenderControlBar(SKCanvas canvas, SKImageInfo info, float barHeight)
+        {
+            using var barPaint = new SKPaint { Color = new SKColor(45, 45, 48) };
+            canvas.DrawRect(0, 0, info.Width, barHeight, barPaint);
+
+            _textFont.Size = 14;
+            using var whitePaint = new SKPaint { Color = SKColors.White };
+
+            // View switcher buttons
+            float x = FilterPaneWidth + 10;
+            string gridLabel = _controller.CurrentView == "grid" ? "▣ Grid" : "▢ Grid";
+            canvas.DrawText(gridLabel, x, barHeight / 2 + 5, SKTextAlign.Left, _textFont, whitePaint);
+
+            x += _textFont.MeasureText(gridLabel, out _) + 20;
+            string graphLabel = _controller.CurrentView == "graph" ? "▣ Graph" : "▢ Graph";
+            canvas.DrawText(graphLabel, x, barHeight / 2 + 5, SKTextAlign.Left, _textFont, whitePaint);
+
+            // Item count
+            float countX = info.Width - 150;
+            string countText = $"{_controller.InScopeItems.Count} of {_controller.Items.Count} items";
+            canvas.DrawText(countText, countX, barHeight / 2 + 5, SKTextAlign.Left, _textFont, whitePaint);
+
+            // Sort indicator
+            if (_controller.SortProperty != null)
+            {
+                float sortX = info.Width / 2;
+                string sortText = $"Sort: {_controller.SortProperty.DisplayName}";
+                canvas.DrawText(sortText, sortX, barHeight / 2 + 5, SKTextAlign.Center, _textFont, whitePaint);
+            }
+        }
+
+        // --- Filter Pane ---
+
+        private void RenderFilterPane(SKCanvas canvas, float width, float height, float topOffset)
+        {
+            using var bgPaint = new SKPaint { Color = new SKColor(240, 240, 240) };
+            canvas.DrawRect(0, topOffset, width, height, bgPaint);
+
+            var filterPane = _controller.FilterPaneModel;
+            if (filterPane == null) return;
+
+            var categories = filterPane.GetCategories(_controller.Items);
+            float y = topOffset + Padding;
+            float lineHeight = 20f;
+
+            // "Clear All" button if any filters active
+            if (filterPane.HasActiveFilters)
+            {
+                using var clearPaint = new SKPaint { Color = SKColors.CornflowerBlue };
+                _textFont.Size = 12;
+                canvas.DrawText("✕ Clear All Filters", Padding, y + 14, SKTextAlign.Left, _textFont, clearPaint);
+                y += lineHeight + 4;
+            }
+
+            foreach (var category in categories)
+            {
+                if (y > topOffset + height) break;
+
+                // Category header
+                using var headerPaint = new SKPaint
+                {
+                    Color = category.IsFiltered ? SKColors.CornflowerBlue : SKColors.Black,
+                };
+                _textFont.Size = 13;
+                canvas.DrawText(category.Property.DisplayName ?? category.Property.Id,
+                    Padding, y + 14, SKTextAlign.Left, _textFont, headerPaint);
+                y += lineHeight + 2;
+
+                // Value list (for string/text categories)
+                if (category.ValueCounts != null && category.Property.PropertyType == PivotViewerPropertyType.Text)
+                {
+                    _textFont.Size = 11;
+                    int shown = 0;
+                    foreach (var kv in category.ValueCounts.OrderByDescending(kv => kv.Value).Take(8))
+                    {
+                        if (y > topOffset + height) break;
+
+                        bool isActive = category.ActiveFilters?.Contains(kv.Key) ?? false;
+                        string checkbox = isActive ? "☑" : "☐";
+                        string label = $"{checkbox} {kv.Key} ({kv.Value})";
+
+                        using var valuePaint = new SKPaint
+                        {
+                            Color = isActive ? SKColors.CornflowerBlue : new SKColor(80, 80, 80)
+                        };
+                        canvas.DrawText(label, Padding + 8, y + 12, SKTextAlign.Left, _textFont, valuePaint);
+                        y += lineHeight - 2;
+                        shown++;
+                    }
+
+                    if (category.ValueCounts.Count > 8)
+                    {
+                        using var morePaint = new SKPaint { Color = SKColors.Gray };
+                        canvas.DrawText($"  +{category.ValueCounts.Count - 8} more...",
+                            Padding + 8, y + 12, SKTextAlign.Left, _textFont, morePaint);
+                        y += lineHeight - 2;
+                    }
+                }
+                else if (category.Property.PropertyType == PivotViewerPropertyType.Decimal)
+                {
+                    // Numeric range — show min/max
+                    _textFont.Size = 11;
+                    using var rangePaint = new SKPaint { Color = new SKColor(80, 80, 80) };
+                    canvas.DrawText("Range filter", Padding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
+                    y += lineHeight;
+                }
+                else if (category.Property.PropertyType == PivotViewerPropertyType.DateTime)
+                {
+                    _textFont.Size = 11;
+                    using var datePaint = new SKPaint { Color = new SKColor(80, 80, 80) };
+                    canvas.DrawText("Date range", Padding + 8, y + 12, SKTextAlign.Left, _textFont, datePaint);
+                    y += lineHeight;
+                }
+
+                y += 6; // Spacing between categories
+            }
+        }
+
+        // --- Detail Pane ---
+
+        private void RenderDetailPane(SKCanvas canvas, float width, float height)
+        {
+            using var bgPaint = new SKPaint { Color = new SKColor(250, 250, 250) };
+            canvas.DrawRect(0, 0, width, height, bgPaint);
+
+            // Separator line
+            using var sepPaint = new SKPaint { Color = new SKColor(200, 200, 200), StrokeWidth = 1 };
+            canvas.DrawLine(0, 0, 0, height, sepPaint);
+
+            var detail = _controller.DetailPane;
+            var item = detail.SelectedItem;
+            if (item == null) return;
+
+            float y = Padding;
+
+            // Item name
+            var name = GetItemDisplayName(item) ?? "Unknown";
+            _textFont.Size = 16;
+            using var titlePaint = new SKPaint { Color = SKColors.Black };
+            canvas.DrawText(name, Padding, y + 16, SKTextAlign.Left, _textFont, titlePaint);
+            y += 28;
+
+            // Thumbnail placeholder
+            var imgProvider = _controller.ImageProvider;
+            if (imgProvider != null)
+            {
+                var thumbnail = imgProvider.GetThumbnailForItem(item);
+                if (thumbnail != null)
+                {
+                    float thumbSize = Math.Min(width - 2 * Padding, 150);
+                    float aspectRatio = (float)thumbnail.Width / thumbnail.Height;
+                    float thumbW = thumbSize;
+                    float thumbH = thumbSize / aspectRatio;
+                    canvas.DrawBitmap(thumbnail, new SKRect(Padding, y, Padding + thumbW, y + thumbH));
+                    y += thumbH + Padding;
+                }
+            }
+
+            // Separator
+            y += 4;
+            canvas.DrawLine(Padding, y, width - Padding, y, sepPaint);
+            y += 8;
+
+            // Facet values
+            var facets = detail.FacetValues;
+            _textFont.Size = 11;
+            foreach (var facet in facets)
+            {
+                if (y > height - 20) break;
+
+                // Property name
+                using var propPaint = new SKPaint { Color = new SKColor(100, 100, 100) };
+                canvas.DrawText(facet.DisplayName, Padding, y + 12, SKTextAlign.Left, _textFont, propPaint);
+                y += 16;
+
+                // Values
+                using var valuePaint = new SKPaint { Color = SKColors.Black };
+                foreach (var val in facet.Values.Take(3))
+                {
+                    if (y > height - 20) break;
+                    string displayVal = val.Length > 40 ? val.Substring(0, 37) + "..." : val;
+                    canvas.DrawText(displayVal, Padding + 4, y + 12, SKTextAlign.Left, _textFont, valuePaint);
+                    y += 16;
+                }
+
+                if (facet.Values.Count > 3)
+                {
+                    using var morePaint = new SKPaint { Color = SKColors.Gray };
+                    canvas.DrawText($"+{facet.Values.Count - 3} more",
+                        Padding + 4, y + 12, SKTextAlign.Left, _textFont, morePaint);
+                    y += 16;
+                }
+
+                y += 4;
+            }
         }
 
         // --- Gestures ---
