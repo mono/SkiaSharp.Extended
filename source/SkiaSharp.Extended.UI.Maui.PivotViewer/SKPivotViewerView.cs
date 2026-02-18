@@ -592,39 +592,41 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var properties = _controller.Properties;
             if (properties.Count == 0) return;
 
-            float dropdownWidth = 200;
-            float rowHeight = 28;
-            float dropdownHeight = properties.Count * rowHeight + 8;
+            // Render using pixel-space coordinates (info.Width/Height)
+            float scale = info.Width / (float)Math.Max(1, Width);
+            float dropdownWidth = 200 * scale;
+            float rowHeight = 28 * scale;
+            float dropdownHeight = properties.Count * rowHeight + 8 * scale;
             float dropdownX = info.Width / 2 - dropdownWidth / 2;
-            float dropdownY = ControlBarHeight;
+            float dropdownY = ControlBarHeight * scale;
 
-            _sortDropdownRect = new SKRect(dropdownX, dropdownY, dropdownX + dropdownWidth, dropdownY + dropdownHeight);
+            var renderRect = new SKRect(dropdownX, dropdownY, dropdownX + dropdownWidth, dropdownY + dropdownHeight);
 
             // Background
             using var bgPaint = new SKPaint { Color = SKColors.White };
             using var shadowPaint = new SKPaint { Color = new SKColor(0, 0, 0, 60) };
-            canvas.DrawRect(_sortDropdownRect.Left + 2, _sortDropdownRect.Top + 2,
+            canvas.DrawRect(renderRect.Left + 2 * scale, renderRect.Top + 2 * scale,
                 dropdownWidth, dropdownHeight, shadowPaint);
-            canvas.DrawRect(_sortDropdownRect, bgPaint);
+            canvas.DrawRect(renderRect, bgPaint);
 
             // Border
             using var borderPaint = new SKPaint { Color = new SKColor(180, 180, 180), IsStroke = true, StrokeWidth = 1 };
-            canvas.DrawRect(_sortDropdownRect, borderPaint);
+            canvas.DrawRect(renderRect, borderPaint);
 
             // Rows
-            _textFont.Size = 13;
+            _textFont.Size = 13 * scale;
             using var textPaint = new SKPaint { Color = new SKColor(30, 30, 30) };
             using var selectedTextPaint = new SKPaint { Color = SKColors.CornflowerBlue };
             using var hoverPaint = new SKPaint { Color = new SKColor(230, 240, 255) };
 
-            float y = dropdownY + 4;
+            float y = dropdownY + 4 * scale;
             foreach (var prop in properties)
             {
                 bool isSelected = _controller.SortProperty?.Id == prop.Id;
                 if (isSelected)
                     canvas.DrawRect(dropdownX, y, dropdownWidth, rowHeight, hoverPaint);
 
-                canvas.DrawText(prop.DisplayName ?? prop.Id, dropdownX + 10, y + rowHeight / 2 + 5,
+                canvas.DrawText(prop.DisplayName ?? prop.Id, dropdownX + 10 * scale, y + rowHeight / 2 + 5 * scale,
                     SKTextAlign.Left, _textFont, isSelected ? selectedTextPaint : textPaint);
                 y += rowHeight;
             }
@@ -1089,6 +1091,18 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             if (x > sortCenter - 100 && x < sortCenter + 100)
             {
                 _showSortDropdown = !_showSortDropdown;
+                if (_showSortDropdown)
+                {
+                    // Pre-calculate dropdown rect in logical coordinates for hit-testing
+                    var properties = _controller.Properties;
+                    float dropdownWidth = 200;
+                    float rowHeight = 28;
+                    float dropdownHeight = properties.Count * rowHeight + 8;
+                    float dropdownX = totalWidth / 2 - dropdownWidth / 2;
+                    float dropdownY = ControlBarHeight;
+                    _sortDropdownRect = new SKRect(dropdownX, dropdownY,
+                        dropdownX + dropdownWidth, dropdownY + dropdownHeight);
+                }
                 _canvasView.InvalidateSurface();
                 return;
             }

@@ -439,14 +439,23 @@ namespace SkiaSharp.Extended.PivotViewer
                     item.Add(descProp, descElement.Value);
                 }
 
-                // Parse AdditionalSearchText from Extension element
-                var extElement = itemElement.Element(CollectionNs + "Extension");
-                if (extElement != null)
+                // Parse AdditionalSearchText — spec defines it as an attribute on <Item>
+                var additionalSearch = itemElement.Attribute(PivotNs + "AdditionalSearchText")?.Value;
+                if (!string.IsNullOrWhiteSpace(additionalSearch))
                 {
-                    var searchTextElement = extElement.Element(PivotNs + "AdditionalSearchText");
-                    if (searchTextElement != null && !string.IsNullOrWhiteSpace(searchTextElement.Value))
+                    item.AdditionalSearchText = additionalSearch.Trim();
+                }
+                else
+                {
+                    // Fallback: check Extension element (non-standard but some tools emit this)
+                    var extElement = itemElement.Element(CollectionNs + "Extension");
+                    if (extElement != null)
                     {
-                        item.AdditionalSearchText = searchTextElement.Value.Trim();
+                        var searchTextElement = extElement.Element(PivotNs + "AdditionalSearchText");
+                        if (searchTextElement != null && !string.IsNullOrWhiteSpace(searchTextElement.Value))
+                        {
+                            item.AdditionalSearchText = searchTextElement.Value.Trim();
+                        }
                     }
                 }
 

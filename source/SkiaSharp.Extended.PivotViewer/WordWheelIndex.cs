@@ -68,7 +68,7 @@ namespace SkiaSharp.Extended.PivotViewer
                         StringSplitOptions.RemoveEmptyEntries);
                     foreach (var word in words)
                     {
-                        if (word.Length > 0)
+                        if (word.Length > 1)
                             AddEntry(word, item);
                     }
                 }

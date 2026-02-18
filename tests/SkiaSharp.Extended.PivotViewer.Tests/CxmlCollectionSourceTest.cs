@@ -436,6 +436,7 @@ public class CxmlCollectionSourceTest
     [Fact]
     public void Parse_WithAdditionalSearchText_ParsesCorrectly()
     {
+        // Schema-compliant: AdditionalSearchText as attribute on Item
         var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009""
             xmlns:p=""http://schemas.microsoft.com/livelabs/pivot/collection/2009""
@@ -444,10 +445,7 @@ public class CxmlCollectionSourceTest
         <FacetCategory Name=""Color"" Type=""String"" p:IsWordWheelVisible=""true"" />
     </FacetCategories>
     <Items>
-        <Item Id=""1"" Name=""Widget"">
-            <Extension>
-                <p:AdditionalSearchText>bonus keyword searchable</p:AdditionalSearchText>
-            </Extension>
+        <Item Id=""1"" Name=""Widget"" p:AdditionalSearchText=""bonus keyword searchable"">
             <Facets>
                 <Facet Name=""Color""><String Value=""Red"" /></Facet>
             </Facets>
@@ -468,5 +466,34 @@ public class CxmlCollectionSourceTest
         var item2 = source.GetItemById("2");
         Assert.NotNull(item2);
         Assert.Null(item2!.AdditionalSearchText);
+    }
+
+    [Fact]
+    public void Parse_WithAdditionalSearchText_ExtensionFallback()
+    {
+        // Non-standard fallback: AdditionalSearchText in Extension element
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009""
+            xmlns:p=""http://schemas.microsoft.com/livelabs/pivot/collection/2009""
+            Name=""Test"">
+    <FacetCategories>
+        <FacetCategory Name=""Color"" Type=""String"" />
+    </FacetCategories>
+    <Items>
+        <Item Id=""1"" Name=""Widget"">
+            <Extension>
+                <p:AdditionalSearchText>fallback text</p:AdditionalSearchText>
+            </Extension>
+            <Facets>
+                <Facet Name=""Color""><String Value=""Red"" /></Facet>
+            </Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        var item1 = source.GetItemById("1");
+        Assert.NotNull(item1);
+        Assert.Equal("fallback text", item1!.AdditionalSearchText);
     }
 }
