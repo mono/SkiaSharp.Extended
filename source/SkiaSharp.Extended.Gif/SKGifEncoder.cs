@@ -55,7 +55,7 @@ namespace SkiaSharp.Extended.Gif
         {
             if (bitmap == null)
                 throw new ArgumentNullException(nameof(bitmap));
-            
+
             AddFrame(bitmap, new SKGifFrameInfo
             {
                 Duration = duration,
@@ -223,11 +223,7 @@ namespace SkiaSharp.Extended.Gif
         private class FrameData
         {
             public SKBitmap Bitmap { get; set; } = null!;
-        private class FrameData
-        {
-            public SKBitmap Bitmap { get; set; } = null!;
             public SKGifFrameInfo FrameInfo { get; set; }
         }
     }
-}
 }
