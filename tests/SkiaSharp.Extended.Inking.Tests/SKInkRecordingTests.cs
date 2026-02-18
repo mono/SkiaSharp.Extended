@@ -1,0 +1,186 @@
+using SkiaSharp;
+using SkiaSharp.Extended.Inking;
+using Xunit;
+
+namespace SkiaSharp.Extended.Inking.Tests;
+
+public class SKInkRecordingTests
+{
+    [Fact]
+    public void Constructor_CreatesEmptyRecording()
+    {
+        var recording = new SKInkRecording();
+
+        Assert.True(recording.IsEmpty);
+        Assert.Equal(TimeSpan.Zero, recording.Duration);
+        Assert.Empty(recording.Strokes);
+    }
+
+    [Fact]
+    public void AddStroke_AddsStrokeToRecording()
+    {
+        var recording = new SKInkRecording();
+        var stroke = new RecordedStroke(2f, 8f);
+        stroke.AddPoint(new SKInkPoint(10f, 20f, 0.5f, 100));
+        
+        recording.AddStroke(stroke);
+
+        Assert.Single(recording.Strokes);
+        Assert.False(recording.IsEmpty);
+    }
+
+    [Fact]
+    public void Duration_ReturnsMaxTimestamp()
+    {
+        var recording = new SKInkRecording();
+        
+        var stroke1 = new RecordedStroke();
+        stroke1.AddPoint(new SKInkPoint(0f, 0f, 0.5f, 0));
+        stroke1.AddPoint(new SKInkPoint(10f, 10f, 0.5f, 500));
+        
+        var stroke2 = new RecordedStroke();
+        stroke2.AddPoint(new SKInkPoint(20f, 20f, 0.5f, 600));
+        stroke2.AddPoint(new SKInkPoint(30f, 30f, 0.5f, 1000));
+        
+        recording.AddStroke(stroke1);
+        recording.AddStroke(stroke2);
+
+        Assert.Equal(TimeSpan.FromMilliseconds(1000), recording.Duration);
+    }
+
+    [Fact]
+    public void Clear_RemovesAllStrokes()
+    {
+        var recording = new SKInkRecording();
+        recording.AddStroke(new RecordedStroke());
+        recording.AddStroke(new RecordedStroke());
+
+        recording.Clear();
+
+        Assert.True(recording.IsEmpty);
+    }
+
+    [Fact]
+    public void CreateSampleSignature_CreatesNonEmptyRecording()
+    {
+        var recording = SKInkRecording.CreateSampleSignature(400f, 200f);
+
+        Assert.False(recording.IsEmpty);
+        Assert.True(recording.Strokes.Count > 0);
+        Assert.True(recording.Duration.TotalMilliseconds > 0);
+    }
+
+    [Fact]
+    public void CreateSampleSignature_HasMultipleStrokes()
+    {
+        var recording = SKInkRecording.CreateSampleSignature(400f, 200f);
+
+        Assert.True(recording.Strokes.Count >= 3);
+    }
+
+    [Fact]
+    public void FromCanvas_RecordsAllStrokes()
+    {
+        using var canvas = new SKInkCanvas(2f, 8f);
+        
+        // Add first stroke
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+        canvas.ContinueStroke(new SKPoint(30f, 40f), 0.6f);
+        canvas.EndStroke(new SKPoint(50f, 60f), 0.4f);
+        
+        // Add second stroke
+        canvas.StartStroke(new SKPoint(100f, 100f), 0.7f);
+        canvas.EndStroke(new SKPoint(150f, 150f), 0.8f);
+
+        var recording = SKInkRecording.FromCanvas(canvas);
+
+        Assert.Equal(2, recording.Strokes.Count);
+    }
+
+    [Fact]
+    public void RecordedStroke_StoresPoints()
+    {
+        var stroke = new RecordedStroke(2f, 8f);
+        
+        stroke.AddPoint(new SKInkPoint(10f, 20f, 0.5f, 100));
+        stroke.AddPoint(new SKInkPoint(30f, 40f, 0.6f, 200));
+        stroke.AddPoint(new SKInkPoint(50f, 60f, 0.7f, 300));
+
+        Assert.Equal(3, stroke.Points.Count);
+        Assert.Equal(10f, stroke.Points[0].X);
+        Assert.Equal(0.7f, stroke.Points[2].Pressure);
+    }
+
+    [Fact]
+    public void RecordedStroke_PreservesWidthSettings()
+    {
+        var stroke = new RecordedStroke(3f, 12f);
+
+        Assert.Equal(3f, stroke.MinStrokeWidth);
+        Assert.Equal(12f, stroke.MaxStrokeWidth);
+    }
+}
+
+public class SKInkPlayerTests
+{
+    [Fact]
+    public void Constructor_InitializesCorrectly()
+    {
+        var player = new SKInkPlayer();
+
+        Assert.False(player.IsPlaying);
+        Assert.Equal(0f, player.Progress);
+        Assert.Equal(1f, player.PlaybackSpeed);
+    }
+
+    [Fact]
+    public void Load_SetsUpPlayer()
+    {
+        var player = new SKInkPlayer();
+        var recording = SKInkRecording.CreateSampleSignature(400f, 200f);
+        using var canvas = new SKInkCanvas();
+
+        player.Load(recording, canvas);
+
+        Assert.Equal(0f, player.Progress);
+    }
+
+    [Fact]
+    public void PlayInstant_PlaysEntireRecording()
+    {
+        var player = new SKInkPlayer();
+        var recording = SKInkRecording.CreateSampleSignature(400f, 200f);
+        using var canvas = new SKInkCanvas();
+
+        player.Load(recording, canvas);
+        player.PlayInstant();
+
+        // Canvas should have strokes from the recording
+        Assert.Equal(recording.Strokes.Count, canvas.StrokeCount);
+    }
+
+    [Fact]
+    public void Reset_ClearsProgress()
+    {
+        var player = new SKInkPlayer();
+        var recording = SKInkRecording.CreateSampleSignature(400f, 200f);
+        using var canvas = new SKInkCanvas();
+
+        player.Load(recording, canvas);
+        player.PlayInstant();
+        player.Reset();
+
+        Assert.Equal(0f, player.Progress);
+        Assert.True(canvas.IsBlank);
+    }
+
+    [Fact]
+    public void PlaybackSpeed_CanBeModified()
+    {
+        var player = new SKInkPlayer();
+        
+        player.PlaybackSpeed = 2f;
+
+        Assert.Equal(2f, player.PlaybackSpeed);
+    }
+}

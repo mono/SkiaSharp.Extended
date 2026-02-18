@@ -1,4 +1,5 @@
 ﻿using SkiaSharpDemo.Demos;
+using SkiaSharpDemo.Demos.Inking;
 
 namespace SkiaSharpDemo;
 
@@ -46,6 +47,13 @@ public static class ExtendedDemos
 					Description = "Ooooh! Lottie animations are really cool and now super easy to do!",
 					PageType = typeof(LottiePage),
 					Color = Colors.SteelBlue,
+				},
+				new Demo
+				{
+					Title = "Digital Inking",
+					Description = "Fluid, pressure-sensitive digital inking with signature capture and animated playback.",
+					PageType = typeof(InkingPage),
+					Color = Colors.DarkSlateBlue,
 				},
 				//new Demo
 				//{

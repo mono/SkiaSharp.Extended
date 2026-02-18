@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             x:Class="SkiaSharpDemo.Demos.Inking.InkingPage"
+             Title="Digital Inking">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16">
+        
+        <!-- Header -->
+        <VerticalStackLayout Grid.Row="0" Spacing="8" Margin="0,0,0,16">
+            <Label Text="Digital Inking Demo" 
+                   FontSize="24" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center"/>
+            <Label Text="Sign below or tap 'Play Signature' to see animated playback" 
+                   FontSize="14" 
+                   TextColor="Gray" 
+                   HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+
+        <!-- Signature Pad -->
+        <Border Grid.Row="1" 
+                StrokeThickness="2" 
+                Stroke="Gray"
+                Padding="0"
+                Margin="0,0,0,16">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="8"/>
+            </Border.StrokeShape>
+            <skia:SKSignaturePadView x:Name="signaturePad"
+                                     StrokeColor="DarkBlue"
+                                     MinStrokeWidth="2"
+                                     MaxStrokeWidth="10"
+                                     PadBackgroundColor="Ivory"
+                                     StrokeCompleted="OnStrokeCompleted"/>
+        </Border>
+
+        <!-- Controls -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,*,*" ColumnSpacing="8">
+            <Button Grid.Column="0" 
+                    Text="Clear" 
+                    Clicked="OnClearClicked"
+                    BackgroundColor="LightGray"
+                    TextColor="Black"/>
+            <Button Grid.Column="1" 
+                    Text="Undo" 
+                    Clicked="OnUndoClicked"
+                    BackgroundColor="LightGray"
+                    TextColor="Black"/>
+            <Button Grid.Column="2" 
+                    x:Name="playButton"
+                    Text="Play Signature" 
+                    Clicked="OnPlaySignatureClicked"
+                    BackgroundColor="DarkBlue"
+                    TextColor="White"/>
+        </Grid>
+        
+    </Grid>
+
+</ContentPage>
