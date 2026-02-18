@@ -482,6 +482,7 @@ namespace SkiaSharp.Extended.PivotViewer
                 _textFilteredItemIds = new HashSet<string>(matchingItems.Select(i => i.Id));
             }
             UpdateInScopeItems();
+            FiltersChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnFiltersChanged()

@@ -584,16 +584,19 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             foreach (var category in categories)
             {
-                if (y > topOffset + height) break;
+                bool visible = y < topOffset + height + _filterScrollOffset && y + lineHeight > topOffset;
 
                 // Category header
-                using var headerPaint = new SKPaint
+                if (visible)
                 {
-                    Color = category.IsFiltered ? SKColors.CornflowerBlue : SKColors.Black,
-                };
-                _textFont.Size = 13;
-                canvas.DrawText(category.Property.DisplayName ?? category.Property.Id,
-                    Padding, y + 14, SKTextAlign.Left, _textFont, headerPaint);
+                    using var headerPaint = new SKPaint
+                    {
+                        Color = category.IsFiltered ? SKColors.CornflowerBlue : SKColors.Black,
+                    };
+                    _textFont.Size = 13;
+                    canvas.DrawText(category.Property.DisplayName ?? category.Property.Id,
+                        Padding, y + 14, SKTextAlign.Left, _textFont, headerPaint);
+                }
                 y += lineHeight + 2;
 
                 // Value list (for string/text categories)
@@ -603,26 +606,33 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     int shown = 0;
                     foreach (var kv in category.ValueCounts.OrderByDescending(kv => kv.Value).Take(8))
                     {
-                        if (y > topOffset + height) break;
+                        visible = y < topOffset + height + _filterScrollOffset && y + lineHeight > topOffset;
 
-                        bool isActive = category.ActiveFilters?.Contains(kv.Key) ?? false;
-                        string checkbox = isActive ? "☑" : "☐";
-                        string label = $"{checkbox} {kv.Key} ({kv.Value})";
-
-                        using var valuePaint = new SKPaint
+                        if (visible)
                         {
-                            Color = isActive ? SKColors.CornflowerBlue : new SKColor(80, 80, 80)
-                        };
-                        canvas.DrawText(label, Padding + 8, y + 12, SKTextAlign.Left, _textFont, valuePaint);
+                            bool isActive = category.ActiveFilters?.Contains(kv.Key) ?? false;
+                            string checkbox = isActive ? "☑" : "☐";
+                            string label = $"{checkbox} {kv.Key} ({kv.Value})";
+
+                            using var valuePaint = new SKPaint
+                            {
+                                Color = isActive ? SKColors.CornflowerBlue : new SKColor(80, 80, 80)
+                            };
+                            canvas.DrawText(label, Padding + 8, y + 12, SKTextAlign.Left, _textFont, valuePaint);
+                        }
                         y += lineHeight - 2;
                         shown++;
                     }
 
                     if (category.ValueCounts.Count > 8)
                     {
-                        using var morePaint = new SKPaint { Color = SKColors.Gray };
-                        canvas.DrawText($"  +{category.ValueCounts.Count - 8} more...",
-                            Padding + 8, y + 12, SKTextAlign.Left, _textFont, morePaint);
+                        visible = y < topOffset + height + _filterScrollOffset && y + lineHeight > topOffset;
+                        if (visible)
+                        {
+                            using var morePaint = new SKPaint { Color = SKColors.Gray };
+                            canvas.DrawText($"  +{category.ValueCounts.Count - 8} more...",
+                                Padding + 8, y + 12, SKTextAlign.Left, _textFont, morePaint);
+                        }
                         y += lineHeight - 2;
                     }
                 }
@@ -1005,9 +1015,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             // Adjust tap Y for scroll offset
             double adjustedY = y + _filterScrollOffset;
 
-            // Check "Clear All" button (only responds when visible = not scrolled past)
+            // Check "Clear All" button (only responds when tap is within its rendered bounds)
             float searchBoxOffset = 40f;
-            if (filterPane.HasActiveFilters && adjustedY < ControlBarHeight + searchBoxOffset + Padding + 24)
+            float clearAllStart = ControlBarHeight + searchBoxOffset + Padding;
+            float clearAllEnd = clearAllStart + 24;
+            if (filterPane.HasActiveFilters && adjustedY >= clearAllStart && adjustedY < clearAllEnd)
             {
                 filterPane.ClearAllFilters();
                 _canvasView.InvalidateSurface();
