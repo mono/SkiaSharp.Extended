@@ -23,8 +23,19 @@
 
   <ItemGroup>
     <Content Include="..\..\resources\collections\conceptcars\conceptcars.cxml" Link="TestData\conceptcars.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\conceptcars\conceptcars.full.cxml" Link="TestData\conceptcars.full.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\conceptcars\conceptcars_secondary.cxml" Link="TestData\conceptcars_secondary.cxml" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\resources\collections\msdnmagazine\msdnmagazine.cxml" Link="TestData\msdnmagazine.cxml" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\resources\collections\venues\venues.cxml" Link="TestData\venues.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\buxton\buxton.cxml" Link="TestData\buxton.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\collection-dz\collection-dz.cxml" Link="TestData\collection-dz.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\nigeria-state\nigeria_state.cxml" Link="TestData\nigeria_state.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\shapes\area.cxml" Link="TestData\area.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\shapes\geometry.cxml" Link="TestData\geometry.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\ski-resorts\ski_resorts.cxml" Link="TestData\ski_resorts.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\ski-resorts\ski_resorts_location.cxml" Link="TestData\ski_resorts_location.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\ski-resorts\simple_ski.cxml" Link="TestData\simple_ski.cxml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\stockport\stockport_house_sales.cxml" Link="TestData\stockport_house_sales.cxml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

@@ -23,6 +23,12 @@
 
   <ItemGroup>
     <Content Include="..\..\resources\collections\conceptcars\deepzoom\conceptcars.dzc" Link="TestData\conceptcars.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\collection-dz\deepzoom\collection-dz.dzc" Link="TestData\collection-dz.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\nigeria-state\deepzoom\images.dzc" Link="TestData\nigeria_images.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\ski-resorts\deepzoom\ski_resorts.dzc" Link="TestData\ski_resorts.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\stockport\deepzoom\images.dzc" Link="TestData\stockport_images.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\shapes\deepzoom\area.dzc" Link="TestData\area.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\shapes\deepzoom\geometry.dzc" Link="TestData\geometry.dzc" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\resources\collections\sample\deepzoom\sample.dzi" Link="TestData\sample.dzi" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\resources\collections\sample\deepzoom\sample_files\**" Link="TestData\sample_files\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

@@ -106,7 +106,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
             // Single-pass counting using sorted data
             int idx = 0;
-            while (current < max && buckets.Count < MaxBuckets)
+            while (current <= max)
             {
                 DateTime next = AdvanceDate(current, granularity);
                 int count = 0;

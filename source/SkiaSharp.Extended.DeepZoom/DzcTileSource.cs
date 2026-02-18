@@ -189,7 +189,7 @@ namespace SkiaSharp.Extended.DeepZoom
                     int width = int.Parse(sizeElement?.Attribute("Width")?.Value ?? "0");
                     int height = int.Parse(sizeElement?.Attribute("Height")?.Value ?? "0");
 
-                    var subImage = new DzcSubImage(id, n, width, height, isPath ? source : null);
+                    var subImage = new DzcSubImage(id, n, width, height, source);
 
                     // Parse viewport if present
                     var viewportElement = iElement.Element(ns + "Viewport");
