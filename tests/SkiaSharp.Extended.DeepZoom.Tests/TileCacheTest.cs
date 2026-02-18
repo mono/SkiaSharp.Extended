@@ -1,0 +1,152 @@
+using SkiaSharp.Extended.DeepZoom;
+
+namespace SkiaSharp.Extended.DeepZoom.Tests;
+
+public class TileCacheTest
+{
+    [Fact]
+    public void Empty_Cache_HasZeroCount()
+    {
+        using var cache = new TileCache(10);
+        Assert.Equal(0, cache.Count);
+    }
+
+    [Fact]
+    public void Put_Get_RoundTrips()
+    {
+        using var cache = new TileCache(10);
+        var id = new TileId(5, 2, 3);
+        // Use null bitmap for testing (real bitmaps would be SKBitmap)
+        cache.Put(id, null);
+
+        Assert.True(cache.TryGet(id, out var bitmap));
+        Assert.Null(bitmap); // we stored null
+        Assert.Equal(1, cache.Count);
+    }
+
+    [Fact]
+    public void Contains_ReturnsTrueForCachedTiles()
+    {
+        using var cache = new TileCache(10);
+        var id = new TileId(5, 2, 3);
+        cache.Put(id, null);
+
+        Assert.True(cache.Contains(id));
+        Assert.False(cache.Contains(new TileId(5, 2, 4)));
+    }
+
+    [Fact]
+    public void LRU_EvictsOldestEntry()
+    {
+        using var cache = new TileCache(2);
+        var id0 = new TileId(0, 0, 0);
+        var id1 = new TileId(1, 0, 0);
+        var id2 = new TileId(2, 0, 0);
+
+        cache.Put(id0, null);
+        cache.Put(id1, null);
+        Assert.Equal(2, cache.Count);
+
+        // Adding id2 should evict id0 (oldest)
+        cache.Put(id2, null);
+        Assert.Equal(2, cache.Count);
+        Assert.False(cache.Contains(id0));
+        Assert.True(cache.Contains(id1));
+        Assert.True(cache.Contains(id2));
+    }
+
+    [Fact]
+    public void LRU_AccessRefreshesEntry()
+    {
+        using var cache = new TileCache(2);
+        var id0 = new TileId(0, 0, 0);
+        var id1 = new TileId(1, 0, 0);
+        var id2 = new TileId(2, 0, 0);
+
+        cache.Put(id0, null);
+        cache.Put(id1, null);
+
+        // Access id0 to make it most recently used
+        cache.TryGet(id0, out _);
+
+        // Add id2 — should evict id1 (now the least recently used)
+        cache.Put(id2, null);
+        Assert.True(cache.Contains(id0));
+        Assert.False(cache.Contains(id1));
+        Assert.True(cache.Contains(id2));
+    }
+
+    [Fact]
+    public void Remove_RemovesEntry()
+    {
+        using var cache = new TileCache(10);
+        var id = new TileId(5, 2, 3);
+        cache.Put(id, null);
+        Assert.True(cache.Remove(id));
+        Assert.Equal(0, cache.Count);
+        Assert.False(cache.Contains(id));
+    }
+
+    [Fact]
+    public void Remove_NonExistent_ReturnsFalse()
+    {
+        using var cache = new TileCache(10);
+        Assert.False(cache.Remove(new TileId(0, 0, 0)));
+    }
+
+    [Fact]
+    public void Clear_RemovesAllEntries()
+    {
+        using var cache = new TileCache(10);
+        for (int i = 0; i < 5; i++)
+            cache.Put(new TileId(i, 0, 0), null);
+
+        Assert.Equal(5, cache.Count);
+        cache.Clear();
+        Assert.Equal(0, cache.Count);
+    }
+
+    [Fact]
+    public void Put_UpdatesExistingEntry()
+    {
+        using var cache = new TileCache(10);
+        var id = new TileId(5, 2, 3);
+        cache.Put(id, null);
+        cache.Put(id, null); // update
+
+        Assert.Equal(1, cache.Count);
+    }
+
+    [Fact]
+    public void TileId_Equality()
+    {
+        var a = new TileId(5, 2, 3);
+        var b = new TileId(5, 2, 3);
+        var c = new TileId(5, 2, 4);
+
+        Assert.Equal(a, b);
+        Assert.True(a == b);
+        Assert.NotEqual(a, c);
+        Assert.True(a != c);
+    }
+
+    [Fact]
+    public void TileId_ToString()
+    {
+        Assert.Equal("(5,2,3)", new TileId(5, 2, 3).ToString());
+    }
+
+    [Fact]
+    public void MaxEntries_Property()
+    {
+        using var cache = new TileCache(50);
+        Assert.Equal(50, cache.MaxEntries);
+    }
+
+    [Fact]
+    public void Constructor_InvalidMaxEntries_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new TileCache(0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new TileCache(-1));
+    }
+}

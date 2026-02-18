@@ -1,0 +1,200 @@
+using System;
+using System.IO;
+using System.Xml;
+using System.Xml.Linq;
+
+namespace SkiaSharp.Extended.DeepZoom
+{
+    /// <summary>
+    /// Represents a Deep Zoom Image (DZI) tile source. Parses the DZI XML descriptor
+    /// and provides tile pyramid math for computing tile URLs and dimensions.
+    /// </summary>
+    public class DziTileSource
+    {
+        private const string DeepZoomNamespace2008 = "http://schemas.microsoft.com/deepzoom/2008";
+
+        public DziTileSource(int imageWidth, int imageHeight, int tileSize, int overlap, string format)
+        {
+            if (imageWidth <= 0) throw new ArgumentOutOfRangeException(nameof(imageWidth));
+            if (imageHeight <= 0) throw new ArgumentOutOfRangeException(nameof(imageHeight));
+            if (tileSize <= 0) throw new ArgumentOutOfRangeException(nameof(tileSize));
+            if (overlap < 0) throw new ArgumentOutOfRangeException(nameof(overlap));
+            if (string.IsNullOrEmpty(format)) throw new ArgumentException("Format cannot be null or empty.", nameof(format));
+
+            ImageWidth = imageWidth;
+            ImageHeight = imageHeight;
+            TileSize = tileSize;
+            Overlap = overlap;
+            Format = format;
+            MaxLevel = (int)Math.Ceiling(Math.Log(Math.Max(imageWidth, imageHeight)) / Math.Log(2));
+        }
+
+        /// <summary>Full image width in pixels at maximum resolution.</summary>
+        public int ImageWidth { get; }
+
+        /// <summary>Full image height in pixels at maximum resolution.</summary>
+        public int ImageHeight { get; }
+
+        /// <summary>Tile size in pixels (typically 254 or 256).</summary>
+        public int TileSize { get; }
+
+        /// <summary>Overlap in pixels between adjacent tiles.</summary>
+        public int Overlap { get; }
+
+        /// <summary>Image format (e.g., "jpg", "png").</summary>
+        public string Format { get; }
+
+        /// <summary>Maximum pyramid level. Level 0 is 1×1 pixel.</summary>
+        public int MaxLevel { get; }
+
+        /// <summary>Image aspect ratio (width / height).</summary>
+        public double AspectRatio => (double)ImageWidth / ImageHeight;
+
+        /// <summary>
+        /// Gets or sets the base URI used to resolve tile URLs.
+        /// Typically derived from the DZI file path: "{name}_files/".
+        /// </summary>
+        public string? TilesBaseUri { get; set; }
+
+        /// <summary>Computes the image width at a given pyramid level.</summary>
+        public int GetLevelWidth(int level)
+        {
+            if (level < 0 || level > MaxLevel) throw new ArgumentOutOfRangeException(nameof(level));
+            return (int)Math.Ceiling((double)ImageWidth / (1 << (MaxLevel - level)));
+        }
+
+        /// <summary>Computes the image height at a given pyramid level.</summary>
+        public int GetLevelHeight(int level)
+        {
+            if (level < 0 || level > MaxLevel) throw new ArgumentOutOfRangeException(nameof(level));
+            return (int)Math.Ceiling((double)ImageHeight / (1 << (MaxLevel - level)));
+        }
+
+        /// <summary>Number of tile columns at a given level.</summary>
+        public int GetTileCountX(int level)
+        {
+            return (int)Math.Ceiling((double)GetLevelWidth(level) / TileSize);
+        }
+
+        /// <summary>Number of tile rows at a given level.</summary>
+        public int GetTileCountY(int level)
+        {
+            return (int)Math.Ceiling((double)GetLevelHeight(level) / TileSize);
+        }
+
+        /// <summary>
+        /// Gets the pixel bounds of a tile within its pyramid level, including overlap.
+        /// Returns (x, y, width, height) in level-pixel coordinates.
+        /// </summary>
+        public (int X, int Y, int Width, int Height) GetTileBounds(int level, int col, int row)
+        {
+            if (level < 0 || level > MaxLevel) throw new ArgumentOutOfRangeException(nameof(level));
+
+            int levelWidth = GetLevelWidth(level);
+            int levelHeight = GetLevelHeight(level);
+
+            int x = col == 0 ? 0 : col * TileSize - Overlap;
+            int y = row == 0 ? 0 : row * TileSize - Overlap;
+
+            int right = Math.Min(col * TileSize + TileSize + (col == 0 ? Overlap : Overlap), levelWidth);
+            if (col > 0) right = Math.Min((col + 1) * TileSize + Overlap, levelWidth);
+            else right = Math.Min(TileSize + Overlap, levelWidth);
+
+            int bottom = Math.Min(row * TileSize + TileSize + (row == 0 ? Overlap : Overlap), levelHeight);
+            if (row > 0) bottom = Math.Min((row + 1) * TileSize + Overlap, levelHeight);
+            else bottom = Math.Min(TileSize + Overlap, levelHeight);
+
+            return (x, y, right - x, bottom - y);
+        }
+
+        /// <summary>
+        /// Selects the optimal pyramid level for rendering, where one tile pixel ≈ one screen pixel.
+        /// </summary>
+        /// <param name="viewportWidth">The viewport width (0-1 normalized, where 1.0 = full image fits).</param>
+        /// <param name="controlWidth">The control width in screen pixels.</param>
+        public int GetOptimalLevel(double viewportWidth, double controlWidth)
+        {
+            if (viewportWidth <= 0) return MaxLevel;
+
+            // Pixels per logical unit
+            double scale = controlWidth / viewportWidth;
+            // Desired image pixels visible
+            double desiredWidth = ImageWidth;
+            // Find level where levelWidth >= scale * viewportWidth (i.e. pixels needed)
+            double neededWidth = scale * viewportWidth;
+            if (neededWidth <= 0) return 0;
+
+            for (int level = MaxLevel; level >= 0; level--)
+            {
+                int lw = GetLevelWidth(level);
+                if (lw <= neededWidth * 1.01) // slight tolerance
+                    return Math.Min(level + 1, MaxLevel);
+            }
+
+            return 0;
+        }
+
+        /// <summary>Gets the relative tile URL (e.g., "8/3_2.jpg").</summary>
+        public string GetTileUrl(int level, int col, int row)
+        {
+            return $"{level}/{col}_{row}.{Format}";
+        }
+
+        /// <summary>Gets the full tile URL using TilesBaseUri.</summary>
+        public string? GetFullTileUrl(int level, int col, int row)
+        {
+            if (TilesBaseUri == null) return null;
+            return TilesBaseUri + GetTileUrl(level, col, row);
+        }
+
+        /// <summary>Parses a DZI XML string.</summary>
+        public static DziTileSource Parse(string xml)
+        {
+            var doc = XDocument.Parse(xml);
+            return ParseDocument(doc, null);
+        }
+
+        /// <summary>Parses a DZI XML from a stream.</summary>
+        public static DziTileSource Parse(Stream stream)
+        {
+            var doc = XDocument.Load(stream);
+            return ParseDocument(doc, null);
+        }
+
+        /// <summary>Parses a DZI XML from a stream with a base URI for computing tile URLs.</summary>
+        public static DziTileSource Parse(Stream stream, string? baseUri)
+        {
+            var doc = XDocument.Load(stream);
+            return ParseDocument(doc, baseUri);
+        }
+
+        /// <summary>Parses a DZI XML string with a base URI.</summary>
+        public static DziTileSource Parse(string xml, string? baseUri)
+        {
+            var doc = XDocument.Parse(xml);
+            return ParseDocument(doc, baseUri);
+        }
+
+        private static DziTileSource ParseDocument(XDocument doc, string? baseUri)
+        {
+            var ns = XNamespace.Get(DeepZoomNamespace2008);
+            var imageElement = doc.Element(ns + "Image");
+            if (imageElement == null)
+                throw new FormatException("Invalid DZI: missing <Image> element with namespace " + DeepZoomNamespace2008);
+
+            var sizeElement = imageElement.Element(ns + "Size");
+            if (sizeElement == null)
+                throw new FormatException("Invalid DZI: missing <Size> element.");
+
+            int tileSize = int.Parse(imageElement.Attribute("TileSize")?.Value ?? throw new FormatException("Missing TileSize attribute."));
+            int overlap = int.Parse(imageElement.Attribute("Overlap")?.Value ?? "0");
+            string format = imageElement.Attribute("Format")?.Value ?? throw new FormatException("Missing Format attribute.");
+            int width = int.Parse(sizeElement.Attribute("Width")?.Value ?? throw new FormatException("Missing Width attribute."));
+            int height = int.Parse(sizeElement.Attribute("Height")?.Value ?? throw new FormatException("Missing Height attribute."));
+
+            var source = new DziTileSource(width, height, tileSize, overlap, format);
+            source.TilesBaseUri = baseUri;
+            return source;
+        }
+    }
+}
