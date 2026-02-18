@@ -371,7 +371,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
             // Deselect if selected item is no longer in scope
             if (_selectedItem != null && !_inScopeItems.Contains(_selectedItem))
-                _selectedItem = null;
+                SelectedItem = null;
 
             UpdateLayout();
         }

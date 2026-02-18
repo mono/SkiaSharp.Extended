@@ -441,6 +441,43 @@ public class PivotViewerControllerTest
     }
 
     [Fact]
+    public void Selection_ClearedWhenFilterRemovesItem_FiresEvent()
+    {
+        var (controller, _) = CreateTestController();
+
+        var firstItem = controller.InScopeItems[0];
+        controller.SelectedItem = firstItem;
+
+        // Find a filter value that excludes the first item
+        string? excludeValue = null;
+        var counts = controller.GetFilterCounts("Manufacturer");
+        var firstItemMfg = firstItem["Manufacturer"];
+        foreach (var kv in counts)
+        {
+            if (firstItemMfg == null || !firstItemMfg.Cast<object>().Any(v => v?.ToString() == kv.Key))
+            {
+                excludeValue = kv.Key;
+                break;
+            }
+        }
+
+        if (excludeValue != null)
+        {
+            int selectionChangedCount = 0;
+            controller.SelectionChanged += (s, e) => selectionChangedCount++;
+
+            controller.FilterEngine.AddStringFilter("Manufacturer", excludeValue);
+
+            if (!controller.InScopeItems.Contains(firstItem))
+            {
+                Assert.Null(controller.SelectedItem);
+                Assert.Null(controller.DetailPane.SelectedItem);
+                Assert.True(selectionChangedCount > 0, "SelectionChanged should fire when item is filtered out");
+            }
+        }
+    }
+
+    [Fact]
     public void LoadItems_CreatesFilterPaneModel()
     {
         var controller = new PivotViewerController();
