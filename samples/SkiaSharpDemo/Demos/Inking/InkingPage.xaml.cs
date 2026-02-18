@@ -7,6 +7,7 @@ public partial class InkingPage : ContentPage
 {
     private SKInkPlayer? player;
     private bool isAnimating;
+    private CancellationTokenSource? animationCts;
 
     public InkingPage()
     {
@@ -63,25 +64,56 @@ public partial class InkingPage : ContentPage
         playButton.Text = "Stop";
         player.Play();
 
-        // Animation loop with frame timing
-        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        while (isAnimating && player.IsPlaying)
+        // Create cancellation token for animation loop
+        animationCts = new CancellationTokenSource();
+        var token = animationCts.Token;
+
+        // Run animation on a background task to not block UI
+        try
         {
-            var frameStart = stopwatch.ElapsedMilliseconds;
-            
-            player.Update();
-            signaturePad.Invalidate();
-            
-            // Calculate remaining time to maintain ~60 FPS
-            var elapsed = stopwatch.ElapsedMilliseconds - frameStart;
-            var delay = Math.Max(1, 16 - (int)elapsed);
-            await Task.Delay(delay);
+            await Task.Run(async () =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                while (!token.IsCancellationRequested && player.IsPlaying)
+                {
+                    var frameStart = stopwatch.ElapsedMilliseconds;
+
+                    // Update player state
+                    var hasMore = player.Update();
+
+                    // Request UI update on main thread
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        if (!token.IsCancellationRequested)
+                        {
+                            signaturePad.Invalidate();
+                        }
+                    });
+
+                    if (!hasMore)
+                        break;
+
+                    // Calculate remaining time to maintain ~60 FPS
+                    var elapsed = stopwatch.ElapsedMilliseconds - frameStart;
+                    var delay = Math.Max(1, 16 - (int)elapsed);
+                    await Task.Delay(delay, token).ConfigureAwait(false);
+                }
+            }, token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // Animation was cancelled
         }
 
-        if (!player.IsPlaying)
+        // Ensure final state is rendered
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            StopAnimation();
-        }
+            signaturePad.Invalidate();
+            if (!player?.IsPlaying ?? true)
+            {
+                StopAnimation();
+            }
+        });
     }
 
     private void OnPlaybackCompleted(object? sender, EventArgs e)
@@ -95,6 +127,9 @@ public partial class InkingPage : ContentPage
     private void StopAnimation()
     {
         isAnimating = false;
+        animationCts?.Cancel();
+        animationCts?.Dispose();
+        animationCts = null;
         playButton.Text = "Play Signature";
         
         if (player != null)

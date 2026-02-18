@@ -82,6 +82,33 @@ public class SKInkCanvas : IDisposable
     }
 
     /// <summary>
+    /// Gets or sets the default stroke color for new strokes.
+    /// </summary>
+    public SKColor StrokeColor { get; set; } = SKColors.Black;
+
+    /// <summary>
+    /// Gets or sets the default cap style for new strokes.
+    /// </summary>
+    public SKStrokeCapStyle CapStyle { get; set; } = SKStrokeCapStyle.Round;
+
+    private int smoothingFactor = 4;
+
+    /// <summary>
+    /// Gets or sets the default smoothing factor for new strokes (1-10).
+    /// Higher values produce smoother curves. Default is 4.
+    /// </summary>
+    public int SmoothingFactor
+    {
+        get => smoothingFactor;
+        set
+        {
+            if (value < 1 || value > 10)
+                throw new ArgumentOutOfRangeException(nameof(value), "Smoothing factor must be between 1 and 10.");
+            smoothingFactor = value;
+        }
+    }
+
+    /// <summary>
     /// Gets the completed strokes in the canvas.
     /// </summary>
     public IReadOnlyList<SKInkStroke> Strokes => strokes;
@@ -107,10 +134,22 @@ public class SKInkCanvas : IDisposable
     public bool IsDrawing => currentStroke != null;
 
     /// <summary>
-    /// Starts a new stroke at the specified point.
+    /// Starts a new stroke at the specified point using the canvas default settings.
     /// </summary>
     /// <param name="point">The starting point with pressure.</param>
     public void StartStroke(SKInkPoint point)
+    {
+        StartStroke(point, StrokeColor, CapStyle, SmoothingFactor);
+    }
+
+    /// <summary>
+    /// Starts a new stroke at the specified point with custom settings.
+    /// </summary>
+    /// <param name="point">The starting point with pressure.</param>
+    /// <param name="color">The stroke color.</param>
+    /// <param name="capStyle">The cap style for stroke ends.</param>
+    /// <param name="smoothingFactor">The smoothing factor (1-10).</param>
+    public void StartStroke(SKInkPoint point, SKColor color, SKStrokeCapStyle capStyle = SKStrokeCapStyle.Round, int smoothingFactor = 4)
     {
         ThrowIfDisposed();
 
@@ -120,7 +159,7 @@ public class SKInkCanvas : IDisposable
             currentStroke.Dispose();
         }
 
-        currentStroke = new SKInkStroke(minStrokeWidth, maxStrokeWidth);
+        currentStroke = new SKInkStroke(minStrokeWidth, maxStrokeWidth, color, capStyle, smoothingFactor);
         currentStroke.AddPoint(point);
 
         StrokeStarted?.Invoke(this, EventArgs.Empty);
@@ -308,10 +347,11 @@ public class SKInkCanvas : IDisposable
     }
 
     /// <summary>
-    /// Draws all strokes to the specified canvas.
+    /// Draws all strokes to the specified canvas using per-stroke colors.
+    /// If a stroke has no color set, the paint's color is used.
     /// </summary>
     /// <param name="canvas">The canvas to draw to.</param>
-    /// <param name="paint">The paint to use for drawing.</param>
+    /// <param name="paint">The paint to use for drawing (color may be overridden per-stroke).</param>
     public void Draw(SKCanvas canvas, SKPaint paint)
     {
         ThrowIfDisposed();
@@ -321,11 +361,15 @@ public class SKInkCanvas : IDisposable
         if (paint == null)
             throw new ArgumentNullException(nameof(paint));
 
+        var originalColor = paint.Color;
+
         // Draw all completed strokes
         foreach (var stroke in strokes)
         {
             if (stroke.Path is SKPath path)
             {
+                // Use per-stroke color if set, otherwise use paint color
+                paint.Color = stroke.Color ?? originalColor;
                 canvas.DrawPath(path, paint);
             }
         }
@@ -333,8 +377,12 @@ public class SKInkCanvas : IDisposable
         // Draw the current stroke being drawn
         if (currentStroke?.Path is SKPath currentPath)
         {
+            paint.Color = currentStroke.Color ?? originalColor;
             canvas.DrawPath(currentPath, paint);
         }
+
+        // Restore original color
+        paint.Color = originalColor;
     }
 
     /// <summary>

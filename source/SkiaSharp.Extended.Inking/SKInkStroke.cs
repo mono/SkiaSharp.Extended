@@ -29,15 +29,28 @@ public class SKInkStroke : IDisposable
     /// </summary>
     /// <param name="minStrokeWidth">Minimum stroke width (at zero pressure).</param>
     /// <param name="maxStrokeWidth">Maximum stroke width (at full pressure).</param>
-    public SKInkStroke(float minStrokeWidth = 1f, float maxStrokeWidth = 8f)
+    /// <param name="color">The stroke color, or null to use canvas default.</param>
+    /// <param name="capStyle">The cap style for stroke ends.</param>
+    /// <param name="smoothingFactor">The smoothing factor (1-10, higher = smoother).</param>
+    public SKInkStroke(
+        float minStrokeWidth = 1f, 
+        float maxStrokeWidth = 8f,
+        SKColor? color = null,
+        SKStrokeCapStyle capStyle = SKStrokeCapStyle.Round,
+        int smoothingFactor = 4)
     {
         if (minStrokeWidth < 0)
             throw new ArgumentOutOfRangeException(nameof(minStrokeWidth), "Minimum stroke width must be non-negative.");
         if (maxStrokeWidth < minStrokeWidth)
             throw new ArgumentOutOfRangeException(nameof(maxStrokeWidth), "Maximum stroke width must be greater than or equal to minimum stroke width.");
+        if (smoothingFactor < 1 || smoothingFactor > 10)
+            throw new ArgumentOutOfRangeException(nameof(smoothingFactor), "Smoothing factor must be between 1 and 10.");
 
         this.minStrokeWidth = minStrokeWidth;
         this.maxStrokeWidth = maxStrokeWidth;
+        Color = color;
+        CapStyle = capStyle;
+        this.smoothingFactor = smoothingFactor;
     }
 
     /// <summary>
@@ -49,6 +62,34 @@ public class SKInkStroke : IDisposable
     /// Gets the maximum stroke width (at full pressure).
     /// </summary>
     public float MaxStrokeWidth => maxStrokeWidth;
+
+    /// <summary>
+    /// Gets or sets the stroke color. If null, uses the canvas default color.
+    /// </summary>
+    public SKColor? Color { get; set; }
+
+    /// <summary>
+    /// Gets or sets the cap style for stroke ends.
+    /// </summary>
+    public SKStrokeCapStyle CapStyle { get; set; }
+
+    private int smoothingFactor = 4;
+
+    /// <summary>
+    /// Gets or sets the smoothing factor (1-10). Higher values produce smoother curves
+    /// but require more processing. Default is 4.
+    /// </summary>
+    public int SmoothingFactor
+    {
+        get => smoothingFactor;
+        set
+        {
+            if (value < 1 || value > 10)
+                throw new ArgumentOutOfRangeException(nameof(value), "Smoothing factor must be between 1 and 10.");
+            smoothingFactor = value;
+            isDirty = true;
+        }
+    }
 
     /// <summary>
     /// Gets the list of points in this stroke.
@@ -249,11 +290,11 @@ public class SKInkStroke : IDisposable
             resultPath.LineTo(leftPoints[i]);
         }
 
-        // Add rounded end cap at the end
+        // Add end cap
         var endRadius = GetStrokeWidth(smoothedPoints[smoothedPoints.Count - 1].Pressure) / 2f;
         var endCenter = smoothedPoints[smoothedPoints.Count - 1].Point;
         var endTangent = Normalize(Subtract(smoothedPoints[smoothedPoints.Count - 1].Point, smoothedPoints[smoothedPoints.Count - 2].Point));
-        AddRoundedCap(resultPath, endCenter, endTangent, endRadius);
+        AddCap(resultPath, endCenter, endTangent, endRadius, isStart: false);
 
         // Continue with the right side (reverse direction)
         for (int i = rightPoints.Count - 1; i >= 0; i--)
@@ -261,11 +302,11 @@ public class SKInkStroke : IDisposable
             resultPath.LineTo(rightPoints[i]);
         }
 
-        // Add rounded start cap (direction is reversed since we're drawing back to start)
+        // Add start cap (direction is reversed since we're drawing back to start)
         var startRadius = GetStrokeWidth(smoothedPoints[0].Pressure) / 2f;
         var startCenter = smoothedPoints[0].Point;
         var startTangent = Normalize(Subtract(smoothedPoints[0].Point, smoothedPoints[1].Point));
-        AddRoundedCap(resultPath, startCenter, startTangent, startRadius);
+        AddCap(resultPath, startCenter, startTangent, startRadius, isStart: true);
 
         resultPath.Close();
 
@@ -325,14 +366,14 @@ public class SKInkStroke : IDisposable
     /// <summary>
     /// Adds samples along a quadratic Bezier curve for smooth interpolation.
     /// </summary>
-    private static void AddQuadraticSamples(
+    private void AddQuadraticSamples(
         List<(SKPoint Point, float Pressure)> result,
         SKPoint p0, float pressure0,
         SKPoint control, float controlPressure,
         SKPoint p1, float pressure1)
     {
-        // Sample the quadratic curve at a few points for smooth rendering
-        const int samples = 4;
+        // Sample the quadratic curve using the smoothing factor
+        int samples = SmoothingFactor;
         for (int i = 1; i <= samples; i++)
         {
             float t = i / (float)samples;
@@ -344,6 +385,25 @@ public class SKInkStroke : IDisposable
             var pressure = u * u * pressure0 + 2 * u * t * controlPressure + t * t * pressure1;
 
             result.Add((new SKPoint(x, y), pressure));
+        }
+    }
+
+    /// <summary>
+    /// Adds a cap at the end of the stroke based on the cap style.
+    /// </summary>
+    private void AddCap(SKPath path, SKPoint center, SKPoint direction, float radius, bool isStart)
+    {
+        switch (CapStyle)
+        {
+            case SKStrokeCapStyle.Round:
+                AddRoundedCap(path, center, direction, radius);
+                break;
+            case SKStrokeCapStyle.Flat:
+                // Flat cap - just continue the path, no additional geometry needed
+                break;
+            case SKStrokeCapStyle.Tapered:
+                AddTaperedCap(path, center, direction, radius, isStart);
+                break;
         }
     }
 
@@ -371,6 +431,21 @@ public class SKInkStroke : IDisposable
     private float GetStrokeWidth(float pressure)
     {
         return minStrokeWidth + (maxStrokeWidth - minStrokeWidth) * pressure;
+    }
+
+    /// <summary>
+    /// Adds a tapered cap that narrows to a point.
+    /// </summary>
+    private static void AddTaperedCap(SKPath path, SKPoint center, SKPoint direction, float radius, bool isStart)
+    {
+        // Calculate the tip point (extends beyond center in the direction of the stroke end)
+        var tipDistance = radius * 1.5f; // Extend the taper beyond the stroke width
+        var tipPoint = new SKPoint(
+            center.X + direction.X * tipDistance,
+            center.Y + direction.Y * tipDistance);
+
+        // Add a line to the tip point (creating a triangular taper)
+        path.LineTo(tipPoint);
     }
 
     /// <summary>

@@ -562,4 +562,102 @@ public class SKInkCanvasTests
 
         Assert.True(invalidatedCount >= 1);
     }
+
+    [Fact]
+    public void StrokeColor_DefaultIsBlack()
+    {
+        using var canvas = new SKInkCanvas();
+
+        Assert.Equal(SKColors.Black, canvas.StrokeColor);
+    }
+
+    [Fact]
+    public void StrokeColor_CanBeSet()
+    {
+        using var canvas = new SKInkCanvas();
+
+        canvas.StrokeColor = SKColors.Red;
+
+        Assert.Equal(SKColors.Red, canvas.StrokeColor);
+    }
+
+    [Fact]
+    public void CapStyle_DefaultIsRound()
+    {
+        using var canvas = new SKInkCanvas();
+
+        Assert.Equal(SKStrokeCapStyle.Round, canvas.CapStyle);
+    }
+
+    [Fact]
+    public void CapStyle_CanBeSet()
+    {
+        using var canvas = new SKInkCanvas();
+
+        canvas.CapStyle = SKStrokeCapStyle.Tapered;
+
+        Assert.Equal(SKStrokeCapStyle.Tapered, canvas.CapStyle);
+    }
+
+    [Fact]
+    public void SmoothingFactor_DefaultIsFour()
+    {
+        using var canvas = new SKInkCanvas();
+
+        Assert.Equal(4, canvas.SmoothingFactor);
+    }
+
+    [Fact]
+    public void SmoothingFactor_CanBeSet()
+    {
+        using var canvas = new SKInkCanvas();
+
+        canvas.SmoothingFactor = 8;
+
+        Assert.Equal(8, canvas.SmoothingFactor);
+    }
+
+    [Fact]
+    public void StartStroke_UsesCanvasDefaults()
+    {
+        using var canvas = new SKInkCanvas();
+        canvas.StrokeColor = SKColors.Green;
+        canvas.CapStyle = SKStrokeCapStyle.Tapered;
+        canvas.SmoothingFactor = 6;
+
+        canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
+
+        Assert.Equal(SKColors.Green, canvas.CurrentStroke!.Color);
+        Assert.Equal(SKStrokeCapStyle.Tapered, canvas.CurrentStroke!.CapStyle);
+        Assert.Equal(6, canvas.CurrentStroke!.SmoothingFactor);
+    }
+
+    [Fact]
+    public void StartStroke_WithCustomColor_OverridesDefault()
+    {
+        using var canvas = new SKInkCanvas();
+        canvas.StrokeColor = SKColors.Green;
+
+        canvas.StartStroke(new SKInkPoint(10f, 20f, 0.5f), SKColors.Blue);
+
+        Assert.Equal(SKColors.Blue, canvas.CurrentStroke!.Color);
+    }
+
+    [Fact]
+    public void Draw_UsesPerStrokeColors()
+    {
+        using var canvas = new SKInkCanvas();
+        
+        // Add a red stroke
+        canvas.StartStroke(new SKInkPoint(10f, 20f, 0.5f), SKColors.Red);
+        canvas.EndStroke(new SKPoint(50f, 60f), 0.5f);
+        
+        // Add a blue stroke
+        canvas.StartStroke(new SKInkPoint(100f, 100f, 0.5f), SKColors.Blue);
+        canvas.EndStroke(new SKPoint(150f, 150f), 0.5f);
+
+        Assert.Equal(2, canvas.StrokeCount);
+        Assert.Equal(SKColors.Red, canvas.Strokes[0].Color);
+        Assert.Equal(SKColors.Blue, canvas.Strokes[1].Color);
+    }
 }

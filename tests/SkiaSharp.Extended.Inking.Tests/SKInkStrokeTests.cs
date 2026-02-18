@@ -360,4 +360,98 @@ public class SKInkStrokeTests
 
         Assert.Null(pathAfter);
     }
+
+    [Fact]
+    public void Constructor_SetsColor()
+    {
+        using var stroke = new SKInkStroke(1f, 8f, SKColors.Red);
+
+        Assert.Equal(SKColors.Red, stroke.Color);
+    }
+
+    [Fact]
+    public void Constructor_SetsCapStyle()
+    {
+        using var stroke = new SKInkStroke(1f, 8f, null, SKStrokeCapStyle.Tapered);
+
+        Assert.Equal(SKStrokeCapStyle.Tapered, stroke.CapStyle);
+    }
+
+    [Fact]
+    public void Constructor_SetsSmoothingFactor()
+    {
+        using var stroke = new SKInkStroke(1f, 8f, null, SKStrokeCapStyle.Round, 8);
+
+        Assert.Equal(8, stroke.SmoothingFactor);
+    }
+
+    [Fact]
+    public void Constructor_ThrowsOnInvalidSmoothingFactor()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkStroke(1f, 8f, null, SKStrokeCapStyle.Round, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkStroke(1f, 8f, null, SKStrokeCapStyle.Round, 11));
+    }
+
+    [Fact]
+    public void Color_CanBeModified()
+    {
+        using var stroke = new SKInkStroke();
+        
+        stroke.Color = SKColors.Blue;
+
+        Assert.Equal(SKColors.Blue, stroke.Color);
+    }
+
+    [Fact]
+    public void CapStyle_CanBeModified()
+    {
+        using var stroke = new SKInkStroke();
+        
+        stroke.CapStyle = SKStrokeCapStyle.Flat;
+
+        Assert.Equal(SKStrokeCapStyle.Flat, stroke.CapStyle);
+    }
+
+    [Fact]
+    public void Path_WithFlatCap_GeneratesPath()
+    {
+        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Flat);
+
+        stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+
+        var path = stroke.Path;
+
+        Assert.NotNull(path);
+        Assert.False(path!.IsEmpty);
+    }
+
+    [Fact]
+    public void Path_WithTaperedCap_GeneratesPath()
+    {
+        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Tapered);
+
+        stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+
+        var path = stroke.Path;
+
+        Assert.NotNull(path);
+        Assert.False(path!.IsEmpty);
+    }
+
+    [Fact]
+    public void Path_HighSmoothingFactor_GeneratesSmoothPath()
+    {
+        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 10);
+
+        stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        stroke.AddPoint(new SKPoint(50f, 0f), 0.7f);
+        stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+
+        var path = stroke.Path;
+
+        Assert.NotNull(path);
+        Assert.False(path!.IsEmpty);
+    }
 }
