@@ -145,8 +145,9 @@ namespace SkiaSharp.Extended.PivotViewer
                 var facetCategories = ParseFacetCategories(collectionElement);
                 source._properties = new List<PivotViewerProperty>(facetCategories.Values);
 
-                // Parse Copyright
-                var copyrightElement = collectionElement.Element(CollectionNs + "Copyright");
+                // Parse Copyright (may be in collection ns or pivot ns)
+                var copyrightElement = collectionElement.Element(CollectionNs + "Copyright")
+                    ?? collectionElement.Element(PivotNs + "Copyright");
                 if (copyrightElement != null)
                 {
                     string? copyrightName = copyrightElement.Attribute("Name")?.Value;
@@ -219,7 +220,7 @@ namespace SkiaSharp.Extended.PivotViewer
                 if (!ParseBoolAttribute(fc, PivotNs + "IsMetaDataVisible", true))
                     options |= PivotViewerPropertyOptions.Private;
 
-                property.Options = options;
+                property.Options |= options;
 
                 // Lock after configuration
                 property.Lock();
