@@ -135,6 +135,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 _suppressPropertySync = false;
                 ViewChanged?.Invoke(this, EventArgs.Empty);
             };
+            _controller.SortPropertyChanged += (s, e) =>
+            {
+                _suppressPropertySync = true;
+                SetValue(SortPivotPropertyProperty, _controller.SortProperty);
+                _suppressPropertySync = false;
+                SortPivotPropertyChanged?.Invoke(this, EventArgs.Empty);
+            };
             _controller.CollectionChanged += (s, e) =>
             {
                 InvalidateHistogramCaches();
@@ -307,6 +314,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         public event EventHandler? FilterChanged;
         public event EventHandler? ViewChanged;
         public event EventHandler? CollectionChanged;
+        public event EventHandler? SortPivotPropertyChanged;
         public event EventHandler<PivotViewerItem>? ItemDoubleClick;
 
         // --- Methods ---
