@@ -100,7 +100,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public (double X, double Y) ParentToLocal(double parentX, double parentY)
         {
             var (mx, my, mw, mh) = GetMosaicBounds();
-            return ((parentX - mx) / mw, (parentY - my) / mw);
+            return ((parentX - mx) / mw, (parentY - my) / mh);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public (double X, double Y) LocalToParent(double localX, double localY)
         {
             var (mx, my, mw, mh) = GetMosaicBounds();
-            return (localX * mw + mx, localY * mw + my);
+            return (localX * mw + mx, localY * mh + my);
         }
     }
 }

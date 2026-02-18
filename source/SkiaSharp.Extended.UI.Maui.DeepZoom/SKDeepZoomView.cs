@@ -24,6 +24,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         // Gesture state
         private double _lastPanX, _lastPanY;
         private double _lastPinchScale = 1.0;
+        private float _dpiScale = 1f;
 
         public SKDeepZoomView()
         {
@@ -160,6 +161,11 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             var delta = now - _lastFrameTime;
             _lastFrameTime = now;
 
+            // Store scale factor for gesture coordinate conversion
+            _dpiScale = _canvasView.CanvasSize.Width > 0 && Width > 0
+                ? _canvasView.CanvasSize.Width / (float)Width
+                : 1f;
+
             _controller.SetControlSize(e.Info.Width, e.Info.Height);
             bool needsRepaint = _controller.Update(delta);
             _controller.Render(e.Surface.Canvas);
@@ -196,8 +202,8 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                     _lastPanY = 0;
                     break;
                 case GestureStatus.Running:
-                    double dx = e.TotalX - _lastPanX;
-                    double dy = e.TotalY - _lastPanY;
+                    double dx = (e.TotalX - _lastPanX) * _dpiScale;
+                    double dy = (e.TotalY - _lastPanY) * _dpiScale;
                     _lastPanX = e.TotalX;
                     _lastPanY = e.TotalY;
                     _controller.Pan(dx, dy);
@@ -217,9 +223,9 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                     double scaleChange = e.Scale / _lastPinchScale;
                     _lastPinchScale = e.Scale;
 
-                    // Zoom about the pinch center
-                    double centerX = Width * e.ScaleOrigin.X;
-                    double centerY = Height * e.ScaleOrigin.Y;
+                    // Zoom about the pinch center (convert DIPs to pixels)
+                    double centerX = Width * e.ScaleOrigin.X * _dpiScale;
+                    double centerY = Height * e.ScaleOrigin.Y * _dpiScale;
                     _controller.ZoomAboutScreenPoint(scaleChange, centerX, centerY);
                     _canvasView.InvalidateSurface();
                     break;
@@ -231,7 +237,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             var point = e.GetPosition(this);
             if (point.HasValue)
             {
-                _controller.ZoomAboutScreenPoint(2.0, point.Value.X, point.Value.Y);
+                _controller.ZoomAboutScreenPoint(2.0, point.Value.X * _dpiScale, point.Value.Y * _dpiScale);
                 _canvasView.InvalidateSurface();
             }
         }

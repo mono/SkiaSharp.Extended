@@ -188,7 +188,7 @@ namespace SkiaSharp.Extended.PivotViewer
             double itemPixHeight = itemPixWidth / subImage.AspectRatio;
 
             double itemPxX = col * itemPixWidth;
-            double itemPxY = row * itemPixWidth;
+            double itemPxY = row * itemPixHeight;
 
             int tileCol = (int)(itemPxX / _dzc.TileSize);
             int tileRow = (int)(itemPxY / _dzc.TileSize);

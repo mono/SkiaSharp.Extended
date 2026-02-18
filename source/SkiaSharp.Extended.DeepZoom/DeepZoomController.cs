@@ -106,6 +106,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public void Load(DziTileSource tileSource, ITileFetcher fetcher)
         {
             _cts?.Cancel();
+            _cts?.Dispose();
             _cts = new CancellationTokenSource();
             _pendingTiles.Clear();
             _subImages.Clear();
@@ -133,6 +134,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public void Load(DzcTileSource dzcTileSource, ITileFetcher fetcher)
         {
             _cts?.Cancel();
+            _cts?.Dispose();
             _cts = new CancellationTokenSource();
             _pendingTiles.Clear();
 
