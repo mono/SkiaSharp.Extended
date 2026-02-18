@@ -7,15 +7,18 @@
 
     <Grid RowDefinitions="Auto,*,Auto">
 
-        <!-- Header with URL bar -->
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto"
+        <!-- Header: collection picker + URL bar -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto"
               Padding="8" ColumnSpacing="8">
-            <Entry Grid.Column="0" x:Name="urlEntry"
-                   Placeholder="Enter CXML URL or use built-in sample"
-                   FontSize="12"
-                   ReturnCommand="{x:Null}" />
-            <Button Grid.Column="1" Text="Load"
-                    Clicked="OnLoadClicked"
+            <Picker Grid.Column="0" x:Name="collectionPicker"
+                    Title="Collection"
+                    SelectedIndexChanged="OnCollectionPickerChanged"
+                    FontSize="12" />
+            <Entry Grid.Column="1" x:Name="urlEntry"
+                   Placeholder="Or enter a CXML URL"
+                   FontSize="12" />
+            <Button Grid.Column="2" Text="Load URL"
+                    Clicked="OnLoadUrlClicked"
                     FontSize="12" Padding="8,4" />
         </Grid>
 
@@ -25,19 +28,11 @@
                                BackgroundColor="#F0F0F0" />
 
         <!-- Status bar -->
-        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto"
-              Padding="8" ColumnSpacing="8">
-            <Label Grid.Column="0" x:Name="statusLabel"
-                   Text="Ready — tap Load to load a collection"
-                   FontSize="12" TextColor="Gray"
-                   VerticalTextAlignment="Center" />
-            <Button Grid.Column="1" Text="Built-in Sample"
-                    Clicked="OnBuiltInSampleClicked"
-                    FontSize="12" Padding="8,4" />
-            <Button Grid.Column="2" Text="Load URL"
-                    Clicked="OnRemoteSampleClicked"
-                    FontSize="12" Padding="8,4" />
-        </Grid>
+        <Label Grid.Row="2" x:Name="statusLabel"
+               Text="Select a collection above"
+               FontSize="12" TextColor="Gray"
+               Padding="8"
+               VerticalTextAlignment="Center" />
 
     </Grid>
 

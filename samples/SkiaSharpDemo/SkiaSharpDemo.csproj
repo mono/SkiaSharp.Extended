@@ -66,6 +66,18 @@
 
     <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <!-- Collections: conceptcars (298 items, String+Number, full DZI pyramids) -->
+    <MauiAsset Include="..\..\resources\collections\conceptcars\conceptcars.cxml" LogicalName="Collections\conceptcars\conceptcars.cxml" />
+    <MauiAsset Include="..\..\resources\collections\conceptcars\deepzoom\conceptcars.dzc" LogicalName="Collections\conceptcars\deepzoom\conceptcars.dzc" />
+    <MauiAsset Include="..\..\resources\collections\conceptcars\deepzoom\*.dzi" LogicalName="Collections\conceptcars\deepzoom\%(Filename)%(Extension)" />
+    <MauiAsset Include="..\..\resources\collections\conceptcars\deepzoom\*_files\**" LogicalName="Collections\conceptcars\deepzoom\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <!-- Collections: nigeria-state (33 items, String+Number+DateTime+Link, full DZI pyramids) -->
+    <MauiAsset Include="..\..\resources\collections\nigeria-state\nigeria_state.cxml" LogicalName="Collections\nigeria-state\nigeria_state.cxml" />
+    <MauiAsset Include="..\..\resources\collections\nigeria-state\deepzoom\images.dzc" LogicalName="Collections\nigeria-state\deepzoom\images.dzc" />
+    <MauiAsset Include="..\..\resources\collections\nigeria-state\deepzoom\*.dzi" LogicalName="Collections\nigeria-state\deepzoom\%(Filename)%(Extension)" />
+    <MauiAsset Include="..\..\resources\collections\nigeria-state\deepzoom\*_files\**" LogicalName="Collections\nigeria-state\deepzoom\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>

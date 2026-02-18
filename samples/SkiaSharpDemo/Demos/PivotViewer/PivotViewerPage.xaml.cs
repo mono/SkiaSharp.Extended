@@ -5,25 +5,29 @@ namespace SkiaSharpDemo.Demos;
 
 public partial class PivotViewerPage : ContentPage
 {
+	private static readonly (string Name, string Path)[] BundledCollections =
+	[
+		("Concept Cars (298 items)", "Collections/conceptcars/conceptcars.cxml"),
+		("Nigerian States (33 items)", "Collections/nigeria-state/nigeria_state.cxml"),
+	];
+
 	public PivotViewerPage()
 	{
 		InitializeComponent();
-		LoadBundledCxml();
+
+		foreach (var (name, _) in BundledCollections)
+			collectionPicker.Items.Add(name);
+
+		collectionPicker.SelectedIndex = 0;
 	}
 
-	private void OnLoadClicked(object? sender, EventArgs e)
+	private void OnCollectionPickerChanged(object? sender, EventArgs e)
 	{
-		var url = urlEntry.Text?.Trim();
-		if (!string.IsNullOrEmpty(url))
-			LoadFromUrl(url);
+		if (collectionPicker.SelectedIndex >= 0)
+			LoadBundledCollection(BundledCollections[collectionPicker.SelectedIndex].Path);
 	}
 
-	private void OnBuiltInSampleClicked(object? sender, EventArgs e)
-	{
-		LoadBundledCxml();
-	}
-
-	private void OnRemoteSampleClicked(object? sender, EventArgs e)
+	private void OnLoadUrlClicked(object? sender, EventArgs e)
 	{
 		var url = urlEntry.Text?.Trim();
 		if (!string.IsNullOrEmpty(url))
@@ -32,21 +36,23 @@ public partial class PivotViewerPage : ContentPage
 			statusLabel.Text = "Enter a CXML URL first";
 	}
 
-	private async void LoadBundledCxml()
+	private async void LoadBundledCollection(string assetPath)
 	{
 		try
 		{
-			statusLabel.Text = "Loading ski resorts collection...";
+			statusLabel.Text = "Loading collection...";
 
-			// Load the bundled CXML from app raw assets
-			using var stream = await FileSystem.OpenAppPackageFileAsync("TestData/simple_ski.cxml");
+			using var stream = await FileSystem.OpenAppPackageFileAsync(assetPath);
 			var source = await CxmlCollectionSource.LoadAsync(stream);
 
 			if (source.State == CxmlCollectionState.Loaded)
 			{
 				pivotViewerView.LoadCollection(source);
-				statusLabel.Text = $"Loaded \"{source.Name}\" — {source.Items.Count} items, " +
-				                   $"{source.ItemProperties.Count} facets";
+				var types = string.Join(", ", source.ItemProperties
+					.Select(p => p.GetType().Name.Replace("PivotViewer", "").Replace("Property", ""))
+					.Distinct().OrderBy(t => t));
+				statusLabel.Text = $"\"{source.Name}\" — {source.Items.Count} items, " +
+				                   $"{source.ItemProperties.Count} facets ({types})";
 			}
 			else
 			{
@@ -63,7 +69,7 @@ public partial class PivotViewerPage : ContentPage
 	{
 		try
 		{
-			statusLabel.Text = $"Loading from URL...";
+			statusLabel.Text = "Loading from URL...";
 			using var httpClient = new HttpClient();
 
 			var uri = new Uri(url);
@@ -72,7 +78,7 @@ public partial class PivotViewerPage : ContentPage
 			if (source.State == CxmlCollectionState.Loaded)
 			{
 				pivotViewerView.LoadCollection(source);
-				statusLabel.Text = $"Loaded \"{source.Name}\" — {source.Items.Count} items, " +
+				statusLabel.Text = $"\"{source.Name}\" — {source.Items.Count} items, " +
 				                   $"{source.ItemProperties.Count} facets";
 			}
 			else

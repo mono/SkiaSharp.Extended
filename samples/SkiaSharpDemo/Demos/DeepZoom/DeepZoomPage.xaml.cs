@@ -9,24 +9,31 @@ public partial class DeepZoomPage : ContentPage
 	public DeepZoomPage()
 	{
 		InitializeComponent();
-		LoadBundledDzi();
+		LoadConceptCarDzi();
 	}
 
-	private async void LoadBundledDzi()
+	private async void LoadConceptCarDzi()
 	{
 		try
 		{
 			statusLabel.Text = "Loading Deep Zoom image...";
 
-			// Load the bundled DZI descriptor from raw assets
-			using var stream = await FileSystem.OpenAppPackageFileAsync("TestData/143.dzi");
-			using var reader = new StreamReader(stream);
-			var dziXml = await reader.ReadToEndAsync();
+			// Parse the DZC to find a sub-image with its DZI source
+			using var dzcStream = await FileSystem.OpenAppPackageFileAsync(
+				"Collections/conceptcars/deepzoom/conceptcars.dzc");
+			var dzc = DzcTileSource.Parse(dzcStream);
 
-			// The tile files are at TestData/143_files/{level}/{col}_{row}.jpg
-			var tileSource = DziTileSource.Parse(dziXml, "asset://TestData/143_files/");
+			// Pick the first sub-image and load its DZI
+			var sub = dzc.Items[0];
+			var dziPath = $"Collections/conceptcars/deepzoom/{sub.Source}";
+			using var dziStream = await FileSystem.OpenAppPackageFileAsync(dziPath);
+			using var dziReader = new StreamReader(dziStream);
+			var dziXml = await dziReader.ReadToEndAsync();
 
-			// Load with a fetcher that reads from MAUI app package
+			// Base URL for tiles: DZI path with .dzi replaced by _files/
+			var tileBase = $"asset://Collections/conceptcars/deepzoom/{sub.Source!.Replace(".dzi", "_files/")}";
+			var tileSource = DziTileSource.Parse(dziXml, tileBase);
+
 			deepZoomView.Load(tileSource, new AppPackageTileFetcher());
 
 			statusLabel.Text = $"Loaded: {tileSource.ImageWidth}×{tileSource.ImageHeight} — pinch/pan/double-tap";
@@ -69,7 +76,7 @@ public partial class DeepZoomPage : ContentPage
 
 	/// <summary>
 	/// Loads tiles from MAUI app package raw assets.
-	/// URLs are in the form "asset://TestData/143_files/{level}/{col}_{row}.jpg".
+	/// URLs are in the form "asset://Collections/conceptcars/deepzoom/{id}_files/{level}/{col}_{row}.jpg".
 	/// </summary>
 	private class AppPackageTileFetcher : ITileFetcher
 	{
@@ -77,7 +84,6 @@ public partial class DeepZoomPage : ContentPage
 		{
 			try
 			{
-				// Strip the "asset://" prefix to get the raw asset path
 				var path = url.Replace("asset://", "");
 				using var stream = await FileSystem.OpenAppPackageFileAsync(path);
 				return SKBitmap.Decode(stream);
