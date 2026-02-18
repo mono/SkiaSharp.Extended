@@ -1,13 +1,12 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace SkiaSharp.Extended.Gif.Codec
 {
     /// <summary>
     /// LZW compressor for GIF image data.
-    /// Implements the LZW algorithm as specified in the GIF specification.
     /// </summary>
     internal class LzwEncoder : IDisposable
     {
@@ -18,11 +17,9 @@ namespace SkiaSharp.Extended.Gif.Codec
         private int maxCode;
         private int nextCode;
         
-        private readonly Dictionary<int, int> codeTable;
-        private int currentPrefix;
+        private readonly Dictionary<string, int> codeTable;
         private bool disposed;
         
-        // Bit packing state
         private int bitBuffer;
         private int bitsInBuffer;
         
@@ -31,12 +28,12 @@ namespace SkiaSharp.Extended.Gif.Codec
         public LzwEncoder(int minimumCodeSize)
         {
             if (minimumCodeSize < 2 || minimumCodeSize > 8)
-                throw new ArgumentOutOfRangeException(nameof(minimumCodeSize), "Minimum code size must be 2-8.");
+                throw new ArgumentOutOfRangeException(nameof(minimumCodeSize));
             
             this.minimumCodeSize = minimumCodeSize;
             this.clearCode = 1 << minimumCodeSize;
             this.endCode = clearCode + 1;
-            this.codeTable = new Dictionary<int, int>();
+            this.codeTable = new Dictionary<string, int>();
             
             InitializeTables();
         }
@@ -46,16 +43,9 @@ namespace SkiaSharp.Extended.Gif.Codec
             codeSize = minimumCodeSize + 1;
             maxCode = (1 << codeSize) - 1;
             nextCode = clearCode + 2;
-            currentPrefix = -1;
-            
             codeTable.Clear();
         }
         
-        /// <summary>
-        /// Compresses data using LZW algorithm.
-        /// </summary>
-        /// <param name="input">Input byte array to compress.</param>
-        /// <param name="output">Output stream for compressed data.</param>
         public void Compress(byte[] input, Stream output)
         {
             if (input == null)
@@ -63,86 +53,98 @@ namespace SkiaSharp.Extended.Gif.Codec
             if (output == null)
                 throw new ArgumentNullException(nameof(output));
             
-            // Reset state
             InitializeTables();
             bitBuffer = 0;
             bitsInBuffer = 0;
             
-            // Start with clear code
             WriteCode(clearCode, output);
             
-            currentPrefix = -1;
-            
-            for (int i = 0; i < input.Length; i++)
+            if (input.Length == 0)
             {
-                int k = input[i];
+                WriteCode(endCode, output);
+                FlushBits(output);
+                return;
+            }
+            
+            var sb = new StringBuilder();
+            sb.Append((char)input[0]);
+            
+            for (int i = 1; i < input.Length; i++)
+            {
+                var k = (char)input[i];
+                var candidate = sb.ToString() + k;
                 
-                if (currentPrefix == -1)
+                if (codeTable.ContainsKey(candidate))
                 {
-                    // First byte
-                    currentPrefix = k;
+                    sb.Append(k);
                 }
                 else
                 {
-                    // Combine prefix and k
-                    int combined = (currentPrefix << 8) | k;
-                    
-                    if (codeTable.ContainsKey(combined))
+                    // Output code for current string
+                    var str = sb.ToString();
+                    int code;
+                    if (str.Length == 1)
                     {
-                        // String is in table, extend prefix
-                        currentPrefix = codeTable[combined];
+                        code = (byte)str[0];
                     }
                     else
                     {
-                        // String not in table
-                        // Output current prefix
-                        WriteCode(currentPrefix, output);
-                        
-                        // Add new string to table if space available
-                        if (nextCode < 4096)
-                        {
-                            codeTable[combined] = nextCode;
-                            nextCode++;
-                            
-                            // Increase code size if needed
-                            if (nextCode > maxCode && codeSize < 12)
-                            {
-                                codeSize++;
-                                maxCode = (1 << codeSize) - 1;
-                            }
-                        }
-                        else
-                        {
-                            // Table full, send clear code and reset
-                            WriteCode(clearCode, output);
-                            InitializeTables();
-                        }
-                        
-                        currentPrefix = k;
+                        code = codeTable[str];
                     }
+                    WriteCode(code, output);
+                    
+                    // Add new string if space
+                    if (nextCode < 4096)
+                    {
+                        codeTable[candidate] = nextCode;
+                        nextCode++;
+                        
+                        if (nextCode > maxCode && codeSize < 12)
+                        {
+                            codeSize++;
+                            maxCode = (1 << codeSize) - 1;
+                        }
+                    }
+                    else
+                    {
+                        WriteCode(clearCode, output);
+                        InitializeTables();
+                    }
+                    
+                    sb.Clear();
+                    sb.Append(k);
                 }
             }
             
-            // Output final prefix
-            if (currentPrefix != -1)
+            // Output final string
+            if (sb.Length > 0)
             {
-                WriteCode(currentPrefix, output);
+                var str = sb.ToString();
+                int code;
+                if (str.Length == 1)
+                {
+                    code = (byte)str[0];
+                }
+                else if (codeTable.ContainsKey(str))
+                {
+                    code = codeTable[str];
+                }
+                else
+                {
+                    code = (byte)str[0];
+                }
+                WriteCode(code, output);
             }
             
-            // End with end code
             WriteCode(endCode, output);
-            
-            // Flush remaining bits
             FlushBits(output);
         }
         
         private void WriteCode(int code, Stream output)
         {
-            // Pack code into bit buffer
             bitBuffer |= code << bitsInBuffer;
             bitsInBuffer += codeSize;
             
-            // Write complete bytes
             while (bitsInBuffer >= 8)
             {
                 output.WriteByte((byte)(bitBuffer & 0xFF));
@@ -153,7 +155,6 @@ namespace SkiaSharp.Extended.Gif.Codec
         
         private void FlushBits(Stream output)
         {
-            // Write any remaining bits
             if (bitsInBuffer > 0)
             {
                 output.WriteByte((byte)(bitBuffer & 0xFF));
@@ -169,7 +170,6 @@ namespace SkiaSharp.Extended.Gif.Codec
                 codeTable.Clear();
                 disposed = true;
             }
-            
             GC.SuppressFinalize(this);
         }
     }
