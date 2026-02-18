@@ -664,10 +664,103 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private void OnTapped(object? sender, TappedEventArgs e)
         {
             var point = e.GetPosition(this);
-            if (point.HasValue)
+            if (!point.HasValue) return;
+
+            double x = point.Value.X;
+            double y = point.Value.Y;
+
+            // Control bar interactions
+            if (y < ControlBarHeight)
             {
-                var hit = _controller.HitTest(point.Value.X, point.Value.Y);
-                _controller.SelectedItem = hit;
+                HandleControlBarTap(x, y);
+                return;
+            }
+
+            // Filter pane interactions
+            if (x < FilterPaneWidth && y > ControlBarHeight)
+            {
+                HandleFilterPaneTap(x, y);
+                return;
+            }
+
+            // Main content area — adjust for content region offset
+            double contentX = x - FilterPaneWidth;
+            double contentY = y - ControlBarHeight;
+
+            var hit = _controller.HitTest(contentX - _controller.PanOffsetX, contentY - _controller.PanOffsetY);
+            _controller.SelectedItem = hit;
+            _canvasView.InvalidateSurface();
+        }
+
+        private void HandleControlBarTap(double x, double y)
+        {
+            // View switcher region (after filter pane width)
+            if (x > FilterPaneWidth && x < FilterPaneWidth + 200)
+            {
+                // Toggle between grid and graph
+                _textFont.Size = 14;
+                string gridLabel = _controller.CurrentView == "grid" ? "▣ Grid" : "▢ Grid";
+                float gridWidth = _textFont.MeasureText(gridLabel, out _);
+
+                if (x < FilterPaneWidth + 10 + gridWidth + 10)
+                {
+                    _controller.CurrentView = "grid";
+                }
+                else
+                {
+                    _controller.CurrentView = "graph";
+                }
+                _canvasView.InvalidateSurface();
+            }
+        }
+
+        private void HandleFilterPaneTap(double x, double y)
+        {
+            var filterPane = _controller.FilterPaneModel;
+            if (filterPane == null) return;
+
+            // Check "Clear All" button
+            if (filterPane.HasActiveFilters && y < ControlBarHeight + Padding + 24)
+            {
+                filterPane.ClearAllFilters();
+                _canvasView.InvalidateSurface();
+                return;
+            }
+
+            // Calculate which filter value was tapped based on Y position
+            var categories = filterPane.GetCategories(_controller.Items);
+            float catY = ControlBarHeight + Padding;
+            float lineHeight = 20f;
+
+            if (filterPane.HasActiveFilters)
+                catY += lineHeight + 4;
+
+            foreach (var category in categories)
+            {
+                catY += lineHeight + 2; // Header
+
+                if (category.ValueCounts != null && category.Property.PropertyType == PivotViewerPropertyType.Text)
+                {
+                    foreach (var kv in category.ValueCounts.OrderByDescending(kv => kv.Value).Take(8))
+                    {
+                        if (y >= catY && y < catY + lineHeight - 2)
+                        {
+                            filterPane.ToggleStringFilter(category.Property.Id, kv.Key);
+                            _canvasView.InvalidateSurface();
+                            return;
+                        }
+                        catY += lineHeight - 2;
+                    }
+
+                    if (category.ValueCounts.Count > 8)
+                        catY += lineHeight - 2;
+                }
+                else
+                {
+                    catY += lineHeight;
+                }
+
+                catY += 6;
             }
         }
 
