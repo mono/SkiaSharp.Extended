@@ -60,6 +60,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private readonly int _maxEntries;
         private readonly LinkedList<TileCacheEntry> _lruList;
         private readonly Dictionary<TileId, LinkedListNode<TileCacheEntry>> _map;
+        private readonly object _lock = new object();
         private bool _disposed;
 
         public TileCache(int maxEntries = 256)
@@ -71,7 +72,7 @@ namespace SkiaSharp.Extended.DeepZoom
         }
 
         /// <summary>Current number of cached tiles.</summary>
-        public int Count => _map.Count;
+        public int Count { get { lock (_lock) return _map.Count; } }
 
         /// <summary>Maximum number of cached tiles.</summary>
         public int MaxEntries => _maxEntries;
@@ -79,70 +80,82 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>Tries to get a cached tile bitmap.</summary>
         public bool TryGet(TileId id, out SKBitmap? bitmap)
         {
-            if (_map.TryGetValue(id, out var node))
+            lock (_lock)
             {
-                // Move to front (most recently used)
-                _lruList.Remove(node);
-                _lruList.AddFirst(node);
-                bitmap = node.Value.Bitmap;
-                return true;
+                if (_map.TryGetValue(id, out var node))
+                {
+                    // Move to front (most recently used)
+                    _lruList.Remove(node);
+                    _lruList.AddFirst(node);
+                    bitmap = node.Value.Bitmap;
+                    return true;
+                }
+                bitmap = null;
+                return false;
             }
-            bitmap = null;
-            return false;
         }
 
         /// <summary>Adds a tile bitmap to the cache, evicting LRU entries if needed.</summary>
         public void Put(TileId id, SKBitmap? bitmap)
         {
-            if (_map.TryGetValue(id, out var existing))
+            lock (_lock)
             {
-                // Update existing entry
-                _lruList.Remove(existing);
-                existing.Value.Bitmap?.Dispose();
-                existing.Value = new TileCacheEntry(id, bitmap);
-                _lruList.AddFirst(existing);
-                return;
-            }
+                if (_map.TryGetValue(id, out var existing))
+                {
+                    // Update existing entry
+                    _lruList.Remove(existing);
+                    existing.Value.Bitmap?.Dispose();
+                    existing.Value = new TileCacheEntry(id, bitmap);
+                    _lruList.AddFirst(existing);
+                    return;
+                }
 
-            // Evict if at capacity
-            while (_map.Count >= _maxEntries && _lruList.Last != null)
-            {
-                var lru = _lruList.Last!;
-                _lruList.RemoveLast();
-                _map.Remove(lru.Value.Id);
-                lru.Value.Bitmap?.Dispose();
-            }
+                // Evict if at capacity
+                while (_map.Count >= _maxEntries && _lruList.Last != null)
+                {
+                    var lru = _lruList.Last!;
+                    _lruList.RemoveLast();
+                    _map.Remove(lru.Value.Id);
+                    lru.Value.Bitmap?.Dispose();
+                }
 
-            var entry = new TileCacheEntry(id, bitmap);
-            var newNode = _lruList.AddFirst(entry);
-            _map[id] = newNode;
+                var entry = new TileCacheEntry(id, bitmap);
+                var newNode = _lruList.AddFirst(entry);
+                _map[id] = newNode;
+            }
         }
 
         /// <summary>Checks if a tile is in the cache.</summary>
-        public bool Contains(TileId id) => _map.ContainsKey(id);
+        public bool Contains(TileId id) { lock (_lock) return _map.ContainsKey(id); }
 
         /// <summary>Removes a specific tile from the cache.</summary>
         public bool Remove(TileId id)
         {
-            if (_map.TryGetValue(id, out var node))
+            lock (_lock)
             {
-                _lruList.Remove(node);
-                _map.Remove(id);
-                node.Value.Bitmap?.Dispose();
-                return true;
+                if (_map.TryGetValue(id, out var node))
+                {
+                    _lruList.Remove(node);
+                    _map.Remove(id);
+                    node.Value.Bitmap?.Dispose();
+                    return true;
+                }
+                return false;
             }
-            return false;
         }
 
         /// <summary>Clears all cached tiles.</summary>
         public void Clear()
         {
-            foreach (var node in _lruList)
+            lock (_lock)
             {
-                node.Bitmap?.Dispose();
+                foreach (var node in _lruList)
+                {
+                    node.Bitmap?.Dispose();
+                }
+                _lruList.Clear();
+                _map.Clear();
             }
-            _lruList.Clear();
-            _map.Clear();
         }
 
         public void Dispose()

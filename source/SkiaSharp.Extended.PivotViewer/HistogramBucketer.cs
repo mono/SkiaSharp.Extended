@@ -43,13 +43,26 @@ namespace SkiaSharp.Extended.PivotViewer
             bucketCount = (int)Math.Ceiling((niceMax - niceMin) / step);
             bucketCount = Math.Min(MaxBuckets, Math.Max(1, bucketCount));
 
+            // Single pass counting using sorted data and binary search
+            var counts = new int[bucketCount];
+            int idx = 0;
+            for (int i = 0; i < bucketCount && idx < sorted.Count; i++)
+            {
+                double hi = niceMin + (i + 1) * step;
+                bool isLast = (i == bucketCount - 1);
+                while (idx < sorted.Count && (isLast ? sorted[idx] <= hi : sorted[idx] < hi))
+                {
+                    counts[i]++;
+                    idx++;
+                }
+            }
+
             var buckets = new List<HistogramBucket<double>>(bucketCount);
             for (int i = 0; i < bucketCount; i++)
             {
                 double lo = niceMin + i * step;
                 double hi = niceMin + (i + 1) * step;
-                int count = sorted.Count(v => v >= lo && (i == bucketCount - 1 ? v <= hi : v < hi));
-                buckets.Add(new HistogramBucket<double>(lo, hi, count));
+                buckets.Add(new HistogramBucket<double>(lo, hi, counts[i]));
             }
 
             return buckets;
@@ -91,10 +104,18 @@ namespace SkiaSharp.Extended.PivotViewer
             var buckets = new List<HistogramBucket<DateTime>>();
             DateTime current = FloorDate(min, granularity);
 
+            // Single-pass counting using sorted data
+            int idx = 0;
             while (current < max && buckets.Count < MaxBuckets)
             {
                 DateTime next = AdvanceDate(current, granularity);
-                int count = sorted.Count(v => v >= current && v < next);
+                int count = 0;
+                while (idx < sorted.Count && sorted[idx] < next)
+                {
+                    if (sorted[idx] >= current)
+                        count++;
+                    idx++;
+                }
                 buckets.Add(new HistogramBucket<DateTime>(current, next, count));
                 current = next;
             }
