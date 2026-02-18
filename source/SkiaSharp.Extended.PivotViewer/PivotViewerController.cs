@@ -1,0 +1,359 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+
+namespace SkiaSharp.Extended.PivotViewer
+{
+    /// <summary>
+    /// Orchestrates the PivotViewer: filtering, sorting, layout, selection, and state.
+    /// Platform-agnostic — no MAUI dependency. Can be driven from tests or any UI.
+    /// </summary>
+    public class PivotViewerController
+    {
+        private readonly FilterEngine _filterEngine;
+        private readonly GridLayoutEngine _layoutEngine;
+        private readonly WordWheelIndex _wordWheel;
+
+        private List<PivotViewerItem> _allItems = new List<PivotViewerItem>();
+        private List<PivotViewerProperty> _properties = new List<PivotViewerProperty>();
+        private IReadOnlyList<PivotViewerItem> _inScopeItems = Array.Empty<PivotViewerItem>();
+        private GridLayout? _currentGridLayout;
+        private HistogramLayout? _currentHistogramLayout;
+
+        private PivotViewerItem? _selectedItem;
+        private PivotViewerProperty? _sortProperty;
+        private string _currentView = "grid";
+        private double _availableWidth = 800;
+        private double _availableHeight = 600;
+
+        public PivotViewerController()
+        {
+            _filterEngine = new FilterEngine();
+            _layoutEngine = new GridLayoutEngine();
+            _wordWheel = new WordWheelIndex();
+
+            _filterEngine.FiltersChanged += (s, e) => OnFiltersChanged();
+        }
+
+        // --- Data ---
+
+        /// <summary>All items in the collection.</summary>
+        public IReadOnlyList<PivotViewerItem> Items => _allItems;
+
+        /// <summary>All property definitions.</summary>
+        public IReadOnlyList<PivotViewerProperty> Properties => _properties;
+
+        /// <summary>Items currently in scope (after filtering).</summary>
+        public IReadOnlyList<PivotViewerItem> InScopeItems => _inScopeItems;
+
+        /// <summary>The filter engine.</summary>
+        public FilterEngine FilterEngine => _filterEngine;
+
+        /// <summary>The word wheel search index.</summary>
+        public WordWheelIndex WordWheel => _wordWheel;
+
+        // --- Selection ---
+
+        /// <summary>Currently selected item.</summary>
+        public PivotViewerItem? SelectedItem
+        {
+            get => _selectedItem;
+            set
+            {
+                if (_selectedItem != value)
+                {
+                    var old = _selectedItem;
+                    _selectedItem = value;
+                    SelectionChanged?.Invoke(this, new SelectionChangedEventArgs(old, value));
+                }
+            }
+        }
+
+        /// <summary>Index of the selected item in InScopeItems, or -1.</summary>
+        public int SelectedIndex
+        {
+            get
+            {
+                if (_selectedItem == null) return -1;
+                for (int i = 0; i < _inScopeItems.Count; i++)
+                    if (_inScopeItems[i] == _selectedItem) return i;
+                return -1;
+            }
+            set
+            {
+                if (value >= 0 && value < _inScopeItems.Count)
+                    SelectedItem = _inScopeItems[value];
+                else
+                    SelectedItem = null;
+            }
+        }
+
+        // --- Sort ---
+
+        /// <summary>Active sort property.</summary>
+        public PivotViewerProperty? SortProperty
+        {
+            get => _sortProperty;
+            set
+            {
+                if (_sortProperty != value)
+                {
+                    _sortProperty = value;
+                    SortPropertyChanged?.Invoke(this, EventArgs.Empty);
+                    UpdateLayout();
+                }
+            }
+        }
+
+        // --- View ---
+
+        /// <summary>Current view mode: "grid" or "graph".</summary>
+        public string CurrentView
+        {
+            get => _currentView;
+            set
+            {
+                if (_currentView != value)
+                {
+                    _currentView = value ?? "grid";
+                    ViewChanged?.Invoke(this, EventArgs.Empty);
+                    UpdateLayout();
+                }
+            }
+        }
+
+        // --- Layout ---
+
+        /// <summary>Current grid layout (when in grid view).</summary>
+        public GridLayout? GridLayout => _currentGridLayout;
+
+        /// <summary>Current histogram layout (when in graph view).</summary>
+        public HistogramLayout? HistogramLayout => _currentHistogramLayout;
+
+        // --- Events ---
+
+        public event EventHandler<SelectionChangedEventArgs>? SelectionChanged;
+        public event EventHandler? FiltersChanged;
+        public event EventHandler? SortPropertyChanged;
+        public event EventHandler? ViewChanged;
+        public event EventHandler? CollectionChanged;
+        public event EventHandler? LayoutUpdated;
+
+        // --- Methods ---
+
+        /// <summary>
+        /// Loads a collection from a CxmlCollectionSource.
+        /// </summary>
+        public void LoadCollection(CxmlCollectionSource source)
+        {
+            _allItems = new List<PivotViewerItem>(source.Items);
+            _properties = new List<PivotViewerProperty>(source.ItemProperties);
+
+            _filterEngine.SetSource(_allItems, _properties);
+            _wordWheel.Build(_allItems, _properties);
+
+            _selectedItem = null;
+            _sortProperty = null;
+
+            UpdateInScopeItems();
+            CollectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Loads items and properties directly (binding model, like SL5).
+        /// </summary>
+        public void LoadItems(
+            IEnumerable<PivotViewerItem> items,
+            IEnumerable<PivotViewerProperty> properties)
+        {
+            _allItems = new List<PivotViewerItem>(items);
+            _properties = new List<PivotViewerProperty>(properties);
+
+            _filterEngine.SetSource(_allItems, _properties);
+            _wordWheel.Build(_allItems, _properties);
+
+            _selectedItem = null;
+            _sortProperty = null;
+
+            UpdateInScopeItems();
+            CollectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Sets the available size for layout computation.
+        /// </summary>
+        public void SetAvailableSize(double width, double height)
+        {
+            _availableWidth = width;
+            _availableHeight = height;
+            UpdateLayout();
+        }
+
+        /// <summary>
+        /// Performs a hit test at the given coordinates.
+        /// </summary>
+        public PivotViewerItem? HitTest(double x, double y)
+        {
+            if (_currentView == "graph" && _currentHistogramLayout != null)
+                return _currentHistogramLayout.HitTest(x, y);
+
+            return _currentGridLayout?.HitTest(x, y);
+        }
+
+        /// <summary>
+        /// Serializes the current viewer state (filters, sort, view, selection).
+        /// </summary>
+        public string SerializeViewerState()
+        {
+            var state = new ViewerState
+            {
+                ViewId = _currentView,
+                SortPropertyId = _sortProperty?.Id,
+                SelectedItemId = _selectedItem?.Id,
+                Predicates = _filterEngine.Predicates
+            };
+
+            return ViewerStateSerializer.Serialize(state);
+        }
+
+        /// <summary>
+        /// Restores viewer state from a serialized string.
+        /// </summary>
+        public void SetViewerState(string stateString)
+        {
+            var state = ViewerStateSerializer.Deserialize(stateString);
+
+            // Clear existing filters
+            _filterEngine.ClearAll();
+
+            // Apply deserialized string filters
+            foreach (var pred in state.StringPredicates)
+            {
+                foreach (var v in pred.Values)
+                    _filterEngine.AddStringFilter(pred.PropertyId, v);
+            }
+
+            // Apply view
+            if (!string.IsNullOrEmpty(state.ViewId))
+                _currentView = state.ViewId;
+
+            // Apply sort
+            if (!string.IsNullOrEmpty(state.SortPropertyId))
+                _sortProperty = _properties.FirstOrDefault(p => p.Id == state.SortPropertyId);
+
+            // Apply selection
+            if (!string.IsNullOrEmpty(state.SelectedItemId))
+                _selectedItem = _allItems.FirstOrDefault(i => i.Id == state.SelectedItemId);
+
+            UpdateInScopeItems();
+        }
+
+        /// <summary>
+        /// Gets in-scope counts for the filter pane (how many items match each value).
+        /// </summary>
+        public Dictionary<string, int> GetFilterCounts(string propertyId)
+        {
+            return _filterEngine.ComputeInScopeCounts(propertyId);
+        }
+
+        /// <summary>
+        /// Search for items by text prefix (word wheel).
+        /// </summary>
+        public IReadOnlyList<SearchResult> Search(string text)
+        {
+            return _wordWheel.Search(text);
+        }
+
+        // --- Internal ---
+
+        private void OnFiltersChanged()
+        {
+            UpdateInScopeItems();
+            FiltersChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void UpdateInScopeItems()
+        {
+            var filtered = _filterEngine.GetFilteredItems();
+
+            // Apply sort
+            if (_sortProperty != null)
+            {
+                var sortedList = new List<PivotViewerItem>(filtered);
+                sortedList.Sort((a, b) =>
+                {
+                    var va = a[_sortProperty.Id];
+                    var vb = b[_sortProperty.Id];
+
+                    if (va == null && vb == null) return 0;
+                    if (va == null) return 1;
+                    if (vb == null) return -1;
+
+                    var valA = va.Count > 0 ? va[0] : null;
+                    var valB = vb.Count > 0 ? vb[0] : null;
+
+                    if (valA == null && valB == null) return 0;
+                    if (valA == null) return 1;
+                    if (valB == null) return -1;
+
+                    if (valA is IComparable ca)
+                        return ca.CompareTo(valB);
+
+                    return string.Compare(valA.ToString(), valB.ToString(), StringComparison.OrdinalIgnoreCase);
+                });
+
+                _inScopeItems = sortedList;
+            }
+            else
+            {
+                _inScopeItems = filtered;
+            }
+
+            // Deselect if selected item is no longer in scope
+            if (_selectedItem != null && !_inScopeItems.Contains(_selectedItem))
+                _selectedItem = null;
+
+            UpdateLayout();
+        }
+
+        private void UpdateLayout()
+        {
+            if (_inScopeItems.Count == 0)
+            {
+                _currentGridLayout = null;
+                _currentHistogramLayout = null;
+                LayoutUpdated?.Invoke(this, EventArgs.Empty);
+                return;
+            }
+
+            if (_currentView == "graph" && _sortProperty != null)
+            {
+                _currentHistogramLayout = _layoutEngine.ComputeHistogramLayout(
+                    _inScopeItems, _sortProperty.Id, _availableWidth, _availableHeight);
+                _currentGridLayout = null;
+            }
+            else
+            {
+                _currentGridLayout = _layoutEngine.ComputeLayout(
+                    _inScopeItems, _availableWidth, _availableHeight);
+                _currentHistogramLayout = null;
+            }
+
+            LayoutUpdated?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    /// <summary>Event args for selection changes.</summary>
+    public class SelectionChangedEventArgs : EventArgs
+    {
+        public SelectionChangedEventArgs(PivotViewerItem? oldItem, PivotViewerItem? newItem)
+        {
+            OldItem = oldItem;
+            NewItem = newItem;
+        }
+
+        public PivotViewerItem? OldItem { get; }
+        public PivotViewerItem? NewItem { get; }
+    }
+}

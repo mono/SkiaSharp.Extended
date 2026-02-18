@@ -26,4 +26,10 @@ internal static class TestDataHelper
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
     }
+
+    public static CxmlCollectionSource LoadCxml(string resourceName)
+    {
+        string xml = GetString(resourceName);
+        return CxmlCollectionSource.Parse(xml);
+    }
 }
