@@ -1,3 +1,4 @@
+using SkiaSharp;
 using SkiaSharp.Extended.DeepZoom;
 using SkiaSharp.Extended.UI.Maui.DeepZoom;
 
@@ -8,26 +9,25 @@ public partial class DeepZoomPage : ContentPage
 	public DeepZoomPage()
 	{
 		InitializeComponent();
-		LoadSampleImage();
+		LoadBundledDzi();
 	}
 
-	private void LoadSampleImage()
+	private async void LoadBundledDzi()
 	{
 		try
 		{
-			statusLabel.Text = "Loading sample Deep Zoom image...";
+			statusLabel.Text = "Loading Deep Zoom image...";
 
-			// Use a built-in programmatic DZI for the demo
-			// A real app would load from a URL or local file
-			var dziXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-				"<Image TileSize=\"256\" Overlap=\"0\" Format=\"jpg\" " +
-				"xmlns=\"http://schemas.microsoft.com/deepzoom/2008\">" +
-				"<Size Width=\"1024\" Height=\"768\"/></Image>";
+			// Load the bundled DZI descriptor from raw assets
+			using var stream = await FileSystem.OpenAppPackageFileAsync("TestData/143.dzi");
+			using var reader = new StreamReader(stream);
+			var dziXml = await reader.ReadToEndAsync();
 
-			var tileSource = DziTileSource.Parse(dziXml, "placeholder://");
+			// The tile files are at TestData/143_files/{level}/{col}_{row}.jpg
+			var tileSource = DziTileSource.Parse(dziXml, "asset://TestData/143_files/");
 
-			// Load with a memory fetcher that returns colored placeholder tiles
-			deepZoomView.Load(tileSource, new PlaceholderTileFetcher());
+			// Load with a fetcher that reads from MAUI app package
+			deepZoomView.Load(tileSource, new AppPackageTileFetcher());
 
 			statusLabel.Text = $"Loaded: {tileSource.ImageWidth}×{tileSource.ImageHeight} — pinch/pan/double-tap";
 		}
@@ -68,38 +68,24 @@ public partial class DeepZoomPage : ContentPage
 	}
 
 	/// <summary>
-	/// A tile fetcher that generates colored placeholder tiles for demo purposes.
-	/// Each tile gets a unique color based on its level/col/row.
+	/// Loads tiles from MAUI app package raw assets.
+	/// URLs are in the form "asset://TestData/143_files/{level}/{col}_{row}.jpg".
 	/// </summary>
-	private class PlaceholderTileFetcher : ITileFetcher
+	private class AppPackageTileFetcher : ITileFetcher
 	{
-		public Task<SkiaSharp.SKBitmap?> FetchTileAsync(string url, System.Threading.CancellationToken ct = default)
+		public async Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
 		{
-			var bitmap = new SkiaSharp.SKBitmap(256, 256);
-			using var canvas = new SkiaSharp.SKCanvas(bitmap);
-
-			// Generate a color from the URL hash so each tile is visually distinct
-			int hash = url.GetHashCode();
-			byte r = (byte)((hash & 0xFF0000) >> 16 | 0x40);
-			byte g = (byte)((hash & 0x00FF00) >> 8 | 0x40);
-			byte b = (byte)((hash & 0x0000FF) | 0x40);
-
-			canvas.Clear(new SkiaSharp.SKColor(r, g, b));
-
-			// Draw a grid pattern to make zoom levels visible
-			using var paint = new SkiaSharp.SKPaint
+			try
 			{
-				Color = new SkiaSharp.SKColor((byte)(r + 30), (byte)(g + 30), (byte)(b + 30)),
-				IsStroke = true,
-				StrokeWidth = 1,
-			};
-			for (int i = 0; i < 256; i += 32)
-			{
-				canvas.DrawLine(i, 0, i, 256, paint);
-				canvas.DrawLine(0, i, 256, i, paint);
+				// Strip the "asset://" prefix to get the raw asset path
+				var path = url.Replace("asset://", "");
+				using var stream = await FileSystem.OpenAppPackageFileAsync(path);
+				return SKBitmap.Decode(stream);
 			}
-
-			return Task.FromResult<SkiaSharp.SKBitmap?>(bitmap);
+			catch
+			{
+				return null;
+			}
 		}
 
 		public void Dispose() { }
