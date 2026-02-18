@@ -25,6 +25,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private readonly SKPaint _selectedPaint;
         private readonly SKPaint _textPaint;
         private readonly SKPaint _labelPaint;
+        private readonly SKFont _textFont;
+        private readonly SKFont _labelFont;
         private bool _disposed;
 
         public SKPivotViewerView()
@@ -32,8 +34,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _controller = new PivotViewerController();
             _itemPaint = new SKPaint { IsAntialias = true, Color = SKColors.CornflowerBlue };
             _selectedPaint = new SKPaint { IsAntialias = true, Color = SKColors.Orange, IsStroke = true, StrokeWidth = 3 };
-            _textPaint = new SKPaint { IsAntialias = true, Color = SKColors.White, TextSize = 12 };
-            _labelPaint = new SKPaint { IsAntialias = true, Color = SKColors.DarkGray, TextSize = 14 };
+            _textPaint = new SKPaint { IsAntialias = true, Color = SKColors.White };
+            _labelPaint = new SKPaint { IsAntialias = true, Color = SKColors.DarkGray };
+            _textFont = new SKFont { Size = 12 };
+            _labelFont = new SKFont { Size = 14 };
 
             _canvasView = new SKCanvasView();
             _canvasView.PaintSurface += OnPaintSurface;
@@ -60,6 +64,34 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             BindableProperty.Create(nameof(AccentColor), typeof(Color), typeof(SKPivotViewerView),
                 Colors.CornflowerBlue);
 
+        public static readonly BindableProperty ItemsSourceProperty =
+            BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable<PivotViewerItem>), typeof(SKPivotViewerView),
+                null, propertyChanged: OnItemsSourceChanged);
+
+        public static readonly BindableProperty PivotPropertiesProperty =
+            BindableProperty.Create(nameof(PivotProperties), typeof(IEnumerable<PivotViewerProperty>), typeof(SKPivotViewerView),
+                null, propertyChanged: OnPivotPropertiesChanged);
+
+        public static readonly BindableProperty SelectedItemProperty =
+            BindableProperty.Create(nameof(SelectedItem), typeof(PivotViewerItem), typeof(SKPivotViewerView),
+                null, BindingMode.TwoWay, propertyChanged: OnSelectedItemChanged);
+
+        public static readonly BindableProperty SelectedIndexProperty =
+            BindableProperty.Create(nameof(SelectedIndex), typeof(int), typeof(SKPivotViewerView),
+                -1, BindingMode.TwoWay, propertyChanged: OnSelectedIndexChanged);
+
+        public static readonly BindableProperty SortPivotPropertyProperty =
+            BindableProperty.Create(nameof(SortPivotProperty), typeof(PivotViewerProperty), typeof(SKPivotViewerView),
+                null, BindingMode.TwoWay, propertyChanged: OnSortPivotPropertyChanged);
+
+        public static readonly BindableProperty ViewProperty =
+            BindableProperty.Create(nameof(View), typeof(string), typeof(SKPivotViewerView),
+                "grid", BindingMode.TwoWay, propertyChanged: OnViewChanged);
+
+        public static readonly BindableProperty ItemCultureProperty =
+            BindableProperty.Create(nameof(ItemCulture), typeof(CultureInfo), typeof(SKPivotViewerView),
+                CultureInfo.CurrentCulture);
+
         /// <summary>Accent color for the UI chrome.</summary>
         public Color AccentColor
         {
@@ -67,50 +99,117 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             set => SetValue(AccentColorProperty, value);
         }
 
-        // --- Properties ---
+        /// <summary>Bind a collection of PivotViewerItem (SL5 binding model).</summary>
+        public IEnumerable<PivotViewerItem>? ItemsSource
+        {
+            get => (IEnumerable<PivotViewerItem>?)GetValue(ItemsSourceProperty);
+            set => SetValue(ItemsSourceProperty, value);
+        }
+
+        /// <summary>Facet definitions for filtering and display.</summary>
+        public new IEnumerable<PivotViewerProperty>? PivotProperties
+        {
+            get => (IEnumerable<PivotViewerProperty>?)GetValue(PivotPropertiesProperty);
+            set => SetValue(PivotPropertiesProperty, value);
+        }
+
+        /// <summary>Currently selected item (two-way bindable).</summary>
+        public new PivotViewerItem? SelectedItem
+        {
+            get => (PivotViewerItem?)GetValue(SelectedItemProperty);
+            set => SetValue(SelectedItemProperty, value);
+        }
+
+        /// <summary>Index of the selected item (two-way bindable).</summary>
+        public new int SelectedIndex
+        {
+            get => (int)GetValue(SelectedIndexProperty);
+            set => SetValue(SelectedIndexProperty, value);
+        }
+
+        /// <summary>Active sort facet (two-way bindable).</summary>
+        public PivotViewerProperty? SortPivotProperty
+        {
+            get => (PivotViewerProperty?)GetValue(SortPivotPropertyProperty);
+            set => SetValue(SortPivotPropertyProperty, value);
+        }
+
+        /// <summary>Current view mode: "grid" or "graph" (two-way bindable).</summary>
+        public new string View
+        {
+            get => (string)GetValue(ViewProperty);
+            set => SetValue(ViewProperty, value);
+        }
+
+        /// <summary>Locale for date/number formatting.</summary>
+        public CultureInfo ItemCulture
+        {
+            get => (CultureInfo)GetValue(ItemCultureProperty);
+            set => SetValue(ItemCultureProperty, value);
+        }
+
+        /// <summary>Serialized filter state. Get to bookmark, set to restore.</summary>
+        public string Filter => _controller.SerializeViewerState();
+
+        /// <summary>Items currently in scope after filtering (read-only).</summary>
+        public IReadOnlyList<PivotViewerItem> InScopeItems => _controller.InScopeItems;
 
         /// <summary>The underlying PivotViewer controller.</summary>
         public PivotViewerController Controller => _controller;
 
-        /// <summary>All items in the collection.</summary>
-        public IReadOnlyList<PivotViewerItem> Items => _controller.Items;
+        // --- BindableProperty Change Handlers ---
 
-        /// <summary>Items currently in scope after filtering.</summary>
-        public IReadOnlyList<PivotViewerItem> InScopeItems => _controller.InScopeItems;
-
-        /// <summary>Property definitions.</summary>
-        public IReadOnlyList<PivotViewerProperty> PivotProperties => _controller.Properties;
-
-        /// <summary>Currently selected item.</summary>
-        public PivotViewerItem? SelectedItem
+        private static void OnItemsSourceChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            get => _controller.SelectedItem;
-            set => _controller.SelectedItem = value;
+            if (bindable is SKPivotViewerView view && newValue is IEnumerable<PivotViewerItem> items)
+            {
+                var props = view.PivotProperties ?? Enumerable.Empty<PivotViewerProperty>();
+                view._controller.LoadItems(items, props);
+                view._canvasView.InvalidateSurface();
+            }
         }
 
-        /// <summary>Index of the selected item.</summary>
-        public int SelectedIndex
+        private static void OnPivotPropertiesChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            get => _controller.SelectedIndex;
-            set => _controller.SelectedIndex = value;
+            if (bindable is SKPivotViewerView view && newValue is IEnumerable<PivotViewerProperty> props)
+            {
+                var items = view.ItemsSource ?? Enumerable.Empty<PivotViewerItem>();
+                view._controller.LoadItems(items, props);
+                view._canvasView.InvalidateSurface();
+            }
         }
 
-        /// <summary>Current sort property.</summary>
-        public PivotViewerProperty? SortPivotProperty
+        private static void OnSelectedItemChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            get => _controller.SortProperty;
-            set => _controller.SortProperty = value;
+            if (bindable is SKPivotViewerView view)
+            {
+                view._controller.SelectedItem = newValue as PivotViewerItem;
+            }
         }
 
-        /// <summary>Current view mode ("grid" or "graph").</summary>
-        public string View
+        private static void OnSelectedIndexChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            get => _controller.CurrentView;
-            set => _controller.CurrentView = value;
+            if (bindable is SKPivotViewerView view && newValue is int index)
+            {
+                view._controller.SelectedIndex = index;
+            }
         }
 
-        /// <summary>Serialized filter state.</summary>
-        public string Filter => _controller.SerializeViewerState();
+        private static void OnSortPivotPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is SKPivotViewerView view)
+            {
+                view._controller.SortProperty = newValue as PivotViewerProperty;
+            }
+        }
+
+        private static void OnViewChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is SKPivotViewerView view && newValue is string viewMode)
+            {
+                view._controller.CurrentView = viewMode;
+            }
+        }
 
         // --- Events ---
 
@@ -196,13 +295,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     var name = GetItemDisplayName(pos.Item);
                     if (name != null)
                     {
-                        _textPaint.TextSize = Math.Min(12, (float)pos.Height / 4);
-                        var textBounds = new SKRect();
-                        _textPaint.MeasureText(name, ref textBounds);
+                        _textFont.Size = Math.Min(12, (float)pos.Height / 4);
+                        var textWidth = _textFont.MeasureText(name, out _);
 
-                        if (textBounds.Width < rect.Width - 4)
+                        if (textWidth < rect.Width - 4)
                         {
-                            canvas.DrawText(name, rect.Left + 4, rect.Bottom - 4, _textPaint);
+                            canvas.DrawText(name, rect.Left + 4, rect.Bottom - 4, SKTextAlign.Left, _textFont, _textPaint);
                         }
                     }
                 }
@@ -224,12 +322,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             foreach (var col in layout.Columns)
             {
                 // Draw column label
-                _labelPaint.TextSize = 12;
-                var labelBounds = new SKRect();
-                _labelPaint.MeasureText(col.Label, ref labelBounds);
+                var textWidth = _labelFont.MeasureText(col.Label, out _);
 
-                float labelX = (float)(col.X + (col.Width - labelBounds.Width) / 2);
-                canvas.DrawText(col.Label, labelX, info.Height - 4, _labelPaint);
+                float labelX = (float)(col.X + (col.Width - textWidth) / 2);
+                canvas.DrawText(col.Label, labelX, info.Height - 4, SKTextAlign.Left, _labelFont, _labelPaint);
 
                 // Draw items
                 foreach (var pos in col.Items)
@@ -308,10 +404,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _disposed = true;
 
             _canvasView.PaintSurface -= OnPaintSurface;
+            _controller.Dispose();
             _itemPaint.Dispose();
             _selectedPaint.Dispose();
             _textPaint.Dispose();
             _labelPaint.Dispose();
+            _textFont.Dispose();
+            _labelFont.Dispose();
         }
     }
 }
