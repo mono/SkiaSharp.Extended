@@ -134,6 +134,7 @@ namespace SkiaSharp.Extended.Gif.Codec
 				}
 
 				// Decode the code (traverse the string table backwards)
+				int loopGuard = 0;
 				while (code >= clearCode)
 				{
 					// Bounds check
@@ -141,6 +142,10 @@ namespace SkiaSharp.Extended.Gif.Codec
 						throw new InvalidDataException($"LZW decompression error: invalid code {code}");
 					if (stackPointer >= pixelStack.Length - 1)
 						throw new InvalidDataException("LZW decompression error: stack overflow.");
+					
+					// Cycle detection
+					if (++loopGuard > 4096)
+						throw new InvalidDataException("LZW decompression error: circular reference in code table.");
 					
 					pixelStack[stackPointer++] = suffixTable[code];
 					code = codeTable[code];
