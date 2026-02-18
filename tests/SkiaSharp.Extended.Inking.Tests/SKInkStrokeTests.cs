@@ -454,4 +454,88 @@ public class SKInkStrokeTests
         Assert.NotNull(path);
         Assert.False(path!.IsEmpty);
     }
+
+    [Fact]
+    public void Path_TwoPoints_GeneratesIntermediatePoints()
+    {
+        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 4);
+
+        stroke.AddPoint(new SKPoint(0f, 50f), 0.3f);
+        stroke.AddPoint(new SKPoint(100f, 50f), 0.7f);
+
+        var path = stroke.Path;
+
+        Assert.NotNull(path);
+        Assert.False(path!.IsEmpty);
+        // Bounds should cover the entire stroke
+        Assert.True(path.Bounds.Width >= 90f); // Close to 100 width
+    }
+
+    [Fact]
+    public void Path_TaperedCap_ExtendsBeyondStroke()
+    {
+        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Tapered);
+
+        stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+
+        var path = stroke.Path;
+        var bounds = path!.Bounds;
+
+        // Tapered caps should extend beyond the stroke endpoints
+        Assert.True(bounds.Left < 0f); // Start extends left
+        Assert.True(bounds.Right > 100f); // End extends right
+    }
+
+    [Fact]
+    public void Path_DifferentCapStyles_GenerateDifferentBounds()
+    {
+        using var roundStroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round);
+        using var flatStroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Flat);
+        using var taperedStroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Tapered);
+
+        // Add identical points
+        roundStroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        roundStroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+
+        flatStroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        flatStroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+
+        taperedStroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        taperedStroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+
+        var roundBounds = roundStroke.Bounds;
+        var flatBounds = flatStroke.Bounds;
+        var taperedBounds = taperedStroke.Bounds;
+
+        // All should generate non-empty bounds
+        Assert.False(roundBounds.IsEmpty);
+        Assert.False(flatBounds.IsEmpty);
+        Assert.False(taperedBounds.IsEmpty);
+        
+        // Tapered should be wider (extends beyond stroke)
+        Assert.True(taperedBounds.Width > flatBounds.Width);
+    }
+
+    [Fact]
+    public void SmoothingFactor_SetProperty_InvalidatesPath()
+    {
+        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 2);
+
+        stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        stroke.AddPoint(new SKPoint(50f, 0f), 0.5f);
+        stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+
+        var path1 = stroke.Path;
+        Assert.NotNull(path1);
+
+        // Change smoothing factor
+        stroke.SmoothingFactor = 8;
+
+        var path2 = stroke.Path;
+        Assert.NotNull(path2);
+        
+        // Path should have been regenerated (different reference)
+        Assert.NotSame(path1, path2);
+    }
 }

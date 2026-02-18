@@ -329,6 +329,30 @@ public class SKInkStroke : IDisposable
             return result;
         }
 
+        // For only 2 points, just interpolate linearly with smoothing
+        if (points.Count == 2)
+        {
+            var p0 = points[0].Location;
+            var p1 = points[1].Location;
+            var pressure0 = points[0].Pressure;
+            var pressure1 = points[1].Pressure;
+
+            result.Add((p0, pressure0));
+            
+            // Add intermediate points based on smoothing factor
+            for (int i = 1; i < SmoothingFactor; i++)
+            {
+                float t = i / (float)SmoothingFactor;
+                var x = p0.X + t * (p1.X - p0.X);
+                var y = p0.Y + t * (p1.Y - p0.Y);
+                var pressure = pressure0 + t * (pressure1 - pressure0);
+                result.Add((new SKPoint(x, y), pressure));
+            }
+            
+            result.Add((p1, pressure1));
+            return result;
+        }
+
         // Add the first point
         result.Add((points[0].Location, points[0].Pressure));
 
@@ -351,14 +375,26 @@ public class SKInkStroke : IDisposable
             }
             else if (i < points.Count - 2)
             {
-                // Middle segments: add quadratic curve samples
+                // Middle segments: add quadratic curve samples through the control point
                 var prevMid = result[result.Count - 1];
                 AddQuadraticSamples(result, prevMid.Point, prevMid.Pressure, p0, pressure0, midPoint, midPressure);
             }
+            else
+            {
+                // Last segment (i == points.Count - 2): interpolate from previous midpoint through last control point to end
+                var prevMid = result[result.Count - 1];
+                AddQuadraticSamples(result, prevMid.Point, prevMid.Pressure, p0, pressure0, p1, pressure1);
+            }
         }
 
-        // Add the last point
-        result.Add((points[points.Count - 1].Location, points[points.Count - 1].Pressure));
+        // Add the last point if not already added by the last segment interpolation
+        var lastResultPoint = result[result.Count - 1].Point;
+        var lastOriginalPoint = points[points.Count - 1].Location;
+        if (Math.Abs(lastResultPoint.X - lastOriginalPoint.X) > 0.01f || 
+            Math.Abs(lastResultPoint.Y - lastOriginalPoint.Y) > 0.01f)
+        {
+            result.Add((lastOriginalPoint, points[points.Count - 1].Pressure));
+        }
 
         return result;
     }
@@ -435,16 +471,22 @@ public class SKInkStroke : IDisposable
 
     /// <summary>
     /// Adds a tapered cap that narrows to a point.
+    /// The taper extends from the current path position to a sharp tip.
+    /// The path then continues to the next point in the polygon, creating a triangular taper.
     /// </summary>
     private static void AddTaperedCap(SKPath path, SKPoint center, SKPoint direction, float radius, bool isStart)
     {
-        // Calculate the tip point (extends beyond center in the direction of the stroke end)
+        _ = isStart; // Parameter kept for API consistency with other cap methods
+        
+        // Calculate the tip point (extends beyond center in the stroke direction)
         var tipDistance = radius * 1.5f; // Extend the taper beyond the stroke width
         var tipPoint = new SKPoint(
             center.X + direction.X * tipDistance,
             center.Y + direction.Y * tipDistance);
 
-        // Add a line to the tip point (creating a triangular taper)
+        // Add a line to the tip point. The polygon path structure ensures that:
+        // - For end caps: path continues from left edge → tip → right edge
+        // - For start caps: path continues from right edge → tip → left edge (via Close)
         path.LineTo(tipPoint);
     }
 
