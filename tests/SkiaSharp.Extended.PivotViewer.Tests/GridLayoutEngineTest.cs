@@ -148,6 +148,35 @@ public class GridLayoutEngineTest
     }
 
     [Fact]
+    public void GetItemAt_SecondRow_ReturnsCorrectItem()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(9);
+        var layout = engine.ComputeLayout(items, 900, 900, itemAspectRatio: 1.0);
+
+        // 9 items in 900x900 with 1:1 aspect → 3 cols, 3 rows
+        // Item at (col=1, row=1) → index = 1*3+1 = 4
+        var item = layout.GetItemAt(1, 1);
+        Assert.NotNull(item);
+        Assert.Equal("4", item!.Id);
+    }
+
+    [Fact]
+    public void GetItemAt_LastItem_ReturnsCorrectItem()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(6);
+        var layout = engine.ComputeLayout(items, 800, 600);
+
+        int lastIndex = items.Count - 1;
+        int lastCol = lastIndex % layout.Columns;
+        int lastRow = lastIndex / layout.Columns;
+        var item = layout.GetItemAt(lastCol, lastRow);
+        Assert.NotNull(item);
+        Assert.Equal("5", item!.Id);
+    }
+
+    [Fact]
     public void ComputeHistogramLayout_GroupsByProperty()
     {
         var engine = new GridLayoutEngine();

@@ -254,6 +254,58 @@ public class PivotViewerItemTest
     }
 
     [Fact]
+    public void GetValues_Decimal_ReturnsTypedList()
+    {
+        var item = new PivotViewerItem("1");
+        var prop = new PivotViewerNumericProperty("Price");
+        item.Add(prop, 19.99m, 29.99m);
+
+        var prices = item.GetValues<decimal>("Price");
+        Assert.NotNull(prices);
+        Assert.Equal(2, prices!.Count);
+        Assert.Equal(19.99m, prices[0]);
+        Assert.Equal(29.99m, prices[1]);
+    }
+
+    [Fact]
+    public void TryGetSingleValue_WrongType_ReturnsFalse()
+    {
+        var item = new PivotViewerItem("1");
+        var prop = new PivotViewerStringProperty("Name");
+        item.Add(prop, "Widget");
+
+        Assert.False(item.TryGetSingleValue<int>("Name", out _));
+    }
+
+    [Fact]
+    public void Remove_AlsoRemovesFromPropertiesCollection()
+    {
+        var item = new PivotViewerItem("1");
+        var prop = new PivotViewerStringProperty("Name");
+        item.Add(prop, "Widget");
+        Assert.Single(item.Properties);
+
+        item.Remove(prop);
+        Assert.Empty(item.Properties);
+    }
+
+    [Fact]
+    public void Set_MultipleValues_OverwritesAll()
+    {
+        var item = new PivotViewerItem("1");
+        var prop = new PivotViewerStringProperty("Tags");
+        item.Add(prop, "Old1", "Old2");
+        item.Set(prop, "New1", "New2", "New3");
+
+        var values = item["Tags"];
+        Assert.NotNull(values);
+        Assert.Equal(3, values!.Count);
+        Assert.Equal("New1", values[0]);
+        Assert.Equal("New2", values[1]);
+        Assert.Equal("New3", values[2]);
+    }
+
+    [Fact]
     public void ToString_UsesNameIfAvailable()
     {
         var item = new PivotViewerItem("42");

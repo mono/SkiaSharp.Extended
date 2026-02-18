@@ -261,6 +261,33 @@ public class DziTileSourceTest
     }
 
     [Fact]
+    public void GetOptimalLevel_MidZoom_ReturnsMiddleLevel()
+    {
+        var dzi = new DziTileSource(4096, 4096, 256, 0, "jpg");
+        // MaxLevel = 12; viewportWidth=0.5, controlWidth=512
+        int level = dzi.GetOptimalLevel(0.5, 512);
+        Assert.InRange(level, 9, 12);
+    }
+
+    [Fact]
+    public void GetOptimalLevel_TinyViewport_ReturnsMaxLevel()
+    {
+        var dzi = new DziTileSource(2048, 2048, 256, 0, "jpg");
+        int level = dzi.GetOptimalLevel(0.01, 1024);
+        Assert.Equal(dzi.MaxLevel, level);
+    }
+
+    [Fact]
+    public void GetFullTileUrl_MultipleCoordinates_FormatsCorrectly()
+    {
+        var dzi = new DziTileSource(2048, 2048, 256, 0, "png");
+        dzi.TilesBaseUri = "https://cdn.example.com/tiles/";
+        Assert.Equal("https://cdn.example.com/tiles/10/0_0.png", dzi.GetFullTileUrl(10, 0, 0));
+        Assert.Equal("https://cdn.example.com/tiles/8/2_3.png", dzi.GetFullTileUrl(8, 2, 3));
+        Assert.Equal("https://cdn.example.com/tiles/0/0_0.png", dzi.GetFullTileUrl(0, 0, 0));
+    }
+
+    [Fact]
     public void EdgeTile_IsClipped()
     {
         // Image is 300 wide, tileSize 256. Last tile should be 44 pixels wide

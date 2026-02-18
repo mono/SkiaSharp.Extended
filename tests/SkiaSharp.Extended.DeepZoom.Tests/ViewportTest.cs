@@ -229,6 +229,53 @@ public class ViewportTest
     }
 
     [Fact]
+    public void Constrain_NegativeOrigin_ClampsToZero()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            AspectRatio = 1.0,
+            ViewportWidth = 0.5,
+            ViewportOriginX = -0.3,
+            ViewportOriginY = -0.2
+        };
+
+        vp.Constrain();
+        Assert.Equal(0.0, vp.ViewportOriginX);
+        Assert.Equal(0.0, vp.ViewportOriginY);
+    }
+
+    [Fact]
+    public void GetState_SetState_IndependentCopies()
+    {
+        var vp = new Viewport
+        {
+            ViewportWidth = 0.5,
+            ViewportOriginX = 0.1,
+            ViewportOriginY = 0.2
+        };
+
+        var state = vp.GetState();
+
+        // Modify original viewport
+        vp.ViewportWidth = 1.0;
+        vp.ViewportOriginX = 0.0;
+        vp.ViewportOriginY = 0.0;
+
+        // State snapshot retains original values
+        Assert.Equal(0.5, state.ViewportWidth);
+        Assert.Equal(0.1, state.OriginX);
+        Assert.Equal(0.2, state.OriginY);
+
+        // Restore from state
+        vp.SetState(state);
+        Assert.Equal(0.5, vp.ViewportWidth);
+        Assert.Equal(0.1, vp.ViewportOriginX);
+        Assert.Equal(0.2, vp.ViewportOriginY);
+    }
+
+    [Fact]
     public void Zoom_Property_ReflectsViewportWidth()
     {
         var vp = new Viewport { ViewportWidth = 0.5 };

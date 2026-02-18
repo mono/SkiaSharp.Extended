@@ -91,6 +91,45 @@ public class CollectionBuilderTest
     }
 
     [Fact]
+    public void Build_WithCopyright_ChainableAndBuildable()
+    {
+        var builder = new PivotViewerCollectionBuilder()
+            .WithName("Licensed")
+            .WithCopyright("Acme Corp", "https://acme.com/license")
+            .AddStringProperty("name", "Name");
+
+        builder.AddItem("1", item => item.Set("name", "Widget"));
+
+        var (items, properties) = builder.Build();
+        Assert.Single(items);
+        Assert.Single(properties);
+        Assert.Equal("Widget", items[0]["name"]![0]!.ToString());
+    }
+
+    [Fact]
+    public void ItemBuilder_SetsMultipleProperties()
+    {
+        var builder = new PivotViewerCollectionBuilder()
+            .AddStringProperty("name", "Name")
+            .AddNumericProperty("price", "Price")
+            .AddStringProperty("color", "Color");
+
+        builder.AddItem("item-1", item =>
+        {
+            item.Set("name", "Widget")
+                .Set("price", 9.99)
+                .Set("color", "Red", "Blue");
+        });
+
+        var (items, _) = builder.Build();
+        Assert.Single(items);
+        var item = items[0];
+        Assert.Equal("Widget", item["name"]![0]!.ToString());
+        Assert.Equal(9.99, item["price"]![0]);
+        Assert.Equal(2, item["color"]!.Count);
+    }
+
+    [Fact]
     public void Build_NullName_Throws()
     {
         var builder = new PivotViewerCollectionBuilder();

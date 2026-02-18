@@ -118,6 +118,24 @@ public class SpringAnimatorTest
     }
 
     [Fact]
+    public void SetCurrent_ClearsVelocity()
+    {
+        var spring = new SpringAnimator(0.0);
+        spring.Target = 10.0;
+
+        // Build up velocity
+        for (int i = 0; i < 10; i++)
+            spring.Update(1.0 / 60.0);
+
+        Assert.True(spring.Velocity != 0.0);
+
+        // Setting Current should clear velocity
+        spring.Current = 5.0;
+        Assert.Equal(5.0, spring.Current);
+        Assert.Equal(0.0, spring.Velocity);
+    }
+
+    [Fact]
     public void ViewportSpring_AllSettled_IsSettled()
     {
         var vpSpring = new ViewportSpring();

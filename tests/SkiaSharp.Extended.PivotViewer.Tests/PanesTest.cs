@@ -85,6 +85,65 @@ public class PanesTest
         Assert.False(model.HasActiveFilters);
     }
 
+    [Fact]
+    public void FilterPaneModel_SetNumericRangeFilter_AppliesRange()
+    {
+        var filterEngine = new FilterEngine();
+        var prop = new PivotViewerNumericProperty("price") { DisplayName = "Price", Options = PivotViewerPropertyOptions.CanFilter };
+        var items = new[]
+        {
+            CreateItem("1", prop, 10.0),
+            CreateItem("2", prop, 20.0),
+            CreateItem("3", prop, 30.0),
+        };
+        filterEngine.SetSource(items, new[] { prop });
+
+        var model = new FilterPaneModel(filterEngine, new[] { prop });
+        model.SetNumericRangeFilter("price", 15.0, 25.0);
+
+        Assert.True(model.HasActiveFilters);
+        var filtered = filterEngine.GetFilteredItems();
+        Assert.Single(filtered);
+        Assert.Equal("2", filtered[0].Id);
+    }
+
+    [Fact]
+    public void FilterPaneModel_SetDateTimeRangeFilter_AppliesRange()
+    {
+        var filterEngine = new FilterEngine();
+        var prop = new PivotViewerDateTimeProperty("created") { DisplayName = "Created", Options = PivotViewerPropertyOptions.CanFilter };
+        var items = new[]
+        {
+            CreateItem("1", prop, new DateTime(2023, 1, 1)),
+            CreateItem("2", prop, new DateTime(2023, 6, 15)),
+            CreateItem("3", prop, new DateTime(2024, 1, 1)),
+        };
+        filterEngine.SetSource(items, new[] { prop });
+
+        var model = new FilterPaneModel(filterEngine, new[] { prop });
+        model.SetDateTimeRangeFilter("created", new DateTime(2023, 3, 1), new DateTime(2023, 12, 31));
+
+        Assert.True(model.HasActiveFilters);
+        var filtered = filterEngine.GetFilteredItems();
+        Assert.Single(filtered);
+        Assert.Equal("2", filtered[0].Id);
+    }
+
+    [Fact]
+    public void FilterPaneModel_ClearPropertyFilters_ResetsProperty()
+    {
+        var filterEngine = new FilterEngine();
+        var prop = new PivotViewerStringProperty("color") { DisplayName = "Color", Options = PivotViewerPropertyOptions.CanFilter };
+        filterEngine.SetSource(Array.Empty<PivotViewerItem>(), new[] { prop });
+
+        var model = new FilterPaneModel(filterEngine, new[] { prop });
+        model.ToggleStringFilter("color", "Red");
+        Assert.True(model.HasActiveFilters);
+
+        model.ClearPropertyFilters("color");
+        Assert.False(model.HasActiveFilters);
+    }
+
     // --- DetailPaneModel ---
 
     [Fact]

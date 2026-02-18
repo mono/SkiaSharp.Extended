@@ -614,6 +614,53 @@ public class CxmlCollectionSourceTest
     }
 
     [Fact]
+    public void GetPivotPropertyById_NotFound_ReturnsNull()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+    <FacetCategories>
+        <FacetCategory Name=""Color"" Type=""String"" />
+    </FacetCategories>
+    <Items />
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        Assert.Null(source.GetPivotPropertyById("NonExistent"));
+    }
+
+    [Fact]
+    public void Parse_WithIcon_ParsesIconAttribute()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009""
+            xmlns:p=""http://schemas.microsoft.com/livelabs/pivot/collection/2009""
+            Name=""Test"" p:Icon=""icon.png"">
+    <FacetCategories />
+    <Items />
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        Assert.Equal("icon.png", source.Icon);
+    }
+
+    [Fact]
+    public void Parse_WithBrandImage_ParsesBrandImage()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009""
+            xmlns:p=""http://schemas.microsoft.com/livelabs/pivot/collection/2009""
+            Name=""Test"">
+    <BrandImage Source=""https://example.com/brand.png"" />
+    <FacetCategories />
+    <Items />
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        Assert.NotNull(source.BrandImage);
+        Assert.Equal("https://example.com/brand.png", source.BrandImage!.ToString());
+    }
+
+    [Fact]
     public void MergeSupplementalData_DoesNotDuplicateExistingValues()
     {
         var mainXml = @"<?xml version='1.0' encoding='utf-8'?>
