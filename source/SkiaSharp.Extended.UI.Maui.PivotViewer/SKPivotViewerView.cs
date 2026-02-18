@@ -27,6 +27,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private readonly SKPaint _labelPaint;
         private readonly SKFont _textFont;
         private readonly SKFont _labelFont;
+        private IDispatcherTimer? _animationTimer;
         private bool _disposed;
 
         public SKPivotViewerView()
@@ -45,7 +46,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             // Wire controller events
             _controller.LayoutUpdated += (s, e) =>
+            {
+                StartAnimationIfNeeded();
                 MainThread.BeginInvokeOnMainThread(() => _canvasView.InvalidateSurface());
+            };
             _controller.SelectionChanged += (s, e) =>
             {
                 SelectionChanged?.Invoke(this, e);
@@ -281,7 +285,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var accentColor = ToSKColor(AccentColor);
             _itemPaint.Color = accentColor;
 
-            foreach (var pos in layout.Positions)
+            // Use interpolated positions during animation
+            var positions = _controller.LayoutTransition.IsAnimating
+                ? _controller.LayoutTransition.GetCurrentPositions()
+                : layout.Positions;
+
+            foreach (var pos in positions)
             {
                 var rect = new SKRect(
                     (float)pos.X + 1, (float)pos.Y + 1,
@@ -373,6 +382,14 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var doubleTapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
             doubleTapGesture.Tapped += OnDoubleTapped;
             GestureRecognizers.Add(doubleTapGesture);
+
+            var pinchGesture = new PinchGestureRecognizer();
+            pinchGesture.PinchUpdated += OnPinchUpdated;
+            GestureRecognizers.Add(pinchGesture);
+
+            var panGesture = new PanGestureRecognizer();
+            panGesture.PanUpdated += OnPanUpdated;
+            GestureRecognizers.Add(panGesture);
         }
 
         private void OnTapped(object? sender, TappedEventArgs e)
@@ -396,6 +413,52 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             }
         }
 
+        private void OnPinchUpdated(object? sender, PinchGestureUpdatedEventArgs e)
+        {
+            switch (e.Status)
+            {
+                case GestureStatus.Running:
+                    _controller.ZoomAbout(e.Scale, Width / 2, Height / 2);
+                    _canvasView.InvalidateSurface();
+                    break;
+            }
+        }
+
+        private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
+        {
+            switch (e.StatusType)
+            {
+                case GestureStatus.Running:
+                    _controller.Pan(e.TotalX, e.TotalY);
+                    _canvasView.InvalidateSurface();
+                    break;
+            }
+        }
+
+        // --- Animation ---
+
+        private void StartAnimationIfNeeded()
+        {
+            if (!_controller.LayoutTransition.IsAnimating) return;
+            if (_animationTimer != null && _animationTimer.IsRunning) return;
+
+            _animationTimer = Dispatcher.CreateTimer();
+            _animationTimer.Interval = TimeSpan.FromMilliseconds(16); // ~60fps
+            _animationTimer.Tick += OnAnimationTick;
+            _animationTimer.Start();
+        }
+
+        private void OnAnimationTick(object? sender, EventArgs e)
+        {
+            bool needsRedraw = _controller.Update(TimeSpan.FromMilliseconds(16));
+            _canvasView.InvalidateSurface();
+
+            if (!needsRedraw && !_controller.LayoutTransition.IsAnimating)
+            {
+                _animationTimer?.Stop();
+            }
+        }
+
         // --- Disposal ---
 
         public void Dispose()
@@ -403,6 +466,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             if (_disposed) return;
             _disposed = true;
 
+            _animationTimer?.Stop();
             _canvasView.PaintSurface -= OnPaintSurface;
             _controller.Dispose();
             _itemPaint.Dispose();

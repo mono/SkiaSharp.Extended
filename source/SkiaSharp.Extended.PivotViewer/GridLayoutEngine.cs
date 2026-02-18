@@ -83,6 +83,51 @@ namespace SkiaSharp.Extended.PivotViewer
         }
 
         /// <summary>
+        /// Computes a grid layout with zoom level support.
+        /// zoomLevel 0.0 = fit all items. zoomLevel 1.0 = single item fills the view.
+        /// </summary>
+        public GridLayout ComputeZoomedLayout(
+            IReadOnlyList<PivotViewerItem> items,
+            double availableWidth,
+            double availableHeight,
+            double zoomLevel,
+            double itemAspectRatio = 1.0)
+        {
+            if (items.Count == 0 || zoomLevel < 0.01)
+                return ComputeLayout(items, availableWidth, availableHeight, itemAspectRatio);
+
+            // At zoom 1.0, one item fills the view
+            // At zoom 0.5, ~4 items fit
+            // Interpolate columns between fit-all and 1
+            int fitAllCols = (int)Math.Max(1, Math.Sqrt(items.Count * availableWidth / availableHeight));
+            int targetCols = Math.Max(1, (int)Math.Round(fitAllCols * (1.0 - zoomLevel) + 1.0 * zoomLevel));
+
+            if (itemAspectRatio <= 0) itemAspectRatio = 1.0;
+            int rows = (int)Math.Ceiling((double)items.Count / targetCols);
+            double itemWidth = availableWidth / targetCols;
+            double itemHeight = itemWidth / itemAspectRatio;
+
+            var positions = new ItemPosition[items.Count];
+            double offsetX = 0;
+            double offsetY = 0;
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                int col = i % targetCols;
+                int row = i / targetCols;
+
+                positions[i] = new ItemPosition(
+                    items[i],
+                    offsetX + col * itemWidth,
+                    offsetY + row * itemHeight,
+                    itemWidth,
+                    itemHeight);
+            }
+
+            return new GridLayout(positions, targetCols, rows, itemWidth, itemHeight);
+        }
+
+        /// <summary>
         /// Computes a grid layout grouped by a facet property (for graph/histogram view).
         /// Each group gets its own column of items.
         /// </summary>

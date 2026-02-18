@@ -493,4 +493,123 @@ public class PivotViewerControllerTest
         controller.LoadItems(items, new[] { nameP });
         Assert.NotNull(controller.FilterPaneModel);
     }
+
+    [Fact]
+    public void ZoomLevel_DefaultsToZero()
+    {
+        var controller = new PivotViewerController();
+        Assert.Equal(0.0, controller.ZoomLevel);
+    }
+
+    [Fact]
+    public void ZoomLevel_ClampsToRange()
+    {
+        var controller = new PivotViewerController();
+        controller.ZoomLevel = 2.0;
+        Assert.Equal(1.0, controller.ZoomLevel);
+
+        controller.ZoomLevel = -1.0;
+        Assert.Equal(0.0, controller.ZoomLevel);
+    }
+
+    [Fact]
+    public void ZoomLevel_ChangesLayout()
+    {
+        var (controller, _) = CreateTestController();
+
+        var layoutBefore = controller.GridLayout;
+        Assert.NotNull(layoutBefore);
+
+        controller.ZoomLevel = 0.8;
+        var layoutAfter = controller.GridLayout;
+        Assert.NotNull(layoutAfter);
+
+        // At higher zoom, each item should be wider
+        Assert.True(layoutAfter.ItemWidth >= layoutBefore.ItemWidth,
+            $"Zooming in should make items at least as wide: before={layoutBefore.ItemWidth:F1}, after={layoutAfter.ItemWidth:F1}");
+    }
+
+    [Fact]
+    public void ZoomLevel_TriggersLayoutUpdated()
+    {
+        var (controller, _) = CreateTestController();
+        bool fired = false;
+        controller.LayoutUpdated += (s, e) => fired = true;
+
+        controller.ZoomLevel = 0.5;
+        Assert.True(fired);
+    }
+
+    [Fact]
+    public void Pan_ChangesOffset()
+    {
+        var (controller, _) = CreateTestController();
+
+        Assert.Equal(0.0, controller.PanOffsetX);
+        Assert.Equal(0.0, controller.PanOffsetY);
+
+        controller.Pan(50.0, 30.0);
+        Assert.Equal(50.0, controller.PanOffsetX);
+        Assert.Equal(30.0, controller.PanOffsetY);
+    }
+
+    [Fact]
+    public void Pan_TriggersLayoutUpdated()
+    {
+        var (controller, _) = CreateTestController();
+        bool fired = false;
+        controller.LayoutUpdated += (s, e) => fired = true;
+
+        controller.Pan(10, 10);
+        Assert.True(fired);
+    }
+
+    [Fact]
+    public void Pan_Accumulates()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.Pan(10, 20);
+        controller.Pan(5, 10);
+        Assert.Equal(15.0, controller.PanOffsetX);
+        Assert.Equal(30.0, controller.PanOffsetY);
+    }
+
+    [Fact]
+    public void ZoomAbout_ChangesZoomLevel()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.ZoomAbout(1.5, 512, 384); // zoom in
+        Assert.True(controller.ZoomLevel > 0.0, "ZoomAbout should increase zoom level");
+    }
+
+    [Fact]
+    public void ZoomAbout_ClampsAtMax()
+    {
+        var (controller, _) = CreateTestController();
+
+        for (int i = 0; i < 20; i++)
+            controller.ZoomAbout(2.0, 512, 384);
+
+        Assert.Equal(1.0, controller.ZoomLevel, 3);
+    }
+
+    [Fact]
+    public void ZoomAbout_ClampsAtMin()
+    {
+        var controller = new PivotViewerController();
+
+        controller.ZoomAbout(0.5, 0, 0); // zoom out at min
+        Assert.Equal(0.0, controller.ZoomLevel);
+    }
+
+    [Fact]
+    public void Dispose_CleansUp()
+    {
+        var (controller, _) = CreateTestController();
+        controller.Dispose();
+        // Should not throw on double dispose
+        controller.Dispose();
+    }
 }

@@ -30,6 +30,9 @@ namespace SkiaSharp.Extended.PivotViewer
         private string _currentView = "grid";
         private double _availableWidth = 800;
         private double _availableHeight = 600;
+        private double _zoomLevel = 0.0; // 0.0 = fit all, 1.0 = single item
+        private double _panOffsetX;
+        private double _panOffsetY;
 
         public PivotViewerController()
         {
@@ -153,6 +156,51 @@ namespace SkiaSharp.Extended.PivotViewer
 
         /// <summary>Current histogram layout (when in graph view).</summary>
         public HistogramLayout? HistogramLayout => _currentHistogramLayout;
+
+        /// <summary>
+        /// Zoom level: 0.0 = fit all items, 1.0 = single item detail.
+        /// Affects the item size in the grid layout.
+        /// </summary>
+        public double ZoomLevel
+        {
+            get => _zoomLevel;
+            set
+            {
+                var clamped = Math.Max(0.0, Math.Min(1.0, value));
+                if (Math.Abs(_zoomLevel - clamped) > 0.001)
+                {
+                    _zoomLevel = clamped;
+                    UpdateLayout();
+                }
+            }
+        }
+
+        /// <summary>Pan offset X (for scrolling through items when zoomed in).</summary>
+        public double PanOffsetX => _panOffsetX;
+
+        /// <summary>Pan offset Y.</summary>
+        public double PanOffsetY => _panOffsetY;
+
+        /// <summary>Pans by the given screen-space delta.</summary>
+        public void Pan(double deltaX, double deltaY)
+        {
+            _panOffsetX += deltaX;
+            _panOffsetY += deltaY;
+            LayoutUpdated?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>Zooms about a screen point, keeping the point under the cursor stable.</summary>
+        public void ZoomAbout(double factor, double screenX, double screenY)
+        {
+            double oldZoom = _zoomLevel;
+            double newZoom = Math.Max(0.0, Math.Min(1.0, _zoomLevel + (factor > 1 ? 0.1 : -0.1)));
+
+            if (Math.Abs(newZoom - oldZoom) > 0.001)
+            {
+                _zoomLevel = newZoom;
+                UpdateLayout();
+            }
+        }
 
         // --- Events ---
 
@@ -396,8 +444,11 @@ namespace SkiaSharp.Extended.PivotViewer
             }
             else
             {
-                var newLayout = _layoutEngine.ComputeLayout(
-                    _inScopeItems, _availableWidth, _availableHeight);
+                var newLayout = _zoomLevel > 0.01
+                    ? _layoutEngine.ComputeZoomedLayout(
+                        _inScopeItems, _availableWidth, _availableHeight, _zoomLevel)
+                    : _layoutEngine.ComputeLayout(
+                        _inScopeItems, _availableWidth, _availableHeight);
 
                 // Start transition animation if we had a previous layout
                 if (oldGrid != null && oldGrid.Positions.Length > 0)

@@ -224,4 +224,72 @@ public class GridLayoutEngineTest
         Assert.True(layout.Columns > 1);
         Assert.True(layout.Rows > 1);
     }
+
+    [Fact]
+    public void ComputeLayout_WithZoom_ZeroZoomMatchesFitAll()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(20);
+
+        var fitAll = engine.ComputeLayout(items, 800, 600);
+        var zoomZero = engine.ComputeZoomedLayout(items, 800, 600, 0.0);
+
+        // Zero zoom should be equivalent to fit-all
+        Assert.Equal(fitAll.Columns, zoomZero.Columns);
+        Assert.Equal(fitAll.Rows, zoomZero.Rows);
+    }
+
+    [Fact]
+    public void ComputeLayout_WithZoom_FullZoomReducesToSingleColumn()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(20);
+
+        var layout = engine.ComputeZoomedLayout(items, 800, 600, 1.0);
+
+        Assert.Equal(1, layout.Columns);
+        Assert.Equal(20, layout.Rows);
+    }
+
+    [Fact]
+    public void ComputeLayout_WithZoom_HalfZoomReducesColumns()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(50);
+
+        var fitAll = engine.ComputeLayout(items, 1000, 800);
+        var halfZoom = engine.ComputeZoomedLayout(items, 1000, 800, 0.5);
+
+        Assert.True(halfZoom.Columns <= fitAll.Columns, "Half zoom should have fewer or equal columns");
+        Assert.True(halfZoom.ItemWidth >= fitAll.ItemWidth, "Half zoom items should be at least as wide");
+    }
+
+    [Fact]
+    public void ComputeLayout_WithZoom_ItemsSpanBeyondAvailableHeight()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(100);
+
+        var layout = engine.ComputeZoomedLayout(items, 800, 600, 0.9);
+
+        // At high zoom, total grid height should exceed available height (scrollable)
+        double totalHeight = layout.Rows * layout.ItemHeight;
+        Assert.True(totalHeight > 600, "High zoom should produce scrollable content");
+    }
+
+    [Fact]
+    public void ComputeLayout_WithZoom_AllItemsPlaced()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(30);
+
+        var layout = engine.ComputeZoomedLayout(items, 800, 600, 0.5);
+        Assert.Equal(30, layout.Positions.Length);
+
+        foreach (var pos in layout.Positions)
+        {
+            Assert.True(pos.Width > 0);
+            Assert.True(pos.Height > 0);
+        }
+    }
 }
