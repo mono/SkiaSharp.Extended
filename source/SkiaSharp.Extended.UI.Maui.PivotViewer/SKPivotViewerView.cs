@@ -725,6 +725,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     _lastPointerX = pos.Value.X;
             };
             _pointerGesture.PointerPressed += _onPointerPressed;
+            _pointerGesture.PointerMoved += OnPointerMoved;
             GestureRecognizers.Add(_pointerGesture);
         }
 
@@ -916,6 +917,27 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             // Don't set e.Handled — let MAUI gesture recognizers handle the rest
         }
 
+        private void OnPointerMoved(object? sender, PointerEventArgs e)
+        {
+            var pos = e.GetPosition(this);
+            if (!pos.HasValue || _lastPaintInfo.Width == 0) return;
+
+            // Scale to canvas coordinates
+            double scaleX = _lastPaintInfo.Width / Width;
+            double scaleY = _lastPaintInfo.Height / Height;
+            double canvasX = pos.Value.X * scaleX;
+            double canvasY = pos.Value.Y * scaleY;
+
+            var hit = _renderer.HitTest(canvasX, canvasY, _lastPaintInfo, _controller, _viewState);
+            var newHover = hit.Type == RenderHitType.Item ? hit.Item : null;
+
+            if (newHover != _viewState.HoverItem)
+            {
+                _viewState.HoverItem = newHover;
+                _canvasView.InvalidateSurface();
+            }
+        }
+
         private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
         {
             switch (e.StatusType)
@@ -1039,6 +1061,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             if (_panGesture != null) _panGesture.PanUpdated -= OnPanUpdated;
             if (_pointerGesture != null && _onPointerPressed != null)
                 _pointerGesture.PointerPressed -= _onPointerPressed;
+            if (_pointerGesture != null)
+                _pointerGesture.PointerMoved -= OnPointerMoved;
 
             // Unsubscribe lifecycle events
             Loaded -= OnViewLoaded;
