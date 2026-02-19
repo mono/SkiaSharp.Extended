@@ -129,7 +129,8 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                 return;
 
             _sourceCts = new CancellationTokenSource();
-            var ct = _sourceCts.Token;
+            var activeCts = _sourceCts;
+            var ct = activeCts.Token;
 
             HttpTileFetcher? fetcher = null;
             HttpClient? httpClient = null;
@@ -157,8 +158,9 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                 if (!string.IsNullOrEmpty(parsed.Query))
                     tileSource.TilesQueryString = parsed.Query;
 
-                ct.ThrowIfCancellationRequested();
-                if (_disposed) return;
+                // Verify this is still the active request before mutating state
+                if (_disposed || _sourceCts != activeCts || ct.IsCancellationRequested)
+                    return;
 
                 fetcher = new HttpTileFetcher();
                 Load(tileSource, fetcher);

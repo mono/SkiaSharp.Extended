@@ -412,7 +412,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 return;
 
             _collectionCts = new CancellationTokenSource();
-            var ct = _collectionCts.Token;
+            var activeCts = _collectionCts;
+            var ct = activeCts.Token;
 
             try
             {
@@ -421,7 +422,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
                 // Download and parse the CXML
                 var source = await CxmlCollectionSource.LoadAsync(cxmlUri, httpClient, ct);
-                ct.ThrowIfCancellationRequested();
+
+                // Verify this is still the active request before mutating state
+                if (_disposed || _collectionCts != activeCts || ct.IsCancellationRequested)
+                    return;
 
                 // Dispose previous ImageProvider before replacing
                 _controller.ImageProvider?.Dispose();
@@ -438,8 +442,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     if (dzcPath.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase))
                     {
                         var dzcXml = await httpClient.GetStringAsync(dzcUri, ct);
-                        ct.ThrowIfCancellationRequested();
-                        if (_disposed) return;
+
+                        // Re-check after await
+                        if (_disposed || _collectionCts != activeCts || ct.IsCancellationRequested)
+                            return;
 
                         using var dzcStream = new System.IO.MemoryStream(
                             System.Text.Encoding.UTF8.GetBytes(dzcXml));
