@@ -1,430 +1,385 @@
-using Timer = System.Threading.Timer;
+using SkiaSharp.Extended.Gestures;
 
 namespace SkiaSharp.Extended.UI.Controls;
 
 /// <summary>
-/// A SkiaSharp view with built-in gesture detection for pan, pinch, fling, tap, and rotate.
+/// A SkiaSharp view with built-in gesture recognition for touch interactions.
 /// </summary>
 /// <remarks>
 /// <para>
-/// This view extends <see cref="SKDynamicSurfaceView"/> to add comprehensive gesture detection
-/// including:
+/// This view extends <see cref="SKSurfaceView"/> to add comprehensive gesture detection including:
 /// </para>
 /// <list type="bullet">
-/// <item><description>Single and double tap detection</description></item>
-/// <item><description>Long press detection</description></item>
-/// <item><description>Pan/drag gestures</description></item>
-/// <item><description>Pinch to zoom gestures</description></item>
-/// <item><description>Rotation gestures</description></item>
-/// <item><description>Fling (swipe) gesture detection with velocity</description></item>
-/// <item><description>Hover detection for mouse/stylus</description></item>
+///   <item><description>Single, double, and multi-tap detection</description></item>
+///   <item><description>Long press detection</description></item>
+///   <item><description>Pan/drag gestures</description></item>
+///   <item><description>Pinch to zoom gestures</description></item>
+///   <item><description>Rotation gestures</description></item>
+///   <item><description>Fling (swipe) gesture detection with velocity</description></item>
+///   <item><description>Hover detection for mouse/stylus</description></item>
+/// </list>
+/// <para>Selection modes for sticker/image manipulation:</para>
+/// <list type="bullet">
+///   <item><description><see cref="Gestures.SKGestureSelectionMode.Immediate"/> - Start dragging immediately</description></item>
+///   <item><description><see cref="Gestures.SKGestureSelectionMode.TapToSelect"/> - Tap to select, then drag</description></item>
+///   <item><description><see cref="Gestures.SKGestureSelectionMode.LongPressToSelect"/> - Long press to select and drag</description></item>
 /// </list>
 /// </remarks>
-public partial class SKGestureSurfaceView : SKDynamicSurfaceView
+/// <example>
+/// <code>
+/// &lt;controls:SKGestureSurfaceView
+///     SKGestureSelectionMode="TapToSelect"
+///     TapDetected="OnTap"
+///     PanDetected="OnPan"
+///     PinchDetected="OnPinch"
+///     RotateDetected="OnRotate" /&gt;
+/// </code>
+/// </example>
+public class SKGestureSurfaceView : SKSurfaceView
 {
-	// Timing constants
-	private const long ShortTapTicks = 125 * TimeSpan.TicksPerMillisecond;
-	private const long ShortClickTicks = 250 * TimeSpan.TicksPerMillisecond;
-	private const int DelayTapMilliseconds = 200;
-	private const long LongTapTicks = 500 * TimeSpan.TicksPerMillisecond;
-
-	// Distance and velocity thresholds
-	private const int TouchSlopPixels = 8;
-	private const int FlingVelocityThreshold = 200; // pixels per second
-
-	private readonly Dictionary<long, TouchEvent> touches = new();
-	private readonly FlingTracker flingTracker = new();
-	private SKPoint initialTouch = SKPoint.Empty;
-	private Timer? multiTapTimer;
-	private int tapCount = 0;
-	private TouchMode touchMode = TouchMode.None;
-	private PinchValue previousValues;
-	private IDispatcher? dispatcher;
+	/// <summary>
+	/// Identifies the <see cref="SKGestureSelectionMode"/> bindable property.
+	/// </summary>
+	public static readonly BindableProperty SKGestureSelectionModeProperty = BindableProperty.Create(
+		nameof(GestureSelectionMode),
+		typeof(SKGestureSelectionMode),
+		typeof(SKGestureSurfaceView),
+		SKGestureSelectionMode.Immediate,
+		propertyChanged: OnGestureSelectionModeChanged);
 
 	/// <summary>
-	/// Creates a new instance of SKGestureSurfaceView.
+	/// Identifies the <see cref="IsGestureEnabled"/> bindable property.
+	/// </summary>
+	public static readonly BindableProperty IsGestureEnabledProperty = BindableProperty.Create(
+		nameof(IsGestureEnabled),
+		typeof(bool),
+		typeof(SKGestureSurfaceView),
+		true,
+		propertyChanged: OnIsGestureEnabledChanged);
+
+	/// <summary>
+	/// Identifies the <see cref="TouchSlop"/> bindable property.
+	/// </summary>
+	public static readonly BindableProperty TouchSlopProperty = BindableProperty.Create(
+		nameof(TouchSlop),
+		typeof(float),
+		typeof(SKGestureSurfaceView),
+		8f,
+		propertyChanged: OnTouchSlopChanged);
+
+	/// <summary>
+	/// Identifies the <see cref="LongPressDuration"/> bindable property.
+	/// </summary>
+	public static readonly BindableProperty LongPressDurationProperty = BindableProperty.Create(
+		nameof(LongPressDuration),
+		typeof(int),
+		typeof(SKGestureSurfaceView),
+		500,
+		propertyChanged: OnLongPressDurationChanged);
+
+	private readonly SKGestureEngine _engine;
+	private SKCanvasView? _canvasView;
+	private IDispatcher? _dispatcher;
+	private IDispatcherTimer? _longPressTimer;
+
+	/// <summary>
+	/// Creates a new instance of <see cref="SKGestureSurfaceView"/>.
 	/// </summary>
 	public SKGestureSurfaceView()
 	{
-		EnableTouchEvents = true;
-		Touch += OnTouchEvent;
+		ResourceLoader<Themes.SKGestureSurfaceViewResources>.EnsureRegistered(this);
+
+		_engine = new SKGestureEngine();
+		
+		// Wire up engine events
+		_engine.TapDetected += (s, e) => OnTapDetected(e);
+		_engine.DoubleTapDetected += (s, e) => OnDoubleTapDetected(e);
+		_engine.LongPressDetected += (s, e) => OnLongPressDetected(e);
+		_engine.PanDetected += (s, e) => OnPanDetected(e);
+		_engine.PinchDetected += (s, e) => OnPinchDetected(e);
+		_engine.RotateDetected += (s, e) => OnRotateDetected(e);
+		_engine.FlingDetected += (s, e) => OnFlingDetected(e);
+		_engine.HoverDetected += (s, e) => OnHoverDetected(e);
+		_engine.GestureStarted += (s, e) => OnGestureStarted(e);
+		_engine.GestureEnded += (s, e) => OnGestureEnded(e);
+		_engine.SelectionChanged += (s, e) => OnSelectionChanged(e);
+		_engine.DragStarted += (s, e) => OnDragStarted(e);
+		_engine.DragUpdated += (s, e) => OnDragUpdated(e);
+		_engine.DragEnded += (s, e) => OnDragEnded(e);
+
 		Loaded += OnLoaded;
+		Unloaded += OnUnloaded;
+
+		DebugUtils.LogPropertyChanged(this);
 	}
 
 	/// <summary>
-	/// Occurs when a gesture starts.
+	/// Gets the underlying gesture engine for advanced scenarios.
 	/// </summary>
-	public event EventHandler<SKGestureEventArgs>? GestureStarted;
+	public SKGestureEngine Engine => _engine;
 
 	/// <summary>
-	/// Occurs when a gesture ends.
+	/// Gets or sets the selection mode for gesture handling.
 	/// </summary>
-	public event EventHandler<SKGestureEventArgs>? GestureEnded;
+	public SKGestureSelectionMode GestureSelectionMode
+	{
+		get => (SKGestureSelectionMode)GetValue(SKGestureSelectionModeProperty);
+		set => SetValue(SKGestureSelectionModeProperty, value);
+	}
+
+	/// <summary>
+	/// Gets or sets whether gesture detection is enabled.
+	/// </summary>
+	public bool IsGestureEnabled
+	{
+		get => (bool)GetValue(IsGestureEnabledProperty);
+		set => SetValue(IsGestureEnabledProperty, value);
+	}
+
+	/// <summary>
+	/// Gets or sets the touch slop (minimum movement to start a gesture).
+	/// </summary>
+	public float TouchSlop
+	{
+		get => (float)GetValue(TouchSlopProperty);
+		set => SetValue(TouchSlopProperty, value);
+	}
+
+	/// <summary>
+	/// Gets or sets the long press duration in milliseconds.
+	/// </summary>
+	public int LongPressDuration
+	{
+		get => (int)GetValue(LongPressDurationProperty);
+		set => SetValue(LongPressDurationProperty, value);
+	}
+
+	/// <summary>
+	/// Gets or sets the currently selected item ID.
+	/// </summary>
+	public long? SelectedItemId
+	{
+		get => _engine.SelectedItemId;
+		set => _engine.SelectedItemId = value;
+	}
+
+	#region Events
+
+	/// <summary>
+	/// Occurs when a tap is detected.
+	/// </summary>
+	public event EventHandler<SKTapEventArgs>? TapDetected;
+
+	/// <summary>
+	/// Occurs when a double tap is detected.
+	/// </summary>
+	public event EventHandler<SKTapEventArgs>? DoubleTapDetected;
 
 	/// <summary>
 	/// Occurs when a long press is detected.
 	/// </summary>
-	public event EventHandler<SKTapDetectedEventArgs>? LongPressDetected;
+	public event EventHandler<SKTapEventArgs>? LongPressDetected;
 
 	/// <summary>
-	/// Occurs when a single tap is detected.
+	/// Occurs when a pan gesture is detected.
 	/// </summary>
-	public event EventHandler<SKTapDetectedEventArgs>? SingleTapDetected;
+	public event EventHandler<SKPanEventArgs>? PanDetected;
 
 	/// <summary>
-	/// Occurs when a double tap (or multi-tap) is detected.
+	/// Occurs when a pinch (scale) gesture is detected.
 	/// </summary>
-	public event EventHandler<SKTapDetectedEventArgs>? DoubleTapDetected;
+	public event EventHandler<SKPinchEventArgs>? PinchDetected;
 
 	/// <summary>
-	/// Occurs when a hover is detected (mouse or stylus without contact).
+	/// Occurs when a rotation gesture is detected.
 	/// </summary>
-	public event EventHandler<SKHoverDetectedEventArgs>? HoverDetected;
+	public event EventHandler<SKRotateEventArgs>? RotateDetected;
 
 	/// <summary>
 	/// Occurs when a fling gesture is detected.
 	/// </summary>
-	public event EventHandler<SKFlingDetectedEventArgs>? FlingDetected;
+	public event EventHandler<SKFlingEventArgs>? FlingDetected;
 
 	/// <summary>
-	/// Occurs when a transform gesture (pan, zoom, rotate) is detected.
+	/// Occurs when a hover is detected.
 	/// </summary>
-	public event EventHandler<SKTransformDetectedEventArgs>? TransformDetected;
+	public event EventHandler<SKHoverEventArgs>? HoverDetected;
 
 	/// <summary>
-	/// Invokes the <see cref="SingleTapDetected"/> event.
+	/// Occurs when a gesture starts.
 	/// </summary>
-	protected virtual void OnSingleTapDetected(SKTapDetectedEventArgs e) =>
-		SingleTapDetected?.Invoke(this, e);
+	public event EventHandler<SKGestureStateEventArgs>? GestureStarted;
 
 	/// <summary>
-	/// Invokes the <see cref="DoubleTapDetected"/> event.
+	/// Occurs when a gesture ends.
 	/// </summary>
-	protected virtual void OnDoubleTapDetected(SKTapDetectedEventArgs e) =>
-		DoubleTapDetected?.Invoke(this, e);
+	public event EventHandler<SKGestureStateEventArgs>? GestureEnded;
 
 	/// <summary>
-	/// Invokes the <see cref="LongPressDetected"/> event.
+	/// Occurs when selection changes.
 	/// </summary>
-	protected virtual void OnLongPressDetected(SKTapDetectedEventArgs e) =>
-		LongPressDetected?.Invoke(this, e);
+	public event EventHandler<SKSelectionChangedEventArgs>? SelectionChanged;
 
 	/// <summary>
-	/// Invokes the <see cref="HoverDetected"/> event.
+	/// Occurs when a drag operation starts.
 	/// </summary>
-	protected virtual void OnHoverDetected(SKHoverDetectedEventArgs e) =>
-		HoverDetected?.Invoke(this, e);
+	public event EventHandler<SKDragEventArgs>? DragStarted;
 
 	/// <summary>
-	/// Invokes the <see cref="FlingDetected"/> event.
+	/// Occurs during a drag operation.
 	/// </summary>
-	protected virtual void OnFlingDetected(SKFlingDetectedEventArgs e) =>
-		FlingDetected?.Invoke(this, e);
+	public event EventHandler<SKDragEventArgs>? DragUpdated;
 
 	/// <summary>
-	/// Invokes the <see cref="TransformDetected"/> event.
+	/// Occurs when a drag operation ends.
 	/// </summary>
-	protected virtual void OnTransformDetected(SKTransformDetectedEventArgs e) =>
-		TransformDetected?.Invoke(this, e);
+	public event EventHandler<SKDragEventArgs>? DragEnded;
 
-	/// <summary>
-	/// Invokes the <see cref="GestureStarted"/> event.
-	/// </summary>
-	protected virtual void OnGestureStarted(SKGestureEventArgs e) =>
-		GestureStarted?.Invoke(this, e);
+	#endregion
 
-	/// <summary>
-	/// Invokes the <see cref="GestureEnded"/> event.
-	/// </summary>
-	protected virtual void OnGestureEnded(SKGestureEventArgs e) =>
-		GestureEnded?.Invoke(this, e);
+	#region Event Invokers
+
+	/// <summary>Invokes <see cref="TapDetected"/>.</summary>
+	protected virtual void OnTapDetected(SKTapEventArgs e) => TapDetected?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="DoubleTapDetected"/>.</summary>
+	protected virtual void OnDoubleTapDetected(SKTapEventArgs e) => DoubleTapDetected?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="LongPressDetected"/>.</summary>
+	protected virtual void OnLongPressDetected(SKTapEventArgs e) => LongPressDetected?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="PanDetected"/>.</summary>
+	protected virtual void OnPanDetected(SKPanEventArgs e) => PanDetected?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="PinchDetected"/>.</summary>
+	protected virtual void OnPinchDetected(SKPinchEventArgs e) => PinchDetected?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="RotateDetected"/>.</summary>
+	protected virtual void OnRotateDetected(SKRotateEventArgs e) => RotateDetected?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="FlingDetected"/>.</summary>
+	protected virtual void OnFlingDetected(SKFlingEventArgs e) => FlingDetected?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="HoverDetected"/>.</summary>
+	protected virtual void OnHoverDetected(SKHoverEventArgs e) => HoverDetected?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="GestureStarted"/>.</summary>
+	protected virtual void OnGestureStarted(SKGestureStateEventArgs e) => GestureStarted?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="GestureEnded"/>.</summary>
+	protected virtual void OnGestureEnded(SKGestureStateEventArgs e) => GestureEnded?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="SelectionChanged"/>.</summary>
+	protected virtual void OnSelectionChanged(SKSelectionChangedEventArgs e) => SelectionChanged?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="DragStarted"/>.</summary>
+	protected virtual void OnDragStarted(SKDragEventArgs e) => DragStarted?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="DragUpdated"/>.</summary>
+	protected virtual void OnDragUpdated(SKDragEventArgs e) => DragUpdated?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="DragEnded"/>.</summary>
+	protected virtual void OnDragEnded(SKDragEventArgs e) => DragEnded?.Invoke(this, e);
+
+	#endregion
+
+	/// <inheritdoc/>
+	protected override void OnApplyTemplate()
+	{
+		// Unsubscribe from old view
+		if (_canvasView is not null)
+		{
+			_canvasView.Touch -= OnTouch;
+			_canvasView = null;
+		}
+
+		base.OnApplyTemplate();
+
+		// Get canvas view and subscribe to touch
+		var templateChild = GetTemplateChild("PART_DrawingSurface");
+		if (templateChild is SKCanvasView view)
+		{
+			_canvasView = view;
+			_canvasView.EnableTouchEvents = true;
+			_canvasView.Touch += OnTouch;
+		}
+	}
 
 	private void OnLoaded(object? sender, EventArgs e)
 	{
-		dispatcher = Dispatcher;
+		_dispatcher = Dispatcher;
+		StartLongPressTimer();
 	}
 
-	private void OnTouchEvent(object? sender, SKTouchEventArgs e)
+	private void OnUnloaded(object? sender, EventArgs e)
 	{
+		StopLongPressTimer();
+		_engine.Reset();
+	}
+
+	private void OnTouch(object? sender, SKTouchEventArgs e)
+	{
+		var isMouse = e.DeviceType == SKTouchDeviceType.Mouse;
+
 		switch (e.ActionType)
 		{
 			case SKTouchAction.Pressed:
-				e.Handled = OnTouchPressed(e);
+				e.Handled = _engine.ProcessTouchDown(e.Id, e.Location, isMouse);
 				break;
 			case SKTouchAction.Moved:
-				e.Handled = OnTouchMoved(e);
+				e.Handled = _engine.ProcessTouchMove(e.Id, e.Location, e.InContact);
 				break;
 			case SKTouchAction.Released:
-				e.Handled = OnTouchReleased(e);
+				e.Handled = _engine.ProcessTouchUp(e.Id, e.Location, isMouse);
 				break;
 			case SKTouchAction.Cancelled:
-				e.Handled = OnTouchCancelled(e);
-				break;
-		}
-	}
-
-	private bool OnTouchPressed(SKTouchEventArgs e)
-	{
-		var ticks = DateTime.Now.Ticks;
-		var location = e.Location;
-
-		initialTouch = location;
-		touches[e.Id] = new TouchEvent(e.Id, location, ticks, e.InContact);
-
-		// Update the fling tracker
-		flingTracker.Clear();
-
-		// If we are in the middle of a multi-tap, then restart with more taps
-		if (multiTapTimer is not null)
-		{
-			multiTapTimer.Dispose();
-			multiTapTimer = null;
-			tapCount++;
-		}
-		else
-		{
-			tapCount = 1;
-		}
-
-		var handled = false;
-
-		// Start detecting once a finger is on the screen
-		var touchPoints = GetInContactTouchPoints();
-		if (touchPoints.Length > 0)
-		{
-			// Try start a gesture
-			var args = new SKGestureEventArgs(touchPoints);
-			OnGestureStarted(args);
-			handled = args.Handled;
-
-			// If no gesture was detected, then we will handle it
-			if (!handled)
-			{
-				if (touchPoints.Length == 2)
-				{
-					previousValues = PinchValue.FromLocations(touchPoints);
-					touchMode = TouchMode.Multiple;
-				}
-				else
-				{
-					previousValues.Center = touchPoints[0];
-					touchMode = TouchMode.Single;
-				}
-				handled = true;
-			}
-		}
-
-		return handled;
-	}
-
-	private bool OnTouchMoved(SKTouchEventArgs e)
-	{
-		var ticks = DateTime.Now.Ticks;
-		var location = e.Location;
-
-		touches[e.Id] = new TouchEvent(e.Id, location, ticks, e.InContact);
-
-		// Update the fling tracker
-		if (e.InContact)
-			flingTracker.AddEvent(e.Id, location, ticks);
-
-		// If this is a mouse or pen hover, then raise an event
-		if (!e.InContact)
-		{
-			var args = new SKHoverDetectedEventArgs(e.Location);
-			OnHoverDetected(args);
-			return args.Handled;
-		}
-
-		var touchPoints = GetInContactTouchPoints();
-
-		switch (touchMode)
-		{
-			case TouchMode.Single:
-				{
-					if (touchPoints.Length != 1)
-						return false;
-
-					var touchPosition = touchPoints[0];
-
-					if (!previousValues.Center.IsEmpty)
-					{
-						var args = new SKTransformDetectedEventArgs(touchPosition, previousValues.Center);
-						OnTransformDetected(args);
-					}
-
-					previousValues.Center = touchPosition;
-				}
-				break;
-
-			case TouchMode.Multiple:
-				{
-					if (touchPoints.Length != 2)
-						return false;
-
-					var prevVals = previousValues;
-					var pinchValue = PinchValue.FromLocations(touchPoints);
-
-					var rotationDelta = pinchValue.Angle - prevVals.Angle;
-					rotationDelta %= 360;
-
-					if (rotationDelta > 180)
-						rotationDelta -= 360;
-					else if (rotationDelta < -180)
-						rotationDelta += 360;
-
-					var scaleDelta = prevVals.Radius > 0 ? pinchValue.Radius / prevVals.Radius : 1f;
-
-					var args = new SKTransformDetectedEventArgs(
-						pinchValue.Center,
-						prevVals.Center,
-						scaleDelta,
-						rotationDelta);
-					OnTransformDetected(args);
-
-					previousValues = pinchValue;
-				}
+				e.Handled = _engine.ProcessTouchCancel(e.Id);
 				break;
 		}
 
-		return true;
+		// Invalidate for visual feedback
+		if (e.Handled)
+			Invalidate();
 	}
 
-	private bool OnTouchReleased(SKTouchEventArgs e)
+	private void StartLongPressTimer()
 	{
-		var handled = false;
-
-		var ticks = DateTime.Now.Ticks;
-		var location = e.Location;
-
-		if (!touches.TryGetValue(e.Id, out var releasedTouch))
-			return false;
-
-		touches.Remove(e.Id);
-
-		var points = GetInContactTouchPoints();
-
-		// No more fingers on the screen
-		if (points.Length == 0)
-		{
-			// Check to see if it was a fling
-			// Use squared magnitude for proper velocity comparison (handles opposite sign velocities correctly)
-			var velocity = flingTracker.CalculateVelocity(e.Id, ticks);
-			var velocityMagnitudeSquared = velocity.X * velocity.X + velocity.Y * velocity.Y;
-			if (velocityMagnitudeSquared > (FlingVelocityThreshold * FlingVelocityThreshold))
-			{
-				var args = new SKFlingDetectedEventArgs(velocity.X, velocity.Y);
-				OnFlingDetected(args);
-				handled = args.Handled;
-			}
-
-			// When tapping, the finger never goes to exactly the same location
-			var isAround = SKPoint.Distance(releasedTouch.Location, initialTouch) < TouchSlopPixels;
-			var touchDuration = ticks - releasedTouch.Tick;
-
-			if (isAround && touchDuration < (e.DeviceType == SKTouchDeviceType.Mouse ? ShortClickTicks : LongTapTicks))
-			{
-				// Add a timer to detect the type of tap (single or multi)
-				// The timer callback dispatches to UI thread for thread safety
-				var tapLocation = location;
-				var currentTapCount = tapCount;
-
-				multiTapTimer = new Timer(
-					_ => DispatchTapHandler(tapLocation, currentTapCount),
-					null,
-					DelayTapMilliseconds,
-					Timeout.Infinite);
-			}
-			else if (isAround && touchDuration >= LongTapTicks)
-			{
-				// If the finger was down for a long time, then it is a long tap
-				if (!handled)
-				{
-					var args = new SKTapDetectedEventArgs(location);
-					OnLongPressDetected(args);
-					handled = args.Handled;
-				}
-			}
-		}
-
-		// Update the fling tracker
-		flingTracker.RemoveId(e.Id);
-
-		if (points.Length == 1)
-		{
-			// If there is still 1 finger on the screen, then try start a new gesture
-			var args = new SKGestureEventArgs(points);
-			OnGestureStarted(args);
-			handled = args.Handled;
-
-			// If no gesture was started, then we will handle it
-			if (!handled)
-			{
-				touchMode = TouchMode.Single;
-				previousValues.Center = points[0];
-				handled = true;
-			}
-		}
-
-		if (!handled)
-		{
-			// The gesture was not handled, so end it
-			var args = new SKGestureEventArgs(points);
-			OnGestureEnded(args);
-			handled = args.Handled;
-
-			if (points.Length == 0)
-				touchMode = TouchMode.None;
-		}
-
-		return handled;
-	}
-
-	private void DispatchTapHandler(SKPoint location, int currentTapCount)
-	{
-		// Dispatch to UI thread for thread safety
-		var currentDispatcher = dispatcher;
-		if (currentDispatcher is null)
-		{
-			HandleTap(location, currentTapCount);
+		if (_dispatcher is null)
 			return;
-		}
 
-		currentDispatcher.Dispatch(() =>
-		{
-			HandleTap(location, currentTapCount);
-		});
+		_longPressTimer = _dispatcher.CreateTimer();
+		_longPressTimer.Interval = TimeSpan.FromMilliseconds(100);
+		_longPressTimer.Tick += (s, e) => _engine.CheckLongPress();
+		_longPressTimer.Start();
 	}
 
-	private void HandleTap(SKPoint location, int currentTapCount)
+	private void StopLongPressTimer()
 	{
-		if (currentTapCount > 1)
-		{
-			var args = new SKTapDetectedEventArgs(location, currentTapCount);
-			OnDoubleTapDetected(args);
-		}
-		else
-		{
-			var args = new SKTapDetectedEventArgs(location);
-			OnSingleTapDetected(args);
-		}
-
-		// Reset tap count for next gesture (thread-safe since we're on UI thread)
-		tapCount = 1;
-		multiTapTimer?.Dispose();
-		multiTapTimer = null;
+		_longPressTimer?.Stop();
+		_longPressTimer = null;
 	}
 
-	private bool OnTouchCancelled(SKTouchEventArgs e)
+	private static void OnGestureSelectionModeChanged(BindableObject bindable, object oldValue, object newValue)
 	{
-		touches.Remove(e.Id);
-		flingTracker.RemoveId(e.Id);
-		return false;
+		if (bindable is SKGestureSurfaceView view && newValue is SKGestureSelectionMode mode)
+			view._engine.SelectionMode = mode;
 	}
 
-	private SKPoint[] GetInContactTouchPoints() =>
-		touches.Values
-			.Where(t => t.InContact)
-			.Select(t => t.Location)
-			.ToArray();
+	private static void OnIsGestureEnabledChanged(BindableObject bindable, object oldValue, object newValue)
+	{
+		if (bindable is SKGestureSurfaceView view && newValue is bool enabled)
+			view._engine.IsEnabled = enabled;
+	}
+
+	private static void OnTouchSlopChanged(BindableObject bindable, object oldValue, object newValue)
+	{
+		if (bindable is SKGestureSurfaceView view && newValue is float slop)
+			view._engine.TouchSlop = slop;
+	}
+
+	private static void OnLongPressDurationChanged(BindableObject bindable, object oldValue, object newValue)
+	{
+		if (bindable is SKGestureSurfaceView view && newValue is int duration)
+			view._engine.LongPressDuration = duration;
+	}
 }

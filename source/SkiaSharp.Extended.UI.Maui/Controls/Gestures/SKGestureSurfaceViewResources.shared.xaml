@@ -6,13 +6,10 @@
 
     <!-- 
         Control template for SKGestureSurfaceView.
-        Inherits the same template structure as SKDynamicSurfaceView.
+        Uses standard SKCanvasView like other controls in the library.
     -->
     <ControlTemplate x:Key="SKGestureSurfaceViewControlTemplate">
-        <Grid>
-            <skia:SKCanvasView x:Name="PART_CanvasSurface" />
-            <skia:SKGLView x:Name="PART_GLSurface" IsVisible="False" />
-        </Grid>
+        <skia:SKCanvasView x:Name="PART_DrawingSurface" />
     </ControlTemplate>
 
     <!-- The explicit style that allows for extension -->
