@@ -242,15 +242,15 @@ public class CollectionImageProviderTest
 
         var dzc = CreateCompositeDzc(1);
         var fetcher = new TrackingTileFetcher();
-        // The _files path should preserve the query string
-        fetcher.Add("http://cdn.example.com/data/deepzoom/collection_files?sv=2020&sig=abc/0/0_0.jpg", CreateTestTile());
+        // The query string should come AFTER the tile path, not embedded in the base
+        fetcher.Add("http://cdn.example.com/data/deepzoom/collection_files/0/0_0.jpg?sv=2020&sig=abc", CreateTestTile());
 
         using var provider = CollectionImageProvider.FromCxmlSource(source, dzc, fetcher)!;
         Assert.NotNull(provider);
 
         await provider.LoadThumbnailAsync(0, 64, CancellationToken.None);
-        // Verify the query string was preserved in the URL
-        Assert.Contains(fetcher.RequestedUrls, u => u.Contains("collection_files") && u.Contains("sv=2020"));
+        // Verify the query string was preserved at the end of the URL
+        Assert.Contains(fetcher.RequestedUrls, u => u.Contains("collection_files/0/0_0.jpg") && u.EndsWith("?sv=2020&sig=abc"));
     }
 
     #endregion

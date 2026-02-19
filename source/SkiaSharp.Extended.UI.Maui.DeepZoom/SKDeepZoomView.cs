@@ -151,11 +151,11 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                 var pathPart = parsed.GetLeftPart(UriPartial.Path);
                 var dotIdx = pathPart.LastIndexOf('.');
                 var tilesBase = (dotIdx >= 0 ? pathPart.Substring(0, dotIdx) : pathPart) + "_files/";
-                if (!string.IsNullOrEmpty(parsed.Query))
-                    tilesBase += parsed.Query;
 
                 var tileSource = DziTileSource.Parse(stream);
                 tileSource.TilesBaseUri = tilesBase;
+                if (!string.IsNullOrEmpty(parsed.Query))
+                    tileSource.TilesQueryString = parsed.Query;
 
                 ct.ThrowIfCancellationRequested();
                 if (_disposed) return;

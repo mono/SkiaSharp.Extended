@@ -22,6 +22,7 @@ namespace SkiaSharp.Extended.PivotViewer
         private readonly ConcurrentDictionary<int, SKBitmap?> _thumbnailCache;
         private readonly ConcurrentDictionary<int, SemaphoreSlim> _loadLocks;
         private readonly string _basePath;
+        private readonly string _queryString;
         private readonly List<SKBitmap> _pendingThumbnailDispose = new();
         private readonly object _thumbnailDisposeLock = new();
         private bool _disposed;
@@ -32,11 +33,13 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <param name="dzc">The parsed DZC tile source.</param>
         /// <param name="fetcher">Tile fetcher for loading composite tiles.</param>
         /// <param name="basePath">Base path/URL for the DZC tiles directory (e.g., "conceptcars_files").</param>
-        public CollectionImageProvider(DzcTileSource dzc, ITileFetcher fetcher, string basePath)
+        /// <param name="queryString">Optional query string for signed URLs (e.g., "?sig=ABC").</param>
+        public CollectionImageProvider(DzcTileSource dzc, ITileFetcher fetcher, string basePath, string queryString = "")
         {
             _dzc = dzc ?? throw new ArgumentNullException(nameof(dzc));
             _fetcher = fetcher ?? throw new ArgumentNullException(nameof(fetcher));
             _basePath = basePath ?? throw new ArgumentNullException(nameof(basePath));
+            _queryString = queryString ?? "";
             _cache = new TileCache(512);
             _thumbnailCache = new ConcurrentDictionary<int, SKBitmap?>();
             _loadLocks = new ConcurrentDictionary<int, SemaphoreSlim>();
@@ -56,26 +59,27 @@ namespace SkiaSharp.Extended.PivotViewer
             if (source.ImageBase == null) return null;
 
             string basePath;
+            string queryString = "";
             if (source.UriSource != null)
             {
                 // Resolve ImageBase relative to the CXML URI
                 var cxmlUri = source.UriSource;
                 var baseUri = new Uri(cxmlUri, source.ImageBase);
                 // DZC composite tiles live in {dzcName}_files/ alongside the .dzc file.
-                // Use the URI path (ignoring query/fragment) to detect .dzc extension,
-                // then reattach query/fragment for CDN/SAS signed URLs.
+                // Use the URI path (ignoring query/fragment) to detect .dzc extension.
+                // Store query/fragment separately to append after each tile path.
                 var path = baseUri.GetLeftPart(UriPartial.Path);
-                var suffix = baseUri.ToString().Substring(path.Length); // query + fragment
+                queryString = baseUri.ToString().Substring(path.Length); // query + fragment
 
                 if (path.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase))
-                    basePath = path.Substring(0, path.Length - 4) + "_files" + suffix;
+                    basePath = path.Substring(0, path.Length - 4) + "_files";
                 else
                 {
                     // Fallback: strip filename to get directory (non-standard layout)
                     int lastSlash = path.LastIndexOf('/');
                     basePath = lastSlash >= 0
-                        ? path.Substring(0, lastSlash) + suffix
-                        : path + suffix;
+                        ? path.Substring(0, lastSlash)
+                        : path;
                 }
             }
             else
@@ -85,7 +89,7 @@ namespace SkiaSharp.Extended.PivotViewer
                     basePath = basePath.Substring(0, basePath.Length - 4) + "_files";
             }
 
-            return new CollectionImageProvider(dzc, fetcher, basePath);
+            return new CollectionImageProvider(dzc, fetcher, basePath, queryString);
         }
 
         /// <summary>
@@ -246,7 +250,7 @@ namespace SkiaSharp.Extended.PivotViewer
             }
 
             // Try primary format first, then fallback to alternative
-            string url = $"{_basePath}/{filesDir}/{bestLevel}/0_0.{primaryFormat}";
+            string url = $"{_basePath}/{filesDir}/{bestLevel}/0_0.{primaryFormat}{_queryString}";
             var tileBitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
 
             if (_disposed)
@@ -259,7 +263,7 @@ namespace SkiaSharp.Extended.PivotViewer
             {
                 // Try alternative format (jpg ↔ png)
                 string altFormat = primaryFormat == "jpg" ? "png" : "jpg";
-                string altUrl = $"{_basePath}/{filesDir}/{bestLevel}/0_0.{altFormat}";
+                string altUrl = $"{_basePath}/{filesDir}/{bestLevel}/0_0.{altFormat}{_queryString}";
                 tileBitmap = await _fetcher.FetchTileAsync(altUrl, ct).ConfigureAwait(false);
 
                 if (_disposed)
@@ -331,7 +335,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
             if (!_cache.TryGet(tileId, out tileBitmap))
             {
-                string url = $"{_basePath}/{_dzc.GetCompositeTileUrl(bestLevel, tileCol, tileRow)}";
+                string url = $"{_basePath}/{_dzc.GetCompositeTileUrl(bestLevel, tileCol, tileRow)}{_queryString}";
                 tileBitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
 
                 if (_disposed)

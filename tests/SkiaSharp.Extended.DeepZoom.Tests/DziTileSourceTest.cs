@@ -317,6 +317,27 @@ public class DziTileSourceTest
     }
 
     [Fact]
+    public void GetFullTileUrl_WithQueryString_AppendsAfterTilePath()
+    {
+        var dzi = new DziTileSource(2048, 2048, 256, 0, "jpg");
+        dzi.TilesBaseUri = "https://cdn.example.com/image_files/";
+        dzi.TilesQueryString = "?sig=ABC123&se=2030-01-01";
+
+        var url = dzi.GetFullTileUrl(8, 3, 2);
+        Assert.Equal("https://cdn.example.com/image_files/8/3_2.jpg?sig=ABC123&se=2030-01-01", url);
+    }
+
+    [Fact]
+    public void GetFullTileUrl_NoQueryString_NoSuffix()
+    {
+        var dzi = new DziTileSource(2048, 2048, 256, 0, "jpg");
+        dzi.TilesBaseUri = "https://cdn.example.com/image_files/";
+
+        var url = dzi.GetFullTileUrl(8, 3, 2);
+        Assert.Equal("https://cdn.example.com/image_files/8/3_2.jpg", url);
+    }
+
+    [Fact]
     public void EdgeTile_IsClipped()
     {
         // Image is 300 wide, tileSize 256. Last tile should be 44 pixels wide

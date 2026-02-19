@@ -57,6 +57,12 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public string? TilesBaseUri { get; set; }
 
+        /// <summary>
+        /// Gets or sets a query string (e.g., "?sig=ABC") appended to each tile URL.
+        /// Used for signed/SAS URLs where authentication tokens must be preserved.
+        /// </summary>
+        public string? TilesQueryString { get; set; }
+
         /// <summary>Computes the image width at a given pyramid level.</summary>
         public int GetLevelWidth(int level)
         {
@@ -141,11 +147,14 @@ namespace SkiaSharp.Extended.DeepZoom
             return $"{level}/{col}_{row}.{Format}";
         }
 
-        /// <summary>Gets the full tile URL using TilesBaseUri.</summary>
+        /// <summary>Gets the full tile URL using TilesBaseUri and optional TilesQueryString.</summary>
         public string? GetFullTileUrl(int level, int col, int row)
         {
             if (TilesBaseUri == null) return null;
-            return TilesBaseUri + GetTileUrl(level, col, row);
+            var url = TilesBaseUri + GetTileUrl(level, col, row);
+            if (!string.IsNullOrEmpty(TilesQueryString))
+                url += TilesQueryString;
+            return url;
         }
 
         /// <summary>Parses a DZI XML string.</summary>
