@@ -182,6 +182,10 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             var delta = now - _lastFrameTime;
             _lastFrameTime = now;
 
+            // Cap delta to prevent physics instability after app pause/background
+            if (delta.TotalMilliseconds > 100)
+                delta = TimeSpan.FromMilliseconds(100);
+
             // Store scale factor for gesture coordinate conversion
             _dpiScale = _canvasView.CanvasSize.Width > 0 && Width > 0
                 ? _canvasView.CanvasSize.Width / (float)Width

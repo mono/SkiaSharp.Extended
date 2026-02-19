@@ -547,7 +547,10 @@ namespace SkiaSharp.Extended.PivotViewer
                     if (valB == null) return -1;
 
                     if (valA is IComparable ca)
-                        return ca.CompareTo(valB);
+                    {
+                        try { return ca.CompareTo(valB); }
+                        catch (ArgumentException) { }
+                    }
 
                     return string.Compare(valA.ToString(), valB.ToString(), StringComparison.OrdinalIgnoreCase);
                 });

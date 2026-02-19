@@ -488,8 +488,18 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 canvas.Translate(panX, panY);
             }
 
+            // Compute visible viewport for culling off-screen items
+            var viewportRect = new SKRect(-panX, -panY, info.Width - panX, info.Height - panY);
+
             foreach (var pos in positions)
             {
+                // Skip items that are entirely outside the visible viewport
+                if ((float)(pos.X + pos.Width) < viewportRect.Left ||
+                    (float)pos.X > viewportRect.Right ||
+                    (float)(pos.Y + pos.Height) < viewportRect.Top ||
+                    (float)pos.Y > viewportRect.Bottom)
+                    continue;
+
                 var rect = new SKRect(
                     (float)pos.X + 1, (float)pos.Y + 1,
                     (float)(pos.X + pos.Width) - 1, (float)(pos.Y + pos.Height) - 1);
