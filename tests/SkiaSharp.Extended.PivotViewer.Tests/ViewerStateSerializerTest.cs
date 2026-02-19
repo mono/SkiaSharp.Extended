@@ -410,11 +410,45 @@ public class ViewerStateSerializerTest
         var state = new ViewerState();
         Assert.Null(state.ViewId);
         Assert.Null(state.SortPropertyId);
+        Assert.False(state.SortDescending);
         Assert.Null(state.SelectedItemId);
         Assert.Null(state.Predicates);
         Assert.NotNull(state.StringPredicates);
         Assert.NotNull(state.RangePredicates);
         Assert.Empty(state.StringPredicates);
         Assert.Empty(state.RangePredicates);
+    }
+
+    [Fact]
+    public void SortDescending_RoundTrips()
+    {
+        var state = new ViewerState
+        {
+            SortPropertyId = "Year",
+            SortDescending = true
+        };
+
+        var serialized = ViewerStateSerializer.Serialize(state);
+        Assert.Contains("$sortdir=desc", serialized);
+
+        var deserialized = ViewerStateSerializer.Deserialize(serialized);
+        Assert.Equal("Year", deserialized.SortPropertyId);
+        Assert.True(deserialized.SortDescending);
+    }
+
+    [Fact]
+    public void SortAscending_OmitsSortDir()
+    {
+        var state = new ViewerState
+        {
+            SortPropertyId = "Year",
+            SortDescending = false
+        };
+
+        var serialized = ViewerStateSerializer.Serialize(state);
+        Assert.DoesNotContain("$sortdir", serialized);
+
+        var deserialized = ViewerStateSerializer.Deserialize(serialized);
+        Assert.False(deserialized.SortDescending);
     }
 }

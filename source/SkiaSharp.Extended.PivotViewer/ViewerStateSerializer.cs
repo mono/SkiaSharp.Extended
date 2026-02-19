@@ -47,6 +47,8 @@ namespace SkiaSharp.Extended.PivotViewer
             // Serialize sort
             if (!string.IsNullOrEmpty(state.SortPropertyId))
                 parts.Add($"$sort={Encode(state.SortPropertyId)}");
+            if (state.SortDescending)
+                parts.Add("$sortdir=desc");
 
             // Serialize selection
             if (!string.IsNullOrEmpty(state.SelectedItemId))
@@ -86,6 +88,10 @@ namespace SkiaSharp.Extended.PivotViewer
                 else if (key == "$sort")
                 {
                     state.SortPropertyId = Decode(value);
+                }
+                else if (key == "$sortdir")
+                {
+                    state.SortDescending = value == "desc";
                 }
                 else if (key == "$select")
                 {
@@ -134,6 +140,7 @@ namespace SkiaSharp.Extended.PivotViewer
     {
         public string? ViewId { get; set; }
         public string? SortPropertyId { get; set; }
+        public bool SortDescending { get; set; }
         public string? SelectedItemId { get; set; }
         public IReadOnlyList<FilterPredicate>? Predicates { get; set; }
 

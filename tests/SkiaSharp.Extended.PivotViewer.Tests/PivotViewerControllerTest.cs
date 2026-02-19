@@ -186,6 +186,64 @@ public class PivotViewerControllerTest
     }
 
     [Fact]
+    public void SortDescending_DefaultsFalse()
+    {
+        var (controller, _) = CreateTestController();
+        Assert.False(controller.SortDescending);
+    }
+
+    [Fact]
+    public void SortDescending_ReversesOrder()
+    {
+        var controller = new PivotViewerController();
+        var prop = new PivotViewerStringProperty("Name");
+        var items = new[]
+        {
+            new PivotViewerItem("a"),
+            new PivotViewerItem("b"),
+            new PivotViewerItem("c"),
+        };
+        items[0].Add(prop, "Alpha");
+        items[1].Add(prop, "Beta");
+        items[2].Add(prop, "Charlie");
+
+        controller.LoadItems(items, new[] { prop });
+        controller.SortProperty = prop;
+
+        var ascending = controller.InScopeItems.Select(i => i.Id).ToList();
+        Assert.Equal(new[] { "a", "b", "c" }, ascending);
+
+        controller.SortDescending = true;
+        var descending = controller.InScopeItems.Select(i => i.Id).ToList();
+        Assert.Equal(new[] { "c", "b", "a" }, descending);
+    }
+
+    [Fact]
+    public void SortDescending_FiresSortPropertyChanged()
+    {
+        var (controller, _) = CreateTestController();
+        bool fired = false;
+        controller.SortPropertyChanged += (s, e) => fired = true;
+
+        controller.SortDescending = true;
+        Assert.True(fired);
+    }
+
+    [Fact]
+    public void SortDescending_ResetOnLoadItems()
+    {
+        var (controller, _) = CreateTestController();
+        controller.SortDescending = true;
+        Assert.True(controller.SortDescending);
+
+        // Reload items — should reset
+        controller.LoadItems(
+            controller.InScopeItems,
+            controller.Properties);
+        Assert.False(controller.SortDescending);
+    }
+
+    [Fact]
     public void CurrentView_DefaultsToGrid()
     {
         var (controller, _) = CreateTestController();

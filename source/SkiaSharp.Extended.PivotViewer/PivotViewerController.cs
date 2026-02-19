@@ -30,6 +30,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
         private PivotViewerItem? _selectedItem;
         private PivotViewerProperty? _sortProperty;
+        private bool _sortDescending;
         private string _currentView = "grid";
         private double _availableWidth = 800;
         private double _availableHeight = 600;
@@ -145,7 +146,22 @@ namespace SkiaSharp.Extended.PivotViewer
                 {
                     _sortProperty = value;
                     SortPropertyChanged?.Invoke(this, EventArgs.Empty);
-                    UpdateLayout();
+                    UpdateInScopeItems();
+                }
+            }
+        }
+
+        /// <summary>When true, sort order is descending. Default is ascending (false).</summary>
+        public bool SortDescending
+        {
+            get => _sortDescending;
+            set
+            {
+                if (_sortDescending != value)
+                {
+                    _sortDescending = value;
+                    SortPropertyChanged?.Invoke(this, EventArgs.Empty);
+                    UpdateInScopeItems();
                 }
             }
         }
@@ -373,6 +389,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
             _selectedItem = null;
             _sortProperty = null;
+            _sortDescending = false;
 
             UpdateInScopeItems();
             CollectionChanged?.Invoke(this, EventArgs.Empty);
@@ -396,6 +413,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
             _selectedItem = null;
             _sortProperty = null;
+            _sortDescending = false;
 
             UpdateInScopeItems();
             CollectionChanged?.Invoke(this, EventArgs.Empty);
@@ -443,6 +461,7 @@ namespace SkiaSharp.Extended.PivotViewer
             {
                 ViewId = _currentView,
                 SortPropertyId = _sortProperty?.Id,
+                SortDescending = _sortDescending,
                 SelectedItemId = _selectedItem?.Id,
                 Predicates = _filterEngine.Predicates
             };
@@ -480,6 +499,7 @@ namespace SkiaSharp.Extended.PivotViewer
             // Apply sort
             if (!string.IsNullOrEmpty(state.SortPropertyId))
                 SortProperty = _properties.FirstOrDefault(p => p.Id == state.SortPropertyId);
+            SortDescending = state.SortDescending;
 
             // Apply selection
             if (!string.IsNullOrEmpty(state.SelectedItemId))
@@ -637,7 +657,7 @@ namespace SkiaSharp.Extended.PivotViewer
                     return string.Compare(valA.ToString(), valB.ToString(), StringComparison.OrdinalIgnoreCase);
                 });
 
-                _inScopeItems = sortedList;
+                _inScopeItems = _sortDescending ? sortedList.AsEnumerable().Reverse().ToList() : sortedList;
             }
             else
             {

@@ -179,6 +179,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             {
                 _suppressPropertySync = true;
                 SetValue(SortPivotPropertyProperty, _controller.SortProperty);
+                SetValue(SortDescendingProperty, _controller.SortDescending);
                 _suppressPropertySync = false;
                 SortPivotPropertyChanged?.Invoke(this, EventArgs.Empty);
             };
@@ -280,6 +281,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             BindableProperty.Create(nameof(SortPivotProperty), typeof(PivotViewerProperty), typeof(SKPivotViewerView),
                 null, BindingMode.TwoWay, propertyChanged: OnSortPivotPropertyChanged);
 
+        public static readonly BindableProperty SortDescendingProperty =
+            BindableProperty.Create(nameof(SortDescending), typeof(bool), typeof(SKPivotViewerView),
+                false, BindingMode.TwoWay, propertyChanged: OnSortDescendingChanged);
+
         public static readonly BindableProperty ViewProperty =
             BindableProperty.Create(nameof(View), typeof(string), typeof(SKPivotViewerView),
                 "grid", BindingMode.TwoWay, propertyChanged: OnViewChanged);
@@ -340,6 +345,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         {
             get => (PivotViewerProperty?)GetValue(SortPivotPropertyProperty);
             set => SetValue(SortPivotPropertyProperty, value);
+        }
+
+        /// <summary>Sort in descending order (two-way bindable).</summary>
+        public bool SortDescending
+        {
+            get => (bool)GetValue(SortDescendingProperty);
+            set => SetValue(SortDescendingProperty, value);
         }
 
         /// <summary>Current view mode: "grid" or "graph" (two-way bindable).</summary>
@@ -431,6 +443,14 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             if (bindable is SKPivotViewerView view && !view._suppressPropertySync)
             {
                 view._controller.SortProperty = newValue as PivotViewerProperty;
+            }
+        }
+
+        private static void OnSortDescendingChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is SKPivotViewerView view && !view._suppressPropertySync && newValue is bool desc)
+            {
+                view._controller.SortDescending = desc;
             }
         }
 
@@ -1043,9 +1063,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             // Sort indicator (clickable)
             {
                 float sortX = info.Width / 2;
+                string arrow = _controller.SortDescending ? "▲" : "▼";
                 string sortText = _controller.SortProperty != null
-                    ? $"Sort: {_controller.SortProperty.DisplayName} ▼"
-                    : "Sort ▼";
+                    ? $"Sort: {_controller.SortProperty.DisplayName} {arrow}"
+                    : $"Sort {arrow}";
                 canvas.DrawText(sortText, sortX, barHeight / 2 + 5, SKTextAlign.Center, _textFont, whitePaint);
             }
         }
@@ -1532,7 +1553,15 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     var properties = _controller.Properties;
                     if (index >= 0 && index < properties.Count)
                     {
-                        _controller.SortProperty = properties[index];
+                        if (_controller.SortProperty?.Id == properties[index].Id)
+                        {
+                            // Tapping the already-selected sort property toggles direction
+                            _controller.SortDescending = !_controller.SortDescending;
+                        }
+                        else
+                        {
+                            _controller.SortProperty = properties[index];
+                        }
                     }
                 }
                 _showSortDropdown = false;
