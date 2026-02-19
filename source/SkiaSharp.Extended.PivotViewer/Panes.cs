@@ -100,9 +100,12 @@ namespace SkiaSharp.Extended.PivotViewer
 
     /// <summary>
     /// A single filter category in the filter pane.
+    /// Implements INotifyPropertyChanged so native UI controls can bind to it.
     /// </summary>
-    public class FilterCategory
+    public class FilterCategory : INotifyPropertyChanged
     {
+        private bool _isExpanded;
+
         public FilterCategory(PivotViewerProperty property)
         {
             Property = property ?? throw new ArgumentNullException(nameof(property));
@@ -119,6 +122,23 @@ namespace SkiaSharp.Extended.PivotViewer
 
         /// <summary>Whether this category has active filters.</summary>
         public bool IsFiltered => ActiveFilters != null && ActiveFilters.Count > 0;
+
+        /// <summary>Whether this category is expanded to show all values.</summary>
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set
+            {
+                if (_isExpanded == value) return;
+                _isExpanded = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsExpanded)));
+            }
+        }
+
+        /// <summary>Toggle the expanded/collapsed state.</summary>
+        public void ToggleExpanded() => IsExpanded = !IsExpanded;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
     }
 
     /// <summary>
@@ -129,6 +149,10 @@ namespace SkiaSharp.Extended.PivotViewer
         private PivotViewerItem? _selectedItem;
         private bool _isExpanded = true;
         private bool _isShowing;
+        private SKBitmap? _thumbnail;
+        private string? _copyrightText;
+        private string? _itemName;
+        private string? _description;
 
         /// <summary>The currently selected item.</summary>
         public PivotViewerItem? SelectedItem
@@ -140,9 +164,48 @@ namespace SkiaSharp.Extended.PivotViewer
                 {
                     _selectedItem = value;
                     _isShowing = value != null;
+                    _itemName = value != null ? RenderUtils.GetItemDisplayName(value) : null;
+                    _description = GetDescription(value);
                     OnPropertyChanged(nameof(SelectedItem));
                     OnPropertyChanged(nameof(IsShowing));
                     OnPropertyChanged(nameof(FacetValues));
+                    OnPropertyChanged(nameof(ItemName));
+                    OnPropertyChanged(nameof(Description));
+                    OnPropertyChanged(nameof(Thumbnail));
+                }
+            }
+        }
+
+        /// <summary>Display name of the selected item.</summary>
+        public string? ItemName => _itemName;
+
+        /// <summary>Description of the selected item.</summary>
+        public string? Description => _description;
+
+        /// <summary>Thumbnail bitmap for the selected item (set externally by image provider).</summary>
+        public SKBitmap? Thumbnail
+        {
+            get => _thumbnail;
+            set
+            {
+                if (_thumbnail != value)
+                {
+                    _thumbnail = value;
+                    OnPropertyChanged(nameof(Thumbnail));
+                }
+            }
+        }
+
+        /// <summary>Copyright text from the collection source.</summary>
+        public string? CopyrightText
+        {
+            get => _copyrightText;
+            set
+            {
+                if (_copyrightText != value)
+                {
+                    _copyrightText = value;
+                    OnPropertyChanged(nameof(CopyrightText));
                 }
             }
         }
@@ -241,6 +304,15 @@ namespace SkiaSharp.Extended.PivotViewer
                 catch { /* fallback */ }
             }
             return value.ToString() ?? "";
+        }
+
+        private static string? GetDescription(PivotViewerItem? item)
+        {
+            if (item == null) return null;
+            var values = item["Description"];
+            if (values != null && values.Count > 0)
+                return values[0]?.ToString();
+            return null;
         }
     }
 

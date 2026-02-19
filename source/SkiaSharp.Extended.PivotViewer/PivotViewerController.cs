@@ -18,6 +18,8 @@ namespace SkiaSharp.Extended.PivotViewer
         private readonly EventHandler _onFiltersChangedHandler;
         private FilterPaneModel? _filterPaneModel;
         private DetailPaneModel? _detailPaneModel;
+        private ControlBarModel? _controlBarModel;
+        private SortDropdownModel? _sortDropdownModel;
         private CollectionImageProvider? _imageProvider;
         private CxmlCollectionSource? _collectionSource;
         private PivotViewerItemTemplateCollection _itemTemplates = new PivotViewerItemTemplateCollection();
@@ -97,6 +99,28 @@ namespace SkiaSharp.Extended.PivotViewer
         /// which sections are visible.
         /// </summary>
         public PivotViewerDefaultDetails DefaultDetails { get; } = new PivotViewerDefaultDetails();
+
+        /// <summary>The control bar model (lazy-created).</summary>
+        public ControlBarModel ControlBar
+        {
+            get
+            {
+                if (_controlBarModel == null)
+                    _controlBarModel = new ControlBarModel(this);
+                return _controlBarModel;
+            }
+        }
+
+        /// <summary>The sort dropdown model (lazy-created).</summary>
+        public SortDropdownModel SortDropdown
+        {
+            get
+            {
+                if (_sortDropdownModel == null)
+                    _sortDropdownModel = new SortDropdownModel(this);
+                return _sortDropdownModel;
+            }
+        }
 
         // --- Selection ---
 

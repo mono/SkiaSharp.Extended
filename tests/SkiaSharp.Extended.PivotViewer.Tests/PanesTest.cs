@@ -698,6 +698,112 @@ public class PanesTest
         details.OnApplyFilter("test");
     }
 
+    // --- FilterCategory IsExpanded enhancements ---
+
+    [Fact]
+    public void FilterCategory_IsExpanded_DefaultFalse()
+    {
+        var prop = new PivotViewerStringProperty("test") { DisplayName = "Test" };
+        var cat = new FilterCategory(prop);
+
+        Assert.False(cat.IsExpanded);
+    }
+
+    [Fact]
+    public void FilterCategory_ToggleExpanded_Toggles()
+    {
+        var prop = new PivotViewerStringProperty("test") { DisplayName = "Test" };
+        var cat = new FilterCategory(prop);
+
+        cat.ToggleExpanded();
+        Assert.True(cat.IsExpanded);
+
+        cat.ToggleExpanded();
+        Assert.False(cat.IsExpanded);
+    }
+
+    [Fact]
+    public void FilterCategory_IsExpanded_FiresINPC()
+    {
+        var prop = new PivotViewerStringProperty("test") { DisplayName = "Test" };
+        var cat = new FilterCategory(prop);
+        var changed = new List<string>();
+        cat.PropertyChanged += (s, e) => changed.Add(e.PropertyName!);
+
+        cat.IsExpanded = true;
+
+        Assert.Contains("IsExpanded", changed);
+    }
+
+    // --- DetailPaneModel enhancements ---
+
+    [Fact]
+    public void DetailPaneModel_ItemName_ReflectsSelectedItem()
+    {
+        var nameProp = new PivotViewerStringProperty("Name") { DisplayName = "Name" };
+        var item = new PivotViewerItem("item1");
+        item.Add(nameProp, new object[] { "My Car" });
+
+        var model = new DetailPaneModel();
+        model.SelectedItem = item;
+
+        Assert.Equal("My Car", model.ItemName);
+    }
+
+    [Fact]
+    public void DetailPaneModel_Description_ReflectsSelectedItem()
+    {
+        var descProp = new PivotViewerStringProperty("Description") { DisplayName = "Description" };
+        var item = new PivotViewerItem("item1");
+        item.Add(descProp, new object[] { "A cool concept car" });
+
+        var model = new DetailPaneModel();
+        model.SelectedItem = item;
+
+        Assert.Equal("A cool concept car", model.Description);
+    }
+
+    [Fact]
+    public void DetailPaneModel_Thumbnail_CanSetAndGet()
+    {
+        var model = new DetailPaneModel();
+
+        Assert.Null(model.Thumbnail);
+
+        using var bmp = new SKBitmap(10, 10);
+        model.Thumbnail = bmp;
+
+        Assert.Same(bmp, model.Thumbnail);
+    }
+
+    [Fact]
+    public void DetailPaneModel_CopyrightText_CanSetAndGet()
+    {
+        var model = new DetailPaneModel();
+
+        Assert.Null(model.CopyrightText);
+
+        model.CopyrightText = "© 2024 Test";
+        Assert.Equal("© 2024 Test", model.CopyrightText);
+    }
+
+    [Fact]
+    public void DetailPaneModel_SelectionChange_NotifiesItemName()
+    {
+        var nameProp = new PivotViewerStringProperty("Name") { DisplayName = "Name" };
+        var item = new PivotViewerItem("item1");
+        item.Add(nameProp, new object[] { "Test Item" });
+
+        var model = new DetailPaneModel();
+        var changed = new List<string>();
+        model.PropertyChanged += (s, e) => changed.Add(e.PropertyName!);
+
+        model.SelectedItem = item;
+
+        Assert.Contains("ItemName", changed);
+        Assert.Contains("Description", changed);
+    }
+
     [Fact]
     public void FilterPaneModel_SetDateTimeRangeFilter_ThenClearAll_RemovesFilter()
     {
