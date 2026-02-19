@@ -1879,6 +1879,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             {
                 _lastPointerX = e.Location.X;
             }
+            else if (e.ActionType == SkiaSharp.Views.Maui.SKTouchAction.Released ||
+                     e.ActionType == SkiaSharp.Views.Maui.SKTouchAction.Cancelled)
+            {
+                _lastPointerX = double.NaN;
+            }
             // Don't set e.Handled — let MAUI gesture recognizers handle the rest
         }
 
