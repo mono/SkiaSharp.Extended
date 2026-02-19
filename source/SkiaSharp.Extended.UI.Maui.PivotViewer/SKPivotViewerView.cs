@@ -97,6 +97,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _canvasView = new SKCanvasView();
             _canvasView.IgnorePixelScaling = true;
             _canvasView.PaintSurface += OnPaintSurface;
+            _canvasView.EnableTouchEvents = true;
+            _canvasView.Touch += OnCanvasTouch;
 
             // Search entry overlay for the filter pane
             _searchEntry = new Entry
@@ -443,7 +445,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private static void OnThemePropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
             if (bindable is SKPivotViewerView view)
-                view._canvasView.InvalidateSurface();
+                view._canvasView?.InvalidateSurface();
         }
 
         private SKColor ToSkColor(Color color)
@@ -1869,6 +1871,17 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             }
         }
 
+        private void OnCanvasTouch(object? sender, SkiaSharp.Views.Maui.SKTouchEventArgs e)
+        {
+            // Capture touch position for filter pane scroll detection on touch platforms
+            // (PointerGestureRecognizer only fires for mouse/pen, not touch)
+            if (e.ActionType == SkiaSharp.Views.Maui.SKTouchAction.Pressed)
+            {
+                _lastPointerX = e.Location.X;
+            }
+            // Don't set e.Handled — let MAUI gesture recognizers handle the rest
+        }
+
         private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
         {
             switch (e.StatusType)
@@ -1968,6 +1981,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 _animationTimer = null;
             }
             _canvasView.PaintSurface -= OnPaintSurface;
+            _canvasView.Touch -= OnCanvasTouch;
 
             // Unsubscribe all controller events
             if (_onLayoutUpdated != null) _controller.LayoutUpdated -= _onLayoutUpdated;
