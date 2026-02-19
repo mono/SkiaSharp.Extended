@@ -193,9 +193,8 @@ namespace SkiaSharp.Extended.PivotViewer
                     // But we released it above.
                     
                     // Safer strategy: Don't dispose it. Just remove it.
-                    // SemaphoreSlim implements IDisposable but primarily for the AvailableWaitHandle which is lazily allocated.
-                    // If we don't access AvailableWaitHandle, Dispose is mostly a no-op (except for setting a disposed flag).
-                    _loadLocks.TryRemove(itemIndex, out _);
+                    _loadLocks.TryRemove(itemIndex, out var removed);
+                    removed?.Dispose();
                 }
             }
         }
