@@ -58,24 +58,36 @@ namespace SkiaSharp.Extended.PivotViewer
         {
             if (source.ImageBase == null) return null;
 
+            // IsPath DZCs: tile pyramids are sibling to the DZC file, so basePath
+            // should be the DZC's directory. Composite (mosaic) DZCs: tiles are in
+            // {dzcName}_files/, so basePath is {dzcName}_files.
+            bool hasIsPath = dzc.Items.Any(i => i.Source != null);
+
             string basePath;
             string queryString = "";
             if (source.UriSource != null)
             {
-                // Resolve ImageBase relative to the CXML URI
                 var cxmlUri = source.UriSource;
                 var baseUri = new Uri(cxmlUri, source.ImageBase);
-                // DZC composite tiles live in {dzcName}_files/ alongside the .dzc file.
-                // Use the URI path (ignoring query/fragment) to detect .dzc extension.
-                // Store query/fragment separately to append after each tile path.
                 var path = baseUri.GetLeftPart(UriPartial.Path);
-                queryString = baseUri.ToString().Substring(path.Length); // query + fragment
+                queryString = baseUri.ToString().Substring(path.Length);
 
                 if (path.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase))
-                    basePath = path.Substring(0, path.Length - 4) + "_files";
+                {
+                    if (hasIsPath)
+                    {
+                        // IsPath: use the directory containing the DZC
+                        int lastSlash = path.LastIndexOf('/');
+                        basePath = lastSlash >= 0 ? path.Substring(0, lastSlash) : path;
+                    }
+                    else
+                    {
+                        // Composite: tiles in {dzcName}_files/
+                        basePath = path.Substring(0, path.Length - 4) + "_files";
+                    }
+                }
                 else
                 {
-                    // Fallback: strip filename to get directory (non-standard layout)
                     int lastSlash = path.LastIndexOf('/');
                     basePath = lastSlash >= 0
                         ? path.Substring(0, lastSlash)
@@ -86,7 +98,17 @@ namespace SkiaSharp.Extended.PivotViewer
             {
                 basePath = source.ImageBase;
                 if (basePath.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase))
-                    basePath = basePath.Substring(0, basePath.Length - 4) + "_files";
+                {
+                    if (hasIsPath)
+                    {
+                        int lastSlash = basePath.LastIndexOf('/');
+                        basePath = lastSlash >= 0 ? basePath.Substring(0, lastSlash) : ".";
+                    }
+                    else
+                    {
+                        basePath = basePath.Substring(0, basePath.Length - 4) + "_files";
+                    }
+                }
             }
 
             return new CollectionImageProvider(dzc, fetcher, basePath, queryString);

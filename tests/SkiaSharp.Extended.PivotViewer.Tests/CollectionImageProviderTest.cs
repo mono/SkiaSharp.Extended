@@ -228,6 +228,53 @@ public class CollectionImageProviderTest
     }
 
     [Fact]
+    public async Task FromCxmlSource_IsPathDzc_UsesDirectoryBasePath()
+    {
+        // IsPath DZCs have individual DZI files; basePath should be the DZC's directory
+        var cxml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+  <FacetCategories/>
+  <Items ImgBase=""deepzoom/collection.dzc"">
+  </Items>
+</Collection>";
+        var source = CxmlCollectionSource.Parse(cxml);
+
+        var dzc = CreateIsPathDzc(1);
+        var fetcher = new TrackingTileFetcher();
+        // For IsPath, tiles are at {dzcDir}/{sourceName}_files/{level}/0_0.jpg
+        fetcher.Add("deepzoom/img0_files/7/0_0.jpg", CreateTestTile());
+
+        using var provider = CollectionImageProvider.FromCxmlSource(source, dzc, fetcher)!;
+        Assert.NotNull(provider);
+
+        await provider.LoadThumbnailAsync(0, 128, CancellationToken.None);
+        Assert.Contains(fetcher.RequestedUrls, u => u.Contains("deepzoom/img0_files/"));
+    }
+
+    [Fact]
+    public async Task FromCxmlSource_IsPathDzc_WithUriSource_UsesDirectoryBasePath()
+    {
+        var cxml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+  <FacetCategories/>
+  <Items ImgBase=""deepzoom/collection.dzc"">
+  </Items>
+</Collection>";
+        var source = CxmlCollectionSource.Parse(cxml);
+        source.UriSource = new Uri("http://example.com/data/test.cxml");
+
+        var dzc = CreateIsPathDzc(1);
+        var fetcher = new TrackingTileFetcher();
+        fetcher.Add("http://example.com/data/deepzoom/img0_files/7/0_0.jpg", CreateTestTile());
+
+        using var provider = CollectionImageProvider.FromCxmlSource(source, dzc, fetcher)!;
+        Assert.NotNull(provider);
+
+        await provider.LoadThumbnailAsync(0, 128, CancellationToken.None);
+        Assert.Contains(fetcher.RequestedUrls, u => u.Contains("deepzoom/img0_files/"));
+    }
+
+    [Fact]
     public async Task FromCxmlSource_SignedUrl_PreservesQueryString()
     {
         // CDN/SAS signed URLs have query strings that must be preserved

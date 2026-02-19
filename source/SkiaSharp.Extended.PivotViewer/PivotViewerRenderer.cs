@@ -178,18 +178,34 @@ namespace SkiaSharp.Extended.PivotViewer
             double worldX = contentX - controller.PanOffsetX;
             double worldY = contentY - controller.PanOffsetY;
 
-            var hitItem = controller.HitTest(worldX, worldY);
-            if (hitItem != null)
-                return new RenderHitResult { Type = RenderHitType.Item, Item = hitItem };
-
-            // Graph column label hit test
-            if (controller.CurrentView == "graph" && controller.HistogramLayout != null && controller.SortProperty != null)
+            // For graph view, reverse-transform from view coords to layout coords
+            // (the renderer applies chartLeft/titleHeight offset + scaleX/scaleY)
+            if (controller.CurrentView == "graph" && controller.HistogramLayout != null)
             {
-                if (worldY >= contentHeight - 30)
+                const float yAxisWidth = 40f;
+                const float titleHeight = 24f;
+                const float xAxisHeight = 20f;
+                float chartLeft = yAxisWidth;
+                float chartWidth = contentWidth - yAxisWidth;
+                float chartHeight = contentHeight - xAxisHeight - titleHeight;
+                float scaleX = chartWidth / Math.Max(1, contentWidth);
+                float scaleY = chartHeight / Math.Max(1, contentHeight);
+
+                double layoutX = (worldX - chartLeft) / scaleX;
+                double layoutY = (worldY - titleHeight) / scaleY;
+
+                var hitItem = controller.HitTest(layoutX, layoutY);
+                if (hitItem != null)
+                    return new RenderHitResult { Type = RenderHitType.Item, Item = hitItem };
+
+                // Graph column label hit test
+                if (controller.SortProperty != null && worldY >= contentHeight - 30)
                 {
                     foreach (var col in controller.HistogramLayout.Columns)
                     {
-                        if (worldX >= col.X && worldX < col.X + col.Width && col.Label != "(No value)")
+                        float colViewX = chartLeft + (float)col.X * scaleX;
+                        float colViewW = (float)col.Width * scaleX;
+                        if (worldX >= colViewX && worldX < colViewX + colViewW && col.Label != "(No value)")
                         {
                             return new RenderHitResult
                             {
@@ -200,6 +216,12 @@ namespace SkiaSharp.Extended.PivotViewer
                         }
                     }
                 }
+            }
+            else
+            {
+                var hitItem = controller.HitTest(worldX, worldY);
+                if (hitItem != null)
+                    return new RenderHitResult { Type = RenderHitType.Item, Item = hitItem };
             }
 
             return RenderHitResult.None;

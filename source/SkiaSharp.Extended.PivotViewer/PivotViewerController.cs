@@ -350,27 +350,29 @@ namespace SkiaSharp.Extended.PivotViewer
 
             SelectedItem = item;
 
-            // Cancel any active transition so GetItemBounds reads final positions
-            _layoutTransition.CancelTransition();
+            // Save old layout for animation (grab current final positions)
+            var oldPositions = _layoutTransition.IsAnimating
+                ? _layoutTransition.GetCurrentPositions()
+                : (_currentView == "graph" && _currentHistogramLayout != null
+                    ? _currentHistogramLayout.AllPositions
+                    : _currentGridLayout?.Positions ?? Array.Empty<ItemPosition>());
 
-            // Compute item bounds at zoom=0 to get the true "fit all" width
+            // Compute target zoom level
+            double savedZoom = _zoomLevel;
             _zoomLevel = 0;
-            UpdateLayout();
-            _layoutTransition.CancelTransition(); // snap to final layout immediately
-
-            var fitAllBounds = GetItemBounds(item);
+            var tempPositions = ComputeLayoutPositions();
+            var fitAllBounds = FindItemBounds(item, tempPositions);
 
             if (fitAllBounds.Width <= 0 || fitAllBounds.Height <= 0)
+            {
+                _zoomLevel = savedZoom;
                 return;
+            }
 
-            // How much we need to scale the fit-all size to fill 80% of viewport
             double targetWidth = _availableWidth * 0.8;
             double targetHeight = _availableHeight * 0.8;
             double scaleNeeded = Math.Min(targetWidth / fitAllBounds.Width, targetHeight / fitAllBounds.Height);
 
-            // At zoom=0, item width = fitAllBounds.Width
-            // At zoom=1, item width ≈ _availableWidth (one item fills view)
-            // Solve for z: scaleNeeded * fitAll = fitAll*(1-z) + available*z
             double denominator = _availableWidth - fitAllBounds.Width;
             if (denominator > 0.001)
             {
@@ -382,14 +384,40 @@ namespace SkiaSharp.Extended.PivotViewer
                 _zoomLevel = 0;
             }
 
+            // Apply the zoomed layout and animate from old positions
             UpdateLayout();
-            _layoutTransition.CancelTransition(); // snap again for accurate centering
 
-            // Center on the item using final (non-transitioning) positions
-            var bounds = GetItemBounds(item);
+            // Center on the item
+            var newPositions = _currentView == "graph" && _currentHistogramLayout != null
+                ? _currentHistogramLayout.AllPositions
+                : _currentGridLayout?.Positions ?? Array.Empty<ItemPosition>();
+            var bounds = FindItemBounds(item, newPositions);
             _panOffsetX = _availableWidth / 2 - (bounds.X + bounds.Width / 2);
             _panOffsetY = _availableHeight / 2 - (bounds.Y + bounds.Height / 2);
+
+            // Start animated transition from old to new positions
+            if (oldPositions.Length > 0 && newPositions.Length > 0)
+                _layoutTransition.BeginTransition(oldPositions, newPositions);
+
             LayoutUpdated?.Invoke(this, EventArgs.Empty);
+        }
+
+        private ItemPosition[] ComputeLayoutPositions()
+        {
+            if (_currentView == "graph" && _currentHistogramLayout != null)
+                return _currentHistogramLayout.AllPositions;
+            return _currentGridLayout?.Positions ?? Array.Empty<ItemPosition>();
+        }
+
+        private (double X, double Y, double Width, double Height) FindItemBounds(
+            PivotViewerItem item, ItemPosition[] positions)
+        {
+            foreach (var pos in positions)
+            {
+                if (pos.Item == item)
+                    return (pos.X, pos.Y, pos.Width, pos.Height);
+            }
+            return (0, 0, 0, 0);
         }
 
         /// <summary>
@@ -834,7 +862,16 @@ namespace SkiaSharp.Extended.PivotViewer
                     return;
                 }
 
-                GridLayout? oldGrid = _currentGridLayout;
+                // Capture old positions from whichever view was active
+                ItemPosition[] oldPositions;
+                if (_layoutTransition.IsAnimating)
+                    oldPositions = _layoutTransition.GetCurrentPositions();
+                else if (_currentHistogramLayout != null)
+                    oldPositions = _currentHistogramLayout.AllPositions;
+                else if (_currentGridLayout != null)
+                    oldPositions = _currentGridLayout.Positions;
+                else
+                    oldPositions = Array.Empty<ItemPosition>();
 
                 bool computedGraph = false;
                 if (_currentView == "graph")
@@ -853,6 +890,10 @@ namespace SkiaSharp.Extended.PivotViewer
                             _inScopeItems, graphProp.Id, _availableWidth, _availableHeight);
                         _currentGridLayout = null;
                         computedGraph = true;
+
+                        // Animate from old positions to new histogram positions
+                        if (oldPositions.Length > 0)
+                            _layoutTransition.BeginTransition(oldPositions, _currentHistogramLayout.AllPositions);
                     }
                     else
                     {
@@ -870,9 +911,9 @@ namespace SkiaSharp.Extended.PivotViewer
                         : _layoutEngine.ComputeLayout(
                             _inScopeItems, _availableWidth, _availableHeight);
 
-                    // Start transition animation if we had a previous layout
-                    if (oldGrid != null && oldGrid.Positions.Length > 0)
-                        _layoutTransition.BeginTransition(oldGrid.Positions, newLayout.Positions);
+                    // Animate from old positions to new grid positions
+                    if (oldPositions.Length > 0 && newLayout.Positions.Length > 0)
+                        _layoutTransition.BeginTransition(oldPositions, newLayout.Positions);
 
                     _currentGridLayout = newLayout;
                     _currentHistogramLayout = null;

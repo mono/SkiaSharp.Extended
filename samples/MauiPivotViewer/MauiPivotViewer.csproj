@@ -30,7 +30,7 @@
     <MauiAsset Include="../../resources/collections/conceptcars/conceptcars.cxml" LogicalName="Collections/conceptcars/conceptcars.cxml" />
     <MauiAsset Include="../../resources/collections/conceptcars/deepzoom/conceptcars.dzc" LogicalName="Collections/conceptcars/deepzoom/conceptcars.dzc" />
     <MauiAsset Include="../../resources/collections/conceptcars/deepzoom/*.dzi" LogicalName="Collections/conceptcars/deepzoom/%(Filename)%(Extension)" />
-    <MauiAsset Include="../../resources/collections/conceptcars/deepzoom/*_files/**" LogicalName="Collections/conceptcars/deepzoom/%(RecursiveDir)%(Filename)%(Extension)" />
+    <MauiAsset Include="../../resources/collections/conceptcars/deepzoom/**/*" LogicalName="Collections/conceptcars/deepzoom/%(RecursiveDir)%(Filename)%(Extension)" Exclude="../../resources/collections/conceptcars/deepzoom/*.dzi;../../resources/collections/conceptcars/deepzoom/conceptcars.dzc" />
   </ItemGroup>
 
 </Project>
