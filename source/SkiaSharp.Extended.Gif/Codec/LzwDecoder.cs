@@ -31,14 +31,14 @@ namespace SkiaSharp.Extended.Gif.Codec
 		private bool disposed;
 
 		/// <summary>
-		/// Minimum code size for this image (2-8 bits).
+		/// Minimum code size for this image (0-8 bits).
 		/// </summary>
 		public int MinimumCodeSize { get; }
 
 		public LzwDecoder(Stream input, int minimumCodeSize)
 		{
-			if (minimumCodeSize < 2 || minimumCodeSize > 8)
-				throw new ArgumentOutOfRangeException(nameof(minimumCodeSize), "Minimum code size must be 2-8.");
+			if (minimumCodeSize < 0 || minimumCodeSize > 8)
+				throw new ArgumentOutOfRangeException(nameof(minimumCodeSize), "Minimum code size must be 0-8.");
 
 			this.inputStream = input ?? throw new ArgumentNullException(nameof(input));
 			this.MinimumCodeSize = minimumCodeSize;
