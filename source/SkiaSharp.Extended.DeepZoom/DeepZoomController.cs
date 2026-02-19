@@ -332,6 +332,7 @@ namespace SkiaSharp.Extended.DeepZoom
                 }
                 else
                 {
+                    bitmap?.Dispose();
                     _pendingTiles.TryRemove(tileId, out _);
                 }
             }

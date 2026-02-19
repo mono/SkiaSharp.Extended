@@ -400,15 +400,15 @@ namespace SkiaSharp.Extended.PivotViewer
 
             // Apply view
             if (!string.IsNullOrEmpty(state.ViewId))
-                _currentView = state.ViewId;
+                CurrentView = state.ViewId;
 
             // Apply sort
             if (!string.IsNullOrEmpty(state.SortPropertyId))
-                _sortProperty = _properties.FirstOrDefault(p => p.Id == state.SortPropertyId);
+                SortProperty = _properties.FirstOrDefault(p => p.Id == state.SortPropertyId);
 
             // Apply selection
             if (!string.IsNullOrEmpty(state.SelectedItemId))
-                _selectedItem = _allItems.FirstOrDefault(i => i.Id == state.SelectedItemId);
+                SelectedItem = _allItems.FirstOrDefault(i => i.Id == state.SelectedItemId);
 
             UpdateInScopeItems();
         }

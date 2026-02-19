@@ -27,10 +27,9 @@ namespace SkiaSharp.Extended.PivotViewer
 
             if (Math.Abs(max - min) < double.Epsilon)
             {
-                return new List<HistogramBucket<double>>
-                {
-                    new HistogramBucket<double>(min, max, sorted.Count)
-                };
+                var bucket = new HistogramBucket<double>(min, max, sorted.Count);
+                bucket.Label = min.ToString("N0");
+                return new List<HistogramBucket<double>> { bucket };
             }
 
             int bucketCount = Math.Min(MaxBuckets, sorted.Count);
@@ -62,7 +61,9 @@ namespace SkiaSharp.Extended.PivotViewer
             {
                 double lo = niceMin + i * step;
                 double hi = niceMin + (i + 1) * step;
-                buckets.Add(new HistogramBucket<double>(lo, hi, counts[i]));
+                var bucket = new HistogramBucket<double>(lo, hi, counts[i]);
+                bucket.Label = FormatBucketLabel(lo, hi, step);
+                buckets.Add(bucket);
             }
 
             return buckets;
@@ -84,10 +85,9 @@ namespace SkiaSharp.Extended.PivotViewer
 
             if (range.TotalDays < 1)
             {
-                return new List<HistogramBucket<DateTime>>
-                {
-                    new HistogramBucket<DateTime>(min, max, sorted.Count)
-                };
+                var bucket = new HistogramBucket<DateTime>(min, max, sorted.Count);
+                bucket.Label = min.ToString("d");
+                return new List<HistogramBucket<DateTime>> { bucket };
             }
 
             // Choose granularity
@@ -117,6 +117,7 @@ namespace SkiaSharp.Extended.PivotViewer
                     idx++;
                 }
                 buckets.Add(new HistogramBucket<DateTime>(current, next, count));
+                buckets[buckets.Count - 1].Label = FormatDateBucketLabel(current, next, granularity);
                 current = next;
             }
 
@@ -128,10 +129,12 @@ namespace SkiaSharp.Extended.PivotViewer
                 for (int i = 0; i < buckets.Count; i += groupSize)
                 {
                     var group = buckets.Skip(i).Take(groupSize).ToList();
-                    consolidated.Add(new HistogramBucket<DateTime>(
+                    var b = new HistogramBucket<DateTime>(
                         group[0].Min,
                         group[group.Count - 1].Max,
-                        group.Sum(b => b.Count)));
+                        group.Sum(b2 => b2.Count));
+                    b.Label = $"{group[0].Min:d} – {group[group.Count - 1].Max:d}";
+                    consolidated.Add(b);
                 }
                 return consolidated;
             }
@@ -206,6 +209,34 @@ namespace SkiaSharp.Extended.PivotViewer
         }
 
         private enum DateTimeGranularity { Day, Month, Year, Decade }
+
+        private static string FormatBucketLabel(double lo, double hi, double step)
+        {
+            // Use integer format if step is >= 1 and values are whole numbers
+            if (step >= 1.0 && lo == Math.Floor(lo) && hi == Math.Floor(hi))
+                return $"{lo:N0} – {hi:N0}";
+            // Otherwise use decimal with appropriate precision
+            int decimals = Math.Max(0, -(int)Math.Floor(Math.Log10(step)) + 1);
+            string fmt = $"N{decimals}";
+            return $"{lo.ToString(fmt)} – {hi.ToString(fmt)}";
+        }
+
+        private static string FormatDateBucketLabel(DateTime lo, DateTime hi, DateTimeGranularity granularity)
+        {
+            switch (granularity)
+            {
+                case DateTimeGranularity.Decade:
+                    return $"{lo.Year}s";
+                case DateTimeGranularity.Year:
+                    return lo.Year.ToString();
+                case DateTimeGranularity.Month:
+                    return lo.ToString("MMM yyyy");
+                case DateTimeGranularity.Day:
+                    return lo.ToString("d");
+                default:
+                    return $"{lo:d} – {hi:d}";
+            }
+        }
     }
 
     /// <summary>
