@@ -84,4 +84,17 @@ public class EnumsTest
         PivotViewerPropertyOptions opts = default;
         Assert.Equal(PivotViewerPropertyOptions.None, opts);
     }
+
+    [Fact]
+    public void RenderHitType_AllValuesPresent()
+    {
+        var values = Enum.GetValues<RenderHitType>();
+        Assert.Equal(15, values.Length);
+    }
+
+    [Fact]
+    public void RenderHitType_NoneIsDefault()
+    {
+        Assert.Equal(RenderHitType.None, default(RenderHitType));
+    }
 }

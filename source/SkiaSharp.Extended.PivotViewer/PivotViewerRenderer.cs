@@ -97,6 +97,9 @@ namespace SkiaSharp.Extended.PivotViewer
                 canvas.ClipRect(new SKRect(0, ControlBarHeight, filterWidth, info.Height));
                 RenderFilterPane(canvas, filterWidth, contentHeight, ControlBarHeight, theme, controller, viewState);
                 canvas.Restore();
+
+                // Scroll indicator (thin scrollbar track + thumb)
+                RenderFilterScrollIndicator(canvas, filterWidth, contentHeight, ControlBarHeight, viewState);
             }
 
             // Main content area
@@ -938,6 +941,35 @@ namespace SkiaSharp.Extended.PivotViewer
             // Track total content height for scroll clamping
             viewState.FilterContentHeight = y - topOffset;
             canvas.Restore();
+        }
+
+        /// <summary>Renders a thin scrollbar indicator on the right edge of the filter pane.</summary>
+        private static void RenderFilterScrollIndicator(
+            SKCanvas canvas, float paneWidth, float viewportHeight, float topOffset,
+            PivotViewerViewState viewState)
+        {
+            double contentH = viewState.FilterContentHeight;
+            if (contentH <= viewportHeight) return; // No scroll needed
+
+            const float trackWidth = 4f;
+            const float trackMargin = 2f;
+            float trackX = paneWidth - trackWidth - trackMargin;
+            float trackTop = topOffset + 2;
+            float trackHeight = viewportHeight - 4;
+
+            // Track
+            using var trackPaint = new SKPaint { Color = new SKColor(200, 200, 200, 80) };
+            canvas.DrawRoundRect(trackX, trackTop, trackWidth, trackHeight, 2, 2, trackPaint);
+
+            // Thumb
+            double ratio = viewportHeight / contentH;
+            float thumbHeight = Math.Max(20f, (float)(trackHeight * ratio));
+            double maxScroll = contentH - viewportHeight;
+            double scrollFraction = maxScroll > 0 ? viewState.FilterScrollOffset / maxScroll : 0;
+            float thumbY = trackTop + (float)(scrollFraction * (trackHeight - thumbHeight));
+
+            using var thumbPaint = new SKPaint { Color = new SKColor(128, 128, 128, 160) };
+            canvas.DrawRoundRect(trackX, thumbY, trackWidth, thumbHeight, 2, 2, thumbPaint);
         }
 
         // =====================================================================
