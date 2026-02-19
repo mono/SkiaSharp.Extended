@@ -44,6 +44,36 @@ namespace SkiaSharp.Extended.PivotViewer
         public int CachedThumbnailCount => _thumbnailCache.Count;
 
         /// <summary>
+        /// Creates a CollectionImageProvider from a CXML collection source, auto-resolving
+        /// ImageBase relative to the CXML URI. This is the recommended way to create an
+        /// image provider for CXML-based collections.
+        /// </summary>
+        public static CollectionImageProvider? FromCxmlSource(
+            CxmlCollectionSource source, DzcTileSource dzc, ITileFetcher fetcher)
+        {
+            if (source.ImageBase == null) return null;
+
+            string basePath;
+            if (source.UriSource != null)
+            {
+                // Resolve ImageBase relative to the CXML URI
+                var cxmlUri = source.UriSource;
+                var baseUri = new Uri(cxmlUri, source.ImageBase);
+                basePath = baseUri.ToString();
+                // Remove the DZC filename to get the directory
+                int lastSlash = basePath.LastIndexOf('/');
+                if (lastSlash >= 0)
+                    basePath = basePath.Substring(0, lastSlash);
+            }
+            else
+            {
+                basePath = source.ImageBase;
+            }
+
+            return new CollectionImageProvider(dzc, fetcher, basePath);
+        }
+
+        /// <summary>
         /// Gets a thumbnail for the given DZC sub-image index.
         /// Returns null if the thumbnail hasn't been loaded yet (call LoadThumbnailAsync to load).
         /// </summary>

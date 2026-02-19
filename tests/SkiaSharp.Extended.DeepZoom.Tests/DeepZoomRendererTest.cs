@@ -77,6 +77,26 @@ public class DeepZoomRendererTest
     }
 
     [Fact]
+    public void ShowTileBorders_DefaultIsFalse()
+    {
+        using var renderer = new DeepZoomRenderer();
+        Assert.False(renderer.ShowTileBorders);
+    }
+
+    [Fact]
+    public void EnableLodBlending_CanBeToggled()
+    {
+        using var renderer = new DeepZoomRenderer();
+        Assert.True(renderer.EnableLodBlending);
+
+        renderer.EnableLodBlending = false;
+        Assert.False(renderer.EnableLodBlending);
+
+        renderer.EnableLodBlending = true;
+        Assert.True(renderer.EnableLodBlending);
+    }
+
+    [Fact]
     public void ShowTileBorders_DrawsBorders()
     {
         using var renderer = new DeepZoomRenderer();

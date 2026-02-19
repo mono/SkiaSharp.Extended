@@ -139,6 +139,49 @@ public class CollectionImageProviderTest
 
     #endregion
 
+    #region FromCxmlSource
+
+    [Fact]
+    public void FromCxmlSource_WithImageBase_ResolvesBasePath()
+    {
+        var cxml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+  <FacetCategories/>
+  <Items ImgBase=""images/collection.dzc"">
+  </Items>
+</Collection>";
+        var source = CxmlCollectionSource.Parse(cxml);
+        source.UriSource = new Uri("http://example.com/data/test.cxml");
+
+        var dzc = CreateCompositeDzc();
+        var fetcher = new TrackingTileFetcher();
+
+        using var provider = CollectionImageProvider.FromCxmlSource(source, dzc, fetcher);
+
+        Assert.NotNull(provider);
+    }
+
+    [Fact]
+    public void FromCxmlSource_NullImageBase_ReturnsNull()
+    {
+        var cxml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+  <FacetCategories/>
+  <Items>
+  </Items>
+</Collection>";
+        var source = CxmlCollectionSource.Parse(cxml);
+
+        var dzc = CreateCompositeDzc();
+        var fetcher = new TrackingTileFetcher();
+
+        var provider = CollectionImageProvider.FromCxmlSource(source, dzc, fetcher);
+
+        Assert.Null(provider);
+    }
+
+    #endregion
+
     #region GetThumbnail
 
     [Fact]
