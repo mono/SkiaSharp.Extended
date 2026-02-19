@@ -202,11 +202,18 @@ namespace SkiaSharp.Extended.DeepZoom
 
         public void Dispose()
         {
-            if (!_disposed)
+            lock (_lock)
             {
-                _disposed = true;
-                Clear();
+                if (!_disposed)
+                {
+                    _disposed = true;
+                }
+                else
+                {
+                    return;
+                }
             }
+            Clear();
         }
 
         private class TileCacheEntry

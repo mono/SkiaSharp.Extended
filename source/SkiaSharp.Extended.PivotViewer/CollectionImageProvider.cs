@@ -398,8 +398,8 @@ namespace SkiaSharp.Extended.PivotViewer
                     if (kv.Value != null)
                         _pendingThumbnailDispose.Add(kv.Value);
                 }
+                _thumbnailCache.Clear();
             }
-            _thumbnailCache.Clear();
             _cache.Clear();
         }
 

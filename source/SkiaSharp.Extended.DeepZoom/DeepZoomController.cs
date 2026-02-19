@@ -323,7 +323,14 @@ namespace SkiaSharp.Extended.DeepZoom
                     continue;
 
                 _pendingTiles.TryAdd(tileId, 0);
-                _ = LoadTileAsync(tileId, ct);
+                try
+                {
+                    _ = LoadTileAsync(tileId, ct);
+                }
+                catch
+                {
+                    _pendingTiles.TryRemove(tileId, out _);
+                }
             }
         }
 
