@@ -193,8 +193,10 @@ namespace SkiaSharp.Extended.PivotViewer
                     // But we released it above.
                     
                     // Safer strategy: Don't dispose it. Just remove it.
-                    _loadLocks.TryRemove(itemIndex, out var removed);
-                    removed?.Dispose();
+                    // SemaphoreSlim without AvailableWaitHandle access has trivial Dispose.
+                    // Don't dispose here — other callers may still be awaiting this semaphore.
+                    // GC will collect it once all references are released.
+                    _loadLocks.TryRemove(itemIndex, out _);
                 }
             }
         }
