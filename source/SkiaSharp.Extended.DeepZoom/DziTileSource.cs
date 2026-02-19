@@ -60,14 +60,14 @@ namespace SkiaSharp.Extended.DeepZoom
         public int GetLevelWidth(int level)
         {
             if (level < 0 || level > MaxLevel) throw new ArgumentOutOfRangeException(nameof(level));
-            return (int)Math.Ceiling((double)ImageWidth / (1 << (MaxLevel - level)));
+            return (int)Math.Ceiling((double)ImageWidth / (1L << (MaxLevel - level)));
         }
 
         /// <summary>Computes the image height at a given pyramid level.</summary>
         public int GetLevelHeight(int level)
         {
             if (level < 0 || level > MaxLevel) throw new ArgumentOutOfRangeException(nameof(level));
-            return (int)Math.Ceiling((double)ImageHeight / (1 << (MaxLevel - level)));
+            return (int)Math.Ceiling((double)ImageHeight / (1L << (MaxLevel - level)));
         }
 
         /// <summary>Number of tile columns at a given level.</summary>
