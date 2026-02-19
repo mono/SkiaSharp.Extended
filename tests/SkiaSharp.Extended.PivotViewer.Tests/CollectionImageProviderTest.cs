@@ -601,6 +601,27 @@ public class CollectionImageProviderTest
         Assert.Null(provider.GetThumbnail(-1));
     }
 
+    [Fact]
+    public async Task GetThumbnail_NullResult_NotCached_RetriesOnNextCall()
+    {
+        // Regression: null results from failed loads must NOT be cached.
+        // A second call should re-attempt the fetch, not return a cached null.
+        var dzc = CreateCompositeDzc(4);
+        var fetcher = new TrackingTileFetcher(); // No tiles registered → returns null
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        var result1 = await provider.LoadThumbnailAsync(0, 64);
+        Assert.Null(result1);
+        int fetchCount1 = fetcher.RequestedUrls.Count;
+        Assert.True(fetchCount1 > 0, "Should have attempted a fetch");
+
+        var result2 = await provider.LoadThumbnailAsync(0, 64);
+        Assert.Null(result2);
+        Assert.True(fetcher.RequestedUrls.Count > fetchCount1,
+            "Should attempt fetch again for null result (not return cached null)");
+        Assert.Equal(0, provider.CachedThumbnailCount);
+    }
+
     #endregion
 
     #region Non-square aspect ratio

@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Threading;
 using SkiaSharp.Extended.PivotViewer;
 using Xunit;
 
@@ -410,6 +412,44 @@ public class GridLayoutEngineTest
             Assert.True(pos.Y >= 0, $"Negative Y: {pos.Y}");
             Assert.True(pos.Width > 0);
             Assert.True(pos.Height > 0);
+        }
+    }
+
+    [Fact]
+    public void ComputeHistogramLayout_NumericValues_UseInvariantCultureLabels()
+    {
+        // Regression: numeric group keys must use InvariantCulture ("1.5")
+        // not the current thread culture (e.g., "1,5" in de-DE).
+        var engine = new GridLayoutEngine();
+        var numProp = new PivotViewerNumericProperty("Price") { DisplayName = "Price" };
+
+        var items = new List<PivotViewerItem>();
+
+        var i1 = new PivotViewerItem("1");
+        i1.Set(numProp, new object[] { 1.5 });
+        items.Add(i1);
+
+        var i2 = new PivotViewerItem("2");
+        i2.Set(numProp, new object[] { 2.5 });
+        items.Add(i2);
+
+        var savedCulture = Thread.CurrentThread.CurrentCulture;
+        try
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
+
+            var layout = engine.ComputeHistogramLayout(items, "Price", 800, 600);
+
+            Assert.Equal(2, layout.Columns.Length);
+            Assert.Contains(layout.Columns, c => c.Label == "1.5");
+            Assert.Contains(layout.Columns, c => c.Label == "2.5");
+            // Must NOT use locale-specific decimal separator
+            Assert.DoesNotContain(layout.Columns, c => c.Label == "1,5");
+            Assert.DoesNotContain(layout.Columns, c => c.Label == "2,5");
+        }
+        finally
+        {
+            Thread.CurrentThread.CurrentCulture = savedCulture;
         }
     }
 }

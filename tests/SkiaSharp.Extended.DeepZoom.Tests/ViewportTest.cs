@@ -470,4 +470,32 @@ public class ViewportTest
         Assert.True(double.IsFinite(vp.Zoom));
         Assert.True(vp.Zoom > 0);
     }
+
+    [Fact]
+    public void Constrain_ZoomedOut_UsesPostClampHeightForOriginY()
+    {
+        // Regression: Constrain must compute vpHeight AFTER clamping ViewportWidth,
+        // not before, otherwise OriginY is clamped using a stale (too-large) height.
+        var vp = new Viewport
+        {
+            ControlWidth = 1000,
+            ControlHeight = 200,
+            AspectRatio = 2.0,       // landscape: imageLogicalHeight = 0.5
+            ViewportWidth = 2.0,     // zoomed out beyond image
+            ViewportOriginX = 0.0,
+            ViewportOriginY = 0.35
+        };
+
+        vp.Constrain();
+
+        // ViewportWidth must be clamped to 1.0
+        Assert.Equal(1.0, vp.ViewportWidth, 6);
+
+        // Post-clamp vpHeight = 1.0 * 200/1000 = 0.2
+        // Correct: originY = 0.5 - 0.2 = 0.3
+        // Stale bug: vpHeight = 2.0 * 200/1000 = 0.4, originY = 0.5 - 0.4 = 0.1
+        double imageLogicalHeight = 1.0 / 2.0; // 0.5
+        Assert.Equal(0.3, vp.ViewportOriginY, 6);
+        Assert.True(vp.ViewportOriginY + vp.ViewportHeight <= imageLogicalHeight + 1e-9);
+    }
 }
