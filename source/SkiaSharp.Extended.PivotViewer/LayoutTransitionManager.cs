@@ -39,8 +39,12 @@ namespace SkiaSharp.Extended.PivotViewer
             foreach (var pos in oldPositions)
                 oldMap[pos.Item.Id] = pos;
 
+            // Build set of items in new layout
+            var newIds = new HashSet<string>();
+
             foreach (var newPos in newPositions)
             {
+                newIds.Add(newPos.Item.Id);
                 ItemPosition oldPos;
                 if (oldMap.TryGetValue(newPos.Item.Id, out var existing))
                 {
@@ -54,6 +58,18 @@ namespace SkiaSharp.Extended.PivotViewer
                 }
 
                 _transitions[newPos.Item.Id] = new ItemTransition(oldPos, newPos);
+            }
+
+            // Items leaving scope: shrink to center of old position
+            foreach (var oldPos in oldPositions)
+            {
+                if (!newIds.Contains(oldPos.Item.Id))
+                {
+                    var shrinkTarget = new ItemPosition(oldPos.Item,
+                        oldPos.X + oldPos.Width / 2,
+                        oldPos.Y + oldPos.Height / 2, 0, 0);
+                    _transitions[oldPos.Item.Id] = new ItemTransition(oldPos, shrinkTarget);
+                }
             }
         }
 

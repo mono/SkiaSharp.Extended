@@ -384,7 +384,18 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             var point = e.GetPosition(this);
             if (point.HasValue)
             {
-                _controller.ZoomAboutScreenPoint(2.0, point.Value.X * _dpiScale, point.Value.Y * _dpiScale);
+                double screenX = point.Value.X * _dpiScale;
+                double screenY = point.Value.Y * _dpiScale;
+
+                // Toggle: if zoomed in, zoom out to fit; otherwise zoom in by 2x
+                if (_controller.Viewport.ViewportWidth < 0.95)
+                {
+                    _controller.ZoomAboutScreenPoint(0.5, screenX, screenY);
+                }
+                else
+                {
+                    _controller.ZoomAboutScreenPoint(2.0, screenX, screenY);
+                }
                 _canvasView.InvalidateSurface();
             }
         }

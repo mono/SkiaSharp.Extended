@@ -779,6 +779,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
                 case RenderHitType.ClearAllFilters:
                     _controller.FilterPaneModel?.ClearAllFilters();
+                    _controller.SearchText = "";
                     _canvasView.InvalidateSurface();
                     return;
 

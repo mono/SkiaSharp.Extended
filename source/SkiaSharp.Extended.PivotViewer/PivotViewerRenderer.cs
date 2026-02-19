@@ -70,6 +70,8 @@ namespace SkiaSharp.Extended.PivotViewer
             PivotViewerTheme theme,
             PivotViewerViewState viewState)
         {
+            if (_disposed) return;
+
             canvas.Clear(SKColors.White);
 
             // Flush deferred tile disposals on the render thread
@@ -139,6 +141,8 @@ namespace SkiaSharp.Extended.PivotViewer
             PivotViewerController controller,
             PivotViewerViewState viewState)
         {
+            if (_disposed) return new RenderHitResult { Type = RenderHitType.None };
+
             float filterWidth = viewState.IsFilterPaneVisible ? FilterPaneWidth : 0;
             float detailWidth = controller.DetailPane.IsShowing ? DetailPaneWidth : 0;
             float contentWidth = Math.Max(0, info.Width - filterWidth - detailWidth);

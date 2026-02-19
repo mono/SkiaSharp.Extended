@@ -1177,13 +1177,17 @@ public class PivotViewerControllerTest
     }
 
     [Fact]
-    public void Pan_LargeValues_Accepted()
+    public void Pan_LargeValues_Clamped()
     {
         var (controller, _) = CreateTestController();
 
         controller.Pan(100000, 100000);
-        Assert.Equal(100000.0, controller.PanOffsetX);
-        Assert.Equal(100000.0, controller.PanOffsetY);
+        // Pan is now clamped to prevent items from scrolling completely off screen
+        Assert.True(controller.PanOffsetX < 100000.0);
+        Assert.True(controller.PanOffsetY < 100000.0);
+        // But some positive offset should be allowed
+        Assert.True(controller.PanOffsetX > 0);
+        Assert.True(controller.PanOffsetY > 0);
     }
 
     // --- CurrentView switching ---
@@ -1238,15 +1242,14 @@ public class PivotViewerControllerTest
     }
 
     [Fact]
-    public void CurrentView_GraphWithoutSortProperty_NoHistogramLayout()
+    public void CurrentView_GraphWithoutSortProperty_AutoSelectsFilterableProperty()
     {
         var (controller, _) = CreateTestController();
         controller.SortProperty = null;
         controller.CurrentView = "graph";
 
-        // Without a sort property, graph view falls back to grid layout
-        Assert.NotNull(controller.GridLayout);
-        Assert.Null(controller.HistogramLayout);
+        // Auto-selects first filterable property for histogram layout
+        Assert.NotNull(controller.HistogramLayout);
     }
 
     // --- SortProperty ---

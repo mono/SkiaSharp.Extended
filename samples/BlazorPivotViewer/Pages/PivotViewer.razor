@@ -3,6 +3,7 @@
 @using SkiaSharp.Extended.DeepZoom
 @using SkiaSharp.Extended.PivotViewer
 @using SkiaSharp.Views.Blazor
+@implements IDisposable
 @inject HttpClient Http
 
 <h3>PivotViewer Demo</h3>
@@ -96,6 +97,7 @@
     private PivotViewerRenderer _renderer = new();
     private PivotViewerTheme _theme = PivotViewerTheme.Default;
     private PivotViewerViewState _viewState = new();
+    private SKImageInfo _lastInfo = new(1024, 600);
     private CxmlCollectionSource? _source;
     private IReadOnlyList<PivotViewerProperty>? _properties;
     private IReadOnlyList<PivotViewerProperty>? _filterableProperties;
@@ -141,6 +143,7 @@
     {
         var canvas = e.Surface.Canvas;
         var info = e.Info;
+        _lastInfo = info;
 
         _controller.SetAvailableSize(info.Width, info.Height);
         _renderer.Render(canvas, info, _controller, _theme, _viewState);
@@ -148,8 +151,7 @@
 
     private void OnCanvasClick(MouseEventArgs e)
     {
-        var info = new SKImageInfo(1024, 600); // approximate canvas size
-        var hit = _renderer.HitTest(e.OffsetX, e.OffsetY, info, _controller, _viewState);
+        var hit = _renderer.HitTest(e.OffsetX, e.OffsetY, _lastInfo, _controller, _viewState);
         if (hit.Type == RenderHitType.Item && hit.Item != null)
         {
             _selectedItem = hit.Item;
@@ -169,8 +171,7 @@
 
     private void OnCanvasDoubleClick(MouseEventArgs e)
     {
-        var info = new SKImageInfo(1024, 600);
-        var hit = _renderer.HitTest(e.OffsetX, e.OffsetY, info, _controller, _viewState);
+        var hit = _renderer.HitTest(e.OffsetX, e.OffsetY, _lastInfo, _controller, _viewState);
         if (hit.Type == RenderHitType.Item && hit.Item != null)
         {
             _selectedItem = hit.Item;
@@ -276,6 +277,12 @@
             _controller.ZoomLevel = val / 100.0;
             _canvasView?.Invalidate();
         }
+    }
+
+    public void Dispose()
+    {
+        _renderer.Dispose();
+        _controller.Dispose();
     }
 }
 

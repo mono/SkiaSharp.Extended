@@ -382,6 +382,7 @@ namespace SkiaSharp.Extended.PivotViewer
                 double d;
                 if (v is double dd) d = dd;
                 else if (v is int ii) d = ii;
+                else if (v is long ll) d = ll;
                 else if (v is float ff) d = ff;
                 else if (v is decimal dec) d = (double)dec;
                 else continue;

@@ -266,7 +266,39 @@ namespace SkiaSharp.Extended.PivotViewer
         {
             _panOffsetX += deltaX;
             _panOffsetY += deltaY;
+            ClampPanBounds();
             LayoutUpdated?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>Clamps pan offsets to prevent items from scrolling completely off screen.</summary>
+        private void ClampPanBounds()
+        {
+            var layout = _currentGridLayout;
+            if (layout == null || layout.Positions.Length == 0) return;
+
+            // Find bounding box of all items
+            double minX = double.MaxValue, minY = double.MaxValue;
+            double maxX = double.MinValue, maxY = double.MinValue;
+            foreach (var pos in layout.Positions)
+            {
+                if (pos.X < minX) minX = pos.X;
+                if (pos.Y < minY) minY = pos.Y;
+                if (pos.X + pos.Width > maxX) maxX = pos.X + pos.Width;
+                if (pos.Y + pos.Height > maxY) maxY = pos.Y + pos.Height;
+            }
+
+            double contentWidth = maxX - minX;
+            double contentHeight = maxY - minY;
+
+            // Allow panning until at least 25% of content is visible
+            double margin = 0.25;
+            double maxPanRight = _availableWidth - minX - contentWidth * margin;
+            double minPanRight = -(maxX - _availableWidth * margin);
+            double maxPanDown = _availableHeight - minY - contentHeight * margin;
+            double minPanDown = -(maxY - _availableHeight * margin);
+
+            _panOffsetX = Math.Max(minPanRight, Math.Min(maxPanRight, _panOffsetX));
+            _panOffsetY = Math.Max(minPanDown, Math.Min(maxPanDown, _panOffsetY));
         }
 
         /// <summary>Zooms about a screen point, keeping the point under the cursor stable.
@@ -791,13 +823,27 @@ namespace SkiaSharp.Extended.PivotViewer
 
                 GridLayout? oldGrid = _currentGridLayout;
 
-                if (_currentView == "graph" && _sortProperty != null)
+                bool computedGraph = false;
+                if (_currentView == "graph")
                 {
-                    _currentHistogramLayout = _layoutEngine.ComputeHistogramLayout(
-                        _inScopeItems, _sortProperty.Id, _availableWidth, _availableHeight);
-                    _currentGridLayout = null;
+                    // Auto-select first filterable property if none set
+                    var graphProp = _sortProperty;
+                    if (graphProp == null && _properties.Count > 0)
+                    {
+                        graphProp = _properties.FirstOrDefault(p =>
+                            p.Options.HasFlag(PivotViewerPropertyOptions.CanFilter));
+                    }
+
+                    if (graphProp != null)
+                    {
+                        _currentHistogramLayout = _layoutEngine.ComputeHistogramLayout(
+                            _inScopeItems, graphProp.Id, _availableWidth, _availableHeight);
+                        _currentGridLayout = null;
+                        computedGraph = true;
+                    }
                 }
-                else
+
+                if (!computedGraph)
                 {
                     var newLayout = _zoomLevel > 0.01
                         ? _layoutEngine.ComputeZoomedLayout(
