@@ -34,8 +34,11 @@ controller.ZoomAboutScreenPoint(2.0, 400, 300);
 ### MAUI View
 
 ```xml
-<deepzoom:SKDeepZoomView x:Name="dzView" UseSprings="True" />
+<!-- Load from URI (automatic HTTP tile fetching) -->
+<deepzoom:SKDeepZoomView Source="https://example.com/photo.dzi" UseSprings="True" />
 ```
+
+Or load programmatically:
 
 ```csharp
 var tileSource = DziTileSource.Parse(dziXml, baseUrl);

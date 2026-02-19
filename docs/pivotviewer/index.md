@@ -71,9 +71,27 @@ pvView.SelectionChanged += (s, e) => ShowDetails(e.NewItem);
 | `SelectedItem` | `PivotViewerItem?` | TwoWay | Currently selected |
 | `SelectedIndex` | `int` | TwoWay | Index of selected |
 | `SortPivotProperty` | `PivotViewerProperty?` | TwoWay | Active sort facet |
+| `SortDescending` | `bool` | TwoWay | Reverse sort order |
 | `View` | `string` | TwoWay | "grid" or "graph" |
 | `AccentColor` | `Color` | OneWay | UI accent color |
 | `ItemCulture` | `CultureInfo` | OneWay | Date/number locale |
+| `IsFilterPaneVisible` | `bool` | TwoWay | Show/hide filter pane |
+| `CollectionUri` | `string` | OneWay | Auto-loads CXML + DZC from URI |
+| `ControlBackground` | `Color` | OneWay | Filter pane / control bar background |
+| `SecondaryBackground` | `Color` | OneWay | Detail pane background |
+| `SecondaryForeground` | `Color` | OneWay | Secondary text color |
+
+#### Loading from URI
+
+The simplest way to show a PivotViewer collection is with `CollectionUri`:
+
+```xml
+<pivotviewer:SKPivotViewerView
+    CollectionUri="https://example.com/collection.cxml"
+    AccentColor="CornflowerBlue" />
+```
+
+This automatically downloads the CXML, parses it, loads the DZC thumbnails, and displays the collection. No code-behind needed.
 
 ## CXML File Format
 
@@ -258,9 +276,40 @@ enum CxmlCollectionState { Initialized, Loading, Loaded, Failed }
 1. **No LoadCollection()** — that was SL4 only. Use `CxmlCollectionSource` bridge or direct binding.
 2. **`PivotViewerHyperlink.Text`** not `DisplayName` (matching SL5 DLL).
 3. **`CommandsRequested`** is on the adorner, not the main control.
-4. **Added**: `GetValues<T>()`, `TryGetSingleValue<T>()` typed accessors on items.
+4. **Added**: `GetValues<T>()`, `TryGetSingleValue<T>()`, `GetPropertyValue()` typed accessors on items.
 5. **Added**: Async-first loading with `CancellationToken`.
 6. **Added**: `IDisposable` throughout for proper cleanup.
+7. **Added**: `PivotViewerCollectionBuilder` for programmatic collection creation.
+
+### Filter Property (State Persistence)
+
+The `Filter` property on `PivotViewerController` provides a serialized state string — exactly matching Silverlight's `PivotViewer.Filter` property:
+
+```csharp
+// Save current viewer state
+string state = controller.Filter;
+// e.g. "Manufacturer=BMW&$view=graph&$sort=Year"
+
+// Restore state (or use SerializeViewerState/SetViewerState for explicit methods)
+controller.Filter = state;
+
+// Clear all filters
+controller.Filter = "";
+```
+
+### Item Templates
+
+Zoom-based template selection matches Silverlight's `PivotViewerItemTemplateCollection`:
+
+```csharp
+controller.ItemTemplates.Add(new PivotViewerItemTemplate { MaxWidth = 100, RenderAction = RenderSmall });
+controller.ItemTemplates.Add(new PivotViewerItemTemplate { MaxWidth = 300, RenderAction = RenderMedium });
+controller.ItemTemplates.Add(new PivotViewerItemTemplate { MaxWidth = 600, RenderAction = RenderLarge });
+
+// Select the best template for a given rendered size
+var template = controller.ItemTemplates.SelectTemplate(itemWidth);
+template?.RenderAction?.Invoke(canvas, item, rect);
+```
 
 ## Zoom and Pan
 
