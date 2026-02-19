@@ -727,4 +727,16 @@ public class CxmlCollectionSourceTest
         var source = TestDataHelper.LoadCxml("conceptcars.cxml");
         Assert.NotNull(source.SchemaVersion);
     }
+
+    [Fact]
+    public void MergeSupplementalData_NullArg_ThrowsArgumentNullException()
+    {
+        var mainXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009' Name='Main'>
+    <FacetCategories />
+    <Items />
+</Collection>";
+        var main = CxmlCollectionSource.Parse(mainXml);
+        Assert.Throws<ArgumentNullException>(() => main.MergeSupplementalData(null!));
+    }
 }

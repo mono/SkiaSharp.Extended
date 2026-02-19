@@ -800,4 +800,28 @@ public class PivotViewerControllerTest
         controller.NotifyItemDoubleClicked(null!);
         Assert.False(raised);
     }
+
+    [Fact]
+    public void SetViewerState_EmptyString_DoesNotThrow()
+    {
+        var (controller, _) = CreateTestController();
+        var ex = Record.Exception(() => controller.SetViewerState(""));
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void SetViewerState_GarbageString_DoesNotThrow()
+    {
+        var (controller, _) = CreateTestController();
+        var ex = Record.Exception(() => controller.SetViewerState("garbage"));
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void SetViewerState_Null_DoesNotThrow()
+    {
+        var (controller, _) = CreateTestController();
+        var ex = Record.Exception(() => controller.SetViewerState(null!));
+        Assert.Null(ex);
+    }
 }

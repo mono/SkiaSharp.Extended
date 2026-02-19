@@ -176,4 +176,12 @@ public class DzcTileSourceTest
         var subImage = new DzcSubImage(0, 0, 100, 0, null);
         Assert.Equal(1.0, subImage.AspectRatio);
     }
+
+    [Fact]
+    public void Parse_NoCollectionElement_ThrowsFormatException()
+    {
+        // XML with a root element that is not <Collection> in either DZ namespace
+        var xml = @"<?xml version=""1.0"" encoding=""UTF-8""?><Images><I Id=""0"" /></Images>";
+        Assert.Throws<FormatException>(() => DzcTileSource.Parse(xml));
+    }
 }

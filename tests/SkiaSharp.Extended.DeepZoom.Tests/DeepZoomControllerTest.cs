@@ -475,4 +475,18 @@ public class DeepZoomControllerTest
         // New fetches should occur since cache was cleared
         Assert.True(fetcher.FetchCount > fetchesBefore, "Cache clear should trigger new tile fetches");
     }
+
+    [Fact]
+    public void Load_DzcFromFile_PopulatesSubImagesWithCorrectCount()
+    {
+        using var stream = TestDataHelper.GetStream("conceptcars.dzc");
+        var dzc = DzcTileSource.Parse(stream);
+        using var controller = new DeepZoomController();
+        using var fetcher = new MemoryTileFetcher();
+
+        controller.Load(dzc, fetcher);
+
+        Assert.Equal(dzc.ItemCount, controller.SubImages.Count);
+        Assert.True(controller.SubImages.Count > 0, "SubImages should be populated from DZC file");
+    }
 }

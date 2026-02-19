@@ -524,4 +524,31 @@ public class FilterEngineTest
         Assert.Equal(20.0, bucket.Max);
         Assert.Equal(5, bucket.Count);
     }
+
+    [Fact]
+    public void AddNumericRangeFilter_MinGreaterThanMax_MatchesNothing()
+    {
+        var (engine, _, _) = CreateTestData();
+        engine.AddNumericRangeFilter("Year", 2020, 2000); // min > max
+        var result = engine.GetFilteredItems();
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void AddDateTimeRangeFilter_MinGreaterThanMax_MatchesNothing()
+    {
+        var dateP = new PivotViewerDateTimeProperty("Date") { DisplayName = "Date" };
+        var items = new List<PivotViewerItem>();
+
+        var i1 = new PivotViewerItem("1");
+        i1.Set(dateP, new object[] { new DateTime(2021, 6, 15) });
+        items.Add(i1);
+
+        var engine = new FilterEngine();
+        engine.SetSource(items, new[] { dateP });
+        engine.AddDateTimeRangeFilter("Date", new DateTime(2023, 1, 1), new DateTime(2020, 1, 1)); // min > max
+
+        var result = engine.GetFilteredItems();
+        Assert.Empty(result);
+    }
 }

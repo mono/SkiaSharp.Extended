@@ -322,4 +322,20 @@ public class DziTileSourceTest
         Assert.Equal("http://example.com/tiles/", dzi.TilesBaseUri);
         Assert.Equal(512, dzi.ImageWidth);
     }
+
+    [Fact]
+    public void GetOptimalLevel_ZeroViewportWidth_ReturnsMaxLevel()
+    {
+        var dzi = new DziTileSource(1024, 1024, 256, 0, "jpg");
+        int level = dzi.GetOptimalLevel(0, 800);
+        Assert.Equal(dzi.MaxLevel, level);
+    }
+
+    [Fact]
+    public void GetOptimalLevel_NegativeViewportWidth_ReturnsMaxLevel()
+    {
+        var dzi = new DziTileSource(1024, 1024, 256, 0, "jpg");
+        int level = dzi.GetOptimalLevel(-1, 800);
+        Assert.Equal(dzi.MaxLevel, level);
+    }
 }
