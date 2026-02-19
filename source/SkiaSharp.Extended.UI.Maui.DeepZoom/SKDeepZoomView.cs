@@ -124,6 +124,15 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             BindableProperty.Create(nameof(ShowTileBorders), typeof(bool), typeof(SKDeepZoomView), false,
                 propertyChanged: (b, o, n) => ((SKDeepZoomView)b)._controller.ShowTileBorders = (bool)n);
 
+        public static readonly BindableProperty ShowDebugStatsProperty =
+            BindableProperty.Create(nameof(ShowDebugStats), typeof(bool), typeof(SKDeepZoomView), false,
+                propertyChanged: (b, o, n) =>
+                {
+                    var view = (SKDeepZoomView)b;
+                    view._controller.ShowDebugStats = (bool)n;
+                    view.StartAnimation();
+                });
+
         public static readonly BindableProperty SourceProperty =
             BindableProperty.Create(nameof(Source), typeof(string), typeof(SKDeepZoomView), null,
                 BindingMode.OneWay, propertyChanged: OnSourceChanged);
@@ -140,6 +149,13 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         {
             get => (bool)GetValue(ShowTileBordersProperty);
             set => SetValue(ShowTileBordersProperty, value);
+        }
+
+        /// <summary>Whether to show the debug statistics overlay.</summary>
+        public bool ShowDebugStats
+        {
+            get => (bool)GetValue(ShowDebugStatsProperty);
+            set => SetValue(ShowDebugStatsProperty, value);
         }
 
         /// <summary>

@@ -26,50 +26,23 @@ public partial class MainPage : ContentPage
             var tileSource = DziTileSource.Parse(dziXml, tileBase);
 
             deepZoomView.ShowTileBorders = debugSwitch.IsToggled;
-            deepZoomView.ViewportChanged += (s, e) => UpdateZoomLabel();
+            deepZoomView.ShowDebugStats = statsSwitch.IsToggled;
             deepZoomView.Load(tileSource, new AppPackageTileFetcher());
 
-            statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}, " +
-                $"{tileSource.MaxLevel + 1} levels — each level has a different color";
-            UpdateZoomLabel();
+            statusLabel.Text = $"{tileSource.ImageWidth}x{tileSource.ImageHeight}, " +
+                $"{tileSource.MaxLevel + 1} levels";
         }
         catch (Exception ex)
         {
             statusLabel.Text = $"Error: {ex.Message}";
-            Console.WriteLine($"[DeepZoom] Failed: {ex}");
         }
     }
 
-    private void UpdateZoomLabel()
-    {
-        var vw = deepZoomView.ViewportWidth;
-        var zoom = vw > 0 ? 1.0 / vw : 1.0;
-        MainThread.BeginInvokeOnMainThread(() =>
-            zoomLabel.Text = $"VP={vw:F3} ({zoom:F1}x)");
-    }
-
-    private void OnReset(object? sender, EventArgs e)
-    {
-        deepZoomView.ResetView();
-        UpdateZoomLabel();
-    }
-
-    private void OnZoomIn(object? sender, EventArgs e)
-    {
-        deepZoomView.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
-        UpdateZoomLabel();
-    }
-
-    private void OnZoomOut(object? sender, EventArgs e)
-    {
-        deepZoomView.ZoomAboutLogicalPoint(0.5, 0.5, 0.5);
-        UpdateZoomLabel();
-    }
-
-    private void OnDebugToggled(object? sender, ToggledEventArgs e)
-    {
-        deepZoomView.ShowTileBorders = e.Value;
-    }
+    private void OnReset(object? sender, EventArgs e) => deepZoomView.ResetView();
+    private void OnZoomIn(object? sender, EventArgs e) => deepZoomView.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
+    private void OnZoomOut(object? sender, EventArgs e) => deepZoomView.ZoomAboutLogicalPoint(0.5, 0.5, 0.5);
+    private void OnDebugToggled(object? sender, ToggledEventArgs e) => deepZoomView.ShowTileBorders = e.Value;
+    private void OnStatsToggled(object? sender, ToggledEventArgs e) => deepZoomView.ShowDebugStats = e.Value;
 
     protected override void OnDisappearing()
     {
@@ -77,10 +50,6 @@ public partial class MainPage : ContentPage
         deepZoomView.Dispose();
     }
 
-    /// <summary>
-    /// Loads tiles from MAUI app package raw assets.
-    /// URLs are "asset://TestGrid/testgrid_files/{level}/{col}_{row}.png".
-    /// </summary>
     private class AppPackageTileFetcher : ITileFetcher
     {
         public async Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
@@ -91,12 +60,8 @@ public partial class MainPage : ContentPage
                 using var stream = await FileSystem.OpenAppPackageFileAsync(path);
                 return SKBitmap.Decode(stream);
             }
-            catch
-            {
-                return null;
-            }
+            catch { return null; }
         }
-
         public void Dispose() { }
     }
 }
