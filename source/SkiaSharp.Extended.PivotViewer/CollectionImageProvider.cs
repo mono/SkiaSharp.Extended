@@ -22,6 +22,8 @@ namespace SkiaSharp.Extended.PivotViewer
         private readonly ConcurrentDictionary<int, SKBitmap?> _thumbnailCache;
         private readonly ConcurrentDictionary<int, SemaphoreSlim> _loadLocks;
         private readonly string _basePath;
+        private readonly List<SKBitmap> _pendingThumbnailDispose = new();
+        private readonly object _thumbnailDisposeLock = new();
         private bool _disposed;
 
         /// <summary>
@@ -179,10 +181,21 @@ namespace SkiaSharp.Extended.PivotViewer
                 }
 
                 // Remove lock after item is cached to prevent unbounded growth
+                // Only remove if no one else is waiting
                 if (_thumbnailCache.ContainsKey(itemIndex))
                 {
-                    if (_loadLocks.TryRemove(itemIndex, out var done))
-                        done.Dispose();
+                    // We can't safely dispose the semaphore here because other threads might be waiting on it.
+                    // We just remove it from the dictionary so future calls create a new one.
+                    // The SemaphoreSlim will be GC'd eventually. It's a lightweight primitive (unlike WaitHandle).
+                    // However, we should try to remove it only if we can.
+                    
+                    // Actually, since we are inside the lock, we know we hold it.
+                    // But we released it above.
+                    
+                    // Safer strategy: Don't dispose it. Just remove it.
+                    // SemaphoreSlim implements IDisposable but primarily for the AvailableWaitHandle which is lazily allocated.
+                    // If we don't access AvailableWaitHandle, Dispose is mostly a no-op (except for setting a disposed flag).
+                    _loadLocks.TryRemove(itemIndex, out _);
                 }
             }
         }
@@ -357,27 +370,58 @@ namespace SkiaSharp.Extended.PivotViewer
             await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
-        /// <summary>Clears all cached thumbnails.</summary>
+        /// <summary>Clears all cached thumbnails using deferred disposal.</summary>
         public void ClearCache()
         {
-            foreach (var kv in _thumbnailCache)
-                kv.Value?.Dispose();
+            lock (_thumbnailDisposeLock)
+            {
+                foreach (var kv in _thumbnailCache)
+                {
+                    if (kv.Value != null)
+                        _pendingThumbnailDispose.Add(kv.Value);
+                }
+            }
             _thumbnailCache.Clear();
             _cache.Clear();
         }
 
         /// <summary>
-        /// Flushes deferred bitmap disposals from the tile cache.
+        /// Flushes deferred bitmap disposals from the tile cache and thumbnail cache.
         /// Call this on the UI thread before rendering to safely dispose evicted bitmaps.
         /// </summary>
-        public void FlushEvictedTiles() => _cache.FlushEvicted();
+        public void FlushEvictedTiles()
+        {
+            _cache.FlushEvicted();
+
+            List<SKBitmap>? toDispose = null;
+            lock (_thumbnailDisposeLock)
+            {
+                if (_pendingThumbnailDispose.Count > 0)
+                {
+                    toDispose = new List<SKBitmap>(_pendingThumbnailDispose);
+                    _pendingThumbnailDispose.Clear();
+                }
+            }
+            if (toDispose != null)
+            {
+                foreach (var bmp in toDispose)
+                    bmp.Dispose();
+            }
+        }
 
         public void Dispose()
         {
             if (!_disposed)
             {
                 _disposed = true;
+                // ClearCache uses deferred disposal; flush immediately since we're disposing
                 ClearCache();
+                lock (_thumbnailDisposeLock)
+                {
+                    foreach (var bmp in _pendingThumbnailDispose)
+                        bmp.Dispose();
+                    _pendingThumbnailDispose.Clear();
+                }
                 foreach (var kv in _loadLocks)
                     kv.Value?.Dispose();
                 _loadLocks.Clear();

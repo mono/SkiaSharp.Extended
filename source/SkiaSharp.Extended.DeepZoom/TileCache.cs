@@ -113,10 +113,13 @@ namespace SkiaSharp.Extended.DeepZoom
                 if (_map.TryGetValue(id, out var existing))
                 {
                     // Update existing entry — defer old bitmap disposal
-                    _lruList.Remove(existing);
                     if (existing.Value.Bitmap != null)
                         _pendingDispose.Add(existing.Value.Bitmap);
-                    existing.Value = new TileCacheEntry(id, bitmap);
+                    
+                    existing.Value.Bitmap = bitmap;
+                    
+                    // Move to front
+                    _lruList.Remove(existing);
                     _lruList.AddFirst(existing);
                     return;
                 }
@@ -124,7 +127,7 @@ namespace SkiaSharp.Extended.DeepZoom
                 // Evict if at capacity — defer evicted bitmap disposal
                 while (_map.Count >= _maxEntries && _lruList.Last != null)
                 {
-                    var lru = _lruList.Last!;
+                    var lru = _lruList.Last;
                     _lruList.RemoveLast();
                     _map.Remove(lru.Value.Id);
                     if (lru.Value.Bitmap != null)

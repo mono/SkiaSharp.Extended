@@ -317,34 +317,34 @@ namespace SkiaSharp.Extended.DeepZoom
 
         private async Task LoadTileAsync(TileId tileId, CancellationToken ct)
         {
+            SKBitmap? bitmap = null;
             try
             {
                 if (_tileSource == null || _fetcher == null) return;
 
                 string url = _tileSource.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row)
                     ?? _tileSource.GetTileUrl(tileId.Level, tileId.Col, tileId.Row);
-                var bitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
+                bitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
 
                 if (bitmap != null && !ct.IsCancellationRequested && !_disposed)
                 {
                     _cache.Put(tileId, bitmap);
-                    _pendingTiles.TryRemove(tileId, out _);
+                    bitmap = null; // cache owns the bitmap now
                     InvalidateRequired?.Invoke(this, EventArgs.Empty);
-                }
-                else
-                {
-                    bitmap?.Dispose();
-                    _pendingTiles.TryRemove(tileId, out _);
                 }
             }
             catch (OperationCanceledException)
             {
-                _pendingTiles.TryRemove(tileId, out _);
+                // Expected during controller dispose or source change
             }
             catch (Exception ex)
             {
-                _pendingTiles.TryRemove(tileId, out _);
                 TileFailed?.Invoke(this, new TileFailedEventArgs(tileId, ex));
+            }
+            finally
+            {
+                bitmap?.Dispose();
+                _pendingTiles.TryRemove(tileId, out _);
             }
         }
 
