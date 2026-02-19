@@ -144,7 +144,7 @@ Built-in implementations: `HttpTileFetcher` (HTTP), `FileTileFetcher` (local fil
 | `ImageOpenSucceeded` | DZI/DZC source loaded successfully |
 | `ImageOpenFailed` | Source load failed (args: `Exception`) |
 | `MotionFinished` | Spring animation settled — all tiles at rest |
-| `TileFailed` | Individual tile download failed (args: `TileId`) |
+| `TileFailed` | Individual tile download failed (args: `TileFailedEventArgs` with TileId + Exception) |
 | `InvalidateRequired` | New tiles loaded — view needs repaint |
 
 ## Headless Testing

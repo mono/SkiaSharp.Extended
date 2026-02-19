@@ -78,7 +78,7 @@ public class ControllerTileLoadingTest
         using var fetcher = new ThrowingTileFetcher();
 
         TileId? failedTile = null;
-        controller.TileFailed += (s, id) => failedTile = id;
+        controller.TileFailed += (s, e) => failedTile = e.TileId;
 
         controller.Load(dzi, fetcher);
         controller.Update(TimeSpan.FromSeconds(1.0 / 60));

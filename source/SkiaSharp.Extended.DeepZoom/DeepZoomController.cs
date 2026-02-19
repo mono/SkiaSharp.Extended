@@ -95,7 +95,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public event EventHandler? ViewportChanged;
 
         /// <summary>Fired when a tile fails to load.</summary>
-        public event EventHandler<TileId>? TileFailed;
+        public event EventHandler<TileFailedEventArgs>? TileFailed;
 
         /// <summary>Fired when new tiles are loaded and the view needs repainting.</summary>
         public event EventHandler? InvalidateRequired;
@@ -341,10 +341,10 @@ namespace SkiaSharp.Extended.DeepZoom
             {
                 _pendingTiles.TryRemove(tileId, out _);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 _pendingTiles.TryRemove(tileId, out _);
-                TileFailed?.Invoke(this, tileId);
+                TileFailed?.Invoke(this, new TileFailedEventArgs(tileId, ex));
             }
         }
 
@@ -359,5 +359,23 @@ namespace SkiaSharp.Extended.DeepZoom
             _cache.Dispose();
             _renderer.Dispose();
         }
+    }
+
+    /// <summary>
+    /// Event args for when a tile fails to load.
+    /// </summary>
+    public class TileFailedEventArgs : EventArgs
+    {
+        public TileFailedEventArgs(TileId tileId, Exception exception)
+        {
+            TileId = tileId;
+            Exception = exception;
+        }
+
+        /// <summary>The tile that failed to load.</summary>
+        public TileId TileId { get; }
+
+        /// <summary>The exception that caused the failure.</summary>
+        public Exception Exception { get; }
     }
 }
