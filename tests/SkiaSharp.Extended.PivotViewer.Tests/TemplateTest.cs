@@ -263,6 +263,27 @@ public class TemplateTest
     }
 
     [Fact]
+    public void MultiSizeImageSourceCollection_AddRemoveContainsCount()
+    {
+        var coll = new PivotViewerMultiSizeImageSourceCollection();
+        var src1 = new PivotViewerMultiSizeImageSource { UriSource = "a.jpg", MaxWidth = 100, MaxHeight = 100 };
+        var src2 = new PivotViewerMultiSizeImageSource { UriSource = "b.jpg", MaxWidth = 200, MaxHeight = 200 };
+
+        coll.Add(src1);
+        coll.Add(src2);
+
+        Assert.Equal(2, coll.Count);
+        Assert.Contains(src1, coll);
+        Assert.Contains(src2, coll);
+
+        coll.Remove(src1);
+
+        Assert.Single(coll);
+        Assert.DoesNotContain(src1, coll);
+        Assert.Contains(src2, coll);
+    }
+
+    [Fact]
     public void PivotViewerStretch_EnumValues()
     {
         Assert.Equal(0, (int)PivotViewerStretch.None);

@@ -209,7 +209,7 @@ public class DeepZoomControllerTest
 
         // After settling, update should return false
         bool needsRepaint = controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-        // May still need repaint due to pending tiles, that's OK
+        Assert.False(needsRepaint, "Update should return false when idle and settled");
     }
 
     [Fact]
@@ -271,17 +271,17 @@ public class DeepZoomControllerTest
         var dzi = CreateSampleDzi();
 
         using var fetcher = new MemoryTileFetcher();
+        controller.Load(dzi, fetcher);
 
-        // Pre-populate cache with a tile
+        // Add tile to cache AFTER loading (Load clears the cache)
         var tileId = new TileId(0, 0, 0);
         var tileBmp = new SKBitmap(256, 256);
         using (var canvas = new SKCanvas(tileBmp))
             canvas.Clear(SKColors.Red);
         controller.Cache.Put(tileId, tileBmp);
 
-        controller.Load(dzi, fetcher);
-
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
+        surface.Canvas.Clear(SKColors.White);
         controller.Render(surface.Canvas);
 
         // Verify something was drawn (pixel at center shouldn't be white/default)
@@ -289,6 +289,8 @@ public class DeepZoomControllerTest
         using var pixmap = snapshot.PeekPixels();
         // The low-level tile 0,0,0 covers the whole image at level 0
         // At full viewport, it should be rendered somewhere
+        var centerPixel = pixmap.GetPixelColor(400, 300);
+        Assert.NotEqual(SKColors.White, centerPixel);
     }
 
     [Fact]
@@ -740,6 +742,7 @@ public class DeepZoomControllerTest
 
         // With springs disabled, spring snaps to target instantly (already settled → no transition)
         // MotionFinished fires when !wasSettled && IsSettled, so if it was already settled, no event
+        Assert.False(motionFinished, "MotionFinished should not fire with springs disabled");
     }
 
     [Fact]
@@ -761,7 +764,7 @@ public class DeepZoomControllerTest
     }
 
     [Fact]
-    public void InvalidateRequired_FiresWhenTileLoads()
+    public async Task InvalidateRequired_FiresWhenTileLoads()
     {
         using var controller = new DeepZoomController();
         controller.UseSprings = false;
@@ -769,8 +772,10 @@ public class DeepZoomControllerTest
         var dzi = CreateSampleDzi();
 
         using var fetcher = new MemoryTileFetcher();
-        // Pre-add a tile that the scheduler will request
-        fetcher.AddSolidTile("http://example.com/test_files/0/0_0.jpg", 256, 256, SKColors.Blue);
+        // Pre-add tiles at the optimal level (level 9 for 512x512 image at 1:1 zoom)
+        for (int col = 0; col < 2; col++)
+            for (int row = 0; row < 2; row++)
+                fetcher.AddSolidTile($"http://example.com/test9/{col}_{row}.jpg", 256, 256, SKColors.Blue);
 
         bool invalidated = false;
         controller.InvalidateRequired += (s, e) => invalidated = true;
@@ -778,11 +783,11 @@ public class DeepZoomControllerTest
         controller.Load(dzi, fetcher);
         controller.Update(TimeSpan.FromSeconds(1.0 / 60));
 
-        // Wait for async tile load
-        Task.Delay(300).Wait();
+        // Wait for async tile load with polling
+        for (int i = 0; i < 40 && !invalidated; i++)
+            await Task.Delay(50);
 
-        // InvalidateRequired may have fired if the tile was loaded
-        // (depends on timing, so just verify no exception)
+        Assert.True(invalidated, "InvalidateRequired should fire when a tile loads");
     }
 
     [Fact]

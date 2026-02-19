@@ -762,6 +762,46 @@ public class CxmlCollectionSourceTest
     }
 
     [Fact]
+    public void Parse_InlineCxml_ExtraDataType_NameIsSet()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+    <FacetCategories />
+    <Items />
+    <ExtraData>
+        <Types>
+            <Type Name=""Phones"" Image=""phone.png"" SortedIds=""1,2,3"" />
+        </Types>
+    </ExtraData>
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+
+        Assert.Single(source.ExtraDataTypes);
+        Assert.Equal("Phones", source.ExtraDataTypes[0].Name);
+    }
+
+    [Fact]
+    public void Parse_InlineCxml_ExtraDataType_SortedIdsPopulated()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+    <FacetCategories />
+    <Items />
+    <ExtraData>
+        <Types>
+            <Type Name=""Tablets"" SortedIds=""A, B, C"" />
+        </Types>
+    </ExtraData>
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+
+        Assert.Single(source.ExtraDataTypes);
+        Assert.Equal(new[] { "A", "B", "C" }, source.ExtraDataTypes[0].SortedIds);
+    }
+
+    [Fact]
     public void Parse_StringElementWithNumericContent_CoercedToDoubleForNumberCategory()
     {
         var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
