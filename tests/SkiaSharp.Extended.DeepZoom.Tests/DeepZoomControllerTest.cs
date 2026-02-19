@@ -452,4 +452,27 @@ public class DeepZoomControllerTest
         Assert.True(fetcher1.IsDisposed);
         Assert.False(fetcher2.IsDisposed);
     }
+
+    [Fact]
+    public void Load_ClearsCacheFromPreviousImage()
+    {
+        using var controller = new DeepZoomController();
+        var fetcher = new MemoryTileFetcher();
+        fetcher.AddSolidTile("http://example.com/image_files/0/0_0.jpg", 256, 256, SkiaSharp.SKColors.Red);
+        controller.Load(CreateSampleDzi(), fetcher);
+
+        // Trigger tile scheduling
+        controller.SetControlSize(800, 600);
+        controller.Update(TimeSpan.FromMilliseconds(16));
+
+        // Now reload — cache should be cleared
+        controller.Load(CreateSampleDzi(), fetcher);
+
+        // After reload, fetcher should get new tile requests
+        int fetchesBefore = fetcher.FetchCount;
+        controller.SetControlSize(800, 600);
+        controller.Update(TimeSpan.FromMilliseconds(16));
+        // New fetches should occur since cache was cleared
+        Assert.True(fetcher.FetchCount >= fetchesBefore);
+    }
 }

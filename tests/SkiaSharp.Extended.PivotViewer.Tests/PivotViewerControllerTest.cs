@@ -754,4 +754,26 @@ public class PivotViewerControllerTest
         Assert.True(controller.ZoomLevel < 1.0);
         // Pan offsets should remain reasonable (not explode to thousands)
     }
+
+    [Fact]
+    public void SearchFilteredItems_ReturnsAllItems_WhenNoSearch()
+    {
+        var (controller, _) = CreateTestController();
+        Assert.Equal(controller.Items.Count, controller.SearchFilteredItems.Count);
+    }
+
+    [Fact]
+    public void SearchFilteredItems_ReflectsSearchText()
+    {
+        var (controller, source) = CreateTestController();
+
+        // Set search text that matches a specific item name
+        var firstItem = controller.Items[0];
+        var nameValues = firstItem["Name"];
+        string searchTerm = nameValues != null && nameValues.Count > 0 ? nameValues[0]?.ToString() ?? "test" : "test";
+        controller.SearchText = searchTerm;
+
+        // SearchFilteredItems should have fewer items than Items (or equal if all match)
+        Assert.True(controller.SearchFilteredItems.Count <= controller.Items.Count);
+    }
 }

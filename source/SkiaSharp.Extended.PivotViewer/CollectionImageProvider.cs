@@ -136,14 +136,13 @@ namespace SkiaSharp.Extended.PivotViewer
             var source = subImage.Source!;
             var filesDir = source.Replace(".dzi", "_files");
 
+            // Use DZC-level defaults for format/tileSize.
+            // For better compatibility with external collections, try both jpg and png.
+            string primaryFormat = _dzc.Format ?? "jpg";
+            int tileSize = _dzc.TileSize > 0 ? _dzc.TileSize : 256;
             int maxDim = Math.Max(subImage.Width, subImage.Height);
             int maxLevel = maxDim > 0 ? (int)Math.Ceiling(Math.Log(maxDim) / Math.Log(2)) : 0;
 
-            // Cap the level so the entire image fits within one tile.
-            // At level L, the image is (1 << L) pixels on its longest side.
-            // The tile size is _dzc.TileSize (typically 256). If the image at
-            // this level exceeds the tile size, tile 0_0 is only a crop.
-            int tileSize = _dzc.TileSize > 0 ? _dzc.TileSize : 256;
             int maxSingleTileLevel = (int)Math.Floor(Math.Log(tileSize) / Math.Log(2));
 
             int bestLevel = 0;
@@ -156,8 +155,17 @@ namespace SkiaSharp.Extended.PivotViewer
                     break;
             }
 
-            string url = $"{_basePath}/{filesDir}/{bestLevel}/0_0.{_dzc.Format}";
+            // Try primary format first, then fallback to alternative
+            string url = $"{_basePath}/{filesDir}/{bestLevel}/0_0.{primaryFormat}";
             var tileBitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
+
+            if (tileBitmap == null)
+            {
+                // Try alternative format (jpg ↔ png)
+                string altFormat = primaryFormat == "jpg" ? "png" : "jpg";
+                string altUrl = $"{_basePath}/{filesDir}/{bestLevel}/0_0.{altFormat}";
+                tileBitmap = await _fetcher.FetchTileAsync(altUrl, ct).ConfigureAwait(false);
+            }
 
             return tileBitmap;
         }

@@ -58,6 +58,12 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>All property definitions.</summary>
         public IReadOnlyList<PivotViewerProperty> Properties => _properties;
 
+        /// <summary>Items filtered by search text only (before facet filtering). Used for filter pane counts.</summary>
+        public IReadOnlyList<PivotViewerItem> SearchFilteredItems =>
+            _textFilteredItemIds != null
+                ? _allItems.Where(i => _textFilteredItemIds.Contains(i.Id)).ToList()
+                : _allItems;
+
         /// <summary>Items currently in scope (after filtering).</summary>
         public IReadOnlyList<PivotViewerItem> InScopeItems => _inScopeItems;
 

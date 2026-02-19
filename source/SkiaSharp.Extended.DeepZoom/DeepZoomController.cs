@@ -109,6 +109,7 @@ namespace SkiaSharp.Extended.DeepZoom
             _cts?.Dispose();
             _cts = new CancellationTokenSource();
             _pendingTiles.Clear();
+            _cache.Clear();
             _subImages.Clear();
 
             // Dispose previous fetcher if it's a different instance
@@ -134,6 +135,9 @@ namespace SkiaSharp.Extended.DeepZoom
 
         /// <summary>
         /// Loads a DZC tile source, populates SubImages, and sets up the tile fetcher.
+        /// DZC collections are rendered externally by consuming the <see cref="SubImages"/> property.
+        /// Each sub-image can be loaded individually via its Source DZI descriptor.
+        /// The PivotViewer's CollectionImageProvider handles composite thumbnail rendering.
         /// </summary>
         public void Load(DzcTileSource dzcTileSource, ITileFetcher fetcher)
         {
@@ -141,6 +145,7 @@ namespace SkiaSharp.Extended.DeepZoom
             _cts?.Dispose();
             _cts = new CancellationTokenSource();
             _pendingTiles.Clear();
+            _cache.Clear();
 
             // DZC is a collection, not a single image — clear single-image state
             _tileSource = null!;

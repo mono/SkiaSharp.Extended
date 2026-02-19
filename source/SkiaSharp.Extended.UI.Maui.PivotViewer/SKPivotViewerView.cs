@@ -51,6 +51,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         // Detail pane link hit regions (populated during RenderDetailPane)
         private List<(SKRect Bounds, Uri Href)> _detailLinkHitRects = new();
+        // Detail pane facet value hit regions for tap-to-filter
+        private List<(SKRect Bounds, string PropertyId, string Value)> _detailFacetHitRects = new();
+
+        // Filter pane expanded categories (show all values instead of top 8)
+        private readonly HashSet<string> _expandedFilterCategories = new();
 
         // Zoom slider
         private Slider? _zoomSlider;
@@ -758,7 +763,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             canvas.Save();
             canvas.Translate(0, -_filterScrollOffset);
 
-            var categories = filterPane.GetCategories(_controller.Items);
+            var categories = filterPane.GetCategories(_controller.SearchFilteredItems);
             float searchBoxHeight = _searchEntry != null ? 40f : 0f;
             float y = topOffset + Padding + searchBoxHeight;
             float lineHeight = 20f;
@@ -796,7 +801,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 {
                     _textFont.Size = 11;
                     int shown = 0;
-                    foreach (var kv in category.ValueCounts.OrderByDescending(kv => kv.Value).Take(8))
+                    bool isExpanded = _expandedFilterCategories.Contains(category.Property.Id);
+                    int maxVisible = isExpanded ? category.ValueCounts.Count : 8;
+                    foreach (var kv in category.ValueCounts.OrderByDescending(kv => kv.Value).Take(maxVisible))
                     {
                         visible = y < topOffset + height + _filterScrollOffset && y + lineHeight > topOffset;
 
@@ -816,13 +823,24 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                         shown++;
                     }
 
-                    if (category.ValueCounts.Count > 8)
+                    if (!isExpanded && category.ValueCounts.Count > 8)
                     {
                         visible = y < topOffset + height + _filterScrollOffset && y + lineHeight > topOffset;
                         if (visible)
                         {
-                            using var morePaint = new SKPaint { Color = SKColors.Gray };
-                            canvas.DrawText($"  +{category.ValueCounts.Count - 8} more...",
+                            using var morePaint = new SKPaint { Color = new SKColor(0, 102, 204) };
+                            canvas.DrawText($"  ▸ Show all {category.ValueCounts.Count} values...",
+                                Padding + 8, y + 12, SKTextAlign.Left, _textFont, morePaint);
+                        }
+                        y += lineHeight - 2;
+                    }
+                    else if (isExpanded && category.ValueCounts.Count > 8)
+                    {
+                        visible = y < topOffset + height + _filterScrollOffset && y + lineHeight > topOffset;
+                        if (visible)
+                        {
+                            using var morePaint = new SKPaint { Color = new SKColor(0, 102, 204) };
+                            canvas.DrawText("  ▾ Show less",
                                 Padding + 8, y + 12, SKTextAlign.Left, _textFont, morePaint);
                         }
                         y += lineHeight - 2;
@@ -963,6 +981,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private void RenderDetailPane(SKCanvas canvas, float width, float height)
         {
             _detailLinkHitRects.Clear();
+            _detailFacetHitRects.Clear();
 
             using var bgPaint = new SKPaint { Color = new SKColor(250, 250, 250) };
             canvas.DrawRect(0, 0, width, height, bgPaint);
@@ -1044,7 +1063,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
                     // Values — use blue + underline for Link-type properties
                     bool isLinkType = facet.Property is PivotViewerLinkProperty;
-                    using var valuePaint = new SKPaint { Color = isLinkType ? new SKColor(0, 102, 204) : SKColors.Black };
+                    bool isFilterable = facet.Property.Options.HasFlag(PivotViewerPropertyOptions.CanFilter);
+                    using var valuePaint = new SKPaint { Color = isLinkType ? new SKColor(0, 102, 204) : (isFilterable ? new SKColor(0, 90, 180) : SKColors.Black) };
                     var rawValues = isLinkType ? item[facet.Property] : null;
                     int valIdx = 0;
                     foreach (var val in facet.Values.Take(3))
@@ -1063,6 +1083,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                             {
                                 _detailLinkHitRects.Add((new SKRect(Padding + 4, y, Padding + 4 + textWidth, y + 16), hl.Uri));
                             }
+                        }
+                        else if (isFilterable && facet.Property.PropertyType == PivotViewerPropertyType.Text)
+                        {
+                            // Record hit rect for tap-to-filter on filterable text values
+                            _detailFacetHitRects.Add((new SKRect(Padding + 4, y, Padding + 4 + textWidth, y + 16), facet.Property.Id, val));
                         }
                         y += 16;
                         valIdx++;
@@ -1246,6 +1271,19 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 }
             }
 
+            // Check facet value hit rects for tap-to-filter
+            foreach (var (bounds, propertyId, value) in _detailFacetHitRects)
+            {
+                if (localX >= bounds.Left && localX <= bounds.Right &&
+                    localY >= bounds.Top && localY <= bounds.Bottom)
+                {
+                    _controller.FilterPaneModel?.ToggleStringFilter(propertyId, value);
+                    _controller.DetailPane.OnApplyFilter(value);
+                    _canvasView.InvalidateSurface();
+                    return;
+                }
+            }
+
             // Fallback: if the selected item has an Href, treat taps as link clicks
             var item = _controller.DetailPane.SelectedItem;
             if (item == null) return;
@@ -1325,7 +1363,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             }
 
             // Calculate which filter value was tapped based on Y position
-            var categories = filterPane.GetCategories(_controller.Items);
+            var categories = filterPane.GetCategories(_controller.SearchFilteredItems);
             float searchBoxHeight = _searchEntry != null ? 40f : 0f;
             float catY = ControlBarHeight + Padding + searchBoxHeight;
             float lineHeight = 20f;
@@ -1341,7 +1379,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     category.Property.PropertyType == PivotViewerPropertyType.Text ||
                     category.Property.PropertyType == PivotViewerPropertyType.Link))
                 {
-                    foreach (var kv in category.ValueCounts.OrderByDescending(kv => kv.Value).Take(8))
+                    bool isExpanded = _expandedFilterCategories.Contains(category.Property.Id);
+                    int maxVisible = isExpanded ? category.ValueCounts.Count : 8;
+                    foreach (var kv in category.ValueCounts.OrderByDescending(kv => kv.Value).Take(maxVisible))
                     {
                         if (adjustedY >= catY && adjustedY < catY + lineHeight - 2)
                         {
@@ -1353,7 +1393,19 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     }
 
                     if (category.ValueCounts.Count > 8)
+                    {
+                        // "Show all" / "Show less" toggle
+                        if (adjustedY >= catY && adjustedY < catY + lineHeight - 2)
+                        {
+                            if (isExpanded)
+                                _expandedFilterCategories.Remove(category.Property.Id);
+                            else
+                                _expandedFilterCategories.Add(category.Property.Id);
+                            _canvasView.InvalidateSurface();
+                            return;
+                        }
                         catY += lineHeight - 2;
+                    }
                 }
                 else if (category.Property.PropertyType == PivotViewerPropertyType.Decimal)
                 {
