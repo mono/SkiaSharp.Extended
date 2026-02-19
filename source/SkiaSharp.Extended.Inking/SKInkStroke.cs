@@ -53,7 +53,7 @@ public class SKInkStroke : IDisposable
         Color = color;
         CapStyle = capStyle;
         this.smoothingFactor = smoothingFactor;
-        SmoothingAlgorithm = smoothingAlgorithm;
+        this.smoothingAlgorithm = smoothingAlgorithm;
     }
 
     /// <summary>
@@ -94,10 +94,20 @@ public class SKInkStroke : IDisposable
         }
     }
 
+    private SKSmoothingAlgorithm smoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom;
+
     /// <summary>
     /// Gets or sets the smoothing algorithm. Catmull-Rom is recommended for handwriting.
     /// </summary>
-    public SKSmoothingAlgorithm SmoothingAlgorithm { get; set; }
+    public SKSmoothingAlgorithm SmoothingAlgorithm
+    {
+        get => smoothingAlgorithm;
+        set
+        {
+            smoothingAlgorithm = value;
+            isDirty = true;
+        }
+    }
 
     /// <summary>
     /// Gets the list of points in this stroke.

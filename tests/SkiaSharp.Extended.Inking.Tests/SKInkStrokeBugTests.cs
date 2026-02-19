@@ -245,4 +245,27 @@ public class SKInkStrokeBugTests
         var path = stroke.Path;
         Assert.NotNull(path);
     }
+
+    // BUG FIX: SmoothingAlgorithm setter must invalidate cached path
+    [Fact]
+    public void SmoothingAlgorithm_Change_InvalidatesPath()
+    {
+        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 4, SKSmoothingAlgorithm.QuadraticBezier);
+        
+        stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        stroke.AddPoint(new SKPoint(50f, 0f), 0.5f);
+        stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+        
+        var path1 = stroke.Path;
+        Assert.NotNull(path1);
+        
+        // Change algorithm - should invalidate cache
+        stroke.SmoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom;
+        
+        var path2 = stroke.Path;
+        Assert.NotNull(path2);
+        
+        // Path should have been regenerated
+        Assert.NotSame(path1, path2);
+    }
 }
