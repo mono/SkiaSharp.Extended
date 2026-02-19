@@ -44,6 +44,9 @@ namespace SkiaSharp.Extended.DeepZoom
             TileCache cache,
             TileScheduler scheduler)
         {
+            // Flush deferred bitmap disposals before rendering
+            cache.FlushEvicted();
+
             canvas.Save();
 
             var visibleTiles = scheduler.GetVisibleTiles(tileSource, viewport);

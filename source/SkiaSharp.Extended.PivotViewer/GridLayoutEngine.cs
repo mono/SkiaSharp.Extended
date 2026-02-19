@@ -162,28 +162,51 @@ namespace SkiaSharp.Extended.PivotViewer
             }
 
             // Sort groups by key — detect numeric/date values for natural ordering
+            // Pre-parse keys once for efficiency
             List<KeyValuePair<string, List<PivotViewerItem>>> sortedGroups;
-            if (groups.Keys.All(k => k == "(No value)" || double.TryParse(k, NumberStyles.Any, CultureInfo.InvariantCulture, out _)))
+            var keys = groups.Keys.ToList();
+            var numericValues = new Dictionary<string, double>(keys.Count);
+            bool allNumeric = true;
+            foreach (var k in keys)
+            {
+                if (k == "(No value)") continue;
+                if (double.TryParse(k, NumberStyles.Any, CultureInfo.InvariantCulture, out var d))
+                    numericValues[k] = d;
+                else { allNumeric = false; break; }
+            }
+
+            if (allNumeric && numericValues.Count > 0)
             {
                 sortedGroups = groups.OrderBy(g =>
                 {
                     if (g.Key == "(No value)") return double.MaxValue;
-                    double.TryParse(g.Key, NumberStyles.Any, CultureInfo.InvariantCulture, out var d);
-                    return d;
-                }).ToList();
-            }
-            else if (groups.Keys.All(k => k == "(No value)" || DateTime.TryParse(k, CultureInfo.InvariantCulture, DateTimeStyles.None, out _)))
-            {
-                sortedGroups = groups.OrderBy(g =>
-                {
-                    if (g.Key == "(No value)") return DateTime.MaxValue;
-                    DateTime.TryParse(g.Key, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt);
-                    return dt;
+                    return numericValues[g.Key];
                 }).ToList();
             }
             else
             {
-                sortedGroups = groups.OrderBy(g => g.Key, StringComparer.OrdinalIgnoreCase).ToList();
+                var dateValues = new Dictionary<string, DateTime>(keys.Count);
+                bool allDates = true;
+                foreach (var k in keys)
+                {
+                    if (k == "(No value)") continue;
+                    if (DateTime.TryParse(k, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
+                        dateValues[k] = dt;
+                    else { allDates = false; break; }
+                }
+
+                if (allDates && dateValues.Count > 0)
+                {
+                    sortedGroups = groups.OrderBy(g =>
+                    {
+                        if (g.Key == "(No value)") return DateTime.MaxValue;
+                        return dateValues[g.Key];
+                    }).ToList();
+                }
+                else
+                {
+                    sortedGroups = groups.OrderBy(g => g.Key, StringComparer.OrdinalIgnoreCase).ToList();
+                }
             }
             int groupCount = sortedGroups.Count;
             if (groupCount == 0)

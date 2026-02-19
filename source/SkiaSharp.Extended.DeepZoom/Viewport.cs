@@ -29,12 +29,16 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>
         /// Logical width of the visible area. 1.0 = full image width fits in control.
         /// Less than 1.0 = zoomed in. Greater than 1.0 = zoomed out.
+        /// Minimum width is clamped to prevent extreme zoom levels.
         /// </summary>
         public double ViewportWidth
         {
             get => _viewportWidth;
-            set => _viewportWidth = Math.Max(double.Epsilon, value);
+            set => _viewportWidth = Math.Max(MinViewportWidth, value);
         }
+
+        /// <summary>Minimum viewport width to prevent extreme zoom (corresponds to ~1,000,000x zoom).</summary>
+        public const double MinViewportWidth = 1e-6;
 
         /// <summary>Top-left X in logical coordinates (0-1 normalized to image width).</summary>
         public double ViewportOriginX

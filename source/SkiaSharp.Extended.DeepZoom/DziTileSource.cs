@@ -96,11 +96,11 @@ namespace SkiaSharp.Extended.DeepZoom
             int x = col == 0 ? 0 : col * TileSize - Overlap;
             int y = row == 0 ? 0 : row * TileSize - Overlap;
 
-            int right = Math.Min(col * TileSize + TileSize + (col == 0 ? Overlap : Overlap), levelWidth);
+            int right;
             if (col > 0) right = Math.Min((col + 1) * TileSize + Overlap, levelWidth);
             else right = Math.Min(TileSize + Overlap, levelWidth);
 
-            int bottom = Math.Min(row * TileSize + TileSize + (row == 0 ? Overlap : Overlap), levelHeight);
+            int bottom;
             if (row > 0) bottom = Math.Min((row + 1) * TileSize + Overlap, levelHeight);
             else bottom = Math.Min(TileSize + Overlap, levelHeight);
 

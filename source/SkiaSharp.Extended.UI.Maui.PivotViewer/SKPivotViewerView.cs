@@ -1742,6 +1742,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void StartAnimationIfNeeded()
         {
+            if (_disposed) return;
             if (!_controller.LayoutTransition.IsAnimating) return;
             if (_animationTimer != null && _animationTimer.IsRunning) return;
 
@@ -1760,7 +1761,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void OnAnimationTick(object? sender, EventArgs e)
         {
-            if (!_isVisible)
+            if (_disposed || !_isVisible)
             {
                 _animationTimer?.Stop();
                 return;
@@ -1786,6 +1787,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             {
                 _animationTimer.Stop();
                 _animationTimer.Tick -= OnAnimationTick;
+                _animationTimer = null;
             }
             _canvasView.PaintSurface -= OnPaintSurface;
 

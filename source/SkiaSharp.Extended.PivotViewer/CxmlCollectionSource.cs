@@ -596,7 +596,18 @@ namespace SkiaSharp.Extended.PivotViewer
                 {
                     case "String":
                         string? strVal = child.Attribute("Value")?.Value;
-                        if (strVal != null) values.Add(strVal);
+                        if (strVal != null)
+                        {
+                            // Coerce to correct type if property defines differently
+                            if (property.PropertyType == PivotViewerPropertyType.Decimal &&
+                                double.TryParse(strVal, NumberStyles.Float, CultureInfo.InvariantCulture, out var coercedNum))
+                                values.Add(coercedNum);
+                            else if (property.PropertyType == PivotViewerPropertyType.DateTime &&
+                                DateTime.TryParse(strVal, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var coercedDate))
+                                values.Add(coercedDate);
+                            else
+                                values.Add(strVal);
+                        }
                         break;
 
                     case "Number":

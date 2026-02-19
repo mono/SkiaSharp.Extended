@@ -321,7 +321,8 @@ namespace SkiaSharp.Extended.DeepZoom
             {
                 if (_tileSource == null || _fetcher == null) return;
 
-                string url = _tileSource.GetTileUrl(tileId.Level, tileId.Col, tileId.Row);
+                string url = _tileSource.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row)
+                    ?? _tileSource.GetTileUrl(tileId.Level, tileId.Col, tileId.Row);
                 var bitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
 
                 if (bitmap != null && !ct.IsCancellationRequested)

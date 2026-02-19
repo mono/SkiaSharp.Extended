@@ -54,6 +54,9 @@ namespace SkiaSharp.Extended.DeepZoom
 
     /// <summary>
     /// LRU cache for decoded tile bitmaps.
+    /// Evicted bitmaps are deferred for disposal to avoid race conditions
+    /// with the renderer (which may hold references to recently-returned bitmaps).
+    /// Call <see cref="FlushEvicted"/> at the start of each render frame.
     /// </summary>
     public class TileCache : IDisposable
     {
@@ -61,6 +64,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private readonly LinkedList<TileCacheEntry> _lruList;
         private readonly Dictionary<TileId, LinkedListNode<TileCacheEntry>> _map;
         private readonly object _lock = new object();
+        private readonly List<SKBitmap> _pendingDispose = new List<SKBitmap>();
         private bool _disposed;
 
         public TileCache(int maxEntries = 256)
@@ -102,26 +106,51 @@ namespace SkiaSharp.Extended.DeepZoom
             {
                 if (_map.TryGetValue(id, out var existing))
                 {
-                    // Update existing entry
+                    // Update existing entry — defer old bitmap disposal
                     _lruList.Remove(existing);
-                    existing.Value.Bitmap?.Dispose();
+                    if (existing.Value.Bitmap != null)
+                        _pendingDispose.Add(existing.Value.Bitmap);
                     existing.Value = new TileCacheEntry(id, bitmap);
                     _lruList.AddFirst(existing);
                     return;
                 }
 
-                // Evict if at capacity
+                // Evict if at capacity — defer evicted bitmap disposal
                 while (_map.Count >= _maxEntries && _lruList.Last != null)
                 {
                     var lru = _lruList.Last!;
                     _lruList.RemoveLast();
                     _map.Remove(lru.Value.Id);
-                    lru.Value.Bitmap?.Dispose();
+                    if (lru.Value.Bitmap != null)
+                        _pendingDispose.Add(lru.Value.Bitmap);
                 }
 
                 var entry = new TileCacheEntry(id, bitmap);
                 var newNode = _lruList.AddFirst(entry);
                 _map[id] = newNode;
+            }
+        }
+
+        /// <summary>
+        /// Disposes all bitmaps that were evicted since the last call.
+        /// Call this at the start of each render frame (on the UI thread)
+        /// to safely dispose bitmaps that are no longer in use.
+        /// </summary>
+        public void FlushEvicted()
+        {
+            List<SKBitmap>? toDispose = null;
+            lock (_lock)
+            {
+                if (_pendingDispose.Count > 0)
+                {
+                    toDispose = new List<SKBitmap>(_pendingDispose);
+                    _pendingDispose.Clear();
+                }
+            }
+            if (toDispose != null)
+            {
+                foreach (var bmp in toDispose)
+                    bmp.Dispose();
             }
         }
 
@@ -137,7 +166,8 @@ namespace SkiaSharp.Extended.DeepZoom
                 {
                     _lruList.Remove(node);
                     _map.Remove(id);
-                    node.Value.Bitmap?.Dispose();
+                    if (node.Value.Bitmap != null)
+                        _pendingDispose.Add(node.Value.Bitmap);
                     return true;
                 }
                 return false;
@@ -155,6 +185,9 @@ namespace SkiaSharp.Extended.DeepZoom
                 }
                 _lruList.Clear();
                 _map.Clear();
+                foreach (var bmp in _pendingDispose)
+                    bmp.Dispose();
+                _pendingDispose.Clear();
             }
         }
 
