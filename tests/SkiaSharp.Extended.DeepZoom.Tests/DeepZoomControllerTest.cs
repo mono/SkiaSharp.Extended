@@ -516,4 +516,31 @@ public class DeepZoomControllerTest
                 StringComparison.Ordinal);
         }
     }
+
+    [Fact]
+    public void GetZoomRect_ReturnsCurrentViewportBounds()
+    {
+        using var controller = new DeepZoomController();
+        controller.UseSprings = false;
+        controller.SetControlSize(800, 600);
+        var dzi = CreateSampleDzi(); // 512x512, aspect ratio 1.0
+        using var fetcher = new MemoryTileFetcher();
+        controller.Load(dzi, fetcher);
+
+        var (x, y, w, h) = controller.GetZoomRect();
+
+        // At initial load: origin (0,0), width 1.0, height = width / aspect = 1.0
+        Assert.Equal(0.0, x, 6);
+        Assert.Equal(0.0, y, 6);
+        Assert.Equal(1.0, w, 6);
+        Assert.Equal(1.0, h, 6);
+
+        // Zoom in and verify the rect changes
+        controller.ZoomAboutScreenPoint(4.0, 400, 300);
+        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+
+        var (x2, y2, w2, h2) = controller.GetZoomRect();
+        Assert.True(w2 < w, $"Zoomed width {w2} should be less than initial {w}");
+        Assert.True(h2 < h, $"Zoomed height {h2} should be less than initial {h}");
+    }
 }

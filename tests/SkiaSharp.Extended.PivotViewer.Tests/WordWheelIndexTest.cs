@@ -257,4 +257,44 @@ public class WordWheelIndexTest
         var results = index.Search("T");
         Assert.True(results.Count >= 2, "Should find Toyota and Tesla");
     }
+
+    [Fact]
+    public void GetCharBuckets_ReturnsGroupedEntries()
+    {
+        var nameP = new PivotViewerStringProperty("Name")
+        {
+            DisplayName = "Name",
+            Options = PivotViewerPropertyOptions.CanSearchText
+        };
+
+        var items = new List<PivotViewerItem>();
+        // Names starting with 'A': Alpha, Apex
+        // Names starting with 'B': Bravo
+        // Names starting with 'C': Charlie, Coral, Crown
+        foreach (var name in new[] { "Alpha", "Apex", "Bravo", "Charlie", "Coral", "Crown" })
+        {
+            var item = new PivotViewerItem(name);
+            item.Set(nameP, new object[] { name });
+            items.Add(item);
+        }
+
+        var index = new WordWheelIndex();
+        index.Build(items, new PivotViewerProperty[] { nameP });
+
+        var buckets = index.GetCharBuckets();
+
+        // Should have buckets grouped by first character
+        var bucketDict = buckets.ToDictionary(b => b.Character);
+
+        Assert.True(bucketDict.ContainsKey('a'), "Should have bucket for 'a'");
+        Assert.True(bucketDict.ContainsKey('b'), "Should have bucket for 'b'");
+        Assert.True(bucketDict.ContainsKey('c'), "Should have bucket for 'c'");
+
+        // 'a' bucket: Alpha, Apex = 2 entries
+        Assert.Equal(2, bucketDict['a'].EntryCount);
+        // 'b' bucket: Bravo = 1 entry
+        Assert.Equal(1, bucketDict['b'].EntryCount);
+        // 'c' bucket: Charlie, Coral, Crown = 3 entries
+        Assert.Equal(3, bucketDict['c'].EntryCount);
+    }
 }

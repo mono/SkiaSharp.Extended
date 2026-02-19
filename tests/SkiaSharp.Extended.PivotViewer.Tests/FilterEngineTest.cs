@@ -551,4 +551,64 @@ public class FilterEngineTest
         var result = engine.GetFilteredItems();
         Assert.Empty(result);
     }
+
+    [Fact]
+    public void ComputeNumericHistogram_ReturnsCorrectBuckets()
+    {
+        var prop = new PivotViewerNumericProperty("Score") { DisplayName = "Score" };
+        var items = new List<PivotViewerItem>();
+
+        // Create items with known numeric values: 10, 20, 30, 40, 50
+        foreach (var val in new[] { 10.0, 20.0, 30.0, 40.0, 50.0 })
+        {
+            var item = new PivotViewerItem(val.ToString());
+            item.Set(prop, new object[] { val });
+            items.Add(item);
+        }
+
+        var engine = new FilterEngine();
+        engine.SetSource(items, new[] { prop });
+
+        var buckets = engine.ComputeNumericHistogram("Score", items);
+
+        Assert.NotEmpty(buckets);
+
+        // Bucket ranges should cover all values
+        Assert.True(buckets[0].Min <= 10.0, "First bucket min should cover smallest value");
+        Assert.True(buckets[buckets.Count - 1].Max >= 50.0, "Last bucket max should cover largest value");
+
+        // Total count across all buckets should equal item count
+        int totalCount = buckets.Sum(b => b.Count);
+        Assert.Equal(5, totalCount);
+
+        // Each bucket should have valid range: Min < Max
+        Assert.All(buckets, b => Assert.True(b.Min <= b.Max));
+    }
+
+    [Fact]
+    public void StringFilterPredicate_Matches_ExactAndPartial()
+    {
+        var pred = new StringFilterPredicate("Category");
+        pred.AddValue("Sports");
+
+        // Exact match
+        var item1 = new PivotViewerItem("1");
+        item1.Set(new PivotViewerStringProperty("Category"), new object[] { "Sports" });
+        Assert.True(pred.Matches(item1));
+
+        // Case-insensitive match
+        var item2 = new PivotViewerItem("2");
+        item2.Set(new PivotViewerStringProperty("Category"), new object[] { "sports" });
+        Assert.True(pred.Matches(item2));
+
+        // No match
+        var item3 = new PivotViewerItem("3");
+        item3.Set(new PivotViewerStringProperty("Category"), new object[] { "Hybrid" });
+        Assert.False(pred.Matches(item3));
+
+        // Multi-value item: matches if any value matches
+        var item4 = new PivotViewerItem("4");
+        item4.Set(new PivotViewerStringProperty("Category"), new object[] { "Hybrid", "Sports" });
+        Assert.True(pred.Matches(item4));
+    }
 }

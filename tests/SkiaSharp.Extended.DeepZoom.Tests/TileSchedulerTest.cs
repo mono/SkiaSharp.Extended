@@ -243,4 +243,61 @@ public class TileSchedulerTest
         // Very small image should need only 1 tile
         Assert.Equal(1, tiles.Count);
     }
+
+    [Fact]
+    public void FindBestFallback_ReturnsParentTileInCache()
+    {
+        var dzi = new DziTileSource(1024, 1024, 256, 0, "jpg");
+        var cache = new TileCache(100);
+        var scheduler = new TileScheduler();
+
+        // Put parent tile (level 8, col 1, row 1) in cache
+        var parentId = new TileId(8, 1, 1);
+        var bitmap = new SKBitmap(256, 256);
+        cache.Put(parentId, bitmap);
+
+        // Request child at level 9 (col 2, row 2 → parent col=1, row=1 at level 8)
+        var childId = new TileId(9, 2, 2);
+
+        var fallback = scheduler.FindBestFallback(childId, cache);
+
+        Assert.NotNull(fallback);
+        Assert.Equal(parentId, fallback!.Value);
+        bitmap.Dispose();
+        cache.Dispose();
+    }
+
+    [Fact]
+    public void FindBestFallback_ReturnsNull_WhenNoParentInCache()
+    {
+        var cache = new TileCache(100);
+        var scheduler = new TileScheduler();
+
+        var childId = new TileId(8, 3, 3);
+        var fallback = scheduler.FindBestFallback(childId, cache);
+
+        Assert.Null(fallback);
+        cache.Dispose();
+    }
+
+    [Fact]
+    public void GetFallbackSourceRect_ReturnsCorrectSubrect()
+    {
+        var dzi = new DziTileSource(1024, 1024, 256, 0, "jpg");
+        var scheduler = new TileScheduler();
+
+        var parent = new TileId(8, 0, 0);
+        var child = new TileId(9, 1, 1);
+
+        var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(child, parent, dzi);
+
+        // Source rect must be within parent tile bounds
+        var parentBounds = dzi.GetTileBounds(parent.Level, parent.Col, parent.Row);
+        Assert.True(srcX >= 0, $"srcX {srcX} should be >= 0");
+        Assert.True(srcY >= 0, $"srcY {srcY} should be >= 0");
+        Assert.True(srcX + srcW <= parentBounds.Width, $"srcX+srcW ({srcX + srcW}) should be <= parent width ({parentBounds.Width})");
+        Assert.True(srcY + srcH <= parentBounds.Height, $"srcY+srcH ({srcY + srcH}) should be <= parent height ({parentBounds.Height})");
+        Assert.True(srcW > 0);
+        Assert.True(srcH > 0);
+    }
 }
