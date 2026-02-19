@@ -18,7 +18,7 @@ namespace SkiaSharp.Extended.PivotViewer
         /// </summary>
         public static List<HistogramBucket<double>> CreateNumericBuckets(IEnumerable<double> values)
         {
-            var sorted = values.OrderBy(v => v).ToList();
+            var sorted = values.Where(v => !double.IsNaN(v) && !double.IsInfinity(v)).OrderBy(v => v).ToList();
             if (sorted.Count == 0)
                 return new List<HistogramBucket<double>>();
 

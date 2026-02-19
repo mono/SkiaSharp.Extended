@@ -248,6 +248,21 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         }
 
         /// <summary>
+        /// Loads a DZC collection source with the specified fetcher.
+        /// Populates SubImages for multi-image mosaic display.
+        /// </summary>
+        public void Load(DzcTileSource tileSource, ITileFetcher fetcher)
+        {
+            _controller.Load(tileSource, fetcher);
+            _canvasView.InvalidateSurface();
+        }
+
+        /// <summary>
+        /// Sub-images when a DZC collection is loaded. Empty for single DZI images.
+        /// </summary>
+        public IReadOnlyList<DeepZoomSubImage> SubImages => _controller.SubImages;
+
+        /// <summary>
         /// Zooms to show the entire image.
         /// </summary>
         public void ResetView()

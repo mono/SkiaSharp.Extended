@@ -244,6 +244,11 @@ namespace SkiaSharp.Extended.PivotViewer
             if (values.Count == 0)
                 return Array.Empty<HistogramBucket>();
 
+            // Filter out NaN and Infinity to prevent infinite loops in bucketing
+            values.RemoveAll(v => double.IsNaN(v) || double.IsInfinity(v));
+            if (values.Count == 0)
+                return Array.Empty<HistogramBucket>();
+
             values.Sort();
             double min = values[0];
             double max = values[values.Count - 1];

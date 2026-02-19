@@ -305,4 +305,30 @@ public class HistogramBucketerTest
         Assert.True(buckets.Count >= 1);
         Assert.Equal(3, buckets.Sum(b => b.Count));
     }
+
+    [Fact]
+    public void NumericBuckets_NaN_FilteredOut()
+    {
+        var values = new[] { 1.0, 2.0, double.NaN, 3.0 };
+        var buckets = HistogramBucketer.CreateNumericBuckets(values);
+        Assert.True(buckets.Count > 0);
+        Assert.Equal(3, buckets.Sum(b => b.Count)); // NaN excluded
+    }
+
+    [Fact]
+    public void NumericBuckets_Infinity_FilteredOut()
+    {
+        var values = new[] { 1.0, double.PositiveInfinity, double.NegativeInfinity, 2.0 };
+        var buckets = HistogramBucketer.CreateNumericBuckets(values);
+        Assert.True(buckets.Count > 0);
+        Assert.Equal(2, buckets.Sum(b => b.Count)); // Infinities excluded
+    }
+
+    [Fact]
+    public void NumericBuckets_AllNaN_ReturnsEmpty()
+    {
+        var values = new[] { double.NaN, double.NaN };
+        var buckets = HistogramBucketer.CreateNumericBuckets(values);
+        Assert.Empty(buckets);
+    }
 }

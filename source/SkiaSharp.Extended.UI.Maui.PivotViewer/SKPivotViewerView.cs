@@ -298,6 +298,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             BindableProperty.Create(nameof(IsFilterPaneVisible), typeof(bool), typeof(SKPivotViewerView),
                 true, BindingMode.TwoWay, propertyChanged: OnFilterPaneVisibleChanged);
 
+        public static readonly BindableProperty CollectionUriProperty =
+            BindableProperty.Create(nameof(CollectionUri), typeof(string), typeof(SKPivotViewerView),
+                null, BindingMode.OneWay, propertyChanged: OnCollectionUriChanged);
+
         public static readonly BindableProperty ControlBackgroundProperty =
             BindableProperty.Create(nameof(ControlBackground), typeof(Color), typeof(SKPivotViewerView),
                 Color.FromRgb(0xF0, 0xF0, 0xF0), propertyChanged: OnThemePropertyChanged);
@@ -378,6 +382,78 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         {
             get => (bool)GetValue(IsFilterPaneVisibleProperty);
             set => SetValue(IsFilterPaneVisibleProperty, value);
+        }
+
+        /// <summary>
+        /// URI to a .cxml collection file. Setting this downloads the CXML, parses it,
+        /// loads the DZC thumbnails, and hydrates the PivotViewer control.
+        /// </summary>
+        public string? CollectionUri
+        {
+            get => (string?)GetValue(CollectionUriProperty);
+            set => SetValue(CollectionUriProperty, value);
+        }
+
+        private CancellationTokenSource? _collectionCts;
+
+        private static void OnCollectionUriChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is SKPivotViewerView view)
+                view.LoadFromCollectionUri(newValue as string);
+        }
+
+        private async void LoadFromCollectionUri(string? uri)
+        {
+            _collectionCts?.Cancel();
+            _collectionCts?.Dispose();
+            _collectionCts = null;
+
+            if (string.IsNullOrWhiteSpace(uri))
+                return;
+
+            _collectionCts = new CancellationTokenSource();
+            var ct = _collectionCts.Token;
+
+            try
+            {
+                using var httpClient = new HttpClient();
+                var cxmlUri = new Uri(uri, UriKind.Absolute);
+
+                // Download and parse the CXML
+                var source = await CxmlCollectionSource.LoadAsync(cxmlUri, httpClient, ct);
+                ct.ThrowIfCancellationRequested();
+
+                // Load the collection into the controller
+                LoadCollection(source);
+
+                // If there's an ImageBase, try to load thumbnails via DZC
+                if (source.ImageBase != null)
+                {
+                    var dzcUri = new Uri(cxmlUri, source.ImageBase);
+                    var dzcPath = dzcUri.GetLeftPart(UriPartial.Path);
+                    if (dzcPath.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var dzcXml = await httpClient.GetStringAsync(dzcUri, ct);
+                        ct.ThrowIfCancellationRequested();
+
+                        using var dzcStream = new System.IO.MemoryStream(
+                            System.Text.Encoding.UTF8.GetBytes(dzcXml));
+                        var dzc = DzcTileSource.Parse(dzcStream);
+                        var fetcher = new HttpTileFetcher();
+                        var queryString = dzcUri.ToString().Substring(dzcPath.Length);
+                        var basePath = dzcPath.Substring(0, dzcPath.Length - 4) + "_files";
+
+                        var imageProvider = new CollectionImageProvider(dzc, fetcher, basePath, queryString);
+                        _controller.ImageProvider = imageProvider;
+                        _canvasView.InvalidateSurface();
+                    }
+                }
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load collection: {ex.Message}");
+            }
         }
 
         /// <summary>Background color for the control chrome (filter pane, control bar).</summary>
@@ -2048,6 +2124,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         {
             if (_disposed) return;
             _disposed = true;
+
+            _collectionCts?.Cancel();
+            _collectionCts?.Dispose();
+            _collectionCts = null;
 
             if (_animationTimer != null)
             {

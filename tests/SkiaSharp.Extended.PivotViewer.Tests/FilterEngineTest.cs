@@ -418,6 +418,30 @@ public class FilterEngineTest
     }
 
     [Fact]
+    public void ComputeNumericHistogram_NaN_DoesNotCrash()
+    {
+        var prop = new PivotViewerNumericProperty("Val") { DisplayName = "Val" };
+        var items = new List<PivotViewerItem>();
+        for (int i = 0; i < 5; i++)
+        {
+            var item = new PivotViewerItem($"i{i}");
+            item.Add(prop, (double)i);
+            items.Add(item);
+        }
+        // Add an item with NaN
+        var nanItem = new PivotViewerItem("nan");
+        nanItem.Add(prop, double.NaN);
+        items.Add(nanItem);
+
+        var engine = new FilterEngine();
+        engine.SetSource(items, new[] { prop });
+
+        var buckets = engine.ComputeNumericHistogram("Val", items);
+        Assert.True(buckets.Count > 0);
+        Assert.Equal(5, buckets.Sum(b => b.Count)); // NaN excluded
+    }
+
+    [Fact]
     public void StringFilterPredicate_RemoveValue_NarrowsFilter()
     {
         var pred = new StringFilterPredicate("Category");
