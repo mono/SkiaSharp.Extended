@@ -321,4 +321,23 @@ public class LayoutTransitionManagerTest
         Assert.Equal(0.0, positions[0].Width, 1);
         Assert.Equal(0.0, positions[0].Height, 1);
     }
+
+    [Fact]
+    public void BeginTransition_ZeroDuration_DoesNotCrash()
+    {
+        var mgr = new LayoutTransitionManager();
+        mgr.Duration = 0;
+
+        var item = new PivotViewerItem("1");
+        var oldPos = new[] { new ItemPosition(item, 0, 0, 100, 100) };
+        var newPos = new[] { new ItemPosition(item, 200, 200, 50, 50) };
+
+        mgr.BeginTransition(oldPos, newPos);
+        Assert.True(mgr.IsAnimating);
+
+        // Should complete within a single Update call (duration clamped to 0.001)
+        bool stillAnimating = mgr.Update(0.01);
+        Assert.False(stillAnimating); // completed immediately
+        Assert.False(mgr.IsAnimating);
+    }
 }

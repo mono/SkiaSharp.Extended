@@ -15,6 +15,19 @@ public class GridLayoutEngineTest
         return items;
     }
 
+    private static List<PivotViewerItem> CreateItemsWithProperty(int count, string propId, string value)
+    {
+        var prop = new PivotViewerStringProperty(propId) { DisplayName = propId };
+        var items = new List<PivotViewerItem>();
+        for (int i = 0; i < count; i++)
+        {
+            var item = new PivotViewerItem(i.ToString());
+            item.Add(prop, value);
+            items.Add(item);
+        }
+        return items;
+    }
+
     [Fact]
     public void ComputeLayout_EmptyItems_ReturnsEmptyLayout()
     {
@@ -462,5 +475,27 @@ public class GridLayoutEngineTest
         // Zero height should not cause division by zero or overflow
         var layout = engine.ComputeZoomedLayout(items, 800, 0, 0.5);
         Assert.Equal(10, layout.Positions.Length);
+    }
+
+    // --- Edge case: itemAspectRatio guard ---
+
+    [Fact]
+    public void ComputeHistogramLayout_ZeroAspectRatioDoesNotCrash()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItemsWithProperty(5, "Color", "Red");
+
+        var layout = engine.ComputeHistogramLayout(items, "Color", 800, 600, itemAspectRatio: 0);
+        Assert.True(layout.Columns.Length > 0);
+    }
+
+    [Fact]
+    public void ComputeHistogramLayout_NegativeAspectRatioDoesNotCrash()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItemsWithProperty(5, "Color", "Red");
+
+        var layout = engine.ComputeHistogramLayout(items, "Color", 800, 600, itemAspectRatio: -1.5);
+        Assert.True(layout.Columns.Length > 0);
     }
 }

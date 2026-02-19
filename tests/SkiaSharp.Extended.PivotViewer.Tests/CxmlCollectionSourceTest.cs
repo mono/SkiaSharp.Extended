@@ -943,4 +943,64 @@ public class CxmlCollectionSourceTest
         source.ItemTemplates.Add(new PivotViewerItemTemplate { MaxWidth = 200 });
         Assert.Single(source.ItemTemplates);
     }
+
+    [Fact]
+    public void Parse_NullString_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => CxmlCollectionSource.Parse((string)null!));
+    }
+
+    [Fact]
+    public void Parse_NullStream_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => CxmlCollectionSource.Parse((System.IO.Stream)null!));
+    }
+
+    [Fact]
+    public void Parse_HrefBase_ResolvesRelativeHrefs()
+    {
+        var xml = @"<?xml version='1.0'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            Name='Test'>
+  <FacetCategories/>
+  <Items HrefBase='http://example.com/items/'>
+    <Item Id='1' Name='A' Href='page1.html'/>
+    <Item Id='2' Name='B' Href='http://other.com/page2.html'/>
+  </Items>
+</Collection>";
+        var source = CxmlCollectionSource.Parse(xml);
+
+        Assert.Equal("http://example.com/items/", source.HrefBase);
+
+        // Relative Href should be resolved
+        var item1 = source.GetItemById("1");
+        Assert.NotNull(item1);
+        var href1 = item1!.GetPropertyValue("Href");
+        Assert.NotNull(href1);
+        Assert.Contains("http://example.com/items/page1.html", href1![0]?.ToString());
+
+        // Absolute Href should be unchanged
+        var item2 = source.GetItemById("2");
+        var href2 = item2!.GetPropertyValue("Href");
+        Assert.Equal("http://other.com/page2.html", href2![0]?.ToString());
+    }
+
+    [Fact]
+    public void Parse_NoHrefBase_HrefUnchanged()
+    {
+        var xml = @"<?xml version='1.0'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            Name='Test'>
+  <FacetCategories/>
+  <Items>
+    <Item Id='1' Name='A' Href='relative.html'/>
+  </Items>
+</Collection>";
+        var source = CxmlCollectionSource.Parse(xml);
+
+        Assert.Null(source.HrefBase);
+        var item = source.GetItemById("1");
+        var href = item!.GetPropertyValue("Href");
+        Assert.Equal("relative.html", href![0]?.ToString());
+    }
 }

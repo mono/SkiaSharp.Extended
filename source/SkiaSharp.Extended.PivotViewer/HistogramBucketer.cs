@@ -165,6 +165,9 @@ namespace SkiaSharp.Extended.PivotViewer
 
         private static double NiceStep(double rawStep)
         {
+            if (rawStep <= 0 || double.IsNaN(rawStep) || double.IsInfinity(rawStep))
+                return 1.0;
+
             double magnitude = Math.Pow(10, Math.Floor(Math.Log10(rawStep)));
             double residual = rawStep / magnitude;
 

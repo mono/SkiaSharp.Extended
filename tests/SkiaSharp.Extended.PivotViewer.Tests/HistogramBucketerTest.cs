@@ -331,4 +331,14 @@ public class HistogramBucketerTest
         var buckets = HistogramBucketer.CreateNumericBuckets(values);
         Assert.Empty(buckets);
     }
+
+    [Fact]
+    public void CreateNumericBuckets_AllIdenticalValues_DoesNotCrash()
+    {
+        // All same value means rawStep=0, which used to cause Log10(0) = -Infinity
+        var values = new[] { 5.0, 5.0, 5.0, 5.0, 5.0 };
+        var buckets = HistogramBucketer.CreateNumericBuckets(values);
+        Assert.NotNull(buckets);
+        Assert.True(buckets.Count > 0);
+    }
 }

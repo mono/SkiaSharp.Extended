@@ -31,7 +31,7 @@ namespace SkiaSharp.Extended.PivotViewer
         {
             _transitions.Clear();
             _progress = 0;
-            _duration = Duration;
+            _duration = Math.Max(0.001, Duration);
             _isAnimating = true;
 
             // Build lookup for old positions

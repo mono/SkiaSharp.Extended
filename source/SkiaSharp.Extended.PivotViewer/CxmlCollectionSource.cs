@@ -87,6 +87,9 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>URI of supplemental CXML file that provides additional item data.</summary>
         public string? SupplementUri { get; private set; }
 
+        /// <summary>Base URI for resolving relative Href values on items.</summary>
+        public string? HrefBase { get; private set; }
+
         /// <summary>Extra data types parsed from CXML ExtraData/Type elements (e.g., device type groupings).</summary>
         public IReadOnlyList<CxmlExtraDataType> ExtraDataTypes { get; private set; } = Array.Empty<CxmlExtraDataType>();
 
@@ -179,6 +182,7 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>Parses a CXML XML string.</summary>
         public static CxmlCollectionSource Parse(string xml)
         {
+            if (xml == null) throw new ArgumentNullException(nameof(xml));
             var doc = XDocument.Parse(xml);
             return ParseDocument(doc);
         }
@@ -186,6 +190,7 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>Parses a CXML XML from a stream.</summary>
         public static CxmlCollectionSource Parse(Stream stream)
         {
+            if (stream == null) throw new ArgumentNullException(nameof(stream));
             var doc = XDocument.Load(stream);
             return ParseDocument(doc);
         }
@@ -331,7 +336,8 @@ namespace SkiaSharp.Extended.PivotViewer
                 if (itemsElement != null)
                 {
                     source.ImageBase = itemsElement.Attribute("ImgBase")?.Value;
-                    source._items = ParseItems(itemsElement, facetCategories);
+                    source.HrefBase = itemsElement.Attribute("HrefBase")?.Value;
+                    source._items = ParseItems(itemsElement, facetCategories, source.HrefBase);
 
                     // Sync implicit properties (Name, Href, Description, #Image) back to _properties
                     var existingIds = new HashSet<string>(source._properties.Select(p => p.Id), StringComparer.Ordinal);
@@ -506,7 +512,7 @@ namespace SkiaSharp.Extended.PivotViewer
             }
         }
 
-        private static List<PivotViewerItem> ParseItems(XElement itemsElement, Dictionary<string, PivotViewerProperty> properties)
+        private static List<PivotViewerItem> ParseItems(XElement itemsElement, Dictionary<string, PivotViewerProperty> properties, string? hrefBase = null)
         {
             var items = new List<PivotViewerItem>();
 
@@ -528,6 +534,15 @@ namespace SkiaSharp.Extended.PivotViewer
                 string? href = itemElement.Attribute("Href")?.Value;
                 if (href != null)
                 {
+                    // Resolve relative Href against HrefBase if provided
+                    if (hrefBase != null && !Uri.IsWellFormedUriString(href, UriKind.Absolute))
+                    {
+                        var baseUri = new Uri(hrefBase, UriKind.RelativeOrAbsolute);
+                        if (baseUri.IsAbsoluteUri)
+                            href = new Uri(baseUri, href).ToString();
+                        else
+                            href = hrefBase.TrimEnd('/') + "/" + href;
+                    }
                     var hrefProp = GetOrCreateProperty(properties, "Href", "Link");
                     item.Add(hrefProp, href);
                 }

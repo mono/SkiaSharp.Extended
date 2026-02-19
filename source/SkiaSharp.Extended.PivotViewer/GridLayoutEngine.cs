@@ -144,6 +144,7 @@ namespace SkiaSharp.Extended.PivotViewer
             if (items.Count == 0)
                 return new HistogramLayout(Array.Empty<HistogramColumn>(), Array.Empty<ItemPosition>());
 
+            if (itemAspectRatio <= 0) itemAspectRatio = 1.0;
             // Group items by property value
             var groups = new Dictionary<string, List<PivotViewerItem>>(StringComparer.OrdinalIgnoreCase);
 
