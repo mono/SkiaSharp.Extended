@@ -259,6 +259,28 @@ public class WordWheelIndexTest
     }
 
     [Fact]
+    public void GetMatchingItems_CaseInsensitive()
+    {
+        var (index, items) = CreateTestIndex();
+        var matching = index.GetMatchingItems("sports");
+        Assert.Equal(2, matching.Count);
+
+        var matchingUpper = index.GetMatchingItems("SPORTS");
+        Assert.Equal(2, matchingUpper.Count);
+    }
+
+    [Fact]
+    public void GetMatchingItems_PrefixSearch_ReturnsCorrectSubset()
+    {
+        var (index, items) = CreateTestIndex();
+        // "Te" should match "Tesla Model S" (via "Tesla") but not "Toyota"
+        var matching = index.GetMatchingItems("Te");
+        Assert.All(matching, m => Assert.True(
+            m.Id == "4", // Tesla
+            $"Unexpected item {m.Id}"));
+    }
+
+    [Fact]
     public void GetCharBuckets_ReturnsGroupedEntries()
     {
         var nameP = new PivotViewerStringProperty("Name")

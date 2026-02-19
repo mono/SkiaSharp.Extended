@@ -227,7 +227,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
             double itemHeight = Math.Max(1.0, Math.Min(
                 colWidth / itemAspectRatio,
-                (availableHeight - gap * maxItemsInColumn) / maxItemsInColumn));
+                Math.Max(1.0, (availableHeight - gap * maxItemsInColumn) / maxItemsInColumn)));
             double itemWidth = Math.Max(1.0, itemHeight * itemAspectRatio);
 
             if (itemWidth > colWidth - gap * 2)
@@ -250,7 +250,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
                 for (int ii = 0; ii < group.Value.Count; ii++)
                 {
-                    double y = availableHeight - (ii + 1) * (itemHeight + gap);
+                    double y = Math.Max(0, availableHeight - (ii + 1) * (itemHeight + gap));
                     var pos = new ItemPosition(group.Value[ii], centerX, y, itemWidth, itemHeight);
                     colPositions.Add(pos);
                     allPositions.Add(pos);

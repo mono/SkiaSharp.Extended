@@ -697,4 +697,27 @@ public class PanesTest
         // Should not throw when no subscribers
         details.OnApplyFilter("test");
     }
+
+    [Fact]
+    public void FilterPaneModel_SetDateTimeRangeFilter_ThenClearAll_RemovesFilter()
+    {
+        var filterEngine = new FilterEngine();
+        var prop = new PivotViewerDateTimeProperty("created") { DisplayName = "Created", Options = PivotViewerPropertyOptions.CanFilter };
+        var items = new[]
+        {
+            CreateItem("1", prop, new DateTime(2023, 1, 1)),
+            CreateItem("2", prop, new DateTime(2023, 6, 15)),
+            CreateItem("3", prop, new DateTime(2024, 1, 1)),
+        };
+        filterEngine.SetSource(items, new[] { prop });
+
+        var model = new FilterPaneModel(filterEngine, new[] { prop });
+        model.SetDateTimeRangeFilter("created", new DateTime(2023, 3, 1), new DateTime(2023, 12, 31));
+        Assert.True(model.HasActiveFilters);
+
+        model.ClearAllFilters();
+        Assert.False(model.HasActiveFilters);
+        var filtered = filterEngine.GetFilteredItems();
+        Assert.Equal(3, filtered.Count);
+    }
 }

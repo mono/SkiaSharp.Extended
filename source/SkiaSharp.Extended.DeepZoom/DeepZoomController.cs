@@ -325,7 +325,7 @@ namespace SkiaSharp.Extended.DeepZoom
                     ?? _tileSource.GetTileUrl(tileId.Level, tileId.Col, tileId.Row);
                 var bitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
 
-                if (bitmap != null && !ct.IsCancellationRequested)
+                if (bitmap != null && !ct.IsCancellationRequested && !_disposed)
                 {
                     _cache.Put(tileId, bitmap);
                     _pendingTiles.TryRemove(tileId, out _);

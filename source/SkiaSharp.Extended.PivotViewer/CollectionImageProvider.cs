@@ -219,11 +219,34 @@ namespace SkiaSharp.Extended.PivotViewer
             var (col, row) = DzcTileSource.MortonToGrid(subImage.MortonIndex);
 
             int levelTotalWidth = _dzc.TileSize * (1 << bestLevel);
-            double itemPixWidth = (double)levelTotalWidth / gridSize;
-            double itemPixHeight = itemPixWidth / subImage.AspectRatio;
+            double cellSize = (double)levelTotalWidth / gridSize;
 
-            double itemPxX = col * itemPixWidth;
-            double itemPxY = row * itemPixHeight;
+            // Morton grid uses uniform square cells; the actual image is
+            // letterboxed/pillarboxed inside the cell based on aspect ratio
+            double itemPixWidth, itemPixHeight;
+            if (subImage.AspectRatio >= 1.0)
+            {
+                // Landscape: full cell width, reduced height
+                itemPixWidth = cellSize;
+                itemPixHeight = cellSize / subImage.AspectRatio;
+            }
+            else
+            {
+                // Portrait: full cell height, reduced width
+                itemPixHeight = cellSize;
+                itemPixWidth = cellSize * subImage.AspectRatio;
+            }
+
+            // Cell origin in the composite image (uniform grid spacing)
+            double cellPxX = col * cellSize;
+            double cellPxY = row * cellSize;
+
+            // Offset within cell for letterboxing/pillarboxing
+            double offsetX = (cellSize - itemPixWidth) / 2.0;
+            double offsetY = (cellSize - itemPixHeight) / 2.0;
+
+            double itemPxX = cellPxX + offsetX;
+            double itemPxY = cellPxY + offsetY;
 
             int tileCol = (int)(itemPxX / _dzc.TileSize);
             int tileRow = (int)(itemPxY / _dzc.TileSize);

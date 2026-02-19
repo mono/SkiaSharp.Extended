@@ -642,41 +642,52 @@ namespace SkiaSharp.Extended.PivotViewer
             UpdateLayout();
         }
 
+        private bool _updatingLayout;
+
         private void UpdateLayout()
         {
-            if (_inScopeItems.Count == 0)
+            if (_updatingLayout) return;
+            _updatingLayout = true;
+            try
             {
-                _currentGridLayout = null;
-                _currentHistogramLayout = null;
+                if (_inScopeItems.Count == 0)
+                {
+                    _currentGridLayout = null;
+                    _currentHistogramLayout = null;
+                    LayoutUpdated?.Invoke(this, EventArgs.Empty);
+                    return;
+                }
+
+                GridLayout? oldGrid = _currentGridLayout;
+
+                if (_currentView == "graph" && _sortProperty != null)
+                {
+                    _currentHistogramLayout = _layoutEngine.ComputeHistogramLayout(
+                        _inScopeItems, _sortProperty.Id, _availableWidth, _availableHeight);
+                    _currentGridLayout = null;
+                }
+                else
+                {
+                    var newLayout = _zoomLevel > 0.01
+                        ? _layoutEngine.ComputeZoomedLayout(
+                            _inScopeItems, _availableWidth, _availableHeight, _zoomLevel)
+                        : _layoutEngine.ComputeLayout(
+                            _inScopeItems, _availableWidth, _availableHeight);
+
+                    // Start transition animation if we had a previous layout
+                    if (oldGrid != null && oldGrid.Positions.Length > 0)
+                        _layoutTransition.BeginTransition(oldGrid.Positions, newLayout.Positions);
+
+                    _currentGridLayout = newLayout;
+                    _currentHistogramLayout = null;
+                }
+
                 LayoutUpdated?.Invoke(this, EventArgs.Empty);
-                return;
             }
-
-            GridLayout? oldGrid = _currentGridLayout;
-
-            if (_currentView == "graph" && _sortProperty != null)
+            finally
             {
-                _currentHistogramLayout = _layoutEngine.ComputeHistogramLayout(
-                    _inScopeItems, _sortProperty.Id, _availableWidth, _availableHeight);
-                _currentGridLayout = null;
+                _updatingLayout = false;
             }
-            else
-            {
-                var newLayout = _zoomLevel > 0.01
-                    ? _layoutEngine.ComputeZoomedLayout(
-                        _inScopeItems, _availableWidth, _availableHeight, _zoomLevel)
-                    : _layoutEngine.ComputeLayout(
-                        _inScopeItems, _availableWidth, _availableHeight);
-
-                // Start transition animation if we had a previous layout
-                if (oldGrid != null && oldGrid.Positions.Length > 0)
-                    _layoutTransition.BeginTransition(oldGrid.Positions, newLayout.Positions);
-
-                _currentGridLayout = newLayout;
-                _currentHistogramLayout = null;
-            }
-
-            LayoutUpdated?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>Disposes resources held by the controller.</summary>

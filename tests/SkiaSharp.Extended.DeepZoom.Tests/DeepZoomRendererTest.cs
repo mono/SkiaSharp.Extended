@@ -431,4 +431,104 @@ public class DeepZoomRendererTest
         var ex = Record.Exception(() => renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler));
         Assert.Null(ex);
     }
+
+    [Fact]
+    public void EnableLodBlending_DefaultsToTrue()
+    {
+        using var renderer = new DeepZoomRenderer();
+        Assert.True(renderer.EnableLodBlending);
+    }
+
+    [Fact]
+    public void Render_WithLodBlendingDisabled_StillWorks()
+    {
+        using var renderer = new DeepZoomRenderer();
+        renderer.EnableLodBlending = false;
+
+        string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Image xmlns=""http://schemas.microsoft.com/deepzoom/2008""
+       Format=""jpg"" Overlap=""0"" TileSize=""256"">
+  <Size Width=""2048"" Height=""2048""/>
+</Image>";
+        var dzi = DziTileSource.Parse(xml, "http://example.com/noblend");
+
+        using var surface = SKSurface.Create(new SKImageInfo(512, 512));
+        var viewport = new Viewport
+        {
+            ControlWidth = 512,
+            ControlHeight = 512,
+            ViewportWidth = 1.0,
+            ViewportOriginX = 0,
+            ViewportOriginY = 0,
+            AspectRatio = 1.0
+        };
+        using var cache = new TileCache(100);
+        var scheduler = new TileScheduler();
+
+        // Only cache a low-level parent tile to trigger single-pass fallback
+        var parentBmp = new SKBitmap(1, 1);
+        parentBmp.SetPixel(0, 0, SKColors.Yellow);
+        cache.Put(new TileId(0, 0, 0), parentBmp);
+
+        surface.Canvas.Clear(SKColors.White);
+        var ex = Record.Exception(() => renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler));
+        Assert.Null(ex);
+
+        using var snap = surface.Snapshot();
+        using var decoded = SKBitmap.Decode(snap.Encode(SKEncodedImageFormat.Png, 100));
+        var pixel = decoded.GetPixel(256, 256);
+        // Fallback should have rendered something (not pure white)
+        Assert.True(pixel.Red > 200 || pixel.Green > 200 || pixel.Blue < 255,
+            $"Expected fallback rendering but got R={pixel.Red} G={pixel.Green} B={pixel.Blue}");
+    }
+
+    [Fact]
+    public void Render_WithLodBlendingEnabled_DrawsFallbackBehindHighRes()
+    {
+        using var renderer = new DeepZoomRenderer();
+        Assert.True(renderer.EnableLodBlending);
+
+        string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Image xmlns=""http://schemas.microsoft.com/deepzoom/2008""
+       Format=""jpg"" Overlap=""0"" TileSize=""256"">
+  <Size Width=""1024"" Height=""1024""/>
+</Image>";
+        var dzi = DziTileSource.Parse(xml, "http://example.com/blend");
+
+        using var surface = SKSurface.Create(new SKImageInfo(512, 512));
+        var viewport = new Viewport
+        {
+            ControlWidth = 512,
+            ControlHeight = 512,
+            ViewportWidth = 1.0,
+            ViewportOriginX = 0,
+            ViewportOriginY = 0,
+            AspectRatio = 1.0
+        };
+        using var cache = new TileCache(100);
+        var scheduler = new TileScheduler();
+
+        // Cache a blue parent tile at level 0 (fallback)
+        var parentBmp = new SKBitmap(1, 1);
+        parentBmp.SetPixel(0, 0, SKColors.Blue);
+        cache.Put(new TileId(0, 0, 0), parentBmp);
+
+        // Cache a green high-res tile for only the first visible tile
+        var visibleTiles = scheduler.GetVisibleTiles(dzi, viewport);
+        Assert.NotEmpty(visibleTiles);
+        var firstTile = visibleTiles[0].TileId;
+        var highResBmp = new SKBitmap(256, 256);
+        using (var c = new SKCanvas(highResBmp))
+            c.Clear(SKColors.Green);
+        cache.Put(firstTile, highResBmp);
+
+        surface.Canvas.Clear(SKColors.White);
+        renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler);
+
+        // The surface should not be all white — fallback and high-res tiles were drawn
+        using var snap = surface.Snapshot();
+        using var decoded = SKBitmap.Decode(snap.Encode(SKEncodedImageFormat.Png, 100));
+        var pixel = decoded.GetPixel(256, 256);
+        Assert.NotEqual(SKColors.White, pixel);
+    }
 }

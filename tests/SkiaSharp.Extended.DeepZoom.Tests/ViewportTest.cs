@@ -472,6 +472,26 @@ public class ViewportTest
     }
 
     [Fact]
+    public void GetLogicalBounds_AfterZoomAndPan_ReturnsCorrectBounds()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            ViewportWidth = 0.5,
+            ViewportOriginX = 0.25,
+            ViewportOriginY = 0.1
+        };
+
+        var (left, top, right, bottom) = vp.GetLogicalBounds();
+        Assert.Equal(0.25, left, 6);
+        Assert.Equal(0.1, top, 6);
+        Assert.Equal(0.75, right, 6); // 0.25 + 0.5
+        double expectedBottom = 0.1 + vp.ViewportHeight;
+        Assert.Equal(expectedBottom, bottom, 6);
+    }
+
+    [Fact]
     public void Constrain_ZoomedOut_UsesPostClampHeightForOriginY()
     {
         // Regression: Constrain must compute vpHeight AFTER clamping ViewportWidth,

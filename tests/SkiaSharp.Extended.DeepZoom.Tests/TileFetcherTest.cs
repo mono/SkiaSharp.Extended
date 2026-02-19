@@ -155,4 +155,15 @@ public class TileFetcherTest
             File.Delete(tmpPath);
         }
     }
+
+    [Fact]
+    public async Task FileTileFetcher_CancelledToken_ThrowsOperationCanceledException()
+    {
+        var fetcher = new FileTileFetcher();
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+
+        await Assert.ThrowsAsync<OperationCanceledException>(
+            () => fetcher.FetchTileAsync("/any/path/tile.png", cts.Token));
+    }
 }

@@ -147,4 +147,48 @@ public class DeepZoomSubImageTest
         Assert.Equal(0, sub.ViewportOriginY);
         Assert.Equal(0, sub.ViewportWidth);
     }
+
+    [Fact]
+    public void LocalToParent_ParentToLocal_RoundTrip_MultiplePoints()
+    {
+        var sub = new DeepZoomSubImage(1, 0, 2.0, null);
+        sub.ViewportWidth = 4;
+        sub.ViewportOriginX = -1;
+        sub.ViewportOriginY = -0.5;
+
+        // Test several points
+        var points = new[] { (0.3, 0.15), (0.0, 0.0), (1.0, 1.0), (0.5, 0.5) };
+        foreach (var (px, py) in points)
+        {
+            var (lx, ly) = sub.ParentToLocal(px, py);
+            var (rx, ry) = sub.LocalToParent(lx, ly);
+            Assert.Equal(px, rx, 10);
+            Assert.Equal(py, ry, 10);
+        }
+    }
+
+    [Fact]
+    public void ParentToLocal_KnownCoordinates()
+    {
+        var sub = new DeepZoomSubImage(0, 0, 1.0, null);
+        sub.ViewportWidth = 10;
+        sub.ViewportOriginX = -5;
+        sub.ViewportOriginY = -3;
+
+        // Mosaic bounds: x=0.5, y=0.3, w=0.1, h=0.1
+        // ParentToLocal(0.5, 0.3) should be (0,0) — top-left of sub-image
+        var (lx, ly) = sub.ParentToLocal(0.5, 0.3);
+        Assert.Equal(0.0, lx, 6);
+        Assert.Equal(0.0, ly, 6);
+
+        // ParentToLocal(0.6, 0.4) should be (1,1) — bottom-right
+        var (lx2, ly2) = sub.ParentToLocal(0.6, 0.4);
+        Assert.Equal(1.0, lx2, 6);
+        Assert.Equal(1.0, ly2, 6);
+
+        // LocalToParent(0.5, 0.5) should be center of mosaic bounds
+        var (px, py) = sub.LocalToParent(0.5, 0.5);
+        Assert.Equal(0.55, px, 6);
+        Assert.Equal(0.35, py, 6);
+    }
 }
