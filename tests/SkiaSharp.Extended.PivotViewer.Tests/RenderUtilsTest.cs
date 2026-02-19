@@ -119,4 +119,93 @@ public class RenderUtilsTest
 
         Assert.Equal(dest, result);
     }
+
+    [Fact]
+    public void FitUniform_NegativeDimension_ReturnsTarget()
+    {
+        var dest = new SKRect(0, 0, 100, 100);
+        var result = RenderUtils.FitUniform(-10, 50, dest);
+
+        Assert.Equal(dest, result);
+    }
+
+    [Fact]
+    public void FitUniform_OffsetDestRect_CentersCorrectly()
+    {
+        var dest = new SKRect(50, 50, 150, 150);
+        var result = RenderUtils.FitUniform(200, 100, dest);
+
+        // Wide source into square offset dest: fits to width, letterboxed
+        Assert.Equal(100f, result.Width, 0.01f);
+        Assert.Equal(50f, result.Height, 0.01f);
+        Assert.Equal(50f, result.Left, 0.01f);
+        Assert.Equal(75f, result.Top, 0.01f);
+    }
+
+    [Fact]
+    public void FitUniform_WideIntoTallRect()
+    {
+        var dest = new SKRect(0, 0, 50, 200);
+        var result = RenderUtils.FitUniform(100, 50, dest);
+
+        // Wide source into tall dest: fits to width
+        Assert.Equal(50f, result.Width, 0.01f);
+        Assert.Equal(25f, result.Height, 0.01f);
+    }
+
+    [Fact]
+    public void FitUniform_TallIntoWideRect()
+    {
+        var dest = new SKRect(0, 0, 200, 50);
+        var result = RenderUtils.FitUniform(50, 100, dest);
+
+        // Tall source into wide dest: fits to height
+        Assert.Equal(50f, result.Height, 0.01f);
+        Assert.Equal(25f, result.Width, 0.01f);
+    }
+
+    [Fact]
+    public void TruncateText_VeryNarrowWidth_ReturnsEllipsis()
+    {
+        using var font = new SKFont(SKTypeface.Default, 14);
+        var text = "Hello World";
+        // Width of 1 pixel is less than ellipsis width
+        var result = RenderUtils.TruncateText(text, font, 1f);
+
+        Assert.Equal("…", result);
+    }
+
+    [Fact]
+    public void TruncateText_ExactFit_NoTruncation()
+    {
+        using var font = new SKFont(SKTypeface.Default, 14);
+        var text = "Test";
+        float textWidth = font.MeasureText(text, out _);
+        var result = RenderUtils.TruncateText(text, font, textWidth);
+
+        Assert.Equal("Test", result);
+    }
+
+    [Fact]
+    public void TruncateText_SingleChar_Truncated()
+    {
+        using var font = new SKFont(SKTypeface.Default, 14);
+        var text = "ABCDEFGHIJKLMNOP";
+        // Use a width that fits just a few chars
+        float charWidth = font.MeasureText("AB", out _);
+        var result = RenderUtils.TruncateText(text, font, charWidth);
+
+        Assert.EndsWith("…", result);
+        Assert.True(result.Length < text.Length);
+    }
+
+    [Fact]
+    public void GetItemDisplayName_NoNameProperty_ReturnsId()
+    {
+        var otherProp = new PivotViewerStringProperty("Color");
+        var item = new PivotViewerItem("item-7");
+        item.Add(otherProp, "Red");
+
+        Assert.Equal("item-7", RenderUtils.GetItemDisplayName(item));
+    }
 }

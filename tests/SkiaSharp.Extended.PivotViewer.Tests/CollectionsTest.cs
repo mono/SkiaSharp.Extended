@@ -1,5 +1,6 @@
 using SkiaSharp.Extended.PivotViewer;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using Xunit;
 
 namespace SkiaSharp.Extended.PivotViewer.Tests;
@@ -245,5 +246,123 @@ public class CollectionsTest
         Assert.Equal(4, coll.Count);
         Assert.Equal("a", coll[0]);
         Assert.Equal("d", coll[3]);
+    }
+
+    [Fact]
+    public void BatchObservableCollection_AddRange_FiresResetAction()
+    {
+        var coll = new BatchObservableCollection<int>();
+        NotifyCollectionChangedAction? action = null;
+        coll.CollectionChanged += (s, e) => action = e.Action;
+
+        coll.AddRange(new[] { 1, 2 });
+
+        Assert.Equal(NotifyCollectionChangedAction.Reset, action);
+    }
+
+    [Fact]
+    public void BatchObservableCollection_AddRange_FiresPropertyChanged()
+    {
+        var coll = new BatchObservableCollection<int>();
+        var propertyNames = new List<string>();
+        ((INotifyPropertyChanged)coll).PropertyChanged += (s, e) => propertyNames.Add(e.PropertyName!);
+
+        coll.AddRange(new[] { 1, 2, 3 });
+
+        Assert.Contains("Count", propertyNames);
+    }
+
+    [Fact]
+    public void BatchObservableCollection_ReplaceAll_FiresPropertyChanged()
+    {
+        var coll = new BatchObservableCollection<int>();
+        coll.AddRange(new[] { 1, 2 });
+
+        var propertyNames = new List<string>();
+        ((INotifyPropertyChanged)coll).PropertyChanged += (s, e) => propertyNames.Add(e.PropertyName!);
+
+        coll.ReplaceAll(new[] { 10, 20, 30 });
+
+        Assert.Contains("Count", propertyNames);
+    }
+
+    [Fact]
+    public void BatchObservableCollection_RemoveRange_FiresPropertyChanged()
+    {
+        var coll = new BatchObservableCollection<int>();
+        coll.AddRange(new[] { 1, 2, 3 });
+
+        var propertyNames = new List<string>();
+        ((INotifyPropertyChanged)coll).PropertyChanged += (s, e) => propertyNames.Add(e.PropertyName!);
+
+        coll.RemoveRange(new[] { 2 });
+
+        Assert.Contains("Count", propertyNames);
+    }
+
+    [Fact]
+    public void GradualObservableCollection_ItemsAddedInFIFOOrder()
+    {
+        var coll = new GradualObservableCollection<int>();
+        coll.ItemsPerCycle = 5;
+        coll.EnqueueRange(new[] { 10, 20, 30, 40, 50 });
+
+        coll.ProcessCycle();
+
+        Assert.Equal(10, coll[0]);
+        Assert.Equal(20, coll[1]);
+        Assert.Equal(30, coll[2]);
+        Assert.Equal(40, coll[3]);
+        Assert.Equal(50, coll[4]);
+    }
+
+    [Fact]
+    public void GradualObservableCollection_DefaultCycleProcesses10()
+    {
+        var coll = new GradualObservableCollection<int>();
+        // Default ItemsPerCycle is 10
+        coll.EnqueueRange(Enumerable.Range(1, 25));
+
+        coll.ProcessCycle();
+
+        Assert.Equal(10, coll.Count);
+        Assert.Equal(15, coll.PendingCount);
+    }
+
+    [Fact]
+    public void BatchObservableCollection_RemoveRange_DuplicateItems()
+    {
+        var coll = new BatchObservableCollection<int>();
+        coll.AddRange(new[] { 1, 2, 2, 3 });
+
+        coll.RemoveRange(new[] { 2 });
+
+        // Only one instance of 2 is removed
+        Assert.Equal(3, coll.Count);
+        Assert.Contains(2, coll);
+    }
+
+    [Fact]
+    public void GradualObservableCollection_FlushEmptyQueue_NoOp()
+    {
+        var coll = new GradualObservableCollection<int>();
+        coll.Flush();
+
+        Assert.Empty(coll);
+        Assert.False(coll.HasPendingItems);
+    }
+
+    [Fact]
+    public void BatchObservableCollection_ReplaceAll_FiresResetAction()
+    {
+        var coll = new BatchObservableCollection<string>();
+        coll.Add("x");
+
+        NotifyCollectionChangedAction? action = null;
+        coll.CollectionChanged += (s, e) => action = e.Action;
+
+        coll.ReplaceAll(new[] { "y" });
+
+        Assert.Equal(NotifyCollectionChangedAction.Reset, action);
     }
 }

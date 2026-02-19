@@ -135,4 +135,88 @@ public class CollectionBuilderTest
         var builder = new PivotViewerCollectionBuilder();
         Assert.Throws<ArgumentNullException>(() => builder.WithName(null!));
     }
+
+    [Fact]
+    public void AddProperty_Null_Throws()
+    {
+        var builder = new PivotViewerCollectionBuilder();
+        Assert.Throws<ArgumentNullException>(() => builder.AddProperty(null!));
+    }
+
+    [Fact]
+    public void AddItem_NullItem_Throws()
+    {
+        var builder = new PivotViewerCollectionBuilder();
+        Assert.Throws<ArgumentNullException>(() => builder.AddItem((PivotViewerItem)null!));
+    }
+
+    [Fact]
+    public void ItemBuilder_SetUnknownPropertyId_Ignored()
+    {
+        var builder = new PivotViewerCollectionBuilder()
+            .AddStringProperty("name", "Name");
+
+        builder.AddItem("item-1", item =>
+        {
+            item.Set("nonexistent", "value");
+        });
+
+        var (items, _) = builder.Build();
+        Assert.Single(items);
+        Assert.Null(items[0]["nonexistent"]);
+    }
+
+    [Fact]
+    public void ItemBuilder_SetWithPropertyObject()
+    {
+        var prop = new PivotViewerStringProperty("tag") { DisplayName = "Tag" };
+        var builder = new PivotViewerCollectionBuilder()
+            .AddProperty(prop);
+
+        builder.AddItem("item-1", item =>
+        {
+            item.Set(prop, "Important");
+        });
+
+        var (items, _) = builder.Build();
+        Assert.Equal("Important", items[0]["tag"]![0]!.ToString());
+    }
+
+    [Fact]
+    public void Build_LocksAllProperties()
+    {
+        var builder = new PivotViewerCollectionBuilder()
+            .AddStringProperty("a", "A")
+            .AddNumericProperty("b", "B")
+            .AddDateTimeProperty("c", "C")
+            .AddLinkProperty("d", "D");
+
+        var (_, properties) = builder.Build();
+
+        foreach (var prop in properties)
+            Assert.True(prop.IsLocked);
+    }
+
+    [Fact]
+    public void Build_PropertyOptionsRespected()
+    {
+        var builder = new PivotViewerCollectionBuilder()
+            .AddStringProperty("search", "Search", PivotViewerPropertyOptions.CanSearchText);
+
+        var (_, properties) = builder.Build();
+
+        Assert.True(properties[0].CanSearchText);
+        Assert.False(properties[0].CanFilter);
+    }
+
+    [Fact]
+    public void AddNumericProperty_WithFormat()
+    {
+        var builder = new PivotViewerCollectionBuilder()
+            .AddNumericProperty("price", "Price", "$#,##0.00");
+
+        var (_, properties) = builder.Build();
+
+        Assert.Equal("$#,##0.00", properties[0].Format);
+    }
 }
