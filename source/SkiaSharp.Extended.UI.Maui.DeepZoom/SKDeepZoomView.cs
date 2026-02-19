@@ -185,32 +185,32 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         /// <summary>Current viewport width (1.0 = full image fits). Setting triggers animated transition if UseSprings is true.</summary>
         public double ViewportWidth
         {
-            get => _controller.Viewport.ViewportWidth;
+            get => _controller.TargetViewportWidth;
             set
             {
-                _controller.SetViewport(value, _controller.Viewport.ViewportOriginX, _controller.Viewport.ViewportOriginY);
+                _controller.SetViewport(value, _controller.TargetOriginX, _controller.TargetOriginY);
                 _canvasView.InvalidateSurface();
             }
         }
 
-        /// <summary>Current viewport origin X. Setting triggers animated transition if UseSprings is true.</summary>
+        /// <summary>Current viewport origin X (target value). Setting triggers animated transition if UseSprings is true.</summary>
         public double ViewportOriginX
         {
-            get => _controller.Viewport.ViewportOriginX;
+            get => _controller.TargetOriginX;
             set
             {
-                _controller.SetViewport(_controller.Viewport.ViewportWidth, value, _controller.Viewport.ViewportOriginY);
+                _controller.SetViewport(_controller.TargetViewportWidth, value, _controller.TargetOriginY);
                 _canvasView.InvalidateSurface();
             }
         }
 
-        /// <summary>Current viewport origin Y. Setting triggers animated transition if UseSprings is true.</summary>
+        /// <summary>Current viewport origin Y (target value). Setting triggers animated transition if UseSprings is true.</summary>
         public double ViewportOriginY
         {
-            get => _controller.Viewport.ViewportOriginY;
+            get => _controller.TargetOriginY;
             set
             {
-                _controller.SetViewport(_controller.Viewport.ViewportWidth, _controller.Viewport.ViewportOriginX, value);
+                _controller.SetViewport(_controller.TargetViewportWidth, _controller.TargetOriginX, value);
                 _canvasView.InvalidateSurface();
             }
         }
@@ -265,7 +265,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         public IReadOnlyList<DeepZoomSubImage> SubImages => _controller.SubImages;
 
         /// <summary>
-        /// Zooms to show the entire image.
+        /// Zooms to show the entire image. Animates if UseSprings is true.
         /// </summary>
         public void ResetView()
         {
@@ -274,7 +274,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         }
 
         /// <summary>
-        /// Zooms about a logical point.
+        /// Zooms about a logical point. Animates if UseSprings is true.
         /// </summary>
         public void ZoomAboutLogicalPoint(double factor, double logicalX, double logicalY)
         {
@@ -392,7 +392,8 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                 double screenY = point.Value.Y * _dpiScale;
 
                 // Toggle: if zoomed in, zoom out to fit; otherwise zoom in by 2x
-                if (_controller.Viewport.ViewportWidth < 0.95)
+                // Use target VP (not animated) for the decision
+                if (_controller.TargetViewportWidth < 0.95)
                 {
                     _controller.ZoomAboutScreenPoint(0.5, screenX, screenY);
                 }

@@ -157,30 +157,43 @@ namespace SkiaSharp.Extended.DeepZoom
         }
 
         /// <summary>
-        /// Constrains the viewport to stay within the image bounds (0,0)-(1, 1/aspectRatio).
+        /// Maximum viewport width (minimum zoom level). Default 1.0 means the image fills the control.
+        /// Set higher (e.g., 10.0) to allow zooming out so the image appears as a small thumbnail.
+        /// </summary>
+        public double MaxViewportWidth { get; set; } = double.MaxValue;
+
+        /// <summary>
+        /// Constrains the viewport. When zoomed out past the image,
+        /// the image is centered within the viewport.
         /// </summary>
         public void Constrain()
         {
             double imageLogicalHeight = 1.0 / _aspectRatio;
 
-            // Don't zoom out further than the image
-            if (_viewportWidth > 1.0)
-                _viewportWidth = 1.0;
+            // Clamp to max zoom-out
+            if (_viewportWidth > MaxViewportWidth)
+                _viewportWidth = MaxViewportWidth;
 
-            // Recalculate viewport height after potential width change
             double vpHeight = ViewportHeight;
 
-            // Clamp origin
-            if (_viewportOriginX < 0) _viewportOriginX = 0;
-            if (_viewportOriginY < 0) _viewportOriginY = 0;
-            if (_viewportOriginX + _viewportWidth > 1.0)
-                _viewportOriginX = 1.0 - _viewportWidth;
-            if (_viewportOriginY + vpHeight > imageLogicalHeight)
-                _viewportOriginY = imageLogicalHeight - vpHeight;
-
-            // Re-check after adjustment
-            if (_viewportOriginX < 0) _viewportOriginX = 0;
-            if (_viewportOriginY < 0) _viewportOriginY = 0;
+            if (_viewportWidth <= 1.0)
+            {
+                // Zoomed in or exactly fitting: clamp origin to keep image in view
+                if (_viewportOriginX < 0) _viewportOriginX = 0;
+                if (_viewportOriginY < 0) _viewportOriginY = 0;
+                if (_viewportOriginX + _viewportWidth > 1.0)
+                    _viewportOriginX = 1.0 - _viewportWidth;
+                if (_viewportOriginY + vpHeight > imageLogicalHeight)
+                    _viewportOriginY = imageLogicalHeight - vpHeight;
+                if (_viewportOriginX < 0) _viewportOriginX = 0;
+                if (_viewportOriginY < 0) _viewportOriginY = 0;
+            }
+            else
+            {
+                // Zoomed out: center the image in the viewport
+                _viewportOriginX = (1.0 - _viewportWidth) / 2.0;
+                _viewportOriginY = (imageLogicalHeight - vpHeight) / 2.0;
+            }
         }
 
         /// <summary>Creates a snapshot of the current viewport state.</summary>

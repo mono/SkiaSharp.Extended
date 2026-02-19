@@ -221,7 +221,7 @@ public class ViewportTest
     }
 
     [Fact]
-    public void Constrain_PreventsZoomOutBeyondFull()
+    public void Constrain_ZoomedOut_CentersImage()
     {
         var vp = new Viewport
         {
@@ -230,7 +230,9 @@ public class ViewportTest
         };
 
         vp.Constrain();
-        Assert.Equal(1.0, vp.ViewportWidth, 6);
+        // VP=2.0 allowed, image is centered: origin = (1-2)/2 = -0.5
+        Assert.Equal(2.0, vp.ViewportWidth, 6);
+        Assert.Equal(-0.5, vp.ViewportOriginX, 6);
     }
 
     [Fact]
@@ -492,10 +494,9 @@ public class ViewportTest
     }
 
     [Fact]
-    public void Constrain_ZoomedOut_UsesPostClampHeightForOriginY()
+    public void Constrain_ZoomedOut_CentersImageLandscape()
     {
-        // Regression: Constrain must compute vpHeight AFTER clamping ViewportWidth,
-        // not before, otherwise OriginY is clamped using a stale (too-large) height.
+        // When zoomed out, the image should be centered
         var vp = new Viewport
         {
             ControlWidth = 1000,
@@ -508,15 +509,13 @@ public class ViewportTest
 
         vp.Constrain();
 
-        // ViewportWidth must be clamped to 1.0
-        Assert.Equal(1.0, vp.ViewportWidth, 6);
-
-        // Post-clamp vpHeight = 1.0 * 200/1000 = 0.2
-        // Correct: originY = 0.5 - 0.2 = 0.3
-        // Stale bug: vpHeight = 2.0 * 200/1000 = 0.4, originY = 0.5 - 0.4 = 0.1
-        double imageLogicalHeight = 1.0 / 2.0; // 0.5
-        Assert.Equal(0.3, vp.ViewportOriginY, 6);
-        Assert.True(vp.ViewportOriginY + vp.ViewportHeight <= imageLogicalHeight + 1e-9);
+        // VP=2.0 allowed, image centered: originX = (1-2)/2 = -0.5
+        Assert.Equal(2.0, vp.ViewportWidth, 6);
+        Assert.Equal(-0.5, vp.ViewportOriginX, 6);
+        // vpHeight = 2.0 * 200/1000 = 0.4, imageH = 0.5
+        // centerY = (0.5 - 0.4) / 2 = 0.05
+        double expectedY = (0.5 - vp.ViewportHeight) / 2.0;
+        Assert.Equal(expectedY, vp.ViewportOriginY, 6);
     }
 
     // --- Additional Constrain tests ---
