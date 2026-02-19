@@ -429,23 +429,25 @@ namespace SkiaSharp.Extended.PivotViewer
 
         public void Dispose()
         {
-            if (!_disposed)
+            lock (_thumbnailDisposeLock)
             {
+                if (_disposed) return;
                 _disposed = true;
-                // ClearCache uses deferred disposal; flush immediately since we're disposing
-                ClearCache();
-                lock (_thumbnailDisposeLock)
-                {
-                    foreach (var bmp in _pendingThumbnailDispose)
-                        bmp.Dispose();
-                    _pendingThumbnailDispose.Clear();
-                }
-                foreach (var kv in _loadLocks)
-                    kv.Value?.Dispose();
-                _loadLocks.Clear();
-                _cache.Dispose();
-                (_fetcher as IDisposable)?.Dispose();
             }
+
+            // ClearCache uses deferred disposal; flush immediately since we're disposing
+            ClearCache();
+            lock (_thumbnailDisposeLock)
+            {
+                foreach (var bmp in _pendingThumbnailDispose)
+                    bmp.Dispose();
+                _pendingThumbnailDispose.Clear();
+            }
+            foreach (var kv in _loadLocks)
+                kv.Value?.Dispose();
+            _loadLocks.Clear();
+            _cache.Dispose();
+            (_fetcher as IDisposable)?.Dispose();
         }
     }
 }

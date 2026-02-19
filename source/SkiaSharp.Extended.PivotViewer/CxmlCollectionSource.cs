@@ -207,7 +207,7 @@ namespace SkiaSharp.Extended.PivotViewer
 #if NET5_0_OR_GREATER
                     , cancellationToken
 #endif
-                    );
+                    ).ConfigureAwait(false);
 
                 var doc = XDocument.Parse(xml);
                 ParseInto(source, doc);
@@ -223,7 +223,7 @@ namespace SkiaSharp.Extended.PivotViewer
 #if NET5_0_OR_GREATER
                             , cancellationToken
 #endif
-                            );
+                            ).ConfigureAwait(false);
                         var suppDoc = XDocument.Parse(suppXml);
                         var supplement = new CxmlCollectionSource();
                         ParseInto(supplement, suppDoc);
