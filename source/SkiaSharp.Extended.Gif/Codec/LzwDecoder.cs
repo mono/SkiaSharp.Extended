@@ -60,7 +60,8 @@ namespace SkiaSharp.Extended.Gif.Codec
 			const int maxTableSize = 4096;
 			codeTable = ArrayPool<int>.Shared.Rent(maxTableSize);
 			suffixTable = ArrayPool<byte>.Shared.Rent(maxTableSize);
-			pixelStack = ArrayPool<byte>.Shared.Rent(maxTableSize + 1);
+			// Increase stack size for long code chains (some GIFs need more)
+			pixelStack = ArrayPool<byte>.Shared.Rent(8192); // Was 4097, now 8192
 
 			// Initialize code table
 			for (int i = 0; i < clearCode; i++)
@@ -126,26 +127,30 @@ namespace SkiaSharp.Extended.Gif.Codec
 
 				// Handle code
 				int inCode = code;
-				if (code >= nextCode)
+				if (code == nextCode)
 				{
-					// Code not in table yet (special case)
+					// Special case: code not in table yet (KωK sequence)
+					// This happens when encoder outputs the code for a string that's
+					// currently being added to the table
 					pixelStack[stackPointer++] = firstByte;
 					code = oldCode;
 				}
+				else if (code > nextCode)
+				{
+					// Code is beyond what we've defined - this is an error
+					throw new InvalidDataException($"LZW decompression error: code {code} not in table (nextCode={nextCode})");
+				}
 
 				// Decode the code (traverse the string table backwards)
-				int loopGuard = 0;
 				while (code > endCode)
 				{
-					// Bounds check
-					if (code >= 4096)
-						throw new InvalidDataException($"LZW decompression error: invalid code {code}");
+					// Bounds check - code must be in valid range
+					if (code < 0 || code >= nextCode)
+						throw new InvalidDataException($"LZW decompression error: code {code} out of range (nextCode={nextCode})");
+					
+					// Stack overflow protection
 					if (stackPointer >= pixelStack.Length - 1)
 						throw new InvalidDataException("LZW decompression error: stack overflow.");
-					
-					// Cycle detection
-					if (++loopGuard > 4096)
-						throw new InvalidDataException("LZW decompression error: circular reference in code table.");
 					
 					pixelStack[stackPointer++] = suffixTable[code];
 					code = codeTable[code];
