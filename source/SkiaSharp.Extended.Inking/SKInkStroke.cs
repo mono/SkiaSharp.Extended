@@ -32,12 +32,14 @@ public class SKInkStroke : IDisposable
     /// <param name="color">The stroke color, or null to use canvas default.</param>
     /// <param name="capStyle">The cap style for stroke ends.</param>
     /// <param name="smoothingFactor">The smoothing factor (1-10, higher = smoother).</param>
+    /// <param name="smoothingAlgorithm">The algorithm to use for stroke smoothing.</param>
     public SKInkStroke(
         float minStrokeWidth = 1f, 
         float maxStrokeWidth = 8f,
         SKColor? color = null,
         SKStrokeCapStyle capStyle = SKStrokeCapStyle.Round,
-        int smoothingFactor = 4)
+        int smoothingFactor = 4,
+        SKSmoothingAlgorithm smoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom)
     {
         if (minStrokeWidth < 0)
             throw new ArgumentOutOfRangeException(nameof(minStrokeWidth), "Minimum stroke width must be non-negative.");
@@ -51,6 +53,7 @@ public class SKInkStroke : IDisposable
         Color = color;
         CapStyle = capStyle;
         this.smoothingFactor = smoothingFactor;
+        SmoothingAlgorithm = smoothingAlgorithm;
     }
 
     /// <summary>
@@ -90,6 +93,11 @@ public class SKInkStroke : IDisposable
             isDirty = true;
         }
     }
+
+    /// <summary>
+    /// Gets or sets the smoothing algorithm. Catmull-Rom is recommended for handwriting.
+    /// </summary>
+    public SKSmoothingAlgorithm SmoothingAlgorithm { get; set; }
 
     /// <summary>
     /// Gets the list of points in this stroke.
@@ -314,7 +322,7 @@ public class SKInkStroke : IDisposable
     }
 
     /// <summary>
-    /// Generates smoothed points using quadratic Bezier interpolation.
+    /// Generates smoothed points using the selected smoothing algorithm.
     /// </summary>
     private List<(SKPoint Point, float Pressure)> GenerateSmoothedPoints()
     {
@@ -352,6 +360,24 @@ public class SKInkStroke : IDisposable
             result.Add((p1, pressure1));
             return result;
         }
+
+        // Use selected smoothing algorithm for 3+ points
+        if (SmoothingAlgorithm == SKSmoothingAlgorithm.CatmullRom)
+        {
+            return GenerateCatmullRomPoints();
+        }
+        else
+        {
+            return GenerateQuadraticBezierPoints();
+        }
+    }
+
+    /// <summary>
+    /// Generates smoothed points using quadratic Bezier interpolation.
+    /// </summary>
+    private List<(SKPoint Point, float Pressure)> GenerateQuadraticBezierPoints()
+    {
+        var result = new List<(SKPoint Point, float Pressure)>();
 
         // Add the first point
         result.Add((points[0].Location, points[0].Pressure));
@@ -397,6 +423,90 @@ public class SKInkStroke : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Generates smoothed points using Catmull-Rom spline interpolation.
+    /// This algorithm passes through all control points, making it ideal for handwriting.
+    /// </summary>
+    private List<(SKPoint Point, float Pressure)> GenerateCatmullRomPoints()
+    {
+        var result = new List<(SKPoint Point, float Pressure)>();
+
+        // Add the first point
+        result.Add((points[0].Location, points[0].Pressure));
+
+        // Generate intermediate points using Catmull-Rom spline
+        for (int i = 0; i < points.Count - 1; i++)
+        {
+            // Get 4 control points for Catmull-Rom (P0, P1, P2, P3)
+            // For endpoints, use reflection/clamping
+            var p0 = (i > 0) ? points[i - 1].Location : points[0].Location;
+            var p1 = points[i].Location;
+            var p2 = points[i + 1].Location;
+            var p3 = (i < points.Count - 2) ? points[i + 2].Location : points[points.Count - 1].Location;
+
+            var pr0 = (i > 0) ? points[i - 1].Pressure : points[0].Pressure;
+            var pr1 = points[i].Pressure;
+            var pr2 = points[i + 1].Pressure;
+            var pr3 = (i < points.Count - 2) ? points[i + 2].Pressure : points[points.Count - 1].Pressure;
+
+            // Add samples along this segment
+            for (int j = 1; j <= SmoothingFactor; j++)
+            {
+                float t = j / (float)SmoothingFactor;
+                
+                // Catmull-Rom spline formula
+                var point = CatmullRom(p0, p1, p2, p3, t);
+                var pressure = CatmullRomScalar(pr0, pr1, pr2, pr3, t);
+                
+                result.Add((point, pressure));
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Catmull-Rom spline interpolation for a point.
+    /// </summary>
+    private static SKPoint CatmullRom(SKPoint p0, SKPoint p1, SKPoint p2, SKPoint p3, float t)
+    {
+        float t2 = t * t;
+        float t3 = t2 * t;
+
+        // Catmull-Rom matrix coefficients (with tension=0.5)
+        float x = 0.5f * (
+            (2f * p1.X) +
+            (-p0.X + p2.X) * t +
+            (2f * p0.X - 5f * p1.X + 4f * p2.X - p3.X) * t2 +
+            (-p0.X + 3f * p1.X - 3f * p2.X + p3.X) * t3);
+
+        float y = 0.5f * (
+            (2f * p1.Y) +
+            (-p0.Y + p2.Y) * t +
+            (2f * p0.Y - 5f * p1.Y + 4f * p2.Y - p3.Y) * t2 +
+            (-p0.Y + 3f * p1.Y - 3f * p2.Y + p3.Y) * t3);
+
+        return new SKPoint(x, y);
+    }
+
+    /// <summary>
+    /// Catmull-Rom spline interpolation for a scalar value (pressure).
+    /// </summary>
+    private static float CatmullRomScalar(float p0, float p1, float p2, float p3, float t)
+    {
+        float t2 = t * t;
+        float t3 = t2 * t;
+
+        float result = 0.5f * (
+            (2f * p1) +
+            (-p0 + p2) * t +
+            (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 +
+            (-p0 + 3f * p1 - 3f * p2 + p3) * t3);
+
+        // Clamp pressure to valid range
+        return Math.Max(0f, Math.Min(1f, result));
     }
 
     /// <summary>

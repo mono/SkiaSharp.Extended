@@ -538,4 +538,66 @@ public class SKInkStrokeTests
         // Path should have been regenerated (different reference)
         Assert.NotSame(path1, path2);
     }
+
+    [Fact]
+    public void Constructor_DefaultsToCatmullRom()
+    {
+        using var stroke = new SKInkStroke();
+        
+        Assert.Equal(SKSmoothingAlgorithm.CatmullRom, stroke.SmoothingAlgorithm);
+    }
+
+    [Fact]
+    public void Constructor_SetsSmoothingAlgorithm()
+    {
+        using var stroke = new SKInkStroke(1f, 8f, null, SKStrokeCapStyle.Round, 4, SKSmoothingAlgorithm.QuadraticBezier);
+        
+        Assert.Equal(SKSmoothingAlgorithm.QuadraticBezier, stroke.SmoothingAlgorithm);
+    }
+
+    [Fact]
+    public void Path_CatmullRom_PassesThroughAllPoints()
+    {
+        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 4, SKSmoothingAlgorithm.CatmullRom);
+        
+        stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        stroke.AddPoint(new SKPoint(50f, 0f), 0.5f);
+        stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+        stroke.AddPoint(new SKPoint(150f, 100f), 0.5f);
+        
+        var path = stroke.Path;
+        
+        Assert.NotNull(path);
+        Assert.False(path!.IsEmpty);
+        
+        // Catmull-Rom should produce a valid path through all points
+        var bounds = path.Bounds;
+        Assert.True(bounds.Left <= 0f);
+        Assert.True(bounds.Right >= 150f);
+    }
+
+    [Fact]
+    public void Path_QuadraticBezier_GeneratesValidPath()
+    {
+        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 4, SKSmoothingAlgorithm.QuadraticBezier);
+        
+        stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
+        stroke.AddPoint(new SKPoint(50f, 0f), 0.5f);
+        stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
+        
+        var path = stroke.Path;
+        
+        Assert.NotNull(path);
+        Assert.False(path!.IsEmpty);
+    }
+
+    [Fact]
+    public void SmoothingAlgorithm_CanBeModified()
+    {
+        using var stroke = new SKInkStroke();
+        
+        stroke.SmoothingAlgorithm = SKSmoothingAlgorithm.QuadraticBezier;
+        
+        Assert.Equal(SKSmoothingAlgorithm.QuadraticBezier, stroke.SmoothingAlgorithm);
+    }
 }

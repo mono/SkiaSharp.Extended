@@ -109,6 +109,12 @@ public class SKInkCanvas : IDisposable
     }
 
     /// <summary>
+    /// Gets or sets the default smoothing algorithm for new strokes.
+    /// CatmullRom is recommended for handwriting.
+    /// </summary>
+    public SKSmoothingAlgorithm SmoothingAlgorithm { get; set; } = SKSmoothingAlgorithm.CatmullRom;
+
+    /// <summary>
     /// Gets the completed strokes in the canvas.
     /// </summary>
     public IReadOnlyList<SKInkStroke> Strokes => strokes;
@@ -139,7 +145,7 @@ public class SKInkCanvas : IDisposable
     /// <param name="point">The starting point with pressure.</param>
     public void StartStroke(SKInkPoint point)
     {
-        StartStroke(point, StrokeColor, CapStyle, SmoothingFactor);
+        StartStroke(point, StrokeColor, CapStyle, SmoothingFactor, SmoothingAlgorithm);
     }
 
     /// <summary>
@@ -149,7 +155,8 @@ public class SKInkCanvas : IDisposable
     /// <param name="color">The stroke color.</param>
     /// <param name="capStyle">The cap style for stroke ends.</param>
     /// <param name="smoothingFactor">The smoothing factor (1-10).</param>
-    public void StartStroke(SKInkPoint point, SKColor color, SKStrokeCapStyle capStyle = SKStrokeCapStyle.Round, int smoothingFactor = 4)
+    /// <param name="smoothingAlgorithm">The smoothing algorithm to use.</param>
+    public void StartStroke(SKInkPoint point, SKColor color, SKStrokeCapStyle capStyle = SKStrokeCapStyle.Round, int smoothingFactor = 4, SKSmoothingAlgorithm smoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom)
     {
         ThrowIfDisposed();
 
@@ -159,7 +166,7 @@ public class SKInkCanvas : IDisposable
             currentStroke.Dispose();
         }
 
-        currentStroke = new SKInkStroke(minStrokeWidth, maxStrokeWidth, color, capStyle, smoothingFactor);
+        currentStroke = new SKInkStroke(minStrokeWidth, maxStrokeWidth, color, capStyle, smoothingFactor, smoothingAlgorithm);
         currentStroke.AddPoint(point);
 
         StrokeStarted?.Invoke(this, EventArgs.Empty);
