@@ -301,21 +301,21 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         }
 
         /// <summary>Facet definitions for filtering and display.</summary>
-        public new IEnumerable<PivotViewerProperty>? PivotProperties
+        public IEnumerable<PivotViewerProperty>? PivotProperties
         {
             get => (IEnumerable<PivotViewerProperty>?)GetValue(PivotPropertiesProperty);
             set => SetValue(PivotPropertiesProperty, value);
         }
 
         /// <summary>Currently selected item (two-way bindable).</summary>
-        public new PivotViewerItem? SelectedItem
+        public PivotViewerItem? SelectedItem
         {
             get => (PivotViewerItem?)GetValue(SelectedItemProperty);
             set => SetValue(SelectedItemProperty, value);
         }
 
         /// <summary>Index of the selected item (two-way bindable).</summary>
-        public new int SelectedIndex
+        public int SelectedIndex
         {
             get => (int)GetValue(SelectedIndexProperty);
             set => SetValue(SelectedIndexProperty, value);
@@ -329,7 +329,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         }
 
         /// <summary>Current view mode: "grid" or "graph" (two-way bindable).</summary>
-        public new string View
+        public string View
         {
             get => (string)GetValue(ViewProperty);
             set => SetValue(ViewProperty, value);
@@ -463,7 +463,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private const float FilterPaneWidth = 220f;
         private const float DetailPaneWidth = 280f;
         private const float ControlBarHeight = 40f;
-        private const float Padding = 8f;
+        private const float ItemPadding = 8f;
         private const float TradingCardMinWidth = 150f;
 
         private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
@@ -1060,7 +1060,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             var categories = filterPane.GetCategories(_controller.SearchFilteredItems);
             float searchBoxHeight = _searchEntry != null ? 40f : 0f;
-            float y = topOffset + Padding + searchBoxHeight;
+            float y = topOffset + ItemPadding + searchBoxHeight;
             float lineHeight = 20f;
 
             // "Clear All" button if any filters active
@@ -1068,7 +1068,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             {
                 using var clearPaint = new SKPaint { Color = SKColors.CornflowerBlue };
                 _textFont.Size = 12;
-                canvas.DrawText("✕ Clear All Filters", Padding, y + 14, SKTextAlign.Left, _textFont, clearPaint);
+                canvas.DrawText("✕ Clear All Filters", ItemPadding, y + 14, SKTextAlign.Left, _textFont, clearPaint);
                 y += lineHeight + 4;
             }
 
@@ -1085,7 +1085,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     };
                     _textFont.Size = 13;
                     canvas.DrawText(category.Property.DisplayName ?? category.Property.Id,
-                        Padding, y + 14, SKTextAlign.Left, _textFont, headerPaint);
+                        ItemPadding, y + 14, SKTextAlign.Left, _textFont, headerPaint);
                 }
                 y += lineHeight + 2;
 
@@ -1112,7 +1112,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                             {
                                 Color = isActive ? SKColors.CornflowerBlue : new SKColor(80, 80, 80)
                             };
-                            canvas.DrawText(label, Padding + 8, y + 12, SKTextAlign.Left, _textFont, valuePaint);
+                            canvas.DrawText(label, ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, valuePaint);
                         }
                         y += lineHeight - 2;
                         shown++;
@@ -1125,7 +1125,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                         {
                             using var morePaint = new SKPaint { Color = new SKColor(0, 102, 204) };
                             canvas.DrawText($"  ▸ Show all {category.ValueCounts.Count} values...",
-                                Padding + 8, y + 12, SKTextAlign.Left, _textFont, morePaint);
+                                ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, morePaint);
                         }
                         y += lineHeight - 2;
                     }
@@ -1136,7 +1136,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                         {
                             using var morePaint = new SKPaint { Color = new SKColor(0, 102, 204) };
                             canvas.DrawText("  ▾ Show less",
-                                Padding + 8, y + 12, SKTextAlign.Left, _textFont, morePaint);
+                                ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, morePaint);
                         }
                         y += lineHeight - 2;
                     }
@@ -1172,13 +1172,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     if (buckets.Count > 0)
                     {
                         float histH = 40f;
-                        float barWidth = (width - Padding * 2 - 16) / Math.Max(1, buckets.Count);
+                        float barWidth = (width - ItemPadding * 2 - 16) / Math.Max(1, buckets.Count);
                         int maxCount = buckets.Max(b => b.Count);
 
                         for (int i = 0; i < buckets.Count; i++)
                         {
                             float barHeight = maxCount > 0 ? (float)buckets[i].Count / maxCount * histH : 0;
-                            float barX = Padding + 8 + i * barWidth;
+                            float barX = ItemPadding + 8 + i * barWidth;
                             float barY = y + histH - barHeight;
 
                             using var barPaint = new SKPaint { Color = new SKColor(100, 149, 237, 180) };
@@ -1189,13 +1189,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                         // Min/max label
                         using var rangePaint = new SKPaint { Color = new SKColor(120, 120, 120) };
                         string rangeLabel = $"{buckets[0].Label} – {buckets[buckets.Count - 1].Label}";
-                        canvas.DrawText(rangeLabel, Padding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
+                        canvas.DrawText(rangeLabel, ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
                         y += lineHeight;
                     }
                     else
                     {
                         using var emptyPaint = new SKPaint { Color = SKColors.Gray };
-                        canvas.DrawText("(no numeric data)", Padding + 8, y + 12, SKTextAlign.Left, _textFont, emptyPaint);
+                        canvas.DrawText("(no numeric data)", ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, emptyPaint);
                         y += lineHeight;
                     }
                 }
@@ -1236,13 +1236,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     {
                         var dtBuckets = dateData.Buckets;
                         float histH = 40f;
-                        float barWidth = (width - Padding * 2 - 16) / Math.Max(1, dtBuckets.Count);
+                        float barWidth = (width - ItemPadding * 2 - 16) / Math.Max(1, dtBuckets.Count);
                         int maxCount = dtBuckets.Max(b => b.Count);
 
                         for (int i = 0; i < dtBuckets.Count; i++)
                         {
                             float barHeight = maxCount > 0 ? (float)dtBuckets[i].Count / maxCount * histH : 0;
-                            float barX = Padding + 8 + i * barWidth;
+                            float barX = ItemPadding + 8 + i * barWidth;
                             float barY = y + histH - barHeight;
 
                             using var barPaint = new SKPaint { Color = new SKColor(144, 190, 109, 180) };
@@ -1252,13 +1252,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
                         using var rangePaint = new SKPaint { Color = new SKColor(120, 120, 120) };
                         string rangeLabel = $"{dateData.Min:MMM yyyy} – {dateData.Max:MMM yyyy}";
-                        canvas.DrawText(rangeLabel, Padding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
+                        canvas.DrawText(rangeLabel, ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
                         y += lineHeight;
                     }
                     else
                     {
                         using var emptyPaint = new SKPaint { Color = SKColors.Gray };
-                        canvas.DrawText("(no date data)", Padding + 8, y + 12, SKTextAlign.Left, _textFont, emptyPaint);
+                        canvas.DrawText("(no date data)", ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, emptyPaint);
                         y += lineHeight;
                     }
                 }
@@ -1290,7 +1290,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             if (item == null) return;
 
             var defaults = _controller.DefaultDetails;
-            float y = Padding;
+            float y = ItemPadding;
 
             // Item name (respects DefaultDetails.IsNameHidden)
             if (!defaults.IsNameHidden)
@@ -1298,7 +1298,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 var name = GetItemDisplayName(item) ?? "Unknown";
                 _textFont.Size = 16;
                 using var titlePaint = new SKPaint { Color = SKColors.Black };
-                canvas.DrawText(name, Padding, y + 16, SKTextAlign.Left, _textFont, titlePaint);
+                canvas.DrawText(name, ItemPadding, y + 16, SKTextAlign.Left, _textFont, titlePaint);
                 y += 28;
             }
 
@@ -1309,12 +1309,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 var thumbnail = imgProvider.GetThumbnailForItem(item);
                 if (thumbnail != null)
                 {
-                    float thumbSize = Math.Min(width - 2 * Padding, 150);
+                    float thumbSize = Math.Min(width - 2 * ItemPadding, 150);
                     float aspectRatio = (float)thumbnail.Width / thumbnail.Height;
                     float thumbW = thumbSize;
                     float thumbH = thumbSize / aspectRatio;
-                    canvas.DrawBitmap(thumbnail, new SKRect(Padding, y, Padding + thumbW, y + thumbH));
-                    y += thumbH + Padding;
+                    canvas.DrawBitmap(thumbnail, new SKRect(ItemPadding, y, ItemPadding + thumbW, y + thumbH));
+                    y += thumbH + ItemPadding;
                 }
             }
 
@@ -1331,7 +1331,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                         using var descPaint = new SKPaint { Color = new SKColor(80, 80, 80) };
                         // Truncate long descriptions
                         if (desc!.Length > 120) desc = desc.Substring(0, 117) + "...";
-                        canvas.DrawText(desc, Padding, y + 12, SKTextAlign.Left, _textFont, descPaint);
+                        canvas.DrawText(desc, ItemPadding, y + 12, SKTextAlign.Left, _textFont, descPaint);
                         y += 20;
                     }
                 }
@@ -1339,7 +1339,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             // Separator
             y += 4;
-            canvas.DrawLine(Padding, y, width - Padding, y, sepPaint);
+            canvas.DrawLine(ItemPadding, y, width - ItemPadding, y, sepPaint);
             y += 8;
 
             // Facet values (respects DefaultDetails.IsFacetCategoriesHidden)
@@ -1353,7 +1353,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
                     // Property name
                     using var propPaint = new SKPaint { Color = new SKColor(100, 100, 100) };
-                    canvas.DrawText(facet.DisplayName, Padding, y + 12, SKTextAlign.Left, _textFont, propPaint);
+                    canvas.DrawText(facet.DisplayName, ItemPadding, y + 12, SKTextAlign.Left, _textFont, propPaint);
                     y += 16;
 
                     // Values — use blue + underline for Link-type properties
@@ -1367,22 +1367,22 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                         if (y > height - 20) break;
                         string displayVal = val.Length > 40 ? val.Substring(0, 37) + "..." : val;
                         float textWidth = _textFont.MeasureText(displayVal, out _);
-                        canvas.DrawText(displayVal, Padding + 4, y + 12, SKTextAlign.Left, _textFont, valuePaint);
+                        canvas.DrawText(displayVal, ItemPadding + 4, y + 12, SKTextAlign.Left, _textFont, valuePaint);
                         if (isLinkType)
                         {
                             // Draw underline for link values
-                            canvas.DrawLine(Padding + 4, y + 14, Padding + 4 + textWidth, y + 14, valuePaint);
+                            canvas.DrawLine(ItemPadding + 4, y + 14, ItemPadding + 4 + textWidth, y + 14, valuePaint);
 
                             // Record hit rect for link tap handling
                             if (rawValues != null && valIdx < rawValues.Count && rawValues[valIdx] is PivotViewerHyperlink hl)
                             {
-                                _detailLinkHitRects.Add((new SKRect(Padding + 4, y, Padding + 4 + textWidth, y + 16), hl.Uri));
+                                _detailLinkHitRects.Add((new SKRect(ItemPadding + 4, y, ItemPadding + 4 + textWidth, y + 16), hl.Uri));
                             }
                         }
                         else if (isFilterable && facet.Property.PropertyType == PivotViewerPropertyType.Text)
                         {
                             // Record hit rect for tap-to-filter on filterable text values
-                            _detailFacetHitRects.Add((new SKRect(Padding + 4, y, Padding + 4 + textWidth, y + 16), facet.Property.Id, val));
+                            _detailFacetHitRects.Add((new SKRect(ItemPadding + 4, y, ItemPadding + 4 + textWidth, y + 16), facet.Property.Id, val));
                         }
                         y += 16;
                         valIdx++;
@@ -1392,7 +1392,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     {
                         using var morePaint = new SKPaint { Color = SKColors.Gray };
                         canvas.DrawText($"+{facet.Values.Count - 3} more",
-                            Padding + 4, y + 12, SKTextAlign.Left, _textFont, morePaint);
+                            ItemPadding + 4, y + 12, SKTextAlign.Left, _textFont, morePaint);
                         y += 16;
                     }
 
@@ -1410,7 +1410,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     _textFont.Size = 9;
                     using var copyPaint = new SKPaint { Color = SKColors.Gray };
                     var text = copyright.Text ?? "©";
-                    canvas.DrawText(text, Padding, y + 10, SKTextAlign.Left, _textFont, copyPaint);
+                    canvas.DrawText(text, ItemPadding, y + 10, SKTextAlign.Left, _textFont, copyPaint);
                 }
             }
         }
@@ -1649,7 +1649,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             // Check "Clear All" button (only responds when tap is within its rendered bounds)
             float searchBoxOffset = 40f;
-            float clearAllStart = ControlBarHeight + searchBoxOffset + Padding;
+            float clearAllStart = ControlBarHeight + searchBoxOffset + ItemPadding;
             float clearAllEnd = clearAllStart + 24;
             if (filterPane.HasActiveFilters && adjustedY >= clearAllStart && adjustedY < clearAllEnd)
             {
@@ -1661,7 +1661,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             // Calculate which filter value was tapped based on Y position
             var categories = filterPane.GetCategories(_controller.SearchFilteredItems);
             float searchBoxHeight = _searchEntry != null ? 40f : 0f;
-            float catY = ControlBarHeight + Padding + searchBoxHeight;
+            float catY = ControlBarHeight + ItemPadding + searchBoxHeight;
             float lineHeight = 20f;
 
             if (filterPane.HasActiveFilters)
@@ -1709,11 +1709,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     if (_numericHistogramCache.TryGetValue(category.Property.Id, out var buckets) && buckets.Count > 0)
                     {
                         float histH = 40f;
-                        float barWidth = (FilterPaneWidth - Padding * 2 - 16) / Math.Max(1, buckets.Count);
+                        float barWidth = (FilterPaneWidth - ItemPadding * 2 - 16) / Math.Max(1, buckets.Count);
 
                         if (adjustedY >= catY && adjustedY < catY + histH)
                         {
-                            int barIndex = (int)((x - Padding - 8) / barWidth);
+                            int barIndex = (int)((x - ItemPadding - 8) / barWidth);
                             if (barIndex >= 0 && barIndex < buckets.Count)
                             {
                                 double min = buckets[barIndex].Min;
@@ -1741,11 +1741,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     {
                         var dtBuckets = dateData.Buckets;
                         float histH = 40f;
-                        float barWidth = (FilterPaneWidth - Padding * 2 - 16) / Math.Max(1, dtBuckets.Count);
+                        float barWidth = (FilterPaneWidth - ItemPadding * 2 - 16) / Math.Max(1, dtBuckets.Count);
 
                         if (adjustedY >= catY && adjustedY < catY + histH)
                         {
-                            int barIndex = (int)((x - Padding - 8) / barWidth);
+                            int barIndex = (int)((x - ItemPadding - 8) / barWidth);
                             if (barIndex >= 0 && barIndex < dtBuckets.Count)
                             {
                                 var dtMin = dtBuckets[barIndex].Min;
