@@ -278,4 +278,143 @@ public class ViewerStateSerializerTest
         Assert.Single(state.StringPredicates);
         Assert.Equal("val", state.StringPredicates[0].Values.First());
     }
+
+    [Fact]
+    public void Serialize_AllStateFields_CombinedOutput()
+    {
+        var pred1 = new StringFilterPredicate("Color");
+        pred1.AddValue("Red");
+        pred1.AddValue("Blue");
+
+        var pred2 = new NumericRangeFilterPredicate("Price", 10.0, 99.0);
+
+        var state = new ViewerState
+        {
+            ViewId = "graph",
+            SortPropertyId = "Year",
+            SelectedItemId = "item-42",
+            Predicates = new FilterPredicate[] { pred1, pred2 }
+        };
+
+        var serialized = ViewerStateSerializer.Serialize(state);
+
+        Assert.Contains("$view=graph", serialized);
+        Assert.Contains("$sort=Year", serialized);
+        Assert.Contains("$select=item-42", serialized);
+        Assert.Contains("Color=Red", serialized);
+        Assert.Contains("Color=Blue", serialized);
+        Assert.Contains("GE(10)", serialized);
+        Assert.Contains("LE(99)", serialized);
+    }
+
+    [Fact]
+    public void RoundTrip_FullState_AllFieldsPreserved()
+    {
+        var pred = new StringFilterPredicate("Category");
+        pred.AddValue("Sports");
+        pred.AddValue("Hybrid");
+
+        var rangePred = new NumericRangeFilterPredicate("Price", 50.0, 200.0);
+
+        var original = new ViewerState
+        {
+            ViewId = "grid",
+            SortPropertyId = "Year",
+            SelectedItemId = "item-7",
+            Predicates = new FilterPredicate[] { pred, rangePred }
+        };
+
+        var serialized = ViewerStateSerializer.Serialize(original);
+        var restored = ViewerStateSerializer.Deserialize(serialized);
+
+        Assert.Equal("grid", restored.ViewId);
+        Assert.Equal("Year", restored.SortPropertyId);
+        Assert.Equal("item-7", restored.SelectedItemId);
+        Assert.Single(restored.StringPredicates);
+        Assert.Equal(2, restored.StringPredicates[0].Values.Count);
+        Assert.Single(restored.RangePredicates);
+        Assert.Equal("Price", restored.RangePredicates[0].PropertyId);
+    }
+
+    [Fact]
+    public void Deserialize_NullString_ReturnsDefaultState()
+    {
+        var state = ViewerStateSerializer.Deserialize(null!);
+        Assert.NotNull(state);
+        Assert.Null(state.ViewId);
+        Assert.Null(state.SortPropertyId);
+        Assert.Null(state.SelectedItemId);
+    }
+
+    [Fact]
+    public void Serialize_NullPredicates_DoesNotThrow()
+    {
+        var state = new ViewerState
+        {
+            ViewId = "grid",
+            Predicates = null
+        };
+
+        var result = ViewerStateSerializer.Serialize(state);
+        Assert.Contains("$view=grid", result);
+    }
+
+    [Fact]
+    public void Serialize_EmptyStringFilterPredicate_Skipped()
+    {
+        var pred = new StringFilterPredicate("Color");
+        // No values added
+        var state = new ViewerState
+        {
+            Predicates = new FilterPredicate[] { pred }
+        };
+
+        var result = ViewerStateSerializer.Serialize(state);
+        Assert.Equal("", result);
+    }
+
+    [Fact]
+    public void Deserialize_MultipleStringFiltersOnDifferentProperties()
+    {
+        var state = ViewerStateSerializer.Deserialize("Color=Red&Size=Large&Color=Blue");
+        Assert.Equal(2, state.StringPredicates.Count);
+
+        var colorPred = state.StringPredicates.First(p => p.PropertyId == "Color");
+        var sizePred = state.StringPredicates.First(p => p.PropertyId == "Size");
+        Assert.Equal(2, colorPred.Values.Count);
+        Assert.Single(sizePred.Values);
+    }
+
+    [Fact]
+    public void RoundTrip_SpecialCharsInPropertyId()
+    {
+        var pred = new StringFilterPredicate("Make & Model");
+        pred.AddValue("Toyota Camry");
+
+        var state = new ViewerState
+        {
+            Predicates = new FilterPredicate[] { pred }
+        };
+
+        var serialized = ViewerStateSerializer.Serialize(state);
+        var restored = ViewerStateSerializer.Deserialize(serialized);
+
+        Assert.Single(restored.StringPredicates);
+        Assert.Equal("Make & Model", restored.StringPredicates[0].PropertyId);
+        Assert.Contains("Toyota Camry", restored.StringPredicates[0].Values);
+    }
+
+    [Fact]
+    public void ViewerState_DefaultProperties()
+    {
+        var state = new ViewerState();
+        Assert.Null(state.ViewId);
+        Assert.Null(state.SortPropertyId);
+        Assert.Null(state.SelectedItemId);
+        Assert.Null(state.Predicates);
+        Assert.NotNull(state.StringPredicates);
+        Assert.NotNull(state.RangePredicates);
+        Assert.Empty(state.StringPredicates);
+        Assert.Empty(state.RangePredicates);
+    }
 }

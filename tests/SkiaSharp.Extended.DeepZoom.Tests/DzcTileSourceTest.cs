@@ -260,4 +260,193 @@ public class DzcTileSourceTest
         Assert.Equal(4, DzcTileSource.GridToMorton(2, 0));
         Assert.Equal(5, DzcTileSource.GridToMorton(3, 0));
     }
+
+    [Fact]
+    public void Parse_ItemsWithIsPathAndSource()
+    {
+        var xml = @"<Collection MaxLevel=""8"" TileSize=""256"" Format=""jpg"" NextItemId=""3""
+            xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+            <Items>
+                <I Id=""0"" N=""0"" IsPath=""1"" Source=""images/img0.dzi"">
+                    <Size Width=""1024"" Height=""768"" />
+                </I>
+                <I Id=""1"" N=""1"" IsPath=""1"" Source=""images/img1.dzi"">
+                    <Size Width=""640"" Height=""480"" />
+                </I>
+                <I Id=""2"" N=""2"">
+                    <Size Width=""320"" Height=""240"" />
+                </I>
+            </Items>
+        </Collection>";
+
+        var dzc = DzcTileSource.Parse(xml);
+        Assert.Equal(3, dzc.ItemCount);
+
+        // Items with IsPath=1 have Source
+        Assert.Equal("images/img0.dzi", dzc.Items[0].Source);
+        Assert.Equal("images/img1.dzi", dzc.Items[1].Source);
+        // Item without IsPath has no Source
+        Assert.Null(dzc.Items[2].Source);
+    }
+
+    [Fact]
+    public void Parse_MultipleItemsWithDifferentAspectRatios()
+    {
+        var xml = @"<Collection MaxLevel=""7"" TileSize=""256"" Format=""png""
+            xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+            <Items>
+                <I Id=""0"" N=""0""><Size Width=""1920"" Height=""1080"" /></I>
+                <I Id=""1"" N=""1""><Size Width=""500"" Height=""500"" /></I>
+                <I Id=""2"" N=""2""><Size Width=""300"" Height=""600"" /></I>
+                <I Id=""3"" N=""3""><Size Width=""800"" Height=""200"" /></I>
+            </Items>
+        </Collection>";
+
+        var dzc = DzcTileSource.Parse(xml);
+        Assert.Equal(4, dzc.ItemCount);
+
+        // 16:9
+        Assert.Equal(1920.0 / 1080.0, dzc.Items[0].AspectRatio, 6);
+        // 1:1
+        Assert.Equal(1.0, dzc.Items[1].AspectRatio, 6);
+        // 1:2 (portrait)
+        Assert.Equal(0.5, dzc.Items[2].AspectRatio, 6);
+        // 4:1 (wide)
+        Assert.Equal(4.0, dzc.Items[3].AspectRatio, 6);
+    }
+
+    [Fact]
+    public void Parse_MissingOptionalAttributes_UsesDefaults()
+    {
+        var xml = @"<Collection xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+            <Items>
+                <I><Size Width=""100"" Height=""100"" /></I>
+            </Items>
+        </Collection>";
+
+        var dzc = DzcTileSource.Parse(xml);
+
+        // MaxLevel defaults to 0, TileSize defaults to 256, Format to "jpg"
+        Assert.Equal(0, dzc.MaxLevel);
+        Assert.Equal(256, dzc.TileSize);
+        Assert.Equal("jpg", dzc.Format);
+        Assert.Equal(0, dzc.NextItemId);
+        Assert.Single(dzc.Items);
+
+        // Item defaults: Id=0, N=0, no Source
+        Assert.Equal(0, dzc.Items[0].Id);
+        Assert.Equal(0, dzc.Items[0].MortonIndex);
+        Assert.Null(dzc.Items[0].Source);
+    }
+
+    [Fact]
+    public void Parse_ItemsWithFullViewportProperties()
+    {
+        var xml = @"<Collection MaxLevel=""7"" TileSize=""256"" Format=""jpg""
+            xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+            <Items>
+                <I Id=""0"" N=""0"">
+                    <Size Width=""800"" Height=""600"" />
+                    <Viewport Width=""2.5"" X=""-0.75"" Y=""-0.33"" />
+                </I>
+                <I Id=""1"" N=""1"">
+                    <Size Width=""640"" Height=""480"" />
+                    <Viewport Width=""1.0"" X=""0.0"" Y=""0.0"" />
+                </I>
+                <I Id=""2"" N=""2"">
+                    <Size Width=""1024"" Height=""768"" />
+                </I>
+            </Items>
+        </Collection>";
+
+        var dzc = DzcTileSource.Parse(xml);
+
+        // First item has viewport
+        Assert.Equal(2.5, dzc.Items[0].ViewportWidth);
+        Assert.Equal(-0.75, dzc.Items[0].ViewportX);
+        Assert.Equal(-0.33, dzc.Items[0].ViewportY);
+
+        // Second item has viewport at origin
+        Assert.Equal(1.0, dzc.Items[1].ViewportWidth);
+        Assert.Equal(0.0, dzc.Items[1].ViewportX);
+        Assert.Equal(0.0, dzc.Items[1].ViewportY);
+
+        // Third item has no viewport → defaults
+        Assert.Equal(0.0, dzc.Items[2].ViewportWidth);
+        Assert.Equal(0.0, dzc.Items[2].ViewportX);
+        Assert.Equal(0.0, dzc.Items[2].ViewportY);
+    }
+
+    [Fact]
+    public void GetCompositeTileUrl_VaryingLevelsAndFormats()
+    {
+        var jpgDzc = new DzcTileSource(8, 256, "jpg", Array.Empty<DzcSubImage>());
+        var pngDzc = new DzcTileSource(8, 256, "png", Array.Empty<DzcSubImage>());
+
+        Assert.Equal("0/0_0.jpg", jpgDzc.GetCompositeTileUrl(0, 0, 0));
+        Assert.Equal("0/0_0.png", pngDzc.GetCompositeTileUrl(0, 0, 0));
+        Assert.Equal("7/15_31.jpg", jpgDzc.GetCompositeTileUrl(7, 15, 31));
+        Assert.Equal("10/100_200.jpg", jpgDzc.GetCompositeTileUrl(10, 100, 200));
+    }
+
+    [Fact]
+    public void Parse_EmptyItems_Element()
+    {
+        var xml = @"<Collection MaxLevel=""5"" TileSize=""128"" Format=""png""
+            xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+            <Items />
+        </Collection>";
+
+        var dzc = DzcTileSource.Parse(xml);
+        Assert.Equal(0, dzc.ItemCount);
+        Assert.Empty(dzc.Items);
+        Assert.Equal(0, dzc.GetMortonGridSize());
+    }
+
+    [Fact]
+    public void Constructor_InvalidTileSize_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new DzcTileSource(8, 0, "jpg", Array.Empty<DzcSubImage>()));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new DzcTileSource(8, -1, "jpg", Array.Empty<DzcSubImage>()));
+    }
+
+    [Fact]
+    public void Constructor_EmptyFormat_Throws()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new DzcTileSource(8, 256, "", Array.Empty<DzcSubImage>()));
+    }
+
+    [Fact]
+    public void SubImage_ViewportProperties_SetAndGet()
+    {
+        var sub = new DzcSubImage(0, 0, 100, 100, null);
+        sub.ViewportWidth = 3.5;
+        sub.ViewportX = -1.5;
+        sub.ViewportY = -0.75;
+
+        Assert.Equal(3.5, sub.ViewportWidth);
+        Assert.Equal(-1.5, sub.ViewportX);
+        Assert.Equal(-0.75, sub.ViewportY);
+    }
+
+    [Fact]
+    public void Parse_LargeCollection_MortonGridSizeScales()
+    {
+        // 16 items → ceil(sqrt(16)) = 4, ceil(log2(4)) = 2, 2^2 = 4
+        var items = string.Join("\n",
+            Enumerable.Range(0, 16).Select(i =>
+                $"<I Id=\"{i}\" N=\"{i}\"><Size Width=\"100\" Height=\"100\" /></I>"));
+
+        var xml = $@"<Collection MaxLevel=""7"" TileSize=""256"" Format=""jpg""
+            xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+            <Items>{items}</Items>
+        </Collection>";
+
+        var dzc = DzcTileSource.Parse(xml);
+        Assert.Equal(16, dzc.ItemCount);
+        Assert.Equal(4, dzc.GetMortonGridSize());
+    }
 }
