@@ -890,7 +890,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 case GestureStatus.Running:
                     double scaleChange = e.Scale / _lastPivotPinchScale;
                     _lastPivotPinchScale = e.Scale;
-                    _controller.ZoomAbout(scaleChange, Width / 2, Height / 2);
+                    // Zoom about the pinch midpoint, not the view center
+                    double anchorX = e.ScaleOrigin.X * Width;
+                    double anchorY = e.ScaleOrigin.Y * Height;
+                    _controller.ZoomAbout(scaleChange, anchorX, anchorY);
                     SyncZoomSlider();
                     _canvasView.InvalidateSurface();
                     break;
