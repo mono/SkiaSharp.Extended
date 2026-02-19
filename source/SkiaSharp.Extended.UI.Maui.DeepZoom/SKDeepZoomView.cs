@@ -83,6 +83,10 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             BindableProperty.Create(nameof(ShowTileBorders), typeof(bool), typeof(SKDeepZoomView), false,
                 propertyChanged: (b, o, n) => ((SKDeepZoomView)b)._controller.ShowTileBorders = (bool)n);
 
+        public static readonly BindableProperty SourceProperty =
+            BindableProperty.Create(nameof(Source), typeof(string), typeof(SKDeepZoomView), null,
+                BindingMode.OneWay, propertyChanged: OnSourceChanged);
+
         /// <summary>Whether spring animations are used for transitions.</summary>
         public bool UseSprings
         {
@@ -97,16 +101,97 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             set => SetValue(ShowTileBordersProperty, value);
         }
 
-        // --- Read-only properties ---
+        /// <summary>
+        /// URI to a .dzi file. Setting this automatically fetches the DZI metadata
+        /// and loads the image using HTTP. Use <see cref="Load"/> for non-HTTP sources.
+        /// </summary>
+        public string? Source
+        {
+            get => (string?)GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
+        }
 
-        /// <summary>Current viewport width (1.0 = full image fits).</summary>
-        public double ViewportWidth => _controller.Viewport.ViewportWidth;
+        private CancellationTokenSource? _sourceCts;
 
-        /// <summary>Current viewport origin X.</summary>
-        public double ViewportOriginX => _controller.Viewport.ViewportOriginX;
+        private static void OnSourceChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is SKDeepZoomView view)
+                view.LoadFromSource(newValue as string);
+        }
 
-        /// <summary>Current viewport origin Y.</summary>
-        public double ViewportOriginY => _controller.Viewport.ViewportOriginY;
+        private async void LoadFromSource(string? uri)
+        {
+            _sourceCts?.Cancel();
+            _sourceCts?.Dispose();
+            _sourceCts = null;
+
+            if (string.IsNullOrWhiteSpace(uri))
+                return;
+
+            _sourceCts = new CancellationTokenSource();
+            var ct = _sourceCts.Token;
+
+            try
+            {
+                var httpClient = new HttpClient();
+                var response = await httpClient.GetStringAsync(new Uri(uri, UriKind.Absolute));
+                ct.ThrowIfCancellationRequested();
+
+                using var stream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(response));
+
+                // Derive the base URL for tiles: replace .dzi extension with _files/
+                var dotIdx = uri.LastIndexOf('.');
+                var tilesBase = (dotIdx >= 0 ? uri.Substring(0, dotIdx) : uri) + "_files/";
+
+                var tileSource = DziTileSource.Parse(stream);
+                tileSource.TilesBaseUri = tilesBase;
+
+                var fetcher = new HttpTileFetcher(httpClient);
+
+                ct.ThrowIfCancellationRequested();
+                Load(tileSource, fetcher);
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                ImageOpenFailed?.Invoke(this, ex);
+            }
+        }
+
+        // --- Viewport properties (read-write for programmatic control) ---
+
+        /// <summary>Current viewport width (1.0 = full image fits). Setting triggers animated transition if UseSprings is true.</summary>
+        public double ViewportWidth
+        {
+            get => _controller.Viewport.ViewportWidth;
+            set
+            {
+                _controller.Viewport.ViewportWidth = value;
+                _canvasView.InvalidateSurface();
+            }
+        }
+
+        /// <summary>Current viewport origin X. Setting triggers animated transition if UseSprings is true.</summary>
+        public double ViewportOriginX
+        {
+            get => _controller.Viewport.ViewportOriginX;
+            set
+            {
+                _controller.Viewport.ViewportOriginX = value;
+                _canvasView.InvalidateSurface();
+            }
+        }
+
+        /// <summary>Current viewport origin Y. Setting triggers animated transition if UseSprings is true.</summary>
+        public double ViewportOriginY
+        {
+            get => _controller.Viewport.ViewportOriginY;
+            set
+            {
+                _controller.Viewport.ViewportOriginY = value;
+                _canvasView.InvalidateSurface();
+            }
+        }
 
         /// <summary>Image aspect ratio (width/height), or 0 if not loaded.</summary>
         public double AspectRatio => _controller.AspectRatio;
@@ -332,6 +417,10 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         {
             if (_disposed) return;
             _disposed = true;
+
+            _sourceCts?.Cancel();
+            _sourceCts?.Dispose();
+            _sourceCts = null;
 
             _canvasView.PaintSurface -= OnPaintSurface;
             _controller.InvalidateRequired -= _onInvalidateRequired;
