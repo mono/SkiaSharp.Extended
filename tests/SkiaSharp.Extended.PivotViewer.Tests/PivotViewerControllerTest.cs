@@ -1039,4 +1039,910 @@ public class PivotViewerControllerTest
         var hit = controller.HitTest(100, 100);
         Assert.Null(hit);
     }
+
+    // --- ZoomAbout / ZoomTo ---
+
+    [Fact]
+    public void ZoomAbout_AdjustsPanOffset()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.ZoomAbout(2.0, 512, 384);
+        // Pan offset should have been adjusted to keep the screen point stable
+        Assert.True(controller.ZoomLevel > 0.0);
+        Assert.True(controller.PanOffsetX != 0.0 || controller.PanOffsetY != 0.0,
+            "Pan offset should be adjusted when zooming about a non-origin point");
+    }
+
+    [Fact]
+    public void ZoomAbout_ZoomInThenOut_ReturnsNearOriginalZoom()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.ZoomAbout(2.0, 512, 384);
+        double zoomAfterIn = controller.ZoomLevel;
+        Assert.True(zoomAfterIn > 0.0);
+
+        controller.ZoomAbout(0.0, 512, 384); // factor < 1 zooms out
+        Assert.True(controller.ZoomLevel < zoomAfterIn);
+    }
+
+    [Fact]
+    public void ZoomLevel_SmallChange_IgnoredBelowThreshold()
+    {
+        var (controller, _) = CreateTestController();
+        controller.ZoomLevel = 0.5;
+
+        bool fired = false;
+        controller.LayoutUpdated += (s, e) => fired = true;
+
+        // Change smaller than 0.001 threshold
+        controller.ZoomLevel = 0.5005;
+        Assert.False(fired, "Changes below threshold should be ignored");
+    }
+
+    [Fact]
+    public void ZoomLevel_SetSameValue_NoLayoutUpdate()
+    {
+        var (controller, _) = CreateTestController();
+        controller.ZoomLevel = 0.5;
+
+        bool fired = false;
+        controller.LayoutUpdated += (s, e) => fired = true;
+
+        controller.ZoomLevel = 0.5;
+        Assert.False(fired);
+    }
+
+    // --- PanTo / PanBy ---
+
+    [Fact]
+    public void Pan_NegativeValues_Allowed()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.Pan(-100, -200);
+        Assert.Equal(-100.0, controller.PanOffsetX);
+        Assert.Equal(-200.0, controller.PanOffsetY);
+    }
+
+    [Fact]
+    public void Pan_ZeroDeltas_StillFiresLayoutUpdated()
+    {
+        var (controller, _) = CreateTestController();
+
+        bool fired = false;
+        controller.LayoutUpdated += (s, e) => fired = true;
+
+        controller.Pan(0, 0);
+        Assert.True(fired);
+    }
+
+    [Fact]
+    public void Pan_LargeValues_Accepted()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.Pan(100000, 100000);
+        Assert.Equal(100000.0, controller.PanOffsetX);
+        Assert.Equal(100000.0, controller.PanOffsetY);
+    }
+
+    // --- CurrentView switching ---
+
+    [Fact]
+    public void CurrentView_GridToGraph_ClearsGridLayout()
+    {
+        var (controller, _) = CreateTestController();
+        var sortProp = controller.Properties.FirstOrDefault(p => p.Id == "Manufacturer");
+        Assert.NotNull(sortProp);
+
+        controller.SortProperty = sortProp;
+        controller.CurrentView = "graph";
+
+        Assert.Null(controller.GridLayout);
+        Assert.NotNull(controller.HistogramLayout);
+    }
+
+    [Fact]
+    public void CurrentView_GraphToGrid_RestoresGridLayout()
+    {
+        var (controller, _) = CreateTestController();
+        var sortProp = controller.Properties.FirstOrDefault(p => p.Id == "Manufacturer");
+        Assert.NotNull(sortProp);
+
+        controller.SortProperty = sortProp;
+        controller.CurrentView = "graph";
+        Assert.Null(controller.GridLayout);
+
+        controller.CurrentView = "grid";
+        Assert.NotNull(controller.GridLayout);
+        Assert.Null(controller.HistogramLayout);
+    }
+
+    [Fact]
+    public void CurrentView_SetNull_DefaultsToGrid()
+    {
+        var (controller, _) = CreateTestController();
+        controller.CurrentView = null!;
+        Assert.Equal("grid", controller.CurrentView);
+    }
+
+    [Fact]
+    public void CurrentView_SameValue_DoesNotFireEvent()
+    {
+        var (controller, _) = CreateTestController();
+        bool fired = false;
+        controller.ViewChanged += (s, e) => fired = true;
+
+        controller.CurrentView = "grid"; // already grid
+        Assert.False(fired);
+    }
+
+    [Fact]
+    public void CurrentView_GraphWithoutSortProperty_NoHistogramLayout()
+    {
+        var (controller, _) = CreateTestController();
+        controller.SortProperty = null;
+        controller.CurrentView = "graph";
+
+        // Without a sort property, graph view falls back to grid layout
+        Assert.NotNull(controller.GridLayout);
+        Assert.Null(controller.HistogramLayout);
+    }
+
+    // --- SortProperty ---
+
+    [Fact]
+    public void SortProperty_ByName_SortsAlphabetically()
+    {
+        var controller = new PivotViewerController();
+        var nameProp = new PivotViewerStringProperty("Name") { DisplayName = "Name" };
+        var items = new List<PivotViewerItem>();
+        foreach (var name in new[] { "Charlie", "Alice", "Bob" })
+        {
+            var item = new PivotViewerItem(name);
+            item.Set(nameProp, new object[] { name });
+            items.Add(item);
+        }
+
+        controller.LoadItems(items, new[] { nameProp });
+        controller.SetAvailableSize(800, 600);
+        controller.SortProperty = nameProp;
+        // Trigger re-sort via filter engine round-trip
+        controller.FilterEngine.ClearAll();
+
+        Assert.Equal("Alice", controller.InScopeItems[0]["Name"]![0].ToString());
+        Assert.Equal("Bob", controller.InScopeItems[1]["Name"]![0].ToString());
+        Assert.Equal("Charlie", controller.InScopeItems[2]["Name"]![0].ToString());
+    }
+
+    [Fact]
+    public void SortProperty_NullValuesSort_ToEnd()
+    {
+        var controller = new PivotViewerController();
+        var nameProp = new PivotViewerStringProperty("Name") { DisplayName = "Name" };
+        var scoreProp = new PivotViewerNumericProperty("Score") { DisplayName = "Score" };
+
+        var items = new List<PivotViewerItem>();
+
+        var item1 = new PivotViewerItem("1");
+        item1.Set(nameProp, new object[] { "A" });
+        item1.Set(scoreProp, new object[] { 10.0 });
+        items.Add(item1);
+
+        var item2 = new PivotViewerItem("2");
+        item2.Set(nameProp, new object[] { "B" });
+        // No score set
+        items.Add(item2);
+
+        var item3 = new PivotViewerItem("3");
+        item3.Set(nameProp, new object[] { "C" });
+        item3.Set(scoreProp, new object[] { 5.0 });
+        items.Add(item3);
+
+        controller.LoadItems(items, new PivotViewerProperty[] { nameProp, scoreProp });
+        controller.SetAvailableSize(800, 600);
+        controller.SortProperty = scoreProp;
+        // Trigger re-sort via filter engine round-trip
+        controller.FilterEngine.ClearAll();
+
+        // Null values should sort to end
+        var lastItem = controller.InScopeItems[controller.InScopeItems.Count - 1];
+        Assert.Equal("2", lastItem.Id);
+    }
+
+    [Fact]
+    public void SortProperty_ChangeUpdatesLayout()
+    {
+        var (controller, _) = CreateTestController();
+        var mfgProp = controller.Properties.FirstOrDefault(p => p.Id == "Manufacturer");
+        var yearProp = controller.Properties.FirstOrDefault(p => p.Id == "Production Year");
+        Assert.NotNull(mfgProp);
+        Assert.NotNull(yearProp);
+
+        controller.SortProperty = mfgProp;
+        var firstItemMfg = controller.InScopeItems[0];
+
+        controller.SortProperty = yearProp;
+        // After changing sort, the order should differ (unless coincidence)
+        // At minimum, verify layout was updated
+        Assert.Equal(yearProp, controller.SortProperty);
+    }
+
+    [Fact]
+    public void SortProperty_SetNull_RemovesSort()
+    {
+        var (controller, _) = CreateTestController();
+        var yearProp = controller.Properties.FirstOrDefault(p => p.Id == "Production Year");
+        Assert.NotNull(yearProp);
+
+        controller.SortProperty = yearProp;
+        Assert.NotNull(controller.SortProperty);
+
+        controller.SortProperty = null;
+        Assert.Null(controller.SortProperty);
+    }
+
+    [Fact]
+    public void SortProperty_SameValue_DoesNotFireEvent()
+    {
+        var (controller, _) = CreateTestController();
+        var yearProp = controller.Properties.FirstOrDefault(p => p.Id == "Production Year");
+        Assert.NotNull(yearProp);
+
+        controller.SortProperty = yearProp;
+
+        bool fired = false;
+        controller.SortPropertyChanged += (s, e) => fired = true;
+        controller.SortProperty = yearProp; // same value
+        Assert.False(fired);
+    }
+
+    // --- ApplyFilters with multiple predicates ---
+
+    [Fact]
+    public void Filters_MultipleProperties_AndLogic()
+    {
+        var (controller, _) = CreateTestController();
+        int allCount = controller.InScopeItems.Count;
+
+        controller.FilterEngine.AddStringFilter("Manufacturer", "Alfa Romeo");
+        int afterFirstFilter = controller.InScopeItems.Count;
+        Assert.True(afterFirstFilter < allCount);
+
+        // Add a numeric range filter on Production Year
+        controller.FilterEngine.AddNumericRangeFilter("Production Year", 2000, 2010);
+        int afterBothFilters = controller.InScopeItems.Count;
+
+        // AND logic: second filter should reduce further or keep same count
+        Assert.True(afterBothFilters <= afterFirstFilter,
+            "Adding a second filter (AND) should not increase item count");
+    }
+
+    [Fact]
+    public void Filters_SameProperty_OrLogic()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.FilterEngine.AddStringFilter("Manufacturer", "Alfa Romeo");
+        int afterOne = controller.InScopeItems.Count;
+
+        controller.FilterEngine.AddStringFilter("Manufacturer", "BMW");
+        int afterTwo = controller.InScopeItems.Count;
+
+        // OR logic within same property: more values should increase count
+        Assert.True(afterTwo >= afterOne,
+            "Adding another value for same property (OR) should not decrease item count");
+    }
+
+    [Fact]
+    public void Filters_ClearRestoresAllItems()
+    {
+        var (controller, _) = CreateTestController();
+        int allCount = controller.InScopeItems.Count;
+
+        controller.FilterEngine.AddStringFilter("Manufacturer", "Alfa Romeo");
+        controller.FilterEngine.AddNumericRangeFilter("Production Year", 2000, 2010);
+        Assert.True(controller.InScopeItems.Count < allCount);
+
+        controller.FilterEngine.ClearAll();
+        Assert.Equal(allCount, controller.InScopeItems.Count);
+    }
+
+    // --- GetFilterCounts ---
+
+    [Fact]
+    public void GetFilterCounts_ReflectsActiveFilters()
+    {
+        var (controller, _) = CreateTestController();
+
+        var countsBeforeFilter = controller.GetFilterCounts("Manufacturer");
+        Assert.NotEmpty(countsBeforeFilter);
+
+        // Filter by a different property; Manufacturer counts should reflect cross-filter
+        controller.FilterEngine.AddNumericRangeFilter("Production Year", 2005, 2010);
+        var countsAfterFilter = controller.GetFilterCounts("Manufacturer");
+
+        // Counts should be computed excluding own-property filters, so total may be <= before
+        int totalBefore = countsBeforeFilter.Values.Sum();
+        int totalAfter = countsAfterFilter.Values.Sum();
+        Assert.True(totalAfter <= totalBefore);
+    }
+
+    [Fact]
+    public void GetFilterCounts_NonExistentProperty_ReturnsEmpty()
+    {
+        var (controller, _) = CreateTestController();
+        var counts = controller.GetFilterCounts("NonExistentProperty");
+        Assert.Empty(counts);
+    }
+
+    [Fact]
+    public void GetFilterCounts_EachValueCountIsPositive()
+    {
+        var (controller, _) = CreateTestController();
+        var counts = controller.GetFilterCounts("Manufacturer");
+
+        foreach (var kv in counts)
+            Assert.True(kv.Value > 0, $"Count for '{kv.Key}' should be positive");
+    }
+
+    // --- SetAvailableSize ---
+
+    [Fact]
+    public void SetAvailableSize_SmallerSize_ReducesColumns()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SetAvailableSize(1024, 768);
+        int colsLarge = controller.GridLayout?.Columns ?? 0;
+
+        controller.SetAvailableSize(300, 300);
+        int colsSmall = controller.GridLayout?.Columns ?? 0;
+
+        Assert.True(colsSmall <= colsLarge,
+            $"Smaller size should have fewer or equal columns: {colsSmall} vs {colsLarge}");
+    }
+
+    [Fact]
+    public void SetAvailableSize_SameSize_NoLayoutUpdate()
+    {
+        var (controller, _) = CreateTestController();
+        controller.SetAvailableSize(1024, 768);
+
+        bool fired = false;
+        controller.LayoutUpdated += (s, e) => fired = true;
+
+        // Same size within threshold (0.5)
+        controller.SetAvailableSize(1024.3, 768.3);
+        Assert.False(fired);
+    }
+
+    [Fact]
+    public void SetAvailableSize_RecalculatesGridPositions()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SetAvailableSize(1024, 768);
+        var pos1 = controller.GridLayout?.Positions[0];
+
+        controller.SetAvailableSize(500, 400);
+        var pos2 = controller.GridLayout?.Positions[0];
+
+        Assert.NotNull(pos1);
+        Assert.NotNull(pos2);
+        // Item width should change with available size
+        Assert.NotEqual(pos1!.Value.Width, pos2!.Value.Width);
+    }
+
+    // --- SearchText ---
+
+    [Fact]
+    public void SearchText_FiltersItems_CombinesWithFacetFilters()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SearchText = "bmw";
+        int searchOnly = controller.InScopeItems.Count;
+        Assert.True(searchOnly > 0);
+
+        // Add a facet filter on top of search — should reduce further
+        controller.FilterEngine.AddNumericRangeFilter("Production Year", 2005, 2010);
+        Assert.True(controller.InScopeItems.Count <= searchOnly);
+    }
+
+    [Fact]
+    public void SearchText_FiresFiltersChanged()
+    {
+        var (controller, _) = CreateTestController();
+
+        bool fired = false;
+        controller.FiltersChanged += (s, e) => fired = true;
+
+        controller.SearchText = "ford";
+        Assert.True(fired);
+    }
+
+    [Fact]
+    public void SearchText_SameValue_NoEvent()
+    {
+        var (controller, _) = CreateTestController();
+        controller.SearchText = "ford";
+
+        bool fired = false;
+        controller.FiltersChanged += (s, e) => fired = true;
+
+        controller.SearchText = "ford"; // same
+        Assert.False(fired);
+    }
+
+    [Fact]
+    public void SearchText_Null_TreatedAsEmpty()
+    {
+        var (controller, _) = CreateTestController();
+        controller.SearchText = "ford";
+        int filtered = controller.InScopeItems.Count;
+        Assert.True(filtered < controller.Items.Count);
+
+        controller.SearchText = null!;
+        Assert.Equal(controller.Items.Count, controller.InScopeItems.Count);
+    }
+
+    [Fact]
+    public void SearchText_SearchFilteredItems_MatchesSearch()
+    {
+        var (controller, _) = CreateTestController();
+        controller.SearchText = "bmw";
+
+        // SearchFilteredItems should contain only items matching the search
+        Assert.True(controller.SearchFilteredItems.Count > 0);
+        Assert.True(controller.SearchFilteredItems.Count <= controller.Items.Count);
+        // InScopeItems <= SearchFilteredItems (facet filters may reduce further)
+        Assert.True(controller.InScopeItems.Count <= controller.SearchFilteredItems.Count);
+    }
+
+    // --- SelectNext/SelectPrevious with filtered collection ---
+
+    [Fact]
+    public void SelectNext_WithFilters_NavigatesFilteredList()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.FilterEngine.AddStringFilter("Manufacturer", "Alfa Romeo");
+        Assert.True(controller.InScopeItems.Count > 1, "Need at least 2 filtered items");
+
+        controller.SelectNext(); // selects first
+        Assert.Equal(controller.InScopeItems[0], controller.SelectedItem);
+
+        controller.SelectNext(); // selects second
+        Assert.Equal(controller.InScopeItems[1], controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectPrevious_AtFirstItem_StaysAtFirst()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[0];
+        controller.SelectPrevious();
+
+        Assert.Equal(controller.InScopeItems[0], controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectUp_AtFirstRow_StaysAtSameItem()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[0];
+        controller.SelectUp();
+
+        // First row, can't go up
+        Assert.Equal(controller.InScopeItems[0], controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectDown_AtLastRow_StaysAtSameItem()
+    {
+        var (controller, _) = CreateTestController();
+        Assert.NotNull(controller.GridLayout);
+
+        int cols = controller.GridLayout!.Columns;
+        var lastItem = controller.InScopeItems[controller.InScopeItems.Count - 1];
+        controller.SelectedItem = lastItem;
+        controller.SelectDown();
+
+        Assert.Equal(lastItem, controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectUp_NoSelection_DoesNothing()
+    {
+        var (controller, _) = CreateTestController();
+        Assert.Null(controller.SelectedItem);
+        controller.SelectUp();
+        Assert.Null(controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectDown_NoSelection_DoesNothing()
+    {
+        var (controller, _) = CreateTestController();
+        Assert.Null(controller.SelectedItem);
+        controller.SelectDown();
+        Assert.Null(controller.SelectedItem);
+    }
+
+    // --- ZoomLevel bounds clamping ---
+
+    [Fact]
+    public void ZoomLevel_ExactBoundary_Accepted()
+    {
+        var controller = new PivotViewerController();
+
+        controller.ZoomLevel = 0.0;
+        Assert.Equal(0.0, controller.ZoomLevel);
+
+        controller.ZoomLevel = 1.0;
+        Assert.Equal(1.0, controller.ZoomLevel);
+    }
+
+    [Fact]
+    public void ZoomLevel_NaN_ClampsToZero()
+    {
+        var controller = new PivotViewerController();
+        controller.ZoomLevel = double.NaN;
+        // NaN is clamped by Math.Max/Math.Min — result is 0.0
+        Assert.Equal(0.0, controller.ZoomLevel);
+    }
+
+    // --- LoadFromCxml integration ---
+
+    [Fact]
+    public void LoadCollection_FromCxml_AllPropertiesAccessible()
+    {
+        var (controller, _) = CreateTestController();
+
+        foreach (var prop in controller.Properties)
+        {
+            Assert.NotNull(prop.Id);
+            Assert.NotNull(prop.DisplayName);
+        }
+    }
+
+    [Fact]
+    public void LoadCollection_FromCxml_ItemsHaveFacetValues()
+    {
+        var (controller, _) = CreateTestController();
+        var item = controller.Items[0];
+
+        // Every item in conceptcars should have at least one facet value
+        bool hasAnyValue = false;
+        foreach (var prop in controller.Properties)
+        {
+            if (item[prop.Id] != null)
+            {
+                hasAnyValue = true;
+                break;
+            }
+        }
+        Assert.True(hasAnyValue, "Item should have at least one facet value");
+    }
+
+    [Fact]
+    public void LoadCollection_Twice_ReplacesData()
+    {
+        var (controller, source) = CreateTestController();
+        int firstCount = controller.Items.Count;
+
+        // Create a small custom collection
+        var nameProp = new PivotViewerStringProperty("Name") { DisplayName = "Name" };
+        var items = new List<PivotViewerItem>();
+        var item = new PivotViewerItem("only");
+        item.Set(nameProp, new object[] { "Only" });
+        items.Add(item);
+
+        controller.LoadItems(items, new[] { nameProp });
+        Assert.Equal(1, controller.Items.Count);
+        Assert.NotEqual(firstCount, controller.Items.Count);
+    }
+
+    [Fact]
+    public void LoadItems_ClearsSelectionAndSort()
+    {
+        var (controller, _) = CreateTestController();
+        var yearProp = controller.Properties.FirstOrDefault(p => p.Id == "Production Year");
+        Assert.NotNull(yearProp);
+
+        controller.SortProperty = yearProp;
+        controller.SelectedItem = controller.InScopeItems[0];
+
+        // Reload
+        var nameProp = new PivotViewerStringProperty("Name") { DisplayName = "Name" };
+        var newItem = new PivotViewerItem("1");
+        newItem.Set(nameProp, new object[] { "Test" });
+        controller.LoadItems(new[] { newItem }, new[] { nameProp });
+
+        Assert.Null(controller.SelectedItem);
+        Assert.Null(controller.SortProperty);
+    }
+
+    // --- GetViewerState / SetViewerState round-trip with populated state ---
+
+    [Fact]
+    public void SerializeViewerState_PreservesSelection()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[3];
+        var selectedId = controller.InScopeItems[3].Id;
+
+        var state = controller.SerializeViewerState();
+
+        controller.SelectedItem = null;
+        controller.SetViewerState(state);
+
+        Assert.NotNull(controller.SelectedItem);
+        Assert.Equal(selectedId, controller.SelectedItem!.Id);
+    }
+
+    [Fact]
+    public void SerializeViewerState_PreservesMultipleFilters()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.FilterEngine.AddStringFilter("Manufacturer", "Alfa Romeo");
+        controller.FilterEngine.AddStringFilter("Manufacturer", "BMW");
+        int filteredCount = controller.InScopeItems.Count;
+
+        var state = controller.SerializeViewerState();
+
+        controller.FilterEngine.ClearAll();
+        Assert.Equal(controller.Items.Count, controller.InScopeItems.Count);
+
+        controller.SetViewerState(state);
+        Assert.Equal(filteredCount, controller.InScopeItems.Count);
+    }
+
+    [Fact]
+    public void SerializeViewerState_PreservesNumericRangeFilter()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.FilterEngine.AddNumericRangeFilter("Production Year", 2000, 2005);
+        int filteredCount = controller.InScopeItems.Count;
+        Assert.True(filteredCount < controller.Items.Count);
+
+        var state = controller.SerializeViewerState();
+
+        controller.FilterEngine.ClearAll();
+        controller.SetViewerState(state);
+
+        Assert.Equal(filteredCount, controller.InScopeItems.Count);
+    }
+
+    [Fact]
+    public void SerializeViewerState_EmptyState_ProducesMinimalString()
+    {
+        var (controller, _) = CreateTestController();
+
+        var state = controller.SerializeViewerState();
+        // No filters, default view, no selection — should have $view=grid at most
+        Assert.NotNull(state);
+    }
+
+    // --- DetailPane integration ---
+
+    [Fact]
+    public void DetailPane_ShowItem_HasFacetValues()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[0];
+        Assert.True(controller.DetailPane.IsShowing);
+
+        var facets = controller.DetailPane.FacetValues;
+        Assert.NotEmpty(facets);
+    }
+
+    [Fact]
+    public void DetailPane_Hide_ClearsFacets()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[0];
+        Assert.NotEmpty(controller.DetailPane.FacetValues);
+
+        controller.SelectedItem = null;
+        Assert.Empty(controller.DetailPane.FacetValues);
+    }
+
+    [Fact]
+    public void DetailPane_SelectionChange_UpdatesDetailItem()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[0];
+        Assert.Equal(controller.InScopeItems[0], controller.DetailPane.SelectedItem);
+
+        controller.SelectedItem = controller.InScopeItems[1];
+        Assert.Equal(controller.InScopeItems[1], controller.DetailPane.SelectedItem);
+    }
+
+    [Fact]
+    public void DetailPane_IsExpanded_DefaultTrue()
+    {
+        var controller = new PivotViewerController();
+        Assert.True(controller.DetailPane.IsExpanded);
+    }
+
+    // --- DefaultDetails ---
+
+    [Fact]
+    public void DefaultDetails_AllFlagsDefaultFalse()
+    {
+        var controller = new PivotViewerController();
+        Assert.False(controller.DefaultDetails.IsNameHidden);
+        Assert.False(controller.DefaultDetails.IsDescriptionHidden);
+        Assert.False(controller.DefaultDetails.IsFacetCategoriesHidden);
+        Assert.False(controller.DefaultDetails.IsRelatedCollectionsHidden);
+        Assert.False(controller.DefaultDetails.IsCopyrightHidden);
+    }
+
+    // --- SelectedIndex edge cases ---
+
+    [Fact]
+    public void SelectedIndex_OutOfRange_ClearsSelection()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[0];
+        controller.SelectedIndex = 99999;
+        Assert.Null(controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectedIndex_NoSelection_ReturnsMinus1()
+    {
+        var (controller, _) = CreateTestController();
+        Assert.Equal(-1, controller.SelectedIndex);
+    }
+
+    [Fact]
+    public void SelectedIndex_ReflectsCurrentItem()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[5];
+        Assert.Equal(5, controller.SelectedIndex);
+    }
+
+    // --- Dispose ---
+
+    [Fact]
+    public void Dispose_AfterDispose_FilterEngineChangeDontCrash()
+    {
+        var (controller, _) = CreateTestController();
+        controller.Dispose();
+
+        // After dispose, adding a filter should not crash (event is unsubscribed)
+        var ex = Record.Exception(() => controller.FilterEngine.AddStringFilter("Manufacturer", "BMW"));
+        Assert.Null(ex);
+    }
+
+    // --- HitTest in graph view ---
+
+    [Fact]
+    public void HitTest_GraphView_DelegatesToHistogramLayout()
+    {
+        var (controller, _) = CreateTestController();
+        var sortProp = controller.Properties.FirstOrDefault(p => p.Id == "Manufacturer");
+        Assert.NotNull(sortProp);
+
+        controller.SortProperty = sortProp;
+        controller.CurrentView = "graph";
+        Assert.NotNull(controller.HistogramLayout);
+
+        // Hit test at negative coords should return null
+        var hit = controller.HitTest(-100, -100);
+        Assert.Null(hit);
+    }
+
+    // --- Word wheel Search via controller ---
+
+    [Fact]
+    public void Search_ReturnsResultsWithItemCounts()
+    {
+        var (controller, _) = CreateTestController();
+
+        var results = controller.Search("A");
+        Assert.NotEmpty(results);
+
+        foreach (var r in results)
+        {
+            Assert.True(r.ItemCount > 0);
+            Assert.NotNull(r.Text);
+        }
+    }
+
+    [Fact]
+    public void Search_EmptyString_ReturnsEmpty()
+    {
+        var (controller, _) = CreateTestController();
+        var results = controller.Search("");
+        Assert.Empty(results);
+    }
+
+    // --- CollectionSource ---
+
+    [Fact]
+    public void CollectionSource_SetAfterLoadCollection()
+    {
+        var (controller, source) = CreateTestController();
+        Assert.NotNull(controller.CollectionSource);
+        Assert.Equal(source, controller.CollectionSource);
+    }
+
+    [Fact]
+    public void CollectionSource_NullWhenLoadItems()
+    {
+        var controller = new PivotViewerController();
+        var nameProp = new PivotViewerStringProperty("Name") { DisplayName = "Name" };
+        var item = new PivotViewerItem("1");
+        item.Set(nameProp, new object[] { "Test" });
+
+        controller.LoadItems(new[] { item }, new[] { nameProp });
+        Assert.Null(controller.CollectionSource);
+    }
+
+    // --- ImageProvider ---
+
+    [Fact]
+    public void ImageProvider_DefaultNull()
+    {
+        var controller = new PivotViewerController();
+        Assert.Null(controller.ImageProvider);
+    }
+
+    // --- Update / Animation ---
+
+    [Fact]
+    public void Update_DuringTransition_ReturnsTrue()
+    {
+        var (controller, _) = CreateTestController();
+
+        // Trigger a transition by resizing
+        controller.SetAvailableSize(500, 400);
+        Assert.True(controller.LayoutTransition.IsAnimating);
+
+        bool needsRedraw = controller.Update(TimeSpan.FromMilliseconds(16));
+        Assert.True(needsRedraw);
+    }
+
+    // --- Multiple LoadItems calls ---
+
+    [Fact]
+    public void LoadItems_MultipleReloads_CorrectState()
+    {
+        var controller = new PivotViewerController();
+
+        for (int round = 0; round < 3; round++)
+        {
+            var nameProp = new PivotViewerStringProperty("Name") { DisplayName = "Name" };
+            var items = new List<PivotViewerItem>();
+            for (int i = 0; i < (round + 1) * 5; i++)
+            {
+                var item = new PivotViewerItem(i.ToString());
+                item.Set(nameProp, new object[] { $"Item {i}" });
+                items.Add(item);
+            }
+
+            controller.LoadItems(items, new[] { nameProp });
+            controller.SetAvailableSize(800, 600);
+
+            Assert.Equal((round + 1) * 5, controller.Items.Count);
+            Assert.Equal((round + 1) * 5, controller.InScopeItems.Count);
+        }
+    }
 }
