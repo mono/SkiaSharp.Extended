@@ -79,7 +79,7 @@
 @if (_selectedItem != null)
 {
     <div class="detail-pane">
-        <h4>@GetItemDisplayName(_selectedItem)</h4>
+        <h4>@RenderUtils.GetItemDisplayName(_selectedItem)</h4>
         @foreach (var facet in _controller.DetailPane.FacetValues)
         {
             <div class="facet-row">
@@ -93,6 +93,9 @@
 @code {
     private SKCanvasView? _canvasView;
     private PivotViewerController _controller = new();
+    private PivotViewerRenderer _renderer = new();
+    private PivotViewerTheme _theme = PivotViewerTheme.Default;
+    private PivotViewerViewState _viewState = new();
     private CxmlCollectionSource? _source;
     private IReadOnlyList<PivotViewerProperty>? _properties;
     private IReadOnlyList<PivotViewerProperty>? _filterableProperties;
@@ -105,13 +108,6 @@
     private string _currentView = "grid";
     private string _searchText = "";
     private IReadOnlyList<SearchResult>? _searchResults;
-
-    private SKPaint _itemPaint = new() { IsAntialias = true, Color = SKColors.CornflowerBlue };
-    private SKPaint _selectedPaint = new() { IsAntialias = true, Color = SKColors.Orange, IsStroke = true, StrokeWidth = 3 };
-    private SKPaint _textPaint = new() { IsAntialias = true, Color = SKColors.White };
-    private SKPaint _labelPaint = new() { IsAntialias = true, Color = SKColors.DarkGray };
-    private SKFont _textFont = new() { Size = 12 };
-    private SKFont _labelFont = new() { Size = 14 };
 
     protected override async Task OnInitializedAsync()
     {
@@ -146,81 +142,26 @@
         var canvas = e.Surface.Canvas;
         var info = e.Info;
 
-        canvas.Clear(SKColors.White);
-
         _controller.SetAvailableSize(info.Width, info.Height);
-
-        if (_controller.CurrentView == "graph" && _controller.HistogramLayout != null)
-        {
-            RenderHistogramView(canvas, info, _controller.HistogramLayout);
-        }
-        else if (_controller.GridLayout != null)
-        {
-            RenderGridView(canvas, info, _controller.GridLayout);
-        }
-    }
-
-    private void RenderGridView(SKCanvas canvas, SKImageInfo info, GridLayout layout)
-    {
-        foreach (var pos in layout.Positions)
-        {
-            var rect = new SKRect(
-                (float)pos.X + 1, (float)pos.Y + 1,
-                (float)(pos.X + pos.Width) - 1, (float)(pos.Y + pos.Height) - 1);
-
-            canvas.DrawRect(rect, _itemPaint);
-
-            if (pos.Height > 20)
-            {
-                var name = GetItemDisplayName(pos.Item);
-                if (name != null)
-                {
-                    _textFont.Size = Math.Min(12, (float)pos.Height / 4);
-                    var textWidth = _textFont.MeasureText(name, out _);
-                    if (textWidth < rect.Width - 4)
-                    {
-                        canvas.DrawText(name, rect.Left + 4, rect.Bottom - 4, SKTextAlign.Left, _textFont, _textPaint);
-                    }
-                }
-            }
-
-            if (pos.Item == _selectedItem)
-            {
-                canvas.DrawRect(rect, _selectedPaint);
-            }
-        }
-    }
-
-    private void RenderHistogramView(SKCanvas canvas, SKImageInfo info, HistogramLayout layout)
-    {
-        foreach (var col in layout.Columns)
-        {
-            var textWidth = _labelFont.MeasureText(col.Label, out _);
-            float labelX = (float)(col.X + (col.Width - textWidth) / 2);
-            canvas.DrawText(col.Label, labelX, info.Height - 4, SKTextAlign.Left, _labelFont, _labelPaint);
-
-            foreach (var pos in col.Items)
-            {
-                var rect = new SKRect(
-                    (float)pos.X + 1, (float)pos.Y + 1,
-                    (float)(pos.X + pos.Width) - 1, (float)(pos.Y + pos.Height) - 1);
-
-                canvas.DrawRect(rect, _itemPaint);
-
-                if (pos.Item == _selectedItem)
-                {
-                    canvas.DrawRect(rect, _selectedPaint);
-                }
-            }
-        }
+        _renderer.Render(canvas, info, _controller, _theme, _viewState);
     }
 
     private void OnCanvasClick(MouseEventArgs e)
     {
-        var hit = _controller.HitTest(e.OffsetX, e.OffsetY);
-        _selectedItem = hit;
-        _controller.SelectedItem = hit;
-        _selectedItemName = hit != null ? GetItemDisplayName(hit) : null;
+        var info = new SKImageInfo(1024, 600); // approximate canvas size
+        var hit = _renderer.HitTest(e.OffsetX, e.OffsetY, info, _controller, _viewState);
+        if (hit.Type == RenderHitType.Item && hit.Item != null)
+        {
+            _selectedItem = hit.Item;
+            _controller.SelectedItem = hit.Item;
+            _selectedItemName = RenderUtils.GetItemDisplayName(hit.Item);
+        }
+        else
+        {
+            _selectedItem = null;
+            _controller.SelectedItem = null;
+            _selectedItemName = null;
+        }
         _inScopeCount = _controller.InScopeItems.Count;
         _canvasView?.Invalidate();
         StateHasChanged();
@@ -228,12 +169,13 @@
 
     private void OnCanvasDoubleClick(MouseEventArgs e)
     {
-        var hit = _controller.HitTest(e.OffsetX, e.OffsetY);
-        if (hit != null)
+        var info = new SKImageInfo(1024, 600);
+        var hit = _renderer.HitTest(e.OffsetX, e.OffsetY, info, _controller, _viewState);
+        if (hit.Type == RenderHitType.Item && hit.Item != null)
         {
-            _selectedItem = hit;
-            _controller.SelectedItem = hit;
-            _selectedItemName = GetItemDisplayName(hit);
+            _selectedItem = hit.Item;
+            _controller.SelectedItem = hit.Item;
+            _selectedItemName = RenderUtils.GetItemDisplayName(hit.Item);
             StateHasChanged();
         }
     }
@@ -300,14 +242,6 @@
         _filterValues = null;
         _selectedFilterProperty = null;
         _canvasView?.Invalidate();
-    }
-
-    private static string? GetItemDisplayName(PivotViewerItem item)
-    {
-        var name = item["Name"];
-        if (name != null && name.Count > 0)
-            return name[0]?.ToString();
-        return item.Id;
     }
 
     private void OnSearchInput(ChangeEventArgs e)

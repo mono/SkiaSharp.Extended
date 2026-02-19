@@ -47,7 +47,20 @@ namespace SkiaSharp.Extended.DeepZoom
 
         public override bool Equals(object? obj) => obj is DisplayRect other && Equals(other);
 
-        public override int GetHashCode() => HashCode.Combine(X, Y, Width, Height, MinLevel, MaxLevel);
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hash = 17;
+                hash = hash * 31 + X;
+                hash = hash * 31 + Y;
+                hash = hash * 31 + Width;
+                hash = hash * 31 + Height;
+                hash = hash * 31 + MinLevel;
+                hash = hash * 31 + MaxLevel;
+                return hash;
+            }
+        }
 
         public static bool operator ==(DisplayRect left, DisplayRect right) => left.Equals(right);
         public static bool operator !=(DisplayRect left, DisplayRect right) => !left.Equals(right);
