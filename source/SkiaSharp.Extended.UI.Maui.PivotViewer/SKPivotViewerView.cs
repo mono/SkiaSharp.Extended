@@ -461,6 +461,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         {
             if (!_isVisible) return;
 
+            // Flush deferred tile bitmap disposals on the UI thread
+            _controller.ImageProvider?.FlushEvictedTiles();
+
             var canvas = e.Surface.Canvas;
             var info = e.Info;
 

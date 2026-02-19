@@ -207,9 +207,6 @@ namespace SkiaSharp.Extended.PivotViewer
             var tileId = new TileId(bestLevel, tileCol, tileRow);
             SKBitmap? tileBitmap;
 
-            // Flush deferred disposals before accessing cache
-            _cache.FlushEvicted();
-
             if (!_cache.TryGet(tileId, out tileBitmap))
             {
                 string url = $"{_basePath}/{_dzc.GetCompositeTileUrl(bestLevel, tileCol, tileRow)}";
@@ -269,6 +266,12 @@ namespace SkiaSharp.Extended.PivotViewer
             _thumbnailCache.Clear();
             _cache.Clear();
         }
+
+        /// <summary>
+        /// Flushes deferred bitmap disposals from the tile cache.
+        /// Call this on the UI thread before rendering to safely dispose evicted bitmaps.
+        /// </summary>
+        public void FlushEvictedTiles() => _cache.FlushEvicted();
 
         public void Dispose()
         {

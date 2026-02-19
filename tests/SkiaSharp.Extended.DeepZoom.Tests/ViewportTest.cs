@@ -144,6 +144,30 @@ public class ViewportTest
     }
 
     [Fact]
+    public void ZoomAboutLogicalPoint_ExtremeZoom_ClampsToMinViewportWidth()
+    {
+        var vp = new Viewport { ViewportWidth = 0.001 };
+        // Zoom in by 1 billion — should clamp to MinViewportWidth
+        vp.ZoomAboutLogicalPoint(1_000_000_000, 0.5, 0.5);
+        Assert.True(vp.ViewportWidth >= Viewport.MinViewportWidth);
+        Assert.True(double.IsFinite(vp.Zoom));
+        Assert.True(double.IsFinite(vp.Scale));
+    }
+
+    [Fact]
+    public void ZoomAboutLogicalPoint_AtMinWidth_NoPan()
+    {
+        var vp = new Viewport { ViewportWidth = Viewport.MinViewportWidth };
+        double origOriginX = vp.ViewportOriginX;
+        double origOriginY = vp.ViewportOriginY;
+        // Trying to zoom further should not shift the viewport
+        vp.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
+        Assert.Equal(Viewport.MinViewportWidth, vp.ViewportWidth);
+        Assert.Equal(origOriginX, vp.ViewportOriginX);
+        Assert.Equal(origOriginY, vp.ViewportOriginY);
+    }
+
+    [Fact]
     public void PanByScreenDelta_MovesOrigin()
     {
         var vp = new Viewport

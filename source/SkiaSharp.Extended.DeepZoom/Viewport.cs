@@ -116,8 +116,10 @@ namespace SkiaSharp.Extended.DeepZoom
             if (factor <= 0) throw new ArgumentOutOfRangeException(nameof(factor));
 
             double newWidth = Math.Max(MinViewportWidth, _viewportWidth / factor);
-            double newOriginX = logicalX - (logicalX - _viewportOriginX) / factor;
-            double newOriginY = logicalY - (logicalY - _viewportOriginY) / factor;
+            // Use effective factor to keep anchor point stable when zoom is clamped
+            double effectiveFactor = _viewportWidth / newWidth;
+            double newOriginX = logicalX - (logicalX - _viewportOriginX) / effectiveFactor;
+            double newOriginY = logicalY - (logicalY - _viewportOriginY) / effectiveFactor;
 
             _viewportWidth = newWidth;
             _viewportOriginX = newOriginX;

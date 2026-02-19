@@ -278,6 +278,18 @@ public class DziTileSourceTest
     }
 
     [Fact]
+    public void GetOptimalLevel_ZoomedInHigherThanZoomedOut()
+    {
+        // Regression: old bug had neededWidth = scale * viewportWidth = controlWidth
+        // which made zoom level independent of viewportWidth
+        var dzi = new DziTileSource(4096, 4096, 256, 0, "jpg");
+        int levelZoomedOut = dzi.GetOptimalLevel(1.0, 800);
+        int levelZoomedIn = dzi.GetOptimalLevel(0.01, 800);
+        Assert.True(levelZoomedIn > levelZoomedOut,
+            $"Zoomed in (vw=0.01) should use higher level ({levelZoomedIn}) than zoomed out (vw=1.0, level={levelZoomedOut})");
+    }
+
+    [Fact]
     public void GetFullTileUrl_MultipleCoordinates_FormatsCorrectly()
     {
         var dzi = new DziTileSource(2048, 2048, 256, 0, "png");
