@@ -118,6 +118,13 @@ namespace SkiaSharp.Extended.PivotViewer
                     thumbnail = await LoadCompositeThumbnailAsync(subImage, targetSize, ct).ConfigureAwait(false);
                 }
 
+                // Don't cache if disposed — the bitmap will never be cleaned up
+                if (_disposed)
+                {
+                    thumbnail?.Dispose();
+                    return null;
+                }
+
                 // Only cache successful loads — null results should be retried
                 if (thumbnail != null)
                     _thumbnailCache[itemIndex] = thumbnail;
@@ -164,12 +171,24 @@ namespace SkiaSharp.Extended.PivotViewer
             string url = $"{_basePath}/{filesDir}/{bestLevel}/0_0.{primaryFormat}";
             var tileBitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
 
+            if (_disposed)
+            {
+                tileBitmap?.Dispose();
+                return null;
+            }
+
             if (tileBitmap == null)
             {
                 // Try alternative format (jpg ↔ png)
                 string altFormat = primaryFormat == "jpg" ? "png" : "jpg";
                 string altUrl = $"{_basePath}/{filesDir}/{bestLevel}/0_0.{altFormat}";
                 tileBitmap = await _fetcher.FetchTileAsync(altUrl, ct).ConfigureAwait(false);
+
+                if (_disposed)
+                {
+                    tileBitmap?.Dispose();
+                    return null;
+                }
             }
 
             return tileBitmap;
