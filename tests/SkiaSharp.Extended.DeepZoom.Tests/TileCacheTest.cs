@@ -190,4 +190,52 @@ public class TileCacheTest
 
         bmp2.Dispose();
     }
+
+    [Fact]
+    public void FlushEvicted_DisposesEvictedBitmaps()
+    {
+        using var cache = new TileCache(2);
+        var bmp0 = new SKBitmap(1, 1);
+        cache.Put(new TileId(0, 0, 0), bmp0);
+        cache.Put(new TileId(1, 0, 0), new SKBitmap(1, 1));
+
+        // Evict id0 by adding a 3rd item
+        cache.Put(new TileId(2, 0, 0), new SKBitmap(1, 1));
+        Assert.Equal(2, cache.Count);
+        Assert.False(cache.Contains(new TileId(0, 0, 0)));
+
+        // FlushEvicted disposes deferred bitmaps without crashing
+        cache.FlushEvicted();
+    }
+
+    [Fact]
+    public void Remove_DefersDisposal_FlushEvictedCleansThem()
+    {
+        using var cache = new TileCache(10);
+        var bmp = new SKBitmap(1, 1);
+        var id = new TileId(0, 0, 0);
+        cache.Put(id, bmp);
+
+        Assert.True(cache.Remove(id));
+        Assert.Equal(0, cache.Count);
+
+        // FlushEvicted cleans up removed bitmap without crashing
+        cache.FlushEvicted();
+    }
+
+    [Fact]
+    public void Clear_DisposesEverything_IncludingPendingEvictions()
+    {
+        using var cache = new TileCache(2);
+        cache.Put(new TileId(0, 0, 0), new SKBitmap(1, 1));
+        cache.Put(new TileId(1, 0, 0), new SKBitmap(1, 1));
+        cache.Put(new TileId(2, 0, 0), new SKBitmap(1, 1)); // evicts id0
+
+        // Clear disposes all entries and pending evictions
+        cache.Clear();
+        Assert.Equal(0, cache.Count);
+
+        // FlushEvicted after Clear is a no-op
+        cache.FlushEvicted();
+    }
 }

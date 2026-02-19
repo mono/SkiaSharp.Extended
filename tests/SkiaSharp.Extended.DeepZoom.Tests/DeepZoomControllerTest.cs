@@ -489,4 +489,31 @@ public class DeepZoomControllerTest
         Assert.Equal(dzc.ItemCount, controller.SubImages.Count);
         Assert.True(controller.SubImages.Count > 0, "SubImages should be populated from DZC file");
     }
+
+    [Fact]
+    public async Task LoadTileAsync_WithTilesBaseUri_FetcherReceivesFullUrl()
+    {
+        using var controller = new DeepZoomController();
+        controller.UseSprings = false;
+        controller.SetControlSize(512, 512);
+
+        var dzi = CreateSampleDzi(); // TilesBaseUri = "http://example.com/test"
+        using var fetcher = new MemoryTileFetcher();
+        controller.Load(dzi, fetcher);
+
+        // Trigger tile scheduling
+        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+
+        // Wait for async tile loads
+        await Task.Delay(300);
+
+        Assert.True(fetcher.FetchedUrls.Count > 0, "Should have fetched at least one tile");
+
+        // All fetched URLs should be full URLs starting with TilesBaseUri
+        foreach (var url in fetcher.FetchedUrls)
+        {
+            Assert.StartsWith("http://example.com/test", url,
+                StringComparison.Ordinal);
+        }
+    }
 }

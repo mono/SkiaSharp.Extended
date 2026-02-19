@@ -421,4 +421,29 @@ public class ViewportTest
         Assert.True(vp.ViewportOriginY >= 0);
         Assert.True(vp.ViewportOriginY + vp.ViewportHeight <= imageLogicalHeight + 0.001);
     }
+
+    [Fact]
+    public void ViewportWidth_Zero_ClampsToMinViewportWidth()
+    {
+        var vp = new Viewport();
+        vp.ViewportWidth = 0;
+        Assert.Equal(Viewport.MinViewportWidth, vp.ViewportWidth);
+    }
+
+    [Fact]
+    public void ViewportWidth_Negative_ClampsToMinViewportWidth()
+    {
+        var vp = new Viewport();
+        vp.ViewportWidth = -1.0;
+        Assert.Equal(Viewport.MinViewportWidth, vp.ViewportWidth);
+    }
+
+    [Fact]
+    public void Zoom_WithMinViewportWidth_ReturnsFiniteValue()
+    {
+        var vp = new Viewport();
+        vp.ViewportWidth = 0;
+        Assert.True(double.IsFinite(vp.Zoom));
+        Assert.True(vp.Zoom > 0);
+    }
 }

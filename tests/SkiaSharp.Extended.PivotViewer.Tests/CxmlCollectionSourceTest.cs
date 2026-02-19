@@ -760,4 +760,33 @@ public class CxmlCollectionSourceTest
         Assert.False(string.IsNullOrEmpty(first.Image));
         Assert.NotEmpty(first.SortedIds);
     }
+
+    [Fact]
+    public void Parse_StringElementWithNumericContent_CoercedToDoubleForNumberCategory()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009""
+            xmlns:p=""http://schemas.microsoft.com/livelabs/pivot/collection/2009""
+            Name=""Test"">
+    <FacetCategories>
+        <FacetCategory Name=""Score"" Type=""Number"" />
+    </FacetCategories>
+    <Items>
+        <Item Id=""1"" Name=""Widget"">
+            <Facets>
+                <Facet Name=""Score""><String Value=""42.5"" /></Facet>
+            </Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var source = CxmlCollectionSource.Parse(xml);
+        var item = source.GetItemById("1");
+        Assert.NotNull(item);
+        var scoreValues = item!["Score"];
+        Assert.NotNull(scoreValues);
+        Assert.Single(scoreValues!);
+        Assert.IsType<double>(scoreValues![0]);
+        Assert.Equal(42.5, (double)scoreValues[0]!);
+    }
 }
