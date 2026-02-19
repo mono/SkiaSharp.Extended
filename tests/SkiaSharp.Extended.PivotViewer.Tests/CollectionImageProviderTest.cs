@@ -322,6 +322,29 @@ public class CollectionImageProviderTest
         Assert.Null(result);
     }
 
+    [Fact]
+    public async Task LoadThumbnailAsync_SparseId_WorksWhenIdExceedsItemCount()
+    {
+        // Create a DZC with a single item that has a high ID (e.g., database PK)
+        var items = new List<DzcSubImage>
+        {
+            new DzcSubImage(1000, 0, 256, 256, null)
+            {
+                ViewportWidth = 1.0,
+                ViewportX = 0,
+                ViewportY = 0,
+            }
+        };
+        var dzc = new DzcTileSource(8, 256, "jpg", items);
+        var fetcher = new TrackingTileFetcher();
+        fetcher.AddWildcard();
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        // ID 1000 exceeds ItemCount (1), should still resolve
+        var result = await provider.LoadThumbnailAsync(1000);
+        Assert.NotNull(result);
+    }
+
     #endregion
 
     #region LoadThumbnailAsync – IsPath items

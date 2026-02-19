@@ -131,11 +131,13 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             _sourceCts = new CancellationTokenSource();
             var ct = _sourceCts.Token;
 
+            HttpTileFetcher? fetcher = null;
+            HttpClient? httpClient = null;
+            bool loadedOk = false;
+
             try
             {
-                // Use a fetcher that owns its HttpClient (auto-disposed)
-                var fetcher = new HttpTileFetcher();
-                var httpClient = new HttpClient();
+                httpClient = new HttpClient();
 
                 using var response = await httpClient.GetAsync(new Uri(uri, UriKind.Absolute), ct).ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
@@ -144,25 +146,35 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
 
                 using var stream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(xml));
 
-                // Derive the base URL for tiles: replace .dzi extension with _files/
-                var dotIdx = uri.LastIndexOf('.');
-                var tilesBase = (dotIdx >= 0 ? uri.Substring(0, dotIdx) : uri) + "_files/";
+                // Derive the base URL preserving query string (for signed URLs)
+                var parsed = new Uri(uri, UriKind.Absolute);
+                var pathPart = parsed.GetLeftPart(UriPartial.Path);
+                var dotIdx = pathPart.LastIndexOf('.');
+                var tilesBase = (dotIdx >= 0 ? pathPart.Substring(0, dotIdx) : pathPart) + "_files/";
+                if (!string.IsNullOrEmpty(parsed.Query))
+                    tilesBase += parsed.Query;
 
                 var tileSource = DziTileSource.Parse(stream);
                 tileSource.TilesBaseUri = tilesBase;
 
                 ct.ThrowIfCancellationRequested();
-                if (_disposed) { httpClient.Dispose(); return; }
+                if (_disposed) return;
 
-                // Load takes ownership; dispose the temp HttpClient since fetcher owns its own
-                httpClient.Dispose();
+                fetcher = new HttpTileFetcher();
                 Load(tileSource, fetcher);
+                loadedOk = true;
             }
             catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 if (!_disposed)
                     ImageOpenFailed?.Invoke(this, ex);
+            }
+            finally
+            {
+                httpClient?.Dispose();
+                if (!loadedOk)
+                    fetcher?.Dispose();
             }
         }
 

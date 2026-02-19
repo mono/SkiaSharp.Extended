@@ -134,7 +134,7 @@ namespace SkiaSharp.Extended.PivotViewer
             if (_thumbnailCache.TryGetValue(itemIndex, out var cached))
                 return cached;
 
-            if (itemIndex < 0 || itemIndex >= _dzc.ItemCount)
+            if (itemIndex < 0)
                 return null;
 
             // Use per-item lock to prevent duplicate bitmap creation
