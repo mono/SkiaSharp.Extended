@@ -966,7 +966,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     _previousPanY = 0;
                     // Use last pointer position to determine if pan started in filter pane or detail pane
                     _isPanningFilterPane = _viewState.IsFilterPaneVisible && !double.IsNaN(_lastPointerX) && _lastPointerX < PivotViewerRenderer.FilterPaneWidth;
-                    _isPanningDetailPane = _controller.SelectedItem != null && !double.IsNaN(_lastPointerX) && _lastPointerX > Width - PivotViewerRenderer.DetailPaneWidth;
+                    _isPanningDetailPane = !_isPanningFilterPane && _controller.SelectedItem != null && !double.IsNaN(_lastPointerX) && _lastPointerX > Width - PivotViewerRenderer.DetailPaneWidth;
                     break;
                 case GestureStatus.Running:
                     double deltaX = e.TotalX - _previousPanX;
