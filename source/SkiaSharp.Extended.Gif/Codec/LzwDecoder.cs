@@ -11,9 +11,9 @@ namespace SkiaSharp.Extended.Gif.Codec
 	internal class LzwDecoder : IDisposable
 	{
 		private readonly Stream inputStream;
-		private int[] codeTable;
-		private byte[] suffixTable;
-		private byte[] pixelStack;
+		private int[]? codeTable;
+		private byte[]? suffixTable;
+		private byte[]? pixelStack;
 		private int stackPointer;
 		private int codeSize;
 		private int clearCode;
@@ -25,7 +25,7 @@ namespace SkiaSharp.Extended.Gif.Codec
 		private int bitsRead;
 		private int dataBuffer;
 		private int bitsInBuffer;
-		private byte[] blockBuffer;
+		private byte[]? blockBuffer;
 		private int blockIndex;
 		private int blockSize;
 		private bool disposed;
