@@ -191,4 +191,35 @@ public class DeepZoomSubImageTest
         Assert.Equal(0.55, px, 6);
         Assert.Equal(0.35, py, 6);
     }
+
+    [Fact]
+    public void GetMosaicBounds_ZeroViewportWidth_ReturnsZeroBounds()
+    {
+        var sub = new DeepZoomSubImage(0, 0, 1.5, null);
+        // ViewportWidth defaults to 0 — should not produce Infinity
+        var (x, y, w, h) = sub.GetMosaicBounds();
+        Assert.Equal(0, x);
+        Assert.Equal(0, y);
+        Assert.Equal(0, w);
+        Assert.Equal(0, h);
+    }
+
+    [Fact]
+    public void ParentToLocal_ZeroViewportWidth_ReturnsZero()
+    {
+        var sub = new DeepZoomSubImage(0, 0, 1.5, null);
+        var (lx, ly) = sub.ParentToLocal(0.5, 0.5);
+        Assert.Equal(0, lx);
+        Assert.Equal(0, ly);
+    }
+
+    [Fact]
+    public void GetMosaicBounds_ZeroAspectRatio_ReturnsZeroHeight()
+    {
+        var sub = new DeepZoomSubImage(0, 0, 0, null);
+        sub.ViewportWidth = 2.0;
+        var (_, _, w, h) = sub.GetMosaicBounds();
+        Assert.Equal(0.5, w, 6);
+        Assert.Equal(0, h);
+    }
 }

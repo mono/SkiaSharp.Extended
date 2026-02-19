@@ -240,7 +240,7 @@ namespace SkiaSharp.Extended.PivotViewer
             int maxSingleTileLevel = (int)Math.Floor(Math.Log(tileSize) / Math.Log(2));
 
             int bestLevel = 0;
-            int effectiveMax = Math.Min(maxLevel, maxSingleTileLevel);
+            int effectiveMax = Math.Min(maxLevel, Math.Min(maxSingleTileLevel, 30));
             for (int level = 0; level <= effectiveMax; level++)
             {
                 bestLevel = level;

@@ -309,4 +309,19 @@ public class SpringAnimatorTest
         Assert.Equal(0.0, state.OriginY);
         Assert.Equal(1.0, state.ViewportWidth);
     }
+
+    [Fact]
+    public void Update_ManyCycles_SnapsToTarget()
+    {
+        // Run enough iterations that the spring should settle and trigger the snap path
+        var spring = new SpringAnimator(5.0);
+        spring.Target = 10.0;
+
+        // Simulate 10 seconds at 60fps — should be well past convergence
+        for (int i = 0; i < 600; i++)
+            spring.Update(1.0 / 60.0);
+
+        Assert.Equal(10.0, spring.Current);
+        Assert.True(spring.IsSettled);
+    }
 }

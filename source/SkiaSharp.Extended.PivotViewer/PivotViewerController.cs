@@ -340,7 +340,7 @@ namespace SkiaSharp.Extended.PivotViewer
             // At zoom=1, item width ≈ _availableWidth (one item fills view)
             // Solve for z: scaleNeeded * fitAll = fitAll*(1-z) + available*z
             double denominator = _availableWidth - fitAllBounds.Width;
-            if (denominator > 1)
+            if (denominator > 0.001)
             {
                 double desiredZoom = (scaleNeeded - 1) * fitAllBounds.Width / denominator;
                 _zoomLevel = Math.Max(0.0, Math.Min(1.0, desiredZoom));

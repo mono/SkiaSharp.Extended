@@ -860,4 +860,15 @@ public class DeepZoomControllerTest
         // Spring should be animating — not yet at target but closer than start
         Assert.True(controller.Viewport.ViewportWidth < initialWidth || !controller.IsIdle);
     }
+
+    [Fact]
+    public void TileFailedEventArgs_Properties()
+    {
+        var tileId = new TileId(3, 1, 2);
+        var ex = new InvalidOperationException("test error");
+        var args = new TileFailedEventArgs(tileId, ex);
+
+        Assert.Equal(tileId, args.TileId);
+        Assert.Same(ex, args.Exception);
+    }
 }

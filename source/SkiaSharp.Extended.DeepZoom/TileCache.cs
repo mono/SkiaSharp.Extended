@@ -204,16 +204,23 @@ namespace SkiaSharp.Extended.DeepZoom
         {
             lock (_lock)
             {
-                if (!_disposed)
-                {
-                    _disposed = true;
-                }
-                else
-                {
+                if (_disposed)
                     return;
+                _disposed = true;
+
+                // Clear all items while still holding the lock to prevent
+                // any concurrent Put() from inserting between setting _disposed
+                // and clearing. (Put() checks _disposed, but this is defensive.)
+                foreach (var node in _lruList)
+                {
+                    node.Bitmap?.Dispose();
                 }
+                _lruList.Clear();
+                _map.Clear();
+                foreach (var bmp in _pendingDispose)
+                    bmp.Dispose();
+                _pendingDispose.Clear();
             }
-            Clear();
         }
 
         private class TileCacheEntry

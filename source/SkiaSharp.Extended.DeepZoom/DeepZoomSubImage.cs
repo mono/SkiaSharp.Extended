@@ -83,11 +83,14 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public (double X, double Y, double Width, double Height) GetMosaicBounds()
         {
+            if (_viewportWidth == 0)
+                return (0, 0, 0, 0);
+
             // Silverlight uses inverted coordinates:
             // The sub-image's ViewportWidth is the inverse of how much of the parent it occupies
             // ViewportOrigin is the negated position in parent space
             double actualWidth = 1.0 / _viewportWidth;
-            double actualHeight = actualWidth / AspectRatio;
+            double actualHeight = AspectRatio > 0 ? actualWidth / AspectRatio : 0;
             double actualX = -_viewportOriginX / _viewportWidth;
             double actualY = -_viewportOriginY / _viewportWidth;
 
@@ -100,6 +103,8 @@ namespace SkiaSharp.Extended.DeepZoom
         public (double X, double Y) ParentToLocal(double parentX, double parentY)
         {
             var (mx, my, mw, mh) = GetMosaicBounds();
+            if (mw == 0 || mh == 0)
+                return (0, 0);
             return ((parentX - mx) / mw, (parentY - my) / mh);
         }
 
