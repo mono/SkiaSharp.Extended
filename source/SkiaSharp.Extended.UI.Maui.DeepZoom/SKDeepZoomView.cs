@@ -133,11 +133,16 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
 
             try
             {
+                // Use a fetcher that owns its HttpClient (auto-disposed)
+                var fetcher = new HttpTileFetcher();
                 var httpClient = new HttpClient();
-                var response = await httpClient.GetStringAsync(new Uri(uri, UriKind.Absolute));
+
+                using var response = await httpClient.GetAsync(new Uri(uri, UriKind.Absolute), ct).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+                var xml = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
                 ct.ThrowIfCancellationRequested();
 
-                using var stream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(response));
+                using var stream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(xml));
 
                 // Derive the base URL for tiles: replace .dzi extension with _files/
                 var dotIdx = uri.LastIndexOf('.');
@@ -146,15 +151,18 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                 var tileSource = DziTileSource.Parse(stream);
                 tileSource.TilesBaseUri = tilesBase;
 
-                var fetcher = new HttpTileFetcher(httpClient);
-
                 ct.ThrowIfCancellationRequested();
+                if (_disposed) { httpClient.Dispose(); return; }
+
+                // Load takes ownership; dispose the temp HttpClient since fetcher owns its own
+                httpClient.Dispose();
                 Load(tileSource, fetcher);
             }
             catch (OperationCanceledException) { }
             catch (Exception ex)
             {
-                ImageOpenFailed?.Invoke(this, ex);
+                if (!_disposed)
+                    ImageOpenFailed?.Invoke(this, ex);
             }
         }
 
@@ -166,7 +174,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             get => _controller.Viewport.ViewportWidth;
             set
             {
-                _controller.Viewport.ViewportWidth = value;
+                _controller.SetViewport(value, _controller.Viewport.ViewportOriginX, _controller.Viewport.ViewportOriginY);
                 _canvasView.InvalidateSurface();
             }
         }
@@ -177,7 +185,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             get => _controller.Viewport.ViewportOriginX;
             set
             {
-                _controller.Viewport.ViewportOriginX = value;
+                _controller.SetViewport(_controller.Viewport.ViewportWidth, value, _controller.Viewport.ViewportOriginY);
                 _canvasView.InvalidateSurface();
             }
         }
@@ -188,7 +196,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             get => _controller.Viewport.ViewportOriginY;
             set
             {
-                _controller.Viewport.ViewportOriginY = value;
+                _controller.SetViewport(_controller.Viewport.ViewportWidth, _controller.Viewport.ViewportOriginX, value);
                 _canvasView.InvalidateSurface();
             }
         }

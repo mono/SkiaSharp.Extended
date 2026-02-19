@@ -231,6 +231,18 @@ namespace SkiaSharp.Extended.DeepZoom
             ApplyViewportToSpring();
         }
 
+        /// <summary>
+        /// Sets the viewport state directly. Springs animate to this state if enabled.
+        /// </summary>
+        public void SetViewport(double viewportWidth, double originX, double originY)
+        {
+            _viewport.ViewportWidth = viewportWidth;
+            _viewport.ViewportOriginX = originX;
+            _viewport.ViewportOriginY = originY;
+            _viewport.Constrain();
+            ApplyViewportToSpring();
+        }
+
         private void ApplyViewportToSpring()
         {
             var state = _viewport.GetState();

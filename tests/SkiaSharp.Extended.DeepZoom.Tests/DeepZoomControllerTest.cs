@@ -815,4 +815,49 @@ public class DeepZoomControllerTest
         Assert.Equal(1024, controller.Viewport.ControlWidth);
         Assert.Equal(768, controller.Viewport.ControlHeight);
     }
+
+    [Fact]
+    public void SetViewport_UpdatesViewportAndSpring()
+    {
+        using var controller = new DeepZoomController();
+        controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
+        controller.SetControlSize(800, 600);
+        controller.UseSprings = false; // snap immediately
+
+        controller.SetViewport(0.5, 0.1, 0.2);
+
+        Assert.Equal(0.5, controller.Viewport.ViewportWidth, 4);
+        Assert.Equal(0.1, controller.Viewport.ViewportOriginX, 4);
+        Assert.Equal(0.2, controller.Viewport.ViewportOriginY, 4);
+
+        // After Update, values should remain (springs snapped)
+        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        Assert.Equal(0.5, controller.Viewport.ViewportWidth, 4);
+        Assert.Equal(0.1, controller.Viewport.ViewportOriginX, 4);
+        Assert.Equal(0.2, controller.Viewport.ViewportOriginY, 4);
+    }
+
+    [Fact]
+    public void SetViewport_WithSprings_AnimatesToTarget()
+    {
+        using var controller = new DeepZoomController();
+        controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
+        controller.SetControlSize(800, 600);
+        controller.UseSprings = true;
+
+        // Set initial state
+        controller.SetViewport(1.0, 0, 0);
+        controller.Spring.SnapToTarget();
+        controller.Update(TimeSpan.FromSeconds(0.001));
+
+        double initialWidth = controller.Viewport.ViewportWidth;
+
+        // Set new target
+        controller.SetViewport(0.5, 0.1, 0.1);
+
+        // After one frame, should be moving toward target (not at 1.0 anymore)
+        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        // Spring should be animating — not yet at target but closer than start
+        Assert.True(controller.Viewport.ViewportWidth < initialWidth || !controller.IsIdle);
+    }
 }
