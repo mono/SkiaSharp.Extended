@@ -94,14 +94,10 @@ namespace SkiaSharp.Extended.PivotViewer
 
             // Use per-item lock to prevent duplicate bitmap creation
             var loadLock = _loadLocks.GetOrAdd(itemIndex, _ => new SemaphoreSlim(1, 1));
-            if (_disposed)
-            {
-                // Clean up orphaned semaphore added after Dispose cleared the dictionary
-                if (_loadLocks.TryRemove(itemIndex, out var orphaned))
-                    orphaned.Dispose();
-                return null;
-            }
-            try { await loadLock.WaitAsync(ct).ConfigureAwait(false); }
+            if (_disposed) return null;
+
+            bool lockTaken = false;
+            try { await loadLock.WaitAsync(ct).ConfigureAwait(false); lockTaken = true; }
             catch (ObjectDisposedException) { return null; }
             try
             {
@@ -140,8 +136,11 @@ namespace SkiaSharp.Extended.PivotViewer
             }
             finally
             {
-                try { loadLock.Release(); }
-                catch (ObjectDisposedException) { }
+                if (lockTaken)
+                {
+                    try { loadLock.Release(); }
+                    catch (ObjectDisposedException) { }
+                }
             }
         }
 

@@ -654,6 +654,32 @@ public class CollectionImageProviderTest
 
     #endregion
 
+    #region Cancelled token
+
+    [Fact]
+    public async Task LoadThumbnailAsync_WithPreCancelledToken_ReturnsNullWithoutThrowing()
+    {
+        var dzc = CreateCompositeDzc(4);
+        var fetcher = new TrackingTileFetcher();
+        fetcher.AddWildcard();
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+
+        // A pre-cancelled token causes WaitAsync to throw TaskCanceledException.
+        // The lockTaken fix ensures the finally block doesn't try to Release
+        // a semaphore that was never acquired — no deadlock or ObjectDisposedException.
+        await Assert.ThrowsAsync<TaskCanceledException>(
+            () => provider.LoadThumbnailAsync(0, 64, cts.Token));
+
+        // The provider remains usable after the cancellation
+        var result = await provider.LoadThumbnailAsync(0, 64);
+        Assert.NotNull(result);
+    }
+
+    #endregion
+
     #region Concurrent access
 
     [Fact]

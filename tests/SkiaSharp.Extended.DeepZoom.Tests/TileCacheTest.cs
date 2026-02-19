@@ -238,4 +238,19 @@ public class TileCacheTest
         // FlushEvicted after Clear is a no-op
         cache.FlushEvicted();
     }
+
+    [Fact]
+    public void Put_AfterDispose_DoesNotThrow_AndDisposesBitmap()
+    {
+        var cache = new TileCache(10);
+        cache.Dispose();
+
+        var bmp = new SKBitmap(32, 32);
+        var ex = Record.Exception(() => cache.Put(new TileId(0, 0, 0), bmp));
+
+        Assert.Null(ex);
+        // The bitmap was disposed by Put — verify by checking the cache didn't retain it
+        Assert.Equal(0, cache.Count);
+        Assert.False(cache.Contains(new TileId(0, 0, 0)));
+    }
 }

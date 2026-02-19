@@ -562,6 +562,13 @@ namespace SkiaSharp.Extended.PivotViewer
                     return (pos.X, pos.Y, pos.Width, pos.Height);
             }
 
+            if (_currentHistogramLayout != null)
+            {
+                var pos = _currentHistogramLayout.AllPositions.FirstOrDefault(p => p.Item == item);
+                if (pos.Item != null)
+                    return (pos.X, pos.Y, pos.Width, pos.Height);
+            }
+
             return (0, 0, 0, 0);
         }
 

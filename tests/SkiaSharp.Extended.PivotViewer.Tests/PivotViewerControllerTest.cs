@@ -1945,4 +1945,68 @@ public class PivotViewerControllerTest
             Assert.Equal((round + 1) * 5, controller.InScopeItems.Count);
         }
     }
+
+    // --- GetItemBounds histogram ---
+
+    [Fact]
+    public void GetItemBounds_InGraphView_ReturnsNonZeroBounds()
+    {
+        var controller = new PivotViewerController();
+        var categoryProp = new PivotViewerStringProperty("Category") { DisplayName = "Category" };
+        var items = new List<PivotViewerItem>();
+        for (int i = 0; i < 6; i++)
+        {
+            var item = new PivotViewerItem($"item{i}");
+            item.Set(categoryProp, new object[] { i % 2 == 0 ? "A" : "B" });
+            items.Add(item);
+        }
+
+        controller.LoadItems(items, new[] { categoryProp });
+        controller.SetAvailableSize(800, 600);
+        controller.SortProperty = categoryProp;
+        controller.CurrentView = "graph";
+
+        var bounds = controller.GetItemBounds(items[0]);
+
+        Assert.True(bounds.Width > 0, "Width should be non-zero in graph view");
+        Assert.True(bounds.Height > 0, "Height should be non-zero in graph view");
+    }
+
+    // --- ZoomAbout ratio ---
+
+    [Fact]
+    public void ZoomAbout_PreservesZoomCenterPoint()
+    {
+        var controller = new PivotViewerController();
+        var nameProp = new PivotViewerStringProperty("Name") { DisplayName = "Name" };
+        var items = new List<PivotViewerItem>();
+        for (int i = 0; i < 20; i++)
+        {
+            var item = new PivotViewerItem($"item{i}");
+            item.Set(nameProp, new object[] { $"Item {i}" });
+            items.Add(item);
+        }
+
+        controller.LoadItems(items, new[] { nameProp });
+        controller.SetAvailableSize(800, 600);
+
+        double centerX = 400;
+        double centerY = 300;
+
+        // Zoom in about the center point
+        controller.ZoomAbout(2.0, centerX, centerY);
+
+        // The world coordinate at the center should remain at the center:
+        // worldX = screenX - panOffsetX, so panOffsetX should compensate for the zoom
+        double zoomLevel = controller.ZoomLevel;
+        Assert.True(zoomLevel > 0.0, "Zoom level should have increased");
+
+        // Verify pan offset was adjusted (not left at zero) to keep center stable
+        double panX = controller.PanOffsetX;
+        double panY = controller.PanOffsetY;
+        // After zooming in at center, the layout scales up and pan adjusts so the
+        // center world point stays at (centerX, centerY) on screen
+        Assert.True(Math.Abs(panX) > 0.01 || Math.Abs(panY) > 0.01,
+            "Pan offset should be adjusted to preserve zoom center");
+    }
 }

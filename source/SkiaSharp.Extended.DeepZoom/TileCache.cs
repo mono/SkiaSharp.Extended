@@ -201,8 +201,8 @@ namespace SkiaSharp.Extended.DeepZoom
         {
             if (!_disposed)
             {
-                Clear();
                 _disposed = true;
+                Clear();
             }
         }
 
