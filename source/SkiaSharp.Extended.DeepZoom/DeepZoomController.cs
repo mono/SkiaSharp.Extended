@@ -25,7 +25,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private CancellationTokenSource? _cts;
         private bool _disposed;
 
-        public DeepZoomController(int cacheCapacity = 256)
+        public DeepZoomController(int cacheCapacity = 1024)
         {
             _viewport = new Viewport();
             _spring = new ViewportSpring();
@@ -34,8 +34,17 @@ namespace SkiaSharp.Extended.DeepZoom
             _renderer = new DeepZoomRenderer();
         }
 
-        /// <summary>The current viewport (read-only access).</summary>
+        /// <summary>The current viewport (read-only access). During animation, this reflects the animated position.</summary>
         public Viewport Viewport => _viewport;
+
+        /// <summary>The target viewport width. During spring animation, this is the destination value.</summary>
+        public double TargetViewportWidth => _spring.Width.Target;
+
+        /// <summary>The target viewport origin X. During spring animation, this is the destination value.</summary>
+        public double TargetOriginX => _spring.OriginX.Target;
+
+        /// <summary>The target viewport origin Y. During spring animation, this is the destination value.</summary>
+        public double TargetOriginY => _spring.OriginY.Target;
 
         /// <summary>The spring animator for smooth transitions.</summary>
         public ViewportSpring Spring => _spring;
@@ -195,6 +204,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public void ZoomAboutLogicalPoint(double factor, double logicalX, double logicalY)
         {
+            SyncViewportToTarget();
             _viewport.ZoomAboutLogicalPoint(factor, logicalX, logicalY);
             _viewport.Constrain();
             ApplyViewportToSpring();
@@ -205,8 +215,11 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public void ZoomAboutScreenPoint(double factor, double screenX, double screenY)
         {
+            SyncViewportToTarget();
             var (lx, ly) = _viewport.ElementToLogicalPoint(screenX, screenY);
-            ZoomAboutLogicalPoint(factor, lx, ly);
+            _viewport.ZoomAboutLogicalPoint(factor, lx, ly);
+            _viewport.Constrain();
+            ApplyViewportToSpring();
         }
 
         /// <summary>
@@ -214,6 +227,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public void Pan(double deltaScreenX, double deltaScreenY)
         {
+            SyncViewportToTarget();
             _viewport.PanByScreenDelta(deltaScreenX, deltaScreenY);
             _viewport.Constrain();
             ApplyViewportToSpring();
@@ -243,6 +257,18 @@ namespace SkiaSharp.Extended.DeepZoom
             ApplyViewportToSpring();
         }
 
+        /// <summary>
+        /// Restores the viewport to the spring's target state so that
+        /// programmatic operations (Zoom, Pan) compound on the intended
+        /// destination rather than the mid-animation position.
+        /// </summary>
+        private void SyncViewportToTarget()
+        {
+            _viewport.ViewportWidth = _spring.Width.Target;
+            _viewport.ViewportOriginX = _spring.OriginX.Target;
+            _viewport.ViewportOriginY = _spring.OriginY.Target;
+        }
+
         private void ApplyViewportToSpring()
         {
             var state = _viewport.GetState();
@@ -256,6 +282,20 @@ namespace SkiaSharp.Extended.DeepZoom
                 _spring.SnapToTarget();
             }
             ViewportChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Immediately snaps the spring animation to its target.
+        /// Useful for direct-manipulation gestures (pan, pinch) where the
+        /// user expects instant feedback rather than spring lag.
+        /// </summary>
+        public void SnapSpringToTarget()
+        {
+            _spring.SnapToTarget();
+            var state = _spring.GetCurrentState();
+            _viewport.ViewportOriginX = state.OriginX;
+            _viewport.ViewportOriginY = state.OriginY;
+            _viewport.ViewportWidth = state.ViewportWidth;
         }
 
         /// <summary>

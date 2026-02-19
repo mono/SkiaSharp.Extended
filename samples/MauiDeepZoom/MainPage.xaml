@@ -12,7 +12,8 @@
             <Button Text="Zoom In" Clicked="OnZoomIn" BackgroundColor="#555" TextColor="White" />
             <Button Text="Zoom Out" Clicked="OnZoomOut" BackgroundColor="#555" TextColor="White" />
             <Switch x:Name="debugSwitch" IsToggled="True" Toggled="OnDebugToggled" />
-            <Label Text="Show Tile Borders" TextColor="White" VerticalOptions="Center" />
+            <Label Text="Borders" TextColor="White" VerticalOptions="Center" />
+            <Label x:Name="zoomLabel" Text="1.0x" TextColor="Yellow" VerticalOptions="Center" FontAttributes="Bold" />
         </HorizontalStackLayout>
 
         <dz:SKDeepZoomView x:Name="deepZoomView" Grid.Row="1" />

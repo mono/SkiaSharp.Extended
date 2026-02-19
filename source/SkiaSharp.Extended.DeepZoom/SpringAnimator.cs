@@ -11,7 +11,7 @@ namespace SkiaSharp.Extended.DeepZoom
     {
         // Spring constants extracted from Silverlight's VisualStateKeySpline
         // Critical damping ratio for smooth deceleration
-        private const double DefaultSpringStiffness = 11.5;
+        private const double DefaultSpringStiffness = 100.0;
         private const double DefaultDampingRatio = 1.0; // critically damped
 
         private double _current;
@@ -68,7 +68,8 @@ namespace SkiaSharp.Extended.DeepZoom
         public bool IsSettled => Math.Abs(_current - _target) < 1e-6 && Math.Abs(_velocity) < 1e-6;
 
         /// <summary>
-        /// Updates the spring by a time step. Uses a critically-damped spring model.
+        /// Updates the spring by a time step. Uses the exact critically-damped
+        /// spring solution for unconditional stability at any time step.
         /// </summary>
         /// <param name="deltaTime">Time step in seconds.</param>
         public void Update(double deltaTime)
@@ -83,19 +84,38 @@ namespace SkiaSharp.Extended.DeepZoom
                 return;
             }
 
-            // Clamp delta to prevent instability
+            // Clamp delta to prevent extreme values
             deltaTime = Math.Min(deltaTime, 0.1);
 
-            double displacement = _current - _target;
             double omega = Math.Sqrt(_stiffness); // natural frequency
-            double damping = 2.0 * _dampingRatio * omega;
 
-            // Spring force: F = -stiffness * displacement - damping * velocity
-            double acceleration = -_stiffness * displacement - damping * _velocity;
+            if (_dampingRatio >= 0.999 && _dampingRatio <= 1.001)
+            {
+                // Exact critically-damped solution (unconditionally stable)
+                double displacement = _current - _target;
+                double c1 = displacement;
+                double c2 = _velocity + omega * displacement;
+                double expTerm = Math.Exp(-omega * deltaTime);
 
-            // Semi-implicit Euler integration
-            _velocity += acceleration * deltaTime;
-            _current += _velocity * deltaTime;
+                _current = _target + (c1 + c2 * deltaTime) * expTerm;
+                _velocity = (c2 * (1.0 - omega * deltaTime) - omega * c1) * expTerm;
+            }
+            else
+            {
+                // Sub-stepped semi-implicit Euler for non-critically-damped springs
+                double damping = 2.0 * _dampingRatio * omega;
+                double subDt = Math.Min(deltaTime, 1.0 / (4.0 * omega));
+                int steps = Math.Max(1, (int)Math.Ceiling(deltaTime / subDt));
+                subDt = deltaTime / steps;
+
+                for (int i = 0; i < steps; i++)
+                {
+                    double displacement = _current - _target;
+                    double acceleration = -_stiffness * displacement - damping * _velocity;
+                    _velocity += acceleration * subDt;
+                    _current += _velocity * subDt;
+                }
+            }
 
             // Snap to target when very close
             if (Math.Abs(_current - _target) < 1e-8 && Math.Abs(_velocity) < 1e-8)

@@ -353,7 +353,10 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                     double dy = (e.TotalY - _lastPanY) * _dpiScale;
                     _lastPanX = e.TotalX;
                     _lastPanY = e.TotalY;
+                    // Pan during animation: work directly on the spring target
+                    // to avoid the sluggish feel of spring-mediated panning
                     _controller.Pan(dx, dy);
+                    _controller.SnapSpringToTarget();
                     _canvasView.InvalidateSurface();
                     break;
             }
@@ -374,6 +377,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                     double centerX = Width * e.ScaleOrigin.X * _dpiScale;
                     double centerY = Height * e.ScaleOrigin.Y * _dpiScale;
                     _controller.ZoomAboutScreenPoint(scaleChange, centerX, centerY);
+                    _controller.SnapSpringToTarget();
                     _canvasView.InvalidateSurface();
                     break;
             }

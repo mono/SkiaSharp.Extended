@@ -26,10 +26,12 @@ public partial class MainPage : ContentPage
             var tileSource = DziTileSource.Parse(dziXml, tileBase);
 
             deepZoomView.ShowTileBorders = debugSwitch.IsToggled;
+            deepZoomView.ViewportChanged += (s, e) => UpdateZoomLabel();
             deepZoomView.Load(tileSource, new AppPackageTileFetcher());
 
-            statusLabel.Text = $"Loaded: {tileSource.ImageWidth}×{tileSource.ImageHeight} — " +
-                "Each level has a different color. Pinch/pan/double-tap to navigate.";
+            statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}, " +
+                $"{tileSource.MaxLevel + 1} levels — each level has a different color";
+            UpdateZoomLabel();
         }
         catch (Exception ex)
         {
@@ -38,19 +40,30 @@ public partial class MainPage : ContentPage
         }
     }
 
+    private void UpdateZoomLabel()
+    {
+        var vw = deepZoomView.ViewportWidth;
+        var zoom = vw > 0 ? 1.0 / vw : 1.0;
+        MainThread.BeginInvokeOnMainThread(() =>
+            zoomLabel.Text = $"VP={vw:F3} ({zoom:F1}x)");
+    }
+
     private void OnReset(object? sender, EventArgs e)
     {
         deepZoomView.ResetView();
+        UpdateZoomLabel();
     }
 
     private void OnZoomIn(object? sender, EventArgs e)
     {
         deepZoomView.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
+        UpdateZoomLabel();
     }
 
     private void OnZoomOut(object? sender, EventArgs e)
     {
         deepZoomView.ZoomAboutLogicalPoint(0.5, 0.5, 0.5);
+        UpdateZoomLabel();
     }
 
     private void OnDebugToggled(object? sender, ToggledEventArgs e)
