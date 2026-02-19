@@ -766,14 +766,17 @@ public class PivotViewerControllerTest
     public void SearchFilteredItems_ReflectsSearchText()
     {
         var (controller, source) = CreateTestController();
+        int totalCount = controller.Items.Count;
+        Assert.True(totalCount > 1, "Need multiple items for this test");
 
-        // Set search text that matches a specific item name
-        var firstItem = controller.Items[0];
-        var nameValues = firstItem["Name"];
-        string searchTerm = nameValues != null && nameValues.Count > 0 ? nameValues[0]?.ToString() ?? "test" : "test";
-        controller.SearchText = searchTerm;
+        // Use a search term that won't match everything
+        controller.SearchText = "ZZZZNONEXISTENT";
 
-        // SearchFilteredItems should have fewer items than Items (or equal if all match)
-        Assert.True(controller.SearchFilteredItems.Count <= controller.Items.Count);
+        // No items should match a nonsense string
+        Assert.Equal(0, controller.SearchFilteredItems.Count);
+
+        // Clear search restores all items
+        controller.SearchText = "";
+        Assert.Equal(totalCount, controller.SearchFilteredItems.Count);
     }
 }

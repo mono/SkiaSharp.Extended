@@ -473,6 +473,6 @@ public class DeepZoomControllerTest
         controller.SetControlSize(800, 600);
         controller.Update(TimeSpan.FromMilliseconds(16));
         // New fetches should occur since cache was cleared
-        Assert.True(fetcher.FetchCount >= fetchesBefore);
+        Assert.True(fetcher.FetchCount > fetchesBefore, "Cache clear should trigger new tile fetches");
     }
 }
