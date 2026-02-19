@@ -162,11 +162,13 @@ namespace SkiaSharp.Extended.DeepZoom
         public void Constrain()
         {
             double imageLogicalHeight = 1.0 / _aspectRatio;
-            double vpHeight = ViewportHeight;
 
             // Don't zoom out further than the image
             if (_viewportWidth > 1.0)
                 _viewportWidth = 1.0;
+
+            // Recalculate viewport height after potential width change
+            double vpHeight = ViewportHeight;
 
             // Clamp origin
             if (_viewportOriginX < 0) _viewportOriginX = 0;

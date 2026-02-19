@@ -469,13 +469,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             canvas.Clear(SKColors.White);
 
-            // Layout regions
+            // Layout regions — clamp to zero for narrow screens
             float filterWidth = FilterPaneWidth;
             float detailWidth = _controller.DetailPane.IsShowing ? DetailPaneWidth : 0;
             float contentLeft = filterWidth;
-            float contentWidth = info.Width - filterWidth - detailWidth;
+            float contentWidth = Math.Max(0, info.Width - filterWidth - detailWidth);
             float contentTop = ControlBarHeight;
-            float contentHeight = info.Height - ControlBarHeight;
+            float contentHeight = Math.Max(0, info.Height - ControlBarHeight);
 
             // Update controller with content area size
             _controller.SetAvailableSize(contentWidth, contentHeight);

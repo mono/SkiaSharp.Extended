@@ -118,7 +118,9 @@ namespace SkiaSharp.Extended.PivotViewer
                     thumbnail = await LoadCompositeThumbnailAsync(subImage, targetSize, ct).ConfigureAwait(false);
                 }
 
-                _thumbnailCache[itemIndex] = thumbnail;
+                // Only cache successful loads — null results should be retried
+                if (thumbnail != null)
+                    _thumbnailCache[itemIndex] = thumbnail;
                 return thumbnail;
             }
             finally
@@ -212,7 +214,11 @@ namespace SkiaSharp.Extended.PivotViewer
                 string url = $"{_basePath}/{_dzc.GetCompositeTileUrl(bestLevel, tileCol, tileRow)}";
                 tileBitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
 
-                if (_disposed) return null;
+                if (_disposed)
+                {
+                    tileBitmap?.Dispose();
+                    return null;
+                }
                 if (tileBitmap != null)
                     _cache.Put(tileId, tileBitmap);
             }
