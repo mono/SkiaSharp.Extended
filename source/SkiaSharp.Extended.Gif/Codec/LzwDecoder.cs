@@ -135,7 +135,7 @@ namespace SkiaSharp.Extended.Gif.Codec
 
 				// Decode the code (traverse the string table backwards)
 				int loopGuard = 0;
-				while (code >= clearCode)
+				while (code > endCode)
 				{
 					// Bounds check
 					if (code >= 4096)
@@ -151,7 +151,7 @@ namespace SkiaSharp.Extended.Gif.Codec
 					code = codeTable[code];
 				}
 
-				// Code is now < clearCode, it's a direct color value
+				// Code is now <= endCode, it's a direct color value
 				firstByte = (byte)code;
 				pixelStack[stackPointer++] = firstByte;
 
