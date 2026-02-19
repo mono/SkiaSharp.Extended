@@ -226,9 +226,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                         var bounds = _controller.GetItemBounds(_controller.SelectedItem);
                         if (bounds.Width > 0)
                         {
+                            // Add pan offsets to convert layout coords to screen coords
                             _controller.ZoomAbout(1.6,
-                                bounds.X + bounds.Width / 2,
-                                bounds.Y + bounds.Height / 2);
+                                bounds.X + bounds.Width / 2 + _controller.PanOffsetX,
+                                bounds.Y + bounds.Height / 2 + _controller.PanOffsetY);
                             SyncZoomSlider();
                             _canvasView.InvalidateSurface();
                         }
@@ -639,8 +640,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             const float xAxisHeight = 20f;
             const float titleHeight = 24f;
             float chartLeft = yAxisWidth;
-            float chartTop = titleHeight;
             float chartBottom = info.Height - xAxisHeight;
+            float chartWidth = info.Width - yAxisWidth;
+            float chartHeight = info.Height - xAxisHeight - titleHeight;
 
             // Draw graph title (property name)
             if (!string.IsNullOrEmpty(layout.PropertyName))
@@ -663,7 +665,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             if (maxCount > 0)
             {
                 int yTicks = Math.Min(5, maxCount);
-                int yStep = Math.Max(1, maxCount / yTicks);
+                int yStep = Math.Max(1, (maxCount + yTicks - 1) / yTicks);
                 using var gridPaint = new SKPaint { Color = new SKColor(230, 230, 230), StrokeWidth = 1 };
                 _textFont.Size = 9;
                 using var yLabelPaint = new SKPaint { Color = new SKColor(120, 120, 120) };
@@ -671,38 +673,48 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 for (int i = 0; i <= yTicks; i++)
                 {
                     int count = i * yStep;
-                    if (count > maxCount) break;
-                    float yFrac = maxCount > 0 ? (float)count / maxCount : 0;
-                    float y = chartBottom - yFrac * (chartBottom - chartTop);
+                    if (count > maxCount) count = maxCount;
+                    float yFrac = (float)count / maxCount;
+                    float y = chartBottom - yFrac * chartHeight;
                     canvas.DrawLine(chartLeft, y, info.Width, y, gridPaint);
                     canvas.DrawText(count.ToString(), yAxisWidth - 4, y + 4,
                         SKTextAlign.Right, _textFont, yLabelPaint);
+                    if (count >= maxCount) break;
                 }
             }
 
             // Draw axis lines
             using (var axisPaint = new SKPaint { Color = new SKColor(180, 180, 180), StrokeWidth = 1 })
             {
-                canvas.DrawLine(chartLeft, chartTop, chartLeft, chartBottom, axisPaint);
+                canvas.DrawLine(chartLeft, titleHeight, chartLeft, chartBottom, axisPaint);
                 canvas.DrawLine(chartLeft, chartBottom, info.Width, chartBottom, axisPaint);
             }
 
+            // Scale layout positions to fit within the chart area
+            // Layout engine computed positions in [0, availableWidth] x [0, availableHeight]
+            // We need to map them into [chartLeft, chartLeft+chartWidth] x [titleHeight, chartBottom]
+            float scaleX = chartWidth / Math.Max(1, info.Width);
+            float scaleY = chartHeight / Math.Max(1, info.Height);
+
             foreach (var col in layout.Columns)
             {
+                // Map column X from layout space to chart space
+                float colX = chartLeft + (float)col.X * scaleX;
+                float colW = (float)col.Width * scaleX;
+
                 // Draw column label on X-axis
                 _labelFont.Size = 11;
                 string label = col.Label;
                 var textWidth = _labelFont.MeasureText(label, out _);
 
-                // Truncate label if too wide for column
-                if (textWidth > col.Width - 2)
+                if (textWidth > colW - 2)
                 {
-                    while (label.Length > 3 && _labelFont.MeasureText(label + "…", out _) > col.Width - 2)
+                    while (label.Length > 3 && _labelFont.MeasureText(label + "…", out _) > colW - 2)
                         label = label.Substring(0, label.Length - 1);
                     label += "…";
                 }
 
-                float labelX = (float)(col.X + col.Width / 2);
+                float labelX = colX + colW / 2;
                 canvas.DrawText(label, labelX, info.Height - 4, SKTextAlign.Center, _labelFont, _labelPaint);
 
                 // Draw item count above column
@@ -710,19 +722,20 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 {
                     _textFont.Size = 10;
                     string countLabel = col.Items.Length.ToString();
-                    float topItemY = col.Items.Min(p => (float)p.Y);
+                    float topItemY = titleHeight + col.Items.Min(p => (float)p.Y) * scaleY;
                     using var countPaint = new SKPaint { Color = new SKColor(100, 100, 100) };
-                    canvas.DrawText(countLabel,
-                        (float)(col.X + col.Width / 2), topItemY - 4,
+                    canvas.DrawText(countLabel, labelX, topItemY - 4,
                         SKTextAlign.Center, _textFont, countPaint);
                 }
 
                 // Draw items
                 foreach (var pos in col.Items)
                 {
-                    var rect = new SKRect(
-                        (float)pos.X + 1, (float)pos.Y + 1,
-                        (float)(pos.X + pos.Width) - 1, (float)(pos.Y + pos.Height) - 1);
+                    float px = chartLeft + (float)pos.X * scaleX + 1;
+                    float py = titleHeight + (float)pos.Y * scaleY + 1;
+                    float pw = (float)pos.Width * scaleX - 2;
+                    float ph = (float)pos.Height * scaleY - 2;
+                    var rect = new SKRect(px, py, px + pw, py + ph);
 
                     canvas.DrawRect(rect, _itemPaint);
 

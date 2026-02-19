@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace SkiaSharp.Extended.PivotViewer
@@ -160,8 +161,30 @@ namespace SkiaSharp.Extended.PivotViewer
                 }
             }
 
-            // Sort groups by key
-            var sortedGroups = groups.OrderBy(g => g.Key, StringComparer.OrdinalIgnoreCase).ToList();
+            // Sort groups by key — detect numeric/date values for natural ordering
+            List<KeyValuePair<string, List<PivotViewerItem>>> sortedGroups;
+            if (groups.Keys.All(k => k == "(No value)" || double.TryParse(k, NumberStyles.Any, CultureInfo.InvariantCulture, out _)))
+            {
+                sortedGroups = groups.OrderBy(g =>
+                {
+                    if (g.Key == "(No value)") return double.MaxValue;
+                    double.TryParse(g.Key, NumberStyles.Any, CultureInfo.InvariantCulture, out var d);
+                    return d;
+                }).ToList();
+            }
+            else if (groups.Keys.All(k => k == "(No value)" || DateTime.TryParse(k, CultureInfo.InvariantCulture, DateTimeStyles.None, out _)))
+            {
+                sortedGroups = groups.OrderBy(g =>
+                {
+                    if (g.Key == "(No value)") return DateTime.MaxValue;
+                    DateTime.TryParse(g.Key, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt);
+                    return dt;
+                }).ToList();
+            }
+            else
+            {
+                sortedGroups = groups.OrderBy(g => g.Key, StringComparer.OrdinalIgnoreCase).ToList();
+            }
             int groupCount = sortedGroups.Count;
             if (groupCount == 0)
                 return new HistogramLayout(Array.Empty<HistogramColumn>(), Array.Empty<ItemPosition>());

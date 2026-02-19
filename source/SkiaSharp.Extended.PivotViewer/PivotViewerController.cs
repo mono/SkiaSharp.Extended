@@ -313,20 +313,7 @@ namespace SkiaSharp.Extended.PivotViewer
             int idx = IndexOf(_inScopeItems, SelectedItem);
             if (idx < 0) return;
 
-            // Estimate columns from grid layout
-            int cols = Math.Max(1, (int)Math.Sqrt(_inScopeItems.Count));
-            if (GridLayout.Positions.Length > 1)
-            {
-                double firstY = GridLayout.Positions[0].Y;
-                cols = 0;
-                foreach (var p in GridLayout.Positions)
-                {
-                    if (Math.Abs(p.Y - firstY) < 1) cols++;
-                    else break;
-                }
-                cols = Math.Max(1, cols);
-            }
-
+            int cols = Math.Max(1, GridLayout.Columns);
             int newIdx = idx - cols;
             if (newIdx >= 0)
                 SelectedItem = _inScopeItems[newIdx];
@@ -341,19 +328,7 @@ namespace SkiaSharp.Extended.PivotViewer
             int idx = IndexOf(_inScopeItems, SelectedItem);
             if (idx < 0) return;
 
-            int cols = Math.Max(1, (int)Math.Sqrt(_inScopeItems.Count));
-            if (GridLayout.Positions.Length > 1)
-            {
-                double firstY = GridLayout.Positions[0].Y;
-                cols = 0;
-                foreach (var p in GridLayout.Positions)
-                {
-                    if (Math.Abs(p.Y - firstY) < 1) cols++;
-                    else break;
-                }
-                cols = Math.Max(1, cols);
-            }
-
+            int cols = Math.Max(1, GridLayout.Columns);
             int newIdx = idx + cols;
             if (newIdx < _inScopeItems.Count)
                 SelectedItem = _inScopeItems[newIdx];
