@@ -27,7 +27,7 @@ namespace SkiaSharp.Extended.Gif.Codec
         
         public LzwEncoder(int minimumCodeSize)
         {
-            if (minimumCodeSize < 0 || minimumCodeSize > 8)
+            if (minimumCodeSize < 0 || minimumCodeSize > 12)
                 throw new ArgumentOutOfRangeException(nameof(minimumCodeSize));
             
             this.minimumCodeSize = minimumCodeSize;
