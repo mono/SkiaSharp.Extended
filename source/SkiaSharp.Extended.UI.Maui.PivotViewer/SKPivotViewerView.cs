@@ -1031,8 +1031,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _textFont.Size = 14;
             using var whitePaint = new SKPaint { Color = SKColors.White };
 
-            // View switcher buttons
-            float x = (_isFilterPaneVisible ? FilterPaneWidth : 0) + 10;
+            // View switcher buttons (leave room for toggle button)
+            float toggleWidth = 24;
+            float x = (_isFilterPaneVisible ? FilterPaneWidth : toggleWidth) + 10;
 
             // Filter pane toggle button
             string toggleLabel = _isFilterPaneVisible ? "◀" : "▶";
@@ -1745,8 +1746,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 return;
             }
 
-            // View switcher region (after filter pane width)
-            float cbFilterW = _isFilterPaneVisible ? FilterPaneWidth : 0;
+            // View switcher region (after filter pane width + toggle button)
+            float cbFilterW = _isFilterPaneVisible ? FilterPaneWidth : 24;
             if (x > cbFilterW && x < cbFilterW + 200)
             {
                 // Toggle between grid and graph
@@ -1907,7 +1908,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var point = e.GetPosition(this);
             if (!point.HasValue) return;
 
-            double contentX = point.Value.X - FilterPaneWidth;
+            double contentX = point.Value.X - (_isFilterPaneVisible ? FilterPaneWidth : 0);
             double contentY = point.Value.Y - ControlBarHeight;
             var hit = _controller.HitTest(
                 contentX - _controller.PanOffsetX,
