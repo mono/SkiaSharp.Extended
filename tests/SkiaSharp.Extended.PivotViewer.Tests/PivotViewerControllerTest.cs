@@ -2032,7 +2032,7 @@ public class PivotViewerControllerTest
         bool fired = false;
         controller.InScopeItemsChanged += (s, e) => fired = true;
 
-        controller.FilterEngine.ClearAllFilters();
+        controller.FilterEngine.ClearAll();
         Assert.True(fired, "InScopeItemsChanged should fire when filters are cleared");
     }
 

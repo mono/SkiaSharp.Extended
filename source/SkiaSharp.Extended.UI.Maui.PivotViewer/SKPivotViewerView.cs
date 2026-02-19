@@ -25,6 +25,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private readonly SKPaint _selectedPaint;
         private readonly SKPaint _textPaint;
         private readonly SKPaint _labelPaint;
+        private readonly SKPaint _cardBgPaint;
+        private readonly SKPaint _cardBorderPaint;
+        private readonly SKPaint _cardSepPaint;
         private readonly SKFont _textFont;
         private readonly SKFont _labelFont;
         private bool _suppressPropertySync;
@@ -85,6 +88,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _selectedPaint = new SKPaint { IsAntialias = true, Color = SKColors.Orange, IsStroke = true, StrokeWidth = 3 };
             _textPaint = new SKPaint { IsAntialias = true, Color = SKColors.White };
             _labelPaint = new SKPaint { IsAntialias = true, Color = SKColors.DarkGray };
+            _cardBgPaint = new SKPaint { Color = SKColors.White, Style = SKPaintStyle.Fill };
+            _cardBorderPaint = new SKPaint { Color = new SKColor(200, 200, 200), Style = SKPaintStyle.Stroke, StrokeWidth = 1, IsAntialias = true };
+            _cardSepPaint = new SKPaint { Color = new SKColor(220, 220, 220), StrokeWidth = 1 };
             _textFont = new SKFont { Size = 12 };
             _labelFont = new SKFont { Size = 14 };
 
@@ -638,18 +644,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void RenderTradingCard(SKCanvas canvas, ItemPosition pos, SKRect rect)
         {
-            // Trading card layout: white background, thumbnail top, facets below
-            using var cardBg = new SKPaint { Color = SKColors.White, Style = SKPaintStyle.Fill };
-            using var cardBorder = new SKPaint
-            {
-                Color = new SKColor(200, 200, 200),
-                Style = SKPaintStyle.Stroke,
-                StrokeWidth = 1,
-                IsAntialias = true
-            };
-
-            canvas.DrawRect(rect, cardBg);
-            canvas.DrawRect(rect, cardBorder);
+            canvas.DrawRect(rect, _cardBgPaint);
+            canvas.DrawRect(rect, _cardBorderPaint);
 
             float padding = 4f;
             float imgHeight = rect.Height * 0.55f; // Thumbnail gets ~55% of card
@@ -695,8 +691,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             // Draw separator line
             if (textY + 2 < maxTextY)
             {
-                using var sepPaint = new SKPaint { Color = new SKColor(220, 220, 220), StrokeWidth = 1 };
-                canvas.DrawLine(rect.Left + padding, textY, rect.Right - padding, textY, sepPaint);
+                canvas.DrawLine(rect.Left + padding, textY, rect.Right - padding, textY, _cardSepPaint);
                 textY += 4;
             }
 
@@ -1949,6 +1944,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _selectedPaint.Dispose();
             _textPaint.Dispose();
             _labelPaint.Dispose();
+            _cardBgPaint.Dispose();
+            _cardBorderPaint.Dispose();
+            _cardSepPaint.Dispose();
             _textFont.Dispose();
             _labelFont.Dispose();
         }
