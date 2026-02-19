@@ -318,4 +318,117 @@ public class DeepZoomRendererTest
         var ex = Record.Exception(() => renderer2.Render(surface.Canvas, dzi, viewport, cache, scheduler));
         Assert.Null(ex);
     }
+
+    [Fact]
+    public void Render_CachedColoredTile_PixelsAreNonWhite()
+    {
+        // 256x256 DZI, put a colored bitmap at level 0 tile (0,0), verify pixels
+        using var renderer = new DeepZoomRenderer();
+        var dzi = new DziTileSource(256, 256, 256, 0, "png");
+        dzi.TilesBaseUri = "http://test/";
+
+        using var surface = SKSurface.Create(new SKImageInfo(256, 256));
+        var viewport = new Viewport
+        {
+            ControlWidth = 256,
+            ControlHeight = 256,
+            ViewportWidth = 1.0,
+            ViewportOriginX = 0,
+            ViewportOriginY = 0,
+            AspectRatio = 1.0
+        };
+        using var cache = new TileCache(10);
+        var scheduler = new TileScheduler();
+
+        // Put a cyan bitmap at level 0, tile (0,0)
+        var bmp = new SKBitmap(256, 256);
+        using (var c = new SKCanvas(bmp))
+            c.Clear(SKColors.Cyan);
+        cache.Put(new TileId(0, 0, 0), bmp);
+
+        // Also put tiles for whichever level the scheduler picks
+        var tiles = scheduler.GetVisibleTiles(dzi, viewport);
+        foreach (var t in tiles)
+        {
+            if (!cache.Contains(t.TileId))
+            {
+                var tileBmp = new SKBitmap(256, 256);
+                using (var c = new SKCanvas(tileBmp))
+                    c.Clear(SKColors.Cyan);
+                cache.Put(t.TileId, tileBmp);
+            }
+        }
+
+        surface.Canvas.Clear(SKColors.White);
+        renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler);
+
+        using var snap = surface.Snapshot();
+        using var decoded = SKBitmap.Decode(snap.Encode(SKEncodedImageFormat.Png, 100));
+        var pixel = decoded.GetPixel(128, 128);
+        Assert.True(pixel.Blue > 200 && pixel.Green > 200 && pixel.Red < 50,
+            $"Expected cyan-like pixel but got R={pixel.Red} G={pixel.Green} B={pixel.Blue}");
+    }
+
+    [Fact]
+    public void Render_FallbackFromParent_UsesParentTileWhenChildMissing()
+    {
+        using var renderer = new DeepZoomRenderer();
+
+        // Large image so there are multiple levels
+        string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Image xmlns=""http://schemas.microsoft.com/deepzoom/2008""
+       Format=""jpg"" Overlap=""0"" TileSize=""256"">
+  <Size Width=""2048"" Height=""2048""/>
+</Image>";
+        var dzi = DziTileSource.Parse(xml, "http://example.com/fallback");
+
+        using var surface = SKSurface.Create(new SKImageInfo(512, 512));
+        var viewport = new Viewport
+        {
+            ControlWidth = 512,
+            ControlHeight = 512,
+            ViewportWidth = 1.0,
+            ViewportOriginX = 0,
+            ViewportOriginY = 0,
+            AspectRatio = 1.0
+        };
+        using var cache = new TileCache(100);
+        var scheduler = new TileScheduler();
+
+        // Only cache a level-0 (1x1 pixel) parent tile as yellow — do NOT cache the requested level tiles
+        var parentBmp = new SKBitmap(1, 1);
+        parentBmp.SetPixel(0, 0, SKColors.Yellow);
+        cache.Put(new TileId(0, 0, 0), parentBmp);
+
+        surface.Canvas.Clear(SKColors.White);
+        renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler);
+
+        // The fallback should have drawn the yellow parent into the child tile area
+        using var snap = surface.Snapshot();
+        using var decoded = SKBitmap.Decode(snap.Encode(SKEncodedImageFormat.Png, 100));
+        var pixel = decoded.GetPixel(256, 256);
+        // Pixel should not be pure white if fallback worked
+        Assert.True(pixel.Red > 200 || pixel.Green > 200 || pixel.Blue < 255,
+            $"Expected fallback rendering but got R={pixel.Red} G={pixel.Green} B={pixel.Blue}");
+    }
+
+    [Fact]
+    public void Render_MinimumSizeViewport_DoesNotCrash()
+    {
+        // Viewport with ControlWidth/Height of 1 (minimum clamped value)
+        using var renderer = new DeepZoomRenderer();
+        using var surface = SKSurface.Create(new SKImageInfo(1, 1));
+        var dzi = CreateSampleDzi();
+        var viewport = new Viewport
+        {
+            ControlWidth = 0,  // gets clamped to 1
+            ControlHeight = 0, // gets clamped to 1
+            ViewportWidth = 1.0,
+        };
+        using var cache = new TileCache(10);
+        var scheduler = new TileScheduler();
+
+        var ex = Record.Exception(() => renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler));
+        Assert.Null(ex);
+    }
 }

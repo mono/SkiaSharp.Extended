@@ -128,6 +128,60 @@ public class TemplateTest
     }
 
     [Fact]
+    public void ItemTemplateCollection_AddRemove_Works()
+    {
+        var coll = new PivotViewerItemTemplateCollection();
+        var t1 = new PivotViewerItemTemplate { MaxWidth = 100 };
+        var t2 = new PivotViewerItemTemplate { MaxWidth = 200 };
+
+        coll.Add(t1);
+        coll.Add(t2);
+        Assert.Equal(2, coll.Count);
+
+        coll.Remove(t1);
+        Assert.Single(coll);
+        Assert.Same(t2, coll[0]);
+    }
+
+    [Fact]
+    public void ItemTemplateCollection_SelectTemplate_SingleTemplate_AlwaysReturnsIt()
+    {
+        var coll = new PivotViewerItemTemplateCollection();
+        var t = new PivotViewerItemTemplate { MaxWidth = 100 };
+        coll.Add(t);
+
+        Assert.Same(t, coll.SelectTemplate(50));
+        Assert.Same(t, coll.SelectTemplate(100));
+        Assert.Same(t, coll.SelectTemplate(500));
+    }
+
+    [Fact]
+    public void ItemTemplate_RenderAction_InvokedWithCorrectArgs()
+    {
+        PivotViewerItem? receivedItem = null;
+        SKRect receivedBounds = default;
+
+        var template = new PivotViewerItemTemplate
+        {
+            MaxWidth = 300,
+            RenderAction = (canvas, item, bounds) =>
+            {
+                receivedItem = item;
+                receivedBounds = bounds;
+            }
+        };
+
+        var testItem = new PivotViewerItem("test-id");
+        var testBounds = new SKRect(10, 20, 110, 120);
+
+        using var surface = SKSurface.Create(new SKImageInfo(200, 200));
+        template.RenderAction!(surface.Canvas, testItem, testBounds);
+
+        Assert.Same(testItem, receivedItem);
+        Assert.Equal(testBounds, receivedBounds);
+    }
+
+    [Fact]
     public void MultiSizeImage_Stretch_DefaultIsUniform()
     {
         var img = new PivotViewerMultiSizeImage();

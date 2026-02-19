@@ -165,4 +165,66 @@ public class ComparerTest
         Assert.True(comparer.Compare("Beta", "Alpha") > 0);
         Assert.Equal(0, comparer.Compare("Same", "SAME")); // case insensitive
     }
+
+    [Fact]
+    public void CustomSortOrderComparer_FullSort_Ascending()
+    {
+        var comparer = new CustomSortOrderComparer(new[] { "High", "Medium", "Low" });
+        var values = new[] { "Low", "High", "Medium" };
+
+        var sorted = values.OrderBy(v => v, comparer).ToList();
+        Assert.Equal("High", sorted[0]);
+        Assert.Equal("Medium", sorted[1]);
+        Assert.Equal("Low", sorted[2]);
+    }
+
+    [Fact]
+    public void CustomSortOrderComparer_FullSort_Descending()
+    {
+        var comparer = new CustomSortOrderComparer(new[] { "High", "Medium", "Low" });
+        var values = new[] { "Low", "High", "Medium" };
+
+        var sorted = values.OrderByDescending(v => v, comparer).ToList();
+        Assert.Equal("Low", sorted[0]);
+        Assert.Equal("Medium", sorted[1]);
+        Assert.Equal("High", sorted[2]);
+    }
+
+    [Fact]
+    public void CustomSortOrderComparer_EmptyStrings()
+    {
+        var comparer = new CustomSortOrderComparer(new[] { "", "A", "B" });
+
+        Assert.True(comparer.Compare("", "A") < 0); // "" at index 0, "A" at index 1
+        Assert.True(comparer.Compare("A", "B") < 0);
+    }
+
+    [Fact]
+    public void CustomSortOrderComparer_CaseInsensitiveLookup()
+    {
+        var comparer = new CustomSortOrderComparer(new[] { "apple", "Banana" });
+
+        // "APPLE" should match "apple" at index 0
+        Assert.True(comparer.Compare("APPLE", "Banana") < 0);
+        Assert.True(comparer.Compare("banana", "APPLE") > 0);
+    }
+
+    [Fact]
+    public void CardinalityComparer_EmptyInput_TreatsAllAsZero()
+    {
+        var comparer = new PivotViewerPropertyCardinalityComparer(Array.Empty<string>());
+        // Both unknown = zero cardinality, falls back to alphabetical
+        Assert.True(comparer.Compare("Apple", "Banana") < 0);
+    }
+
+    [Fact]
+    public void CardinalityComparer_NullAndEmptyString()
+    {
+        var values = new[] { "", "A" };
+        var comparer = new PivotViewerPropertyCardinalityComparer(values);
+
+        // null sorts after everything
+        Assert.True(comparer.Compare(null, "") > 0);
+        Assert.True(comparer.Compare("", null) < 0);
+    }
 }

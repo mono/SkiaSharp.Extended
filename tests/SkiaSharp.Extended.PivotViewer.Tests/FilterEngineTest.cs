@@ -611,4 +611,241 @@ public class FilterEngineTest
         item4.Set(new PivotViewerStringProperty("Category"), new object[] { "Hybrid", "Sports" });
         Assert.True(pred.Matches(item4));
     }
+
+    [Fact]
+    public void StringFilterPredicate_MultipleValues_MatchesAny()
+    {
+        var pred = new StringFilterPredicate("Color");
+        pred.AddValue("Red");
+        pred.AddValue("Blue");
+
+        var item1 = new PivotViewerItem("1");
+        item1.Set(new PivotViewerStringProperty("Color"), new object[] { "Red" });
+        Assert.True(pred.Matches(item1));
+
+        var item2 = new PivotViewerItem("2");
+        item2.Set(new PivotViewerStringProperty("Color"), new object[] { "Blue" });
+        Assert.True(pred.Matches(item2));
+
+        var item3 = new PivotViewerItem("3");
+        item3.Set(new PivotViewerStringProperty("Color"), new object[] { "Green" });
+        Assert.False(pred.Matches(item3));
+    }
+
+    [Fact]
+    public void StringFilterPredicate_CaseSensitivity_OrdinalIgnoreCase()
+    {
+        var pred = new StringFilterPredicate("Tag");
+        pred.AddValue("UPPERCASE");
+
+        var item = new PivotViewerItem("1");
+        item.Set(new PivotViewerStringProperty("Tag"), new object[] { "uppercase" });
+        Assert.True(pred.Matches(item));
+
+        var item2 = new PivotViewerItem("2");
+        item2.Set(new PivotViewerStringProperty("Tag"), new object[] { "UpperCase" });
+        Assert.True(pred.Matches(item2));
+    }
+
+    [Fact]
+    public void StringFilterPredicate_PartialMatch_DoesNotMatch()
+    {
+        var pred = new StringFilterPredicate("Name");
+        pred.AddValue("Sport");
+
+        var item = new PivotViewerItem("1");
+        item.Set(new PivotViewerStringProperty("Name"), new object[] { "Sports" });
+        Assert.False(pred.Matches(item)); // "Sport" != "Sports"
+    }
+
+    [Fact]
+    public void NumericRangeFilterPredicate_JustBelowMin_DoesNotMatch()
+    {
+        var pred = new NumericRangeFilterPredicate("Val", 10.0, 20.0);
+        var item = new PivotViewerItem("1");
+        item.Set(new PivotViewerNumericProperty("Val"), new object[] { 9.999 });
+        Assert.False(pred.Matches(item));
+    }
+
+    [Fact]
+    public void NumericRangeFilterPredicate_JustAboveMax_DoesNotMatch()
+    {
+        var pred = new NumericRangeFilterPredicate("Val", 10.0, 20.0);
+        var item = new PivotViewerItem("1");
+        item.Set(new PivotViewerNumericProperty("Val"), new object[] { 20.001 });
+        Assert.False(pred.Matches(item));
+    }
+
+    [Fact]
+    public void NumericRangeFilterPredicate_NullItemValues_ReturnsFalse()
+    {
+        var pred = new NumericRangeFilterPredicate("Val", 0, 100);
+        var item = new PivotViewerItem("1"); // no Val set
+        Assert.False(pred.Matches(item));
+    }
+
+    [Fact]
+    public void NumericRangeFilterPredicate_IntegerValues_Match()
+    {
+        var pred = new NumericRangeFilterPredicate("Count", 1, 10);
+        var item = new PivotViewerItem("1");
+        item.Set(new PivotViewerNumericProperty("Count"), new object[] { 5 }); // int, not double
+        Assert.True(pred.Matches(item));
+    }
+
+    [Fact]
+    public void DateTimeRangeFilterPredicate_ExactBoundaries_Match()
+    {
+        var min = new DateTime(2023, 1, 1);
+        var max = new DateTime(2023, 12, 31);
+        var pred = new DateTimeRangeFilterPredicate("Date", min, max);
+
+        var itemMin = new PivotViewerItem("1");
+        itemMin.Set(new PivotViewerDateTimeProperty("Date"), new object[] { min });
+        Assert.True(pred.Matches(itemMin));
+
+        var itemMax = new PivotViewerItem("2");
+        itemMax.Set(new PivotViewerDateTimeProperty("Date"), new object[] { max });
+        Assert.True(pred.Matches(itemMax));
+    }
+
+    [Fact]
+    public void DateTimeRangeFilterPredicate_JustOutside_DoesNotMatch()
+    {
+        var pred = new DateTimeRangeFilterPredicate("Date",
+            new DateTime(2023, 1, 1), new DateTime(2023, 12, 31));
+
+        var before = new PivotViewerItem("1");
+        before.Set(new PivotViewerDateTimeProperty("Date"), new object[] { new DateTime(2022, 12, 31) });
+        Assert.False(pred.Matches(before));
+
+        var after = new PivotViewerItem("2");
+        after.Set(new PivotViewerDateTimeProperty("Date"), new object[] { new DateTime(2024, 1, 1) });
+        Assert.False(pred.Matches(after));
+    }
+
+    [Fact]
+    public void DateTimeRangeFilterPredicate_NullItemValues_ReturnsFalse()
+    {
+        var pred = new DateTimeRangeFilterPredicate("Date",
+            new DateTime(2020, 1, 1), new DateTime(2025, 1, 1));
+        var item = new PivotViewerItem("1"); // no Date set
+        Assert.False(pred.Matches(item));
+    }
+
+    [Fact]
+    public void DateTimeRangeFilterPredicate_UtcAndLocal_BothMatch()
+    {
+        var pred = new DateTimeRangeFilterPredicate("Date",
+            new DateTime(2023, 6, 1, 0, 0, 0, DateTimeKind.Unspecified),
+            new DateTime(2023, 6, 30, 23, 59, 59, DateTimeKind.Unspecified));
+
+        var utcItem = new PivotViewerItem("1");
+        utcItem.Set(new PivotViewerDateTimeProperty("Date"),
+            new object[] { new DateTime(2023, 6, 15, 12, 0, 0, DateTimeKind.Utc) });
+        Assert.True(pred.Matches(utcItem));
+
+        var localItem = new PivotViewerItem("2");
+        localItem.Set(new PivotViewerDateTimeProperty("Date"),
+            new object[] { new DateTime(2023, 6, 15, 12, 0, 0, DateTimeKind.Local) });
+        Assert.True(pred.Matches(localItem));
+    }
+
+    [Fact]
+    public void ComputeInScopeCounts_WithSamePropertyFilter_IgnoresOwnFilter()
+    {
+        var (engine, _, _) = CreateTestData();
+        engine.AddStringFilter("Category", "Sports");
+
+        // Counts for Category should ignore the Category filter itself
+        var counts = engine.ComputeInScopeCounts("Category");
+
+        Assert.Equal(2, counts["Sports"]);
+        Assert.Equal(1, counts["Hybrid"]);
+        Assert.Equal(1, counts["Electric"]);
+    }
+
+    [Fact]
+    public void ComputeInScopeCounts_CrossPropertyFilter_ReducesCounts()
+    {
+        var (engine, _, _) = CreateTestData();
+        // Filter to years 2001-2005; Tesla (2012) drops out
+        engine.AddNumericRangeFilter("Year", 2001, 2005);
+
+        var categoryCounts = engine.ComputeInScopeCounts("Category");
+        Assert.Equal(2, categoryCounts["Sports"]);
+        Assert.Equal(1, categoryCounts["Hybrid"]);
+        Assert.False(categoryCounts.ContainsKey("Electric"));
+    }
+
+    [Fact]
+    public void ComputeInScopeCounts_Overload_WithExplicitItems()
+    {
+        var (engine, items, _) = CreateTestData();
+        var counts = engine.ComputeInScopeCounts("Category", items);
+
+        Assert.Equal(2, counts["Sports"]);
+        Assert.Equal(1, counts["Hybrid"]);
+        Assert.Equal(1, counts["Electric"]);
+    }
+
+    [Fact]
+    public void HasActiveFilters_TrueWhenFiltersExist()
+    {
+        var (engine, _, _) = CreateTestData();
+        Assert.False(engine.HasActiveFilters);
+
+        engine.AddStringFilter("Category", "Sports");
+        Assert.True(engine.HasActiveFilters);
+
+        engine.ClearAll();
+        Assert.False(engine.HasActiveFilters);
+    }
+
+    [Fact]
+    public void HasStringFilter_ChecksSpecificValue()
+    {
+        var (engine, _, _) = CreateTestData();
+        Assert.False(engine.HasStringFilter("Category", "Sports"));
+
+        engine.AddStringFilter("Category", "Sports");
+        Assert.True(engine.HasStringFilter("Category", "Sports"));
+        Assert.False(engine.HasStringFilter("Category", "Hybrid"));
+    }
+
+    [Fact]
+    public void Predicates_ReturnsReadOnlyList()
+    {
+        var (engine, _, _) = CreateTestData();
+        Assert.Empty(engine.Predicates);
+
+        engine.AddStringFilter("Category", "Sports");
+        Assert.Single(engine.Predicates);
+        Assert.IsType<StringFilterPredicate>(engine.Predicates[0]);
+    }
+
+    [Fact]
+    public void AddNumericRangeFilter_ReplacesExisting()
+    {
+        var (engine, _, _) = CreateTestData();
+        engine.AddNumericRangeFilter("Year", 2000, 2002);
+        Assert.Equal(2, engine.GetFilteredItems().Count); // 2001, 2002
+
+        engine.AddNumericRangeFilter("Year", 2010, 2015);
+        Assert.Single(engine.GetFilteredItems()); // 2012 only
+    }
+
+    [Fact]
+    public void SetSource_NullItems_Throws()
+    {
+        var engine = new FilterEngine();
+        Assert.Throws<ArgumentNullException>(() => engine.SetSource(null!, Array.Empty<PivotViewerProperty>()));
+    }
+
+    [Fact]
+    public void SetSource_NullProperties_Throws()
+    {
+        var engine = new FilterEngine();
+        Assert.Throws<ArgumentNullException>(() => engine.SetSource(Array.Empty<PivotViewerItem>(), null!));
+    }
 }

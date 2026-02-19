@@ -139,4 +139,111 @@ public class CollectionsTest
         coll.ProcessCycle(); // Adds 2 items individually
         Assert.Equal(2, addCount);
     }
+
+    [Fact]
+    public void BatchObservableCollection_StandardAdd_Contains_Remove()
+    {
+        var coll = new BatchObservableCollection<string>();
+        coll.Add("first");
+        coll.Add("second");
+
+        Assert.Equal(2, coll.Count);
+        Assert.Contains("first", coll);
+        Assert.Contains("second", coll);
+
+        coll.Remove("first");
+        Assert.Single(coll);
+        Assert.DoesNotContain("first", coll);
+    }
+
+    [Fact]
+    public void BatchObservableCollection_Clear_EmptiesCollection()
+    {
+        var coll = new BatchObservableCollection<int>();
+        coll.AddRange(new[] { 1, 2, 3 });
+        Assert.Equal(3, coll.Count);
+
+        coll.Clear();
+        Assert.Empty(coll);
+    }
+
+    [Fact]
+    public void BatchObservableCollection_AddRange_EmptyCollection_NoOp()
+    {
+        var coll = new BatchObservableCollection<int>();
+        int notifyCount = 0;
+        coll.CollectionChanged += (s, e) => notifyCount++;
+
+        coll.AddRange(Array.Empty<int>());
+
+        Assert.Empty(coll);
+        Assert.Equal(1, notifyCount); // Still fires Reset
+    }
+
+    [Fact]
+    public void BatchObservableCollection_ReplaceAll_WithEmpty_ClearsAll()
+    {
+        var coll = new BatchObservableCollection<string>();
+        coll.AddRange(new[] { "a", "b", "c" });
+
+        coll.ReplaceAll(Array.Empty<string>());
+        Assert.Empty(coll);
+    }
+
+    [Fact]
+    public void BatchObservableCollection_IndexAccess()
+    {
+        var coll = new BatchObservableCollection<int>();
+        coll.AddRange(new[] { 10, 20, 30 });
+
+        Assert.Equal(10, coll[0]);
+        Assert.Equal(20, coll[1]);
+        Assert.Equal(30, coll[2]);
+    }
+
+    [Fact]
+    public void GradualObservableCollection_CustomItemsPerCycle()
+    {
+        var coll = new GradualObservableCollection<int>();
+        coll.ItemsPerCycle = 1;
+        coll.EnqueueRange(new[] { 100, 200, 300 });
+
+        coll.ProcessCycle(); // should add exactly 1
+        Assert.Single(coll);
+        Assert.Equal(100, coll[0]);
+
+        coll.ProcessCycle();
+        Assert.Equal(2, coll.Count);
+        Assert.Equal(200, coll[1]);
+    }
+
+    [Fact]
+    public void GradualObservableCollection_FlushAfterPartialProcess()
+    {
+        var coll = new GradualObservableCollection<int>();
+        coll.ItemsPerCycle = 2;
+        coll.EnqueueRange(new[] { 1, 2, 3, 4, 5 });
+
+        coll.ProcessCycle(); // adds 2
+        Assert.Equal(2, coll.Count);
+
+        coll.Flush(); // adds remaining 3
+        Assert.Equal(5, coll.Count);
+        Assert.False(coll.HasPendingItems);
+    }
+
+    [Fact]
+    public void GradualObservableCollection_MultipleEnqueueRanges()
+    {
+        var coll = new GradualObservableCollection<string>();
+        coll.EnqueueRange(new[] { "a", "b" });
+        coll.EnqueueRange(new[] { "c", "d" });
+
+        Assert.Equal(4, coll.PendingCount);
+
+        coll.Flush();
+        Assert.Equal(4, coll.Count);
+        Assert.Equal("a", coll[0]);
+        Assert.Equal("d", coll[3]);
+    }
 }

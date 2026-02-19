@@ -151,6 +151,41 @@ public class AdornerTest
         Assert.False(received!.IsItemSelected);
     }
 
+    [Fact]
+    public void AdornerBase_IsAbstract_CannotInstantiateDirectly()
+    {
+        // PivotViewerItemAdorner is abstract — we can only use via subclass
+        PivotViewerItemAdorner adorner = new PivotViewerDefaultItemAdorner();
+        Assert.IsAssignableFrom<PivotViewerItemAdorner>(adorner);
+    }
+
+    [Fact]
+    public void DefaultAdorner_MultipleSubscribers_AllReceiveEvent()
+    {
+        var adorner = new PivotViewerDefaultItemAdorner();
+        var item = new PivotViewerItem("multi");
+        int callCount = 0;
+
+        adorner.CommandsRequested += (s, e) => callCount++;
+        adorner.CommandsRequested += (s, e) => callCount++;
+
+        adorner.RequestCommands(item, true);
+        Assert.Equal(2, callCount);
+    }
+
+    [Fact]
+    public void DefaultAdorner_SenderIsAdorner()
+    {
+        var adorner = new PivotViewerDefaultItemAdorner();
+        var item = new PivotViewerItem("sender-test");
+        object? receivedSender = null;
+
+        adorner.CommandsRequested += (s, e) => receivedSender = s;
+        adorner.RequestCommands(item, false);
+
+        Assert.Same(adorner, receivedSender);
+    }
+
     private class TestCommand : IPivotViewerUICommand
     {
         public TestCommand(string name) { DisplayName = name; }
