@@ -227,6 +227,32 @@ public class CollectionImageProviderTest
         Assert.NotNull(provider);
     }
 
+    [Fact]
+    public async Task FromCxmlSource_SignedUrl_PreservesQueryString()
+    {
+        // CDN/SAS signed URLs have query strings that must be preserved
+        var cxml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+  <FacetCategories/>
+  <Items ImgBase=""deepzoom/collection.dzc?sv=2020&amp;sig=abc"">
+  </Items>
+</Collection>";
+        var source = CxmlCollectionSource.Parse(cxml);
+        source.UriSource = new Uri("http://cdn.example.com/data/test.cxml");
+
+        var dzc = CreateCompositeDzc(1);
+        var fetcher = new TrackingTileFetcher();
+        // The _files path should preserve the query string
+        fetcher.Add("http://cdn.example.com/data/deepzoom/collection_files?sv=2020&sig=abc/0/0_0.jpg", CreateTestTile());
+
+        using var provider = CollectionImageProvider.FromCxmlSource(source, dzc, fetcher)!;
+        Assert.NotNull(provider);
+
+        await provider.LoadThumbnailAsync(0, 64, CancellationToken.None);
+        // Verify the query string was preserved in the URL
+        Assert.Contains(fetcher.RequestedUrls, u => u.Contains("collection_files") && u.Contains("sv=2020"));
+    }
+
     #endregion
 
     #region GetThumbnail

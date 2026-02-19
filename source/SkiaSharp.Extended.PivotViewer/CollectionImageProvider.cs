@@ -61,17 +61,21 @@ namespace SkiaSharp.Extended.PivotViewer
                 // Resolve ImageBase relative to the CXML URI
                 var cxmlUri = source.UriSource;
                 var baseUri = new Uri(cxmlUri, source.ImageBase);
-                basePath = baseUri.ToString();
                 // DZC composite tiles live in {dzcName}_files/ alongside the .dzc file.
-                // Strip .dzc extension and append _files to get the tile directory.
-                if (basePath.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase))
-                    basePath = basePath.Substring(0, basePath.Length - 4) + "_files";
+                // Use the URI path (ignoring query/fragment) to detect .dzc extension,
+                // then reattach query/fragment for CDN/SAS signed URLs.
+                var path = baseUri.GetLeftPart(UriPartial.Path);
+                var suffix = baseUri.ToString().Substring(path.Length); // query + fragment
+
+                if (path.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase))
+                    basePath = path.Substring(0, path.Length - 4) + "_files" + suffix;
                 else
                 {
                     // Fallback: strip filename to get directory (non-standard layout)
-                    int lastSlash = basePath.LastIndexOf('/');
-                    if (lastSlash >= 0)
-                        basePath = basePath.Substring(0, lastSlash);
+                    int lastSlash = path.LastIndexOf('/');
+                    basePath = lastSlash >= 0
+                        ? path.Substring(0, lastSlash) + suffix
+                        : path + suffix;
                 }
             }
             else
