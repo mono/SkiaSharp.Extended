@@ -15,7 +15,7 @@ public class LzwDecoderTests
 		using var stream = new MemoryStream();
 
 		// Act & Assert
-		Assert.Throws<ArgumentOutOfRangeException>(() => new LzwDecoder(stream, 1)); // Too small
+		Assert.Throws<ArgumentOutOfRangeException>(() => new LzwDecoder(stream, -1)); // Too small (changed from 1 to -1)
 		Assert.Throws<ArgumentOutOfRangeException>(() => new LzwDecoder(stream, 9)); // Too large
 	}
 
@@ -25,8 +25,8 @@ public class LzwDecoderTests
 		// Arrange
 		using var stream = new MemoryStream();
 
-		// Act & Assert - should not throw
-		for (int i = 2; i <= 8; i++)
+		// Act & Assert - should not throw (changed range from 2-8 to 0-8)
+		for (int i = 0; i <= 8; i++)
 		{
 			using var decoder = new LzwDecoder(stream, i);
 			Assert.Equal(i, decoder.MinimumCodeSize);

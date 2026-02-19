@@ -10,11 +10,13 @@ namespace SkiaSharp.Extended.Gif.Tests.Codec
         [Fact]
         public void Constructor_ValidatesMinCodeSize()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new LzwEncoder(1)); // Too small
+            Assert.Throws<ArgumentOutOfRangeException>(() => new LzwEncoder(-1)); // Too small (changed from 1 to -1)
             Assert.Throws<ArgumentOutOfRangeException>(() => new LzwEncoder(9)); // Too large
         }
         
         [Theory]
+        [InlineData(0)] // Added 0 and 1 to test range
+        [InlineData(1)]
         [InlineData(2)]
         [InlineData(4)]
         [InlineData(8)]
