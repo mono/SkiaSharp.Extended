@@ -156,7 +156,15 @@ namespace SkiaSharp.Extended.PivotViewer
 
                 foreach (var val in values)
                 {
-                    string key = val?.ToString() ?? "(No value)";
+                    string key;
+                    if (val is double d)
+                        key = d.ToString(CultureInfo.InvariantCulture);
+                    else if (val is int i)
+                        key = i.ToString(CultureInfo.InvariantCulture);
+                    else if (val is DateTime dt)
+                        key = dt.ToString(CultureInfo.InvariantCulture);
+                    else
+                        key = val?.ToString() ?? "(No value)";
                     AddToGroup(groups, key, item);
                 }
             }

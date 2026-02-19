@@ -115,7 +115,7 @@ namespace SkiaSharp.Extended.DeepZoom
         {
             if (factor <= 0) throw new ArgumentOutOfRangeException(nameof(factor));
 
-            double newWidth = _viewportWidth / factor;
+            double newWidth = Math.Max(MinViewportWidth, _viewportWidth / factor);
             double newOriginX = logicalX - (logicalX - _viewportOriginX) / factor;
             double newOriginY = logicalY - (logicalY - _viewportOriginY) / factor;
 

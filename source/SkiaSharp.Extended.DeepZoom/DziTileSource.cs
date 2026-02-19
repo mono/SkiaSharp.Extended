@@ -118,10 +118,10 @@ namespace SkiaSharp.Extended.DeepZoom
 
             // Pixels per logical unit
             double scale = controlWidth / viewportWidth;
-            // Desired image pixels visible
-            double desiredWidth = ImageWidth;
-            // Find level where levelWidth >= scale * viewportWidth (i.e. pixels needed)
-            double neededWidth = scale * viewportWidth;
+            // The visible area is viewportWidth logical units wide, rendered into controlWidth pixels.
+            // We need a level where levelWidth * viewportWidth ≈ controlWidth,
+            // i.e. levelWidth ≈ controlWidth / viewportWidth = scale
+            double neededWidth = scale;
             if (neededWidth <= 0) return 0;
 
             for (int level = MaxLevel; level >= 0; level--)
