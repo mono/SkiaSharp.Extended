@@ -2180,4 +2180,44 @@ public class PivotViewerControllerTest
         Assert.Null(item2!["Desc"]); // item2 didn't have Desc in supplement
         Assert.Equal(3.0, (double)item2["Rating"]![0]!);
     }
+
+    [Fact]
+    public void ZoomToItem_SelectsAndPansToItem()
+    {
+        var controller = new PivotViewerController();
+        var prop = new PivotViewerStringProperty("Name");
+        var items = Enumerable.Range(0, 20).Select(i =>
+        {
+            var item = new PivotViewerItem($"item{i}");
+            item.Add(prop, $"Item {i:D2}");
+            return item;
+        }).ToArray();
+        controller.LoadItems(items, new[] { prop });
+        controller.SetAvailableSize(800, 600);
+
+        var target = items[10];
+        controller.ZoomToItem(target);
+
+        Assert.Equal(target, controller.SelectedItem);
+        // Zoom should have increased from default 0
+        Assert.True(controller.ZoomLevel > 0);
+    }
+
+    [Fact]
+    public void ZoomToItem_OutOfScopeItem_DoesNothing()
+    {
+        var (controller, _) = CreateTestController();
+
+        var orphan = new PivotViewerItem("orphan");
+        controller.ZoomToItem(orphan);
+
+        Assert.Null(controller.SelectedItem);
+    }
+
+    [Fact]
+    public void ZoomToItem_NullThrows()
+    {
+        var (controller, _) = CreateTestController();
+        Assert.Throws<ArgumentNullException>(() => controller.ZoomToItem(null!));
+    }
 }

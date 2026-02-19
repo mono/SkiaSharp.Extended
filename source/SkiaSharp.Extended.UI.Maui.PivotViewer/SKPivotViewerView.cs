@@ -1871,13 +1871,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 contentY - _controller.PanOffsetY);
             if (hit != null)
             {
-                _controller.SelectedItem = hit;
+                _controller.ZoomToItem(hit);
                 _controller.NotifyItemDoubleClicked(hit);
                 ItemDoubleClick?.Invoke(this, hit);
 
-                // Zoom toward the tapped item (+0.3 zoom level)
-                // ZoomAbout uses delta = (factor - 1.0) * 0.5, so factor = 1.6 → delta = 0.3
-                _controller.ZoomAbout(1.6, contentX, contentY);
                 SyncZoomSlider();
                 _canvasView.InvalidateSurface();
             }

@@ -287,6 +287,50 @@ namespace SkiaSharp.Extended.PivotViewer
         }
 
         /// <summary>
+        /// Zooms and pans to center on the specified item, filling the viewport.
+        /// The item is also selected.
+        /// </summary>
+        public void ZoomToItem(PivotViewerItem item)
+        {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (!_inScopeItems.Contains(item)) return;
+
+            SelectedItem = item;
+
+            var bounds = GetItemBounds(item);
+            if (bounds.Width <= 0 || bounds.Height <= 0) return;
+
+            // Calculate zoom level that would make this item fill ~80% of the viewport
+            double scaleX = _availableWidth * 0.8 / bounds.Width;
+            double scaleY = _availableHeight * 0.8 / bounds.Height;
+            double targetScale = Math.Min(scaleX, scaleY);
+
+            // Current item size at current zoom determines the zoom delta needed
+            double fitAllItemWidth = bounds.Width;
+            double singleItemWidth = _availableWidth;
+            if (fitAllItemWidth > 0 && singleItemWidth > fitAllItemWidth)
+            {
+                double desiredZoom = (targetScale * fitAllItemWidth - fitAllItemWidth) / (singleItemWidth - fitAllItemWidth);
+                _zoomLevel = Math.Max(0.0, Math.Min(1.0, desiredZoom));
+            }
+            else
+            {
+                _zoomLevel = 0.5;
+            }
+
+            UpdateLayout();
+
+            // Recalculate bounds after layout update and center on the item
+            bounds = GetItemBounds(item);
+            double itemCenterX = bounds.X + bounds.Width / 2;
+            double itemCenterY = bounds.Y + bounds.Height / 2;
+
+            _panOffsetX = _availableWidth / 2 - itemCenterX;
+            _panOffsetY = _availableHeight / 2 - itemCenterY;
+            LayoutUpdated?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
         /// Selects the next item in the current in-scope list.
         /// If no item is selected, selects the first item.
         /// </summary>
