@@ -286,6 +286,18 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             BindableProperty.Create(nameof(ItemCulture), typeof(CultureInfo), typeof(SKPivotViewerView),
                 CultureInfo.CurrentCulture);
 
+        public static readonly BindableProperty ControlBackgroundProperty =
+            BindableProperty.Create(nameof(ControlBackground), typeof(Color), typeof(SKPivotViewerView),
+                Color.FromRgb(0xF0, 0xF0, 0xF0));
+
+        public static readonly BindableProperty SecondaryBackgroundProperty =
+            BindableProperty.Create(nameof(SecondaryBackground), typeof(Color), typeof(SKPivotViewerView),
+                Colors.White);
+
+        public static readonly BindableProperty SecondaryForegroundProperty =
+            BindableProperty.Create(nameof(SecondaryForeground), typeof(Color), typeof(SKPivotViewerView),
+                Color.FromRgb(0x66, 0x66, 0x66));
+
         /// <summary>Accent color for the UI chrome.</summary>
         public Color AccentColor
         {
@@ -340,6 +352,27 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         {
             get => (CultureInfo)GetValue(ItemCultureProperty);
             set => SetValue(ItemCultureProperty, value);
+        }
+
+        /// <summary>Background color for the control chrome (filter pane, control bar).</summary>
+        public Color ControlBackground
+        {
+            get => (Color)GetValue(ControlBackgroundProperty);
+            set => SetValue(ControlBackgroundProperty, value);
+        }
+
+        /// <summary>Secondary background color (detail pane, dropdown).</summary>
+        public Color SecondaryBackground
+        {
+            get => (Color)GetValue(SecondaryBackgroundProperty);
+            set => SetValue(SecondaryBackgroundProperty, value);
+        }
+
+        /// <summary>Secondary foreground color (labels, hints).</summary>
+        public Color SecondaryForeground
+        {
+            get => (Color)GetValue(SecondaryForegroundProperty);
+            set => SetValue(SecondaryForegroundProperty, value);
         }
 
         /// <summary>Serialized filter state. Get to bookmark, set to restore.</summary>
@@ -415,6 +448,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         public event EventHandler? CollectionChanged;
         public event EventHandler? SortPivotPropertyChanged;
         public event EventHandler<PivotViewerItem>? ItemDoubleClick;
+
+        /// <summary>Fired when a hyperlink in the detail pane is clicked.</summary>
+        public event EventHandler<PivotViewerLinkEventArgs>? LinkClicked;
 
         // --- Methods ---
 
@@ -1563,6 +1599,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     localY >= bounds.Top && localY <= bounds.Bottom)
                 {
                     _controller.DetailPane.OnLinkClicked(href);
+                    LinkClicked?.Invoke(this, new PivotViewerLinkEventArgs(href));
                     return;
                 }
             }
@@ -1591,6 +1628,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 if (!string.IsNullOrEmpty(href) && Uri.TryCreate(href, UriKind.Absolute, out var uri))
                 {
                     _controller.DefaultDetails.OnLinkClicked(uri);
+                    LinkClicked?.Invoke(this, new PivotViewerLinkEventArgs(uri));
                 }
             }
         }
