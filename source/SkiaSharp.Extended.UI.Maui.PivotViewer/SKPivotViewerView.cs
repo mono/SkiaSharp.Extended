@@ -480,12 +480,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 foreach (var id in itemIds)
                 {
                     ct.ThrowIfCancellationRequested();
-                    if (_disposed) return;
+                    if (_disposed || _controller.ImageProvider != provider) return;
 
                     await provider.LoadThumbnailAsync(id, 128, ct);
 
                     // Invalidate periodically to show thumbnails as they load
-                    if (!_disposed)
+                    if (!_disposed && _controller.ImageProvider == provider)
                         MainThread.BeginInvokeOnMainThread(() => _canvasView?.InvalidateSurface());
                 }
             }
