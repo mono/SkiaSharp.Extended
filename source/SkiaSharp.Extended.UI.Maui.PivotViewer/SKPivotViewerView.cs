@@ -47,6 +47,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private bool _isPanningFilterPane;
         private double _lastPointerX = double.NaN; // Track last known pointer X for pan origin detection
         private double _lastPivotPinchScale = 1.0;
+        private bool _isFilterPaneVisible = true;
 
         // Sort dropdown state
         private bool _showSortDropdown;
@@ -293,6 +294,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             BindableProperty.Create(nameof(ItemCulture), typeof(CultureInfo), typeof(SKPivotViewerView),
                 CultureInfo.CurrentCulture);
 
+        public static readonly BindableProperty IsFilterPaneVisibleProperty =
+            BindableProperty.Create(nameof(IsFilterPaneVisible), typeof(bool), typeof(SKPivotViewerView),
+                true, BindingMode.TwoWay, propertyChanged: OnFilterPaneVisibleChanged);
+
         public static readonly BindableProperty ControlBackgroundProperty =
             BindableProperty.Create(nameof(ControlBackground), typeof(Color), typeof(SKPivotViewerView),
                 Color.FromRgb(0xF0, 0xF0, 0xF0), propertyChanged: OnThemePropertyChanged);
@@ -366,6 +371,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         {
             get => (CultureInfo)GetValue(ItemCultureProperty);
             set => SetValue(ItemCultureProperty, value);
+        }
+
+        /// <summary>Controls visibility of the filter pane (two-way bindable).</summary>
+        public bool IsFilterPaneVisible
+        {
+            get => (bool)GetValue(IsFilterPaneVisibleProperty);
+            set => SetValue(IsFilterPaneVisibleProperty, value);
         }
 
         /// <summary>Background color for the control chrome (filter pane, control bar).</summary>
@@ -468,6 +480,17 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 view._canvasView?.InvalidateSurface();
         }
 
+        private static void OnFilterPaneVisibleChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is SKPivotViewerView view && newValue is bool visible)
+            {
+                view._isFilterPaneVisible = visible;
+                if (view._searchEntry != null)
+                    view._searchEntry.IsVisible = visible;
+                view._canvasView?.InvalidateSurface();
+            }
+        }
+
         private SKColor ToSkColor(Color color)
         {
             return new SKColor(
@@ -552,7 +575,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             canvas.Clear(SKColors.White);
 
             // Layout regions — clamp to zero for narrow screens
-            float filterWidth = FilterPaneWidth;
+            float filterWidth = _isFilterPaneVisible ? FilterPaneWidth : 0;
             float detailWidth = _controller.DetailPane.IsShowing ? DetailPaneWidth : 0;
             float contentLeft = filterWidth;
             float contentWidth = Math.Max(0, info.Width - filterWidth - detailWidth);
@@ -565,11 +588,14 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             // Render control bar
             RenderControlBar(canvas, info, ControlBarHeight);
 
-            // Render filter pane
-            canvas.Save();
-            canvas.ClipRect(new SKRect(0, ControlBarHeight, filterWidth, info.Height));
-            RenderFilterPane(canvas, filterWidth, contentHeight, ControlBarHeight);
-            canvas.Restore();
+            // Render filter pane (only when visible)
+            if (_isFilterPaneVisible && filterWidth > 0)
+            {
+                canvas.Save();
+                canvas.ClipRect(new SKRect(0, ControlBarHeight, filterWidth, info.Height));
+                RenderFilterPane(canvas, filterWidth, contentHeight, ControlBarHeight);
+                canvas.Restore();
+            }
 
             // Render main content
             canvas.Save();
@@ -785,6 +811,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     if (values == null || values.Count == 0) continue;
 
                     string valueStr = string.Join(", ", values.Take(3));
+                    if (values.Count > 3)
+                        valueStr += $" +{values.Count - 3} more";
                     string label = prop.DisplayName + ": ";
 
                     // Label in bold-like color
@@ -1004,7 +1032,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             using var whitePaint = new SKPaint { Color = SKColors.White };
 
             // View switcher buttons
-            float x = FilterPaneWidth + 10;
+            float x = (_isFilterPaneVisible ? FilterPaneWidth : 0) + 10;
+
+            // Filter pane toggle button
+            string toggleLabel = _isFilterPaneVisible ? "◀" : "▶";
+            canvas.DrawText(toggleLabel, 6, barHeight / 2 + 5, SKTextAlign.Left, _textFont, whitePaint);
             string gridLabel = _controller.CurrentView == "grid" ? "▣ Grid" : "▢ Grid";
             canvas.DrawText(gridLabel, x, barHeight / 2 + 5, SKTextAlign.Left, _textFont, whitePaint);
 
@@ -1577,7 +1609,8 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             }
 
             // Filter pane interactions
-            if (x < FilterPaneWidth && y > ControlBarHeight)
+            float effectiveFilterWidth = _isFilterPaneVisible ? FilterPaneWidth : 0;
+            if (_isFilterPaneVisible && x < effectiveFilterWidth && y > ControlBarHeight)
             {
                 HandleFilterPaneTap(x, y);
                 return;
@@ -1593,7 +1626,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             }
 
             // Main content area — adjust for content region offset
-            double contentX = x - FilterPaneWidth;
+            double contentX = x - effectiveFilterWidth;
             double contentY = y - ControlBarHeight;
 
             // Try item hit test first (works for both grid and graph views)
@@ -1681,6 +1714,15 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void HandleControlBarTap(double x, double y)
         {
+            // Filter pane toggle (left edge, first 20px)
+            if (x < 20)
+            {
+                _isFilterPaneVisible = !_isFilterPaneVisible;
+                SetValue(IsFilterPaneVisibleProperty, _isFilterPaneVisible);
+                _canvasView.InvalidateSurface();
+                return;
+            }
+
             // Sort dropdown region (center of control bar)
             float totalWidth = (float)Width;
             float sortCenter = totalWidth / 2;
@@ -1704,14 +1746,15 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             }
 
             // View switcher region (after filter pane width)
-            if (x > FilterPaneWidth && x < FilterPaneWidth + 200)
+            float cbFilterW = _isFilterPaneVisible ? FilterPaneWidth : 0;
+            if (x > cbFilterW && x < cbFilterW + 200)
             {
                 // Toggle between grid and graph
                 _textFont.Size = 14;
                 string gridLabel = _controller.CurrentView == "grid" ? "▣ Grid" : "▢ Grid";
                 float gridWidth = _textFont.MeasureText(gridLabel, out _);
 
-                if (x < FilterPaneWidth + 10 + gridWidth + 10)
+                if (x < cbFilterW + 10 + gridWidth + 10)
                 {
                     _controller.CurrentView = "grid";
                 }
@@ -1921,7 +1964,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     _previousPanX = 0;
                     _previousPanY = 0;
                     // Use last pointer position to determine if pan started in filter pane
-                    _isPanningFilterPane = !double.IsNaN(_lastPointerX) && _lastPointerX < FilterPaneWidth;
+                    _isPanningFilterPane = _isFilterPaneVisible && !double.IsNaN(_lastPointerX) && _lastPointerX < FilterPaneWidth;
                     break;
                 case GestureStatus.Running:
                     double deltaX = e.TotalX - _previousPanX;

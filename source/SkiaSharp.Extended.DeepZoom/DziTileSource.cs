@@ -12,6 +12,7 @@ namespace SkiaSharp.Extended.DeepZoom
     public class DziTileSource
     {
         private const string DeepZoomNamespace2008 = "http://schemas.microsoft.com/deepzoom/2008";
+        private const string DeepZoomNamespace2009 = "http://schemas.microsoft.com/deepzoom/2009";
 
         public DziTileSource(int imageWidth, int imageHeight, int tileSize, int overlap, string format)
         {
@@ -177,10 +178,16 @@ namespace SkiaSharp.Extended.DeepZoom
 
         private static DziTileSource ParseDocument(XDocument doc, string? baseUri)
         {
+            // Try both 2008 and 2009 namespaces
             var ns = XNamespace.Get(DeepZoomNamespace2008);
             var imageElement = doc.Element(ns + "Image");
             if (imageElement == null)
-                throw new FormatException("Invalid DZI: missing <Image> element with namespace " + DeepZoomNamespace2008);
+            {
+                ns = XNamespace.Get(DeepZoomNamespace2009);
+                imageElement = doc.Element(ns + "Image");
+            }
+            if (imageElement == null)
+                throw new FormatException("Invalid DZI: missing <Image> element with Deep Zoom namespace.");
 
             var sizeElement = imageElement.Element(ns + "Size");
             if (sizeElement == null)

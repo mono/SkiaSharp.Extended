@@ -128,10 +128,12 @@ public class DziCompatibilityIntegrationTest
     }
 
     [Fact]
-    public void Parse_CollectionDz0_Uses2009Namespace_ThrowsFormatException()
+    public void Parse_CollectionDz0_Uses2009Namespace_SucceedsWithFallback()
     {
-        // collection-dz DZI files use the 2009 namespace, which the parser doesn't support
+        // collection-dz DZI files use the 2009 namespace, which the parser now supports via fallback
         using var stream = TestDataHelper.GetStream("collection-dz_0.dzi");
-        Assert.Throws<FormatException>(() => DziTileSource.Parse(stream));
+        var dzi = DziTileSource.Parse(stream);
+        Assert.True(dzi.ImageWidth > 0);
+        Assert.True(dzi.ImageHeight > 0);
     }
 }

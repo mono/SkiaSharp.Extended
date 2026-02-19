@@ -22,6 +22,23 @@ public class DziTileSourceTest
     }
 
     [Fact]
+    public void Parse_2009Namespace_ParsesCorrectly()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Image TileSize=""254"" Overlap=""1"" Format=""png"" xmlns=""http://schemas.microsoft.com/deepzoom/2009"">
+    <Size Width=""1024"" Height=""768""/>
+</Image>";
+
+        var dzi = DziTileSource.Parse(xml);
+
+        Assert.Equal(1024, dzi.ImageWidth);
+        Assert.Equal(768, dzi.ImageHeight);
+        Assert.Equal(254, dzi.TileSize);
+        Assert.Equal(1, dzi.Overlap);
+        Assert.Equal("png", dzi.Format);
+    }
+
+    [Fact]
     public void Parse_EmbeddedSampleDzi_ParsesCorrectly()
     {
         using var stream = TestDataHelper.GetStream("sample.dzi");
