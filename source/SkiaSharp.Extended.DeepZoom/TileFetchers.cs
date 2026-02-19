@@ -75,6 +75,8 @@ namespace SkiaSharp.Extended.DeepZoom
     {
         public Task<SKBitmap?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             try
             {
                 // Handle both file:// URIs and plain paths
@@ -87,8 +89,13 @@ namespace SkiaSharp.Extended.DeepZoom
                 if (!File.Exists(path))
                     return Task.FromResult<SKBitmap?>(null);
 
+                cancellationToken.ThrowIfCancellationRequested();
                 var bitmap = SKBitmap.Decode(path);
                 return Task.FromResult<SKBitmap?>(bitmap);
+            }
+            catch (OperationCanceledException)
+            {
+                throw; // Propagate cancellation
             }
             catch
             {

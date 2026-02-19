@@ -11,11 +11,17 @@ namespace SkiaSharp.Extended.DeepZoom
     public class DeepZoomRenderer : IDisposable
     {
         private readonly SKPaint _tilePaint;
+        private readonly SKPaint _fadePaint;
         private readonly SKPaint _debugPaint;
 
         public DeepZoomRenderer()
         {
             _tilePaint = new SKPaint
+            {
+                FilterQuality = SKFilterQuality.High,
+                IsAntialias = true,
+            };
+            _fadePaint = new SKPaint
             {
                 FilterQuality = SKFilterQuality.High,
                 IsAntialias = true,
@@ -35,6 +41,13 @@ namespace SkiaSharp.Extended.DeepZoom
         public bool ShowTileBorders { get; set; }
 
         /// <summary>
+        /// Whether to enable LOD cross-fade blending when transitioning between tile levels.
+        /// When enabled, fallback (lower-resolution) tiles are drawn underneath with fading opacity.
+        /// Default is true (matches Silverlight behavior).
+        /// </summary>
+        public bool EnableLodBlending { get; set; } = true;
+
+        /// <summary>
         /// Renders visible tiles onto the canvas using the current viewport state.
         /// </summary>
         public void Render(
@@ -51,6 +64,29 @@ namespace SkiaSharp.Extended.DeepZoom
 
             var visibleTiles = scheduler.GetVisibleTiles(tileSource, viewport);
 
+            // Pass 1: Draw fallback (lower-resolution) tiles for any missing tiles
+            if (EnableLodBlending)
+            {
+                foreach (var request in visibleTiles)
+                {
+                    var tileId = request.TileId;
+                    if (!cache.Contains(tileId))
+                    {
+                        var fallback = scheduler.FindBestFallback(tileId, cache);
+                        if (fallback.HasValue)
+                        {
+                            cache.TryGet(fallback.Value, out SKBitmap? parentBitmap);
+                            if (parentBitmap != null)
+                            {
+                                DrawFallbackTile(canvas, tileSource, viewport, tileId,
+                                    fallback.Value, parentBitmap, scheduler);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Pass 2: Draw high-resolution tiles on top
             foreach (var request in visibleTiles)
             {
                 var tileId = request.TileId;
@@ -60,9 +96,9 @@ namespace SkiaSharp.Extended.DeepZoom
                 {
                     DrawTile(canvas, tileSource, viewport, tileId, bitmap);
                 }
-                else
+                else if (!EnableLodBlending)
                 {
-                    // Try fallback: find the best parent tile
+                    // Single-pass fallback when blending is disabled
                     var fallback = scheduler.FindBestFallback(tileId, cache);
                     if (fallback.HasValue)
                     {
@@ -164,6 +200,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public void Dispose()
         {
             _tilePaint.Dispose();
+            _fadePaint.Dispose();
             _debugPaint.Dispose();
         }
     }

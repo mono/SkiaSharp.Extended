@@ -209,6 +209,28 @@ namespace SkiaSharp.Extended.PivotViewer
                 var doc = XDocument.Parse(xml);
                 ParseInto(source, doc);
                 source.State = CxmlCollectionState.Loaded;
+
+                // Auto-load supplemental CXML if SupplementUri is set
+                if (source.SupplementUri != null)
+                {
+                    try
+                    {
+                        var supplementUrl = new Uri(uri, source.SupplementUri);
+                        var suppXml = await httpClient.GetStringAsync(supplementUrl
+#if NET5_0_OR_GREATER
+                            , cancellationToken
+#endif
+                            );
+                        var suppDoc = XDocument.Parse(suppXml);
+                        var supplement = new CxmlCollectionSource();
+                        ParseInto(supplement, suppDoc);
+                        source.MergeSupplementalData(supplement);
+                    }
+                    catch (Exception)
+                    {
+                        // Supplemental data is optional — failure is not fatal
+                    }
+                }
             }
             catch (Exception ex) when (!(ex is OperationCanceledException))
             {
