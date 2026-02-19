@@ -66,7 +66,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>
         /// Whether the controller is idle (no pending tile loads and no active animation).
         /// </summary>
-        public bool IsIdle => _pendingTiles.Count == 0 && _spring.IsSettled;
+        public bool IsIdle => _pendingTiles.IsEmpty && _spring.IsSettled;
 
         /// <summary>
         /// Returns the logical rectangle visible at the current viewport state.
