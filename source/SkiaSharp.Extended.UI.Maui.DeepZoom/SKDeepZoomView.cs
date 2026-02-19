@@ -20,6 +20,8 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         private TimeSpan _lastFrameTime;
         private bool _disposed;
         private bool _isVisible = true;
+        private IDispatcherTimer? _animationTimer;
+        private bool _isAnimating;
 
         // Gesture state
         private double _lastPanX, _lastPanY;
@@ -50,7 +52,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
 
             // Wire up controller events using named handlers for proper cleanup
             _onInvalidateRequired = (s, e) =>
-                MainThread.BeginInvokeOnMainThread(() => _canvasView.InvalidateSurface());
+                MainThread.BeginInvokeOnMainThread(() => StartAnimation());
             _onMotionFinished = (s, e) => MotionFinished?.Invoke(this, EventArgs.Empty);
             _onViewportChanged = (s, e) => ViewportChanged?.Invoke(this, EventArgs.Empty);
             _onImageOpenSucceeded = (s, e) => ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
@@ -71,7 +73,46 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         }
 
         private void OnViewLoaded(object? sender, EventArgs e) => _isVisible = true;
-        private void OnViewUnloaded(object? sender, EventArgs e) => _isVisible = false;
+        private void OnViewUnloaded(object? sender, EventArgs e)
+        {
+            _isVisible = false;
+            StopAnimation();
+        }
+
+        /// <summary>
+        /// Ensures the animation timer is running. The timer fires at ~60fps,
+        /// invalidating the surface each tick so the spring advances smoothly.
+        /// Stops automatically when the spring settles and no tiles are pending.
+        /// </summary>
+        private void StartAnimation()
+        {
+            if (_isAnimating || _disposed) return;
+            _isAnimating = true;
+            _lastFrameTime = _stopwatch.Elapsed;
+
+            if (_animationTimer == null)
+            {
+                _animationTimer = Dispatcher.CreateTimer();
+                _animationTimer.Interval = TimeSpan.FromMilliseconds(16); // ~60fps
+                _animationTimer.Tick += (s, e) =>
+                {
+                    if (!_isVisible || _disposed)
+                    {
+                        StopAnimation();
+                        return;
+                    }
+                    _canvasView.InvalidateSurface();
+                };
+            }
+
+            _animationTimer.Start();
+        }
+
+        private void StopAnimation()
+        {
+            _isAnimating = false;
+            _animationTimer?.Stop();
+        }
 
         // --- BindableProperties ---
 
@@ -189,7 +230,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             set
             {
                 _controller.SetViewport(value, _controller.TargetOriginX, _controller.TargetOriginY);
-                _canvasView.InvalidateSurface();
+                StartAnimation();
             }
         }
 
@@ -200,7 +241,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             set
             {
                 _controller.SetViewport(_controller.TargetViewportWidth, value, _controller.TargetOriginY);
-                _canvasView.InvalidateSurface();
+                StartAnimation();
             }
         }
 
@@ -211,7 +252,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             set
             {
                 _controller.SetViewport(_controller.TargetViewportWidth, _controller.TargetOriginX, value);
-                _canvasView.InvalidateSurface();
+                StartAnimation();
             }
         }
 
@@ -246,7 +287,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         public void Load(DziTileSource tileSource, ITileFetcher fetcher)
         {
             _controller.Load(tileSource, fetcher);
-            _canvasView.InvalidateSurface();
+            StartAnimation();
         }
 
         /// <summary>
@@ -256,7 +297,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         public void Load(DzcTileSource tileSource, ITileFetcher fetcher)
         {
             _controller.Load(tileSource, fetcher);
-            _canvasView.InvalidateSurface();
+            StartAnimation();
         }
 
         /// <summary>
@@ -270,7 +311,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         public void ResetView()
         {
             _controller.ResetView();
-            _canvasView.InvalidateSurface();
+            StartAnimation();
         }
 
         /// <summary>
@@ -279,7 +320,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         public void ZoomAboutLogicalPoint(double factor, double logicalX, double logicalY)
         {
             _controller.ZoomAboutLogicalPoint(factor, logicalX, logicalY);
-            _canvasView.InvalidateSurface();
+            StartAnimation();
         }
 
         /// <summary>
@@ -317,9 +358,10 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             bool needsRepaint = _controller.Update(delta);
             _controller.Render(e.Surface.Canvas);
 
-            if (needsRepaint && _isVisible)
+            // Stop the animation timer when spring has settled and all tiles are loaded
+            if (!needsRepaint)
             {
-                MainThread.BeginInvokeOnMainThread(() => _canvasView.InvalidateSurface());
+                StopAnimation();
             }
         }
 
@@ -357,7 +399,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                     // to avoid the sluggish feel of spring-mediated panning
                     _controller.Pan(dx, dy);
                     _controller.SnapSpringToTarget();
-                    _canvasView.InvalidateSurface();
+                    StartAnimation();
                     break;
             }
         }
@@ -378,7 +420,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                     double centerY = Height * e.ScaleOrigin.Y * _dpiScale;
                     _controller.ZoomAboutScreenPoint(scaleChange, centerX, centerY);
                     _controller.SnapSpringToTarget();
-                    _canvasView.InvalidateSurface();
+                    StartAnimation();
                     break;
             }
         }
@@ -401,7 +443,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                 {
                     _controller.ZoomAboutScreenPoint(2.0, screenX, screenY);
                 }
-                _canvasView.InvalidateSurface();
+                StartAnimation();
             }
         }
 
@@ -460,7 +502,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                     return false;
             }
 
-            _canvasView.InvalidateSurface();
+            StartAnimation();
             return true;
         }
 
@@ -476,7 +518,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
 
             double factor = delta > 0 ? 1.2 : 1.0 / 1.2;
             _controller.ZoomAboutScreenPoint(factor, screenX * _dpiScale, screenY * _dpiScale);
-            _canvasView?.InvalidateSurface();
+            StartAnimation();
         }
 
         // --- Disposal ---
