@@ -360,6 +360,39 @@ public class PivotViewerRendererTest
     }
 
     // =====================================================================
+    // Render / HitTest after Dispose
+    // =====================================================================
+
+    [Fact]
+    public void Render_AfterDispose_DoesNotThrow()
+    {
+        var renderer = new PivotViewerRenderer();
+        using var surface = SKSurface.Create(new SKImageInfo(Width, Height));
+        var controller = CreateLoadedController();
+        var theme = PivotViewerTheme.Default;
+        var viewState = new PivotViewerViewState();
+
+        renderer.Dispose();
+
+        // Render after dispose should return silently without exception
+        renderer.Render(surface.Canvas, new SKImageInfo(Width, Height), controller, theme, viewState);
+    }
+
+    [Fact]
+    public void HitTest_AfterDispose_ReturnsNone()
+    {
+        var renderer = new PivotViewerRenderer();
+        var info = new SKImageInfo(Width, Height);
+        var controller = CreateLoadedController();
+        var viewState = new PivotViewerViewState();
+
+        renderer.Dispose();
+
+        var result = renderer.HitTest(Width / 2.0, Height / 2.0, info, controller, viewState);
+        Assert.Equal(RenderHitType.None, result.Type);
+    }
+
+    // =====================================================================
     // Helpers
     // =====================================================================
 

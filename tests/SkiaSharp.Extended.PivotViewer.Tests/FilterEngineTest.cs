@@ -872,4 +872,14 @@ public class FilterEngineTest
         var engine = new FilterEngine();
         Assert.Throws<ArgumentNullException>(() => engine.SetSource(Array.Empty<PivotViewerItem>(), null!));
     }
+
+    [Fact]
+    public void NumericRangeFilter_LongValues_Matched()
+    {
+        var pred = new NumericRangeFilterPredicate("Id", 1000, 5000);
+        var item = new PivotViewerItem("1");
+        item.Set(new PivotViewerNumericProperty("Id"), new object[] { 3000L });
+
+        Assert.True(pred.Matches(item));
+    }
 }

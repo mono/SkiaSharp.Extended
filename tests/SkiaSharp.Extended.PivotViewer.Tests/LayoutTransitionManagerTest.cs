@@ -340,4 +340,54 @@ public class LayoutTransitionManagerTest
         Assert.False(stillAnimating); // completed immediately
         Assert.False(mgr.IsAnimating);
     }
+
+    [Fact]
+    public void BeginTransition_ItemsLeavingScope_ShrinkToCenter()
+    {
+        var tm = new LayoutTransitionManager();
+        tm.Duration = 1.0;
+        var staying = new PivotViewerItem("stay");
+        var leaving = new PivotViewerItem("leave");
+
+        var old = new[]
+        {
+            new ItemPosition(staying, 0, 0, 50, 50),
+            new ItemPosition(leaving, 200, 100, 80, 60)
+        };
+        // New layout only contains the staying item
+        var @new = new[] { new ItemPosition(staying, 10, 10, 50, 50) };
+
+        tm.BeginTransition(old, @new);
+
+        // After animation completes, the leaving item should have zero size
+        tm.Update(1.0);
+        var positions = tm.GetCurrentPositions();
+        Assert.Equal(2, positions.Length);
+
+        var leavingPos = positions.First(p => p.Item.Id == "leave");
+        Assert.Equal(0.0, leavingPos.Width, 1);
+        Assert.Equal(0.0, leavingPos.Height, 1);
+    }
+
+    [Fact]
+    public void BeginTransition_ItemsLeavingScope_TargetPositionIsCenterOfOld()
+    {
+        var tm = new LayoutTransitionManager();
+        tm.Duration = 1.0;
+        var leaving = new PivotViewerItem("leave");
+
+        var old = new[] { new ItemPosition(leaving, 200, 100, 80, 60) };
+        var @new = Array.Empty<ItemPosition>();
+
+        tm.BeginTransition(old, @new);
+
+        // Complete the animation so positions snap to target
+        tm.Update(1.0);
+        var positions = tm.GetCurrentPositions();
+        Assert.Single(positions);
+
+        // Target X,Y should be center of old position: (200+80/2, 100+60/2) = (240, 130)
+        Assert.Equal(240.0, positions[0].X, 1);
+        Assert.Equal(130.0, positions[0].Y, 1);
+    }
 }

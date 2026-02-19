@@ -2355,4 +2355,33 @@ public class PivotViewerControllerTest
         controller.Filter = null!;
         Assert.False(controller.FilterEngine.HasActiveFilters);
     }
+
+    [Fact]
+    public void Pan_BoundaryClamping_PreventsOffscreen()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.Pan(1_000_000, 1_000_000);
+        Assert.True(controller.PanOffsetX < 1_000_000.0, "Pan X should be clamped");
+        Assert.True(controller.PanOffsetY < 1_000_000.0, "Pan Y should be clamped");
+
+        // Also test large negative values
+        controller.Pan(-2_000_000, -2_000_000);
+        Assert.True(controller.PanOffsetX > -2_000_000.0, "Pan X should be clamped for negative");
+        Assert.True(controller.PanOffsetY > -2_000_000.0, "Pan Y should be clamped for negative");
+    }
+
+    [Fact]
+    public void GraphView_NullSortProperty_AutoSelectsFirstFilterable()
+    {
+        var (controller, _) = CreateTestController();
+
+        // Ensure SortProperty is null, then switch to graph
+        controller.SortProperty = null;
+        controller.CurrentView = "graph";
+
+        // The auto-select logic should pick the first filterable property
+        // and compute a histogram layout
+        Assert.NotNull(controller.HistogramLayout);
+    }
 }
