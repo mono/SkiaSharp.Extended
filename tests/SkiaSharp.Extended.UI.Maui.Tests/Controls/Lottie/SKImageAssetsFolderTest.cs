@@ -68,4 +68,54 @@ public class SKImageAssetsFolderTest
 		await lottie.LoadedTask;
 		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Duration);
 	}
+
+	[Fact]
+	public void ImageAssetsFolderPropertyWorksOnAllImageSourceTypes()
+	{
+		// Test on SKFileLottieImageSource
+		var fileSource = new SKFileLottieImageSource();
+		fileSource.ImageAssetsFolder = "test/path";
+		Assert.Equal("test/path", fileSource.ImageAssetsFolder);
+
+		// Test on SKUriLottieImageSource
+		var uriSource = new SKUriLottieImageSource();
+		uriSource.ImageAssetsFolder = "another/path";
+		Assert.Equal("another/path", uriSource.ImageAssetsFolder);
+
+		// Test on SKStreamLottieImageSource
+		var streamSource = new SKStreamLottieImageSource();
+		streamSource.ImageAssetsFolder = "stream/path";
+		Assert.Equal("stream/path", streamSource.ImageAssetsFolder);
+
+		// Test on SKDotLottieImageSource
+		var dotLottieSource = new SKDotLottieImageSource();
+		dotLottieSource.ImageAssetsFolder = "dotlottie/path";
+		Assert.Equal("dotlottie/path", dotLottieSource.ImageAssetsFolder);
+	}
+
+	[Fact]
+	public void ImageAssetsFolderCanBeSetToNull()
+	{
+		var source = new SKFileLottieImageSource
+		{
+			ImageAssetsFolder = "test/path"
+		};
+		Assert.Equal("test/path", source.ImageAssetsFolder);
+
+		source.ImageAssetsFolder = null;
+		Assert.Null(source.ImageAssetsFolder);
+	}
+
+	[Fact]
+	public void ImageAssetsFolderCanBeSetToEmptyString()
+	{
+		var source = new SKFileLottieImageSource
+		{
+			ImageAssetsFolder = "test/path"
+		};
+		Assert.Equal("test/path", source.ImageAssetsFolder);
+
+		source.ImageAssetsFolder = string.Empty;
+		Assert.Equal(string.Empty, source.ImageAssetsFolder);
+	}
 }

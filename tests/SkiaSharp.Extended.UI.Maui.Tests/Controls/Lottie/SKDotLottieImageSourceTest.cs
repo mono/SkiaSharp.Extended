@@ -41,4 +41,56 @@ public class SKDotLottieImageSourceTest : SKLottieImageSourceTest<SKDotLottieIma
 		source.File = TestLottieFile;
 		Assert.Equal(TestLottieFile, source.File);
 	}
+
+	[Fact]
+	public void IsEmptyReturnsTrueWhenFileIsNull()
+	{
+		var source = new SKDotLottieImageSource();
+		Assert.True(source.IsEmpty);
+	}
+
+	[Fact]
+	public void IsEmptyReturnsFalseWhenFileIsSet()
+	{
+		var source = new SKDotLottieImageSource { File = TestLottieFile };
+		Assert.False(source.IsEmpty);
+	}
+
+	[Fact]
+	public async Task LoadAnimationAsyncReturnsEmptyAnimationWhenFileIsNull()
+	{
+		var source = new SKDotLottieImageSource();
+		var animation = await source.LoadAnimationAsync();
+		Assert.False(animation.IsLoaded);
+	}
+
+	[Fact]
+	public async Task LoadAnimationAsyncReturnsEmptyAnimationWhenFileIsEmpty()
+	{
+		var source = new SKDotLottieImageSource { File = string.Empty };
+		var animation = await source.LoadAnimationAsync();
+		Assert.False(animation.IsLoaded);
+	}
+
+	[Fact]
+	public async Task LoadAnimationAsyncThrowsWhenFileNotFound()
+	{
+		var source = new SKDotLottieImageSource { File = "nonexistent.lottie" };
+		await Assert.ThrowsAsync<FileLoadException>(() => source.LoadAnimationAsync());
+	}
+
+	[Fact]
+	public async Task DotLottieSourceWithImageAssetsFolderLoadsCorrectly()
+	{
+		// Test that .lottie files can also set ImageAssetsFolder if needed
+		var source = new SKDotLottieImageSource
+		{
+			File = TestLottieFile,
+			ImageAssetsFolder = "TestAssets/Lottie"
+		};
+
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Duration);
+	}
 }
