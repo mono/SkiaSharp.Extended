@@ -452,4 +452,15 @@ public class GridLayoutEngineTest
             Thread.CurrentThread.CurrentCulture = savedCulture;
         }
     }
+
+    [Fact]
+    public void ComputeZoomedLayout_ZeroHeight_DoesNotThrow()
+    {
+        var engine = new GridLayoutEngine();
+        var items = CreateItems(10);
+
+        // Zero height should not cause division by zero or overflow
+        var layout = engine.ComputeZoomedLayout(items, 800, 0, 0.5);
+        Assert.Equal(10, layout.Positions.Length);
+    }
 }

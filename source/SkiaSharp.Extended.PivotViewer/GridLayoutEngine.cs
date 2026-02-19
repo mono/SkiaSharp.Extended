@@ -97,6 +97,8 @@ namespace SkiaSharp.Extended.PivotViewer
             if (items.Count == 0 || zoomLevel < 0.01)
                 return ComputeLayout(items, availableWidth, availableHeight, itemAspectRatio);
 
+            if (availableHeight <= 0) availableHeight = 1;
+
             // At zoom 1.0, one item fills the view
             // At zoom 0.5, ~4 items fit
             // Interpolate columns between fit-all and 1

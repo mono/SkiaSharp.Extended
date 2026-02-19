@@ -62,14 +62,23 @@ namespace SkiaSharp.Extended.PivotViewer
                 var cxmlUri = source.UriSource;
                 var baseUri = new Uri(cxmlUri, source.ImageBase);
                 basePath = baseUri.ToString();
-                // Remove the DZC filename to get the directory
-                int lastSlash = basePath.LastIndexOf('/');
-                if (lastSlash >= 0)
-                    basePath = basePath.Substring(0, lastSlash);
+                // DZC composite tiles live in {dzcName}_files/ alongside the .dzc file.
+                // Strip .dzc extension and append _files to get the tile directory.
+                if (basePath.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase))
+                    basePath = basePath.Substring(0, basePath.Length - 4) + "_files";
+                else
+                {
+                    // Fallback: strip filename to get directory (non-standard layout)
+                    int lastSlash = basePath.LastIndexOf('/');
+                    if (lastSlash >= 0)
+                        basePath = basePath.Substring(0, lastSlash);
+                }
             }
             else
             {
                 basePath = source.ImageBase;
+                if (basePath.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase))
+                    basePath = basePath.Substring(0, basePath.Length - 4) + "_files";
             }
 
             return new CollectionImageProvider(dzc, fetcher, basePath);

@@ -180,6 +180,53 @@ public class CollectionImageProviderTest
         Assert.Null(provider);
     }
 
+    [Fact]
+    public async Task FromCxmlSource_ResolvesFilesDirectory()
+    {
+        // Verify that FromCxmlSource converts .dzc path to _files directory
+        var cxml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+  <FacetCategories/>
+  <Items ImgBase=""deepzoom/collection.dzc"">
+  </Items>
+</Collection>";
+        var source = CxmlCollectionSource.Parse(cxml);
+        source.UriSource = new Uri("http://example.com/data/test.cxml");
+
+        var dzc = CreateCompositeDzc(1);
+        var fetcher = new TrackingTileFetcher();
+        // Add a tile at the _files path that FromCxmlSource should resolve to
+        fetcher.Add("http://example.com/data/deepzoom/collection_files/0/0_0.jpg", CreateTestTile());
+
+        using var provider = CollectionImageProvider.FromCxmlSource(source, dzc, fetcher)!;
+        Assert.NotNull(provider);
+
+        // Loading a composite thumbnail should use the _files directory
+        await provider.LoadThumbnailAsync(0, 64, CancellationToken.None);
+        Assert.Contains(fetcher.RequestedUrls, u => u.Contains("collection_files/"));
+    }
+
+    [Fact]
+    public void FromCxmlSource_NoUriSource_ResolvesFilesDirectory()
+    {
+        // When UriSource is null, should still strip .dzc and add _files
+        var cxml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Collection xmlns=""http://schemas.microsoft.com/collection/metadata/2009"" Name=""Test"">
+  <FacetCategories/>
+  <Items ImgBase=""deepzoom/collection.dzc"">
+  </Items>
+</Collection>";
+        var source = CxmlCollectionSource.Parse(cxml);
+        // Don't set UriSource
+
+        var dzc = CreateCompositeDzc(1);
+        var fetcher = new TrackingTileFetcher();
+        fetcher.Add("deepzoom/collection_files/0/0_0.jpg", CreateTestTile());
+
+        using var provider = CollectionImageProvider.FromCxmlSource(source, dzc, fetcher)!;
+        Assert.NotNull(provider);
+    }
+
     #endregion
 
     #region GetThumbnail
