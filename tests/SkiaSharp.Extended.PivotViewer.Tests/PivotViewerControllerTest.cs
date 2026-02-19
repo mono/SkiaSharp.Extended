@@ -2225,6 +2225,43 @@ public class PivotViewerControllerTest
     }
 
     [Fact]
+    public void ResetZoom_ResetsToFitAll()
+    {
+        var (controller, _) = CreateTestController();
+        controller.SetAvailableSize(800, 600);
+        var item = controller.InScopeItems[0];
+        controller.ZoomToItem(item);
+
+        Assert.True(controller.ZoomLevel > 0);
+        Assert.NotNull(controller.SelectedItem);
+
+        controller.ResetZoom();
+
+        Assert.Equal(0, controller.ZoomLevel, 0.001);
+        Assert.Equal(0, controller.PanOffsetX, 0.001);
+        Assert.Equal(0, controller.PanOffsetY, 0.001);
+        Assert.Null(controller.SelectedItem);
+    }
+
+    [Fact]
+    public void GraphView_NoFilterableProperties_RevertsToGrid()
+    {
+        // Create items with only private (non-filterable) properties
+        var builder = new PivotViewerCollectionBuilder();
+        builder.AddStringProperty("PrivateProp", "Private Property", PivotViewerPropertyOptions.Private);
+        builder.AddItem("1", b => b.Set("PrivateProp", "A"));
+        builder.AddItem("2", b => b.Set("PrivateProp", "B"));
+        var collection = builder.Build();
+
+        var controller = new PivotViewerController();
+        controller.LoadItems(collection.Items, collection.Properties);
+        controller.SetAvailableSize(800, 600);
+
+        controller.CurrentView = "graph";
+        Assert.Equal("grid", controller.CurrentView); // should revert
+    }
+
+    [Fact]
     public void Refresh_ClearsFiltersAndSelection()
     {
         var (controller, _) = CreateTestController();

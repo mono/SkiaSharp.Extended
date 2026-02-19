@@ -393,6 +393,19 @@ namespace SkiaSharp.Extended.PivotViewer
         }
 
         /// <summary>
+        /// Resets zoom and pan to show all items (fit-all view).
+        /// </summary>
+        public void ResetZoom()
+        {
+            _zoomLevel = 0;
+            _panOffsetX = 0;
+            _panOffsetY = 0;
+            SelectedItem = null;
+            UpdateLayout();
+            LayoutUpdated?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
         /// Selects the next item in the current in-scope list.
         /// If no item is selected, selects the first item.
         /// </summary>
@@ -840,6 +853,12 @@ namespace SkiaSharp.Extended.PivotViewer
                             _inScopeItems, graphProp.Id, _availableWidth, _availableHeight);
                         _currentGridLayout = null;
                         computedGraph = true;
+                    }
+                    else
+                    {
+                        // No filterable property available — revert to grid view
+                        _currentView = "grid";
+                        ViewChanged?.Invoke(this, EventArgs.Empty);
                     }
                 }
 

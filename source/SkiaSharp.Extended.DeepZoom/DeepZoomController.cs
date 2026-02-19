@@ -91,6 +91,13 @@ namespace SkiaSharp.Extended.DeepZoom
             set => _renderer.ShowTileBorders = value;
         }
 
+        /// <summary>Show a debug statistics overlay with viewport, level, cache, and tile info.</summary>
+        public bool ShowDebugStats
+        {
+            get => _renderer.ShowDebugStats;
+            set => _renderer.ShowDebugStats = value;
+        }
+
         /// <summary>Fired when the image source is loaded successfully.</summary>
         public event EventHandler? ImageOpenSucceeded;
 

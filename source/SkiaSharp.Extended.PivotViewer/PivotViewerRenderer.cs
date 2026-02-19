@@ -550,7 +550,23 @@ namespace SkiaSharp.Extended.PivotViewer
                     float ph = (float)pos.Height * scaleY - 2;
                     var rect = new SKRect(px, py, px + pw, py + ph);
 
-                    canvas.DrawRect(rect, _itemPaint);
+                    // Try thumbnail first, fall back to colored rectangle
+                    bool drewImage = false;
+                    var imgProvider = controller.ImageProvider;
+                    if (imgProvider != null && pw > 4 && ph > 4)
+                    {
+                        var thumbnail = imgProvider.GetThumbnailForItem(pos.Item);
+                        if (thumbnail != null)
+                        {
+                            var destRect = RenderUtils.FitUniform(thumbnail.Width, thumbnail.Height, rect);
+                            canvas.DrawBitmap(thumbnail, destRect);
+                            drewImage = true;
+                        }
+                    }
+                    if (!drewImage)
+                    {
+                        canvas.DrawRect(rect, _itemPaint);
+                    }
 
                     if (pos.Item == controller.SelectedItem)
                     {

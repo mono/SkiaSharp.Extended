@@ -781,6 +781,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 case RenderHitType.ClearAllFilters:
                     _controller.FilterPaneModel?.ClearAllFilters();
                     _controller.SearchText = "";
+                    if (_searchEntry != null) _searchEntry.Text = "";
                     _canvasView.InvalidateSurface();
                     return;
 
@@ -872,7 +873,15 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var hit = _renderer.HitTest(point.Value.X, point.Value.Y, _lastPaintInfo, _controller, _viewState);
             if (hit.Type == RenderHitType.Item && hit.Item != null)
             {
-                _controller.ZoomToItem(hit.Item);
+                // Toggle: if already zoomed to this item, zoom back out
+                if (_controller.SelectedItem == hit.Item && _controller.ZoomLevel > 0.01)
+                {
+                    _controller.ResetZoom();
+                }
+                else
+                {
+                    _controller.ZoomToItem(hit.Item);
+                }
                 _controller.NotifyItemDoubleClicked(hit.Item);
                 ItemDoubleClick?.Invoke(this, hit.Item);
 
