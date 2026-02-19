@@ -338,4 +338,53 @@ public class DziTileSourceTest
         int level = dzi.GetOptimalLevel(-1, 800);
         Assert.Equal(dzi.MaxLevel, level);
     }
+
+    [Fact]
+    public void GetTileBounds_WithOverlap1_EdgeAndNonEdgeTiles()
+    {
+        // 1024x512, tileSize=256, overlap=1
+        var dzi = new DziTileSource(1024, 512, 256, 1, "jpg");
+        int maxLevel = dzi.MaxLevel;
+
+        // First tile (0,0): x=0, right=min(256+1,1024)=257 → width=257
+        var first = dzi.GetTileBounds(maxLevel, 0, 0);
+        Assert.Equal(0, first.X);
+        Assert.Equal(0, first.Y);
+        Assert.Equal(257, first.Width);
+        Assert.Equal(257, first.Height);
+
+        // Interior tile (1,0): x=1*256-1=255, right=min((1+1)*256+1,1024)=513 → width=258
+        var interior = dzi.GetTileBounds(maxLevel, 1, 0);
+        Assert.Equal(255, interior.X);
+        Assert.Equal(258, interior.Width);
+
+        // Last column tile (3,0): x=3*256-1=767, right=min((3+1)*256+1,1024)=1024 → width=257
+        var last = dzi.GetTileBounds(maxLevel, 3, 0);
+        Assert.Equal(767, last.X);
+        Assert.Equal(257, last.Width);
+    }
+
+    [Fact]
+    public void Parse_WithBaseUri_TileUrlsIncorporateBaseUri()
+    {
+        var xml = @"<Image TileSize=""256"" Overlap=""0"" Format=""png"" xmlns=""http://schemas.microsoft.com/deepzoom/2008""><Size Width=""512"" Height=""512""/></Image>";
+        var dzi = DziTileSource.Parse(xml, "https://cdn.example.com/myimage_files/");
+
+        Assert.Equal("https://cdn.example.com/myimage_files/", dzi.TilesBaseUri);
+        Assert.Equal("https://cdn.example.com/myimage_files/9/0_0.png", dzi.GetFullTileUrl(9, 0, 0));
+        Assert.Equal("https://cdn.example.com/myimage_files/5/2_1.png", dzi.GetFullTileUrl(5, 2, 1));
+    }
+
+    [Fact]
+    public void Parse_StreamWithBaseUri_SetsTilesBaseUri()
+    {
+        var xml = @"<Image TileSize=""254"" Overlap=""1"" Format=""jpg"" xmlns=""http://schemas.microsoft.com/deepzoom/2008""><Size Width=""800"" Height=""600""/></Image>";
+        using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xml));
+        var dzi = DziTileSource.Parse(stream, "file:///images/photo_files/");
+
+        Assert.Equal("file:///images/photo_files/", dzi.TilesBaseUri);
+        Assert.Equal(254, dzi.TileSize);
+        Assert.Equal(1, dzi.Overlap);
+        Assert.Equal("file:///images/photo_files/0/0_0.jpg", dzi.GetFullTileUrl(0, 0, 0));
+    }
 }

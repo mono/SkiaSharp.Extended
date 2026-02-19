@@ -177,4 +177,46 @@ public class DeepZoomRendererTest
         // Should not throw on double dispose
         renderer.Dispose();
     }
+
+    [Fact]
+    public void Render_CachedTile_CanvasIsNotAllWhite()
+    {
+        using var renderer = new DeepZoomRenderer();
+        using var surface = SKSurface.Create(new SKImageInfo(400, 400));
+
+        // 256x256 image, single tile at max level
+        var dzi = new DziTileSource(256, 256, 256, 0, "jpg");
+        dzi.TilesBaseUri = "http://test/";
+
+        var viewport = new Viewport
+        {
+            ControlWidth = 400,
+            ControlHeight = 400,
+            ViewportWidth = 1.0,
+            ViewportOriginX = 0,
+            ViewportOriginY = 0,
+            AspectRatio = 1.0
+        };
+        using var cache = new TileCache(10);
+        var scheduler = new TileScheduler();
+
+        // Create a magenta tile and add to cache
+        var tiles = scheduler.GetVisibleTiles(dzi, viewport);
+        Assert.NotEmpty(tiles);
+        var tileId = tiles[0].TileId;
+        var bmp = new SKBitmap(256, 256);
+        using (var c = new SKCanvas(bmp))
+            c.Clear(SKColors.Magenta);
+        cache.Put(tileId, bmp);
+
+        // Clear to white, then render
+        surface.Canvas.Clear(SKColors.White);
+        renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler);
+
+        // Verify center pixel is not white
+        using var snap = surface.Snapshot();
+        using var decoded = SKBitmap.Decode(snap.Encode(SKEncodedImageFormat.Png, 100));
+        var pixel = decoded.GetPixel(200, 200);
+        Assert.NotEqual(SKColors.White, pixel);
+    }
 }

@@ -379,4 +379,46 @@ public class ViewportTest
         Assert.True(vp.ViewportOriginX >= 0);
         Assert.True(vp.ViewportOriginY >= 0);
     }
+
+    [Fact]
+    public void Constrain_VeryWideAspectRatio_StaysWithinBounds()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 1920,
+            ControlHeight = 200,
+            AspectRatio = 10.0, // Very wide: logical height = 1/10 = 0.1
+            ViewportWidth = 0.5,
+            ViewportOriginX = 0.8,
+            ViewportOriginY = 0.5
+        };
+        vp.Constrain();
+
+        double imageLogicalHeight = 1.0 / 10.0;
+        Assert.True(vp.ViewportOriginX >= 0);
+        Assert.True(vp.ViewportOriginX + vp.ViewportWidth <= 1.001);
+        Assert.True(vp.ViewportOriginY >= 0);
+        Assert.True(vp.ViewportOriginY + vp.ViewportHeight <= imageLogicalHeight + 0.001);
+    }
+
+    [Fact]
+    public void Constrain_VeryTallAspectRatio_StaysWithinBounds()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 200,
+            ControlHeight = 1920,
+            AspectRatio = 0.1, // Very tall: logical height = 1/0.1 = 10
+            ViewportWidth = 0.5,
+            ViewportOriginX = 0.8,
+            ViewportOriginY = 15.0
+        };
+        vp.Constrain();
+
+        double imageLogicalHeight = 1.0 / 0.1;
+        Assert.True(vp.ViewportOriginX >= 0);
+        Assert.True(vp.ViewportOriginX + vp.ViewportWidth <= 1.001);
+        Assert.True(vp.ViewportOriginY >= 0);
+        Assert.True(vp.ViewportOriginY + vp.ViewportHeight <= imageLogicalHeight + 0.001);
+    }
 }

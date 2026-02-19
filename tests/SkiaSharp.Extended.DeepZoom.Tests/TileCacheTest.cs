@@ -149,4 +149,45 @@ public class TileCacheTest
         Assert.Throws<ArgumentOutOfRangeException>(() => new TileCache(0));
         Assert.Throws<ArgumentOutOfRangeException>(() => new TileCache(-1));
     }
+
+    [Fact]
+    public void LRU_MaxEntries3_Put4_EvictsOldestAndCountIs3()
+    {
+        using var cache = new TileCache(3);
+        var id0 = new TileId(0, 0, 0);
+        var id1 = new TileId(1, 0, 0);
+        var id2 = new TileId(2, 0, 0);
+        var id3 = new TileId(3, 0, 0);
+
+        cache.Put(id0, null);
+        cache.Put(id1, null);
+        cache.Put(id2, null);
+        cache.Put(id3, null);
+
+        Assert.Equal(3, cache.Count);
+        Assert.False(cache.Contains(id0));
+        Assert.True(cache.Contains(id1));
+        Assert.True(cache.Contains(id2));
+        Assert.True(cache.Contains(id3));
+    }
+
+    [Fact]
+    public void Put_UpdateExisting_CountStays1_ReturnsNewBitmap()
+    {
+        using var cache = new TileCache(10);
+        var id = new TileId(3, 1, 2);
+
+        var bmp1 = new SkiaSharp.SKBitmap(64, 64);
+        cache.Put(id, bmp1);
+        Assert.Equal(1, cache.Count);
+
+        var bmp2 = new SkiaSharp.SKBitmap(128, 128);
+        cache.Put(id, bmp2);
+        Assert.Equal(1, cache.Count);
+
+        Assert.True(cache.TryGet(id, out var result));
+        Assert.Equal(128, result!.Width);
+
+        bmp2.Dispose();
+    }
 }

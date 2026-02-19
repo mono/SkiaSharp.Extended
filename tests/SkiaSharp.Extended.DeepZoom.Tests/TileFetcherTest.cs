@@ -122,4 +122,37 @@ public class TileFetcherTest
         var fetcher = new FileTileFetcher();
         fetcher.Dispose();
     }
+
+    [Fact]
+    public async Task FileTileFetcher_NonexistentPath_ReturnsNull()
+    {
+        var fetcher = new FileTileFetcher();
+        var result = await fetcher.FetchTileAsync(Path.Combine(Path.GetTempPath(), "does_not_exist_" + Guid.NewGuid() + ".png"));
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task FileTileFetcher_ValidImagePath_ReturnsNonNullBitmap()
+    {
+        var fetcher = new FileTileFetcher();
+        var tmpPath = Path.Combine(Path.GetTempPath(), $"fetcher_valid_{Guid.NewGuid()}.png");
+        try
+        {
+            using var surface = SKSurface.Create(new SKImageInfo(32, 32));
+            surface.Canvas.Clear(SKColors.Green);
+            using var image = surface.Snapshot();
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            File.WriteAllBytes(tmpPath, data.ToArray());
+
+            var bitmap = await fetcher.FetchTileAsync(tmpPath);
+            Assert.NotNull(bitmap);
+            Assert.Equal(32, bitmap!.Width);
+            Assert.Equal(32, bitmap.Height);
+            bitmap.Dispose();
+        }
+        finally
+        {
+            File.Delete(tmpPath);
+        }
+    }
 }
