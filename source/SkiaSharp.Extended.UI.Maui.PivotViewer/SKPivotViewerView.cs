@@ -61,6 +61,15 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private Slider? _zoomSlider;
         private bool _suppressZoomSliderUpdate;
 
+        // Named event handlers for proper cleanup
+        private EventHandler? _onLayoutUpdated;
+        private EventHandler<SkiaSharp.Extended.PivotViewer.SelectionChangedEventArgs>? _onSelectionChanged;
+        private EventHandler? _onFiltersChanged;
+        private EventHandler? _onViewChanged;
+        private EventHandler? _onSortPropertyChanged;
+        private EventHandler? _onCollectionChanged;
+        private EventHandler<ValueChangedEventArgs>? _onZoomSliderValueChanged;
+
         public SKPivotViewerView()
         {
             _controller = new PivotViewerController();
@@ -72,6 +81,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _labelFont = new SKFont { Size = 14 };
 
             _canvasView = new SKCanvasView();
+            _canvasView.IgnorePixelScaling = true;
             _canvasView.PaintSurface += OnPaintSurface;
 
             // Search entry overlay for the filter pane
@@ -99,12 +109,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 HeightRequest = 30,
                 Margin = new Thickness(0, 6, DetailPaneWidth + 10, 0),
             };
-            _zoomSlider.ValueChanged += (s, e) =>
+            _onZoomSliderValueChanged = (s, e) =>
             {
                 if (_suppressZoomSliderUpdate) return;
                 _controller.ZoomLevel = e.NewValue;
                 _canvasView.InvalidateSurface();
             };
+            _zoomSlider.ValueChanged += _onZoomSliderValueChanged;
 
             var grid = new Grid();
             grid.Children.Add(_canvasView);
@@ -112,13 +123,15 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             grid.Children.Add(_zoomSlider);
             Content = grid;
 
-            // Wire controller events
-            _controller.LayoutUpdated += (s, e) =>
+            // Wire controller events using named handlers for proper cleanup
+            _onLayoutUpdated = (s, e) =>
             {
                 StartAnimationIfNeeded();
                 MainThread.BeginInvokeOnMainThread(() => _canvasView.InvalidateSurface());
             };
-            _controller.SelectionChanged += (s, e) =>
+            _controller.LayoutUpdated += _onLayoutUpdated;
+
+            _onSelectionChanged = (s, e) =>
             {
                 // Sync two-way bindable properties back from controller
                 _suppressPropertySync = true;
@@ -128,30 +141,39 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 SelectionChanged?.Invoke(this, e);
                 MainThread.BeginInvokeOnMainThread(() => _canvasView.InvalidateSurface());
             };
-            _controller.FiltersChanged += (s, e) =>
+            _controller.SelectionChanged += _onSelectionChanged;
+
+            _onFiltersChanged = (s, e) =>
             {
                 InvalidateHistogramCaches();
                 FilterChanged?.Invoke(this, EventArgs.Empty);
             };
-            _controller.ViewChanged += (s, e) =>
+            _controller.FiltersChanged += _onFiltersChanged;
+
+            _onViewChanged = (s, e) =>
             {
                 _suppressPropertySync = true;
                 SetValue(ViewProperty, _controller.CurrentView);
                 _suppressPropertySync = false;
                 ViewChanged?.Invoke(this, EventArgs.Empty);
             };
-            _controller.SortPropertyChanged += (s, e) =>
+            _controller.ViewChanged += _onViewChanged;
+
+            _onSortPropertyChanged = (s, e) =>
             {
                 _suppressPropertySync = true;
                 SetValue(SortPivotPropertyProperty, _controller.SortProperty);
                 _suppressPropertySync = false;
                 SortPivotPropertyChanged?.Invoke(this, EventArgs.Empty);
             };
-            _controller.CollectionChanged += (s, e) =>
+            _controller.SortPropertyChanged += _onSortPropertyChanged;
+
+            _onCollectionChanged = (s, e) =>
             {
                 InvalidateHistogramCaches();
                 CollectionChanged?.Invoke(this, EventArgs.Empty);
             };
+            _controller.CollectionChanged += _onCollectionChanged;
 
             SetupGestures();
 
@@ -1617,6 +1639,20 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 _animationTimer.Tick -= OnAnimationTick;
             }
             _canvasView.PaintSurface -= OnPaintSurface;
+
+            // Unsubscribe all controller events
+            if (_onLayoutUpdated != null) _controller.LayoutUpdated -= _onLayoutUpdated;
+            if (_onSelectionChanged != null) _controller.SelectionChanged -= _onSelectionChanged;
+            if (_onFiltersChanged != null) _controller.FiltersChanged -= _onFiltersChanged;
+            if (_onViewChanged != null) _controller.ViewChanged -= _onViewChanged;
+            if (_onSortPropertyChanged != null) _controller.SortPropertyChanged -= _onSortPropertyChanged;
+            if (_onCollectionChanged != null) _controller.CollectionChanged -= _onCollectionChanged;
+
+            // Unsubscribe UI control events
+            if (_searchEntry != null) _searchEntry.TextChanged -= OnSearchTextChanged;
+            if (_zoomSlider != null && _onZoomSliderValueChanged != null)
+                _zoomSlider.ValueChanged -= _onZoomSliderValueChanged;
+
             _controller.Dispose();
             _itemPaint.Dispose();
             _selectedPaint.Dispose();

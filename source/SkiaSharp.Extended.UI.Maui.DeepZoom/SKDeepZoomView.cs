@@ -26,6 +26,13 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         private double _lastPinchScale = 1.0;
         private float _dpiScale = 1f;
 
+        // Named event handlers for proper cleanup
+        private readonly EventHandler _onInvalidateRequired;
+        private readonly EventHandler _onMotionFinished;
+        private readonly EventHandler _onViewportChanged;
+        private readonly EventHandler _onImageOpenSucceeded;
+        private readonly EventHandler<Exception> _onImageOpenFailed;
+
         public SKDeepZoomView()
         {
             _controller = new DeepZoomController();
@@ -36,13 +43,19 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             _canvasView.PaintSurface += OnPaintSurface;
             Content = _canvasView;
 
-            // Wire up controller events
-            _controller.InvalidateRequired += (s, e) =>
+            // Wire up controller events using named handlers for proper cleanup
+            _onInvalidateRequired = (s, e) =>
                 MainThread.BeginInvokeOnMainThread(() => _canvasView.InvalidateSurface());
-            _controller.MotionFinished += (s, e) => MotionFinished?.Invoke(this, EventArgs.Empty);
-            _controller.ViewportChanged += (s, e) => ViewportChanged?.Invoke(this, EventArgs.Empty);
-            _controller.ImageOpenSucceeded += (s, e) => ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
-            _controller.ImageOpenFailed += (s, e) => ImageOpenFailed?.Invoke(this, e);
+            _onMotionFinished = (s, e) => MotionFinished?.Invoke(this, EventArgs.Empty);
+            _onViewportChanged = (s, e) => ViewportChanged?.Invoke(this, EventArgs.Empty);
+            _onImageOpenSucceeded = (s, e) => ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
+            _onImageOpenFailed = (s, e) => ImageOpenFailed?.Invoke(this, e);
+
+            _controller.InvalidateRequired += _onInvalidateRequired;
+            _controller.MotionFinished += _onMotionFinished;
+            _controller.ViewportChanged += _onViewportChanged;
+            _controller.ImageOpenSucceeded += _onImageOpenSucceeded;
+            _controller.ImageOpenFailed += _onImageOpenFailed;
 
             // Set up gestures
             SetupGestures();
@@ -250,6 +263,11 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             _disposed = true;
 
             _canvasView.PaintSurface -= OnPaintSurface;
+            _controller.InvalidateRequired -= _onInvalidateRequired;
+            _controller.MotionFinished -= _onMotionFinished;
+            _controller.ViewportChanged -= _onViewportChanged;
+            _controller.ImageOpenSucceeded -= _onImageOpenSucceeded;
+            _controller.ImageOpenFailed -= _onImageOpenFailed;
             _controller.Dispose();
         }
     }
