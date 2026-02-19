@@ -540,8 +540,8 @@ namespace SkiaSharp.Extended.PivotViewer
                         var baseUri = new Uri(hrefBase, UriKind.RelativeOrAbsolute);
                         if (baseUri.IsAbsoluteUri)
                             href = new Uri(baseUri, href).ToString();
-                        else
-                            href = hrefBase.TrimEnd('/') + "/" + href.TrimStart('/');
+                        else if (!href.StartsWith("/"))
+                            href = hrefBase.TrimEnd('/') + "/" + href;
                     }
                     var hrefProp = GetOrCreateProperty(properties, "Href", "Link");
                     item.Add(hrefProp, href);

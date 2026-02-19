@@ -1003,4 +1003,29 @@ public class CxmlCollectionSourceTest
         var href = item!.GetPropertyValue("Href");
         Assert.Equal("relative.html", href![0]?.ToString());
     }
+
+    [Fact]
+    public void Parse_RelativeHrefBase_WithAbsolutePathHref_PreservesHref()
+    {
+        var xml = @"<?xml version='1.0'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            Name='Test'>
+  <FacetCategories/>
+  <Items HrefBase='relative/base'>
+    <Item Id='1' Name='A' Href='/page.html'/>
+    <Item Id='2' Name='B' Href='other.html'/>
+  </Items>
+</Collection>";
+        var source = CxmlCollectionSource.Parse(xml);
+
+        // Href starting with / is absolute path — should not be modified
+        var item1 = source.GetItemById("1");
+        var href1 = item1!.GetPropertyValue("Href");
+        Assert.Equal("/page.html", href1![0]?.ToString());
+
+        // Relative href should be concatenated with HrefBase
+        var item2 = source.GetItemById("2");
+        var href2 = item2!.GetPropertyValue("Href");
+        Assert.Equal("relative/base/other.html", href2![0]?.ToString());
+    }
 }

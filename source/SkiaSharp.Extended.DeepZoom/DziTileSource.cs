@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
@@ -50,6 +51,12 @@ namespace SkiaSharp.Extended.DeepZoom
 
         /// <summary>Image aspect ratio (width / height).</summary>
         public double AspectRatio => (double)ImageWidth / ImageHeight;
+
+        /// <summary>
+        /// Display rectangles for sparse images. If empty, the image is not sparse
+        /// and all pixels are available at all levels.
+        /// </summary>
+        public IReadOnlyList<DisplayRect> DisplayRects { get; internal set; } = Array.Empty<DisplayRect>();
 
         /// <summary>
         /// Gets or sets the base URI used to resolve tile URLs.
@@ -210,6 +217,31 @@ namespace SkiaSharp.Extended.DeepZoom
 
             var source = new DziTileSource(width, height, tileSize, overlap, format);
             source.TilesBaseUri = baseUri;
+
+            // Parse optional DisplayRects (sparse image support)
+            var displayRectsElement = imageElement.Element(ns + "DisplayRects");
+            if (displayRectsElement != null)
+            {
+                var rects = new List<DisplayRect>();
+                foreach (var drElement in displayRectsElement.Elements(ns + "DisplayRect"))
+                {
+                    int minLevel = int.Parse(drElement.Attribute("MinLevel")?.Value ?? "0");
+                    int maxLevel = int.Parse(drElement.Attribute("MaxLevel")?.Value ?? "0");
+
+                    var rectElement = drElement.Element(ns + "Rect");
+                    if (rectElement != null)
+                    {
+                        int rx = int.Parse(rectElement.Attribute("X")?.Value ?? "0");
+                        int ry = int.Parse(rectElement.Attribute("Y")?.Value ?? "0");
+                        int rw = int.Parse(rectElement.Attribute("Width")?.Value ?? "0");
+                        int rh = int.Parse(rectElement.Attribute("Height")?.Value ?? "0");
+                        rects.Add(new DisplayRect(rx, ry, rw, rh, minLevel, maxLevel));
+                    }
+                }
+
+                source.DisplayRects = rects.AsReadOnly();
+            }
+
             return source;
         }
     }

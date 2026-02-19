@@ -512,4 +512,117 @@ public class DziTileSourceTest
         Assert.Equal(1, dzi.GetLevelWidth(0));
         Assert.Equal(1, dzi.GetLevelHeight(0));
     }
+
+    [Fact]
+    public void Parse_WithDisplayRects_ParsesSparseImage()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Image TileSize=""256"" Overlap=""1"" Format=""jpg"" xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+    <Size Width=""1024"" Height=""768""/>
+    <DisplayRects>
+        <DisplayRect MinLevel=""3"" MaxLevel=""8"">
+            <Rect X=""100"" Y=""200"" Width=""400"" Height=""300""/>
+        </DisplayRect>
+        <DisplayRect MinLevel=""5"" MaxLevel=""10"">
+            <Rect X=""0"" Y=""0"" Width=""1024"" Height=""768""/>
+        </DisplayRect>
+    </DisplayRects>
+</Image>";
+
+        var dzi = DziTileSource.Parse(xml);
+
+        Assert.Equal(2, dzi.DisplayRects.Count);
+
+        Assert.Equal(100, dzi.DisplayRects[0].X);
+        Assert.Equal(200, dzi.DisplayRects[0].Y);
+        Assert.Equal(400, dzi.DisplayRects[0].Width);
+        Assert.Equal(300, dzi.DisplayRects[0].Height);
+        Assert.Equal(3, dzi.DisplayRects[0].MinLevel);
+        Assert.Equal(8, dzi.DisplayRects[0].MaxLevel);
+
+        Assert.Equal(0, dzi.DisplayRects[1].X);
+        Assert.Equal(0, dzi.DisplayRects[1].Y);
+        Assert.Equal(1024, dzi.DisplayRects[1].Width);
+        Assert.Equal(768, dzi.DisplayRects[1].Height);
+        Assert.Equal(5, dzi.DisplayRects[1].MinLevel);
+        Assert.Equal(10, dzi.DisplayRects[1].MaxLevel);
+    }
+
+    [Fact]
+    public void Parse_WithoutDisplayRects_ReturnsEmptyList()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Image TileSize=""256"" Overlap=""1"" Format=""jpg"" xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+    <Size Width=""1024"" Height=""768""/>
+</Image>";
+
+        var dzi = DziTileSource.Parse(xml);
+
+        Assert.Empty(dzi.DisplayRects);
+    }
+
+    [Fact]
+    public void Parse_DisplayRects_2009Namespace()
+    {
+        var xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Image TileSize=""256"" Overlap=""0"" Format=""png"" xmlns=""http://schemas.microsoft.com/deepzoom/2009"">
+    <Size Width=""512"" Height=""512""/>
+    <DisplayRects>
+        <DisplayRect MinLevel=""0"" MaxLevel=""9"">
+            <Rect X=""10"" Y=""20"" Width=""100"" Height=""50""/>
+        </DisplayRect>
+    </DisplayRects>
+</Image>";
+
+        var dzi = DziTileSource.Parse(xml);
+
+        Assert.Single(dzi.DisplayRects);
+        Assert.Equal(10, dzi.DisplayRects[0].X);
+        Assert.Equal(20, dzi.DisplayRects[0].Y);
+        Assert.Equal(100, dzi.DisplayRects[0].Width);
+        Assert.Equal(50, dzi.DisplayRects[0].Height);
+        Assert.Equal(0, dzi.DisplayRects[0].MinLevel);
+        Assert.Equal(9, dzi.DisplayRects[0].MaxLevel);
+    }
+
+    [Fact]
+    public void DisplayRect_IsVisibleAtLevel_ReturnsCorrectly()
+    {
+        var rect = new DisplayRect(0, 0, 100, 100, 3, 8);
+
+        Assert.False(rect.IsVisibleAtLevel(2));
+        Assert.True(rect.IsVisibleAtLevel(3));
+        Assert.True(rect.IsVisibleAtLevel(5));
+        Assert.True(rect.IsVisibleAtLevel(8));
+        Assert.False(rect.IsVisibleAtLevel(9));
+    }
+
+    [Fact]
+    public void DisplayRect_Equality()
+    {
+        var a = new DisplayRect(10, 20, 100, 200, 3, 8);
+        var b = new DisplayRect(10, 20, 100, 200, 3, 8);
+        var c = new DisplayRect(10, 20, 100, 200, 4, 8);
+
+        Assert.True(a == b);
+        Assert.False(a == c);
+        Assert.True(a != c);
+        Assert.Equal(a, b);
+        Assert.NotEqual(a, c);
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+    }
+
+    [Fact]
+    public void DisplayRect_ToString()
+    {
+        var rect = new DisplayRect(10, 20, 300, 400, 3, 8);
+        Assert.Equal("DisplayRect(10, 20, 300x400, Levels 3-8)", rect.ToString());
+    }
+
+    [Fact]
+    public void Constructor_DefaultDisplayRects_IsEmpty()
+    {
+        var dzi = new DziTileSource(1024, 768, 256, 1, "jpg");
+        Assert.Empty(dzi.DisplayRects);
+    }
 }
