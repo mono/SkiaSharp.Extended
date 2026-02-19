@@ -297,36 +297,48 @@ namespace SkiaSharp.Extended.PivotViewer
 
             SelectedItem = item;
 
-            var bounds = GetItemBounds(item);
-            if (bounds.Width <= 0 || bounds.Height <= 0) return;
+            // Compute item bounds at zoom=0 to get the true "fit all" width
+            double savedZoom = _zoomLevel;
+            _zoomLevel = 0;
+            UpdateLayout();
+            var fitAllBounds = GetItemBounds(item);
 
-            // Calculate zoom level that would make this item fill ~80% of the viewport
-            double scaleX = _availableWidth * 0.8 / bounds.Width;
-            double scaleY = _availableHeight * 0.8 / bounds.Height;
-            double targetScale = Math.Min(scaleX, scaleY);
-
-            // Current item size at current zoom determines the zoom delta needed
-            double fitAllItemWidth = bounds.Width;
-            double singleItemWidth = _availableWidth;
-            if (fitAllItemWidth > 0 && singleItemWidth > fitAllItemWidth)
+            if (fitAllBounds.Width <= 0 || fitAllBounds.Height <= 0)
             {
-                double desiredZoom = (targetScale * fitAllItemWidth - fitAllItemWidth) / (singleItemWidth - fitAllItemWidth);
+                _zoomLevel = savedZoom;
+                UpdateLayout();
+                return;
+            }
+
+            // How much we need to scale the fit-all size to fill 80% of viewport
+            double targetWidth = _availableWidth * 0.8;
+            double targetHeight = _availableHeight * 0.8;
+            double scaleNeeded = Math.Min(targetWidth / fitAllBounds.Width, targetHeight / fitAllBounds.Height);
+
+            // At zoom=0, item width = fitAllBounds.Width
+            // At zoom=1, item width ≈ _availableWidth (one item fills view)
+            // Linear interpolation: itemWidth(z) = fitAll*(1-z) + available*z
+            // Solve for z: scaleNeeded * fitAll = fitAll*(1-z) + available*z
+            //              scaleNeeded * fitAll - fitAll = z * (available - fitAll)
+            //              z = (scaleNeeded - 1) * fitAll / (available - fitAll)
+            double denominator = _availableWidth - fitAllBounds.Width;
+            if (denominator > 1)
+            {
+                double desiredZoom = (scaleNeeded - 1) * fitAllBounds.Width / denominator;
                 _zoomLevel = Math.Max(0.0, Math.Min(1.0, desiredZoom));
             }
             else
             {
-                _zoomLevel = 0.5;
+                // Item already fills the viewport at zoom=0, just center it
+                _zoomLevel = 0;
             }
 
             UpdateLayout();
 
-            // Recalculate bounds after layout update and center on the item
-            bounds = GetItemBounds(item);
-            double itemCenterX = bounds.X + bounds.Width / 2;
-            double itemCenterY = bounds.Y + bounds.Height / 2;
-
-            _panOffsetX = _availableWidth / 2 - itemCenterX;
-            _panOffsetY = _availableHeight / 2 - itemCenterY;
+            // Center on the item
+            var bounds = GetItemBounds(item);
+            _panOffsetX = _availableWidth / 2 - (bounds.X + bounds.Width / 2);
+            _panOffsetY = _availableHeight / 2 - (bounds.Y + bounds.Height / 2);
             LayoutUpdated?.Invoke(this, EventArgs.Empty);
         }
 
@@ -726,7 +738,9 @@ namespace SkiaSharp.Extended.PivotViewer
                     return string.Compare(valA.ToString(), valB.ToString(), StringComparison.OrdinalIgnoreCase);
                 });
 
-                _inScopeItems = _sortDescending ? sortedList.AsEnumerable().Reverse().ToList() : sortedList;
+                if (_sortDescending)
+                    sortedList.Reverse();
+                _inScopeItems = sortedList;
             }
             else
             {
