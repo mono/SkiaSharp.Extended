@@ -464,6 +464,31 @@ namespace SkiaSharp.Extended.PivotViewer
         }
 
         /// <summary>
+        /// Refreshes the current collection by re-processing all items.
+        /// Preserves the current sort and view, but clears filters and selection.
+        /// If loaded from CXML, re-reads from the stored source.
+        /// </summary>
+        public void Refresh()
+        {
+            if (_collectionSource != null)
+            {
+                _allItems = new List<PivotViewerItem>(_collectionSource.Items);
+                _properties = new List<PivotViewerProperty>(_collectionSource.ItemProperties);
+            }
+
+            _filterEngine.SetSource(_allItems, _properties);
+            _filterEngine.ClearAll();
+            _wordWheel.Build(_allItems, _properties);
+            ApplySearchFilter();
+
+            _filterPaneModel = new FilterPaneModel(_filterEngine, _properties);
+            _selectedItem = null;
+
+            UpdateInScopeItems();
+            CollectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
         /// Sets the available size for layout computation.
         /// </summary>
         public void SetAvailableSize(double width, double height)

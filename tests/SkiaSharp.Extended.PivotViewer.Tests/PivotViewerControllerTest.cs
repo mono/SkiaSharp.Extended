@@ -2220,4 +2220,56 @@ public class PivotViewerControllerTest
         var (controller, _) = CreateTestController();
         Assert.Throws<ArgumentNullException>(() => controller.ZoomToItem(null!));
     }
+
+    [Fact]
+    public void Refresh_ClearsFiltersAndSelection()
+    {
+        var (controller, _) = CreateTestController();
+        int totalCount = controller.InScopeItems.Count;
+
+        // Apply a filter and select an item
+        var firstProp = controller.Properties.First(p => p.PropertyType == PivotViewerPropertyType.Text);
+        var firstVal = controller.InScopeItems
+            .Select(i => i[firstProp.Id])
+            .Where(v => v != null && v.Count > 0)
+            .Select(v => v![0]?.ToString())
+            .Where(s => !string.IsNullOrEmpty(s))
+            .First();
+        controller.FilterEngine.AddStringFilter(firstProp.Id, firstVal!);
+        controller.SelectedItem = controller.InScopeItems.First();
+        Assert.True(controller.InScopeItems.Count < totalCount);
+
+        // Refresh clears filters and selection
+        controller.Refresh();
+        Assert.Null(controller.SelectedItem);
+        Assert.Equal(totalCount, controller.InScopeItems.Count);
+    }
+
+    [Fact]
+    public void Refresh_PreservesSortAndView()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SortProperty = controller.Properties.First();
+        controller.SortDescending = true;
+        controller.CurrentView = "graph";
+
+        controller.Refresh();
+
+        // Sort and view should be preserved
+        Assert.NotNull(controller.SortProperty);
+        Assert.True(controller.SortDescending);
+        Assert.Equal("graph", controller.CurrentView);
+    }
+
+    [Fact]
+    public void Refresh_FiresCollectionChanged()
+    {
+        var (controller, _) = CreateTestController();
+        bool fired = false;
+        controller.CollectionChanged += (s, e) => fired = true;
+
+        controller.Refresh();
+        Assert.True(fired);
+    }
 }
