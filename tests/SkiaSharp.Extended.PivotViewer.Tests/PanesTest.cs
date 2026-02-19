@@ -301,4 +301,28 @@ public class PanesTest
         Assert.Single(facets);
         Assert.Equal("3.14", facets[0].Values[0]);
     }
+
+    [Fact]
+    public void FacetDisplay_StoresProperties()
+    {
+        var prop = new PivotViewerStringProperty("color") { DisplayName = "Color" };
+        var values = new List<string> { "Red", "Blue" };
+        var facet = new FacetDisplay("Color", values, prop);
+
+        Assert.Equal("Color", facet.DisplayName);
+        Assert.Equal(2, facet.Values.Count);
+        Assert.Contains("Red", facet.Values);
+        Assert.Contains("Blue", facet.Values);
+        Assert.Same(prop, facet.Property);
+    }
+
+    [Fact]
+    public void FacetDisplay_EmptyValues()
+    {
+        var prop = new PivotViewerNumericProperty("year") { DisplayName = "Year" };
+        var facet = new FacetDisplay("Year", Array.Empty<string>(), prop);
+
+        Assert.Equal("Year", facet.DisplayName);
+        Assert.Empty(facet.Values);
+    }
 }

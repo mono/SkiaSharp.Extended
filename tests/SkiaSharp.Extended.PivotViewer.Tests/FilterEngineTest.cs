@@ -333,4 +333,195 @@ public class FilterEngineTest
         engine.ClearAll();
         Assert.Equal(2, engine.GetFilteredItems().Count);
     }
+
+    // --- Tests for previously untested public methods ---
+
+    [Fact]
+    public void RemoveAllFilters_ClearsPropertyFilters()
+    {
+        var (engine, items, _) = CreateTestData();
+        engine.AddStringFilter("Category", "Sports");
+        Assert.Equal(2, engine.GetFilteredItems().Count);
+
+        engine.RemoveAllFilters("Category");
+        Assert.Equal(4, engine.GetFilteredItems().Count);
+    }
+
+    [Fact]
+    public void RemoveAllFilters_LeavesOtherPropertyFiltersIntact()
+    {
+        var (engine, items, _) = CreateTestData();
+        engine.AddStringFilter("Category", "Sports");
+        engine.AddNumericRangeFilter("Year", 2000, 2003);
+
+        engine.RemoveAllFilters("Category");
+
+        // Year filter still active: 2001, 2002 pass
+        var filtered = engine.GetFilteredItems();
+        Assert.Equal(2, filtered.Count);
+        Assert.All(filtered, i => Assert.True(
+            ((double)(i["Year"]![0]!)) <= 2003));
+    }
+
+    [Fact]
+    public void RemoveAllFilters_NonexistentProperty_NoOp()
+    {
+        var (engine, items, _) = CreateTestData();
+        engine.AddStringFilter("Category", "Sports");
+
+        engine.RemoveAllFilters("Nonexistent");
+
+        // Original filter still active
+        Assert.Equal(2, engine.GetFilteredItems().Count);
+    }
+
+    [Fact]
+    public void GetActiveFilters_AfterRemoveAllFilters_ReturnsEmpty()
+    {
+        var (engine, items, _) = CreateTestData();
+        engine.AddStringFilter("Category", "Sports");
+        engine.AddStringFilter("Category", "Electric");
+        Assert.Equal(2, engine.GetActiveFilters("Category").Count);
+
+        engine.RemoveAllFilters("Category");
+        Assert.Empty(engine.GetActiveFilters("Category"));
+    }
+
+    [Fact]
+    public void ComputeNumericHistogram_SingleValue_ReturnsSingleBucket()
+    {
+        var prop = new PivotViewerNumericProperty("Val") { DisplayName = "Val" };
+        var items = new List<PivotViewerItem>();
+        for (int j = 0; j < 5; j++)
+        {
+            var item = new PivotViewerItem(j.ToString());
+            item.Set(prop, new object[] { 42.0 });
+            items.Add(item);
+        }
+        var engine = new FilterEngine();
+        engine.SetSource(items, new[] { prop });
+
+        var buckets = engine.ComputeNumericHistogram("Val", items);
+        Assert.Single(buckets);
+        Assert.Equal(5, buckets[0].Count);
+    }
+
+    [Fact]
+    public void ComputeNumericHistogram_EmptyItems_ReturnsEmpty()
+    {
+        var prop = new PivotViewerNumericProperty("Val") { DisplayName = "Val" };
+        var engine = new FilterEngine();
+        engine.SetSource(Array.Empty<PivotViewerItem>(), new[] { prop });
+
+        var buckets = engine.ComputeNumericHistogram("Val", Array.Empty<PivotViewerItem>().ToList());
+        Assert.Empty(buckets);
+    }
+
+    [Fact]
+    public void StringFilterPredicate_RemoveValue_NarrowsFilter()
+    {
+        var pred = new StringFilterPredicate("Category");
+        pred.AddValue("Sports");
+        pred.AddValue("Electric");
+        Assert.Equal(2, pred.Values.Count);
+
+        pred.RemoveValue("Sports");
+        Assert.Single(pred.Values);
+        Assert.Contains("Electric", pred.Values);
+    }
+
+    [Fact]
+    public void StringFilterPredicate_RemoveValue_NonexistentIsNoOp()
+    {
+        var pred = new StringFilterPredicate("Category");
+        pred.AddValue("Sports");
+
+        pred.RemoveValue("Nonexistent");
+        Assert.Single(pred.Values);
+    }
+
+    [Fact]
+    public void StringFilterPredicate_Matches_EmptyValues_MatchesAll()
+    {
+        var pred = new StringFilterPredicate("Category");
+        var item = new PivotViewerItem("1");
+        item.Set(new PivotViewerStringProperty("Category"), new object[] { "Sports" });
+
+        Assert.True(pred.Matches(item));
+    }
+
+    [Fact]
+    public void StringFilterPredicate_Matches_NullItemValues_ReturnsFalse()
+    {
+        var pred = new StringFilterPredicate("Category");
+        pred.AddValue("Sports");
+        var item = new PivotViewerItem("1");
+
+        Assert.False(pred.Matches(item));
+    }
+
+    [Fact]
+    public void NumericRangeFilterPredicate_Matches_InRange()
+    {
+        var pred = new NumericRangeFilterPredicate("Year", 2000, 2010);
+        var item = new PivotViewerItem("1");
+        item.Set(new PivotViewerNumericProperty("Year"), new object[] { 2005.0 });
+
+        Assert.True(pred.Matches(item));
+    }
+
+    [Fact]
+    public void NumericRangeFilterPredicate_Matches_OutOfRange()
+    {
+        var pred = new NumericRangeFilterPredicate("Year", 2000, 2010);
+        var item = new PivotViewerItem("1");
+        item.Set(new PivotViewerNumericProperty("Year"), new object[] { 2015.0 });
+
+        Assert.False(pred.Matches(item));
+    }
+
+    [Fact]
+    public void NumericRangeFilterPredicate_Matches_BoundaryValues()
+    {
+        var pred = new NumericRangeFilterPredicate("Val", 10.0, 20.0);
+        var itemMin = new PivotViewerItem("1");
+        itemMin.Set(new PivotViewerNumericProperty("Val"), new object[] { 10.0 });
+        var itemMax = new PivotViewerItem("2");
+        itemMax.Set(new PivotViewerNumericProperty("Val"), new object[] { 20.0 });
+
+        Assert.True(pred.Matches(itemMin));
+        Assert.True(pred.Matches(itemMax));
+    }
+
+    [Fact]
+    public void DateTimeRangeFilterPredicate_Matches_InRange()
+    {
+        var pred = new DateTimeRangeFilterPredicate("Date",
+            new DateTime(2023, 1, 1), new DateTime(2023, 12, 31));
+        var item = new PivotViewerItem("1");
+        item.Set(new PivotViewerDateTimeProperty("Date"), new object[] { new DateTime(2023, 6, 15) });
+
+        Assert.True(pred.Matches(item));
+    }
+
+    [Fact]
+    public void DateTimeRangeFilterPredicate_Matches_OutOfRange()
+    {
+        var pred = new DateTimeRangeFilterPredicate("Date",
+            new DateTime(2023, 1, 1), new DateTime(2023, 12, 31));
+        var item = new PivotViewerItem("1");
+        item.Set(new PivotViewerDateTimeProperty("Date"), new object[] { new DateTime(2024, 6, 15) });
+
+        Assert.False(pred.Matches(item));
+    }
+
+    [Fact]
+    public void HistogramBucket_StoresProperties()
+    {
+        var bucket = new HistogramBucket("10–20", 10.0, 20.0, 5);
+        Assert.Equal("10–20", bucket.Label);
+        Assert.Equal(10.0, bucket.Min);
+        Assert.Equal(20.0, bucket.Max);
+        Assert.Equal(5, bucket.Count);
+    }
 }

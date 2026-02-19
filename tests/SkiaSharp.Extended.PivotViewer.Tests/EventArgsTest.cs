@@ -104,4 +104,30 @@ public class EventArgsTest
         public bool CanExecute(object? parameter) => true;
         public void Execute(object? parameter) { }
     }
+
+    [Fact]
+    public void SelectionChangedEventArgs_StoresOldAndNew()
+    {
+        var oldItem = new PivotViewerItem("old");
+        var newItem = new PivotViewerItem("new");
+        var args = new SelectionChangedEventArgs(oldItem, newItem);
+
+        Assert.Same(oldItem, args.OldItem);
+        Assert.Same(newItem, args.NewItem);
+    }
+
+    [Fact]
+    public void SelectionChangedEventArgs_AllowsNulls()
+    {
+        var args = new SelectionChangedEventArgs(null, null);
+        Assert.Null(args.OldItem);
+        Assert.Null(args.NewItem);
+    }
+
+    [Fact]
+    public void SelectionChangedEventArgs_InheritsFromEventArgs()
+    {
+        var args = new SelectionChangedEventArgs(null, new PivotViewerItem("1"));
+        Assert.IsAssignableFrom<EventArgs>(args);
+    }
 }
