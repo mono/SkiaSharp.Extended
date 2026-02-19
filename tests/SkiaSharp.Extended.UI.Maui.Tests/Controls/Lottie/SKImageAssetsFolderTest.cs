@@ -2,6 +2,14 @@ using Xunit;
 
 namespace SkiaSharp.Extended.UI.Controls.Tests;
 
+/// <summary>
+/// Tests for the ImageAssetsFolder property on SKLottieImageSource.
+/// 
+/// NOTE: These tests use file system paths (TestAssets/Lottie) which work because
+/// test assets are copied to the output directory. In a real MAUI app, external
+/// image assets currently need to be extracted from app package resources to the
+/// file system before they can be loaded by FileResourceProvider.
+/// </summary>
 public class SKImageAssetsFolderTest
 {
 	private const string WithImagesJson = "TestAssets/Lottie/with-images.json";

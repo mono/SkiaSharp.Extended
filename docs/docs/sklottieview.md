@@ -32,8 +32,18 @@ The `SKLottieImageSource` and its derived classes support the following property
 
 Lottie animations can reference external image files that are stored separately from the animation JSON. To use external images:
 
-1. Place your image files in a folder in your project (e.g., `Resources/Raw/images/`)
+1. Place your image files in a folder accessible via the file system
 2. Set the `ImageAssetsFolder` property on the `Source` to the folder path where the images are located
+
+> [!IMPORTANT]
+> **Current Limitation**: The `ImageAssetsFolder` property currently only works with file system paths and cannot access MAUI app package resources (files in `Resources/Raw`). This is because the underlying `FileResourceProvider` from SkiaSharp.Resources uses standard file I/O and does not support `FileSystem.OpenAppPackageFileAsync()`.
+>
+> **Workaround Options**:
+> - Use absolute file system paths where images are extracted/copied at runtime
+> - Embed images as base64 data URIs directly in the Lottie JSON file
+> - Wait for a future update when custom ResourceProvider inheritance is supported
+>
+> This limitation is being tracked and will be addressed in a future update when SkiaSharp.Resources allows custom ResourceProvider implementations.
 
 ### Example in XAML
 
@@ -42,7 +52,7 @@ Lottie animations can reference external image files that are stored separately 
     <controls:SKLottieView.Source>
         <controls:SKFileLottieImageSource 
             File="animations/myanimation.json"
-            ImageAssetsFolder="animations/images" />
+            ImageAssetsFolder="/data/user/0/com.yourapp/files/images" />
     </controls:SKLottieView.Source>
 </controls:SKLottieView>
 ```
@@ -50,12 +60,24 @@ Lottie animations can reference external image files that are stored separately 
 ### Example in C#
 
 ```csharp
+// Example: Extract images from app package to file system
+var imagesPath = Path.Combine(FileSystem.AppDataDirectory, "lottie_images");
+Directory.CreateDirectory(imagesPath);
+
+// Copy image files from app package to file system
+// (You would need to do this for each image your animation references)
+using (var sourceStream = await FileSystem.OpenAppPackageFileAsync("animations/images/img_0.png"))
+using (var destStream = File.Create(Path.Combine(imagesPath, "img_0.png")))
+{
+    await sourceStream.CopyToAsync(destStream);
+}
+
 var lottieView = new SKLottieView
 {
     Source = new SKFileLottieImageSource
     {
         File = "animations/myanimation.json",
-        ImageAssetsFolder = "animations/images"
+        ImageAssetsFolder = imagesPath
     }
 };
 ```

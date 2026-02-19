@@ -36,6 +36,14 @@ public abstract class SKLottieImageSource : Element
 			// DataUriResourceProvider first handles base64 embedded images (data: URIs)
 			// FileResourceProvider (fallback) loads external image files from the specified folder
 			// This allows animations to use both embedded and external images
+			//
+			// LIMITATION: FileResourceProvider uses standard file system I/O and cannot access
+			// MAUI app package resources (FileSystem.OpenAppPackageFileAsync). Images must be
+			// in an accessible file system location. A custom ResourceProvider would be needed
+			// to support app package resources, but ResourceProvider does not currently allow
+			// inheritance (Load methods are not virtual/abstract).
+			// TODO: Once SkiaSharp.Resources.ResourceProvider supports inheritance, create a
+			// custom provider that uses FileSystem.OpenAppPackageFileAsync for MAUI apps.
 			resourceProvider = new CachingResourceProvider(
 				new DataUriResourceProvider(
 					new FileResourceProvider(ImageAssetsFolder)));
