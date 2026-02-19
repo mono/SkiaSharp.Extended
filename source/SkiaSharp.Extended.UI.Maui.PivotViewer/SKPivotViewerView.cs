@@ -355,8 +355,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private static void OnItemsSourceChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is SKPivotViewerView view && newValue is IEnumerable<PivotViewerItem> items)
+            if (bindable is SKPivotViewerView view)
             {
+                var items = newValue as IEnumerable<PivotViewerItem> ?? Enumerable.Empty<PivotViewerItem>();
                 var props = view.PivotProperties ?? Enumerable.Empty<PivotViewerProperty>();
                 view._controller.LoadItems(items, props);
                 view._canvasView.InvalidateSurface();
@@ -365,9 +366,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private static void OnPivotPropertiesChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            if (bindable is SKPivotViewerView view && newValue is IEnumerable<PivotViewerProperty> props)
+            if (bindable is SKPivotViewerView view)
             {
                 var items = view.ItemsSource ?? Enumerable.Empty<PivotViewerItem>();
+                var props = newValue as IEnumerable<PivotViewerProperty> ?? Enumerable.Empty<PivotViewerProperty>();
                 view._controller.LoadItems(items, props);
                 view._canvasView.InvalidateSurface();
             }
