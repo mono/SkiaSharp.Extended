@@ -104,6 +104,12 @@ namespace SkiaSharp.Extended.DeepZoom
         {
             lock (_lock)
             {
+                if (_disposed)
+                {
+                    bitmap?.Dispose();
+                    return;
+                }
+
                 if (_map.TryGetValue(id, out var existing))
                 {
                     // Update existing entry — defer old bitmap disposal

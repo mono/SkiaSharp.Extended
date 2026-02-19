@@ -258,9 +258,10 @@ namespace SkiaSharp.Extended.PivotViewer
                 // at (worldX, worldY) may have shifted. Adjust pan offset.
                 double oldScale = 1.0 - oldZoom;
                 double newScale = 1.0 - newZoom;
-                if (oldScale > 1e-6)
+                if (newScale > 1e-6)
                 {
-                    double zoomRatio = newScale / oldScale;
+                    // World coords scale as 1/(1-zoom), so ratio = oldScale/newScale
+                    double zoomRatio = oldScale / newScale;
                     double newWorldX = worldX * zoomRatio;
                     double newWorldY = worldY * zoomRatio;
                     _panOffsetX += worldX - newWorldX;
