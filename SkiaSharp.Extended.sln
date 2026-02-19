@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkiaSharp.Extended.UI.Maui.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkiaSharp.Extended.UI.Maui.DeepZoom", "source\SkiaSharp.Extended.UI.Maui.DeepZoom\SkiaSharp.Extended.UI.Maui.DeepZoom.csproj", "{2E15CADA-4F93-4F6F-8BB3-8D13E26ED94F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiDeepZoom", "samples\MauiDeepZoom\MauiDeepZoom.csproj", "{231CCBB4-1767-4884-91EF-3B585B5E16F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -189,6 +191,18 @@ Global
 		{2E15CADA-4F93-4F6F-8BB3-8D13E26ED94F}.Release|x64.Build.0 = Release|Any CPU
 		{2E15CADA-4F93-4F6F-8BB3-8D13E26ED94F}.Release|x86.ActiveCfg = Release|Any CPU
 		{2E15CADA-4F93-4F6F-8BB3-8D13E26ED94F}.Release|x86.Build.0 = Release|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Debug|x64.Build.0 = Debug|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Debug|x86.Build.0 = Debug|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Release|x64.ActiveCfg = Release|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Release|x64.Build.0 = Release|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Release|x86.ActiveCfg = Release|Any CPU
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -206,6 +220,7 @@ Global
 		{46BD5BE3-DCEC-4751-BB53-86B4C7FA4652} = {51B0C2C7-732B-4A5C-A4F2-55655D147866}
 		{F1CCF25B-22E5-41A2-943A-0A307EC885C5} = {51B0C2C7-732B-4A5C-A4F2-55655D147866}
 		{2E15CADA-4F93-4F6F-8BB3-8D13E26ED94F} = {51B0C2C7-732B-4A5C-A4F2-55655D147866}
+		{231CCBB4-1767-4884-91EF-3B585B5E16F8} = {51B0C2C7-732B-4A5C-A4F2-55655D147866}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08D78153-5DD7-4C52-A348-46AA448B2CFC}
