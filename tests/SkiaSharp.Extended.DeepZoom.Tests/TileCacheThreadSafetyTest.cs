@@ -126,4 +126,304 @@ public class TileCacheThreadSafetyTest
         // Should be in valid state (not corrupted)
         Assert.True(cache.Count >= 0);
     }
+
+    /// <summary>
+    /// Stress test for Dispose/Put race condition.
+    /// This test aggressively exercises Put() and Dispose() concurrently
+    /// to verify thread safety when disposing while items are being added.
+    /// </summary>
+    [Fact]
+    public async Task ConcurrentDisposeAndPut_NoExceptionsOrLeaks()
+    {
+        var cache = new TileCache(100);
+        var lockObj = new object();
+        var exceptions = new List<Exception>();
+
+        // Pre-populate the cache to give it some initial state
+        for (int i = 0; i < 50; i++)
+        {
+            cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+        }
+
+        var tasks = new List<Task>();
+
+        // Multiple threads aggressively putting items
+        for (int threadId = 0; threadId < 5; threadId++)
+        {
+            int localThreadId = threadId;
+            tasks.Add(Task.Run(() =>
+            {
+                try
+                {
+                    for (int i = 0; i < 1000; i++)
+                    {
+                        var tileId = new TileId(localThreadId * 1000 + i, i % 10, i % 5);
+                        var bmp = new SKBitmap(10, 10);
+                        cache.Put(tileId, bmp);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lock (lockObj)
+                        exceptions.Add(ex);
+                }
+            }));
+        }
+
+        // Another thread reading from cache
+        tasks.Add(Task.Run(() =>
+        {
+            try
+            {
+                for (int i = 0; i < 500; i++)
+                {
+                    var tileId = new TileId(i % 100, 0, 0);
+                    cache.TryGet(tileId, out _);
+                    Thread.Yield();
+                }
+            }
+            catch (Exception ex)
+            {
+                lock (lockObj)
+                    exceptions.Add(ex);
+            }
+        }));
+
+        // Single thread flushing evicted items periodically
+        tasks.Add(Task.Run(() =>
+        {
+            try
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    cache.FlushEvicted();
+                    Thread.Sleep(1);
+                }
+            }
+            catch (Exception ex)
+            {
+                lock (lockObj)
+                    exceptions.Add(ex);
+            }
+        }));
+
+        // The key part: Dispose is called while Put is happening
+        var disposeTask = Task.Delay(50).ContinueWith(_ =>
+        {
+            try
+            {
+                cache.Dispose();
+            }
+            catch (Exception ex)
+            {
+                lock (lockObj)
+                    exceptions.Add(ex);
+            }
+        });
+        tasks.Add(disposeTask);
+
+        // Continue trying to Put items even after Dispose starts
+        // This should not throw; Put should handle this gracefully
+        tasks.Add(Task.Run(() =>
+        {
+            try
+            {
+                // Wait a bit to let Dispose start
+                Thread.Sleep(60);
+                for (int i = 0; i < 500; i++)
+                {
+                    var tileId = new TileId(5000 + i, 0, 0);
+                    var bmp = new SKBitmap(10, 10);
+                    cache.Put(tileId, bmp);
+                }
+            }
+            catch (Exception ex)
+            {
+                lock (lockObj)
+                    exceptions.Add(ex);
+            }
+        }));
+
+        // Wait for all tasks to complete
+        await Task.WhenAll(tasks);
+
+        // Final flush to clean up any remaining pending disposals
+        cache.FlushEvicted();
+
+        // Verify no exceptions occurred during concurrent access
+        Assert.Empty(exceptions);
+
+        // After dispose, cache should be empty
+        Assert.Equal(0, cache.Count);
+
+        // Verify that the cache state is valid (no corruption)
+        // Attempting to access or modify after dispose should be safe
+        cache.Put(new TileId(9999, 0, 0), new SKBitmap(10, 10));
+        Assert.Equal(0, cache.Count); // Should still be empty since disposed
+
+        // Final flush should not throw
+        cache.FlushEvicted();
+    }
+
+    /// <summary>
+    /// Verifies that items added during Dispose are properly cleaned up
+    /// and don't leak resources.
+    /// </summary>
+    [Fact]
+    public async Task PutDuringDispose_ItemsAreCleanedUp()
+    {
+        var cache = new TileCache(50);
+        var disposeStartedEvent = new ManualResetEvent(false);
+
+        // Pre-populate
+        for (int i = 0; i < 20; i++)
+        {
+            cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+        }
+
+        // Start Dispose in one thread
+        var disposeTask = Task.Run(() =>
+        {
+            disposeStartedEvent.Set();
+            cache.Dispose();
+        });
+
+        // Wait for dispose to start
+        disposeStartedEvent.WaitOne();
+        Thread.Sleep(10); // Let dispose get into the lock
+
+        // Try to add items while dispose is happening
+        var putTask = Task.Run(() =>
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                try
+                {
+                    var bmp = new SKBitmap(10, 10);
+                    cache.Put(new TileId(100 + i, 0, 0), bmp);
+                }
+                catch (ObjectDisposedException)
+                {
+                    // This is acceptable - cache was disposed
+                    break;
+                }
+            }
+        });
+
+        await Task.WhenAll(disposeTask, putTask);
+
+        // Cache should be empty after dispose
+        Assert.Equal(0, cache.Count);
+
+        // FlushEvicted should complete without issues
+        cache.FlushEvicted();
+    }
+
+    /// <summary>
+    /// Extreme stress test: rapid alternation between Put and Dispose
+    /// to catch race conditions in the _disposed flag check.
+    /// </summary>
+    [Fact]
+    public async Task RapidDisposePutCycles_NoRaceConditions()
+    {
+        var exceptions = new List<Exception>();
+        var lockObj = new object();
+
+        // Run multiple rounds of rapid Dispose/Put cycles
+        for (int round = 0; round < 10; round++)
+        {
+            var cache = new TileCache(50);
+
+            // Pre-populate
+            for (int i = 0; i < 20; i++)
+                cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+
+            var tasks = new List<Task>();
+
+            // Aggressive putters
+            for (int threadId = 0; threadId < 3; threadId++)
+            {
+                int localThreadId = threadId;
+                tasks.Add(Task.Run(() =>
+                {
+                    try
+                    {
+                        for (int i = 0; i < 200; i++)
+                        {
+                            var bmp = new SKBitmap(10, 10);
+                            cache.Put(new TileId(localThreadId * 200 + i, 0, 0), bmp);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        lock (lockObj)
+                            exceptions.Add(ex);
+                    }
+                }));
+            }
+
+            // Occasional flush
+            tasks.Add(Task.Run(() =>
+            {
+                for (int i = 0; i < 50; i++)
+                {
+                    cache.FlushEvicted();
+                    Thread.Sleep(1);
+                }
+            }));
+
+            // Dispose
+            tasks.Add(Task.Run(() =>
+            {
+                Thread.Sleep(50);
+                cache.Dispose();
+            }));
+
+            await Task.WhenAll(tasks);
+        }
+
+        Assert.Empty(exceptions);
+    }
+
+    /// <summary>
+    /// Verifies that FlushEvicted is safe to call after Dispose.
+    /// </summary>
+    [Fact]
+    public void FlushEvicted_AfterDispose_IsNoOp()
+    {
+        var cache = new TileCache(50);
+
+        // Add some items that will be evicted
+        for (int i = 0; i < 100; i++)
+            cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+
+        // Dispose the cache (should clear everything and pending disposals)
+        cache.Dispose();
+
+        // FlushEvicted after dispose should not throw
+        var ex = Record.Exception(() => cache.FlushEvicted());
+        Assert.Null(ex);
+    }
+
+    /// <summary>
+    /// Verifies that concurrent Dispose calls are safe.
+    /// </summary>
+    [Fact]
+    public async Task ConcurrentDispose_DoesNotThrow()
+    {
+        var cache = new TileCache(50);
+
+        // Add some items
+        for (int i = 0; i < 30; i++)
+            cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+
+        var tasks = Enumerable.Range(0, 10).Select(i =>
+            Task.Run(() =>
+            {
+                cache.Dispose();
+            }));
+
+        var ex = await Record.ExceptionAsync(async () => await Task.WhenAll(tasks));
+        Assert.Null(ex);
+    }
 }

@@ -449,4 +449,79 @@ public class DzcTileSourceTest
         Assert.Equal(16, dzc.ItemCount);
         Assert.Equal(4, dzc.GetMortonGridSize());
     }
+
+    // --- Additional MortonToGrid tests ---
+
+    [Fact]
+    public void MortonToGrid_LargeIndices()
+    {
+        // Index 8 → (0,2), Index 9 → (1,2), Index 10 → (0,3), Index 15 → (3,3)
+        Assert.Equal((0, 2), DzcTileSource.MortonToGrid(8));
+        Assert.Equal((1, 2), DzcTileSource.MortonToGrid(9));
+        Assert.Equal((0, 3), DzcTileSource.MortonToGrid(10));
+        Assert.Equal((3, 3), DzcTileSource.MortonToGrid(15));
+    }
+
+    [Fact]
+    public void MortonToGrid_PowerOfFourIndices()
+    {
+        // Powers of 4 map to increasing columns: 4^n → col=2^n, row=0
+        // 16 = 4^2, deinterleave: bit4 → col bit 2 → col=4, row=0
+        var (c16, r16) = DzcTileSource.MortonToGrid(16);
+        Assert.Equal(4, c16);
+        Assert.Equal(0, r16);
+    }
+
+    // --- Additional GetMortonGridSize tests ---
+
+    [Fact]
+    public void GetMortonGridSize_SingleItem_Returns1()
+    {
+        var xml = @"<Collection MaxLevel=""7"" TileSize=""256"" Format=""jpg""
+            xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+            <Items><I Id=""0"" N=""0""><Size Width=""100"" Height=""100"" /></I></Items>
+        </Collection>";
+        var dzc = DzcTileSource.Parse(xml);
+        Assert.Equal(1, dzc.GetMortonGridSize());
+    }
+
+    [Fact]
+    public void GetMortonGridSize_FiveItems_Returns4()
+    {
+        // 5 items → ceil(sqrt(5)) ≈ 3, ceil(log2(3)) = 2, 2^2 = 4
+        var items = string.Join("\n",
+            Enumerable.Range(0, 5).Select(i =>
+                $"<I Id=\"{i}\" N=\"{i}\"><Size Width=\"100\" Height=\"100\" /></I>"));
+        var xml = $@"<Collection MaxLevel=""7"" TileSize=""256"" Format=""jpg""
+            xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+            <Items>{items}</Items>
+        </Collection>";
+        var dzc = DzcTileSource.Parse(xml);
+        Assert.Equal(4, dzc.GetMortonGridSize());
+    }
+
+    [Fact]
+    public void GetMortonGridSize_TwoItems_Returns2()
+    {
+        var items = string.Join("\n",
+            Enumerable.Range(0, 2).Select(i =>
+                $"<I Id=\"{i}\" N=\"{i}\"><Size Width=\"100\" Height=\"100\" /></I>"));
+        var xml = $@"<Collection MaxLevel=""7"" TileSize=""256"" Format=""jpg""
+            xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+            <Items>{items}</Items>
+        </Collection>";
+        var dzc = DzcTileSource.Parse(xml);
+        Assert.Equal(2, dzc.GetMortonGridSize());
+    }
+
+    // --- Additional GetCompositeTileUrl tests ---
+
+    [Fact]
+    public void GetCompositeTileUrl_MatchesDziTileUrlFormat()
+    {
+        var dzc = new DzcTileSource(8, 256, "jpg", Array.Empty<DzcSubImage>());
+        // URL format should match "{level}/{col}_{row}.{format}"
+        Assert.Equal("0/0_0.jpg", dzc.GetCompositeTileUrl(0, 0, 0));
+        Assert.Equal("8/255_127.jpg", dzc.GetCompositeTileUrl(8, 255, 127));
+    }
 }

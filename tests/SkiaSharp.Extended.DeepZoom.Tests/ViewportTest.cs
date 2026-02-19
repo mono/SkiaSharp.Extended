@@ -518,4 +518,152 @@ public class ViewportTest
         Assert.Equal(0.3, vp.ViewportOriginY, 6);
         Assert.True(vp.ViewportOriginY + vp.ViewportHeight <= imageLogicalHeight + 1e-9);
     }
+
+    // --- Additional Constrain tests ---
+
+    [Fact]
+    public void Constrain_SquareAspect_ClampsOriginXAndY()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 500,
+            ControlHeight = 500,
+            AspectRatio = 1.0,
+            ViewportWidth = 0.25,
+            ViewportOriginX = 0.9,
+            ViewportOriginY = 0.9
+        };
+        vp.Constrain();
+        Assert.Equal(0.75, vp.ViewportOriginX, 6);
+        Assert.Equal(0.75, vp.ViewportOriginY, 6);
+    }
+
+    [Fact]
+    public void Constrain_ViewportExactlyFitsImage_OriginIsZero()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 800,
+            AspectRatio = 1.0,
+            ViewportWidth = 1.0,
+            ViewportOriginX = 0.0,
+            ViewportOriginY = 0.0
+        };
+        vp.Constrain();
+        Assert.Equal(0.0, vp.ViewportOriginX);
+        Assert.Equal(0.0, vp.ViewportOriginY);
+    }
+
+    // --- Additional GetLogicalBounds tests ---
+
+    [Fact]
+    public void GetLogicalBounds_ZoomedIn4x_ReturnsQuarterWidth()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 1000,
+            ControlHeight = 1000,
+            ViewportWidth = 0.25,
+            ViewportOriginX = 0.1,
+            ViewportOriginY = 0.2
+        };
+        var (left, top, right, bottom) = vp.GetLogicalBounds();
+        Assert.Equal(0.1, left, 6);
+        Assert.Equal(0.2, top, 6);
+        Assert.Equal(0.35, right, 6);
+        Assert.Equal(0.45, bottom, 6);
+    }
+
+    [Fact]
+    public void GetLogicalBounds_WidthEqualsHeight_SquareViewport()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 400,
+            ControlHeight = 400,
+            ViewportWidth = 1.0,
+            ViewportOriginX = 0.0,
+            ViewportOriginY = 0.0
+        };
+        var (left, top, right, bottom) = vp.GetLogicalBounds();
+        Assert.Equal(0.0, left);
+        Assert.Equal(0.0, top);
+        Assert.Equal(1.0, right);
+        Assert.Equal(1.0, bottom, 6);
+    }
+
+    // --- Additional ElementToLogicalPoint tests ---
+
+    [Fact]
+    public void ElementToLogicalPoint_WithOffset_ConvertsCorrectly()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            ViewportWidth = 0.5,
+            ViewportOriginX = 0.25,
+            ViewportOriginY = 0.1
+        };
+        // Scale = 800/0.5 = 1600
+        var (lx, ly) = vp.ElementToLogicalPoint(160, 80);
+        Assert.Equal(0.35, lx, 6); // 0.25 + 160/1600
+        Assert.Equal(0.15, ly, 6); // 0.1 + 80/1600
+    }
+
+    [Fact]
+    public void ElementToLogicalPoint_BottomRightCorner()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            ViewportWidth = 1.0,
+            ViewportOriginX = 0.0,
+            ViewportOriginY = 0.0
+        };
+        var (lx, ly) = vp.ElementToLogicalPoint(800, 600);
+        Assert.Equal(1.0, lx, 6);
+        Assert.Equal(0.75, ly, 6);
+    }
+
+    // --- Additional GetZoomRect tests ---
+
+    [Fact]
+    public void GetZoomRect_HalfWidth_ReturnsHalfSizeRect()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            AspectRatio = 2.0,
+            ViewportWidth = 0.5,
+            ViewportOriginX = 0.1,
+            ViewportOriginY = 0.05
+        };
+        var (x, y, w, h) = vp.GetZoomRect(0.5);
+        Assert.Equal(0.1, x, 6);
+        Assert.Equal(0.05, y, 6);
+        Assert.Equal(0.5, w, 6);
+        Assert.Equal(0.25, h, 6); // 0.5 / 2.0
+    }
+
+    [Fact]
+    public void GetZoomRect_DifferentViewportWidthParam_UsesParam()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            AspectRatio = 1.0,
+            ViewportWidth = 0.5,
+            ViewportOriginX = 0.0,
+            ViewportOriginY = 0.0
+        };
+        // Pass a different viewportWidth than what the viewport currently has
+        var (x, y, w, h) = vp.GetZoomRect(0.25);
+        Assert.Equal(0.25, w, 6);
+        Assert.Equal(0.25, h, 6);
+    }
 }

@@ -2009,4 +2009,117 @@ public class PivotViewerControllerTest
         Assert.True(Math.Abs(panX) > 0.01 || Math.Abs(panY) > 0.01,
             "Pan offset should be adjusted to preserve zoom center");
     }
+
+    // --- InScopeItemsChanged event ---
+
+    [Fact]
+    public void InScopeItemsChanged_FiresWhenFilterAdded()
+    {
+        var (controller, _) = CreateTestController();
+        bool fired = false;
+        controller.InScopeItemsChanged += (s, e) => fired = true;
+
+        controller.FilterEngine.AddStringFilter("Manufacturer", "Alfa Romeo");
+        Assert.True(fired, "InScopeItemsChanged should fire when a filter is added");
+    }
+
+    [Fact]
+    public void InScopeItemsChanged_FiresWhenFilterCleared()
+    {
+        var (controller, _) = CreateTestController();
+        controller.FilterEngine.AddStringFilter("Manufacturer", "Alfa Romeo");
+
+        bool fired = false;
+        controller.InScopeItemsChanged += (s, e) => fired = true;
+
+        controller.FilterEngine.ClearAllFilters();
+        Assert.True(fired, "InScopeItemsChanged should fire when filters are cleared");
+    }
+
+    [Fact]
+    public void InScopeItemsChanged_FiresWhenSearchTextSet()
+    {
+        var (controller, _) = CreateTestController();
+        bool fired = false;
+        controller.InScopeItemsChanged += (s, e) => fired = true;
+
+        controller.SearchText = "Ford";
+        Assert.True(fired, "InScopeItemsChanged should fire when search text changes");
+    }
+
+    [Fact]
+    public void InScopeItemsChanged_ReducesInScopeCount()
+    {
+        var (controller, _) = CreateTestController();
+        int originalCount = controller.InScopeItems.Count;
+        int newCount = -1;
+        controller.InScopeItemsChanged += (s, e) => newCount = controller.InScopeItems.Count;
+
+        controller.FilterEngine.AddStringFilter("Manufacturer", "Alfa Romeo");
+        Assert.True(newCount > 0 && newCount < originalCount,
+            $"In-scope count ({newCount}) should be less than original ({originalCount})");
+    }
+
+    // --- Additional MergeSupplementalData scenario via controller ---
+
+    [Fact]
+    public void MergeSupplementalData_MultipleNewProperties_AllAdded()
+    {
+        var mainXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Main'>
+    <FacetCategories>
+        <FacetCategory Name='Name' Type='String' />
+    </FacetCategories>
+    <Items>
+        <Item Id='1' Name='Alpha'>
+            <Facets><Facet Name='Name'><String Value='Alpha'/></Facet></Facets>
+        </Item>
+        <Item Id='2' Name='Beta'>
+            <Facets><Facet Name='Name'><String Value='Beta'/></Facet></Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var suppXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Supplement'>
+    <FacetCategories>
+        <FacetCategory Name='Desc' Type='LongString' />
+        <FacetCategory Name='Rating' Type='Number' />
+    </FacetCategories>
+    <Items>
+        <Item Id='1'>
+            <Facets>
+                <Facet Name='Desc'><String Value='Description for Alpha'/></Facet>
+                <Facet Name='Rating'><Number Value='4.5'/></Facet>
+            </Facets>
+        </Item>
+        <Item Id='2'>
+            <Facets>
+                <Facet Name='Rating'><Number Value='3.0'/></Facet>
+            </Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var main = CxmlCollectionSource.Parse(mainXml);
+        var supp = CxmlCollectionSource.Parse(suppXml);
+        int propCountBefore = main.ItemProperties.Count;
+        main.MergeSupplementalData(supp);
+
+        // Two new properties should be added
+        Assert.Equal(propCountBefore + 2, main.ItemProperties.Count);
+
+        var item1 = main.GetItemById("1");
+        Assert.NotNull(item1!["Desc"]);
+        Assert.Equal("Description for Alpha", item1["Desc"]![0]?.ToString());
+        Assert.Equal(4.5, (double)item1["Rating"]![0]!);
+
+        var item2 = main.GetItemById("2");
+        Assert.Null(item2!["Desc"]); // item2 didn't have Desc in supplement
+        Assert.Equal(3.0, (double)item2["Rating"]![0]!);
+    }
 }

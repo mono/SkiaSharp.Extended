@@ -399,4 +399,79 @@ public class DziTileSourceTest
         Assert.Equal(1, dzi.Overlap);
         Assert.Equal("file:///images/photo_files/0/0_0.jpg", dzi.GetFullTileUrl(0, 0, 0));
     }
+
+    // --- Additional GetTileCountX/Y tests at different levels ---
+
+    [Fact]
+    public void GetTileCountX_Level0_AlwaysReturns1()
+    {
+        var dzi = new DziTileSource(4096, 2048, 256, 0, "jpg");
+        Assert.Equal(1, dzi.GetTileCountX(0));
+        Assert.Equal(1, dzi.GetTileCountY(0));
+    }
+
+    [Fact]
+    public void GetTileCountX_NonPowerOfTwo_CeilsCorrectly()
+    {
+        // 1000 pixels / 256 tiles = ceil(3.906) = 4
+        var dzi = new DziTileSource(1000, 750, 256, 0, "jpg");
+        Assert.Equal(4, dzi.GetTileCountX(dzi.MaxLevel));
+        Assert.Equal(3, dzi.GetTileCountY(dzi.MaxLevel)); // ceil(750/256) = 3
+    }
+
+    [Fact]
+    public void GetTileCountXY_AtLowerLevels_DecreaseCorrectly()
+    {
+        var dzi = new DziTileSource(2048, 2048, 256, 0, "jpg");
+        // MaxLevel = 11, level width = 2048, tiles = 8
+        Assert.Equal(8, dzi.GetTileCountX(dzi.MaxLevel));
+        // Level MaxLevel-1: width = 1024, tiles = 4
+        Assert.Equal(4, dzi.GetTileCountX(dzi.MaxLevel - 1));
+        // Level MaxLevel-2: width = 512, tiles = 2
+        Assert.Equal(2, dzi.GetTileCountX(dzi.MaxLevel - 2));
+    }
+
+    // --- Additional GetOptimalLevel tests ---
+
+    [Fact]
+    public void GetOptimalLevel_LargeControlWidth_ReturnsHigherLevel()
+    {
+        var dzi = new DziTileSource(4096, 4096, 256, 0, "jpg");
+        int levelSmall = dzi.GetOptimalLevel(1.0, 256);
+        int levelLarge = dzi.GetOptimalLevel(1.0, 2048);
+        Assert.True(levelLarge >= levelSmall,
+            $"Larger control ({levelLarge}) should use >= level than smaller ({levelSmall})");
+    }
+
+    [Fact]
+    public void GetOptimalLevel_ExactMatchTileSize_ReturnsExpectedLevel()
+    {
+        // 256x256 image, tileSize=256. MaxLevel = 8
+        var dzi = new DziTileSource(256, 256, 256, 0, "jpg");
+        // viewportWidth=1.0, controlWidth=256 → neededWidth=256 → level 8
+        int level = dzi.GetOptimalLevel(1.0, 256);
+        Assert.Equal(dzi.MaxLevel, level);
+    }
+
+    // --- Additional GetLevelWidth/Height edge cases ---
+
+    [Fact]
+    public void GetLevelWidth_OddDimensions_CeilsCorrectly()
+    {
+        var dzi = new DziTileSource(999, 501, 256, 0, "jpg");
+        int max = dzi.MaxLevel;
+        Assert.Equal(999, dzi.GetLevelWidth(max));
+        Assert.Equal(501, dzi.GetLevelHeight(max));
+        // Level max-1: ceil(999/2) = 500, ceil(501/2) = 251
+        Assert.Equal(500, dzi.GetLevelWidth(max - 1));
+        Assert.Equal(251, dzi.GetLevelHeight(max - 1));
+    }
+
+    [Fact]
+    public void GetLevelWidth_TinyImage_Level0Is1()
+    {
+        var dzi = new DziTileSource(3, 5, 256, 0, "jpg");
+        Assert.Equal(1, dzi.GetLevelWidth(0));
+        Assert.Equal(1, dzi.GetLevelHeight(0));
+    }
 }

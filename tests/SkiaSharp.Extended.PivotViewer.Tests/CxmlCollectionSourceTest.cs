@@ -829,4 +829,102 @@ public class CxmlCollectionSourceTest
         Assert.IsType<double>(scoreValues![0]);
         Assert.Equal(42.5, (double)scoreValues[0]!);
     }
+
+    // --- Additional MergeSupplementalData tests ---
+
+    [Fact]
+    public void MergeSupplementalData_AddsNewPropertyDefinitions()
+    {
+        var mainXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Main'>
+    <FacetCategories>
+        <FacetCategory Name='Name' Type='String' />
+    </FacetCategories>
+    <Items>
+        <Item Id='1' Name='Alpha'>
+            <Facets><Facet Name='Name'><String Value='Alpha'/></Facet></Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var suppXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Supplement'>
+    <FacetCategories>
+        <FacetCategory Name='Weight' Type='Number' />
+    </FacetCategories>
+    <Items>
+        <Item Id='1'>
+            <Facets><Facet Name='Weight'><Number Value='10.5'/></Facet></Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var main = CxmlCollectionSource.Parse(mainXml);
+        var supp = CxmlCollectionSource.Parse(suppXml);
+        main.MergeSupplementalData(supp);
+
+        // Weight property should now exist in the property list
+        var weightProp = main.GetPivotPropertyById("Weight");
+        Assert.NotNull(weightProp);
+        Assert.IsType<PivotViewerNumericProperty>(weightProp);
+    }
+
+    [Fact]
+    public void MergeSupplementalData_MultipleItemsWithMultipleValues()
+    {
+        var mainXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Main'>
+    <FacetCategories>
+        <FacetCategory Name='Name' Type='String' />
+    </FacetCategories>
+    <Items>
+        <Item Id='A' Name='Item A'>
+            <Facets><Facet Name='Name'><String Value='A'/></Facet></Facets>
+        </Item>
+        <Item Id='B' Name='Item B'>
+            <Facets><Facet Name='Name'><String Value='B'/></Facet></Facets>
+        </Item>
+        <Item Id='C' Name='Item C'>
+            <Facets><Facet Name='Name'><String Value='C'/></Facet></Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var suppXml = @"<?xml version='1.0' encoding='utf-8'?>
+<Collection xmlns='http://schemas.microsoft.com/collection/metadata/2009'
+            xmlns:p='http://schemas.microsoft.com/livelabs/pivot/collection/2009'
+            Name='Supp'>
+    <FacetCategories>
+        <FacetCategory Name='Tags' Type='String' />
+    </FacetCategories>
+    <Items>
+        <Item Id='A'>
+            <Facets><Facet Name='Tags'><String Value='X'/><String Value='Y'/></Facet></Facets>
+        </Item>
+        <Item Id='C'>
+            <Facets><Facet Name='Tags'><String Value='Z'/></Facet></Facets>
+        </Item>
+    </Items>
+</Collection>";
+
+        var main = CxmlCollectionSource.Parse(mainXml);
+        var supp = CxmlCollectionSource.Parse(suppXml);
+        main.MergeSupplementalData(supp);
+
+        var itemA = main.GetItemById("A");
+        Assert.Equal(2, itemA!["Tags"]!.Count);
+
+        var itemB = main.GetItemById("B");
+        Assert.Null(itemB!["Tags"]); // B not in supplement
+
+        var itemC = main.GetItemById("C");
+        Assert.Single(itemC!["Tags"]!);
+        Assert.Equal("Z", itemC["Tags"]![0]?.ToString());
+    }
 }

@@ -300,4 +300,79 @@ public class TileSchedulerTest
         Assert.True(srcW > 0);
         Assert.True(srcH > 0);
     }
+
+    // --- Additional FindBestFallback tests ---
+
+    [Fact]
+    public void FindBestFallback_MinLevel_RespectsMinimum()
+    {
+        var cache = new TileCache(100);
+        var scheduler = new TileScheduler();
+
+        // Add tile at level 1
+        var level1 = new TileId(1, 0, 0);
+        cache.Put(level1, new SKBitmap(256, 256));
+
+        // Request level 5, but set minLevel=3 — should not find level 1
+        var childId = new TileId(5, 0, 0);
+        var fallback = scheduler.FindBestFallback(childId, cache, minLevel: 3);
+        Assert.Null(fallback);
+
+        // Same request with minLevel=0 — should find level 1
+        fallback = scheduler.FindBestFallback(childId, cache, minLevel: 0);
+        Assert.NotNull(fallback);
+        Assert.Equal(1, fallback!.Value.Level);
+        cache.Dispose();
+    }
+
+    [Fact]
+    public void FindBestFallback_Level0Requested_ReturnsNull()
+    {
+        var cache = new TileCache(100);
+        var scheduler = new TileScheduler();
+
+        // No parent exists below level 0
+        var tileId = new TileId(0, 0, 0);
+        var fallback = scheduler.FindBestFallback(tileId, cache);
+        Assert.Null(fallback);
+        cache.Dispose();
+    }
+
+    // --- Additional GetFallbackSourceRect tests ---
+
+    [Fact]
+    public void GetFallbackSourceRect_TwoLevelDiff_QuarterSize()
+    {
+        // 2 levels up means scale=4, so child should map to ~1/4 of parent
+        var dzi = new DziTileSource(1024, 1024, 256, 0, "jpg");
+        var scheduler = new TileScheduler();
+
+        var parent = new TileId(7, 0, 0);
+        var child = new TileId(9, 0, 0); // 2 levels deeper, same position
+
+        var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(child, parent, dzi);
+
+        Assert.Equal(0, srcX, 1);
+        Assert.Equal(0, srcY, 1);
+        // At 2 levels difference, child size / 4 should fit within parent
+        Assert.True(srcW > 0);
+        Assert.True(srcH > 0);
+        Assert.True(srcW <= 256);
+        Assert.True(srcH <= 256);
+    }
+
+    [Fact]
+    public void GetFallbackSourceRect_ChildInBottomRightQuadrant_HasPositiveOffset()
+    {
+        var dzi = new DziTileSource(1024, 1024, 256, 0, "jpg");
+        var scheduler = new TileScheduler();
+
+        var parent = new TileId(8, 0, 0);
+        var child = new TileId(9, 1, 1); // bottom-right quadrant of parent (0,0)
+
+        var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(child, parent, dzi);
+
+        Assert.True(srcX > 0, "Child in bottom-right quadrant should have positive srcX");
+        Assert.True(srcY > 0, "Child in bottom-right quadrant should have positive srcY");
+    }
 }
