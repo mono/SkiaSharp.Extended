@@ -277,6 +277,7 @@ namespace SkiaSharp.Extended.PivotViewer
         public event EventHandler? ViewChanged;
         public event EventHandler? CollectionChanged;
         public event EventHandler? LayoutUpdated;
+        public event EventHandler<PivotViewerItemDoubleClickEventArgs>? ItemDoubleClicked;
 
         // --- Methods ---
 
@@ -346,6 +347,16 @@ namespace SkiaSharp.Extended.PivotViewer
                 return _currentHistogramLayout.HitTest(x, y);
 
             return _currentGridLayout?.HitTest(x, y);
+        }
+
+        /// <summary>
+        /// Notifies the controller that an item was double-clicked.
+        /// Raises the <see cref="ItemDoubleClicked"/> event.
+        /// </summary>
+        public void NotifyItemDoubleClicked(PivotViewerItem item)
+        {
+            if (item == null) return;
+            ItemDoubleClicked?.Invoke(this, new PivotViewerItemDoubleClickEventArgs(item));
         }
 
         /// <summary>

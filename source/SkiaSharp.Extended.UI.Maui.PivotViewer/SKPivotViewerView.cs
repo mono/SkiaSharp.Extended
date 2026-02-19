@@ -1492,6 +1492,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             if (hit != null)
             {
                 _controller.SelectedItem = hit;
+                _controller.NotifyItemDoubleClicked(hit);
                 ItemDoubleClick?.Invoke(this, hit);
 
                 // Zoom toward the tapped item (+0.3 zoom level)

@@ -60,6 +60,9 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>Collection name from CXML.</summary>
         public string? Name { get; private set; }
 
+        /// <summary>CXML schema version (e.g., "1.0").</summary>
+        public string? SchemaVersion { get; private set; }
+
         /// <summary>Brand image URI from CXML.</summary>
         public Uri? BrandImage { get; private set; }
 
@@ -261,6 +264,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
                 // Parse collection-level attributes
                 source.Name = collectionElement.Attribute("Name")?.Value;
+                source.SchemaVersion = collectionElement.Attribute("SchemaVersion")?.Value;
                 source.Icon = collectionElement.Attribute(PivotNs + "Icon")?.Value;
 
                 var supplementAttr = collectionElement.Attribute(PivotNs + "Supplement");
