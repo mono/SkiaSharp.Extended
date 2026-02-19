@@ -134,7 +134,10 @@ namespace SkiaSharp.Extended.PivotViewer
             // We find the lowest level where the image fits in a single tile (0_0)
             // and is at least targetSize pixels.
             var source = subImage.Source!;
-            var filesDir = source.Replace(".dzi", "_files");
+            // Robustly construct the _files directory path
+            var filesDir = source.EndsWith(".dzi", StringComparison.OrdinalIgnoreCase)
+                ? source.Substring(0, source.Length - 4) + "_files"
+                : source + "_files";
 
             // Use DZC-level defaults for format/tileSize.
             // For better compatibility with external collections, try both jpg and png.

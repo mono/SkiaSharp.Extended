@@ -38,6 +38,7 @@ namespace SkiaSharp.Extended.PivotViewer
         private double _panOffsetY;
         private string _searchText = "";
         private HashSet<string>? _textFilteredItemIds;
+        private IReadOnlyList<PivotViewerItem>? _searchFilteredItemsCache;
 
         public PivotViewerController()
         {
@@ -60,9 +61,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
         /// <summary>Items filtered by search text only (before facet filtering). Used for filter pane counts.</summary>
         public IReadOnlyList<PivotViewerItem> SearchFilteredItems =>
-            _textFilteredItemIds != null
-                ? _allItems.Where(i => _textFilteredItemIds.Contains(i.Id)).ToList()
-                : _allItems;
+            _searchFilteredItemsCache ?? _allItems;
 
         /// <summary>Items currently in scope (after filtering).</summary>
         public IReadOnlyList<PivotViewerItem> InScopeItems => _inScopeItems;
@@ -488,11 +487,13 @@ namespace SkiaSharp.Extended.PivotViewer
             if (string.IsNullOrWhiteSpace(_searchText))
             {
                 _textFilteredItemIds = null;
+                _searchFilteredItemsCache = null; // null = use _allItems
             }
             else
             {
                 var matchingItems = _wordWheel.GetMatchingItems(_searchText);
                 _textFilteredItemIds = new HashSet<string>(matchingItems.Select(i => i.Id));
+                _searchFilteredItemsCache = _allItems.Where(i => _textFilteredItemIds.Contains(i.Id)).ToList();
             }
             UpdateInScopeItems();
             FiltersChanged?.Invoke(this, EventArgs.Empty);
