@@ -297,18 +297,18 @@ namespace SkiaSharp.Extended.PivotViewer
 
             SelectedItem = item;
 
+            // Cancel any active transition so GetItemBounds reads final positions
+            _layoutTransition.CancelTransition();
+
             // Compute item bounds at zoom=0 to get the true "fit all" width
-            double savedZoom = _zoomLevel;
             _zoomLevel = 0;
             UpdateLayout();
+            _layoutTransition.CancelTransition(); // snap to final layout immediately
+
             var fitAllBounds = GetItemBounds(item);
 
             if (fitAllBounds.Width <= 0 || fitAllBounds.Height <= 0)
-            {
-                _zoomLevel = savedZoom;
-                UpdateLayout();
                 return;
-            }
 
             // How much we need to scale the fit-all size to fill 80% of viewport
             double targetWidth = _availableWidth * 0.8;
@@ -317,10 +317,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
             // At zoom=0, item width = fitAllBounds.Width
             // At zoom=1, item width ≈ _availableWidth (one item fills view)
-            // Linear interpolation: itemWidth(z) = fitAll*(1-z) + available*z
             // Solve for z: scaleNeeded * fitAll = fitAll*(1-z) + available*z
-            //              scaleNeeded * fitAll - fitAll = z * (available - fitAll)
-            //              z = (scaleNeeded - 1) * fitAll / (available - fitAll)
             double denominator = _availableWidth - fitAllBounds.Width;
             if (denominator > 1)
             {
@@ -329,13 +326,13 @@ namespace SkiaSharp.Extended.PivotViewer
             }
             else
             {
-                // Item already fills the viewport at zoom=0, just center it
                 _zoomLevel = 0;
             }
 
             UpdateLayout();
+            _layoutTransition.CancelTransition(); // snap again for accurate centering
 
-            // Center on the item
+            // Center on the item using final (non-transitioning) positions
             var bounds = GetItemBounds(item);
             _panOffsetX = _availableWidth / 2 - (bounds.X + bounds.Width / 2);
             _panOffsetY = _availableHeight / 2 - (bounds.Y + bounds.Height / 2);
