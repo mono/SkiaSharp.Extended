@@ -92,6 +92,37 @@ public class PivotViewerPropertyTest
     }
 
     [Fact]
+    public void Property_Lock_PreventsIdModification()
+    {
+        var prop = new PivotViewerStringProperty("Name");
+        prop.Lock();
+
+        Assert.Throws<InvalidOperationException>(() => prop.Id = "NewId");
+    }
+
+    [Fact]
+    public void Property_Lock_IsIdempotent()
+    {
+        var prop = new PivotViewerStringProperty("Name");
+        prop.Lock();
+        prop.Lock(); // should not throw
+
+        Assert.True(prop.IsLocked);
+    }
+
+    [Fact]
+    public void Property_Lock_AllSettersThrow()
+    {
+        var prop = new PivotViewerNumericProperty("Price");
+        prop.Lock();
+
+        Assert.Throws<InvalidOperationException>(() => prop.Id = "X");
+        Assert.Throws<InvalidOperationException>(() => prop.DisplayName = "X");
+        Assert.Throws<InvalidOperationException>(() => prop.Format = "X");
+        Assert.Throws<InvalidOperationException>(() => prop.Options = PivotViewerPropertyOptions.CanFilter);
+    }
+
+    [Fact]
     public void Property_Equality_ById()
     {
         var a = new PivotViewerStringProperty("Name");

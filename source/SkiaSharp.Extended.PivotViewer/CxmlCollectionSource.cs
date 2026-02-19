@@ -325,9 +325,14 @@ namespace SkiaSharp.Extended.PivotViewer
                 if (extraDataElement != null)
                 {
                     var types = new List<CxmlExtraDataType>();
-                    foreach (var typeEl in extraDataElement.Elements("Type")
-                        .Concat(extraDataElement.Elements(PivotNs + "Type"))
-                        .Concat(extraDataElement.Elements(CollectionNs + "Type")))
+                    // Look inside a Types wrapper element (e.g., buxton.cxml), or directly under ExtraData
+                    var typesContainer = extraDataElement.Element("Types")
+                        ?? extraDataElement.Element(PivotNs + "Types")
+                        ?? extraDataElement.Element(CollectionNs + "Types")
+                        ?? extraDataElement;
+                    foreach (var typeEl in typesContainer.Elements("Type")
+                        .Concat(typesContainer.Elements(PivotNs + "Type"))
+                        .Concat(typesContainer.Elements(CollectionNs + "Type")))
                     {
                         string? typeName = typeEl.Attribute("Name")?.Value;
                         string? typeImage = typeEl.Attribute("Image")?.Value;

@@ -825,6 +825,99 @@ public class PivotViewerControllerTest
         Assert.Null(ex);
     }
 
+    // --- SelectNext / SelectPrevious / ClearSelection ---
+
+    [Fact]
+    public void SelectNext_WhenNoneSelected_SelectsFirstItem()
+    {
+        var (controller, _) = CreateTestController();
+
+        Assert.Null(controller.SelectedItem);
+        controller.SelectNext();
+
+        Assert.Equal(controller.InScopeItems[0], controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectNext_AdvancesSelection()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[0];
+        controller.SelectNext();
+
+        Assert.Equal(controller.InScopeItems[1], controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectPrevious_GoesBack()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[2];
+        controller.SelectPrevious();
+
+        Assert.Equal(controller.InScopeItems[1], controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectNext_AtEnd_StaysAtLastItem()
+    {
+        var (controller, _) = CreateTestController();
+
+        var lastItem = controller.InScopeItems[controller.InScopeItems.Count - 1];
+        controller.SelectedItem = lastItem;
+        controller.SelectNext();
+
+        Assert.Equal(lastItem, controller.SelectedItem);
+    }
+
+    [Fact]
+    public void ClearSelection_SetsSelectedItemToNull()
+    {
+        var (controller, _) = CreateTestController();
+
+        controller.SelectedItem = controller.InScopeItems[0];
+        Assert.NotNull(controller.SelectedItem);
+
+        controller.ClearSelection();
+        Assert.Null(controller.SelectedItem);
+    }
+
+    // --- SelectUp / SelectDown ---
+
+    [Fact]
+    public void SelectDown_FromFirstRow_GoesToNextRow()
+    {
+        var (controller, _) = CreateTestController();
+
+        Assert.NotNull(controller.GridLayout);
+        int cols = controller.GridLayout!.Columns;
+        Assert.True(cols > 0);
+        Assert.True(controller.InScopeItems.Count > cols, "Need more items than one row");
+
+        controller.SelectedItem = controller.InScopeItems[0];
+        controller.SelectDown();
+
+        Assert.Equal(controller.InScopeItems[cols], controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectUp_FromSecondRow_GoesToFirstRow()
+    {
+        var (controller, _) = CreateTestController();
+
+        Assert.NotNull(controller.GridLayout);
+        int cols = controller.GridLayout!.Columns;
+        Assert.True(cols > 0);
+        Assert.True(controller.InScopeItems.Count > cols, "Need more items than one row");
+
+        controller.SelectedItem = controller.InScopeItems[cols];
+        controller.SelectUp();
+
+        Assert.Equal(controller.InScopeItems[0], controller.SelectedItem);
+    }
+
     [Fact]
     public void SetViewerState_FiresViewChangedSortPropertyChangedSelectionChanged()
     {

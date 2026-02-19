@@ -376,6 +376,27 @@ public class GridLayoutEngineTest
     }
 
     [Fact]
+    public void ComputeHistogramLayout_PropertyName_MatchesGroupByPropertyId()
+    {
+        var engine = new GridLayoutEngine();
+        var catP = new PivotViewerStringProperty("Category") { DisplayName = "Category" };
+
+        var items = new List<PivotViewerItem>();
+
+        var i1 = new PivotViewerItem("1");
+        i1.Set(catP, new object[] { "A" });
+        items.Add(i1);
+
+        var i2 = new PivotViewerItem("2");
+        i2.Set(catP, new object[] { "B" });
+        items.Add(i2);
+
+        var layout = engine.ComputeHistogramLayout(items, "Category", 800, 600);
+
+        Assert.Equal("Category", layout.PropertyName);
+    }
+
+    [Fact]
     public void ComputeLayout_VeryLargeCollection_AllItemsPlacedWithValidPositions()
     {
         var engine = new GridLayoutEngine();

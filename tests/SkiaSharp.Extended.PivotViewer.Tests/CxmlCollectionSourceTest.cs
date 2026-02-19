@@ -739,4 +739,25 @@ public class CxmlCollectionSourceTest
         var main = CxmlCollectionSource.Parse(mainXml);
         Assert.Throws<ArgumentNullException>(() => main.MergeSupplementalData(null!));
     }
+
+    // --- ExtraData parsing (buxton.cxml) ---
+
+    [Fact]
+    public void Parse_Buxton_ExtraDataTypes_Populated()
+    {
+        var source = TestDataHelper.LoadCxml("buxton.cxml");
+
+        Assert.NotEmpty(source.ExtraDataTypes);
+    }
+
+    [Fact]
+    public void Parse_Buxton_FirstExtraDataType_HasNameImageAndSortedIds()
+    {
+        var source = TestDataHelper.LoadCxml("buxton.cxml");
+
+        var first = source.ExtraDataTypes[0];
+        Assert.False(string.IsNullOrEmpty(first.Name));
+        Assert.False(string.IsNullOrEmpty(first.Image));
+        Assert.NotEmpty(first.SortedIds);
+    }
 }
