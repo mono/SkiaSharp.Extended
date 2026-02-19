@@ -423,6 +423,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 var source = await CxmlCollectionSource.LoadAsync(cxmlUri, httpClient, ct);
                 ct.ThrowIfCancellationRequested();
 
+                // Dispose previous ImageProvider before replacing
+                _controller.ImageProvider?.Dispose();
+                _controller.ImageProvider = null;
+
                 // Load the collection into the controller
                 LoadCollection(source);
 
@@ -435,6 +439,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     {
                         var dzcXml = await httpClient.GetStringAsync(dzcUri, ct);
                         ct.ThrowIfCancellationRequested();
+                        if (_disposed) return;
 
                         using var dzcStream = new System.IO.MemoryStream(
                             System.Text.Encoding.UTF8.GetBytes(dzcXml));
@@ -445,6 +450,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
                         var imageProvider = new CollectionImageProvider(dzc, fetcher, basePath, queryString);
                         _controller.ImageProvider = imageProvider;
+
+                        // Kick off thumbnail loading for all items
+                        _ = LoadThumbnailsInBackground(imageProvider, source, ct);
+
                         _canvasView.InvalidateSurface();
                     }
                 }
@@ -453,6 +462,37 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Failed to load collection: {ex.Message}");
+            }
+        }
+
+        private async Task LoadThumbnailsInBackground(
+            CollectionImageProvider provider, CxmlCollectionSource source, CancellationToken ct)
+        {
+            try
+            {
+                var itemIds = source.Items
+                    .Select(i => CollectionImageProvider.GetItemImageIndex(i))
+                    .Where(id => id.HasValue && id.Value >= 0)
+                    .Select(id => id!.Value)
+                    .Distinct()
+                    .ToList();
+
+                foreach (var id in itemIds)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    if (_disposed) return;
+
+                    await provider.LoadThumbnailAsync(id, 128, ct);
+
+                    // Invalidate periodically to show thumbnails as they load
+                    if (!_disposed)
+                        MainThread.BeginInvokeOnMainThread(() => _canvasView?.InvalidateSurface());
+                }
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Thumbnail load error: {ex.Message}");
             }
         }
 
