@@ -33,6 +33,11 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         private readonly EventHandler _onImageOpenSucceeded;
         private readonly EventHandler<Exception> _onImageOpenFailed;
 
+        // Gesture recognizer references for disposal
+        private PanGestureRecognizer? _panGesture;
+        private PinchGestureRecognizer? _pinchGesture;
+        private TapGestureRecognizer? _doubleTapGesture;
+
         public SKDeepZoomView()
         {
             _controller = new DeepZoomController();
@@ -61,9 +66,12 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             SetupGestures();
 
             // Suppress animation when not visible
-            Loaded += (s, e) => _isVisible = true;
-            Unloaded += (s, e) => _isVisible = false;
+            Loaded += OnViewLoaded;
+            Unloaded += OnViewUnloaded;
         }
+
+        private void OnViewLoaded(object? sender, EventArgs e) => _isVisible = true;
+        private void OnViewUnloaded(object? sender, EventArgs e) => _isVisible = false;
 
         // --- BindableProperties ---
 
@@ -193,17 +201,17 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
 
         private void SetupGestures()
         {
-            var panGesture = new PanGestureRecognizer();
-            panGesture.PanUpdated += OnPanUpdated;
-            GestureRecognizers.Add(panGesture);
+            _panGesture = new PanGestureRecognizer();
+            _panGesture.PanUpdated += OnPanUpdated;
+            GestureRecognizers.Add(_panGesture);
 
-            var pinchGesture = new PinchGestureRecognizer();
-            pinchGesture.PinchUpdated += OnPinchUpdated;
-            GestureRecognizers.Add(pinchGesture);
+            _pinchGesture = new PinchGestureRecognizer();
+            _pinchGesture.PinchUpdated += OnPinchUpdated;
+            GestureRecognizers.Add(_pinchGesture);
 
-            var tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
-            tapGesture.Tapped += OnDoubleTapped;
-            GestureRecognizers.Add(tapGesture);
+            _doubleTapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
+            _doubleTapGesture.Tapped += OnDoubleTapped;
+            GestureRecognizers.Add(_doubleTapGesture);
         }
 
         private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
@@ -268,6 +276,16 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             _controller.ViewportChanged -= _onViewportChanged;
             _controller.ImageOpenSucceeded -= _onImageOpenSucceeded;
             _controller.ImageOpenFailed -= _onImageOpenFailed;
+
+            // Unsubscribe gesture recognizer events
+            if (_panGesture != null) _panGesture.PanUpdated -= OnPanUpdated;
+            if (_pinchGesture != null) _pinchGesture.PinchUpdated -= OnPinchUpdated;
+            if (_doubleTapGesture != null) _doubleTapGesture.Tapped -= OnDoubleTapped;
+
+            // Unsubscribe lifecycle events
+            Loaded -= OnViewLoaded;
+            Unloaded -= OnViewUnloaded;
+
             _controller.Dispose();
         }
     }

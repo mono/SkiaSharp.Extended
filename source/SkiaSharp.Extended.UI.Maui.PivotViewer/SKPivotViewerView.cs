@@ -70,6 +70,14 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private EventHandler? _onCollectionChanged;
         private EventHandler<ValueChangedEventArgs>? _onZoomSliderValueChanged;
 
+        // Gesture recognizer references for disposal
+        private TapGestureRecognizer? _tapGesture;
+        private TapGestureRecognizer? _doubleTapGesture;
+        private PinchGestureRecognizer? _pinchGesture;
+        private PanGestureRecognizer? _panGesture;
+        private PointerGestureRecognizer? _pointerGesture;
+        private EventHandler<PointerEventArgs>? _onPointerPressed;
+
         public SKPivotViewerView()
         {
             _controller = new PivotViewerController();
@@ -178,9 +186,12 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             SetupGestures();
 
             // Suppress animation when not visible
-            Loaded += (s, e) => _isVisible = true;
-            Unloaded += (s, e) => { _isVisible = false; _animationTimer?.Stop(); };
+            Loaded += OnViewLoaded;
+            Unloaded += OnViewUnloaded;
         }
+
+        private void OnViewLoaded(object? sender, EventArgs e) => _isVisible = true;
+        private void OnViewUnloaded(object? sender, EventArgs e) { _isVisible = false; _animationTimer?.Stop(); }
 
         // --- BindableProperties ---
 
@@ -1158,31 +1169,32 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void SetupGestures()
         {
-            var tapGesture = new TapGestureRecognizer();
-            tapGesture.Tapped += OnTapped;
-            GestureRecognizers.Add(tapGesture);
+            _tapGesture = new TapGestureRecognizer();
+            _tapGesture.Tapped += OnTapped;
+            GestureRecognizers.Add(_tapGesture);
 
-            var doubleTapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
-            doubleTapGesture.Tapped += OnDoubleTapped;
-            GestureRecognizers.Add(doubleTapGesture);
+            _doubleTapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
+            _doubleTapGesture.Tapped += OnDoubleTapped;
+            GestureRecognizers.Add(_doubleTapGesture);
 
-            var pinchGesture = new PinchGestureRecognizer();
-            pinchGesture.PinchUpdated += OnPinchUpdated;
-            GestureRecognizers.Add(pinchGesture);
+            _pinchGesture = new PinchGestureRecognizer();
+            _pinchGesture.PinchUpdated += OnPinchUpdated;
+            GestureRecognizers.Add(_pinchGesture);
 
-            var panGesture = new PanGestureRecognizer();
-            panGesture.PanUpdated += OnPanUpdated;
-            GestureRecognizers.Add(panGesture);
+            _panGesture = new PanGestureRecognizer();
+            _panGesture.PanUpdated += OnPanUpdated;
+            GestureRecognizers.Add(_panGesture);
 
             // Track pointer position to determine pan origin (filter pane vs content)
-            var pointerGesture = new PointerGestureRecognizer();
-            pointerGesture.PointerPressed += (s, e) =>
+            _pointerGesture = new PointerGestureRecognizer();
+            _onPointerPressed = (s, e) =>
             {
                 var pos = e.GetPosition(this);
                 if (pos.HasValue)
                     _lastPointerX = pos.Value.X;
             };
-            GestureRecognizers.Add(pointerGesture);
+            _pointerGesture.PointerPressed += _onPointerPressed;
+            GestureRecognizers.Add(_pointerGesture);
         }
 
         private void OnTapped(object? sender, TappedEventArgs e)
@@ -1652,6 +1664,18 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             if (_searchEntry != null) _searchEntry.TextChanged -= OnSearchTextChanged;
             if (_zoomSlider != null && _onZoomSliderValueChanged != null)
                 _zoomSlider.ValueChanged -= _onZoomSliderValueChanged;
+
+            // Unsubscribe gesture recognizer events
+            if (_tapGesture != null) _tapGesture.Tapped -= OnTapped;
+            if (_doubleTapGesture != null) _doubleTapGesture.Tapped -= OnDoubleTapped;
+            if (_pinchGesture != null) _pinchGesture.PinchUpdated -= OnPinchUpdated;
+            if (_panGesture != null) _panGesture.PanUpdated -= OnPanUpdated;
+            if (_pointerGesture != null && _onPointerPressed != null)
+                _pointerGesture.PointerPressed -= _onPointerPressed;
+
+            // Unsubscribe lifecycle events
+            Loaded -= OnViewLoaded;
+            Unloaded -= OnViewUnloaded;
 
             _controller.Dispose();
             _itemPaint.Dispose();
