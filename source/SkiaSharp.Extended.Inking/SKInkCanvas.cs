@@ -32,85 +32,10 @@ public class SKInkCanvas : IDisposable
     }
 
     /// <summary>
-    /// Creates a new ink canvas with the specified stroke width range (legacy constructor).
-    /// </summary>
-    /// <param name="minStrokeWidth">Minimum stroke width (at zero pressure).</param>
-    /// <param name="maxStrokeWidth">Maximum stroke width (at full pressure).</param>
-    public SKInkCanvas(float minStrokeWidth, float maxStrokeWidth)
-    {
-        if (minStrokeWidth < 0)
-            throw new ArgumentOutOfRangeException(nameof(minStrokeWidth), "Minimum stroke width must be non-negative.");
-        if (maxStrokeWidth < minStrokeWidth)
-            throw new ArgumentOutOfRangeException(nameof(maxStrokeWidth), "Maximum stroke width must be greater than or equal to minimum stroke width.");
-        
-        Brush = new SKInkStrokeBrush(SKColors.Black, minStrokeWidth, maxStrokeWidth);
-    }
-
-    /// <summary>
     /// Gets or sets the default brush for new strokes.
     /// When a stroke is started, the brush is cloned so each stroke has independent settings.
     /// </summary>
     public SKInkStrokeBrush Brush { get; set; }
-
-    #region Backward Compatibility Properties
-
-    /// <summary>
-    /// Gets or sets the minimum stroke width (at zero pressure).
-    /// </summary>
-    public float MinStrokeWidth
-    {
-        get => Brush.MinSize.Width;
-        set => Brush.MinSize = new SKSize(value, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the maximum stroke width (at full pressure).
-    /// </summary>
-    public float MaxStrokeWidth
-    {
-        get => Brush.MaxSize.Width;
-        set => Brush.MaxSize = new SKSize(value, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the default stroke color for new strokes.
-    /// </summary>
-    public SKColor StrokeColor
-    {
-        get => Brush.Color;
-        set => Brush.Color = value;
-    }
-
-    /// <summary>
-    /// Gets or sets the default cap style for new strokes.
-    /// </summary>
-    public SKStrokeCapStyle CapStyle
-    {
-        get => Brush.CapStyle;
-        set => Brush.CapStyle = value;
-    }
-
-    /// <summary>
-    /// Gets or sets the default smoothing factor for new strokes (1-10).
-    /// Higher values produce smoother curves. Default is 4.
-    /// </summary>
-    public int SmoothingFactor
-    {
-        get => Brush.SmoothingFactor;
-        set => Brush.SmoothingFactor = value;
-    }
-
-    /// <summary>
-    /// Gets or sets the default smoothing algorithm for new strokes.
-    /// CatmullRom is recommended for handwriting.
-    /// </summary>
-    public SKSmoothingAlgorithm SmoothingAlgorithm
-    {
-        get => Brush.SmoothingAlgorithm;
-        set => Brush.SmoothingAlgorithm = value;
-    }
-
-    #endregion
 
     #region Events
 
@@ -214,24 +139,6 @@ public class SKInkCanvas : IDisposable
 
         StrokeStarted?.Invoke(this, EventArgs.Empty);
         Invalidated?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>
-    /// Starts a new stroke at the specified point with custom settings (legacy method).
-    /// </summary>
-    /// <param name="point">The starting point with pressure.</param>
-    /// <param name="color">The stroke color.</param>
-    /// <param name="capStyle">The cap style for stroke ends.</param>
-    /// <param name="smoothingFactor">The smoothing factor (1-10).</param>
-    /// <param name="smoothingAlgorithm">The smoothing algorithm to use.</param>
-    public void StartStroke(SKInkPoint point, SKColor color, SKStrokeCapStyle capStyle = SKStrokeCapStyle.Round, int smoothingFactor = 4, SKSmoothingAlgorithm smoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom)
-    {
-        var brush = Brush.Clone();
-        brush.Color = color;
-        brush.CapStyle = capStyle;
-        brush.SmoothingFactor = smoothingFactor;
-        brush.SmoothingAlgorithm = smoothingAlgorithm;
-        StartStroke(point, brush);
     }
 
     /// <summary>
@@ -579,7 +486,7 @@ public class SKInkCanvas : IDisposable
         {
             if (stroke.Path is SKPath path)
             {
-                paint.Color = stroke.Color;
+                paint.Color = stroke.Brush.Color;
                 canvas.DrawPath(path, paint);
             }
         }
@@ -587,7 +494,7 @@ public class SKInkCanvas : IDisposable
         // Draw the current stroke being drawn
         if (currentStroke?.Path is SKPath currentPath)
         {
-            paint.Color = currentStroke.Color;
+            paint.Color = currentStroke.Brush.Color;
             canvas.DrawPath(currentPath, paint);
         }
 

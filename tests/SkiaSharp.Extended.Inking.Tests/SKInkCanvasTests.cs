@@ -19,18 +19,18 @@ public class SKInkCanvasTests
     [Fact]
     public void Constructor_WithWidths_SetsWidthRange()
     {
-        using var canvas = new SKInkCanvas(2f, 12f);
+        using var canvas = new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, 2f, 12f));
 
-        Assert.Equal(2f, canvas.MinStrokeWidth);
-        Assert.Equal(12f, canvas.MaxStrokeWidth);
+        Assert.Equal(2f, canvas.Brush.MinSize.Width);
+        Assert.Equal(12f, canvas.Brush.MaxSize.Width);
     }
 
     [Fact]
     public void MinStrokeWidth_ThrowsOnNegative()
     {
-        using var canvas = new SKInkCanvas();
-
-        Assert.Throws<ArgumentOutOfRangeException>(() => canvas.MinStrokeWidth = -1f);
+        var brush = new SKInkStrokeBrush();
+        
+        Assert.Throws<ArgumentOutOfRangeException>(() => brush.MinSize = new SKSize(-1f, -1f));
     }
 
     [Fact]
@@ -240,7 +240,7 @@ public class SKInkCanvasTests
     [Fact]
     public void GetBounds_ReturnsBoundsOfAllStrokes()
     {
-        using var canvas = new SKInkCanvas(2f, 4f);
+        using var canvas = new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, 2f, 4f));
 
         canvas.StartStroke(new SKPoint(0f, 0f), 0.5f);
         canvas.EndStroke(new SKPoint(100f, 100f), 0.5f);
@@ -493,10 +493,10 @@ public class SKInkCanvasTests
     public void Constructor_WithInvalidWidths_Throws()
     {
         // Min > Max
-        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkCanvas(10f, 5f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, 10f, 5f)));
         
         // Negative min
-        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkCanvas(-1f, 5f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, -1f, 5f)));
     }
 
     [Fact]
@@ -575,7 +575,7 @@ public class SKInkCanvasTests
     {
         using var canvas = new SKInkCanvas();
 
-        Assert.Equal(SKColors.Black, canvas.StrokeColor);
+        Assert.Equal(SKColors.Black, canvas.Brush.Color);
     }
 
     [Fact]
@@ -583,9 +583,9 @@ public class SKInkCanvasTests
     {
         using var canvas = new SKInkCanvas();
 
-        canvas.StrokeColor = SKColors.Red;
+        canvas.Brush.Color = SKColors.Red;
 
-        Assert.Equal(SKColors.Red, canvas.StrokeColor);
+        Assert.Equal(SKColors.Red, canvas.Brush.Color);
     }
 
     [Fact]
@@ -593,7 +593,7 @@ public class SKInkCanvasTests
     {
         using var canvas = new SKInkCanvas();
 
-        Assert.Equal(SKStrokeCapStyle.Round, canvas.CapStyle);
+        Assert.Equal(SKStrokeCapStyle.Round, canvas.Brush.CapStyle);
     }
 
     [Fact]
@@ -601,9 +601,9 @@ public class SKInkCanvasTests
     {
         using var canvas = new SKInkCanvas();
 
-        canvas.CapStyle = SKStrokeCapStyle.Tapered;
+        canvas.Brush.CapStyle = SKStrokeCapStyle.Tapered;
 
-        Assert.Equal(SKStrokeCapStyle.Tapered, canvas.CapStyle);
+        Assert.Equal(SKStrokeCapStyle.Tapered, canvas.Brush.CapStyle);
     }
 
     [Fact]
@@ -611,7 +611,7 @@ public class SKInkCanvasTests
     {
         using var canvas = new SKInkCanvas();
 
-        Assert.Equal(4, canvas.SmoothingFactor);
+        Assert.Equal(4, canvas.Brush.SmoothingFactor);
     }
 
     [Fact]
@@ -619,35 +619,35 @@ public class SKInkCanvasTests
     {
         using var canvas = new SKInkCanvas();
 
-        canvas.SmoothingFactor = 8;
+        canvas.Brush.SmoothingFactor = 8;
 
-        Assert.Equal(8, canvas.SmoothingFactor);
+        Assert.Equal(8, canvas.Brush.SmoothingFactor);
     }
 
     [Fact]
     public void StartStroke_UsesCanvasDefaults()
     {
         using var canvas = new SKInkCanvas();
-        canvas.StrokeColor = SKColors.Green;
-        canvas.CapStyle = SKStrokeCapStyle.Tapered;
-        canvas.SmoothingFactor = 6;
+        canvas.Brush.Color = SKColors.Green;
+        canvas.Brush.CapStyle = SKStrokeCapStyle.Tapered;
+        canvas.Brush.SmoothingFactor = 6;
 
         canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
 
-        Assert.Equal(SKColors.Green, canvas.CurrentStroke!.Color);
-        Assert.Equal(SKStrokeCapStyle.Tapered, canvas.CurrentStroke!.CapStyle);
-        Assert.Equal(6, canvas.CurrentStroke!.SmoothingFactor);
+        Assert.Equal(SKColors.Green, canvas.CurrentStroke!.Brush.Color);
+        Assert.Equal(SKStrokeCapStyle.Tapered, canvas.CurrentStroke!.Brush.CapStyle);
+        Assert.Equal(6, canvas.CurrentStroke!.Brush.SmoothingFactor);
     }
 
     [Fact]
     public void StartStroke_WithCustomColor_OverridesDefault()
     {
         using var canvas = new SKInkCanvas();
-        canvas.StrokeColor = SKColors.Green;
+        canvas.Brush.Color = SKColors.Green;
 
-        canvas.StartStroke(new SKInkPoint(10f, 20f, 0.5f), SKColors.Blue);
+        canvas.StartStroke(new SKInkPoint(10f, 20f, 0.5f), new SKInkStrokeBrush { Color = SKColors.Blue });
 
-        Assert.Equal(SKColors.Blue, canvas.CurrentStroke!.Color);
+        Assert.Equal(SKColors.Blue, canvas.CurrentStroke!.Brush.Color);
     }
 
     [Fact]
@@ -656,15 +656,15 @@ public class SKInkCanvasTests
         using var canvas = new SKInkCanvas();
         
         // Add a red stroke
-        canvas.StartStroke(new SKInkPoint(10f, 20f, 0.5f), SKColors.Red);
+        canvas.StartStroke(new SKInkPoint(10f, 20f, 0.5f), new SKInkStrokeBrush { Color = SKColors.Red });
         canvas.EndStroke(new SKPoint(50f, 60f), 0.5f);
         
         // Add a blue stroke
-        canvas.StartStroke(new SKInkPoint(100f, 100f, 0.5f), SKColors.Blue);
+        canvas.StartStroke(new SKInkPoint(100f, 100f, 0.5f), new SKInkStrokeBrush { Color = SKColors.Blue });
         canvas.EndStroke(new SKPoint(150f, 150f), 0.5f);
 
         Assert.Equal(2, canvas.StrokeCount);
-        Assert.Equal(SKColors.Red, canvas.Strokes[0].Color);
-        Assert.Equal(SKColors.Blue, canvas.Strokes[1].Color);
+        Assert.Equal(SKColors.Red, canvas.Strokes[0].Brush.Color);
+        Assert.Equal(SKColors.Blue, canvas.Strokes[1].Brush.Color);
     }
 }

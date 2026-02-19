@@ -78,7 +78,7 @@ public class SKInkRecording
         var recording = new SKInkRecording();
         foreach (var stroke in canvas.Strokes)
         {
-            var recordedStroke = new RecordedStroke(stroke.MinStrokeWidth, stroke.MaxStrokeWidth);
+            var recordedStroke = new RecordedStroke(stroke.Brush.Clone());
             foreach (var point in stroke.Points)
             {
                 recordedStroke.AddPoint(point);
@@ -246,10 +246,19 @@ public class RecordedStroke
     private readonly List<SKInkPoint> points = new List<SKInkPoint>();
 
     /// <summary>
-    /// Creates a new recorded stroke with default stroke widths.
+    /// Creates a new recorded stroke with default brush.
     /// </summary>
-    public RecordedStroke() : this(1f, 8f)
+    public RecordedStroke() : this(new SKInkStrokeBrush())
     {
+    }
+
+    /// <summary>
+    /// Creates a new recorded stroke with the specified brush.
+    /// </summary>
+    /// <param name="brush">The brush defining stroke appearance.</param>
+    public RecordedStroke(SKInkStrokeBrush brush)
+    {
+        Brush = brush ?? throw new ArgumentNullException(nameof(brush));
     }
 
     /// <summary>
@@ -264,19 +273,13 @@ public class RecordedStroke
         if (maxStrokeWidth < minStrokeWidth)
             throw new ArgumentOutOfRangeException(nameof(maxStrokeWidth), "Maximum stroke width must be greater than or equal to minimum stroke width.");
 
-        MinStrokeWidth = minStrokeWidth;
-        MaxStrokeWidth = maxStrokeWidth;
+        Brush = new SKInkStrokeBrush(SKColors.Black, minStrokeWidth, maxStrokeWidth);
     }
 
     /// <summary>
-    /// Gets the minimum stroke width.
+    /// Gets the brush defining this stroke's appearance.
     /// </summary>
-    public float MinStrokeWidth { get; }
-
-    /// <summary>
-    /// Gets the maximum stroke width.
-    /// </summary>
-    public float MaxStrokeWidth { get; }
+    public SKInkStrokeBrush Brush { get; }
 
     /// <summary>
     /// Gets the recorded points.
@@ -417,8 +420,8 @@ public class SKInkPlayer
 
                 if (currentPointIndex == 0)
                 {
-                    // Start new stroke
-                    canvas.StartStroke(point);
+                    // Start new stroke with the recorded brush
+                    canvas.StartStroke(point, stroke.Brush.Clone());
                 }
                 else if (currentPointIndex == stroke.Points.Count - 1)
                 {
@@ -460,7 +463,7 @@ public class SKInkPlayer
             if (stroke.Points.Count == 0)
                 continue;
 
-            canvas.StartStroke(stroke.Points[0]);
+            canvas.StartStroke(stroke.Points[0], stroke.Brush.Clone());
             
             for (int i = 1; i < stroke.Points.Count - 1; i++)
             {

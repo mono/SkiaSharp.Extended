@@ -116,7 +116,7 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 	{
 		ResourceLoader<Themes.SKSignaturePadViewResources>.EnsureRegistered(this);
 
-		inkCanvas = new SKInkCanvas(1f, 8f);
+		inkCanvas = new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, 1f, 8f));
 		inkCanvas.Invalidated += OnInkCanvasInvalidated;
 		inkCanvas.Cleared += OnInkCanvasCleared;
 		inkCanvas.StrokeCompleted += OnInkCanvasStrokeCompleted;
@@ -445,7 +445,7 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 				(byte)(color.Blue * 255),
 				(byte)(color.Alpha * 255));
 			view.strokePaint.Color = view.skStrokeColor;
-			view.inkCanvas.StrokeColor = view.skStrokeColor;
+			view.inkCanvas.Brush.Color = view.skStrokeColor;
 			view.Invalidate();
 		}
 	}
@@ -454,8 +454,8 @@ public class SKSignaturePadView : SKSurfaceView, IDisposable
 	{
 		if (bindable is SKSignaturePadView view)
 		{
-			view.inkCanvas.MinStrokeWidth = view.MinStrokeWidth;
-			view.inkCanvas.MaxStrokeWidth = view.MaxStrokeWidth;
+			view.inkCanvas.Brush.MinSize = new SKSize(view.MinStrokeWidth, view.MinStrokeWidth);
+			view.inkCanvas.Brush.MaxSize = new SKSize(view.MaxStrokeWidth, view.MaxStrokeWidth);
 		}
 	}
 

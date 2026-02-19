@@ -32,41 +32,6 @@ public class SKInkStroke : IDisposable
     }
 
     /// <summary>
-    /// Creates a new ink stroke with the specified stroke width range (legacy constructor).
-    /// </summary>
-    /// <param name="minStrokeWidth">Minimum stroke width (at zero pressure).</param>
-    /// <param name="maxStrokeWidth">Maximum stroke width (at full pressure).</param>
-    /// <param name="color">The stroke color.</param>
-    /// <param name="capStyle">The cap style for stroke ends.</param>
-    /// <param name="smoothingFactor">The smoothing factor (1-10, higher = smoother).</param>
-    /// <param name="smoothingAlgorithm">The algorithm to use for stroke smoothing.</param>
-    public SKInkStroke(
-        float minStrokeWidth, 
-        float maxStrokeWidth,
-        SKColor? color = null,
-        SKStrokeCapStyle capStyle = SKStrokeCapStyle.Round,
-        int smoothingFactor = 4,
-        SKSmoothingAlgorithm smoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom)
-    {
-        if (minStrokeWidth < 0)
-            throw new ArgumentOutOfRangeException(nameof(minStrokeWidth), "Minimum stroke width must be non-negative.");
-        if (maxStrokeWidth < minStrokeWidth)
-            throw new ArgumentOutOfRangeException(nameof(maxStrokeWidth), "Maximum stroke width must be greater than or equal to minimum stroke width.");
-        if (smoothingFactor < 1 || smoothingFactor > 10)
-            throw new ArgumentOutOfRangeException(nameof(smoothingFactor), "Smoothing factor must be between 1 and 10.");
-
-        Brush = new SKInkStrokeBrush
-        {
-            Color = color ?? SKColors.Black,
-            MinSize = new SKSize(minStrokeWidth, minStrokeWidth),
-            MaxSize = new SKSize(maxStrokeWidth, maxStrokeWidth),
-            CapStyle = capStyle,
-            SmoothingFactor = smoothingFactor,
-            SmoothingAlgorithm = smoothingAlgorithm
-        };
-    }
-
-    /// <summary>
     /// Gets the brush defining this stroke's appearance.
     /// </summary>
     public SKInkStrokeBrush Brush { get; }
@@ -75,61 +40,6 @@ public class SKInkStroke : IDisposable
     /// Gets or sets whether this stroke is selected.
     /// </summary>
     public bool IsSelected { get; set; }
-
-    /// <summary>
-    /// Gets the minimum stroke width (at zero pressure).
-    /// </summary>
-    public float MinStrokeWidth => Brush.MinSize.Width;
-
-    /// <summary>
-    /// Gets the maximum stroke width (at full pressure).
-    /// </summary>
-    public float MaxStrokeWidth => Brush.MaxSize.Width;
-
-    /// <summary>
-    /// Gets or sets the stroke color.
-    /// </summary>
-    public SKColor Color
-    {
-        get => Brush.Color;
-        set => Brush.Color = value;
-    }
-
-    /// <summary>
-    /// Gets or sets the cap style for stroke ends.
-    /// </summary>
-    public SKStrokeCapStyle CapStyle
-    {
-        get => Brush.CapStyle;
-        set => Brush.CapStyle = value;
-    }
-
-    /// <summary>
-    /// Gets or sets the smoothing factor (1-10). Higher values produce smoother curves
-    /// but require more processing. Default is 4.
-    /// </summary>
-    public int SmoothingFactor
-    {
-        get => Brush.SmoothingFactor;
-        set
-        {
-            Brush.SmoothingFactor = value;
-            isDirty = true;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the smoothing algorithm. Catmull-Rom is recommended for handwriting.
-    /// </summary>
-    public SKSmoothingAlgorithm SmoothingAlgorithm
-    {
-        get => Brush.SmoothingAlgorithm;
-        set
-        {
-            Brush.SmoothingAlgorithm = value;
-            isDirty = true;
-        }
-    }
 
     /// <summary>
     /// Gets the list of points in this stroke.
@@ -380,9 +290,9 @@ public class SKInkStroke : IDisposable
             result.Add((p0, pressure0));
             
             // Add intermediate points based on smoothing factor
-            for (int i = 1; i < SmoothingFactor; i++)
+            for (int i = 1; i < Brush.SmoothingFactor; i++)
             {
-                float t = i / (float)SmoothingFactor;
+                float t = i / (float)Brush.SmoothingFactor;
                 var x = p0.X + t * (p1.X - p0.X);
                 var y = p0.Y + t * (p1.Y - p0.Y);
                 var pressure = pressure0 + t * (pressure1 - pressure0);
@@ -394,7 +304,7 @@ public class SKInkStroke : IDisposable
         }
 
         // Use selected smoothing algorithm for 3+ points
-        if (SmoothingAlgorithm == SKSmoothingAlgorithm.CatmullRom)
+        if (Brush.SmoothingAlgorithm == SKSmoothingAlgorithm.CatmullRom)
         {
             return GenerateCatmullRomPoints();
         }
@@ -484,9 +394,9 @@ public class SKInkStroke : IDisposable
             var pr3 = (i < points.Count - 2) ? points[i + 2].Pressure : points[points.Count - 1].Pressure;
 
             // Add samples along this segment
-            for (int j = 1; j <= SmoothingFactor; j++)
+            for (int j = 1; j <= Brush.SmoothingFactor; j++)
             {
-                float t = j / (float)SmoothingFactor;
+                float t = j / (float)Brush.SmoothingFactor;
                 
                 // Catmull-Rom spline formula
                 var point = CatmullRom(p0, p1, p2, p3, t);
@@ -551,7 +461,7 @@ public class SKInkStroke : IDisposable
         SKPoint p1, float pressure1)
     {
         // Sample the quadratic curve using the smoothing factor
-        int samples = SmoothingFactor;
+        int samples = Brush.SmoothingFactor;
         for (int i = 1; i <= samples; i++)
         {
             float t = i / (float)samples;
@@ -571,7 +481,7 @@ public class SKInkStroke : IDisposable
     /// </summary>
     private void AddCap(SKPath path, SKPoint center, SKPoint direction, float radius, bool isStart)
     {
-        switch (CapStyle)
+        switch (Brush.CapStyle)
         {
             case SKStrokeCapStyle.Round:
                 AddRoundedCap(path, center, direction, radius);

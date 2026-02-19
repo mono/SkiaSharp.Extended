@@ -14,7 +14,7 @@ public class SKInkBenchmarkTests
     [Fact]
     public void PathGeneration_1000Points_CompletesInReasonableTime()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 4);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 4 });
         
         // Add 1000 points
         for (int i = 0; i < 1000; i++)
@@ -38,7 +38,7 @@ public class SKInkBenchmarkTests
     [Fact]
     public void PathGeneration_CacheHit_IsFast()
     {
-        using var stroke = new SKInkStroke(2f, 8f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 8f));
         
         for (int i = 0; i < 100; i++)
         {
@@ -63,7 +63,7 @@ public class SKInkBenchmarkTests
     [Fact]
     public void AddPoint_Performance_CompletesInReasonableTime()
     {
-        using var stroke = new SKInkStroke(2f, 8f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 8f));
         
         var sw = Stopwatch.StartNew();
         for (int i = 0; i < 10000; i++)
@@ -80,8 +80,8 @@ public class SKInkBenchmarkTests
     public void SmoothingFactor_AffectsPathGeneration()
     {
         // Test that different smoothing factors produce different results
-        using var strokeLow = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 1);
-        using var strokeHigh = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 10);
+        using var strokeLow = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 1 });
+        using var strokeHigh = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 10 });
         
         // Add same points to both
         for (int i = 0; i < 10; i++)
@@ -103,7 +103,7 @@ public class SKInkBenchmarkTests
     [Fact]
     public void CanvasRender_ManyStrokes_CompletesInReasonableTime()
     {
-        using var canvas = new SKInkCanvas(2f, 8f);
+        using var canvas = new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, 2f, 8f));
         
         // Add 50 strokes
         for (int s = 0; s < 50; s++)
@@ -131,7 +131,7 @@ public class SKInkBenchmarkTests
     [Fact]
     public void ToImage_Performance_CompletesInReasonableTime()
     {
-        using var canvas = new SKInkCanvas(2f, 8f);
+        using var canvas = new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, 2f, 8f));
         
         // Add a few strokes
         for (int s = 0; s < 10; s++)

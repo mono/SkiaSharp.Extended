@@ -114,7 +114,7 @@ public class SKInkRecordingTests
     [Fact]
     public void FromCanvas_RecordsAllStrokes()
     {
-        using var canvas = new SKInkCanvas(2f, 8f);
+        using var canvas = new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, 2f, 8f));
         
         // Add first stroke
         canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
@@ -139,15 +139,15 @@ public class SKInkRecordingTests
     [Fact]
     public void FromCanvas_PreservesStrokeWidths()
     {
-        using var canvas = new SKInkCanvas(3f, 12f);
+        using var canvas = new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, 3f, 12f));
         
         canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
         canvas.EndStroke(new SKPoint(50f, 60f), 0.5f);
 
         var recording = SKInkRecording.FromCanvas(canvas);
 
-        Assert.Equal(3f, recording.Strokes[0].MinStrokeWidth);
-        Assert.Equal(12f, recording.Strokes[0].MaxStrokeWidth);
+        Assert.Equal(3f, recording.Strokes[0].Brush.MinSize.Width);
+        Assert.Equal(12f, recording.Strokes[0].Brush.MaxSize.Width);
     }
 
     [Fact]
@@ -169,8 +169,8 @@ public class SKInkRecordingTests
     {
         var stroke = new RecordedStroke(3f, 12f);
 
-        Assert.Equal(3f, stroke.MinStrokeWidth);
-        Assert.Equal(12f, stroke.MaxStrokeWidth);
+        Assert.Equal(3f, stroke.Brush.MinSize.Width);
+        Assert.Equal(12f, stroke.Brush.MaxSize.Width);
     }
 
     [Fact]
@@ -178,8 +178,8 @@ public class SKInkRecordingTests
     {
         var stroke = new RecordedStroke();
 
-        Assert.Equal(1f, stroke.MinStrokeWidth);
-        Assert.Equal(8f, stroke.MaxStrokeWidth);
+        Assert.Equal(1f, stroke.Brush.MinSize.Width);
+        Assert.Equal(8f, stroke.Brush.MaxSize.Width);
     }
 
     [Fact]

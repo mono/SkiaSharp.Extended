@@ -13,7 +13,7 @@ public class SKInkStrokeBugTests
     [Fact]
     public void AddPoint_PressureGreaterThanOne_IsClamped()
     {
-        using var stroke = new SKInkStroke(2f, 10f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 10f));
         
         stroke.AddPoint(new SKPoint(0, 0), 2.0f); // Invalid pressure - should be clamped
         stroke.AddPoint(new SKPoint(100, 0), 2.0f);
@@ -29,7 +29,7 @@ public class SKInkStrokeBugTests
     [Fact]
     public void AddPoint_NegativePressure_IsClamped()
     {
-        using var stroke = new SKInkStroke(2f, 10f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 10f));
         
         stroke.AddPoint(new SKPoint(0, 0), -0.5f); // Negative pressure - should be clamped
         stroke.AddPoint(new SKPoint(100, 0), -0.5f);
@@ -59,7 +59,7 @@ public class SKInkStrokeBugTests
     [Fact]
     public void Path_CollinearPoints_GeneratesValidPath()
     {
-        using var stroke = new SKInkStroke(2f, 8f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 8f));
         
         // All points on the same line
         stroke.AddPoint(new SKPoint(0, 50), 0.5f);
@@ -77,7 +77,7 @@ public class SKInkStrokeBugTests
     [Fact]
     public void Path_VeryShortStroke_TaperedCap_DoesNotOverextend()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Tapered);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Tapered });
         
         // Two points very close together
         stroke.AddPoint(new SKPoint(50, 50), 0.5f);
@@ -133,11 +133,11 @@ public class SKInkStrokeBugTests
     {
         using var stroke = new SKInkStroke();
         
-        stroke.SmoothingFactor = 1; // Minimum valid
-        Assert.Equal(1, stroke.SmoothingFactor);
+        stroke.Brush.SmoothingFactor = 1; // Minimum valid
+        Assert.Equal(1, stroke.Brush.SmoothingFactor);
         
-        stroke.SmoothingFactor = 10; // Maximum valid
-        Assert.Equal(10, stroke.SmoothingFactor);
+        stroke.Brush.SmoothingFactor = 10; // Maximum valid
+        Assert.Equal(10, stroke.Brush.SmoothingFactor);
     }
     
     [Fact]
@@ -145,8 +145,8 @@ public class SKInkStrokeBugTests
     {
         using var stroke = new SKInkStroke();
         
-        Assert.Throws<ArgumentOutOfRangeException>(() => stroke.SmoothingFactor = 0);
-        Assert.Throws<ArgumentOutOfRangeException>(() => stroke.SmoothingFactor = 11);
+        Assert.Throws<ArgumentOutOfRangeException>(() => stroke.Brush.SmoothingFactor = 0);
+        Assert.Throws<ArgumentOutOfRangeException>(() => stroke.Brush.SmoothingFactor = 11);
     }
     
     // BUG 9: Player GetTickCount timing issues
@@ -176,7 +176,7 @@ public class SKInkStrokeBugTests
     [Fact]
     public void FromCanvas_PreservesStrokeWidths()
     {
-        using var canvas = new SKInkCanvas(3f, 15f);
+        using var canvas = new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, 3f, 15f));
         
         canvas.StartStroke(new SKPoint(0, 0), 0.5f);
         canvas.EndStroke(new SKPoint(100, 0), 0.5f);
@@ -184,15 +184,15 @@ public class SKInkStrokeBugTests
         var recording = SKInkRecording.FromCanvas(canvas);
         
         Assert.Single(recording.Strokes);
-        Assert.Equal(3f, recording.Strokes[0].MinStrokeWidth);
-        Assert.Equal(15f, recording.Strokes[0].MaxStrokeWidth);
+        Assert.Equal(3f, recording.Strokes[0].Brush.MinSize.Width);
+        Assert.Equal(15f, recording.Strokes[0].Brush.MaxSize.Width);
     }
     
     // BUG 11: Very high smoothing with only 2 points
     [Fact]
     public void Path_TwoPoints_HighSmoothing_GeneratesCorrectPath()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 10);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 10 });
         
         stroke.AddPoint(new SKPoint(0, 50), 0.3f);
         stroke.AddPoint(new SKPoint(100, 50), 0.7f);
@@ -235,7 +235,7 @@ public class SKInkStrokeBugTests
     [Fact]
     public void Path_TwoIdenticalPoints_DoesNotCrash()
     {
-        using var stroke = new SKInkStroke(2f, 8f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 8f));
         
         stroke.AddPoint(new SKPoint(50, 50), 0.5f);
         stroke.AddPoint(new SKPoint(50, 50), 0.5f, isLastPoint: true); // Force identical
@@ -250,7 +250,7 @@ public class SKInkStrokeBugTests
     [Fact]
     public void SmoothingAlgorithm_Change_InvalidatesPath()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 4, SKSmoothingAlgorithm.QuadraticBezier);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 4, SmoothingAlgorithm = SKSmoothingAlgorithm.QuadraticBezier });
         
         stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
         stroke.AddPoint(new SKPoint(50f, 0f), 0.5f);
@@ -260,7 +260,7 @@ public class SKInkStrokeBugTests
         Assert.NotNull(path1);
         
         // Change algorithm - should invalidate cache
-        stroke.SmoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom;
+        stroke.Brush.SmoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom;
         
         var path2 = stroke.Path;
         Assert.NotNull(path2);

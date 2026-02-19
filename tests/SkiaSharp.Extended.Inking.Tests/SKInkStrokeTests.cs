@@ -19,22 +19,22 @@ public class SKInkStrokeTests
     [Fact]
     public void Constructor_SetsStrokeWidthRange()
     {
-        using var stroke = new SKInkStroke(2f, 10f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 10f));
 
-        Assert.Equal(2f, stroke.MinStrokeWidth);
-        Assert.Equal(10f, stroke.MaxStrokeWidth);
+        Assert.Equal(2f, stroke.Brush.MinSize.Width);
+        Assert.Equal(10f, stroke.Brush.MaxSize.Width);
     }
 
     [Fact]
     public void Constructor_ThrowsOnNegativeMinWidth()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkStroke(-1f, 8f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, -1f, 8f)));
     }
 
     [Fact]
     public void Constructor_ThrowsWhenMaxLessThanMin()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkStroke(10f, 5f));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 10f, 5f)));
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class SKInkStrokeTests
     [Fact]
     public void Path_SinglePoint_ReturnsCirclePath()
     {
-        using var stroke = new SKInkStroke(4f, 8f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 4f, 8f));
 
         stroke.AddPoint(new SKPoint(50f, 50f), 1f); // Full pressure
 
@@ -115,7 +115,7 @@ public class SKInkStrokeTests
     [Fact]
     public void Path_TwoPoints_ReturnsFilledPolygon()
     {
-        using var stroke = new SKInkStroke(2f, 8f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 8f));
 
         stroke.AddPoint(new SKPoint(10f, 50f), 0.5f);
         stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
@@ -177,7 +177,7 @@ public class SKInkStrokeTests
     [Fact]
     public void Bounds_ReturnsPathBounds()
     {
-        using var stroke = new SKInkStroke(2f, 4f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 4f));
 
         stroke.AddPoint(new SKPoint(10f, 20f), 0.5f);
         stroke.AddPoint(new SKPoint(100f, 80f), 0.5f);
@@ -192,8 +192,8 @@ public class SKInkStrokeTests
     [Fact]
     public void PressureSensitivity_HighPressureWidensStroke()
     {
-        using var lowPressureStroke = new SKInkStroke(2f, 10f);
-        using var highPressureStroke = new SKInkStroke(2f, 10f);
+        using var lowPressureStroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 10f));
+        using var highPressureStroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 10f));
 
         // Low pressure stroke
         lowPressureStroke.AddPoint(new SKPoint(0f, 50f), 0.1f);
@@ -259,7 +259,7 @@ public class SKInkStrokeTests
     [Fact]
     public void Path_WithManyPoints_GeneratesSmoothedPath()
     {
-        using var stroke = new SKInkStroke(2f, 8f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 8f));
 
         // Add many points to trigger Bezier smoothing
         for (int i = 0; i < 10; i++)
@@ -276,7 +276,7 @@ public class SKInkStrokeTests
     [Fact]
     public void Path_VaryingPressure_AffectsWidth()
     {
-        using var stroke = new SKInkStroke(2f, 20f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 20f));
 
         // Add points with varying pressure
         stroke.AddPoint(new SKPoint(0f, 50f), 0.1f);
@@ -294,18 +294,18 @@ public class SKInkStrokeTests
     [Fact]
     public void Constructor_AllowsEqualMinAndMax()
     {
-        using var stroke = new SKInkStroke(5f, 5f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 5f, 5f));
 
-        Assert.Equal(5f, stroke.MinStrokeWidth);
-        Assert.Equal(5f, stroke.MaxStrokeWidth);
+        Assert.Equal(5f, stroke.Brush.MinSize.Width);
+        Assert.Equal(5f, stroke.Brush.MaxSize.Width);
     }
 
     [Fact]
     public void Constructor_AllowsZeroMinWidth()
     {
-        using var stroke = new SKInkStroke(0f, 5f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 0f, 5f));
 
-        Assert.Equal(0f, stroke.MinStrokeWidth);
+        Assert.Equal(0f, stroke.Brush.MinSize.Width);
     }
 
     [Fact]
@@ -323,7 +323,7 @@ public class SKInkStrokeTests
     [Fact]
     public void Path_ThreePoints_GeneratesSmoothedCurve()
     {
-        using var stroke = new SKInkStroke(2f, 8f);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Black, 2f, 8f));
 
         stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
         stroke.AddPoint(new SKPoint(50f, 0f), 0.7f);
@@ -364,32 +364,32 @@ public class SKInkStrokeTests
     [Fact]
     public void Constructor_SetsColor()
     {
-        using var stroke = new SKInkStroke(1f, 8f, SKColors.Red);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush(SKColors.Red, 1f, 8f));
 
-        Assert.Equal(SKColors.Red, stroke.Color);
+        Assert.Equal(SKColors.Red, stroke.Brush.Color);
     }
 
     [Fact]
     public void Constructor_SetsCapStyle()
     {
-        using var stroke = new SKInkStroke(1f, 8f, null, SKStrokeCapStyle.Tapered);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(1f, 1f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Tapered });
 
-        Assert.Equal(SKStrokeCapStyle.Tapered, stroke.CapStyle);
+        Assert.Equal(SKStrokeCapStyle.Tapered, stroke.Brush.CapStyle);
     }
 
     [Fact]
     public void Constructor_SetsSmoothingFactor()
     {
-        using var stroke = new SKInkStroke(1f, 8f, null, SKStrokeCapStyle.Round, 8);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(1f, 1f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 8 });
 
-        Assert.Equal(8, stroke.SmoothingFactor);
+        Assert.Equal(8, stroke.Brush.SmoothingFactor);
     }
 
     [Fact]
     public void Constructor_ThrowsOnInvalidSmoothingFactor()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkStroke(1f, 8f, null, SKStrokeCapStyle.Round, 0));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkStroke(1f, 8f, null, SKStrokeCapStyle.Round, 11));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(1f, 1f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 0 }));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(1f, 1f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 11 }));
     }
 
     [Fact]
@@ -397,9 +397,9 @@ public class SKInkStrokeTests
     {
         using var stroke = new SKInkStroke();
         
-        stroke.Color = SKColors.Blue;
+        stroke.Brush.Color = SKColors.Blue;
 
-        Assert.Equal(SKColors.Blue, stroke.Color);
+        Assert.Equal(SKColors.Blue, stroke.Brush.Color);
     }
 
     [Fact]
@@ -407,15 +407,15 @@ public class SKInkStrokeTests
     {
         using var stroke = new SKInkStroke();
         
-        stroke.CapStyle = SKStrokeCapStyle.Flat;
+        stroke.Brush.CapStyle = SKStrokeCapStyle.Flat;
 
-        Assert.Equal(SKStrokeCapStyle.Flat, stroke.CapStyle);
+        Assert.Equal(SKStrokeCapStyle.Flat, stroke.Brush.CapStyle);
     }
 
     [Fact]
     public void Path_WithFlatCap_GeneratesPath()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Flat);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Flat });
 
         stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
         stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
@@ -429,7 +429,7 @@ public class SKInkStrokeTests
     [Fact]
     public void Path_WithTaperedCap_GeneratesPath()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Tapered);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Tapered });
 
         stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
         stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
@@ -443,7 +443,7 @@ public class SKInkStrokeTests
     [Fact]
     public void Path_HighSmoothingFactor_GeneratesSmoothPath()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 10);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 10 });
 
         stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
         stroke.AddPoint(new SKPoint(50f, 0f), 0.7f);
@@ -458,7 +458,7 @@ public class SKInkStrokeTests
     [Fact]
     public void Path_TwoPoints_GeneratesIntermediatePoints()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 4);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 4 });
 
         stroke.AddPoint(new SKPoint(0f, 50f), 0.3f);
         stroke.AddPoint(new SKPoint(100f, 50f), 0.7f);
@@ -474,7 +474,7 @@ public class SKInkStrokeTests
     [Fact]
     public void Path_TaperedCap_ExtendsBeyondStroke()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Tapered);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Tapered });
 
         stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
         stroke.AddPoint(new SKPoint(100f, 50f), 0.5f);
@@ -490,9 +490,9 @@ public class SKInkStrokeTests
     [Fact]
     public void Path_DifferentCapStyles_GenerateDifferentBounds()
     {
-        using var roundStroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round);
-        using var flatStroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Flat);
-        using var taperedStroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Tapered);
+        using var roundStroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round });
+        using var flatStroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Flat });
+        using var taperedStroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Tapered });
 
         // Add identical points
         roundStroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
@@ -520,7 +520,7 @@ public class SKInkStrokeTests
     [Fact]
     public void SmoothingFactor_SetProperty_InvalidatesPath()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 2);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 2 });
 
         stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
         stroke.AddPoint(new SKPoint(50f, 0f), 0.5f);
@@ -530,7 +530,7 @@ public class SKInkStrokeTests
         Assert.NotNull(path1);
 
         // Change smoothing factor
-        stroke.SmoothingFactor = 8;
+        stroke.Brush.SmoothingFactor = 8;
 
         var path2 = stroke.Path;
         Assert.NotNull(path2);
@@ -544,21 +544,21 @@ public class SKInkStrokeTests
     {
         using var stroke = new SKInkStroke();
         
-        Assert.Equal(SKSmoothingAlgorithm.CatmullRom, stroke.SmoothingAlgorithm);
+        Assert.Equal(SKSmoothingAlgorithm.CatmullRom, stroke.Brush.SmoothingAlgorithm);
     }
 
     [Fact]
     public void Constructor_SetsSmoothingAlgorithm()
     {
-        using var stroke = new SKInkStroke(1f, 8f, null, SKStrokeCapStyle.Round, 4, SKSmoothingAlgorithm.QuadraticBezier);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(1f, 1f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 4, SmoothingAlgorithm = SKSmoothingAlgorithm.QuadraticBezier });
         
-        Assert.Equal(SKSmoothingAlgorithm.QuadraticBezier, stroke.SmoothingAlgorithm);
+        Assert.Equal(SKSmoothingAlgorithm.QuadraticBezier, stroke.Brush.SmoothingAlgorithm);
     }
 
     [Fact]
     public void Path_CatmullRom_PassesThroughAllPoints()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 4, SKSmoothingAlgorithm.CatmullRom);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 4, SmoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom });
         
         stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
         stroke.AddPoint(new SKPoint(50f, 0f), 0.5f);
@@ -579,7 +579,7 @@ public class SKInkStrokeTests
     [Fact]
     public void Path_QuadraticBezier_GeneratesValidPath()
     {
-        using var stroke = new SKInkStroke(2f, 8f, null, SKStrokeCapStyle.Round, 4, SKSmoothingAlgorithm.QuadraticBezier);
+        using var stroke = new SKInkStroke(new SKInkStrokeBrush { MinSize = new SKSize(2f, 2f), MaxSize = new SKSize(8f, 8f), CapStyle = SKStrokeCapStyle.Round, SmoothingFactor = 4, SmoothingAlgorithm = SKSmoothingAlgorithm.QuadraticBezier });
         
         stroke.AddPoint(new SKPoint(0f, 50f), 0.5f);
         stroke.AddPoint(new SKPoint(50f, 0f), 0.5f);
@@ -596,8 +596,8 @@ public class SKInkStrokeTests
     {
         using var stroke = new SKInkStroke();
         
-        stroke.SmoothingAlgorithm = SKSmoothingAlgorithm.QuadraticBezier;
+        stroke.Brush.SmoothingAlgorithm = SKSmoothingAlgorithm.QuadraticBezier;
         
-        Assert.Equal(SKSmoothingAlgorithm.QuadraticBezier, stroke.SmoothingAlgorithm);
+        Assert.Equal(SKSmoothingAlgorithm.QuadraticBezier, stroke.Brush.SmoothingAlgorithm);
     }
 }
