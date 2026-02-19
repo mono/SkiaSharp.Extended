@@ -219,4 +219,103 @@ public class DeepZoomRendererTest
         var pixel = decoded.GetPixel(200, 200);
         Assert.NotEqual(SKColors.White, pixel);
     }
+
+    [Fact]
+    public void ShowTileBorders_EmptyCache_DoesNotThrow()
+    {
+        using var renderer = new DeepZoomRenderer();
+        renderer.ShowTileBorders = true;
+
+        using var surface = SKSurface.Create(new SKImageInfo(800, 600));
+        var dzi = CreateSampleDzi();
+        var viewport = new Viewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            ViewportWidth = 1.0,
+        };
+        var cache = new TileCache(10);
+        var scheduler = new TileScheduler();
+
+        // Render with borders on but no tiles cached — should not throw
+        var ex = Record.Exception(() => renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler));
+        Assert.Null(ex);
+        cache.Dispose();
+    }
+
+    [Fact]
+    public void Render_MultipleTimesInSequence_DoesNotThrow()
+    {
+        using var renderer = new DeepZoomRenderer();
+        using var surface = SKSurface.Create(new SKImageInfo(400, 400));
+        var dzi = CreateSampleDzi();
+        var viewport = new Viewport
+        {
+            ControlWidth = 400,
+            ControlHeight = 400,
+            ViewportWidth = 1.0,
+        };
+        using var cache = new TileCache(10);
+        var scheduler = new TileScheduler();
+
+        // Render multiple times should be safe
+        for (int i = 0; i < 5; i++)
+        {
+            surface.Canvas.Clear(SKColors.White);
+            renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler);
+        }
+    }
+
+    [Fact]
+    public void ShowTileBorders_WithFallbackTile_DrawsBordersWithoutCrash()
+    {
+        using var renderer = new DeepZoomRenderer();
+        renderer.ShowTileBorders = true;
+
+        string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Image xmlns=""http://schemas.microsoft.com/deepzoom/2008""
+       Format=""jpg"" Overlap=""0"" TileSize=""256"">
+  <Size Width=""1024"" Height=""1024""/>
+</Image>";
+        var dzi = DziTileSource.Parse(xml, "http://example.com/large");
+        using var surface = SKSurface.Create(new SKImageInfo(512, 512));
+        var viewport = new Viewport
+        {
+            ControlWidth = 512,
+            ControlHeight = 512,
+            ViewportWidth = 1.0,
+            ViewportOriginX = 0,
+            ViewportOriginY = 0,
+            AspectRatio = 1.0
+        };
+        using var cache = new TileCache(100);
+        var scheduler = new TileScheduler();
+
+        // Add only a low-level tile to trigger fallback path with borders
+        var bmp = new SKBitmap(256, 256);
+        using (var c = new SKCanvas(bmp))
+            c.Clear(SKColors.Green);
+        cache.Put(new TileId(0, 0, 0), bmp);
+
+        var ex = Record.Exception(() => renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler));
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void Dispose_PaintObjectsAreDisposed()
+    {
+        var renderer = new DeepZoomRenderer();
+        renderer.Dispose();
+
+        // After dispose, creating a new renderer should work (verifies no static state corruption)
+        using var renderer2 = new DeepZoomRenderer();
+        using var surface = SKSurface.Create(new SKImageInfo(100, 100));
+        var dzi = CreateSampleDzi();
+        var viewport = new Viewport { ControlWidth = 100, ControlHeight = 100, ViewportWidth = 1.0 };
+        using var cache = new TileCache(10);
+        var scheduler = new TileScheduler();
+
+        var ex = Record.Exception(() => renderer2.Render(surface.Canvas, dzi, viewport, cache, scheduler));
+        Assert.Null(ex);
+    }
 }

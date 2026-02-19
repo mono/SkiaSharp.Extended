@@ -534,6 +534,75 @@ public class CollectionImageProviderTest
 
     #endregion
 
+    #region FlushEvictedTiles
+
+    [Fact]
+    public void FlushEvictedTiles_DoesNotThrow_WhenEmpty()
+    {
+        var dzc = CreateCompositeDzc();
+        var fetcher = new TrackingTileFetcher();
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        var ex = Record.Exception(() => provider.FlushEvictedTiles());
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public async Task FlushEvictedTiles_DoesNotThrow_AfterLoading()
+    {
+        var dzc = CreateCompositeDzc(4);
+        var fetcher = new TrackingTileFetcher();
+        fetcher.AddWildcard();
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        await provider.LoadThumbnailAsync(0, 64);
+        await provider.LoadThumbnailAsync(1, 64);
+
+        var ex = Record.Exception(() => provider.FlushEvictedTiles());
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void FlushEvictedTiles_MultipleCallsAreIdempotent()
+    {
+        var dzc = CreateCompositeDzc();
+        var fetcher = new TrackingTileFetcher();
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        // Multiple calls should be safe
+        for (int i = 0; i < 5; i++)
+        {
+            var ex = Record.Exception(() => provider.FlushEvictedTiles());
+            Assert.Null(ex);
+        }
+    }
+
+    #endregion
+
+    #region GetThumbnail edge cases
+
+    [Fact]
+    public void GetThumbnail_OutOfRangeIndex_ReturnsNull()
+    {
+        var dzc = CreateCompositeDzc(4);
+        var fetcher = new TrackingTileFetcher();
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        Assert.Null(provider.GetThumbnail(999));
+    }
+
+    [Fact]
+    public void GetThumbnail_NegativeIndex_ReturnsNull()
+    {
+        var dzc = CreateCompositeDzc(4);
+        var fetcher = new TrackingTileFetcher();
+        using var provider = new CollectionImageProvider(dzc, fetcher, "test_files");
+
+        Assert.Null(provider.GetThumbnail(-1));
+    }
+
+    #endregion
+
     #region Non-square aspect ratio
 
     [Fact]

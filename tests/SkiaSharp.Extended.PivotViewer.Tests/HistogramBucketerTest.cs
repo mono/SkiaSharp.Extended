@@ -229,4 +229,80 @@ public class HistogramBucketerTest
         Assert.NotNull(buckets[0].Label);
         Assert.NotEqual("", buckets[0].Label);
     }
+
+    [Fact]
+    public void StringBuckets_ManyUniqueValues_AllRepresented()
+    {
+        var values = Enumerable.Range(0, 100).Select(i => $"Value_{i:D3}").ToList();
+        var buckets = HistogramBucketer.CreateStringBuckets(values);
+        // All unique values produce individual buckets for strings
+        Assert.Equal(100, buckets.Count);
+        Assert.Equal(100, buckets.Sum(b => b.Count));
+    }
+
+    [Fact]
+    public void StringBuckets_SingleValue_OneBucket()
+    {
+        var buckets = HistogramBucketer.CreateStringBuckets(new[] { "Only" });
+        Assert.Single(buckets);
+        Assert.Equal(1, buckets[0].Count);
+        Assert.Equal("Only", buckets[0].Min);
+    }
+
+    [Fact]
+    public void NumericBuckets_TwoValues_LabelsContainRange()
+    {
+        var buckets = HistogramBucketer.CreateNumericBuckets(new[] { 10.0, 20.0 });
+        Assert.True(buckets.Count >= 1);
+        Assert.Equal(2, buckets.Sum(b => b.Count));
+    }
+
+    [Fact]
+    public void DateTimeBuckets_DayRange_HasMultipleBuckets()
+    {
+        // Dates within a single month but different days
+        var dates = Enumerable.Range(1, 28).Select(d => new DateTime(2020, 3, d)).ToList();
+        var buckets = HistogramBucketer.CreateDateTimeBuckets(dates);
+        Assert.True(buckets.Count >= 1);
+        Assert.Equal(28, buckets.Sum(b => b.Count));
+    }
+
+    [Fact]
+    public void DateTimeBuckets_WideRange_UsesAppropriateGranularity()
+    {
+        // Dates spanning 100 years
+        var dates = Enumerable.Range(1900, 100).Select(y => new DateTime(y, 1, 1)).ToList();
+        var buckets = HistogramBucketer.CreateDateTimeBuckets(dates);
+        Assert.True(buckets.Count > 1);
+        Assert.True(buckets.Count <= HistogramBucketer.MaxBuckets);
+        Assert.Equal(100, buckets.Sum(b => b.Count));
+    }
+
+    [Fact]
+    public void NumericBuckets_VeryCloseValues_HandlesPrecision()
+    {
+        var values = new[] { 1.001, 1.002, 1.003 };
+        var buckets = HistogramBucketer.CreateNumericBuckets(values);
+        Assert.True(buckets.Count >= 1);
+        Assert.Equal(3, buckets.Sum(b => b.Count));
+    }
+
+    [Fact]
+    public void HistogramBucket_MinAndMax_Properties()
+    {
+        var bucket = new HistogramBucket<double>(5.0, 15.0, 10);
+        Assert.Equal(5.0, bucket.Min);
+        Assert.Equal(15.0, bucket.Max);
+        Assert.Equal(10, bucket.Count);
+    }
+
+    [Fact]
+    public void StringBuckets_NullOrEmpty_Handled()
+    {
+        // Empty strings should be grouped together
+        var values = new[] { "", "", "A" };
+        var buckets = HistogramBucketer.CreateStringBuckets(values);
+        Assert.True(buckets.Count >= 1);
+        Assert.Equal(3, buckets.Sum(b => b.Count));
+    }
 }

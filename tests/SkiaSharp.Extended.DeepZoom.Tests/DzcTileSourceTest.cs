@@ -184,4 +184,80 @@ public class DzcTileSourceTest
         var xml = @"<?xml version=""1.0"" encoding=""UTF-8""?><Images><I Id=""0"" /></Images>";
         Assert.Throws<FormatException>(() => DzcTileSource.Parse(xml));
     }
+
+    [Fact]
+    public void MortonToGrid_HigherIndices()
+    {
+        // Index 5 → col=3, row=0
+        Assert.Equal((3, 0), DzcTileSource.MortonToGrid(5));
+        // Index 6 → col=2, row=1
+        Assert.Equal((2, 1), DzcTileSource.MortonToGrid(6));
+        // Index 7 → col=3, row=1
+        Assert.Equal((3, 1), DzcTileSource.MortonToGrid(7));
+    }
+
+    [Fact]
+    public void GetCompositeTileUrl_DifferentLevelsAndPositions()
+    {
+        var dzc = new DzcTileSource(8, 256, "png", Array.Empty<DzcSubImage>());
+
+        Assert.Equal("0/0_0.png", dzc.GetCompositeTileUrl(0, 0, 0));
+        Assert.Equal("3/1_2.png", dzc.GetCompositeTileUrl(3, 1, 2));
+        Assert.Equal("8/10_5.png", dzc.GetCompositeTileUrl(8, 10, 5));
+    }
+
+    [Fact]
+    public void TilesBaseUri_CanBeSetAndRetrieved()
+    {
+        var dzc = new DzcTileSource(8, 256, "jpg", Array.Empty<DzcSubImage>());
+        Assert.Null(dzc.TilesBaseUri);
+
+        dzc.TilesBaseUri = "http://example.com/tiles";
+        Assert.Equal("http://example.com/tiles", dzc.TilesBaseUri);
+    }
+
+    [Fact]
+    public void Parse_WithBaseUri_SetsTilesBaseUri()
+    {
+        var xml = @"<Collection MaxLevel=""7"" TileSize=""256"" Format=""jpg"" xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
+    <Items>
+        <I Id=""0"" N=""0""><Size Width=""100"" Height=""100"" /></I>
+    </Items>
+</Collection>";
+
+        using var stream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(xml));
+        var dzc = DzcTileSource.Parse(stream, "http://example.com/collection.dzc");
+
+        Assert.NotNull(dzc.TilesBaseUri);
+        Assert.Contains("example.com", dzc.TilesBaseUri!);
+    }
+
+    [Fact]
+    public void SubImage_WidthAndHeight_AreCorrect()
+    {
+        var subImage = new DzcSubImage(0, 0, 1920, 1080, "test.dzi");
+        Assert.Equal(1920, subImage.Width);
+        Assert.Equal(1080, subImage.Height);
+        Assert.Equal("test.dzi", subImage.Source);
+    }
+
+    [Fact]
+    public void SubImage_ViewportProperties_Default()
+    {
+        var subImage = new DzcSubImage(0, 0, 100, 100, null);
+        // Default viewport properties
+        Assert.Equal(0.0, subImage.ViewportX);
+        Assert.Equal(0.0, subImage.ViewportY);
+    }
+
+    [Fact]
+    public void GridToMorton_SpecificValues()
+    {
+        Assert.Equal(0, DzcTileSource.GridToMorton(0, 0));
+        Assert.Equal(1, DzcTileSource.GridToMorton(1, 0));
+        Assert.Equal(2, DzcTileSource.GridToMorton(0, 1));
+        Assert.Equal(3, DzcTileSource.GridToMorton(1, 1));
+        Assert.Equal(4, DzcTileSource.GridToMorton(2, 0));
+        Assert.Equal(5, DzcTileSource.GridToMorton(3, 0));
+    }
 }

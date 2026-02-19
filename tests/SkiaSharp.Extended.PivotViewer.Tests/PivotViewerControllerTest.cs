@@ -951,4 +951,92 @@ public class PivotViewerControllerTest
         Assert.True(sortFired);
         Assert.True(selectionFired);
     }
+
+    [Fact]
+    public void SelectNext_EmptyCollection_DoesNotThrow()
+    {
+        var controller = new PivotViewerController();
+        // No items loaded
+        var ex = Record.Exception(() => controller.SelectNext());
+        Assert.Null(ex);
+        Assert.Null(controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectPrevious_EmptyCollection_DoesNotThrow()
+    {
+        var controller = new PivotViewerController();
+        var ex = Record.Exception(() => controller.SelectPrevious());
+        Assert.Null(ex);
+        Assert.Null(controller.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectPrevious_NoSelection_SelectsLastItem()
+    {
+        var (controller, _) = CreateTestController();
+        Assert.Null(controller.SelectedItem);
+
+        controller.SelectPrevious();
+
+        var lastItem = controller.InScopeItems[controller.InScopeItems.Count - 1];
+        Assert.Equal(lastItem, controller.SelectedItem);
+    }
+
+    [Fact]
+    public void ApplyFilters_NoItemsLoaded_DoesNotThrow()
+    {
+        var controller = new PivotViewerController();
+        var ex = Record.Exception(() => controller.FilterEngine.ClearAll());
+        Assert.Null(ex);
+        Assert.Empty(controller.InScopeItems);
+    }
+
+    [Fact]
+    public void Update_ReturnsFalse_WhenNoItemsLoaded()
+    {
+        var controller = new PivotViewerController();
+        bool needsRedraw = controller.Update(TimeSpan.FromMilliseconds(16));
+        Assert.False(needsRedraw);
+    }
+
+    [Fact]
+    public void ClearSelection_EmptyCollection_DoesNotThrow()
+    {
+        var controller = new PivotViewerController();
+        var ex = Record.Exception(() => controller.ClearSelection());
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void SelectDown_EmptyCollection_DoesNotThrow()
+    {
+        var controller = new PivotViewerController();
+        var ex = Record.Exception(() => controller.SelectDown());
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void SelectUp_EmptyCollection_DoesNotThrow()
+    {
+        var controller = new PivotViewerController();
+        var ex = Record.Exception(() => controller.SelectUp());
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void GetFilterCounts_NoItemsLoaded_ReturnsEmpty()
+    {
+        var controller = new PivotViewerController();
+        var counts = controller.GetFilterCounts("NonExistent");
+        Assert.Empty(counts);
+    }
+
+    [Fact]
+    public void HitTest_NoItemsLoaded_ReturnsNull()
+    {
+        var controller = new PivotViewerController();
+        var hit = controller.HitTest(100, 100);
+        Assert.Null(hit);
+    }
 }
