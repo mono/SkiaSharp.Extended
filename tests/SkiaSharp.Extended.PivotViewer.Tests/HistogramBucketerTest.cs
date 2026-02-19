@@ -169,4 +169,64 @@ public class HistogramBucketerTest
         bucket.Label = "Category A";
         Assert.Equal("Category A", bucket.Label);
     }
+
+    [Fact]
+    public void NumericBuckets_LabelsAreNonEmpty()
+    {
+        var values = Enumerable.Range(1, 100).Select(i => (double)i).ToList();
+        var buckets = HistogramBucketer.CreateNumericBuckets(values);
+
+        Assert.True(buckets.Count > 1);
+        foreach (var bucket in buckets)
+        {
+            Assert.NotNull(bucket.Label);
+            Assert.NotEqual("", bucket.Label);
+        }
+    }
+
+    [Fact]
+    public void NumericBuckets_LabelContainsMinAndMax()
+    {
+        var values = new[] { 0.0, 50.0, 100.0 };
+        var buckets = HistogramBucketer.CreateNumericBuckets(values);
+
+        Assert.True(buckets.Count > 1);
+        foreach (var bucket in buckets)
+        {
+            // Label should contain the "–" separator between min and max
+            Assert.Contains("–", bucket.Label);
+        }
+    }
+
+    [Fact]
+    public void NumericBuckets_SingleValue_LabelIsValue()
+    {
+        var buckets = HistogramBucketer.CreateNumericBuckets(new[] { 42.0 });
+        Assert.Single(buckets);
+        Assert.Contains("42", buckets[0].Label);
+    }
+
+    [Fact]
+    public void DateTimeBuckets_LabelsAreNonEmpty()
+    {
+        var dates = Enumerable.Range(2010, 5).Select(y => new DateTime(y, 6, 15)).ToList();
+        var buckets = HistogramBucketer.CreateDateTimeBuckets(dates);
+
+        Assert.True(buckets.Count > 1);
+        foreach (var bucket in buckets)
+        {
+            Assert.NotNull(bucket.Label);
+            Assert.NotEqual("", bucket.Label);
+        }
+    }
+
+    [Fact]
+    public void DateTimeBuckets_SingleDate_LabelIsNonEmpty()
+    {
+        var dt = new DateTime(2020, 6, 15);
+        var buckets = HistogramBucketer.CreateDateTimeBuckets(new[] { dt });
+        Assert.Single(buckets);
+        Assert.NotNull(buckets[0].Label);
+        Assert.NotEqual("", buckets[0].Label);
+    }
 }

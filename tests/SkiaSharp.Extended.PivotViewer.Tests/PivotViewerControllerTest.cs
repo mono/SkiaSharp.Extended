@@ -824,4 +824,38 @@ public class PivotViewerControllerTest
         var ex = Record.Exception(() => controller.SetViewerState(null!));
         Assert.Null(ex);
     }
+
+    [Fact]
+    public void SetViewerState_FiresViewChangedSortPropertyChangedSelectionChanged()
+    {
+        var (controller, _) = CreateTestController();
+
+        // Set up a specific state: graph view, sort by Production Year, select first item
+        var yearProp = controller.Properties.FirstOrDefault(p => p.Id == "Production Year");
+        Assert.NotNull(yearProp);
+        controller.SortProperty = yearProp;
+        controller.CurrentView = "graph";
+        controller.SelectedItem = controller.InScopeItems[0];
+
+        var state = controller.SerializeViewerState();
+
+        // Reset to defaults
+        controller.CurrentView = "grid";
+        controller.SortProperty = null;
+        controller.SelectedItem = null;
+
+        // Listen for events
+        bool viewFired = false;
+        bool sortFired = false;
+        bool selectionFired = false;
+        controller.ViewChanged += (s, e) => viewFired = true;
+        controller.SortPropertyChanged += (s, e) => sortFired = true;
+        controller.SelectionChanged += (s, e) => selectionFired = true;
+
+        controller.SetViewerState(state);
+
+        Assert.True(viewFired);
+        Assert.True(sortFired);
+        Assert.True(selectionFired);
+    }
 }
