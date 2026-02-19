@@ -28,6 +28,15 @@ The `SKLottieImageSource` and its derived classes support the following property
 | :--------------------- | :--------------------- | :---------- |
 | **ImageAssetsFolder**  | `string`               | The folder path where external image assets referenced in the Lottie JSON file are located. This is required when your animation references external image files (e.g., `"p": "img_0.png"`) instead of embedding them as base64 data URIs. |
 
+### Available Image Source Types
+
+| Type                        | Purpose | Example |
+| :-------------------------- | :------ | :------ |
+| **SKFileLottieImageSource** | Load animation from a JSON file | `Source = new SKFileLottieImageSource { File = "animation.json" }` |
+| **SKUriLottieImageSource**  | Load animation from a URL | `Source = new SKUriLottieImageSource { Uri = new Uri("https://example.com/animation.json") }` |
+| **SKStreamLottieImageSource** | Load animation from a stream | `Source = new SKStreamLottieImageSource { Stream = myStreamGetter }` |
+| **SKDotLottieImageSource**  | Load animation from a .lottie file | `Source = new SKDotLottieImageSource { File = "animation.lottie" }` |
+
 ## Loading External Image Assets
 
 Lottie animations can reference external image files that are stored separately from the animation JSON. To use external images:
@@ -102,6 +111,46 @@ When your Lottie animation references external images, the JSON will contain ass
 ```
 
 The `ImageAssetsFolder` property should be set to the base path where the images folder is located. The library will combine the `ImageAssetsFolder` with the `"u"` (folder) and `"p"` (filename) values from the JSON to locate the image file.
+
+## Loading .lottie Files (dotLottie Format)
+
+The .lottie format (also known as dotLottie) is a modern container format that bundles Lottie animations and all their assets (images, fonts, themes) into a single compressed ZIP file. This makes distribution and management much easier.
+
+### Using .lottie Files
+
+```csharp
+var lottieView = new SKLottieView
+{
+    Source = new SKDotLottieImageSource
+    {
+        File = "animations/my-animation.lottie"
+    }
+};
+```
+
+### .lottie File Structure
+
+A .lottie file is a ZIP archive with the following structure:
+```
+.
+├── manifest.json      # Required: Metadata and animation list
+├── a/                 # Required: Animation JSON files
+│   └── animation.json
+├── i/                 # Optional: Image assets
+│   └── image.png
+├── f/                 # Optional: Font assets
+└── t/                 # Optional: Theme files
+```
+
+### Benefits of .lottie Format
+
+- **All-in-one**: Animations, images, and fonts packaged in a single file
+- **Compression**: Smaller file sizes compared to separate files
+- **No ImageAssetsFolder needed**: Images are automatically extracted and loaded
+- **Multi-animation support**: Can contain multiple animations in one file
+- **Standard format**: Official open-source format from LottieFiles
+
+For more information about the .lottie format specification, visit [dotLottie.io](https://dotlottie.io/).
 
 ## Events
 
