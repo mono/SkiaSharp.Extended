@@ -130,7 +130,7 @@ public class RenderHitResultTest
     public void RenderHitType_HasAllExpectedValues()
     {
         var values = Enum.GetValues<RenderHitType>();
-        Assert.Equal(15, values.Length);
+        Assert.Equal(16, values.Length);
     }
 
     [Fact]
@@ -145,5 +145,18 @@ public class RenderHitResultTest
         var a = RenderHitResult.None;
         var b = RenderHitResult.None;
         Assert.NotSame(a, b);
+    }
+
+    [Fact]
+    public void FilterCategoryClear_Properties_Roundtrip()
+    {
+        var result = new RenderHitResult
+        {
+            Type = RenderHitType.FilterCategoryClear,
+            CategoryName = "test",
+        };
+
+        Assert.Equal(RenderHitType.FilterCategoryClear, result.Type);
+        Assert.Equal("test", result.CategoryName);
     }
 }

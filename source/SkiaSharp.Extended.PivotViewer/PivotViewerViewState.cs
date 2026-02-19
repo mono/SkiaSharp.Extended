@@ -26,6 +26,12 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>Item currently under the pointer (for hover highlight).</summary>
         public PivotViewerItem? HoverItem { get; set; }
 
+        /// <summary>Vertical scroll offset within the detail pane.</summary>
+        public double DetailScrollOffset { get; set; }
+
+        /// <summary>Total content height of the detail pane (set by renderer after each paint).</summary>
+        public double DetailContentHeight { get; set; }
+
         /// <summary>Clamps filter scroll offset to valid bounds.</summary>
         public void ClampFilterScroll(double viewportHeight)
         {
@@ -33,6 +39,15 @@ namespace SkiaSharp.Extended.PivotViewer
             if (maxScroll < 0) maxScroll = 0;
             if (FilterScrollOffset < 0) FilterScrollOffset = 0;
             if (FilterScrollOffset > maxScroll) FilterScrollOffset = maxScroll;
+        }
+
+        /// <summary>Clamps detail pane scroll offset to valid bounds.</summary>
+        public void ClampDetailScroll(double viewportHeight)
+        {
+            double maxScroll = DetailContentHeight - viewportHeight;
+            if (maxScroll < 0) maxScroll = 0;
+            if (DetailScrollOffset < 0) DetailScrollOffset = 0;
+            if (DetailScrollOffset > maxScroll) DetailScrollOffset = maxScroll;
         }
     }
 }

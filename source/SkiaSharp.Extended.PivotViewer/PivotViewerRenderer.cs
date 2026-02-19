@@ -125,7 +125,7 @@ namespace SkiaSharp.Extended.PivotViewer
                 canvas.Save();
                 canvas.ClipRect(new SKRect(detailLeft, ControlBarHeight, info.Width, info.Height));
                 canvas.Translate(detailLeft, ControlBarHeight);
-                RenderDetailPane(canvas, detailWidth, contentHeight, theme, controller);
+                RenderDetailPane(canvas, detailWidth, contentHeight, theme, controller, viewState);
                 canvas.Restore();
             }
 
@@ -172,7 +172,7 @@ namespace SkiaSharp.Extended.PivotViewer
             {
                 double localX = viewX - (info.Width - detailWidth);
                 double localY = viewY - ControlBarHeight;
-                return HitTestDetailPane(localX, localY);
+                return HitTestDetailPane(localX, localY, viewState);
             }
 
             // Main content area
@@ -284,8 +284,14 @@ namespace SkiaSharp.Extended.PivotViewer
                     (float)pos.X + 1, (float)pos.Y + 1,
                     (float)(pos.X + pos.Width) - 1, (float)(pos.Y + pos.Height) - 1);
 
+                // Skip degenerate rects (e.g. items animating out to zero size)
+                if (rect.Width < 2 || rect.Height < 2)
+                    continue;
+
                 if (pos.Width >= TradingCardMinWidth)
                     RenderTradingCard(canvas, pos, rect, theme, controller);
+                else if (TryRenderCustomTemplate(canvas, pos, rect, controller))
+                    { /* custom template handled it */ }
                 else
                     RenderThumbnailItem(canvas, pos, rect, theme, controller);
 
@@ -327,6 +333,23 @@ namespace SkiaSharp.Extended.PivotViewer
         // =====================================================================
         // Thumbnail and Trading Card items
         // =====================================================================
+
+        /// <summary>
+        /// Tries to render an item using a custom template from ItemTemplates.
+        /// Returns true if a matching template with a RenderAction was found.
+        /// </summary>
+        private static bool TryRenderCustomTemplate(
+            SKCanvas canvas, ItemPosition pos, SKRect rect, PivotViewerController controller)
+        {
+            var templates = controller.ItemTemplates;
+            if (templates == null || templates.Count == 0) return false;
+
+            var template = templates.SelectTemplate((int)pos.Width);
+            if (template?.RenderAction == null) return false;
+
+            template.RenderAction(canvas, pos.Item, rect);
+            return true;
+        }
 
         private void RenderThumbnailItem(
             SKCanvas canvas, ItemPosition pos, SKRect rect,
@@ -782,6 +805,14 @@ namespace SkiaSharp.Extended.PivotViewer
                     var headerPaint = category.IsFiltered ? accentPaint : lightPaint;
                     canvas.DrawText(category.Property.DisplayName ?? category.Property.Id,
                         ItemPadding, y + 14, SKTextAlign.Left, _textFont, headerPaint);
+
+                    // Per-category clear button when filtered
+                    if (category.IsFiltered)
+                    {
+                        float clearX = width - 24;
+                        _textFont.Size = 11;
+                        canvas.DrawText("✕", clearX, y + 13, SKTextAlign.Left, _textFont, accentPaint);
+                    }
                 }
                 y += LineHeight + 2;
 
@@ -978,7 +1009,7 @@ namespace SkiaSharp.Extended.PivotViewer
 
         private void RenderDetailPane(
             SKCanvas canvas, float width, float height,
-            PivotViewerTheme theme, PivotViewerController controller)
+            PivotViewerTheme theme, PivotViewerController controller, PivotViewerViewState viewState)
         {
             _detailLinkHitRects.Clear();
             _detailFacetHitRects.Clear();
@@ -992,6 +1023,11 @@ namespace SkiaSharp.Extended.PivotViewer
             var detail = controller.DetailPane;
             var item = detail.SelectedItem;
             if (item == null) return;
+
+            // Apply scroll offset
+            canvas.Save();
+            canvas.ClipRect(new SKRect(0, 0, width, height));
+            canvas.Translate(0, -(float)viewState.DetailScrollOffset);
 
             var defaults = controller.DefaultDetails;
             float y = ItemPadding;
@@ -1053,8 +1089,6 @@ namespace SkiaSharp.Extended.PivotViewer
 
                 foreach (var facet in facets)
                 {
-                    if (y > height - 20) break;
-
                     // Property name
                     using var propPaint = new SKPaint { Color = theme.SecondaryForeground, IsAntialias = true };
                     canvas.DrawText(facet.DisplayName, ItemPadding, y + 12, SKTextAlign.Left, _textFont, propPaint);
@@ -1070,9 +1104,8 @@ namespace SkiaSharp.Extended.PivotViewer
 
                     var rawValues = isLinkType ? item[facet.Property] : null;
                     int valIdx = 0;
-                    foreach (var val in facet.Values.Take(3))
+                    foreach (var val in facet.Values.Take(5))
                     {
-                        if (y > height - 20) break;
                         string displayVal = val.Length > 40 ? val.Substring(0, 37) + "..." : val;
                         float textWidth = _textFont.MeasureText(displayVal, out _);
                         canvas.DrawText(displayVal, ItemPadding + 4, y + 12, SKTextAlign.Left, _textFont, valuePaint);
@@ -1095,10 +1128,10 @@ namespace SkiaSharp.Extended.PivotViewer
                         valIdx++;
                     }
 
-                    if (facet.Values.Count > 3)
+                    if (facet.Values.Count > 5)
                     {
                         using var morePaint = new SKPaint { Color = SKColors.Gray, IsAntialias = true };
-                        canvas.DrawText($"+{facet.Values.Count - 3} more",
+                        canvas.DrawText($"+{facet.Values.Count - 5} more",
                             ItemPadding + 4, y + 12, SKTextAlign.Left, _textFont, morePaint);
                         y += 16;
                     }
@@ -1111,14 +1144,19 @@ namespace SkiaSharp.Extended.PivotViewer
             if (!defaults.IsCopyrightHidden)
             {
                 var copyright = controller.CollectionSource?.Copyright;
-                if (copyright != null && y < height - 30)
+                if (copyright != null)
                 {
-                    y = height - 24;
+                    y += 8;
                     _textFont.Size = 9;
                     using var copyPaint = new SKPaint { Color = SKColors.Gray, IsAntialias = true };
                     canvas.DrawText(copyright.Text ?? "©", ItemPadding, y + 10, SKTextAlign.Left, _textFont, copyPaint);
+                    y += 20;
                 }
             }
+
+            // Track content height for scrolling
+            viewState.DetailContentHeight = y;
+            canvas.Restore();
         }
 
         // =====================================================================
@@ -1220,6 +1258,16 @@ namespace SkiaSharp.Extended.PivotViewer
 
             foreach (var category in categories)
             {
+                // Category header — check for per-category clear button
+                if (category.IsFiltered && adjustedY >= catY && adjustedY < catY + LineHeight + 2
+                    && x > FilterPaneWidth - 28)
+                {
+                    return new RenderHitResult
+                    {
+                        Type = RenderHitType.FilterCategoryClear,
+                        CategoryName = category.Property.Id
+                    };
+                }
                 catY += LineHeight + 2; // Header
 
                 if (category.ValueCounts != null && (
@@ -1329,13 +1377,16 @@ namespace SkiaSharp.Extended.PivotViewer
             return RenderHitResult.None;
         }
 
-        private RenderHitResult HitTestDetailPane(double localX, double localY)
+        private RenderHitResult HitTestDetailPane(double localX, double localY, PivotViewerViewState viewState)
         {
+            // Adjust for scroll offset (hit rects are stored in content-space coordinates)
+            double adjustedY = localY + viewState.DetailScrollOffset;
+
             // Check link hit rects (populated during RenderDetailPane)
             foreach (var (bounds, href) in _detailLinkHitRects)
             {
                 if (localX >= bounds.Left && localX <= bounds.Right &&
-                    localY >= bounds.Top && localY <= bounds.Bottom)
+                    adjustedY >= bounds.Top && adjustedY <= bounds.Bottom)
                 {
                     return new RenderHitResult
                     {
@@ -1349,7 +1400,7 @@ namespace SkiaSharp.Extended.PivotViewer
             foreach (var (bounds, propertyId, value) in _detailFacetHitRects)
             {
                 if (localX >= bounds.Left && localX <= bounds.Right &&
-                    localY >= bounds.Top && localY <= bounds.Bottom)
+                    adjustedY >= bounds.Top && adjustedY <= bounds.Bottom)
                 {
                     return new RenderHitResult
                     {

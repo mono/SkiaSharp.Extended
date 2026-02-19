@@ -92,5 +92,8 @@ namespace SkiaSharp.Extended.PivotViewer
 
         /// <summary>A histogram column label in graph view (tap to filter).</summary>
         GraphColumnLabel,
+
+        /// <summary>A per-category clear button in the filter pane.</summary>
+        FilterCategoryClear,
     }
 }

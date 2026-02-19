@@ -138,4 +138,70 @@ public class PivotViewerViewStateTest
         state.HoverItem = null;
         Assert.Null(state.HoverItem);
     }
+
+    [Fact]
+    public void DetailScrollOffset_Default_Zero()
+    {
+        var state = new PivotViewerViewState();
+        Assert.Equal(0.0, state.DetailScrollOffset);
+    }
+
+    [Fact]
+    public void DetailContentHeight_Default_Zero()
+    {
+        var state = new PivotViewerViewState();
+        Assert.Equal(0.0, state.DetailContentHeight);
+    }
+
+    [Fact]
+    public void ClampDetailScroll_NegativeOffset_ClampsToZero()
+    {
+        var state = new PivotViewerViewState
+        {
+            DetailScrollOffset = -10,
+            DetailContentHeight = 500,
+        };
+
+        state.ClampDetailScroll(600);
+        Assert.Equal(0.0, state.DetailScrollOffset);
+    }
+
+    [Fact]
+    public void ClampDetailScroll_ExceedsMax_ClampsToMax()
+    {
+        var state = new PivotViewerViewState
+        {
+            DetailScrollOffset = 1000,
+            DetailContentHeight = 800,
+        };
+
+        state.ClampDetailScroll(500);
+        Assert.Equal(300.0, state.DetailScrollOffset);
+    }
+
+    [Fact]
+    public void ClampDetailScroll_ContentSmallerThanViewport_ClampsToZero()
+    {
+        var state = new PivotViewerViewState
+        {
+            DetailScrollOffset = 50,
+            DetailContentHeight = 100,
+        };
+
+        state.ClampDetailScroll(600);
+        Assert.Equal(0.0, state.DetailScrollOffset);
+    }
+
+    [Fact]
+    public void ClampDetailScroll_WithinBounds_Unchanged()
+    {
+        var state = new PivotViewerViewState
+        {
+            DetailScrollOffset = 100,
+            DetailContentHeight = 800,
+        };
+
+        state.ClampDetailScroll(400);
+        Assert.Equal(100.0, state.DetailScrollOffset);
+    }
 }

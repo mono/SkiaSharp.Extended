@@ -89,7 +89,7 @@ public class EnumsTest
     public void RenderHitType_AllValuesPresent()
     {
         var values = Enum.GetValues<RenderHitType>();
-        Assert.Equal(15, values.Length);
+        Assert.Equal(16, values.Length);
     }
 
     [Fact]

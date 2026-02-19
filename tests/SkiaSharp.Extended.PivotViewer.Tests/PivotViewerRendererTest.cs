@@ -667,6 +667,101 @@ public class PivotViewerRendererTest
     }
 
     // =====================================================================
+    // Render — custom template invokes RenderAction
+    // =====================================================================
+
+    [Fact]
+    public void Render_CustomTemplate_InvokesRenderAction()
+    {
+        using var renderer = new PivotViewerRenderer();
+        var info = new SKImageInfo(Width, Height);
+        var controller = CreateLoadedController();
+        var theme = PivotViewerTheme.Default;
+        var viewState = new PivotViewerViewState { IsFilterPaneVisible = false };
+
+        bool templateInvoked = false;
+        controller.ItemTemplates = new PivotViewerItemTemplateCollection
+        {
+            new PivotViewerItemTemplate
+            {
+                MaxWidth = 9999,
+                RenderAction = (canvas, item, bounds) => templateInvoked = true,
+            }
+        };
+
+        using var surface = SKSurface.Create(info);
+        renderer.Render(surface.Canvas, info, controller, theme, viewState);
+
+        Assert.True(templateInvoked, "Custom template RenderAction should be invoked during grid render");
+    }
+
+    // =====================================================================
+    // HitTest — per-category clear button
+    // =====================================================================
+
+    [Fact]
+    public void HitTest_FilterCategoryClear_WhenFiltered()
+    {
+        using var renderer = new PivotViewerRenderer();
+        var info = new SKImageInfo(Width, Height);
+        var controller = CreateLoadedController();
+        controller.FilterEngine.AddStringFilter("Manufacturer", "Alfa Romeo");
+        var viewState = new PivotViewerViewState { IsFilterPaneVisible = true };
+
+        // Render to populate layout
+        using var surface = SKSurface.Create(info);
+        renderer.Render(surface.Canvas, info, controller, PivotViewerTheme.Default, viewState);
+
+        // Sweep the filter pane header area on the right side to find FilterCategoryClear
+        RenderHitResult? found = null;
+        for (double y = PivotViewerRenderer.ControlBarHeight + 20; y < Height - 20; y += 3)
+        {
+            var result = renderer.HitTest(PivotViewerRenderer.FilterPaneWidth - 10, y, info, controller, viewState);
+            if (result.Type == RenderHitType.FilterCategoryClear)
+            {
+                found = result;
+                break;
+            }
+        }
+
+        Assert.NotNull(found);
+        Assert.Equal(RenderHitType.FilterCategoryClear, found!.Type);
+        Assert.NotNull(found.CategoryName);
+    }
+
+    // =====================================================================
+    // Render — detail pane scrolled draws different content
+    // =====================================================================
+
+    [Fact]
+    public void Render_DetailPaneScrolled_DrawsDifferentContent()
+    {
+        using var renderer = new PivotViewerRenderer();
+        var info = new SKImageInfo(Width, Height);
+        var controller = CreateLoadedController();
+        controller.SelectedItem = controller.InScopeItems[0];
+        Assert.True(controller.DetailPane.IsShowing);
+        var theme = PivotViewerTheme.Default;
+
+        // Render with scroll offset 0
+        using var surface0 = SKSurface.Create(info);
+        var vs0 = new PivotViewerViewState { IsFilterPaneVisible = false, DetailScrollOffset = 0 };
+        renderer.Render(surface0.Canvas, info, controller, theme, vs0);
+        using var img0 = surface0.Snapshot();
+        using var pm0 = img0.PeekPixels();
+
+        // Render with scroll offset 50
+        using var surface50 = SKSurface.Create(info);
+        var vs50 = new PivotViewerViewState { IsFilterPaneVisible = false, DetailScrollOffset = 50 };
+        renderer.Render(surface50.Canvas, info, controller, theme, vs50);
+        using var img50 = surface50.Snapshot();
+        using var pm50 = img50.PeekPixels();
+
+        int diffPixels = CountDifferentPixels(pm0, pm50);
+        Assert.True(diffPixels > 0, "Detail pane with different scroll offsets should produce different pixel data");
+    }
+
+    // =====================================================================
     // Helpers
     // =====================================================================
 

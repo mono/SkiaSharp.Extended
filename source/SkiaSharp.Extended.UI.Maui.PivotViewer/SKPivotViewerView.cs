@@ -34,6 +34,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private Entry? _searchEntry;
         private bool _isPanningFilterPane;
+        private bool _isPanningDetailPane;
         private double _lastPointerX = double.NaN;
         private double _lastPivotPinchScale = 1.0;
 
@@ -820,6 +821,14 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     }
                     return;
 
+                case RenderHitType.FilterCategoryClear:
+                    if (hit.CategoryName != null)
+                    {
+                        _controller.FilterPaneModel?.ClearPropertyFilters(hit.CategoryName);
+                        _canvasView.InvalidateSurface();
+                    }
+                    return;
+
                 case RenderHitType.DetailLink:
                     if (hit.LinkUri != null && Uri.TryCreate(hit.LinkUri, UriKind.Absolute, out var linkUri))
                     {
@@ -847,6 +856,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
                 case RenderHitType.Item:
                     _controller.SelectedItem = hit.Item;
+                    _viewState.DetailScrollOffset = 0;
                     _canvasView.InvalidateSurface();
                     return;
 
@@ -954,8 +964,9 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 case GestureStatus.Started:
                     _previousPanX = 0;
                     _previousPanY = 0;
-                    // Use last pointer position to determine if pan started in filter pane
+                    // Use last pointer position to determine if pan started in filter pane or detail pane
                     _isPanningFilterPane = _viewState.IsFilterPaneVisible && !double.IsNaN(_lastPointerX) && _lastPointerX < PivotViewerRenderer.FilterPaneWidth;
+                    _isPanningDetailPane = _controller.SelectedItem != null && !double.IsNaN(_lastPointerX) && _lastPointerX > Width - PivotViewerRenderer.DetailPaneWidth;
                     break;
                 case GestureStatus.Running:
                     double deltaX = e.TotalX - _previousPanX;
@@ -970,6 +981,13 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                         _viewState.ClampFilterScroll(contentHeight);
                         _canvasView.InvalidateSurface();
                     }
+                    else if (_isPanningDetailPane)
+                    {
+                        double contentHeight = Height - PivotViewerRenderer.ControlBarHeight;
+                        _viewState.DetailScrollOffset -= deltaY;
+                        _viewState.ClampDetailScroll(contentHeight);
+                        _canvasView.InvalidateSurface();
+                    }
                     else
                     {
                         _controller.Pan(deltaX, deltaY);
@@ -979,6 +997,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 case GestureStatus.Completed:
                 case GestureStatus.Canceled:
                     _isPanningFilterPane = false;
+                    _isPanningDetailPane = false;
                     _lastPointerX = double.NaN;
                     break;
             }
