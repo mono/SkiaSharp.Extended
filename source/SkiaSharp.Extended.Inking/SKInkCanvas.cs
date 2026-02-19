@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SkiaSharp.Extended.Inking;
 
@@ -11,27 +12,107 @@ public class SKInkCanvas : IDisposable
 {
     private readonly List<SKInkStroke> strokes = new List<SKInkStroke>();
     private SKInkStroke? currentStroke;
-    private float minStrokeWidth = 1f;
-    private float maxStrokeWidth = 8f;
     private bool isDisposed;
 
     /// <summary>
-    /// Creates a new ink canvas.
+    /// Creates a new ink canvas with a default brush.
     /// </summary>
     public SKInkCanvas()
     {
+        Brush = new SKInkStrokeBrush();
     }
 
     /// <summary>
-    /// Creates a new ink canvas with the specified stroke width range.
+    /// Creates a new ink canvas with a custom brush.
+    /// </summary>
+    /// <param name="brush">The default brush for new strokes.</param>
+    public SKInkCanvas(SKInkStrokeBrush brush)
+    {
+        Brush = brush ?? throw new ArgumentNullException(nameof(brush));
+    }
+
+    /// <summary>
+    /// Creates a new ink canvas with the specified stroke width range (legacy constructor).
     /// </summary>
     /// <param name="minStrokeWidth">Minimum stroke width (at zero pressure).</param>
     /// <param name="maxStrokeWidth">Maximum stroke width (at full pressure).</param>
     public SKInkCanvas(float minStrokeWidth, float maxStrokeWidth)
     {
-        MinStrokeWidth = minStrokeWidth;
-        MaxStrokeWidth = maxStrokeWidth;
+        if (minStrokeWidth < 0)
+            throw new ArgumentOutOfRangeException(nameof(minStrokeWidth), "Minimum stroke width must be non-negative.");
+        if (maxStrokeWidth < minStrokeWidth)
+            throw new ArgumentOutOfRangeException(nameof(maxStrokeWidth), "Maximum stroke width must be greater than or equal to minimum stroke width.");
+        
+        Brush = new SKInkStrokeBrush(SKColors.Black, minStrokeWidth, maxStrokeWidth);
     }
+
+    /// <summary>
+    /// Gets or sets the default brush for new strokes.
+    /// When a stroke is started, the brush is cloned so each stroke has independent settings.
+    /// </summary>
+    public SKInkStrokeBrush Brush { get; set; }
+
+    #region Backward Compatibility Properties
+
+    /// <summary>
+    /// Gets or sets the minimum stroke width (at zero pressure).
+    /// </summary>
+    public float MinStrokeWidth
+    {
+        get => Brush.MinSize.Width;
+        set => Brush.MinSize = new SKSize(value, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the maximum stroke width (at full pressure).
+    /// </summary>
+    public float MaxStrokeWidth
+    {
+        get => Brush.MaxSize.Width;
+        set => Brush.MaxSize = new SKSize(value, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the default stroke color for new strokes.
+    /// </summary>
+    public SKColor StrokeColor
+    {
+        get => Brush.Color;
+        set => Brush.Color = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the default cap style for new strokes.
+    /// </summary>
+    public SKStrokeCapStyle CapStyle
+    {
+        get => Brush.CapStyle;
+        set => Brush.CapStyle = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the default smoothing factor for new strokes (1-10).
+    /// Higher values produce smoother curves. Default is 4.
+    /// </summary>
+    public int SmoothingFactor
+    {
+        get => Brush.SmoothingFactor;
+        set => Brush.SmoothingFactor = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the default smoothing algorithm for new strokes.
+    /// CatmullRom is recommended for handwriting.
+    /// </summary>
+    public SKSmoothingAlgorithm SmoothingAlgorithm
+    {
+        get => Brush.SmoothingAlgorithm;
+        set => Brush.SmoothingAlgorithm = value;
+    }
+
+    #endregion
+
+    #region Events
 
     /// <summary>
     /// Occurs when the canvas content has changed and needs to be redrawn.
@@ -54,65 +135,13 @@ public class SKInkCanvas : IDisposable
     public event EventHandler? StrokeStarted;
 
     /// <summary>
-    /// Gets or sets the minimum stroke width (at zero pressure).
+    /// Occurs when the selection changes.
     /// </summary>
-    public float MinStrokeWidth
-    {
-        get => minStrokeWidth;
-        set
-        {
-            if (value < 0)
-                throw new ArgumentOutOfRangeException(nameof(value), "Minimum stroke width must be non-negative.");
-            minStrokeWidth = value;
-        }
-    }
+    public event EventHandler? SelectionChanged;
 
-    /// <summary>
-    /// Gets or sets the maximum stroke width (at full pressure).
-    /// </summary>
-    public float MaxStrokeWidth
-    {
-        get => maxStrokeWidth;
-        set
-        {
-            if (value < minStrokeWidth)
-                throw new ArgumentOutOfRangeException(nameof(value), "Maximum stroke width must be greater than or equal to minimum stroke width.");
-            maxStrokeWidth = value;
-        }
-    }
+    #endregion
 
-    /// <summary>
-    /// Gets or sets the default stroke color for new strokes.
-    /// </summary>
-    public SKColor StrokeColor { get; set; } = SKColors.Black;
-
-    /// <summary>
-    /// Gets or sets the default cap style for new strokes.
-    /// </summary>
-    public SKStrokeCapStyle CapStyle { get; set; } = SKStrokeCapStyle.Round;
-
-    private int smoothingFactor = 4;
-
-    /// <summary>
-    /// Gets or sets the default smoothing factor for new strokes (1-10).
-    /// Higher values produce smoother curves. Default is 4.
-    /// </summary>
-    public int SmoothingFactor
-    {
-        get => smoothingFactor;
-        set
-        {
-            if (value < 1 || value > 10)
-                throw new ArgumentOutOfRangeException(nameof(value), "Smoothing factor must be between 1 and 10.");
-            smoothingFactor = value;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the default smoothing algorithm for new strokes.
-    /// CatmullRom is recommended for handwriting.
-    /// </summary>
-    public SKSmoothingAlgorithm SmoothingAlgorithm { get; set; } = SKSmoothingAlgorithm.CatmullRom;
+    #region Properties
 
     /// <summary>
     /// Gets the completed strokes in the canvas.
@@ -140,16 +169,55 @@ public class SKInkCanvas : IDisposable
     public bool IsDrawing => currentStroke != null;
 
     /// <summary>
-    /// Starts a new stroke at the specified point using the canvas default settings.
+    /// Gets the selected strokes.
+    /// </summary>
+    public IReadOnlyList<SKInkStroke> SelectedStrokes => strokes.Where(s => s.IsSelected).ToList();
+
+    /// <summary>
+    /// Gets whether any strokes are selected.
+    /// </summary>
+    public bool HasSelection => strokes.Any(s => s.IsSelected);
+
+    #endregion
+
+    #region Stroke Creation
+
+    /// <summary>
+    /// Starts a new stroke at the specified point using a clone of the canvas brush.
     /// </summary>
     /// <param name="point">The starting point with pressure.</param>
     public void StartStroke(SKInkPoint point)
     {
-        StartStroke(point, StrokeColor, CapStyle, SmoothingFactor, SmoothingAlgorithm);
+        StartStroke(point, Brush.Clone());
     }
 
     /// <summary>
-    /// Starts a new stroke at the specified point with custom settings.
+    /// Starts a new stroke at the specified point with a custom brush.
+    /// </summary>
+    /// <param name="point">The starting point with pressure.</param>
+    /// <param name="brush">The brush for this stroke.</param>
+    public void StartStroke(SKInkPoint point, SKInkStrokeBrush brush)
+    {
+        ThrowIfDisposed();
+
+        if (brush == null)
+            throw new ArgumentNullException(nameof(brush));
+
+        // Cancel any existing stroke
+        if (currentStroke != null)
+        {
+            currentStroke.Dispose();
+        }
+
+        currentStroke = new SKInkStroke(brush);
+        currentStroke.AddPoint(point);
+
+        StrokeStarted?.Invoke(this, EventArgs.Empty);
+        Invalidated?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Starts a new stroke at the specified point with custom settings (legacy method).
     /// </summary>
     /// <param name="point">The starting point with pressure.</param>
     /// <param name="color">The stroke color.</param>
@@ -158,19 +226,12 @@ public class SKInkCanvas : IDisposable
     /// <param name="smoothingAlgorithm">The smoothing algorithm to use.</param>
     public void StartStroke(SKInkPoint point, SKColor color, SKStrokeCapStyle capStyle = SKStrokeCapStyle.Round, int smoothingFactor = 4, SKSmoothingAlgorithm smoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom)
     {
-        ThrowIfDisposed();
-
-        // Cancel any existing stroke
-        if (currentStroke != null)
-        {
-            currentStroke.Dispose();
-        }
-
-        currentStroke = new SKInkStroke(minStrokeWidth, maxStrokeWidth, color, capStyle, smoothingFactor, smoothingAlgorithm);
-        currentStroke.AddPoint(point);
-
-        StrokeStarted?.Invoke(this, EventArgs.Empty);
-        Invalidated?.Invoke(this, EventArgs.Empty);
+        var brush = Brush.Clone();
+        brush.Color = color;
+        brush.CapStyle = capStyle;
+        brush.SmoothingFactor = smoothingFactor;
+        brush.SmoothingAlgorithm = smoothingAlgorithm;
+        StartStroke(point, brush);
     }
 
     /// <summary>
@@ -260,6 +321,10 @@ public class SKInkCanvas : IDisposable
         }
     }
 
+    #endregion
+
+    #region Stroke Management
+
     /// <summary>
     /// Clears all strokes from the canvas.
     /// </summary>
@@ -298,6 +363,146 @@ public class SKInkCanvas : IDisposable
         Invalidated?.Invoke(this, EventArgs.Empty);
         return true;
     }
+
+    #endregion
+
+    #region Selection
+
+    /// <summary>
+    /// Selects a stroke.
+    /// </summary>
+    /// <param name="stroke">The stroke to select.</param>
+    /// <returns>True if the stroke was found and selected.</returns>
+    public bool SelectStroke(SKInkStroke stroke)
+    {
+        ThrowIfDisposed();
+
+        if (stroke == null)
+            return false;
+
+        if (!strokes.Contains(stroke))
+            return false;
+
+        if (!stroke.IsSelected)
+        {
+            stroke.IsSelected = true;
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+            Invalidated?.Invoke(this, EventArgs.Empty);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Deselects a stroke.
+    /// </summary>
+    /// <param name="stroke">The stroke to deselect.</param>
+    /// <returns>True if the stroke was found and deselected.</returns>
+    public bool DeselectStroke(SKInkStroke stroke)
+    {
+        ThrowIfDisposed();
+
+        if (stroke == null)
+            return false;
+
+        if (!strokes.Contains(stroke))
+            return false;
+
+        if (stroke.IsSelected)
+        {
+            stroke.IsSelected = false;
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+            Invalidated?.Invoke(this, EventArgs.Empty);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Selects all strokes that intersect with the specified rectangle.
+    /// </summary>
+    /// <param name="rect">The selection rectangle.</param>
+    /// <returns>The number of strokes selected.</returns>
+    public int SelectStrokesInRect(SKRect rect)
+    {
+        ThrowIfDisposed();
+
+        int count = 0;
+        foreach (var stroke in strokes)
+        {
+            if (rect.IntersectsWith(stroke.Bounds))
+            {
+                if (!stroke.IsSelected)
+                {
+                    stroke.IsSelected = true;
+                    count++;
+                }
+            }
+        }
+
+        if (count > 0)
+        {
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+            Invalidated?.Invoke(this, EventArgs.Empty);
+        }
+
+        return count;
+    }
+
+    /// <summary>
+    /// Deselects all strokes.
+    /// </summary>
+    /// <returns>The number of strokes deselected.</returns>
+    public int DeselectAll()
+    {
+        ThrowIfDisposed();
+
+        int count = 0;
+        foreach (var stroke in strokes)
+        {
+            if (stroke.IsSelected)
+            {
+                stroke.IsSelected = false;
+                count++;
+            }
+        }
+
+        if (count > 0)
+        {
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+            Invalidated?.Invoke(this, EventArgs.Empty);
+        }
+
+        return count;
+    }
+
+    /// <summary>
+    /// Deletes all selected strokes.
+    /// </summary>
+    /// <returns>The number of strokes deleted.</returns>
+    public int DeleteSelected()
+    {
+        ThrowIfDisposed();
+
+        var selected = strokes.Where(s => s.IsSelected).ToList();
+        foreach (var stroke in selected)
+        {
+            strokes.Remove(stroke);
+            stroke.Dispose();
+        }
+
+        if (selected.Count > 0)
+        {
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+            Invalidated?.Invoke(this, EventArgs.Empty);
+        }
+
+        return selected.Count;
+    }
+
+    #endregion
+
+    #region Export
 
     /// <summary>
     /// Gets a combined path of all strokes.
@@ -354,8 +559,7 @@ public class SKInkCanvas : IDisposable
     }
 
     /// <summary>
-    /// Draws all strokes to the specified canvas using per-stroke colors.
-    /// If a stroke has no color set, the paint's color is used.
+    /// Draws all strokes to the specified canvas using per-stroke colors from their brushes.
     /// </summary>
     /// <param name="canvas">The canvas to draw to.</param>
     /// <param name="paint">The paint to use for drawing (color may be overridden per-stroke).</param>
@@ -375,8 +579,7 @@ public class SKInkCanvas : IDisposable
         {
             if (stroke.Path is SKPath path)
             {
-                // Use per-stroke color if set, otherwise use paint color
-                paint.Color = stroke.Color ?? originalColor;
+                paint.Color = stroke.Color;
                 canvas.DrawPath(path, paint);
             }
         }
@@ -384,7 +587,7 @@ public class SKInkCanvas : IDisposable
         // Draw the current stroke being drawn
         if (currentStroke?.Path is SKPath currentPath)
         {
-            paint.Color = currentStroke.Color ?? originalColor;
+            paint.Color = currentStroke.Color;
             canvas.DrawPath(currentPath, paint);
         }
 
@@ -450,6 +653,10 @@ public class SKInkCanvas : IDisposable
         return surface.Snapshot();
     }
 
+    #endregion
+
+    #region Disposal
+
     /// <summary>
     /// Disposes all resources used by this canvas.
     /// </summary>
@@ -494,4 +701,6 @@ public class SKInkCanvas : IDisposable
         if (value > max) return max;
         return value;
     }
+
+    #endregion
 }

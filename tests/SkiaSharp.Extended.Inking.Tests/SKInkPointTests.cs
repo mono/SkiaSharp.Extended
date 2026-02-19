@@ -14,7 +14,7 @@ public class SKInkPointTests
         Assert.Equal(10f, point.X);
         Assert.Equal(20f, point.Y);
         Assert.Equal(0.5f, point.Pressure);
-        Assert.Equal(12345, point.Timestamp);
+        Assert.Equal(12345, point.TimestampMicroseconds);
     }
 
     [Fact]
@@ -152,6 +152,28 @@ public class SKInkPointTests
     {
         var point = new SKInkPoint(10f, 20f, 0.5f);
 
-        Assert.Equal(0, point.Timestamp);
+        Assert.Equal(0, point.TimestampMicroseconds);
+    }
+
+    [Fact]
+    public void Constructor_WithTilt_CreatesPointWithTiltValues()
+    {
+        var point = new SKInkPoint(10f, 20f, 0.5f, 30f, -15f, 12345);
+
+        Assert.Equal(10f, point.X);
+        Assert.Equal(20f, point.Y);
+        Assert.Equal(0.5f, point.Pressure);
+        Assert.Equal(30f, point.TiltX);
+        Assert.Equal(-15f, point.TiltY);
+        Assert.Equal(12345, point.TimestampMicroseconds);
+    }
+
+    [Fact]
+    public void Constructor_TiltValuesClamped()
+    {
+        var point = new SKInkPoint(10f, 20f, 0.5f, 100f, -100f, 0);
+
+        Assert.Equal(90f, point.TiltX);  // Clamped from 100
+        Assert.Equal(-90f, point.TiltY); // Clamped from -100
     }
 }

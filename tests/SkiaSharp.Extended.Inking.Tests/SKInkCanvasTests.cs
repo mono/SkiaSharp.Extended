@@ -34,12 +34,19 @@ public class SKInkCanvasTests
     }
 
     [Fact]
-    public void MaxStrokeWidth_ThrowsWhenLessThanMin()
+    public void Brush_MaxSize_ThrowsWhenNegative()
     {
-        using var canvas = new SKInkCanvas();
-        canvas.MinStrokeWidth = 5f;
+        var brush = new SKInkStrokeBrush();
+        
+        Assert.Throws<ArgumentOutOfRangeException>(() => brush.MaxSize = new SKSize(-1, 5f));
+    }
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => canvas.MaxStrokeWidth = 3f);
+    [Fact]
+    public void Brush_MinSize_ThrowsWhenNegative()
+    {
+        var brush = new SKInkStrokeBrush();
+        
+        Assert.Throws<ArgumentOutOfRangeException>(() => brush.MinSize = new SKSize(-1, 5f));
     }
 
     [Fact]

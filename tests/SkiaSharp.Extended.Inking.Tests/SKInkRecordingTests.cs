@@ -44,11 +44,11 @@ public class SKInkRecordingTests
         
         var stroke1 = new RecordedStroke();
         stroke1.AddPoint(new SKInkPoint(0f, 0f, 0.5f, 0));
-        stroke1.AddPoint(new SKInkPoint(10f, 10f, 0.5f, 500));
+        stroke1.AddPoint(new SKInkPoint(10f, 10f, 0.5f, 500_000)); // 500ms in microseconds
         
         var stroke2 = new RecordedStroke();
-        stroke2.AddPoint(new SKInkPoint(20f, 20f, 0.5f, 600));
-        stroke2.AddPoint(new SKInkPoint(30f, 30f, 0.5f, 1000));
+        stroke2.AddPoint(new SKInkPoint(20f, 20f, 0.5f, 600_000)); // 600ms in microseconds
+        stroke2.AddPoint(new SKInkPoint(30f, 30f, 0.5f, 1_000_000)); // 1000ms = 1s in microseconds
         
         recording.AddStroke(stroke1);
         recording.AddStroke(stroke2);

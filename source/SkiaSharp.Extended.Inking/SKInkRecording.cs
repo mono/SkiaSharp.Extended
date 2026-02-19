@@ -32,11 +32,12 @@ public class SKInkRecording
                 if (stroke.Points.Count > 0)
                 {
                     var lastPoint = stroke.Points[stroke.Points.Count - 1];
-                    if (lastPoint.Timestamp > maxEndTime)
-                        maxEndTime = lastPoint.Timestamp;
+                    if (lastPoint.TimestampMicroseconds > maxEndTime)
+                        maxEndTime = lastPoint.TimestampMicroseconds;
                 }
             }
-            return TimeSpan.FromMilliseconds(maxEndTime);
+            // Convert from microseconds to TimeSpan
+            return TimeSpan.FromTicks(maxEndTime * 10); // 1 tick = 0.1 microseconds
         }
     }
 
@@ -104,7 +105,7 @@ public class SKInkRecording
             new SKPoint(width * 0.1f, height * 0.3f),
             new SKPoint(width * 0.15f, height * 0.7f),
             new SKPoint(width * 0.08f, height * 0.8f),
-            startTime: 0, duration: 400, random);
+            startTimeMs: 0, durationMs: 400, random);
         recording.AddStroke(stroke1);
 
         // Connecting line
@@ -113,7 +114,7 @@ public class SKInkRecording
             new SKPoint(width * 0.12f, height * 0.5f),
             new SKPoint(width * 0.25f, height * 0.45f),
             new SKPoint(width * 0.35f, height * 0.5f),
-            startTime: 500, duration: 300, random);
+            startTimeMs: 500, durationMs: 300, random);
         recording.AddStroke(stroke2);
 
         // "o" loop
@@ -121,7 +122,7 @@ public class SKInkRecording
         AddLoopStroke(stroke3,
             new SKPoint(width * 0.4f, height * 0.55f),
             width * 0.06f, height * 0.1f,
-            startTime: 900, duration: 350, random);
+            startTimeMs: 900, durationMs: 350, random);
         recording.AddStroke(stroke3);
 
         // "hn" wavy line
@@ -130,7 +131,7 @@ public class SKInkRecording
             new SKPoint(width * 0.48f, height * 0.5f),
             new SKPoint(width * 0.75f, height * 0.55f),
             3, height * 0.08f,
-            startTime: 1350, duration: 500, random);
+            startTimeMs: 1350, durationMs: 500, random);
         recording.AddStroke(stroke4);
 
         // Last name - underline flourish
@@ -138,14 +139,14 @@ public class SKInkRecording
         AddFlourishStroke(stroke5,
             new SKPoint(width * 0.08f, height * 0.85f),
             new SKPoint(width * 0.85f, height * 0.82f),
-            startTime: 2000, duration: 400, random);
+            startTimeMs: 2000, durationMs: 400, random);
         recording.AddStroke(stroke5);
 
         return recording;
     }
 
     private static void AddCurvedStroke(RecordedStroke stroke, SKPoint start, SKPoint mid, SKPoint end, 
-        long startTime, int duration, Random random)
+        long startTimeMs, int durationMs, Random random)
     {
         int pointCount = 20;
         for (int i = 0; i <= pointCount; i++)
@@ -161,13 +162,14 @@ public class SKInkRecording
             float pressure = 0.4f + 0.4f * (float)Math.Sin(t * Math.PI) + 0.1f * (float)(random.NextDouble() - 0.5);
             pressure = Math.Max(0.2f, Math.Min(1f, pressure));
             
-            long timestamp = startTime + (long)(t * duration);
-            stroke.AddPoint(new SKInkPoint(x, y, pressure, timestamp));
+            // Convert milliseconds to microseconds
+            long timestampMicroseconds = (startTimeMs + (long)(t * durationMs)) * 1000;
+            stroke.AddPoint(new SKInkPoint(x, y, pressure, timestampMicroseconds));
         }
     }
 
     private static void AddLoopStroke(RecordedStroke stroke, SKPoint center, float radiusX, float radiusY,
-        long startTime, int duration, Random random)
+        long startTimeMs, int durationMs, Random random)
     {
         int pointCount = 24;
         for (int i = 0; i <= pointCount; i++)
@@ -182,13 +184,14 @@ public class SKInkRecording
             float pressure = 0.5f + 0.3f * (float)Math.Sin(angle * 2) + 0.1f * (float)(random.NextDouble() - 0.5);
             pressure = Math.Max(0.2f, Math.Min(1f, pressure));
             
-            long timestamp = startTime + (long)(t * duration);
-            stroke.AddPoint(new SKInkPoint(x, y, pressure, timestamp));
+            // Convert milliseconds to microseconds
+            long timestampMicroseconds = (startTimeMs + (long)(t * durationMs)) * 1000;
+            stroke.AddPoint(new SKInkPoint(x, y, pressure, timestampMicroseconds));
         }
     }
 
     private static void AddWavyStroke(RecordedStroke stroke, SKPoint start, SKPoint end, int waves, float amplitude,
-        long startTime, int duration, Random random)
+        long startTimeMs, int durationMs, Random random)
     {
         int pointCount = 30;
         for (int i = 0; i <= pointCount; i++)
@@ -203,13 +206,14 @@ public class SKInkRecording
             float pressure = 0.4f + 0.3f * (float)Math.Abs(Math.Sin(t * waves * Math.PI)) + 0.1f * (float)(random.NextDouble() - 0.5);
             pressure = Math.Max(0.2f, Math.Min(1f, pressure));
             
-            long timestamp = startTime + (long)(t * duration);
-            stroke.AddPoint(new SKInkPoint(x, y, pressure, timestamp));
+            // Convert milliseconds to microseconds
+            long timestampMicroseconds = (startTimeMs + (long)(t * durationMs)) * 1000;
+            stroke.AddPoint(new SKInkPoint(x, y, pressure, timestampMicroseconds));
         }
     }
 
     private static void AddFlourishStroke(RecordedStroke stroke, SKPoint start, SKPoint end,
-        long startTime, int duration, Random random)
+        long startTimeMs, int durationMs, Random random)
     {
         int pointCount = 25;
         for (int i = 0; i <= pointCount; i++)
@@ -227,8 +231,9 @@ public class SKInkRecording
             float pressure = 0.8f * (1 - t * 0.5f) + 0.1f * (float)(random.NextDouble() - 0.5);
             pressure = Math.Max(0.2f, Math.Min(1f, pressure));
             
-            long timestamp = startTime + (long)(t * duration);
-            stroke.AddPoint(new SKInkPoint(x, y, pressure, timestamp));
+            // Convert milliseconds to microseconds
+            long timestampMicroseconds = (startTimeMs + (long)(t * durationMs)) * 1000;
+            stroke.AddPoint(new SKInkPoint(x, y, pressure, timestampMicroseconds));
         }
     }
 }
@@ -317,16 +322,24 @@ public class SKInkPlayer
     {
         get
         {
-            if (recording == null || recording.Duration.TotalMilliseconds == 0)
+            if (recording == null)
                 return 0;
-            return (float)(CurrentTime / recording.Duration.TotalMilliseconds);
+            var durationMicroseconds = recording.Duration.Ticks / 10; // Convert ticks to microseconds
+            if (durationMicroseconds == 0)
+                return 0;
+            return (float)((double)CurrentTimeMicroseconds / durationMicroseconds);
         }
     }
 
     /// <summary>
-    /// Gets the current playback time in milliseconds.
+    /// Gets the current playback time in microseconds.
     /// </summary>
-    public double CurrentTime { get; private set; }
+    public long CurrentTimeMicroseconds { get; private set; }
+
+    /// <summary>
+    /// Gets the current playback time in milliseconds (for compatibility).
+    /// </summary>
+    public double CurrentTime => CurrentTimeMicroseconds / 1000.0;
 
     /// <summary>
     /// Occurs when playback is complete.
@@ -354,7 +367,8 @@ public class SKInkPlayer
             return;
 
         isPlaying = true;
-        playbackStartTime = GetTickCount64() - (long)(CurrentTime / PlaybackSpeed);
+        // GetTickCount64 returns milliseconds, convert to microseconds
+        playbackStartTime = GetTickCount64() * 1000 - (long)(CurrentTimeMicroseconds / PlaybackSpeed);
     }
 
     /// <summary>
@@ -372,7 +386,7 @@ public class SKInkPlayer
     {
         currentStrokeIndex = 0;
         currentPointIndex = 0;
-        CurrentTime = 0;
+        CurrentTimeMicroseconds = 0;
         isPlaying = false;
         canvas?.Clear();
     }
@@ -386,7 +400,8 @@ public class SKInkPlayer
         if (!isPlaying || recording == null || canvas == null)
             return false;
 
-        CurrentTime = (GetTickCount64() - playbackStartTime) * PlaybackSpeed;
+        // GetTickCount64 returns milliseconds, convert to microseconds
+        CurrentTimeMicroseconds = (long)((GetTickCount64() * 1000 - playbackStartTime) * PlaybackSpeed);
 
         // Process all points up to the current time
         while (currentStrokeIndex < recording.Strokes.Count)
@@ -397,7 +412,7 @@ public class SKInkPlayer
             {
                 var point = stroke.Points[currentPointIndex];
                 
-                if (point.Timestamp > CurrentTime)
+                if (point.TimestampMicroseconds > CurrentTimeMicroseconds)
                     return true; // Wait for this point's time
 
                 if (currentPointIndex == 0)
@@ -463,7 +478,7 @@ public class SKInkPlayer
         }
 
         currentStrokeIndex = recording.Strokes.Count;
-        CurrentTime = recording.Duration.TotalMilliseconds;
+        CurrentTimeMicroseconds = (long)(recording.Duration.Ticks / 10); // Convert ticks to microseconds
     }
 
     /// <summary>
