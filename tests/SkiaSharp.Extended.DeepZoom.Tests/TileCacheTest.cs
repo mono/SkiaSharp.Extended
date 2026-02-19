@@ -253,4 +253,17 @@ public class TileCacheTest
         Assert.Equal(0, cache.Count);
         Assert.False(cache.Contains(new TileId(0, 0, 0)));
     }
+
+    [Fact]
+    public void TryGet_AfterDispose_ReturnsFalse()
+    {
+        var cache = new TileCache(10);
+        var tileId = new TileId(3, 1, 2);
+        cache.Put(tileId, new SKBitmap(32, 32));
+
+        cache.Dispose();
+
+        Assert.False(cache.TryGet(tileId, out var bitmap));
+        Assert.Null(bitmap);
+    }
 }

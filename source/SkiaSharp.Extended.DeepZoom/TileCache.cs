@@ -86,6 +86,12 @@ namespace SkiaSharp.Extended.DeepZoom
         {
             lock (_lock)
             {
+                if (_disposed)
+                {
+                    bitmap = null;
+                    return false;
+                }
+
                 if (_map.TryGetValue(id, out var node))
                 {
                     // Move to front (most recently used)
