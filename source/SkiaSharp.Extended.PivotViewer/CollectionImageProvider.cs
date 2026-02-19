@@ -426,6 +426,7 @@ namespace SkiaSharp.Extended.PivotViewer
                     kv.Value?.Dispose();
                 _loadLocks.Clear();
                 _cache.Dispose();
+                (_fetcher as IDisposable)?.Dispose();
             }
         }
     }
