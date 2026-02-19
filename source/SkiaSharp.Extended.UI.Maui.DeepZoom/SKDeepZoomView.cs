@@ -267,6 +267,65 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             }
         }
 
+        // --- Keyboard Navigation ---
+
+        /// <summary>
+        /// Handles keyboard input for navigation:
+        /// Arrow keys → pan, +/= → zoom in, -/_ → zoom out, Home → reset view.
+        /// Call from platform key event handler.
+        /// </summary>
+        public bool HandleKeyPress(string key)
+        {
+            if (_disposed) return false;
+
+            double panStep = 50 * _dpiScale;
+            const double zoomFactor = 1.5;
+
+            switch (key)
+            {
+                case "Left":
+                case "ArrowLeft":
+                    _controller.Pan(panStep, 0);
+                    break;
+                case "Right":
+                case "ArrowRight":
+                    _controller.Pan(-panStep, 0);
+                    break;
+                case "Up":
+                case "ArrowUp":
+                    _controller.Pan(0, panStep);
+                    break;
+                case "Down":
+                case "ArrowDown":
+                    _controller.Pan(0, -panStep);
+                    break;
+                case "Add":
+                case "OemPlus":
+                case "+":
+                case "=":
+                    _controller.ZoomAboutScreenPoint(zoomFactor,
+                        _canvasView.CanvasSize.Width / 2,
+                        _canvasView.CanvasSize.Height / 2);
+                    break;
+                case "Subtract":
+                case "OemMinus":
+                case "-":
+                case "_":
+                    _controller.ZoomAboutScreenPoint(1.0 / zoomFactor,
+                        _canvasView.CanvasSize.Width / 2,
+                        _canvasView.CanvasSize.Height / 2);
+                    break;
+                case "Home":
+                    _controller.ResetView();
+                    break;
+                default:
+                    return false;
+            }
+
+            _canvasView.InvalidateSurface();
+            return true;
+        }
+
         // --- Disposal ---
 
         public void Dispose()

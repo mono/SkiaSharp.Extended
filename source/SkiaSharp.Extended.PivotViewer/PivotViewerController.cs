@@ -351,6 +351,7 @@ namespace SkiaSharp.Extended.PivotViewer
         public event EventHandler? ViewChanged;
         public event EventHandler? CollectionChanged;
         public event EventHandler? LayoutUpdated;
+        public event EventHandler? InScopeItemsChanged;
         public event EventHandler<PivotViewerItemDoubleClickEventArgs>? ItemDoubleClicked;
 
         // --- Methods ---
@@ -648,6 +649,7 @@ namespace SkiaSharp.Extended.PivotViewer
                 SelectedItem = null;
 
             UpdateLayout();
+            InScopeItemsChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private bool _updatingLayout;

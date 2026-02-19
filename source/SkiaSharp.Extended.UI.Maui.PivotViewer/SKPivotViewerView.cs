@@ -456,6 +456,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private const float DetailPaneWidth = 280f;
         private const float ControlBarHeight = 40f;
         private const float Padding = 8f;
+        private const float TradingCardMinWidth = 150f;
 
         private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
         {
@@ -560,40 +561,14 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     (float)pos.X + 1, (float)pos.Y + 1,
                     (float)(pos.X + pos.Width) - 1, (float)(pos.Y + pos.Height) - 1);
 
-                // Try to draw thumbnail from DZC
-                bool drewImage = false;
-                var imgProvider = _controller.ImageProvider;
-                if (imgProvider != null)
+                // Use trading card layout when items are large enough
+                if (pos.Width >= TradingCardMinWidth)
                 {
-                    var thumbnail = imgProvider.GetThumbnailForItem(pos.Item);
-                    if (thumbnail != null)
-                    {
-                        // Apply Uniform stretch to preserve aspect ratio within the grid cell
-                        var destRect = FitUniform(thumbnail.Width, thumbnail.Height, rect);
-                        canvas.DrawBitmap(thumbnail, destRect);
-                        drewImage = true;
-                    }
+                    RenderTradingCard(canvas, pos, rect);
                 }
-
-                if (!drewImage)
+                else
                 {
-                    canvas.DrawRect(rect, _itemPaint);
-                }
-
-                // Draw item name if space allows
-                if (pos.Height > 20)
-                {
-                    var name = GetItemDisplayName(pos.Item);
-                    if (name != null)
-                    {
-                        _textFont.Size = Math.Min(12, (float)pos.Height / 4);
-                        var textWidth = _textFont.MeasureText(name, out _);
-
-                        if (textWidth < rect.Width - 4)
-                        {
-                            canvas.DrawText(name, rect.Left + 4, rect.Bottom - 4, SKTextAlign.Left, _textFont, _textPaint);
-                        }
-                    }
+                    RenderThumbnailItem(canvas, pos, rect);
                 }
 
                 // Highlight selected item with adorner
@@ -624,6 +599,156 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             if (panX != 0 || panY != 0)
                 canvas.Restore();
+        }
+
+        private void RenderThumbnailItem(SKCanvas canvas, ItemPosition pos, SKRect rect)
+        {
+            bool drewImage = false;
+            var imgProvider = _controller.ImageProvider;
+            if (imgProvider != null)
+            {
+                var thumbnail = imgProvider.GetThumbnailForItem(pos.Item);
+                if (thumbnail != null)
+                {
+                    var destRect = FitUniform(thumbnail.Width, thumbnail.Height, rect);
+                    canvas.DrawBitmap(thumbnail, destRect);
+                    drewImage = true;
+                }
+            }
+
+            if (!drewImage)
+            {
+                canvas.DrawRect(rect, _itemPaint);
+            }
+
+            if (pos.Height > 20)
+            {
+                var name = GetItemDisplayName(pos.Item);
+                if (name != null)
+                {
+                    _textFont.Size = Math.Min(12, (float)pos.Height / 4);
+                    var textWidth = _textFont.MeasureText(name, out _);
+                    if (textWidth < rect.Width - 4)
+                    {
+                        canvas.DrawText(name, rect.Left + 4, rect.Bottom - 4, SKTextAlign.Left, _textFont, _textPaint);
+                    }
+                }
+            }
+        }
+
+        private void RenderTradingCard(SKCanvas canvas, ItemPosition pos, SKRect rect)
+        {
+            // Trading card layout: white background, thumbnail top, facets below
+            using var cardBg = new SKPaint { Color = SKColors.White, Style = SKPaintStyle.Fill };
+            using var cardBorder = new SKPaint
+            {
+                Color = new SKColor(200, 200, 200),
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 1,
+                IsAntialias = true
+            };
+
+            canvas.DrawRect(rect, cardBg);
+            canvas.DrawRect(rect, cardBorder);
+
+            float padding = 4f;
+            float imgHeight = rect.Height * 0.55f; // Thumbnail gets ~55% of card
+            var imgRect = new SKRect(
+                rect.Left + padding, rect.Top + padding,
+                rect.Right - padding, rect.Top + imgHeight);
+
+            // Draw thumbnail
+            bool drewImage = false;
+            var imgProvider = _controller.ImageProvider;
+            if (imgProvider != null)
+            {
+                var thumbnail = imgProvider.GetThumbnailForItem(pos.Item);
+                if (thumbnail != null)
+                {
+                    var destRect = FitUniform(thumbnail.Width, thumbnail.Height, imgRect);
+                    canvas.DrawBitmap(thumbnail, destRect);
+                    drewImage = true;
+                }
+            }
+            if (!drewImage)
+            {
+                canvas.DrawRect(imgRect, _itemPaint);
+            }
+
+            // Draw facet values below the image
+            float textY = rect.Top + imgHeight + padding + 2;
+            float fontSize = Math.Max(8f, Math.Min(11f, rect.Height * 0.04f));
+            float lineHeight = fontSize + 3;
+            float maxTextY = rect.Bottom - padding;
+
+            // Item name as title
+            var name = GetItemDisplayName(pos.Item);
+            if (name != null && textY + lineHeight < maxTextY)
+            {
+                _labelFont.Size = fontSize + 1;
+                var truncatedName = TruncateText(name, _labelFont, rect.Width - padding * 2);
+                canvas.DrawText(truncatedName, rect.Left + padding, textY + fontSize,
+                    SKTextAlign.Left, _labelFont, _labelPaint);
+                textY += lineHeight + 2;
+            }
+
+            // Draw separator line
+            if (textY + 2 < maxTextY)
+            {
+                using var sepPaint = new SKPaint { Color = new SKColor(220, 220, 220), StrokeWidth = 1 };
+                canvas.DrawLine(rect.Left + padding, textY, rect.Right - padding, textY, sepPaint);
+                textY += 4;
+            }
+
+            // Render facet values
+            _textFont.Size = fontSize;
+            _labelFont.Size = fontSize;
+            var properties = _controller.Properties;
+            if (properties != null)
+            {
+                foreach (var prop in properties)
+                {
+                    if (textY + lineHeight > maxTextY) break;
+                    if (prop.IsPrivate) continue;
+
+                    var values = pos.Item[prop.Id];
+                    if (values == null || values.Count == 0) continue;
+
+                    string valueStr = string.Join(", ", values.Take(3));
+                    string label = prop.DisplayName + ": ";
+
+                    // Label in bold-like color
+                    float labelWidth = _labelFont.MeasureText(label, out _);
+                    canvas.DrawText(label, rect.Left + padding, textY + fontSize,
+                        SKTextAlign.Left, _labelFont, _labelPaint);
+
+                    // Value text
+                    float valueX = rect.Left + padding + labelWidth;
+                    float availWidth = rect.Right - padding - valueX;
+                    if (availWidth > 10)
+                    {
+                        string truncated = TruncateText(valueStr, _textFont, availWidth);
+                        canvas.DrawText(truncated, valueX, textY + fontSize,
+                            SKTextAlign.Left, _textFont, _textPaint);
+                    }
+
+                    textY += lineHeight;
+                }
+            }
+        }
+
+        private static string TruncateText(string text, SKFont font, float maxWidth)
+        {
+            if (font.MeasureText(text, out _) <= maxWidth)
+                return text;
+
+            for (int len = text.Length - 1; len > 0; len--)
+            {
+                string candidate = text.Substring(0, len) + "…";
+                if (font.MeasureText(candidate, out _) <= maxWidth)
+                    return candidate;
+            }
+            return "…";
         }
 
         private void RenderHistogramView(SKCanvas canvas, SKImageInfo info, HistogramLayout layout)
