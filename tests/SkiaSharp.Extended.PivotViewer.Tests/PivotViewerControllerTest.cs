@@ -2332,11 +2332,24 @@ public class PivotViewerControllerTest
     }
 
     [Fact]
-    public void Filter_SetEmptyIsNoOp()
+    public void Filter_SetEmptyClearsFilters()
     {
         var (controller, _) = CreateTestController();
-        var origView = controller.CurrentView;
+        controller.FilterEngine.AddStringFilter("Manufacturer", "BMW");
+        Assert.True(controller.FilterEngine.HasActiveFilters);
+
         controller.Filter = "";
-        Assert.Equal(origView, controller.CurrentView);
+        Assert.False(controller.FilterEngine.HasActiveFilters);
+    }
+
+    [Fact]
+    public void Filter_SetNullClearsFilters()
+    {
+        var (controller, _) = CreateTestController();
+        controller.FilterEngine.AddStringFilter("Manufacturer", "BMW");
+        Assert.True(controller.FilterEngine.HasActiveFilters);
+
+        controller.Filter = null!;
+        Assert.False(controller.FilterEngine.HasActiveFilters);
     }
 }

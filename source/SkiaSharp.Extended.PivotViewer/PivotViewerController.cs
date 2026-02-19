@@ -219,11 +219,7 @@ namespace SkiaSharp.Extended.PivotViewer
         public string Filter
         {
             get => SerializeViewerState();
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                    SetViewerState(value);
-            }
+            set => SetViewerState(value ?? "");
         }
 
         /// <summary>
