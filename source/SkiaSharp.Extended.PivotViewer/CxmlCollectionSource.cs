@@ -87,6 +87,9 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>URI of supplemental CXML file that provides additional item data.</summary>
         public string? SupplementUri { get; private set; }
 
+        /// <summary>Extra data types parsed from CXML ExtraData/Type elements (e.g., device type groupings).</summary>
+        public IReadOnlyList<CxmlExtraDataType> ExtraDataTypes { get; private set; } = Array.Empty<CxmlExtraDataType>();
+
         /// <summary>Current loading state.</summary>
         public CxmlCollectionState State
         {
@@ -312,6 +315,29 @@ namespace SkiaSharp.Extended.PivotViewer
                         if (!existingIds.Contains(prop.Id))
                             source._properties.Add(prop);
                     }
+                }
+
+                // Parse ExtraData (Type elements for UI groupings, e.g., buxton.cxml)
+                var extraDataElement = collectionElement.Element(PivotNs + "ExtraData")
+                    ?? collectionElement.Element(CollectionNs + "ExtraData");
+                if (extraDataElement == null)
+                    extraDataElement = collectionElement.Element("ExtraData");
+                if (extraDataElement != null)
+                {
+                    var types = new List<CxmlExtraDataType>();
+                    foreach (var typeEl in extraDataElement.Elements("Type")
+                        .Concat(extraDataElement.Elements(PivotNs + "Type"))
+                        .Concat(extraDataElement.Elements(CollectionNs + "Type")))
+                    {
+                        string? typeName = typeEl.Attribute("Name")?.Value;
+                        string? typeImage = typeEl.Attribute("Image")?.Value;
+                        string? sortedIdsStr = typeEl.Attribute("SortedIds")?.Value;
+                        var sortedIds = !string.IsNullOrEmpty(sortedIdsStr)
+                            ? sortedIdsStr.Split(',').Select(s => s.Trim()).Where(s => s.Length > 0).ToArray()
+                            : Array.Empty<string>();
+                        types.Add(new CxmlExtraDataType(typeName ?? "", typeImage, sortedIds));
+                    }
+                    source.ExtraDataTypes = types;
                 }
 
                 // Parse RelatedCollections
@@ -598,5 +624,27 @@ namespace SkiaSharp.Extended.PivotViewer
             if (value == null) return defaultValue;
             return string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
         }
+    }
+
+    /// <summary>
+    /// Represents a Type element from CXML ExtraData, used for UI groupings (e.g., device types in Buxton collection).
+    /// </summary>
+    public class CxmlExtraDataType
+    {
+        public CxmlExtraDataType(string name, string? image, string[] sortedIds)
+        {
+            Name = name;
+            Image = image;
+            SortedIds = sortedIds;
+        }
+
+        /// <summary>Display name of the type category.</summary>
+        public string Name { get; }
+
+        /// <summary>Image filename for the type icon.</summary>
+        public string? Image { get; }
+
+        /// <summary>Item IDs belonging to this type, in display order.</summary>
+        public string[] SortedIds { get; }
     }
 }

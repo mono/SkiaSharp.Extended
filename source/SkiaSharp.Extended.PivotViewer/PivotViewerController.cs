@@ -269,6 +269,104 @@ namespace SkiaSharp.Extended.PivotViewer
             }
         }
 
+        /// <summary>
+        /// Selects the next item in the current in-scope list.
+        /// If no item is selected, selects the first item.
+        /// </summary>
+        public void SelectNext()
+        {
+            if (_inScopeItems.Count == 0) return;
+            if (SelectedItem == null)
+            {
+                SelectedItem = _inScopeItems[0];
+                return;
+            }
+            int idx = IndexOf(_inScopeItems, SelectedItem);
+            if (idx >= 0 && idx < _inScopeItems.Count - 1)
+                SelectedItem = _inScopeItems[idx + 1];
+        }
+
+        /// <summary>
+        /// Selects the previous item in the current in-scope list.
+        /// If no item is selected, selects the last item.
+        /// </summary>
+        public void SelectPrevious()
+        {
+            if (_inScopeItems.Count == 0) return;
+            if (SelectedItem == null)
+            {
+                SelectedItem = _inScopeItems[_inScopeItems.Count - 1];
+                return;
+            }
+            int idx = IndexOf(_inScopeItems, SelectedItem);
+            if (idx > 0)
+                SelectedItem = _inScopeItems[idx - 1];
+        }
+
+        /// <summary>
+        /// Selects the item in the row above the current selection in grid view.
+        /// Uses the grid layout column count to compute offset.
+        /// </summary>
+        public void SelectUp()
+        {
+            if (_inScopeItems.Count == 0 || SelectedItem == null || GridLayout == null) return;
+            int idx = IndexOf(_inScopeItems, SelectedItem);
+            if (idx < 0) return;
+
+            // Estimate columns from grid layout
+            int cols = Math.Max(1, (int)Math.Sqrt(_inScopeItems.Count));
+            if (GridLayout.Positions.Length > 1)
+            {
+                double firstY = GridLayout.Positions[0].Y;
+                cols = 0;
+                foreach (var p in GridLayout.Positions)
+                {
+                    if (Math.Abs(p.Y - firstY) < 1) cols++;
+                    else break;
+                }
+                cols = Math.Max(1, cols);
+            }
+
+            int newIdx = idx - cols;
+            if (newIdx >= 0)
+                SelectedItem = _inScopeItems[newIdx];
+        }
+
+        /// <summary>
+        /// Selects the item in the row below the current selection in grid view.
+        /// </summary>
+        public void SelectDown()
+        {
+            if (_inScopeItems.Count == 0 || SelectedItem == null || GridLayout == null) return;
+            int idx = IndexOf(_inScopeItems, SelectedItem);
+            if (idx < 0) return;
+
+            int cols = Math.Max(1, (int)Math.Sqrt(_inScopeItems.Count));
+            if (GridLayout.Positions.Length > 1)
+            {
+                double firstY = GridLayout.Positions[0].Y;
+                cols = 0;
+                foreach (var p in GridLayout.Positions)
+                {
+                    if (Math.Abs(p.Y - firstY) < 1) cols++;
+                    else break;
+                }
+                cols = Math.Max(1, cols);
+            }
+
+            int newIdx = idx + cols;
+            if (newIdx < _inScopeItems.Count)
+                SelectedItem = _inScopeItems[newIdx];
+        }
+
+        /// <summary>
+        /// Clears the current selection.
+        /// </summary>
+        public void ClearSelection()
+        {
+            SelectedItem = null;
+        }
+
         // --- Events ---
 
         public event EventHandler<SelectionChangedEventArgs>? SelectionChanged;
@@ -618,8 +716,16 @@ namespace SkiaSharp.Extended.PivotViewer
                 _imageProvider = null;
             }
         }
-    }
 
+        private static int IndexOf(IReadOnlyList<PivotViewerItem> list, PivotViewerItem item)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (ReferenceEquals(list[i], item)) return i;
+            }
+            return -1;
+        }
+    }
     /// <summary>Event args for selection changes.</summary>
     public class SelectionChangedEventArgs : EventArgs
     {

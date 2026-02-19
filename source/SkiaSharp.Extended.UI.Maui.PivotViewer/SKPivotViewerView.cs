@@ -190,8 +190,60 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             Unloaded += OnViewUnloaded;
         }
 
-        private void OnViewLoaded(object? sender, EventArgs e) => _isVisible = true;
+        private void OnViewLoaded(object? sender, EventArgs e)
+        {
+            _isVisible = true;
+        }
         private void OnViewUnloaded(object? sender, EventArgs e) { _isVisible = false; _animationTimer?.Stop(); }
+
+        /// <summary>
+        /// Handles keyboard input for navigation. Call from platform-specific key handlers.
+        /// </summary>
+        public void HandleKeyPress(string key)
+        {
+            switch (key)
+            {
+                case "Left":
+                    _controller.SelectPrevious();
+                    _canvasView.InvalidateSurface();
+                    break;
+                case "Right":
+                    _controller.SelectNext();
+                    _canvasView.InvalidateSurface();
+                    break;
+                case "Up":
+                    _controller.SelectUp();
+                    _canvasView.InvalidateSurface();
+                    break;
+                case "Down":
+                    _controller.SelectDown();
+                    _canvasView.InvalidateSurface();
+                    break;
+                case "Enter":
+                case "Return":
+                    if (_controller.SelectedItem != null)
+                    {
+                        var bounds = _controller.GetItemBounds(_controller.SelectedItem);
+                        if (bounds.Width > 0)
+                        {
+                            _controller.ZoomAbout(1.6,
+                                bounds.X + bounds.Width / 2,
+                                bounds.Y + bounds.Height / 2);
+                            SyncZoomSlider();
+                            _canvasView.InvalidateSurface();
+                        }
+                    }
+                    break;
+                case "Escape":
+                    if (_controller.SelectedItem != null)
+                        _controller.ClearSelection();
+                    else
+                        _controller.ZoomLevel = 0;
+                    SyncZoomSlider();
+                    _canvasView.InvalidateSurface();
+                    break;
+            }
+        }
 
         // --- BindableProperties ---
 
@@ -582,14 +634,76 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 return;
             }
 
+            // Layout constants for axis area
+            const float yAxisWidth = 40f;
+            const float xAxisHeight = 20f;
+            const float titleHeight = 24f;
+            float chartLeft = yAxisWidth;
+            float chartTop = titleHeight;
+            float chartBottom = info.Height - xAxisHeight;
+
+            // Draw graph title (property name)
+            if (!string.IsNullOrEmpty(layout.PropertyName))
+            {
+                _labelFont.Size = 13;
+                using var titlePaint = new SKPaint { Color = new SKColor(60, 60, 60) };
+                canvas.DrawText(layout.PropertyName, info.Width / 2, 16,
+                    SKTextAlign.Center, _labelFont, titlePaint);
+            }
+
+            // Compute max count for Y-axis scale
+            int maxCount = 0;
             foreach (var col in layout.Columns)
             {
-                // Draw column label
-                _labelFont.Size = 12;
-                var textWidth = _labelFont.MeasureText(col.Label, out _);
+                if (col.Items.Length > maxCount)
+                    maxCount = col.Items.Length;
+            }
 
-                float labelX = (float)(col.X + (col.Width - textWidth) / 2);
-                canvas.DrawText(col.Label, labelX, info.Height - 4, SKTextAlign.Left, _labelFont, _labelPaint);
+            // Draw Y-axis labels and gridlines
+            if (maxCount > 0)
+            {
+                int yTicks = Math.Min(5, maxCount);
+                int yStep = Math.Max(1, maxCount / yTicks);
+                using var gridPaint = new SKPaint { Color = new SKColor(230, 230, 230), StrokeWidth = 1 };
+                _textFont.Size = 9;
+                using var yLabelPaint = new SKPaint { Color = new SKColor(120, 120, 120) };
+
+                for (int i = 0; i <= yTicks; i++)
+                {
+                    int count = i * yStep;
+                    if (count > maxCount) break;
+                    float yFrac = maxCount > 0 ? (float)count / maxCount : 0;
+                    float y = chartBottom - yFrac * (chartBottom - chartTop);
+                    canvas.DrawLine(chartLeft, y, info.Width, y, gridPaint);
+                    canvas.DrawText(count.ToString(), yAxisWidth - 4, y + 4,
+                        SKTextAlign.Right, _textFont, yLabelPaint);
+                }
+            }
+
+            // Draw axis lines
+            using (var axisPaint = new SKPaint { Color = new SKColor(180, 180, 180), StrokeWidth = 1 })
+            {
+                canvas.DrawLine(chartLeft, chartTop, chartLeft, chartBottom, axisPaint);
+                canvas.DrawLine(chartLeft, chartBottom, info.Width, chartBottom, axisPaint);
+            }
+
+            foreach (var col in layout.Columns)
+            {
+                // Draw column label on X-axis
+                _labelFont.Size = 11;
+                string label = col.Label;
+                var textWidth = _labelFont.MeasureText(label, out _);
+
+                // Truncate label if too wide for column
+                if (textWidth > col.Width - 2)
+                {
+                    while (label.Length > 3 && _labelFont.MeasureText(label + "…", out _) > col.Width - 2)
+                        label = label.Substring(0, label.Length - 1);
+                    label += "…";
+                }
+
+                float labelX = (float)(col.X + col.Width / 2);
+                canvas.DrawText(label, labelX, info.Height - 4, SKTextAlign.Center, _labelFont, _labelPaint);
 
                 // Draw item count above column
                 if (col.Items.Length > 0)

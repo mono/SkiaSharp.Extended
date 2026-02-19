@@ -206,7 +206,7 @@ namespace SkiaSharp.Extended.PivotViewer
                     group.Key, colX, colWidth, colPositions.ToArray(), group.Value.Count));
             }
 
-            return new HistogramLayout(columns.ToArray(), allPositions.ToArray());
+            return new HistogramLayout(columns.ToArray(), allPositions.ToArray(), groupByPropertyId);
         }
 
         private static void AddToGroup(Dictionary<string, List<PivotViewerItem>> groups, string key, PivotViewerItem item)
@@ -268,14 +268,16 @@ namespace SkiaSharp.Extended.PivotViewer
     /// <summary>Result of a histogram layout computation.</summary>
     public class HistogramLayout
     {
-        public HistogramLayout(HistogramColumn[] columns, ItemPosition[] allPositions)
+        public HistogramLayout(HistogramColumn[] columns, ItemPosition[] allPositions, string? propertyName = null)
         {
             Columns = columns;
             AllPositions = allPositions;
+            PropertyName = propertyName;
         }
 
         public HistogramColumn[] Columns { get; }
         public ItemPosition[] AllPositions { get; }
+        public string? PropertyName { get; }
 
         public PivotViewerItem? HitTest(double x, double y)
         {
