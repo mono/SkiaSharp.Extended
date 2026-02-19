@@ -256,6 +256,21 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             }
         }
 
+        /// <summary>
+        /// Handles mouse wheel input for zoom in grid/graph views.
+        /// Positive delta = zoom in, negative = zoom out.
+        /// Call from platform-specific mouse wheel event handler.
+        /// </summary>
+        public void HandleMouseWheel(double delta)
+        {
+            if (_disposed) return;
+
+            double step = delta > 0 ? 0.05 : -0.05;
+            _controller.ZoomLevel = Math.Clamp(_controller.ZoomLevel + step, 0.0, 1.0);
+            SyncZoomSlider();
+            _canvasView?.InvalidateSurface();
+        }
+
         // --- BindableProperties ---
 
         public static readonly BindableProperty AccentColorProperty =

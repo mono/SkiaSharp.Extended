@@ -448,6 +448,21 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             return true;
         }
 
+        /// <summary>
+        /// Handles mouse wheel input for zoom.
+        /// Positive delta = zoom in, negative = zoom out.
+        /// screenX/screenY is the cursor position in control coordinates.
+        /// Call from platform-specific mouse wheel event handler.
+        /// </summary>
+        public void HandleMouseWheel(double delta, double screenX, double screenY)
+        {
+            if (_disposed) return;
+
+            double factor = delta > 0 ? 1.2 : 1.0 / 1.2;
+            _controller.ZoomAboutScreenPoint(factor, screenX * _dpiScale, screenY * _dpiScale);
+            _canvasView?.InvalidateSurface();
+        }
+
         // --- Disposal ---
 
         public void Dispose()
