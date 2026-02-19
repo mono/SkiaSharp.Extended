@@ -288,15 +288,15 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         public static readonly BindableProperty ControlBackgroundProperty =
             BindableProperty.Create(nameof(ControlBackground), typeof(Color), typeof(SKPivotViewerView),
-                Color.FromRgb(0xF0, 0xF0, 0xF0));
+                Color.FromRgb(0xF0, 0xF0, 0xF0), propertyChanged: OnThemePropertyChanged);
 
         public static readonly BindableProperty SecondaryBackgroundProperty =
             BindableProperty.Create(nameof(SecondaryBackground), typeof(Color), typeof(SKPivotViewerView),
-                Colors.White);
+                Colors.White, propertyChanged: OnThemePropertyChanged);
 
         public static readonly BindableProperty SecondaryForegroundProperty =
             BindableProperty.Create(nameof(SecondaryForeground), typeof(Color), typeof(SKPivotViewerView),
-                Color.FromRgb(0x66, 0x66, 0x66));
+                Color.FromRgb(0x66, 0x66, 0x66), propertyChanged: OnThemePropertyChanged);
 
         /// <summary>Accent color for the UI chrome.</summary>
         public Color AccentColor
@@ -438,6 +438,21 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             {
                 view._controller.CurrentView = viewMode;
             }
+        }
+
+        private static void OnThemePropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is SKPivotViewerView view)
+                view._canvasView.InvalidateSurface();
+        }
+
+        private SKColor ToSkColor(Color color)
+        {
+            return new SKColor(
+                (byte)(color.Red * 255),
+                (byte)(color.Green * 255),
+                (byte)(color.Blue * 255),
+                (byte)(color.Alpha * 255));
         }
 
         // --- Events ---
@@ -1084,7 +1099,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void RenderFilterPane(SKCanvas canvas, float width, float height, float topOffset)
         {
-            using var bgPaint = new SKPaint { Color = new SKColor(240, 240, 240) };
+            using var bgPaint = new SKPaint { Color = ToSkColor(ControlBackground) };
             canvas.DrawRect(0, topOffset, width, height, bgPaint);
 
             var filterPane = _controller.FilterPaneModel;
@@ -1314,7 +1329,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _detailLinkHitRects.Clear();
             _detailFacetHitRects.Clear();
 
-            using var bgPaint = new SKPaint { Color = new SKColor(250, 250, 250) };
+            using var bgPaint = new SKPaint { Color = ToSkColor(SecondaryBackground) };
             canvas.DrawRect(0, 0, width, height, bgPaint);
 
             // Separator line
