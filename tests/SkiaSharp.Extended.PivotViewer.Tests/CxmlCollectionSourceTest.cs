@@ -927,4 +927,20 @@ public class CxmlCollectionSourceTest
         Assert.Single(itemC!["Tags"]!);
         Assert.Equal("Z", itemC["Tags"]![0]?.ToString());
     }
+
+    [Fact]
+    public void ItemTemplates_DefaultIsEmpty()
+    {
+        var source = TestDataHelper.LoadCxml("conceptcars.cxml");
+        Assert.NotNull(source.ItemTemplates);
+        Assert.Empty(source.ItemTemplates);
+    }
+
+    [Fact]
+    public void ItemTemplates_CanAddTemplates()
+    {
+        var source = TestDataHelper.LoadCxml("conceptcars.cxml");
+        source.ItemTemplates.Add(new PivotViewerItemTemplate { MaxWidth = 200 });
+        Assert.Single(source.ItemTemplates);
+    }
 }

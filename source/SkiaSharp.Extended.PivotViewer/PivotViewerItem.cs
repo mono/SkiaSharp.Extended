@@ -157,6 +157,11 @@ namespace SkiaSharp.Extended.PivotViewer
             return property;
         }
 
+        /// <summary>
+        /// Gets all values for a property by ID. Matches Silverlight's GetPropertyValue method.
+        /// </summary>
+        public IList<object>? GetPropertyValue(string propertyId) => this[propertyId];
+
         /// <summary>Checks if this item has any values for a property.</summary>
         public bool HasProperty(string propertyId) =>
             _values.TryGetValue(propertyId, out var list) && list.Count > 0;

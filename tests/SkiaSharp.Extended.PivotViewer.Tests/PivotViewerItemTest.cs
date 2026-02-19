@@ -321,4 +321,25 @@ public class PivotViewerItemTest
         var item = new PivotViewerItem("42");
         Assert.Equal("42", item.ToString());
     }
+
+    [Fact]
+    public void GetPropertyValue_ReturnsValuesForExistingProperty()
+    {
+        var item = new PivotViewerItem("1");
+        var prop = new PivotViewerStringProperty("Color") { DisplayName = "Color" };
+        item.Add(prop, "Red", "Blue");
+
+        var values = item.GetPropertyValue("Color");
+        Assert.NotNull(values);
+        Assert.Equal(2, values!.Count);
+        Assert.Equal("Red", values[0]);
+        Assert.Equal("Blue", values[1]);
+    }
+
+    [Fact]
+    public void GetPropertyValue_ReturnsNullForMissingProperty()
+    {
+        var item = new PivotViewerItem("1");
+        Assert.Null(item.GetPropertyValue("NonExistent"));
+    }
 }

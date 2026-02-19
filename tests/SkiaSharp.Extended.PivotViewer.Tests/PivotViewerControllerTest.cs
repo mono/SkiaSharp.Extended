@@ -2272,4 +2272,71 @@ public class PivotViewerControllerTest
         controller.Refresh();
         Assert.True(fired);
     }
+
+    // --- ItemTemplates ---
+
+    [Fact]
+    public void ItemTemplates_DefaultIsEmpty()
+    {
+        var controller = new PivotViewerController();
+        Assert.NotNull(controller.ItemTemplates);
+        Assert.Empty(controller.ItemTemplates);
+    }
+
+    [Fact]
+    public void ItemTemplates_CanAddAndSelectTemplates()
+    {
+        var controller = new PivotViewerController();
+        controller.ItemTemplates.Add(new PivotViewerItemTemplate { MaxWidth = 100 });
+        controller.ItemTemplates.Add(new PivotViewerItemTemplate { MaxWidth = 300 });
+
+        Assert.Equal(2, controller.ItemTemplates.Count);
+        var selected = controller.ItemTemplates.SelectTemplate(200);
+        Assert.NotNull(selected);
+        Assert.Equal(300, selected!.MaxWidth);
+    }
+
+    [Fact]
+    public void ItemTemplates_SetNullResetsToEmpty()
+    {
+        var controller = new PivotViewerController();
+        controller.ItemTemplates.Add(new PivotViewerItemTemplate { MaxWidth = 100 });
+        controller.ItemTemplates = null!;
+        Assert.NotNull(controller.ItemTemplates);
+        Assert.Empty(controller.ItemTemplates);
+    }
+
+    // --- Filter property ---
+
+    [Fact]
+    public void Filter_GetReturnsSerializedState()
+    {
+        var (controller, _) = CreateTestController();
+        var filter = controller.Filter;
+        Assert.NotNull(filter);
+        // Default state serializes the current view
+        Assert.Contains("$view=", filter);
+    }
+
+    [Fact]
+    public void Filter_SetAppliesState()
+    {
+        var (controller, _) = CreateTestController();
+        controller.CurrentView = "graph";
+        var state = controller.Filter;
+
+        // Create fresh controller and apply the state
+        var (controller2, _) = CreateTestController();
+        controller2.Filter = state;
+        Assert.Equal("graph", controller2.CurrentView);
+    }
+
+    [Fact]
+    public void Filter_SetEmptyIsNoOp()
+    {
+        var (controller, _) = CreateTestController();
+        var origView = controller.CurrentView;
+        controller.Filter = "";
+        Assert.Equal(origView, controller.CurrentView);
+    }
 }

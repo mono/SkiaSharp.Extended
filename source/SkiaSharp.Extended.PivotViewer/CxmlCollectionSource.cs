@@ -112,6 +112,9 @@ namespace SkiaSharp.Extended.PivotViewer
         /// <summary>All property definitions in the collection.</summary>
         public IReadOnlyList<PivotViewerProperty> ItemProperties => _properties;
 
+        /// <summary>Item templates for zoom-based template selection. Matches Silverlight API.</summary>
+        public PivotViewerItemTemplateCollection ItemTemplates { get; } = new PivotViewerItemTemplateCollection();
+
         /// <summary>Fired when loading state changes.</summary>
         public event EventHandler<CxmlCollectionStateChangedEventArgs>? StateChanged;
 

@@ -20,6 +20,7 @@ namespace SkiaSharp.Extended.PivotViewer
         private DetailPaneModel? _detailPaneModel;
         private CollectionImageProvider? _imageProvider;
         private CxmlCollectionSource? _collectionSource;
+        private PivotViewerItemTemplateCollection _itemTemplates = new PivotViewerItemTemplateCollection();
         private bool _disposed;
 
         private List<PivotViewerItem> _allItems = new List<PivotViewerItem>();
@@ -200,6 +201,30 @@ namespace SkiaSharp.Extended.PivotViewer
 
         /// <summary>The loaded CXML collection source, if any.</summary>
         public CxmlCollectionSource? CollectionSource => _collectionSource;
+
+        /// <summary>
+        /// Item templates for zoom-based template selection. Matches Silverlight's ItemTemplates property.
+        /// Templates are selected based on the rendered item width using <see cref="PivotViewerItemTemplateCollection.SelectTemplate"/>.
+        /// </summary>
+        public PivotViewerItemTemplateCollection ItemTemplates
+        {
+            get => _itemTemplates;
+            set => _itemTemplates = value ?? new PivotViewerItemTemplateCollection();
+        }
+
+        /// <summary>
+        /// Serialized filter state string. Setting this applies the encoded filters.
+        /// Matches Silverlight's Filter property for state persistence.
+        /// </summary>
+        public string Filter
+        {
+            get => SerializeViewerState();
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                    SetViewerState(value);
+            }
+        }
 
         /// <summary>
         /// Zoom level: 0.0 = fit all items, 1.0 = single item detail.
