@@ -137,4 +137,38 @@ public class LayoutTransitionManagerTest
         tm.Duration = 2.0;
         Assert.Equal(2.0, tm.Duration);
     }
+
+    [Fact]
+    public void Update_WithoutBegin_DoesNotThrow()
+    {
+        var tm = new LayoutTransitionManager();
+        tm.Update(0.5);
+        Assert.False(tm.IsAnimating);
+    }
+
+    [Fact]
+    public void GetCurrentPositions_WhenNotAnimating_ReturnsEmpty()
+    {
+        var tm = new LayoutTransitionManager();
+        var positions = tm.GetCurrentPositions();
+        Assert.Empty(positions);
+    }
+
+    [Fact]
+    public void BeginTransition_EmptyArrays_DoesNotThrow()
+    {
+        var tm = new LayoutTransitionManager();
+        tm.BeginTransition(Array.Empty<ItemPosition>(), Array.Empty<ItemPosition>());
+        Assert.True(tm.IsAnimating);
+        tm.Update(1.0);
+        Assert.False(tm.IsAnimating);
+    }
+
+    [Fact]
+    public void CancelTransition_WhenNotAnimating_DoesNotThrow()
+    {
+        var tm = new LayoutTransitionManager();
+        tm.CancelTransition();
+        Assert.False(tm.IsAnimating);
+    }
 }

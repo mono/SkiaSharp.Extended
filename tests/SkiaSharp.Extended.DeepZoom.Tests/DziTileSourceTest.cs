@@ -296,4 +296,30 @@ public class DziTileSourceTest
         Assert.Equal(256, bounds.X);
         Assert.Equal(44, bounds.Width); // 300 - 256 = 44
     }
+
+    [Fact]
+    public void Parse_MalformedXml_ThrowsException()
+    {
+        Assert.Throws<System.Xml.XmlException>(() =>
+            DziTileSource.Parse("not valid xml"));
+    }
+
+    [Fact]
+    public void Parse_MissingTileSize_ThrowsFormatException()
+    {
+        string xml = @"<?xml version='1.0'?>
+<Image xmlns='http://schemas.microsoft.com/deepzoom/2008' Format='jpg'>
+  <Size Width='1000' Height='800'/>
+</Image>";
+        Assert.Throws<FormatException>(() => DziTileSource.Parse(xml));
+    }
+
+    [Fact]
+    public void Parse_WithBaseUri_RoundTrips()
+    {
+        var xml = @"<Image TileSize=""256"" Overlap=""0"" Format=""jpg"" xmlns=""http://schemas.microsoft.com/deepzoom/2008""><Size Width=""512"" Height=""512""/></Image>";
+        var dzi = DziTileSource.Parse(xml, "http://example.com/tiles/");
+        Assert.Equal("http://example.com/tiles/", dzi.TilesBaseUri);
+        Assert.Equal(512, dzi.ImageWidth);
+    }
 }

@@ -236,4 +236,101 @@ public class FilterEngineTest
         var result = engine.GetFilteredItems();
         Assert.Empty(result);
     }
+
+    [Fact]
+    public void CombinedFilters_StringAndNumeric()
+    {
+        var engine = new FilterEngine();
+        var strProp = new PivotViewerStringProperty("Color") { DisplayName = "Color" };
+        var numProp = new PivotViewerNumericProperty("Year") { DisplayName = "Year" };
+
+        var item1 = new PivotViewerItem("1");
+        item1.Set(strProp, new object[] { "Red" });
+        item1.Set(numProp, new object[] { 2020.0 });
+
+        var item2 = new PivotViewerItem("2");
+        item2.Set(strProp, new object[] { "Blue" });
+        item2.Set(numProp, new object[] { 2022.0 });
+
+        var item3 = new PivotViewerItem("3");
+        item3.Set(strProp, new object[] { "Red" });
+        item3.Set(numProp, new object[] { 2023.0 });
+
+        engine.SetSource(new[] { item1, item2, item3 }, new PivotViewerProperty[] { strProp, numProp });
+
+        engine.AddStringFilter("Color", "Red");
+        engine.AddNumericRangeFilter("Year", 2021, 2025);
+
+        var filtered = engine.GetFilteredItems();
+        Assert.Single(filtered);
+        Assert.Equal("3", filtered[0].Id);
+    }
+
+    [Fact]
+    public void CombinedFilters_MultipleStringProperties()
+    {
+        var engine = new FilterEngine();
+        var colorProp = new PivotViewerStringProperty("Color") { DisplayName = "Color" };
+        var sizeProp = new PivotViewerStringProperty("Size") { DisplayName = "Size" };
+
+        var item1 = new PivotViewerItem("1");
+        item1.Set(colorProp, new object[] { "Red" });
+        item1.Set(sizeProp, new object[] { "Large" });
+
+        var item2 = new PivotViewerItem("2");
+        item2.Set(colorProp, new object[] { "Red" });
+        item2.Set(sizeProp, new object[] { "Small" });
+
+        engine.SetSource(new[] { item1, item2 }, new PivotViewerProperty[] { colorProp, sizeProp });
+
+        engine.AddStringFilter("Color", "Red");
+        engine.AddStringFilter("Size", "Large");
+
+        var filtered = engine.GetFilteredItems();
+        Assert.Single(filtered);
+        Assert.Equal("1", filtered[0].Id);
+    }
+
+    [Fact]
+    public void NumericRangeFilter_ExactBounds_IncludesBothEnds()
+    {
+        var engine = new FilterEngine();
+        var numProp = new PivotViewerNumericProperty("Value") { DisplayName = "Value" };
+
+        var item1 = new PivotViewerItem("1");
+        item1.Set(numProp, new object[] { 10.0 });
+        var item2 = new PivotViewerItem("2");
+        item2.Set(numProp, new object[] { 20.0 });
+        var item3 = new PivotViewerItem("3");
+        item3.Set(numProp, new object[] { 30.0 });
+
+        engine.SetSource(new[] { item1, item2, item3 }, new PivotViewerProperty[] { numProp });
+        engine.AddNumericRangeFilter("Value", 10, 20);
+
+        var filtered = engine.GetFilteredItems();
+        Assert.Equal(2, filtered.Count);
+    }
+
+    [Fact]
+    public void ClearAll_AfterCombinedFilters_RestoresAll()
+    {
+        var engine = new FilterEngine();
+        var strProp = new PivotViewerStringProperty("Color") { DisplayName = "Color" };
+        var numProp = new PivotViewerNumericProperty("Year") { DisplayName = "Year" };
+
+        var item1 = new PivotViewerItem("1");
+        item1.Set(strProp, new object[] { "Red" });
+        item1.Set(numProp, new object[] { 2020.0 });
+        var item2 = new PivotViewerItem("2");
+        item2.Set(strProp, new object[] { "Blue" });
+        item2.Set(numProp, new object[] { 2022.0 });
+
+        engine.SetSource(new[] { item1, item2 }, new PivotViewerProperty[] { strProp, numProp });
+        engine.AddStringFilter("Color", "Red");
+        engine.AddNumericRangeFilter("Year", 2021, 2025);
+        Assert.Empty(engine.GetFilteredItems());
+
+        engine.ClearAll();
+        Assert.Equal(2, engine.GetFilteredItems().Count);
+    }
 }

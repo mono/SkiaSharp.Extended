@@ -221,4 +221,40 @@ public class WordWheelIndexTest
         Assert.Single(matching);
         Assert.Equal("1", matching[0].Id);
     }
+
+    [Fact]
+    public void Search_SpecialCharacters_DoesNotThrow()
+    {
+        var nameP = new PivotViewerStringProperty("Name")
+        {
+            DisplayName = "Name",
+            Options = PivotViewerPropertyOptions.CanSearchText
+        };
+
+        var item = new PivotViewerItem("1");
+        item.Set(nameP, new object[] { "Café résumé naïve" });
+
+        var index = new WordWheelIndex();
+        index.Build(new[] { item }, new PivotViewerProperty[] { nameP });
+
+        var results = index.Search("café");
+        Assert.NotNull(results);
+    }
+
+    [Fact]
+    public void GetMatchingItems_PartialMatch_ReturnsCorrectItems()
+    {
+        var (index, items) = CreateTestIndex();
+        var matching = index.GetMatchingItems("Ford");
+        Assert.Single(matching);
+        Assert.Equal("1", matching[0].Id);
+    }
+
+    [Fact]
+    public void Search_SingleCharPrefix_ReturnsResults()
+    {
+        var (index, _) = CreateTestIndex();
+        var results = index.Search("T");
+        Assert.True(results.Count >= 2, "Should find Toyota and Tesla");
+    }
 }

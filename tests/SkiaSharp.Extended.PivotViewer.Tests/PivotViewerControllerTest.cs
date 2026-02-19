@@ -779,4 +779,25 @@ public class PivotViewerControllerTest
         controller.SearchText = "";
         Assert.Equal(totalCount, controller.SearchFilteredItems.Count);
     }
+
+    [Fact]
+    public void NotifyItemDoubleClicked_RaisesEvent()
+    {
+        var (controller, _) = CreateTestController();
+        PivotViewerItemDoubleClickEventArgs? args = null;
+        controller.ItemDoubleClicked += (s, e) => args = e;
+        controller.NotifyItemDoubleClicked(controller.Items[0]);
+        Assert.NotNull(args);
+        Assert.Equal(controller.Items[0], args.Item);
+    }
+
+    [Fact]
+    public void NotifyItemDoubleClicked_NullItem_DoesNotRaise()
+    {
+        var (controller, _) = CreateTestController();
+        bool raised = false;
+        controller.ItemDoubleClicked += (s, e) => raised = true;
+        controller.NotifyItemDoubleClicked(null!);
+        Assert.False(raised);
+    }
 }

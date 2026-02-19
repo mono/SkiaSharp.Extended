@@ -339,4 +339,44 @@ public class ViewportTest
         Assert.Equal(0.5, h, 6); // 0.5 / 1.0
         Assert.True(w < 1.0);
     }
+
+    [Fact]
+    public void Constrain_ExtremeZoom_ClampsToValid()
+    {
+        var vp = new Viewport { AspectRatio = 1.5 };
+        vp.ControlWidth = 800;
+        vp.ControlHeight = 600;
+        vp.ViewportWidth = 0.0001;
+        vp.Constrain();
+        Assert.True(vp.ViewportWidth > 0);
+    }
+
+    [Fact]
+    public void ZeroSize_DoesNotThrow()
+    {
+        var vp = new Viewport { AspectRatio = 1.5 };
+        vp.ControlWidth = 0;
+        vp.ControlHeight = 0;
+        var state = vp.GetState();
+        Assert.NotNull(state);
+    }
+
+    [Fact]
+    public void Constrain_LargePositiveOrigin_ClampsToMaximum()
+    {
+        var vp = new Viewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            AspectRatio = 1.0,
+            ViewportWidth = 0.5,
+            ViewportOriginX = 10.0,
+            ViewportOriginY = 10.0
+        };
+        vp.Constrain();
+        // Origin + ViewportWidth should not exceed 1.0
+        Assert.True(vp.ViewportOriginX + vp.ViewportWidth <= 1.001);
+        Assert.True(vp.ViewportOriginX >= 0);
+        Assert.True(vp.ViewportOriginY >= 0);
+    }
 }

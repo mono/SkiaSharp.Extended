@@ -720,4 +720,11 @@ public class CxmlCollectionSourceTest
         Assert.Single(colorValues!);
         Assert.Equal("Red", colorValues![0]?.ToString());
     }
+
+    [Fact]
+    public void Parse_SchemaVersion_Extracted()
+    {
+        var source = TestDataHelper.LoadCxml("conceptcars.cxml");
+        Assert.NotNull(source.SchemaVersion);
+    }
 }
