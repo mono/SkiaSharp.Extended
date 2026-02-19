@@ -207,20 +207,10 @@ namespace SkiaSharp.Extended.DeepZoom
                 if (_disposed)
                     return;
                 _disposed = true;
-
-                // Clear all items while still holding the lock to prevent
-                // any concurrent Put() from inserting between setting _disposed
-                // and clearing. (Put() checks _disposed, but this is defensive.)
-                foreach (var node in _lruList)
-                {
-                    node.Bitmap?.Dispose();
-                }
-                _lruList.Clear();
-                _map.Clear();
-                foreach (var bmp in _pendingDispose)
-                    bmp.Dispose();
-                _pendingDispose.Clear();
             }
+            // Safe to call Clear() outside the lock: _disposed=true prevents
+            // new Put() calls from inserting items (Put checks _disposed under lock).
+            Clear();
         }
 
         private class TileCacheEntry
