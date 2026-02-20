@@ -93,6 +93,8 @@ public abstract class SKLottieImageSource : Element
 
 			// Get the initial animation path from manifest
 			string? animationPath = null;
+			
+			// v2.0: Look for initial.animation property
 			if (manifest.RootElement.TryGetProperty("initial", out var initial) &&
 				initial.TryGetProperty("animation", out var animationId))
 			{
@@ -101,10 +103,24 @@ public abstract class SKLottieImageSource : Element
 				{
 					foreach (var anim in animations.EnumerateArray())
 					{
-						if (anim.TryGetProperty("id", out var aid) && aid.GetString() == id &&
-							anim.TryGetProperty("path", out var path))
+						if (anim.TryGetProperty("id", out var aid) && aid.GetString() == id)
 						{
-							animationPath = path.GetString();
+							// v2.0: animation has 'path' property
+							if (anim.TryGetProperty("path", out var path))
+							{
+								animationPath = path.GetString();
+							}
+							// v1.0: animation id IS the filename (without extension)
+							else
+							{
+								// Try both directory structures
+								var v2Path = Path.Combine("a", $"{id}.json");
+								var v1Path = Path.Combine("animations", $"{id}.json");
+								if (File.Exists(Path.Combine(tempDir, v2Path)))
+									animationPath = v2Path;
+								else if (File.Exists(Path.Combine(tempDir, v1Path)))
+									animationPath = v1Path;
+							}
 							break;
 						}
 					}
@@ -117,9 +133,26 @@ public abstract class SKLottieImageSource : Element
 				anims.GetArrayLength() > 0)
 			{
 				var firstAnim = anims.EnumerateArray().First();
-				if (firstAnim.TryGetProperty("path", out var path))
+				if (firstAnim.TryGetProperty("id", out var aid))
 				{
-					animationPath = path.GetString();
+					var id = aid.GetString();
+					
+					// v2.0: animation has 'path' property
+					if (firstAnim.TryGetProperty("path", out var path))
+					{
+						animationPath = path.GetString();
+					}
+					// v1.0: animation id IS the filename (without extension)
+					else if (!string.IsNullOrEmpty(id))
+					{
+						// Try both directory structures
+						var v2Path = Path.Combine("a", $"{id}.json");
+						var v1Path = Path.Combine("animations", $"{id}.json");
+						if (File.Exists(Path.Combine(tempDir, v2Path)))
+							animationPath = v2Path;
+						else if (File.Exists(Path.Combine(tempDir, v1Path)))
+							animationPath = v1Path;
+					}
 				}
 			}
 
