@@ -8,12 +8,22 @@ namespace SkiaSharp.Extended.Gestures;
 public class SKFlingEventArgs : EventArgs
 {
 	/// <summary>
-	/// Creates a new instance.
+	/// Creates a new instance with velocity only (used for FlingDetected).
 	/// </summary>
 	public SKFlingEventArgs(float velocityX, float velocityY)
+		: this(velocityX, velocityY, 0f, 0f)
+	{
+	}
+
+	/// <summary>
+	/// Creates a new instance with velocity and per-frame delta (used for Flinging).
+	/// </summary>
+	public SKFlingEventArgs(float velocityX, float velocityY, float deltaX, float deltaY)
 	{
 		VelocityX = velocityX;
 		VelocityY = velocityY;
+		DeltaX = deltaX;
+		DeltaY = deltaY;
 	}
 
 	/// <summary>
@@ -25,6 +35,21 @@ public class SKFlingEventArgs : EventArgs
 	/// Gets the Y velocity in pixels per second.
 	/// </summary>
 	public float VelocityY { get; }
+
+	/// <summary>
+	/// Gets the per-frame X displacement in pixels.
+	/// </summary>
+	public float DeltaX { get; }
+
+	/// <summary>
+	/// Gets the per-frame Y displacement in pixels.
+	/// </summary>
+	public float DeltaY { get; }
+
+	/// <summary>
+	/// Gets the current speed (magnitude of velocity) in pixels per second.
+	/// </summary>
+	public float Speed => (float)Math.Sqrt(VelocityX * VelocityX + VelocityY * VelocityY);
 
 	/// <summary>
 	/// Gets or sets whether the event was handled.

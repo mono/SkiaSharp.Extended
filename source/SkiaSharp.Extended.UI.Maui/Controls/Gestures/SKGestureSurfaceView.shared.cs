@@ -82,6 +82,8 @@ public class SKGestureSurfaceView : SKSurfaceView
 		_engine.PinchDetected += (s, e) => OnPinchDetected(e);
 		_engine.RotateDetected += (s, e) => OnRotateDetected(e);
 		_engine.FlingDetected += (s, e) => OnFlingDetected(e);
+		_engine.Flinging += (s, e) => OnFlinging(e);
+		_engine.FlingCompleted += (s, e) => OnFlingCompleted();
 		_engine.HoverDetected += (s, e) => OnHoverDetected(e);
 		_engine.GestureStarted += (s, e) => OnGestureStarted(e);
 		_engine.GestureEnded += (s, e) => OnGestureEnded(e);
@@ -164,6 +166,16 @@ public class SKGestureSurfaceView : SKSurfaceView
 	public event EventHandler<SKFlingEventArgs>? FlingDetected;
 
 	/// <summary>
+	/// Occurs each animation frame during a fling with current velocity and per-frame delta.
+	/// </summary>
+	public event EventHandler<SKFlingEventArgs>? Flinging;
+
+	/// <summary>
+	/// Occurs when a fling animation completes.
+	/// </summary>
+	public event EventHandler? FlingCompleted;
+
+	/// <summary>
 	/// Occurs when a hover is detected.
 	/// </summary>
 	public event EventHandler<SKHoverEventArgs>? HoverDetected;
@@ -222,6 +234,12 @@ public class SKGestureSurfaceView : SKSurfaceView
 
 	/// <summary>Invokes <see cref="FlingDetected"/>.</summary>
 	protected virtual void OnFlingDetected(SKFlingEventArgs e) => FlingDetected?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="Flinging"/>.</summary>
+	protected virtual void OnFlinging(SKFlingEventArgs e) => Flinging?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="FlingCompleted"/>.</summary>
+	protected virtual void OnFlingCompleted() => FlingCompleted?.Invoke(this, EventArgs.Empty);
 
 	/// <summary>Invokes <see cref="HoverDetected"/>.</summary>
 	protected virtual void OnHoverDetected(SKHoverEventArgs e) => HoverDetected?.Invoke(this, e);

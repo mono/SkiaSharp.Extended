@@ -1154,6 +1154,222 @@ public class SKGestureEngineTests
 
 	#endregion
 
+	#region Fling Animation Tests
+
+	[Fact]
+	public async Task FlingAnimation_FiresFlingingEvents()
+	{
+		var engine = CreateEngine();
+		var flingingCount = 0;
+		engine.Flinging += (s, e) => flingingCount++;
+
+		// Trigger a fast swipe
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(500, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(500, 100));
+
+		Assert.True(engine.IsFlinging, "Engine should be flinging after fast swipe");
+
+		// Wait for a few animation frames
+		await Task.Delay(100);
+
+		Assert.True(flingingCount > 0, $"Flinging should fire at least once, fired {flingingCount} times");
+	}
+
+	[Fact]
+	public async Task FlingAnimation_HasDeltaValues()
+	{
+		var engine = CreateEngine();
+		var deltas = new List<(float DeltaX, float DeltaY)>();
+		engine.Flinging += (s, e) => deltas.Add((e.DeltaX, e.DeltaY));
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(500, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(500, 100));
+
+		await Task.Delay(50);
+
+		Assert.NotEmpty(deltas);
+		// Delta should be in the direction of the swipe (positive X)
+		Assert.True(deltas[0].DeltaX > 0, $"DeltaX should be positive, was {deltas[0].DeltaX}");
+	}
+
+	[Fact]
+	public async Task FlingAnimation_DeceleratesOverTime()
+	{
+		var engine = CreateEngine();
+		var speeds = new List<float>();
+		engine.Flinging += (s, e) => speeds.Add(e.Speed);
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(300, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(600, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(600, 100));
+
+		await Task.Delay(200);
+
+		Assert.True(speeds.Count >= 2, "Need at least 2 frames to compare");
+		Assert.True(speeds[^1] < speeds[0], "Speed should decrease over time due to friction");
+	}
+
+	[Fact]
+	public async Task FlingAnimation_EventuallyCompletes()
+	{
+		var engine = CreateEngine();
+		var completed = false;
+		engine.FlingCompleted += (s, e) => completed = true;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(120, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(200, 100)); // Moderate speed
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(200, 100));
+
+		// Wait long enough for fling to decelerate to stop
+		await Task.Delay(2000);
+
+		Assert.True(completed, "FlingCompleted should fire when velocity drops below minimum");
+		Assert.False(engine.IsFlinging);
+	}
+
+	[Fact]
+	public void FlingAnimation_StopsOnNewTouch()
+	{
+		var engine = CreateEngine();
+		var completed = false;
+		engine.FlingCompleted += (s, e) => completed = true;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(500, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(500, 100));
+
+		Assert.True(engine.IsFlinging);
+
+		// New touch should stop fling
+		engine.ProcessTouchDown(2, new SKPoint(300, 300));
+
+		Assert.False(engine.IsFlinging);
+		Assert.True(completed, "FlingCompleted should fire when stopped by new touch");
+	}
+
+	[Fact]
+	public void StopFling_StopsAnimation()
+	{
+		var engine = CreateEngine();
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(500, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(500, 100));
+
+		Assert.True(engine.IsFlinging);
+
+		engine.StopFling();
+
+		Assert.False(engine.IsFlinging);
+	}
+
+	[Fact]
+	public void FlingProperties_CanBeConfigured()
+	{
+		var engine = CreateEngine();
+		engine.FlingFriction = 0.95f;
+		engine.FlingMinVelocity = 10f;
+		engine.FlingFrameInterval = 32;
+
+		Assert.Equal(0.95f, engine.FlingFriction);
+		Assert.Equal(10f, engine.FlingMinVelocity);
+		Assert.Equal(32, engine.FlingFrameInterval);
+	}
+
+	[Fact]
+	public void SlowSwipe_DoesNotStartFlingAnimation()
+	{
+		var engine = CreateEngine();
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(500);
+		engine.ProcessTouchMove(1, new SKPoint(110, 100));
+		AdvanceTime(500);
+		engine.ProcessTouchUp(1, new SKPoint(110, 100));
+
+		Assert.False(engine.IsFlinging, "Slow swipe should not start fling animation");
+	}
+
+	[Fact]
+	public void FlingDetected_StillFiresOnceAtStart()
+	{
+		var engine = CreateEngine();
+		var flingDetectedCount = 0;
+		engine.FlingDetected += (s, e) => flingDetectedCount++;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(500, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(500, 100));
+
+		Assert.Equal(1, flingDetectedCount);
+	}
+
+	[Fact]
+	public void StopFling_WhenNotFlinging_DoesNothing()
+	{
+		var engine = CreateEngine();
+		var completedCount = 0;
+		engine.FlingCompleted += (s, e) => completedCount++;
+
+		// Should not throw or fire events
+		engine.StopFling();
+
+		Assert.Equal(0, completedCount);
+		Assert.False(engine.IsFlinging);
+	}
+
+	[Fact]
+	public void Reset_StopsFlingAnimation()
+	{
+		var engine = CreateEngine();
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(500, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(500, 100));
+
+		Assert.True(engine.IsFlinging);
+
+		engine.Reset();
+
+		Assert.False(engine.IsFlinging);
+	}
+
+	#endregion
+
 	#region Cancel Edge Case Tests
 
 	[Fact]

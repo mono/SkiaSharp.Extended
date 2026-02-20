@@ -33,14 +33,6 @@ public partial class GesturePage : ContentPage
 	private int _canvasWidth;
 	private int _canvasHeight;
 
-	// Fling animation state
-	private IDispatcherTimer? _flingTimer;
-	private float _flingVelocityX;
-	private float _flingVelocityY;
-	private const float FlingFriction = 0.92f; // Deceleration factor per frame (higher = smoother/slower stop)
-	private const float FlingMinVelocity = 5f; // Minimum velocity to continue animation
-	private const int FlingFrameMs = 16; // ~60 FPS
-
 	public GesturePage()
 	{
 		InitializeComponent();
@@ -49,67 +41,12 @@ public partial class GesturePage : ContentPage
 		_stickers.Add(new Sticker { Position = new SKPoint(100, 100), Size = 80, Color = SKColors.Red, Label = "1" });
 		_stickers.Add(new Sticker { Position = new SKPoint(200, 200), Size = 60, Color = SKColors.Green, Label = "2" });
 		_stickers.Add(new Sticker { Position = new SKPoint(300, 150), Size = 70, Color = SKColors.Blue, Label = "3" });
-
-		// Create fling animation timer
-		_flingTimer = Dispatcher.CreateTimer();
-		_flingTimer.Interval = TimeSpan.FromMilliseconds(FlingFrameMs);
-		_flingTimer.Tick += OnFlingTimerTick;
 	}
 
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
 		gestureView.Invalidate();
-	}
-
-	protected override void OnDisappearing()
-	{
-		base.OnDisappearing();
-		StopFlingAnimation();
-	}
-
-	private void OnFlingTimerTick(object? sender, EventArgs e)
-	{
-		// Convert screen-space fling velocity to content-space offset delta
-		var d = ScreenToContentDelta(
-			_flingVelocityX * (FlingFrameMs / 1000f),
-			_flingVelocityY * (FlingFrameMs / 1000f));
-		_canvasOffset = new SKPoint(_canvasOffset.X + d.X, _canvasOffset.Y + d.Y);
-
-		// Apply friction (deceleration)
-		_flingVelocityX *= FlingFriction;
-		_flingVelocityY *= FlingFriction;
-
-		// Update display
-		gestureView.Invalidate();
-
-		// Calculate current speed
-		var speed = MathF.Sqrt(_flingVelocityX * _flingVelocityX + _flingVelocityY * _flingVelocityY);
-
-		// Stop when velocity is too low
-		if (speed < FlingMinVelocity)
-		{
-			StopFlingAnimation();
-			statusLabel.Text = "Fling ended";
-		}
-		else
-		{
-			statusLabel.Text = $"Flinging... ({speed:F0} px/s)";
-		}
-	}
-
-	private void StartFlingAnimation(float velocityX, float velocityY)
-	{
-		_flingVelocityX = velocityX;
-		_flingVelocityY = velocityY;
-		_flingTimer?.Start();
-	}
-
-	private void StopFlingAnimation()
-	{
-		_flingTimer?.Stop();
-		_flingVelocityX = 0;
-		_flingVelocityY = 0;
 	}
 
 	private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
@@ -241,7 +178,6 @@ public partial class GesturePage : ContentPage
 	private void OnTap(object? sender, SKTapEventArgs e)
 	{
 		if (!_enableTap) return;
-		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Tap at ({e.Location.X:F0}, {e.Location.Y:F0})");
 		
 		// Try to select a sticker
@@ -263,7 +199,6 @@ public partial class GesturePage : ContentPage
 	private void OnDoubleTap(object? sender, SKTapEventArgs e)
 	{
 		if (!_enableDoubleTap) return;
-		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Double tap ({e.TapCount}x) at ({e.Location.X:F0}, {e.Location.Y:F0})");
 
 		const float zoomIn = 2f;
@@ -291,7 +226,6 @@ public partial class GesturePage : ContentPage
 	private void OnLongPress(object? sender, SKTapEventArgs e)
 	{
 		if (!_enableLongPress) return;
-		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Long press at ({e.Location.X:F0}, {e.Location.Y:F0})");
 		
 		var hitSticker = HitTest(e.Location);
@@ -318,7 +252,6 @@ public partial class GesturePage : ContentPage
 	private void OnPan(object? sender, SKPanEventArgs e)
 	{
 		if (!_enablePan) return;
-		StopFlingAnimation(); // Stop any ongoing fling when starting a new pan
 		
 		// Only pan canvas when no sticker is selected
 		if (_selectedSticker == null)
@@ -334,7 +267,6 @@ public partial class GesturePage : ContentPage
 	private void OnPinch(object? sender, SKPinchEventArgs e)
 	{
 		if (!_enablePinch) return;
-		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Pinch scale: {e.Scale:F2}");
 		
 		// Apply center movement as pan so content follows the fingers
@@ -357,7 +289,6 @@ public partial class GesturePage : ContentPage
 	private void OnRotate(object? sender, SKRotateEventArgs e)
 	{
 		if (!_enableRotate) return;
-		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Rotate: {e.RotationDelta:F1}°");
 		
 		// Center pan is handled in OnPinch (both fire on the same touch move)
@@ -373,16 +304,27 @@ public partial class GesturePage : ContentPage
 	{
 		if (!_enableFling) return;
 		LogEvent($"Fling: ({e.VelocityX:F0}, {e.VelocityY:F0}) px/s");
-		
-		// Start smooth fling animation
-		StartFlingAnimation(e.VelocityX, e.VelocityY);
-		statusLabel.Text = $"Flinging at {MathF.Sqrt(e.VelocityX * e.VelocityX + e.VelocityY * e.VelocityY):F0} px/s";
+		statusLabel.Text = $"Flinging at {e.Speed:F0} px/s";
+	}
+
+	private void OnFlinging(object? sender, SKFlingEventArgs e)
+	{
+		if (!_enableFling) return;
+		// Convert per-frame screen-space delta to content-space offset
+		var d = ScreenToContentDelta(e.DeltaX, e.DeltaY);
+		_canvasOffset = new SKPoint(_canvasOffset.X + d.X, _canvasOffset.Y + d.Y);
+		gestureView.Invalidate();
+		statusLabel.Text = $"Flinging... ({e.Speed:F0} px/s)";
+	}
+
+	private void OnFlingCompleted(object? sender, EventArgs e)
+	{
+		statusLabel.Text = "Fling ended";
 	}
 
 	private void OnDragStarted(object? sender, SKDragEventArgs e)
 	{
 		if (!_enableDrag) return;
-		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Drag started at ({e.StartLocation.X:F0}, {e.StartLocation.Y:F0})");
 		
 		if (_selectedSticker != null)
