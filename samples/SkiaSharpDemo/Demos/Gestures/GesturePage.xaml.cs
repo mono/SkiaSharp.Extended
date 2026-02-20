@@ -1,6 +1,7 @@
 using SkiaSharp;
 using SkiaSharp.Extended.Gestures;
 using SkiaSharp.Extended.UI.Controls;
+using SkiaSharp.Views.Maui;
 
 namespace SkiaSharpDemo.Demos;
 
@@ -34,6 +35,123 @@ public partial class GesturePage : ContentPage
 	{
 		base.OnAppearing();
 		gestureView.Invalidate();
+	}
+
+	private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
+	{
+		var canvas = e.Surface.Canvas;
+		var width = e.Info.Width;
+		var height = e.Info.Height;
+
+		// Clear background
+		canvas.Clear(SKColors.White);
+
+		// Draw grid background so scrolling is visible
+		DrawGrid(canvas, width, height);
+
+		// Apply canvas transforms (pan, scale, rotate)
+		canvas.Save();
+		canvas.Translate(width / 2f + _canvasOffset.X, height / 2f + _canvasOffset.Y);
+		canvas.Scale(_canvasScale);
+		canvas.RotateDegrees(_canvasRotation);
+		canvas.Translate(-width / 2f, -height / 2f);
+
+		// Draw stickers
+		foreach (var sticker in _stickers)
+		{
+			DrawSticker(canvas, sticker, sticker == _selectedSticker);
+		}
+
+		canvas.Restore();
+
+		// Draw crosshair at center for reference
+		using var crosshairPaint = new SKPaint
+		{
+			Color = SKColors.Gray.WithAlpha(100),
+			StrokeWidth = 1,
+			IsAntialias = true
+		};
+		canvas.DrawLine(width / 2f, 0, width / 2f, height, crosshairPaint);
+		canvas.DrawLine(0, height / 2f, width, height / 2f, crosshairPaint);
+	}
+
+	private void DrawGrid(SKCanvas canvas, int width, int height)
+	{
+		const int gridSize = 40;
+		
+		using var lightPaint = new SKPaint { Color = new SKColor(240, 240, 240) };
+		using var darkPaint = new SKPaint { Color = new SKColor(220, 220, 220) };
+
+		// Calculate grid offset based on canvas pan
+		var offsetX = (int)_canvasOffset.X % (gridSize * 2);
+		var offsetY = (int)_canvasOffset.Y % (gridSize * 2);
+
+		for (int y = -gridSize * 2; y < height + gridSize * 2; y += gridSize)
+		{
+			for (int x = -gridSize * 2; x < width + gridSize * 2; x += gridSize)
+			{
+				var isLight = ((x / gridSize) + (y / gridSize)) % 2 == 0;
+				var rect = new SKRect(x + offsetX, y + offsetY, x + offsetX + gridSize, y + offsetY + gridSize);
+				canvas.DrawRect(rect, isLight ? lightPaint : darkPaint);
+			}
+		}
+	}
+
+	private void DrawSticker(SKCanvas canvas, Sticker sticker, bool isSelected)
+	{
+		var radius = sticker.Size / 2f;
+		
+		// Draw shadow
+		using var shadowPaint = new SKPaint
+		{
+			Color = SKColors.Black.WithAlpha(50),
+			IsAntialias = true,
+			MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 5)
+		};
+		canvas.DrawCircle(sticker.Position.X + 3, sticker.Position.Y + 3, radius, shadowPaint);
+
+		// Draw sticker fill
+		using var fillPaint = new SKPaint
+		{
+			Color = sticker.Color,
+			IsAntialias = true,
+			Style = SKPaintStyle.Fill
+		};
+		canvas.DrawCircle(sticker.Position, radius, fillPaint);
+
+		// Draw selection ring
+		if (isSelected)
+		{
+			using var selectPaint = new SKPaint
+			{
+				Color = SKColors.Yellow,
+				IsAntialias = true,
+				Style = SKPaintStyle.Stroke,
+				StrokeWidth = 4
+			};
+			canvas.DrawCircle(sticker.Position, radius + 4, selectPaint);
+		}
+
+		// Draw border
+		using var borderPaint = new SKPaint
+		{
+			Color = SKColors.White,
+			IsAntialias = true,
+			Style = SKPaintStyle.Stroke,
+			StrokeWidth = 2
+		};
+		canvas.DrawCircle(sticker.Position, radius, borderPaint);
+
+		// Draw label
+		using var textPaint = new SKPaint
+		{
+			Color = SKColors.White,
+			IsAntialias = true,
+			TextSize = sticker.Size * 0.4f,
+			TextAlign = SKTextAlign.Center,
+			Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold)
+		};
+		canvas.DrawText(sticker.Label, sticker.Position.X, sticker.Position.Y + textPaint.TextSize * 0.35f, textPaint);
 	}
 
 	private void OnTap(object? sender, SKTapEventArgs e)
