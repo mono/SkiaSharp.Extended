@@ -441,15 +441,13 @@ public partial class GesturePage : ContentPage
 		var w = (float)_canvasWidth;
 		var h = (float)_canvasHeight;
 
-		// Must match the canvas call order in OnPaintSurface.
-		// Canvas calls are pre-concat, so the effective matrix is
-		// (last call) · ... · (first call), i.e.:
-		// T(-w/2,-h/2) · T(ox,oy) · R(θ) · S(s) · T(w/2,h/2)
-		var matrix = SKMatrix.CreateTranslation(-w / 2f, -h / 2f);
-		matrix = matrix.PreConcat(SKMatrix.CreateTranslation(_canvasOffset.X, _canvasOffset.Y));
-		matrix = matrix.PreConcat(SKMatrix.CreateRotationDegrees(_canvasRotation));
+		// Reproduce the canvas call order using PreConcat (this = this · B).
+		// Start from the first canvas call and PreConcat each subsequent one.
+		var matrix = SKMatrix.CreateTranslation(w / 2f, h / 2f);
 		matrix = matrix.PreConcat(SKMatrix.CreateScale(_canvasScale, _canvasScale));
-		matrix = matrix.PreConcat(SKMatrix.CreateTranslation(w / 2f, h / 2f));
+		matrix = matrix.PreConcat(SKMatrix.CreateRotationDegrees(_canvasRotation));
+		matrix = matrix.PreConcat(SKMatrix.CreateTranslation(_canvasOffset.X, _canvasOffset.Y));
+		matrix = matrix.PreConcat(SKMatrix.CreateTranslation(-w / 2f, -h / 2f));
 		return matrix;
 	}
 
