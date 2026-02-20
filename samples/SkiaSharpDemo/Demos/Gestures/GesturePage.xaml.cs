@@ -341,12 +341,7 @@ public partial class GesturePage : ContentPage
 		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Rotate: {e.RotationDelta:F1}°");
 		
-		// Apply center movement as pan so content follows the fingers
-		var panDelta = ScreenToContentDelta(
-			e.Center.X - e.PreviousCenter.X,
-			e.Center.Y - e.PreviousCenter.Y);
-		_canvasOffset = new SKPoint(_canvasOffset.X + panDelta.X, _canvasOffset.Y + panDelta.Y);
-
+		// Center pan is handled in OnPinch (both fire on the same touch move)
 		var newRotation = _canvasRotation + e.RotationDelta;
 		AdjustOffsetForPivot(e.Center, _canvasScale, _canvasScale, _canvasRotation, newRotation);
 		_canvasRotation = newRotation;
