@@ -145,9 +145,9 @@ public partial class InkingPage : ContentPage
         signaturePad.MinStrokeWidth = (float)minWidthSlider.Value;
         signaturePad.MaxStrokeWidth = (float)maxWidthSlider.Value;
         
-        // Apply to ink canvas directly for cap style and smoothing
-        signaturePad.InkCanvas.CapStyle = currentCapStyle;
-        signaturePad.InkCanvas.SmoothingFactor = (int)Math.Round(smoothingSlider.Value);
+        // Apply to ink canvas brush for cap style and smoothing
+        signaturePad.InkCanvas.Brush.CapStyle = currentCapStyle;
+        signaturePad.InkCanvas.Brush.SmoothingFactor = (int)Math.Round(smoothingSlider.Value);
     }
 
     private void OnClearClicked(object? sender, EventArgs e)
