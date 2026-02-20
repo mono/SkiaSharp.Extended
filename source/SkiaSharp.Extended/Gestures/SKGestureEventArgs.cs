@@ -112,9 +112,10 @@ public class SKRotateEventArgs : EventArgs
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
-	public SKRotateEventArgs(SKPoint center, float rotationDelta)
+	public SKRotateEventArgs(SKPoint center, SKPoint previousCenter, float rotationDelta)
 	{
 		Center = center;
+		PreviousCenter = previousCenter;
 		RotationDelta = rotationDelta;
 	}
 
@@ -122,6 +123,11 @@ public class SKRotateEventArgs : EventArgs
 	/// Gets the center point of rotation.
 	/// </summary>
 	public SKPoint Center { get; }
+
+	/// <summary>
+	/// Gets the previous center point of rotation.
+	/// </summary>
+	public SKPoint PreviousCenter { get; }
 
 	/// <summary>
 	/// Gets the rotation delta in degrees.
