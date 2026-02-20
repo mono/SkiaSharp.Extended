@@ -279,7 +279,7 @@ public class SKGestureEngine : IDisposable
 					// Calculate rotation
 					var rotationDelta = newPinch.Angle - _pinchState.Angle;
 					rotationDelta = NormalizeAngle(rotationDelta);
-					OnRotateDetected(new SKRotateEventArgs(newPinch.Center, rotationDelta));
+					OnRotateDetected(new SKRotateEventArgs(newPinch.Center, _pinchState.Center, rotationDelta));
 
 					_pinchState = newPinch;
 				}
