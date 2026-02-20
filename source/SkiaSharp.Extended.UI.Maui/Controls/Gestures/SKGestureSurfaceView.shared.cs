@@ -85,6 +85,7 @@ public class SKGestureSurfaceView : SKSurfaceView
 		_engine.Flinging += (s, e) => OnFlinging(e);
 		_engine.FlingCompleted += (s, e) => OnFlingCompleted();
 		_engine.HoverDetected += (s, e) => OnHoverDetected(e);
+		_engine.ScrollDetected += (s, e) => OnScrollDetected(e);
 		_engine.GestureStarted += (s, e) => OnGestureStarted(e);
 		_engine.GestureEnded += (s, e) => OnGestureEnded(e);
 		_engine.DragStarted += (s, e) => OnDragStarted(e);
@@ -181,6 +182,11 @@ public class SKGestureSurfaceView : SKSurfaceView
 	public event EventHandler<SKHoverEventArgs>? HoverDetected;
 
 	/// <summary>
+	/// Occurs when a mouse scroll (wheel) event is detected.
+	/// </summary>
+	public event EventHandler<SKScrollEventArgs>? ScrollDetected;
+
+	/// <summary>
 	/// Occurs when a gesture starts.
 	/// </summary>
 	public event EventHandler<SKGestureStateEventArgs>? GestureStarted;
@@ -243,6 +249,9 @@ public class SKGestureSurfaceView : SKSurfaceView
 
 	/// <summary>Invokes <see cref="HoverDetected"/>.</summary>
 	protected virtual void OnHoverDetected(SKHoverEventArgs e) => HoverDetected?.Invoke(this, e);
+
+	/// <summary>Invokes <see cref="ScrollDetected"/>.</summary>
+	protected virtual void OnScrollDetected(SKScrollEventArgs e) => ScrollDetected?.Invoke(this, e);
 
 	/// <summary>Invokes <see cref="GestureStarted"/>.</summary>
 	protected virtual void OnGestureStarted(SKGestureStateEventArgs e) => GestureStarted?.Invoke(this, e);
@@ -323,6 +332,14 @@ public class SKGestureSurfaceView : SKSurfaceView
 				break;
 			case SKTouchAction.Cancelled:
 				e.Handled = _engine.ProcessTouchCancel(e.Id);
+				break;
+			case SKTouchAction.Entered:
+			case SKTouchAction.Exited:
+				// Accept these to keep receiving hover/move events
+				e.Handled = true;
+				break;
+			case SKTouchAction.WheelChanged:
+				e.Handled = _engine.ProcessMouseWheel(location, 0, e.WheelDelta);
 				break;
 		}
 

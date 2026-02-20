@@ -161,6 +161,11 @@ public class SKGestureEngine : IDisposable
 	public event EventHandler<SKHoverEventArgs>? HoverDetected;
 
 	/// <summary>
+	/// Occurs when a mouse scroll (wheel) event is detected.
+	/// </summary>
+	public event EventHandler<SKScrollEventArgs>? ScrollDetected;
+
+	/// <summary>
 	/// Occurs when a gesture starts.
 	/// </summary>
 	public event EventHandler<SKGestureStateEventArgs>? GestureStarted;
@@ -269,20 +274,18 @@ public class SKGestureEngine : IDisposable
 
 		var ticks = TimeProvider();
 
-		if (!_touches.ContainsKey(id))
-			return false;
-
-		_touches[id] = new SKTouchState(id, location, ticks, inContact);
-
-		if (inContact)
-			_flingTracker.AddEvent(id, location, ticks);
-
-		// Handle hover (mouse without contact)
+		// Handle hover (mouse without contact) — no prior touch down required
 		if (!inContact)
 		{
 			OnHoverDetected(new SKHoverEventArgs(location));
 			return true;
 		}
+
+		if (!_touches.ContainsKey(id))
+			return false;
+
+		_touches[id] = new SKTouchState(id, location, ticks, inContact);
+		_flingTracker.AddEvent(id, location, ticks);
 
 		var touchPoints = GetActiveTouchPoints();
 		var distance = SKPoint.Distance(location, _initialTouch);
@@ -454,6 +457,22 @@ public class SKGestureEngine : IDisposable
 			_dragStartedFired = false;
 		}
 
+		return true;
+	}
+
+	/// <summary>
+	/// Processes a mouse wheel (scroll) event.
+	/// </summary>
+	/// <param name="location">The location of the mouse pointer.</param>
+	/// <param name="deltaX">The horizontal scroll delta.</param>
+	/// <param name="deltaY">The vertical scroll delta.</param>
+	/// <returns>True if the event was handled.</returns>
+	public bool ProcessMouseWheel(SKPoint location, float deltaX, float deltaY)
+	{
+		if (!IsEnabled || _disposed)
+			return false;
+
+		OnScrollDetected(new SKScrollEventArgs(location, deltaX, deltaY));
 		return true;
 	}
 
@@ -642,6 +661,7 @@ public class SKGestureEngine : IDisposable
 	protected virtual void OnFlinging(SKFlingEventArgs e) => Flinging?.Invoke(this, e);
 	protected virtual void OnFlingCompleted() => FlingCompleted?.Invoke(this, EventArgs.Empty);
 	protected virtual void OnHoverDetected(SKHoverEventArgs e) => HoverDetected?.Invoke(this, e);
+	protected virtual void OnScrollDetected(SKScrollEventArgs e) => ScrollDetected?.Invoke(this, e);
 	protected virtual void OnGestureStarted(SKGestureStateEventArgs e) => GestureStarted?.Invoke(this, e);
 	protected virtual void OnGestureEnded(SKGestureStateEventArgs e) => GestureEnded?.Invoke(this, e);
 	protected virtual void OnDragStarted(SKDragEventArgs e) => DragStarted?.Invoke(this, e);
