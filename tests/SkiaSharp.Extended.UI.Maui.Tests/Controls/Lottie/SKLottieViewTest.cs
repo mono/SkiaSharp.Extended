@@ -999,4 +999,253 @@ public class SKLottieViewTest
 		Assert.True(lottie.Fps > 0);
 		Assert.True(lottie.FrameCount > 0);
 	}
+
+	// ===========================================
+	// Animated Play-To Tests (issue #166)
+	// ===========================================
+
+	[Fact]
+	public async Task PlayToFrameAnimatesForwardToTarget()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// start at frame 0, animate to frame 30
+		Assert.Equal(0, lottie.CurrentFrame);
+		lottie.PlayToFrame(30);
+		Assert.True(lottie.IsAnimationEnabled);
+
+		// drive the animation forward in large steps until it stops
+		for (var i = 0; i < 100; i++)
+		{
+			if (!lottie.IsAnimationEnabled) break;
+			lottie.CallUpdate(TimeSpan.FromSeconds(0.1));
+		}
+
+		// should have stopped at frame 30
+		Assert.False(lottie.IsAnimationEnabled);
+		Assert.Equal(30, lottie.CurrentFrame);
+		Assert.Equal(TimeSpan.FromSeconds(30.0 / lottie.Fps), lottie.Progress);
+	}
+
+	[Fact]
+	public async Task PlayToFrameAnimatesBackwardToTarget()
+	{
+		// create and seek to frame 60 first
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SeekToFrame(60, stopPlayback: true);
+		Assert.Equal(60, lottie.CurrentFrame);
+
+		// animate backward to frame 0
+		lottie.PlayToFrame(0);
+		Assert.True(lottie.IsAnimationEnabled);
+
+		// drive the animation until it stops
+		for (var i = 0; i < 100; i++)
+		{
+			if (!lottie.IsAnimationEnabled) break;
+			lottie.CallUpdate(TimeSpan.FromSeconds(0.1));
+		}
+
+		// should have stopped at frame 0
+		Assert.False(lottie.IsAnimationEnabled);
+		Assert.Equal(0, lottie.CurrentFrame);
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+	}
+
+	[Fact]
+	public async Task PlayToFrameStopsExactlyAtTarget()
+	{
+		// Verify animation stops at the exact target, not beyond it
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// animate to frame 10 with a large step size that would overshoot
+		lottie.PlayToFrame(10);
+		lottie.CallUpdate(TimeSpan.FromSeconds(100)); // massive overshoot step
+
+		// should be clamped to exactly frame 10
+		Assert.Equal(10, lottie.CurrentFrame);
+		Assert.False(lottie.IsAnimationEnabled);
+	}
+
+	[Fact]
+	public async Task PlayToFrameDoesNothingWhenAlreadyAtTarget()
+	{
+		// If current position == target, PlayToFrame should be a no-op
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SeekToFrame(15, stopPlayback: true);
+		Assert.Equal(15, lottie.CurrentFrame);
+		Assert.False(lottie.IsAnimationEnabled);
+
+		// PlayToFrame to the same frame should not start animation
+		lottie.PlayToFrame(15);
+		Assert.Equal(15, lottie.CurrentFrame);
+		Assert.False(lottie.IsAnimationEnabled);
+	}
+
+	[Fact]
+	public async Task PlayToFrameDoesNothingWithoutAnimation()
+	{
+		// Without a loaded animation, PlayToFrame should be safe to call
+		var lottie = new WaitingLottieView();
+
+		lottie.PlayToFrame(10);
+
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+		Assert.Equal(0, lottie.CurrentFrame);
+	}
+
+	[Fact]
+	public async Task PlayToFrameClampsNegativeFrame()
+	{
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SeekToFrame(30, stopPlayback: true);
+		lottie.PlayToFrame(-10); // clamps to 0, animates backward
+
+		for (var i = 0; i < 100; i++)
+		{
+			if (!lottie.IsAnimationEnabled) break;
+			lottie.CallUpdate(TimeSpan.FromSeconds(0.1));
+		}
+
+		Assert.Equal(0, lottie.CurrentFrame);
+		Assert.False(lottie.IsAnimationEnabled);
+	}
+
+	[Fact]
+	public async Task PlayToFrameClampsBeyondMax()
+	{
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// animate forward, clamped to FrameCount - 1
+		lottie.PlayToFrame(10000);
+
+		for (var i = 0; i < 100; i++)
+		{
+			if (!lottie.IsAnimationEnabled) break;
+			lottie.CallUpdate(TimeSpan.FromSeconds(0.1));
+		}
+
+		Assert.Equal(lottie.FrameCount - 1, lottie.CurrentFrame);
+		Assert.False(lottie.IsAnimationEnabled);
+	}
+
+	[Fact]
+	public async Task PlayToProgressAnimatesToTarget()
+	{
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// animate to 50%
+		lottie.PlayToProgress(0.5);
+		Assert.True(lottie.IsAnimationEnabled);
+
+		for (var i = 0; i < 100; i++)
+		{
+			if (!lottie.IsAnimationEnabled) break;
+			lottie.CallUpdate(TimeSpan.FromSeconds(0.1));
+		}
+
+		var expectedTime = TimeSpan.FromSeconds(lottie.Duration.TotalSeconds * 0.5);
+		Assert.Equal(expectedTime, lottie.Progress);
+		Assert.False(lottie.IsAnimationEnabled);
+	}
+
+	[Fact]
+	public async Task PlayToTimeAnimatesToTarget()
+	{
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		var target = TimeSpan.FromSeconds(1.0);
+		lottie.PlayToTime(target);
+		Assert.True(lottie.IsAnimationEnabled);
+
+		for (var i = 0; i < 100; i++)
+		{
+			if (!lottie.IsAnimationEnabled) break;
+			lottie.CallUpdate(TimeSpan.FromSeconds(0.1));
+		}
+
+		Assert.Equal(target, lottie.Progress);
+		Assert.False(lottie.IsAnimationEnabled);
+	}
+
+	[Fact]
+	public async Task SeekCancelsPlayTo()
+	{
+		// Calling SeekToFrame while PlayToFrame is in progress cancels the play-to
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// start animating to frame 60
+		lottie.PlayToFrame(60);
+		lottie.CallUpdate(TimeSpan.FromSeconds(0.1)); // partial progress
+
+		// interrupt with an instant seek
+		lottie.SeekToFrame(5, stopPlayback: true);
+
+		// we should be at frame 5, and more updates should not resume play-to
+		Assert.Equal(5, lottie.CurrentFrame);
+		lottie.CallUpdate(TimeSpan.FromSeconds(10)); // large step with no IsAnimationEnabled
+		Assert.Equal(5, lottie.CurrentFrame); // no movement since stopped
+	}
+
+	[Fact]
+	public async Task PlayToDoesNotFireAnimationCompleted()
+	{
+		// PlayTo stopping at target should NOT fire AnimationCompleted
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		var completedCount = 0;
+		lottie.AnimationCompleted += (s, e) => completedCount++;
+
+		// Animate to a non-end frame (frame 30 of 71)
+		lottie.PlayToFrame(30);
+		for (var i = 0; i < 100; i++)
+		{
+			if (!lottie.IsAnimationEnabled) break;
+			lottie.CallUpdate(TimeSpan.FromSeconds(0.1));
+		}
+
+		Assert.Equal(30, lottie.CurrentFrame);
+		Assert.Equal(0, completedCount); // AnimationCompleted not fired for PlayTo stop
+	}
+
+	[Fact]
+	public async Task PlayToRespectsAnimationSpeed()
+	{
+		// PlayToFrame should move faster when AnimationSpeed is 2x
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, AnimationSpeed = 2.0 };
+		await lottie.LoadedTask;
+
+		// Animate to frame 60 with one 0.5s update at 2x speed = effectively 1s of movement
+		// 1s at 30fps = 30 frames, so starting at 0 we should reach >= frame 30 in one update
+		lottie.PlayToFrame(60);
+		lottie.CallUpdate(TimeSpan.FromSeconds(0.5)); // 0.5s * 2x = 1s of movement = 30 frames
+
+		// Should have moved 30 frames in one 0.5s update
+		Assert.True(lottie.CurrentFrame >= 30);
+	}
 }

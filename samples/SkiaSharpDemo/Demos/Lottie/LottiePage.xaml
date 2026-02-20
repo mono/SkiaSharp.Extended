@@ -73,12 +73,19 @@
                 <Button Text="End" Command="{Binding EndCommand}" />
             </HorizontalStackLayout>
 
-            <!-- Frame-based seeking -->
+            <!-- Frame-based seeking (instant jump) -->
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
                 <Button Text="Frame 0" Command="{Binding SeekToFrameCommand}" CommandParameter="0" />
                 <Button Text="Frame 15" Command="{Binding SeekToFrameCommand}" CommandParameter="15" />
                 <Button Text="Frame 30" Command="{Binding SeekToFrameCommand}" CommandParameter="30" />
                 <Button Text="Last Frame" Command="{Binding SeekToLastFrameCommand}" />
+            </HorizontalStackLayout>
+
+            <!-- Animated play-to (smoothly animate to a position) -->
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                <Button Text="Play→0%" Command="{Binding PlayToProgressCommand}" CommandParameter="0" />
+                <Button Text="Play→50%" Command="{Binding PlayToProgressCommand}" CommandParameter="0.5" />
+                <Button Text="Play→100%" Command="{Binding PlayToProgressCommand}" CommandParameter="1" />
             </HorizontalStackLayout>
 
             <!-- Frame info display -->

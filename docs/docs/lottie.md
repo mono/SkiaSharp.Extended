@@ -82,42 +82,41 @@ if (lottieView.IsComplete)
 
 ### Frame-based control
 
-Seek to a specific frame and stop (like Lottie's `goToAndStop`):
+Seek to a specific frame and stop (instant, like Lottie's `goToAndStop`):
 
 ```csharp
-// Seek to frame 30 and pause
+// Instantly jump to frame 30 and pause
 lottieView.SeekToFrame(30, stopPlayback: true);
 
-// Seek to frame 0 and keep playing
-lottieView.SeekToFrame(0);
-
-// Seek to a normalized position (0.0–1.0)
-lottieView.SeekToProgress(0.5, stopPlayback: true);
-
-// Seek to a specific time
-lottieView.SeekToTime(TimeSpan.FromSeconds(1.5), stopPlayback: true);
+// Instantly jump to a normalized position and keep playing
+lottieView.SeekToProgress(0.5);
 ```
 
-Create a switch animation that toggles between two states:
+Smoothly animate to a position (plays the frames, then stops):
+
+```csharp
+// Play forward from current position to frame 50, then stop
+lottieView.PlayToFrame(50);
+
+// Play backward from frame 50 to frame 0 (direction auto-detected)
+lottieView.SeekToFrame(50, stopPlayback: true);  // jump to frame 50 first
+lottieView.PlayToFrame(0);                        // then animate back to 0
+
+// Animate to the 75% position
+lottieView.PlayToProgress(0.75);
+```
+
+Create a toggle-switch animation using `PlayToFrame`:
 
 ```csharp
 private bool isOn = false;
 
 private void OnSwitchToggled(object sender, EventArgs e)
 {
-    if (isOn)
-        lottieView.SeekToFrame(0, stopPlayback: true);             // Off state
-    else
-        lottieView.SeekToFrame(lottieView.FrameCount - 1, stopPlayback: true);  // On state
-
+    // PlayToFrame auto-detects direction: forward when off→on, backward when on→off
+    lottieView.PlayToFrame(isOn ? 0 : lottieView.FrameCount - 1);
     isOn = !isOn;
 }
-```
-
-You can also bind `CurrentFrame`, `FrameCount`, and `Fps` in XAML:
-
-```xml
-<Label Text="{Binding CurrentFrame, Source={Reference lottieView}, StringFormat='Frame {0}'}" />
 ```
 
 ## Events
@@ -162,9 +161,12 @@ lottieView.AnimationCompleted += (s, e) =>
 
 | Method | Description |
 | :----- | :---------- |
-| `SeekToFrame(int, bool)` | Seeks to a frame (zero-based). Pass `stopPlayback: true` to pause. |
-| `SeekToTime(TimeSpan, bool)` | Seeks to a time position. Pass `stopPlayback: true` to pause. |
-| `SeekToProgress(double, bool)` | Seeks to a normalized position [0.0, 1.0]. Pass `stopPlayback: true` to pause. |
+| `SeekToFrame(int, bool)` | Instantly seeks to a frame (zero-based). Pass `stopPlayback: true` to pause. |
+| `SeekToTime(TimeSpan, bool)` | Instantly seeks to a time position. Pass `stopPlayback: true` to pause. |
+| `SeekToProgress(double, bool)` | Instantly seeks to a normalized position [0.0, 1.0]. Pass `stopPlayback: true` to pause. |
+| `PlayToFrame(int)` | Smoothly animates from current position to the target frame, then stops. Direction is auto-detected. |
+| `PlayToProgress(double)` | Smoothly animates from current position to a normalized position [0.0, 1.0], then stops. |
+| `PlayToTime(TimeSpan)` | Smoothly animates from current position to a target time, then stops. |
 | `Pause()` | Pauses the animation. Equivalent to `IsAnimationEnabled = false`. |
 | `Resume()` | Resumes the animation. Equivalent to `IsAnimationEnabled = true`. |
 
