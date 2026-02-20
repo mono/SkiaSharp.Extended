@@ -247,12 +247,42 @@ public partial class GesturePage : ContentPage
 	{
 		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Double tap ({e.TapCount}x) at ({e.Location.X:F0}, {e.Location.Y:F0})");
-		
-		// Reset view transform on double tap
-		_canvasScale = 1f;
-		_canvasRotation = 0f;
-		_canvasOffset = SKPoint.Empty;
-		statusLabel.Text = "View reset";
+
+		const float zoomIn = 2f;
+		const float maxScale = 3f;
+
+		if (_canvasScale >= maxScale - 0.01f)
+		{
+			// Already at max zoom — reset to 1x centered
+			_canvasScale = 1f;
+			_canvasRotation = 0f;
+			_canvasOffset = SKPoint.Empty;
+			statusLabel.Text = "View reset";
+		}
+		else
+		{
+			// Zoom in toward the tapped point.
+			// We want the content under the tap to stay under the tap after scaling.
+			var newScale = Math.Min(_canvasScale * zoomIn, maxScale);
+			var ratio = newScale / _canvasScale;
+
+			// The tap point in canvas coordinates (origin = top-left of view)
+			var tapX = e.Location.X;
+			var tapY = e.Location.Y;
+
+			// Adjust offset so the tap point stays fixed:
+			// newOffset = tap - ratio * (tap - oldOffset)
+			var cx = (float)_canvasWidth / 2f;
+			var cy = (float)_canvasHeight / 2f;
+			var pivotX = tapX - cx;
+			var pivotY = tapY - cy;
+			_canvasOffset = new SKPoint(
+				pivotX - ratio * (pivotX - _canvasOffset.X),
+				pivotY - ratio * (pivotY - _canvasOffset.Y));
+
+			_canvasScale = newScale;
+			statusLabel.Text = $"Zoom: {_canvasScale:F2}x";
+		}
 		
 		gestureView.Invalidate();
 	}
