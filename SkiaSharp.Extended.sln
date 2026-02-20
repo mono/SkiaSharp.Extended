@@ -19,9 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaSharpDemo", "samples\Sk
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaSharp.Extended.UI.Maui.Tests", "tests\SkiaSharp.Extended.UI.Maui.Tests\SkiaSharp.Extended.UI.Maui.Tests.csproj", "{4B4EC78C-33B5-456D-BD7D-4358D16272F4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaSharp.Extended.Inking", "source\SkiaSharp.Extended.Inking\SkiaSharp.Extended.Inking.csproj", "{E7A1B8F6-3C2D-4E5A-9B8F-1C2D3E4F5A6B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaSharp.Extended.Inking.Tests", "tests\SkiaSharp.Extended.Inking.Tests\SkiaSharp.Extended.Inking.Tests.csproj", "{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,14 +49,6 @@ Global
 		{4B4EC78C-33B5-456D-BD7D-4358D16272F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B4EC78C-33B5-456D-BD7D-4358D16272F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B4EC78C-33B5-456D-BD7D-4358D16272F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E7A1B8F6-3C2D-4E5A-9B8F-1C2D3E4F5A6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E7A1B8F6-3C2D-4E5A-9B8F-1C2D3E4F5A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E7A1B8F6-3C2D-4E5A-9B8F-1C2D3E4F5A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E7A1B8F6-3C2D-4E5A-9B8F-1C2D3E4F5A6B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,8 +59,6 @@ Global
 		{2C0DAB3F-1246-4AE7-BFA5-E7F5DDD7E1C4} = {5DEC7961-7CE3-44D7-A7FC-6185BA2D37FE}
 		{2C67033A-2C49-4146-B942-9CDD2E0BA412} = {51B0C2C7-732B-4A5C-A4F2-55655D147866}
 		{4B4EC78C-33B5-456D-BD7D-4358D16272F4} = {5555F827-12DF-4D15-BF07-3A720FC2EF3F}
-		{E7A1B8F6-3C2D-4E5A-9B8F-1C2D3E4F5A6B} = {5DEC7961-7CE3-44D7-A7FC-6185BA2D37FE}
-		{A1B2C3D4-5E6F-7A8B-9C0D-1E2F3A4B5C6D} = {5555F827-12DF-4D15-BF07-3A720FC2EF3F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08D78153-5DD7-4C52-A348-46AA448B2CFC}
