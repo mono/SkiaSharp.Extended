@@ -81,23 +81,19 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 	public static readonly BindableProperty CurrentFrameProperty = CurrentFramePropertyKey.BindableProperty;
 
-	private static readonly BindablePropertyKey SegmentStartPropertyKey = BindableProperty.CreateReadOnly(
-		nameof(SegmentStart),
-		typeof(TimeSpan),
+	public static readonly BindableProperty FrameStartProperty = BindableProperty.Create(
+		nameof(FrameStart),
+		typeof(int),
 		typeof(SKLottieView),
-		TimeSpan.Zero,
-		defaultBindingMode: BindingMode.OneWayToSource);
+		0,
+		propertyChanged: OnFramePropertyChanged);
 
-	public static readonly BindableProperty SegmentStartProperty = SegmentStartPropertyKey.BindableProperty;
-
-	private static readonly BindablePropertyKey SegmentEndPropertyKey = BindableProperty.CreateReadOnly(
-		nameof(SegmentEnd),
-		typeof(TimeSpan),
+	public static readonly BindableProperty FrameEndProperty = BindableProperty.Create(
+		nameof(FrameEnd),
+		typeof(int),
 		typeof(SKLottieView),
-		TimeSpan.Zero,
-		defaultBindingMode: BindingMode.OneWayToSource);
-
-	public static readonly BindableProperty SegmentEndProperty = SegmentEndPropertyKey.BindableProperty;
+		-1,
+		propertyChanged: OnFramePropertyChanged);
 
 	Skottie.Animation? animation;
 	bool isInForwardPhase = true;
@@ -106,8 +102,8 @@ public class SKLottieView : SKAnimatedSurfaceView
 	bool isResetting;
 	TimeSpan? playToTarget = null;
 	int playToDirection = 0; // 1 = forward, -1 = backward
-	TimeSpan fullAnimationDuration = TimeSpan.Zero; // InPoint→OutPoint duration from Skottie
-	TimeSpan segmentOffset = TimeSpan.Zero;         // offset into the animation where the segment starts
+	int fullFrameCount = 0;             // InPoint→OutPoint frame count from Skottie
+	TimeSpan segmentOffset = TimeSpan.Zero; // time offset into the animation from FrameStart
 
 	public SKLottieView()
 	{
@@ -191,7 +187,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 	}
 
 	/// <summary>
-	/// Gets the current frame number of the animation (zero-based).
+	/// Gets the current frame number of the animation (zero-based, relative to <see cref="FrameStart"/>).
 	/// Returns 0 if no animation is loaded.
 	/// </summary>
 	public int CurrentFrame
@@ -201,25 +197,28 @@ public class SKLottieView : SKAnimatedSurfaceView
 	}
 
 	/// <summary>
-	/// Gets the start of the active playback segment, expressed as a time offset from the
-	/// animation's InPoint. Defaults to <see cref="TimeSpan.Zero"/> (= InPoint of the animation).
-	/// Use <see cref="SetSegment(TimeSpan, TimeSpan)"/> to change.
+	/// Gets or sets the first frame to play (zero-based, offset from the animation's InPoint).
+	/// Default is 0 (= InPoint). Clamped to [0, total frame count].
+	/// Setting this property immediately updates <see cref="Duration"/>, <see cref="FrameCount"/>,
+	/// and resets <see cref="Progress"/> to the beginning of the range.
 	/// </summary>
-	public TimeSpan SegmentStart
+	public int FrameStart
 	{
-		get => (TimeSpan)GetValue(SegmentStartProperty);
-		private set => SetValue(SegmentStartPropertyKey, value);
+		get => (int)GetValue(FrameStartProperty);
+		set => SetValue(FrameStartProperty, value);
 	}
 
 	/// <summary>
-	/// Gets the end of the active playback segment, expressed as a time offset from the
-	/// animation's InPoint. Defaults to the full animation duration (= OutPoint).
-	/// Use <see cref="SetSegment(TimeSpan, TimeSpan)"/> to change.
+	/// Gets or sets the end frame (exclusive, zero-based, offset from the animation's InPoint).
+	/// Use -1 (the default) to play through to the animation's OutPoint.
+	/// Clamped to [FrameStart, total frame count].
+	/// Setting this property immediately updates <see cref="Duration"/>, <see cref="FrameCount"/>,
+	/// and resets <see cref="Progress"/> to the beginning of the range.
 	/// </summary>
-	public TimeSpan SegmentEnd
+	public int FrameEnd
 	{
-		get => (TimeSpan)GetValue(SegmentEndProperty);
-		private set => SetValue(SegmentEndPropertyKey, value);
+		get => (int)GetValue(FrameEndProperty);
+		set => SetValue(FrameEndProperty, value);
 	}
 
 	public event EventHandler<SKLottieAnimationFailedEventArgs>? AnimationFailed;
@@ -301,75 +300,31 @@ public class SKLottieView : SKAnimatedSurfaceView
 	public void Resume() =>
 		IsAnimationEnabled = true;
 
-	/// <summary>
-	/// Restricts playback to the specified frame range (zero-based, relative to the animation's InPoint).
-	/// While a segment is active, <see cref="Duration"/>, <see cref="FrameCount"/>, and
-	/// <see cref="Progress"/> all operate within the segment. Use <see cref="ClearSegment"/> to restore
-	/// the full InPoint→OutPoint range.
-	/// </summary>
-	/// <param name="startFrame">The first frame of the segment (zero-based, inclusive, clamped to valid range).</param>
-	/// <param name="endFrame">The end frame of the segment (zero-based, clamped to valid range). Must be &gt;= startFrame.</param>
-	public void SetSegment(int startFrame, int endFrame)
+	// Recomputes segmentOffset, Duration, FrameCount from the current FrameStart/FrameEnd values.
+	// Called whenever FrameStart or FrameEnd changes, or when an animation finishes loading.
+	private void ApplyFrames()
 	{
 		if (animation is null || Fps <= 0)
 			return;
 
-		SetSegment(
-			TimeSpan.FromSeconds(Math.Max(0, startFrame) / Fps),
-			TimeSpan.FromSeconds(Math.Max(0, endFrame) / Fps));
-	}
+		var effectiveStart = Math.Max(0, Math.Min(FrameStart, fullFrameCount));
+		var effectiveEnd = FrameEnd < 0
+			? fullFrameCount
+			: Math.Max(effectiveStart, Math.Min(FrameEnd, fullFrameCount));
 
-	/// <summary>
-	/// Restricts playback to the specified time range (relative to the animation's InPoint).
-	/// While a segment is active, <see cref="Duration"/>, <see cref="FrameCount"/>, and
-	/// <see cref="Progress"/> all operate within the segment. Use <see cref="ClearSegment"/> to restore
-	/// the full InPoint→OutPoint range.
-	/// </summary>
-	/// <param name="start">The start of the segment (relative to InPoint, clamped to valid range).</param>
-	/// <param name="end">The end of the segment (relative to InPoint, clamped to valid range). Must be &gt;= start.</param>
-	public void SetSegment(TimeSpan start, TimeSpan end)
-	{
-		if (animation is null)
-			return;
+		segmentOffset = TimeSpan.FromSeconds(effectiveStart / Fps);
+		var segmentFrames = effectiveEnd - effectiveStart;
+		var segmentDuration = TimeSpan.FromSeconds(segmentFrames / Fps);
 
-		var clampedStart = TimeSpan.FromTicks(
-			Math.Max(0L, Math.Min(start.Ticks, fullAnimationDuration.Ticks)));
-		var clampedEnd = TimeSpan.FromTicks(
-			Math.Max(clampedStart.Ticks, Math.Min(end.Ticks, fullAnimationDuration.Ticks)));
-
-		segmentOffset = clampedStart;
-		SegmentStart = clampedStart;
-		SegmentEnd = clampedEnd;
-		ApplyCurrentSegment();
-	}
-
-	/// <summary>
-	/// Clears the active segment and restores playback over the full InPoint→OutPoint range.
-	/// </summary>
-	public void ClearSegment()
-	{
-		if (animation is null)
-			return;
-
-		segmentOffset = TimeSpan.Zero;
-		SegmentStart = TimeSpan.Zero;
-		SegmentEnd = fullAnimationDuration;
-		ApplyCurrentSegment();
-	}
-
-	// Applies the current SegmentStart/SegmentEnd by updating Duration, FrameCount, and resetting Progress.
-	private void ApplyCurrentSegment()
-	{
 		// Cancel any pending play-to since the playable range has changed
 		playToTarget = null;
 		playToDirection = 0;
 
-		var segmentDuration = SegmentEnd - segmentOffset;
 		isResetting = true;
 		try
 		{
 			Duration = segmentDuration;
-			FrameCount = Fps > 0 ? (int)Math.Round(segmentDuration.TotalSeconds * Fps) : 0;
+			FrameCount = segmentFrames;
 			Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
 			CurrentFrame = 0;
 		}
@@ -676,23 +631,27 @@ public class SKLottieView : SKAnimatedSurfaceView
 				playToTarget = null;
 				playToDirection = 0;
 
-				// Store the full InPoint→OutPoint duration so SetSegment can clamp to it
-				fullAnimationDuration = animation?.Duration ?? TimeSpan.Zero;
+				Fps = animation?.Fps ?? 0.0;
+				fullFrameCount = Fps > 0 && animation is not null
+					? (int)Math.Round(animation.Duration.TotalSeconds * Fps)
+					: 0;
 
-				// Reset segment to the full animation range
-				segmentOffset = TimeSpan.Zero;
-				SegmentStart = TimeSpan.Zero;
-				SegmentEnd = fullAnimationDuration;
+				// Compute the effective playback range from FrameStart/FrameEnd (clamped to the new animation)
+				var effectiveStart = Fps > 0 ? Math.Max(0, Math.Min(FrameStart, fullFrameCount)) : 0;
+				var effectiveEnd = Fps > 0
+					? (FrameEnd < 0 ? fullFrameCount : Math.Max(effectiveStart, Math.Min(FrameEnd, fullFrameCount)))
+					: 0;
+
+				segmentOffset = Fps > 0 ? TimeSpan.FromSeconds(effectiveStart / Fps) : TimeSpan.Zero;
+				var segmentFrames = effectiveEnd - effectiveStart;
+				var segmentDuration = Fps > 0 ? TimeSpan.FromSeconds(segmentFrames / Fps) : TimeSpan.Zero;
 
 				// Initialize Progress based on AnimationSpeed:
 				// - Positive/zero speed: start at 0, move toward Duration
 				// - Negative speed: start at Duration, move toward 0
-				Duration = fullAnimationDuration;
+				Duration = segmentDuration;
+				FrameCount = segmentFrames;
 				Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
-				Fps = animation?.Fps ?? 0.0;
-				FrameCount = Fps > 0 && animation is not null
-					? (int)Math.Round(fullAnimationDuration.TotalSeconds * Fps)
-					: 0;
 				CurrentFrame = 0;
 			}
 			finally
@@ -718,6 +677,12 @@ public class SKLottieView : SKAnimatedSurfaceView
 	private async void OnSourceChanged(object? sender, EventArgs e)
 	{
 		await LoadAnimationAsync(sender as SKLottieImageSource);
+	}
+
+	private static void OnFramePropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
+	{
+		if (bindable is SKLottieView lv)
+			lv.ApplyFrames();
 	}
 
 	private static void OnProgressDurationPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)

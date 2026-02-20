@@ -12,6 +12,7 @@ public partial class LottiePage : ContentPage
 	private double animationSpeed = 1.0;
 	private SKLottieRepeatMode repeatMode = SKLottieRepeatMode.Restart;
 	private int repeatCount = -1;
+	private int totalFrameCount = 0; // full frame count (before any FrameStart/FrameEnd)
 
 	public LottiePage()
 	{
@@ -25,8 +26,8 @@ public partial class LottiePage : ContentPage
 		SeekToFrameCommand = new Command<string>(OnSeekToFrame);
 		SeekToLastFrameCommand = new Command(OnSeekToLastFrame);
 		PlayToProgressCommand = new Command<string>(OnPlayToProgress);
-		SetSegmentCommand = new Command<string>(OnSetSegment);
-		ClearSegmentCommand = new Command(OnClearSegment);
+		SetFrameRangeCommand = new Command<string>(OnSetFrameRange);
+		ResetFrameRangeCommand = new Command(OnResetFrameRange);
 
 		IsPlaying = true;
 
@@ -109,9 +110,9 @@ public partial class LottiePage : ContentPage
 
 	public ICommand PlayToProgressCommand { get; }
 
-	public ICommand SetSegmentCommand { get; }
+	public ICommand SetFrameRangeCommand { get; }
 
-	public ICommand ClearSegmentCommand { get; }
+	public ICommand ResetFrameRangeCommand { get; }
 
 	private void OnReset() =>
 		Progress = TimeSpan.Zero;
@@ -146,17 +147,26 @@ public partial class LottiePage : ContentPage
 			lottieView.PlayToProgress(prog);
 	}
 
-	private void OnSetSegment(string which)
+	private void OnSetFrameRange(string which)
 	{
-		var mid = lottieView.FrameCount / 2;
+		var mid = totalFrameCount / 2;
 		if (which == "first")
-			lottieView.SetSegment(0, mid);
+		{
+			lottieView.FrameStart = 0;
+			lottieView.FrameEnd = mid;
+		}
 		else
-			lottieView.SetSegment(mid, lottieView.FrameCount);
+		{
+			lottieView.FrameStart = mid;
+			lottieView.FrameEnd = -1;
+		}
 	}
 
-	private void OnClearSegment() =>
-		lottieView.ClearSegment();
+	private void OnResetFrameRange()
+	{
+		lottieView.FrameStart = 0;
+		lottieView.FrameEnd = -1;
+	}
 
 	private void OnAnimationFailed(object sender, SKLottieAnimationFailedEventArgs e)
 	{
@@ -165,6 +175,8 @@ public partial class LottiePage : ContentPage
 
 	private void OnAnimationLoaded(object sender, SKLottieAnimationLoadedEventArgs e)
 	{
+		// Capture the full frame count before any FrameStart/FrameEnd narrowing
+		totalFrameCount = lottieView.FrameCount;
 		Debug.WriteLine($"Lottie animation loaded: {e.Size}; {e.Duration}; {e.Fps}");
 	}
 

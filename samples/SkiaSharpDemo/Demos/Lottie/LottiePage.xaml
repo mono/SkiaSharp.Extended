@@ -88,14 +88,14 @@
                 <Button Text="Play→100%" Command="{Binding PlayToProgressCommand}" CommandParameter="1" />
             </HorizontalStackLayout>
 
-            <!-- Segment controls -->
+            <!-- FrameStart / FrameEnd controls -->
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
-                <Button Text="Seg: First½" Command="{Binding SetSegmentCommand}" CommandParameter="first" />
-                <Button Text="Seg: Last½" Command="{Binding SetSegmentCommand}" CommandParameter="last" />
-                <Button Text="Clear Seg" Command="{Binding ClearSegmentCommand}" />
+                <Button Text="Frames: First Half" Command="{Binding SetFrameRangeCommand}" CommandParameter="first" />
+                <Button Text="Frames: Last Half" Command="{Binding SetFrameRangeCommand}" CommandParameter="last" />
+                <Button Text="Frames: All" Command="{Binding ResetFrameRangeCommand}" />
             </HorizontalStackLayout>
 
-            <!-- Frame/segment info display -->
+            <!-- Frame info display -->
             <Grid ColumnDefinitions="*,*" Margin="0,-6,0,0">
                 <Label Grid.Column="0"
                        Text="{Binding CurrentFrame, Source={Reference lottieView}, StringFormat='Frame: {0}'}"
