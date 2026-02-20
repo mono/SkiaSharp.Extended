@@ -131,4 +131,127 @@ public class SKInkStrokeBrushTests
         Assert.Throws<ArgumentOutOfRangeException>(() => brush.MaxSize = new SKSize(-1, 2));
         Assert.Throws<ArgumentOutOfRangeException>(() => brush.MaxSize = new SKSize(2, -1));
     }
+
+    [Fact]
+    public void VelocityMode_DefaultsToNone()
+    {
+        var brush = new SKInkStrokeBrush();
+
+        Assert.Equal(SKVelocityMode.None, brush.VelocityMode);
+    }
+
+    [Fact]
+    public void VelocityScale_DefaultsToHalf()
+    {
+        var brush = new SKInkStrokeBrush();
+
+        Assert.Equal(0.5f, brush.VelocityScale);
+    }
+
+    [Fact]
+    public void VelocityScale_ClampedToRange()
+    {
+        var brush = new SKInkStrokeBrush();
+
+        brush.VelocityScale = -0.5f;
+        Assert.Equal(0f, brush.VelocityScale);
+
+        brush.VelocityScale = 1.5f;
+        Assert.Equal(1f, brush.VelocityScale);
+    }
+
+    [Fact]
+    public void GetWidthForPressureAndVelocity_WithNoVelocityMode_ReturnsPressureWidth()
+    {
+        var brush = new SKInkStrokeBrush
+        {
+            MinSize = new SKSize(2f, 2f),
+            MaxSize = new SKSize(10f, 10f),
+            VelocityMode = SKVelocityMode.None
+        };
+
+        // At pressure 0.5, width should be 6
+        var width = brush.GetWidthForPressureAndVelocity(0.5f, 5f);
+        Assert.Equal(6f, width);
+    }
+
+    [Fact]
+    public void GetWidthForPressureAndVelocity_BallpointPen_FasterIsThinnerStroke()
+    {
+        var brush = new SKInkStrokeBrush
+        {
+            MinSize = new SKSize(2f, 2f),
+            MaxSize = new SKSize(10f, 10f),
+            VelocityMode = SKVelocityMode.BallpointPen,
+            VelocityScale = 1f
+        };
+
+        var slowWidth = brush.GetWidthForPressureAndVelocity(0.5f, 0.5f);
+        var fastWidth = brush.GetWidthForPressureAndVelocity(0.5f, 4f);
+
+        Assert.True(fastWidth < slowWidth, "Faster velocity should result in thinner stroke");
+    }
+
+    [Fact]
+    public void GetWidthForPressureAndVelocity_Pencil_FasterIsThinnerStroke()
+    {
+        var brush = new SKInkStrokeBrush
+        {
+            MinSize = new SKSize(2f, 2f),
+            MaxSize = new SKSize(10f, 10f),
+            VelocityMode = SKVelocityMode.Pencil,
+            VelocityScale = 1f
+        };
+
+        var slowWidth = brush.GetWidthForPressureAndVelocity(0.5f, 0.5f);
+        var fastWidth = brush.GetWidthForPressureAndVelocity(0.5f, 4f);
+
+        Assert.True(fastWidth < slowWidth, "Faster velocity should result in thinner stroke");
+    }
+
+    [Fact]
+    public void GetColorForVelocity_NonPencilMode_ReturnsOriginalColor()
+    {
+        var brush = new SKInkStrokeBrush
+        {
+            Color = SKColors.Blue,
+            VelocityMode = SKVelocityMode.BallpointPen,
+            VelocityScale = 1f
+        };
+
+        var color = brush.GetColorForVelocity(5f);
+
+        Assert.Equal(SKColors.Blue, color);
+    }
+
+    [Fact]
+    public void GetColorForVelocity_PencilMode_FasterIsLighterColor()
+    {
+        var brush = new SKInkStrokeBrush
+        {
+            Color = SKColors.Black,
+            VelocityMode = SKVelocityMode.Pencil,
+            VelocityScale = 1f
+        };
+
+        var slowColor = brush.GetColorForVelocity(0.5f);
+        var fastColor = brush.GetColorForVelocity(4f);
+
+        Assert.True(fastColor.Alpha < slowColor.Alpha, "Faster velocity should result in lighter (more transparent) color");
+    }
+
+    [Fact]
+    public void Clone_IncludesVelocitySettings()
+    {
+        var brush = new SKInkStrokeBrush
+        {
+            VelocityMode = SKVelocityMode.BallpointPen,
+            VelocityScale = 0.8f
+        };
+
+        var clone = brush.Clone();
+
+        Assert.Equal(SKVelocityMode.BallpointPen, clone.VelocityMode);
+        Assert.Equal(0.8f, clone.VelocityScale);
+    }
 }

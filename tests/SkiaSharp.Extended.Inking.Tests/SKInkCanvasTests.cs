@@ -490,13 +490,18 @@ public class SKInkCanvasTests
     }
 
     [Fact]
-    public void Constructor_WithInvalidWidths_Throws()
+    public void Constructor_WithNegativeWidth_Throws()
     {
-        // Min > Max
-        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, 10f, 5f)));
-        
-        // Negative min
-        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, -1f, 5f)));
+        // Negative min should still throw
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKInkCanvas(new SKInkStrokeBrush { MinSize = new SKSize(-1, -1) }));
+    }
+
+    [Fact]
+    public void Constructor_AllowsMaxLessThanMin()
+    {
+        // Max less than min is allowed - creates inverted pressure curve
+        using var canvas = new SKInkCanvas(new SKInkStrokeBrush(SKColors.Black, 10f, 5f));
+        Assert.NotNull(canvas);
     }
 
     [Fact]

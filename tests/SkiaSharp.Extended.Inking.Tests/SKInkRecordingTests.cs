@@ -178,8 +178,8 @@ public class SKInkRecordingTests
     {
         var stroke = new RecordedStroke();
 
-        Assert.Equal(1f, stroke.Brush.MinSize.Width);
-        Assert.Equal(8f, stroke.Brush.MaxSize.Width);
+        Assert.Equal(2f, stroke.Brush.MinSize.Width);
+        Assert.Equal(6f, stroke.Brush.MaxSize.Width);
     }
 
     [Fact]

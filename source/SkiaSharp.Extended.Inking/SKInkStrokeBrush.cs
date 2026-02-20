@@ -14,6 +14,8 @@ public class SKInkStrokeBrush
     private SKStrokeCapStyle _capStyle = SKStrokeCapStyle.Round;
     private SKSmoothingAlgorithm _smoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom;
     private int _smoothingFactor = 4;
+    private SKVelocityMode _velocityMode = SKVelocityMode.None;
+    private float _velocityScale = 0.5f;
 
     /// <summary>
     /// Gets or sets the stroke color.
@@ -87,6 +89,27 @@ public class SKInkStrokeBrush
     }
 
     /// <summary>
+    /// Gets or sets the velocity mode, which determines how pen velocity affects stroke appearance.
+    /// </summary>
+    public SKVelocityMode VelocityMode
+    {
+        get => _velocityMode;
+        set => _velocityMode = value;
+    }
+
+    /// <summary>
+    /// Gets or sets the velocity scale factor (0.0 to 1.0).
+    /// Controls how strongly velocity affects stroke width.
+    /// 0 = no velocity effect, 1 = maximum velocity effect.
+    /// Default is 0.5.
+    /// </summary>
+    public float VelocityScale
+    {
+        get => _velocityScale;
+        set => _velocityScale = Clamp(value, 0f, 1f);
+    }
+
+    /// <summary>
     /// Creates a default brush with black color and standard sizes.
     /// </summary>
     public SKInkStrokeBrush()
@@ -133,7 +156,9 @@ public class SKInkStrokeBrush
             _maxSize = _maxSize,
             _capStyle = _capStyle,
             _smoothingAlgorithm = _smoothingAlgorithm,
-            _smoothingFactor = _smoothingFactor
+            _smoothingFactor = _smoothingFactor,
+            _velocityMode = _velocityMode,
+            _velocityScale = _velocityScale
         };
     }
 
@@ -146,6 +171,72 @@ public class SKInkStrokeBrush
     {
         pressure = Clamp(pressure, 0f, 1f);
         return _minSize.Width + (_maxSize.Width - _minSize.Width) * pressure;
+    }
+
+    /// <summary>
+    /// Calculates the stroke width for given pressure and velocity values.
+    /// The velocity effect depends on the VelocityMode setting.
+    /// </summary>
+    /// <param name="pressure">Pressure from 0.0 to 1.0</param>
+    /// <param name="velocity">Velocity in pixels per millisecond</param>
+    /// <returns>The interpolated width based on pressure and velocity</returns>
+    public float GetWidthForPressureAndVelocity(float pressure, float velocity)
+    {
+        // Base width from pressure
+        var baseWidth = GetWidthForPressure(pressure);
+
+        if (_velocityMode == SKVelocityMode.None || _velocityScale == 0f)
+            return baseWidth;
+
+        // Normalize velocity to a 0-1 range.
+        // Typical handwriting velocity ranges from ~0.1 to ~5 pixels/ms
+        // We'll use a reference velocity of 2 pixels/ms as "normal"
+        const float ReferenceVelocity = 2.0f;
+        var normalizedVelocity = Clamp(velocity / ReferenceVelocity, 0f, 2f) / 2f; // 0 to 1
+
+        // Calculate velocity factor based on mode
+        float velocityFactor;
+        switch (_velocityMode)
+        {
+            case SKVelocityMode.BallpointPen:
+                // Faster = thinner: at max velocity, reduce width by velocityScale
+                velocityFactor = 1f - normalizedVelocity * _velocityScale;
+                break;
+            case SKVelocityMode.Pencil:
+                // Pencil mode: same as ballpoint for width
+                velocityFactor = 1f - normalizedVelocity * _velocityScale;
+                break;
+            default:
+                velocityFactor = 1f;
+                break;
+        }
+
+        // Clamp factor to reasonable range
+        velocityFactor = Clamp(velocityFactor, 0.2f, 1f);
+
+        return baseWidth * velocityFactor;
+    }
+
+    /// <summary>
+    /// Calculates the color for given velocity in Pencil mode.
+    /// Returns a lighter color for faster strokes.
+    /// </summary>
+    /// <param name="velocity">Velocity in pixels per millisecond</param>
+    /// <returns>The adjusted color based on velocity</returns>
+    public SKColor GetColorForVelocity(float velocity)
+    {
+        if (_velocityMode != SKVelocityMode.Pencil || _velocityScale == 0f)
+            return _color;
+
+        // Normalize velocity (same as width calculation)
+        const float ReferenceVelocity = 2.0f;
+        var normalizedVelocity = Clamp(velocity / ReferenceVelocity, 0f, 2f) / 2f;
+
+        // Faster = lighter (reduce alpha)
+        var alphaFactor = 1f - normalizedVelocity * _velocityScale * 0.5f; // Max 50% lighter
+        alphaFactor = Clamp(alphaFactor, 0.5f, 1f);
+
+        return _color.WithAlpha((byte)(_color.Alpha * alphaFactor));
     }
 
     /// <summary>

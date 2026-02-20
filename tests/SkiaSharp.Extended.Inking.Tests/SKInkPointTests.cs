@@ -176,4 +176,78 @@ public class SKInkPointTests
         Assert.Equal(90f, point.TiltX);  // Clamped from 100
         Assert.Equal(-90f, point.TiltY); // Clamped from -100
     }
+
+    [Fact]
+    public void CalculateVelocity_ReturnsCorrectVelocity()
+    {
+        var p1 = new SKInkPoint(0f, 0f, 0.5f, 0f, 0f, 0L);
+        var p2 = new SKInkPoint(100f, 0f, 0.5f, 0f, 0f, 1000L); // 100 pixels in 1ms = 100 px/ms
+
+        var velocity = SKInkPoint.CalculateVelocity(p1, p2);
+
+        Assert.Equal(100f, velocity, 0.01f);
+    }
+
+    [Fact]
+    public void CalculateVelocity_ReturnsZero_WhenTimeDeltaIsZero()
+    {
+        var p1 = new SKInkPoint(0f, 0f, 0.5f, 0f, 0f, 1000L);
+        var p2 = new SKInkPoint(100f, 0f, 0.5f, 0f, 0f, 1000L);
+
+        var velocity = SKInkPoint.CalculateVelocity(p1, p2);
+
+        Assert.Equal(0f, velocity);
+    }
+
+    [Fact]
+    public void CalculateVelocity_ReturnsZero_WhenTimeDeltaIsNegative()
+    {
+        var p1 = new SKInkPoint(0f, 0f, 0.5f, 0f, 0f, 2000L);
+        var p2 = new SKInkPoint(100f, 0f, 0.5f, 0f, 0f, 1000L);
+
+        var velocity = SKInkPoint.CalculateVelocity(p1, p2);
+
+        Assert.Equal(0f, velocity);
+    }
+
+    [Fact]
+    public void WithVelocity_CreatesNewPointWithVelocity()
+    {
+        var p1 = new SKInkPoint(10f, 20f, 0.5f, 5f, 10f, 1000L);
+        var p2 = p1.WithVelocity(2.5f);
+
+        Assert.Equal(p1.Location, p2.Location);
+        Assert.Equal(p1.Pressure, p2.Pressure);
+        Assert.Equal(p1.TiltX, p2.TiltX);
+        Assert.Equal(p1.TiltY, p2.TiltY);
+        Assert.Equal(p1.TimestampMicroseconds, p2.TimestampMicroseconds);
+        Assert.Equal(2.5f, p2.Velocity);
+    }
+
+    [Fact]
+    public void Constructor_WithVelocity_SetsVelocity()
+    {
+        var point = new SKInkPoint(new SKPoint(10f, 20f), 0.5f, 5f, 10f, 1000L, 3.5f);
+
+        Assert.Equal(3.5f, point.Velocity);
+    }
+
+    [Fact]
+    public void Equals_IncludesVelocity()
+    {
+        var p1 = new SKInkPoint(new SKPoint(10f, 20f), 0.5f, 5f, 10f, 1000L, 3.5f);
+        var p2 = new SKInkPoint(new SKPoint(10f, 20f), 0.5f, 5f, 10f, 1000L, 3.5f);
+        var p3 = new SKInkPoint(new SKPoint(10f, 20f), 0.5f, 5f, 10f, 1000L, 4.5f);
+
+        Assert.Equal(p1, p2);
+        Assert.NotEqual(p1, p3);
+    }
+
+    [Fact]
+    public void Velocity_ClampedToNonNegative()
+    {
+        var point = new SKInkPoint(new SKPoint(10f, 20f), 0.5f, 5f, 10f, 1000L, -5f);
+
+        Assert.Equal(0f, point.Velocity);
+    }
 }

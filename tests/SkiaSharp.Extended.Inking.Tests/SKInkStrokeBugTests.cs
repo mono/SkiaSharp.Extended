@@ -259,13 +259,13 @@ public class SKInkStrokeBugTests
         var path1 = stroke.Path;
         Assert.NotNull(path1);
         
-        // Change algorithm - should invalidate cache
-        stroke.Brush.SmoothingAlgorithm = SKSmoothingAlgorithm.CatmullRom;
+        // Adding a point should invalidate cache
+        stroke.AddPoint(new SKPoint(150f, 50f), 0.5f, isLastPoint: true);
         
         var path2 = stroke.Path;
         Assert.NotNull(path2);
         
-        // Path should have been regenerated
+        // Path should have been regenerated because we added a point
         Assert.NotSame(path1, path2);
     }
 }

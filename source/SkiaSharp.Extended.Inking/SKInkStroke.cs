@@ -4,6 +4,23 @@ using System.Collections.Generic;
 namespace SkiaSharp.Extended.Inking;
 
 /// <summary>
+/// Internal struct representing a smoothed point with pressure and velocity.
+/// </summary>
+internal readonly struct SmoothedPoint
+{
+    public SmoothedPoint(SKPoint point, float pressure, float velocity)
+    {
+        Point = point;
+        Pressure = pressure;
+        Velocity = velocity;
+    }
+
+    public SKPoint Point { get; }
+    public float Pressure { get; }
+    public float Velocity { get; }
+}
+
+/// <summary>
 /// Represents a single ink stroke with pressure-sensitive variable-width rendering.
 /// Uses quadratic Bézier curves for smooth path interpolation and renders
 /// variable-width strokes as filled polygons based on pressure data.
@@ -99,8 +116,15 @@ public class SKInkStroke : IDisposable
         if (!isLastPoint && points.Count > 0 && !HasMovedFarEnough(points[points.Count - 1].Location, point.Location))
             return;
 
-        // Create a new point with potentially adjusted pressure, preserving tilt
-        var adjustedPoint = new SKInkPoint(point.Location, pressure, point.TiltX, point.TiltY, point.TimestampMicroseconds);
+        // Calculate velocity from the previous point if timestamps are available
+        float velocity = 0f;
+        if (points.Count > 0 && point.TimestampMicroseconds > 0)
+        {
+            velocity = SKInkPoint.CalculateVelocity(points[points.Count - 1], point);
+        }
+
+        // Create a new point with adjusted pressure and calculated velocity, preserving tilt
+        var adjustedPoint = new SKInkPoint(point.Location, pressure, point.TiltX, point.TiltY, point.TimestampMicroseconds, velocity);
         points.Add(adjustedPoint);
         isDirty = true;
     }
@@ -180,7 +204,7 @@ public class SKInkStroke : IDisposable
             if (points.Count == 1)
             {
                 var path = new SKPath();
-                var radius = GetStrokeWidth(points[0].Pressure) / 2f;
+                var radius = GetStrokeWidth(points[0].Pressure, points[0].Velocity) / 2f;
                 path.AddCircle(points[0].X, points[0].Y, radius);
                 return path;
             }
@@ -192,7 +216,7 @@ public class SKInkStroke : IDisposable
         if (smoothedPoints.Count < 2)
             return null;
 
-        // Generate left and right offset points based on pressure
+        // Generate left and right offset points based on pressure and velocity
         var leftPoints = new List<SKPoint>();
         var rightPoints = new List<SKPoint>();
 
@@ -200,7 +224,8 @@ public class SKInkStroke : IDisposable
         {
             var point = smoothedPoints[i].Point;
             var pressure = smoothedPoints[i].Pressure;
-            var halfWidth = GetStrokeWidth(pressure) / 2f;
+            var velocity = smoothedPoints[i].Velocity;
+            var halfWidth = GetStrokeWidth(pressure, velocity) / 2f;
 
             // Calculate the normal (perpendicular) at this point
             SKPoint tangent;
@@ -241,9 +266,10 @@ public class SKInkStroke : IDisposable
         }
 
         // Add end cap
-        var endRadius = GetStrokeWidth(smoothedPoints[smoothedPoints.Count - 1].Pressure) / 2f;
-        var endCenter = smoothedPoints[smoothedPoints.Count - 1].Point;
-        var endTangent = Normalize(Subtract(smoothedPoints[smoothedPoints.Count - 1].Point, smoothedPoints[smoothedPoints.Count - 2].Point));
+        var lastSmoothedPoint = smoothedPoints[smoothedPoints.Count - 1];
+        var endRadius = GetStrokeWidth(lastSmoothedPoint.Pressure, lastSmoothedPoint.Velocity) / 2f;
+        var endCenter = lastSmoothedPoint.Point;
+        var endTangent = Normalize(Subtract(lastSmoothedPoint.Point, smoothedPoints[smoothedPoints.Count - 2].Point));
         AddCap(resultPath, endCenter, endTangent, endRadius, isStart: false);
 
         // Continue with the right side (reverse direction)
@@ -253,9 +279,10 @@ public class SKInkStroke : IDisposable
         }
 
         // Add start cap (direction is reversed since we're drawing back to start)
-        var startRadius = GetStrokeWidth(smoothedPoints[0].Pressure) / 2f;
-        var startCenter = smoothedPoints[0].Point;
-        var startTangent = Normalize(Subtract(smoothedPoints[0].Point, smoothedPoints[1].Point));
+        var firstSmoothedPoint = smoothedPoints[0];
+        var startRadius = GetStrokeWidth(firstSmoothedPoint.Pressure, firstSmoothedPoint.Velocity) / 2f;
+        var startCenter = firstSmoothedPoint.Point;
+        var startTangent = Normalize(Subtract(firstSmoothedPoint.Point, smoothedPoints[1].Point));
         AddCap(resultPath, startCenter, startTangent, startRadius, isStart: true);
 
         resultPath.Close();
@@ -266,16 +293,16 @@ public class SKInkStroke : IDisposable
     /// <summary>
     /// Generates smoothed points using the selected smoothing algorithm.
     /// </summary>
-    private List<(SKPoint Point, float Pressure)> GenerateSmoothedPoints()
+    private List<SmoothedPoint> GenerateSmoothedPoints()
     {
-        var result = new List<(SKPoint Point, float Pressure)>();
+        var result = new List<SmoothedPoint>();
 
         if (points.Count == 0)
             return result;
 
         if (points.Count == 1)
         {
-            result.Add((points[0].Location, points[0].Pressure));
+            result.Add(new SmoothedPoint(points[0].Location, points[0].Pressure, points[0].Velocity));
             return result;
         }
 
@@ -286,8 +313,10 @@ public class SKInkStroke : IDisposable
             var p1 = points[1].Location;
             var pressure0 = points[0].Pressure;
             var pressure1 = points[1].Pressure;
+            var velocity0 = points[0].Velocity;
+            var velocity1 = points[1].Velocity;
 
-            result.Add((p0, pressure0));
+            result.Add(new SmoothedPoint(p0, pressure0, velocity0));
             
             // Add intermediate points based on smoothing factor
             for (int i = 1; i < Brush.SmoothingFactor; i++)
@@ -296,10 +325,11 @@ public class SKInkStroke : IDisposable
                 var x = p0.X + t * (p1.X - p0.X);
                 var y = p0.Y + t * (p1.Y - p0.Y);
                 var pressure = pressure0 + t * (pressure1 - pressure0);
-                result.Add((new SKPoint(x, y), pressure));
+                var velocity = velocity0 + t * (velocity1 - velocity0);
+                result.Add(new SmoothedPoint(new SKPoint(x, y), pressure, velocity));
             }
             
-            result.Add((p1, pressure1));
+            result.Add(new SmoothedPoint(p1, pressure1, velocity1));
             return result;
         }
 
@@ -317,12 +347,12 @@ public class SKInkStroke : IDisposable
     /// <summary>
     /// Generates smoothed points using quadratic Bezier interpolation.
     /// </summary>
-    private List<(SKPoint Point, float Pressure)> GenerateQuadraticBezierPoints()
+    private List<SmoothedPoint> GenerateQuadraticBezierPoints()
     {
-        var result = new List<(SKPoint Point, float Pressure)>();
+        var result = new List<SmoothedPoint>();
 
         // Add the first point
-        result.Add((points[0].Location, points[0].Pressure));
+        result.Add(new SmoothedPoint(points[0].Location, points[0].Pressure, points[0].Velocity));
 
         // Generate intermediate points using quadratic Bezier interpolation
         for (int i = 0; i < points.Count - 1; i++)
@@ -331,27 +361,30 @@ public class SKInkStroke : IDisposable
             var p1 = points[i + 1].Location;
             var pressure0 = points[i].Pressure;
             var pressure1 = points[i + 1].Pressure;
+            var velocity0 = points[i].Velocity;
+            var velocity1 = points[i + 1].Velocity;
 
             // Calculate midpoint
             var midPoint = new SKPoint((p0.X + p1.X) / 2f, (p0.Y + p1.Y) / 2f);
             var midPressure = (pressure0 + pressure1) / 2f;
+            var midVelocity = (velocity0 + velocity1) / 2f;
 
             if (i == 0)
             {
                 // First segment: add midpoint
-                result.Add((midPoint, midPressure));
+                result.Add(new SmoothedPoint(midPoint, midPressure, midVelocity));
             }
             else if (i < points.Count - 2)
             {
                 // Middle segments: add quadratic curve samples through the control point
                 var prevMid = result[result.Count - 1];
-                AddQuadraticSamples(result, prevMid.Point, prevMid.Pressure, p0, pressure0, midPoint, midPressure);
+                AddQuadraticSamples(result, prevMid.Point, prevMid.Pressure, prevMid.Velocity, p0, pressure0, velocity0, midPoint, midPressure, midVelocity);
             }
             else
             {
                 // Last segment (i == points.Count - 2): interpolate from previous midpoint through last control point to end
                 var prevMid = result[result.Count - 1];
-                AddQuadraticSamples(result, prevMid.Point, prevMid.Pressure, p0, pressure0, p1, pressure1);
+                AddQuadraticSamples(result, prevMid.Point, prevMid.Pressure, prevMid.Velocity, p0, pressure0, velocity0, p1, pressure1, velocity1);
             }
         }
 
@@ -361,7 +394,7 @@ public class SKInkStroke : IDisposable
         if (Math.Abs(lastResultPoint.X - lastOriginalPoint.X) > 0.01f || 
             Math.Abs(lastResultPoint.Y - lastOriginalPoint.Y) > 0.01f)
         {
-            result.Add((lastOriginalPoint, points[points.Count - 1].Pressure));
+            result.Add(new SmoothedPoint(lastOriginalPoint, points[points.Count - 1].Pressure, points[points.Count - 1].Velocity));
         }
 
         return result;
@@ -371,12 +404,12 @@ public class SKInkStroke : IDisposable
     /// Generates smoothed points using Catmull-Rom spline interpolation.
     /// This algorithm passes through all control points, making it ideal for handwriting.
     /// </summary>
-    private List<(SKPoint Point, float Pressure)> GenerateCatmullRomPoints()
+    private List<SmoothedPoint> GenerateCatmullRomPoints()
     {
-        var result = new List<(SKPoint Point, float Pressure)>();
+        var result = new List<SmoothedPoint>();
 
         // Add the first point
-        result.Add((points[0].Location, points[0].Pressure));
+        result.Add(new SmoothedPoint(points[0].Location, points[0].Pressure, points[0].Velocity));
 
         // Generate intermediate points using Catmull-Rom spline
         for (int i = 0; i < points.Count - 1; i++)
@@ -393,6 +426,11 @@ public class SKInkStroke : IDisposable
             var pr2 = points[i + 1].Pressure;
             var pr3 = (i < points.Count - 2) ? points[i + 2].Pressure : points[points.Count - 1].Pressure;
 
+            var v0 = (i > 0) ? points[i - 1].Velocity : points[0].Velocity;
+            var v1 = points[i].Velocity;
+            var v2 = points[i + 1].Velocity;
+            var v3 = (i < points.Count - 2) ? points[i + 2].Velocity : points[points.Count - 1].Velocity;
+
             // Add samples along this segment
             for (int j = 1; j <= Brush.SmoothingFactor; j++)
             {
@@ -401,8 +439,11 @@ public class SKInkStroke : IDisposable
                 // Catmull-Rom spline formula
                 var point = CatmullRom(p0, p1, p2, p3, t);
                 var pressure = CatmullRomScalar(pr0, pr1, pr2, pr3, t);
+                var velocity = CatmullRomScalar(v0, v1, v2, v3, t);
+                // Velocity must be non-negative
+                velocity = Math.Max(0f, velocity);
                 
-                result.Add((point, pressure));
+                result.Add(new SmoothedPoint(point, pressure, velocity));
             }
         }
 
@@ -455,10 +496,10 @@ public class SKInkStroke : IDisposable
     /// Adds samples along a quadratic Bezier curve for smooth interpolation.
     /// </summary>
     private void AddQuadraticSamples(
-        List<(SKPoint Point, float Pressure)> result,
-        SKPoint p0, float pressure0,
-        SKPoint control, float controlPressure,
-        SKPoint p1, float pressure1)
+        List<SmoothedPoint> result,
+        SKPoint p0, float pressure0, float velocity0,
+        SKPoint control, float controlPressure, float controlVelocity,
+        SKPoint p1, float pressure1, float velocity1)
     {
         // Sample the quadratic curve using the smoothing factor
         int samples = Brush.SmoothingFactor;
@@ -471,8 +512,11 @@ public class SKInkStroke : IDisposable
             var x = u * u * p0.X + 2 * u * t * control.X + t * t * p1.X;
             var y = u * u * p0.Y + 2 * u * t * control.Y + t * t * p1.Y;
             var pressure = u * u * pressure0 + 2 * u * t * controlPressure + t * t * pressure1;
+            var velocity = u * u * velocity0 + 2 * u * t * controlVelocity + t * t * velocity1;
+            // Velocity must be non-negative
+            velocity = Math.Max(0f, velocity);
 
-            result.Add((new SKPoint(x, y), pressure));
+            result.Add(new SmoothedPoint(new SKPoint(x, y), pressure, velocity));
         }
     }
 
@@ -514,11 +558,19 @@ public class SKInkStroke : IDisposable
     }
 
     /// <summary>
-    /// Calculates the stroke width based on pressure.
+    /// Calculates the stroke width based on pressure only.
     /// </summary>
     private float GetStrokeWidth(float pressure)
     {
         return Brush.GetWidthForPressure(pressure);
+    }
+
+    /// <summary>
+    /// Calculates the stroke width based on pressure and velocity.
+    /// </summary>
+    private float GetStrokeWidth(float pressure, float velocity)
+    {
+        return Brush.GetWidthForPressureAndVelocity(pressure, velocity);
     }
 
     /// <summary>
