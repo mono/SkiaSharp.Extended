@@ -34,43 +34,39 @@ public abstract class SKLottieImageSource : Element
 		if (stream is null)
 			throw new ArgumentNullException(nameof(stream));
 
+		// Wrap stream in SKFrontBufferedStream to allow format detection without requiring seekability
+		// Buffer 4KB which is enough for ZIP header detection and small JSON files
+		using var bufferedStream = new SKFrontBufferedStream(stream, bufferSize: 4096, disposeUnderlying: false);
+
 		// Check if this is a .lottie (ZIP) file by reading the first few bytes
-		var isZip = await IsZipFileAsync(stream, cancellationToken);
+		var isZip = IsZipFile(bufferedStream);
+
+		// Reset to beginning for actual loading
+		bufferedStream.Position = 0;
 
 		if (isZip)
 		{
-			return await LoadDotLottieAnimationAsync(stream, cancellationToken);
+			return await LoadDotLottieAnimationAsync(bufferedStream, cancellationToken);
 		}
 		else
 		{
-			return await LoadJsonAnimationAsync(stream, cancellationToken);
+			return await LoadJsonAnimationAsync(bufferedStream, cancellationToken);
 		}
 	}
 
-	private async Task<bool> IsZipFileAsync(Stream stream, CancellationToken cancellationToken)
+	private bool IsZipFile(Stream stream)
 	{
-		if (!stream.CanSeek)
-			return false;
-
-		var position = stream.Position;
-		try
+		var buffer = new byte[4];
+		var bytesRead = stream.Read(buffer, 0, 4);
+		
+		// ZIP files start with PK\x03\x04 (0x04034b50 in little-endian)
+		if (bytesRead >= 4 && buffer[0] == 0x50 && buffer[1] == 0x4B && 
+		    buffer[2] == 0x03 && buffer[3] == 0x04)
 		{
-			var buffer = new byte[4];
-			var bytesRead = await stream.ReadAsync(buffer, 0, 4, cancellationToken);
-			
-			// ZIP files start with PK\x03\x04 (0x04034b50 in little-endian)
-			if (bytesRead >= 4 && buffer[0] == 0x50 && buffer[1] == 0x4B && 
-			    buffer[2] == 0x03 && buffer[3] == 0x04)
-			{
-				return true;
-			}
-			
-			return false;
+			return true;
 		}
-		finally
-		{
-			stream.Position = position;
-		}
+		
+		return false;
 	}
 
 	private async Task<SKLottieAnimation> LoadDotLottieAnimationAsync(Stream zipStream, CancellationToken cancellationToken)
@@ -148,22 +144,18 @@ public abstract class SKLottieImageSource : Element
 			if (!File.Exists(fullAnimationPath))
 				throw new FileLoadException($"Animation file \"{animationPath}\" not found in .lottie archive.");
 
-			// Set ImageAssetsFolder to the temp directory so images can be loaded
+			// Determine ImageAssetsFolder for .lottie embedded images
 			// Images in .lottie are in the 'i' subdirectory
-			// Save the original ImageAssetsFolder to restore it later
-			var originalImageAssetsFolder = ImageAssetsFolder;
+			string? imageAssetsFolderForLoad = ImageAssetsFolder;
 			var imagesDir = Path.Combine(tempDir, "i");
 			if (Directory.Exists(imagesDir))
 			{
-				ImageAssetsFolder = tempDir;
+				imageAssetsFolderForLoad = tempDir;
 			}
 
-			// Load the animation
+			// Load the animation with the appropriate ImageAssetsFolder
 			using var animStream = File.OpenRead(fullAnimationPath);
-			var animation = CreateAnimationBuilder().Build(animStream);
-			
-			// Restore original ImageAssetsFolder
-			ImageAssetsFolder = originalImageAssetsFolder;
+			var animation = CreateAnimationBuilderWithAssetsFolder(imageAssetsFolderForLoad).Build(animStream);
 
 			if (animation is null)
 				throw new FileLoadException("Unable to parse Lottie animation in .lottie file.");
@@ -196,13 +188,16 @@ public abstract class SKLottieImageSource : Element
 		return new SKLottieAnimation(animation);
 	}
 
-	internal Skottie.AnimationBuilder CreateAnimationBuilder()
+	internal Skottie.AnimationBuilder CreateAnimationBuilder() =>
+		CreateAnimationBuilderWithAssetsFolder(ImageAssetsFolder);
+
+	private Skottie.AnimationBuilder CreateAnimationBuilderWithAssetsFolder(string? assetsFolder)
 	{
 		var builder = Skottie.Animation.CreateBuilder();
 
 		// Create the resource provider chain
 		ResourceProvider resourceProvider;
-		if (!string.IsNullOrEmpty(ImageAssetsFolder))
+		if (!string.IsNullOrEmpty(assetsFolder))
 		{
 			// Chain DataUriResourceProvider with FileResourceProvider
 			// DataUriResourceProvider first handles base64 embedded images (data: URIs)
@@ -218,7 +213,7 @@ public abstract class SKLottieImageSource : Element
 			// custom provider that uses FileSystem.OpenAppPackageFileAsync for MAUI apps.
 			resourceProvider = new CachingResourceProvider(
 				new DataUriResourceProvider(
-					new FileResourceProvider(ImageAssetsFolder)));
+					new FileResourceProvider(assetsFolder)));
 		}
 		else
 		{
