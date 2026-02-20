@@ -91,7 +91,8 @@ public class SKInkCanvasTests
         using var canvas = new SKInkCanvas();
 
         canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
-        canvas.ContinueStroke(new SKPoint(50f, 60f), 0.5f);
+        // Use a point close enough to avoid interpolation (within 15px)
+        canvas.ContinueStroke(new SKPoint(20f, 25f), 0.5f);
 
         Assert.Equal(2, canvas.CurrentStroke?.PointCount);
     }
@@ -522,7 +523,8 @@ public class SKInkCanvasTests
         using var canvas = new SKInkCanvas();
 
         canvas.StartStroke(new SKPoint(10f, 20f), 0.5f);
-        canvas.ContinueStroke(new SKInkPoint(50f, 60f, 0.6f, 100));
+        // Use a point close enough to avoid interpolation (within 15px)
+        canvas.ContinueStroke(new SKInkPoint(20f, 25f, 0.6f, 100));
 
         Assert.Equal(2, canvas.CurrentStroke!.PointCount);
     }
@@ -671,5 +673,37 @@ public class SKInkCanvasTests
         Assert.Equal(2, canvas.StrokeCount);
         Assert.Equal(SKColors.Red, canvas.Strokes[0].Brush.Color);
         Assert.Equal(SKColors.Blue, canvas.Strokes[1].Brush.Color);
+    }
+
+    [Fact]
+    public void ContinueStroke_InterpolatesPointsWhenDistanceIsLarge()
+    {
+        using var canvas = new SKInkCanvas();
+
+        // Start at (0, 0)
+        canvas.StartStroke(new SKPoint(0f, 0f), 0.5f);
+        
+        // Continue with a point 100 pixels away (should trigger interpolation)
+        canvas.ContinueStroke(new SKPoint(100f, 0f), 0.5f);
+
+        // With MaxPointDistance=15, numInterpolatedPoints = (int)(100/15) = 6
+        // Loop adds points from i=1 to i=5 (5 intermediate points)
+        // Plus 2 original points (start + end) = 7 total points
+        Assert.Equal(7, canvas.CurrentStroke!.PointCount);
+    }
+
+    [Fact]
+    public void ContinueStroke_DoesNotInterpolateForSmallDistances()
+    {
+        using var canvas = new SKInkCanvas();
+
+        // Start at (0, 0)
+        canvas.StartStroke(new SKPoint(0f, 0f), 0.5f);
+        
+        // Continue with a point only 10 pixels away (should not trigger interpolation)
+        canvas.ContinueStroke(new SKPoint(10f, 0f), 0.5f);
+
+        // No interpolation should occur, so we should have exactly 2 points
+        Assert.Equal(2, canvas.CurrentStroke!.PointCount);
     }
 }

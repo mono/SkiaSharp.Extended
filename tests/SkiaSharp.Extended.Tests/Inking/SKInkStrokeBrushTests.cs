@@ -254,4 +254,44 @@ public class SKInkStrokeBrushTests
         Assert.Equal(SKVelocityMode.BallpointPen, clone.VelocityMode);
         Assert.Equal(0.8f, clone.VelocityScale);
     }
+
+    [Fact]
+    public void TaperLength_Default_Is20()
+    {
+        var brush = new SKInkStrokeBrush();
+        Assert.Equal(20f, brush.TaperLength);
+    }
+
+    [Fact]
+    public void TaperLength_CanBeSet()
+    {
+        var brush = new SKInkStrokeBrush
+        {
+            TaperLength = 35f
+        };
+        Assert.Equal(35f, brush.TaperLength);
+    }
+
+    [Fact]
+    public void TaperLength_ClampsToMinimum1()
+    {
+        var brush = new SKInkStrokeBrush
+        {
+            TaperLength = 0f
+        };
+        Assert.Equal(1f, brush.TaperLength);
+    }
+
+    [Fact]
+    public void Clone_IncludesTaperLength()
+    {
+        var brush = new SKInkStrokeBrush
+        {
+            TaperLength = 45f
+        };
+
+        var clone = brush.Clone();
+
+        Assert.Equal(45f, clone.TaperLength);
+    }
 }

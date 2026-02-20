@@ -534,7 +534,7 @@ public class SKInkStroke : IDisposable
                 // Flat cap - just continue the path, no additional geometry needed
                 break;
             case SKStrokeCapStyle.Tapered:
-                AddTaperedCap(path, center, direction, radius, isStart);
+                AddTaperedCap(path, center, direction, radius, isStart, Brush.TaperLength);
                 break;
         }
     }
@@ -574,23 +574,41 @@ public class SKInkStroke : IDisposable
     }
 
     /// <summary>
-    /// Adds a tapered cap that narrows to a point.
-    /// The taper extends from the current path position to a sharp tip.
-    /// The path then continues to the next point in the polygon, creating a triangular taper.
+    /// Adds a tapered cap that narrows gradually to a point using a smooth curve.
+    /// The taper uses a cubic polynomial for a natural pen-lift effect.
     /// </summary>
-    private static void AddTaperedCap(SKPath path, SKPoint center, SKPoint direction, float radius, bool isStart)
+    private static void AddTaperedCap(SKPath path, SKPoint center, SKPoint direction, float radius, bool isStart, float taperLength)
     {
         _ = isStart; // Parameter kept for API consistency with other cap methods
         
         // Calculate the tip point (extends beyond center in the stroke direction)
-        var tipDistance = radius * 1.5f; // Extend the taper beyond the stroke width
         var tipPoint = new SKPoint(
-            center.X + direction.X * tipDistance,
-            center.Y + direction.Y * tipDistance);
+            center.X + direction.X * taperLength,
+            center.Y + direction.Y * taperLength);
 
-        // Add a line to the tip point. The polygon path structure ensures that:
-        // - For end caps: path continues from left edge → tip → right edge
-        // - For start caps: path continues from right edge → tip → left edge (via Close)
+        // Create intermediate points for a smooth curve from current width to zero
+        // Using a cubic ease-out for natural pen-lift feel: width = radius * (1 - t)^3
+        var perpendicular = new SKPoint(-direction.Y, direction.X);
+        
+        // 6 curve points provides smooth visual transition while keeping performance reasonable
+        // Fewer points look choppy, more points provide diminishing visual improvement
+        const int numCurvePoints = 6;
+        for (int i = 1; i <= numCurvePoints; i++)
+        {
+            float t = i / (float)numCurvePoints;
+            // Cubic ease-out: starts fast, ends slow (natural pen lift)
+            float widthFactor = (float)Math.Pow(1 - t, 3);
+            float currentWidth = radius * widthFactor;
+            
+            // Position along taper
+            float posX = center.X + direction.X * taperLength * t;
+            float posY = center.Y + direction.Y * taperLength * t;
+            
+            // Add point on the left side of the taper
+            path.LineTo(posX + perpendicular.X * currentWidth, posY + perpendicular.Y * currentWidth);
+        }
+
+        // Add a line to the tip point (ensures we reach the exact tip)
         path.LineTo(tipPoint);
     }
 

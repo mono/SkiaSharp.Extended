@@ -87,11 +87,10 @@ public class SKInkStrokeBugTests
         Assert.NotNull(path);
         
         var bounds = path!.Bounds;
-        // The tapered cap extends by radius * 1.5
-        // With pressure 0.5, width = 2 + 6*0.5 = 5, radius = 2.5
-        // Extension = 2.5 * 1.5 = 3.75 on each side
-        // Total width should be ~2 (stroke) + 7.5 (extensions) = ~9.5px
-        Assert.True(bounds.Width < 30, $"Width too large: {bounds.Width}"); // Sanity check
+        // The tapered cap now extends by TaperLength (default 20px)
+        // With a short stroke and gradual taper, bounds should still be reasonable
+        // Total width should be reasonable - with TaperLength=20, it can extend more
+        Assert.True(bounds.Width < 60, $"Width too large: {bounds.Width}"); // Sanity check
     }
     
     // BUG 6: Empty canvas GetBounds after clear

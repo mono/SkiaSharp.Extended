@@ -11,6 +11,7 @@ public partial class InkingPage : ContentPage
     private CancellationTokenSource? animationCts;
     private SKColor currentColor = SKColors.Black;
     private SKStrokeCapStyle currentCapStyle = SKStrokeCapStyle.Round;
+    private SKSmoothingAlgorithm currentAlgorithm = SKSmoothingAlgorithm.CatmullRom;
     private string selectedColorName = "Black";
     private readonly Dictionary<string, Border> colorBorders = new();
 
@@ -28,6 +29,9 @@ public partial class InkingPage : ContentPage
         
         // Set initial selection
         UpdateColorSelection("Black");
+        
+        // Apply initial settings to ensure brush is synchronized
+        ApplySettings();
     }
 
     private void OnStrokeCompleted(object? sender, SKSignatureStrokeCompletedEventArgs e)
@@ -120,6 +124,32 @@ public partial class InkingPage : ContentPage
             capTapered.BackgroundColor = currentCapStyle == SKStrokeCapStyle.Tapered ? Colors.DodgerBlue : Colors.LightGray;
             capTapered.TextColor = currentCapStyle == SKStrokeCapStyle.Tapered ? Colors.White : Colors.Black;
 
+            // Show/hide taper length slider based on cap style
+            taperLengthGrid.IsVisible = currentCapStyle == SKStrokeCapStyle.Tapered;
+
+            ApplySettings();
+        }
+    }
+
+    private void OnAlgorithmTapped(object? sender, EventArgs e)
+    {
+        if (sender is Button button)
+        {
+            // Update algorithm based on button
+            currentAlgorithm = button.Text switch
+            {
+                "Catmull-Rom" => SKSmoothingAlgorithm.CatmullRom,
+                "Bezier" => SKSmoothingAlgorithm.QuadraticBezier,
+                _ => SKSmoothingAlgorithm.CatmullRom
+            };
+
+            // Update button visual state
+            algoCatmullRom.BackgroundColor = currentAlgorithm == SKSmoothingAlgorithm.CatmullRom ? Colors.DodgerBlue : Colors.LightGray;
+            algoCatmullRom.TextColor = currentAlgorithm == SKSmoothingAlgorithm.CatmullRom ? Colors.White : Colors.Black;
+            
+            algoBezier.BackgroundColor = currentAlgorithm == SKSmoothingAlgorithm.QuadraticBezier ? Colors.DodgerBlue : Colors.LightGray;
+            algoBezier.TextColor = currentAlgorithm == SKSmoothingAlgorithm.QuadraticBezier ? Colors.White : Colors.Black;
+
             ApplySettings();
         }
     }
@@ -128,6 +158,13 @@ public partial class InkingPage : ContentPage
     {
         var value = (int)Math.Round(e.NewValue);
         smoothingLabel.Text = value.ToString();
+        ApplySettings();
+    }
+
+    private void OnTaperLengthChanged(object? sender, ValueChangedEventArgs e)
+    {
+        var value = (int)Math.Round(e.NewValue);
+        taperLengthLabel.Text = value.ToString();
         ApplySettings();
     }
 
@@ -145,9 +182,11 @@ public partial class InkingPage : ContentPage
         signaturePad.MinStrokeWidth = (float)minWidthSlider.Value;
         signaturePad.MaxStrokeWidth = (float)maxWidthSlider.Value;
         
-        // Apply to ink canvas brush for cap style and smoothing
+        // Apply to ink canvas brush for cap style, smoothing, and algorithm
         signaturePad.InkCanvas.Brush.CapStyle = currentCapStyle;
         signaturePad.InkCanvas.Brush.SmoothingFactor = (int)Math.Round(smoothingSlider.Value);
+        signaturePad.InkCanvas.Brush.SmoothingAlgorithm = currentAlgorithm;
+        signaturePad.InkCanvas.Brush.TaperLength = (float)taperLengthSlider.Value;
     }
 
     private void OnClearClicked(object? sender, EventArgs e)

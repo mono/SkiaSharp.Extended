@@ -16,6 +16,7 @@ public class SKInkStrokeBrush
     private int _smoothingFactor = 4;
     private SKVelocityMode _velocityMode = SKVelocityMode.None;
     private float _velocityScale = 0.5f;
+    private float _taperLength = 20f;
 
     /// <summary>
     /// Gets or sets the stroke color.
@@ -110,6 +111,18 @@ public class SKInkStrokeBrush
     }
 
     /// <summary>
+    /// Gets or sets the taper length for tapered cap style.
+    /// Controls how gradually the taper occurs (in pixels).
+    /// Larger values create a more gradual, natural-looking taper.
+    /// Default is 20 pixels.
+    /// </summary>
+    public float TaperLength
+    {
+        get => _taperLength;
+        set => _taperLength = Math.Max(1f, value);
+    }
+
+    /// <summary>
     /// Creates a default brush with black color and standard sizes.
     /// </summary>
     public SKInkStrokeBrush()
@@ -158,7 +171,8 @@ public class SKInkStrokeBrush
             _smoothingAlgorithm = _smoothingAlgorithm,
             _smoothingFactor = _smoothingFactor,
             _velocityMode = _velocityMode,
-            _velocityScale = _velocityScale
+            _velocityScale = _velocityScale,
+            _taperLength = _taperLength
         };
     }
 

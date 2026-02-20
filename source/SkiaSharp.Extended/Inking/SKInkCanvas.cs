@@ -153,17 +153,61 @@ public class SKInkCanvas : IDisposable
 
     /// <summary>
     /// Continues the current stroke with a new point.
+    /// Automatically interpolates intermediate points if the distance is too large.
     /// </summary>
     /// <param name="point">The point to add.</param>
     public void ContinueStroke(SKInkPoint point)
     {
         ThrowIfDisposed();
 
-        if (currentStroke != null)
+        if (currentStroke == null)
+            return;
+
+        // Check if we need to interpolate points (for smooth drawing with fast movements)
+        if (currentStroke.PointCount > 0)
         {
-            currentStroke.AddPoint(point);
-            Invalidated?.Invoke(this, EventArgs.Empty);
+            var lastPoint = currentStroke.Points[currentStroke.PointCount - 1];
+            var dx = point.X - lastPoint.X;
+            var dy = point.Y - lastPoint.Y;
+            var distance = (float)Math.Sqrt(dx * dx + dy * dy);
+            
+            // If distance is too large (more than ~15 pixels), interpolate intermediate points
+            // This prevents gaps in fast drawing while avoiding too many points for normal input
+            const float MaxPointDistance = 15f;
+            if (distance > MaxPointDistance)
+            {
+                int numInterpolatedPoints = (int)(distance / MaxPointDistance);
+                for (int i = 1; i < numInterpolatedPoints; i++)
+                {
+                    float t = i / (float)numInterpolatedPoints;
+                    var interpolatedX = lastPoint.X + dx * t;
+                    var interpolatedY = lastPoint.Y + dy * t;
+                    var interpolatedPressure = lastPoint.Pressure + (point.Pressure - lastPoint.Pressure) * t;
+                    var interpolatedTiltX = lastPoint.TiltX + (point.TiltX - lastPoint.TiltX) * t;
+                    var interpolatedTiltY = lastPoint.TiltY + (point.TiltY - lastPoint.TiltY) * t;
+                    
+                    // Interpolate timestamp if available
+                    long interpolatedTimestamp = 0;
+                    if (lastPoint.TimestampMicroseconds > 0 && point.TimestampMicroseconds > 0)
+                    {
+                        interpolatedTimestamp = lastPoint.TimestampMicroseconds + 
+                            (long)((point.TimestampMicroseconds - lastPoint.TimestampMicroseconds) * t);
+                    }
+                    
+                    var interpolatedPoint = new SKInkPoint(
+                        new SKPoint(interpolatedX, interpolatedY),
+                        interpolatedPressure,
+                        interpolatedTiltX,
+                        interpolatedTiltY,
+                        interpolatedTimestamp);
+                    
+                    currentStroke.AddPoint(interpolatedPoint);
+                }
+            }
         }
+
+        currentStroke.AddPoint(point);
+        Invalidated?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>

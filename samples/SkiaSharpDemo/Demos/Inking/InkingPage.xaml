@@ -215,6 +215,46 @@
                                Text="4" 
                                VerticalOptions="Center"/>
                     </Grid>
+
+                    <!-- Smoothing Algorithm -->
+                    <Grid ColumnDefinitions="100,*">
+                        <Label Text="Algorithm:" 
+                               VerticalOptions="Center"/>
+                        <HorizontalStackLayout Grid.Column="1" Spacing="8">
+                            <Button x:Name="algoCatmullRom"
+                                    Text="Catmull-Rom"
+                                    Clicked="OnAlgorithmTapped"
+                                    BackgroundColor="DodgerBlue"
+                                    TextColor="White"
+                                    WidthRequest="100"
+                                    HeightRequest="36"
+                                    Padding="8,0"/>
+                            <Button x:Name="algoBezier"
+                                    Text="Bezier"
+                                    Clicked="OnAlgorithmTapped"
+                                    BackgroundColor="LightGray"
+                                    TextColor="Black"
+                                    WidthRequest="80"
+                                    HeightRequest="36"
+                                    Padding="8,0"/>
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <!-- Taper Length (only visible when Tapered cap is selected) -->
+                    <Grid x:Name="taperLengthGrid" ColumnDefinitions="100,*,40" IsVisible="False">
+                        <Label Text="Taper Length:" 
+                               VerticalOptions="Center"/>
+                        <Slider Grid.Column="1" 
+                                x:Name="taperLengthSlider"
+                                Minimum="5" 
+                                Maximum="50" 
+                                Value="20"
+                                ValueChanged="OnTaperLengthChanged"/>
+                        <Label Grid.Column="2" 
+                               x:Name="taperLengthLabel"
+                               Text="20" 
+                               VerticalOptions="Center"/>
+                    </Grid>
                 </VerticalStackLayout>
             </Border>
 
