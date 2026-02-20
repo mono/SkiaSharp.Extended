@@ -32,13 +32,14 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private bool _disposed;
         private bool _isVisible = true;
 
-        private Entry? _searchEntry;
         private double _lastPointerX = double.NaN;
         private double _lastPivotPinchScale = 1.0;
 
-        // Zoom slider
-        private Slider? _zoomSlider;
-        private bool _suppressZoomSliderUpdate;
+        // Native MAUI controls
+        private readonly PivotViewerControlBar _controlBar;
+        private readonly PivotViewerFilterPane _filterPane;
+        private readonly PivotViewerDetailPane _detailPane;
+        private readonly PivotViewerSortDropdown _sortDropdown;
 
         // Named event handlers for proper cleanup
         private EventHandler? _onLayoutUpdated;
@@ -47,7 +48,6 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private EventHandler? _onViewChanged;
         private EventHandler? _onSortPropertyChanged;
         private EventHandler? _onCollectionChanged;
-        private EventHandler<ValueChangedEventArgs>? _onZoomSliderValueChanged;
 
         // Gesture recognizer references for disposal
         private TapGestureRecognizer? _tapGesture;
@@ -73,44 +73,89 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _canvasView.EnableTouchEvents = true;
             _canvasView.Touch += OnCanvasTouch;
 
-            // Search entry overlay for the filter pane
-            _searchEntry = new Entry
+            // Native MAUI controls
+            _controlBar = new PivotViewerControlBar
             {
-                Placeholder = "Search...",
-                FontSize = 12,
-                BackgroundColor = Colors.White,
-                Margin = new Thickness(4, 44, 0, 0),
-                HorizontalOptions = LayoutOptions.Start,
-                VerticalOptions = LayoutOptions.Start,
-                WidthRequest = 212,
-                HeightRequest = 32,
+                Model = _controller.ControlBar,
             };
-            _searchEntry.TextChanged += OnSearchTextChanged;
-
-            _zoomSlider = new Slider
+            _controlBar.FilterToggled += (s, e) =>
             {
-                Minimum = 0,
-                Maximum = 1,
-                Value = 0,
-                HorizontalOptions = LayoutOptions.End,
-                VerticalOptions = LayoutOptions.Start,
-                WidthRequest = 150,
-                HeightRequest = 30,
-                Margin = new Thickness(0, 6, 290, 0),
-            };
-            _onZoomSliderValueChanged = (s, e) =>
-            {
-                if (_suppressZoomSliderUpdate) return;
-                _controller.ZoomLevel = e.NewValue;
+                IsFilterPaneVisible = _controller.ControlBar.IsFilterPaneVisible;
                 _canvasView.InvalidateSurface();
             };
-            _zoomSlider.ValueChanged += _onZoomSliderValueChanged;
+            _controlBar.ViewChanged += (s, view) => _canvasView.InvalidateSurface();
+            _controlBar.SortTapped += (s, e) => _controller.SortDropdown.Toggle();
+            _controlBar.SearchTextChanged += (s, text) =>
+            {
+                _controller.SearchText = text;
+                RefreshFilterPane();
+                _canvasView.InvalidateSurface();
+            };
+            _controlBar.ZoomChanged += (s, zoom) =>
+            {
+                _controller.ZoomLevel = zoom;
+                _canvasView.InvalidateSurface();
+            };
 
-            var grid = new Grid();
-            grid.Children.Add(_canvasView);
-            grid.Children.Add(_searchEntry);
-            grid.Children.Add(_zoomSlider);
-            Content = grid;
+            _filterPane = new PivotViewerFilterPane
+            {
+                Model = _controller.FilterPaneModel,
+                VerticalOptions = LayoutOptions.Fill,
+            };
+            _filterPane.FilterChanged += (s, e) =>
+            {
+                RefreshFilterPane();
+                _canvasView.InvalidateSurface();
+            };
+
+            _detailPane = new PivotViewerDetailPane
+            {
+                Model = _controller.DetailPane,
+            };
+            _detailPane.LinkClicked += (s, e) => LinkClicked?.Invoke(this, e);
+
+            _sortDropdown = new PivotViewerSortDropdown
+            {
+                Model = _controller.SortDropdown,
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Start,
+                Margin = new Thickness(140, 0, 0, 0),
+            };
+            _sortDropdown.PropertySelected += (s, e) => _canvasView.InvalidateSurface();
+
+            // Layout: Row 0 = control bar, Row 1 = content (filter | canvas | detail) + sort overlay
+            var outerGrid = new Grid
+            {
+                RowDefinitions =
+                {
+                    new RowDefinition(new GridLength(40, GridUnitType.Absolute)),
+                    new RowDefinition(GridLength.Star),
+                },
+            };
+
+            outerGrid.Add(_controlBar, 0, 0);
+
+            var contentGrid = new Grid
+            {
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition(new GridLength(220, GridUnitType.Absolute)),
+                    new ColumnDefinition(GridLength.Star),
+                    new ColumnDefinition(new GridLength(280, GridUnitType.Absolute)),
+                },
+            };
+            contentGrid.Add(_filterPane, 0);
+            contentGrid.Add(_canvasView, 1);
+            contentGrid.Add(_detailPane, 2);
+
+            // Wrap content + sort dropdown in an overlay grid
+            var contentOverlay = new Grid();
+            contentOverlay.Children.Add(contentGrid);
+            contentOverlay.Children.Add(_sortDropdown);
+
+            outerGrid.Add(contentOverlay, 0, 1);
+
+            Content = outerGrid;
 
             // Wire controller events using named handlers for proper cleanup
             _onLayoutUpdated = (s, e) =>
@@ -135,6 +180,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _onFiltersChanged = (s, e) =>
             {
                 FilterChanged?.Invoke(this, EventArgs.Empty);
+                RefreshFilterPane();
             };
             _controller.FiltersChanged += _onFiltersChanged;
 
@@ -160,6 +206,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _onCollectionChanged = (s, e) =>
             {
                 CollectionChanged?.Invoke(this, EventArgs.Empty);
+                RefreshFilterPane();
             };
             _controller.CollectionChanged += _onCollectionChanged;
 
@@ -594,8 +641,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         {
             if (bindable is SKPivotViewerView view && newValue is bool visible)
             {
-                if (view._searchEntry != null)
-                    view._searchEntry.IsVisible = visible;
+                view._filterPane.IsVisible = visible;
                 view._canvasView?.InvalidateSurface();
             }
         }
@@ -684,12 +730,6 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             _lastPaintInfo = e.Info;
             _renderer.Render(e.Surface.Canvas, e.Info, _controller, _theme, _viewState.HoverItem);
-        }
-
-        private void OnSearchTextChanged(object? sender, TextChangedEventArgs e)
-        {
-            _controller.SearchText = e.NewTextValue ?? "";
-            _canvasView.InvalidateSurface();
         }
 
         // --- Gestures ---
@@ -868,10 +908,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
         private void SyncZoomSlider()
         {
-            if (_zoomSlider == null) return;
-            _suppressZoomSliderUpdate = true;
-            _zoomSlider.Value = _controller.ZoomLevel;
-            _suppressZoomSliderUpdate = false;
+            _controlBar.SetZoomValue(_controller.ZoomLevel);
         }
 
         private void StartAnimationIfNeeded()
@@ -910,6 +947,16 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             }
         }
 
+        // --- Native Control Helpers ---
+
+        private void RefreshFilterPane()
+        {
+            // Update filter pane model and items after controller state changes
+            if (_controller.FilterPaneModel != null)
+                _filterPane.Model = _controller.FilterPaneModel;
+            _filterPane.Items = _controller.SearchFilteredItems;
+        }
+
         // --- Disposal ---
 
         public void Dispose()
@@ -937,11 +984,6 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             if (_onViewChanged != null) _controller.ViewChanged -= _onViewChanged;
             if (_onSortPropertyChanged != null) _controller.SortPropertyChanged -= _onSortPropertyChanged;
             if (_onCollectionChanged != null) _controller.CollectionChanged -= _onCollectionChanged;
-
-            // Unsubscribe UI control events
-            if (_searchEntry != null) _searchEntry.TextChanged -= OnSearchTextChanged;
-            if (_zoomSlider != null && _onZoomSliderValueChanged != null)
-                _zoomSlider.ValueChanged -= _onZoomSliderValueChanged;
 
             // Unsubscribe gesture recognizer events
             if (_tapGesture != null) _tapGesture.Tapped -= OnTapped;
