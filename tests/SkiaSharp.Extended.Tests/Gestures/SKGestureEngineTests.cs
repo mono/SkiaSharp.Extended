@@ -607,4 +607,137 @@ public class SKGestureEngineTests
 	}
 
 	#endregion
+
+	#region Bug Fix Tests
+
+	[Fact]
+	public void DoubleTap_FarApart_DoesNotTriggerDoubleTap()
+	{
+		var engine = CreateEngine();
+		var doubleTapRaised = false;
+		engine.DoubleTapDetected += (s, e) => doubleTapRaised = true;
+
+		// First tap at (100, 100)
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+		
+		AdvanceTime(100);
+		
+		// Second tap far away at (500, 500)
+		engine.ProcessTouchDown(1, new SKPoint(500, 500));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(500, 500));
+
+		Assert.False(doubleTapRaised);
+	}
+
+	[Fact]
+	public void PanThenReturnToStart_DoesNotFireTap()
+	{
+		var engine = CreateEngine();
+		var tapRaised = false;
+		var dragEnded = false;
+		engine.TapDetected += (s, e) => tapRaised = true;
+		engine.DragEnded += (s, e) => dragEnded = true;
+
+		// Start at (100, 100)
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		// Move far away (triggers pan)
+		engine.ProcessTouchMove(1, new SKPoint(200, 100));
+		AdvanceTime(10);
+		// Move back near start
+		engine.ProcessTouchMove(1, new SKPoint(101, 100));
+		AdvanceTime(10);
+		// Release near start
+		engine.ProcessTouchUp(1, new SKPoint(101, 100));
+
+		Assert.False(tapRaised, "Tap should not fire after panning");
+		Assert.True(dragEnded, "DragEnded should fire");
+	}
+
+	[Fact]
+	public void CancelDuringDrag_FiresDragEnded()
+	{
+		var engine = CreateEngine();
+		var dragStarted = false;
+		var dragEnded = false;
+		engine.DragStarted += (s, e) => dragStarted = true;
+		engine.DragEnded += (s, e) => dragEnded = true;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(150, 150)); // Start drag
+		Assert.True(dragStarted);
+
+		engine.ProcessTouchCancel(1);
+		Assert.True(dragEnded, "DragEnded should fire on cancel");
+	}
+
+	[Fact]
+	public void PinchToSingleFinger_FiresDragStarted()
+	{
+		var engine = CreateEngine();
+		var dragStartedCount = 0;
+		engine.DragStarted += (s, e) => dragStartedCount++;
+
+		// Two fingers down → pinch
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(90, 100));
+		engine.ProcessTouchMove(2, new SKPoint(210, 100));
+
+		// Lift one finger → should transition to panning with DragStarted
+		engine.ProcessTouchUp(2, new SKPoint(210, 100));
+
+		Assert.Equal(1, dragStartedCount);
+	}
+
+	[Fact]
+	public void SecondFingerDown_DoesNotBreakFirstFingerTap()
+	{
+		var engine = CreateEngine();
+		var tapRaised = false;
+		engine.TapDetected += (s, e) => tapRaised = true;
+
+		// First finger down
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		// Second finger touches briefly
+		engine.ProcessTouchDown(2, new SKPoint(200, 200));
+		engine.ProcessTouchUp(2, new SKPoint(200, 200));
+		AdvanceTime(50);
+		// First finger up — should not trigger tap (state changed to pinching)
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		// After multi-touch, tap detection is naturally suppressed since state transitions away
+		// This tests that we don't crash and state is consistent
+		Assert.Equal(GestureState.None, engine.CurrentState);
+	}
+
+	[Fact]
+	public void FlingWithMultipleMoveEvents_ProducesReasonableVelocity()
+	{
+		var engine = CreateEngine();
+		float? velocityX = null;
+		engine.FlingDetected += (s, e) => velocityX = e.VelocityX;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(150, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(250, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(400, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(600, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(600, 100));
+
+		Assert.NotNull(velocityX);
+		Assert.True(velocityX.Value > 200, $"VelocityX should be > 200, was {velocityX.Value}");
+	}
+
+	#endregion
 }

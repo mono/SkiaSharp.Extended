@@ -344,7 +344,20 @@ public partial class GesturePage : ContentPage
 	private Sticker? HitTest(SKPoint location)
 	{
 		// Transform location by inverse of canvas transform
-		var transformed = location;
+		var size = gestureView.CanvasSize;
+		var w = size.Width;
+		var h = size.Height;
+
+		// Build the same transform used in OnPaintSurface
+		var matrix = SKMatrix.CreateTranslation(w / 2f + _canvasOffset.X, h / 2f + _canvasOffset.Y);
+		matrix = matrix.PostConcat(SKMatrix.CreateScale(_canvasScale, _canvasScale));
+		matrix = matrix.PostConcat(SKMatrix.CreateRotationDegrees(_canvasRotation));
+		matrix = matrix.PostConcat(SKMatrix.CreateTranslation(-w / 2f, -h / 2f));
+
+		if (!matrix.TryInvert(out var inverse))
+			return null;
+
+		var transformed = inverse.MapPoint(location);
 		
 		// Check stickers in reverse order (top to bottom)
 		for (int i = _stickers.Count - 1; i >= 0; i--)
