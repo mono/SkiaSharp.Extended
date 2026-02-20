@@ -18,17 +18,10 @@ namespace SkiaSharp.Extended.UI.Controls;
 ///   <item><description>Fling (swipe) gesture detection with velocity</description></item>
 ///   <item><description>Hover detection for mouse/stylus</description></item>
 /// </list>
-/// <para>Selection modes for sticker/image manipulation:</para>
-/// <list type="bullet">
-///   <item><description><see cref="Gestures.SKGestureSelectionMode.Immediate"/> - Start dragging immediately</description></item>
-///   <item><description><see cref="Gestures.SKGestureSelectionMode.TapToSelect"/> - Tap to select, then drag</description></item>
-///   <item><description><see cref="Gestures.SKGestureSelectionMode.LongPressToSelect"/> - Long press to select and drag</description></item>
-/// </list>
 /// </remarks>
 /// <example>
 /// <code>
 /// &lt;controls:SKGestureSurfaceView
-///     SKGestureSelectionMode="TapToSelect"
 ///     TapDetected="OnTap"
 ///     PanDetected="OnPan"
 ///     PinchDetected="OnPinch"
@@ -37,16 +30,6 @@ namespace SkiaSharp.Extended.UI.Controls;
 /// </example>
 public class SKGestureSurfaceView : SKSurfaceView
 {
-	/// <summary>
-	/// Identifies the <see cref="SKGestureSelectionMode"/> bindable property.
-	/// </summary>
-	public static readonly BindableProperty SKGestureSelectionModeProperty = BindableProperty.Create(
-		nameof(GestureSelectionMode),
-		typeof(SKGestureSelectionMode),
-		typeof(SKGestureSurfaceView),
-		SKGestureSelectionMode.Immediate,
-		propertyChanged: OnGestureSelectionModeChanged);
-
 	/// <summary>
 	/// Identifies the <see cref="IsGestureEnabled"/> bindable property.
 	/// </summary>
@@ -79,8 +62,7 @@ public class SKGestureSurfaceView : SKSurfaceView
 
 	private readonly SKGestureEngine _engine;
 	private SKCanvasView? _canvasView;
-	private IDispatcher? _dispatcher;
-	private IDispatcherTimer? _longPressTimer;
+	private SKGLView? _glView;
 
 	/// <summary>
 	/// Creates a new instance of <see cref="SKGestureSurfaceView"/>.
@@ -102,12 +84,10 @@ public class SKGestureSurfaceView : SKSurfaceView
 		_engine.HoverDetected += (s, e) => OnHoverDetected(e);
 		_engine.GestureStarted += (s, e) => OnGestureStarted(e);
 		_engine.GestureEnded += (s, e) => OnGestureEnded(e);
-		_engine.SelectionChanged += (s, e) => OnSelectionChanged(e);
 		_engine.DragStarted += (s, e) => OnDragStarted(e);
 		_engine.DragUpdated += (s, e) => OnDragUpdated(e);
 		_engine.DragEnded += (s, e) => OnDragEnded(e);
 
-		Loaded += OnLoaded;
 		Unloaded += OnUnloaded;
 
 		DebugUtils.LogPropertyChanged(this);
@@ -117,15 +97,6 @@ public class SKGestureSurfaceView : SKSurfaceView
 	/// Gets the underlying gesture engine for advanced scenarios.
 	/// </summary>
 	public SKGestureEngine Engine => _engine;
-
-	/// <summary>
-	/// Gets or sets the selection mode for gesture handling.
-	/// </summary>
-	public SKGestureSelectionMode GestureSelectionMode
-	{
-		get => (SKGestureSelectionMode)GetValue(SKGestureSelectionModeProperty);
-		set => SetValue(SKGestureSelectionModeProperty, value);
-	}
 
 	/// <summary>
 	/// Gets or sets whether gesture detection is enabled.
@@ -152,15 +123,6 @@ public class SKGestureSurfaceView : SKSurfaceView
 	{
 		get => (int)GetValue(LongPressDurationProperty);
 		set => SetValue(LongPressDurationProperty, value);
-	}
-
-	/// <summary>
-	/// Gets or sets the currently selected item ID.
-	/// </summary>
-	public long? SelectedItemId
-	{
-		get => _engine.SelectedItemId;
-		set => _engine.SelectedItemId = value;
 	}
 
 	#region Events
@@ -216,11 +178,6 @@ public class SKGestureSurfaceView : SKSurfaceView
 	public event EventHandler<SKGestureStateEventArgs>? GestureEnded;
 
 	/// <summary>
-	/// Occurs when selection changes.
-	/// </summary>
-	public event EventHandler<SKSelectionChangedEventArgs>? SelectionChanged;
-
-	/// <summary>
 	/// Occurs when a drag operation starts.
 	/// </summary>
 	public event EventHandler<SKDragEventArgs>? DragStarted;
@@ -269,9 +226,6 @@ public class SKGestureSurfaceView : SKSurfaceView
 	/// <summary>Invokes <see cref="GestureEnded"/>.</summary>
 	protected virtual void OnGestureEnded(SKGestureStateEventArgs e) => GestureEnded?.Invoke(this, e);
 
-	/// <summary>Invokes <see cref="SelectionChanged"/>.</summary>
-	protected virtual void OnSelectionChanged(SKSelectionChangedEventArgs e) => SelectionChanged?.Invoke(this, e);
-
 	/// <summary>Invokes <see cref="DragStarted"/>.</summary>
 	protected virtual void OnDragStarted(SKDragEventArgs e) => DragStarted?.Invoke(this, e);
 
@@ -286,35 +240,40 @@ public class SKGestureSurfaceView : SKSurfaceView
 	/// <inheritdoc/>
 	protected override void OnApplyTemplate()
 	{
-		// Unsubscribe from old view
+		// Unsubscribe from old views
 		if (_canvasView is not null)
 		{
 			_canvasView.Touch -= OnTouch;
 			_canvasView = null;
+		}
+		
+		if (_glView is not null)
+		{
+			_glView.Touch -= OnTouch;
+			_glView = null;
 		}
 
 		base.OnApplyTemplate();
 
 		// Get canvas view and subscribe to touch
 		var templateChild = GetTemplateChild("PART_DrawingSurface");
-		if (templateChild is SKCanvasView view)
+		if (templateChild is SKCanvasView canvasView)
 		{
-			_canvasView = view;
+			_canvasView = canvasView;
 			_canvasView.EnableTouchEvents = true;
 			_canvasView.Touch += OnTouch;
 		}
-	}
-
-	private void OnLoaded(object? sender, EventArgs e)
-	{
-		_dispatcher = Dispatcher;
-		StartLongPressTimer();
+		else if (templateChild is SKGLView glView)
+		{
+			_glView = glView;
+			_glView.EnableTouchEvents = true;
+			_glView.Touch += OnTouch;
+		}
 	}
 
 	private void OnUnloaded(object? sender, EventArgs e)
 	{
-		StopLongPressTimer();
-		_engine.Reset();
+		_engine.Dispose();
 	}
 
 	private void OnTouch(object? sender, SKTouchEventArgs e)
@@ -340,29 +299,6 @@ public class SKGestureSurfaceView : SKSurfaceView
 		// Invalidate for visual feedback
 		if (e.Handled)
 			Invalidate();
-	}
-
-	private void StartLongPressTimer()
-	{
-		if (_dispatcher is null)
-			return;
-
-		_longPressTimer = _dispatcher.CreateTimer();
-		_longPressTimer.Interval = TimeSpan.FromMilliseconds(100);
-		_longPressTimer.Tick += (s, e) => _engine.CheckLongPress();
-		_longPressTimer.Start();
-	}
-
-	private void StopLongPressTimer()
-	{
-		_longPressTimer?.Stop();
-		_longPressTimer = null;
-	}
-
-	private static void OnGestureSelectionModeChanged(BindableObject bindable, object oldValue, object newValue)
-	{
-		if (bindable is SKGestureSurfaceView view && newValue is SKGestureSelectionMode mode)
-			view._engine.SelectionMode = mode;
 	}
 
 	private static void OnIsGestureEnabledChanged(BindableObject bindable, object oldValue, object newValue)

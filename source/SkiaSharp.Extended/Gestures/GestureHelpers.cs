@@ -82,10 +82,10 @@ internal sealed class FlingTracker
 /// </summary>
 internal readonly struct TouchState
 {
-	public readonly long Id;
-	public readonly SKPoint Location;
-	public readonly long Ticks;
-	public readonly bool InContact;
+	public long Id { get; }
+	public SKPoint Location { get; }
+	public long Ticks { get; }
+	public bool InContact { get; }
 
 	public TouchState(long id, SKPoint location, long ticks, bool inContact)
 	{
@@ -99,11 +99,11 @@ internal readonly struct TouchState
 /// <summary>
 /// Represents the state of a pinch gesture.
 /// </summary>
-internal struct PinchState
+internal readonly struct PinchState
 {
-	public SKPoint Center;
-	public float Radius;
-	public float Angle;
+	public SKPoint Center { get; }
+	public float Radius { get; }
+	public float Angle { get; }
 
 	public PinchState(SKPoint center, float radius, float angle)
 	{
@@ -112,6 +112,9 @@ internal struct PinchState
 		Angle = angle;
 	}
 
+	/// <summary>
+	/// Creates a PinchState from an array of touch locations.
+	/// </summary>
 	public static PinchState FromLocations(SKPoint[] locations)
 	{
 		if (locations == null || locations.Length < 2)

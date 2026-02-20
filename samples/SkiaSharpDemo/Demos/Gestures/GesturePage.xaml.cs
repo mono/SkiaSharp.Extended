@@ -36,20 +36,6 @@ public partial class GesturePage : ContentPage
 		gestureView.Invalidate();
 	}
 
-	private void OnModeChanged(object? sender, CheckedChangedEventArgs e)
-	{
-		if (!e.Value) return;
-
-		if (modeImmediate.IsChecked)
-			gestureView.Engine.SelectionMode = SKGestureSelectionMode.Immediate;
-		else if (modeTapToSelect.IsChecked)
-			gestureView.Engine.SelectionMode = SKGestureSelectionMode.TapToSelect;
-		else if (modeLongPress.IsChecked)
-			gestureView.Engine.SelectionMode = SKGestureSelectionMode.LongPressToSelect;
-
-		LogEvent($"Mode: {gestureView.Engine.SelectionMode}");
-	}
-
 	private void OnTap(object? sender, SKTapEventArgs e)
 	{
 		LogEvent($"Tap at ({e.Location.X:F0}, {e.Location.Y:F0})");
@@ -59,13 +45,11 @@ public partial class GesturePage : ContentPage
 		if (hitSticker != null)
 		{
 			_selectedSticker = hitSticker;
-			gestureView.SelectedItemId = _stickers.IndexOf(hitSticker);
 			statusLabel.Text = $"Selected: Sticker {hitSticker.Label}";
 		}
 		else
 		{
 			_selectedSticker = null;
-			gestureView.SelectedItemId = null;
 			statusLabel.Text = "No selection";
 		}
 		
@@ -93,7 +77,6 @@ public partial class GesturePage : ContentPage
 		if (hitSticker != null)
 		{
 			_selectedSticker = hitSticker;
-			gestureView.SelectedItemId = _stickers.IndexOf(hitSticker);
 			statusLabel.Text = $"Long press selected: Sticker {hitSticker.Label}";
 		}
 		

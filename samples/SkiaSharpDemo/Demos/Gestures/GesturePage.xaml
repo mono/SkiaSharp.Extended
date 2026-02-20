@@ -7,14 +7,10 @@
 
     <Grid RowDefinitions="Auto,*,Auto">
         
-        <!-- Settings Panel -->
+        <!-- Instructions Panel -->
         <VerticalStackLayout Grid.Row="0" Padding="10" Spacing="5" BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
-            <Label Text="Selection Mode:" FontSize="12" />
-            <HorizontalStackLayout Spacing="10">
-                <RadioButton Content="Immediate" x:Name="modeImmediate" IsChecked="True" CheckedChanged="OnModeChanged" />
-                <RadioButton Content="Tap to Select" x:Name="modeTapToSelect" CheckedChanged="OnModeChanged" />
-                <RadioButton Content="Long Press" x:Name="modeLongPress" CheckedChanged="OnModeChanged" />
-            </HorizontalStackLayout>
+            <Label Text="Gesture Features:" FontSize="12" FontAttributes="Bold" />
+            <Label Text="• Tap to select sticker • Double-tap to reset • Long press for info • Drag to move • Pinch/rotate to transform" FontSize="11" TextColor="Gray" />
         </VerticalStackLayout>
         
         <!-- Gesture Surface -->

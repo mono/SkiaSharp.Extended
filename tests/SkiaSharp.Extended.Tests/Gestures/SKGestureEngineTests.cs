@@ -1,5 +1,6 @@
 using SkiaSharp;
 using SkiaSharp.Extended.Gestures;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace SkiaSharp.Extended.Tests.Gestures;
@@ -166,55 +167,54 @@ public class SKGestureEngineTests
 	#region Long Press Tests
 
 	[Fact]
-	public void LongTouch_RaisesLongPressDetected()
+	public async Task LongTouch_RaisesLongPressDetected()
 	{
-		var engine = CreateEngine();
+		var engine = new SKGestureEngine();
+		engine.LongPressDuration = 100; // Short duration for testing
 		var longPressRaised = false;
 		engine.LongPressDetected += (s, e) => longPressRaised = true;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(600); // Longer than long press duration
-		engine.CheckLongPress();
+		await Task.Delay(200); // Wait for timer to fire
 
 		Assert.True(longPressRaised);
+		engine.Dispose();
 	}
 
 	[Fact]
-	public void LongPress_DoesNotRaiseTapOnRelease()
+	public async Task LongPress_DoesNotRaiseTapOnRelease()
 	{
-		var engine = CreateEngine();
+		var engine = new SKGestureEngine();
+		engine.LongPressDuration = 100;
 		var tapRaised = false;
 		var longPressRaised = false;
 		engine.TapDetected += (s, e) => tapRaised = true;
 		engine.LongPressDetected += (s, e) => longPressRaised = true;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(600);
-		engine.CheckLongPress();
+		await Task.Delay(200);
 		engine.ProcessTouchUp(1, new SKPoint(100, 100));
 
 		Assert.True(longPressRaised);
 		Assert.False(tapRaised);
+		engine.Dispose();
 	}
 
 	[Fact]
-	public void LongPressDuration_CanBeCustomized()
+	public async Task LongPressDuration_CanBeCustomized()
 	{
-		var engine = CreateEngine();
-		engine.LongPressDuration = 1000;
+		var engine = new SKGestureEngine();
+		engine.LongPressDuration = 300;
 		var longPressRaised = false;
 		engine.LongPressDetected += (s, e) => longPressRaised = true;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(800);
-		engine.CheckLongPress();
-		
+		await Task.Delay(100);
 		Assert.False(longPressRaised);
 		
-		AdvanceTime(300);
-		engine.CheckLongPress();
-		
+		await Task.Delay(300);
 		Assert.True(longPressRaised);
+		engine.Dispose();
 	}
 
 	#endregion
@@ -491,75 +491,12 @@ public class SKGestureEngineTests
 
 	#endregion
 
-	#region Selection Mode Tests
-
-	[Fact]
-	public void ImmediateMode_StartsPanningOnMove()
-	{
-		var engine = CreateEngine();
-		engine.SelectionMode = SKGestureSelectionMode.Immediate;
-		var panRaised = false;
-		engine.PanDetected += (s, e) => panRaised = true;
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(120, 100));
-
-		Assert.True(panRaised);
-	}
-
-	[Fact]
-	public void TapToSelectMode_RequiresSelectionBeforeDrag()
-	{
-		var engine = CreateEngine();
-		engine.SelectionMode = SKGestureSelectionMode.TapToSelect;
-		var dragStarted = false;
-		engine.DragStarted += (s, e) => dragStarted = true;
-
-		// Without selection
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(120, 100));
-		engine.ProcessTouchUp(1, new SKPoint(120, 100));
-
-		Assert.False(dragStarted);
-
-		// Set selection
-		engine.SelectedItemId = 1;
-
-		// With selection
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(120, 100));
-
-		Assert.True(dragStarted);
-	}
-
-	[Fact]
-	public void LongPressToSelectMode_StartsDragOnLongPress()
-	{
-		var engine = CreateEngine();
-		engine.SelectionMode = SKGestureSelectionMode.LongPressToSelect;
-		var dragStarted = false;
-		engine.DragStarted += (s, e) => dragStarted = true;
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(600);
-		engine.CheckLongPress();
-
-		Assert.True(dragStarted);
-		Assert.Equal(GestureState.Dragging, engine.CurrentState);
-	}
-
-	#endregion
-
 	#region Drag Events Tests
 
 	[Fact]
 	public void DragStarted_ProvidesStartLocation()
 	{
 		var engine = CreateEngine();
-		engine.SelectionMode = SKGestureSelectionMode.Immediate;
 		SKPoint? startLocation = null;
 		engine.DragStarted += (s, e) => startLocation = e.StartLocation;
 
@@ -576,48 +513,15 @@ public class SKGestureEngineTests
 	public void DragEnded_RaisesOnTouchUp()
 	{
 		var engine = CreateEngine();
-		engine.SelectionMode = SKGestureSelectionMode.LongPressToSelect;
 		var dragEnded = false;
 		engine.DragEnded += (s, e) => dragEnded = true;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(600);
-		engine.CheckLongPress();
 		AdvanceTime(10);
 		engine.ProcessTouchMove(1, new SKPoint(150, 150));
 		engine.ProcessTouchUp(1, new SKPoint(150, 150));
 
 		Assert.True(dragEnded);
-	}
-
-	#endregion
-
-	#region Selection Changed Tests
-
-	[Fact]
-	public void SettingSelectedItemId_RaisesSelectionChanged()
-	{
-		var engine = CreateEngine();
-		long? selectedId = null;
-		engine.SelectionChanged += (s, e) => selectedId = e.SelectedItemId;
-
-		engine.SelectedItemId = 42;
-
-		Assert.Equal(42, selectedId);
-	}
-
-	[Fact]
-	public void ClearingSelection_RaisesSelectionChangedWithNull()
-	{
-		var engine = CreateEngine();
-		engine.SelectedItemId = 1;
-		
-		long? selectedId = -1;
-		engine.SelectionChanged += (s, e) => selectedId = e.SelectedItemId;
-
-		engine.SelectedItemId = null;
-
-		Assert.Null(selectedId);
 	}
 
 	#endregion
@@ -628,13 +532,11 @@ public class SKGestureEngineTests
 	public void Reset_ClearsState()
 	{
 		var engine = CreateEngine();
-		engine.SelectedItemId = 1;
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 
 		engine.Reset();
 
 		Assert.Equal(GestureState.None, engine.CurrentState);
-		Assert.Null(engine.SelectedItemId);
 	}
 
 	#endregion
