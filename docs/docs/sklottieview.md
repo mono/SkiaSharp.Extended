@@ -153,7 +153,19 @@ var lottieView = new SKLottieView
 
 ### .lottie File Structure
 
-A .lottie file is a ZIP archive with the following structure:
+A .lottie file is a ZIP archive. The format has evolved through versions:
+
+**dotLottie v1.0 structure:**
+```
+.
+├── manifest.json        # Metadata and animation list
+├── animations/          # Animation JSON files
+│   └── animation.json
+└── images/              # Image assets
+    └── image_0.png
+```
+
+**dotLottie v2.0 structure:**
 ```
 .
 ├── manifest.json      # Required: Metadata and animation list
@@ -164,6 +176,8 @@ A .lottie file is a ZIP archive with the following structure:
 ├── f/                 # Optional: Font assets
 └── t/                 # Optional: Theme files
 ```
+
+The library automatically detects and supports both v1.0 and v2.0 formats.
 
 ### Benefits of .lottie Format
 

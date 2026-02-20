@@ -123,9 +123,10 @@ public abstract class SKLottieImageSource : Element
 				}
 			}
 
-			// Fallback: look for JSON files in 'a' directory
+			// Fallback: look for JSON files in 'a' directory (v2.0 spec) or 'animations' directory (v1.0 spec)
 			if (string.IsNullOrEmpty(animationPath))
 			{
+				// Try v2.0 directory structure ('a/')
 				var animDir = Path.Combine(tempDir, "a");
 				if (Directory.Exists(animDir))
 				{
@@ -133,6 +134,20 @@ public abstract class SKLottieImageSource : Element
 					if (jsonFiles.Length > 0)
 					{
 						animationPath = Path.Combine("a", Path.GetFileName(jsonFiles[0]));
+					}
+				}
+
+				// Try v1.0 directory structure ('animations/')
+				if (string.IsNullOrEmpty(animationPath))
+				{
+					animDir = Path.Combine(tempDir, "animations");
+					if (Directory.Exists(animDir))
+					{
+						var jsonFiles = Directory.GetFiles(animDir, "*.json");
+						if (jsonFiles.Length > 0)
+						{
+							animationPath = Path.Combine("animations", Path.GetFileName(jsonFiles[0]));
+						}
 					}
 				}
 			}
@@ -145,9 +160,14 @@ public abstract class SKLottieImageSource : Element
 				throw new FileLoadException($"Animation file \"{animationPath}\" not found in .lottie archive.");
 
 			// Determine ImageAssetsFolder for .lottie embedded images
-			// Images in .lottie are in the 'i' subdirectory
+			// dotLottie v1.0 uses 'images/' subdirectory
+			// dotLottie v2.0 uses 'i/' subdirectory
 			string? imageAssetsFolderForLoad = ImageAssetsFolder;
-			var imagesDir = Path.Combine(tempDir, "i");
+			var imagesDir = Path.Combine(tempDir, "images");
+			if (!Directory.Exists(imagesDir))
+			{
+				imagesDir = Path.Combine(tempDir, "i");
+			}
 			if (Directory.Exists(imagesDir))
 			{
 				imageAssetsFolderForLoad = tempDir;

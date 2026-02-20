@@ -165,9 +165,10 @@ public partial class LottiePage : ContentPage
 
 			case ".lottie Format (ZIP)":
 				// SKFileLottieImageSource now auto-detects .lottie format
+				// Uses real dotnetbot.lottie with 10 embedded images
 				LottieSource = new SKFileLottieImageSource
 				{
-					File = "Lottie/test.lottie"
+					File = "Lottie/dotnetbot.lottie"
 				};
 				break;
 		}
@@ -179,7 +180,7 @@ public partial class LottiePage : ContentPage
 		{
 			"Base64 Embedded (dotnetbot)" => "Images embedded as base64 data URIs in JSON file",
 			"External Images (File System)" => "Images loaded from file system using ImageAssetsFolder property",
-			".lottie Format (ZIP)" => "Animation and images bundled in .lottie ZIP container",
+			".lottie Format (ZIP)" => "Animation with 10 images bundled in .lottie ZIP container (dotLottie v1.0)",
 			_ => ""
 		};
 	}

@@ -8,6 +8,7 @@ namespace SkiaSharp.Extended.UI.Controls.Tests;
 public class SKLottieDotLottieFormatTest
 {
 	private const string TestLottieFile = "TestAssets/Lottie/test.lottie";
+	private const string DotnetBotLottieFile = "TestAssets/Lottie/dotnetbot.lottie";
 	private const string TrophyJson = "TestAssets/Lottie/trophy.json";
 
 	[Fact]
@@ -18,6 +19,19 @@ public class SKLottieDotLottieFormatTest
 
 		await lottie.LoadedTask;
 		Assert.Equal(TimeSpan.FromSeconds(1), lottie.Duration);
+	}
+
+	[Fact]
+	public async Task RealDotnetBotLottieFileLoadsSuccessfully()
+	{
+		// Test with the real dotnetbot.lottie file (v1.0 format with 10 images)
+		var source = new SKFileLottieImageSource { File = DotnetBotLottieFile };
+		var lottie = new WaitingLottieView { Source = source };
+
+		await lottie.LoadedTask;
+		// dotnetbot animation is about 4 seconds (239 frames at 60fps)
+		Assert.True(lottie.Duration > TimeSpan.FromSeconds(3.5));
+		Assert.True(lottie.Duration < TimeSpan.FromSeconds(4.5));
 	}
 
 	[Fact]
