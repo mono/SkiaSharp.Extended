@@ -10,7 +10,7 @@ internal sealed class FlingTracker
 {
 	// Use only events from the last 200 ms
 	private const long ThresholdTicks = 200 * TimeSpan.TicksPerMillisecond;
-	private const int MaxSize = 2;
+	private const int MaxSize = 5;
 
 	private readonly Dictionary<long, Queue<FlingEvent>> _events = new();
 
@@ -44,22 +44,44 @@ internal sealed class FlingTracker
 			return SKPoint.Empty;
 
 		var array = queue.ToArray();
-		var first = array[0];
-		var last = array[array.Length - 1];
 
-		// Check if events are recent enough
-		if (now - first.Ticks >= ThresholdTicks)
+		// Find the oldest event within the threshold window
+		var startIndex = -1;
+		for (int i = 0; i < array.Length; i++)
+		{
+			if (now - array[i].Ticks < ThresholdTicks)
+			{
+				startIndex = i;
+				break;
+			}
+		}
+
+		if (startIndex < 0 || startIndex >= array.Length - 1)
 			return SKPoint.Empty;
 
-		var timeDelta = last.Ticks - first.Ticks;
-		if (timeDelta <= 0)
+		// Use weighted average of velocities between consecutive events,
+		// favoring more recent events
+		float totalVelocityX = 0, totalVelocityY = 0, totalWeight = 0;
+		for (int i = startIndex; i < array.Length - 1; i++)
+		{
+			var dt = array[i + 1].Ticks - array[i].Ticks;
+			if (dt <= 0)
+				continue;
+
+			var vx = (array[i + 1].X - array[i].X) * TimeSpan.TicksPerSecond / dt;
+			var vy = (array[i + 1].Y - array[i].Y) * TimeSpan.TicksPerSecond / dt;
+
+			// Weight increases for more recent events
+			var weight = (float)(i - startIndex + 1);
+			totalVelocityX += vx * weight;
+			totalVelocityY += vy * weight;
+			totalWeight += weight;
+		}
+
+		if (totalWeight <= 0)
 			return SKPoint.Empty;
 
-		// Calculate velocity in pixels per second
-		var velocityX = (last.X - first.X) * TimeSpan.TicksPerSecond / timeDelta;
-		var velocityY = (last.Y - first.Y) * TimeSpan.TicksPerSecond / timeDelta;
-
-		return new SKPoint(velocityX, velocityY);
+		return new SKPoint(totalVelocityX / totalWeight, totalVelocityY / totalWeight);
 	}
 
 	private readonly struct FlingEvent

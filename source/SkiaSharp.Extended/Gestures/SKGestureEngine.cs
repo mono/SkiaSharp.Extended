@@ -35,12 +35,15 @@ public class SKGestureEngine : IDisposable
 	private Timer? _longPressTimer;
 	
 	private SKPoint _initialTouch = SKPoint.Empty;
+	private SKPoint _lastTapLocation = SKPoint.Empty;
 	private long _lastTapTicks;
 	private int _tapCount;
 	private GestureState _gestureState = GestureState.None;
 	private PinchState _pinchState;
 	private bool _longPressTriggered;
+	private bool _dragStartedFired;
 	private long _touchStartTicks;
+	private Timer? _activeLongPressTimer;
 	private bool _disposed;
 
 	/// <summary>
@@ -162,21 +165,26 @@ public class SKGestureEngine : IDisposable
 		
 		_touches[id] = new TouchState(id, location, ticks, true);
 		
-		_initialTouch = location;
-		_touchStartTicks = ticks;
-		_longPressTriggered = false;
-		_flingTracker.Clear();
+		// Only set initial touch state for the first finger
+		if (_touches.Count == 1)
+		{
+			_initialTouch = location;
+			_touchStartTicks = ticks;
+			_longPressTriggered = false;
+			_dragStartedFired = false;
+		}
 
 		// Start the long press timer
 		StartLongPressTimer();
 
-		// Check for double tap
-		if (ticks - _lastTapTicks < DoubleTapDelayTicks && 
-			SKPoint.Distance(location, _initialTouch) < TouchSlop)
+		// Check for double tap using the last completed tap location
+		if (_touches.Count == 1 &&
+			ticks - _lastTapTicks < DoubleTapDelayTicks && 
+			SKPoint.Distance(location, _lastTapLocation) < TouchSlop)
 		{
 			_tapCount++;
 		}
-		else
+		else if (_touches.Count == 1)
 		{
 			_tapCount = 1;
 		}
@@ -242,6 +250,7 @@ public class SKGestureEngine : IDisposable
 		{
 			StopLongPressTimer();
 			_gestureState = GestureState.Panning;
+			_dragStartedFired = true;
 			OnDragStarted(new SKDragEventArgs(_initialTouch, location, location - _initialTouch));
 		}
 
@@ -252,13 +261,14 @@ public class SKGestureEngine : IDisposable
 				{
 					var delta = location - _pinchState.Center;
 					OnPanDetected(new SKPanEventArgs(location, _pinchState.Center, delta));
-					OnDragUpdated(new SKDragEventArgs(_initialTouch, location, delta));
+					if (_dragStartedFired)
+						OnDragUpdated(new SKDragEventArgs(_initialTouch, location, delta));
 					_pinchState = new PinchState(location, 0, 0);
 				}
 				break;
 
 			case GestureState.Pinching:
-				if (touchPoints.Length >= 2)
+				if (touchPoints.Length == 2)
 				{
 					var newPinch = PinchState.FromLocations(touchPoints);
 					
@@ -314,32 +324,36 @@ public class SKGestureEngine : IDisposable
 				handled = true;
 			}
 
-			// Check for tap
-			var distance = SKPoint.Distance(releasedTouch.Location, _initialTouch);
-			var duration = ticks - releasedTouch.Ticks;
-			var maxTapDuration = isMouse ? ShortClickTicks : LongPressTicks;
-
-			if (distance < TouchSlop && duration < maxTapDuration && !_longPressTriggered)
+			// Check for tap — only if we haven't transitioned to panning/pinching
+			if (_gestureState == GestureState.Detecting)
 			{
-				_lastTapTicks = ticks;
-				
-				if (_tapCount > 1)
+				var distance = SKPoint.Distance(location, _initialTouch);
+				var duration = ticks - _touchStartTicks;
+				var maxTapDuration = isMouse ? ShortClickTicks : LongPressTicks;
+
+				if (distance < TouchSlop && duration < maxTapDuration && !_longPressTriggered)
 				{
-					OnDoubleTapDetected(new SKTapEventArgs(location, _tapCount));
-					_tapCount = 0;
+					_lastTapTicks = ticks;
+					_lastTapLocation = location;
+					
+					if (_tapCount > 1)
+					{
+						OnDoubleTapDetected(new SKTapEventArgs(location, _tapCount));
+						_tapCount = 0;
+					}
+					else
+					{
+						OnTapDetected(new SKTapEventArgs(location, 1));
+					}
+					handled = true;
 				}
-				else
-				{
-					OnTapDetected(new SKTapEventArgs(location, 1));
-				}
-				handled = true;
 			}
 		}
 
 		_flingTracker.RemoveId(id);
 
 		// Handle end of drag/pan
-		if (_gestureState == GestureState.Panning)
+		if (_gestureState == GestureState.Panning && _dragStartedFired)
 		{
 			OnDragEnded(new SKDragEventArgs(_initialTouch, location, location - _initialTouch));
 		}
@@ -352,9 +366,16 @@ public class SKGestureEngine : IDisposable
 				OnGestureEnded(new SKGestureStateEventArgs(Array.Empty<SKPoint>(), _gestureState));
 				_gestureState = GestureState.None;
 			}
+			_dragStartedFired = false;
 		}
 		else if (touchPoints.Length == 1)
 		{
+			// Transition from pinch to pan — fire DragStarted for the new single-finger gesture
+			if (_gestureState == GestureState.Pinching && !_dragStartedFired)
+			{
+				_dragStartedFired = true;
+				OnDragStarted(new SKDragEventArgs(touchPoints[0], touchPoints[0], SKPoint.Empty));
+			}
 			_gestureState = GestureState.Panning;
 			_pinchState = new PinchState(touchPoints[0], 0, 0);
 		}
@@ -376,10 +397,18 @@ public class SKGestureEngine : IDisposable
 		_flingTracker.RemoveId(id);
 
 		var touchPoints = GetActiveTouchPoints();
-		if (touchPoints.Length == 0 && _gestureState != GestureState.None)
+		if (touchPoints.Length == 0)
 		{
-			OnGestureEnded(new SKGestureStateEventArgs(Array.Empty<SKPoint>(), _gestureState));
-			_gestureState = GestureState.None;
+			if (_gestureState == GestureState.Panning && _dragStartedFired)
+			{
+				OnDragEnded(new SKDragEventArgs(_initialTouch, _initialTouch, SKPoint.Empty));
+			}
+			if (_gestureState != GestureState.None)
+			{
+				OnGestureEnded(new SKGestureStateEventArgs(Array.Empty<SKPoint>(), _gestureState));
+				_gestureState = GestureState.None;
+			}
+			_dragStartedFired = false;
 		}
 
 		return true;
@@ -396,7 +425,9 @@ public class SKGestureEngine : IDisposable
 		_gestureState = GestureState.None;
 		_tapCount = 0;
 		_lastTapTicks = 0;
+		_lastTapLocation = SKPoint.Empty;
 		_longPressTriggered = false;
+		_dragStartedFired = false;
 	}
 
 	/// <summary>
@@ -415,17 +446,25 @@ public class SKGestureEngine : IDisposable
 	private void StartLongPressTimer()
 	{
 		StopLongPressTimer();
-		_longPressTimer = new Timer(OnLongPressTimerTick, null, LongPressDuration, Timeout.Infinite);
+		var timer = new Timer(OnLongPressTimerTick, null, LongPressDuration, Timeout.Infinite);
+		_activeLongPressTimer = timer;
+		_longPressTimer = timer;
 	}
 
 	private void StopLongPressTimer()
 	{
+		_activeLongPressTimer = null;
 		_longPressTimer?.Dispose();
 		_longPressTimer = null;
 	}
 
 	private void OnLongPressTimerTick(object? state)
 	{
+		// Check if this timer is still the active one (guards against stale callbacks)
+		var currentTimer = _activeLongPressTimer;
+		if (currentTimer == null)
+			return;
+
 		// Marshal to UI thread if we have a sync context
 		if (_syncContext != null)
 		{
