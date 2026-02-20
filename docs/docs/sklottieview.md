@@ -30,13 +30,15 @@ The `SKLottieImageSource` and its derived classes support the following property
 
 ### Available Image Source Types
 
-| Type                        | Purpose | Example |
-| :-------------------------- | :------ | :------ |
-| **SKFileLottieImageSource** | Load animation from a JSON file | `Source = new SKFileLottieImageSource { File = "animation.json" }` |
-| **SKUriLottieImageSource**  | Load animation from a URL | `Source = new SKUriLottieImageSource { Uri = new Uri("https://example.com/animation.json") }` |
-| **SKStreamLottieImageSource** | Load animation from a stream | `Source = new SKStreamLottieImageSource { Stream = myStreamGetter }` |
-| **SKDotLottieImageSource**  | Load animation from a .lottie file | `Source = new SKDotLottieImageSource { File = "animation.lottie" }` |
+All image sources automatically detect and support both JSON and .lottie (dotLottie ZIP) formats:
 
+| Type                        | Purpose | Supported Formats | Example |
+| :-------------------------- | :------ | :---------------- | :------ |
+| **SKFileLottieImageSource** | Load animation from a file | JSON, .lottie | `Source = new SKFileLottieImageSource { File = "animation.json" }` or `File = "animation.lottie"` |
+| **SKUriLottieImageSource**  | Load animation from a URL | JSON, .lottie | `Source = new SKUriLottieImageSource { Uri = new Uri("https://example.com/animation.json") }` |
+| **SKStreamLottieImageSource** | Load animation from a stream | JSON, .lottie | `Source = new SKStreamLottieImageSource { Stream = myStreamGetter }` |
+
+**Note:** All sources automatically detect the file format (JSON vs .lottie) by inspecting the stream content. You don't need different source types for different animation formats.
 ## Loading External Image Assets
 
 Lottie animations can reference external image files that are stored separately from the animation JSON. To use external images:
@@ -116,14 +118,35 @@ The `ImageAssetsFolder` property should be set to the base path where the images
 
 The .lottie format (also known as dotLottie) is a modern container format that bundles Lottie animations and all their assets (images, fonts, themes) into a single compressed ZIP file. This makes distribution and management much easier.
 
+**All image source types automatically detect and support .lottie files** - you don't need a separate source type.
+
 ### Using .lottie Files
 
 ```csharp
+// From a file - auto-detects .lottie format
 var lottieView = new SKLottieView
 {
-    Source = new SKDotLottieImageSource
+    Source = new SKFileLottieImageSource
     {
         File = "animations/my-animation.lottie"
+    }
+};
+
+// From a URI - auto-detects .lottie format
+var lottieView = new SKLottieView
+{
+    Source = new SKUriLottieImageSource
+    {
+        Uri = new Uri("https://example.com/animation.lottie")
+    }
+};
+
+// From a stream - auto-detects .lottie format
+var lottieView = new SKLottieView
+{
+    Source = new SKStreamLottieImageSource
+    {
+        Stream = async ct => await GetAnimationStreamAsync()
     }
 };
 ```

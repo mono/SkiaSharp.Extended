@@ -164,7 +164,8 @@ public partial class LottiePage : ContentPage
 				break;
 
 			case ".lottie Format (ZIP)":
-				LottieSource = new SKDotLottieImageSource
+				// SKFileLottieImageSource now auto-detects .lottie format
+				LottieSource = new SKFileLottieImageSource
 				{
 					File = "Lottie/test.lottie"
 				};

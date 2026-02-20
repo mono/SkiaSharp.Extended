@@ -26,17 +26,14 @@ public class SKUriLottieImageSource : SKLottieImageSource
 			using var response = await client.GetAsync(Uri, cancellationToken).ConfigureAwait(false);
 			response.EnsureSuccessStatusCode();
 
-			using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-			if (stream is null)
-				throw new FileLoadException($"Unable to load Lottie animation uri \"{Uri}\".");
+			// Download to memory stream so we can detect format
+			using var memoryStream = new MemoryStream();
+			await response.Content.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
+			memoryStream.Position = 0;
 
-			var animation = CreateAnimationBuilder().Build(stream);
-			if (animation is null)
-				throw new FileLoadException($"Unable to parse Lottie animation \"{Uri}\".");
-
-			return new SKLottieAnimation(animation);
+			return await LoadAnimationFromStreamAsync(memoryStream, cancellationToken);
 		}
-		catch (Exception ex)
+		catch (Exception ex) when (ex is not FileLoadException)
 		{
 			throw new FileLoadException($"Error loading Lottie animation uri \"{Uri}\".", ex);
 		}

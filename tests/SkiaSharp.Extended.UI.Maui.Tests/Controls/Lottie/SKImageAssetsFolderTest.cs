@@ -86,11 +86,6 @@ public class SKImageAssetsFolderTest
 		var streamSource = new SKStreamLottieImageSource();
 		streamSource.ImageAssetsFolder = "stream/path";
 		Assert.Equal("stream/path", streamSource.ImageAssetsFolder);
-
-		// Test on SKDotLottieImageSource
-		var dotLottieSource = new SKDotLottieImageSource();
-		dotLottieSource.ImageAssetsFolder = "dotlottie/path";
-		Assert.Equal("dotlottie/path", dotLottieSource.ImageAssetsFolder);
 	}
 
 	[Fact]
