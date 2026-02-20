@@ -25,6 +25,7 @@ public partial class GesturePage : ContentPage
 	private bool _enableDoubleTap = true;
 	private bool _enableLongPress = true;
 	private bool _enableDrag = true;
+	private bool _enableScrollZoom = true;
 
 	// Transform state
 	private float _canvasScale = 1f;
@@ -322,6 +323,22 @@ public partial class GesturePage : ContentPage
 		statusLabel.Text = "Fling ended";
 	}
 
+	private void OnScroll(object? sender, SKScrollEventArgs e)
+	{
+		if (!_enableScrollZoom) return;
+
+		// Use scroll delta for zooming at the mouse location
+		const float zoomFactor = 0.1f;
+		var scaleDelta = 1f + e.DeltaY * zoomFactor;
+		var newScale = Math.Clamp(_canvasScale * scaleDelta, 0.1f, 10f);
+
+		AdjustOffsetForPivot(e.Location, _canvasScale, newScale, _canvasRotation, _canvasRotation);
+		_canvasScale = newScale;
+
+		statusLabel.Text = $"Scroll zoom: {_canvasScale:F2}x";
+		gestureView.Invalidate();
+	}
+
 	private void OnDragStarted(object? sender, SKDragEventArgs e)
 	{
 		if (!_enableDrag) return;
@@ -438,6 +455,7 @@ public partial class GesturePage : ContentPage
 			("Rotate", _enableRotate, v => _enableRotate = v),
 			("Fling", _enableFling, v => _enableFling = v),
 			("Drag (Sticker)", _enableDrag, v => _enableDrag = v),
+			("Scroll Zoom", _enableScrollZoom, v => _enableScrollZoom = v),
 		};
 
 		foreach (var (label, value, setter) in toggles)
