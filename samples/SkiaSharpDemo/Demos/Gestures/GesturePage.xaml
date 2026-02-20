@@ -28,6 +28,8 @@
                                         PinchDetected="OnPinch"
                                         RotateDetected="OnRotate"
                                         FlingDetected="OnFling"
+                                        Flinging="OnFlinging"
+                                        FlingCompleted="OnFlingCompleted"
                                         DragStarted="OnDragStarted"
                                         DragUpdated="OnDragUpdated"
                                         DragEnded="OnDragEnded" />

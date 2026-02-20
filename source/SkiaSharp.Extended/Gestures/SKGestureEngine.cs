@@ -28,6 +28,9 @@ public class SKGestureEngine : IDisposable
 	// Distance and velocity thresholds
 	private const float TouchSlopPixels = 8f;
 	private const float FlingVelocityThreshold = 200f; // pixels per second
+	private const float DefaultFlingFriction = 0.92f;
+	private const float DefaultFlingMinVelocity = 5f;
+	private const int DefaultFlingFrameMs = 16;
 
 	private readonly Dictionary<long, SKTouchState> _touches = new();
 	private readonly SKFlingTracker _flingTracker = new();
@@ -45,6 +48,12 @@ public class SKGestureEngine : IDisposable
 	private long _touchStartTicks;
 	private Timer? _activeLongPressTimer;
 	private bool _disposed;
+
+	// Fling animation state
+	private Timer? _flingTimer;
+	private float _flingVelocityX;
+	private float _flingVelocityY;
+	private bool _isFlinging;
 
 	/// <summary>
 	/// Gets or sets the current time provider. Used for testing.
@@ -65,6 +74,26 @@ public class SKGestureEngine : IDisposable
 	/// Gets or sets the fling velocity threshold.
 	/// </summary>
 	public float FlingThreshold { get; set; } = FlingVelocityThreshold;
+
+	/// <summary>
+	/// Gets or sets the fling friction (deceleration factor per frame, 0-1). Higher = slower stop.
+	/// </summary>
+	public float FlingFriction { get; set; } = DefaultFlingFriction;
+
+	/// <summary>
+	/// Gets or sets the minimum fling velocity before the animation stops.
+	/// </summary>
+	public float FlingMinVelocity { get; set; } = DefaultFlingMinVelocity;
+
+	/// <summary>
+	/// Gets or sets the fling animation frame interval in milliseconds (~60 FPS = 16ms).
+	/// </summary>
+	public int FlingFrameInterval { get; set; } = DefaultFlingFrameMs;
+
+	/// <summary>
+	/// Gets whether a fling animation is currently running.
+	/// </summary>
+	public bool IsFlinging => _isFlinging;
 
 	/// <summary>
 	/// Gets or sets the long press duration in milliseconds.
@@ -112,9 +141,19 @@ public class SKGestureEngine : IDisposable
 	public event EventHandler<SKRotateEventArgs>? RotateDetected;
 
 	/// <summary>
-	/// Occurs when a fling gesture is detected.
+	/// Occurs when a fling gesture is detected (fires once with initial velocity).
 	/// </summary>
 	public event EventHandler<SKFlingEventArgs>? FlingDetected;
+
+	/// <summary>
+	/// Occurs each animation frame during a fling with current velocity and per-frame delta.
+	/// </summary>
+	public event EventHandler<SKFlingEventArgs>? Flinging;
+
+	/// <summary>
+	/// Occurs when a fling animation completes (velocity dropped below minimum).
+	/// </summary>
+	public event EventHandler? FlingCompleted;
 
 	/// <summary>
 	/// Occurs when a hover is detected.
@@ -160,6 +199,9 @@ public class SKGestureEngine : IDisposable
 
 		// Capture the synchronization context on first touch (UI thread)
 		_syncContext ??= SynchronizationContext.Current;
+
+		// Stop any active fling animation on new touch
+		StopFling();
 
 		var ticks = TimeProvider();
 
@@ -321,6 +363,7 @@ public class SKGestureEngine : IDisposable
 			if (velocityMagnitude > FlingThreshold)
 			{
 				OnFlingDetected(new SKFlingEventArgs(velocity.X, velocity.Y));
+				StartFlingAnimation(velocity.X, velocity.Y);
 				handled = true;
 			}
 
@@ -420,6 +463,7 @@ public class SKGestureEngine : IDisposable
 	public void Reset()
 	{
 		StopLongPressTimer();
+		StopFling();
 		_touches.Clear();
 		_flingTracker.Clear();
 		_gestureState = SKGestureState.None;
@@ -440,6 +484,7 @@ public class SKGestureEngine : IDisposable
 
 		_disposed = true;
 		StopLongPressTimer();
+		StopFling();
 		Reset();
 	}
 
@@ -514,6 +559,78 @@ public class SKGestureEngine : IDisposable
 		return angle;
 	}
 
+	/// <summary>
+	/// Stops any active fling animation.
+	/// </summary>
+	public void StopFling()
+	{
+		if (!_isFlinging)
+			return;
+
+		_isFlinging = false;
+		_flingVelocityX = 0;
+		_flingVelocityY = 0;
+		_flingTimer?.Dispose();
+		_flingTimer = null;
+		OnFlingCompleted();
+	}
+
+	private void StartFlingAnimation(float velocityX, float velocityY)
+	{
+		// Stop any existing fling without firing completed
+		_flingTimer?.Dispose();
+
+		_flingVelocityX = velocityX;
+		_flingVelocityY = velocityY;
+		_isFlinging = true;
+
+		_flingTimer = new Timer(
+			OnFlingTimerTick,
+			null,
+			FlingFrameInterval,
+			FlingFrameInterval);
+	}
+
+	private void OnFlingTimerTick(object? state)
+	{
+		if (!_isFlinging || _disposed)
+			return;
+
+		if (_syncContext != null)
+		{
+			_syncContext.Post(_ => HandleFlingFrame(), null);
+		}
+		else
+		{
+			HandleFlingFrame();
+		}
+	}
+
+	private void HandleFlingFrame()
+	{
+		if (!_isFlinging || _disposed)
+			return;
+
+		// Calculate per-frame displacement
+		var dt = FlingFrameInterval / 1000f;
+		var deltaX = _flingVelocityX * dt;
+		var deltaY = _flingVelocityY * dt;
+
+		// Fire the per-frame event
+		OnFlinging(new SKFlingEventArgs(_flingVelocityX, _flingVelocityY, deltaX, deltaY));
+
+		// Apply friction
+		_flingVelocityX *= FlingFriction;
+		_flingVelocityY *= FlingFriction;
+
+		// Check if velocity is below minimum
+		var speed = (float)Math.Sqrt(_flingVelocityX * _flingVelocityX + _flingVelocityY * _flingVelocityY);
+		if (speed < FlingMinVelocity)
+		{
+			StopFling();
+		}
+	}
+
 	// Event invokers
 	protected virtual void OnTapDetected(SKTapEventArgs e) => TapDetected?.Invoke(this, e);
 	protected virtual void OnDoubleTapDetected(SKTapEventArgs e) => DoubleTapDetected?.Invoke(this, e);
@@ -522,6 +639,8 @@ public class SKGestureEngine : IDisposable
 	protected virtual void OnPinchDetected(SKPinchEventArgs e) => PinchDetected?.Invoke(this, e);
 	protected virtual void OnRotateDetected(SKRotateEventArgs e) => RotateDetected?.Invoke(this, e);
 	protected virtual void OnFlingDetected(SKFlingEventArgs e) => FlingDetected?.Invoke(this, e);
+	protected virtual void OnFlinging(SKFlingEventArgs e) => Flinging?.Invoke(this, e);
+	protected virtual void OnFlingCompleted() => FlingCompleted?.Invoke(this, EventArgs.Empty);
 	protected virtual void OnHoverDetected(SKHoverEventArgs e) => HoverDetected?.Invoke(this, e);
 	protected virtual void OnGestureStarted(SKGestureStateEventArgs e) => GestureStarted?.Invoke(this, e);
 	protected virtual void OnGestureEnded(SKGestureStateEventArgs e) => GestureEnded?.Invoke(this, e);
