@@ -282,20 +282,26 @@ public class SKGestureSurfaceView : SKSurfaceView
 		_engine.Dispose();
 	}
 
+	private float _displayScale = 1f;
+
 	private void OnTouch(object? sender, SKTouchEventArgs e)
 	{
 		var isMouse = e.DeviceType == SKTouchDeviceType.Mouse;
 
+		// Convert pixel coordinates to point coordinates (matching the pre-scaled canvas)
+		var scale = _displayScale;
+		var location = scale > 0 ? new SKPoint(e.Location.X / scale, e.Location.Y / scale) : e.Location;
+
 		switch (e.ActionType)
 		{
 			case SKTouchAction.Pressed:
-				e.Handled = _engine.ProcessTouchDown(e.Id, e.Location, isMouse);
+				e.Handled = _engine.ProcessTouchDown(e.Id, location, isMouse);
 				break;
 			case SKTouchAction.Moved:
-				e.Handled = _engine.ProcessTouchMove(e.Id, e.Location, e.InContact);
+				e.Handled = _engine.ProcessTouchMove(e.Id, location, e.InContact);
 				break;
 			case SKTouchAction.Released:
-				e.Handled = _engine.ProcessTouchUp(e.Id, e.Location, isMouse);
+				e.Handled = _engine.ProcessTouchUp(e.Id, location, isMouse);
 				break;
 			case SKTouchAction.Cancelled:
 				e.Handled = _engine.ProcessTouchCancel(e.Id);
@@ -310,10 +316,17 @@ public class SKGestureSurfaceView : SKSurfaceView
 	/// <inheritdoc/>
 	internal override void OnPaintSurfaceCore(SKSurface surface, SKSize size)
 	{
+		// Cache the display scale factor (pixels / points)
+		if (Width > 0)
+			_displayScale = size.Width / (float)Width;
+
 		base.OnPaintSurfaceCore(surface, size);
 		
-		// Invoke the PaintSurface event
-		var info = new SKImageInfo((int)size.Width, (int)size.Height);
+		// Pass point-based dimensions (matching the pre-scaled canvas from base class)
+		var scale = _displayScale;
+		var pointWidth = scale > 0 ? (int)(size.Width / scale) : (int)size.Width;
+		var pointHeight = scale > 0 ? (int)(size.Height / scale) : (int)size.Height;
+		var info = new SKImageInfo(pointWidth, pointHeight);
 		var args = new SKPaintSurfaceEventArgs(surface, info);
 		PaintSurface?.Invoke(this, args);
 	}

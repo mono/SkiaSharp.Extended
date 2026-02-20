@@ -20,6 +20,8 @@ public partial class GesturePage : ContentPage
 	private float _canvasScale = 1f;
 	private float _canvasRotation;
 	private SKPoint _canvasOffset = SKPoint.Empty;
+	private int _canvasWidth;
+	private int _canvasHeight;
 
 	// Fling animation state
 	private IDispatcherTimer? _flingTimer;
@@ -104,6 +106,10 @@ public partial class GesturePage : ContentPage
 		var canvas = e.Surface.Canvas;
 		var width = e.Info.Width;
 		var height = e.Info.Height;
+
+		// Cache canvas size for hit testing
+		_canvasWidth = width;
+		_canvasHeight = height;
 
 		// Clear background
 		canvas.Clear(SKColors.White);
@@ -270,9 +276,12 @@ public partial class GesturePage : ContentPage
 	{
 		StopFlingAnimation(); // Stop any ongoing fling when starting a new pan
 		
-		// Pan the canvas
-		_canvasOffset = new SKPoint(_canvasOffset.X + e.Delta.X, _canvasOffset.Y + e.Delta.Y);
-		statusLabel.Text = $"Pan: Δ({e.Delta.X:F1}, {e.Delta.Y:F1})";
+		// Only pan canvas when no sticker is selected
+		if (_selectedSticker == null)
+		{
+			_canvasOffset = new SKPoint(_canvasOffset.X + e.Delta.X, _canvasOffset.Y + e.Delta.Y);
+			statusLabel.Text = $"Pan: Δ({e.Delta.X:F1}, {e.Delta.Y:F1})";
+		}
 		
 		gestureView.Invalidate();
 	}
@@ -344,9 +353,11 @@ public partial class GesturePage : ContentPage
 	private Sticker? HitTest(SKPoint location)
 	{
 		// Transform location by inverse of canvas transform
-		var size = gestureView.CanvasSize;
-		var w = size.Width;
-		var h = size.Height;
+		var w = (float)_canvasWidth;
+		var h = (float)_canvasHeight;
+
+		if (w <= 0 || h <= 0)
+			return null;
 
 		// Build the same transform used in OnPaintSurface
 		var matrix = SKMatrix.CreateTranslation(w / 2f + _canvasOffset.X, h / 2f + _canvasOffset.Y);
