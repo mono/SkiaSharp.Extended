@@ -16,6 +16,16 @@ public partial class GesturePage : ContentPage
 	private readonly Queue<string> _eventLog = new();
 	private const int MaxLogEntries = 5;
 
+	// Feature toggles
+	private bool _enablePan = true;
+	private bool _enablePinch = true;
+	private bool _enableRotate = true;
+	private bool _enableFling = true;
+	private bool _enableTap = true;
+	private bool _enableDoubleTap = true;
+	private bool _enableLongPress = true;
+	private bool _enableDrag = true;
+
 	// Transform state
 	private float _canvasScale = 1f;
 	private float _canvasRotation;
@@ -230,6 +240,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnTap(object? sender, SKTapEventArgs e)
 	{
+		if (!_enableTap) return;
 		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Tap at ({e.Location.X:F0}, {e.Location.Y:F0})");
 		
@@ -251,6 +262,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnDoubleTap(object? sender, SKTapEventArgs e)
 	{
+		if (!_enableDoubleTap) return;
 		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Double tap ({e.TapCount}x) at ({e.Location.X:F0}, {e.Location.Y:F0})");
 
@@ -278,6 +290,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnLongPress(object? sender, SKTapEventArgs e)
 	{
+		if (!_enableLongPress) return;
 		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Long press at ({e.Location.X:F0}, {e.Location.Y:F0})");
 		
@@ -304,6 +317,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnPan(object? sender, SKPanEventArgs e)
 	{
+		if (!_enablePan) return;
 		StopFlingAnimation(); // Stop any ongoing fling when starting a new pan
 		
 		// Only pan canvas when no sticker is selected
@@ -319,6 +333,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnPinch(object? sender, SKPinchEventArgs e)
 	{
+		if (!_enablePinch) return;
 		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Pinch scale: {e.Scale:F2}");
 		
@@ -338,6 +353,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnRotate(object? sender, SKRotateEventArgs e)
 	{
+		if (!_enableRotate) return;
 		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Rotate: {e.RotationDelta:F1}°");
 		
@@ -352,6 +368,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnFling(object? sender, SKFlingEventArgs e)
 	{
+		if (!_enableFling) return;
 		LogEvent($"Fling: ({e.VelocityX:F0}, {e.VelocityY:F0}) px/s");
 		
 		// Start smooth fling animation
@@ -361,6 +378,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnDragStarted(object? sender, SKDragEventArgs e)
 	{
+		if (!_enableDrag) return;
 		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Drag started at ({e.StartLocation.X:F0}, {e.StartLocation.Y:F0})");
 		
@@ -372,6 +390,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnDragUpdated(object? sender, SKDragEventArgs e)
 	{
+		if (!_enableDrag) return;
 		// Move selected sticker
 		if (_selectedSticker != null)
 		{
@@ -385,6 +404,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnDragEnded(object? sender, SKDragEventArgs e)
 	{
+		if (!_enableDrag) return;
 		LogEvent($"Drag ended at ({e.CurrentLocation.X:F0}, {e.CurrentLocation.Y:F0})");
 		statusLabel.Text = "Drag completed";
 	}
@@ -444,6 +464,90 @@ public partial class GesturePage : ContentPage
 		}
 		
 		return null;
+	}
+
+	private async void OnSettingsClicked(object? sender, EventArgs e)
+	{
+		var page = new ContentPage { Title = "Gesture Settings" };
+
+		var touchSlop = gestureView.TouchSlop;
+		var longPressDuration = gestureView.LongPressDuration;
+
+		var layout = new VerticalStackLayout { Padding = 20, Spacing = 12 };
+
+		// --- Gesture Toggles ---
+		layout.Children.Add(new Label { Text = "Gesture Toggles", FontAttributes = FontAttributes.Bold, FontSize = 16 });
+
+		var toggles = new (string Label, bool Value, Action<bool> Setter)[]
+		{
+			("Tap", _enableTap, v => _enableTap = v),
+			("Double Tap", _enableDoubleTap, v => _enableDoubleTap = v),
+			("Long Press", _enableLongPress, v => _enableLongPress = v),
+			("Pan", _enablePan, v => _enablePan = v),
+			("Pinch (Zoom)", _enablePinch, v => _enablePinch = v),
+			("Rotate", _enableRotate, v => _enableRotate = v),
+			("Fling", _enableFling, v => _enableFling = v),
+			("Drag (Sticker)", _enableDrag, v => _enableDrag = v),
+		};
+
+		foreach (var (label, value, setter) in toggles)
+		{
+			var sw = new Switch { IsToggled = value };
+			var captured = setter;
+			sw.Toggled += (_, args) => captured(args.Value);
+			layout.Children.Add(new HorizontalStackLayout
+			{
+				Spacing = 10,
+				Children = { sw, new Label { Text = label, VerticalOptions = LayoutOptions.Center } }
+			});
+		}
+
+		// --- Thresholds ---
+		layout.Children.Add(new Label { Text = "Detection Thresholds", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
+
+		// Touch slop
+		var slopLabel = new Label { Text = $"Touch Slop: {touchSlop:F0} px" };
+		var slopSlider = new Slider { Minimum = 1, Maximum = 50, Value = touchSlop };
+		slopSlider.ValueChanged += (_, args) =>
+		{
+			gestureView.TouchSlop = (float)args.NewValue;
+			slopLabel.Text = $"Touch Slop: {args.NewValue:F0} px";
+		};
+		layout.Children.Add(slopLabel);
+		layout.Children.Add(slopSlider);
+
+		// Long press duration
+		var lpLabel = new Label { Text = $"Long Press: {longPressDuration} ms" };
+		var lpSlider = new Slider { Minimum = 100, Maximum = 2000, Value = longPressDuration };
+		lpSlider.ValueChanged += (_, args) =>
+		{
+			gestureView.LongPressDuration = (int)args.NewValue;
+			lpLabel.Text = $"Long Press: {(int)args.NewValue} ms";
+		};
+		layout.Children.Add(lpLabel);
+		layout.Children.Add(lpSlider);
+
+		// --- Current State ---
+		layout.Children.Add(new Label { Text = "Current State", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
+		layout.Children.Add(new Label { Text = $"Scale: {_canvasScale:F2}x" });
+		layout.Children.Add(new Label { Text = $"Rotation: {_canvasRotation:F1}°" });
+		layout.Children.Add(new Label { Text = $"Offset: ({_canvasOffset.X:F0}, {_canvasOffset.Y:F0})" });
+		layout.Children.Add(new Label { Text = $"Selected: {(_selectedSticker != null ? $"Sticker {_selectedSticker.Label}" : "None")}" });
+
+		// Reset button
+		var resetBtn = new Button { Text = "Reset View", Margin = new Thickness(0, 10, 0, 0) };
+		resetBtn.Clicked += (_, _) =>
+		{
+			_canvasScale = 1f;
+			_canvasRotation = 0f;
+			_canvasOffset = SKPoint.Empty;
+			_selectedSticker = null;
+			gestureView.Invalidate();
+		};
+		layout.Children.Add(resetBtn);
+
+		page.Content = new ScrollView { Content = layout };
+		await Navigation.PushAsync(page);
 	}
 
 	private void LogEvent(string message)

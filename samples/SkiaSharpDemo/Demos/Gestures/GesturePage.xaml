@@ -5,6 +5,10 @@
              x:Class="SkiaSharpDemo.Demos.GesturePage"
              Title="Gesture Demo">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="⚙️" Clicked="OnSettingsClicked" />
+    </ContentPage.ToolbarItems>
+
     <Grid RowDefinitions="Auto,*,Auto">
         
         <!-- Instructions Panel -->
