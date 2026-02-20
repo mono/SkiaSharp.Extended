@@ -27,6 +27,7 @@ public class SKGestureEngine : IDisposable
 
 	// Distance and velocity thresholds
 	private const float TouchSlopPixels = 8f;
+	private const float DoubleTapSlopPixels = 40f;
 	private const float FlingVelocityThreshold = 200f; // pixels per second
 	private const float DefaultFlingFriction = 0.92f;
 	private const float DefaultFlingMinVelocity = 5f;
@@ -36,6 +37,7 @@ public class SKGestureEngine : IDisposable
 	private readonly SKFlingTracker _flingTracker = new();
 	private SynchronizationContext? _syncContext;
 	private Timer? _longPressTimer;
+	private int _longPressToken;
 
 	private SKPoint _initialTouch = SKPoint.Empty;
 	private SKPoint _lastTapLocation = SKPoint.Empty;
@@ -46,11 +48,11 @@ public class SKGestureEngine : IDisposable
 	private bool _longPressTriggered;
 	private bool _dragStartedFired;
 	private long _touchStartTicks;
-	private Timer? _activeLongPressTimer;
 	private bool _disposed;
 
 	// Fling animation state
 	private Timer? _flingTimer;
+	private int _flingToken;
 	private float _flingVelocityX;
 	private float _flingVelocityY;
 	private bool _isFlinging;
@@ -69,6 +71,11 @@ public class SKGestureEngine : IDisposable
 	/// Gets or sets the touch slop (minimum movement distance to start a gesture).
 	/// </summary>
 	public float TouchSlop { get; set; } = TouchSlopPixels;
+
+	/// <summary>
+	/// Gets or sets the maximum distance between two taps for double-tap detection.
+	/// </summary>
+	public float DoubleTapSlop { get; set; } = DoubleTapSlopPixels;
 
 	/// <summary>
 	/// Gets or sets the fling velocity threshold.
@@ -227,7 +234,7 @@ public class SKGestureEngine : IDisposable
 		// Check for double tap using the last completed tap location
 		if (_touches.Count == 1 &&
 			ticks - _lastTapTicks < DoubleTapDelayTicks &&
-			SKPoint.Distance(location, _lastTapLocation) < TouchSlop)
+			SKPoint.Distance(location, _lastTapLocation) < DoubleTapSlop)
 		{
 			_tapCount++;
 		}
@@ -313,7 +320,7 @@ public class SKGestureEngine : IDisposable
 				break;
 
 			case SKGestureState.Pinching:
-				if (touchPoints.Length == 2)
+				if (touchPoints.Length >= 2)
 				{
 					var newPinch = SKPinchState.FromLocations(touchPoints);
 
@@ -416,14 +423,23 @@ public class SKGestureEngine : IDisposable
 		}
 		else if (touchPoints.Length == 1)
 		{
-			// Transition from pinch to pan — fire DragStarted for the new single-finger gesture
-			if (_gestureState == SKGestureState.Pinching && !_dragStartedFired)
+			// Transition from pinch to pan — update origin and fire DragStarted
+			if (_gestureState == SKGestureState.Pinching)
 			{
-				_dragStartedFired = true;
-				OnDragStarted(new SKDragEventArgs(touchPoints[0], touchPoints[0], SKPoint.Empty));
+				_initialTouch = touchPoints[0];
+				if (!_dragStartedFired)
+				{
+					_dragStartedFired = true;
+					OnDragStarted(new SKDragEventArgs(touchPoints[0], touchPoints[0], SKPoint.Empty));
+				}
 			}
 			_gestureState = SKGestureState.Panning;
 			_pinchState = new SKPinchState(touchPoints[0], 0, 0);
+		}
+		else if (touchPoints.Length >= 2)
+		{
+			// Recalculate pinch state for remaining fingers to avoid jumps
+			_pinchState = SKPinchState.FromLocations(touchPoints);
 		}
 
 		return handled;
@@ -436,9 +452,10 @@ public class SKGestureEngine : IDisposable
 	/// <returns>True if the event was handled.</returns>
 	public bool ProcessTouchCancel(long id)
 	{
-		if (!IsEnabled)
+		if (!IsEnabled || _disposed)
 			return false;
 
+		StopLongPressTimer();
 		_touches.Remove(id);
 		_flingTracker.RemoveId(id);
 
@@ -510,29 +527,34 @@ public class SKGestureEngine : IDisposable
 	private void StartLongPressTimer()
 	{
 		StopLongPressTimer();
-		var timer = new Timer(OnLongPressTimerTick, null, LongPressDuration, Timeout.Infinite);
-		_activeLongPressTimer = timer;
+		var token = Interlocked.Increment(ref _longPressToken);
+		var timer = new Timer(OnLongPressTimerTick, token, LongPressDuration, Timeout.Infinite);
 		_longPressTimer = timer;
 	}
 
 	private void StopLongPressTimer()
 	{
-		_activeLongPressTimer = null;
-		_longPressTimer?.Dispose();
+		Interlocked.Increment(ref _longPressToken);
+		var timer = _longPressTimer;
 		_longPressTimer = null;
+		timer?.Change(Timeout.Infinite, Timeout.Infinite);
+		timer?.Dispose();
 	}
 
 	private void OnLongPressTimerTick(object? state)
 	{
-		// Check if this timer is still the active one (guards against stale callbacks)
-		var currentTimer = _activeLongPressTimer;
-		if (currentTimer == null)
+		// Verify this callback is for the current timer (not a stale one)
+		if (state is not int token || token != Volatile.Read(ref _longPressToken))
 			return;
 
 		// Marshal to UI thread if we have a sync context
 		if (_syncContext != null)
 		{
-			_syncContext.Post(_ => HandleLongPress(), null);
+			_syncContext.Post(_ =>
+			{
+				if (token == Volatile.Read(ref _longPressToken))
+					HandleLongPress();
+			}, null);
 		}
 		else
 		{
@@ -589,35 +611,48 @@ public class SKGestureEngine : IDisposable
 		_isFlinging = false;
 		_flingVelocityX = 0;
 		_flingVelocityY = 0;
-		_flingTimer?.Dispose();
+		Interlocked.Increment(ref _flingToken);
+		var timer = _flingTimer;
 		_flingTimer = null;
+		timer?.Change(Timeout.Infinite, Timeout.Infinite);
+		timer?.Dispose();
 		OnFlingCompleted();
 	}
 
 	private void StartFlingAnimation(float velocityX, float velocityY)
 	{
-		// Stop any existing fling without firing completed
-		_flingTimer?.Dispose();
+		// Stop any existing fling timer without firing completed
+		var oldTimer = _flingTimer;
+		oldTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+		oldTimer?.Dispose();
 
 		_flingVelocityX = velocityX;
 		_flingVelocityY = velocityY;
 		_isFlinging = true;
 
+		var token = Interlocked.Increment(ref _flingToken);
 		_flingTimer = new Timer(
 			OnFlingTimerTick,
-			null,
+			token,
 			FlingFrameInterval,
 			FlingFrameInterval);
 	}
 
 	private void OnFlingTimerTick(object? state)
 	{
+		if (state is not int token || token != Volatile.Read(ref _flingToken))
+			return;
+
 		if (!_isFlinging || _disposed)
 			return;
 
 		if (_syncContext != null)
 		{
-			_syncContext.Post(_ => HandleFlingFrame(), null);
+			_syncContext.Post(_ =>
+			{
+				if (token == Volatile.Read(ref _flingToken))
+					HandleFlingFrame();
+			}, null);
 		}
 		else
 		{
