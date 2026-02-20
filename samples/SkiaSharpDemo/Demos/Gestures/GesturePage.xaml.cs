@@ -339,6 +339,11 @@ public partial class GesturePage : ContentPage
 		gestureView.Invalidate();
 	}
 
+	private void OnHover(object? sender, SKHoverEventArgs e)
+	{
+		statusLabel.Text = $"Hover: ({e.Location.X:F0}, {e.Location.Y:F0})";
+	}
+
 	private void OnDragStarted(object? sender, SKDragEventArgs e)
 	{
 		if (!_enableDrag) return;
