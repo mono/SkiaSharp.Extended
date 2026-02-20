@@ -1248,4 +1248,269 @@ public class SKLottieViewTest
 		// Should have moved 30 frames in one 0.5s update
 		Assert.True(lottie.CurrentFrame >= 30);
 	}
+
+	// ===========================================
+	// Segment Tests (issue #166)
+	// ===========================================
+
+	[Fact]
+	public async Task SegmentDefaultsToFullRangeAfterLoad()
+	{
+		// After loading, SegmentStart=0 and SegmentEnd=Duration (full animation)
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		Assert.Equal(TimeSpan.Zero, lottie.SegmentStart);
+		Assert.Equal(lottie.Duration, lottie.SegmentEnd);
+	}
+
+	[Fact]
+	public async Task SetSegmentByTimeUpdatesDuration()
+	{
+		// SetSegment(0s, 1s) on trophy.json (2.36s total) → Duration becomes 1s
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SetSegment(TimeSpan.Zero, TimeSpan.FromSeconds(1.0));
+
+		Assert.Equal(TimeSpan.Zero, lottie.SegmentStart);
+		Assert.Equal(TimeSpan.FromSeconds(1.0), lottie.SegmentEnd);
+		Assert.Equal(TimeSpan.FromSeconds(1.0), lottie.Duration);
+	}
+
+	[Fact]
+	public async Task SetSegmentByFrameUpdatesDuration()
+	{
+		// SetSegment(0, 30) on trophy.json (30fps) → Duration = 30/30 = 1.0s
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SetSegment(0, 30);
+
+		Assert.Equal(TimeSpan.Zero, lottie.SegmentStart);
+		Assert.Equal(TimeSpan.FromSeconds(30.0 / lottie.Fps), lottie.SegmentEnd);
+		Assert.Equal(TimeSpan.FromSeconds(1.0), lottie.Duration);
+	}
+
+	[Fact]
+	public async Task SetSegmentUpdatesFrameCount()
+	{
+		// SetSegment(0, 30) → FrameCount = round(1.0 * 30) = 30
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SetSegment(0, 30);
+
+		Assert.Equal(30, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task SetSegmentMidRangeUpdatesDuration()
+	{
+		// SetSegment(10, 40) on trophy.json → Duration = 30 frames = 1.0s
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SetSegment(10, 40);
+
+		var expectedStart = TimeSpan.FromSeconds(10.0 / lottie.Fps);
+		var expectedEnd = TimeSpan.FromSeconds(40.0 / lottie.Fps);
+		Assert.Equal(expectedStart, lottie.SegmentStart);
+		Assert.Equal(expectedEnd, lottie.SegmentEnd);
+		Assert.Equal(expectedEnd - expectedStart, lottie.Duration);
+		Assert.Equal(30, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task SetSegmentResetsProgress()
+	{
+		// After advancing progress, SetSegment should reset it to 0
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+		Assert.True(lottie.Progress > TimeSpan.Zero);
+
+		lottie.SetSegment(0, 30);
+
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+		Assert.Equal(0, lottie.CurrentFrame);
+	}
+
+	[Fact]
+	public async Task ProgressStopsAtSegmentEnd()
+	{
+		// With SetSegment(0, 30), Duration = 1s. A large update should stop at 1s.
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SetSegment(0, 30);
+		lottie.CallUpdate(TimeSpan.FromSeconds(100)); // much larger than segment Duration
+
+		Assert.Equal(lottie.Duration, lottie.Progress); // clamped to segment end
+	}
+
+	[Fact]
+	public async Task SeekToFrameWorksWithinSegment()
+	{
+		// With SetSegment(10, 40), SeekToFrame(0) = frame 10 of full animation
+		// and SeekToFrame(FrameCount-1) = frame 39 of full animation
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SetSegment(10, 40);
+
+		// Frame 0 within the segment
+		lottie.SeekToFrame(0, stopPlayback: true);
+		Assert.Equal(0, lottie.CurrentFrame);
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+
+		// Frame 15 within the segment (= frame 25 of full animation)
+		lottie.SeekToFrame(15, stopPlayback: true);
+		Assert.Equal(15, lottie.CurrentFrame);
+		Assert.Equal(TimeSpan.FromSeconds(15.0 / lottie.Fps), lottie.Progress);
+	}
+
+	[Fact]
+	public async Task SetSegmentClampsStartToAnimationBounds()
+	{
+		// Negative startFrame → clamped to 0
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SetSegment(-10, 30);
+
+		Assert.Equal(TimeSpan.Zero, lottie.SegmentStart);
+		Assert.Equal(30, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task SetSegmentClampsEndToAnimationBounds()
+	{
+		// endFrame > FrameCount → clamped to full animation duration
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		var fullDuration = lottie.Duration;
+		lottie.SetSegment(0, 10000);
+
+		Assert.Equal(fullDuration, lottie.SegmentEnd);
+		Assert.Equal(fullDuration, lottie.Duration);
+	}
+
+	[Fact]
+	public async Task SetSegmentWhereEndLessThanStartUsesZeroDuration()
+	{
+		// end < start → clamped so end == start → Duration = 0
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SetSegment(TimeSpan.FromSeconds(1.0), TimeSpan.FromSeconds(0.5));
+
+		// end is clamped to max(start, end) = start
+		Assert.Equal(lottie.SegmentStart, lottie.SegmentEnd);
+		Assert.Equal(TimeSpan.Zero, lottie.Duration);
+	}
+
+	[Fact]
+	public async Task ClearSegmentRestoresFullRange()
+	{
+		// After SetSegment + ClearSegment, Duration returns to original
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		var fullDuration = lottie.Duration;
+		var fullFrameCount = lottie.FrameCount;
+
+		lottie.SetSegment(10, 40);
+		Assert.NotEqual(fullDuration, lottie.Duration); // sanity check
+
+		lottie.ClearSegment();
+
+		Assert.Equal(TimeSpan.Zero, lottie.SegmentStart);
+		Assert.Equal(fullDuration, lottie.SegmentEnd);
+		Assert.Equal(fullDuration, lottie.Duration);
+		Assert.Equal(fullFrameCount, lottie.FrameCount);
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+	}
+
+	[Fact]
+	public async Task SetSegmentDoesNothingWithoutAnimation()
+	{
+		// Without a loaded animation, SetSegment should not throw
+		var lottie = new WaitingLottieView();
+
+		lottie.SetSegment(0, 10);
+
+		Assert.Equal(TimeSpan.Zero, lottie.Duration);
+		Assert.Equal(0, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task ClearSegmentDoesNothingWithoutAnimation()
+	{
+		// Without a loaded animation, ClearSegment should not throw
+		var lottie = new WaitingLottieView();
+
+		lottie.ClearSegment();
+
+		Assert.Equal(TimeSpan.Zero, lottie.Duration);
+	}
+
+	[Fact]
+	public async Task SegmentResetWhenSourceChanges()
+	{
+		// Loading a new source resets the segment to the full animation
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.SetSegment(10, 40);
+		Assert.NotEqual(TimeSpan.Zero, lottie.SegmentStart);
+
+		// Change source → segment should reset
+		lottie.ResetTask();
+		source.File = LoloJson;
+		await lottie.LoadedTask;
+
+		Assert.Equal(TimeSpan.Zero, lottie.SegmentStart);
+		Assert.Equal(lottie.Duration, lottie.SegmentEnd);
+	}
+
+	[Fact]
+	public async Task SetSegmentWithRepeatCountLoopsWithinSegment()
+	{
+		// With RepeatCount=1 (play twice) and a segment, animation completes within the segment
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, RepeatCount = 1 };
+		await lottie.LoadedTask;
+
+		lottie.SetSegment(0, 30); // 1.0s segment
+
+		var completedCount = 0;
+		lottie.AnimationCompleted += (s, e) => completedCount++;
+
+		// Play through twice (2 seconds total for 2 loops of a 1s segment)
+		for (var i = 0; i < 100; i++)
+		{
+			lottie.CallUpdate(TimeSpan.FromSeconds(0.1));
+			if (lottie.IsComplete) break;
+		}
+
+		// Should complete within the segment duration (never exceed 1.0s progress)
+		Assert.Equal(1, completedCount);
+		Assert.True(lottie.IsComplete);
+	}
 }

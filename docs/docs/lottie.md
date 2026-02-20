@@ -119,6 +119,48 @@ private void OnSwitchToggled(object sender, EventArgs e)
 }
 ```
 
+### Segment control
+
+Restrict playback to a sub-range of the animation using segments. All other APIs (`Duration`, `FrameCount`, `Progress`, `SeekToFrame`, `PlayToFrame`, etc.) automatically operate within the active segment.
+
+```csharp
+// Play only frames 10–40 (30 frames)
+lottieView.SetSegment(10, 40);
+
+// Same thing expressed as time
+lottieView.SetSegment(TimeSpan.FromSeconds(1.0/3), TimeSpan.FromSeconds(4.0/3));
+
+// Restore the full InPoint→OutPoint range
+lottieView.ClearSegment();
+```
+
+A multi-state animation where each state lives in a different frame range:
+
+```csharp
+// Three states: idle (0-30), pressed (30-50), release (50-80)
+void SetState(AnimationState state)
+{
+    switch (state)
+    {
+        case AnimationState.Idle:
+            lottieView.SetSegment(0, 30);
+            break;
+        case AnimationState.Pressed:
+            lottieView.SetSegment(30, 50);
+            break;
+        case AnimationState.Release:
+            lottieView.SetSegment(50, 80);
+            break;
+    }
+}
+```
+
+XAML binding works directly on `SegmentStart` and `SegmentEnd`:
+
+```xml
+<Label Text="{Binding SegmentStart, Source={Reference lottieView}, StringFormat='Seg start: {0:ss\\.fff}s'}" />
+```
+
 ## Events
 
 Handle animation lifecycle events:
@@ -147,11 +189,13 @@ lottieView.AnimationCompleted += (s, e) =>
 | Property | Type | Description |
 | :------- | :--- | :---------- |
 | `Source` | `SKLottieImageSource` | The Lottie JSON file to play |
-| `Duration` | `TimeSpan` | Total duration of the animation (read-only) |
-| `Progress` | `TimeSpan` | Current playback position |
+| `Duration` | `TimeSpan` | Duration of the active segment (or full animation if no segment is set). Read-only. |
+| `Progress` | `TimeSpan` | Current playback position within the active segment. |
 | `Fps` | `double` | Frames per second of the animation (read-only) |
-| `FrameCount` | `int` | Total number of frames (read-only) |
-| `CurrentFrame` | `int` | Current frame number, zero-based (read-only) |
+| `FrameCount` | `int` | Number of frames in the active segment (read-only) |
+| `CurrentFrame` | `int` | Current frame within the active segment, zero-based (read-only) |
+| `SegmentStart` | `TimeSpan` | Start of the active segment relative to InPoint (read-only, set via `SetSegment`) |
+| `SegmentEnd` | `TimeSpan` | End of the active segment relative to InPoint (read-only, set via `SetSegment`) |
 | `RepeatCount` | `int` | Times to repeat (0 = once, -1 = forever) |
 | `RepeatMode` | `SKLottieRepeatMode` | `Restart` or `Reverse` (ping-pong) |
 | `IsAnimationEnabled` | `bool` | Play/pause the animation |
@@ -161,12 +205,15 @@ lottieView.AnimationCompleted += (s, e) =>
 
 | Method | Description |
 | :----- | :---------- |
-| `SeekToFrame(int, bool)` | Instantly seeks to a frame (zero-based). Pass `stopPlayback: true` to pause. |
+| `SeekToFrame(int, bool)` | Instantly seeks to a frame within the segment (zero-based). Pass `stopPlayback: true` to pause. |
 | `SeekToTime(TimeSpan, bool)` | Instantly seeks to a time position. Pass `stopPlayback: true` to pause. |
 | `SeekToProgress(double, bool)` | Instantly seeks to a normalized position [0.0, 1.0]. Pass `stopPlayback: true` to pause. |
 | `PlayToFrame(int)` | Smoothly animates from current position to the target frame, then stops. Direction is auto-detected. |
 | `PlayToProgress(double)` | Smoothly animates from current position to a normalized position [0.0, 1.0], then stops. |
 | `PlayToTime(TimeSpan)` | Smoothly animates from current position to a target time, then stops. |
+| `SetSegment(int, int)` | Restricts playback to a frame range (both zero-based). Resets `Progress` to 0. |
+| `SetSegment(TimeSpan, TimeSpan)` | Restricts playback to a time range (relative to InPoint). Resets `Progress` to 0. |
+| `ClearSegment()` | Removes the segment and restores the full InPoint→OutPoint range. |
 | `Pause()` | Pauses the animation. Equivalent to `IsAnimationEnabled = false`. |
 | `Resume()` | Resumes the animation. Equivalent to `IsAnimationEnabled = true`. |
 

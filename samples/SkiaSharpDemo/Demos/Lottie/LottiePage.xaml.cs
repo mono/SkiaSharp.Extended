@@ -25,6 +25,8 @@ public partial class LottiePage : ContentPage
 		SeekToFrameCommand = new Command<string>(OnSeekToFrame);
 		SeekToLastFrameCommand = new Command(OnSeekToLastFrame);
 		PlayToProgressCommand = new Command<string>(OnPlayToProgress);
+		SetSegmentCommand = new Command<string>(OnSetSegment);
+		ClearSegmentCommand = new Command(OnClearSegment);
 
 		IsPlaying = true;
 
@@ -107,6 +109,10 @@ public partial class LottiePage : ContentPage
 
 	public ICommand PlayToProgressCommand { get; }
 
+	public ICommand SetSegmentCommand { get; }
+
+	public ICommand ClearSegmentCommand { get; }
+
 	private void OnReset() =>
 		Progress = TimeSpan.Zero;
 
@@ -139,6 +145,18 @@ public partial class LottiePage : ContentPage
 		if (double.TryParse(progressStr, out var prog))
 			lottieView.PlayToProgress(prog);
 	}
+
+	private void OnSetSegment(string which)
+	{
+		var mid = lottieView.FrameCount / 2;
+		if (which == "first")
+			lottieView.SetSegment(0, mid);
+		else
+			lottieView.SetSegment(mid, lottieView.FrameCount);
+	}
+
+	private void OnClearSegment() =>
+		lottieView.ClearSegment();
 
 	private void OnAnimationFailed(object sender, SKLottieAnimationFailedEventArgs e)
 	{
