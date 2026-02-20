@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace SkiaSharp.Extended.Gestures;
 
@@ -11,14 +12,10 @@ namespace SkiaSharp.Extended.Gestures;
 /// <remarks>
 /// <para>This engine is designed to be testable and reusable across different platforms.
 /// It processes touch events and raises events when gestures are detected.</para>
-/// <para>Selection modes:</para>
-/// <list type="bullet">
-///   <item><description><see cref="SKGestureSelectionMode.TapToSelect"/> - Tap to select, then drag</description></item>
-///   <item><description><see cref="SKGestureSelectionMode.LongPressToSelect"/> - Long press to select, then drag</description></item>
-///   <item><description><see cref="SKGestureSelectionMode.Immediate"/> - Start dragging immediately on touch</description></item>
-/// </list>
+/// <para>The engine includes a built-in timer for long press detection. Call <see cref="Dispose"/>
+/// to clean up resources when done.</para>
 /// </remarks>
-public class SKGestureEngine
+public class SKGestureEngine : IDisposable
 {
 	// Timing constants
 	private const long ShortTapTicks = 125 * TimeSpan.TicksPerMillisecond;
@@ -32,25 +29,22 @@ public class SKGestureEngine
 
 	private readonly Dictionary<long, TouchState> _touches = new();
 	private readonly FlingTracker _flingTracker = new();
+	private readonly object _syncLock = new();
+	private Timer? _longPressTimer;
 	
 	private SKPoint _initialTouch = SKPoint.Empty;
 	private long _lastTapTicks;
 	private int _tapCount;
 	private GestureState _gestureState = GestureState.None;
 	private PinchState _pinchState;
-	private long? _selectedItemId;
 	private bool _longPressTriggered;
 	private long _touchStartTicks;
+	private bool _disposed;
 
 	/// <summary>
 	/// Gets or sets the current time provider. Used for testing.
 	/// </summary>
 	public Func<long> TimeProvider { get; set; } = () => DateTime.Now.Ticks;
-
-	/// <summary>
-	/// Gets or sets the selection mode for the gesture engine.
-	/// </summary>
-	public SKGestureSelectionMode SelectionMode { get; set; } = SKGestureSelectionMode.Immediate;
 
 	/// <summary>
 	/// Gets or sets whether the engine is enabled.
@@ -71,22 +65,6 @@ public class SKGestureEngine
 	/// Gets or sets the long press duration in milliseconds.
 	/// </summary>
 	public int LongPressDuration { get; set; } = (int)(LongPressTicks / TimeSpan.TicksPerMillisecond);
-
-	/// <summary>
-	/// Gets or sets the currently selected item ID.
-	/// </summary>
-	public long? SelectedItemId
-	{
-		get => _selectedItemId;
-		set
-		{
-			if (_selectedItemId != value)
-			{
-				_selectedItemId = value;
-				SelectionChanged?.Invoke(this, new SKSelectionChangedEventArgs(value));
-			}
-		}
-	}
 
 	/// <summary>
 	/// Gets whether a gesture is currently in progress.
@@ -149,12 +127,7 @@ public class SKGestureEngine
 	public event EventHandler<SKGestureStateEventArgs>? GestureEnded;
 
 	/// <summary>
-	/// Occurs when selection changes.
-	/// </summary>
-	public event EventHandler<SKSelectionChangedEventArgs>? SelectionChanged;
-
-	/// <summary>
-	/// Occurs when a drag operation starts (after selection criteria is met).
+	/// Occurs when a drag operation starts.
 	/// </summary>
 	public event EventHandler<SKDragEventArgs>? DragStarted;
 
@@ -177,16 +150,23 @@ public class SKGestureEngine
 	/// <returns>True if the event was handled.</returns>
 	public bool ProcessTouchDown(long id, SKPoint location, bool isMouse = false)
 	{
-		if (!IsEnabled)
+		if (!IsEnabled || _disposed)
 			return false;
 
 		var ticks = TimeProvider();
 		
-		_touches[id] = new TouchState(id, location, ticks, true);
+		lock (_syncLock)
+		{
+			_touches[id] = new TouchState(id, location, ticks, true);
+		}
+		
 		_initialTouch = location;
 		_touchStartTicks = ticks;
 		_longPressTriggered = false;
 		_flingTracker.Clear();
+
+		// Start the long press timer
+		StartLongPressTimer();
 
 		// Check for double tap
 		if (ticks - _lastTapTicks < DoubleTapDelayTicks && 
@@ -232,15 +212,18 @@ public class SKGestureEngine
 	/// <returns>True if the event was handled.</returns>
 	public bool ProcessTouchMove(long id, SKPoint location, bool inContact = true)
 	{
-		if (!IsEnabled)
+		if (!IsEnabled || _disposed)
 			return false;
 
 		var ticks = TimeProvider();
 		
-		if (!_touches.ContainsKey(id))
-			return false;
+		lock (_syncLock)
+		{
+			if (!_touches.ContainsKey(id))
+				return false;
 
-		_touches[id] = new TouchState(id, location, ticks, inContact);
+			_touches[id] = new TouchState(id, location, ticks, inContact);
+		}
 
 		if (inContact)
 			_flingTracker.AddEvent(id, location, ticks);
@@ -255,46 +238,12 @@ public class SKGestureEngine
 		var touchPoints = GetActiveTouchPoints();
 		var distance = SKPoint.Distance(location, _initialTouch);
 
-		// Check for long press
-		if (!_longPressTriggered && 
-			touchPoints.Length == 1 && 
-			distance < TouchSlop &&
-			(ticks - _touchStartTicks) >= LongPressTicks * TimeSpan.TicksPerMillisecond / 1000)
-		{
-			_longPressTriggered = true;
-			
-			// In LongPressToSelect mode, selecting happens on long press
-			if (SelectionMode == SKGestureSelectionMode.LongPressToSelect)
-			{
-				OnLongPressDetected(new SKTapEventArgs(location, 1));
-				OnDragStarted(new SKDragEventArgs(location, location, SKPoint.Empty));
-				_gestureState = GestureState.Dragging;
-			}
-			else
-			{
-				OnLongPressDetected(new SKTapEventArgs(location, 1));
-			}
-			
-			return true;
-		}
-
 		// Start pan/drag if moved beyond touch slop
 		if (_gestureState == GestureState.Detecting && distance >= TouchSlop)
 		{
-			if (SelectionMode == SKGestureSelectionMode.Immediate)
-			{
-				_gestureState = GestureState.Panning;
-				OnDragStarted(new SKDragEventArgs(_initialTouch, location, location - _initialTouch));
-			}
-			else if (SelectionMode == SKGestureSelectionMode.TapToSelect && _selectedItemId.HasValue)
-			{
-				_gestureState = GestureState.Dragging;
-				OnDragStarted(new SKDragEventArgs(_initialTouch, location, location - _initialTouch));
-			}
-			else
-			{
-				_gestureState = GestureState.Panning;
-			}
+			StopLongPressTimer();
+			_gestureState = GestureState.Panning;
+			OnDragStarted(new SKDragEventArgs(_initialTouch, location, location - _initialTouch));
 		}
 
 		switch (_gestureState)
@@ -304,14 +253,6 @@ public class SKGestureEngine
 				{
 					var delta = location - _pinchState.Center;
 					OnPanDetected(new SKPanEventArgs(location, _pinchState.Center, delta));
-					_pinchState = new PinchState(location, 0, 0);
-				}
-				break;
-
-			case GestureState.Dragging:
-				if (touchPoints.Length == 1)
-				{
-					var delta = location - _pinchState.Center;
 					OnDragUpdated(new SKDragEventArgs(_initialTouch, location, delta));
 					_pinchState = new PinchState(location, 0, 0);
 				}
@@ -348,15 +289,21 @@ public class SKGestureEngine
 	/// <returns>True if the event was handled.</returns>
 	public bool ProcessTouchUp(long id, SKPoint location, bool isMouse = false)
 	{
-		if (!IsEnabled)
+		if (!IsEnabled || _disposed)
 			return false;
 
+		StopLongPressTimer();
 		var ticks = TimeProvider();
+		TouchState releasedTouch;
 		
-		if (!_touches.TryGetValue(id, out var releasedTouch))
-			return false;
+		lock (_syncLock)
+		{
+			if (!_touches.TryGetValue(id, out releasedTouch))
+				return false;
 
-		_touches.Remove(id);
+			_touches.Remove(id);
+		}
+		
 		var touchPoints = GetActiveTouchPoints();
 		var handled = false;
 
@@ -389,12 +336,6 @@ public class SKGestureEngine
 				else
 				{
 					OnTapDetected(new SKTapEventArgs(location, 1));
-					
-					// In TapToSelect mode, tapping selects
-					if (SelectionMode == SKGestureSelectionMode.TapToSelect)
-					{
-						// Selection would be handled by consumer based on tap location
-					}
 				}
 				handled = true;
 			}
@@ -402,8 +343,8 @@ public class SKGestureEngine
 
 		_flingTracker.RemoveId(id);
 
-		// Handle end of drag
-		if (_gestureState == GestureState.Dragging)
+		// Handle end of drag/pan
+		if (_gestureState == GestureState.Panning)
 		{
 			OnDragEnded(new SKDragEventArgs(_initialTouch, location, location - _initialTouch));
 		}
@@ -450,53 +391,76 @@ public class SKGestureEngine
 	}
 
 	/// <summary>
-	/// Checks if long press should be triggered (called from timer).
-	/// </summary>
-	public void CheckLongPress()
-	{
-		if (!IsEnabled || _longPressTriggered || _gestureState != GestureState.Detecting)
-			return;
-
-		var ticks = TimeProvider();
-		var duration = ticks - _touchStartTicks;
-		var touchPoints = GetActiveTouchPoints();
-
-		if (touchPoints.Length == 1 && duration >= LongPressDuration * TimeSpan.TicksPerMillisecond)
-		{
-			var distance = SKPoint.Distance(touchPoints[0], _initialTouch);
-			if (distance < TouchSlop)
-			{
-				_longPressTriggered = true;
-				OnLongPressDetected(new SKTapEventArgs(touchPoints[0], 1));
-
-				if (SelectionMode == SKGestureSelectionMode.LongPressToSelect)
-				{
-					_gestureState = GestureState.Dragging;
-					OnDragStarted(new SKDragEventArgs(touchPoints[0], touchPoints[0], SKPoint.Empty));
-				}
-			}
-		}
-	}
-
-	/// <summary>
 	/// Resets the gesture engine state.
 	/// </summary>
 	public void Reset()
 	{
-		_touches.Clear();
+		StopLongPressTimer();
+		lock (_syncLock)
+		{
+			_touches.Clear();
+		}
 		_flingTracker.Clear();
 		_gestureState = GestureState.None;
 		_tapCount = 0;
 		_lastTapTicks = 0;
 		_longPressTriggered = false;
-		_selectedItemId = null;
 	}
 
-	private SKPoint[] GetActiveTouchPoints() =>
-		_touches.Values
-			.Where(t => t.InContact)
-			.Select(t => t.Location)
-			.ToArray();
+	/// <summary>
+	/// Disposes the gesture engine and releases resources.
+	/// </summary>
+	public void Dispose()
+	{
+		if (_disposed)
+			return;
+		
+		_disposed = true;
+		StopLongPressTimer();
+		Reset();
+	}
+
+	private void StartLongPressTimer()
+	{
+		StopLongPressTimer();
+		_longPressTimer = new Timer(OnLongPressTimerTick, null, LongPressDuration, Timeout.Infinite);
+	}
+
+	private void StopLongPressTimer()
+	{
+		_longPressTimer?.Dispose();
+		_longPressTimer = null;
+	}
+
+	private void OnLongPressTimerTick(object? state)
+	{
+		if (_disposed || !IsEnabled || _longPressTriggered || _gestureState != GestureState.Detecting)
+			return;
+
+		var touchPoints = GetActiveTouchPoints();
+
+		if (touchPoints.Length == 1)
+		{
+			var distance = SKPoint.Distance(touchPoints[0], _initialTouch);
+			if (distance < TouchSlop)
+			{
+				_longPressTriggered = true;
+				StopLongPressTimer();
+				OnLongPressDetected(new SKTapEventArgs(touchPoints[0], 1));
+			}
+		}
+	}
+
+	private SKPoint[] GetActiveTouchPoints()
+	{
+		lock (_syncLock)
+		{
+			return _touches.Values
+				.Where(t => t.InContact)
+				.Select(t => t.Location)
+				.ToArray();
+		}
+	}
 
 	private static float NormalizeAngle(float angle)
 	{
@@ -523,27 +487,6 @@ public class SKGestureEngine
 }
 
 /// <summary>
-/// The selection mode for the gesture engine.
-/// </summary>
-public enum SKGestureSelectionMode
-{
-	/// <summary>
-	/// Start dragging immediately on touch (no selection required).
-	/// </summary>
-	Immediate,
-
-	/// <summary>
-	/// Tap to select, then drag the selected item.
-	/// </summary>
-	TapToSelect,
-
-	/// <summary>
-	/// Long press to select and start dragging.
-	/// </summary>
-	LongPressToSelect
-}
-
-/// <summary>
 /// The current state of a gesture.
 /// </summary>
 public enum GestureState
@@ -566,10 +509,5 @@ public enum GestureState
 	/// <summary>
 	/// A pinch/zoom gesture is in progress.
 	/// </summary>
-	Pinching,
-
-	/// <summary>
-	/// A drag operation is in progress (after selection).
-	/// </summary>
-	Dragging
+	Pinching
 }

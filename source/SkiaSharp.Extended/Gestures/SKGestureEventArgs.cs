@@ -219,25 +219,6 @@ public class SKGestureStateEventArgs : EventArgs
 }
 
 /// <summary>
-/// Event arguments for selection changes.
-/// </summary>
-public class SKSelectionChangedEventArgs : EventArgs
-{
-	/// <summary>
-	/// Creates a new instance.
-	/// </summary>
-	public SKSelectionChangedEventArgs(long? selectedItemId)
-	{
-		SelectedItemId = selectedItemId;
-	}
-
-	/// <summary>
-	/// Gets the selected item ID, or null if nothing is selected.
-	/// </summary>
-	public long? SelectedItemId { get; }
-}
-
-/// <summary>
 /// Event arguments for a drag operation.
 /// </summary>
 public class SKDragEventArgs : EventArgs
