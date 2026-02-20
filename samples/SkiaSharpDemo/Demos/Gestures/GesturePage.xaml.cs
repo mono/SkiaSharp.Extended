@@ -338,10 +338,13 @@ public partial class GesturePage : ContentPage
 		LogEvent($"Pinch scale: {e.Scale:F2}");
 		
 		// Apply center movement as pan so content follows the fingers
-		var panDelta = ScreenToContentDelta(
-			e.Center.X - e.PreviousCenter.X,
-			e.Center.Y - e.PreviousCenter.Y);
-		_canvasOffset = new SKPoint(_canvasOffset.X + panDelta.X, _canvasOffset.Y + panDelta.Y);
+		if (_enablePan)
+		{
+			var panDelta = ScreenToContentDelta(
+				e.Center.X - e.PreviousCenter.X,
+				e.Center.Y - e.PreviousCenter.Y);
+			_canvasOffset = new SKPoint(_canvasOffset.X + panDelta.X, _canvasOffset.Y + panDelta.Y);
+		}
 
 		var newScale = Math.Clamp(_canvasScale * e.Scale, 0.5f, 3f);
 		AdjustOffsetForPivot(e.Center, _canvasScale, newScale, _canvasRotation, _canvasRotation);
@@ -433,22 +436,29 @@ public partial class GesturePage : ContentPage
 			_canvasOffset.Y + qNew.Y - qOld.Y);
 	}
 
-	private Sticker? HitTest(SKPoint location)
+	private SKMatrix BuildCanvasTransform()
 	{
-		// Transform location by inverse of canvas transform
 		var w = (float)_canvasWidth;
 		var h = (float)_canvasHeight;
 
-		if (w <= 0 || h <= 0)
+		// Must match the canvas call order in OnPaintSurface.
+		// Canvas calls are pre-concat, so the effective matrix is
+		// (last call) · ... · (first call), i.e.:
+		// T(-w/2,-h/2) · T(ox,oy) · R(θ) · S(s) · T(w/2,h/2)
+		var matrix = SKMatrix.CreateTranslation(-w / 2f, -h / 2f);
+		matrix = matrix.PreConcat(SKMatrix.CreateTranslation(_canvasOffset.X, _canvasOffset.Y));
+		matrix = matrix.PreConcat(SKMatrix.CreateRotationDegrees(_canvasRotation));
+		matrix = matrix.PreConcat(SKMatrix.CreateScale(_canvasScale, _canvasScale));
+		matrix = matrix.PreConcat(SKMatrix.CreateTranslation(w / 2f, h / 2f));
+		return matrix;
+	}
+
+	private Sticker? HitTest(SKPoint location)
+	{
+		if (_canvasWidth <= 0 || _canvasHeight <= 0)
 			return null;
 
-		// Build the same transform used in OnPaintSurface
-		var matrix = SKMatrix.CreateTranslation(w / 2f, h / 2f);
-		matrix = matrix.PostConcat(SKMatrix.CreateScale(_canvasScale, _canvasScale));
-		matrix = matrix.PostConcat(SKMatrix.CreateRotationDegrees(_canvasRotation));
-		matrix = matrix.PostConcat(SKMatrix.CreateTranslation(_canvasOffset.X, _canvasOffset.Y));
-		matrix = matrix.PostConcat(SKMatrix.CreateTranslation(-w / 2f, -h / 2f));
-
+		var matrix = BuildCanvasTransform();
 		if (!matrix.TryInvert(out var inverse))
 			return null;
 
