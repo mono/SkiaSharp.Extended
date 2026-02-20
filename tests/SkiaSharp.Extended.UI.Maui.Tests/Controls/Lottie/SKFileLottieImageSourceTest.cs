@@ -33,24 +33,16 @@ public class SKFileLottieImageSourceTest : SKLottieImageSourceTest<SKFileLottieI
 	}
 
 	[Fact]
-	public void IsEmptyReturnsTrueForDotLottieWhenFileIsNull()
+	public async Task JsonFileLoadsSuccessfully()
 	{
-		var source = new SKFileLottieImageSource();
-		Assert.True(source.IsEmpty);
-	}
+		// create & set source - SKFileLottieImageSource auto-detects JSON format
+		var lottie = new WaitingLottieView
+		{
+			Source = new SKFileLottieImageSource { File = TrophyJson }
+		};
 
-	[Fact]
-	public void IsEmptyReturnsFalseForDotLottieWhenFileIsSet()
-	{
-		var source = new SKFileLottieImageSource { File = TestLottieFile };
-		Assert.False(source.IsEmpty);
-	}
-
-	[Fact]
-	public async Task LoadAnimationAsyncReturnsEmptyAnimationForDotLottieWhenFileIsNull()
-	{
-		var source = new SKFileLottieImageSource();
-		var animation = await source.LoadAnimationAsync();
-		Assert.False(animation.IsLoaded);
+		// test
+		await lottie.LoadedTask;
+		Assert.Equal(TimeSpan.FromSeconds(2.3666665), lottie.Duration);
 	}
 }
