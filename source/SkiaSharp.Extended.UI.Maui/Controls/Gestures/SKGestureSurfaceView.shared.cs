@@ -73,25 +73,9 @@ public class SKGestureSurfaceView : SKSurfaceView
 		ResourceLoader<Themes.SKGestureSurfaceViewResources>.EnsureRegistered(this);
 
 		_engine = new SKGestureEngine();
-		
-		// Wire up engine events
-		_engine.TapDetected += (s, e) => OnTapDetected(e);
-		_engine.DoubleTapDetected += (s, e) => OnDoubleTapDetected(e);
-		_engine.LongPressDetected += (s, e) => OnLongPressDetected(e);
-		_engine.PanDetected += (s, e) => OnPanDetected(e);
-		_engine.PinchDetected += (s, e) => OnPinchDetected(e);
-		_engine.RotateDetected += (s, e) => OnRotateDetected(e);
-		_engine.FlingDetected += (s, e) => OnFlingDetected(e);
-		_engine.Flinging += (s, e) => OnFlinging(e);
-		_engine.FlingCompleted += (s, e) => OnFlingCompleted();
-		_engine.HoverDetected += (s, e) => OnHoverDetected(e);
-		_engine.ScrollDetected += (s, e) => OnScrollDetected(e);
-		_engine.GestureStarted += (s, e) => OnGestureStarted(e);
-		_engine.GestureEnded += (s, e) => OnGestureEnded(e);
-		_engine.DragStarted += (s, e) => OnDragStarted(e);
-		_engine.DragUpdated += (s, e) => OnDragUpdated(e);
-		_engine.DragEnded += (s, e) => OnDragEnded(e);
+		SubscribeEngineEvents();
 
+		Loaded += OnLoaded;
 		Unloaded += OnUnloaded;
 
 		DebugUtils.LogPropertyChanged(this);
@@ -304,12 +288,75 @@ public class SKGestureSurfaceView : SKSurfaceView
 		}
 	}
 
-	private void OnUnloaded(object? sender, EventArgs e)
+	private void OnLoaded(object? sender, EventArgs e)
 	{
-		_engine.Dispose();
+		SubscribeEngineEvents();
 	}
 
-	private float _displayScale = 1f;
+	private void OnUnloaded(object? sender, EventArgs e)
+	{
+		UnsubscribeEngineEvents();
+		_engine.Reset();
+	}
+
+	private void SubscribeEngineEvents()
+	{
+		_engine.TapDetected += OnEngineTapDetected;
+		_engine.DoubleTapDetected += OnEngineDoubleTapDetected;
+		_engine.LongPressDetected += OnEngineLongPressDetected;
+		_engine.PanDetected += OnEnginePanDetected;
+		_engine.PinchDetected += OnEnginePinchDetected;
+		_engine.RotateDetected += OnEngineRotateDetected;
+		_engine.FlingDetected += OnEngineFlingDetected;
+		_engine.Flinging += OnEngineFlinging;
+		_engine.FlingCompleted += OnEngineFlingCompleted;
+		_engine.HoverDetected += OnEngineHoverDetected;
+		_engine.ScrollDetected += OnEngineScrollDetected;
+		_engine.GestureStarted += OnEngineGestureStarted;
+		_engine.GestureEnded += OnEngineGestureEnded;
+		_engine.DragStarted += OnEngineDragStarted;
+		_engine.DragUpdated += OnEngineDragUpdated;
+		_engine.DragEnded += OnEngineDragEnded;
+	}
+
+	private void UnsubscribeEngineEvents()
+	{
+		_engine.TapDetected -= OnEngineTapDetected;
+		_engine.DoubleTapDetected -= OnEngineDoubleTapDetected;
+		_engine.LongPressDetected -= OnEngineLongPressDetected;
+		_engine.PanDetected -= OnEnginePanDetected;
+		_engine.PinchDetected -= OnEnginePinchDetected;
+		_engine.RotateDetected -= OnEngineRotateDetected;
+		_engine.FlingDetected -= OnEngineFlingDetected;
+		_engine.Flinging -= OnEngineFlinging;
+		_engine.FlingCompleted -= OnEngineFlingCompleted;
+		_engine.HoverDetected -= OnEngineHoverDetected;
+		_engine.ScrollDetected -= OnEngineScrollDetected;
+		_engine.GestureStarted -= OnEngineGestureStarted;
+		_engine.GestureEnded -= OnEngineGestureEnded;
+		_engine.DragStarted -= OnEngineDragStarted;
+		_engine.DragUpdated -= OnEngineDragUpdated;
+		_engine.DragEnded -= OnEngineDragEnded;
+	}
+
+	private void OnEngineTapDetected(object? s, SKTapEventArgs e) => OnTapDetected(e);
+	private void OnEngineDoubleTapDetected(object? s, SKTapEventArgs e) => OnDoubleTapDetected(e);
+	private void OnEngineLongPressDetected(object? s, SKTapEventArgs e) => OnLongPressDetected(e);
+	private void OnEnginePanDetected(object? s, SKPanEventArgs e) => OnPanDetected(e);
+	private void OnEnginePinchDetected(object? s, SKPinchEventArgs e) => OnPinchDetected(e);
+	private void OnEngineRotateDetected(object? s, SKRotateEventArgs e) => OnRotateDetected(e);
+	private void OnEngineFlingDetected(object? s, SKFlingEventArgs e) => OnFlingDetected(e);
+	private void OnEngineFlinging(object? s, SKFlingEventArgs e) => OnFlinging(e);
+	private void OnEngineFlingCompleted(object? s, EventArgs e) => OnFlingCompleted();
+	private void OnEngineHoverDetected(object? s, SKHoverEventArgs e) => OnHoverDetected(e);
+	private void OnEngineScrollDetected(object? s, SKScrollEventArgs e) => OnScrollDetected(e);
+	private void OnEngineGestureStarted(object? s, SKGestureStateEventArgs e) => OnGestureStarted(e);
+	private void OnEngineGestureEnded(object? s, SKGestureStateEventArgs e) => OnGestureEnded(e);
+	private void OnEngineDragStarted(object? s, SKDragEventArgs e) => OnDragStarted(e);
+	private void OnEngineDragUpdated(object? s, SKDragEventArgs e) => OnDragUpdated(e);
+	private void OnEngineDragEnded(object? s, SKDragEventArgs e) => OnDragEnded(e);
+
+	private float _displayScale = GetDefaultDisplayScale();
 
 	private void OnTouch(object? sender, SKTouchEventArgs e)
 	{
@@ -382,5 +429,30 @@ public class SKGestureSurfaceView : SKSurfaceView
 	{
 		if (bindable is SKGestureSurfaceView view && newValue is int duration)
 			view._engine.LongPressDuration = duration;
+	}
+
+	/// <inheritdoc/>
+	protected override void OnHandlerChanging(HandlerChangingEventArgs args)
+	{
+		base.OnHandlerChanging(args);
+
+		// Dispose engine when handler is permanently disconnected
+		if (args.NewHandler == null)
+		{
+			UnsubscribeEngineEvents();
+			_engine.Dispose();
+		}
+	}
+
+	private static float GetDefaultDisplayScale()
+	{
+		try
+		{
+			return (float)DeviceDisplay.MainDisplayInfo.Density;
+		}
+		catch
+		{
+			return 1f;
+		}
 	}
 }

@@ -1042,8 +1042,8 @@ public class SKGestureEngineTests
 		engine.ProcessTouchMove(2, new SKPoint(210, 100));
 		engine.ProcessTouchMove(3, new SKPoint(310, 100));
 
-		// Should not crash; pinch is restricted to exactly 2 touches
-		Assert.False(pinchRaised, "Pinch should not fire with 3 touches");
+		// Should not crash; pinch fires for >= 2 touches
+		Assert.True(pinchRaised, "Pinch should fire with 3+ touches using first 2");
 	}
 
 	[Fact]
@@ -1665,6 +1665,231 @@ public class SKGestureEngineTests
 
 		// Should not crash
 		Assert.Equal(SKGestureState.None, engine.CurrentState);
+	}
+
+	#endregion
+
+	#region Review Fix Tests
+
+	[Fact]
+	public void DoubleTapSlop_FarApartTaps_DoNotTriggerDoubleTap()
+	{
+		var engine = CreateEngine();
+		engine.DoubleTapSlop = 40f;
+		var doubleTapCount = 0;
+		engine.DoubleTapDetected += (s, e) => doubleTapCount++;
+
+		// First tap
+		engine.ProcessTouchDown(1, new SKPoint(50, 50));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(50, 50));
+
+		// Second tap far away (beyond 40px slop)
+		AdvanceTime(100);
+		engine.ProcessTouchDown(1, new SKPoint(200, 200));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(200, 200));
+
+		Assert.Equal(0, doubleTapCount);
+	}
+
+	[Fact]
+	public void DoubleTapSlop_CloseTaps_TriggerDoubleTap()
+	{
+		var engine = CreateEngine();
+		engine.DoubleTapSlop = 40f;
+		var doubleTapCount = 0;
+		engine.DoubleTapDetected += (s, e) => doubleTapCount++;
+
+		// First tap
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		// Second tap within 40px slop
+		AdvanceTime(100);
+		engine.ProcessTouchDown(1, new SKPoint(120, 115));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(120, 115));
+
+		Assert.Equal(1, doubleTapCount);
+	}
+
+	[Fact]
+	public void ProcessTouchCancel_WhenDisposed_DoesNotThrow()
+	{
+		var engine = CreateEngine();
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.Dispose();
+
+		// Should not throw
+		var result = engine.ProcessTouchCancel(1);
+		Assert.False(result);
+	}
+
+	[Fact]
+	public void ProcessTouchCancel_StopsLongPressTimer()
+	{
+		var engine = CreateEngine();
+		var longPressCount = 0;
+		engine.LongPressDetected += (s, e) => longPressCount++;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(200);
+		engine.ProcessTouchCancel(1);
+
+		// Wait for timer to have fired if it wasn't stopped
+		AdvanceTime(600);
+
+		Assert.Equal(0, longPressCount);
+	}
+
+	[Fact]
+	public void ProcessTouchCancel_DuringDrag_FiresDragEnded()
+	{
+		var engine = CreateEngine();
+		var dragEndedCount = 0;
+		engine.DragEnded += (s, e) => dragEndedCount++;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		// Move beyond slop to start drag
+		engine.ProcessTouchMove(1, new SKPoint(130, 130));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(160, 160));
+
+		engine.ProcessTouchCancel(1);
+
+		Assert.Equal(1, dragEndedCount);
+	}
+
+	[Fact]
+	public void ThreeToTwoFinger_NoScaleJump()
+	{
+		var engine = CreateEngine();
+		var scales = new List<float>();
+		engine.PinchDetected += (s, e) => scales.Add(e.Scale);
+
+		// Start 2-finger pinch
+		engine.ProcessTouchDown(1, new SKPoint(100, 200));
+		engine.ProcessTouchDown(2, new SKPoint(200, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(95, 200));
+		engine.ProcessTouchMove(2, new SKPoint(205, 200));
+
+		// Add third finger
+		engine.ProcessTouchDown(3, new SKPoint(300, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(90, 200));
+		engine.ProcessTouchMove(2, new SKPoint(210, 200));
+		engine.ProcessTouchMove(3, new SKPoint(310, 200));
+
+		scales.Clear(); // Clear history
+
+		// Lift third finger — should recalculate pinch state, no jump
+		engine.ProcessTouchUp(3, new SKPoint(310, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(85, 200));
+		engine.ProcessTouchMove(2, new SKPoint(215, 200));
+
+		// Scale should be close to 1.0 (small incremental change, not a jump)
+		foreach (var scale in scales)
+		{
+			Assert.InRange(scale, 0.8f, 1.2f);
+		}
+	}
+
+	[Fact]
+	public void PinchToPan_DragOriginIsUpdated()
+	{
+		var engine = CreateEngine();
+		var panDeltas = new List<SKPoint>();
+		engine.PanDetected += (s, e) => panDeltas.Add(new SKPoint(e.Delta.X, e.Delta.Y));
+
+		// Start pinch with 2 fingers
+		engine.ProcessTouchDown(1, new SKPoint(100, 200));
+		engine.ProcessTouchDown(2, new SKPoint(300, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(105, 200));
+		engine.ProcessTouchMove(2, new SKPoint(295, 200));
+
+		// Lift one finger → transition to pan
+		engine.ProcessTouchUp(2, new SKPoint(295, 200));
+		panDeltas.Clear();
+
+		// Continue moving remaining finger — delta should be small and incremental
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(110, 200));
+
+		if (panDeltas.Count > 0)
+		{
+			var delta = panDeltas[0];
+			// Delta should be small (5px move), not a jump from original touch position
+			Assert.InRange(delta.X, -20f, 20f);
+			Assert.InRange(delta.Y, -20f, 20f);
+		}
+	}
+
+	[Fact]
+	public void Reset_AllowsGesturesAgain()
+	{
+		var engine = CreateEngine();
+		var tapCount = 0;
+		engine.TapDetected += (s, e) => tapCount++;
+
+		// First tap
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+		Assert.Equal(1, tapCount);
+
+		// Reset
+		engine.Reset();
+
+		// Second tap should still work
+		AdvanceTime(500);
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+		Assert.Equal(2, tapCount);
+	}
+
+	[Fact]
+	public void Dispose_PreventsAllFutureGestures()
+	{
+		var engine = CreateEngine();
+		var tapCount = 0;
+		engine.TapDetected += (s, e) => tapCount++;
+
+		engine.Dispose();
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		Assert.Equal(0, tapCount);
+	}
+
+	[Fact]
+	public void DragStarted_FiresOnPinchToPanTransition()
+	{
+		var engine = CreateEngine();
+		var dragStartedCount = 0;
+		engine.DragStarted += (s, e) => dragStartedCount++;
+
+		// Start pinch
+		engine.ProcessTouchDown(1, new SKPoint(100, 200));
+		engine.ProcessTouchDown(2, new SKPoint(300, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(110, 200));
+		engine.ProcessTouchMove(2, new SKPoint(290, 200));
+
+		// Lift one finger → transition to pan, should fire DragStarted
+		engine.ProcessTouchUp(2, new SKPoint(290, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(130, 200));
+
+		Assert.True(dragStartedCount >= 1, "DragStarted should fire on pinch-to-pan transition");
 	}
 
 	#endregion

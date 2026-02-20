@@ -60,8 +60,13 @@ internal sealed class SKFlingTracker
 			return SKPoint.Empty;
 
 		// Use weighted average of velocities between consecutive events,
-		// favoring more recent events
+		// with time-based weighting (more recent = higher weight)
 		float totalVelocityX = 0, totalVelocityY = 0, totalWeight = 0;
+		var windowStart = array[startIndex].Ticks;
+		var windowSpan = (float)(now - windowStart);
+		if (windowSpan <= 0)
+			windowSpan = 1;
+
 		for (int i = startIndex; i < array.Length - 1; i++)
 		{
 			var dt = array[i + 1].Ticks - array[i].Ticks;
@@ -71,8 +76,9 @@ internal sealed class SKFlingTracker
 			var vx = (array[i + 1].X - array[i].X) * TimeSpan.TicksPerSecond / dt;
 			var vy = (array[i + 1].Y - array[i].Y) * TimeSpan.TicksPerSecond / dt;
 
-			// Weight increases for more recent events
-			var weight = (float)(i - startIndex + 1);
+			// Time-based weight: how recent is this segment (0..1, 1 = most recent)
+			var recency = (float)(array[i + 1].Ticks - windowStart) / windowSpan;
+			var weight = 0.5f + recency; // range [0.5, 1.5] — still uses older data but favors newer
 			totalVelocityX += vx * weight;
 			totalVelocityY += vy * weight;
 			totalWeight += weight;
