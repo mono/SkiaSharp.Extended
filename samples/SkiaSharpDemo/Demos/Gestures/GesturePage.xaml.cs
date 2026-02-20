@@ -114,15 +114,15 @@ public partial class GesturePage : ContentPage
 		// Clear background
 		canvas.Clear(SKColors.White);
 
-		// Draw grid background so scrolling is visible
-		DrawGrid(canvas, width, height);
-
 		// Apply canvas transforms (pan, scale, rotate)
 		canvas.Save();
 		canvas.Translate(width / 2f + _canvasOffset.X, height / 2f + _canvasOffset.Y);
 		canvas.Scale(_canvasScale);
 		canvas.RotateDegrees(_canvasRotation);
 		canvas.Translate(-width / 2f, -height / 2f);
+
+		// Draw grid background inside the transform so it pans/zooms/rotates with content
+		DrawGrid(canvas, width, height);
 
 		// Draw stickers
 		foreach (var sticker in _stickers)
@@ -150,16 +150,15 @@ public partial class GesturePage : ContentPage
 		using var lightPaint = new SKPaint { Color = new SKColor(240, 240, 240) };
 		using var darkPaint = new SKPaint { Color = new SKColor(220, 220, 220) };
 
-		// Calculate grid offset based on canvas pan
-		var offsetX = (int)_canvasOffset.X % (gridSize * 2);
-		var offsetY = (int)_canvasOffset.Y % (gridSize * 2);
+		// Expand grid coverage so it fills the view when zoomed out
+		var extra = (int)(Math.Max(width, height) / _canvasScale) + gridSize * 4;
 
-		for (int y = -gridSize * 2; y < height + gridSize * 2; y += gridSize)
+		for (int y = -extra; y < height + extra; y += gridSize)
 		{
-			for (int x = -gridSize * 2; x < width + gridSize * 2; x += gridSize)
+			for (int x = -extra; x < width + extra; x += gridSize)
 			{
 				var isLight = ((x / gridSize) + (y / gridSize)) % 2 == 0;
-				var rect = new SKRect(x + offsetX, y + offsetY, x + offsetX + gridSize, y + offsetY + gridSize);
+				var rect = new SKRect(x, y, x + gridSize, y + gridSize);
 				canvas.DrawRect(rect, isLight ? lightPaint : darkPaint);
 			}
 		}
