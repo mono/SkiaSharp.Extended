@@ -478,17 +478,17 @@ public class SKGestureEngineTests
 	{
 		var engine = CreateEngine();
 		
-		Assert.Equal(GestureState.None, engine.CurrentState);
+		Assert.Equal(SKGestureState.None, engine.CurrentState);
 		
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		Assert.Equal(GestureState.Detecting, engine.CurrentState);
+		Assert.Equal(SKGestureState.Detecting, engine.CurrentState);
 		
 		AdvanceTime(10);
 		engine.ProcessTouchMove(1, new SKPoint(150, 100)); // Move beyond slop
-		Assert.Equal(GestureState.Panning, engine.CurrentState);
+		Assert.Equal(SKGestureState.Panning, engine.CurrentState);
 		
 		engine.ProcessTouchUp(1, new SKPoint(150, 100));
-		Assert.Equal(GestureState.None, engine.CurrentState);
+		Assert.Equal(SKGestureState.None, engine.CurrentState);
 	}
 
 	#endregion
@@ -538,7 +538,7 @@ public class SKGestureEngineTests
 
 		engine.Reset();
 
-		Assert.Equal(GestureState.None, engine.CurrentState);
+		Assert.Equal(SKGestureState.None, engine.CurrentState);
 	}
 
 	#endregion
@@ -587,10 +587,10 @@ public class SKGestureEngineTests
 		var engine = CreateEngine();
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		Assert.Equal(GestureState.Detecting, engine.CurrentState);
+		Assert.Equal(SKGestureState.Detecting, engine.CurrentState);
 
 		engine.ProcessTouchCancel(1);
-		Assert.Equal(GestureState.None, engine.CurrentState);
+		Assert.Equal(SKGestureState.None, engine.CurrentState);
 	}
 
 	[Fact]
@@ -735,7 +735,7 @@ public class SKGestureEngineTests
 
 		// After multi-touch, tap detection is naturally suppressed since state transitions away
 		// This tests that we don't crash and state is consistent
-		Assert.Equal(GestureState.None, engine.CurrentState);
+		Assert.Equal(SKGestureState.None, engine.CurrentState);
 	}
 
 	[Fact]
@@ -1163,11 +1163,11 @@ public class SKGestureEngineTests
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 		engine.ProcessTouchDown(2, new SKPoint(200, 100));
-		Assert.Equal(GestureState.Pinching, engine.CurrentState);
+		Assert.Equal(SKGestureState.Pinching, engine.CurrentState);
 
 		engine.ProcessTouchCancel(1);
 		engine.ProcessTouchCancel(2);
-		Assert.Equal(GestureState.None, engine.CurrentState);
+		Assert.Equal(SKGestureState.None, engine.CurrentState);
 	}
 
 	[Fact]
@@ -1178,7 +1178,7 @@ public class SKGestureEngineTests
 		engine.DragEnded += (s, e) => dragEnded = true;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		Assert.Equal(GestureState.Detecting, engine.CurrentState);
+		Assert.Equal(SKGestureState.Detecting, engine.CurrentState);
 
 		engine.ProcessTouchCancel(1);
 		Assert.False(dragEnded, "DragEnded should not fire if drag never started");
@@ -1288,10 +1288,10 @@ public class SKGestureEngineTests
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 		AdvanceTime(10);
 		engine.ProcessTouchMove(1, new SKPoint(150, 100));
-		Assert.Equal(GestureState.Panning, engine.CurrentState);
+		Assert.Equal(SKGestureState.Panning, engine.CurrentState);
 
 		engine.Reset();
-		Assert.Equal(GestureState.None, engine.CurrentState);
+		Assert.Equal(SKGestureState.None, engine.CurrentState);
 
 		// New gesture should work
 		var tapRaised = false;
@@ -1367,7 +1367,7 @@ public class SKGestureEngineTests
 		engine.ProcessTouchUp(1, new SKPoint(200, 200));
 
 		// Should not crash
-		Assert.Equal(GestureState.None, engine.CurrentState);
+		Assert.Equal(SKGestureState.None, engine.CurrentState);
 	}
 
 	#endregion

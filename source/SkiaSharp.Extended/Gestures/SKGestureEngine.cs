@@ -29,8 +29,8 @@ public class SKGestureEngine : IDisposable
 	private const float TouchSlopPixels = 8f;
 	private const float FlingVelocityThreshold = 200f; // pixels per second
 
-	private readonly Dictionary<long, TouchState> _touches = new();
-	private readonly FlingTracker _flingTracker = new();
+	private readonly Dictionary<long, SKTouchState> _touches = new();
+	private readonly SKFlingTracker _flingTracker = new();
 	private SynchronizationContext? _syncContext;
 	private Timer? _longPressTimer;
 	
@@ -38,8 +38,8 @@ public class SKGestureEngine : IDisposable
 	private SKPoint _lastTapLocation = SKPoint.Empty;
 	private long _lastTapTicks;
 	private int _tapCount;
-	private GestureState _gestureState = GestureState.None;
-	private PinchState _pinchState;
+	private SKGestureState _gestureState = SKGestureState.None;
+	private SKPinchState _pinchState;
 	private bool _longPressTriggered;
 	private bool _dragStartedFired;
 	private long _touchStartTicks;
@@ -74,12 +74,12 @@ public class SKGestureEngine : IDisposable
 	/// <summary>
 	/// Gets whether a gesture is currently in progress.
 	/// </summary>
-	public bool IsGestureActive => _gestureState != GestureState.None;
+	public bool IsGestureActive => _gestureState != SKGestureState.None;
 
 	/// <summary>
 	/// Gets the current gesture state.
 	/// </summary>
-	public GestureState CurrentState => _gestureState;
+	public SKGestureState CurrentState => _gestureState;
 
 	/// <summary>
 	/// Occurs when a tap is detected.
@@ -163,7 +163,7 @@ public class SKGestureEngine : IDisposable
 
 		var ticks = TimeProvider();
 		
-		_touches[id] = new TouchState(id, location, ticks, true);
+		_touches[id] = new SKTouchState(id, location, ticks, true);
 		
 		// Only set initial touch state for the first finger
 		if (_touches.Count == 1)
@@ -194,17 +194,17 @@ public class SKGestureEngine : IDisposable
 		if (touchPoints.Length > 0)
 		{
 			// Raise gesture started
-			OnGestureStarted(new SKGestureStateEventArgs(touchPoints, GestureState.Detecting));
+			OnGestureStarted(new SKGestureStateEventArgs(touchPoints, SKGestureState.Detecting));
 			
 			if (touchPoints.Length >= 2)
 			{
-				_pinchState = PinchState.FromLocations(touchPoints);
-				_gestureState = GestureState.Pinching;
+				_pinchState = SKPinchState.FromLocations(touchPoints);
+				_gestureState = SKGestureState.Pinching;
 			}
 			else
 			{
-				_pinchState = new PinchState(touchPoints[0], 0, 0);
-				_gestureState = GestureState.Detecting;
+				_pinchState = new SKPinchState(touchPoints[0], 0, 0);
+				_gestureState = SKGestureState.Detecting;
 			}
 
 			return true;
@@ -230,7 +230,7 @@ public class SKGestureEngine : IDisposable
 		if (!_touches.ContainsKey(id))
 			return false;
 
-		_touches[id] = new TouchState(id, location, ticks, inContact);
+		_touches[id] = new SKTouchState(id, location, ticks, inContact);
 
 		if (inContact)
 			_flingTracker.AddEvent(id, location, ticks);
@@ -246,31 +246,31 @@ public class SKGestureEngine : IDisposable
 		var distance = SKPoint.Distance(location, _initialTouch);
 
 		// Start pan/drag if moved beyond touch slop
-		if (_gestureState == GestureState.Detecting && distance >= TouchSlop)
+		if (_gestureState == SKGestureState.Detecting && distance >= TouchSlop)
 		{
 			StopLongPressTimer();
-			_gestureState = GestureState.Panning;
+			_gestureState = SKGestureState.Panning;
 			_dragStartedFired = true;
 			OnDragStarted(new SKDragEventArgs(_initialTouch, location, location - _initialTouch));
 		}
 
 		switch (_gestureState)
 		{
-			case GestureState.Panning:
+			case SKGestureState.Panning:
 				if (touchPoints.Length == 1)
 				{
 					var delta = location - _pinchState.Center;
 					OnPanDetected(new SKPanEventArgs(location, _pinchState.Center, delta));
 					if (_dragStartedFired)
 						OnDragUpdated(new SKDragEventArgs(_initialTouch, location, delta));
-					_pinchState = new PinchState(location, 0, 0);
+					_pinchState = new SKPinchState(location, 0, 0);
 				}
 				break;
 
-			case GestureState.Pinching:
+			case SKGestureState.Pinching:
 				if (touchPoints.Length == 2)
 				{
-					var newPinch = PinchState.FromLocations(touchPoints);
+					var newPinch = SKPinchState.FromLocations(touchPoints);
 					
 					// Calculate scale
 					var scaleDelta = _pinchState.Radius > 0 ? newPinch.Radius / _pinchState.Radius : 1f;
@@ -325,7 +325,7 @@ public class SKGestureEngine : IDisposable
 			}
 
 			// Check for tap — only if we haven't transitioned to panning/pinching
-			if (_gestureState == GestureState.Detecting)
+			if (_gestureState == SKGestureState.Detecting)
 			{
 				var distance = SKPoint.Distance(location, _initialTouch);
 				var duration = ticks - _touchStartTicks;
@@ -353,7 +353,7 @@ public class SKGestureEngine : IDisposable
 		_flingTracker.RemoveId(id);
 
 		// Handle end of drag/pan
-		if (_gestureState == GestureState.Panning && _dragStartedFired)
+		if (_gestureState == SKGestureState.Panning && _dragStartedFired)
 		{
 			OnDragEnded(new SKDragEventArgs(_initialTouch, location, location - _initialTouch));
 		}
@@ -361,23 +361,23 @@ public class SKGestureEngine : IDisposable
 		// Transition gesture state
 		if (touchPoints.Length == 0)
 		{
-			if (_gestureState != GestureState.None)
+			if (_gestureState != SKGestureState.None)
 			{
 				OnGestureEnded(new SKGestureStateEventArgs(Array.Empty<SKPoint>(), _gestureState));
-				_gestureState = GestureState.None;
+				_gestureState = SKGestureState.None;
 			}
 			_dragStartedFired = false;
 		}
 		else if (touchPoints.Length == 1)
 		{
 			// Transition from pinch to pan — fire DragStarted for the new single-finger gesture
-			if (_gestureState == GestureState.Pinching && !_dragStartedFired)
+			if (_gestureState == SKGestureState.Pinching && !_dragStartedFired)
 			{
 				_dragStartedFired = true;
 				OnDragStarted(new SKDragEventArgs(touchPoints[0], touchPoints[0], SKPoint.Empty));
 			}
-			_gestureState = GestureState.Panning;
-			_pinchState = new PinchState(touchPoints[0], 0, 0);
+			_gestureState = SKGestureState.Panning;
+			_pinchState = new SKPinchState(touchPoints[0], 0, 0);
 		}
 
 		return handled;
@@ -399,14 +399,14 @@ public class SKGestureEngine : IDisposable
 		var touchPoints = GetActiveTouchPoints();
 		if (touchPoints.Length == 0)
 		{
-			if (_gestureState == GestureState.Panning && _dragStartedFired)
+			if (_gestureState == SKGestureState.Panning && _dragStartedFired)
 			{
 				OnDragEnded(new SKDragEventArgs(_initialTouch, _initialTouch, SKPoint.Empty));
 			}
-			if (_gestureState != GestureState.None)
+			if (_gestureState != SKGestureState.None)
 			{
 				OnGestureEnded(new SKGestureStateEventArgs(Array.Empty<SKPoint>(), _gestureState));
-				_gestureState = GestureState.None;
+				_gestureState = SKGestureState.None;
 			}
 			_dragStartedFired = false;
 		}
@@ -422,7 +422,7 @@ public class SKGestureEngine : IDisposable
 		StopLongPressTimer();
 		_touches.Clear();
 		_flingTracker.Clear();
-		_gestureState = GestureState.None;
+		_gestureState = SKGestureState.None;
 		_tapCount = 0;
 		_lastTapTicks = 0;
 		_lastTapLocation = SKPoint.Empty;
@@ -479,7 +479,7 @@ public class SKGestureEngine : IDisposable
 
 	private void HandleLongPress()
 	{
-		if (_disposed || !IsEnabled || _longPressTriggered || _gestureState != GestureState.Detecting)
+		if (_disposed || !IsEnabled || _longPressTriggered || _gestureState != SKGestureState.Detecting)
 			return;
 
 		var touchPoints = GetActiveTouchPoints();
@@ -526,30 +526,4 @@ public class SKGestureEngine : IDisposable
 	protected virtual void OnDragStarted(SKDragEventArgs e) => DragStarted?.Invoke(this, e);
 	protected virtual void OnDragUpdated(SKDragEventArgs e) => DragUpdated?.Invoke(this, e);
 	protected virtual void OnDragEnded(SKDragEventArgs e) => DragEnded?.Invoke(this, e);
-}
-
-/// <summary>
-/// The current state of a gesture.
-/// </summary>
-public enum GestureState
-{
-	/// <summary>
-	/// No gesture is active.
-	/// </summary>
-	None,
-
-	/// <summary>
-	/// A gesture is being detected.
-	/// </summary>
-	Detecting,
-
-	/// <summary>
-	/// A pan gesture is in progress.
-	/// </summary>
-	Panning,
-
-	/// <summary>
-	/// A pinch/zoom gesture is in progress.
-	/// </summary>
-	Pinching
 }
