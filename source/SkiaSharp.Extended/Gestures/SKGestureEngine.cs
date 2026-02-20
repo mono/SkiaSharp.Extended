@@ -12,8 +12,10 @@ namespace SkiaSharp.Extended.Gestures;
 /// <remarks>
 /// <para>This engine is designed to be testable and reusable across different platforms.
 /// It processes touch events and raises events when gestures are detected.</para>
-/// <para>The engine includes a built-in timer for long press detection. Call <see cref="Dispose"/>
-/// to clean up resources when done.</para>
+/// <para>The engine must be used on the UI thread. It captures the current 
+/// <see cref="SynchronizationContext"/> when processing touch events and uses it
+/// to marshal timer callbacks back to the UI thread.</para>
+/// <para>Call <see cref="Dispose"/> to clean up resources when done.</para>
 /// </remarks>
 public class SKGestureEngine : IDisposable
 {
@@ -29,7 +31,7 @@ public class SKGestureEngine : IDisposable
 
 	private readonly Dictionary<long, TouchState> _touches = new();
 	private readonly FlingTracker _flingTracker = new();
-	private readonly object _syncLock = new();
+	private SynchronizationContext? _syncContext;
 	private Timer? _longPressTimer;
 	
 	private SKPoint _initialTouch = SKPoint.Empty;
@@ -153,12 +155,12 @@ public class SKGestureEngine : IDisposable
 		if (!IsEnabled || _disposed)
 			return false;
 
+		// Capture the synchronization context on first touch (UI thread)
+		_syncContext ??= SynchronizationContext.Current;
+
 		var ticks = TimeProvider();
 		
-		lock (_syncLock)
-		{
-			_touches[id] = new TouchState(id, location, ticks, true);
-		}
+		_touches[id] = new TouchState(id, location, ticks, true);
 		
 		_initialTouch = location;
 		_touchStartTicks = ticks;
@@ -217,13 +219,10 @@ public class SKGestureEngine : IDisposable
 
 		var ticks = TimeProvider();
 		
-		lock (_syncLock)
-		{
-			if (!_touches.ContainsKey(id))
-				return false;
+		if (!_touches.ContainsKey(id))
+			return false;
 
-			_touches[id] = new TouchState(id, location, ticks, inContact);
-		}
+		_touches[id] = new TouchState(id, location, ticks, inContact);
 
 		if (inContact)
 			_flingTracker.AddEvent(id, location, ticks);
@@ -294,15 +293,11 @@ public class SKGestureEngine : IDisposable
 
 		StopLongPressTimer();
 		var ticks = TimeProvider();
-		TouchState releasedTouch;
 		
-		lock (_syncLock)
-		{
-			if (!_touches.TryGetValue(id, out releasedTouch))
-				return false;
+		if (!_touches.TryGetValue(id, out var releasedTouch))
+			return false;
 
-			_touches.Remove(id);
-		}
+		_touches.Remove(id);
 		
 		var touchPoints = GetActiveTouchPoints();
 		var handled = false;
@@ -396,10 +391,7 @@ public class SKGestureEngine : IDisposable
 	public void Reset()
 	{
 		StopLongPressTimer();
-		lock (_syncLock)
-		{
-			_touches.Clear();
-		}
+		_touches.Clear();
 		_flingTracker.Clear();
 		_gestureState = GestureState.None;
 		_tapCount = 0;
@@ -434,6 +426,20 @@ public class SKGestureEngine : IDisposable
 
 	private void OnLongPressTimerTick(object? state)
 	{
+		// Marshal to UI thread if we have a sync context
+		if (_syncContext != null)
+		{
+			_syncContext.Post(_ => HandleLongPress(), null);
+		}
+		else
+		{
+			// No sync context (testing or console app) - run directly
+			HandleLongPress();
+		}
+	}
+
+	private void HandleLongPress()
+	{
 		if (_disposed || !IsEnabled || _longPressTriggered || _gestureState != GestureState.Detecting)
 			return;
 
@@ -453,13 +459,10 @@ public class SKGestureEngine : IDisposable
 
 	private SKPoint[] GetActiveTouchPoints()
 	{
-		lock (_syncLock)
-		{
-			return _touches.Values
-				.Where(t => t.InContact)
-				.Select(t => t.Location)
-				.ToArray();
-		}
+		return _touches.Values
+			.Where(t => t.InContact)
+			.Select(t => t.Location)
+			.ToArray();
 	}
 
 	private static float NormalizeAngle(float angle)
