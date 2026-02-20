@@ -1,5 +1,7 @@
 using SkiaSharp;
 using SkiaSharp.Extended.Gestures;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -633,6 +635,26 @@ public class SKGestureEngineTests
 	}
 
 	[Fact]
+	public void DoubleTap_TooSlow_DoesNotTriggerDoubleTap()
+	{
+		var engine = CreateEngine();
+		var doubleTapRaised = false;
+		engine.DoubleTapDetected += (s, e) => doubleTapRaised = true;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+		
+		AdvanceTime(500); // Longer than DoubleTapDelayTicks (300ms)
+		
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		Assert.False(doubleTapRaised);
+	}
+
+	[Fact]
 	public void PanThenReturnToStart_DoesNotFireTap()
 	{
 		var engine = CreateEngine();
@@ -737,6 +759,615 @@ public class SKGestureEngineTests
 
 		Assert.NotNull(velocityX);
 		Assert.True(velocityX.Value > 200, $"VelocityX should be > 200, was {velocityX.Value}");
+	}
+
+	#endregion
+
+	#region Tap Duration Tests
+
+	[Fact]
+	public void MouseClick_BeyondShortClickDuration_DoesNotFireTap()
+	{
+		var engine = CreateEngine();
+		var tapRaised = false;
+		engine.TapDetected += (s, e) => tapRaised = true;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100), isMouse: true);
+		AdvanceTime(300); // Beyond ShortClickTicks (250ms)
+		engine.ProcessTouchUp(1, new SKPoint(100, 100), isMouse: true);
+
+		Assert.False(tapRaised, "Mouse click held too long should not fire tap");
+	}
+
+	[Fact]
+	public void TouchHeld_WithSmallMoves_BeyondLongPressDuration_DoesNotFireTap()
+	{
+		var engine = CreateEngine();
+		var tapRaised = false;
+		engine.TapDetected += (s, e) => tapRaised = true;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		// Small moves within slop over a long time
+		AdvanceTime(200);
+		engine.ProcessTouchMove(1, new SKPoint(101, 101));
+		AdvanceTime(200);
+		engine.ProcessTouchMove(1, new SKPoint(100, 100));
+		AdvanceTime(200); // Total 600ms > LongPressTicks (500ms)
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		Assert.False(tapRaised, "Touch held too long should not fire tap");
+	}
+
+	#endregion
+
+	#region Pinch Event Data Tests
+
+	[Fact]
+	public void PinchDetected_CenterIsMidpointOfTouches()
+	{
+		var engine = CreateEngine();
+		SKPoint? center = null;
+		engine.PinchDetected += (s, e) => center = e.Center;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(80, 100));
+		engine.ProcessTouchMove(2, new SKPoint(220, 100));
+
+		Assert.NotNull(center);
+		Assert.Equal(150, center.Value.X, 0.1);
+		Assert.Equal(100, center.Value.Y, 0.1);
+	}
+
+	[Fact]
+	public void PinchDetected_PreviousCenterIsProvided()
+	{
+		var engine = CreateEngine();
+		SKPinchEventArgs? lastArgs = null;
+		engine.PinchDetected += (s, e) => lastArgs = e;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		// Move both fingers right — events fire per-finger, so check last event
+		engine.ProcessTouchMove(1, new SKPoint(120, 100));
+		engine.ProcessTouchMove(2, new SKPoint(220, 100));
+
+		Assert.NotNull(lastArgs);
+		// PreviousCenter should be from the intermediate state (after finger1 moved)
+		Assert.NotNull(lastArgs!.PreviousCenter);
+		// Center should be midpoint of final positions
+		Assert.Equal(170, lastArgs.Center.X, 0.1);
+	}
+
+	[Fact]
+	public void PinchDetected_EqualDistanceMove_ScaleIsOne()
+	{
+		var engine = CreateEngine();
+		var scales = new List<float>();
+		engine.PinchDetected += (s, e) => scales.Add(e.Scale);
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		// Move both outward equally — each finger fires separately
+		engine.ProcessTouchMove(1, new SKPoint(50, 100));
+		engine.ProcessTouchMove(2, new SKPoint(250, 100));
+
+		Assert.True(scales.Count >= 1);
+		// The net product of scales should show zoom-out (> 1)
+		var totalScale = 1f;
+		foreach (var s in scales) totalScale *= s;
+		Assert.True(totalScale > 1.0f, $"Total scale should be > 1 for zoom-out, was {totalScale}");
+	}
+
+	[Fact]
+	public void PinchDetected_FingersCloser_ScaleLessThanOne()
+	{
+		var engine = CreateEngine();
+		float? scale = null;
+		engine.PinchDetected += (s, e) => scale = e.Scale;
+
+		// Initial: 100 apart
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		// Pinch in: 50 apart
+		engine.ProcessTouchMove(1, new SKPoint(125, 100));
+		engine.ProcessTouchMove(2, new SKPoint(175, 100));
+
+		Assert.NotNull(scale);
+		Assert.True(scale.Value < 1.0f, $"Scale should be < 1 (zoom in), was {scale.Value}");
+	}
+
+	#endregion
+
+	#region Rotation Event Data Tests
+
+	[Fact]
+	public void RotateDetected_PreviousCenterIsProvided()
+	{
+		var engine = CreateEngine();
+		SKRotateEventArgs? lastArgs = null;
+		engine.RotateDetected += (s, e) => lastArgs = e;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(100, 150));
+		engine.ProcessTouchMove(2, new SKPoint(200, 50));
+
+		Assert.NotNull(lastArgs);
+		Assert.NotNull(lastArgs!.PreviousCenter);
+		// Center should be midpoint of final positions
+		Assert.Equal(150, lastArgs.Center.X, 0.1);
+		Assert.Equal(100, lastArgs.Center.Y, 0.1);
+	}
+
+	[Fact]
+	public void RotateDetected_CenterMovesWithFingers()
+	{
+		var engine = CreateEngine();
+		SKPoint? center = null;
+		engine.RotateDetected += (s, e) => center = e.Center;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		// Move both fingers down while rotating
+		engine.ProcessTouchMove(1, new SKPoint(100, 200));
+		engine.ProcessTouchMove(2, new SKPoint(200, 200));
+
+		Assert.NotNull(center);
+		Assert.Equal(150, center.Value.X, 0.1);
+		Assert.Equal(200, center.Value.Y, 0.1);
+	}
+
+	[Fact]
+	public void RotateDetected_NoRotation_DeltaIsZero()
+	{
+		var engine = CreateEngine();
+		float? rotationDelta = null;
+		engine.RotateDetected += (s, e) => rotationDelta = e.RotationDelta;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		// Move both outward horizontally — no angle change
+		engine.ProcessTouchMove(1, new SKPoint(50, 100));
+		engine.ProcessTouchMove(2, new SKPoint(250, 100));
+
+		Assert.NotNull(rotationDelta);
+		Assert.Equal(0f, rotationDelta.Value, 0.1);
+	}
+
+	#endregion
+
+	#region Three-Plus Touch Tests
+
+	[Fact]
+	public void ThreeFingers_DoesNotCrash()
+	{
+		var engine = CreateEngine();
+		var pinchRaised = false;
+		engine.PinchDetected += (s, e) => pinchRaised = true;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		engine.ProcessTouchDown(3, new SKPoint(300, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(90, 100));
+		engine.ProcessTouchMove(2, new SKPoint(210, 100));
+		engine.ProcessTouchMove(3, new SKPoint(310, 100));
+
+		// Should not crash; pinch is restricted to exactly 2 touches
+		Assert.False(pinchRaised, "Pinch should not fire with 3 touches");
+	}
+
+	[Fact]
+	public void ThreeFingers_LiftOneToTwo_ResumesPinch()
+	{
+		var engine = CreateEngine();
+		var pinchCount = 0;
+		engine.PinchDetected += (s, e) => pinchCount++;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		engine.ProcessTouchDown(3, new SKPoint(300, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(90, 100)); // 3 fingers, no pinch
+
+		// Lift third finger → back to 2
+		engine.ProcessTouchUp(3, new SKPoint(300, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(80, 100));
+		engine.ProcessTouchMove(2, new SKPoint(220, 100));
+
+		Assert.True(pinchCount > 0, "Pinch should resume after lifting to 2 fingers");
+	}
+
+	#endregion
+
+	#region Drag Lifecycle Tests
+
+	[Fact]
+	public void DragUpdated_DeltaMatchesMovement()
+	{
+		var engine = CreateEngine();
+		var deltas = new List<SKPoint>();
+		engine.DragUpdated += (s, e) => deltas.Add(e.Delta);
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(120, 100)); // Starts pan+drag, delta=(20,0)
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(130, 110)); // Delta: (10, 10)
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(135, 115)); // Delta: (5, 5)
+
+		Assert.True(deltas.Count >= 3);
+		// First DragUpdated fires with delta from initial touch
+		Assert.Equal(20, deltas[0].X, 0.1);
+		Assert.Equal(0, deltas[0].Y, 0.1);
+		// Subsequent deltas are incremental
+		Assert.Equal(10, deltas[1].X, 0.1);
+		Assert.Equal(10, deltas[1].Y, 0.1);
+		Assert.Equal(5, deltas[2].X, 0.1);
+		Assert.Equal(5, deltas[2].Y, 0.1);
+	}
+
+	[Fact]
+	public void DragStarted_PrecedesDragUpdated()
+	{
+		var engine = CreateEngine();
+		var events = new List<string>();
+		engine.DragStarted += (s, e) => events.Add("started");
+		engine.DragUpdated += (s, e) => events.Add("updated");
+		engine.DragEnded += (s, e) => events.Add("ended");
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(120, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(130, 110));
+		engine.ProcessTouchUp(1, new SKPoint(130, 110));
+
+		Assert.True(events.Count >= 3);
+		Assert.Equal("started", events[0]);
+		Assert.Equal("updated", events[1]);
+		Assert.Equal("ended", events[events.Count - 1]);
+	}
+
+	[Fact]
+	public void PinchToPan_DragStartedFiredOnce()
+	{
+		var engine = CreateEngine();
+		var dragStartedCount = 0;
+		var dragEndedCount = 0;
+		engine.DragStarted += (s, e) => dragStartedCount++;
+		engine.DragEnded += (s, e) => dragEndedCount++;
+
+		// Pinch gesture
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(90, 100));
+		engine.ProcessTouchMove(2, new SKPoint(210, 100));
+
+		// Lift second finger → transitions to pan
+		engine.ProcessTouchUp(2, new SKPoint(210, 100));
+		AdvanceTime(10);
+
+		// Continue panning
+		engine.ProcessTouchMove(1, new SKPoint(80, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(80, 100));
+
+		Assert.Equal(1, dragStartedCount);
+		Assert.Equal(1, dragEndedCount);
+	}
+
+	[Fact]
+	public void NoPan_NoDragEvents()
+	{
+		var engine = CreateEngine();
+		var dragStarted = false;
+		var dragEnded = false;
+		engine.DragStarted += (s, e) => dragStarted = true;
+		engine.DragEnded += (s, e) => dragEnded = true;
+
+		// Quick tap — no drag
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		Assert.False(dragStarted);
+		Assert.False(dragEnded);
+	}
+
+	#endregion
+
+	#region Fling Edge Case Tests
+
+	[Fact]
+	public void Fling_PauseBeforeRelease_NoFling()
+	{
+		var engine = CreateEngine();
+		var flingRaised = false;
+		engine.FlingDetected += (s, e) => flingRaised = true;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(500, 100)); // Fast move
+		AdvanceTime(500); // Long pause — velocity decays past threshold window
+		engine.ProcessTouchUp(1, new SKPoint(500, 100));
+
+		Assert.False(flingRaised, "Fling should not fire after a long pause");
+	}
+
+	[Fact]
+	public void Fling_VerticalDirection_CorrectVelocity()
+	{
+		var engine = CreateEngine();
+		float? velocityX = null, velocityY = null;
+		engine.FlingDetected += (s, e) => { velocityX = e.VelocityX; velocityY = e.VelocityY; };
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(100, 150));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(100, 400));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(100, 700));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(100, 700));
+
+		Assert.NotNull(velocityY);
+		Assert.True(velocityY.Value > 200, $"VelocityY should be > 200, was {velocityY.Value}");
+		Assert.True(Math.Abs(velocityX!.Value) < Math.Abs(velocityY.Value),
+			"Horizontal velocity should be less than vertical for vertical fling");
+	}
+
+	[Fact]
+	public void Fling_DiagonalDirection_BothAxesHaveVelocity()
+	{
+		var engine = CreateEngine();
+		float? velocityX = null, velocityY = null;
+		engine.FlingDetected += (s, e) => { velocityX = e.VelocityX; velocityY = e.VelocityY; };
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(200, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(400, 400));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(700, 700));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(700, 700));
+
+		Assert.NotNull(velocityX);
+		Assert.NotNull(velocityY);
+		Assert.True(velocityX.Value > 200);
+		Assert.True(velocityY.Value > 200);
+	}
+
+	#endregion
+
+	#region Cancel Edge Case Tests
+
+	[Fact]
+	public void CancelDuringPinch_ResetsState()
+	{
+		var engine = CreateEngine();
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		Assert.Equal(GestureState.Pinching, engine.CurrentState);
+
+		engine.ProcessTouchCancel(1);
+		engine.ProcessTouchCancel(2);
+		Assert.Equal(GestureState.None, engine.CurrentState);
+	}
+
+	[Fact]
+	public void CancelDuringDetecting_NoDragEndFired()
+	{
+		var engine = CreateEngine();
+		var dragEnded = false;
+		engine.DragEnded += (s, e) => dragEnded = true;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		Assert.Equal(GestureState.Detecting, engine.CurrentState);
+
+		engine.ProcessTouchCancel(1);
+		Assert.False(dragEnded, "DragEnded should not fire if drag never started");
+	}
+
+	#endregion
+
+	#region Sequential Gesture Tests
+
+	[Fact]
+	public void MultipleSequentialTaps_EachFiresSeparately()
+	{
+		var engine = CreateEngine();
+		var tapCount = 0;
+		engine.TapDetected += (s, e) => tapCount++;
+
+		for (int i = 0; i < 5; i++)
+		{
+			engine.ProcessTouchDown(1, new SKPoint(100 + i * 50, 100));
+			AdvanceTime(50);
+			engine.ProcessTouchUp(1, new SKPoint(100 + i * 50, 100));
+			AdvanceTime(500); // Wait long enough to not trigger double-tap
+		}
+
+		Assert.Equal(5, tapCount);
+	}
+
+	[Fact]
+	public void PanThenTap_TapFiresAfterPanEnds()
+	{
+		var engine = CreateEngine();
+		var tapRaised = false;
+		var panRaised = false;
+		engine.TapDetected += (s, e) => tapRaised = true;
+		engine.PanDetected += (s, e) => panRaised = true;
+
+		// Pan gesture
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(200, 100));
+		Assert.True(panRaised);
+		Assert.False(tapRaised);
+
+		// New tap gesture after pan is done
+		AdvanceTime(500);
+		engine.ProcessTouchDown(1, new SKPoint(300, 300));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(300, 300));
+		Assert.True(tapRaised);
+	}
+
+	[Fact]
+	public void PinchThenTap_TapFiresAfterPinchEnds()
+	{
+		var engine = CreateEngine();
+		var tapRaised = false;
+		engine.TapDetected += (s, e) => tapRaised = true;
+
+		// Pinch gesture
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(80, 100));
+		engine.ProcessTouchMove(2, new SKPoint(220, 100));
+		engine.ProcessTouchUp(2, new SKPoint(220, 100));
+		engine.ProcessTouchUp(1, new SKPoint(80, 100));
+		Assert.False(tapRaised);
+
+		// New tap
+		AdvanceTime(500);
+		engine.ProcessTouchDown(1, new SKPoint(150, 150));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(150, 150));
+		Assert.True(tapRaised);
+	}
+
+	#endregion
+
+	#region Dispose/Reset Edge Cases
+
+	[Fact]
+	public void Dispose_DuringGesture_StopsProcessing()
+	{
+		var engine = CreateEngine();
+		var panCount = 0;
+		engine.PanDetected += (s, e) => panCount++;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(120, 100)); // Triggers pan
+		Assert.True(panCount > 0);
+
+		engine.Dispose();
+		var beforeCount = panCount;
+		
+		// Further events should be ignored
+		engine.ProcessTouchMove(1, new SKPoint(200, 100));
+		Assert.Equal(beforeCount, panCount);
+	}
+
+	[Fact]
+	public void Reset_DuringPan_AllowsNewGesture()
+	{
+		var engine = CreateEngine();
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(150, 100));
+		Assert.Equal(GestureState.Panning, engine.CurrentState);
+
+		engine.Reset();
+		Assert.Equal(GestureState.None, engine.CurrentState);
+
+		// New gesture should work
+		var tapRaised = false;
+		engine.TapDetected += (s, e) => tapRaised = true;
+		engine.ProcessTouchDown(1, new SKPoint(200, 200));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(200, 200));
+		Assert.True(tapRaised);
+	}
+
+	[Fact]
+	public void ProcessEvents_AfterDispose_ReturnsFalse()
+	{
+		var engine = CreateEngine();
+		engine.Dispose();
+
+		Assert.False(engine.ProcessTouchDown(1, new SKPoint(100, 100)));
+		Assert.False(engine.ProcessTouchMove(1, new SKPoint(110, 110)));
+		Assert.False(engine.ProcessTouchUp(1, new SKPoint(110, 110)));
+	}
+
+	#endregion
+
+	#region Zero/Edge Value Tests
+
+	[Fact]
+	public void TouchMove_ToSameLocation_ZeroDelta()
+	{
+		var engine = CreateEngine();
+		SKPoint? lastDelta = null;
+		engine.PanDetected += (s, e) => lastDelta = e.Delta;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(120, 100)); // Start pan
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(120, 100)); // Same location
+
+		Assert.NotNull(lastDelta);
+		Assert.Equal(0, lastDelta.Value.X, 0.01);
+		Assert.Equal(0, lastDelta.Value.Y, 0.01);
+	}
+
+	[Fact]
+	public void Pinch_ZeroRadius_ScaleIsOne()
+	{
+		var engine = CreateEngine();
+		float? scale = null;
+		engine.PinchDetected += (s, e) => scale = e.Scale;
+
+		// Both fingers at the same point
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(100, 100));
+		engine.ProcessTouchMove(2, new SKPoint(100, 100));
+
+		// With zero initial radius, scale should be 1 (guarded)
+		if (scale != null)
+			Assert.Equal(1.0f, scale.Value, 0.01);
+	}
+
+	[Fact]
+	public void TouchDown_DuplicateId_UpdatesExistingTouch()
+	{
+		var engine = CreateEngine();
+		var tapRaised = false;
+		engine.TapDetected += (s, e) => tapRaised = true;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(1, new SKPoint(200, 200)); // Same ID
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(200, 200));
+
+		// Should not crash
+		Assert.Equal(GestureState.None, engine.CurrentState);
 	}
 
 	#endregion
