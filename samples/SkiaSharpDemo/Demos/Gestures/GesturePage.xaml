@@ -16,6 +16,7 @@
         <!-- Gesture Surface -->
         <controls:SKGestureSurfaceView x:Name="gestureView"
                                         Grid.Row="1"
+                                        PaintSurface="OnPaintSurface"
                                         TapDetected="OnTap"
                                         DoubleTapDetected="OnDoubleTap"
                                         LongPressDetected="OnLongPress"

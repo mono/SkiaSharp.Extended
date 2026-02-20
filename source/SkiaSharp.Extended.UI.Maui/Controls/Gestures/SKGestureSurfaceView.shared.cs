@@ -1,4 +1,5 @@
 using SkiaSharp.Extended.Gestures;
+using SkiaSharp.Views.Maui;
 
 namespace SkiaSharp.Extended.UI.Controls;
 
@@ -192,6 +193,11 @@ public class SKGestureSurfaceView : SKSurfaceView
 	/// </summary>
 	public event EventHandler<SKDragEventArgs>? DragEnded;
 
+	/// <summary>
+	/// Occurs when the surface needs to be painted.
+	/// </summary>
+	public event EventHandler<SKPaintSurfaceEventArgs>? PaintSurface;
+
 	#endregion
 
 	#region Event Invokers
@@ -299,6 +305,17 @@ public class SKGestureSurfaceView : SKSurfaceView
 		// Invalidate for visual feedback
 		if (e.Handled)
 			Invalidate();
+	}
+
+	/// <inheritdoc/>
+	internal override void OnPaintSurfaceCore(SKSurface surface, SKSize size)
+	{
+		base.OnPaintSurfaceCore(surface, size);
+		
+		// Invoke the PaintSurface event
+		var info = new SKImageInfo((int)size.Width, (int)size.Height);
+		var args = new SKPaintSurfaceEventArgs(surface, info);
+		PaintSurface?.Invoke(this, args);
 	}
 
 	private static void OnIsGestureEnabledChanged(BindableObject bindable, object oldValue, object newValue)
