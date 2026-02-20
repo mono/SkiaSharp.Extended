@@ -266,22 +266,8 @@ public partial class GesturePage : ContentPage
 		}
 		else
 		{
-			// Zoom in toward the tapped point.
-			// With transform: Translate(w/2,h/2) · Scale(s) · Rotate(θ) · Translate(ox,oy) · Translate(-w/2,-h/2)
-			// For θ=0, screen point sx = w/2 + s*(cx - w/2 + ox), so:
-			// ox' = tap*(1-ratio)/(s*ratio) + ox  where tap = tapX - w/2
 			var newScale = Math.Min(_canvasScale * zoomIn, maxScale);
-			var ratio = newScale / _canvasScale;
-
-			var cx = (float)_canvasWidth / 2f;
-			var cy = (float)_canvasHeight / 2f;
-			var tapDx = e.Location.X - cx;
-			var tapDy = e.Location.Y - cy;
-			var factor = (1f - ratio) / (_canvasScale * ratio);
-			_canvasOffset = new SKPoint(
-				tapDx * factor + _canvasOffset.X,
-				tapDy * factor + _canvasOffset.Y);
-
+			AdjustOffsetForPivot(e.Location, _canvasScale, newScale, _canvasRotation, _canvasRotation);
 			_canvasScale = newScale;
 			statusLabel.Text = $"Zoom: {_canvasScale:F2}x";
 		}
@@ -323,9 +309,9 @@ public partial class GesturePage : ContentPage
 		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Pinch scale: {e.Scale:F2}");
 		
-		// Scale the canvas
-		_canvasScale *= e.Scale;
-		_canvasScale = Math.Clamp(_canvasScale, 0.5f, 3f);
+		var newScale = Math.Clamp(_canvasScale * e.Scale, 0.5f, 3f);
+		AdjustOffsetForPivot(e.Center, _canvasScale, newScale, _canvasRotation, _canvasRotation);
+		_canvasScale = newScale;
 		statusLabel.Text = $"Scale: {_canvasScale:F2}";
 		
 		gestureView.Invalidate();
@@ -336,8 +322,9 @@ public partial class GesturePage : ContentPage
 		StopFlingAnimation(); // Stop any ongoing fling
 		LogEvent($"Rotate: {e.RotationDelta:F1}°");
 		
-		// Rotate the canvas
-		_canvasRotation += e.RotationDelta;
+		var newRotation = _canvasRotation + e.RotationDelta;
+		AdjustOffsetForPivot(e.Center, _canvasScale, _canvasScale, _canvasRotation, newRotation);
+		_canvasRotation = newRotation;
 		statusLabel.Text = $"Rotation: {_canvasRotation:F1}°";
 		
 		gestureView.Invalidate();
@@ -380,6 +367,30 @@ public partial class GesturePage : ContentPage
 	{
 		LogEvent($"Drag ended at ({e.CurrentLocation.X:F0}, {e.CurrentLocation.Y:F0})");
 		statusLabel.Text = "Drag completed";
+	}
+
+	/// <summary>
+	/// Adjusts _canvasOffset so that the content under screenPivot stays fixed
+	/// when scale or rotation changes.
+	/// </summary>
+	private void AdjustOffsetForPivot(SKPoint screenPivot, float oldScale, float newScale, float oldRotDeg, float newRotDeg)
+	{
+		var w2 = (float)_canvasWidth / 2f;
+		var h2 = (float)_canvasHeight / 2f;
+		var d = new SKPoint(screenPivot.X - w2, screenPivot.Y - h2);
+
+		// Q = Rot(-θ) · d / scale  (content-space vector from center to pivot)
+		var rotOld = SKMatrix.CreateRotationDegrees(-oldRotDeg);
+		var qOld = rotOld.MapVector(d.X, d.Y);
+		qOld = new SKPoint(qOld.X / oldScale, qOld.Y / oldScale);
+
+		var rotNew = SKMatrix.CreateRotationDegrees(-newRotDeg);
+		var qNew = rotNew.MapVector(d.X, d.Y);
+		qNew = new SKPoint(qNew.X / newScale, qNew.Y / newScale);
+
+		_canvasOffset = new SKPoint(
+			_canvasOffset.X + qNew.X - qOld.X,
+			_canvasOffset.Y + qNew.Y - qOld.Y);
 	}
 
 	private Sticker? HitTest(SKPoint location)
