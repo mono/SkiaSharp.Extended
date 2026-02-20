@@ -73,6 +73,24 @@
                 <Button Text="End" Command="{Binding EndCommand}" />
             </HorizontalStackLayout>
 
+            <!-- Frame-based seeking -->
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                <Button Text="Frame 0" Command="{Binding SeekToFrameCommand}" CommandParameter="0" />
+                <Button Text="Frame 15" Command="{Binding SeekToFrameCommand}" CommandParameter="15" />
+                <Button Text="Frame 30" Command="{Binding SeekToFrameCommand}" CommandParameter="30" />
+                <Button Text="Last Frame" Command="{Binding SeekToLastFrameCommand}" />
+            </HorizontalStackLayout>
+
+            <!-- Frame info display -->
+            <Grid ColumnDefinitions="*,*" Margin="0,-6,0,0">
+                <Label Grid.Column="0"
+                       Text="{Binding CurrentFrame, Source={Reference lottieView}, StringFormat='Frame: {0}'}"
+                       HorizontalOptions="Start" />
+                <Label Grid.Column="1"
+                       Text="{Binding FrameCount, Source={Reference lottieView}, StringFormat='/ {0} frames'}"
+                       HorizontalOptions="End" />
+            </Grid>
+
         </VerticalStackLayout>
     </Grid>
 

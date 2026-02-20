@@ -65,10 +65,10 @@ lottieView.Source = new SKStreamLottieImageSource { Stream = myStream };
 
 ```csharp
 // Pause the animation
-lottieView.IsAnimationEnabled = false;
+lottieView.Pause();
 
 // Resume
-lottieView.IsAnimationEnabled = true;
+lottieView.Resume();
 
 // Jump to specific progress
 lottieView.Progress = TimeSpan.FromSeconds(1.5);
@@ -78,6 +78,46 @@ if (lottieView.IsComplete)
 {
     // Animation finished
 }
+```
+
+### Frame-based control
+
+Seek to a specific frame and stop (like Lottie's `goToAndStop`):
+
+```csharp
+// Seek to frame 30 and pause
+lottieView.SeekToFrame(30, stopPlayback: true);
+
+// Seek to frame 0 and keep playing
+lottieView.SeekToFrame(0);
+
+// Seek to a normalized position (0.0–1.0)
+lottieView.SeekToProgress(0.5, stopPlayback: true);
+
+// Seek to a specific time
+lottieView.SeekToTime(TimeSpan.FromSeconds(1.5), stopPlayback: true);
+```
+
+Create a switch animation that toggles between two states:
+
+```csharp
+private bool isOn = false;
+
+private void OnSwitchToggled(object sender, EventArgs e)
+{
+    if (isOn)
+        lottieView.SeekToFrame(0, stopPlayback: true);             // Off state
+    else
+        lottieView.SeekToFrame(lottieView.FrameCount - 1, stopPlayback: true);  // On state
+
+    isOn = !isOn;
+}
+```
+
+You can also bind `CurrentFrame`, `FrameCount`, and `Fps` in XAML:
+
+```xml
+<Label Text="{Binding CurrentFrame, Source={Reference lottieView}, StringFormat='Frame {0}'}" />
 ```
 
 ## Events
@@ -110,10 +150,23 @@ lottieView.AnimationCompleted += (s, e) =>
 | `Source` | `SKLottieImageSource` | The Lottie JSON file to play |
 | `Duration` | `TimeSpan` | Total duration of the animation (read-only) |
 | `Progress` | `TimeSpan` | Current playback position |
+| `Fps` | `double` | Frames per second of the animation (read-only) |
+| `FrameCount` | `int` | Total number of frames (read-only) |
+| `CurrentFrame` | `int` | Current frame number, zero-based (read-only) |
 | `RepeatCount` | `int` | Times to repeat (0 = once, -1 = forever) |
 | `RepeatMode` | `SKLottieRepeatMode` | `Restart` or `Reverse` (ping-pong) |
 | `IsAnimationEnabled` | `bool` | Play/pause the animation |
 | `IsComplete` | `bool` | Whether playback has finished |
+
+## Methods Reference
+
+| Method | Description |
+| :----- | :---------- |
+| `SeekToFrame(int, bool)` | Seeks to a frame (zero-based). Pass `stopPlayback: true` to pause. |
+| `SeekToTime(TimeSpan, bool)` | Seeks to a time position. Pass `stopPlayback: true` to pause. |
+| `SeekToProgress(double, bool)` | Seeks to a normalized position [0.0, 1.0]. Pass `stopPlayback: true` to pause. |
+| `Pause()` | Pauses the animation. Equivalent to `IsAnimationEnabled = false`. |
+| `Resume()` | Resumes the animation. Equivalent to `IsAnimationEnabled = true`. |
 
 ## Where to Find Animations
 

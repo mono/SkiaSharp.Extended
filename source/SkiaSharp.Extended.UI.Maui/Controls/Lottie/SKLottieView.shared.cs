@@ -54,6 +54,33 @@ public class SKLottieView : SKAnimatedSurfaceView
 		typeof(SKLottieView),
 		1.0);
 
+	private static readonly BindablePropertyKey FpsPropertyKey = BindableProperty.CreateReadOnly(
+		nameof(Fps),
+		typeof(double),
+		typeof(SKLottieView),
+		0.0,
+		defaultBindingMode: BindingMode.OneWayToSource);
+
+	public static readonly BindableProperty FpsProperty = FpsPropertyKey.BindableProperty;
+
+	private static readonly BindablePropertyKey FrameCountPropertyKey = BindableProperty.CreateReadOnly(
+		nameof(FrameCount),
+		typeof(int),
+		typeof(SKLottieView),
+		0,
+		defaultBindingMode: BindingMode.OneWayToSource);
+
+	public static readonly BindableProperty FrameCountProperty = FrameCountPropertyKey.BindableProperty;
+
+	private static readonly BindablePropertyKey CurrentFramePropertyKey = BindableProperty.CreateReadOnly(
+		nameof(CurrentFrame),
+		typeof(int),
+		typeof(SKLottieView),
+		0,
+		defaultBindingMode: BindingMode.OneWayToSource);
+
+	public static readonly BindableProperty CurrentFrameProperty = CurrentFramePropertyKey.BindableProperty;
+
 	Skottie.Animation? animation;
 	bool isInForwardPhase = true;
 	int repeatsCompleted = 0;
@@ -121,11 +148,102 @@ public class SKLottieView : SKAnimatedSurfaceView
 		set => SetValue(AnimationSpeedProperty, value);
 	}
 
+	/// <summary>
+	/// Gets the frames per second of the loaded animation.
+	/// Returns 0 if no animation is loaded.
+	/// </summary>
+	public double Fps
+	{
+		get => (double)GetValue(FpsProperty);
+		private set => SetValue(FpsPropertyKey, value);
+	}
+
+	/// <summary>
+	/// Gets the total number of frames in the animation.
+	/// Returns 0 if no animation is loaded.
+	/// </summary>
+	public int FrameCount
+	{
+		get => (int)GetValue(FrameCountProperty);
+		private set => SetValue(FrameCountPropertyKey, value);
+	}
+
+	/// <summary>
+	/// Gets the current frame number of the animation (zero-based).
+	/// Returns 0 if no animation is loaded.
+	/// </summary>
+	public int CurrentFrame
+	{
+		get => (int)GetValue(CurrentFrameProperty);
+		private set => SetValue(CurrentFramePropertyKey, value);
+	}
+
 	public event EventHandler<SKLottieAnimationFailedEventArgs>? AnimationFailed;
 
 	public event EventHandler<SKLottieAnimationLoadedEventArgs>? AnimationLoaded;
 
 	public event EventHandler? AnimationCompleted;
+
+	/// <summary>
+	/// Seeks to a specific frame in the animation and optionally stops playback.
+	/// Frame numbers are zero-based and are clamped to the valid range [0, FrameCount - 1].
+	/// </summary>
+	/// <param name="frameNumber">The zero-based frame number to seek to.</param>
+	/// <param name="stopPlayback">If true, stops animation playback after seeking. Default is false.</param>
+	public void SeekToFrame(int frameNumber, bool stopPlayback = false)
+	{
+		if (animation is null || Fps <= 0)
+			return;
+
+		var clampedFrame = Math.Max(0, Math.Min(frameNumber, FrameCount - 1));
+		Progress = TimeSpan.FromSeconds(clampedFrame / Fps);
+
+		if (stopPlayback)
+			IsAnimationEnabled = false;
+	}
+
+	/// <summary>
+	/// Seeks to a specific time position in the animation and optionally stops playback.
+	/// </summary>
+	/// <param name="time">The time position to seek to.</param>
+	/// <param name="stopPlayback">If true, stops animation playback after seeking. Default is false.</param>
+	public void SeekToTime(TimeSpan time, bool stopPlayback = false)
+	{
+		Progress = time;
+
+		if (stopPlayback)
+			IsAnimationEnabled = false;
+	}
+
+	/// <summary>
+	/// Seeks to a normalized progress position (0.0 to 1.0) in the animation and optionally stops playback.
+	/// The progress value is clamped to the valid range [0.0, 1.0].
+	/// </summary>
+	/// <param name="progress">The normalized progress value between 0.0 (start) and 1.0 (end).</param>
+	/// <param name="stopPlayback">If true, stops animation playback after seeking. Default is false.</param>
+	public void SeekToProgress(double progress, bool stopPlayback = false)
+	{
+		if (animation is null)
+			return;
+
+		var clampedProgress = Math.Max(0.0, Math.Min(progress, 1.0));
+		Progress = TimeSpan.FromSeconds(Duration.TotalSeconds * clampedProgress);
+
+		if (stopPlayback)
+			IsAnimationEnabled = false;
+	}
+
+	/// <summary>
+	/// Pauses the animation playback. Equivalent to setting <c>IsAnimationEnabled</c> to false.
+	/// </summary>
+	public void Pause() =>
+		IsAnimationEnabled = false;
+
+	/// <summary>
+	/// Resumes the animation playback. Equivalent to setting <c>IsAnimationEnabled</c> to true.
+	/// </summary>
+	public void Resume() =>
+		IsAnimationEnabled = true;
 
 	protected override void Update(TimeSpan deltaTime)
 	{
@@ -180,6 +298,10 @@ public class SKLottieView : SKAnimatedSurfaceView
 		}
 
 		animation.SeekFrameTime(progress.TotalSeconds);
+
+		// Keep CurrentFrame in sync with progress
+		if (Fps > 0)
+			CurrentFrame = (int)Math.Floor(progress.TotalSeconds * Fps);
 
 		// Skip completion/repeat logic during Reset to avoid spurious events
 		if (isResetting)
@@ -324,6 +446,11 @@ public class SKLottieView : SKAnimatedSurfaceView
 				// - Negative speed: start at Duration, move toward 0
 				Duration = animation?.Duration ?? TimeSpan.Zero;
 				Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
+				Fps = animation?.Fps ?? 0.0;
+				FrameCount = Fps > 0 && animation is not null
+					? (int)Math.Round(animation.Duration.TotalSeconds * Fps)
+					: 0;
+				CurrentFrame = 0;
 			}
 			finally
 			{
