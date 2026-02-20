@@ -114,11 +114,12 @@ public partial class GesturePage : ContentPage
 		// Clear background
 		canvas.Clear(SKColors.White);
 
-		// Apply canvas transforms (pan, scale, rotate)
+		// Apply canvas transforms: rotate/scale around view center, then pan
 		canvas.Save();
-		canvas.Translate(width / 2f + _canvasOffset.X, height / 2f + _canvasOffset.Y);
+		canvas.Translate(width / 2f, height / 2f);
 		canvas.Scale(_canvasScale);
 		canvas.RotateDegrees(_canvasRotation);
+		canvas.Translate(_canvasOffset.X, _canvasOffset.Y);
 		canvas.Translate(-width / 2f, -height / 2f);
 
 		// Draw grid background inside the transform so it pans/zooms/rotates with content
@@ -152,12 +153,17 @@ public partial class GesturePage : ContentPage
 
 		// Expand grid coverage so it fills the view when zoomed out
 		var extra = (int)(Math.Max(width, height) / _canvasScale) + gridSize * 4;
+		// Snap start to grid boundary to keep checker pattern correct
+		var startX = -(extra / gridSize) * gridSize;
+		var startY = startX;
+		var endX = width - startX;
+		var endY = height - startY;
 
-		for (int y = -extra; y < height + extra; y += gridSize)
+		for (int y = startY, row = 0; y < endY; y += gridSize, row++)
 		{
-			for (int x = -extra; x < width + extra; x += gridSize)
+			for (int x = startX, col = 0; x < endX; x += gridSize, col++)
 			{
-				var isLight = ((x / gridSize) + (y / gridSize)) % 2 == 0;
+				var isLight = (col + row) % 2 == 0;
 				var rect = new SKRect(x, y, x + gridSize, y + gridSize);
 				canvas.DrawRect(rect, isLight ? lightPaint : darkPaint);
 			}
@@ -261,23 +267,20 @@ public partial class GesturePage : ContentPage
 		else
 		{
 			// Zoom in toward the tapped point.
-			// We want the content under the tap to stay under the tap after scaling.
+			// With transform: Translate(w/2,h/2) · Scale(s) · Rotate(θ) · Translate(ox,oy) · Translate(-w/2,-h/2)
+			// For θ=0, screen point sx = w/2 + s*(cx - w/2 + ox), so:
+			// ox' = tap*(1-ratio)/(s*ratio) + ox  where tap = tapX - w/2
 			var newScale = Math.Min(_canvasScale * zoomIn, maxScale);
 			var ratio = newScale / _canvasScale;
 
-			// The tap point in canvas coordinates (origin = top-left of view)
-			var tapX = e.Location.X;
-			var tapY = e.Location.Y;
-
-			// Adjust offset so the tap point stays fixed:
-			// newOffset = tap - ratio * (tap - oldOffset)
 			var cx = (float)_canvasWidth / 2f;
 			var cy = (float)_canvasHeight / 2f;
-			var pivotX = tapX - cx;
-			var pivotY = tapY - cy;
+			var tapDx = e.Location.X - cx;
+			var tapDy = e.Location.Y - cy;
+			var factor = (1f - ratio) / (_canvasScale * ratio);
 			_canvasOffset = new SKPoint(
-				pivotX - ratio * (pivotX - _canvasOffset.X),
-				pivotY - ratio * (pivotY - _canvasOffset.Y));
+				tapDx * factor + _canvasOffset.X,
+				tapDy * factor + _canvasOffset.Y);
 
 			_canvasScale = newScale;
 			statusLabel.Text = $"Zoom: {_canvasScale:F2}x";
@@ -389,9 +392,10 @@ public partial class GesturePage : ContentPage
 			return null;
 
 		// Build the same transform used in OnPaintSurface
-		var matrix = SKMatrix.CreateTranslation(w / 2f + _canvasOffset.X, h / 2f + _canvasOffset.Y);
+		var matrix = SKMatrix.CreateTranslation(w / 2f, h / 2f);
 		matrix = matrix.PostConcat(SKMatrix.CreateScale(_canvasScale, _canvasScale));
 		matrix = matrix.PostConcat(SKMatrix.CreateRotationDegrees(_canvasRotation));
+		matrix = matrix.PostConcat(SKMatrix.CreateTranslation(_canvasOffset.X, _canvasOffset.Y));
 		matrix = matrix.PostConcat(SKMatrix.CreateTranslation(-w / 2f, -h / 2f));
 
 		if (!matrix.TryInvert(out var inverse))
