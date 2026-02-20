@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -33,7 +33,7 @@ public class SKGestureEngine : IDisposable
 	private readonly SKFlingTracker _flingTracker = new();
 	private SynchronizationContext? _syncContext;
 	private Timer? _longPressTimer;
-	
+
 	private SKPoint _initialTouch = SKPoint.Empty;
 	private SKPoint _lastTapLocation = SKPoint.Empty;
 	private long _lastTapTicks;
@@ -162,9 +162,9 @@ public class SKGestureEngine : IDisposable
 		_syncContext ??= SynchronizationContext.Current;
 
 		var ticks = TimeProvider();
-		
+
 		_touches[id] = new SKTouchState(id, location, ticks, true);
-		
+
 		// Only set initial touch state for the first finger
 		if (_touches.Count == 1)
 		{
@@ -179,7 +179,7 @@ public class SKGestureEngine : IDisposable
 
 		// Check for double tap using the last completed tap location
 		if (_touches.Count == 1 &&
-			ticks - _lastTapTicks < DoubleTapDelayTicks && 
+			ticks - _lastTapTicks < DoubleTapDelayTicks &&
 			SKPoint.Distance(location, _lastTapLocation) < TouchSlop)
 		{
 			_tapCount++;
@@ -190,12 +190,12 @@ public class SKGestureEngine : IDisposable
 		}
 
 		var touchPoints = GetActiveTouchPoints();
-		
+
 		if (touchPoints.Length > 0)
 		{
 			// Raise gesture started
 			OnGestureStarted(new SKGestureStateEventArgs(touchPoints, SKGestureState.Detecting));
-			
+
 			if (touchPoints.Length >= 2)
 			{
 				_pinchState = SKPinchState.FromLocations(touchPoints);
@@ -226,7 +226,7 @@ public class SKGestureEngine : IDisposable
 			return false;
 
 		var ticks = TimeProvider();
-		
+
 		if (!_touches.ContainsKey(id))
 			return false;
 
@@ -271,7 +271,7 @@ public class SKGestureEngine : IDisposable
 				if (touchPoints.Length == 2)
 				{
 					var newPinch = SKPinchState.FromLocations(touchPoints);
-					
+
 					// Calculate scale
 					var scaleDelta = _pinchState.Radius > 0 ? newPinch.Radius / _pinchState.Radius : 1f;
 					OnPinchDetected(new SKPinchEventArgs(newPinch.Center, _pinchState.Center, scaleDelta));
@@ -303,12 +303,12 @@ public class SKGestureEngine : IDisposable
 
 		StopLongPressTimer();
 		var ticks = TimeProvider();
-		
+
 		if (!_touches.TryGetValue(id, out var releasedTouch))
 			return false;
 
 		_touches.Remove(id);
-		
+
 		var touchPoints = GetActiveTouchPoints();
 		var handled = false;
 
@@ -317,7 +317,7 @@ public class SKGestureEngine : IDisposable
 		{
 			var velocity = _flingTracker.CalculateVelocity(id, ticks);
 			var velocityMagnitude = (float)Math.Sqrt(velocity.X * velocity.X + velocity.Y * velocity.Y);
-			
+
 			if (velocityMagnitude > FlingThreshold)
 			{
 				OnFlingDetected(new SKFlingEventArgs(velocity.X, velocity.Y));
@@ -335,7 +335,7 @@ public class SKGestureEngine : IDisposable
 				{
 					_lastTapTicks = ticks;
 					_lastTapLocation = location;
-					
+
 					if (_tapCount > 1)
 					{
 						OnDoubleTapDetected(new SKTapEventArgs(location, _tapCount));
@@ -437,7 +437,7 @@ public class SKGestureEngine : IDisposable
 	{
 		if (_disposed)
 			return;
-		
+
 		_disposed = true;
 		StopLongPressTimer();
 		Reset();
@@ -507,8 +507,10 @@ public class SKGestureEngine : IDisposable
 	private static float NormalizeAngle(float angle)
 	{
 		angle %= 360f;
-		if (angle > 180f) angle -= 360f;
-		if (angle < -180f) angle += 360f;
+		if (angle > 180f)
+			angle -= 360f;
+		if (angle < -180f)
+			angle += 360f;
 		return angle;
 	}
 

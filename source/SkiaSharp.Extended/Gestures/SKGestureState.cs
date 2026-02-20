@@ -1,4 +1,4 @@
-namespace SkiaSharp.Extended.Gestures;
+﻿namespace SkiaSharp.Extended.Gestures;
 
 /// <summary>
 /// The current state of a gesture.

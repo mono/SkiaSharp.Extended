@@ -1,4 +1,4 @@
-namespace SkiaSharp.Extended.Gestures;
+﻿namespace SkiaSharp.Extended.Gestures;
 
 /// <summary>
 /// Represents the state of a touch point.
