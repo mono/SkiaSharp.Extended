@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using SkiaSharp;
 
@@ -7,20 +6,14 @@ namespace SkiaSharp.Extended.PivotViewer
 {
     /// <summary>
     /// Core rendering engine for PivotViewer. Platform-agnostic — depends only on SkiaSharp.
-    /// Renders grid view, histogram view, filter pane, detail pane, control bar, and sort dropdown.
-    /// Used by MAUI, Blazor, or any SkiaSharp host.
+    /// Renders grid view and histogram view (main content area only).
+    /// UI chrome (control bar, filter pane, detail pane, sort dropdown) is handled by the host (MAUI/Blazor).
     /// </summary>
     public class PivotViewerRenderer : IDisposable
     {
         // --- Layout constants ---
-        public const float FilterPaneWidth = 220f;
-        public const float DetailPaneWidth = 280f;
-        public const float ControlBarHeight = 40f;
         public const float ItemPadding = 8f;
         public const float TradingCardMinWidth = 150f;
-
-        private const float LineHeight = 20f;
-        private const float HistogramHeight = 40f;
 
         // --- Owned paint/font resources ---
         private readonly SKPaint _itemPaint;
@@ -32,14 +25,6 @@ namespace SkiaSharp.Extended.PivotViewer
         private readonly SKPaint _cardSepPaint;
         private readonly SKFont _textFont;
         private readonly SKFont _labelFont;
-
-        // --- Cached histogram data (invalidated when filters change) ---
-        private readonly Dictionary<string, List<HistogramBucket<double>>> _numericHistogramCache = new();
-        private readonly Dictionary<string, (List<HistogramBucket<DateTime>> Buckets, DateTime Min, DateTime Max)> _dateHistogramCache = new();
-
-        // --- Detail pane hit rects (populated during RenderDetailPane, consumed by HitTest) ---
-        private readonly List<(SKRect Bounds, Uri Href)> _detailLinkHitRects = new();
-        private readonly List<(SKRect Bounds, string PropertyId, string Value)> _detailFacetHitRects = new();
 
         private bool _disposed;
 
@@ -61,14 +46,14 @@ namespace SkiaSharp.Extended.PivotViewer
         // =====================================================================
 
         /// <summary>
-        /// Renders the full PivotViewer surface: control bar, filter pane, content area, detail pane, and sort dropdown.
+        /// Renders the main content area: grid of items or histogram view.
         /// </summary>
         public void Render(
             SKCanvas canvas,
             SKImageInfo info,
             PivotViewerController controller,
             PivotViewerTheme theme,
-            PivotViewerViewState viewState)
+            PivotViewerItem? hoverItem = null)
         {
             if (_disposed) return;
 
@@ -77,109 +62,36 @@ namespace SkiaSharp.Extended.PivotViewer
             // Flush deferred tile disposals on the render thread
             controller.ImageProvider?.FlushEvictedTiles();
 
-            // Compute layout regions
-            float filterWidth = viewState.IsFilterPaneVisible ? FilterPaneWidth : 0;
-            float detailWidth = controller.DetailPane.IsShowing ? DetailPaneWidth : 0;
-            float contentLeft = filterWidth;
-            float contentWidth = Math.Max(0, info.Width - filterWidth - detailWidth);
-            float contentTop = ControlBarHeight;
-            float contentHeight = Math.Max(0, info.Height - ControlBarHeight);
+            controller.SetAvailableSize(info.Width, info.Height);
 
-            controller.SetAvailableSize(contentWidth, contentHeight);
-
-            // Control bar
-            RenderControlBar(canvas, info, theme, controller, viewState);
-
-            // Filter pane
-            if (viewState.IsFilterPaneVisible && filterWidth > 0)
-            {
-                canvas.Save();
-                canvas.ClipRect(new SKRect(0, ControlBarHeight, filterWidth, info.Height));
-                RenderFilterPane(canvas, filterWidth, contentHeight, ControlBarHeight, theme, controller, viewState);
-                canvas.Restore();
-
-                // Scroll indicator (thin scrollbar track + thumb)
-                RenderFilterScrollIndicator(canvas, filterWidth, contentHeight, ControlBarHeight, viewState);
-            }
-
-            // Main content area
-            canvas.Save();
-            canvas.ClipRect(new SKRect(contentLeft, contentTop, contentLeft + contentWidth, info.Height));
-            canvas.Translate(contentLeft, contentTop);
             if (controller.CurrentView == "graph" && controller.HistogramLayout != null)
             {
-                RenderHistogramView(canvas, new SKImageInfo((int)contentWidth, (int)contentHeight),
-                    controller.HistogramLayout, theme, controller);
+                RenderHistogramView(canvas, info, controller.HistogramLayout, theme, controller);
             }
             else if (controller.GridLayout != null)
             {
-                RenderGridView(canvas, new SKImageInfo((int)contentWidth, (int)contentHeight),
-                    controller.GridLayout, theme, controller, viewState);
+                RenderGridView(canvas, info, controller.GridLayout, theme, controller, hoverItem);
             }
-            canvas.Restore();
-
-            // Detail pane
-            if (controller.DetailPane.IsShowing)
+            else
             {
-                float detailLeft = info.Width - detailWidth;
-                canvas.Save();
-                canvas.ClipRect(new SKRect(detailLeft, ControlBarHeight, info.Width, info.Height));
-                canvas.Translate(detailLeft, ControlBarHeight);
-                RenderDetailPane(canvas, detailWidth, contentHeight, theme, controller, viewState);
-                canvas.Restore();
+                RenderNoResultsMessage(canvas, info.Width, info.Height, theme);
             }
-
-            // Sort dropdown overlay (last so it draws on top)
-            RenderSortDropdown(canvas, info, theme, controller, viewState);
         }
 
         /// <summary>
-        /// Hit-tests a view-space coordinate against the rendered layout regions.
+        /// Hit-tests a coordinate against the content area (grid items or histogram items).
         /// Returns a <see cref="RenderHitResult"/> the UI layer dispatches.
         /// </summary>
         public RenderHitResult HitTest(
             double viewX,
             double viewY,
             SKImageInfo info,
-            PivotViewerController controller,
-            PivotViewerViewState viewState)
+            PivotViewerController controller)
         {
             if (_disposed) return new RenderHitResult { Type = RenderHitType.None };
 
-            float filterWidth = viewState.IsFilterPaneVisible ? FilterPaneWidth : 0;
-            float detailWidth = controller.DetailPane.IsShowing ? DetailPaneWidth : 0;
-            float contentWidth = Math.Max(0, info.Width - filterWidth - detailWidth);
-            float contentHeight = Math.Max(0, info.Height - ControlBarHeight);
-
-            // Sort dropdown overlay (highest priority)
-            if (viewState.IsSortDropdownVisible)
-            {
-                var sortResult = HitTestSortDropdown(viewX, viewY, info, controller);
-                if (sortResult.Type != RenderHitType.None)
-                    return sortResult;
-            }
-
-            // Control bar
-            if (viewY < ControlBarHeight)
-                return HitTestControlBar(viewX, viewY, info, controller, viewState);
-
-            // Filter pane
-            if (viewState.IsFilterPaneVisible && viewX < filterWidth && viewY > ControlBarHeight)
-                return HitTestFilterPane(viewX, viewY, controller, viewState);
-
-            // Detail pane
-            if (detailWidth > 0 && viewX > info.Width - detailWidth)
-            {
-                double localX = viewX - (info.Width - detailWidth);
-                double localY = viewY - ControlBarHeight;
-                return HitTestDetailPane(localX, localY, viewState);
-            }
-
-            // Main content area
-            double contentX = viewX - filterWidth;
-            double contentY = viewY - ControlBarHeight;
-            double worldX = contentX - controller.PanOffsetX;
-            double worldY = contentY - controller.PanOffsetY;
+            double worldX = viewX - controller.PanOffsetX;
+            double worldY = viewY - controller.PanOffsetY;
 
             // For graph view, reverse-transform from view coords to layout coords
             // (the renderer applies chartLeft/titleHeight offset + scaleX/scaleY)
@@ -189,10 +101,10 @@ namespace SkiaSharp.Extended.PivotViewer
                 const float titleHeight = 24f;
                 const float xAxisHeight = 20f;
                 float chartLeft = yAxisWidth;
-                float chartWidth = contentWidth - yAxisWidth;
-                float chartHeight = contentHeight - xAxisHeight - titleHeight;
-                float scaleX = chartWidth / Math.Max(1, contentWidth);
-                float scaleY = chartHeight / Math.Max(1, contentHeight);
+                float chartWidth = info.Width - yAxisWidth;
+                float chartHeight = info.Height - xAxisHeight - titleHeight;
+                float scaleX = chartWidth / Math.Max(1, info.Width);
+                float scaleY = chartHeight / Math.Max(1, info.Height);
 
                 double layoutX = (worldX - chartLeft) / scaleX;
                 double layoutY = (worldY - titleHeight) / scaleY;
@@ -202,7 +114,7 @@ namespace SkiaSharp.Extended.PivotViewer
                     return new RenderHitResult { Type = RenderHitType.Item, Item = hitItem };
 
                 // Graph column label hit test
-                if (controller.SortProperty != null && worldY >= contentHeight - 30)
+                if (controller.SortProperty != null && worldY >= info.Height - 30)
                 {
                     foreach (var col in controller.HistogramLayout.Columns)
                     {
@@ -230,22 +142,13 @@ namespace SkiaSharp.Extended.PivotViewer
             return RenderHitResult.None;
         }
 
-        /// <summary>
-        /// Invalidates cached histogram data. Call when filters or in-scope items change.
-        /// </summary>
-        public void InvalidateHistogramCaches()
-        {
-            _numericHistogramCache.Clear();
-            _dateHistogramCache.Clear();
-        }
-
         // =====================================================================
         // Grid View
         // =====================================================================
 
         private void RenderGridView(
             SKCanvas canvas, SKImageInfo info, GridLayout layout,
-            PivotViewerTheme theme, PivotViewerController controller, PivotViewerViewState viewState)
+            PivotViewerTheme theme, PivotViewerController controller, PivotViewerItem? hoverItem)
         {
             _itemPaint.Color = theme.ItemFallbackColor;
 
@@ -319,7 +222,7 @@ namespace SkiaSharp.Extended.PivotViewer
                 }
 
                 // Hover highlight
-                if (pos.Item == viewState.HoverItem && pos.Item != controller.SelectedItem)
+                if (pos.Item == hoverItem && pos.Item != controller.SelectedItem)
                 {
                     using var hoverPaint = new SKPaint { Color = theme.HoverColor };
                     canvas.DrawRect(rect, hoverPaint);
@@ -626,540 +529,6 @@ namespace SkiaSharp.Extended.PivotViewer
         }
 
         // =====================================================================
-        // Control Bar
-        // =====================================================================
-
-        private void RenderControlBar(
-            SKCanvas canvas, SKImageInfo info,
-            PivotViewerTheme theme, PivotViewerController controller, PivotViewerViewState viewState)
-        {
-            using var barPaint = new SKPaint { Color = theme.ControlBackground };
-            canvas.DrawRect(0, 0, info.Width, ControlBarHeight, barPaint);
-
-            _textFont.Size = 14;
-            using var lightPaint = new SKPaint { Color = theme.LightForegroundColor, IsAntialias = true };
-
-            // Filter pane toggle
-            float toggleWidth = 24;
-            float x = (viewState.IsFilterPaneVisible ? FilterPaneWidth : toggleWidth) + 10;
-            string toggleLabel = viewState.IsFilterPaneVisible ? "◀" : "▶";
-            canvas.DrawText(toggleLabel, 6, ControlBarHeight / 2 + 5, SKTextAlign.Left, _textFont, lightPaint);
-
-            // View switcher
-            string gridLabel = controller.CurrentView == "grid" ? "▣ Grid" : "▢ Grid";
-            canvas.DrawText(gridLabel, x, ControlBarHeight / 2 + 5, SKTextAlign.Left, _textFont, lightPaint);
-            x += _textFont.MeasureText(gridLabel, out _) + 20;
-
-            string graphLabel = controller.CurrentView == "graph" ? "▣ Graph" : "▢ Graph";
-            canvas.DrawText(graphLabel, x, ControlBarHeight / 2 + 5, SKTextAlign.Left, _textFont, lightPaint);
-
-            // Item count
-            float countX = info.Width - 150;
-            string countText = $"{controller.InScopeItems.Count} of {controller.Items.Count} items";
-            canvas.DrawText(countText, countX, ControlBarHeight / 2 + 5, SKTextAlign.Left, _textFont, lightPaint);
-
-            // Active filter breadcrumbs
-            {
-                var activeFilters = new List<string>();
-                if (!string.IsNullOrEmpty(controller.SearchText))
-                    activeFilters.Add($"\"{controller.SearchText}\"");
-
-                var predicates = controller.FilterEngine.Predicates;
-                foreach (var prop in controller.Properties)
-                {
-                    bool hasFilter = false;
-                    for (int i = 0; i < predicates.Count; i++)
-                    {
-                        if (predicates[i].PropertyId == prop.Id)
-                        {
-                            hasFilter = true;
-                            break;
-                        }
-                    }
-                    if (hasFilter)
-                        activeFilters.Add(prop.DisplayName ?? prop.Id);
-                }
-
-                if (activeFilters.Count > 0)
-                {
-                    float graphLabelWidth = _textFont.MeasureText(graphLabel, out _);
-                    _textFont.Size = 11;
-                    using var breadcrumbPaint = new SKPaint { Color = new SKColor(180, 200, 255), IsAntialias = true };
-                    string breadcrumb = string.Join(" › ", activeFilters);
-                    float bx = x + graphLabelWidth + 20;
-                    float maxWidth = info.Width / 2 - bx - 60;
-                    if (maxWidth > 40)
-                    {
-                        breadcrumb = RenderUtils.TruncateText(breadcrumb, _textFont, maxWidth);
-                        canvas.DrawText(breadcrumb, bx, ControlBarHeight / 2 + 4,
-                            SKTextAlign.Left, _textFont, breadcrumbPaint);
-                    }
-                    _textFont.Size = 14;
-                }
-            }
-
-            // Sort indicator
-            {
-                float sortX = info.Width / 2;
-                string arrow = controller.SortDescending ? "▲" : "▼";
-                string sortText = controller.SortProperty != null
-                    ? $"Sort: {controller.SortProperty.DisplayName} {arrow}"
-                    : $"Sort {arrow}";
-                canvas.DrawText(sortText, sortX, ControlBarHeight / 2 + 5, SKTextAlign.Center, _textFont, lightPaint);
-            }
-        }
-
-        // =====================================================================
-        // Sort Dropdown
-        // =====================================================================
-
-        private void RenderSortDropdown(
-            SKCanvas canvas, SKImageInfo info,
-            PivotViewerTheme theme, PivotViewerController controller, PivotViewerViewState viewState)
-        {
-            if (!viewState.IsSortDropdownVisible) return;
-
-            var properties = controller.Properties;
-            if (properties.Count == 0) return;
-
-            float dropdownWidth = 200;
-            float rowHeight = 28;
-            float dropdownHeight = properties.Count * rowHeight + 8;
-            float dropdownX = info.Width / 2 - dropdownWidth / 2;
-            float dropdownY = ControlBarHeight;
-
-            var renderRect = new SKRect(dropdownX, dropdownY, dropdownX + dropdownWidth, dropdownY + dropdownHeight);
-
-            // Shadow + background
-            using var shadowPaint = new SKPaint { Color = new SKColor(0, 0, 0, 60) };
-            canvas.DrawRect(renderRect.Left + 2, renderRect.Top + 2, dropdownWidth, dropdownHeight, shadowPaint);
-            using var bgPaint = new SKPaint { Color = SKColors.White };
-            canvas.DrawRect(renderRect, bgPaint);
-            using var borderPaint = new SKPaint { Color = new SKColor(180, 180, 180), IsStroke = true, StrokeWidth = 1 };
-            canvas.DrawRect(renderRect, borderPaint);
-
-            // Rows
-            _textFont.Size = 13;
-            using var textPaint = new SKPaint { Color = theme.ForegroundColor, IsAntialias = true };
-            using var selectedTextPaint = new SKPaint { Color = theme.AccentColor, IsAntialias = true };
-            using var hoverBgPaint = new SKPaint { Color = new SKColor(230, 240, 255) };
-
-            float y = dropdownY + 4;
-            foreach (var prop in properties)
-            {
-                bool isSelected = controller.SortProperty?.Id == prop.Id;
-                if (isSelected)
-                    canvas.DrawRect(dropdownX, y, dropdownWidth, rowHeight, hoverBgPaint);
-
-                canvas.DrawText(prop.DisplayName ?? prop.Id, dropdownX + 10, y + rowHeight / 2 + 5,
-                    SKTextAlign.Left, _textFont, isSelected ? selectedTextPaint : textPaint);
-                y += rowHeight;
-            }
-        }
-
-        // =====================================================================
-        // Filter Pane
-        // =====================================================================
-
-        private void RenderFilterPane(
-            SKCanvas canvas, float width, float height, float topOffset,
-            PivotViewerTheme theme, PivotViewerController controller, PivotViewerViewState viewState)
-        {
-            using var bgPaint = new SKPaint { Color = theme.ControlBackground };
-            canvas.DrawRect(0, topOffset, width, height, bgPaint);
-
-            var filterPane = controller.FilterPaneModel;
-            if (filterPane == null) return;
-
-            // Apply scroll offset
-            canvas.Save();
-            canvas.Translate(0, -(float)viewState.FilterScrollOffset);
-
-            var categories = filterPane.GetCategories(controller.SearchFilteredItems);
-            float y = topOffset + ItemPadding;
-
-            using var lightPaint = new SKPaint { Color = theme.LightForegroundColor, IsAntialias = true };
-            using var accentPaint = new SKPaint { Color = theme.AccentColor, IsAntialias = true };
-            using var dimPaint = new SKPaint { Color = new SKColor(80, 80, 80), IsAntialias = true };
-            using var linkPaint = new SKPaint { Color = new SKColor(0, 102, 204), IsAntialias = true };
-            using var rangePaint = new SKPaint { Color = theme.SecondaryForeground, IsAntialias = true };
-            using var emptyPaint = new SKPaint { Color = SKColors.Gray, IsAntialias = true };
-
-            // "Clear All" button
-            if (filterPane.HasActiveFilters)
-            {
-                _textFont.Size = 12;
-                canvas.DrawText("✕ Clear All Filters", ItemPadding, y + 14, SKTextAlign.Left, _textFont, accentPaint);
-                y += LineHeight + 4;
-            }
-
-            float scrollOffset = (float)viewState.FilterScrollOffset;
-            foreach (var category in categories)
-            {
-                bool visible = y < topOffset + height + scrollOffset && y + LineHeight > topOffset;
-
-                // Category header
-                if (visible)
-                {
-                    _textFont.Size = 13;
-                    var headerPaint = category.IsFiltered ? accentPaint : lightPaint;
-                    canvas.DrawText(category.Property.DisplayName ?? category.Property.Id,
-                        ItemPadding, y + 14, SKTextAlign.Left, _textFont, headerPaint);
-
-                    // Per-category clear button when filtered
-                    if (category.IsFiltered)
-                    {
-                        float clearX = width - 24;
-                        _textFont.Size = 11;
-                        canvas.DrawText("✕", clearX, y + 13, SKTextAlign.Left, _textFont, accentPaint);
-                    }
-                }
-                y += LineHeight + 2;
-
-                // String/Text/Link values — checkbox UI
-                if (category.ValueCounts != null && (
-                    category.Property.PropertyType == PivotViewerPropertyType.Text ||
-                    category.Property.PropertyType == PivotViewerPropertyType.Link))
-                {
-                    _textFont.Size = 11;
-                    bool isExpanded = viewState.ExpandedFilterCategories.Contains(category.Property.Id);
-                    int maxVisible = isExpanded ? category.ValueCounts.Count : 8;
-
-                    foreach (var kv in category.ValueCounts.OrderByDescending(kv => kv.Value).Take(maxVisible))
-                    {
-                        visible = y < topOffset + height + scrollOffset && y + LineHeight > topOffset;
-                        if (visible)
-                        {
-                            bool isActive = category.ActiveFilters?.Contains(kv.Key) ?? false;
-                            string checkbox = isActive ? "☑" : "☐";
-                            string label = $"{checkbox} {kv.Key} ({kv.Value})";
-                            var valuePaint = isActive ? accentPaint : dimPaint;
-                            canvas.DrawText(label, ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, valuePaint);
-                        }
-                        y += LineHeight - 2;
-                    }
-
-                    // "Show all N values..." / "Show less" toggle
-                    if (category.ValueCounts.Count > 8)
-                    {
-                        visible = y < topOffset + height + scrollOffset && y + LineHeight > topOffset;
-                        if (visible)
-                        {
-                            string toggleText = isExpanded
-                                ? "  ▾ Show less"
-                                : $"  ▸ Show all {category.ValueCounts.Count} values...";
-                            canvas.DrawText(toggleText, ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, linkPaint);
-                        }
-                        y += LineHeight - 2;
-                    }
-                }
-                else if (category.Property.PropertyType == PivotViewerPropertyType.Decimal)
-                {
-                    // Numeric mini histogram
-                    _textFont.Size = 11;
-                    if (!_numericHistogramCache.TryGetValue(category.Property.Id, out var buckets))
-                    {
-                        var numericValues = new List<double>();
-                        foreach (var item in controller.InScopeItems)
-                        {
-                            var vals = item[category.Property.Id];
-                            if (vals != null)
-                            {
-                                foreach (var v in vals)
-                                {
-                                    if (v is double d) numericValues.Add(d);
-                                    else if (v is IConvertible c)
-                                    {
-                                        try { numericValues.Add(c.ToDouble(null)); } catch { }
-                                    }
-                                }
-                            }
-                        }
-                        buckets = numericValues.Count > 0
-                            ? HistogramBucketer.CreateNumericBuckets(numericValues)
-                            : new List<HistogramBucket<double>>();
-                        _numericHistogramCache[category.Property.Id] = buckets;
-                    }
-
-                    if (buckets.Count > 0)
-                    {
-                        float barWidth = (width - ItemPadding * 2 - 16) / Math.Max(1, buckets.Count);
-                        int maxBucketCount = buckets.Max(b => b.Count);
-
-                        for (int i = 0; i < buckets.Count; i++)
-                        {
-                            float barHeight = maxBucketCount > 0 ? (float)buckets[i].Count / maxBucketCount * HistogramHeight : 0;
-                            float barX = ItemPadding + 8 + i * barWidth;
-                            float barY = y + HistogramHeight - barHeight;
-                            using var barPaint = new SKPaint { Color = new SKColor(theme.AccentColor.Red, theme.AccentColor.Green, theme.AccentColor.Blue, 180) };
-                            canvas.DrawRect(barX, barY, barWidth - 1, barHeight, barPaint);
-                        }
-                        y += HistogramHeight + 4;
-
-                        string rangeLabel = $"{buckets[0].Label} – {buckets[buckets.Count - 1].Label}";
-                        canvas.DrawText(rangeLabel, ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
-                        y += LineHeight;
-                    }
-                    else
-                    {
-                        canvas.DrawText("(no numeric data)", ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, emptyPaint);
-                        y += LineHeight;
-                    }
-                }
-                else if (category.Property.PropertyType == PivotViewerPropertyType.DateTime)
-                {
-                    // DateTime mini histogram
-                    _textFont.Size = 11;
-                    if (!_dateHistogramCache.TryGetValue(category.Property.Id, out var dateData))
-                    {
-                        var dateValues = new List<DateTime>();
-                        foreach (var item in controller.InScopeItems)
-                        {
-                            var vals = item[category.Property.Id];
-                            if (vals != null)
-                            {
-                                foreach (var v in vals)
-                                {
-                                    if (v is DateTime dt) dateValues.Add(dt);
-                                    else if (v is string s && DateTime.TryParse(s, out var parsed))
-                                        dateValues.Add(parsed);
-                                }
-                            }
-                        }
-
-                        if (dateValues.Count > 0)
-                        {
-                            var dtBuckets = HistogramBucketer.CreateDateTimeBuckets(dateValues);
-                            dateData = (dtBuckets, dateValues.Min(), dateValues.Max());
-                        }
-                        else
-                        {
-                            dateData = (new List<HistogramBucket<DateTime>>(), DateTime.MinValue, DateTime.MaxValue);
-                        }
-                        _dateHistogramCache[category.Property.Id] = dateData;
-                    }
-
-                    if (dateData.Buckets.Count > 0)
-                    {
-                        var dtBuckets = dateData.Buckets;
-                        float barWidth = (width - ItemPadding * 2 - 16) / Math.Max(1, dtBuckets.Count);
-                        int maxBucketCount = dtBuckets.Max(b => b.Count);
-
-                        for (int i = 0; i < dtBuckets.Count; i++)
-                        {
-                            float barHeight = maxBucketCount > 0 ? (float)dtBuckets[i].Count / maxBucketCount * HistogramHeight : 0;
-                            float barX = ItemPadding + 8 + i * barWidth;
-                            float barY = y + HistogramHeight - barHeight;
-                            using var barPaint = new SKPaint { Color = new SKColor(144, 190, 109, 180) };
-                            canvas.DrawRect(barX, barY, barWidth - 1, barHeight, barPaint);
-                        }
-                        y += HistogramHeight + 4;
-
-                        string rangeLabel = $"{dateData.Min:MMM yyyy} – {dateData.Max:MMM yyyy}";
-                        canvas.DrawText(rangeLabel, ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, rangePaint);
-                        y += LineHeight;
-                    }
-                    else
-                    {
-                        canvas.DrawText("(no date data)", ItemPadding + 8, y + 12, SKTextAlign.Left, _textFont, emptyPaint);
-                        y += LineHeight;
-                    }
-                }
-
-                y += 6; // Spacing between categories
-            }
-
-            // Track total content height for scroll clamping
-            viewState.FilterContentHeight = y - topOffset;
-            canvas.Restore();
-        }
-
-        /// <summary>Renders a thin scrollbar indicator on the right edge of the filter pane.</summary>
-        private static void RenderFilterScrollIndicator(
-            SKCanvas canvas, float paneWidth, float viewportHeight, float topOffset,
-            PivotViewerViewState viewState)
-        {
-            double contentH = viewState.FilterContentHeight;
-            if (contentH <= viewportHeight) return; // No scroll needed
-
-            const float trackWidth = 4f;
-            const float trackMargin = 2f;
-            float trackX = paneWidth - trackWidth - trackMargin;
-            float trackTop = topOffset + 2;
-            float trackHeight = viewportHeight - 4;
-
-            // Track
-            using var trackPaint = new SKPaint { Color = new SKColor(200, 200, 200, 80) };
-            canvas.DrawRoundRect(trackX, trackTop, trackWidth, trackHeight, 2, 2, trackPaint);
-
-            // Thumb
-            double ratio = viewportHeight / contentH;
-            float thumbHeight = Math.Max(20f, (float)(trackHeight * ratio));
-            double maxScroll = contentH - viewportHeight;
-            double scrollFraction = maxScroll > 0 ? viewState.FilterScrollOffset / maxScroll : 0;
-            float thumbY = trackTop + (float)(scrollFraction * (trackHeight - thumbHeight));
-
-            using var thumbPaint = new SKPaint { Color = new SKColor(128, 128, 128, 160) };
-            canvas.DrawRoundRect(trackX, thumbY, trackWidth, thumbHeight, 2, 2, thumbPaint);
-        }
-
-        // =====================================================================
-        // Detail Pane
-        // =====================================================================
-
-        private void RenderDetailPane(
-            SKCanvas canvas, float width, float height,
-            PivotViewerTheme theme, PivotViewerController controller, PivotViewerViewState viewState)
-        {
-            _detailLinkHitRects.Clear();
-            _detailFacetHitRects.Clear();
-
-            using var bgPaint = new SKPaint { Color = theme.SecondaryBackground };
-            canvas.DrawRect(0, 0, width, height, bgPaint);
-
-            using var sepPaint = new SKPaint { Color = new SKColor(200, 200, 200), StrokeWidth = 1 };
-            canvas.DrawLine(0, 0, 0, height, sepPaint);
-
-            var detail = controller.DetailPane;
-            var item = detail.SelectedItem;
-            if (item == null) return;
-
-            // Apply scroll offset
-            canvas.Save();
-            canvas.ClipRect(new SKRect(0, 0, width, height));
-            canvas.Translate(0, -(float)viewState.DetailScrollOffset);
-
-            var defaults = controller.DefaultDetails;
-            float y = ItemPadding;
-
-            // Item name
-            if (!defaults.IsNameHidden)
-            {
-                var name = RenderUtils.GetItemDisplayName(item);
-                _textFont.Size = 16;
-                using var titlePaint = new SKPaint { Color = theme.ForegroundColor, IsAntialias = true };
-                canvas.DrawText(name, ItemPadding, y + 16, SKTextAlign.Left, _textFont, titlePaint);
-                y += 28;
-            }
-
-            // Thumbnail
-            var imgProvider = controller.ImageProvider;
-            if (imgProvider != null)
-            {
-                var thumbnail = imgProvider.GetThumbnailForItem(item);
-                if (thumbnail != null)
-                {
-                    float thumbSize = Math.Min(width - 2 * ItemPadding, 150);
-                    float aspectRatio = (float)thumbnail.Width / thumbnail.Height;
-                    float thumbW = thumbSize;
-                    float thumbH = thumbSize / aspectRatio;
-                    canvas.DrawBitmap(thumbnail, new SKRect(ItemPadding, y, ItemPadding + thumbW, y + thumbH));
-                    y += thumbH + ItemPadding;
-                }
-            }
-
-            // Description
-            if (!defaults.IsDescriptionHidden)
-            {
-                var descValues = item["Description"];
-                if (descValues != null && descValues.Count > 0)
-                {
-                    var desc = descValues[0]?.ToString();
-                    if (!string.IsNullOrEmpty(desc))
-                    {
-                        _textFont.Size = 11;
-                        using var descPaint = new SKPaint { Color = theme.SecondaryForeground, IsAntialias = true };
-                        if (desc!.Length > 120) desc = desc.Substring(0, 117) + "...";
-                        canvas.DrawText(desc, ItemPadding, y + 12, SKTextAlign.Left, _textFont, descPaint);
-                        y += 20;
-                    }
-                }
-            }
-
-            // Separator
-            y += 4;
-            canvas.DrawLine(ItemPadding, y, width - ItemPadding, y, sepPaint);
-            y += 8;
-
-            // Facet values
-            if (!defaults.IsFacetCategoriesHidden)
-            {
-                var facets = detail.FacetValues;
-                _textFont.Size = 11;
-
-                foreach (var facet in facets)
-                {
-                    // Property name
-                    using var propPaint = new SKPaint { Color = theme.SecondaryForeground, IsAntialias = true };
-                    canvas.DrawText(facet.DisplayName, ItemPadding, y + 12, SKTextAlign.Left, _textFont, propPaint);
-                    y += 16;
-
-                    // Values
-                    bool isLinkType = facet.Property is PivotViewerLinkProperty;
-                    bool isFilterable = facet.Property.Options.HasFlag(PivotViewerPropertyOptions.CanFilter);
-                    var valueColor = isLinkType || isFilterable
-                        ? new SKColor(0, 102, 204)
-                        : theme.ForegroundColor;
-                    using var valuePaint = new SKPaint { Color = valueColor, IsAntialias = true };
-
-                    var rawValues = isLinkType ? item[facet.Property] : null;
-                    int valIdx = 0;
-                    foreach (var val in facet.Values.Take(5))
-                    {
-                        string displayVal = val.Length > 40 ? val.Substring(0, 37) + "..." : val;
-                        float textWidth = _textFont.MeasureText(displayVal, out _);
-                        canvas.DrawText(displayVal, ItemPadding + 4, y + 12, SKTextAlign.Left, _textFont, valuePaint);
-
-                        if (isLinkType)
-                        {
-                            // Underline for links
-                            canvas.DrawLine(ItemPadding + 4, y + 14, ItemPadding + 4 + textWidth, y + 14, valuePaint);
-                            if (rawValues != null && valIdx < rawValues.Count && rawValues[valIdx] is PivotViewerHyperlink hl)
-                            {
-                                _detailLinkHitRects.Add((new SKRect(ItemPadding + 4, y, ItemPadding + 4 + textWidth, y + 16), hl.Uri));
-                            }
-                        }
-                        else if (isFilterable && facet.Property.PropertyType == PivotViewerPropertyType.Text)
-                        {
-                            _detailFacetHitRects.Add((new SKRect(ItemPadding + 4, y, ItemPadding + 4 + textWidth, y + 16), facet.Property.Id, val));
-                        }
-
-                        y += 16;
-                        valIdx++;
-                    }
-
-                    if (facet.Values.Count > 5)
-                    {
-                        using var morePaint = new SKPaint { Color = SKColors.Gray, IsAntialias = true };
-                        canvas.DrawText($"+{facet.Values.Count - 5} more",
-                            ItemPadding + 4, y + 12, SKTextAlign.Left, _textFont, morePaint);
-                        y += 16;
-                    }
-
-                    y += 4;
-                }
-            }
-
-            // Copyright
-            if (!defaults.IsCopyrightHidden)
-            {
-                var copyright = controller.CollectionSource?.Copyright;
-                if (copyright != null)
-                {
-                    y += 8;
-                    _textFont.Size = 9;
-                    using var copyPaint = new SKPaint { Color = SKColors.Gray, IsAntialias = true };
-                    canvas.DrawText(copyright.Text ?? "©", ItemPadding, y + 10, SKTextAlign.Left, _textFont, copyPaint);
-                    y += 20;
-                }
-            }
-
-            // Track content height for scrolling
-            viewState.DetailContentHeight = y;
-            canvas.Restore();
-        }
-
-        // =====================================================================
         // No Results Message
         // =====================================================================
 
@@ -1169,249 +538,6 @@ namespace SkiaSharp.Extended.PivotViewer
             _textFont.Size = 18;
             using var paint = new SKPaint { Color = theme.SecondaryForeground, IsAntialias = true };
             canvas.DrawText(message, width / 2, height / 2, SKTextAlign.Center, _textFont, paint);
-        }
-
-        // =====================================================================
-        // Hit Test Helpers
-        // =====================================================================
-
-        private RenderHitResult HitTestControlBar(
-            double x, double y, SKImageInfo info,
-            PivotViewerController controller, PivotViewerViewState viewState)
-        {
-            // Filter pane toggle (left edge)
-            if (x < 20)
-                return new RenderHitResult { Type = RenderHitType.FilterToggle };
-
-            // Sort dropdown region (center)
-            float sortCenter = info.Width / 2f;
-            if (x > sortCenter - 100 && x < sortCenter + 100)
-                return new RenderHitResult { Type = RenderHitType.SortDropdown };
-
-            // View switcher
-            float cbFilterW = viewState.IsFilterPaneVisible ? FilterPaneWidth : 24;
-            if (x > cbFilterW && x < cbFilterW + 200)
-            {
-                _textFont.Size = 14;
-                string gridLabel = controller.CurrentView == "grid" ? "▣ Grid" : "▢ Grid";
-                float gridWidth = _textFont.MeasureText(gridLabel, out _);
-
-                if (x < cbFilterW + 10 + gridWidth + 10)
-                    return new RenderHitResult { Type = RenderHitType.ViewGrid };
-                else
-                    return new RenderHitResult { Type = RenderHitType.ViewGraph };
-            }
-
-            return RenderHitResult.None;
-        }
-
-        private RenderHitResult HitTestSortDropdown(
-            double x, double y, SKImageInfo info, PivotViewerController controller)
-        {
-            var properties = controller.Properties;
-            if (properties.Count == 0) return RenderHitResult.None;
-
-            float dropdownWidth = 200;
-            float rowHeight = 28;
-            float dropdownHeight = properties.Count * rowHeight + 8;
-            float dropdownX = info.Width / 2 - dropdownWidth / 2;
-            float dropdownY = ControlBarHeight;
-
-            if (x >= dropdownX && x <= dropdownX + dropdownWidth &&
-                y >= dropdownY && y <= dropdownY + dropdownHeight)
-            {
-                int index = (int)((y - dropdownY - 4) / rowHeight);
-                if (index >= 0 && index < properties.Count)
-                {
-                    return new RenderHitResult
-                    {
-                        Type = RenderHitType.SortDropdownRow,
-                        SortRowIndex = index
-                    };
-                }
-            }
-
-            return RenderHitResult.None;
-        }
-
-        private RenderHitResult HitTestFilterPane(
-            double x, double y,
-            PivotViewerController controller, PivotViewerViewState viewState)
-        {
-            var filterPane = controller.FilterPaneModel;
-            if (filterPane == null) return RenderHitResult.None;
-
-            double adjustedY = y + viewState.FilterScrollOffset;
-
-            // "Clear All" button
-            float clearAllStart = ControlBarHeight + ItemPadding;
-            float clearAllEnd = clearAllStart + 24;
-            if (filterPane.HasActiveFilters && adjustedY >= clearAllStart && adjustedY < clearAllEnd)
-                return new RenderHitResult { Type = RenderHitType.ClearAllFilters };
-
-            // Walk category layout to find hit target
-            var categories = filterPane.GetCategories(controller.SearchFilteredItems);
-            float catY = ControlBarHeight + ItemPadding;
-
-            if (filterPane.HasActiveFilters)
-                catY += LineHeight + 4;
-
-            foreach (var category in categories)
-            {
-                // Category header — check for per-category clear button
-                if (category.IsFiltered && adjustedY >= catY && adjustedY < catY + LineHeight + 2
-                    && x > FilterPaneWidth - 28)
-                {
-                    return new RenderHitResult
-                    {
-                        Type = RenderHitType.FilterCategoryClear,
-                        CategoryName = category.Property.Id
-                    };
-                }
-                catY += LineHeight + 2; // Header
-
-                if (category.ValueCounts != null && (
-                    category.Property.PropertyType == PivotViewerPropertyType.Text ||
-                    category.Property.PropertyType == PivotViewerPropertyType.Link))
-                {
-                    bool isExpanded = viewState.ExpandedFilterCategories.Contains(category.Property.Id);
-                    int maxVisible = isExpanded ? category.ValueCounts.Count : 8;
-
-                    foreach (var kv in category.ValueCounts.OrderByDescending(kv => kv.Value).Take(maxVisible))
-                    {
-                        if (adjustedY >= catY && adjustedY < catY + LineHeight - 2)
-                        {
-                            return new RenderHitResult
-                            {
-                                Type = RenderHitType.FilterCheckbox,
-                                FilterPropertyId = category.Property.Id,
-                                FilterValue = kv.Key
-                            };
-                        }
-                        catY += LineHeight - 2;
-                    }
-
-                    // "Show all" / "Show less" toggle
-                    if (category.ValueCounts.Count > 8)
-                    {
-                        if (adjustedY >= catY && adjustedY < catY + LineHeight - 2)
-                        {
-                            return new RenderHitResult
-                            {
-                                Type = RenderHitType.FilterCategoryToggle,
-                                CategoryName = category.Property.Id
-                            };
-                        }
-                        catY += LineHeight - 2;
-                    }
-                }
-                else if (category.Property.PropertyType == PivotViewerPropertyType.Decimal)
-                {
-                    if (_numericHistogramCache.TryGetValue(category.Property.Id, out var buckets) && buckets.Count > 0)
-                    {
-                        float barWidth = (FilterPaneWidth - ItemPadding * 2 - 16) / Math.Max(1, buckets.Count);
-
-                        if (adjustedY >= catY && adjustedY < catY + HistogramHeight)
-                        {
-                            int barIndex = (int)((x - ItemPadding - 8) / barWidth);
-                            if (barIndex >= 0 && barIndex < buckets.Count)
-                            {
-                                return new RenderHitResult
-                                {
-                                    Type = RenderHitType.FilterNumericHistogramBar,
-                                    FilterPropertyId = category.Property.Id,
-                                    RangeMin = buckets[barIndex].Min,
-                                    RangeMax = barIndex < buckets.Count - 1
-                                        ? buckets[barIndex].Max - 1e-10
-                                        : buckets[barIndex].Max
-                                };
-                            }
-                        }
-                        catY += HistogramHeight + 4;
-                        catY += LineHeight; // range label
-                    }
-                    else
-                    {
-                        catY += LineHeight;
-                    }
-                }
-                else if (category.Property.PropertyType == PivotViewerPropertyType.DateTime)
-                {
-                    if (_dateHistogramCache.TryGetValue(category.Property.Id, out var dateData) && dateData.Buckets.Count > 0)
-                    {
-                        var dtBuckets = dateData.Buckets;
-                        float barWidth = (FilterPaneWidth - ItemPadding * 2 - 16) / Math.Max(1, dtBuckets.Count);
-
-                        if (adjustedY >= catY && adjustedY < catY + HistogramHeight)
-                        {
-                            int barIndex = (int)((x - ItemPadding - 8) / barWidth);
-                            if (barIndex >= 0 && barIndex < dtBuckets.Count)
-                            {
-                                return new RenderHitResult
-                                {
-                                    Type = RenderHitType.FilterDateTimeHistogramBar,
-                                    FilterPropertyId = category.Property.Id,
-                                    DateRangeMin = dtBuckets[barIndex].Min,
-                                    DateRangeMax = barIndex < dtBuckets.Count - 1
-                                        ? dtBuckets[barIndex].Max.AddTicks(-1)
-                                        : dtBuckets[barIndex].Max
-                                };
-                            }
-                        }
-                        catY += HistogramHeight + 4;
-                        catY += LineHeight;
-                    }
-                    else
-                    {
-                        catY += LineHeight;
-                    }
-                }
-                else
-                {
-                    catY += LineHeight;
-                }
-
-                catY += 6;
-            }
-
-            return RenderHitResult.None;
-        }
-
-        private RenderHitResult HitTestDetailPane(double localX, double localY, PivotViewerViewState viewState)
-        {
-            // Adjust for scroll offset (hit rects are stored in content-space coordinates)
-            double adjustedY = localY + viewState.DetailScrollOffset;
-
-            // Check link hit rects (populated during RenderDetailPane)
-            foreach (var (bounds, href) in _detailLinkHitRects)
-            {
-                if (localX >= bounds.Left && localX <= bounds.Right &&
-                    adjustedY >= bounds.Top && adjustedY <= bounds.Bottom)
-                {
-                    return new RenderHitResult
-                    {
-                        Type = RenderHitType.DetailLink,
-                        LinkUri = href.ToString()
-                    };
-                }
-            }
-
-            // Check facet value hit rects for tap-to-filter
-            foreach (var (bounds, propertyId, value) in _detailFacetHitRects)
-            {
-                if (localX >= bounds.Left && localX <= bounds.Right &&
-                    adjustedY >= bounds.Top && adjustedY <= bounds.Bottom)
-                {
-                    return new RenderHitResult
-                    {
-                        Type = RenderHitType.DetailFacetFilter,
-                        FilterPropertyId = propertyId,
-                        FilterValue = value
-                    };
-                }
-            }
-
-            return RenderHitResult.None;
         }
 
         // =====================================================================

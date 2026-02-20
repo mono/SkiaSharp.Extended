@@ -33,8 +33,6 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         private bool _isVisible = true;
 
         private Entry? _searchEntry;
-        private bool _isPanningFilterPane;
-        private bool _isPanningDetailPane;
         private double _lastPointerX = double.NaN;
         private double _lastPivotPinchScale = 1.0;
 
@@ -81,10 +79,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 Placeholder = "Search...",
                 FontSize = 12,
                 BackgroundColor = Colors.White,
-                Margin = new Thickness(4, PivotViewerRenderer.ControlBarHeight + 4, 0, 0),
+                Margin = new Thickness(4, 44, 0, 0),
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Start,
-                WidthRequest = PivotViewerRenderer.FilterPaneWidth - 8,
+                WidthRequest = 212,
                 HeightRequest = 32,
             };
             _searchEntry.TextChanged += OnSearchTextChanged;
@@ -98,7 +96,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 VerticalOptions = LayoutOptions.Start,
                 WidthRequest = 150,
                 HeightRequest = 30,
-                Margin = new Thickness(0, 6, PivotViewerRenderer.DetailPaneWidth + 10, 0),
+                Margin = new Thickness(0, 6, 290, 0),
             };
             _onZoomSliderValueChanged = (s, e) =>
             {
@@ -136,7 +134,6 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             _onFiltersChanged = (s, e) =>
             {
-                _renderer.InvalidateHistogramCaches();
                 FilterChanged?.Invoke(this, EventArgs.Empty);
             };
             _controller.FiltersChanged += _onFiltersChanged;
@@ -162,7 +159,6 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
             _onCollectionChanged = (s, e) =>
             {
-                _renderer.InvalidateHistogramCaches();
                 CollectionChanged?.Invoke(this, EventArgs.Empty);
             };
             _controller.CollectionChanged += _onCollectionChanged;
@@ -598,7 +594,6 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
         {
             if (bindable is SKPivotViewerView view && newValue is bool visible)
             {
-                view._viewState.IsFilterPaneVisible = visible;
                 if (view._searchEntry != null)
                     view._searchEntry.IsVisible = visible;
                 view._canvasView?.InvalidateSurface();
@@ -688,7 +683,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             _controller.ImageProvider?.FlushEvictedTiles();
 
             _lastPaintInfo = e.Info;
-            _renderer.Render(e.Surface.Canvas, e.Info, _controller, _theme, _viewState);
+            _renderer.Render(e.Surface.Canvas, e.Info, _controller, _theme, _viewState.HoverItem);
         }
 
         private void OnSearchTextChanged(object? sender, TextChangedEventArgs e)
@@ -738,114 +733,10 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             double x = point.Value.X;
             double y = point.Value.Y;
 
-            var hit = _renderer.HitTest(x, y, _lastPaintInfo, _controller, _viewState);
+            var hit = _renderer.HitTest(x, y, _lastPaintInfo, _controller);
 
             switch (hit.Type)
             {
-                case RenderHitType.SortDropdownRow:
-                    {
-                        var properties = _controller.Properties;
-                        int index = hit.SortRowIndex;
-                        if (index >= 0 && index < properties.Count)
-                        {
-                            if (_controller.SortProperty?.Id == properties[index].Id)
-                                _controller.SortDescending = !_controller.SortDescending;
-                            else
-                                _controller.SortProperty = properties[index];
-                        }
-                        _viewState.IsSortDropdownVisible = false;
-                        _canvasView.InvalidateSurface();
-                    }
-                    return;
-
-                case RenderHitType.FilterToggle:
-                    _viewState.IsFilterPaneVisible = !_viewState.IsFilterPaneVisible;
-                    SetValue(IsFilterPaneVisibleProperty, _viewState.IsFilterPaneVisible);
-                    _canvasView.InvalidateSurface();
-                    return;
-
-                case RenderHitType.ViewGrid:
-                    _controller.CurrentView = "grid";
-                    _canvasView.InvalidateSurface();
-                    return;
-
-                case RenderHitType.ViewGraph:
-                    _controller.CurrentView = "graph";
-                    _canvasView.InvalidateSurface();
-                    return;
-
-                case RenderHitType.SortDropdown:
-                    _viewState.IsSortDropdownVisible = !_viewState.IsSortDropdownVisible;
-                    _canvasView.InvalidateSurface();
-                    return;
-
-                case RenderHitType.ClearAllFilters:
-                    _controller.FilterPaneModel?.ClearAllFilters();
-                    _controller.SearchText = "";
-                    if (_searchEntry != null) _searchEntry.Text = "";
-                    _canvasView.InvalidateSurface();
-                    return;
-
-                case RenderHitType.FilterCheckbox:
-                    if (hit.FilterPropertyId != null && hit.FilterValue != null)
-                    {
-                        _controller.FilterPaneModel?.ToggleStringFilter(hit.FilterPropertyId, hit.FilterValue);
-                        _canvasView.InvalidateSurface();
-                    }
-                    return;
-
-                case RenderHitType.FilterNumericHistogramBar:
-                    if (hit.FilterPropertyId != null && hit.RangeMin.HasValue && hit.RangeMax.HasValue)
-                    {
-                        _controller.FilterPaneModel?.SetNumericRangeFilter(hit.FilterPropertyId, hit.RangeMin.Value, hit.RangeMax.Value);
-                        _canvasView.InvalidateSurface();
-                    }
-                    return;
-
-                case RenderHitType.FilterDateTimeHistogramBar:
-                    if (hit.FilterPropertyId != null && hit.DateRangeMin.HasValue && hit.DateRangeMax.HasValue)
-                    {
-                        _controller.FilterPaneModel?.SetDateTimeRangeFilter(hit.FilterPropertyId, hit.DateRangeMin.Value, hit.DateRangeMax.Value);
-                        _canvasView.InvalidateSurface();
-                    }
-                    return;
-
-                case RenderHitType.FilterCategoryToggle:
-                    if (hit.CategoryName != null)
-                    {
-                        if (_viewState.ExpandedFilterCategories.Contains(hit.CategoryName))
-                            _viewState.ExpandedFilterCategories.Remove(hit.CategoryName);
-                        else
-                            _viewState.ExpandedFilterCategories.Add(hit.CategoryName);
-                        _canvasView.InvalidateSurface();
-                    }
-                    return;
-
-                case RenderHitType.FilterCategoryClear:
-                    if (hit.CategoryName != null)
-                    {
-                        _controller.FilterPaneModel?.ClearPropertyFilters(hit.CategoryName);
-                        _canvasView.InvalidateSurface();
-                    }
-                    return;
-
-                case RenderHitType.DetailLink:
-                    if (hit.LinkUri != null && Uri.TryCreate(hit.LinkUri, UriKind.Absolute, out var linkUri))
-                    {
-                        _controller.DetailPane.OnLinkClicked(linkUri);
-                        LinkClicked?.Invoke(this, new PivotViewerLinkEventArgs(linkUri));
-                    }
-                    return;
-
-                case RenderHitType.DetailFacetFilter:
-                    if (hit.FilterPropertyId != null && hit.FilterValue != null)
-                    {
-                        _controller.FilterPaneModel?.ToggleStringFilter(hit.FilterPropertyId, hit.FilterValue);
-                        _controller.DetailPane.OnApplyFilter(hit.FilterValue);
-                        _canvasView.InvalidateSurface();
-                    }
-                    return;
-
                 case RenderHitType.GraphColumnLabel:
                     if (hit.FilterPropertyId != null && hit.FilterValue != null)
                     {
@@ -856,19 +747,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
 
                 case RenderHitType.Item:
                     _controller.SelectedItem = hit.Item;
-                    _viewState.DetailScrollOffset = 0;
                     _canvasView.InvalidateSurface();
                     return;
 
                 case RenderHitType.None:
                 default:
-                    // Close sort dropdown if open, or deselect
-                    if (_viewState.IsSortDropdownVisible)
-                    {
-                        _viewState.IsSortDropdownVisible = false;
-                        _canvasView.InvalidateSurface();
-                        return;
-                    }
                     _controller.SelectedItem = null;
                     _canvasView.InvalidateSurface();
                     return;
@@ -880,7 +763,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             var point = e.GetPosition(this);
             if (!point.HasValue) return;
 
-            var hit = _renderer.HitTest(point.Value.X, point.Value.Y, _lastPaintInfo, _controller, _viewState);
+            var hit = _renderer.HitTest(point.Value.X, point.Value.Y, _lastPaintInfo, _controller);
             if (hit.Type == RenderHitType.Item && hit.Item != null)
             {
                 // Toggle: if already zoomed to this item, zoom back out
@@ -947,7 +830,7 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
             double canvasX = pos.Value.X * scaleX;
             double canvasY = pos.Value.Y * scaleY;
 
-            var hit = _renderer.HitTest(canvasX, canvasY, _lastPaintInfo, _controller, _viewState);
+            var hit = _renderer.HitTest(canvasX, canvasY, _lastPaintInfo, _controller);
             var newHover = hit.Type == RenderHitType.Item ? hit.Item : null;
 
             if (newHover != _viewState.HoverItem)
@@ -964,9 +847,6 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                 case GestureStatus.Started:
                     _previousPanX = 0;
                     _previousPanY = 0;
-                    // Use last pointer position to determine if pan started in filter pane or detail pane
-                    _isPanningFilterPane = _viewState.IsFilterPaneVisible && !double.IsNaN(_lastPointerX) && _lastPointerX < PivotViewerRenderer.FilterPaneWidth;
-                    _isPanningDetailPane = !_isPanningFilterPane && _controller.SelectedItem != null && !double.IsNaN(_lastPointerX) && _lastPointerX > Width - PivotViewerRenderer.DetailPaneWidth;
                     break;
                 case GestureStatus.Running:
                     double deltaX = e.TotalX - _previousPanX;
@@ -974,30 +854,11 @@ namespace SkiaSharp.Extended.UI.Maui.PivotViewer
                     _previousPanX = e.TotalX;
                     _previousPanY = e.TotalY;
 
-                    if (_isPanningFilterPane)
-                    {
-                        double contentHeight = Height - PivotViewerRenderer.ControlBarHeight;
-                        _viewState.FilterScrollOffset -= deltaY;
-                        _viewState.ClampFilterScroll(contentHeight);
-                        _canvasView.InvalidateSurface();
-                    }
-                    else if (_isPanningDetailPane)
-                    {
-                        double contentHeight = Height - PivotViewerRenderer.ControlBarHeight;
-                        _viewState.DetailScrollOffset -= deltaY;
-                        _viewState.ClampDetailScroll(contentHeight);
-                        _canvasView.InvalidateSurface();
-                    }
-                    else
-                    {
-                        _controller.Pan(deltaX, deltaY);
-                        _canvasView.InvalidateSurface();
-                    }
+                    _controller.Pan(deltaX, deltaY);
+                    _canvasView.InvalidateSurface();
                     break;
                 case GestureStatus.Completed:
                 case GestureStatus.Canceled:
-                    _isPanningFilterPane = false;
-                    _isPanningDetailPane = false;
                     _lastPointerX = double.NaN;
                     break;
             }
