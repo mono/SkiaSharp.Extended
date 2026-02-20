@@ -60,10 +60,11 @@ public partial class GesturePage : ContentPage
 
 	private void OnFlingTimerTick(object? sender, EventArgs e)
 	{
-		// Apply velocity to canvas offset
-		_canvasOffset = new SKPoint(
-			_canvasOffset.X + _flingVelocityX * (FlingFrameMs / 1000f),
-			_canvasOffset.Y + _flingVelocityY * (FlingFrameMs / 1000f));
+		// Convert screen-space fling velocity to content-space offset delta
+		var d = ScreenToContentDelta(
+			_flingVelocityX * (FlingFrameMs / 1000f),
+			_flingVelocityY * (FlingFrameMs / 1000f));
+		_canvasOffset = new SKPoint(_canvasOffset.X + d.X, _canvasOffset.Y + d.Y);
 
 		// Apply friction (deceleration)
 		_flingVelocityX *= FlingFriction;
@@ -290,6 +291,17 @@ public partial class GesturePage : ContentPage
 		gestureView.Invalidate();
 	}
 
+	/// <summary>
+	/// Converts a screen-space delta to content-space offset delta,
+	/// accounting for current rotation and scale.
+	/// </summary>
+	private SKPoint ScreenToContentDelta(float dx, float dy)
+	{
+		var inv = SKMatrix.CreateRotationDegrees(-_canvasRotation);
+		var mapped = inv.MapVector(dx, dy);
+		return new SKPoint(mapped.X / _canvasScale, mapped.Y / _canvasScale);
+	}
+
 	private void OnPan(object? sender, SKPanEventArgs e)
 	{
 		StopFlingAnimation(); // Stop any ongoing fling when starting a new pan
@@ -297,7 +309,8 @@ public partial class GesturePage : ContentPage
 		// Only pan canvas when no sticker is selected
 		if (_selectedSticker == null)
 		{
-			_canvasOffset = new SKPoint(_canvasOffset.X + e.Delta.X, _canvasOffset.Y + e.Delta.Y);
+			var d = ScreenToContentDelta(e.Delta.X, e.Delta.Y);
+			_canvasOffset = new SKPoint(_canvasOffset.X + d.X, _canvasOffset.Y + d.Y);
 			statusLabel.Text = $"Pan: Δ({e.Delta.X:F1}, {e.Delta.Y:F1})";
 		}
 		
