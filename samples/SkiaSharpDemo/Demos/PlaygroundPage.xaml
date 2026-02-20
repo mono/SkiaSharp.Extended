@@ -1,27 +1,8 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
+             xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             xmlns:views="clr-namespace:SkiaSharpDemo.Views"
              x:Class="SkiaSharpDemo.Demos.PlaygroundPage"
-             Title="Touch Event Inspector">
-
-    <Grid RowDefinitions="*,*">
-
-        <!-- Raw SKCanvasView to log all touch events -->
-        <skia:SKCanvasView x:Name="canvasView"
-                           Grid.Row="0"
-                           EnableTouchEvents="True"
-                           Touch="OnCanvasTouch"
-                           PaintSurface="OnCanvasPaint"
-                           BackgroundColor="LightGray" />
-
-        <!-- Event log -->
-        <Editor x:Name="logEditor"
-                Grid.Row="1"
-                IsReadOnly="True"
-                FontSize="11"
-                FontFamily="Courier New"
-                Placeholder="Touch events will appear here..." />
-
-    </Grid>
+             Title="Play">
 
 </ContentPage>
