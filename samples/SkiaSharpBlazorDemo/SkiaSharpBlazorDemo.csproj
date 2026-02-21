@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- <Nullable>enable</Nullable> -->
+    <RootNamespace>SkiaSharpBlazorDemo</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" PrivateAssets="all" />
+    <PackageReference Include="SkiaSharp" Version="3.119.2" />
+    <PackageReference Include="SkiaSharp.NativeAssets.WebAssembly" Version="3.119.2" />
+    <PackageReference Include="SkiaSharp.Views.Blazor" Version="3.119.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\source\SkiaSharp.Extended\SkiaSharp.Extended.csproj" />
+    <ProjectReference Include="..\..\source\SkiaSharp.Extended.UI.Blazor\SkiaSharp.Extended.UI.Blazor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="SkiaSharp" />
+    <Using Include="SkiaSharp.Extended.Gestures" />
+    <Using Include="SkiaSharp.Extended.UI.Blazor" />
+    <Using Include="SkiaSharp.Extended.UI.Blazor.Controls" />
+  </ItemGroup>
+
+</Project>

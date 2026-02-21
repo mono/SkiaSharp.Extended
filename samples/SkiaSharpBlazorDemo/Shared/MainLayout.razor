@@ -1,0 +1,56 @@
+@inherits LayoutComponentBase
+
+<div class="page">
+    <nav class="sidebar">
+        <a class="navbar-brand" href="">SkiaSharp Blazor</a>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="gestures">Gestures</a>
+            </li>
+        </ul>
+    </nav>
+    <main>
+        @Body
+    </main>
+</div>
+
+<style>
+    .page {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+    .sidebar {
+        width: 200px;
+        background: #1a1a2e;
+        color: white;
+        padding: 1rem;
+        flex-shrink: 0;
+    }
+    .sidebar .navbar-brand {
+        color: white;
+        font-weight: bold;
+        font-size: 1.1rem;
+        display: block;
+        margin-bottom: 1rem;
+        text-decoration: none;
+    }
+    .sidebar .nav-link {
+        color: rgba(255,255,255,0.8);
+        padding: 0.4rem 0;
+        display: block;
+        text-decoration: none;
+    }
+    .sidebar .nav-link:hover {
+        color: white;
+    }
+    main {
+        flex: 1;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+    }
+</style>
