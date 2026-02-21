@@ -5,7 +5,9 @@
     <title>SkiaSharp Extended - Blazor Demo</title>
     <script>
         // GitHub Pages SPA redirect: convert path to query string for index.html
-        var segmentCount = 2; // /SkiaSharp.Extended/sample/
+        // segmentCount = number of path segments in the base href (e.g. 2 for /SkiaSharp.Extended/sample/)
+        // Must match the <base href> in index.html
+        var segmentCount = 2;
         var l = window.location;
         l.replace(
             l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
