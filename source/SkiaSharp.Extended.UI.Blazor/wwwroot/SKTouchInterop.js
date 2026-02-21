@@ -40,7 +40,6 @@ function getElementRect(element) {
 
 function onPointerEvent(e, dotNetRef, action) {
     const rect = getElementRect(e.currentTarget);
-    const dpr = window.devicePixelRatio || 1;
     // Convert to element-local coordinates (CSS pixels)
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;

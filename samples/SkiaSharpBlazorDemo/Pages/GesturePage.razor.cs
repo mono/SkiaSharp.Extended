@@ -370,7 +370,7 @@ public partial class GesturePage : IDisposable
 
     private void LogEvent(string message)
     {
-        _eventLog.Enqueue($"[{DateTime.Now:HH:mm:ss}] {message}");
+        _eventLog.Enqueue($"[{DateTimeOffset.Now:HH:mm:ss}] {message}");
         while (_eventLog.Count > MaxLogEntries)
             _eventLog.Dequeue();
         StateHasChanged();
