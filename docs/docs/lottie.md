@@ -80,50 +80,11 @@ if (lottieView.IsComplete)
 }
 ```
 
-### Frame-based control
-
-Seek to a specific frame and stop (instant, like Lottie's `goToAndStop`):
-
-```csharp
-// Instantly jump to frame 30 and pause
-lottieView.SeekToFrame(30, stopPlayback: true);
-
-// Instantly jump to a normalized position and keep playing
-lottieView.SeekToProgress(0.5);
-```
-
-Smoothly animate to a position (plays the frames, then stops):
-
-```csharp
-// Play forward from current position to frame 50, then stop
-lottieView.PlayToFrame(50);
-
-// Play backward from frame 50 to frame 0 (direction auto-detected)
-lottieView.SeekToFrame(50, stopPlayback: true);  // jump to frame 50 first
-lottieView.PlayToFrame(0);                        // then animate back to 0
-
-// Animate to the 75% position
-lottieView.PlayToProgress(0.75);
-```
-
-Create a toggle-switch animation using `PlayToFrame`:
-
-```csharp
-private bool isOn = false;
-
-private void OnSwitchToggled(object sender, EventArgs e)
-{
-    // PlayToFrame auto-detects direction: forward when off→on, backward when on→off
-    lottieView.PlayToFrame(isOn ? 0 : lottieView.FrameCount - 1);
-    isOn = !isOn;
-}
-```
-
 ### Frame range control
 
 Restrict playback to a sub-range of the animation using `FrameStart` and `FrameEnd`.
 Both are zero-based offsets from the animation's InPoint. `Duration`, `FrameCount`, `Progress`,
-`SeekToFrame`, `PlayToFrame`, etc. all work within the active range.
+and `CurrentFrame` all reflect the active range.
 
 - **`FrameStart`** — first frame to play (default `0` = InPoint)
 - **`FrameEnd`** — end frame (exclusive, default `-1` = OutPoint)
@@ -214,16 +175,7 @@ lottieView.AnimationCompleted += (s, e) =>
 
 ## Methods Reference
 
-| Method | Description |
-| :----- | :---------- |
-| `SeekToFrame(int, bool)` | Instantly seeks to a frame within the active range (zero-based). Pass `stopPlayback: true` to pause. |
-| `SeekToTime(TimeSpan, bool)` | Instantly seeks to a time position. Pass `stopPlayback: true` to pause. |
-| `SeekToProgress(double, bool)` | Instantly seeks to a normalized position [0.0, 1.0]. Pass `stopPlayback: true` to pause. |
-| `PlayToFrame(int)` | Smoothly animates from current position to the target frame, then stops. Direction is auto-detected. |
-| `PlayToProgress(double)` | Smoothly animates from current position to a normalized position [0.0, 1.0], then stops. |
-| `PlayToTime(TimeSpan)` | Smoothly animates from current position to a target time, then stops. |
-| `Pause()` | Pauses the animation. Equivalent to `IsAnimationEnabled = false`. |
-| `Resume()` | Resumes the animation. Equivalent to `IsAnimationEnabled = true`. |
+There are no additional public methods beyond setting properties. Use `Progress` and `IsAnimationEnabled` directly for playback control.
 
 ## Where to Find Animations
 
