@@ -1,0 +1,125 @@
+@page "/shapes"
+
+<PageTitle>Shapes</PageTitle>
+
+<h1>Shapes</h1>
+
+<p>
+    Demonstrating squares, triangles, regular polygons, and stars
+    using <code>SkiaSharp.Extended</code> drawing methods.
+</p>
+
+<SKCanvasView OnPaintSurface="OnPaintSurface"
+              style="width: 100%; height: 720px;" />
+
+@code {
+    private static readonly Random random = new();
+    private readonly List<float> sectors = GeneratePieData();
+    private readonly SKColor[] colors =
+    {
+        0xff959edf,
+        0xff2de513,
+        0xffdbcc93,
+        0xffaa6b7f,
+        0xff3c5061,
+        0xffa31359,
+        0xff29ef1b,
+        0xff3d0fad,
+        0xffd365f1,
+        0xff3cd7d5,
+    };
+
+    private static List<float> GeneratePieData()
+    {
+        var count = random.Next(5, 10);
+        var data = new List<float>();
+        while (count-- > 0)
+        {
+            data.Add(random.Next(10, 100));
+        }
+        var sum = data.Sum();
+        return data.Select(d => d / sum).ToList();
+    }
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        var surface = e.Surface;
+        var canvas = surface.Canvas;
+
+        canvas.Clear(SKColors.White);
+
+        var textFont = new SKFont
+        {
+            Size = 14,
+            Edging = SKFontEdging.SubpixelAntialias,
+        };
+
+        var textPaint = new SKPaint
+        {
+            IsAntialias = true,
+            Color = SKColors.Black,
+        };
+
+        var shapePaint = new SKPaint
+        {
+            IsAntialias = true,
+            Color = SKColors.CadetBlue,
+        };
+
+        var bigSpace = 12f;
+        var smallSpace = 6f;
+        var shapeSize = 100f;
+
+        var offsetX = bigSpace;
+        var offsetY = bigSpace;
+
+        // Square
+        offsetY += textFont.Size;
+        canvas.DrawText("Square (from center)", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
+        offsetY += smallSpace;
+        canvas.DrawSquare(offsetX + 50, offsetY + 50, 75, shapePaint);
+        offsetY += shapeSize;
+
+        // Triangle (radius)
+        offsetY += textFont.Size;
+        canvas.DrawText("Triangle (using radius)", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
+        offsetY += smallSpace;
+        canvas.DrawTriangle(offsetX + 50, offsetY + 50, 40, shapePaint);
+        offsetY += shapeSize;
+
+        // Triangle (width + height)
+        offsetY += textFont.Size;
+        canvas.DrawText("Triangle (using width and height)", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
+        offsetY += smallSpace;
+        canvas.DrawTriangle(offsetX + 75, offsetY + 50, 75, 40, shapePaint);
+        offsetY += shapeSize;
+
+        // Triangle (rect)
+        offsetY += textFont.Size;
+        canvas.DrawText("Triangle (using rect)", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
+        offsetY += smallSpace;
+        canvas.DrawTriangle(SKRect.Create(offsetX, offsetY + 15, 150, 75), shapePaint);
+        offsetY += shapeSize;
+
+        // Regular Polygons
+        offsetY += textFont.Size;
+        canvas.DrawText("Regular Polygons", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
+        offsetY += smallSpace;
+        for (var i = 5; i < 12; i++)
+        {
+            var x = (i - 5) * 60;
+            canvas.DrawRegularPolygon(offsetX + 50 + x, offsetY + 50, 30, i, shapePaint);
+        }
+        offsetY += shapeSize;
+
+        // Regular Stars
+        offsetY += textFont.Size;
+        canvas.DrawText("Regular Stars", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
+        offsetY += smallSpace;
+        for (var i = 5; i < 12; i++)
+        {
+            var x = (i - 5) * 60;
+            canvas.DrawStar(offsetX + 50 + x, offsetY + 50, 30, 15, i, shapePaint);
+        }
+    }
+}
