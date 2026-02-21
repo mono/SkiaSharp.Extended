@@ -8,6 +8,11 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   deploy:
     runs-on: windows-latest
@@ -19,14 +24,27 @@ jobs:
     - name: Install MAUI workload
       run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
 
+    - name: Install wasm-tools workload
+      run: dotnet workload install wasm-tools --source https://api.nuget.org/v3/index.json
+
     - name: Restore .NET tools
       run: dotnet tool restore
 
     - name: Build the assemblies
       run: dotnet build scripts/SkiaSharp.Extended-Pack.slnf -c Release -f net9.0
 
+    - name: Publish Blazor sample
+      run: dotnet publish samples/SkiaSharpDemo.Blazor/SkiaSharpDemo.Blazor.csproj -c Release -o publish/sample
+
     - name: Build docs
       run: dotnet docfx docs/docfx.json
+
+    - name: Copy Blazor sample into docs site
+      run: |
+        New-Item -ItemType Directory -Path docs/_site/sample -Force
+        Copy-Item -Path publish/sample/wwwroot/* -Destination docs/_site/sample -Recurse -Force
+        if (Test-Path publish/sample/wwwroot/.nojekyll) { Copy-Item publish/sample/wwwroot/.nojekyll docs/_site/sample/ }
+      shell: pwsh
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
@@ -34,7 +52,6 @@ jobs:
         path: 'docs/_site'
 
     - name: Deploy
-      if: github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v3.6.1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
