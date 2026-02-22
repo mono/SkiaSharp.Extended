@@ -1,5 +1,8 @@
 # Blur Hash
 
+> [!TIP]
+> **[Try it live →](../sample/blurhash)** — Interactive BlurHash demo in the Blazor sample app.
+
 Blur Hash is a compact representation of an image placeholder. Instead of loading a grey box while your image loads, you can show a colorful blur that hints at the final image—all from a tiny string that's only 20-30 characters.
 
 | Original | Blur Hash Placeholder |

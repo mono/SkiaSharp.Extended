@@ -1,6 +1,9 @@
 # Geometry Helpers
 
-Geometry Helpers provide simple methods to create common geometric shapes as `SKPath` objects. Instead of manually calculating points and angles, you can generate squares, triangles, polygons, and stars with a single method call.
+> [!TIP]
+> **[Try it live →](../sample/shapes)** — Interactive Shapes demo in the Blazor sample app.
+
+Geometry Helpers provide simple methods to create common geometric shapes as [`SKPath`](xref:SkiaSharp.SKPath) objects. Instead of manually calculating points and angles, you can generate squares, triangles, polygons, and stars with a single method call.
 
 ![Shapes overview][shapes-overview]
 
@@ -104,7 +107,7 @@ canvas.DrawStar(cx: 350, cy: 50, outerRadius: 30, innerRadius: 12, points: 5, pa
 
 ## Utility Methods
 
-The `SKGeometry` class also provides utility methods for geometric calculations:
+The [`SKGeometry`](xref:SkiaSharp.Extended.SKGeometry) class also provides utility methods for geometric calculations:
 
 | Method | Description |
 | :----- | :---------- |
@@ -126,7 +129,7 @@ var area = SKGeometry.Area(points);
 
 ### Path Direction
 
-All shape methods accept an optional `SKPathDirection` parameter to control winding order:
+All shape methods accept an optional [`SKPathDirection`](xref:SkiaSharp.SKPathDirection) parameter to control winding order:
 
 ```csharp
 // Clockwise (default)
