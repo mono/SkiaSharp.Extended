@@ -187,8 +187,8 @@ public class SKLottieViewTest
 		lottie.AnimationFailed += (s, e) => failedTriggered = true;
 		lottie.AnimationLoaded += (s, e) => loadedTriggered = true;
 
-		// wait to ensure events have time to fire
-		await Task.Delay(1000);
+		// wait to ensure events have time to fire (using consistent 3000ms)
+		await Task.Delay(3000);
 		
 		// test - verify neither event was triggered for empty source
 		Assert.False(failedTriggered);

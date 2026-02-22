@@ -28,7 +28,7 @@ public static class SKLottieViewExtensions
 			if (e.Exception != null)
 				tcs.SetException(new Exception("Unable to load Lottie animation.", e.Exception));
 			else
-				tcs.SetException(new Exception("Unable to load Lottie animation (returned null)."));
+				tcs.SetException(new Exception("Unable to load Lottie animation (animation source returned null)."));
 		}
 
 		void OnTimeout()
