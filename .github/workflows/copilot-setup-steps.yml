@@ -24,7 +24,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "9.0.x"
+          dotnet-version: "10.0.x"
 
       - name: Install MAUI Android workload
         run: dotnet workload install maui-android --source https://api.nuget.org/v3/index.json
