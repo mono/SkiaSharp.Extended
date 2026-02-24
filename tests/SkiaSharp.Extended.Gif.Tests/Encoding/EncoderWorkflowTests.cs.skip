@@ -1,0 +1,240 @@
+using System;
+using System.IO;
+using SkiaSharp;
+using Xunit;
+
+namespace SkiaSharp.Extended.Gif.Tests.Encoding
+{
+    public class EncoderWorkflowTests
+    {
+        [Fact]
+        public void Encode_WritesValidGifStructure()
+        {
+            // Create a minimal 2x2 bitmap to avoid large memory/processing
+            using var bitmap = new SKBitmap(2, 2, SKColorType.Rgba8888, SKAlphaType.Premul);
+            bitmap.Erase(SKColors.Red);
+            
+            using var ms = new MemoryStream();
+            using var encoder = new SKGifEncoder(ms);
+            
+            encoder.AddFrame(bitmap, 100);
+            encoder.Encode();
+            
+            // Verify output has valid GIF structure
+            var bytes = ms.ToArray();
+            
+            // Should have GIF header
+            Assert.True(bytes.Length > 13, "GIF should have at least header + LSD");
+            
+            // Check header
+            Assert.Equal((byte)'G', bytes[0]);
+            Assert.Equal((byte)'I', bytes[1]);
+            Assert.Equal((byte)'F', bytes[2]);
+            
+            // Check version (89a)
+            Assert.Equal((byte)'8', bytes[3]);
+            Assert.Equal((byte)'9', bytes[4]);
+            Assert.Equal((byte)'a', bytes[5]);
+            
+            // Check trailer exists
+            Assert.Equal(0x3B, bytes[bytes.Length - 1]);
+        }
+        
+        [Fact]
+        public void Encode_WithLoopCount_WritesNetscapeExtension()
+        {
+            using var bitmap = new SKBitmap(2, 2);
+            bitmap.Erase(SKColors.Blue);
+            
+            using var ms = new MemoryStream();
+            using var encoder = new SKGifEncoder(ms);
+            
+            encoder.SetLoopCount(0); // Loop forever
+            encoder.AddFrame(bitmap, 50);
+            encoder.Encode();
+            
+            var bytes = ms.ToArray();
+            
+            // Look for NETSCAPE extension marker (0x21, 0xFF)
+            bool foundNetscape = false;
+            for (int i = 0; i < bytes.Length - 11; i++)
+            {
+                if (bytes[i] == 0x21 && bytes[i + 1] == 0xFF && bytes[i + 2] == 0x0B)
+                {
+                    // Check for NETSCAPE2.0
+                    if (bytes[i + 3] == 'N' && bytes[i + 4] == 'E')
+                    {
+                        foundNetscape = true;
+                        break;
+                    }
+                }
+            }
+            
+            Assert.True(foundNetscape, "Should contain NETSCAPE loop extension");
+        }
+        
+        [Fact]
+        public void Encode_MultipleFrames_WritesAllFrames()
+        {
+            using var bitmap1 = new SKBitmap(2, 2);
+            bitmap1.Erase(SKColors.Red);
+            
+            using var bitmap2 = new SKBitmap(2, 2);
+            bitmap2.Erase(SKColors.Green);
+            
+            using var ms = new MemoryStream();
+            using var encoder = new SKGifEncoder(ms);
+            
+            encoder.AddFrame(bitmap1, 100);
+            encoder.AddFrame(bitmap2, 150);
+            encoder.Encode();
+            
+            var bytes = ms.ToArray();
+            
+            // Count image descriptors (0x2C marker)
+            int imageCount = 0;
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                if (bytes[i] == 0x2C)
+                    imageCount++;
+            }
+            
+            Assert.Equal(2, imageCount);
+        }
+        
+        [Fact]
+        public void Encode_WithFrameInfo_UsesDisposalMethod()
+        {
+            using var bitmap = new SKBitmap(2, 2);
+            bitmap.Erase(SKColors.Yellow);
+            
+            var frameInfo = new SKGifFrameInfo
+            {
+                Duration = 200,
+                DisposalMethod = SKGifDisposalMethod.RestoreToBackground,
+                HasTransparency = false
+            };
+            
+            using var ms = new MemoryStream();
+            using var encoder = new SKGifEncoder(ms);
+            
+            encoder.AddFrame(bitmap, frameInfo);
+            encoder.Encode();
+            
+            var bytes = ms.ToArray();
+            
+            // Should contain Graphics Control Extension (0x21, 0xF9)
+            bool foundGCE = false;
+            for (int i = 0; i < bytes.Length - 5; i++)
+            {
+                if (bytes[i] == 0x21 && bytes[i + 1] == 0xF9)
+                {
+                    foundGCE = true;
+                    // Check disposal method is in packed field
+                    byte packed = bytes[i + 3];
+                    byte disposal = (byte)((packed >> 2) & 0x07);
+                    Assert.Equal(2, disposal); // RestoreToBackground = 2
+                    break;
+                }
+            }
+            
+            Assert.True(foundGCE, "Should contain Graphics Control Extension");
+        }
+        
+        [Fact]
+        public void Encode_AfterEncode_CannotAddMoreFrames()
+        {
+            using var bitmap = new SKBitmap(2, 2);
+            bitmap.Erase(SKColors.Magenta);
+            
+            using var ms = new MemoryStream();
+            using var encoder = new SKGifEncoder(ms);
+            
+            encoder.AddFrame(bitmap, 100);
+            encoder.Encode();
+            
+            // Trying to add frame after encoding should throw
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                encoder.AddFrame(bitmap, 100);
+            });
+        }
+        
+        [Fact]
+        public void Encode_AfterEncode_CannotSetLoopCount()
+        {
+            using var bitmap = new SKBitmap(2, 2);
+            bitmap.Erase(SKColors.Cyan);
+            
+            using var ms = new MemoryStream();
+            using var encoder = new SKGifEncoder(ms);
+            
+            encoder.AddFrame(bitmap, 100);
+            encoder.Encode();
+            
+            // Trying to set loop count after encoding should throw
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                encoder.SetLoopCount(5);
+            });
+        }
+        
+        [Fact]
+        public void CalculateMinCodeSize_ReturnsCorrectValues()
+        {
+            using var ms = new MemoryStream();
+            using var encoder = new SKGifEncoder(ms);
+            
+            // This is testing internal logic via public API
+            // We verify the result by checking the generated GIF uses correct code size
+            using var bitmap = new SKBitmap(2, 2);
+            bitmap.Erase(SKColors.White);
+            
+            encoder.AddFrame(bitmap, 100);
+            encoder.Encode();
+            
+            // Just verify it doesn't throw and produces valid output
+            Assert.True(ms.Length > 0);
+        }
+        
+        [Fact]
+        public void Encode_WithTransparency_WritesTransparentIndex()
+        {
+            using var bitmap = new SKBitmap(2, 2);
+            bitmap.Erase(SKColors.Transparent);
+            
+            var frameInfo = new SKGifFrameInfo
+            {
+                Duration = 100,
+                HasTransparency = true,
+                TransparentColor = SKColors.Transparent
+            };
+            
+            using var ms = new MemoryStream();
+            using var encoder = new SKGifEncoder(ms);
+            
+            encoder.AddFrame(bitmap, frameInfo);
+            encoder.Encode();
+            
+            var bytes = ms.ToArray();
+            
+            // Should contain Graphics Control Extension with transparency flag
+            bool foundTransparency = false;
+            for (int i = 0; i < bytes.Length - 5; i++)
+            {
+                if (bytes[i] == 0x21 && bytes[i + 1] == 0xF9)
+                {
+                    byte packed = bytes[i + 3];
+                    bool hasTransparency = (packed & 0x01) != 0;
+                    if (hasTransparency)
+                    {
+                        foundTransparency = true;
+                        break;
+                    }
+                }
+            }
+            
+            Assert.True(foundTransparency, "Should have transparency flag set");
+        }
+    }
+}

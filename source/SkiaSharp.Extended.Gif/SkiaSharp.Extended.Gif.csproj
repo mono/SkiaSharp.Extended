@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net9.0</TargetFrameworks>
+    <AssemblyName>SkiaSharp.Extended.Gif</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended.Gif</RootNamespace>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.Gif</PackageId>
+    <Title>SkiaSharp.Extended.Gif</Title>
+    <Description>GIF encoder and decoder for SkiaSharp. Supports both GIF87a and GIF89a with all extensions, animation, transparency, and disposal methods.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="3.119.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SkiaSharp.Extended.Gif.Tests" />
+    <InternalsVisibleTo Include="SkiaSharp.Extended.Gif.Benchmarks" />
+  </ItemGroup>
+
+</Project>
