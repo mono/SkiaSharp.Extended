@@ -73,6 +73,23 @@
                 <Button Text="End" Command="{Binding EndCommand}" />
             </HorizontalStackLayout>
 
+            <!-- FrameStart / FrameEnd controls -->
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                <Button Text="Frames: First Half" Command="{Binding SetFrameRangeCommand}" CommandParameter="first" />
+                <Button Text="Frames: Last Half" Command="{Binding SetFrameRangeCommand}" CommandParameter="last" />
+                <Button Text="Frames: All" Command="{Binding ResetFrameRangeCommand}" />
+            </HorizontalStackLayout>
+
+            <!-- Frame info display -->
+            <Grid ColumnDefinitions="*,*" Margin="0,-6,0,0">
+                <Label Grid.Column="0"
+                       Text="{Binding CurrentFrame, Source={Reference lottieView}, StringFormat='Frame: {0}'}"
+                       HorizontalOptions="Start" />
+                <Label Grid.Column="1"
+                       Text="{Binding FrameCount, Source={Reference lottieView}, StringFormat='/ {0} frames'}"
+                       HorizontalOptions="End" />
+            </Grid>
+
         </VerticalStackLayout>
     </Grid>
 

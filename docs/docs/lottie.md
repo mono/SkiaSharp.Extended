@@ -65,10 +65,10 @@ lottieView.Source = new SKStreamLottieImageSource { Stream = myStream };
 
 ```csharp
 // Pause the animation
-lottieView.IsAnimationEnabled = false;
+lottieView.Pause();
 
 // Resume
-lottieView.IsAnimationEnabled = true;
+lottieView.Resume();
 
 // Jump to specific progress
 lottieView.Progress = TimeSpan.FromSeconds(1.5);
@@ -78,6 +78,59 @@ if (lottieView.IsComplete)
 {
     // Animation finished
 }
+```
+
+### Frame range control
+
+Restrict playback to a sub-range of the animation using `FrameStart` and `FrameEnd`.
+Both are zero-based offsets from the animation's InPoint. `Duration`, `FrameCount`, `Progress`,
+and `CurrentFrame` all reflect the active range.
+
+- **`FrameStart`** — first frame to play (default `0` = InPoint)
+- **`FrameEnd`** — end frame (exclusive, default `-1` = OutPoint)
+
+```csharp
+// Play only frames 0–29 (30 frames)
+lottieView.FrameEnd = 30;
+
+// Play only frames 10–39 (30 frames, offset start)
+lottieView.FrameStart = 10;
+lottieView.FrameEnd = 40;
+
+// Restore the full InPoint→OutPoint range
+lottieView.FrameStart = 0;
+lottieView.FrameEnd = -1;
+```
+
+A multi-state animation where each state lives in a different frame range:
+
+```csharp
+// Three states: idle (0-30), pressed (30-50), release (50-80)
+void SetState(AnimationState state)
+{
+    switch (state)
+    {
+        case AnimationState.Idle:
+            lottieView.FrameStart = 0;
+            lottieView.FrameEnd = 30;
+            break;
+        case AnimationState.Pressed:
+            lottieView.FrameStart = 30;
+            lottieView.FrameEnd = 50;
+            break;
+        case AnimationState.Release:
+            lottieView.FrameStart = 50;
+            lottieView.FrameEnd = 80;
+            break;
+    }
+}
+```
+
+XAML binding works directly on `FrameStart` and `FrameEnd`:
+
+```xml
+<Entry Text="{Binding FrameStart, Source={Reference lottieView}}" Keyboard="Numeric" />
+<Entry Text="{Binding FrameEnd, Source={Reference lottieView}}" Keyboard="Numeric" />
 ```
 
 ## Events
@@ -108,12 +161,21 @@ lottieView.AnimationCompleted += (s, e) =>
 | Property | Type | Description |
 | :------- | :--- | :---------- |
 | `Source` | `SKLottieImageSource` | The Lottie JSON file to play |
-| `Duration` | `TimeSpan` | Total duration of the animation (read-only) |
-| `Progress` | `TimeSpan` | Current playback position |
+| `Duration` | `TimeSpan` | Duration of the active frame range (read-only, updates when `FrameStart`/`FrameEnd` changes) |
+| `Progress` | `TimeSpan` | Current playback position within the active frame range |
+| `Fps` | `double` | Frames per second of the animation (read-only) |
+| `FrameCount` | `int` | Number of frames in the active range (read-only) |
+| `CurrentFrame` | `int` | Current frame within the active range, zero-based (read-only) |
+| `FrameStart` | `int` | First frame to play (zero-based from InPoint, default `0`) |
+| `FrameEnd` | `int` | End frame — exclusive (zero-based from InPoint, default `-1` = OutPoint) |
 | `RepeatCount` | `int` | Times to repeat (0 = once, -1 = forever) |
 | `RepeatMode` | `SKLottieRepeatMode` | `Restart` or `Reverse` (ping-pong) |
 | `IsAnimationEnabled` | `bool` | Play/pause the animation |
 | `IsComplete` | `bool` | Whether playback has finished |
+
+## Methods Reference
+
+There are no additional public methods beyond setting properties. Use `Progress` and `IsAnimationEnabled` directly for playback control.
 
 ## Where to Find Animations
 

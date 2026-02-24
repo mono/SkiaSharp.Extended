@@ -54,11 +54,54 @@ public class SKLottieView : SKAnimatedSurfaceView
 		typeof(SKLottieView),
 		1.0);
 
+	private static readonly BindablePropertyKey FpsPropertyKey = BindableProperty.CreateReadOnly(
+		nameof(Fps),
+		typeof(double),
+		typeof(SKLottieView),
+		0.0,
+		defaultBindingMode: BindingMode.OneWayToSource);
+
+	public static readonly BindableProperty FpsProperty = FpsPropertyKey.BindableProperty;
+
+	private static readonly BindablePropertyKey FrameCountPropertyKey = BindableProperty.CreateReadOnly(
+		nameof(FrameCount),
+		typeof(int),
+		typeof(SKLottieView),
+		0,
+		defaultBindingMode: BindingMode.OneWayToSource);
+
+	public static readonly BindableProperty FrameCountProperty = FrameCountPropertyKey.BindableProperty;
+
+	private static readonly BindablePropertyKey CurrentFramePropertyKey = BindableProperty.CreateReadOnly(
+		nameof(CurrentFrame),
+		typeof(int),
+		typeof(SKLottieView),
+		0,
+		defaultBindingMode: BindingMode.OneWayToSource);
+
+	public static readonly BindableProperty CurrentFrameProperty = CurrentFramePropertyKey.BindableProperty;
+
+	public static readonly BindableProperty FrameStartProperty = BindableProperty.Create(
+		nameof(FrameStart),
+		typeof(int),
+		typeof(SKLottieView),
+		0,
+		propertyChanged: OnFramePropertyChanged);
+
+	public static readonly BindableProperty FrameEndProperty = BindableProperty.Create(
+		nameof(FrameEnd),
+		typeof(int),
+		typeof(SKLottieView),
+		-1,
+		propertyChanged: OnFramePropertyChanged);
+
 	Skottie.Animation? animation;
 	bool isInForwardPhase = true;
 	int repeatsCompleted = 0;
 	CancellationTokenSource? loadCancellation;
 	bool isResetting;
+	int fullFrameCount = 0;             // InPoint→OutPoint frame count from Skottie
+	TimeSpan segmentOffset = TimeSpan.Zero; // time offset into the animation from FrameStart
 
 	public SKLottieView()
 	{
@@ -121,11 +164,96 @@ public class SKLottieView : SKAnimatedSurfaceView
 		set => SetValue(AnimationSpeedProperty, value);
 	}
 
+	/// <summary>
+	/// Gets the frames per second of the loaded animation.
+	/// Returns 0 if no animation is loaded.
+	/// </summary>
+	public double Fps
+	{
+		get => (double)GetValue(FpsProperty);
+		private set => SetValue(FpsPropertyKey, value);
+	}
+
+	/// <summary>
+	/// Gets the total number of frames in the animation.
+	/// Returns 0 if no animation is loaded.
+	/// </summary>
+	public int FrameCount
+	{
+		get => (int)GetValue(FrameCountProperty);
+		private set => SetValue(FrameCountPropertyKey, value);
+	}
+
+	/// <summary>
+	/// Gets the current frame number of the animation (zero-based, relative to <see cref="FrameStart"/>).
+	/// Returns 0 if no animation is loaded.
+	/// </summary>
+	public int CurrentFrame
+	{
+		get => (int)GetValue(CurrentFrameProperty);
+		private set => SetValue(CurrentFramePropertyKey, value);
+	}
+
+	/// <summary>
+	/// Gets or sets the first frame to play (zero-based, offset from the animation's InPoint).
+	/// Default is 0 (= InPoint). Clamped to [0, total frame count].
+	/// Setting this property immediately updates <see cref="Duration"/>, <see cref="FrameCount"/>,
+	/// and resets <see cref="Progress"/> to the beginning of the range.
+	/// </summary>
+	public int FrameStart
+	{
+		get => (int)GetValue(FrameStartProperty);
+		set => SetValue(FrameStartProperty, value);
+	}
+
+	/// <summary>
+	/// Gets or sets the end frame (exclusive, zero-based, offset from the animation's InPoint).
+	/// Use -1 (the default) to play through to the animation's OutPoint.
+	/// Clamped to [FrameStart, total frame count].
+	/// Setting this property immediately updates <see cref="Duration"/>, <see cref="FrameCount"/>,
+	/// and resets <see cref="Progress"/> to the beginning of the range.
+	/// </summary>
+	public int FrameEnd
+	{
+		get => (int)GetValue(FrameEndProperty);
+		set => SetValue(FrameEndProperty, value);
+	}
+
 	public event EventHandler<SKLottieAnimationFailedEventArgs>? AnimationFailed;
 
 	public event EventHandler<SKLottieAnimationLoadedEventArgs>? AnimationLoaded;
 
 	public event EventHandler? AnimationCompleted;
+
+	// Recomputes segmentOffset, Duration, FrameCount from the current FrameStart/FrameEnd values.
+	// Called whenever FrameStart or FrameEnd changes, or when an animation finishes loading.
+	private void ApplyFrames()
+	{
+		if (animation is null || Fps <= 0)
+			return;
+
+		var effectiveStart = Math.Max(0, Math.Min(FrameStart, fullFrameCount));
+		var effectiveEnd = FrameEnd < 0
+			? fullFrameCount
+			: Math.Max(effectiveStart, Math.Min(FrameEnd, fullFrameCount));
+
+		segmentOffset = TimeSpan.FromSeconds(effectiveStart / Fps);
+		var segmentFrames = effectiveEnd - effectiveStart;
+		var segmentDuration = TimeSpan.FromSeconds(segmentFrames / Fps);
+
+		isResetting = true;
+		try
+		{
+			Duration = segmentDuration;
+			FrameCount = segmentFrames;
+			Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
+			CurrentFrame = 0;
+		}
+		finally
+		{
+			isResetting = false;
+		}
+	}
 
 	protected override void Update(TimeSpan deltaTime)
 	{
@@ -133,29 +261,33 @@ public class SKLottieView : SKAnimatedSurfaceView
 			return;
 
 		// Apply animation speed with overflow protection
-		// Handle NaN and Infinity explicitly, and use safe bounds for long cast
-		var scaledTicks = deltaTime.Ticks * AnimationSpeed;
-		const long SafeMax = long.MaxValue - 1;  // Avoid overflow when casting from double
-		const long SafeMin = long.MinValue + 2;  // Avoid overflow when negating TimeSpan
-		if (!double.IsFinite(scaledTicks))
-			scaledTicks = double.IsNaN(scaledTicks) || scaledTicks < 0 ? SafeMin : SafeMax;
-		else if (scaledTicks > SafeMax)
-			scaledTicks = SafeMax;
-		else if (scaledTicks < SafeMin)
-			scaledTicks = SafeMin;
-		deltaTime = TimeSpan.FromTicks((long)scaledTicks);
+		deltaTime = TimeSpan.FromTicks(ClampToSafeRange(deltaTime.Ticks * AnimationSpeed));
 
 		// Apply phase direction (for RepeatMode.Reverse ping-pong)
 		if (!isInForwardPhase)
 			deltaTime = -deltaTime;
 
-		var newProgress = Progress + deltaTime;
-		if (newProgress > Duration)
-			newProgress = Duration;
-		if (newProgress < TimeSpan.Zero)
-			newProgress = TimeSpan.Zero;
+		var newProgressNormal = Progress + deltaTime;
+		if (newProgressNormal > Duration)
+			newProgressNormal = Duration;
+		if (newProgressNormal < TimeSpan.Zero)
+			newProgressNormal = TimeSpan.Zero;
 
-		Progress = newProgress;
+		Progress = newProgressNormal;
+	}
+
+	// Clamps a double tick count to a safe range for TimeSpan.FromTicks, handling NaN/Infinity/overflow.
+	private static long ClampToSafeRange(double ticks)
+	{
+		const long SafeMax = long.MaxValue - 1;
+		const long SafeMin = long.MinValue + 2;
+		if (!double.IsFinite(ticks))
+			return double.IsNaN(ticks) || ticks < 0 ? SafeMin : SafeMax;
+		if (ticks > SafeMax)
+			return SafeMax;
+		if (ticks < SafeMin)
+			return SafeMin;
+		return (long)ticks;
 	}
 
 	protected override void OnPaintSurface(SKCanvas canvas, SKSize size)
@@ -179,7 +311,11 @@ public class SKLottieView : SKAnimatedSurfaceView
 			return;
 		}
 
-		animation.SeekFrameTime(progress.TotalSeconds);
+		animation.SeekFrameTime(segmentOffset.TotalSeconds + progress.TotalSeconds);
+
+		// Keep CurrentFrame in sync with progress
+		if (Fps > 0)
+			CurrentFrame = (int)Math.Floor(progress.TotalSeconds * Fps);
 
 		// Skip completion/repeat logic during Reset to avoid spurious events
 		if (isResetting)
@@ -319,11 +455,28 @@ public class SKLottieView : SKAnimatedSurfaceView
 				isInForwardPhase = true;
 				repeatsCompleted = 0;
 
+				Fps = animation?.Fps ?? 0.0;
+				fullFrameCount = Fps > 0 && animation is not null
+					? (int)Math.Round(animation.Duration.TotalSeconds * Fps)
+					: 0;
+
+				// Compute the effective playback range from FrameStart/FrameEnd (clamped to the new animation)
+				var effectiveStart = Fps > 0 ? Math.Max(0, Math.Min(FrameStart, fullFrameCount)) : 0;
+				var effectiveEnd = Fps > 0
+					? (FrameEnd < 0 ? fullFrameCount : Math.Max(effectiveStart, Math.Min(FrameEnd, fullFrameCount)))
+					: 0;
+
+				segmentOffset = Fps > 0 ? TimeSpan.FromSeconds(effectiveStart / Fps) : TimeSpan.Zero;
+				var segmentFrames = effectiveEnd - effectiveStart;
+				var segmentDuration = Fps > 0 ? TimeSpan.FromSeconds(segmentFrames / Fps) : TimeSpan.Zero;
+
 				// Initialize Progress based on AnimationSpeed:
 				// - Positive/zero speed: start at 0, move toward Duration
 				// - Negative speed: start at Duration, move toward 0
-				Duration = animation?.Duration ?? TimeSpan.Zero;
+				Duration = segmentDuration;
+				FrameCount = segmentFrames;
 				Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
+				CurrentFrame = 0;
 			}
 			finally
 			{
@@ -348,6 +501,12 @@ public class SKLottieView : SKAnimatedSurfaceView
 	private async void OnSourceChanged(object? sender, EventArgs e)
 	{
 		await LoadAnimationAsync(sender as SKLottieImageSource);
+	}
+
+	private static void OnFramePropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
+	{
+		if (bindable is SKLottieView lv)
+			lv.ApplyFrames();
 	}
 
 	private static void OnProgressDurationPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)

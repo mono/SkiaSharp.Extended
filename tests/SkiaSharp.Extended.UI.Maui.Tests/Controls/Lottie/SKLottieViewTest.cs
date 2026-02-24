@@ -613,4 +613,387 @@ public class SKLottieViewTest
 		// (Duration differs between trophy.json and lolo.json)
 		Assert.NotEqual(TimeSpan.Zero, lottie.Duration);
 	}
+
+	// ===========================================
+	// Frame-Based Control Tests (issue #166)
+	// ===========================================
+
+	[Fact]
+	public async Task FpsIsSetAfterLoad()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// trophy.json is 30 fps
+		Assert.Equal(30.0, lottie.Fps);
+	}
+
+	[Fact]
+	public async Task FpsIsZeroWithoutAnimation()
+	{
+		// create without source
+		var lottie = new WaitingLottieView();
+
+		// test
+		Assert.Equal(0.0, lottie.Fps);
+	}
+
+	[Fact]
+	public async Task FrameCountIsSetAfterLoad()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// trophy.json: 2.3666665s at 30fps → Math.Round(2.3666665 * 30) = Math.Round(71.0) = 71
+		var expected = (int)Math.Round(lottie.Duration.TotalSeconds * lottie.Fps);
+		Assert.Equal(expected, lottie.FrameCount);
+		Assert.True(lottie.FrameCount > 0);
+	}
+
+	[Fact]
+	public async Task FrameCountIsZeroWithoutAnimation()
+	{
+		// create without source
+		var lottie = new WaitingLottieView();
+
+		// test
+		Assert.Equal(0, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task CurrentFrameIsZeroAfterLoad()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// test
+		Assert.Equal(0, lottie.CurrentFrame);
+	}
+
+	[Fact]
+	public async Task CurrentFrameIsZeroWithoutAnimation()
+	{
+		// create without source
+		var lottie = new WaitingLottieView();
+
+		// test
+		Assert.Equal(0, lottie.CurrentFrame);
+	}
+
+	[Fact]
+	public async Task CurrentFrameUpdatesWithProgress()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// trophy.json is 30fps: 1 second = 30 frames
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+
+		// test - Math.Floor(1.0 * 30) = 30
+		Assert.Equal(30, lottie.CurrentFrame);
+	}
+
+	[Fact]
+	public async Task CurrentFrameUsesFloorRounding()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// At 30fps, 0.5s is frame 15.0 exactly; 0.9s is frame 27.0
+		lottie.CallUpdate(TimeSpan.FromSeconds(0.9));
+
+		// Math.Floor(0.9 * 30) = Math.Floor(27.0) = 27
+		Assert.Equal(27, lottie.CurrentFrame);
+	}
+
+	[Fact]
+	public async Task FramePropertiesResetWhenSourceChanges()
+	{
+		// create
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		// verify properties are set
+		var fps = lottie.Fps;
+		var frameCount = lottie.FrameCount;
+		Assert.True(fps > 0);
+		Assert.True(frameCount > 0);
+
+		// advance animation
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+		Assert.True(lottie.CurrentFrame > 0);
+
+		// reset with new source
+		lottie.ResetTask();
+		source.File = LoloJson;
+		await lottie.LoadedTask;
+
+		// CurrentFrame should be reset to 0
+		Assert.Equal(0, lottie.CurrentFrame);
+		// Fps and FrameCount should be recalculated
+		Assert.True(lottie.Fps > 0);
+		Assert.True(lottie.FrameCount > 0);
+	}
+
+	// ===========================================
+	// FrameStart/FrameEnd Tests (issue #166)
+	// ===========================================
+
+	[Fact]
+	public async Task FrameStartEndDefaultsAfterLoad()
+	{
+		// After loading, FrameStart=0, FrameEnd=-1, and Duration = full animation
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		Assert.Equal(0, lottie.FrameStart);
+		Assert.Equal(-1, lottie.FrameEnd);
+		// Duration reflects the full InPoint→OutPoint range
+		Assert.Equal(TimeSpan.FromSeconds(2.3666665), lottie.Duration);
+	}
+
+	[Fact]
+	public async Task SettingFrameEndUpdatesDuration()
+	{
+		// FrameEnd = 30 on trophy.json (30fps) → Duration = 30/30 = 1.0s
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.FrameEnd = 30;
+
+		Assert.Equal(TimeSpan.FromSeconds(1.0), lottie.Duration);
+	}
+
+	[Fact]
+	public async Task SettingFrameEndUpdatesFrameCount()
+	{
+		// FrameEnd = 30 → FrameCount = 30 (0..29)
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.FrameEnd = 30;
+
+		Assert.Equal(30, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task SettingFrameStartAndEndMidRangeUpdatesDuration()
+	{
+		// FrameStart=10, FrameEnd=40 → Duration = 30 frames = 1.0s
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.FrameStart = 10;
+		lottie.FrameEnd = 40;
+
+		Assert.Equal(TimeSpan.FromSeconds(1.0), lottie.Duration);
+		Assert.Equal(30, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task SettingFrameStartOrEndResetsProgress()
+	{
+		// After advancing progress, changing FrameEnd should reset Progress to 0
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.CallUpdate(TimeSpan.FromSeconds(1));
+		Assert.True(lottie.Progress > TimeSpan.Zero);
+
+		lottie.FrameEnd = 30;
+
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+		Assert.Equal(0, lottie.CurrentFrame);
+	}
+
+	[Fact]
+	public async Task ProgressStopsAtFrameEnd()
+	{
+		// FrameEnd=30 → Duration=1s. A large update should clamp at 1s.
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.FrameEnd = 30;
+		lottie.CallUpdate(TimeSpan.FromSeconds(100)); // much larger than Duration
+
+		Assert.Equal(lottie.Duration, lottie.Progress);
+	}
+
+	[Fact]
+	public async Task SeekToFrameWorksWithinFrameStartEnd()
+	{
+		// FrameStart=10, FrameEnd=40 → playback range is 30 frames (0-based within the range)
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.FrameStart = 10;
+		lottie.FrameEnd = 40;
+
+		// After setting FrameStart=10, FrameEnd=40, progress starts at 0 within the range
+		Assert.Equal(0, lottie.CurrentFrame);
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+
+		// Advance 0.5s within the range to reach frame 15 (15/30fps = 0.5s)
+		lottie.CallUpdate(TimeSpan.FromSeconds(0.5));
+		Assert.Equal(15, lottie.CurrentFrame);
+		Assert.Equal(TimeSpan.FromSeconds(0.5), lottie.Progress);
+	}
+
+	[Fact]
+	public async Task FrameStartIsClamped()
+	{
+		// Negative FrameStart → clamped to 0
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.FrameStart = -10;
+		lottie.FrameEnd = 30;
+
+		// Effectively 0..30
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+		Assert.Equal(30, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task FrameEndIsClamped()
+	{
+		// FrameEnd beyond full frame count → clamped to full animation end
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		var fullDuration = lottie.Duration;
+		lottie.FrameEnd = 10000;
+
+		Assert.Equal(fullDuration, lottie.Duration);
+	}
+
+	[Fact]
+	public async Task FrameEndLessThanFrameStartUsesZeroDuration()
+	{
+		// FrameStart > FrameEnd → FrameEnd clamped to FrameStart → Duration = 0
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.FrameStart = 40;
+		lottie.FrameEnd = 10; // less than FrameStart → clamped to FrameStart
+
+		Assert.Equal(TimeSpan.Zero, lottie.Duration);
+		Assert.Equal(0, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task SettingFrameEndToMinusOneRestoresFullRange()
+	{
+		// FrameEnd = -1 means "use full animation end"
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		var fullDuration = lottie.Duration;
+		var fullFrameCount = lottie.FrameCount;
+
+		lottie.FrameEnd = 30; // restrict
+		Assert.NotEqual(fullDuration, lottie.Duration); // sanity
+
+		lottie.FrameStart = 0;
+		lottie.FrameEnd = -1; // restore
+
+		Assert.Equal(fullDuration, lottie.Duration);
+		Assert.Equal(fullFrameCount, lottie.FrameCount);
+		Assert.Equal(TimeSpan.Zero, lottie.Progress);
+	}
+
+	[Fact]
+	public async Task SettingFrameStartEndBeforeLoadIsAppliedOnLoad()
+	{
+		// FrameStart/FrameEnd set before source loads should take effect after load
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { FrameStart = 0, FrameEnd = 30 };
+		lottie.Source = source;
+		await lottie.LoadedTask;
+
+		// Duration should reflect 30-frame range (1.0s at 30fps)
+		Assert.Equal(TimeSpan.FromSeconds(1.0), lottie.Duration);
+		Assert.Equal(30, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task FrameStartEndDoesNothingWithoutAnimation()
+	{
+		// Setting FrameStart/FrameEnd without a loaded animation should not throw
+		var lottie = new WaitingLottieView();
+
+		lottie.FrameStart = 10;
+		lottie.FrameEnd = 40;
+
+		Assert.Equal(TimeSpan.Zero, lottie.Duration);
+		Assert.Equal(0, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task FrameStartEndPersistWhenSourceChanges()
+	{
+		// FrameStart/FrameEnd persist after a source change (they're user-set properties)
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source };
+		await lottie.LoadedTask;
+
+		lottie.FrameStart = 0;
+		lottie.FrameEnd = 30;
+		Assert.Equal(30, lottie.FrameCount); // 30-frame range active
+
+		// Change source → FrameStart/FrameEnd should persist (clamped to new animation's range)
+		lottie.ResetTask();
+		source.File = LoloJson;
+		await lottie.LoadedTask;
+
+		Assert.Equal(0, lottie.FrameStart);
+		Assert.Equal(30, lottie.FrameEnd);
+		// lolo.json has 24 frames, so FrameEnd=30 is clamped to 24
+		Assert.Equal(24, lottie.FrameCount);
+	}
+
+	[Fact]
+	public async Task FrameEndWithRepeatCountLoopsWithinRange()
+	{
+		// RepeatCount=1 and FrameEnd=30 → animation loops twice within the 30-frame range
+		var source = new SKFileLottieImageSource { File = TrophyJson };
+		var lottie = new WaitingLottieView { Source = source, RepeatCount = 1 };
+		await lottie.LoadedTask;
+
+		lottie.FrameEnd = 30; // 1.0s segment
+
+		var completedCount = 0;
+		lottie.AnimationCompleted += (s, e) => completedCount++;
+
+		for (var i = 0; i < 100; i++)
+		{
+			lottie.CallUpdate(TimeSpan.FromSeconds(0.1));
+			if (lottie.IsComplete) break;
+		}
+
+		Assert.Equal(1, completedCount);
+		Assert.True(lottie.IsComplete);
+	}
 }
