@@ -18,7 +18,7 @@ public class SKConfettiColorCollectionTypeConverter : StringTypeConverter
 
 		foreach (var part in parts)
 		{
-			var c = colConv.ConvertFromInvariantString(part);
+			var c = colConv.ConvertFromInvariantString(part.Trim());
 			colors.Add((Color)c);
 		}
 
