@@ -1,0 +1,177 @@
+@page "/blurhash"
+@inject HttpClient Http
+
+<PageTitle>BlurHash</PageTitle>
+
+<h1>BlurHash</h1>
+
+<p>
+    Encode images to BlurHash strings and decode them back to blurred previews
+    using <a href="https://mono.github.io/SkiaSharp.Extended/api/SkiaSharp.Extended.SKBlurHash.html" target="_blank"><code>SKBlurHash</code></a>.
+    <a href="https://mono.github.io/SkiaSharp.Extended/docs/blurhash.html" target="_blank">View documentation ↗</a>
+</p>
+
+<div class="row mb-3">
+    <div class="col-auto">
+        <label class="form-label">Image</label>
+        <select class="form-select" @bind="selectedImageIndex" @bind:after="OnImageChanged">
+            @for (var i = 0; i < imagePaths.Length; i++)
+            {
+                <option value="@i">@imagePaths[i]</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Components X</label>
+        <input type="number" class="form-control" style="width: 80px"
+               @bind="componentsX" @bind:after="OnSettingsChanged" min="1" max="9" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Components Y</label>
+        <input type="number" class="form-control" style="width: 80px"
+               @bind="componentsY" @bind:after="OnSettingsChanged" min="1" max="9" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Punch</label>
+        <input type="number" class="form-control" style="width: 80px"
+               @bind="punch" @bind:after="OnPunchChanged" min="1" max="10" />
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col">
+        <label class="form-label">BlurHash</label>
+        <input type="text" class="form-control" @bind="blurHash" @bind:after="OnHashChanged" />
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+
+<div class="row">
+    <div class="col-6">
+        <h5>Original</h5>
+        <img src="@($"images/BlurHash/{imagePaths[selectedImageIndex]}")"
+             style="max-width: 100%; height: auto;" />
+    </div>
+    <div class="col-6">
+        <h5>BlurHash Preview</h5>
+        <SKCanvasView @ref="blurCanvas" OnPaintSurface="OnPaintSurface"
+                      style="width: 100%; height: 300px;" />
+    </div>
+</div>
+
+@code {
+    private readonly string[] imagePaths =
+    {
+        "img1.jpg", "img2.jpg", "img3.jpg", "img4.jpg",
+        "img5.jpg", "img6.png", "img7.png"
+    };
+
+    private SKCanvasView? blurCanvas;
+    private int selectedImageIndex;
+    private int componentsX = 4;
+    private int componentsY = 3;
+    private string blurHash = "LEHV6nWB2yk8pyo0adR*.7kCMdnj";
+    private int punch = 1;
+    private bool isLoading;
+    private SKBitmap? decodedBlur;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await EncodeImage();
+        }
+    }
+
+    private async Task OnImageChanged()
+    {
+        await EncodeImage();
+    }
+
+    private async Task OnSettingsChanged()
+    {
+        await EncodeImage();
+    }
+
+    private void OnHashChanged()
+    {
+        DecodeBlur();
+    }
+
+    private void OnPunchChanged()
+    {
+        DecodeBlur();
+    }
+
+    private async Task EncodeImage()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            var imageUrl = $"images/BlurHash/{imagePaths[selectedImageIndex]}";
+            var data = await Http.GetByteArrayAsync(imageUrl);
+            using var bitmap = SKBitmap.Decode(data);
+
+            if (bitmap != null)
+            {
+                blurHash = SKBlurHash.Serialize(bitmap, componentsX, componentsY);
+                DecodeBlur();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error encoding image: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void DecodeBlur()
+    {
+        try
+        {
+            decodedBlur?.Dispose();
+            decodedBlur = SKBlurHash.DeserializeBitmap(blurHash, 20, 12, punch);
+            blurCanvas?.Invalidate();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error decoding blur hash: {ex.Message}");
+            decodedBlur = null;
+        }
+    }
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        var canvas = e.Surface.Canvas;
+        var info = e.Info;
+
+        canvas.Clear(SKColors.LightGray);
+
+        if (decodedBlur == null)
+            return;
+
+        var destRect = SKRect.Create(0, 0, info.Width, info.Height);
+        var srcRect = SKRect.Create(0, 0, decodedBlur.Width, decodedBlur.Height);
+
+        // Scale to fit while preserving aspect ratio
+        var scale = Math.Min(destRect.Width / srcRect.Width, destRect.Height / srcRect.Height);
+        var scaledWidth = srcRect.Width * scale;
+        var scaledHeight = srcRect.Height * scale;
+        var offsetX = (destRect.Width - scaledWidth) / 2;
+        var offsetY = (destRect.Height - scaledHeight) / 2;
+
+        var drawRect = SKRect.Create(offsetX, offsetY, scaledWidth, scaledHeight);
+
+        canvas.DrawBitmap(decodedBlur, drawRect);
+    }
+}
