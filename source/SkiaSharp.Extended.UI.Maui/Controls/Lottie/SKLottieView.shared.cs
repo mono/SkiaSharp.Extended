@@ -48,9 +48,17 @@ public class SKLottieView : SKAnimatedSurfaceView
 		typeof(SKLottieView),
 		SKLottieRepeatMode.Restart);
 
+	public static readonly BindableProperty AnimationSpeedProperty = BindableProperty.Create(
+		nameof(AnimationSpeed),
+		typeof(double),
+		typeof(SKLottieView),
+		1.0);
+
 	Skottie.Animation? animation;
-	bool playForwards = true;
+	bool isInForwardPhase = true;
 	int repeatsCompleted = 0;
+	CancellationTokenSource? loadCancellation;
+	bool isResetting;
 
 	public SKLottieView()
 	{
@@ -101,6 +109,18 @@ public class SKLottieView : SKAnimatedSurfaceView
 		set => SetValue(RepeatModeProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the animation playback speed multiplier.
+	/// Default is 1.0 (normal speed). Values greater than 1.0 speed up the animation,
+	/// values between 0 and 1.0 slow it down. Use 0 to pause the animation.
+	/// Negative values reverse the playback direction.
+	/// </summary>
+	public double AnimationSpeed
+	{
+		get => (double)GetValue(AnimationSpeedProperty);
+		set => SetValue(AnimationSpeedProperty, value);
+	}
+
 	public event EventHandler<SKLottieAnimationFailedEventArgs>? AnimationFailed;
 
 	public event EventHandler<SKLottieAnimationLoadedEventArgs>? AnimationLoaded;
@@ -112,10 +132,21 @@ public class SKLottieView : SKAnimatedSurfaceView
 		if (animation is null)
 			return;
 
-		// TODO: handle case where a repeat or revers cases the progress
-		//       to either wrap or start the next round
+		// Apply animation speed with overflow protection
+		// Handle NaN and Infinity explicitly, and use safe bounds for long cast
+		var scaledTicks = deltaTime.Ticks * AnimationSpeed;
+		const long SafeMax = long.MaxValue - 1;  // Avoid overflow when casting from double
+		const long SafeMin = long.MinValue + 2;  // Avoid overflow when negating TimeSpan
+		if (!double.IsFinite(scaledTicks))
+			scaledTicks = double.IsNaN(scaledTicks) || scaledTicks < 0 ? SafeMin : SafeMax;
+		else if (scaledTicks > SafeMax)
+			scaledTicks = SafeMax;
+		else if (scaledTicks < SafeMin)
+			scaledTicks = SafeMin;
+		deltaTime = TimeSpan.FromTicks((long)scaledTicks);
 
-		if (!playForwards)
+		// Apply phase direction (for RepeatMode.Reverse ping-pong)
+		if (!isInForwardPhase)
 			deltaTime = -deltaTime;
 
 		var newProgress = Progress + deltaTime;
@@ -136,7 +167,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 #if DEBUG
 		WriteDebugStatus($"Repeats: {repeatsCompleted}/{RepeatCount}");
-		WriteDebugStatus($"Forward: {playForwards} ({RepeatMode})");
+		WriteDebugStatus($"Forward: {isInForwardPhase} ({RepeatMode})");
 #endif
 	}
 
@@ -150,23 +181,41 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 		animation.SeekFrameTime(progress.TotalSeconds);
 
+		// Skip completion/repeat logic during Reset to avoid spurious events
+		if (isResetting)
+			return;
+
 		var repeatMode = RepeatMode;
 		var duration = Duration;
 
-		// have we reached the end of this run
-		var atStart = !playForwards && progress <= TimeSpan.Zero;
-		var atEnd = playForwards && progress >= duration;
-		var isFinishedRun = repeatMode == SKLottieRepeatMode.Restart ? atEnd : atStart;
+		// Determine effective movement direction
+		// Negative AnimationSpeed inverts the movement relative to the phase
+		var movingForward = AnimationSpeed >= 0 ? isInForwardPhase : !isInForwardPhase;
 
-		// maybe the direction changed
-		var needsFlip =
-			(atEnd && repeatMode == SKLottieRepeatMode.Reverse) ||
-			(atStart && repeatMode == SKLottieRepeatMode.Restart);
+		// Have we reached a boundary based on our movement direction?
+		var atStart = !movingForward && progress <= TimeSpan.Zero;
+		var atEnd = movingForward && progress >= duration;
+		
+		// A run is "finished" based on RepeatMode:
+		// - Restart: finished when reaching the destination (end for forward, start for backward)
+		// - Reverse: finished when completing full cycle (forward + back to start, or backward + back to end)
+		//   With positive speed: start -> end -> start (finish at start)
+		//   With negative speed: end -> start -> end (finish at end)
+		var reverseFinishPoint = AnimationSpeed >= 0 ? atStart : atEnd;
+		var isFinishedRun = repeatMode == SKLottieRepeatMode.Restart 
+			? (movingForward ? atEnd : atStart)
+			: reverseFinishPoint;
+
+		// For Reverse mode: flip direction when hitting a boundary (but not the finish boundary)
+		// With positive speed: flip at end (start going back toward start)
+		// With negative speed: flip at start (start going back toward end)
+		var needsFlip = repeatMode == SKLottieRepeatMode.Reverse && 
+			(AnimationSpeed >= 0 ? atEnd : atStart) && !isFinishedRun;
 
 		if (needsFlip)
 		{
 			// we need to reverse to finish the run
-			playForwards = !playForwards;
+			isInForwardPhase = !isInForwardPhase;
 
 			IsComplete = false;
 		}
@@ -191,9 +240,14 @@ public class SKLottieView : SKAnimatedSurfaceView
 				isFinishedRun = false;
 
 				if (repeatMode == SKLottieRepeatMode.Restart)
-					Progress = TimeSpan.Zero;
+				{
+					// Restart at the beginning of the movement direction:
+					// - Positive speed: restart at 0, move toward Duration
+					// - Negative speed: restart at Duration, move toward 0
+					Progress = AnimationSpeed >= 0 ? TimeSpan.Zero : Duration;
+				}
 				else if (repeatMode == SKLottieRepeatMode.Reverse)
-					playForwards = !playForwards;
+					isInForwardPhase = !isInForwardPhase;
 			}
 
 			IsComplete =
@@ -208,9 +262,13 @@ public class SKLottieView : SKAnimatedSurfaceView
 			Invalidate();
 	}
 
-	private async Task LoadAnimationAsync(SKLottieImageSource? imageSource, CancellationToken cancellationToken = default)
+	private async Task LoadAnimationAsync(SKLottieImageSource? imageSource)
 	{
-		// TODO: better error messaging/handling
+		// Cancel and dispose any in-flight load
+		loadCancellation?.Cancel();
+		loadCancellation?.Dispose();
+		loadCancellation = new CancellationTokenSource();
+		var cancellationToken = loadCancellation.Token;
 
 		if (imageSource is null || imageSource.IsEmpty)
 		{
@@ -222,10 +280,19 @@ public class SKLottieView : SKAnimatedSurfaceView
 			Exception? exception;
 			try
 			{
-				var loadResult = await Task.Run(() => imageSource.LoadAnimationAsync(cancellationToken));
+				var loadResult = await Task.Run(() => imageSource.LoadAnimationAsync(cancellationToken), cancellationToken);
+
+				// Check if cancelled before applying result
+				if (cancellationToken.IsCancellationRequested)
+					return;
 
 				exception = null;
 				animation = loadResult.Animation;
+			}
+			catch (OperationCanceledException)
+			{
+				// Load was cancelled, don't update state
+				return;
 			}
 			catch (Exception ex)
 			{
@@ -246,11 +313,22 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 		void Reset()
 		{
-			playForwards = true;
-			repeatsCompleted = 0;
+			isResetting = true;
+			try
+			{
+				isInForwardPhase = true;
+				repeatsCompleted = 0;
 
-			Progress = TimeSpan.Zero;
-			Duration = animation?.Duration ?? TimeSpan.Zero;
+				// Initialize Progress based on AnimationSpeed:
+				// - Positive/zero speed: start at 0, move toward Duration
+				// - Negative speed: start at Duration, move toward 0
+				Duration = animation?.Duration ?? TimeSpan.Zero;
+				Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
+			}
+			finally
+			{
+				isResetting = false;
+			}
 		}
 	}
 
