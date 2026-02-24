@@ -500,6 +500,55 @@ public partial class GesturePage : ContentPage
 		layout.Children.Add(lpLabel);
 		layout.Children.Add(lpSlider);
 
+		// --- Fling Settings ---
+		layout.Children.Add(new Label { Text = "Fling Settings", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
+
+		var engine = gestureView.Engine;
+
+		// Fling friction (deceleration rate per frame)
+		var frictionLabel = new Label { Text = $"Friction: {engine.FlingFriction:F2}" };
+		var frictionSlider = new Slider { Minimum = 0.80, Maximum = 0.99, Value = engine.FlingFriction };
+		frictionSlider.ValueChanged += (_, args) =>
+		{
+			engine.FlingFriction = (float)args.NewValue;
+			frictionLabel.Text = $"Friction: {args.NewValue:F2}";
+		};
+		layout.Children.Add(frictionLabel);
+		layout.Children.Add(frictionSlider);
+
+		// Fling min velocity (stop threshold)
+		var minVelLabel = new Label { Text = $"Min Velocity: {engine.FlingMinVelocity:F0} px/s" };
+		var minVelSlider = new Slider { Minimum = 1, Maximum = 50, Value = engine.FlingMinVelocity };
+		minVelSlider.ValueChanged += (_, args) =>
+		{
+			engine.FlingMinVelocity = (float)args.NewValue;
+			minVelLabel.Text = $"Min Velocity: {args.NewValue:F0} px/s";
+		};
+		layout.Children.Add(minVelLabel);
+		layout.Children.Add(minVelSlider);
+
+		// Fling detection threshold
+		var threshLabel = new Label { Text = $"Fling Threshold: {engine.FlingThreshold:F0} px/s" };
+		var threshSlider = new Slider { Minimum = 50, Maximum = 1000, Value = engine.FlingThreshold };
+		threshSlider.ValueChanged += (_, args) =>
+		{
+			engine.FlingThreshold = (float)args.NewValue;
+			threshLabel.Text = $"Fling Threshold: {args.NewValue:F0} px/s";
+		};
+		layout.Children.Add(threshLabel);
+		layout.Children.Add(threshSlider);
+
+		// Double tap slop
+		var dtSlopLabel = new Label { Text = $"Double Tap Slop: {engine.DoubleTapSlop:F0} px" };
+		var dtSlopSlider = new Slider { Minimum = 10, Maximum = 200, Value = engine.DoubleTapSlop };
+		dtSlopSlider.ValueChanged += (_, args) =>
+		{
+			engine.DoubleTapSlop = (float)args.NewValue;
+			dtSlopLabel.Text = $"Double Tap Slop: {args.NewValue:F0} px";
+		};
+		layout.Children.Add(dtSlopLabel);
+		layout.Children.Add(dtSlopSlider);
+
 		// --- Current State ---
 		layout.Children.Add(new Label { Text = "Current State", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
 		layout.Children.Add(new Label { Text = $"Scale: {_canvasScale:F2}x" });
