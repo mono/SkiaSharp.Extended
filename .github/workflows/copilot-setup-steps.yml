@@ -27,10 +27,10 @@ jobs:
           dotnet-version: "10.0.x"
 
       - name: Install MAUI Android workload
-        run: dotnet workload install maui-android --source https://api.nuget.org/v3/index.json
+        run: dotnet workload install maui-android
 
       - name: Install wasm-tools workload
-        run: dotnet workload install wasm-tools --source https://api.nuget.org/v3/index.json
+        run: dotnet workload install wasm-tools
 
       - name: Restore local tools
         run: dotnet tool restore

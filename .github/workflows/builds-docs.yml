@@ -21,16 +21,16 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Install MAUI workload
-      run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
+      run: dotnet workload install maui
 
     - name: Install wasm-tools workload
-      run: dotnet workload install wasm-tools --source https://api.nuget.org/v3/index.json
+      run: dotnet workload install wasm-tools
 
     - name: Restore .NET tools
       run: dotnet tool restore
 
     - name: Build the assemblies
-      run: dotnet build scripts/SkiaSharp.Extended-Pack.slnf -c Release -f net9.0
+      run: dotnet build scripts/SkiaSharp.Extended-Pack.slnf -c Release -f net10.0
 
     - name: Publish Blazor sample
       run: dotnet publish samples/SkiaSharpDemo.Blazor/SkiaSharpDemo.Blazor.csproj -c Release -o publish/sample

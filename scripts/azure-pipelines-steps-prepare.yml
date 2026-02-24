@@ -32,5 +32,8 @@ steps:
   - pwsh: dotnet workload install maui
     displayName: Install MAUI workload
 
+  - pwsh: dotnet workload install wasm-tools
+    displayName: Install WASM tools workload
+
   - pwsh: dotnet tool restore
     displayName: Restore the dotnet tools
