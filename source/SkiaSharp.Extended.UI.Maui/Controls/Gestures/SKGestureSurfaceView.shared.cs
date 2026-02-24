@@ -73,7 +73,6 @@ public class SKGestureSurfaceView : SKSurfaceView
 		ResourceLoader<Themes.SKGestureSurfaceViewResources>.EnsureRegistered(this);
 
 		_engine = new SKGestureEngine();
-		SubscribeEngineEvents();
 
 		Loaded += OnLoaded;
 		Unloaded += OnUnloaded;
