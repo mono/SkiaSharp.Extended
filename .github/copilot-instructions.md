@@ -97,8 +97,9 @@ There is a Blazor WebAssembly sample app at `samples/SkiaSharpDemo.Blazor/` that
 To capture screenshots:
 1. Run the Blazor sample locally (`dotnet run --project samples/SkiaSharpDemo.Blazor`)
 2. Navigate to each affected page in the browser
-3. Take a screenshot of each page
-4. Post the screenshots as a comment on the PR
+3. Verify there are no errors on the page or in the browser console logs
+4. Take a screenshot of each page
+5. Post the screenshots as a comment on the PR
 
 ## Dependencies
 

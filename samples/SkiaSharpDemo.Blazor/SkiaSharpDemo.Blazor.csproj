@@ -6,6 +6,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
+    <!-- Required for SkiaSharp native WASM bindings to be linked -->
+    <WasmBuildNative>true</WasmBuildNative>
+
     <!-- Do not make NuGet packages or include in tests -->
     <IsPackable>false</IsPackable>
     <IsTestProject>false</IsTestProject>
