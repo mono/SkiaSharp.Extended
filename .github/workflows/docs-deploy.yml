@@ -27,7 +27,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     outputs:
       artifact_name: ${{ steps.vars.outputs.artifact_name }}
       is_staging: ${{ steps.vars.outputs.is_staging }}
@@ -55,7 +55,7 @@ jobs:
           fi
 
       - name: Install MAUI workload
-        run: dotnet workload install maui
+        run: dotnet workload install maui-android
 
       - name: Install wasm-tools workload
         run: dotnet workload install wasm-tools
@@ -74,22 +74,19 @@ jobs:
 
       - name: Copy Blazor sample into docs site
         run: |
-          $baseHref = "${{ steps.vars.outputs.sample_base_href }}"
-          $segmentCount = "${{ steps.vars.outputs.sample_segment_count }}"
+          BASE_HREF="${{ steps.vars.outputs.sample_base_href }}"
+          SEGMENT_COUNT="${{ steps.vars.outputs.sample_segment_count }}"
 
-          New-Item -ItemType Directory -Path docs/_site/sample -Force
-          Get-ChildItem -Path publish/sample/wwwroot -Force | Copy-Item -Destination docs/_site/sample -Recurse -Force
+          mkdir -p docs/_site/sample
+          cp -r publish/sample/wwwroot/. docs/_site/sample/
 
           # Rewrite base href for deployment
-          $indexPath = "docs/_site/sample/index.html"
-          (Get-Content $indexPath -Raw) -replace '<base href="/" />', "<base href=`"$baseHref`" />" | Set-Content $indexPath
+          sed -i "s|<base href=\"/\" />|<base href=\"$BASE_HREF\" />|" docs/_site/sample/index.html
 
           # Update segmentCount in 404.html
-          $notFoundPath = "docs/_site/sample/404.html"
-          if (Test-Path $notFoundPath) {
-            (Get-Content $notFoundPath -Raw) -replace 'var segmentCount = \d+;', "var segmentCount = $segmentCount;" | Set-Content $notFoundPath
-          }
-        shell: pwsh
+          if [ -f docs/_site/sample/404.html ]; then
+            sed -i "s|var segmentCount = [0-9]*;|var segmentCount = $SEGMENT_COUNT;|" docs/_site/sample/404.html
+          fi
 
       - name: Upload site artifact
         uses: actions/upload-artifact@v4
