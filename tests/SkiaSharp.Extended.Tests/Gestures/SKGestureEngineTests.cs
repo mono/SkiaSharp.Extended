@@ -573,42 +573,6 @@ public class SKGestureEngineTests
 	}
 
 	#endregion
-
-	#region Drag Events Tests
-
-	[Fact]
-	public void DragStarted_ProvidesStartLocation()
-	{
-		var engine = CreateEngine();
-		SKPoint? startLocation = null;
-		engine.DragStarted += (s, e) => startLocation = e.StartLocation;
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(120, 100));
-
-		Assert.NotNull(startLocation);
-		Assert.Equal(100, startLocation.Value.X);
-		Assert.Equal(100, startLocation.Value.Y);
-	}
-
-	[Fact]
-	public void DragEnded_RaisesOnTouchUp()
-	{
-		var engine = CreateEngine();
-		var dragEnded = false;
-		engine.DragEnded += (s, e) => dragEnded = true;
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(150, 150));
-		engine.ProcessTouchUp(1, new SKPoint(150, 150));
-
-		Assert.True(dragEnded);
-	}
-
-	#endregion
-
 	#region Reset Tests
 
 	[Fact]
@@ -733,69 +697,6 @@ public class SKGestureEngineTests
 		engine.ProcessTouchUp(1, new SKPoint(100, 100));
 
 		Assert.False(doubleTapRaised);
-	}
-
-	[Fact]
-	public void PanThenReturnToStart_DoesNotFireTap()
-	{
-		var engine = CreateEngine();
-		var tapRaised = false;
-		var dragEnded = false;
-		engine.TapDetected += (s, e) => tapRaised = true;
-		engine.DragEnded += (s, e) => dragEnded = true;
-
-		// Start at (100, 100)
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		// Move far away (triggers pan)
-		engine.ProcessTouchMove(1, new SKPoint(200, 100));
-		AdvanceTime(10);
-		// Move back near start
-		engine.ProcessTouchMove(1, new SKPoint(101, 100));
-		AdvanceTime(10);
-		// Release near start
-		engine.ProcessTouchUp(1, new SKPoint(101, 100));
-
-		Assert.False(tapRaised, "Tap should not fire after panning");
-		Assert.True(dragEnded, "DragEnded should fire");
-	}
-
-	[Fact]
-	public void CancelDuringDrag_FiresDragEnded()
-	{
-		var engine = CreateEngine();
-		var dragStarted = false;
-		var dragEnded = false;
-		engine.DragStarted += (s, e) => dragStarted = true;
-		engine.DragEnded += (s, e) => dragEnded = true;
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(150, 150)); // Start drag
-		Assert.True(dragStarted);
-
-		engine.ProcessTouchCancel(1);
-		Assert.True(dragEnded, "DragEnded should fire on cancel");
-	}
-
-	[Fact]
-	public void PinchToSingleFinger_FiresDragStarted()
-	{
-		var engine = CreateEngine();
-		var dragStartedCount = 0;
-		engine.DragStarted += (s, e) => dragStartedCount++;
-
-		// Two fingers down → pinch
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		engine.ProcessTouchDown(2, new SKPoint(200, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(90, 100));
-		engine.ProcessTouchMove(2, new SKPoint(210, 100));
-
-		// Lift one finger → should transition to panning with DragStarted
-		engine.ProcessTouchUp(2, new SKPoint(210, 100));
-
-		Assert.Equal(1, dragStartedCount);
 	}
 
 	[Fact]
@@ -1069,106 +970,6 @@ public class SKGestureEngineTests
 	}
 
 	#endregion
-
-	#region Drag Lifecycle Tests
-
-	[Fact]
-	public void DragUpdated_DeltaMatchesMovement()
-	{
-		var engine = CreateEngine();
-		var deltas = new List<SKPoint>();
-		engine.DragUpdated += (s, e) => deltas.Add(e.Delta);
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(120, 100)); // Starts pan+drag, delta=(20,0)
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(130, 110)); // Delta: (10, 10)
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(135, 115)); // Delta: (5, 5)
-
-		Assert.True(deltas.Count >= 3);
-		// First DragUpdated fires with delta from initial touch
-		Assert.Equal(20, deltas[0].X, 0.1);
-		Assert.Equal(0, deltas[0].Y, 0.1);
-		// Subsequent deltas are incremental
-		Assert.Equal(10, deltas[1].X, 0.1);
-		Assert.Equal(10, deltas[1].Y, 0.1);
-		Assert.Equal(5, deltas[2].X, 0.1);
-		Assert.Equal(5, deltas[2].Y, 0.1);
-	}
-
-	[Fact]
-	public void DragStarted_PrecedesDragUpdated()
-	{
-		var engine = CreateEngine();
-		var events = new List<string>();
-		engine.DragStarted += (s, e) => events.Add("started");
-		engine.DragUpdated += (s, e) => events.Add("updated");
-		engine.DragEnded += (s, e) => events.Add("ended");
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(120, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(130, 110));
-		engine.ProcessTouchUp(1, new SKPoint(130, 110));
-
-		Assert.True(events.Count >= 3);
-		Assert.Equal("started", events[0]);
-		Assert.Equal("updated", events[1]);
-		Assert.Equal("ended", events[events.Count - 1]);
-	}
-
-	[Fact]
-	public void PinchToPan_DragStartedFiredOnce()
-	{
-		var engine = CreateEngine();
-		var dragStartedCount = 0;
-		var dragEndedCount = 0;
-		engine.DragStarted += (s, e) => dragStartedCount++;
-		engine.DragEnded += (s, e) => dragEndedCount++;
-
-		// Pinch gesture
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		engine.ProcessTouchDown(2, new SKPoint(200, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(90, 100));
-		engine.ProcessTouchMove(2, new SKPoint(210, 100));
-
-		// Lift second finger → transitions to pan
-		engine.ProcessTouchUp(2, new SKPoint(210, 100));
-		AdvanceTime(10);
-
-		// Continue panning
-		engine.ProcessTouchMove(1, new SKPoint(80, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchUp(1, new SKPoint(80, 100));
-
-		Assert.Equal(1, dragStartedCount);
-		Assert.Equal(1, dragEndedCount);
-	}
-
-	[Fact]
-	public void NoPan_NoDragEvents()
-	{
-		var engine = CreateEngine();
-		var dragStarted = false;
-		var dragEnded = false;
-		engine.DragStarted += (s, e) => dragStarted = true;
-		engine.DragEnded += (s, e) => dragEnded = true;
-
-		// Quick tap — no drag
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(50);
-		engine.ProcessTouchUp(1, new SKPoint(100, 100));
-
-		Assert.False(dragStarted);
-		Assert.False(dragEnded);
-	}
-
-	#endregion
-
 	#region Fling Edge Case Tests
 
 	[Fact]
@@ -1238,166 +1039,6 @@ public class SKGestureEngineTests
 	#region Fling Animation Tests
 
 	[Fact]
-	public async Task FlingAnimation_FiresFlingingEvents()
-	{
-		var engine = CreateEngine();
-		var flingingCount = 0;
-		engine.Flinging += (s, e) => flingingCount++;
-
-		// Trigger a fast swipe
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(200, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(500, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchUp(1, new SKPoint(500, 100));
-
-		Assert.True(engine.IsFlinging, "Engine should be flinging after fast swipe");
-
-		// Wait for a few animation frames
-		await Task.Delay(100);
-
-		Assert.True(flingingCount > 0, $"Flinging should fire at least once, fired {flingingCount} times");
-	}
-
-	[Fact]
-	public async Task FlingAnimation_HasDeltaValues()
-	{
-		var engine = CreateEngine();
-		var deltas = new List<(float DeltaX, float DeltaY)>();
-		engine.Flinging += (s, e) => deltas.Add((e.DeltaX, e.DeltaY));
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(200, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(500, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchUp(1, new SKPoint(500, 100));
-
-		await Task.Delay(50);
-
-		Assert.NotEmpty(deltas);
-		// Delta should be in the direction of the swipe (positive X)
-		Assert.True(deltas[0].DeltaX > 0, $"DeltaX should be positive, was {deltas[0].DeltaX}");
-	}
-
-	[Fact]
-	public async Task FlingAnimation_DeceleratesOverTime()
-	{
-		var engine = CreateEngine();
-		var speeds = new List<float>();
-		engine.Flinging += (s, e) => speeds.Add(e.Speed);
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(300, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(600, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchUp(1, new SKPoint(600, 100));
-
-		await Task.Delay(200);
-
-		Assert.True(speeds.Count >= 2, "Need at least 2 frames to compare");
-		Assert.True(speeds[^1] < speeds[0], "Speed should decrease over time due to friction");
-	}
-
-	[Fact]
-	public async Task FlingAnimation_EventuallyCompletes()
-	{
-		var engine = CreateEngine();
-		var completed = false;
-		engine.FlingCompleted += (s, e) => completed = true;
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(120, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(200, 100)); // Moderate speed
-		AdvanceTime(10);
-		engine.ProcessTouchUp(1, new SKPoint(200, 100));
-
-		// Wait long enough for fling to decelerate to stop
-		await Task.Delay(2000);
-
-		Assert.True(completed, "FlingCompleted should fire when velocity drops below minimum");
-		Assert.False(engine.IsFlinging);
-	}
-
-	[Fact]
-	public void FlingAnimation_StopsOnNewTouch()
-	{
-		var engine = CreateEngine();
-		var completed = false;
-		engine.FlingCompleted += (s, e) => completed = true;
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(200, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(500, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchUp(1, new SKPoint(500, 100));
-
-		Assert.True(engine.IsFlinging);
-
-		// New touch should stop fling
-		engine.ProcessTouchDown(2, new SKPoint(300, 300));
-
-		Assert.False(engine.IsFlinging);
-		Assert.True(completed, "FlingCompleted should fire when stopped by new touch");
-	}
-
-	[Fact]
-	public void StopFling_StopsAnimation()
-	{
-		var engine = CreateEngine();
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(200, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(500, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchUp(1, new SKPoint(500, 100));
-
-		Assert.True(engine.IsFlinging);
-
-		engine.StopFling();
-
-		Assert.False(engine.IsFlinging);
-	}
-
-	[Fact]
-	public void FlingProperties_CanBeConfigured()
-	{
-		var engine = CreateEngine();
-		engine.FlingFriction = 0.95f;
-		engine.FlingMinVelocity = 10f;
-		engine.FlingFrameInterval = 32;
-
-		Assert.Equal(0.95f, engine.FlingFriction);
-		Assert.Equal(10f, engine.FlingMinVelocity);
-		Assert.Equal(32, engine.FlingFrameInterval);
-	}
-
-	[Fact]
-	public void SlowSwipe_DoesNotStartFlingAnimation()
-	{
-		var engine = CreateEngine();
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(500);
-		engine.ProcessTouchMove(1, new SKPoint(110, 100));
-		AdvanceTime(500);
-		engine.ProcessTouchUp(1, new SKPoint(110, 100));
-
-		Assert.False(engine.IsFlinging, "Slow swipe should not start fling animation");
-	}
-
-	[Fact]
 	public void FlingDetected_StillFiresOnceAtStart()
 	{
 		var engine = CreateEngine();
@@ -1413,40 +1054,6 @@ public class SKGestureEngineTests
 		engine.ProcessTouchUp(1, new SKPoint(500, 100));
 
 		Assert.Equal(1, flingDetectedCount);
-	}
-
-	[Fact]
-	public void StopFling_WhenNotFlinging_DoesNothing()
-	{
-		var engine = CreateEngine();
-		var completedCount = 0;
-		engine.FlingCompleted += (s, e) => completedCount++;
-
-		// Should not throw or fire events
-		engine.StopFling();
-
-		Assert.Equal(0, completedCount);
-		Assert.False(engine.IsFlinging);
-	}
-
-	[Fact]
-	public void Reset_StopsFlingAnimation()
-	{
-		var engine = CreateEngine();
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(200, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(500, 100));
-		AdvanceTime(10);
-		engine.ProcessTouchUp(1, new SKPoint(500, 100));
-
-		Assert.True(engine.IsFlinging);
-
-		engine.Reset();
-
-		Assert.False(engine.IsFlinging);
 	}
 
 	#endregion
@@ -1465,20 +1072,6 @@ public class SKGestureEngineTests
 		engine.ProcessTouchCancel(1);
 		engine.ProcessTouchCancel(2);
 		Assert.Equal(SKGestureState.None, engine.CurrentState);
-	}
-
-	[Fact]
-	public void CancelDuringDetecting_NoDragEndFired()
-	{
-		var engine = CreateEngine();
-		var dragEnded = false;
-		engine.DragEnded += (s, e) => dragEnded = true;
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		Assert.Equal(SKGestureState.Detecting, engine.CurrentState);
-
-		engine.ProcessTouchCancel(1);
-		Assert.False(dragEnded, "DragEnded should not fire if drag never started");
 	}
 
 	#endregion
@@ -1745,25 +1338,6 @@ public class SKGestureEngineTests
 	}
 
 	[Fact]
-	public void ProcessTouchCancel_DuringDrag_FiresDragEnded()
-	{
-		var engine = CreateEngine();
-		var dragEndedCount = 0;
-		engine.DragEnded += (s, e) => dragEndedCount++;
-
-		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		AdvanceTime(10);
-		// Move beyond slop to start drag
-		engine.ProcessTouchMove(1, new SKPoint(130, 130));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(160, 160));
-
-		engine.ProcessTouchCancel(1);
-
-		Assert.Equal(1, dragEndedCount);
-	}
-
-	[Fact]
 	public void ThreeToTwoFinger_NoScaleJump()
 	{
 		var engine = CreateEngine();
@@ -1868,28 +1442,6 @@ public class SKGestureEngineTests
 		engine.ProcessTouchUp(1, new SKPoint(100, 100));
 
 		Assert.Equal(0, tapCount);
-	}
-
-	[Fact]
-	public void DragStarted_FiresOnPinchToPanTransition()
-	{
-		var engine = CreateEngine();
-		var dragStartedCount = 0;
-		engine.DragStarted += (s, e) => dragStartedCount++;
-
-		// Start pinch
-		engine.ProcessTouchDown(1, new SKPoint(100, 200));
-		engine.ProcessTouchDown(2, new SKPoint(300, 200));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(110, 200));
-		engine.ProcessTouchMove(2, new SKPoint(290, 200));
-
-		// Lift one finger → transition to pan, should fire DragStarted
-		engine.ProcessTouchUp(2, new SKPoint(290, 200));
-		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(130, 200));
-
-		Assert.True(dragStartedCount >= 1, "DragStarted should fire on pinch-to-pan transition");
 	}
 
 	#endregion

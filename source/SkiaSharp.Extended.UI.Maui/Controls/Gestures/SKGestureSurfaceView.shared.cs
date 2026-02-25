@@ -4,7 +4,7 @@ using SkiaSharp.Views.Maui;
 namespace SkiaSharp.Extended.UI.Controls;
 
 /// <summary>
-/// A SkiaSharp view with built-in gesture recognition for touch interactions.
+/// A SkiaSharp view with built-in gesture recognition and transform tracking.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -13,12 +13,16 @@ namespace SkiaSharp.Extended.UI.Controls;
 /// <list type="bullet">
 ///   <item><description>Single, double, and multi-tap detection</description></item>
 ///   <item><description>Long press detection</description></item>
-///   <item><description>Pan/drag gestures</description></item>
+///   <item><description>Pan/drag gestures with fling animation</description></item>
 ///   <item><description>Pinch to zoom gestures</description></item>
 ///   <item><description>Rotation gestures</description></item>
-///   <item><description>Fling (swipe) gesture detection with velocity</description></item>
+///   <item><description>Animated double-tap zoom and scroll zoom</description></item>
 ///   <item><description>Hover detection for mouse/stylus</description></item>
 /// </list>
+/// <para>
+/// Use the <see cref="Tracker"/> property to access the transform state (<see cref="SKGestureTracker.Matrix"/>)
+/// and configure gesture behavior.
+/// </para>
 /// </remarks>
 /// <example>
 /// <code>
@@ -61,7 +65,6 @@ public class SKGestureSurfaceView : SKSurfaceView
 		500,
 		propertyChanged: OnLongPressDurationChanged);
 
-	private readonly SKGestureEngine _engine;
 	private SKCanvasView? _canvasView;
 	private SKGLView? _glView;
 
@@ -72,7 +75,7 @@ public class SKGestureSurfaceView : SKSurfaceView
 	{
 		ResourceLoader<Themes.SKGestureSurfaceViewResources>.EnsureRegistered(this);
 
-		_engine = new SKGestureEngine();
+		Tracker = new SKGestureTracker();
 
 		Loaded += OnLoaded;
 		Unloaded += OnUnloaded;
@@ -81,9 +84,9 @@ public class SKGestureSurfaceView : SKSurfaceView
 	}
 
 	/// <summary>
-	/// Gets the underlying gesture engine for advanced scenarios.
+	/// Gets the gesture tracker that manages transform state and animations.
 	/// </summary>
-	public SKGestureEngine Engine => _engine;
+	public SKGestureTracker Tracker { get; }
 
 	/// <summary>
 	/// Gets or sets whether gesture detection is enabled.
@@ -180,6 +183,11 @@ public class SKGestureSurfaceView : SKSurfaceView
 	public event EventHandler<SKGestureStateEventArgs>? GestureEnded;
 
 	/// <summary>
+	/// Occurs when the transform state changes.
+	/// </summary>
+	public event EventHandler? TransformChanged;
+
+	/// <summary>
 	/// Occurs when a drag operation starts.
 	/// </summary>
 	public event EventHandler<SKDragEventArgs>? DragStarted;
@@ -242,6 +250,9 @@ public class SKGestureSurfaceView : SKSurfaceView
 	/// <summary>Invokes <see cref="GestureEnded"/>.</summary>
 	protected virtual void OnGestureEnded(SKGestureStateEventArgs e) => GestureEnded?.Invoke(this, e);
 
+	/// <summary>Invokes <see cref="TransformChanged"/>.</summary>
+	protected virtual void OnTransformChanged() => TransformChanged?.Invoke(this, EventArgs.Empty);
+
 	/// <summary>Invokes <see cref="DragStarted"/>.</summary>
 	protected virtual void OnDragStarted(SKDragEventArgs e) => DragStarted?.Invoke(this, e);
 
@@ -289,107 +300,79 @@ public class SKGestureSurfaceView : SKSurfaceView
 
 	private void OnLoaded(object? sender, EventArgs e)
 	{
-		SubscribeEngineEvents();
+		SubscribeTrackerEvents();
 	}
 
 	private void OnUnloaded(object? sender, EventArgs e)
 	{
-		UnsubscribeEngineEvents();
-		_engine.Reset();
+		UnsubscribeTrackerEvents();
+		Tracker.Reset();
 	}
 
-	private void SubscribeEngineEvents()
+	private void SubscribeTrackerEvents()
 	{
-		_engine.TapDetected += OnEngineTapDetected;
-		_engine.DoubleTapDetected += OnEngineDoubleTapDetected;
-		_engine.LongPressDetected += OnEngineLongPressDetected;
-		_engine.PanDetected += OnEnginePanDetected;
-		_engine.PinchDetected += OnEnginePinchDetected;
-		_engine.RotateDetected += OnEngineRotateDetected;
-		_engine.FlingDetected += OnEngineFlingDetected;
-		_engine.Flinging += OnEngineFlinging;
-		_engine.FlingCompleted += OnEngineFlingCompleted;
-		_engine.HoverDetected += OnEngineHoverDetected;
-		_engine.ScrollDetected += OnEngineScrollDetected;
-		_engine.GestureStarted += OnEngineGestureStarted;
-		_engine.GestureEnded += OnEngineGestureEnded;
-		_engine.DragStarted += OnEngineDragStarted;
-		_engine.DragUpdated += OnEngineDragUpdated;
-		_engine.DragEnded += OnEngineDragEnded;
+		Tracker.TapDetected += OnTrackerTapDetected;
+		Tracker.DoubleTapDetected += OnTrackerDoubleTapDetected;
+		Tracker.LongPressDetected += OnTrackerLongPressDetected;
+		Tracker.PanDetected += OnTrackerPanDetected;
+		Tracker.PinchDetected += OnTrackerPinchDetected;
+		Tracker.RotateDetected += OnTrackerRotateDetected;
+		Tracker.FlingDetected += OnTrackerFlingDetected;
+		Tracker.Flinging += OnTrackerFlinging;
+		Tracker.FlingCompleted += OnTrackerFlingCompleted;
+		Tracker.HoverDetected += OnTrackerHoverDetected;
+		Tracker.ScrollDetected += OnTrackerScrollDetected;
+		Tracker.GestureStarted += OnTrackerGestureStarted;
+		Tracker.GestureEnded += OnTrackerGestureEnded;
+		Tracker.TransformChanged += OnTrackerTransformChanged;
+		Tracker.DragStarted += OnTrackerDragStarted;
+		Tracker.DragUpdated += OnTrackerDragUpdated;
+		Tracker.DragEnded += OnTrackerDragEnded;
 	}
 
-	private void UnsubscribeEngineEvents()
+	private void UnsubscribeTrackerEvents()
 	{
-		_engine.TapDetected -= OnEngineTapDetected;
-		_engine.DoubleTapDetected -= OnEngineDoubleTapDetected;
-		_engine.LongPressDetected -= OnEngineLongPressDetected;
-		_engine.PanDetected -= OnEnginePanDetected;
-		_engine.PinchDetected -= OnEnginePinchDetected;
-		_engine.RotateDetected -= OnEngineRotateDetected;
-		_engine.FlingDetected -= OnEngineFlingDetected;
-		_engine.Flinging -= OnEngineFlinging;
-		_engine.FlingCompleted -= OnEngineFlingCompleted;
-		_engine.HoverDetected -= OnEngineHoverDetected;
-		_engine.ScrollDetected -= OnEngineScrollDetected;
-		_engine.GestureStarted -= OnEngineGestureStarted;
-		_engine.GestureEnded -= OnEngineGestureEnded;
-		_engine.DragStarted -= OnEngineDragStarted;
-		_engine.DragUpdated -= OnEngineDragUpdated;
-		_engine.DragEnded -= OnEngineDragEnded;
+		Tracker.TapDetected -= OnTrackerTapDetected;
+		Tracker.DoubleTapDetected -= OnTrackerDoubleTapDetected;
+		Tracker.LongPressDetected -= OnTrackerLongPressDetected;
+		Tracker.PanDetected -= OnTrackerPanDetected;
+		Tracker.PinchDetected -= OnTrackerPinchDetected;
+		Tracker.RotateDetected -= OnTrackerRotateDetected;
+		Tracker.FlingDetected -= OnTrackerFlingDetected;
+		Tracker.Flinging -= OnTrackerFlinging;
+		Tracker.FlingCompleted -= OnTrackerFlingCompleted;
+		Tracker.HoverDetected -= OnTrackerHoverDetected;
+		Tracker.ScrollDetected -= OnTrackerScrollDetected;
+		Tracker.GestureStarted -= OnTrackerGestureStarted;
+		Tracker.GestureEnded -= OnTrackerGestureEnded;
+		Tracker.TransformChanged -= OnTrackerTransformChanged;
+		Tracker.DragStarted -= OnTrackerDragStarted;
+		Tracker.DragUpdated -= OnTrackerDragUpdated;
+		Tracker.DragEnded -= OnTrackerDragEnded;
 	}
 
-	private void OnEngineTapDetected(object? s, SKTapEventArgs e) => OnTapDetected(e);
-	private void OnEngineDoubleTapDetected(object? s, SKTapEventArgs e) => OnDoubleTapDetected(e);
-	private void OnEngineLongPressDetected(object? s, SKTapEventArgs e) => OnLongPressDetected(e);
-	private void OnEnginePanDetected(object? s, SKPanEventArgs e) => OnPanDetected(e);
-	private void OnEnginePinchDetected(object? s, SKPinchEventArgs e) => OnPinchDetected(e);
-	private void OnEngineRotateDetected(object? s, SKRotateEventArgs e) => OnRotateDetected(e);
-	private void OnEngineFlingDetected(object? s, SKFlingEventArgs e) => OnFlingDetected(e);
-	private void OnEngineFlinging(object? s, SKFlingEventArgs e) => OnFlinging(e);
-	private void OnEngineFlingCompleted(object? s, EventArgs e) => OnFlingCompleted();
-	private void OnEngineHoverDetected(object? s, SKHoverEventArgs e) => OnHoverDetected(e);
-	private void OnEngineScrollDetected(object? s, SKScrollEventArgs e) => OnScrollDetected(e);
-	private void OnEngineGestureStarted(object? s, SKGestureStateEventArgs e) => OnGestureStarted(e);
-	private void OnEngineGestureEnded(object? s, SKGestureStateEventArgs e) => OnGestureEnded(e);
-	private void OnEngineDragStarted(object? s, SKDragEventArgs e) => OnDragStarted(e);
-	private void OnEngineDragUpdated(object? s, SKDragEventArgs e) => OnDragUpdated(e);
-	private void OnEngineDragEnded(object? s, SKDragEventArgs e) => OnDragEnded(e);
-
-	private float _displayScale = GetDefaultDisplayScale();
+	private void OnTrackerTapDetected(object? s, SKTapEventArgs e) => OnTapDetected(e);
+	private void OnTrackerDoubleTapDetected(object? s, SKTapEventArgs e) => OnDoubleTapDetected(e);
+	private void OnTrackerLongPressDetected(object? s, SKTapEventArgs e) => OnLongPressDetected(e);
+	private void OnTrackerPanDetected(object? s, SKPanEventArgs e) => OnPanDetected(e);
+	private void OnTrackerPinchDetected(object? s, SKPinchEventArgs e) => OnPinchDetected(e);
+	private void OnTrackerRotateDetected(object? s, SKRotateEventArgs e) => OnRotateDetected(e);
+	private void OnTrackerFlingDetected(object? s, SKFlingEventArgs e) => OnFlingDetected(e);
+	private void OnTrackerFlinging(object? s, SKFlingEventArgs e) { OnFlinging(e); Invalidate(); }
+	private void OnTrackerFlingCompleted(object? s, EventArgs e) { OnFlingCompleted(); Invalidate(); }
+	private void OnTrackerHoverDetected(object? s, SKHoverEventArgs e) => OnHoverDetected(e);
+	private void OnTrackerScrollDetected(object? s, SKScrollEventArgs e) => OnScrollDetected(e);
+	private void OnTrackerGestureStarted(object? s, SKGestureStateEventArgs e) => OnGestureStarted(e);
+	private void OnTrackerGestureEnded(object? s, SKGestureStateEventArgs e) => OnGestureEnded(e);
+	private void OnTrackerTransformChanged(object? s, EventArgs e) { OnTransformChanged(); Invalidate(); }
+	private void OnTrackerDragStarted(object? s, SKDragEventArgs e) => OnDragStarted(e);
+	private void OnTrackerDragUpdated(object? s, SKDragEventArgs e) => OnDragUpdated(e);
+	private void OnTrackerDragEnded(object? s, SKDragEventArgs e) => OnDragEnded(e);
 
 	private void OnTouch(object? sender, SKTouchEventArgs e)
 	{
-		var isMouse = e.DeviceType == SKTouchDeviceType.Mouse;
+		e.Handled = Tracker.ProcessTouch(e);
 
-		// Convert pixel coordinates to point coordinates (matching the pre-scaled canvas)
-		var scale = _displayScale;
-		var location = scale > 0 ? new SKPoint(e.Location.X / scale, e.Location.Y / scale) : e.Location;
-
-		switch (e.ActionType)
-		{
-			case SKTouchAction.Pressed:
-				e.Handled = _engine.ProcessTouchDown(e.Id, location, isMouse);
-				break;
-			case SKTouchAction.Moved:
-				e.Handled = _engine.ProcessTouchMove(e.Id, location, e.InContact);
-				break;
-			case SKTouchAction.Released:
-				e.Handled = _engine.ProcessTouchUp(e.Id, location, isMouse);
-				break;
-			case SKTouchAction.Cancelled:
-				e.Handled = _engine.ProcessTouchCancel(e.Id);
-				break;
-			case SKTouchAction.Entered:
-			case SKTouchAction.Exited:
-				// Accept these to keep receiving hover/move events
-				e.Handled = true;
-				break;
-			case SKTouchAction.WheelChanged:
-				e.Handled = _engine.ProcessMouseWheel(location, 0, e.WheelDelta);
-				break;
-		}
-
-		// Invalidate for visual feedback
 		if (e.Handled)
 			Invalidate();
 	}
@@ -397,16 +380,18 @@ public class SKGestureSurfaceView : SKSurfaceView
 	/// <inheritdoc/>
 	internal override void OnPaintSurfaceCore(SKSurface surface, SKSize size)
 	{
-		// Cache the display scale factor (pixels / points)
+		// Update display scale (pixels / points)
 		if (Width > 0)
-			_displayScale = size.Width / (float)Width;
+			Tracker.DisplayScale = size.Width / (float)Width;
 
 		base.OnPaintSurfaceCore(surface, size);
 		
-		// Pass point-based dimensions (matching the pre-scaled canvas from base class)
-		var scale = _displayScale;
+		// Update view size in point coordinates
+		var scale = Tracker.DisplayScale;
 		var pointWidth = scale > 0 ? (int)(size.Width / scale) : (int)size.Width;
 		var pointHeight = scale > 0 ? (int)(size.Height / scale) : (int)size.Height;
+		Tracker.SetViewSize(pointWidth, pointHeight);
+
 		var info = new SKImageInfo(pointWidth, pointHeight);
 		var args = new SKPaintSurfaceEventArgs(surface, info);
 		PaintSurface?.Invoke(this, args);
@@ -415,19 +400,19 @@ public class SKGestureSurfaceView : SKSurfaceView
 	private static void OnIsGestureEnabledChanged(BindableObject bindable, object oldValue, object newValue)
 	{
 		if (bindable is SKGestureSurfaceView view && newValue is bool enabled)
-			view._engine.IsEnabled = enabled;
+			view.Tracker.IsEnabled = enabled;
 	}
 
 	private static void OnTouchSlopChanged(BindableObject bindable, object oldValue, object newValue)
 	{
 		if (bindable is SKGestureSurfaceView view && newValue is float slop)
-			view._engine.TouchSlop = slop;
+			view.Tracker.TouchSlop = slop;
 	}
 
 	private static void OnLongPressDurationChanged(BindableObject bindable, object oldValue, object newValue)
 	{
 		if (bindable is SKGestureSurfaceView view && newValue is int duration)
-			view._engine.LongPressDuration = duration;
+			view.Tracker.LongPressDuration = duration;
 	}
 
 	/// <inheritdoc/>
@@ -435,23 +420,11 @@ public class SKGestureSurfaceView : SKSurfaceView
 	{
 		base.OnHandlerChanging(args);
 
-		// Dispose engine when handler is permanently disconnected
+		// Dispose tracker when handler is permanently disconnected
 		if (args.NewHandler == null)
 		{
-			UnsubscribeEngineEvents();
-			_engine.Dispose();
-		}
-	}
-
-	private static float GetDefaultDisplayScale()
-	{
-		try
-		{
-			return (float)DeviceDisplay.MainDisplayInfo.Density;
-		}
-		catch
-		{
-			return 1f;
+			UnsubscribeTrackerEvents();
+			Tracker.Dispose();
 		}
 	}
 }
