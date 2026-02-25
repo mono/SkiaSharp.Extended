@@ -15,7 +15,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/353/merge/docs/docs/geometry.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/main/docs/docs/geometry.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -86,7 +86,11 @@
         <article data-uid="">
 <h1 id="geometry-helpers">Geometry Helpers</h1>
 
-<p>Geometry Helpers provide simple methods to create common geometric shapes as <code>SKPath</code> objects. Instead of manually calculating points and angles, you can generate squares, triangles, polygons, and stars with a single method call.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p><strong><a href="../sample/shapes">Try it live →</a></strong> — Interactive Shapes demo in the Blazor sample app.</p>
+</div>
+<p>Geometry Helpers provide simple methods to create common geometric shapes as <a href="xref:SkiaSharp.SKPath"><code>SKPath</code></a> objects. Instead of manually calculating points and angles, you can generate squares, triangles, polygons, and stars with a single method call.</p>
 <p><img src="../images/extended/geometry/shapes-overview.png" alt="Shapes overview"></p>
 <h2 id="quick-start">Quick Start</h2>
 <h3 id="create-a-shape-path">Create a shape path</h3>
@@ -182,7 +186,7 @@ canvas.DrawRegularPolygon(cx: 250, cy: 50, radius: 30, points: 6, paint);
 canvas.DrawStar(cx: 350, cy: 50, outerRadius: 30, innerRadius: 12, points: 5, paint);
 </code></pre>
 <h2 id="utility-methods">Utility Methods</h2>
-<p>The <code>SKGeometry</code> class also provides utility methods for geometric calculations:</p>
+<p>The <a href="xref:SkiaSharp.Extended.SKGeometry"><code>SKGeometry</code></a> class also provides utility methods for geometric calculations:</p>
 <table>
 <thead>
 <tr>
@@ -218,7 +222,7 @@ var area = SKGeometry.Area(points);
 </code></pre>
 <h2 id="customization">Customization</h2>
 <h3 id="path-direction">Path Direction</h3>
-<p>All shape methods accept an optional <code>SKPathDirection</code> parameter to control winding order:</p>
+<p>All shape methods accept an optional <a href="xref:SkiaSharp.SKPathDirection"><code>SKPathDirection</code></a> parameter to control winding order:</p>
 <pre><code class="lang-csharp">// Clockwise (default)
 var cwPath = SKGeometry.CreateSquarePath(50, SKPathDirection.Clockwise);
 
@@ -235,14 +239,14 @@ canvas.DrawPath(path, paint);
 <p>Or use the canvas extension methods which take position parameters directly.</p>
 <h2 id="learn-more">Learn More</h2>
 <ul>
-<li><a class="xref" href="../api/SkiaSharp.Extended.SKGeometry.html">API Reference</a> — Full method documentation</li>
-<li><a class="xref" href="../api/SkiaSharp.Extended.SKGeometryExtensions.html">SKGeometryExtensions</a> — Canvas extension methods</li>
+<li><a href="xref:SkiaSharp.Extended.SKGeometry">API Reference</a> — Full method documentation</li>
+<li><a href="xref:SkiaSharp.Extended.SKGeometryExtensions">SKGeometryExtensions</a> — Canvas extension methods</li>
 </ul>
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/353/merge/docs/docs/geometry.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/main/docs/docs/geometry.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>
