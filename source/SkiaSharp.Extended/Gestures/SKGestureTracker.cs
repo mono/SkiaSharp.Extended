@@ -456,16 +456,23 @@ public class SKGestureTracker : IDisposable
 			return;
 
 		// Derive drag lifecycle
+		SKDragEventArgs? dragArgs = null;
 		if (!_isDragging)
 		{
 			_isDragging = true;
 			_dragStartLocation = e.PreviousLocation;
-			DragStarted?.Invoke(this, new SKDragEventArgs(_dragStartLocation, e.Location, e.Delta));
+			dragArgs = new SKDragEventArgs(_dragStartLocation, e.Location, e.Delta);
+			DragStarted?.Invoke(this, dragArgs);
 		}
 		else
 		{
-			DragUpdated?.Invoke(this, new SKDragEventArgs(_dragStartLocation, e.Location, e.Delta));
+			dragArgs = new SKDragEventArgs(_dragStartLocation, e.Location, e.Delta);
+			DragUpdated?.Invoke(this, dragArgs);
 		}
+
+		// Skip offset update if consumer handled the pan or drag (e.g. sticker drag)
+		if (e.Handled || (dragArgs?.Handled ?? false))
+			return;
 
 		// Update offset
 		var d = ScreenToContentDelta(e.Delta.X, e.Delta.Y);

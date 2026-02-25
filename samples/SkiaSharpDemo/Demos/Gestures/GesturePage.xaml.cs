@@ -271,19 +271,27 @@ public partial class GesturePage : ContentPage
 		if (_selectedSticker != null)
 		{
 			statusLabel.Text = $"Dragging Sticker {_selectedSticker.Label}";
+			e.Handled = true; // suppress canvas pan
 		}
 	}
 
 	private void OnDragUpdated(object? sender, SKDragEventArgs e)
 	{
 		if (!_enableDrag) return;
-		// Move selected sticker
+		// Move selected sticker in content-space
 		if (_selectedSticker != null)
 		{
-			_selectedSticker.Position = new SKPoint(
-				_selectedSticker.Position.X + e.Delta.X,
-				_selectedSticker.Position.Y + e.Delta.Y);
-			
+			// Convert screen-space delta to content-space via inverse matrix
+			var matrix = gestureView.Tracker.Matrix;
+			if (matrix.TryInvert(out var inverse))
+			{
+				var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
+				_selectedSticker.Position = new SKPoint(
+					_selectedSticker.Position.X + contentDelta.X,
+					_selectedSticker.Position.Y + contentDelta.Y);
+			}
+
+			e.Handled = true; // suppress canvas pan
 			gestureView.Invalidate();
 		}
 	}
