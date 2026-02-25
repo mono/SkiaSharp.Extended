@@ -1,0 +1,45 @@
+name: "Docs - PR Staging - Cleanup"
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
+
+# Ensure documentation workflows run sequentially
+concurrency:
+  group: "docs-deployment"
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout gh-pages branch if exists
+        run: |
+          git fetch origin gh-pages:gh-pages 2>/dev/null || exit 0
+          git checkout gh-pages 2>/dev/null || exit 0
+
+      - name: Remove staging directory
+        run: |
+          if [ -d "staging/${{ github.event.number }}" ]; then
+            rm -rf staging/${{ github.event.number }}
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add -A
+            if ! git diff --cached --quiet; then
+              git commit -m "Remove staging docs for PR #${{ github.event.number }}"
+              git push origin gh-pages
+              echo "Removed staging directory for PR #${{ github.event.number }}"
+            else
+              echo "No changes to commit for PR #${{ github.event.number }}"
+            fi
+          else
+            echo "No staging directory found for PR #${{ github.event.number }}"
+          fi
