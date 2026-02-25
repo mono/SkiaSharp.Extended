@@ -1,0 +1,341 @@
+@page "/touch"
+
+<PageTitle>Touch</PageTitle>
+
+<h1>Touch Events</h1>
+
+<p>
+    Demonstrating <code>SKTouchCanvasView</code> with unified pointer event support
+    for mouse, touch, and stylus devices.
+</p>
+
+<div class="touch-section">
+    <h3>Drawing Pad</h3>
+    <p class="text-muted">Draw with mouse, finger, or stylus. Each stroke is tracked as a separate path.</p>
+    <div class="toolbar">
+        <button class="btn btn-sm btn-outline-danger" @onclick="ClearPaths">Clear</button>
+        <span class="text-muted ms-2">Strokes: @_paths.Count</span>
+    </div>
+    <div class="canvas-container">
+        <SKTouchCanvasView OnPaintSurface="OnDrawPadPaint"
+                           Touch="OnDrawPadTouch"
+                           EnableTouchEvents="true"
+                           style="width: 100%; height: 100%;" />
+    </div>
+</div>
+
+<div class="touch-section">
+    <h3>Touch Actions</h3>
+    <p class="text-muted">Move, press, and release over the canvas to see each action type fire.</p>
+    <div class="canvas-container canvas-container-sm">
+        <SKTouchCanvasView OnPaintSurface="OnActionDemoPaint"
+                           Touch="OnActionDemoTouch"
+                           EnableTouchEvents="true"
+                           style="width: 100%; height: 100%;" />
+    </div>
+    <div class="event-grid">
+        @foreach (var action in _actionStates)
+        {
+            <div class="event-card @(action.Value.Active ? "active" : "")">
+                <div class="event-name">@action.Key</div>
+                <div class="event-count">@action.Value.Count</div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="touch-section">
+    <h3>Device Types</h3>
+    <p class="text-muted">The canvas detects mouse, touch, and stylus input devices. Try different input methods.</p>
+    <div class="canvas-container canvas-container-sm">
+        <SKTouchCanvasView OnPaintSurface="OnDeviceDemoPaint"
+                           Touch="OnDeviceDemoTouch"
+                           EnableTouchEvents="true"
+                           style="width: 100%; height: 100%;" />
+    </div>
+    <div class="event-grid">
+        @foreach (var device in _deviceStates)
+        {
+            <div class="event-card @(device.Value.Active ? "active" : "")">
+                <div class="event-name">@device.Key</div>
+                <div class="event-count">@device.Value.Count</div>
+                <div class="event-detail">@device.Value.LastLocation</div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .touch-section {
+        margin-bottom: 2rem;
+    }
+    .toolbar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .canvas-container {
+        width: 100%;
+        height: 400px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    .canvas-container-sm {
+        height: 200px;
+    }
+    .event-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    .event-card {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        min-width: 120px;
+        text-align: center;
+        transition: background-color 0.15s, border-color 0.15s;
+    }
+    .event-card.active {
+        background-color: #e0f0ff;
+        border-color: #3399ff;
+    }
+    .event-name {
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+    .event-count {
+        font-size: 1.2rem;
+        color: #333;
+    }
+    .event-detail {
+        font-size: 0.75rem;
+        color: #888;
+    }
+</style>
+
+@code {
+    // ── Drawing Pad ──
+
+    private readonly List<List<SKPoint>> _paths = new();
+    private List<SKPoint>? _currentPath;
+
+    private void OnDrawPadTouch(SKTouchEventArgs e)
+    {
+        switch (e.ActionType)
+        {
+            case SKTouchAction.Pressed:
+                _currentPath = new List<SKPoint> { e.Location };
+                _paths.Add(_currentPath);
+                break;
+
+            case SKTouchAction.Moved when _currentPath is not null:
+                _currentPath.Add(e.Location);
+                break;
+
+            case SKTouchAction.Released:
+            case SKTouchAction.Cancelled:
+                _currentPath = null;
+                break;
+        }
+
+        e.Handled = true;
+    }
+
+    private void OnDrawPadPaint(SKPaintSurfaceEventArgs e)
+    {
+        var canvas = e.Surface.Canvas;
+        canvas.Clear(SKColors.White);
+
+        using var paint = new SKPaint
+        {
+            IsAntialias = true,
+            Color = SKColors.CadetBlue,
+            StrokeWidth = 3,
+            Style = SKPaintStyle.Stroke,
+            StrokeCap = SKStrokeCap.Round,
+            StrokeJoin = SKStrokeJoin.Round,
+        };
+
+        foreach (var path in _paths)
+        {
+            if (path.Count < 2)
+                continue;
+
+            using var skPath = new SKPath();
+            skPath.MoveTo(path[0]);
+            for (int i = 1; i < path.Count; i++)
+                skPath.LineTo(path[i]);
+            canvas.DrawPath(skPath, paint);
+        }
+    }
+
+    private void ClearPaths()
+    {
+        _paths.Clear();
+        _currentPath = null;
+    }
+
+    // ── Touch Actions Demo ──
+
+    private class ActionState
+    {
+        public int Count { get; set; }
+        public bool Active { get; set; }
+    }
+
+    private readonly Dictionary<string, ActionState> _actionStates = new()
+    {
+        ["Entered"] = new(),
+        ["Pressed"] = new(),
+        ["Moved"] = new(),
+        ["Released"] = new(),
+        ["Exited"] = new(),
+        ["Cancelled"] = new(),
+        ["WheelChanged"] = new(),
+    };
+
+    private SKPoint _actionDemoPoint;
+    private string _actionDemoLabel = "";
+
+    private void OnActionDemoTouch(SKTouchEventArgs e)
+    {
+        var name = e.ActionType.ToString();
+        if (_actionStates.TryGetValue(name, out var state))
+        {
+            // Deactivate all first
+            foreach (var s in _actionStates.Values)
+                s.Active = false;
+
+            state.Count++;
+            state.Active = true;
+        }
+
+        _actionDemoPoint = e.Location;
+        _actionDemoLabel = $"{e.ActionType} ({e.Location.X:F0}, {e.Location.Y:F0})";
+        e.Handled = true;
+    }
+
+    private void OnActionDemoPaint(SKPaintSurfaceEventArgs e)
+    {
+        var canvas = e.Surface.Canvas;
+        canvas.Clear(new SKColor(0xFFF8F8F8));
+
+        if (_actionDemoLabel.Length == 0)
+        {
+            using var hintFont = new SKFont { Size = 14, Edging = SKFontEdging.SubpixelAntialias };
+            using var hintPaint = new SKPaint { IsAntialias = true, Color = SKColors.Gray };
+            canvas.DrawText("Interact with this canvas", 12, 24, SKTextAlign.Left, hintFont, hintPaint);
+            return;
+        }
+
+        using var markerPaint = new SKPaint
+        {
+            IsAntialias = true,
+            Color = SKColors.CornflowerBlue,
+            Style = SKPaintStyle.Fill,
+        };
+        canvas.DrawCircle(_actionDemoPoint, 8, markerPaint);
+
+        using var font = new SKFont { Size = 13, Edging = SKFontEdging.SubpixelAntialias };
+        using var textPaint = new SKPaint { IsAntialias = true, Color = SKColors.Black };
+        canvas.DrawText(_actionDemoLabel, 12, 24, SKTextAlign.Left, font, textPaint);
+    }
+
+    // ── Device Types Demo ──
+
+    private class DeviceState
+    {
+        public int Count { get; set; }
+        public bool Active { get; set; }
+        public string LastLocation { get; set; } = "";
+    }
+
+    private readonly Dictionary<string, DeviceState> _deviceStates = new()
+    {
+        ["Mouse"] = new(),
+        ["Touch"] = new(),
+        ["Stylus"] = new(),
+    };
+
+    private readonly Dictionary<string, List<SKPoint>> _deviceTrails = new()
+    {
+        ["Mouse"] = new(),
+        ["Touch"] = new(),
+        ["Stylus"] = new(),
+    };
+
+    private static readonly Dictionary<string, SKColor> _deviceColors = new()
+    {
+        ["Mouse"] = SKColors.CornflowerBlue,
+        ["Touch"] = SKColors.Coral,
+        ["Stylus"] = SKColors.MediumSeaGreen,
+    };
+
+    private void OnDeviceDemoTouch(SKTouchEventArgs e)
+    {
+        var name = e.DeviceType.ToString();
+        if (_deviceStates.TryGetValue(name, out var state))
+        {
+            foreach (var s in _deviceStates.Values)
+                s.Active = false;
+
+            state.Count++;
+            state.Active = true;
+            state.LastLocation = $"({e.Location.X:F0}, {e.Location.Y:F0})";
+        }
+
+        if (e.InContact && _deviceTrails.TryGetValue(name, out var trail))
+        {
+            if (e.ActionType == SKTouchAction.Pressed)
+                trail.Clear();
+            trail.Add(e.Location);
+        }
+
+        e.Handled = true;
+    }
+
+    private void OnDeviceDemoPaint(SKPaintSurfaceEventArgs e)
+    {
+        var canvas = e.Surface.Canvas;
+        canvas.Clear(new SKColor(0xFFF8F8F8));
+
+        using var paint = new SKPaint
+        {
+            IsAntialias = true,
+            StrokeWidth = 3,
+            Style = SKPaintStyle.Stroke,
+            StrokeCap = SKStrokeCap.Round,
+            StrokeJoin = SKStrokeJoin.Round,
+        };
+
+        foreach (var (deviceName, trail) in _deviceTrails)
+        {
+            if (trail.Count < 2)
+                continue;
+
+            paint.Color = _deviceColors[deviceName];
+            using var path = new SKPath();
+            path.MoveTo(trail[0]);
+            for (int i = 1; i < trail.Count; i++)
+                path.LineTo(trail[i]);
+            canvas.DrawPath(path, paint);
+        }
+
+        // Legend
+        using var legendFont = new SKFont { Size = 12, Edging = SKFontEdging.SubpixelAntialias };
+        using var legendPaint = new SKPaint { IsAntialias = true };
+        var legendY = 16f;
+        foreach (var (deviceName, color) in _deviceColors)
+        {
+            legendPaint.Color = color;
+            canvas.DrawCircle(12, legendY - 4, 5, legendPaint);
+            legendPaint.Color = SKColors.Black;
+            canvas.DrawText(deviceName, 22, legendY, SKTextAlign.Left, legendFont, legendPaint);
+            legendY += 18;
+        }
+    }
+}
