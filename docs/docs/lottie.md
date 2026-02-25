@@ -1,6 +1,6 @@
 # Lottie Animations
 
-Lottie brings designer-created animations to your .NET MAUI apps. Instead of manually coding complex animations, designers export their After Effects animations as JSON files, and `SKLottieView` plays them natively with smooth, scalable vector graphics.
+Lottie brings designer-created animations to your .NET MAUI apps. Instead of manually coding complex animations, designers export their After Effects animations as JSON files, and [`SKLottieView`](xref:SkiaSharp.Extended.UI.Controls.SKLottieView) plays them natively with smooth, scalable vector graphics.
 
 ![Lottie animation preview][lottie-preview]
 
@@ -107,11 +107,11 @@ lottieView.AnimationCompleted += (s, e) =>
 
 | Property | Type | Description |
 | :------- | :--- | :---------- |
-| `Source` | `SKLottieImageSource` | The Lottie JSON file to play |
+| `Source` | [`SKLottieImageSource`](xref:SkiaSharp.Extended.UI.Controls.SKLottieImageSource) | The Lottie JSON file to play |
 | `Duration` | `TimeSpan` | Total duration of the animation (read-only) |
 | `Progress` | `TimeSpan` | Current playback position |
 | `RepeatCount` | `int` | Times to repeat (0 = once, -1 = forever) |
-| `RepeatMode` | `SKLottieRepeatMode` | `Restart` or `Reverse` (ping-pong) |
+| `RepeatMode` | [`SKLottieRepeatMode`](xref:SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode) | `Restart` or `Reverse` (ping-pong) |
 | `IsAnimationEnabled` | `bool` | Play/pause the animation |
 | `IsComplete` | `bool` | Whether playback has finished |
 

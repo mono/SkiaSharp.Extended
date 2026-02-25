@@ -86,9 +86,25 @@ The base class handles Window lifecycle and timer management internally.
 ### Test Structure
 Tests use xUnit v3 and mirror the source structure. Test files are named `*Test.cs` (e.g., `SKBlurHashTest.cs`).
 
+## Blazor Sample
+
+There is a Blazor WebAssembly sample app at `samples/SkiaSharpDemo.Blazor/` that demonstrates core `SkiaSharp.Extended` features (Shapes, Path Interpolation, BlurHash). It is deployed to GitHub Pages at `mono.github.io/SkiaSharp.Extended/sample/` via the `builds-docs.yml` workflow.
+
+## PR Screenshot Requirement
+
+**Whenever a PR touches the Blazor sample (`samples/SkiaSharpDemo.Blazor/`) or updates a feature or control in the libraries (`source/SkiaSharp.Extended/` or `source/SkiaSharp.Extended.UI.Maui/`), you MUST add screenshots of all affected and related Blazor sample pages as a new comment on the PR.** This is required for every such PR without exception, so that reviewers can visually verify changes and track change history.
+
+To capture screenshots:
+1. Run the Blazor sample locally (`dotnet run --project samples/SkiaSharpDemo.Blazor`)
+2. Navigate to each affected page in the browser
+3. Verify there are no errors on the page or in the browser console logs
+4. Take a screenshot of each page
+5. Post the screenshots as a comment on the PR
+
 ## Dependencies
 
 - `SkiaSharp` (3.119.1+)
 - `SkiaSharp.Skottie` (3.119.1+) - For Lottie animations
 - `SkiaSharp.Views.Maui.Controls` (3.119.1+)
+- `SkiaSharp.Views.Blazor` (3.119.1+) - For Blazor WebAssembly
 - `Microsoft.Maui.Controls` (9.x)

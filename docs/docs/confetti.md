@@ -1,6 +1,6 @@
 # Confetti Effects
 
-Add celebratory confetti explosions to your .NET MAUI apps. `SKConfettiView` provides a full-featured particle system with customizable shapes, colors, physics, and emission patterns.
+Add celebratory confetti explosions to your .NET MAUI apps. [`SKConfettiView`](xref:SkiaSharp.Extended.UI.Controls.SKConfettiView) provides a full-featured particle system with customizable shapes, colors, physics, and emission patterns.
 
 | Top Stream | Center Burst | Side Spray |
 | :--------: | :----------: | :--------: |
