@@ -1,0 +1,191 @@
+name: "Docs - Deploy"
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - 'samples/SkiaSharpDemo.Blazor/**'
+      - 'source/**'
+      - 'scripts/**'
+      - '.github/workflows/docs-deploy.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - 'samples/SkiaSharpDemo.Blazor/**'
+      - 'source/**'
+      - 'scripts/**'
+      - '.github/workflows/docs-deploy.yml'
+    types: [ opened, synchronize, reopened ]
+  workflow_dispatch:
+
+# Ensure documentation workflows run sequentially
+concurrency:
+  group: "docs-deployment"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    outputs:
+      artifact_name: ${{ steps.vars.outputs.artifact_name }}
+      is_staging: ${{ steps.vars.outputs.is_staging }}
+      pr_number: ${{ steps.vars.outputs.pr_number }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup build variables
+        id: vars
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "artifact_name=staging-site-${{ github.event.number }}" >> $GITHUB_OUTPUT
+            echo "sample_base_href=/SkiaSharp.Extended/staging/${{ github.event.number }}/sample/" >> $GITHUB_OUTPUT
+            echo "sample_segment_count=4" >> $GITHUB_OUTPUT
+            echo "is_staging=true" >> $GITHUB_OUTPUT
+            echo "pr_number=${{ github.event.number }}" >> $GITHUB_OUTPUT
+          else
+            echo "artifact_name=main-site" >> $GITHUB_OUTPUT
+            echo "sample_base_href=/SkiaSharp.Extended/sample/" >> $GITHUB_OUTPUT
+            echo "sample_segment_count=2" >> $GITHUB_OUTPUT
+            echo "is_staging=false" >> $GITHUB_OUTPUT
+            echo "pr_number=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install MAUI workload
+        run: dotnet workload install maui
+
+      - name: Install wasm-tools workload
+        run: dotnet workload install wasm-tools
+
+      - name: Restore .NET tools
+        run: dotnet tool restore
+
+      - name: Build the assemblies
+        run: dotnet build scripts/SkiaSharp.Extended-Pack.slnf -c Release -f net10.0
+
+      - name: Publish Blazor sample
+        run: dotnet publish samples/SkiaSharpDemo.Blazor/SkiaSharpDemo.Blazor.csproj -c Release -o publish/sample
+
+      - name: Build docs
+        run: dotnet docfx docs/docfx.json
+
+      - name: Copy Blazor sample into docs site
+        run: |
+          $baseHref = "${{ steps.vars.outputs.sample_base_href }}"
+          $segmentCount = "${{ steps.vars.outputs.sample_segment_count }}"
+
+          New-Item -ItemType Directory -Path docs/_site/sample -Force
+          Get-ChildItem -Path publish/sample/wwwroot -Force | Copy-Item -Destination docs/_site/sample -Recurse -Force
+
+          # Rewrite base href for deployment
+          $indexPath = "docs/_site/sample/index.html"
+          (Get-Content $indexPath -Raw) -replace '<base href="/" />', "<base href=`"$baseHref`" />" | Set-Content $indexPath
+
+          # Update segmentCount in 404.html
+          $notFoundPath = "docs/_site/sample/404.html"
+          if (Test-Path $notFoundPath) {
+            (Get-Content $notFoundPath -Raw) -replace 'var segmentCount = \d+;', "var segmentCount = $segmentCount;" | Set-Content $notFoundPath
+          }
+        shell: pwsh
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.vars.outputs.artifact_name }}
+          path: docs/_site
+          retention-days: 1
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+
+      - name: Download site artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+          path: /tmp/site-temp
+
+      - name: Setup main site content
+        if: needs.build.outputs.is_staging == 'false'
+        run: |
+          find . -maxdepth 1 \
+              -not -name 'staging' \
+              -not -name '.git' \
+              -not -name '.' \
+              -not -name '..' \
+            -exec rm -rf {} \;
+          cp -r /tmp/site-temp/. .
+          rm -rf /tmp/site-temp
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          if ! git diff --cached --quiet; then
+            git commit -m "Deploy main documentation from commit ${{ github.sha }}"
+            git push origin gh-pages
+          else
+            echo "No changes to commit"
+          fi
+
+      - name: Setup staging site content
+        if: needs.build.outputs.is_staging == 'true'
+        run: |
+          PR_NUMBER="${{ needs.build.outputs.pr_number }}"
+          mkdir -p staging/$PR_NUMBER
+          rm -rf staging/$PR_NUMBER/*
+          cp -r /tmp/site-temp/. staging/$PR_NUMBER/
+          rm -rf /tmp/site-temp
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add staging/$PR_NUMBER
+          if ! git diff --cached --quiet; then
+            git commit -m "Deploy staging docs for PR #$PR_NUMBER"
+            git push origin gh-pages
+          else
+            echo "No changes to commit"
+          fi
+
+  comment:
+    runs-on: ubuntu-latest
+    needs: [build, deploy]
+    if: needs.build.outputs.is_staging == 'true' && (github.event.action == 'opened' || github.event.action == 'reopened')
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const stagingUrl = `https://mono.github.io/SkiaSharp.Extended/staging/${prNumber}/`;
+            const sampleUrl = `https://mono.github.io/SkiaSharp.Extended/staging/${prNumber}/sample/`;
+
+            const commentBody = `📖 **Documentation Preview**
+
+            The documentation for this PR has been deployed and is available at:
+
+            🔗 **[View Staging Documentation](${stagingUrl})**
+
+            🔗 **[View Staging Blazor Sample](${sampleUrl})**
+
+            This preview will be updated automatically when you push new commits to this PR.
+
+            ---
+            *This comment is automatically updated by the documentation staging workflow.*`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: commentBody
+            });

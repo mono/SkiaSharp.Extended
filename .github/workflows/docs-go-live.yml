@@ -3,8 +3,7 @@ name: "Docs - Go Live!"
 on:
   workflow_run:
     workflows:
-      - "Docs - Main - Deploy"
-      - "Docs - PR Staging - Deploy"
+      - "Docs - Deploy"
       - "Docs - PR Staging - Cleanup"
     types:
       - completed
