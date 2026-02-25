@@ -10,6 +10,9 @@ on:
       - completed
   workflow_dispatch:
 
+# Default to no permissions — each job declares only what it needs.
+permissions: {}
+
 # Ensure go-live runs one at a time (latest wins)
 concurrency:
   group: "docs-go-live"

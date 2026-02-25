@@ -20,6 +20,9 @@ on:
     types: [ opened, synchronize, reopened ]
   workflow_dispatch:
 
+# Default to no permissions — each job declares only what it needs.
+permissions: {}
+
 # Ensure documentation workflows run sequentially
 concurrency:
   group: "docs-deployment"
@@ -28,6 +31,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read   # checkout only
     outputs:
       artifact_name: ${{ steps.vars.outputs.artifact_name }}
       is_staging: ${{ steps.vars.outputs.is_staging }}
@@ -38,14 +43,17 @@ jobs:
 
       - name: Setup build variables
         id: vars
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.number }}
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "artifact_name=staging-site-${{ github.event.number }}" >> $GITHUB_OUTPUT
-            echo "sample_base_href=/SkiaSharp.Extended/staging/${{ github.event.number }}/sample/" >> $GITHUB_OUTPUT
+          if [ "$EVENT_NAME" == "pull_request" ]; then
+            echo "artifact_name=staging-site-${PR_NUMBER}" >> $GITHUB_OUTPUT
+            echo "sample_base_href=/SkiaSharp.Extended/staging/${PR_NUMBER}/sample/" >> $GITHUB_OUTPUT
             echo "sample_segment_count=4" >> $GITHUB_OUTPUT
             echo "is_staging=true" >> $GITHUB_OUTPUT
-            echo "pr_number=${{ github.event.number }}" >> $GITHUB_OUTPUT
+            echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
           else
             echo "artifact_name=main-site" >> $GITHUB_OUTPUT
             echo "sample_base_href=/SkiaSharp.Extended/sample/" >> $GITHUB_OUTPUT
@@ -73,10 +81,10 @@ jobs:
         run: dotnet docfx docs/docfx.json
 
       - name: Copy Blazor sample into docs site
+        env:
+          BASE_HREF: ${{ steps.vars.outputs.sample_base_href }}
+          SEGMENT_COUNT: ${{ steps.vars.outputs.sample_segment_count }}
         run: |
-          BASE_HREF="${{ steps.vars.outputs.sample_base_href }}"
-          SEGMENT_COUNT="${{ steps.vars.outputs.sample_segment_count }}"
-
           mkdir -p docs/_site/sample
           cp -r publish/sample/wwwroot/. docs/_site/sample/
 
@@ -137,8 +145,9 @@ jobs:
 
       - name: Setup staging site content
         if: needs.build.outputs.is_staging == 'true'
+        env:
+          PR_NUMBER: ${{ needs.build.outputs.pr_number }}
         run: |
-          PR_NUMBER="${{ needs.build.outputs.pr_number }}"
           mkdir -p staging/$PR_NUMBER
           rm -rf staging/$PR_NUMBER/*
           cp -r /tmp/site-temp/. staging/$PR_NUMBER/

@@ -5,6 +5,9 @@ on:
     branches: [ main ]
     types: [ closed ]
 
+# Default to no permissions — each job declares only what it needs.
+permissions: {}
+
 # Ensure documentation workflows run sequentially
 concurrency:
   group: "docs-deployment"
@@ -14,7 +17,7 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write   # push to gh-pages
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,19 +30,21 @@ jobs:
           git checkout gh-pages 2>/dev/null || exit 0
 
       - name: Remove staging directory
+        env:
+          PR_NUMBER: ${{ github.event.number }}
         run: |
-          if [ -d "staging/${{ github.event.number }}" ]; then
-            rm -rf staging/${{ github.event.number }}
+          if [ -d "staging/$PR_NUMBER" ]; then
+            rm -rf staging/$PR_NUMBER
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
             git add -A
             if ! git diff --cached --quiet; then
-              git commit -m "Remove staging docs for PR #${{ github.event.number }}"
+              git commit -m "Remove staging docs for PR #$PR_NUMBER"
               git push origin gh-pages
-              echo "Removed staging directory for PR #${{ github.event.number }}"
+              echo "Removed staging directory for PR #$PR_NUMBER"
             else
-              echo "No changes to commit for PR #${{ github.event.number }}"
+              echo "No changes to commit for PR #$PR_NUMBER"
             fi
           else
-            echo "No staging directory found for PR #${{ github.event.number }}"
+            echo "No staging directory found for PR #$PR_NUMBER"
           fi
