@@ -130,16 +130,16 @@ jobs:
 
             const commentBody = `📖 **Documentation Preview**
 
-            The documentation for this PR has been deployed and is available at:
+The documentation for this PR has been deployed and is available at:
 
-            🔗 **[View Staging Documentation](${stagingUrl})**
+🔗 **[View Staging Documentation](${stagingUrl})**
 
-            🔗 **[View Staging Blazor Sample](${sampleUrl})**
+🔗 **[View Staging Blazor Sample](${sampleUrl})**
 
-            This preview will be updated automatically when you push new commits to this PR.
+This preview will be updated automatically when you push new commits to this PR.
 
-            ---
-            *This comment is automatically updated by the documentation staging workflow.*`;
+---
+*This comment is automatically updated by the documentation staging workflow.*`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
