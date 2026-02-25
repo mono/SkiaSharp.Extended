@@ -1,0 +1,864 @@
+using SkiaSharp;
+using SkiaSharp.Extended.Gestures;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace SkiaSharp.Extended.Tests.Gestures;
+
+/// <summary>
+/// Tests for <see cref="SKGestureTracker"/>.
+/// </summary>
+public class SKGestureTrackerTests
+{
+	private long _testTicks = 1000000;
+
+	private SKGestureTracker CreateTracker()
+	{
+		var tracker = new SKGestureTracker
+		{
+			TimeProvider = () => _testTicks
+		};
+		tracker.SetViewSize(400, 400);
+		return tracker;
+	}
+
+	private void AdvanceTime(long milliseconds)
+	{
+		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
+	}
+
+	private void SimulateFastSwipe(SKGestureTracker tracker, SKPoint start, SKPoint end)
+	{
+		var mid = new SKPoint((start.X + end.X) / 2, (start.Y + end.Y) / 2);
+		tracker.ProcessTouchDown(1, start);
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, mid);
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, end);
+		AdvanceTime(10);
+		tracker.ProcessTouchUp(1, end);
+	}
+
+	private void SimulateDoubleTap(SKGestureTracker tracker, SKPoint location)
+	{
+		tracker.ProcessTouchDown(1, location);
+		AdvanceTime(50);
+		tracker.ProcessTouchUp(1, location);
+		AdvanceTime(100);
+		tracker.ProcessTouchDown(1, location);
+		AdvanceTime(50);
+		tracker.ProcessTouchUp(1, location);
+	}
+
+	#region Pan → Offset Tests
+
+	[Fact]
+	public void Pan_UpdatesOffset()
+	{
+		var tracker = CreateTracker();
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+
+		Assert.NotEqual(SKPoint.Empty, tracker.Offset);
+		Assert.True(tracker.Offset.X > 0, $"Offset.X should be > 0, was {tracker.Offset.X}");
+	}
+
+	[Fact]
+	public void Pan_FiresTransformChanged()
+	{
+		var tracker = CreateTracker();
+		var transformChanged = false;
+		tracker.TransformChanged += (s, e) => transformChanged = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+
+		Assert.True(transformChanged);
+	}
+
+	[Fact]
+	public void Pan_OffsetAccumulates()
+	{
+		var tracker = CreateTracker();
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+		var offset1 = tracker.Offset;
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(140, 100));
+		var offset2 = tracker.Offset;
+
+		Assert.True(offset2.X > offset1.X, "Offset should accumulate with continued panning");
+	}
+
+	#endregion
+
+	#region Pinch → Scale Tests
+
+	[Fact]
+	public void Pinch_UpdatesScale()
+	{
+		var tracker = CreateTracker();
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(200, 200));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(50, 200));
+		tracker.ProcessTouchMove(2, new SKPoint(250, 200));
+
+		Assert.True(tracker.Scale > 1.0f, $"Scale should be > 1 after spreading fingers, was {tracker.Scale}");
+	}
+
+	[Fact]
+	public void Pinch_FiresTransformChanged()
+	{
+		var tracker = CreateTracker();
+		var changeCount = 0;
+		tracker.TransformChanged += (s, e) => changeCount++;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(200, 200));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(50, 200));
+		tracker.ProcessTouchMove(2, new SKPoint(250, 200));
+
+		Assert.True(changeCount > 0);
+	}
+
+	[Fact]
+	public void Pinch_ScaleClampedToMinMax()
+	{
+		var tracker = CreateTracker();
+		tracker.MinScale = 0.5f;
+		tracker.MaxScale = 3f;
+
+		// Pinch fingers very close together
+		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(200, 200));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(149, 200));
+		tracker.ProcessTouchMove(2, new SKPoint(151, 200));
+
+		Assert.True(tracker.Scale >= 0.5f, "Scale should not go below MinScale");
+		Assert.True(tracker.Scale <= 3f, "Scale should not exceed MaxScale");
+	}
+
+	#endregion
+
+	#region Rotate → Rotation Tests
+
+	[Fact]
+	public void Rotate_UpdatesRotation()
+	{
+		var tracker = CreateTracker();
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(200, 200));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(100, 250));
+		tracker.ProcessTouchMove(2, new SKPoint(200, 150));
+
+		Assert.NotEqual(0f, tracker.Rotation);
+	}
+
+	[Fact]
+	public void Rotate_FiresTransformChanged()
+	{
+		var tracker = CreateTracker();
+		var changeCount = 0;
+		tracker.TransformChanged += (s, e) => changeCount++;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(200, 200));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(100, 250));
+		tracker.ProcessTouchMove(2, new SKPoint(200, 150));
+
+		Assert.True(changeCount > 0);
+	}
+
+	#endregion
+
+	#region Drag Lifecycle Tests
+
+	[Fact]
+	public void FirstPan_FiresDragStarted()
+	{
+		var tracker = CreateTracker();
+		var dragStarted = false;
+		tracker.DragStarted += (s, e) => dragStarted = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+
+		Assert.True(dragStarted);
+	}
+
+	[Fact]
+	public void SubsequentPan_FiresDragUpdated()
+	{
+		var tracker = CreateTracker();
+		var dragUpdatedCount = 0;
+		tracker.DragUpdated += (s, e) => dragUpdatedCount++;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(140, 100));
+
+		Assert.True(dragUpdatedCount > 0);
+	}
+
+	[Fact]
+	public void GestureEnd_FiresDragEnded()
+	{
+		var tracker = CreateTracker();
+		var dragEnded = false;
+		tracker.DragEnded += (s, e) => dragEnded = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+		AdvanceTime(500); // Long pause to avoid fling
+		tracker.ProcessTouchUp(1, new SKPoint(120, 100));
+
+		Assert.True(dragEnded);
+	}
+
+	[Fact]
+	public void DragStarted_HasCorrectStartLocation()
+	{
+		var tracker = CreateTracker();
+		SKPoint? startLocation = null;
+		tracker.DragStarted += (s, e) => startLocation = e.StartLocation;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+
+		Assert.NotNull(startLocation);
+		Assert.Equal(100, startLocation.Value.X, 1);
+		Assert.Equal(100, startLocation.Value.Y, 1);
+	}
+
+	[Fact]
+	public void DragLifecycle_CorrectOrder()
+	{
+		var tracker = CreateTracker();
+		var events = new List<string>();
+		tracker.DragStarted += (s, e) => events.Add("started");
+		tracker.DragUpdated += (s, e) => events.Add("updated");
+		tracker.DragEnded += (s, e) => events.Add("ended");
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(140, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(160, 100));
+		AdvanceTime(500);
+		tracker.ProcessTouchUp(1, new SKPoint(160, 100));
+
+		Assert.Equal("started", events[0]);
+		Assert.Equal("ended", events[^1]);
+		Assert.True(events.Count >= 3);
+	}
+
+	#endregion
+
+	#region Fling Animation Tests
+
+	[Fact]
+	public void FastSwipe_FiresFlingDetected()
+	{
+		var tracker = CreateTracker();
+		var flingDetected = false;
+		tracker.FlingDetected += (s, e) => flingDetected = true;
+
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+
+		Assert.True(flingDetected);
+		tracker.Dispose();
+	}
+
+	[Fact]
+	public async Task Fling_FiresFlingingEvents()
+	{
+		var tracker = CreateTracker();
+		tracker.FlingFrameInterval = 16;
+		var flingingCount = 0;
+		tracker.Flinging += (s, e) => flingingCount++;
+
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+
+		await Task.Delay(200);
+
+		Assert.True(flingingCount > 0, $"Flinging should have fired, count was {flingingCount}");
+		tracker.Dispose();
+	}
+
+	[Fact]
+	public async Task Fling_UpdatesOffset()
+	{
+		var tracker = CreateTracker();
+		tracker.FlingFrameInterval = 16;
+		var flingingFired = false;
+		tracker.Flinging += (s, e) => flingingFired = true;
+
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+		var offsetAfterSwipe = tracker.Offset;
+
+		await Task.Delay(200);
+
+		Assert.True(flingingFired, "Flinging event should have fired");
+		Assert.True(tracker.Offset.X > offsetAfterSwipe.X || !tracker.IsFlinging,
+			$"Offset should move during fling or fling already completed");
+		tracker.Dispose();
+	}
+
+	[Fact]
+	public void StopFling_StopsAnimation()
+	{
+		var tracker = CreateTracker();
+
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+		Assert.True(tracker.IsFlinging);
+
+		tracker.StopFling();
+
+		Assert.False(tracker.IsFlinging);
+		tracker.Dispose();
+	}
+
+	[Fact]
+	public void StopFling_FiresFlingCompleted()
+	{
+		var tracker = CreateTracker();
+		var flingCompleted = false;
+		tracker.FlingCompleted += (s, e) => flingCompleted = true;
+
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+		tracker.StopFling();
+
+		Assert.True(flingCompleted);
+		tracker.Dispose();
+	}
+
+	[Fact]
+	public async Task Fling_EventuallyCompletes()
+	{
+		var tracker = CreateTracker();
+		tracker.FlingFrameInterval = 16;
+		tracker.FlingFriction = 0.5f;
+		tracker.FlingMinVelocity = 100f;
+		var flingCompleted = false;
+		tracker.FlingCompleted += (s, e) => flingCompleted = true;
+
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+
+		await Task.Delay(1000);
+
+		Assert.True(flingCompleted, "Fling should eventually complete");
+		Assert.False(tracker.IsFlinging);
+		tracker.Dispose();
+	}
+
+	#endregion
+
+	#region Zoom Animation (Double-Tap) Tests
+
+	[Fact]
+	public void DoubleTap_StartsZoomAnimation()
+	{
+		var tracker = CreateTracker();
+
+		SimulateDoubleTap(tracker, new SKPoint(200, 200));
+
+		Assert.True(tracker.IsZoomAnimating);
+		tracker.Dispose();
+	}
+
+	[Fact]
+	public async Task DoubleTap_ScaleChangesToDoubleTapZoomFactor()
+	{
+		var tracker = CreateTracker();
+		tracker.DoubleTapZoomFactor = 2f;
+		tracker.ZoomAnimationDuration = 100;
+
+		SimulateDoubleTap(tracker, new SKPoint(200, 200));
+
+		// Advance test time past animation duration so timer tick sees it as complete
+		_testTicks += 200 * TimeSpan.TicksPerMillisecond;
+		await Task.Delay(200);
+
+		Assert.Equal(2f, tracker.Scale, 0.1);
+		tracker.Dispose();
+	}
+
+	[Fact]
+	public async Task DoubleTap_AtMaxScale_ResetsToOne()
+	{
+		var tracker = CreateTracker();
+		tracker.DoubleTapZoomFactor = 2f;
+		tracker.MaxScale = 2f;
+		tracker.ZoomAnimationDuration = 100;
+
+		// First double tap: zoom to 2x
+		SimulateDoubleTap(tracker, new SKPoint(200, 200));
+		_testTicks += 200 * TimeSpan.TicksPerMillisecond;
+		await Task.Delay(200);
+		Assert.Equal(2f, tracker.Scale, 0.1);
+
+		// Second double tap at max: should reset to 1.0
+		AdvanceTime(500);
+		SimulateDoubleTap(tracker, new SKPoint(200, 200));
+		_testTicks += 200 * TimeSpan.TicksPerMillisecond;
+		await Task.Delay(200);
+		Assert.Equal(1f, tracker.Scale, 0.1);
+
+		tracker.Dispose();
+	}
+
+	[Fact]
+	public async Task DoubleTap_FiresTransformChanged()
+	{
+		var tracker = CreateTracker();
+		tracker.ZoomAnimationDuration = 100;
+		var changeCount = 0;
+		tracker.TransformChanged += (s, e) => changeCount++;
+
+		SimulateDoubleTap(tracker, new SKPoint(200, 200));
+		_testTicks += 200 * TimeSpan.TicksPerMillisecond;
+		await Task.Delay(200);
+
+		Assert.True(changeCount > 0, "TransformChanged should fire during zoom animation");
+		tracker.Dispose();
+	}
+
+	#endregion
+
+	#region Scroll Zoom Tests
+
+	[Fact]
+	public void ScrollUp_IncreasesScale()
+	{
+		var tracker = CreateTracker();
+
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 1f);
+
+		Assert.True(tracker.Scale > 1.0f, $"Scale should increase on scroll up, was {tracker.Scale}");
+	}
+
+	[Fact]
+	public void ScrollDown_DecreasesScale()
+	{
+		var tracker = CreateTracker();
+
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, -1f);
+
+		Assert.True(tracker.Scale < 1.0f, $"Scale should decrease on scroll down, was {tracker.Scale}");
+	}
+
+	[Fact]
+	public void Scroll_FiresTransformChanged()
+	{
+		var tracker = CreateTracker();
+		var transformChanged = false;
+		tracker.TransformChanged += (s, e) => transformChanged = true;
+
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 1f);
+
+		Assert.True(transformChanged);
+	}
+
+	[Fact]
+	public void Scroll_ScaleClampedToMinMax()
+	{
+		var tracker = CreateTracker();
+		tracker.MinScale = 0.5f;
+		tracker.MaxScale = 3f;
+
+		for (int i = 0; i < 100; i++)
+			tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, -1f);
+
+		Assert.True(tracker.Scale >= 0.5f, "Scale should not go below MinScale");
+
+		for (int i = 0; i < 200; i++)
+			tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 1f);
+
+		Assert.True(tracker.Scale <= 3f, "Scale should not exceed MaxScale");
+	}
+
+	#endregion
+
+	#region Feature Toggle Tests
+
+	[Fact]
+	public void IsPanEnabled_False_DoesNotUpdateOffset()
+	{
+		var tracker = CreateTracker();
+		tracker.IsPanEnabled = false;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(150, 100));
+
+		Assert.Equal(SKPoint.Empty, tracker.Offset);
+	}
+
+	[Fact]
+	public void IsDoubleTapZoomEnabled_False_DoesNotZoom()
+	{
+		var tracker = CreateTracker();
+		tracker.IsDoubleTapZoomEnabled = false;
+
+		SimulateDoubleTap(tracker, new SKPoint(200, 200));
+
+		Assert.Equal(1f, tracker.Scale);
+		Assert.False(tracker.IsZoomAnimating);
+	}
+
+	[Fact]
+	public void IsPinchEnabled_False_DoesNotScale()
+	{
+		var tracker = CreateTracker();
+		tracker.IsPinchEnabled = false;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(200, 200));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(50, 200));
+		tracker.ProcessTouchMove(2, new SKPoint(250, 200));
+
+		Assert.Equal(1f, tracker.Scale);
+	}
+
+	[Fact]
+	public void IsRotateEnabled_False_DoesNotRotate()
+	{
+		var tracker = CreateTracker();
+		tracker.IsRotateEnabled = false;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(200, 200));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(100, 250));
+		tracker.ProcessTouchMove(2, new SKPoint(200, 150));
+
+		Assert.Equal(0f, tracker.Rotation);
+	}
+
+	[Fact]
+	public void IsFlingEnabled_False_DoesNotFling()
+	{
+		var tracker = CreateTracker();
+		tracker.IsFlingEnabled = false;
+
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+
+		Assert.False(tracker.IsFlinging);
+	}
+
+	[Fact]
+	public void IsScrollZoomEnabled_False_DoesNotZoomOnScroll()
+	{
+		var tracker = CreateTracker();
+		tracker.IsScrollZoomEnabled = false;
+
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 1f);
+
+		Assert.Equal(1f, tracker.Scale);
+	}
+
+	#endregion
+
+	#region Reset Tests
+
+	[Fact]
+	public void Reset_RestoresDefaultTransform()
+	{
+		var tracker = CreateTracker();
+
+		// Apply pan
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(150, 100));
+		AdvanceTime(500);
+		tracker.ProcessTouchUp(1, new SKPoint(150, 100));
+
+		// Apply scroll zoom
+		AdvanceTime(500);
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 2f);
+
+		Assert.NotEqual(1f, tracker.Scale);
+		Assert.NotEqual(SKPoint.Empty, tracker.Offset);
+
+		tracker.Reset();
+
+		Assert.Equal(1f, tracker.Scale);
+		Assert.Equal(0f, tracker.Rotation);
+		Assert.Equal(SKPoint.Empty, tracker.Offset);
+	}
+
+	[Fact]
+	public void Reset_MatrixIsIdentity()
+	{
+		var tracker = CreateTracker();
+
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 2f);
+
+		tracker.Reset();
+
+		var m = tracker.Matrix;
+		Assert.Equal(1f, m.ScaleX, 0.01);
+		Assert.Equal(1f, m.ScaleY, 0.01);
+		Assert.Equal(0f, m.TransX, 0.01);
+		Assert.Equal(0f, m.TransY, 0.01);
+	}
+
+	[Fact]
+	public void Reset_FiresTransformChanged()
+	{
+		var tracker = CreateTracker();
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 2f);
+
+		var transformChanged = false;
+		tracker.TransformChanged += (s, e) => transformChanged = true;
+
+		tracker.Reset();
+
+		Assert.True(transformChanged);
+	}
+
+	#endregion
+
+	#region Matrix Composition Tests
+
+	[Fact]
+	public void Matrix_AtIdentity_IsIdentity()
+	{
+		var tracker = CreateTracker();
+
+		var m = tracker.Matrix;
+		var pt = m.MapPoint(200, 200);
+		Assert.Equal(200, pt.X, 0.1);
+		Assert.Equal(200, pt.Y, 0.1);
+	}
+
+	[Fact]
+	public void Matrix_AfterScrollAtCenter_CenterUnchanged()
+	{
+		var tracker = CreateTracker();
+
+		// Scroll zoom at center of view
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 1f);
+
+		var m = tracker.Matrix;
+		var pt = m.MapPoint(200, 200);
+		Assert.Equal(200, pt.X, 5);
+		Assert.Equal(200, pt.Y, 5);
+	}
+
+	[Fact]
+	public void Matrix_AfterPan_PointsShifted()
+	{
+		var tracker = CreateTracker();
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+		AdvanceTime(500);
+		tracker.ProcessTouchUp(1, new SKPoint(120, 100));
+
+		var m = tracker.Matrix;
+		var origin = m.MapPoint(200, 200);
+		// Pan moved right so the mapped point should shift right
+		Assert.True(origin.X > 200, $"Mapped X should shift right, was {origin.X}");
+	}
+
+	#endregion
+
+	#region Config Forwarding Tests
+
+	[Fact]
+	public void TouchSlop_ForwardedToEngine()
+	{
+		var tracker = CreateTracker();
+		tracker.TouchSlop = 50;
+
+		var panRaised = false;
+		tracker.PanDetected += (s, e) => panRaised = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(130, 100)); // 30px < 50px slop
+
+		Assert.False(panRaised, "Pan should not fire when within custom touch slop");
+	}
+
+	[Fact]
+	public void DoubleTapSlop_ForwardedToEngine()
+	{
+		var tracker = CreateTracker();
+		tracker.DoubleTapSlop = 10;
+
+		var doubleTapRaised = false;
+		tracker.DoubleTapDetected += (s, e) => doubleTapRaised = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		tracker.ProcessTouchUp(1, new SKPoint(100, 100));
+		AdvanceTime(100);
+		tracker.ProcessTouchDown(1, new SKPoint(120, 120));
+		AdvanceTime(50);
+		tracker.ProcessTouchUp(1, new SKPoint(120, 120));
+
+		Assert.False(doubleTapRaised, "Double tap should not fire outside slop distance");
+	}
+
+	[Fact]
+	public void FlingThreshold_ForwardedToEngine()
+	{
+		var tracker = CreateTracker();
+		tracker.FlingThreshold = 50000;
+
+		var flingRaised = false;
+		tracker.FlingDetected += (s, e) => flingRaised = true;
+
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+
+		Assert.False(flingRaised, "Fling should not fire with very high threshold");
+	}
+
+	[Fact]
+	public void IsEnabled_ForwardedToEngine()
+	{
+		var tracker = CreateTracker();
+		tracker.IsEnabled = false;
+
+		var result = tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+
+		Assert.False(result);
+	}
+
+	[Fact]
+	public void LongPressDuration_ForwardedToEngine()
+	{
+		var tracker = CreateTracker();
+		tracker.LongPressDuration = 200;
+		Assert.Equal(200, tracker.LongPressDuration);
+	}
+
+	#endregion
+
+	#region Dispose Tests
+
+	[Fact]
+	public void Dispose_StopsFlingAnimation()
+	{
+		var tracker = CreateTracker();
+
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+		Assert.True(tracker.IsFlinging);
+
+		tracker.Dispose();
+
+		Assert.False(tracker.IsFlinging);
+	}
+
+	[Fact]
+	public void Dispose_StopsZoomAnimation()
+	{
+		var tracker = CreateTracker();
+
+		SimulateDoubleTap(tracker, new SKPoint(200, 200));
+		Assert.True(tracker.IsZoomAnimating);
+
+		tracker.Dispose();
+
+		Assert.False(tracker.IsZoomAnimating);
+	}
+
+	#endregion
+
+	#region Event Forwarding Tests
+
+	[Fact]
+	public void TapDetected_ForwardedFromEngine()
+	{
+		var tracker = CreateTracker();
+		var tapRaised = false;
+		tracker.TapDetected += (s, e) => tapRaised = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		tracker.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		Assert.True(tapRaised);
+	}
+
+	[Fact]
+	public void PanDetected_ForwardedFromEngine()
+	{
+		var tracker = CreateTracker();
+		var panRaised = false;
+		tracker.PanDetected += (s, e) => panRaised = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+
+		Assert.True(panRaised);
+	}
+
+	[Fact]
+	public void ScrollDetected_ForwardedFromEngine()
+	{
+		var tracker = CreateTracker();
+		var scrollRaised = false;
+		tracker.ScrollDetected += (s, e) => scrollRaised = true;
+
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 1f);
+
+		Assert.True(scrollRaised);
+	}
+
+	[Fact]
+	public void GestureStarted_ForwardedFromEngine()
+	{
+		var tracker = CreateTracker();
+		var gestureStarted = false;
+		tracker.GestureStarted += (s, e) => gestureStarted = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+
+		Assert.True(gestureStarted);
+	}
+
+	[Fact]
+	public void GestureEnded_ForwardedFromEngine()
+	{
+		var tracker = CreateTracker();
+		var gestureEnded = false;
+		tracker.GestureEnded += (s, e) => gestureEnded = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchUp(1, new SKPoint(120, 100));
+
+		Assert.True(gestureEnded);
+	}
+
+	#endregion
+}

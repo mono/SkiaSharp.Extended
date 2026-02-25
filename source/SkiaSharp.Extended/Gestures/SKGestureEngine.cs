@@ -6,12 +6,13 @@ using System.Threading;
 namespace SkiaSharp.Extended.Gestures;
 
 /// <summary>
-/// A platform-agnostic gesture recognition engine that can detect taps, long presses,
+/// A platform-agnostic gesture recognition engine that detects taps, long presses,
 /// pan, pinch, rotation, and fling gestures from touch input.
 /// </summary>
 /// <remarks>
-/// <para>This engine is designed to be testable and reusable across different platforms.
-/// It processes touch events and raises events when gestures are detected.</para>
+/// <para>This engine is a pure gesture detector. It processes touch events and raises
+/// events when gestures are recognized. It does not maintain transform state or run
+/// animations — use <see cref="SKGestureTracker"/> for that.</para>
 /// <para>The engine must be used on the UI thread. It captures the current 
 /// <see cref="SynchronizationContext"/> when processing touch events and uses it
 /// to marshal timer callbacks back to the UI thread.</para>
@@ -29,9 +30,6 @@ public class SKGestureEngine : IDisposable
 	private const float TouchSlopPixels = 8f;
 	private const float DoubleTapSlopPixels = 40f;
 	private const float FlingVelocityThreshold = 200f; // pixels per second
-	private const float DefaultFlingFriction = 0.92f;
-	private const float DefaultFlingMinVelocity = 5f;
-	private const int DefaultFlingFrameMs = 16;
 
 	private readonly Dictionary<long, SKTouchState> _touches = new();
 	private readonly SKFlingTracker _flingTracker = new();
@@ -46,16 +44,8 @@ public class SKGestureEngine : IDisposable
 	private SKGestureState _gestureState = SKGestureState.None;
 	private SKPinchState _pinchState;
 	private bool _longPressTriggered;
-	private bool _dragStartedFired;
 	private long _touchStartTicks;
 	private bool _disposed;
-
-	// Fling animation state
-	private Timer? _flingTimer;
-	private int _flingToken;
-	private float _flingVelocityX;
-	private float _flingVelocityY;
-	private bool _isFlinging;
 
 	/// <summary>
 	/// Gets or sets the current time provider. Used for testing.
@@ -81,26 +71,6 @@ public class SKGestureEngine : IDisposable
 	/// Gets or sets the fling velocity threshold.
 	/// </summary>
 	public float FlingThreshold { get; set; } = FlingVelocityThreshold;
-
-	/// <summary>
-	/// Gets or sets the fling friction (deceleration factor per frame, 0-1). Higher = slower stop.
-	/// </summary>
-	public float FlingFriction { get; set; } = DefaultFlingFriction;
-
-	/// <summary>
-	/// Gets or sets the minimum fling velocity before the animation stops.
-	/// </summary>
-	public float FlingMinVelocity { get; set; } = DefaultFlingMinVelocity;
-
-	/// <summary>
-	/// Gets or sets the fling animation frame interval in milliseconds (~60 FPS = 16ms).
-	/// </summary>
-	public int FlingFrameInterval { get; set; } = DefaultFlingFrameMs;
-
-	/// <summary>
-	/// Gets whether a fling animation is currently running.
-	/// </summary>
-	public bool IsFlinging => _isFlinging;
 
 	/// <summary>
 	/// Gets or sets the long press duration in milliseconds.
@@ -153,16 +123,6 @@ public class SKGestureEngine : IDisposable
 	public event EventHandler<SKFlingEventArgs>? FlingDetected;
 
 	/// <summary>
-	/// Occurs each animation frame during a fling with current velocity and per-frame delta.
-	/// </summary>
-	public event EventHandler<SKFlingEventArgs>? Flinging;
-
-	/// <summary>
-	/// Occurs when a fling animation completes (velocity dropped below minimum).
-	/// </summary>
-	public event EventHandler? FlingCompleted;
-
-	/// <summary>
 	/// Occurs when a hover is detected.
 	/// </summary>
 	public event EventHandler<SKHoverEventArgs>? HoverDetected;
@@ -183,21 +143,6 @@ public class SKGestureEngine : IDisposable
 	public event EventHandler<SKGestureStateEventArgs>? GestureEnded;
 
 	/// <summary>
-	/// Occurs when a drag operation starts.
-	/// </summary>
-	public event EventHandler<SKDragEventArgs>? DragStarted;
-
-	/// <summary>
-	/// Occurs during a drag operation.
-	/// </summary>
-	public event EventHandler<SKDragEventArgs>? DragUpdated;
-
-	/// <summary>
-	/// Occurs when a drag operation ends.
-	/// </summary>
-	public event EventHandler<SKDragEventArgs>? DragEnded;
-
-	/// <summary>
 	/// Processes a touch down event.
 	/// </summary>
 	/// <param name="id">The unique identifier for this touch.</param>
@@ -212,9 +157,6 @@ public class SKGestureEngine : IDisposable
 		// Capture the synchronization context on first touch (UI thread)
 		_syncContext ??= SynchronizationContext.Current;
 
-		// Stop any active fling animation on new touch
-		StopFling();
-
 		var ticks = TimeProvider();
 
 		_touches[id] = new SKTouchState(id, location, ticks, true);
@@ -225,7 +167,6 @@ public class SKGestureEngine : IDisposable
 			_initialTouch = location;
 			_touchStartTicks = ticks;
 			_longPressTriggered = false;
-			_dragStartedFired = false;
 		}
 
 		// Start the long press timer
@@ -297,13 +238,11 @@ public class SKGestureEngine : IDisposable
 		var touchPoints = GetActiveTouchPoints();
 		var distance = SKPoint.Distance(location, _initialTouch);
 
-		// Start pan/drag if moved beyond touch slop
+		// Start pan if moved beyond touch slop
 		if (_gestureState == SKGestureState.Detecting && distance >= TouchSlop)
 		{
 			StopLongPressTimer();
 			_gestureState = SKGestureState.Panning;
-			_dragStartedFired = true;
-			OnDragStarted(new SKDragEventArgs(_initialTouch, location, location - _initialTouch));
 		}
 
 		switch (_gestureState)
@@ -313,8 +252,6 @@ public class SKGestureEngine : IDisposable
 				{
 					var delta = location - _pinchState.Center;
 					OnPanDetected(new SKPanEventArgs(location, _pinchState.Center, delta));
-					if (_dragStartedFired)
-						OnDragUpdated(new SKDragEventArgs(_initialTouch, location, delta));
 					_pinchState = new SKPinchState(location, 0, 0);
 				}
 				break;
@@ -373,7 +310,6 @@ public class SKGestureEngine : IDisposable
 			if (velocityMagnitude > FlingThreshold)
 			{
 				OnFlingDetected(new SKFlingEventArgs(velocity.X, velocity.Y));
-				StartFlingAnimation(velocity.X, velocity.Y);
 				handled = true;
 			}
 
@@ -405,12 +341,6 @@ public class SKGestureEngine : IDisposable
 
 		_flingTracker.RemoveId(id);
 
-		// Handle end of drag/pan
-		if (_gestureState == SKGestureState.Panning && _dragStartedFired)
-		{
-			OnDragEnded(new SKDragEventArgs(_initialTouch, location, location - _initialTouch));
-		}
-
 		// Transition gesture state
 		if (touchPoints.Length == 0)
 		{
@@ -419,19 +349,13 @@ public class SKGestureEngine : IDisposable
 				OnGestureEnded(new SKGestureStateEventArgs(Array.Empty<SKPoint>(), _gestureState));
 				_gestureState = SKGestureState.None;
 			}
-			_dragStartedFired = false;
 		}
 		else if (touchPoints.Length == 1)
 		{
-			// Transition from pinch to pan — update origin and fire DragStarted
+			// Transition from pinch to pan
 			if (_gestureState == SKGestureState.Pinching)
 			{
 				_initialTouch = touchPoints[0];
-				if (!_dragStartedFired)
-				{
-					_dragStartedFired = true;
-					OnDragStarted(new SKDragEventArgs(touchPoints[0], touchPoints[0], SKPoint.Empty));
-				}
 			}
 			_gestureState = SKGestureState.Panning;
 			_pinchState = new SKPinchState(touchPoints[0], 0, 0);
@@ -462,16 +386,11 @@ public class SKGestureEngine : IDisposable
 		var touchPoints = GetActiveTouchPoints();
 		if (touchPoints.Length == 0)
 		{
-			if (_gestureState == SKGestureState.Panning && _dragStartedFired)
-			{
-				OnDragEnded(new SKDragEventArgs(_initialTouch, _initialTouch, SKPoint.Empty));
-			}
 			if (_gestureState != SKGestureState.None)
 			{
 				OnGestureEnded(new SKGestureStateEventArgs(Array.Empty<SKPoint>(), _gestureState));
 				_gestureState = SKGestureState.None;
 			}
-			_dragStartedFired = false;
 		}
 
 		return true;
@@ -499,7 +418,6 @@ public class SKGestureEngine : IDisposable
 	public void Reset()
 	{
 		StopLongPressTimer();
-		StopFling();
 		_touches.Clear();
 		_flingTracker.Clear();
 		_gestureState = SKGestureState.None;
@@ -507,7 +425,6 @@ public class SKGestureEngine : IDisposable
 		_lastTapTicks = 0;
 		_lastTapLocation = SKPoint.Empty;
 		_longPressTriggered = false;
-		_dragStartedFired = false;
 	}
 
 	/// <summary>
@@ -520,7 +437,6 @@ public class SKGestureEngine : IDisposable
 
 		_disposed = true;
 		StopLongPressTimer();
-		StopFling();
 		Reset();
 	}
 
@@ -600,91 +516,6 @@ public class SKGestureEngine : IDisposable
 		return angle;
 	}
 
-	/// <summary>
-	/// Stops any active fling animation.
-	/// </summary>
-	public void StopFling()
-	{
-		if (!_isFlinging)
-			return;
-
-		_isFlinging = false;
-		_flingVelocityX = 0;
-		_flingVelocityY = 0;
-		Interlocked.Increment(ref _flingToken);
-		var timer = _flingTimer;
-		_flingTimer = null;
-		timer?.Change(Timeout.Infinite, Timeout.Infinite);
-		timer?.Dispose();
-		OnFlingCompleted();
-	}
-
-	private void StartFlingAnimation(float velocityX, float velocityY)
-	{
-		// Stop any existing fling timer without firing completed
-		var oldTimer = _flingTimer;
-		oldTimer?.Change(Timeout.Infinite, Timeout.Infinite);
-		oldTimer?.Dispose();
-
-		_flingVelocityX = velocityX;
-		_flingVelocityY = velocityY;
-		_isFlinging = true;
-
-		var token = Interlocked.Increment(ref _flingToken);
-		_flingTimer = new Timer(
-			OnFlingTimerTick,
-			token,
-			FlingFrameInterval,
-			FlingFrameInterval);
-	}
-
-	private void OnFlingTimerTick(object? state)
-	{
-		if (state is not int token || token != Volatile.Read(ref _flingToken))
-			return;
-
-		if (!_isFlinging || _disposed)
-			return;
-
-		if (_syncContext != null)
-		{
-			_syncContext.Post(_ =>
-			{
-				if (token == Volatile.Read(ref _flingToken))
-					HandleFlingFrame();
-			}, null);
-		}
-		else
-		{
-			HandleFlingFrame();
-		}
-	}
-
-	private void HandleFlingFrame()
-	{
-		if (!_isFlinging || _disposed)
-			return;
-
-		// Calculate per-frame displacement
-		var dt = FlingFrameInterval / 1000f;
-		var deltaX = _flingVelocityX * dt;
-		var deltaY = _flingVelocityY * dt;
-
-		// Fire the per-frame event
-		OnFlinging(new SKFlingEventArgs(_flingVelocityX, _flingVelocityY, deltaX, deltaY));
-
-		// Apply friction
-		_flingVelocityX *= FlingFriction;
-		_flingVelocityY *= FlingFriction;
-
-		// Check if velocity is below minimum
-		var speed = (float)Math.Sqrt(_flingVelocityX * _flingVelocityX + _flingVelocityY * _flingVelocityY);
-		if (speed < FlingMinVelocity)
-		{
-			StopFling();
-		}
-	}
-
 	// Event invokers
 	protected virtual void OnTapDetected(SKTapEventArgs e) => TapDetected?.Invoke(this, e);
 	protected virtual void OnDoubleTapDetected(SKTapEventArgs e) => DoubleTapDetected?.Invoke(this, e);
@@ -693,13 +524,8 @@ public class SKGestureEngine : IDisposable
 	protected virtual void OnPinchDetected(SKPinchEventArgs e) => PinchDetected?.Invoke(this, e);
 	protected virtual void OnRotateDetected(SKRotateEventArgs e) => RotateDetected?.Invoke(this, e);
 	protected virtual void OnFlingDetected(SKFlingEventArgs e) => FlingDetected?.Invoke(this, e);
-	protected virtual void OnFlinging(SKFlingEventArgs e) => Flinging?.Invoke(this, e);
-	protected virtual void OnFlingCompleted() => FlingCompleted?.Invoke(this, EventArgs.Empty);
 	protected virtual void OnHoverDetected(SKHoverEventArgs e) => HoverDetected?.Invoke(this, e);
 	protected virtual void OnScrollDetected(SKScrollEventArgs e) => ScrollDetected?.Invoke(this, e);
 	protected virtual void OnGestureStarted(SKGestureStateEventArgs e) => GestureStarted?.Invoke(this, e);
 	protected virtual void OnGestureEnded(SKGestureStateEventArgs e) => GestureEnded?.Invoke(this, e);
-	protected virtual void OnDragStarted(SKDragEventArgs e) => DragStarted?.Invoke(this, e);
-	protected virtual void OnDragUpdated(SKDragEventArgs e) => DragUpdated?.Invoke(this, e);
-	protected virtual void OnDragEnded(SKDragEventArgs e) => DragEnded?.Invoke(this, e);
 }
