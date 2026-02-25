@@ -148,6 +148,11 @@ jobs:
         env:
           PR_NUMBER: ${{ needs.build.outputs.pr_number }}
         run: |
+          # Validate PR_NUMBER is a positive integer before using in paths
+          if ! [[ "$PR_NUMBER" =~ ^[1-9][0-9]*$ ]]; then
+            echo "Invalid PR number: $PR_NUMBER"
+            exit 1
+          fi
           mkdir -p staging/$PR_NUMBER
           rm -rf staging/$PR_NUMBER/*
           cp -r /tmp/site-temp/. staging/$PR_NUMBER/
@@ -176,6 +181,21 @@ jobs:
             const prNumber = context.issue.number;
             const stagingUrl = `https://mono.github.io/SkiaSharp.Extended/staging/${prNumber}/`;
             const sampleUrl = `https://mono.github.io/SkiaSharp.Extended/staging/${prNumber}/sample/`;
+
+            // Only comment once; check for an existing bot comment to avoid duplicates on reopen
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber
+            });
+            const botComment = comments.data.find(c =>
+              c.user.type === 'Bot' &&
+              c.body.includes('Documentation Preview')
+            );
+            if (botComment) {
+              console.log('Bot comment already exists, skipping.');
+              return;
+            }
 
             const commentBody = `📖 **Documentation Preview**
 
