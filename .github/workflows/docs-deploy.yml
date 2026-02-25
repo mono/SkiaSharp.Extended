@@ -49,17 +49,24 @@ jobs:
         shell: bash
         run: |
           if [ "$EVENT_NAME" == "pull_request" ]; then
+            # Validate PR_NUMBER is a positive integer before using it in artifact names/paths
+            if ! [[ "$PR_NUMBER" =~ ^[1-9][0-9]*$ ]]; then
+              echo "Invalid PR number: $PR_NUMBER"
+              exit 1
+            fi
             echo "artifact_name=staging-site-${PR_NUMBER}" >> $GITHUB_OUTPUT
             echo "sample_base_href=/SkiaSharp.Extended/staging/${PR_NUMBER}/sample/" >> $GITHUB_OUTPUT
             echo "sample_segment_count=4" >> $GITHUB_OUTPUT
             echo "is_staging=true" >> $GITHUB_OUTPUT
             echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+            echo "source_label=PR #${PR_NUMBER}" >> $GITHUB_OUTPUT
           else
             echo "artifact_name=main-site" >> $GITHUB_OUTPUT
             echo "sample_base_href=/SkiaSharp.Extended/sample/" >> $GITHUB_OUTPUT
             echo "sample_segment_count=2" >> $GITHUB_OUTPUT
             echo "is_staging=false" >> $GITHUB_OUTPUT
             echo "pr_number=" >> $GITHUB_OUTPUT
+            echo "source_label=main" >> $GITHUB_OUTPUT
           fi
 
       - name: Install MAUI workload
@@ -78,13 +85,25 @@ jobs:
         run: dotnet publish samples/SkiaSharpDemo.Blazor/SkiaSharpDemo.Blazor.csproj -c Release -o publish/sample
 
       - name: Build docs
-        run: dotnet docfx docs/docfx.json
+        env:
+          SOURCE_LABEL: ${{ steps.vars.outputs.source_label }}
+        run: |
+          COMMIT_SHORT="${GITHUB_SHA:0:7}"
+          APP_FOOTER="source: ${SOURCE_LABEL} · ${COMMIT_SHORT}"
+          jq --arg footer "$APP_FOOTER" \
+            '.build.globalMetadata._appFooter = $footer' \
+            docs/docfx.json > docs/docfx-build.json
+          dotnet docfx docs/docfx-build.json
 
       - name: Copy Blazor sample into docs site
         env:
           BASE_HREF: ${{ steps.vars.outputs.sample_base_href }}
           SEGMENT_COUNT: ${{ steps.vars.outputs.sample_segment_count }}
+          SOURCE_LABEL: ${{ steps.vars.outputs.source_label }}
         run: |
+          COMMIT_SHORT="${GITHUB_SHA:0:7}"
+          BUILD_INFO="${SOURCE_LABEL} · ${COMMIT_SHORT}"
+
           mkdir -p docs/_site/sample
           cp -r publish/sample/wwwroot/. docs/_site/sample/
 
@@ -95,6 +114,9 @@ jobs:
           if [ -f docs/_site/sample/404.html ]; then
             sed -i "s|var segmentCount = [0-9]*;|var segmentCount = $SEGMENT_COUNT;|" docs/_site/sample/404.html
           fi
+
+          # Inject build info
+          sed -i "s|BUILD_INFO_PLACEHOLDER|$BUILD_INFO|" docs/_site/sample/index.html
 
       - name: Upload site artifact
         uses: actions/upload-artifact@v4
