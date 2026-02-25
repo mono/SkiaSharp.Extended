@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows:
       - "Docs - Deploy"
+      - "Docs - Fork PR - Deploy"
       - "Docs - PR Staging - Cleanup"
     types:
       - completed
