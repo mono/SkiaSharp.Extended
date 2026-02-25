@@ -128,18 +128,20 @@ jobs:
               return;
             }
 
-            const commentBody = `📖 **Documentation Preview**
-
-The documentation for this PR has been deployed and is available at:
-
-🔗 **[View Staging Documentation](${stagingUrl})**
-
-🔗 **[View Staging Blazor Sample](${sampleUrl})**
-
-This preview will be updated automatically when you push new commits to this PR.
-
----
-*This comment is automatically updated by the documentation staging workflow.*`;
+            const commentBody = [
+              '📖 **Documentation Preview**',
+              '',
+              'The documentation for this PR has been deployed and is available at:',
+              '',
+              `🔗 **[View Staging Documentation](${stagingUrl})**`,
+              '',
+              `🔗 **[View Staging Blazor Sample](${sampleUrl})**`,
+              '',
+              'This preview will be updated automatically when you push new commits to this PR.',
+              '',
+              '---',
+              '*This comment is automatically updated by the documentation staging workflow.*'
+            ].join('\n');
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
