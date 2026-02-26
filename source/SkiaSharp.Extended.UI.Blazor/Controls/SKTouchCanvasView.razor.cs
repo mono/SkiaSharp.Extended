@@ -11,13 +11,12 @@ namespace SkiaSharp.Extended.UI.Blazor.Controls;
 /// <para>This view translates browser pointer events (mouse, touch, stylus) into
 /// <see cref="SKTouchEventArgs"/> and raises the <see cref="Touch"/> event,
 /// matching the MAUI touch API for shared source compatibility.</para>
-/// <para>Pointer events are captured using JavaScript interop. The canvas is wrapped
-/// in a container div that receives pointer events.</para>
+/// <para>Pointer events are captured using JavaScript interop on the canvas element.</para>
 /// </remarks>
 public partial class SKTouchCanvasView : ComponentBase, IAsyncDisposable
 {
     private SkiaSharp.Views.Blazor.SKCanvasView? _skCanvasView;
-    private ElementReference _containerRef;
+    private ElementReference _elementRef;
     private IJSObjectReference? _jsModule;
     private DotNetObjectReference<SKTouchCanvasView>? _dotNetRef;
     private bool _touchInitialized;
@@ -48,14 +47,6 @@ public partial class SKTouchCanvasView : ComponentBase, IAsyncDisposable
     /// <summary>Gets or sets whether pixel scaling is ignored.</summary>
     [Parameter]
     public bool IgnorePixelScaling { get; set; }
-
-    /// <summary>Gets or sets the CSS style string for the container.</summary>
-    [Parameter]
-    public string? Style { get; set; }
-
-    /// <summary>Gets or sets the CSS class string for the container.</summary>
-    [Parameter]
-    public string? Class { get; set; }
 
     /// <summary>Gets or sets additional HTML attributes passed to the inner canvas.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
@@ -101,7 +92,7 @@ public partial class SKTouchCanvasView : ComponentBase, IAsyncDisposable
 
             _dotNetRef = DotNetObjectReference.Create(this);
 
-            await _jsModule.InvokeVoidAsync("initializeTouchEvents", _containerRef, _dotNetRef);
+            await _jsModule.InvokeVoidAsync("initializeTouchEvents", _elementRef, _dotNetRef);
 
             _touchInitialized = true;
         }
@@ -118,7 +109,7 @@ public partial class SKTouchCanvasView : ComponentBase, IAsyncDisposable
         {
             try
             {
-                await _jsModule.InvokeVoidAsync("disposeTouchEvents", _containerRef);
+                await _jsModule.InvokeVoidAsync("disposeTouchEvents", _elementRef);
                 await _jsModule.DisposeAsync();
                 _jsModule = null;
             }
@@ -148,13 +139,6 @@ public partial class SKTouchCanvasView : ComponentBase, IAsyncDisposable
             wheelDelta: data.WheelDelta);
 
         await Touch.InvokeAsync(args);
-
-        // Auto-invalidate the canvas after touch events so that drawing
-        // changes made by the handler are rendered immediately.
-        if (args.Handled)
-        {
-            _skCanvasView?.Invalidate();
-        }
     }
 
     private void OnPaintSurfaceInternal(SKPaintSurfaceEventArgs e)

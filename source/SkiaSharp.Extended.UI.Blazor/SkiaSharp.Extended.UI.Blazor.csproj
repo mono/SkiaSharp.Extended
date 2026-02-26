@@ -37,4 +37,12 @@
     <Using Include="SkiaSharp.Views.Blazor" />
   </ItemGroup>
 
+  <!-- Exclude TypeScript source and config from static web assets -->
+  <ItemGroup>
+    <Content Remove="wwwroot\*.ts" />
+    <Content Remove="wwwroot\tsconfig.json" />
+    <None Include="wwwroot\*.ts" />
+    <None Include="wwwroot\tsconfig.json" />
+  </ItemGroup>
+
 </Project>

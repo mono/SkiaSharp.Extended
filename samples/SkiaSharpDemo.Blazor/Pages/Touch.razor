@@ -15,7 +15,8 @@
 </div>
 
 <div class="canvas-container">
-    <SKTouchCanvasView OnPaintSurface="OnPaintSurface"
+    <SKTouchCanvasView @ref="_canvasView"
+                       OnPaintSurface="OnPaintSurface"
                        Touch="OnTouch"
                        EnableTouchEvents="true"
                        style="width: 100%; height: 100%;" />
@@ -66,87 +67,11 @@
     </div>
 </div>
 
-<style>
-    .toolbar {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-    .canvas-container {
-        width: 100%;
-        height: 480px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        overflow: hidden;
-        margin-bottom: 1rem;
-    }
-    .stats-row {
-        display: flex;
-        gap: 2rem;
-        flex-wrap: wrap;
-        margin-bottom: 1rem;
-    }
-    .stats-group {
-        flex: 1;
-        min-width: 260px;
-    }
-    .stats-header {
-        font-weight: 600;
-        font-size: 0.85rem;
-        margin-bottom: 0.4rem;
-        color: #555;
-    }
-    .event-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.4rem;
-    }
-    .event-card {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 0.35rem 0.75rem;
-        min-width: 90px;
-        text-align: center;
-        transition: background-color 0.15s, border-color 0.15s;
-    }
-    .event-card.active {
-        background-color: #e0f0ff;
-        border-color: #3399ff;
-    }
-    .color-dot {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-bottom: -1px;
-    }
-    .event-name {
-        font-weight: 600;
-        font-size: 0.8rem;
-    }
-    .event-count {
-        font-size: 1.1rem;
-        color: #333;
-    }
-    .log-section {
-        margin-bottom: 2rem;
-    }
-    .event-log {
-        font-family: monospace;
-        font-size: 0.78rem;
-        max-height: 160px;
-        overflow-y: auto;
-        border: 1px solid #eee;
-        border-radius: 4px;
-        padding: 0.4rem 0.6rem;
-        background: #fafafa;
-    }
-    .log-entry {
-        white-space: nowrap;
-    }
-</style>
-
 @code {
+    // ── Canvas reference ──
+
+    private SKTouchCanvasView? _canvasView;
+
     // ── Colors per device type ──
 
     private static readonly (string Name, string Css, SKColor Sk)[] DeviceColors =
@@ -230,6 +155,7 @@
         }
 
         e.Handled = true;
+        _canvasView?.Invalidate();
     }
 
     // ── Paint ──
@@ -294,6 +220,7 @@
         _deviceCounts.Clear();
         _lastAction = "";
         _log.Clear();
+        _canvasView?.Invalidate();
     }
 
     private void ClearLog() => _log.Clear();

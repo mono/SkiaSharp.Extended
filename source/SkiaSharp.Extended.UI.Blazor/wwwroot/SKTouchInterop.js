@@ -1,88 +1,99 @@
-// SKTouchInterop.js
+// SKTouchInterop.ts
 // Handles pointer events on the SkiaSharp canvas and forwards them to .NET
 // using the same event model as the MAUI SKTouchEventArgs API.
-
+let currentElement = null;
+let currentDotNetRef = null;
 export function initializeTouchEvents(element, dotNetRef) {
-    if (!element) return;
-
-    // Use pointer events for cross-device support (mouse, touch, stylus)
-    element.addEventListener('pointerdown', (e) => onPointerEvent(e, dotNetRef, 2 /* Pressed */));
-    element.addEventListener('pointermove', (e) => onPointerEvent(e, dotNetRef, 3 /* Moved */));
-    element.addEventListener('pointerup', (e) => onPointerEvent(e, dotNetRef, 4 /* Released */));
-    element.addEventListener('pointercancel', (e) => onPointerEvent(e, dotNetRef, 0 /* Cancelled */));
-    element.addEventListener('pointerenter', (e) => onPointerEvent(e, dotNetRef, 1 /* Entered */));
-    element.addEventListener('pointerleave', (e) => onPointerEvent(e, dotNetRef, 5 /* Exited */));
-    element.addEventListener('wheel', (e) => onWheelEvent(e, dotNetRef));
-
-    // Prevent default to avoid page scroll/zoom on touch
-    element.style.touchAction = 'none';
-    element.style.userSelect = 'none';
+    if (!element)
+        return;
+    currentElement = element;
+    currentDotNetRef = dotNetRef;
+    element.addEventListener("pointerdown", onPointerDown);
+    element.addEventListener("pointermove", onPointerMove);
+    element.addEventListener("pointerup", onPointerUp);
+    element.addEventListener("pointercancel", onPointerCancel);
+    element.addEventListener("pointerenter", onPointerEnter);
+    element.addEventListener("pointerleave", onPointerLeave);
+    element.addEventListener("wheel", onWheel);
 }
-
 export function disposeTouchEvents(element) {
-    if (!element) return;
-    // Cloning removes all listeners – simpler than tracking references
-    element.style.touchAction = '';
-    element.style.userSelect = '';
+    if (!element)
+        return;
+    element.removeEventListener("pointerdown", onPointerDown);
+    element.removeEventListener("pointermove", onPointerMove);
+    element.removeEventListener("pointerup", onPointerUp);
+    element.removeEventListener("pointercancel", onPointerCancel);
+    element.removeEventListener("pointerenter", onPointerEnter);
+    element.removeEventListener("pointerleave", onPointerLeave);
+    element.removeEventListener("wheel", onWheel);
+    currentElement = null;
+    currentDotNetRef = null;
 }
-
+function onPointerDown(e) {
+    sendPointerEvent(e, 2 /* SKTouchAction.Pressed */);
+    try {
+        e.currentTarget.setPointerCapture(e.pointerId);
+    }
+    catch { /* ignore */ }
+}
+function onPointerMove(e) {
+    sendPointerEvent(e, 3 /* SKTouchAction.Moved */);
+}
+function onPointerUp(e) {
+    sendPointerEvent(e, 4 /* SKTouchAction.Released */);
+}
+function onPointerCancel(e) {
+    sendPointerEvent(e, 0 /* SKTouchAction.Cancelled */);
+}
+function onPointerEnter(e) {
+    sendPointerEvent(e, 1 /* SKTouchAction.Entered */);
+}
+function onPointerLeave(e) {
+    sendPointerEvent(e, 5 /* SKTouchAction.Exited */);
+}
+function onWheel(e) {
+    if (!currentDotNetRef)
+        return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const delta = e.deltaMode === 0
+        ? Math.round(-e.deltaY / 10)
+        : (e.deltaY < 0 ? 1 : -1);
+    currentDotNetRef.invokeMethodAsync("OnPointerEvent", {
+        id: -1,
+        action: 6 /* SKTouchAction.WheelChanged */,
+        deviceType: 1 /* SKTouchDeviceType.Mouse */,
+        x,
+        y,
+        pressure: 0,
+        inContact: false,
+        wheelDelta: delta,
+    });
+    e.preventDefault();
+}
 function getDeviceType(pointerType) {
     switch (pointerType) {
-        case 'mouse': return 1;   // Mouse
-        case 'pen': return 2;     // Stylus
-        default: return 0;        // Touch
+        case "mouse": return 1 /* SKTouchDeviceType.Mouse */;
+        case "pen": return 2 /* SKTouchDeviceType.Stylus */;
+        default: return 0 /* SKTouchDeviceType.Touch */;
     }
 }
-
-function getElementRect(element) {
-    return element.getBoundingClientRect();
-}
-
-function onPointerEvent(e, dotNetRef, action) {
-    const rect = getElementRect(e.currentTarget);
-    // Convert to element-local coordinates (CSS pixels)
+function sendPointerEvent(e, action) {
+    if (!currentDotNetRef)
+        return;
+    const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const deviceType = getDeviceType(e.pointerType);
-    const inContact = e.buttons !== 0 || action === 2; // Pressed always in contact
-
-    // Capture pointer on press so move/up events are received even outside the element
-    if (action === 2 /* Pressed */) {
-        try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) { }
-    }
-
-    dotNetRef.invokeMethodAsync('OnPointerEvent', {
+    const inContact = e.buttons !== 0 || action === 2 /* SKTouchAction.Pressed */;
+    currentDotNetRef.invokeMethodAsync("OnPointerEvent", {
         id: e.pointerId,
-        action: action,
-        deviceType: deviceType,
-        x: x,
-        y: y,
+        action,
+        deviceType,
+        x,
+        y,
         pressure: e.pressure,
-        inContact: inContact
+        inContact,
     });
-}
-
-function onWheelEvent(e, dotNetRef) {
-    const rect = getElementRect(e.currentTarget);
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    // Normalize deltaY to a small integer similar to MAUI WheelDelta
-    // Positive = scroll down, negative = scroll up
-    const delta = e.deltaMode === 0
-        ? Math.round(-e.deltaY / 10)   // pixels
-        : (e.deltaY < 0 ? 1 : -1);    // lines/pages
-
-    dotNetRef.invokeMethodAsync('OnPointerEvent', {
-        id: -1,
-        action: 6, // WheelChanged
-        deviceType: 1, // Mouse
-        x: x,
-        y: y,
-        pressure: 0,
-        inContact: false,
-        wheelDelta: delta
-    });
-
-    e.preventDefault();
 }
