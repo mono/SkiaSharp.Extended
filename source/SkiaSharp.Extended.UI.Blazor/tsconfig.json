@@ -3,10 +3,10 @@
     "target": "ES2020",
     "module": "ES2020",
     "strict": true,
-    "outDir": ".",
-    "rootDir": ".",
+    "outDir": "wwwroot",
+    "rootDir": "Scripts",
     "declaration": false,
     "sourceMap": false
   },
-  "include": ["*.ts"]
+  "include": ["Scripts/**/*.ts"]
 }

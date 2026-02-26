@@ -16,7 +16,13 @@
     <Description>This package adds a touch-enabled SkiaSharp canvas view for Blazor, providing unified touch/pointer event support across mouse, touch, and stylus inputs.</Description>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Let Microsoft.TypeScript.MSBuild compile .ts → .js via tsconfig.json -->
+    <TypeScriptCompileBlocked>false</TypeScriptCompileBlocked>
+  </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.7.3" PrivateAssets="all" />
     <PackageReference Include="SkiaSharp" Version="3.119.1" />
     <PackageReference Include="SkiaSharp.Views.Blazor" Version="3.119.1" />
   </ItemGroup>
@@ -37,12 +43,10 @@
     <Using Include="SkiaSharp.Views.Blazor" />
   </ItemGroup>
 
-  <!-- Exclude TypeScript source and config from static web assets -->
+  <!-- TypeScript source lives in Scripts/ and is compiled to wwwroot/ by Microsoft.TypeScript.MSBuild -->
   <ItemGroup>
-    <Content Remove="wwwroot\*.ts" />
-    <Content Remove="wwwroot\tsconfig.json" />
-    <None Include="wwwroot\*.ts" />
-    <None Include="wwwroot\tsconfig.json" />
+    <Content Remove="Scripts\**" />
+    <TypeScriptCompile Include="Scripts\**\*.ts" />
   </ItemGroup>
 
 </Project>
