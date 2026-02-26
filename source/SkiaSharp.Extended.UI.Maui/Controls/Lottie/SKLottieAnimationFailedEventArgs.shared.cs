@@ -1,3 +1,15 @@
-using System.Runtime.CompilerServices;
+namespace SkiaSharp.Extended.UI.Controls;
 
-[assembly: TypeForwardedTo(typeof(SkiaSharp.Extended.SKLottieAnimationFailedEventArgs))]
+public class SKLottieAnimationFailedEventArgs : EventArgs
+{
+public SKLottieAnimationFailedEventArgs()
+{
+}
+
+public SKLottieAnimationFailedEventArgs(Exception? exception)
+{
+Exception = exception;
+}
+
+public Exception? Exception { get; }
+}
