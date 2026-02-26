@@ -36,11 +36,19 @@ const enum SKTouchDeviceType {
 let currentElement: HTMLElement | null = null;
 let currentDotNetRef: DotNetObjectReference | null = null;
 
-export function initializeTouchEvents(element: HTMLElement, dotNetRef: DotNetObjectReference): void {
+function findElement(touchId: string): HTMLElement | null {
+    return document.querySelector<HTMLElement>(`[data-sk-touch-id="${touchId}"]`);
+}
+
+export function initializeTouchEvents(touchId: string, dotNetRef: DotNetObjectReference): void {
+    const element = findElement(touchId);
     if (!element) return;
 
     currentElement = element;
     currentDotNetRef = dotNetRef;
+
+    element.style.touchAction = "none";
+    element.style.userSelect = "none";
 
     element.addEventListener("pointerdown", onPointerDown);
     element.addEventListener("pointermove", onPointerMove);
@@ -51,8 +59,12 @@ export function initializeTouchEvents(element: HTMLElement, dotNetRef: DotNetObj
     element.addEventListener("wheel", onWheel);
 }
 
-export function disposeTouchEvents(element: HTMLElement): void {
+export function disposeTouchEvents(touchId: string): void {
+    const element = findElement(touchId);
     if (!element) return;
+
+    element.style.touchAction = "";
+    element.style.userSelect = "";
 
     element.removeEventListener("pointerdown", onPointerDown);
     element.removeEventListener("pointermove", onPointerMove);

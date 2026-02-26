@@ -11,12 +11,15 @@ namespace SkiaSharp.Extended.UI.Blazor.Controls;
 /// <para>This view translates browser pointer events (mouse, touch, stylus) into
 /// <see cref="SKTouchEventArgs"/> and raises the <see cref="Touch"/> event,
 /// matching the MAUI touch API for shared source compatibility.</para>
-/// <para>Pointer events are captured using JavaScript interop on the canvas element.</para>
+/// <para>Pointer events are captured using JavaScript interop on the canvas element.
+/// No wrapper element is added; the upstream <c>SKCanvasView</c> splatts
+/// <c>AdditionalAttributes</c> directly onto its <c>&lt;canvas&gt;</c>, so a
+/// <c>data-sk-touch-id</c> attribute is used to locate the element from JS.</para>
 /// </remarks>
 public partial class SKTouchCanvasView : ComponentBase, IAsyncDisposable
 {
     private SkiaSharp.Views.Blazor.SKCanvasView? _skCanvasView;
-    private ElementReference _elementRef;
+    private readonly string _touchId = Guid.NewGuid().ToString("N");
     private IJSObjectReference? _jsModule;
     private DotNetObjectReference<SKTouchCanvasView>? _dotNetRef;
     private bool _touchInitialized;
@@ -58,6 +61,30 @@ public partial class SKTouchCanvasView : ComponentBase, IAsyncDisposable
     /// <summary>Requests a redraw of the canvas.</summary>
     public void Invalidate() => _skCanvasView?.Invalidate();
 
+    /// <summary>
+    /// Merges the user-supplied <see cref="AdditionalAttributes"/> with the
+    /// internal <c>data-sk-touch-id</c> marker attribute so JS interop can locate
+    /// the rendered <c>&lt;canvas&gt;</c> element without a wrapper div.
+    /// </summary>
+    private IReadOnlyDictionary<string, object> MergedAttributes
+    {
+        get
+        {
+            var attrs = new Dictionary<string, object>
+            {
+                ["data-sk-touch-id"] = _touchId
+            };
+
+            if (AdditionalAttributes is not null)
+            {
+                foreach (var kvp in AdditionalAttributes)
+                    attrs[kvp.Key] = kvp.Value;
+            }
+
+            return attrs;
+        }
+    }
+
     /// <inheritdoc/>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -92,7 +119,7 @@ public partial class SKTouchCanvasView : ComponentBase, IAsyncDisposable
 
             _dotNetRef = DotNetObjectReference.Create(this);
 
-            await _jsModule.InvokeVoidAsync("initializeTouchEvents", _elementRef, _dotNetRef);
+            await _jsModule.InvokeVoidAsync("initializeTouchEvents", _touchId, _dotNetRef);
 
             _touchInitialized = true;
         }
@@ -109,7 +136,7 @@ public partial class SKTouchCanvasView : ComponentBase, IAsyncDisposable
         {
             try
             {
-                await _jsModule.InvokeVoidAsync("disposeTouchEvents", _elementRef);
+                await _jsModule.InvokeVoidAsync("disposeTouchEvents", _touchId);
                 await _jsModule.DisposeAsync();
                 _jsModule = null;
             }

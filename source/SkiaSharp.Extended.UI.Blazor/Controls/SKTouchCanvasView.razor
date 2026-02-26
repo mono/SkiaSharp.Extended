@@ -2,11 +2,9 @@
 @inherits ComponentBase
 @implements IAsyncDisposable
 
-<div @ref="_elementRef" style="touch-action: none; user-select: none;">
-    <SkiaSharp.Views.Blazor.SKCanvasView
-        @ref="_skCanvasView"
-        OnPaintSurface="OnPaintSurfaceInternal"
-        EnableRenderLoop="@EnableRenderLoop"
-        IgnorePixelScaling="@IgnorePixelScaling"
-        @attributes="AdditionalAttributes" />
-</div>
+<SkiaSharp.Views.Blazor.SKCanvasView
+    @ref="_skCanvasView"
+    OnPaintSurface="OnPaintSurfaceInternal"
+    EnableRenderLoop="@EnableRenderLoop"
+    IgnorePixelScaling="@IgnorePixelScaling"
+    @attributes="MergedAttributes" />

@@ -3,11 +3,17 @@
 // using the same event model as the MAUI SKTouchEventArgs API.
 let currentElement = null;
 let currentDotNetRef = null;
-export function initializeTouchEvents(element, dotNetRef) {
+function findElement(touchId) {
+    return document.querySelector(`[data-sk-touch-id="${touchId}"]`);
+}
+export function initializeTouchEvents(touchId, dotNetRef) {
+    const element = findElement(touchId);
     if (!element)
         return;
     currentElement = element;
     currentDotNetRef = dotNetRef;
+    element.style.touchAction = "none";
+    element.style.userSelect = "none";
     element.addEventListener("pointerdown", onPointerDown);
     element.addEventListener("pointermove", onPointerMove);
     element.addEventListener("pointerup", onPointerUp);
@@ -16,9 +22,12 @@ export function initializeTouchEvents(element, dotNetRef) {
     element.addEventListener("pointerleave", onPointerLeave);
     element.addEventListener("wheel", onWheel);
 }
-export function disposeTouchEvents(element) {
+export function disposeTouchEvents(touchId) {
+    const element = findElement(touchId);
     if (!element)
         return;
+    element.style.touchAction = "";
+    element.style.userSelect = "";
     element.removeEventListener("pointerdown", onPointerDown);
     element.removeEventListener("pointermove", onPointerMove);
     element.removeEventListener("pointerup", onPointerUp);
