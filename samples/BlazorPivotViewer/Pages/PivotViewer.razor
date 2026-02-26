@@ -1,0 +1,325 @@
+@page "/pivotviewer"
+@using SkiaSharp
+@using SkiaSharp.Extended.DeepZoom
+@using SkiaSharp.Extended.PivotViewer
+@using SkiaSharp.Views.Blazor
+@implements IDisposable
+@inject HttpClient Http
+
+<h3>PivotViewer Demo</h3>
+
+<div class="toolbar">
+    <button class="btn btn-sm btn-primary" @onclick="SwitchToGrid">Grid View</button>
+    <button class="btn btn-sm btn-primary" @onclick="SwitchToGraph">Graph View</button>
+
+    @if (_properties != null)
+    {
+        <select @onchange="OnSortChanged" class="form-select form-select-sm" style="width:200px;display:inline-block">
+            <option value="">Sort by...</option>
+            @foreach (var prop in _properties)
+            {
+                <option value="@prop.Id">@prop.DisplayName</option>
+            }
+        </select>
+    }
+
+    @if (_filterableProperties != null)
+    {
+        <select @onchange="OnFilterPropertyChanged" class="form-select form-select-sm" style="width:200px;display:inline-block">
+            <option value="">Filter by...</option>
+            @foreach (var prop in _filterableProperties)
+            {
+                <option value="@prop.Id">@prop.DisplayName</option>
+            }
+        </select>
+    }
+
+    @if (_filterValues != null)
+    {
+        <select @onchange="OnFilterValueChanged" class="form-select form-select-sm" style="width:200px;display:inline-block">
+            <option value="">Select value...</option>
+            @foreach (var kv in _filterValues)
+            {
+                <option value="@kv.Key">@kv.Key (@kv.Value)</option>
+            }
+        </select>
+    }
+
+    <button class="btn btn-sm btn-outline-secondary" @onclick="ClearFilters">Clear Filters</button>
+</div>
+
+<div class="toolbar">
+    <input type="text" class="form-control form-control-sm" style="width:250px;display:inline-block"
+           placeholder="Search..." @oninput="OnSearchInput" value="@_searchText" />
+    <button class="btn btn-sm btn-outline-primary" @onclick="ZoomIn" title="Zoom In">🔍+</button>
+    <button class="btn btn-sm btn-outline-primary" @onclick="ZoomOut" title="Zoom Out">🔍−</button>
+    <input type="range" min="0" max="100" value="@((int)(_controller.ZoomLevel * 100))"
+           @oninput="OnZoomSlider" style="width:150px;vertical-align:middle" />
+    <span class="zoom-label">@((_controller.ZoomLevel * 100).ToString("F0"))%</span>
+</div>
+
+<div class="status-bar">
+    <span>Items: @_inScopeCount / @_totalCount</span>
+    @if (_selectedItemName != null)
+    {
+        <span> | Selected: @_selectedItemName</span>
+    }
+    <span> | View: @_currentView</span>
+    @if (_searchResults != null && _searchResults.Count > 0)
+    {
+        <span> | Search: @_searchResults.Count results</span>
+    }
+</div>
+
+<div class="canvas-container" @onclick="OnCanvasClick" @ondblclick="OnCanvasDoubleClick">
+    <SKCanvasView @ref="_canvasView"
+                  OnPaintSurface="OnPaintSurface"
+                  style="width:100%;height:600px;" />
+</div>
+
+@if (_selectedItem != null)
+{
+    <div class="detail-pane">
+        <h4>@RenderUtils.GetItemDisplayName(_selectedItem)</h4>
+        @foreach (var facet in _controller.DetailPane.FacetValues)
+        {
+            <div class="facet-row">
+                <strong>@facet.DisplayName:</strong>
+                <span>@string.Join(", ", facet.Values)</span>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private SKCanvasView? _canvasView;
+    private PivotViewerController _controller = new();
+    private PivotViewerRenderer _renderer = new();
+    private PivotViewerTheme _theme = PivotViewerTheme.Default;
+
+    private SKImageInfo _lastInfo = new(1024, 600);
+    private CxmlCollectionSource? _source;
+    private IReadOnlyList<PivotViewerProperty>? _properties;
+    private IReadOnlyList<PivotViewerProperty>? _filterableProperties;
+    private Dictionary<string, int>? _filterValues;
+    private string? _selectedFilterProperty;
+    private PivotViewerItem? _selectedItem;
+    private string? _selectedItemName;
+    private int _totalCount;
+    private int _inScopeCount;
+    private string _currentView = "grid";
+    private string _searchText = "";
+    private IReadOnlyList<SearchResult>? _searchResults;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var xml = await Http.GetStringAsync("data/conceptcars.cxml");
+            LoadFromXml(xml);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load CXML: {ex.Message}");
+        }
+    }
+
+    private void LoadFromXml(string xml)
+    {
+        _source = CxmlCollectionSource.Parse(xml);
+        _controller.LoadCollection(_source);
+        _controller.SetAvailableSize(1024, 600);
+
+        _properties = _controller.Properties;
+        _filterableProperties = _controller.Properties
+            .Where(p => p.Options.HasFlag(PivotViewerPropertyOptions.CanFilter))
+            .ToList();
+
+        _totalCount = _controller.Items.Count;
+        _inScopeCount = _controller.InScopeItems.Count;
+    }
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        var canvas = e.Surface.Canvas;
+        var info = e.Info;
+        _lastInfo = info;
+
+        _controller.SetAvailableSize(info.Width, info.Height);
+        _renderer.Render(canvas, info, _controller, _theme);
+    }
+
+    private void OnCanvasClick(MouseEventArgs e)
+    {
+        var hit = _renderer.HitTest(e.OffsetX, e.OffsetY, _lastInfo, _controller);
+        if (hit.Type == RenderHitType.Item && hit.Item != null)
+        {
+            _selectedItem = hit.Item;
+            _controller.SelectedItem = hit.Item;
+            _selectedItemName = RenderUtils.GetItemDisplayName(hit.Item);
+        }
+        else
+        {
+            _selectedItem = null;
+            _controller.SelectedItem = null;
+            _selectedItemName = null;
+        }
+        _inScopeCount = _controller.InScopeItems.Count;
+        _canvasView?.Invalidate();
+        StateHasChanged();
+    }
+
+    private void OnCanvasDoubleClick(MouseEventArgs e)
+    {
+        var hit = _renderer.HitTest(e.OffsetX, e.OffsetY, _lastInfo, _controller);
+        if (hit.Type == RenderHitType.Item && hit.Item != null)
+        {
+            _selectedItem = hit.Item;
+            _controller.SelectedItem = hit.Item;
+            _selectedItemName = RenderUtils.GetItemDisplayName(hit.Item);
+            StateHasChanged();
+        }
+    }
+
+    private void SwitchToGrid()
+    {
+        _controller.CurrentView = "grid";
+        _currentView = "grid";
+        _canvasView?.Invalidate();
+    }
+
+    private void SwitchToGraph()
+    {
+        _controller.CurrentView = "graph";
+        _currentView = "graph";
+        _canvasView?.Invalidate();
+    }
+
+    private void OnSortChanged(ChangeEventArgs e)
+    {
+        var propId = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(propId))
+        {
+            var prop = _controller.Properties.FirstOrDefault(p => p.Id == propId);
+            _controller.SortProperty = prop;
+        }
+        else
+        {
+            _controller.SortProperty = null;
+        }
+        _inScopeCount = _controller.InScopeItems.Count;
+        _canvasView?.Invalidate();
+    }
+
+    private void OnFilterPropertyChanged(ChangeEventArgs e)
+    {
+        _selectedFilterProperty = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(_selectedFilterProperty))
+        {
+            _filterValues = _controller.GetFilterCounts(_selectedFilterProperty);
+        }
+        else
+        {
+            _filterValues = null;
+        }
+    }
+
+    private void OnFilterValueChanged(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(_selectedFilterProperty) && !string.IsNullOrEmpty(value))
+        {
+            _controller.FilterEngine.AddStringFilter(_selectedFilterProperty, value);
+            _inScopeCount = _controller.InScopeItems.Count;
+            _filterValues = _controller.GetFilterCounts(_selectedFilterProperty);
+            _canvasView?.Invalidate();
+        }
+    }
+
+    private void ClearFilters()
+    {
+        _controller.FilterEngine.ClearAll();
+        _inScopeCount = _controller.InScopeItems.Count;
+        _filterValues = null;
+        _selectedFilterProperty = null;
+        _canvasView?.Invalidate();
+    }
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        _searchText = e.Value?.ToString() ?? "";
+        if (_searchText.Length >= 2)
+        {
+            _searchResults = _controller.Search(_searchText);
+        }
+        else
+        {
+            _searchResults = null;
+        }
+    }
+
+    private void ZoomIn()
+    {
+        _controller.ZoomLevel = Math.Min(1.0, _controller.ZoomLevel + 0.1);
+        _canvasView?.Invalidate();
+    }
+
+    private void ZoomOut()
+    {
+        _controller.ZoomLevel = Math.Max(0.0, _controller.ZoomLevel - 0.1);
+        _canvasView?.Invalidate();
+    }
+
+    private void OnZoomSlider(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out double val))
+        {
+            _controller.ZoomLevel = val / 100.0;
+            _canvasView?.Invalidate();
+        }
+    }
+
+    public void Dispose()
+    {
+        _renderer.Dispose();
+        _controller.Dispose();
+    }
+}
+
+<style>
+    .toolbar {
+        margin-bottom: 8px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .status-bar {
+        padding: 4px 8px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        font-size: 0.9em;
+    }
+    .zoom-label {
+        font-size: 0.85em;
+        color: #666;
+        min-width: 40px;
+        display: inline-block;
+    }
+    .canvas-container {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .detail-pane {
+        margin-top: 12px;
+        padding: 12px;
+        background: #f8f8f8;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+    .facet-row {
+        margin: 4px 0;
+    }
+</style>

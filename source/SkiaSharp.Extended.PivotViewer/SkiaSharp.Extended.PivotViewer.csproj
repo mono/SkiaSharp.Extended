@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net9.0</TargetFrameworks>
+    <AssemblyName>SkiaSharp.Extended.PivotViewer</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended.PivotViewer</RootNamespace>
+    <Nullable>enable</Nullable>
+    <LangVersion>10.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.PivotViewer</PackageId>
+    <Title>SkiaSharp.Extended.PivotViewer</Title>
+    <Description>PivotViewer collection viewer engine for SkiaSharp. Supports CXML format with filtering, sorting, grid/graph layouts, and the complete Silverlight PivotViewer feature set.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="3.119.1" />
+    <ProjectReference Include="..\SkiaSharp.Extended.DeepZoom\SkiaSharp.Extended.DeepZoom.csproj" />
+  </ItemGroup>
+
+</Project>
