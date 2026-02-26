@@ -47,7 +47,16 @@ main[b-u7t1t1ae9g] {
     }
 }
 
-@media (min-width: 641px) {
+
+.build-info[b-u7t1t1ae9g] {
+    text-align: right;
+    padding: 0.25rem 1.5rem;
+    font-size: 0.65rem;
+    font-family: monospace;
+    color: #999;
+    border-top: 1px solid #eee;
+}
+
     .page[b-u7t1t1ae9g] {
         flex-direction: row;
     }
