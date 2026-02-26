@@ -21,6 +21,7 @@ public class SKLottiePlayer
 	/// <summary>
 	/// Gets or sets the current playback position. Setting this seeks the animation
 	/// and may trigger completion logic (repeats, AnimationCompleted event).
+	/// Raises <see cref="AnimationUpdated"/> after each change.
 	/// </summary>
 	public TimeSpan Progress
 	{
@@ -29,6 +30,7 @@ public class SKLottiePlayer
 		{
 			_progress = value;
 			UpdateProgress(_progress);
+			AnimationUpdated?.Invoke(this, EventArgs.Empty);
 		}
 	}
 
@@ -49,6 +51,12 @@ public class SKLottiePlayer
 
 	/// <summary>Fires when the animation completes all repeats.</summary>
 	public event EventHandler? AnimationCompleted;
+
+	/// <summary>
+	/// Fires after each change to <see cref="Progress"/>, notifying subscribers of
+	/// updated state (Progress, Duration, IsComplete).
+	/// </summary>
+	public event EventHandler? AnimationUpdated;
 
 	/// <summary>
 	/// Sets the animation to play. Pass null to clear the current animation.

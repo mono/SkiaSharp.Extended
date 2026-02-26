@@ -20,8 +20,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		typeof(TimeSpan),
 		typeof(SKLottieView),
 		TimeSpan.Zero,
-		defaultBindingMode: BindingMode.OneWayToSource,
-		propertyChanged: OnProgressDurationPropertyChanged);
+		defaultBindingMode: BindingMode.OneWayToSource);
 
 	/// <summary>
 	/// Identifies the <see cref="Duration"/> bindable property.
@@ -37,7 +36,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		typeof(SKLottieView),
 		TimeSpan.Zero,
 		BindingMode.TwoWay,
-		propertyChanged: OnProgressDurationPropertyChanged);
+		propertyChanged: OnProgressPropertyChanged);
 
 	private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
 		nameof(IsComplete),
@@ -58,7 +57,8 @@ public class SKLottieView : SKAnimatedSurfaceView
 		nameof(RepeatCount),
 		typeof(int),
 		typeof(SKLottieView),
-		0);
+		0,
+		propertyChanged: OnRepeatPropertyChanged);
 
 	/// <summary>
 	/// Identifies the <see cref="RepeatMode"/> bindable property.
@@ -67,7 +67,8 @@ public class SKLottieView : SKAnimatedSurfaceView
 		nameof(RepeatMode),
 		typeof(SKLottieRepeatMode),
 		typeof(SKLottieView),
-		SKLottieRepeatMode.Restart);
+		SKLottieRepeatMode.Restart,
+		propertyChanged: OnRepeatPropertyChanged);
 
 	/// <summary>
 	/// Identifies the <see cref="AnimationSpeed"/> bindable property.
@@ -76,11 +77,11 @@ public class SKLottieView : SKAnimatedSurfaceView
 		nameof(AnimationSpeed),
 		typeof(double),
 		typeof(SKLottieView),
-		1.0);
+		1.0,
+		propertyChanged: OnAnimationSpeedPropertyChanged);
 
 	private readonly SKLottiePlayer player = new();
 	private CancellationTokenSource? loadCancellation;
-	private bool isSyncingFromPlayer;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKLottieView"/> class.
@@ -91,6 +92,12 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 		IsAnimationEnabled = true;
 
+		// Initialize player from default property values (propertyChanged callbacks don't
+		// fire for the initial default, so we push the defaults explicitly here).
+		player.Repeat = SKLottieRepeat.Restart(RepeatCount);
+		player.AnimationSpeed = AnimationSpeed;
+
+		player.AnimationUpdated += OnPlayerAnimationUpdated;
 		player.AnimationCompleted += OnPlayerAnimationCompleted;
 
 #if DEBUG
@@ -184,14 +191,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 	/// <inheritdoc/>
 	protected override void Update(TimeSpan deltaTime)
 	{
-		player.Repeat = RepeatMode == SKLottieRepeatMode.Reverse
-			? SKLottieRepeat.Reverse(RepeatCount)
-			: SKLottieRepeat.Restart(RepeatCount);
-		player.AnimationSpeed = AnimationSpeed;
-
 		player.Update(deltaTime);
-
-		SyncFromPlayer();
 	}
 
 	/// <inheritdoc/>
@@ -200,33 +200,11 @@ public class SKLottieView : SKAnimatedSurfaceView
 		player.Render(canvas, SKRect.Create(SKPoint.Empty, size));
 	}
 
-	private void SyncFromPlayer()
+	private void OnPlayerAnimationUpdated(object? sender, EventArgs e)
 	{
-		isSyncingFromPlayer = true;
-		try
-		{
-			Progress = player.Progress;
-			IsComplete = player.IsComplete;
-		}
-		finally
-		{
-			isSyncingFromPlayer = false;
-		}
-	}
-
-	private void SyncFromLoad()
-	{
-		isSyncingFromPlayer = true;
-		try
-		{
-			Duration = player.Duration;
-			Progress = player.Progress;
-			IsComplete = player.IsComplete;
-		}
-		finally
-		{
-			isSyncingFromPlayer = false;
-		}
+		Duration = player.Duration;
+		Progress = player.Progress;
+		IsComplete = player.IsComplete;
 	}
 
 	private void OnPlayerAnimationCompleted(object? sender, EventArgs e)
@@ -245,7 +223,6 @@ public class SKLottieView : SKAnimatedSurfaceView
 		if (imageSource is null || imageSource.IsEmpty)
 		{
 			player.SetAnimation(null);
-			SyncFromLoad();
 		}
 		else
 		{
@@ -273,7 +250,6 @@ public class SKLottieView : SKAnimatedSurfaceView
 			}
 
 			player.SetAnimation(loadResult?.Animation);
-			SyncFromLoad();
 
 			if (player.HasAnimation)
 				AnimationLoaded?.Invoke(this, SKLottieAnimationLoadedEventArgs.Create(loadResult!.Animation!));
@@ -303,21 +279,43 @@ public class SKLottieView : SKAnimatedSurfaceView
 		await LoadAnimationAsync(sender as SKLottieImageSource);
 	}
 
-	private static void OnProgressDurationPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
+	private static void OnProgressPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
 	{
 		if (bindable is not SKLottieView lv)
 			return;
 
-		// Skip if we are syncing from the player to avoid re-entrant seeks
-		if (lv.isSyncingFromPlayer)
+		var newProgress = (TimeSpan)newValue!;
+
+		// Skip if the player already has this value (e.g. set via AnimationUpdated event).
+		if (lv.player.Progress == newProgress)
 			return;
 
-		// User-driven change (e.g. scrubbing): propagate to player
-		lv.player.Progress = lv.Progress;
+		// User-driven change (e.g. scrubbing): propagate to player.
+		// AnimationUpdated fires from the Progress setter, which syncs Duration, Progress,
+		// and IsComplete back to the view via OnPlayerAnimationUpdated.
+		lv.player.Progress = newProgress;
 
-		// Trigger repaint if animation is disabled (e.g. user is scrubbing a paused animation)
+		// Trigger repaint if animation is disabled (e.g. user is scrubbing a paused animation).
 		if (!lv.IsAnimationEnabled)
 			lv.Invalidate();
+	}
+
+	private static void OnRepeatPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
+	{
+		if (bindable is not SKLottieView lv)
+			return;
+
+		lv.player.Repeat = lv.RepeatMode == SKLottieRepeatMode.Reverse
+			? SKLottieRepeat.Reverse(lv.RepeatCount)
+			: SKLottieRepeat.Restart(lv.RepeatCount);
+	}
+
+	private static void OnAnimationSpeedPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
+	{
+		if (bindable is not SKLottieView lv)
+			return;
+
+		lv.player.AnimationSpeed = (double)newValue!;
 	}
 
 }
