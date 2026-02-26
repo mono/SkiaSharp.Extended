@@ -82,7 +82,14 @@ jobs:
         run: dotnet build scripts/SkiaSharp.Extended-Pack.slnf -c Release -f net10.0
 
       - name: Publish Blazor sample
-        run: dotnet publish samples/SkiaSharpDemo.Blazor/SkiaSharpDemo.Blazor.csproj -c Release -o publish/sample
+        env:
+          SOURCE_LABEL: ${{ steps.vars.outputs.source_label }}
+        run: |
+          COMMIT_SHORT="${GITHUB_SHA:0:7}"
+          BUILD_INFO="${SOURCE_LABEL} · ${COMMIT_SHORT}"
+          dotnet publish samples/SkiaSharpDemo.Blazor/SkiaSharpDemo.Blazor.csproj \
+            -c Release -o publish/sample \
+            -p:BuildInfo="$BUILD_INFO"
 
       - name: Build docs
         env:
@@ -99,11 +106,7 @@ jobs:
         env:
           BASE_HREF: ${{ steps.vars.outputs.sample_base_href }}
           SEGMENT_COUNT: ${{ steps.vars.outputs.sample_segment_count }}
-          SOURCE_LABEL: ${{ steps.vars.outputs.source_label }}
         run: |
-          COMMIT_SHORT="${GITHUB_SHA:0:7}"
-          BUILD_INFO="${SOURCE_LABEL} · ${COMMIT_SHORT}"
-
           mkdir -p docs/_site/sample
           cp -r publish/sample/wwwroot/. docs/_site/sample/
 
@@ -114,9 +117,6 @@ jobs:
           if [ -f docs/_site/sample/404.html ]; then
             sed -i "s|var segmentCount = [0-9]*;|var segmentCount = $SEGMENT_COUNT;|" docs/_site/sample/404.html
           fi
-
-          # Inject build info
-          sed -i "s|BUILD_INFO_PLACEHOLDER|$BUILD_INFO|" docs/_site/sample/index.html
 
       - name: Upload site artifact
         uses: actions/upload-artifact@v4

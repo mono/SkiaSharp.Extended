@@ -12,7 +12,18 @@
     <!-- Do not make NuGet packages or include in tests -->
     <IsPackable>false</IsPackable>
     <IsTestProject>false</IsTestProject>
+
+    <!-- Build info shown in the app footer; overridden by CI via -p:BuildInfo="..." -->
+    <BuildInfo Condition="'$(BuildInfo)' == ''">local</BuildInfo>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Expose BuildInfo as an assembly-level attribute so the Blazor app can read it at runtime -->
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BuildInfo</_Parameter1>
+      <_Parameter2>$(BuildInfo)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.3" />
