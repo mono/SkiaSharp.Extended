@@ -110,6 +110,9 @@ jobs:
           mkdir -p docs/_site/sample
           cp -r publish/sample/wwwroot/. docs/_site/sample/
 
+          # Disable Jekyll processing so _framework directory is served
+          touch docs/_site/.nojekyll
+
           # Rewrite base href for deployment
           sed -i "s|<base href=\"/\" />|<base href=\"$BASE_HREF\" />|" docs/_site/sample/index.html
 
@@ -179,9 +182,13 @@ jobs:
           rm -rf staging/$PR_NUMBER/*
           cp -r /tmp/site-temp/. staging/$PR_NUMBER/
           rm -rf /tmp/site-temp
+
+          # Ensure .nojekyll exists at root so _framework is served
+          touch .nojekyll
+
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add staging/$PR_NUMBER
+          git add .nojekyll staging/$PR_NUMBER
           if ! git diff --cached --quiet; then
             git commit -m "Deploy staging docs for PR #$PR_NUMBER"
             git push origin gh-pages
