@@ -1,0 +1,300 @@
+@page "/touch"
+
+<PageTitle>Touch</PageTitle>
+
+<h1>Touch Events</h1>
+
+<p>
+    Draw on the canvas below with mouse, finger, or stylus.
+    Each device type draws in a different color. Action counters and an event log update live.
+</p>
+
+<div class="toolbar">
+    <button class="btn btn-sm btn-outline-danger" @onclick="Clear">Clear</button>
+    <span class="text-muted ms-2">Strokes: @_strokes.Count</span>
+</div>
+
+<div class="canvas-container">
+    <SKTouchCanvasView OnPaintSurface="OnPaintSurface"
+                       Touch="OnTouch"
+                       EnableTouchEvents="true"
+                       style="width: 100%; height: 100%;" />
+</div>
+
+<div class="stats-row">
+    <div class="stats-group">
+        <div class="stats-header">Device Types</div>
+        <div class="event-grid">
+            @foreach (var device in DeviceColors)
+            {
+                var count = _deviceCounts.GetValueOrDefault(device.Name);
+                <div class="event-card">
+                    <span class="color-dot" style="background: @device.Css"></span>
+                    <div class="event-name">@device.Name</div>
+                    <div class="event-count">@count</div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="stats-group">
+        <div class="stats-header">Touch Actions</div>
+        <div class="event-grid">
+            @foreach (var action in ActionNames)
+            {
+                var count = _actionCounts.GetValueOrDefault(action);
+                var active = _lastAction == action;
+                <div class="event-card @(active ? "active" : "")">
+                    <div class="event-name">@action</div>
+                    <div class="event-count">@count</div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="log-section">
+    <div class="stats-header">Event Log <button class="btn btn-sm btn-link" @onclick="ClearLog">clear</button></div>
+    <div class="event-log">
+        @foreach (var entry in _log)
+        {
+            <div class="log-entry">@entry</div>
+        }
+        @if (_log.Count == 0)
+        {
+            <div class="log-entry text-muted">Interact with the canvas…</div>
+        }
+    </div>
+</div>
+
+<style>
+    .toolbar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .canvas-container {
+        width: 100%;
+        height: 480px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+    .stats-row {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+    .stats-group {
+        flex: 1;
+        min-width: 260px;
+    }
+    .stats-header {
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 0.4rem;
+        color: #555;
+    }
+    .event-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+    .event-card {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 0.35rem 0.75rem;
+        min-width: 90px;
+        text-align: center;
+        transition: background-color 0.15s, border-color 0.15s;
+    }
+    .event-card.active {
+        background-color: #e0f0ff;
+        border-color: #3399ff;
+    }
+    .color-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-bottom: -1px;
+    }
+    .event-name {
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+    .event-count {
+        font-size: 1.1rem;
+        color: #333;
+    }
+    .log-section {
+        margin-bottom: 2rem;
+    }
+    .event-log {
+        font-family: monospace;
+        font-size: 0.78rem;
+        max-height: 160px;
+        overflow-y: auto;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        padding: 0.4rem 0.6rem;
+        background: #fafafa;
+    }
+    .log-entry {
+        white-space: nowrap;
+    }
+</style>
+
+@code {
+    // ── Colors per device type ──
+
+    private static readonly (string Name, string Css, SKColor Sk)[] DeviceColors =
+    {
+        ("Mouse",  "#6495ED", new SKColor(0xFF6495ED)),  // CornflowerBlue
+        ("Touch",  "#FF7F50", new SKColor(0xFFFF7F50)),  // Coral
+        ("Stylus", "#3CB371", new SKColor(0xFF3CB371)),  // MediumSeaGreen
+    };
+
+    private static readonly string[] ActionNames =
+        { "Entered", "Pressed", "Moved", "Released", "Exited", "Cancelled", "WheelChanged" };
+
+    // ── Stroke data ──
+
+    private record struct StrokeSegment(SKPoint Point);
+
+    private class Stroke
+    {
+        public SKTouchDeviceType DeviceType { get; init; }
+        public List<SKPoint> Points { get; } = new();
+    }
+
+    private readonly List<Stroke> _strokes = new();
+    private readonly Dictionary<long, Stroke> _activeStrokes = new();
+
+    // ── Counters ──
+
+    private readonly Dictionary<string, int> _actionCounts = new();
+    private readonly Dictionary<string, int> _deviceCounts = new();
+    private string _lastAction = "";
+
+    // ── Event log ──
+
+    private const int MaxLogEntries = 80;
+    private readonly List<string> _log = new();
+
+    // ── Touch handler ──
+
+    private void OnTouch(SKTouchEventArgs e)
+    {
+        // Count action
+        var actionName = e.ActionType.ToString();
+        _actionCounts[actionName] = _actionCounts.GetValueOrDefault(actionName) + 1;
+        _lastAction = actionName;
+
+        // Count device
+        var deviceName = e.DeviceType.ToString();
+        _deviceCounts[deviceName] = _deviceCounts.GetValueOrDefault(deviceName) + 1;
+
+        // Log (newest first, cap at MaxLogEntries)
+        var logText = $"{actionName,-14} {deviceName,-7} ({e.Location.X:F0}, {e.Location.Y:F0})";
+        if (e.ActionType == SKTouchAction.WheelChanged)
+            logText += $"  Δ={e.WheelDelta}";
+        _log.Insert(0, logText);
+        if (_log.Count > MaxLogEntries)
+            _log.RemoveAt(_log.Count - 1);
+
+        // Drawing strokes
+        switch (e.ActionType)
+        {
+            case SKTouchAction.Pressed:
+                var stroke = new Stroke { DeviceType = e.DeviceType };
+                stroke.Points.Add(e.Location);
+                _strokes.Add(stroke);
+                _activeStrokes[e.Id] = stroke;
+                break;
+
+            case SKTouchAction.Moved:
+                if (_activeStrokes.TryGetValue(e.Id, out var active))
+                    active.Points.Add(e.Location);
+                break;
+
+            case SKTouchAction.Released:
+            case SKTouchAction.Cancelled:
+                if (_activeStrokes.TryGetValue(e.Id, out var finished))
+                {
+                    finished.Points.Add(e.Location);
+                    _activeStrokes.Remove(e.Id);
+                }
+                break;
+        }
+
+        e.Handled = true;
+    }
+
+    // ── Paint ──
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        var canvas = e.Surface.Canvas;
+        canvas.Clear(SKColors.White);
+
+        using var paint = new SKPaint
+        {
+            IsAntialias = true,
+            StrokeWidth = 3,
+            Style = SKPaintStyle.Stroke,
+            StrokeCap = SKStrokeCap.Round,
+            StrokeJoin = SKStrokeJoin.Round,
+        };
+
+        foreach (var stroke in _strokes)
+        {
+            if (stroke.Points.Count < 2)
+                continue;
+
+            paint.Color = GetDeviceColor(stroke.DeviceType);
+
+            using var path = new SKPath();
+            path.MoveTo(stroke.Points[0]);
+            for (int i = 1; i < stroke.Points.Count; i++)
+                path.LineTo(stroke.Points[i]);
+            canvas.DrawPath(path, paint);
+        }
+
+        // Legend in top-left corner
+        using var legendFont = new SKFont { Size = 12, Edging = SKFontEdging.SubpixelAntialias };
+        using var legendPaint = new SKPaint { IsAntialias = true };
+        var y = 16f;
+        foreach (var (name, _, color) in DeviceColors)
+        {
+            legendPaint.Color = color;
+            canvas.DrawCircle(12, y - 4, 5, legendPaint);
+            legendPaint.Color = SKColors.Black;
+            canvas.DrawText(name, 22, y, SKTextAlign.Left, legendFont, legendPaint);
+            y += 18;
+        }
+    }
+
+    private static SKColor GetDeviceColor(SKTouchDeviceType type) => type switch
+    {
+        SKTouchDeviceType.Mouse  => DeviceColors[0].Sk,
+        SKTouchDeviceType.Touch  => DeviceColors[1].Sk,
+        SKTouchDeviceType.Stylus => DeviceColors[2].Sk,
+        _ => SKColors.Gray,
+    };
+
+    // ── Clear ──
+
+    private void Clear()
+    {
+        _strokes.Clear();
+        _activeStrokes.Clear();
+        _actionCounts.Clear();
+        _deviceCounts.Clear();
+        _lastAction = "";
+        _log.Clear();
+    }
+
+    private void ClearLog() => _log.Clear();
+}
