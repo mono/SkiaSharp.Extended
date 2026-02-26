@@ -6,7 +6,7 @@ namespace SkiaSharp.Extended;
 /// A platform-agnostic Skottie (Lottie) animation player that manages playback state
 /// and rendering. Can be shared between MAUI, Blazor, and other platforms.
 /// </summary>
-public class SKSkottiePlayer
+public class SKLottiePlayer
 {
 	private Skottie.Animation? animation;
 	private bool isInForwardPhase = true;
@@ -39,7 +39,7 @@ public class SKSkottiePlayer
 	public int RepeatCount { get; set; } = 0;
 
 	/// <summary>Gets or sets the repeat mode (Restart or Reverse ping-pong).</summary>
-	public SKSkottieRepeatMode RepeatMode { get; set; } = SKSkottieRepeatMode.Restart;
+	public SKLottieRepeatMode RepeatMode { get; set; } = SKLottieRepeatMode.Restart;
 
 	/// <summary>
 	/// Gets or sets the playback speed multiplier.
@@ -129,12 +129,12 @@ public class SKSkottiePlayer
 
 		// A run is "finished" based on RepeatMode
 		var reverseFinishPoint = AnimationSpeed >= 0 ? atStart : atEnd;
-		var isFinishedRun = repeatMode == SKSkottieRepeatMode.Restart
+		var isFinishedRun = repeatMode == SKLottieRepeatMode.Restart
 			? (movingForward ? atEnd : atStart)
 			: reverseFinishPoint;
 
 		// For Reverse mode: flip direction when hitting a boundary (but not the finish boundary)
-		var needsFlip = repeatMode == SKSkottieRepeatMode.Reverse &&
+		var needsFlip = repeatMode == SKLottieRepeatMode.Reverse &&
 			(AnimationSpeed >= 0 ? atEnd : atStart) && !isFinishedRun;
 
 		if (needsFlip)
@@ -159,11 +159,11 @@ public class SKSkottiePlayer
 
 				isFinishedRun = false;
 
-				if (repeatMode == SKSkottieRepeatMode.Restart)
+				if (repeatMode == SKLottieRepeatMode.Restart)
 				{
 					Progress = AnimationSpeed >= 0 ? TimeSpan.Zero : Duration;
 				}
-				else if (repeatMode == SKSkottieRepeatMode.Reverse)
+				else if (repeatMode == SKLottieRepeatMode.Reverse)
 					isInForwardPhase = !isInForwardPhase;
 			}
 

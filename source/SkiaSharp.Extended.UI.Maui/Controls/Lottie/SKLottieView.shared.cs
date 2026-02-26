@@ -78,7 +78,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		typeof(SKLottieView),
 		1.0);
 
-	private readonly SKSkottiePlayer player = new();
+	private readonly SKLottiePlayer player = new();
 	private CancellationTokenSource? loadCancellation;
 	private bool isSyncingFromPlayer;
 
@@ -185,7 +185,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 	protected override void Update(TimeSpan deltaTime)
 	{
 		player.RepeatCount = RepeatCount;
-		player.RepeatMode = (SKSkottieRepeatMode)RepeatMode;
+		player.RepeatMode = RepeatMode;
 		player.AnimationSpeed = AnimationSpeed;
 
 		player.Update(deltaTime);

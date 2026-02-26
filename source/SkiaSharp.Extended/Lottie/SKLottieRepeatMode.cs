@@ -2,7 +2,7 @@ using System;
 
 namespace SkiaSharp.Extended;
 
-public enum SKSkottieRepeatMode
+public enum SKLottieRepeatMode
 {
 	Restart,
 	Reverse

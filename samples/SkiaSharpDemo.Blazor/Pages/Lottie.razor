@@ -8,7 +8,7 @@
 <h1>Lottie Animation</h1>
 
 <p>
-    Play Lottie animations using <code>SKSkottiePlayer</code> from
+    Play Lottie animations using <code>SKLottiePlayer</code> from
     <code>SkiaSharp.Extended</code>. The same player logic is shared between
     this Blazor component and the .NET MAUI <code>SKLottieView</code>.
 </p>
@@ -17,8 +17,8 @@
     <div class="col-auto">
         <label class="form-label">Repeat Mode</label>
         <select class="form-select" @bind="repeatMode" @bind:after="OnRepeatModeChanged">
-            <option value="@SKSkottieRepeatMode.Restart">Restart</option>
-            <option value="@SKSkottieRepeatMode.Reverse">Reverse</option>
+            <option value="@SKLottieRepeatMode.Restart">Restart</option>
+            <option value="@SKLottieRepeatMode.Reverse">Reverse</option>
         </select>
     </div>
     <div class="col-auto">
@@ -74,11 +74,11 @@
 
 @code {
     private SKCanvasView? canvas;
-    private readonly SKSkottiePlayer player = new() { RepeatCount = -1 };
+    private readonly SKLottiePlayer player = new() { RepeatCount = -1 };
     private Animation? loadedAnimation;
     private CancellationTokenSource? animationCts;
     private bool isLoading = true;
-    private SKSkottieRepeatMode repeatMode = SKSkottieRepeatMode.Restart;
+    private SKLottieRepeatMode repeatMode = SKLottieRepeatMode.Restart;
     private double animationSpeed = 1.0;
     private int repeatCount = -1;
     private DateTime lastFrame;
