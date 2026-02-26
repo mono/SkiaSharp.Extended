@@ -1,7 +1,6 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
-             xmlns:extended="clr-namespace:SkiaSharp.Extended;assembly=SkiaSharp.Extended"
              xmlns:views="clr-namespace:SkiaSharpDemo.Views"
              x:Class="SkiaSharpDemo.Demos.LottiePage"
              Title="Lottie">
@@ -56,9 +55,9 @@
                 <Label Text="Repeat:" VerticalOptions="Center" />
                 <Picker Grid.Column="1" SelectedItem="{Binding RepeatMode}">
                     <Picker.ItemsSource>
-                        <x:Array Type="{x:Type extended:SKLottieRepeatMode}">
-                            <extended:SKLottieRepeatMode>Restart</extended:SKLottieRepeatMode>
-                            <extended:SKLottieRepeatMode>Reverse</extended:SKLottieRepeatMode>
+                        <x:Array Type="{x:Type controls:SKLottieRepeatMode}">
+                            <controls:SKLottieRepeatMode>Restart</controls:SKLottieRepeatMode>
+                            <controls:SKLottieRepeatMode>Reverse</controls:SKLottieRepeatMode>
                         </x:Array>
                     </Picker.ItemsSource>
                 </Picker>

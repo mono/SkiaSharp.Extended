@@ -35,11 +35,8 @@ public class SKLottiePlayer
 	/// <summary>Gets whether the animation has completed all repeats.</summary>
 	public bool IsComplete { get; private set; } = false;
 
-	/// <summary>Gets or sets the number of additional times the animation repeats after the first play. Use -1 for infinite.</summary>
-	public int RepeatCount { get; set; } = 0;
-
-	/// <summary>Gets or sets the repeat mode (Restart or Reverse ping-pong).</summary>
-	public SKLottieRepeatMode RepeatMode { get; set; } = SKLottieRepeatMode.Restart;
+	/// <summary>Gets or sets how the animation repeats. Defaults to <see cref="SKLottieRepeat.Never"/>.</summary>
+	public SKLottieRepeat Repeat { get; set; } = SKLottieRepeat.Never;
 
 	/// <summary>
 	/// Gets or sets the playback speed multiplier.
@@ -64,7 +61,7 @@ public class SKLottiePlayer
 	}
 
 	/// <summary>
-	/// Advances the animation by the given time delta, applying AnimationSpeed and RepeatMode.
+	/// Advances the animation by the given time delta, applying AnimationSpeed and Repeat.
 	/// Call this on each frame tick.
 	/// </summary>
 	public void Update(TimeSpan deltaTime)
@@ -84,7 +81,7 @@ public class SKLottiePlayer
 			scaledTicks = SafeMin;
 		deltaTime = TimeSpan.FromTicks((long)scaledTicks);
 
-		// Apply phase direction (for RepeatMode.Reverse ping-pong)
+		// Apply phase direction (for Reverse ping-pong)
 		if (!isInForwardPhase)
 			deltaTime = -deltaTime;
 
@@ -117,7 +114,7 @@ public class SKLottiePlayer
 		if (isResetting)
 			return;
 
-		var repeatMode = RepeatMode;
+		var repeat = Repeat;
 		var duration = Duration;
 
 		// Determine effective movement direction
@@ -127,14 +124,14 @@ public class SKLottiePlayer
 		var atStart = !movingForward && progress <= TimeSpan.Zero;
 		var atEnd = movingForward && progress >= duration;
 
-		// A run is "finished" based on RepeatMode
+		// A run is "finished" based on repeat kind
 		var reverseFinishPoint = AnimationSpeed >= 0 ? atStart : atEnd;
-		var isFinishedRun = repeatMode == SKLottieRepeatMode.Restart
+		var isFinishedRun = repeat.IsRestartRepeating
 			? (movingForward ? atEnd : atStart)
 			: reverseFinishPoint;
 
 		// For Reverse mode: flip direction when hitting a boundary (but not the finish boundary)
-		var needsFlip = repeatMode == SKLottieRepeatMode.Reverse &&
+		var needsFlip = repeat.IsReverseRepeating &&
 			(AnimationSpeed >= 0 ? atEnd : atStart) && !isFinishedRun;
 
 		if (needsFlip)
@@ -144,7 +141,7 @@ public class SKLottiePlayer
 		}
 		else
 		{
-			var totalRepeatCount = RepeatCount;
+			var totalRepeatCount = repeat.Count;
 			if (totalRepeatCount < 0)
 				totalRepeatCount = int.MaxValue;
 
@@ -159,11 +156,11 @@ public class SKLottiePlayer
 
 				isFinishedRun = false;
 
-				if (repeatMode == SKLottieRepeatMode.Restart)
+				if (repeat.IsRestartRepeating)
 				{
 					Progress = AnimationSpeed >= 0 ? TimeSpan.Zero : Duration;
 				}
-				else if (repeatMode == SKLottieRepeatMode.Reverse)
+				else if (repeat.IsReverseRepeating)
 					isInForwardPhase = !isInForwardPhase;
 			}
 

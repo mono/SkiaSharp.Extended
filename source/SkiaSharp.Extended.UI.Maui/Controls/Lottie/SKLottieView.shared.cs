@@ -184,8 +184,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 	/// <inheritdoc/>
 	protected override void Update(TimeSpan deltaTime)
 	{
-		player.RepeatCount = RepeatCount;
-		player.RepeatMode = RepeatMode;
+		player.Repeat = RepeatMode == SKLottieRepeatMode.Reverse
+			? SKLottieRepeat.Reverse(RepeatCount)
+			: SKLottieRepeat.Restart(RepeatCount);
 		player.AnimationSpeed = AnimationSpeed;
 
 		player.Update(deltaTime);

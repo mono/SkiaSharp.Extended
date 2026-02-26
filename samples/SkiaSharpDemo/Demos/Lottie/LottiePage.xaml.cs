@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Windows.Input;
-using SkiaSharp.Extended;
 using SkiaSharp.Extended.UI.Controls;
 
 namespace SkiaSharpDemo.Demos;

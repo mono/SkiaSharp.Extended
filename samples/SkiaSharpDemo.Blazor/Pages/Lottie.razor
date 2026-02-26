@@ -16,9 +16,9 @@
 <div class="row mb-3 align-items-end">
     <div class="col-auto">
         <label class="form-label">Repeat Mode</label>
-        <select class="form-select" @bind="repeatMode" @bind:after="OnRepeatModeChanged">
-            <option value="@SKLottieRepeatMode.Restart">Restart</option>
-            <option value="@SKLottieRepeatMode.Reverse">Reverse</option>
+        <select class="form-select" @bind="repeatKind" @bind:after="ApplySettings">
+            <option value="restart">Restart</option>
+            <option value="reverse">Reverse</option>
         </select>
     </div>
     <div class="col-auto">
@@ -29,7 +29,7 @@
     </div>
     <div class="col-auto">
         <label class="form-label">Repeat Count</label>
-        <select class="form-select" @bind="repeatCount" @bind:after="OnRepeatCountChanged">
+        <select class="form-select" @bind="repeatCount" @bind:after="ApplySettings">
             <option value="0">None</option>
             <option value="1">1&#xD7;</option>
             <option value="2">2&#xD7;</option>
@@ -74,11 +74,11 @@
 
 @code {
     private SKCanvasView? canvas;
-    private readonly SKLottiePlayer player = new() { RepeatCount = -1 };
+    private readonly SKLottiePlayer player = new();
     private Animation? loadedAnimation;
     private CancellationTokenSource? animationCts;
     private bool isLoading = true;
-    private SKLottieRepeatMode repeatMode = SKLottieRepeatMode.Restart;
+    private string repeatKind = "restart";
     private double animationSpeed = 1.0;
     private int repeatCount = -1;
     private DateTime lastFrame;
@@ -147,19 +147,9 @@
             player.Render(skCanvas, SKRect.Create(0, 0, info.Width, info.Height));
     }
 
-    private void OnRepeatModeChanged()
-    {
-        player.RepeatMode = repeatMode;
-    }
-
     private void OnSpeedChanged()
     {
         player.AnimationSpeed = animationSpeed;
-    }
-
-    private void OnRepeatCountChanged()
-    {
-        player.RepeatCount = repeatCount;
     }
 
     private void Restart()
@@ -171,9 +161,10 @@
 
     private void ApplySettings()
     {
-        player.RepeatMode = repeatMode;
+        player.Repeat = repeatKind == "reverse"
+            ? SKLottieRepeat.Reverse(repeatCount)
+            : SKLottieRepeat.Restart(repeatCount);
         player.AnimationSpeed = animationSpeed;
-        player.RepeatCount = repeatCount;
     }
 
     public ValueTask DisposeAsync()
