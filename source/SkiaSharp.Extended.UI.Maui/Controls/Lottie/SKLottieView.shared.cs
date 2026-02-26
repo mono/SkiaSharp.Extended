@@ -291,9 +291,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 			return;
 
 		// User-driven change (e.g. scrubbing): propagate to player.
-		// AnimationUpdated fires from the Progress setter, which syncs Duration, Progress,
+		// AnimationUpdated fires from Seek(), which syncs Duration, Progress,
 		// and IsComplete back to the view via OnPlayerAnimationUpdated.
-		lv.player.Progress = newProgress;
+		lv.player.Seek(newProgress);
 
 		// Trigger repaint if animation is disabled (e.g. user is scrubbing a paused animation).
 		if (!lv.IsAnimationEnabled)

@@ -18,21 +18,8 @@ public class SKLottiePlayer
 	/// <summary>Gets the total duration of the loaded animation.</summary>
 	public TimeSpan Duration { get; private set; } = TimeSpan.Zero;
 
-	/// <summary>
-	/// Gets or sets the current playback position. Setting this seeks the animation
-	/// and may trigger completion logic (repeats, AnimationCompleted event).
-	/// Raises <see cref="AnimationUpdated"/> after each change.
-	/// </summary>
-	public TimeSpan Progress
-	{
-		get => _progress;
-		set
-		{
-			_progress = value;
-			UpdateProgress(_progress);
-			AnimationUpdated?.Invoke(this, EventArgs.Empty);
-		}
-	}
+	/// <summary>Gets the current playback position.</summary>
+	public TimeSpan Progress => _progress;
 
 	/// <summary>Gets whether the animation has completed all repeats.</summary>
 	public bool IsComplete { get; private set; } = false;
@@ -53,7 +40,7 @@ public class SKLottiePlayer
 	public event EventHandler? AnimationCompleted;
 
 	/// <summary>
-	/// Fires after each change to <see cref="Progress"/>, notifying subscribers of
+	/// Fires after each <see cref="Seek"/> call, notifying subscribers of
 	/// updated state (Progress, Duration, IsComplete).
 	/// </summary>
 	public event EventHandler? AnimationUpdated;
@@ -66,6 +53,17 @@ public class SKLottiePlayer
 	{
 		animation = newAnimation;
 		Reset();
+	}
+
+	/// <summary>
+	/// Seeks the animation to the specified position and raises <see cref="AnimationUpdated"/>.
+	/// Completion and repeat logic is applied as part of the seek.
+	/// </summary>
+	public void Seek(TimeSpan position)
+	{
+		_progress = position;
+		UpdateProgress(_progress);
+		AnimationUpdated?.Invoke(this, EventArgs.Empty);
 	}
 
 	/// <summary>
@@ -99,7 +97,7 @@ public class SKLottiePlayer
 		if (newProgress < TimeSpan.Zero)
 			newProgress = TimeSpan.Zero;
 
-		Progress = newProgress;
+		Seek(newProgress);
 	}
 
 	/// <summary>Renders the current animation frame to the given canvas within the specified rectangle.</summary>
@@ -166,7 +164,7 @@ public class SKLottiePlayer
 
 				if (repeat.IsRestartRepeating)
 				{
-					Progress = AnimationSpeed >= 0 ? TimeSpan.Zero : Duration;
+					Seek(AnimationSpeed >= 0 ? TimeSpan.Zero : Duration);
 				}
 				else if (repeat.IsReverseRepeating)
 					isInForwardPhase = !isInForwardPhase;
@@ -190,7 +188,7 @@ public class SKLottiePlayer
 			repeatsCompleted = 0;
 
 			Duration = animation?.Duration ?? TimeSpan.Zero;
-			Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
+			Seek(AnimationSpeed < 0 ? Duration : TimeSpan.Zero);
 		}
 		finally
 		{
