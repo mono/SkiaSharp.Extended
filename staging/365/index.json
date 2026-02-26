@@ -109,6 +109,111 @@
     "title": "Class SKGeometryExtensions | SkiaSharp.Extended",
     "keywords": "Class SKGeometryExtensions Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll public static class SKGeometryExtensions Inheritance object SKGeometryExtensions Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Methods DrawRegularPolygon(SKCanvas, SKPoint, float, int, SKPaint) DrawRegularPolygon(SKCanvas, float, float, float, int, SKPaint) DrawSquare(SKCanvas, SKPoint, float, SKPaint) DrawSquare(SKCanvas, float, float, float, SKPaint) DrawStar(SKCanvas, SKPoint, float, float, int, SKPaint) DrawStar(SKCanvas, float, float, float, float, int, SKPaint) DrawTriangle(SKCanvas, SKPoint, SKSize, SKPaint) DrawTriangle(SKCanvas, SKPoint, float, SKPaint) DrawTriangle(SKCanvas, SKRect, SKPaint) DrawTriangle(SKCanvas, float, float, float, SKPaint) DrawTriangle(SKCanvas, float, float, float, float, SKPaint)"
   },
+  "api/SkiaSharp.Extended.SKLottieAnimation.-ctor.html": {
+    "href": "api/SkiaSharp.Extended.SKLottieAnimation.-ctor.html",
+    "title": "Constructor SKLottieAnimation | SkiaSharp.Extended",
+    "keywords": "Constructor SKLottieAnimation Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll SKLottieAnimation() public SKLottieAnimation() SKLottieAnimation(Animation?) public SKLottieAnimation(Animation? animation) Parameters animation Animation"
+  },
+  "api/SkiaSharp.Extended.SKLottieAnimation.Animation.html": {
+    "href": "api/SkiaSharp.Extended.SKLottieAnimation.Animation.html",
+    "title": "Property Animation | SkiaSharp.Extended",
+    "keywords": "Property Animation Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Animation public Animation? Animation { get; } Property Value Animation"
+  },
+  "api/SkiaSharp.Extended.SKLottieAnimation.IsLoaded.html": {
+    "href": "api/SkiaSharp.Extended.SKLottieAnimation.IsLoaded.html",
+    "title": "Property IsLoaded | SkiaSharp.Extended",
+    "keywords": "Property IsLoaded Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll IsLoaded public bool IsLoaded { get; } Property Value bool"
+  },
+  "api/SkiaSharp.Extended.SKLottieAnimation.html": {
+    "href": "api/SkiaSharp.Extended.SKLottieAnimation.html",
+    "title": "Class SKLottieAnimation | SkiaSharp.Extended",
+    "keywords": "Class SKLottieAnimation Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll public class SKLottieAnimation Inheritance object SKLottieAnimation Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKLottieAnimation() SKLottieAnimation(Animation?) Properties Animation IsLoaded"
+  },
+  "api/SkiaSharp.Extended.SKLottieAnimationFailedEventArgs.-ctor.html": {
+    "href": "api/SkiaSharp.Extended.SKLottieAnimationFailedEventArgs.-ctor.html",
+    "title": "Constructor SKLottieAnimationFailedEventArgs | SkiaSharp.Extended",
+    "keywords": "Constructor SKLottieAnimationFailedEventArgs Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll SKLottieAnimationFailedEventArgs() public SKLottieAnimationFailedEventArgs() SKLottieAnimationFailedEventArgs(Exception?) public SKLottieAnimationFailedEventArgs(Exception? exception) Parameters exception Exception"
+  },
+  "api/SkiaSharp.Extended.SKLottieAnimationFailedEventArgs.Exception.html": {
+    "href": "api/SkiaSharp.Extended.SKLottieAnimationFailedEventArgs.Exception.html",
+    "title": "Property Exception | SkiaSharp.Extended",
+    "keywords": "Property Exception Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Exception public Exception? Exception { get; } Property Value Exception"
+  },
+  "api/SkiaSharp.Extended.SKLottieAnimationFailedEventArgs.html": {
+    "href": "api/SkiaSharp.Extended.SKLottieAnimationFailedEventArgs.html",
+    "title": "Class SKLottieAnimationFailedEventArgs | SkiaSharp.Extended",
+    "keywords": "Class SKLottieAnimationFailedEventArgs Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll public class SKLottieAnimationFailedEventArgs : EventArgs Inheritance object EventArgs SKLottieAnimationFailedEventArgs Inherited Members EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKLottieAnimationFailedEventArgs() SKLottieAnimationFailedEventArgs(Exception?) Properties Exception"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.-ctor.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.-ctor.html",
+    "title": "Constructor SKLottiePlayer | SkiaSharp.Extended",
+    "keywords": "Constructor SKLottiePlayer Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll SKLottiePlayer() public SKLottiePlayer()"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.AnimationCompleted.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.AnimationCompleted.html",
+    "title": "Event AnimationCompleted | SkiaSharp.Extended",
+    "keywords": "Event AnimationCompleted Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll public event EventHandler? AnimationCompleted Returns EventHandler"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html",
+    "title": "Property AnimationSpeed | SkiaSharp.Extended",
+    "keywords": "Property AnimationSpeed Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll AnimationSpeed public double AnimationSpeed { get; set; } Property Value double"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.Duration.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.Duration.html",
+    "title": "Property Duration | SkiaSharp.Extended",
+    "keywords": "Property Duration Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Duration public TimeSpan Duration { get; } Property Value TimeSpan"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.HasAnimation.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.HasAnimation.html",
+    "title": "Property HasAnimation | SkiaSharp.Extended",
+    "keywords": "Property HasAnimation Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll HasAnimation public bool HasAnimation { get; } Property Value bool"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.IsComplete.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.IsComplete.html",
+    "title": "Property IsComplete | SkiaSharp.Extended",
+    "keywords": "Property IsComplete Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll IsComplete public bool IsComplete { get; } Property Value bool"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.Progress.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.Progress.html",
+    "title": "Property Progress | SkiaSharp.Extended",
+    "keywords": "Property Progress Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Progress public TimeSpan Progress { get; set; } Property Value TimeSpan"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.Render.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.Render.html",
+    "title": "Method Render | SkiaSharp.Extended",
+    "keywords": "Method Render Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Render(SKCanvas, SKRect) public void Render(SKCanvas canvas, SKRect rect) Parameters canvas SKCanvas rect SKRect"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.RepeatCount.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.RepeatCount.html",
+    "title": "Property RepeatCount | SkiaSharp.Extended",
+    "keywords": "Property RepeatCount Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll RepeatCount public int RepeatCount { get; set; } Property Value int"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.RepeatMode.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.RepeatMode.html",
+    "title": "Property RepeatMode | SkiaSharp.Extended",
+    "keywords": "Property RepeatMode Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll RepeatMode public SKLottieRepeatMode RepeatMode { get; set; } Property Value SKLottieRepeatMode"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.SetAnimation.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.SetAnimation.html",
+    "title": "Method SetAnimation | SkiaSharp.Extended",
+    "keywords": "Method SetAnimation Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll SetAnimation(Animation?) public void SetAnimation(Animation? newAnimation) Parameters newAnimation Animation"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.Update.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.Update.html",
+    "title": "Method Update | SkiaSharp.Extended",
+    "keywords": "Method Update Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Update(TimeSpan) public void Update(TimeSpan deltaTime) Parameters deltaTime TimeSpan"
+  },
+  "api/SkiaSharp.Extended.SKLottiePlayer.html": {
+    "href": "api/SkiaSharp.Extended.SKLottiePlayer.html",
+    "title": "Class SKLottiePlayer | SkiaSharp.Extended",
+    "keywords": "Class SKLottiePlayer Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll public class SKLottiePlayer Inheritance object SKLottiePlayer Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKLottiePlayer() Properties AnimationSpeed Duration HasAnimation IsComplete Progress RepeatCount RepeatMode Methods Render(SKCanvas, SKRect) SetAnimation(Animation?) Update(TimeSpan) Events AnimationCompleted"
+  },
+  "api/SkiaSharp.Extended.SKLottieRepeatMode.html": {
+    "href": "api/SkiaSharp.Extended.SKLottieRepeatMode.html",
+    "title": "Enum SKLottieRepeatMode | SkiaSharp.Extended",
+    "keywords": "Enum SKLottieRepeatMode Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll public enum SKLottieRepeatMode Fields Restart = 0 Reverse = 1"
+  },
   "api/SkiaSharp.Extended.SKPathInterpolation.-ctor.html": {
     "href": "api/SkiaSharp.Extended.SKPathInterpolation.-ctor.html",
     "title": "Constructor SKPathInterpolation | SkiaSharp.Extended",
@@ -188,76 +293,6 @@
     "href": "api/SkiaSharp.Extended.SKPixelComparisonResult.html",
     "title": "Class SKPixelComparisonResult | SkiaSharp.Extended",
     "keywords": "Class SKPixelComparisonResult Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll public class SKPixelComparisonResult Inheritance object SKPixelComparisonResult Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKPixelComparisonResult(int, int, int) Properties AbsoluteError ErrorPixelCount ErrorPixelPercentage TotalPixels"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.-ctor.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.-ctor.html",
-    "title": "Constructor SKSkottiePlayer | SkiaSharp.Extended",
-    "keywords": "Constructor SKSkottiePlayer Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll SKSkottiePlayer() public SKSkottiePlayer()"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.AnimationCompleted.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.AnimationCompleted.html",
-    "title": "Event AnimationCompleted | SkiaSharp.Extended",
-    "keywords": "Event AnimationCompleted Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll public event EventHandler? AnimationCompleted Returns EventHandler"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.AnimationSpeed.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.AnimationSpeed.html",
-    "title": "Property AnimationSpeed | SkiaSharp.Extended",
-    "keywords": "Property AnimationSpeed Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll AnimationSpeed public double AnimationSpeed { get; set; } Property Value double"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.Duration.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.Duration.html",
-    "title": "Property Duration | SkiaSharp.Extended",
-    "keywords": "Property Duration Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Duration public TimeSpan Duration { get; } Property Value TimeSpan"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.HasAnimation.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.HasAnimation.html",
-    "title": "Property HasAnimation | SkiaSharp.Extended",
-    "keywords": "Property HasAnimation Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll HasAnimation public bool HasAnimation { get; } Property Value bool"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.IsComplete.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.IsComplete.html",
-    "title": "Property IsComplete | SkiaSharp.Extended",
-    "keywords": "Property IsComplete Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll IsComplete public bool IsComplete { get; } Property Value bool"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.Progress.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.Progress.html",
-    "title": "Property Progress | SkiaSharp.Extended",
-    "keywords": "Property Progress Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Progress public TimeSpan Progress { get; set; } Property Value TimeSpan"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.Render.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.Render.html",
-    "title": "Method Render | SkiaSharp.Extended",
-    "keywords": "Method Render Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Render(SKCanvas, SKRect) public void Render(SKCanvas canvas, SKRect rect) Parameters canvas SKCanvas rect SKRect"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.RepeatCount.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.RepeatCount.html",
-    "title": "Property RepeatCount | SkiaSharp.Extended",
-    "keywords": "Property RepeatCount Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll RepeatCount public int RepeatCount { get; set; } Property Value int"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.RepeatMode.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.RepeatMode.html",
-    "title": "Property RepeatMode | SkiaSharp.Extended",
-    "keywords": "Property RepeatMode Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll RepeatMode public SKSkottieRepeatMode RepeatMode { get; set; } Property Value SKSkottieRepeatMode"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.SetAnimation.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.SetAnimation.html",
-    "title": "Method SetAnimation | SkiaSharp.Extended",
-    "keywords": "Method SetAnimation Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll SetAnimation(Animation?) public void SetAnimation(Animation? newAnimation) Parameters newAnimation Animation"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.Update.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.Update.html",
-    "title": "Method Update | SkiaSharp.Extended",
-    "keywords": "Method Update Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Update(TimeSpan) public void Update(TimeSpan deltaTime) Parameters deltaTime TimeSpan"
-  },
-  "api/SkiaSharp.Extended.SKSkottiePlayer.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottiePlayer.html",
-    "title": "Class SKSkottiePlayer | SkiaSharp.Extended",
-    "keywords": "Class SKSkottiePlayer Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll public class SKSkottiePlayer Inheritance object SKSkottiePlayer Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKSkottiePlayer() Properties AnimationSpeed Duration HasAnimation IsComplete Progress RepeatCount RepeatMode Methods Render(SKCanvas, SKRect) SetAnimation(Animation?) Update(TimeSpan) Events AnimationCompleted"
-  },
-  "api/SkiaSharp.Extended.SKSkottieRepeatMode.html": {
-    "href": "api/SkiaSharp.Extended.SKSkottieRepeatMode.html",
-    "title": "Enum SKSkottieRepeatMode | SkiaSharp.Extended",
-    "keywords": "Enum SKSkottieRepeatMode Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll public enum SKSkottieRepeatMode Fields Restart = 0 Reverse = 1"
   },
   "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.-ctor.html": {
     "href": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.-ctor.html",
@@ -979,41 +1014,6 @@
     "title": "Class SKFileLottieImageSource | SkiaSharp.Extended",
     "keywords": "Class SKFileLottieImageSource Namespace SkiaSharp.Extended.UI.Controls Assembly SkiaSharp.Extended.UI.dll public class SKFileLottieImageSource : SKLottieImageSource, INotifyPropertyChanged, IElementController, IVisualTreeElement, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IElement Inheritance object BindableObject Element SKLottieImageSource SKFileLottieImageSource Implements INotifyPropertyChanged IElementController IVisualTreeElement IEffectControlProvider IToolTipElement IContextFlyoutElement IElement Inherited Members SKLottieImageSource.FromUri(Uri) SKLottieImageSource.FromFile(string) SKLottieImageSource.FromStream(Func<CancellationToken, Task<Stream>>) SKLottieImageSource.FromStream(Stream) SKLottieImageSource.OnSourceChanged(BindableObject, object, object) SKLottieImageSource.SourceChanged Element.AutomationIdProperty Element.ClassIdProperty Element.InsertLogicalChild(int, Element) Element.AddLogicalChild(Element) Element.RemoveLogicalChild(Element) Element.ClearLogicalChildren() Element.FindByName(string) Element.RemoveDynamicResource(BindableProperty) Element.SetDynamicResource(BindableProperty, string) Element.OnBindingContextChanged() Element.OnChildAdded(Element) Element.OnChildRemoved(Element, int) Element.OnParentSet() Element.OnPropertyChanged(string) Element.OnParentChanging(ParentChangingEventArgs) Element.OnParentChanged() Element.OnHandlerChanging(HandlerChangingEventArgs) Element.OnHandlerChanged() Element.MapAutomationPropertiesIsInAccessibleTree(IElementHandler, Element) Element.MapAutomationPropertiesExcludedWithChildren(IElementHandler, Element) Element.AutomationId Element.ClassId Element.Effects Element.Id Element.StyleId Element.Parent Element.Handler Element.ChildAdded Element.ChildRemoved Element.DescendantAdded Element.DescendantRemoved Element.ParentChanging Element.ParentChanged Element.HandlerChanging Element.HandlerChanged BindableObject.BindingContextProperty BindableObject.ClearValue(BindableProperty) BindableObject.ClearValue(BindablePropertyKey) BindableObject.GetValue(BindableProperty) BindableObject.IsSet(BindableProperty) BindableObject.RemoveBinding(BindableProperty) BindableObject.SetBinding(BindableProperty, BindingBase) BindableObject.ApplyBindings() BindableObject.OnPropertyChanging(string) BindableObject.UnapplyBindings() BindableObject.SetValue(BindableProperty, object) BindableObject.SetValue(BindablePropertyKey, object) BindableObject.CoerceValue(BindableProperty) BindableObject.CoerceValue(BindablePropertyKey) BindableObject.Dispatcher BindableObject.BindingContext BindableObject.PropertyChanged BindableObject.PropertyChanging BindableObject.BindingContextChanged object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKFileLottieImageSource() Fields FileProperty Properties File IsEmpty Methods LoadAnimationAsync(CancellationToken)"
   },
-  "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.-ctor.html": {
-    "href": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.-ctor.html",
-    "title": "Constructor SKLottieAnimation | SkiaSharp.Extended",
-    "keywords": "Constructor SKLottieAnimation Namespace SkiaSharp.Extended.UI.Controls Assembly SkiaSharp.Extended.UI.dll SKLottieAnimation() public SKLottieAnimation() SKLottieAnimation(Animation?) public SKLottieAnimation(Animation? animation) Parameters animation Animation"
-  },
-  "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.Animation.html": {
-    "href": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.Animation.html",
-    "title": "Property Animation | SkiaSharp.Extended",
-    "keywords": "Property Animation Namespace SkiaSharp.Extended.UI.Controls Assembly SkiaSharp.Extended.UI.dll Animation public Animation? Animation { get; } Property Value Animation"
-  },
-  "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.IsLoaded.html": {
-    "href": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.IsLoaded.html",
-    "title": "Property IsLoaded | SkiaSharp.Extended",
-    "keywords": "Property IsLoaded Namespace SkiaSharp.Extended.UI.Controls Assembly SkiaSharp.Extended.UI.dll IsLoaded public bool IsLoaded { get; } Property Value bool"
-  },
-  "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.html": {
-    "href": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.html",
-    "title": "Class SKLottieAnimation | SkiaSharp.Extended",
-    "keywords": "Class SKLottieAnimation Namespace SkiaSharp.Extended.UI.Controls Assembly SkiaSharp.Extended.UI.dll public class SKLottieAnimation Inheritance object SKLottieAnimation Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKLottieAnimation() SKLottieAnimation(Animation?) Properties Animation IsLoaded"
-  },
-  "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.-ctor.html": {
-    "href": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.-ctor.html",
-    "title": "Constructor SKLottieAnimationFailedEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKLottieAnimationFailedEventArgs Namespace SkiaSharp.Extended.UI.Controls Assembly SkiaSharp.Extended.UI.dll SKLottieAnimationFailedEventArgs() public SKLottieAnimationFailedEventArgs() SKLottieAnimationFailedEventArgs(Exception?) public SKLottieAnimationFailedEventArgs(Exception? exception) Parameters exception Exception"
-  },
-  "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.Exception.html": {
-    "href": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.Exception.html",
-    "title": "Property Exception | SkiaSharp.Extended",
-    "keywords": "Property Exception Namespace SkiaSharp.Extended.UI.Controls Assembly SkiaSharp.Extended.UI.dll Exception public Exception? Exception { get; } Property Value Exception"
-  },
-  "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.html": {
-    "href": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.html",
-    "title": "Class SKLottieAnimationFailedEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKLottieAnimationFailedEventArgs Namespace SkiaSharp.Extended.UI.Controls Assembly SkiaSharp.Extended.UI.dll public class SKLottieAnimationFailedEventArgs : EventArgs Inheritance object EventArgs SKLottieAnimationFailedEventArgs Inherited Members EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKLottieAnimationFailedEventArgs() SKLottieAnimationFailedEventArgs(Exception?) Properties Exception"
-  },
   "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.-ctor.html",
     "title": "Constructor SKLottieAnimationLoadedEventArgs | SkiaSharp.Extended",
@@ -1083,11 +1083,6 @@
     "href": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.html",
     "title": "Class SKLottieImageSource | SkiaSharp.Extended",
     "keywords": "Class SKLottieImageSource Namespace SkiaSharp.Extended.UI.Controls Assembly SkiaSharp.Extended.UI.dll [TypeConverter(typeof(SKLottieImageSourceConverter))] public abstract class SKLottieImageSource : Element, INotifyPropertyChanged, IElementController, IVisualTreeElement, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IElement Inheritance object BindableObject Element SKLottieImageSource Implements INotifyPropertyChanged IElementController IVisualTreeElement IEffectControlProvider IToolTipElement IContextFlyoutElement IElement Derived SKFileLottieImageSource SKStreamLottieImageSource SKUriLottieImageSource Inherited Members Element.AutomationIdProperty Element.ClassIdProperty Element.InsertLogicalChild(int, Element) Element.AddLogicalChild(Element) Element.RemoveLogicalChild(Element) Element.ClearLogicalChildren() Element.FindByName(string) Element.RemoveDynamicResource(BindableProperty) Element.SetDynamicResource(BindableProperty, string) Element.OnBindingContextChanged() Element.OnChildAdded(Element) Element.OnChildRemoved(Element, int) Element.OnParentSet() Element.OnPropertyChanged(string) Element.OnParentChanging(ParentChangingEventArgs) Element.OnParentChanged() Element.OnHandlerChanging(HandlerChangingEventArgs) Element.OnHandlerChanged() Element.MapAutomationPropertiesIsInAccessibleTree(IElementHandler, Element) Element.MapAutomationPropertiesExcludedWithChildren(IElementHandler, Element) Element.AutomationId Element.ClassId Element.Effects Element.Id Element.StyleId Element.Parent Element.Handler Element.ChildAdded Element.ChildRemoved Element.DescendantAdded Element.DescendantRemoved Element.ParentChanging Element.ParentChanged Element.HandlerChanging Element.HandlerChanged BindableObject.BindingContextProperty BindableObject.ClearValue(BindableProperty) BindableObject.ClearValue(BindablePropertyKey) BindableObject.GetValue(BindableProperty) BindableObject.IsSet(BindableProperty) BindableObject.RemoveBinding(BindableProperty) BindableObject.SetBinding(BindableProperty, BindingBase) BindableObject.ApplyBindings() BindableObject.OnPropertyChanging(string) BindableObject.UnapplyBindings() BindableObject.SetValue(BindableProperty, object) BindableObject.SetValue(BindablePropertyKey, object) BindableObject.CoerceValue(BindableProperty) BindableObject.CoerceValue(BindablePropertyKey) BindableObject.Dispatcher BindableObject.BindingContext BindableObject.PropertyChanged BindableObject.PropertyChanging BindableObject.BindingContextChanged object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKLottieImageSource() Properties IsEmpty Methods FromFile(string) FromStream(Func<CancellationToken, Task<Stream?>>) FromStream(Stream) FromUri(Uri) LoadAnimationAsync(CancellationToken) OnSourceChanged(BindableObject, object, object) Events SourceChanged"
-  },
-  "api/SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode.html": {
-    "href": "api/SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode.html",
-    "title": "Enum SKLottieRepeatMode | SkiaSharp.Extended",
-    "keywords": "Enum SKLottieRepeatMode Namespace SkiaSharp.Extended.UI.Controls Assembly SkiaSharp.Extended.UI.dll public enum SKLottieRepeatMode Fields Restart = 0 Reverse = 1"
   },
   "api/SkiaSharp.Extended.UI.Controls.SKLottieView.-ctor.html": {
     "href": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.-ctor.html",
@@ -1317,12 +1312,12 @@
   "api/SkiaSharp.Extended.UI.Controls.html": {
     "href": "api/SkiaSharp.Extended.UI.Controls.html",
     "title": "Namespace SkiaSharp.Extended.UI.Controls | SkiaSharp.Extended",
-    "keywords": "Namespace SkiaSharp.Extended.UI.Controls Classes SKAnimatedSurfaceView SKConfettiCircleShape SKConfettiColorCollection SKConfettiEmitter SKConfettiOvalShape SKConfettiPathShape SKConfettiPhysicsCollection SKConfettiRectShape SKConfettiShape SKConfettiShapeCollection SKConfettiSquareShape SKConfettiSystem SKConfettiSystemCollection SKConfettiView SKFileLottieImageSource SKLottieAnimation SKLottieAnimationFailedEventArgs SKLottieAnimationLoadedEventArgs SKLottieImageSource SKLottieView SKStreamLottieImageSource SKSurfaceView SKUriLottieImageSource Structs SKConfettiEmitterBounds SKConfettiPhysics Enums SKConfettiEmitterSide SKLottieRepeatMode"
+    "keywords": "Namespace SkiaSharp.Extended.UI.Controls Classes SKAnimatedSurfaceView SKConfettiCircleShape SKConfettiColorCollection SKConfettiEmitter SKConfettiOvalShape SKConfettiPathShape SKConfettiPhysicsCollection SKConfettiRectShape SKConfettiShape SKConfettiShapeCollection SKConfettiSquareShape SKConfettiSystem SKConfettiSystemCollection SKConfettiView SKFileLottieImageSource SKLottieAnimationLoadedEventArgs SKLottieImageSource SKLottieView SKStreamLottieImageSource SKSurfaceView SKUriLottieImageSource Structs SKConfettiEmitterBounds SKConfettiPhysics Enums SKConfettiEmitterSide"
   },
   "api/SkiaSharp.Extended.html": {
     "href": "api/SkiaSharp.Extended.html",
     "title": "Namespace SkiaSharp.Extended | SkiaSharp.Extended",
-    "keywords": "Namespace SkiaSharp.Extended Classes SKBlurHash SKGeometry SKGeometryExtensions SKPathInterpolation SKPixelComparer SKPixelComparisonResult SKSkottiePlayer Enums SKSkottieRepeatMode"
+    "keywords": "Namespace SkiaSharp.Extended Classes SKBlurHash SKGeometry SKGeometryExtensions SKLottieAnimation SKLottieAnimationFailedEventArgs SKLottiePlayer SKPathInterpolation SKPixelComparer SKPixelComparisonResult Enums SKLottieRepeatMode"
   },
   "docs/blurhash.html": {
     "href": "docs/blurhash.html",
