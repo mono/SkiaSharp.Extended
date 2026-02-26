@@ -129,26 +129,32 @@
         if (_log.Count > MaxLogEntries)
             _log.RemoveAt(_log.Count - 1);
 
+        // Scale CSS-pixel coordinates to canvas pixels (device DPI).
+        // Touch events arrive in CSS pixels, but the SkiaSharp surface
+        // renders at device pixel ratio when IgnorePixelScaling is false.
+        var dpi = _canvasView?.Dpi ?? 1f;
+        var scaledLocation = new SKPoint(e.Location.X * dpi, e.Location.Y * dpi);
+
         // Drawing strokes
         switch (e.ActionType)
         {
             case SKTouchAction.Pressed:
                 var stroke = new Stroke { DeviceType = e.DeviceType };
-                stroke.Points.Add(e.Location);
+                stroke.Points.Add(scaledLocation);
                 _strokes.Add(stroke);
                 _activeStrokes[e.Id] = stroke;
                 break;
 
             case SKTouchAction.Moved:
                 if (_activeStrokes.TryGetValue(e.Id, out var active))
-                    active.Points.Add(e.Location);
+                    active.Points.Add(scaledLocation);
                 break;
 
             case SKTouchAction.Released:
             case SKTouchAction.Cancelled:
                 if (_activeStrokes.TryGetValue(e.Id, out var finished))
                 {
-                    finished.Points.Add(e.Location);
+                    finished.Points.Add(scaledLocation);
                     _activeStrokes.Remove(e.Id);
                 }
                 break;
@@ -165,10 +171,13 @@
         var canvas = e.Surface.Canvas;
         canvas.Clear(SKColors.White);
 
+        // Scale stroke width and legend by DPI so they look correct at device resolution
+        var dpi = _canvasView?.Dpi ?? 1f;
+
         using var paint = new SKPaint
         {
             IsAntialias = true,
-            StrokeWidth = 3,
+            StrokeWidth = 3 * dpi,
             Style = SKPaintStyle.Stroke,
             StrokeCap = SKStrokeCap.Round,
             StrokeJoin = SKStrokeJoin.Round,
@@ -188,17 +197,17 @@
             canvas.DrawPath(path, paint);
         }
 
-        // Legend in top-left corner
-        using var legendFont = new SKFont { Size = 12, Edging = SKFontEdging.SubpixelAntialias };
+        // Legend in top-left corner (scaled by DPI)
+        using var legendFont = new SKFont { Size = 12 * dpi, Edging = SKFontEdging.SubpixelAntialias };
         using var legendPaint = new SKPaint { IsAntialias = true };
-        var y = 16f;
+        var y = 16f * dpi;
         foreach (var (name, _, color) in DeviceColors)
         {
             legendPaint.Color = color;
-            canvas.DrawCircle(12, y - 4, 5, legendPaint);
+            canvas.DrawCircle(12 * dpi, y - 4 * dpi, 5 * dpi, legendPaint);
             legendPaint.Color = SKColors.Black;
-            canvas.DrawText(name, 22, y, SKTextAlign.Left, legendFont, legendPaint);
-            y += 18;
+            canvas.DrawText(name, 22 * dpi, y, SKTextAlign.Left, legendFont, legendPaint);
+            y += 18 * dpi;
         }
     }
 
