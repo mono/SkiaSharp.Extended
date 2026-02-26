@@ -70,16 +70,16 @@ public partial class SKTouchCanvasView : ComponentBase, IAsyncDisposable
     {
         get
         {
-            var attrs = new Dictionary<string, object>
-            {
-                ["data-sk-touch-id"] = _touchId
-            };
+            var attrs = new Dictionary<string, object>();
 
             if (AdditionalAttributes is not null)
             {
                 foreach (var kvp in AdditionalAttributes)
                     attrs[kvp.Key] = kvp.Value;
             }
+
+            // Set after user attributes so it cannot be overwritten
+            attrs["data-sk-touch-id"] = _touchId;
 
             return attrs;
         }
