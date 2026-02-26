@@ -12,13 +12,11 @@ public class SKLottiePlayer
 	private bool isInForwardPhase = true;
 	private int repeatsCompleted = 0;
 
-	private TimeSpan _progress;
-
 	/// <summary>Gets the total duration of the loaded animation.</summary>
 	public TimeSpan Duration { get; private set; } = TimeSpan.Zero;
 
 	/// <summary>Gets the current playback position.</summary>
-	public TimeSpan Progress => _progress;
+	public TimeSpan Progress { get; private set; }
 
 	/// <summary>Gets whether the animation has completed all repeats.</summary>
 	public bool IsComplete { get; private set; } = false;
@@ -60,8 +58,8 @@ public class SKLottiePlayer
 	/// </summary>
 	public void Seek(TimeSpan position)
 	{
-		_progress = position;
-		UpdateProgress(_progress);
+		Progress = position;
+		UpdateProgress(Progress);
 		AnimationUpdated?.Invoke(this, EventArgs.Empty);
 	}
 
@@ -184,8 +182,8 @@ public class SKLottiePlayer
 		Duration = animation?.Duration ?? TimeSpan.Zero;
 
 		// Directly set the initial position without triggering completion logic.
-		_progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
-		animation?.SeekFrameTime(_progress.TotalSeconds);
+		Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
+		animation?.SeekFrameTime(Progress.TotalSeconds);
 		AnimationUpdated?.Invoke(this, EventArgs.Empty);
 	}
 }
