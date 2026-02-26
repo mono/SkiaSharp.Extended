@@ -11,7 +11,6 @@ public class SKLottiePlayer
 	private Skottie.Animation? animation;
 	private bool isInForwardPhase = true;
 	private int repeatsCompleted = 0;
-	private bool isResetting;
 
 	private TimeSpan _progress;
 
@@ -116,10 +115,6 @@ public class SKLottiePlayer
 
 		animation.SeekFrameTime(progress.TotalSeconds);
 
-		// Skip completion/repeat logic during Reset to avoid spurious events
-		if (isResetting)
-			return;
-
 		var repeat = Repeat;
 		var duration = Duration;
 
@@ -170,29 +165,27 @@ public class SKLottiePlayer
 					isInForwardPhase = !isInForwardPhase;
 			}
 
+			var prevIsComplete = IsComplete;
 			IsComplete =
 				isFinishedRun &&
 				repeatsCompleted >= totalRepeatCount;
 
-			if (IsComplete)
+			if (IsComplete && !prevIsComplete)
 				AnimationCompleted?.Invoke(this, EventArgs.Empty);
 		}
 	}
 
 	private void Reset()
 	{
-		isResetting = true;
-		try
-		{
-			isInForwardPhase = true;
-			repeatsCompleted = 0;
+		isInForwardPhase = true;
+		repeatsCompleted = 0;
+		IsComplete = false;
 
-			Duration = animation?.Duration ?? TimeSpan.Zero;
-			Seek(AnimationSpeed < 0 ? Duration : TimeSpan.Zero);
-		}
-		finally
-		{
-			isResetting = false;
-		}
+		Duration = animation?.Duration ?? TimeSpan.Zero;
+
+		// Directly set the initial position without triggering completion logic.
+		_progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
+		animation?.SeekFrameTime(_progress.TotalSeconds);
+		AnimationUpdated?.Invoke(this, EventArgs.Empty);
 	}
 }
