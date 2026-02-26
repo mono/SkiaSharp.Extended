@@ -90,7 +90,7 @@
 <h5>Tip</h5>
 <p><strong><a href="../sample/shapes">Try it live →</a></strong> — Interactive Shapes demo in the Blazor sample app.</p>
 </div>
-<p>Geometry Helpers provide simple methods to create common geometric shapes as <a href="xref:SkiaSharp.SKPath"><code>SKPath</code></a> objects. Instead of manually calculating points and angles, you can generate squares, triangles, polygons, and stars with a single method call.</p>
+<p>Geometry Helpers provide simple methods to create common geometric shapes as <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpath"><code>SKPath</code></a> objects. Instead of manually calculating points and angles, you can generate squares, triangles, polygons, and stars with a single method call.</p>
 <p><img src="../images/extended/geometry/shapes-overview.png" alt="Shapes overview"></p>
 <h2 id="quick-start">Quick Start</h2>
 <h3 id="create-a-shape-path">Create a shape path</h3>
@@ -186,7 +186,7 @@ canvas.DrawRegularPolygon(cx: 250, cy: 50, radius: 30, points: 6, paint);
 canvas.DrawStar(cx: 350, cy: 50, outerRadius: 30, innerRadius: 12, points: 5, paint);
 </code></pre>
 <h2 id="utility-methods">Utility Methods</h2>
-<p>The <a href="xref:SkiaSharp.Extended.SKGeometry"><code>SKGeometry</code></a> class also provides utility methods for geometric calculations:</p>
+<p>The <a class="xref" href="../api/SkiaSharp.Extended.SKGeometry.html"><code>SKGeometry</code></a> class also provides utility methods for geometric calculations:</p>
 <table>
 <thead>
 <tr>
@@ -222,7 +222,7 @@ var area = SKGeometry.Area(points);
 </code></pre>
 <h2 id="customization">Customization</h2>
 <h3 id="path-direction">Path Direction</h3>
-<p>All shape methods accept an optional <a href="xref:SkiaSharp.SKPathDirection"><code>SKPathDirection</code></a> parameter to control winding order:</p>
+<p>All shape methods accept an optional <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpathdirection"><code>SKPathDirection</code></a> parameter to control winding order:</p>
 <pre><code class="lang-csharp">// Clockwise (default)
 var cwPath = SKGeometry.CreateSquarePath(50, SKPathDirection.Clockwise);
 
@@ -239,8 +239,8 @@ canvas.DrawPath(path, paint);
 <p>Or use the canvas extension methods which take position parameters directly.</p>
 <h2 id="learn-more">Learn More</h2>
 <ul>
-<li><a href="xref:SkiaSharp.Extended.SKGeometry">API Reference</a> — Full method documentation</li>
-<li><a href="xref:SkiaSharp.Extended.SKGeometryExtensions">SKGeometryExtensions</a> — Canvas extension methods</li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKGeometry.html">API Reference</a> — Full method documentation</li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKGeometryExtensions.html">SKGeometryExtensions</a> — Canvas extension methods</li>
 </ul>
 
 </article>
@@ -263,7 +263,7 @@ canvas.DrawPath(path, paint);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+          source: main · c05aed0
         </div>
       </div>
     </footer>
