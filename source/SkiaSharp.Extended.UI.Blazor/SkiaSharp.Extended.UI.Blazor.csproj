@@ -45,7 +45,7 @@
 
   <!-- Compile TypeScript before build; requires tsc (npm i -g typescript) -->
   <Target Name="CompileTypeScript" BeforeTargets="BeforeBuild"
-          Inputs="Scripts/SKTouchInterop.ts"
+          Inputs="@(None->WithMetadataValue('Extension', '.ts'))"
           Outputs="wwwroot/SKTouchInterop.js">
     <Exec Command="tsc -p tsconfig.json" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>

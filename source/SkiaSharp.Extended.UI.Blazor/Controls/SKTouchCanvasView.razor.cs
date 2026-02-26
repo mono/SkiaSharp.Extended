@@ -12,7 +12,7 @@ namespace SkiaSharp.Extended.UI.Blazor.Controls;
 /// <see cref="SKTouchEventArgs"/> and raises the <see cref="Touch"/> event,
 /// matching the MAUI touch API for shared source compatibility.</para>
 /// <para>Pointer events are captured using JavaScript interop on the canvas element.
-/// No wrapper element is added; the upstream <c>SKCanvasView</c> splatts
+/// No wrapper element is added; the upstream <c>SKCanvasView</c> splats
 /// <c>AdditionalAttributes</c> directly onto its <c>&lt;canvas&gt;</c>, so a
 /// <c>data-sk-touch-id</c> attribute is used to locate the element from JS.</para>
 /// </remarks>
