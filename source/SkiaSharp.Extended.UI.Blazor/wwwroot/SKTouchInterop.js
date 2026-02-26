@@ -43,7 +43,7 @@ function onPointerDown(e) {
     try {
         e.currentTarget.setPointerCapture(e.pointerId);
     }
-    catch { /* ignore */ }
+    catch ( /* ignore */_a) { /* ignore */ }
 }
 function onPointerMove(e) {
     sendPointerEvent(e, 3 /* SKTouchAction.Moved */);
@@ -106,3 +106,4 @@ function sendPointerEvent(e, action) {
         inContact,
     });
 }
+//# sourceMappingURL=SKTouchInterop.js.map
