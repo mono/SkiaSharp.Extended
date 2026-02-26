@@ -1,1 +1,3 @@
-global using SKLottieRepeatMode = SkiaSharp.Extended.SKLottieRepeatMode;
+using System.Runtime.CompilerServices;
+
+[assembly: TypeForwardedTo(typeof(SkiaSharp.Extended.SKLottieRepeatMode))]
