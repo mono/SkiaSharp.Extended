@@ -104,6 +104,16 @@
     "title": "Property FlingThreshold | SkiaSharp.Extended",
     "keywords": "Property FlingThreshold Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingThreshold public float FlingThreshold { get; set; } Property Value float"
   },
+  "api/SkiaSharp.Extended.Gestures.SKGestureEngine.GestureEnded.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.GestureEnded.html",
+    "title": "Event GestureEnded | SkiaSharp.Extended",
+    "keywords": "Event GestureEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler? GestureEnded Returns EventHandler"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureEngine.GestureStarted.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.GestureStarted.html",
+    "title": "Event GestureStarted | SkiaSharp.Extended",
+    "keywords": "Event GestureStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler? GestureStarted Returns EventHandler"
+  },
   "api/SkiaSharp.Extended.Gestures.SKGestureEngine.HoverDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.HoverDetected.html",
     "title": "Event HoverDetected | SkiaSharp.Extended",
@@ -242,7 +252,7 @@
   "api/SkiaSharp.Extended.Gestures.SKGestureEngine.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.html",
     "title": "Class SKGestureEngine | SkiaSharp.Extended",
-    "keywords": "Class SKGestureEngine Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureEngine : IDisposable Inheritance object SKGestureEngine Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureEngine() Properties DoubleTapSlop FlingThreshold IsEnabled IsGestureActive LongPressDuration TimeProvider TouchSlop Methods Dispose() OnDoubleTapDetected(SKTapEventArgs) OnFlingDetected(SKFlingEventArgs) OnHoverDetected(SKHoverEventArgs) OnLongPressDetected(SKTapEventArgs) OnPanDetected(SKPanEventArgs) OnPinchDetected(SKPinchEventArgs) OnRotateDetected(SKRotateEventArgs) OnScrollDetected(SKScrollEventArgs) OnTapDetected(SKTapEventArgs) ProcessMouseWheel(SKPoint, float, float) ProcessTouchCancel(long) ProcessTouchDown(long, SKPoint, bool) ProcessTouchMove(long, SKPoint, bool) ProcessTouchUp(long, SKPoint, bool) Reset() Events DoubleTapDetected FlingDetected HoverDetected LongPressDetected PanDetected PinchDetected RotateDetected ScrollDetected TapDetected"
+    "keywords": "Class SKGestureEngine Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureEngine : IDisposable Inheritance object SKGestureEngine Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureEngine() Properties DoubleTapSlop FlingThreshold IsEnabled IsGestureActive LongPressDuration TimeProvider TouchSlop Methods Dispose() OnDoubleTapDetected(SKTapEventArgs) OnFlingDetected(SKFlingEventArgs) OnHoverDetected(SKHoverEventArgs) OnLongPressDetected(SKTapEventArgs) OnPanDetected(SKPanEventArgs) OnPinchDetected(SKPinchEventArgs) OnRotateDetected(SKRotateEventArgs) OnScrollDetected(SKScrollEventArgs) OnTapDetected(SKTapEventArgs) ProcessMouseWheel(SKPoint, float, float) ProcessTouchCancel(long) ProcessTouchDown(long, SKPoint, bool) ProcessTouchMove(long, SKPoint, bool) ProcessTouchUp(long, SKPoint, bool) Reset() Events DoubleTapDetected FlingDetected GestureEnded GestureStarted HoverDetected LongPressDetected PanDetected PinchDetected RotateDetected ScrollDetected TapDetected"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html",
