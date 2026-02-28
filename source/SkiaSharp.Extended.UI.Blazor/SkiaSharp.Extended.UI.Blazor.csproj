@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- <Nullable>enable</Nullable> -->
+    <AssemblyName>SkiaSharp.Extended.UI.Blazor</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended.UI.Blazor</RootNamespace>
+    <AddRazorSupportForMvc>false</AddRazorSupportForMvc>
+    <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.UI.Blazor</PackageId>
+    <Title>Additional SkiaSharp controls for Blazor</Title>
+    <Description>This package adds additional SkiaSharp controls to Blazor, including a touch-enabled canvas view and gesture recognition.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="3.119.2" />
+    <PackageReference Include="SkiaSharp.Views.Blazor" Version="3.119.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SkiaSharp.Extended\SkiaSharp.Extended.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.AspNetCore.Components" />
+    <Using Include="Microsoft.AspNetCore.Components.Web" />
+    <Using Include="Microsoft.JSInterop" />
+    <Using Include="SkiaSharp" />
+    <Using Include="SkiaSharp.Views.Blazor" />
+    <Using Include="SkiaSharp.Extended.Gestures" />
+  </ItemGroup>
+
+</Project>

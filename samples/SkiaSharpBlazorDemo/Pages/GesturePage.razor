@@ -1,0 +1,111 @@
+@page "/gestures"
+@implements IDisposable
+
+<div class="gesture-page">
+    <div class="toolbar">
+        <h3>Gesture Demo</h3>
+        <div class="controls">
+            <label><input type="checkbox" @bind="_enableTap" /> Tap</label>
+            <label><input type="checkbox" @bind="_enableDoubleTap" /> Double Tap</label>
+            <label><input type="checkbox" @bind="_enableLongPress" /> Long Press</label>
+            <label><input type="checkbox" @bind="_enablePan" /> Pan</label>
+            <label><input type="checkbox" @bind="_enablePinch" /> Pinch</label>
+            <label><input type="checkbox" @bind="_enableRotate" /> Rotate</label>
+            <label><input type="checkbox" @bind="_enableFling" /> Fling</label>
+            <label><input type="checkbox" @bind="_enableScrollZoom" /> Scroll Zoom</label>
+        </div>
+        <div class="status-bar">
+            <span class="status-text">@_statusText</span>
+            <button class="reset-btn" @onclick="ResetView">Reset</button>
+        </div>
+        <div class="event-log">
+            @foreach (var entry in _eventLog)
+            {
+                <div class="log-entry">@entry</div>
+            }
+        </div>
+    </div>
+
+    <div class="canvas-area">
+        <SKGestureSurfaceView
+            Style="width: 100%; height: 100%;"
+            OnPaintSurface="OnPaintSurface"
+            TapDetected="OnTap"
+            DoubleTapDetected="OnDoubleTap"
+            LongPressDetected="OnLongPress"
+            PanDetected="OnPan"
+            PinchDetected="OnPinch"
+            RotateDetected="OnRotate"
+            FlingDetected="OnFling"
+            Flinging="OnFlinging"
+            FlingCompleted="OnFlingCompleted"
+            ScrollDetected="OnScroll"
+            HoverDetected="OnHover"
+            DragStarted="OnDragStarted"
+            DragUpdated="OnDragUpdated"
+            DragEnded="OnDragEnded"
+            @ref="_gestureView" />
+    </div>
+</div>
+
+<style>
+    .gesture-page {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+    }
+    .toolbar {
+        padding: 0.5rem 1rem;
+        background: #f5f5f5;
+        border-bottom: 1px solid #ddd;
+        flex-shrink: 0;
+    }
+    .toolbar h3 {
+        margin: 0 0 0.4rem;
+        font-size: 1rem;
+    }
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.4rem;
+    }
+    .controls label {
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        cursor: pointer;
+    }
+    .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.25rem;
+    }
+    .status-text {
+        font-size: 0.85rem;
+        color: #555;
+        flex: 1;
+    }
+    .reset-btn {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.6rem;
+        cursor: pointer;
+    }
+    .event-log {
+        font-size: 0.75rem;
+        color: #777;
+        font-family: monospace;
+        min-height: 1.2em;
+    }
+    .log-entry {
+        line-height: 1.4;
+    }
+    .canvas-area {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+</style>

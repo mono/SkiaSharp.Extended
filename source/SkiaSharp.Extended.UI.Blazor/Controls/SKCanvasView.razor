@@ -1,0 +1,12 @@
+@namespace SkiaSharp.Extended.UI.Blazor.Controls
+@inherits ComponentBase
+@implements IDisposable
+
+<SkiaSharp.Views.Blazor.SKCanvasView
+    @ref="_skCanvasView"
+    OnPaintSurface="OnPaintSurfaceInternal"
+    EnableRenderLoop="@EnableRenderLoop"
+    IgnorePixelScaling="@IgnorePixelScaling"
+    style="@Style"
+    class="@Class"
+    @attributes="AdditionalAttributes" />

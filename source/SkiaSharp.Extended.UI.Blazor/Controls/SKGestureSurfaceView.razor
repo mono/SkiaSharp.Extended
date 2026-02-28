@@ -1,0 +1,14 @@
+@namespace SkiaSharp.Extended.UI.Blazor.Controls
+@inherits ComponentBase
+@implements IAsyncDisposable
+
+<SKTouchCanvasView
+    @ref="_touchView"
+    OnPaintSurface="OnPaintSurfaceInternal"
+    Touch="OnTouchInternal"
+    EnableTouchEvents="@IsGestureEnabled"
+    EnableRenderLoop="@EnableRenderLoop"
+    IgnorePixelScaling="@IgnorePixelScaling"
+    Style="@Style"
+    Class="@Class"
+    @attributes="AdditionalAttributes" />
