@@ -170,9 +170,6 @@ public class SKGestureTracker : IDisposable
 		_viewHeight = height;
 	}
 
-	/// <summary>Gets or sets the display scale (pixels/points) for coordinate conversion.</summary>
-	public float DisplayScale { get; set; } = 1f;
-
 	#endregion
 
 	#region Transform Config
