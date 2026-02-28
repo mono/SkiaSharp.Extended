@@ -172,7 +172,7 @@ public class SKGestureEngineTests
 	public async Task LongTouch_RaisesLongPressDetected()
 	{
 		var engine = new SKGestureEngine();
-		engine.LongPressDuration = 100; // Short duration for testing
+		engine.Options.LongPressDuration = 100; // Short duration for testing
 		var longPressRaised = false;
 		engine.LongPressDetected += (s, e) => longPressRaised = true;
 
@@ -187,7 +187,7 @@ public class SKGestureEngineTests
 	public async Task LongPress_DoesNotRaiseTapOnRelease()
 	{
 		var engine = new SKGestureEngine();
-		engine.LongPressDuration = 100;
+		engine.Options.LongPressDuration = 100;
 		var tapRaised = false;
 		var longPressRaised = false;
 		engine.TapDetected += (s, e) => tapRaised = true;
@@ -206,7 +206,7 @@ public class SKGestureEngineTests
 	public async Task LongPressDuration_CanBeCustomized()
 	{
 		var engine = new SKGestureEngine();
-		engine.LongPressDuration = 300;
+		engine.Options.LongPressDuration = 300;
 		var longPressRaised = false;
 		engine.LongPressDetected += (s, e) => longPressRaised = true;
 
@@ -600,7 +600,7 @@ public class SKGestureEngineTests
 	public void TouchSlop_CanBeCustomized()
 	{
 		var engine = CreateEngine();
-		engine.TouchSlop = 20;
+		engine.Options.TouchSlop = 20;
 		var panRaised = false;
 		engine.PanDetected += (s, e) => panRaised = true;
 
@@ -615,7 +615,7 @@ public class SKGestureEngineTests
 	public void FlingThreshold_CanBeCustomized()
 	{
 		var engine = CreateEngine();
-		engine.FlingThreshold = 1000; // Very high threshold
+		engine.Options.FlingThreshold = 1000; // Very high threshold
 		var flingRaised = false;
 		engine.FlingDetected += (s, e) => flingRaised = true;
 
@@ -1287,7 +1287,7 @@ public class SKGestureEngineTests
 	public void DoubleTapSlop_FarApartTaps_DoNotTriggerDoubleTap()
 	{
 		var engine = CreateEngine();
-		engine.DoubleTapSlop = 40f;
+		engine.Options.DoubleTapSlop = 40f;
 		var doubleTapCount = 0;
 		engine.DoubleTapDetected += (s, e) => doubleTapCount++;
 
@@ -1309,7 +1309,7 @@ public class SKGestureEngineTests
 	public void DoubleTapSlop_CloseTaps_TriggerDoubleTap()
 	{
 		var engine = CreateEngine();
-		engine.DoubleTapSlop = 40f;
+		engine.Options.DoubleTapSlop = 40f;
 		var doubleTapCount = 0;
 		engine.DoubleTapDetected += (s, e) => doubleTapCount++;
 
