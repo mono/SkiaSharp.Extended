@@ -6,10 +6,15 @@ using SkiaSharp.Views.Maui;
 namespace SkiaSharpDemo.Demos;
 
 /// <summary>
-/// Demo page showcasing all gesture features of SKGestureSurfaceView.
+/// Demo page showcasing gesture features using SKGestureTracker directly with SKCanvasView.
+/// This demonstrates the recommended pattern: apps use the tracker directly rather than
+/// a wrapper view, giving full control over which gestures to handle.
 /// </summary>
 public partial class GesturePage : ContentPage
 {
+	// Gesture tracker - the core gesture recognition component
+	private readonly SKGestureTracker _tracker;
+
 	// Sticker data for demonstration
 	private readonly List<Sticker> _stickers = new();
 	private Sticker? _selectedSticker;
@@ -30,6 +35,10 @@ public partial class GesturePage : ContentPage
 	{
 		InitializeComponent();
 
+		// Create and configure the gesture tracker
+		_tracker = new SKGestureTracker();
+		SubscribeTrackerEvents();
+
 		// Initialize with some stickers
 		_stickers.Add(new Sticker { Position = new SKPoint(100, 100), Size = 80, Color = SKColors.Red, Label = "1" });
 		_stickers.Add(new Sticker { Position = new SKPoint(200, 200), Size = 60, Color = SKColors.Green, Label = "2" });
@@ -39,7 +48,72 @@ public partial class GesturePage : ContentPage
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
-		gestureView.Invalidate();
+		canvasView.InvalidateSurface();
+	}
+
+	protected override void OnDisappearing()
+	{
+		base.OnDisappearing();
+		UnsubscribeTrackerEvents();
+		_tracker.Dispose();
+	}
+
+	private void SubscribeTrackerEvents()
+	{
+		_tracker.TapDetected += OnTap;
+		_tracker.DoubleTapDetected += OnDoubleTap;
+		_tracker.LongPressDetected += OnLongPress;
+		_tracker.PanDetected += OnPan;
+		_tracker.PinchDetected += OnPinch;
+		_tracker.RotateDetected += OnRotate;
+		_tracker.FlingDetected += OnFling;
+		_tracker.Flinging += OnFlinging;
+		_tracker.FlingCompleted += OnFlingCompleted;
+		_tracker.ScrollDetected += OnScroll;
+		_tracker.HoverDetected += OnHover;
+		_tracker.DragStarted += OnDragStarted;
+		_tracker.DragUpdated += OnDragUpdated;
+		_tracker.DragEnded += OnDragEnded;
+		_tracker.TransformChanged += OnTransformChanged;
+	}
+
+	private void UnsubscribeTrackerEvents()
+	{
+		_tracker.TapDetected -= OnTap;
+		_tracker.DoubleTapDetected -= OnDoubleTap;
+		_tracker.LongPressDetected -= OnLongPress;
+		_tracker.PanDetected -= OnPan;
+		_tracker.PinchDetected -= OnPinch;
+		_tracker.RotateDetected -= OnRotate;
+		_tracker.FlingDetected -= OnFling;
+		_tracker.Flinging -= OnFlinging;
+		_tracker.FlingCompleted -= OnFlingCompleted;
+		_tracker.ScrollDetected -= OnScroll;
+		_tracker.HoverDetected -= OnHover;
+		_tracker.DragStarted -= OnDragStarted;
+		_tracker.DragUpdated -= OnDragUpdated;
+		_tracker.DragEnded -= OnDragEnded;
+		_tracker.TransformChanged -= OnTransformChanged;
+	}
+
+	/// <summary>
+	/// Handle touch events from SKCanvasView and forward to the tracker.
+	/// </summary>
+	private void OnTouch(object? sender, SKTouchEventArgs e)
+	{
+		// Use the extension method to process touch events
+		e.Handled = _tracker.ProcessTouch(e);
+
+		if (e.Handled)
+			canvasView.InvalidateSurface();
+	}
+
+	/// <summary>
+	/// Invalidate canvas when transform changes (pan, zoom, rotate, fling).
+	/// </summary>
+	private void OnTransformChanged(object? sender, EventArgs e)
+	{
+		canvasView.InvalidateSurface();
 	}
 
 	private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
@@ -52,12 +126,21 @@ public partial class GesturePage : ContentPage
 		_canvasWidth = width;
 		_canvasHeight = height;
 
+		// Update display scale (pixels / points) and view size
+		if (canvasView.Width > 0)
+			_tracker.DisplayScale = width / (float)canvasView.Width;
+		
+		var scale = _tracker.DisplayScale;
+		var pointWidth = scale > 0 ? (int)(width / scale) : width;
+		var pointHeight = scale > 0 ? (int)(height / scale) : height;
+		_tracker.SetViewSize(pointWidth, pointHeight);
+
 		// Clear background
 		canvas.Clear(SKColors.White);
 
 		// Apply transform from the tracker
 		canvas.Save();
-		canvas.Concat(gestureView.Tracker.Matrix);
+		canvas.Concat(_tracker.Matrix);
 
 		// Draw grid background inside the transform so it pans/zooms/rotates with content
 		DrawGrid(canvas, width, height);
@@ -89,7 +172,7 @@ public partial class GesturePage : ContentPage
 		using var darkPaint = new SKPaint { Color = new SKColor(220, 220, 220) };
 
 		// Expand grid coverage so it fills the view when zoomed out
-		var scale = gestureView.Tracker.Scale;
+		var scale = _tracker.Scale;
 		var extra = (int)(Math.Max(width, height) / scale) + gridSize * 4;
 		// Snap start to grid boundary to keep checker pattern correct
 		var startX = -(extra / gridSize) * gridSize;
@@ -183,7 +266,7 @@ public partial class GesturePage : ContentPage
 			statusLabel.Text = "No selection";
 		}
 		
-		gestureView.Invalidate();
+		canvasView.InvalidateSurface();
 	}
 
 	private void OnDoubleTap(object? sender, SKTapEventArgs e)
@@ -198,7 +281,7 @@ public partial class GesturePage : ContentPage
 			_selectedSticker = hitSticker;
 			statusLabel.Text = $"Selected: Sticker {hitSticker.Label}";
 			e.Handled = true;
-			gestureView.Invalidate();
+			canvasView.InvalidateSurface();
 		}
 	}
 
@@ -214,7 +297,7 @@ public partial class GesturePage : ContentPage
 			statusLabel.Text = $"Long press selected: Sticker {hitSticker.Label}";
 		}
 		
-		gestureView.Invalidate();
+		canvasView.InvalidateSurface();
 	}
 
 	private void OnPan(object? sender, SKPanEventArgs e)
@@ -226,13 +309,13 @@ public partial class GesturePage : ContentPage
 	private void OnPinch(object? sender, SKPinchEventArgs e)
 	{
 		LogEvent($"Pinch scale: {e.Scale:F2}");
-		statusLabel.Text = $"Scale: {gestureView.Tracker.Scale:F2}";
+		statusLabel.Text = $"Scale: {_tracker.Scale:F2}";
 	}
 
 	private void OnRotate(object? sender, SKRotateEventArgs e)
 	{
 		LogEvent($"Rotate: {e.RotationDelta:F1}°");
-		statusLabel.Text = $"Rotation: {gestureView.Tracker.Rotation:F1}°";
+		statusLabel.Text = $"Rotation: {_tracker.Rotation:F1}°";
 	}
 
 	private void OnFling(object? sender, SKFlingEventArgs e)
@@ -255,7 +338,7 @@ public partial class GesturePage : ContentPage
 	private void OnScroll(object? sender, SKScrollEventArgs e)
 	{
 		// Scroll zoom is handled by the tracker
-		statusLabel.Text = $"Scroll zoom: {gestureView.Tracker.Scale:F2}x";
+		statusLabel.Text = $"Scroll zoom: {_tracker.Scale:F2}x";
 	}
 
 	private void OnHover(object? sender, SKHoverEventArgs e)
@@ -282,7 +365,7 @@ public partial class GesturePage : ContentPage
 		if (_selectedSticker != null)
 		{
 			// Convert screen-space delta to content-space via inverse matrix
-			var matrix = gestureView.Tracker.Matrix;
+			var matrix = _tracker.Matrix;
 			if (matrix.TryInvert(out var inverse))
 			{
 				var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
@@ -292,7 +375,7 @@ public partial class GesturePage : ContentPage
 			}
 
 			e.Handled = true; // suppress canvas pan
-			gestureView.Invalidate();
+			canvasView.InvalidateSurface();
 		}
 	}
 
@@ -308,7 +391,7 @@ public partial class GesturePage : ContentPage
 		if (_canvasWidth <= 0 || _canvasHeight <= 0)
 			return null;
 
-		var matrix = gestureView.Tracker.Matrix;
+		var matrix = _tracker.Matrix;
 		if (!matrix.TryInvert(out var inverse))
 			return null;
 
@@ -329,10 +412,9 @@ public partial class GesturePage : ContentPage
 	private async void OnSettingsClicked(object? sender, EventArgs e)
 	{
 		var page = new ContentPage { Title = "Gesture Settings" };
-		var tracker = gestureView.Tracker;
 
-		var touchSlop = gestureView.TouchSlop;
-		var longPressDuration = gestureView.LongPressDuration;
+		var touchSlop = _tracker.TouchSlop;
+		var longPressDuration = _tracker.LongPressDuration;
 
 		var layout = new VerticalStackLayout { Padding = 20, Spacing = 12 };
 
@@ -341,12 +423,12 @@ public partial class GesturePage : ContentPage
 
 		var toggles = new (string Label, bool Value, Action<bool> Setter)[]
 		{
-			("Pan", tracker.IsPanEnabled, v => tracker.IsPanEnabled = v),
-			("Pinch (Zoom)", tracker.IsPinchEnabled, v => tracker.IsPinchEnabled = v),
-			("Rotate", tracker.IsRotateEnabled, v => tracker.IsRotateEnabled = v),
-			("Fling", tracker.IsFlingEnabled, v => tracker.IsFlingEnabled = v),
-			("Double Tap Zoom", tracker.IsDoubleTapZoomEnabled, v => tracker.IsDoubleTapZoomEnabled = v),
-			("Scroll Zoom", tracker.IsScrollZoomEnabled, v => tracker.IsScrollZoomEnabled = v),
+			("Pan", _tracker.IsPanEnabled, v => _tracker.IsPanEnabled = v),
+			("Pinch (Zoom)", _tracker.IsPinchEnabled, v => _tracker.IsPinchEnabled = v),
+			("Rotate", _tracker.IsRotateEnabled, v => _tracker.IsRotateEnabled = v),
+			("Fling", _tracker.IsFlingEnabled, v => _tracker.IsFlingEnabled = v),
+			("Double Tap Zoom", _tracker.IsDoubleTapZoomEnabled, v => _tracker.IsDoubleTapZoomEnabled = v),
+			("Scroll Zoom", _tracker.IsScrollZoomEnabled, v => _tracker.IsScrollZoomEnabled = v),
 			("Tap (App)", _enableTap, v => _enableTap = v),
 			("Double Tap Log (App)", _enableDoubleTap, v => _enableDoubleTap = v),
 			("Long Press (App)", _enableLongPress, v => _enableLongPress = v),
@@ -373,7 +455,7 @@ public partial class GesturePage : ContentPage
 		var slopSlider = new Slider { Minimum = 1, Maximum = 50, Value = touchSlop };
 		slopSlider.ValueChanged += (_, args) =>
 		{
-			gestureView.TouchSlop = (float)args.NewValue;
+			_tracker.TouchSlop = (float)args.NewValue;
 			slopLabel.Text = $"Touch Slop: {args.NewValue:F0} px";
 		};
 		layout.Children.Add(slopLabel);
@@ -384,7 +466,7 @@ public partial class GesturePage : ContentPage
 		var lpSlider = new Slider { Minimum = 100, Maximum = 2000, Value = longPressDuration };
 		lpSlider.ValueChanged += (_, args) =>
 		{
-			gestureView.LongPressDuration = (int)args.NewValue;
+			_tracker.LongPressDuration = (int)args.NewValue;
 			lpLabel.Text = $"Long Press: {(int)args.NewValue} ms";
 		};
 		layout.Children.Add(lpLabel);
@@ -394,44 +476,44 @@ public partial class GesturePage : ContentPage
 		layout.Children.Add(new Label { Text = "Fling Settings", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
 
 		// Fling friction
-		var frictionLabel = new Label { Text = $"Friction: {tracker.FlingFriction:F2}" };
-		var frictionSlider = new Slider { Minimum = 0.0, Maximum = 1.0, Value = tracker.FlingFriction };
+		var frictionLabel = new Label { Text = $"Friction: {_tracker.FlingFriction:F2}" };
+		var frictionSlider = new Slider { Minimum = 0.0, Maximum = 1.0, Value = _tracker.FlingFriction };
 		frictionSlider.ValueChanged += (_, args) =>
 		{
-			tracker.FlingFriction = (float)args.NewValue;
+			_tracker.FlingFriction = (float)args.NewValue;
 			frictionLabel.Text = $"Friction: {args.NewValue:F2}";
 		};
 		layout.Children.Add(frictionLabel);
 		layout.Children.Add(frictionSlider);
 
 		// Fling min velocity
-		var minVelLabel = new Label { Text = $"Min Velocity: {tracker.FlingMinVelocity:F0} px/s" };
-		var minVelSlider = new Slider { Minimum = 1, Maximum = 50, Value = tracker.FlingMinVelocity };
+		var minVelLabel = new Label { Text = $"Min Velocity: {_tracker.FlingMinVelocity:F0} px/s" };
+		var minVelSlider = new Slider { Minimum = 1, Maximum = 50, Value = _tracker.FlingMinVelocity };
 		minVelSlider.ValueChanged += (_, args) =>
 		{
-			tracker.FlingMinVelocity = (float)args.NewValue;
+			_tracker.FlingMinVelocity = (float)args.NewValue;
 			minVelLabel.Text = $"Min Velocity: {args.NewValue:F0} px/s";
 		};
 		layout.Children.Add(minVelLabel);
 		layout.Children.Add(minVelSlider);
 
 		// Fling detection threshold
-		var threshLabel = new Label { Text = $"Fling Threshold: {tracker.FlingThreshold:F0} px/s" };
-		var threshSlider = new Slider { Minimum = 50, Maximum = 1000, Value = tracker.FlingThreshold };
+		var threshLabel = new Label { Text = $"Fling Threshold: {_tracker.FlingThreshold:F0} px/s" };
+		var threshSlider = new Slider { Minimum = 50, Maximum = 1000, Value = _tracker.FlingThreshold };
 		threshSlider.ValueChanged += (_, args) =>
 		{
-			tracker.FlingThreshold = (float)args.NewValue;
+			_tracker.FlingThreshold = (float)args.NewValue;
 			threshLabel.Text = $"Fling Threshold: {args.NewValue:F0} px/s";
 		};
 		layout.Children.Add(threshLabel);
 		layout.Children.Add(threshSlider);
 
 		// Double tap slop
-		var dtSlopLabel = new Label { Text = $"Double Tap Slop: {tracker.DoubleTapSlop:F0} px" };
-		var dtSlopSlider = new Slider { Minimum = 10, Maximum = 200, Value = tracker.DoubleTapSlop };
+		var dtSlopLabel = new Label { Text = $"Double Tap Slop: {_tracker.DoubleTapSlop:F0} px" };
+		var dtSlopSlider = new Slider { Minimum = 10, Maximum = 200, Value = _tracker.DoubleTapSlop };
 		dtSlopSlider.ValueChanged += (_, args) =>
 		{
-			tracker.DoubleTapSlop = (float)args.NewValue;
+			_tracker.DoubleTapSlop = (float)args.NewValue;
 			dtSlopLabel.Text = $"Double Tap Slop: {args.NewValue:F0} px";
 		};
 		layout.Children.Add(dtSlopLabel);
@@ -440,41 +522,41 @@ public partial class GesturePage : ContentPage
 		// --- Zoom Settings ---
 		layout.Children.Add(new Label { Text = "Zoom Settings", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
 
-		var zoomFactorLabel = new Label { Text = $"Double Tap Zoom: {tracker.DoubleTapZoomFactor:F1}x" };
-		var zoomFactorSlider = new Slider { Minimum = 1.5, Maximum = 5.0, Value = tracker.DoubleTapZoomFactor };
+		var zoomFactorLabel = new Label { Text = $"Double Tap Zoom: {_tracker.DoubleTapZoomFactor:F1}x" };
+		var zoomFactorSlider = new Slider { Minimum = 1.5, Maximum = 5.0, Value = _tracker.DoubleTapZoomFactor };
 		zoomFactorSlider.ValueChanged += (_, args) =>
 		{
-			tracker.DoubleTapZoomFactor = (float)args.NewValue;
+			_tracker.DoubleTapZoomFactor = (float)args.NewValue;
 			zoomFactorLabel.Text = $"Double Tap Zoom: {args.NewValue:F1}x";
 		};
 		layout.Children.Add(zoomFactorLabel);
 		layout.Children.Add(zoomFactorSlider);
 
-		var scrollZoomLabel = new Label { Text = $"Scroll Zoom Factor: {tracker.ScrollZoomFactor:F2}" };
-		var scrollZoomSlider = new Slider { Minimum = 0.01, Maximum = 0.5, Value = tracker.ScrollZoomFactor };
+		var scrollZoomLabel = new Label { Text = $"Scroll Zoom Factor: {_tracker.ScrollZoomFactor:F2}" };
+		var scrollZoomSlider = new Slider { Minimum = 0.01, Maximum = 0.5, Value = _tracker.ScrollZoomFactor };
 		scrollZoomSlider.ValueChanged += (_, args) =>
 		{
-			tracker.ScrollZoomFactor = (float)args.NewValue;
+			_tracker.ScrollZoomFactor = (float)args.NewValue;
 			scrollZoomLabel.Text = $"Scroll Zoom Factor: {args.NewValue:F2}";
 		};
 		layout.Children.Add(scrollZoomLabel);
 		layout.Children.Add(scrollZoomSlider);
 
-		var minScaleLabel = new Label { Text = $"Min Scale: {tracker.MinScale:F1}x" };
-		var minScaleSlider = new Slider { Minimum = 0.1, Maximum = 1.0, Value = tracker.MinScale };
+		var minScaleLabel = new Label { Text = $"Min Scale: {_tracker.MinScale:F1}x" };
+		var minScaleSlider = new Slider { Minimum = 0.1, Maximum = 1.0, Value = _tracker.MinScale };
 		minScaleSlider.ValueChanged += (_, args) =>
 		{
-			tracker.MinScale = (float)args.NewValue;
+			_tracker.MinScale = (float)args.NewValue;
 			minScaleLabel.Text = $"Min Scale: {args.NewValue:F1}x";
 		};
 		layout.Children.Add(minScaleLabel);
 		layout.Children.Add(minScaleSlider);
 
-		var maxScaleLabel = new Label { Text = $"Max Scale: {tracker.MaxScale:F1}x" };
-		var maxScaleSlider = new Slider { Minimum = 2.0, Maximum = 20.0, Value = tracker.MaxScale };
+		var maxScaleLabel = new Label { Text = $"Max Scale: {_tracker.MaxScale:F1}x" };
+		var maxScaleSlider = new Slider { Minimum = 2.0, Maximum = 20.0, Value = _tracker.MaxScale };
 		maxScaleSlider.ValueChanged += (_, args) =>
 		{
-			tracker.MaxScale = (float)args.NewValue;
+			_tracker.MaxScale = (float)args.NewValue;
 			maxScaleLabel.Text = $"Max Scale: {args.NewValue:F1}x";
 		};
 		layout.Children.Add(maxScaleLabel);
@@ -482,18 +564,18 @@ public partial class GesturePage : ContentPage
 
 		// --- Current State ---
 		layout.Children.Add(new Label { Text = "Current State", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
-		layout.Children.Add(new Label { Text = $"Scale: {tracker.Scale:F2}x" });
-		layout.Children.Add(new Label { Text = $"Rotation: {tracker.Rotation:F1}°" });
-		layout.Children.Add(new Label { Text = $"Offset: ({tracker.Offset.X:F0}, {tracker.Offset.Y:F0})" });
+		layout.Children.Add(new Label { Text = $"Scale: {_tracker.Scale:F2}x" });
+		layout.Children.Add(new Label { Text = $"Rotation: {_tracker.Rotation:F1}°" });
+		layout.Children.Add(new Label { Text = $"Offset: ({_tracker.Offset.X:F0}, {_tracker.Offset.Y:F0})" });
 		layout.Children.Add(new Label { Text = $"Selected: {(_selectedSticker != null ? $"Sticker {_selectedSticker.Label}" : "None")}" });
 
 		// Reset button
 		var resetBtn = new Button { Text = "Reset View", Margin = new Thickness(0, 10, 0, 0) };
 		resetBtn.Clicked += (_, _) =>
 		{
-			tracker.Reset();
+			_tracker.Reset();
 			_selectedSticker = null;
-			gestureView.Invalidate();
+			canvasView.InvalidateSurface();
 		};
 		layout.Children.Add(resetBtn);
 
