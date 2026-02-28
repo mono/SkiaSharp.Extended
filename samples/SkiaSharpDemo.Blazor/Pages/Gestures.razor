@@ -204,11 +204,19 @@
         _canvasWidth = width;
         _canvasHeight = height;
 
-        // Estimate display scale from canvas size vs element size
-        // For Blazor WASM, this is typically 1:1 unless CSS scaling is applied
-        _displayScale = 1f;
+        // Calculate display scale from canvas pixel size vs CSS size
+        // PointerEventArgs provides CSS pixels, but canvas size is in device pixels
+        // This handles high-DPI displays where devicePixelRatio > 1
+        // We'll estimate this based on the expected CSS size of the container (600px height from style)
+        // In production, you'd use JavaScript interop to get the actual element bounds
+        const float expectedCssHeight = 600f;
+        _displayScale = height / expectedCssHeight;
         _tracker.DisplayScale = _displayScale;
-        _tracker.SetViewSize(width, height);
+        
+        // Set view size in CSS/point coordinates (same units as touch events)
+        var cssWidth = _displayScale > 0 ? width / _displayScale : width;
+        var cssHeight = _displayScale > 0 ? height / _displayScale : height;
+        _tracker.SetViewSize(cssWidth, cssHeight);
 
         // Clear background
         canvas.Clear(SKColors.White);

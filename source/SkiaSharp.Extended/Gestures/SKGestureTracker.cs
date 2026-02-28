@@ -147,23 +147,17 @@ public class SKGestureTracker : IDisposable
 	public SKPoint Offset => _offset;
 
 	/// <summary>Gets the composite transform matrix.</summary>
-	/// <remarks>
-	/// The matrix is composed as: screen offset, then center-origin, scale, rotate, and restore.
-	/// This ensures pan moves content at 1:1 screen speed regardless of zoom level.
-	/// </remarks>
 	public SKMatrix Matrix
 	{
 		get
 		{
 			var w2 = _viewWidth / 2f;
 			var h2 = _viewHeight / 2f;
-			// Order (PreConcat reverses): 
-			// 1. Translate to center  2. Rotate  3. Scale  4. Translate to origin  5. Screen-space offset
 			var m = SKMatrix.CreateTranslation(w2, h2);
-			m = m.PreConcat(SKMatrix.CreateRotationDegrees(_rotation));
 			m = m.PreConcat(SKMatrix.CreateScale(_scale, _scale));
-			m = m.PreConcat(SKMatrix.CreateTranslation(-w2, -h2));
+			m = m.PreConcat(SKMatrix.CreateRotationDegrees(_rotation));
 			m = m.PreConcat(SKMatrix.CreateTranslation(_offset.X, _offset.Y));
+			m = m.PreConcat(SKMatrix.CreateTranslation(-w2, -h2));
 			return m;
 		}
 	}
@@ -480,8 +474,9 @@ public class SKGestureTracker : IDisposable
 		if (e.Handled || (dragArgs?.Handled ?? false))
 			return;
 
-		// Update offset (screen-space: apply delta directly)
-		_offset = new SKPoint(_offset.X + e.Delta.X, _offset.Y + e.Delta.Y);
+		// Update offset
+		var d = ScreenToContentDelta(e.Delta.X, e.Delta.Y);
+		_offset = new SKPoint(_offset.X + d.X, _offset.Y + d.Y);
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
 
@@ -489,18 +484,19 @@ public class SKGestureTracker : IDisposable
 	{
 		PinchDetected?.Invoke(this, e);
 
-		// Apply center movement as pan (screen-space)
+		// Apply center movement as pan
 		if (IsPanEnabled)
 		{
-			var dx = e.Center.X - e.PreviousCenter.X;
-			var dy = e.Center.Y - e.PreviousCenter.Y;
-			_offset = new SKPoint(_offset.X + dx, _offset.Y + dy);
+			var panDelta = ScreenToContentDelta(
+				e.Center.X - e.PreviousCenter.X,
+				e.Center.Y - e.PreviousCenter.Y);
+			_offset = new SKPoint(_offset.X + panDelta.X, _offset.Y + panDelta.Y);
 		}
 
 		if (IsPinchEnabled)
 		{
 			var newScale = Clamp(_scale * e.Scale, MinScale, MaxScale);
-			AdjustOffsetForScalePivot(e.Center, _scale, newScale);
+			AdjustOffsetForPivot(e.Center, _scale, newScale, _rotation, _rotation);
 			_scale = newScale;
 		}
 
@@ -515,7 +511,7 @@ public class SKGestureTracker : IDisposable
 			return;
 
 		var newRotation = _rotation + e.RotationDelta;
-		AdjustOffsetForRotatePivot(e.Center, _rotation, newRotation);
+		AdjustOffsetForPivot(e.Center, _scale, _scale, _rotation, newRotation);
 		_rotation = newRotation;
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
@@ -542,7 +538,7 @@ public class SKGestureTracker : IDisposable
 
 		var scaleDelta = 1f + e.DeltaY * ScrollZoomFactor;
 		var newScale = Clamp(_scale * scaleDelta, MinScale, MaxScale);
-		AdjustOffsetForScalePivot(e.Location, _scale, newScale);
+		AdjustOffsetForPivot(e.Location, _scale, newScale, _rotation, _rotation);
 		_scale = newScale;
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
@@ -569,73 +565,30 @@ public class SKGestureTracker : IDisposable
 
 	#region Transform Helpers
 
-	/// <summary>
-	/// Adjusts the screen-space offset so that the point under screenPivot stays fixed
-	/// when scale changes from oldScale to newScale.
-	/// </summary>
-	private void AdjustOffsetForScalePivot(SKPoint screenPivot, float oldScale, float newScale)
+	private SKPoint ScreenToContentDelta(float dx, float dy)
 	{
-		// Screen-space: pivot point relative to view center
-		var w2 = _viewWidth / 2f;
-		var h2 = _viewHeight / 2f;
-		
-		// Point in screen space before applying offset
-		// To keep screenPivot fixed: offset_new = offset_old + pivot * (1 - newScale/oldScale)
-		// But since Matrix is: offset then center then scale etc, we need:
-		// The content point under screenPivot must map to the same screen point after scale change.
-		
-		// Before scale change: screenPivot maps to some content point P
-		// After scale change: we want P to still be under screenPivot
-		// 
-		// Let's derive: screenPivot = M * contentPoint
-		// We want: screenPivot = M_new * contentPoint
-		// So: offset_new = offset_old + (screenPivot - center) * (1 - oldScale/newScale)
-		
-		var dx = screenPivot.X - w2;
-		var dy = screenPivot.Y - h2;
-		var factor = 1f - oldScale / newScale;
-		
-		_offset = new SKPoint(
-			_offset.X + dx * factor,
-			_offset.Y + dy * factor);
+		var inv = SKMatrix.CreateRotationDegrees(-_rotation);
+		var mapped = inv.MapVector(dx, dy);
+		return new SKPoint(mapped.X / _scale, mapped.Y / _scale);
 	}
 
-	/// <summary>
-	/// Adjusts the screen-space offset so that the point under screenPivot stays fixed
-	/// when rotation changes from oldRotation to newRotation.
-	/// </summary>
-	private void AdjustOffsetForRotatePivot(SKPoint screenPivot, float oldRotationDeg, float newRotationDeg)
+	private void AdjustOffsetForPivot(SKPoint screenPivot, float oldScale, float newScale, float oldRotDeg, float newRotDeg)
 	{
-		// Screen-space: rotate offset around the pivot point
 		var w2 = _viewWidth / 2f;
 		var h2 = _viewHeight / 2f;
-		
-		// The rotation happens around view center in screen space.
-		// To keep screenPivot fixed, we need to adjust offset.
-		// 
-		// Content under screenPivot: inverse_M(screenPivot)
-		// After rotation change, we want inverse_M_new(screenPivot) to be the same content point.
-		// 
-		// Simpler approach: rotate the offset around the pivot point
-		var deltaDeg = newRotationDeg - oldRotationDeg;
-		var deltaRad = deltaDeg * (float)Math.PI / 180f;
-		
-		// Pivot relative to center
-		var px = screenPivot.X - w2;
-		var py = screenPivot.Y - h2;
-		
-		// Offset relative to pivot
-		var ox = _offset.X - px;
-		var oy = _offset.Y - py;
-		
-		// Rotate offset around pivot
-		var cos = (float)Math.Cos(deltaRad);
-		var sin = (float)Math.Sin(deltaRad);
-		var rotX = ox * cos - oy * sin;
-		var rotY = ox * sin + oy * cos;
-		
-		// Translate back
-		_offset = new SKPoint(rotX + px, rotY + py);
+		var d = new SKPoint(screenPivot.X - w2, screenPivot.Y - h2);
+
+		var rotOld = SKMatrix.CreateRotationDegrees(-oldRotDeg);
+		var qOld = rotOld.MapVector(d.X, d.Y);
+		qOld = new SKPoint(qOld.X / oldScale, qOld.Y / oldScale);
+
+		var rotNew = SKMatrix.CreateRotationDegrees(-newRotDeg);
+		var qNew = rotNew.MapVector(d.X, d.Y);
+		qNew = new SKPoint(qNew.X / newScale, qNew.Y / newScale);
+
+		_offset = new SKPoint(
+			_offset.X + qNew.X - qOld.X,
+			_offset.Y + qNew.Y - qOld.Y);
 	}
 
 	private static float Clamp(float value, float min, float max)
@@ -695,8 +648,9 @@ public class SKGestureTracker : IDisposable
 
 		Flinging?.Invoke(this, new SKFlingEventArgs(_flingVelocityX, _flingVelocityY, deltaX, deltaY));
 
-		// Apply as pan offset (screen-space)
-		_offset = new SKPoint(_offset.X + deltaX, _offset.Y + deltaY);
+		// Apply as pan offset
+		var d = ScreenToContentDelta(deltaX, deltaY);
+		_offset = new SKPoint(_offset.X + d.X, _offset.Y + d.Y);
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 
 		// Apply friction (FlingFriction: 0 = no friction, 1 = full friction)
@@ -759,7 +713,7 @@ public class SKGestureTracker : IDisposable
 		// Apply scale change
 		var oldScale = _scale;
 		var newScale = Clamp(_zoomStartScale * cumulative, MinScale, MaxScale);
-		AdjustOffsetForScalePivot(_zoomFocalPoint, oldScale, newScale);
+		AdjustOffsetForPivot(_zoomFocalPoint, oldScale, newScale, _rotation, _rotation);
 		_scale = newScale;
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 
