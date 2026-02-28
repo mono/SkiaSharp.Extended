@@ -181,8 +181,8 @@
 
     private SKPoint GetCanvasLocation(MouseEventArgs e)
     {
-        // OffsetX/OffsetY are relative to the target element
-        return new SKPoint((float)e.OffsetX, (float)e.OffsetY);
+        // OffsetX/OffsetY are in CSS pixels; scale to device pixels to match the canvas
+        return new SKPoint((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
     }
 
     private void Invalidate()
@@ -207,16 +207,11 @@
         // Calculate display scale from canvas pixel size vs CSS size
         // PointerEventArgs provides CSS pixels, but canvas size is in device pixels
         // This handles high-DPI displays where devicePixelRatio > 1
-        // We'll estimate this based on the expected CSS size of the container (600px height from style)
-        // In production, you'd use JavaScript interop to get the actual element bounds
         const float expectedCssHeight = 600f;
         _displayScale = height / expectedCssHeight;
-        _tracker.DisplayScale = _displayScale;
         
-        // Set view size in CSS/point coordinates (same units as touch events)
-        var cssWidth = _displayScale > 0 ? width / _displayScale : width;
-        var cssHeight = _displayScale > 0 ? height / _displayScale : height;
-        _tracker.SetViewSize(cssWidth, cssHeight);
+        // Set view size in device pixels (same units as scaled touch events and canvas)
+        _tracker.SetViewSize(width, height);
 
         // Clear background
         canvas.Clear(SKColors.White);
