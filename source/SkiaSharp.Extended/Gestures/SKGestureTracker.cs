@@ -547,7 +547,7 @@ public class SKGestureTracker : IDisposable
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
 
-	private void OnEngineGestureStarted(object? s, SKGestureStateEventArgs e)
+	private void OnEngineGestureStarted(object? s, EventArgs e)
 	{
 		_syncContext ??= SynchronizationContext.Current;
 		StopFling();
@@ -555,7 +555,7 @@ public class SKGestureTracker : IDisposable
 		GestureStarted?.Invoke(this, EventArgs.Empty);
 	}
 
-	private void OnEngineGestureEnded(object? s, SKGestureStateEventArgs e)
+	private void OnEngineGestureEnded(object? s, EventArgs e)
 	{
 		if (_isDragging)
 		{

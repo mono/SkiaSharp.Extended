@@ -539,6 +539,16 @@ public class SKGestureEngineTests
 	}
 
 	[Fact]
+	public void TouchDown_SetsGestureActive()
+	{
+		var engine = CreateEngine();
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+
+		Assert.True(engine.IsGestureActive);
+	}
+
+	[Fact]
 	public void TouchUp_RaisesGestureEnded()
 	{
 		var engine = CreateEngine();
@@ -555,21 +565,17 @@ public class SKGestureEngineTests
 	}
 
 	[Fact]
-	public void CurrentState_TracksGestureProgress()
+	public void TouchUp_ClearsGestureActive()
 	{
 		var engine = CreateEngine();
-		
-		Assert.Equal(SKGestureState.None, engine.CurrentState);
-		
+
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		Assert.Equal(SKGestureState.Detecting, engine.CurrentState);
-		
 		AdvanceTime(10);
-		engine.ProcessTouchMove(1, new SKPoint(150, 100)); // Move beyond slop
-		Assert.Equal(SKGestureState.Panning, engine.CurrentState);
-		
+		engine.ProcessTouchMove(1, new SKPoint(150, 100));
+		AdvanceTime(10);
 		engine.ProcessTouchUp(1, new SKPoint(150, 100));
-		Assert.Equal(SKGestureState.None, engine.CurrentState);
+
+		Assert.False(engine.IsGestureActive);
 	}
 
 	#endregion
@@ -583,7 +589,7 @@ public class SKGestureEngineTests
 
 		engine.Reset();
 
-		Assert.Equal(SKGestureState.None, engine.CurrentState);
+		Assert.False(engine.IsGestureActive);
 	}
 
 	#endregion
@@ -632,10 +638,23 @@ public class SKGestureEngineTests
 		var engine = CreateEngine();
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		Assert.Equal(SKGestureState.Detecting, engine.CurrentState);
+		Assert.True(engine.IsGestureActive);
 
 		engine.ProcessTouchCancel(1);
-		Assert.Equal(SKGestureState.None, engine.CurrentState);
+		Assert.False(engine.IsGestureActive);
+	}
+
+	[Fact]
+	public void ProcessTouchCancel_ClearsGestureActive()
+	{
+		var engine = CreateEngine();
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(150, 100));
+		engine.ProcessTouchCancel(1);
+
+		Assert.False(engine.IsGestureActive);
 	}
 
 	[Fact]
@@ -717,7 +736,7 @@ public class SKGestureEngineTests
 
 		// After multi-touch, tap detection is naturally suppressed since state transitions away
 		// This tests that we don't crash and state is consistent
-		Assert.Equal(SKGestureState.None, engine.CurrentState);
+		Assert.False(engine.IsGestureActive);
 	}
 
 	[Fact]
@@ -1067,11 +1086,11 @@ public class SKGestureEngineTests
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 		engine.ProcessTouchDown(2, new SKPoint(200, 100));
-		Assert.Equal(SKGestureState.Pinching, engine.CurrentState);
+		Assert.True(engine.IsGestureActive);
 
 		engine.ProcessTouchCancel(1);
 		engine.ProcessTouchCancel(2);
-		Assert.Equal(SKGestureState.None, engine.CurrentState);
+		Assert.False(engine.IsGestureActive);
 	}
 
 	#endregion
@@ -1178,10 +1197,10 @@ public class SKGestureEngineTests
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 		AdvanceTime(10);
 		engine.ProcessTouchMove(1, new SKPoint(150, 100));
-		Assert.Equal(SKGestureState.Panning, engine.CurrentState);
+		Assert.True(engine.IsGestureActive);
 
 		engine.Reset();
-		Assert.Equal(SKGestureState.None, engine.CurrentState);
+		Assert.False(engine.IsGestureActive);
 
 		// New gesture should work
 		var tapRaised = false;
@@ -1257,7 +1276,7 @@ public class SKGestureEngineTests
 		engine.ProcessTouchUp(1, new SKPoint(200, 200));
 
 		// Should not crash
-		Assert.Equal(SKGestureState.None, engine.CurrentState);
+		Assert.False(engine.IsGestureActive);
 	}
 
 	#endregion
