@@ -1,0 +1,428 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class SKGestureTracker
+ | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class SKGestureTracker
+ | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="SkiaSharp.Extended.Gestures.SKGestureTracker">
+
+
+
+  <h1 id="SkiaSharp_Extended_Gestures_SKGestureTracker" data-uid="SkiaSharp.Extended.Gestures.SKGestureTracker" class="text-break">
+    Class SKGestureTracker
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTracker.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a>.<a class="xref" href="SkiaSharp.Extended.Gestures.html">Gestures</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class SKGestureTracker : IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">SKGestureTracker</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html#SkiaSharp_Extended_Gestures_SKGestureTracker__ctor">SKGestureTracker()</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DisplayScale.html#SkiaSharp_Extended_Gestures_SKGestureTracker_DisplayScale">DisplayScale</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DoubleTapSlop.html#SkiaSharp_Extended_Gestures_SKGestureTracker_DoubleTapSlop">DoubleTapSlop</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DoubleTapZoomFactor.html#SkiaSharp_Extended_Gestures_SKGestureTracker_DoubleTapZoomFactor">DoubleTapZoomFactor</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.FlingFrameInterval.html#SkiaSharp_Extended_Gestures_SKGestureTracker_FlingFrameInterval">FlingFrameInterval</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.FlingFriction.html#SkiaSharp_Extended_Gestures_SKGestureTracker_FlingFriction">FlingFriction</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.FlingMinVelocity.html#SkiaSharp_Extended_Gestures_SKGestureTracker_FlingMinVelocity">FlingMinVelocity</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.FlingThreshold.html#SkiaSharp_Extended_Gestures_SKGestureTracker_FlingThreshold">FlingThreshold</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapZoomEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTracker_IsDoubleTapZoomEnabled">IsDoubleTapZoomEnabled</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.IsEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTracker_IsEnabled">IsEnabled</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.IsFlingEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTracker_IsFlingEnabled">IsFlingEnabled</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.IsFlinging.html#SkiaSharp_Extended_Gestures_SKGestureTracker_IsFlinging">IsFlinging</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.IsGestureActive.html#SkiaSharp_Extended_Gestures_SKGestureTracker_IsGestureActive">IsGestureActive</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.IsPanEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTracker_IsPanEnabled">IsPanEnabled</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.IsPinchEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTracker_IsPinchEnabled">IsPinchEnabled</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.IsRotateEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTracker_IsRotateEnabled">IsRotateEnabled</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.IsScrollZoomEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTracker_IsScrollZoomEnabled">IsScrollZoomEnabled</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.IsZoomAnimating.html#SkiaSharp_Extended_Gestures_SKGestureTracker_IsZoomAnimating">IsZoomAnimating</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.LongPressDuration.html#SkiaSharp_Extended_Gestures_SKGestureTracker_LongPressDuration">LongPressDuration</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Matrix.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Matrix">Matrix</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.MaxScale.html#SkiaSharp_Extended_Gestures_SKGestureTracker_MaxScale">MaxScale</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.MinScale.html#SkiaSharp_Extended_Gestures_SKGestureTracker_MinScale">MinScale</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Offset.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Offset">Offset</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Rotation.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Rotation">Rotation</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Scale.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Scale">Scale</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ScrollZoomFactor.html#SkiaSharp_Extended_Gestures_SKGestureTracker_ScrollZoomFactor">ScrollZoomFactor</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.TimeProvider.html#SkiaSharp_Extended_Gestures_SKGestureTracker_TimeProvider">TimeProvider</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.TouchSlop.html#SkiaSharp_Extended_Gestures_SKGestureTracker_TouchSlop">TouchSlop</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ZoomAnimationDuration.html#SkiaSharp_Extended_Gestures_SKGestureTracker_ZoomAnimationDuration">ZoomAnimationDuration</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Dispose.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Dispose">Dispose()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessMouseWheel.html#SkiaSharp_Extended_Gestures_SKGestureTracker_ProcessMouseWheel_SkiaSharp_SKPoint_System_Single_System_Single_">ProcessMouseWheel(SKPoint, float, float)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchCancel.html#SkiaSharp_Extended_Gestures_SKGestureTracker_ProcessTouchCancel_System_Int64_">ProcessTouchCancel(long)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchDown.html#SkiaSharp_Extended_Gestures_SKGestureTracker_ProcessTouchDown_System_Int64_SkiaSharp_SKPoint_System_Boolean_">ProcessTouchDown(long, SKPoint, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchMove.html#SkiaSharp_Extended_Gestures_SKGestureTracker_ProcessTouchMove_System_Int64_SkiaSharp_SKPoint_System_Boolean_">ProcessTouchMove(long, SKPoint, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchUp.html#SkiaSharp_Extended_Gestures_SKGestureTracker_ProcessTouchUp_System_Int64_SkiaSharp_SKPoint_System_Boolean_">ProcessTouchUp(long, SKPoint, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Reset.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Reset">Reset()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetViewSize_System_Single_System_Single_">SetViewSize(float, float)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.StopFling.html#SkiaSharp_Extended_Gestures_SKGestureTracker_StopFling">StopFling()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.StopZoomAnimation.html#SkiaSharp_Extended_Gestures_SKGestureTracker_StopZoomAnimation">StopZoomAnimation()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ZoomTo.html#SkiaSharp_Extended_Gestures_SKGestureTracker_ZoomTo_System_Single_SkiaSharp_SKPoint_">ZoomTo(float, SKPoint)</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="events">Events
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DoubleTapDetected.html">DoubleTapDetected</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragEnded.html">DragEnded</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragStarted.html">DragStarted</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragUpdated.html">DragUpdated</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.FlingCompleted.html">FlingCompleted</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.FlingDetected.html">FlingDetected</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Flinging.html">Flinging</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.GestureEnded.html">GestureEnded</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.GestureStarted.html">GestureStarted</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.HoverDetected.html">HoverDetected</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.LongPressDetected.html">LongPressDetected</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.PanDetected.html">PanDetected</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.PinchDetected.html">PinchDetected</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.RotateDetected.html">RotateDetected</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ScrollDetected.html">ScrollDetected</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.TapDetected.html">TapDetected</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.TransformChanged.html">TransformChanged</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTracker.cs" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #326 · bf90fcd
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
