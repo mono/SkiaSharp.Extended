@@ -180,7 +180,7 @@ public class SKGestureEngine : IDisposable
 		if (touchPoints.Length > 0)
 		{
 			// Raise gesture started
-			OnGestureStarted(new SKGestureStateEventArgs(touchPoints, SKGestureState.Detecting));
+			OnGestureStarted();
 
 			if (touchPoints.Length >= 2)
 			{
@@ -337,7 +337,7 @@ public class SKGestureEngine : IDisposable
 		{
 			if (_gestureState != SKGestureState.None)
 			{
-				OnGestureEnded(new SKGestureStateEventArgs(Array.Empty<SKPoint>(), _gestureState));
+				OnGestureEnded();
 				_gestureState = SKGestureState.None;
 			}
 		}
@@ -381,7 +381,7 @@ public class SKGestureEngine : IDisposable
 		{
 			if (_gestureState != SKGestureState.None)
 			{
-				OnGestureEnded(new SKGestureStateEventArgs(Array.Empty<SKPoint>(), _gestureState));
+				OnGestureEnded();
 				_gestureState = SKGestureState.None;
 			}
 		}
@@ -519,6 +519,6 @@ public class SKGestureEngine : IDisposable
 	protected virtual void OnFlingDetected(SKFlingEventArgs e) => FlingDetected?.Invoke(this, e);
 	protected virtual void OnHoverDetected(SKHoverEventArgs e) => HoverDetected?.Invoke(this, e);
 	protected virtual void OnScrollDetected(SKScrollEventArgs e) => ScrollDetected?.Invoke(this, e);
-	private void OnGestureStarted(SKGestureStateEventArgs e) => GestureStarted?.Invoke(this, EventArgs.Empty);
-	private void OnGestureEnded(SKGestureStateEventArgs e) => GestureEnded?.Invoke(this, EventArgs.Empty);
+	private void OnGestureStarted() => GestureStarted?.Invoke(this, EventArgs.Empty);
+	private void OnGestureEnded() => GestureEnded?.Invoke(this, EventArgs.Empty);
 }
