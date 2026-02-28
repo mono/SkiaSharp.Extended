@@ -79,11 +79,6 @@
     "title": "Constructor SKGestureEngine | SkiaSharp.Extended",
     "keywords": "Constructor SKGestureEngine Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKGestureEngine() public SKGestureEngine()"
   },
-  "api/SkiaSharp.Extended.Gestures.SKGestureEngine.CurrentState.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.CurrentState.html",
-    "title": "Property CurrentState | SkiaSharp.Extended",
-    "keywords": "Property CurrentState Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll CurrentState public SKGestureState CurrentState { get; } Property Value SKGestureState"
-  },
   "api/SkiaSharp.Extended.Gestures.SKGestureEngine.Dispose.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.Dispose.html",
     "title": "Method Dispose | SkiaSharp.Extended",
@@ -108,16 +103,6 @@
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.FlingThreshold.html",
     "title": "Property FlingThreshold | SkiaSharp.Extended",
     "keywords": "Property FlingThreshold Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingThreshold public float FlingThreshold { get; set; } Property Value float"
-  },
-  "api/SkiaSharp.Extended.Gestures.SKGestureEngine.GestureEnded.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.GestureEnded.html",
-    "title": "Event GestureEnded | SkiaSharp.Extended",
-    "keywords": "Event GestureEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKGestureStateEventArgs>? GestureEnded Returns EventHandler<SKGestureStateEventArgs>"
-  },
-  "api/SkiaSharp.Extended.Gestures.SKGestureEngine.GestureStarted.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.GestureStarted.html",
-    "title": "Event GestureStarted | SkiaSharp.Extended",
-    "keywords": "Event GestureStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKGestureStateEventArgs>? GestureStarted Returns EventHandler<SKGestureStateEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureEngine.HoverDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.HoverDetected.html",
@@ -153,16 +138,6 @@
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected.html",
     "title": "Method OnFlingDetected | SkiaSharp.Extended",
     "keywords": "Method OnFlingDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnFlingDetected(SKFlingEventArgs) protected virtual void OnFlingDetected(SKFlingEventArgs e) Parameters e SKFlingEventArgs"
-  },
-  "api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnGestureEnded.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnGestureEnded.html",
-    "title": "Method OnGestureEnded | SkiaSharp.Extended",
-    "keywords": "Method OnGestureEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnGestureEnded(SKGestureStateEventArgs) protected virtual void OnGestureEnded(SKGestureStateEventArgs e) Parameters e SKGestureStateEventArgs"
-  },
-  "api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnGestureStarted.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnGestureStarted.html",
-    "title": "Method OnGestureStarted | SkiaSharp.Extended",
-    "keywords": "Method OnGestureStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnGestureStarted(SKGestureStateEventArgs) protected virtual void OnGestureStarted(SKGestureStateEventArgs e) Parameters e SKGestureStateEventArgs"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected.html",
@@ -267,37 +242,7 @@
   "api/SkiaSharp.Extended.Gestures.SKGestureEngine.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngine.html",
     "title": "Class SKGestureEngine | SkiaSharp.Extended",
-    "keywords": "Class SKGestureEngine Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureEngine : IDisposable Inheritance object SKGestureEngine Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureEngine() Properties CurrentState DoubleTapSlop FlingThreshold IsEnabled IsGestureActive LongPressDuration TimeProvider TouchSlop Methods Dispose() OnDoubleTapDetected(SKTapEventArgs) OnFlingDetected(SKFlingEventArgs) OnGestureEnded(SKGestureStateEventArgs) OnGestureStarted(SKGestureStateEventArgs) OnHoverDetected(SKHoverEventArgs) OnLongPressDetected(SKTapEventArgs) OnPanDetected(SKPanEventArgs) OnPinchDetected(SKPinchEventArgs) OnRotateDetected(SKRotateEventArgs) OnScrollDetected(SKScrollEventArgs) OnTapDetected(SKTapEventArgs) ProcessMouseWheel(SKPoint, float, float) ProcessTouchCancel(long) ProcessTouchDown(long, SKPoint, bool) ProcessTouchMove(long, SKPoint, bool) ProcessTouchUp(long, SKPoint, bool) Reset() Events DoubleTapDetected FlingDetected GestureEnded GestureStarted HoverDetected LongPressDetected PanDetected PinchDetected RotateDetected ScrollDetected TapDetected"
-  },
-  "api/SkiaSharp.Extended.Gestures.SKGestureState.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKGestureState.html",
-    "title": "Enum SKGestureState | SkiaSharp.Extended",
-    "keywords": "Enum SKGestureState Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public enum SKGestureState Fields Detecting = 1 None = 0 Panning = 2 Pinching = 3"
-  },
-  "api/SkiaSharp.Extended.Gestures.SKGestureStateEventArgs.-ctor.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKGestureStateEventArgs.-ctor.html",
-    "title": "Constructor SKGestureStateEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKGestureStateEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKGestureStateEventArgs(SKPoint[], SKGestureState) public SKGestureStateEventArgs(SKPoint[] touchPoints, SKGestureState state) Parameters touchPoints SKPoint[] state SKGestureState"
-  },
-  "api/SkiaSharp.Extended.Gestures.SKGestureStateEventArgs.Handled.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKGestureStateEventArgs.Handled.html",
-    "title": "Property Handled | SkiaSharp.Extended",
-    "keywords": "Property Handled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Handled public bool Handled { get; set; } Property Value bool"
-  },
-  "api/SkiaSharp.Extended.Gestures.SKGestureStateEventArgs.State.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKGestureStateEventArgs.State.html",
-    "title": "Property State | SkiaSharp.Extended",
-    "keywords": "Property State Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll State public SKGestureState State { get; } Property Value SKGestureState"
-  },
-  "api/SkiaSharp.Extended.Gestures.SKGestureStateEventArgs.TouchPoints.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKGestureStateEventArgs.TouchPoints.html",
-    "title": "Property TouchPoints | SkiaSharp.Extended",
-    "keywords": "Property TouchPoints Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll TouchPoints public SKPoint[] TouchPoints { get; } Property Value SKPoint[]"
-  },
-  "api/SkiaSharp.Extended.Gestures.SKGestureStateEventArgs.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKGestureStateEventArgs.html",
-    "title": "Class SKGestureStateEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKGestureStateEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureStateEventArgs : EventArgs Inheritance object EventArgs SKGestureStateEventArgs Inherited Members EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureStateEventArgs(SKPoint[], SKGestureState) Properties Handled State TouchPoints"
+    "keywords": "Class SKGestureEngine Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureEngine : IDisposable Inheritance object SKGestureEngine Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureEngine() Properties DoubleTapSlop FlingThreshold IsEnabled IsGestureActive LongPressDuration TimeProvider TouchSlop Methods Dispose() OnDoubleTapDetected(SKTapEventArgs) OnFlingDetected(SKFlingEventArgs) OnHoverDetected(SKHoverEventArgs) OnLongPressDetected(SKTapEventArgs) OnPanDetected(SKPanEventArgs) OnPinchDetected(SKPinchEventArgs) OnRotateDetected(SKRotateEventArgs) OnScrollDetected(SKScrollEventArgs) OnTapDetected(SKTapEventArgs) ProcessMouseWheel(SKPoint, float, float) ProcessTouchCancel(long) ProcessTouchDown(long, SKPoint, bool) ProcessTouchMove(long, SKPoint, bool) ProcessTouchUp(long, SKPoint, bool) Reset() Events DoubleTapDetected FlingDetected HoverDetected LongPressDetected PanDetected PinchDetected RotateDetected ScrollDetected TapDetected"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html",
@@ -377,12 +322,12 @@
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureEnded.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureEnded.html",
     "title": "Event GestureEnded | SkiaSharp.Extended",
-    "keywords": "Event GestureEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKGestureStateEventArgs>? GestureEnded Returns EventHandler<SKGestureStateEventArgs>"
+    "keywords": "Event GestureEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler? GestureEnded Returns EventHandler"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureStarted.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureStarted.html",
     "title": "Event GestureStarted | SkiaSharp.Extended",
-    "keywords": "Event GestureStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKGestureStateEventArgs>? GestureStarted Returns EventHandler<SKGestureStateEventArgs>"
+    "keywords": "Event GestureStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler? GestureStarted Returns EventHandler"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.HoverDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.HoverDetected.html",
@@ -752,7 +697,7 @@
   "api/SkiaSharp.Extended.Gestures.html": {
     "href": "api/SkiaSharp.Extended.Gestures.html",
     "title": "Namespace SkiaSharp.Extended.Gestures | SkiaSharp.Extended",
-    "keywords": "Namespace SkiaSharp.Extended.Gestures Classes SKDragEventArgs SKFlingEventArgs SKGestureEngine SKGestureStateEventArgs SKGestureTracker SKHoverEventArgs SKPanEventArgs SKPinchEventArgs SKRotateEventArgs SKScrollEventArgs SKTapEventArgs Enums SKGestureState"
+    "keywords": "Namespace SkiaSharp.Extended.Gestures Classes SKDragEventArgs SKFlingEventArgs SKGestureEngine SKGestureTracker SKHoverEventArgs SKPanEventArgs SKPinchEventArgs SKRotateEventArgs SKScrollEventArgs SKTapEventArgs"
   },
   "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html": {
     "href": "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html",
