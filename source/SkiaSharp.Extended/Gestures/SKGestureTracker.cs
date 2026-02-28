@@ -14,16 +14,6 @@ namespace SkiaSharp.Extended.Gestures;
 /// </remarks>
 public class SKGestureTracker : IDisposable
 {
-	// Animation defaults
-	private const float DefaultFlingFriction = 0.08f;
-	private const float DefaultFlingMinVelocity = 5f;
-	private const int DefaultFlingFrameMs = 16;
-	private const float DefaultMinScale = 0.1f;
-	private const float DefaultMaxScale = 10f;
-	private const float DefaultDoubleTapZoomFactor = 2f;
-	private const int DefaultZoomAnimationDurationMs = 250;
-	private const float DefaultScrollZoomFactor = 0.1f;
-
 	private readonly SKGestureEngine _engine;
 	private SynchronizationContext? _syncContext;
 	private bool _disposed;
@@ -58,13 +48,27 @@ public class SKGestureTracker : IDisposable
 	private float _zoomPrevCumulative;
 
 	/// <summary>
-	/// Creates a new gesture tracker with an internal gesture engine.
+	/// Creates a new gesture tracker with default options.
 	/// </summary>
 	public SKGestureTracker()
+		: this(new SKGestureTrackerOptions())
 	{
-		_engine = new SKGestureEngine();
+	}
+
+	/// <summary>
+	/// Creates a new gesture tracker with the specified options.
+	/// </summary>
+	public SKGestureTracker(SKGestureTrackerOptions options)
+	{
+		Options = options ?? throw new ArgumentNullException(nameof(options));
+		_engine = new SKGestureEngine(options);
 		SubscribeEngineEvents();
 	}
+
+	/// <summary>
+	/// Gets the configuration options for this tracker.
+	/// </summary>
+	public SKGestureTrackerOptions Options { get; }
 
 	#region Touch Input
 
@@ -102,29 +106,29 @@ public class SKGestureTracker : IDisposable
 	/// <summary>Gets or sets the touch slop (minimum movement to start a gesture).</summary>
 	public float TouchSlop
 	{
-		get => _engine.Options.TouchSlop;
-		set => _engine.Options.TouchSlop = value;
+		get => Options.TouchSlop;
+		set => Options.TouchSlop = value;
 	}
 
 	/// <summary>Gets or sets the double-tap slop distance.</summary>
 	public float DoubleTapSlop
 	{
-		get => _engine.Options.DoubleTapSlop;
-		set => _engine.Options.DoubleTapSlop = value;
+		get => Options.DoubleTapSlop;
+		set => Options.DoubleTapSlop = value;
 	}
 
 	/// <summary>Gets or sets the fling velocity detection threshold.</summary>
 	public float FlingThreshold
 	{
-		get => _engine.Options.FlingThreshold;
-		set => _engine.Options.FlingThreshold = value;
+		get => Options.FlingThreshold;
+		set => Options.FlingThreshold = value;
 	}
 
 	/// <summary>Gets or sets the long press duration in milliseconds.</summary>
 	public int LongPressDuration
 	{
-		get => _engine.Options.LongPressDuration;
-		set => _engine.Options.LongPressDuration = value;
+		get => Options.LongPressDuration;
+		set => Options.LongPressDuration = value;
 	}
 
 	/// <summary>Gets or sets the time provider (for testing).</summary>
@@ -175,31 +179,63 @@ public class SKGestureTracker : IDisposable
 	#region Transform Config
 
 	/// <summary>Gets or sets the minimum allowed scale.</summary>
-	public float MinScale { get; set; } = DefaultMinScale;
+	public float MinScale
+	{
+		get => Options.MinScale;
+		set => Options.MinScale = value;
+	}
 
 	/// <summary>Gets or sets the maximum allowed scale.</summary>
-	public float MaxScale { get; set; } = DefaultMaxScale;
+	public float MaxScale
+	{
+		get => Options.MaxScale;
+		set => Options.MaxScale = value;
+	}
 
 	/// <summary>Gets or sets the zoom factor applied per double-tap.</summary>
-	public float DoubleTapZoomFactor { get; set; } = DefaultDoubleTapZoomFactor;
+	public float DoubleTapZoomFactor
+	{
+		get => Options.DoubleTapZoomFactor;
+		set => Options.DoubleTapZoomFactor = value;
+	}
 
 	/// <summary>Gets or sets the zoom animation duration in milliseconds.</summary>
-	public int ZoomAnimationDuration { get; set; } = DefaultZoomAnimationDurationMs;
+	public int ZoomAnimationDuration
+	{
+		get => Options.ZoomAnimationDuration;
+		set => Options.ZoomAnimationDuration = value;
+	}
 
 	/// <summary>Gets or sets how much each scroll tick changes scale.</summary>
-	public float ScrollZoomFactor { get; set; } = DefaultScrollZoomFactor;
+	public float ScrollZoomFactor
+	{
+		get => Options.ScrollZoomFactor;
+		set => Options.ScrollZoomFactor = value;
+	}
 
 	/// <summary>
 	/// Gets or sets the fling friction (0 = no friction / infinite fling, 1 = full friction / no fling).
 	/// Default is 0.08.
 	/// </summary>
-	public float FlingFriction { get; set; } = DefaultFlingFriction;
+	public float FlingFriction
+	{
+		get => Options.FlingFriction;
+		set => Options.FlingFriction = value;
+	}
 
 	/// <summary>Gets or sets the minimum fling velocity before the animation stops.</summary>
-	public float FlingMinVelocity { get; set; } = DefaultFlingMinVelocity;
+	public float FlingMinVelocity
+	{
+		get => Options.FlingMinVelocity;
+		set => Options.FlingMinVelocity = value;
+	}
 
 	/// <summary>Gets or sets the fling animation frame interval in milliseconds.</summary>
-	public int FlingFrameInterval { get; set; } = DefaultFlingFrameMs;
+	public int FlingFrameInterval
+	{
+		get => Options.FlingFrameInterval;
+		set => Options.FlingFrameInterval = value;
+	}
 
 	#endregion
 
