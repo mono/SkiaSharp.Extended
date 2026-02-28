@@ -1,5 +1,8 @@
 # Path Interpolation
 
+> [!TIP]
+> **[Try it live →](../sample/interpolation)** — Interactive Path Interpolation demo in the Blazor sample app.
+
 Path Interpolation lets you smoothly morph one shape into another. This is perfect for creating animated transitions, loading indicators, or any UI effect where shapes need to transform fluidly.
 
 ![Path Interpolation Animation][interpolation-gif]

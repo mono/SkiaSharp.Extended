@@ -1,0 +1,26 @@
+@inherits LayoutComponentBase
+@using System.Reflection
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <a href="https://mono.github.io/SkiaSharp.Extended/" target="_blank">Docs</a>
+            <a href="https://mono.github.io/SkiaSharp.Extended/api/" target="_blank">API</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+
+        <footer class="build-info">@_buildInfo</footer>
+    </main>
+</div>
+
+@code {
+    private string _buildInfo = typeof(App).Assembly
+        .GetCustomAttributes<AssemblyMetadataAttribute>()
+        .FirstOrDefault(a => a.Key == "BuildInfo")?.Value ?? "local";
+}
