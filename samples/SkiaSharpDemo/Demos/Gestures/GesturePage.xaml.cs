@@ -1,6 +1,5 @@
 using SkiaSharp;
 using SkiaSharp.Extended.Gestures;
-using SkiaSharp.Extended.UI.Controls;
 using SkiaSharp.Views.Maui;
 
 namespace SkiaSharpDemo.Demos;
@@ -101,11 +100,34 @@ public partial class GesturePage : ContentPage
 	/// </summary>
 	private void OnTouch(object? sender, SKTouchEventArgs e)
 	{
-		// Use the extension method to process touch events
-		e.Handled = _tracker.ProcessTouch(e);
+		// Convert MAUI touch event to tracker input
+		e.Handled = ProcessTouch(_tracker, e);
 
 		if (e.Handled)
 			canvasView.InvalidateSurface();
+	}
+
+	/// <summary>
+	/// Processes a MAUI SKTouchEventArgs through the gesture tracker.
+	/// Converts pixel coordinates to point coordinates using the tracker's DisplayScale.
+	/// </summary>
+	private static bool ProcessTouch(SKGestureTracker tracker, SKTouchEventArgs e)
+	{
+		var isMouse = e.DeviceType == SKTouchDeviceType.Mouse;
+		var scale = tracker.DisplayScale;
+		var location = scale > 0
+			? new SKPoint(e.Location.X / scale, e.Location.Y / scale)
+			: e.Location;
+
+		return e.ActionType switch
+		{
+			SKTouchAction.Pressed => tracker.ProcessTouchDown(e.Id, location, isMouse),
+			SKTouchAction.Moved => tracker.ProcessTouchMove(e.Id, location, e.InContact),
+			SKTouchAction.Released => tracker.ProcessTouchUp(e.Id, location, isMouse),
+			SKTouchAction.Cancelled => tracker.ProcessTouchCancel(e.Id),
+			SKTouchAction.WheelChanged => tracker.ProcessMouseWheel(location, 0, e.WheelDelta),
+			_ => true, // Entered/Exited — accept to keep receiving events
+		};
 	}
 
 	/// <summary>
@@ -237,15 +259,17 @@ public partial class GesturePage : ContentPage
 		canvas.DrawCircle(sticker.Position, radius, borderPaint);
 
 		// Draw label
+		using var textFont = new SKFont
+		{
+			Size = sticker.Size * 0.4f,
+			Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold)
+		};
 		using var textPaint = new SKPaint
 		{
 			Color = SKColors.White,
-			IsAntialias = true,
-			TextSize = sticker.Size * 0.4f,
-			TextAlign = SKTextAlign.Center,
-			Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold)
+			IsAntialias = true
 		};
-		canvas.DrawText(sticker.Label, sticker.Position.X, sticker.Position.Y + textPaint.TextSize * 0.35f, textPaint);
+		canvas.DrawText(sticker.Label, sticker.Position.X, sticker.Position.Y + textFont.Size * 0.35f, SKTextAlign.Center, textFont, textPaint);
 	}
 
 	private void OnTap(object? sender, SKTapEventArgs e)
