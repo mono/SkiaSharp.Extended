@@ -85,7 +85,7 @@ public class SKGestureEngine : IDisposable
 	/// <summary>
 	/// Gets the current gesture state.
 	/// </summary>
-	public SKGestureState CurrentState => _gestureState;
+	internal SKGestureState CurrentState => _gestureState;
 
 	/// <summary>
 	/// Occurs when a tap is detected.
@@ -132,15 +132,9 @@ public class SKGestureEngine : IDisposable
 	/// </summary>
 	public event EventHandler<SKScrollEventArgs>? ScrollDetected;
 
-	/// <summary>
-	/// Occurs when a gesture starts.
-	/// </summary>
-	public event EventHandler<SKGestureStateEventArgs>? GestureStarted;
+	internal event EventHandler<SKGestureStateEventArgs>? GestureStarted;
 
-	/// <summary>
-	/// Occurs when a gesture ends.
-	/// </summary>
-	public event EventHandler<SKGestureStateEventArgs>? GestureEnded;
+	internal event EventHandler<SKGestureStateEventArgs>? GestureEnded;
 
 	/// <summary>
 	/// Processes a touch down event.
@@ -528,6 +522,6 @@ public class SKGestureEngine : IDisposable
 	protected virtual void OnFlingDetected(SKFlingEventArgs e) => FlingDetected?.Invoke(this, e);
 	protected virtual void OnHoverDetected(SKHoverEventArgs e) => HoverDetected?.Invoke(this, e);
 	protected virtual void OnScrollDetected(SKScrollEventArgs e) => ScrollDetected?.Invoke(this, e);
-	protected virtual void OnGestureStarted(SKGestureStateEventArgs e) => GestureStarted?.Invoke(this, e);
-	protected virtual void OnGestureEnded(SKGestureStateEventArgs e) => GestureEnded?.Invoke(this, e);
+	private void OnGestureStarted(SKGestureStateEventArgs e) => GestureStarted?.Invoke(this, e);
+	private void OnGestureEnded(SKGestureStateEventArgs e) => GestureEnded?.Invoke(this, e);
 }
