@@ -205,6 +205,15 @@ references:
   fullName.vb: SkiaSharp.Extended.Gestures.SKGestureEngine.New()
   nameWithType: SKGestureEngine.SKGestureEngine()
   nameWithType.vb: SKGestureEngine.New()
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.#ctor(SkiaSharp.Extended.Gestures.SKGestureEngineOptions)
+  name: SKGestureEngine(SKGestureEngineOptions)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.-ctor.html#SkiaSharp_Extended_Gestures_SKGestureEngine__ctor_SkiaSharp_Extended_Gestures_SKGestureEngineOptions_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.#ctor(SkiaSharp.Extended.Gestures.SKGestureEngineOptions)
+  name.vb: New(SKGestureEngineOptions)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.SKGestureEngine(SkiaSharp.Extended.Gestures.SKGestureEngineOptions)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureEngine.New(SkiaSharp.Extended.Gestures.SKGestureEngineOptions)
+  nameWithType: SKGestureEngine.SKGestureEngine(SKGestureEngineOptions)
+  nameWithType.vb: SKGestureEngine.New(SKGestureEngineOptions)
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.#ctor*
   name: SKGestureEngine
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.-ctor.html
@@ -232,36 +241,12 @@ references:
   commentId: E:SkiaSharp.Extended.Gestures.SKGestureEngine.DoubleTapDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.DoubleTapDetected
   nameWithType: SKGestureEngine.DoubleTapDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.DoubleTapSlop
-  name: DoubleTapSlop
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.DoubleTapSlop.html#SkiaSharp_Extended_Gestures_SKGestureEngine_DoubleTapSlop
-  commentId: P:SkiaSharp.Extended.Gestures.SKGestureEngine.DoubleTapSlop
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.DoubleTapSlop
-  nameWithType: SKGestureEngine.DoubleTapSlop
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.DoubleTapSlop*
-  name: DoubleTapSlop
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.DoubleTapSlop.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.DoubleTapSlop
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.DoubleTapSlop
-  nameWithType: SKGestureEngine.DoubleTapSlop
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.FlingDetected
   name: FlingDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.FlingDetected.html
   commentId: E:SkiaSharp.Extended.Gestures.SKGestureEngine.FlingDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.FlingDetected
   nameWithType: SKGestureEngine.FlingDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.FlingThreshold
-  name: FlingThreshold
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.FlingThreshold.html#SkiaSharp_Extended_Gestures_SKGestureEngine_FlingThreshold
-  commentId: P:SkiaSharp.Extended.Gestures.SKGestureEngine.FlingThreshold
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.FlingThreshold
-  nameWithType: SKGestureEngine.FlingThreshold
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.FlingThreshold*
-  name: FlingThreshold
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.FlingThreshold.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.FlingThreshold
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.FlingThreshold
-  nameWithType: SKGestureEngine.FlingThreshold
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.GestureEnded
   name: GestureEnded
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.GestureEnded.html
@@ -310,18 +295,6 @@ references:
   commentId: E:SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDetected
   nameWithType: SKGestureEngine.LongPressDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDuration
-  name: LongPressDuration
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDuration.html#SkiaSharp_Extended_Gestures_SKGestureEngine_LongPressDuration
-  commentId: P:SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDuration
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDuration
-  nameWithType: SKGestureEngine.LongPressDuration
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDuration*
-  name: LongPressDuration
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDuration.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDuration
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDuration
-  nameWithType: SKGestureEngine.LongPressDuration
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected(SkiaSharp.Extended.Gestures.SKTapEventArgs)
   name: OnDoubleTapDetected(SKTapEventArgs)
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnDoubleTapDetected_SkiaSharp_Extended_Gestures_SKTapEventArgs_
@@ -430,6 +403,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected
   nameWithType: SKGestureEngine.OnTapDetected
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.Options
+  name: Options
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.Options.html#SkiaSharp_Extended_Gestures_SKGestureEngine_Options
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureEngine.Options
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.Options
+  nameWithType: SKGestureEngine.Options
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.Options*
+  name: Options
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.Options.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.Options
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.Options
+  nameWithType: SKGestureEngine.Options
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.PanDetected
   name: PanDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.PanDetected.html
@@ -559,18 +544,78 @@ references:
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.TimeProvider
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.TimeProvider
   nameWithType: SKGestureEngine.TimeProvider
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.TouchSlop
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngineOptions
+  name: SKGestureEngineOptions
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKGestureEngineOptions
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngineOptions
+  nameWithType: SKGestureEngineOptions
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.#ctor
+  name: SKGestureEngineOptions()
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.-ctor.html#SkiaSharp_Extended_Gestures_SKGestureEngineOptions__ctor
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngineOptions.#ctor
+  name.vb: New()
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.SKGestureEngineOptions()
+  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.New()
+  nameWithType: SKGestureEngineOptions.SKGestureEngineOptions()
+  nameWithType.vb: SKGestureEngineOptions.New()
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.#ctor*
+  name: SKGestureEngineOptions
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngineOptions.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.SKGestureEngineOptions
+  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.New
+  nameWithType: SKGestureEngineOptions.SKGestureEngineOptions
+  nameWithType.vb: SKGestureEngineOptions.New
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.DoubleTapSlop
+  name: DoubleTapSlop
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.DoubleTapSlop.html#SkiaSharp_Extended_Gestures_SKGestureEngineOptions_DoubleTapSlop
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureEngineOptions.DoubleTapSlop
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.DoubleTapSlop
+  nameWithType: SKGestureEngineOptions.DoubleTapSlop
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.DoubleTapSlop*
+  name: DoubleTapSlop
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.DoubleTapSlop.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngineOptions.DoubleTapSlop
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.DoubleTapSlop
+  nameWithType: SKGestureEngineOptions.DoubleTapSlop
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.FlingThreshold
+  name: FlingThreshold
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.FlingThreshold.html#SkiaSharp_Extended_Gestures_SKGestureEngineOptions_FlingThreshold
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureEngineOptions.FlingThreshold
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.FlingThreshold
+  nameWithType: SKGestureEngineOptions.FlingThreshold
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.FlingThreshold*
+  name: FlingThreshold
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.FlingThreshold.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngineOptions.FlingThreshold
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.FlingThreshold
+  nameWithType: SKGestureEngineOptions.FlingThreshold
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.LongPressDuration
+  name: LongPressDuration
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.LongPressDuration.html#SkiaSharp_Extended_Gestures_SKGestureEngineOptions_LongPressDuration
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureEngineOptions.LongPressDuration
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.LongPressDuration
+  nameWithType: SKGestureEngineOptions.LongPressDuration
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.LongPressDuration*
+  name: LongPressDuration
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.LongPressDuration.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngineOptions.LongPressDuration
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.LongPressDuration
+  nameWithType: SKGestureEngineOptions.LongPressDuration
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.TouchSlop
   name: TouchSlop
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.TouchSlop.html#SkiaSharp_Extended_Gestures_SKGestureEngine_TouchSlop
-  commentId: P:SkiaSharp.Extended.Gestures.SKGestureEngine.TouchSlop
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.TouchSlop
-  nameWithType: SKGestureEngine.TouchSlop
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.TouchSlop*
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.TouchSlop.html#SkiaSharp_Extended_Gestures_SKGestureEngineOptions_TouchSlop
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureEngineOptions.TouchSlop
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.TouchSlop
+  nameWithType: SKGestureEngineOptions.TouchSlop
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.TouchSlop*
   name: TouchSlop
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.TouchSlop.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.TouchSlop
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.TouchSlop
-  nameWithType: SKGestureEngine.TouchSlop
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.TouchSlop.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngineOptions.TouchSlop
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngineOptions.TouchSlop
+  nameWithType: SKGestureEngineOptions.TouchSlop
 - uid: SkiaSharp.Extended.Gestures.SKGestureTracker
   name: SKGestureTracker
   href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.html
