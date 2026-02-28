@@ -24,12 +24,6 @@ public class SKGestureEngine : IDisposable
 	private const long ShortTapTicks = 125 * TimeSpan.TicksPerMillisecond;
 	private const long ShortClickTicks = 250 * TimeSpan.TicksPerMillisecond;
 	private const long DoubleTapDelayTicks = 300 * TimeSpan.TicksPerMillisecond;
-	private const long LongPressTicks = 500 * TimeSpan.TicksPerMillisecond;
-
-	// Distance and velocity thresholds
-	private const float TouchSlopPixels = 8f;
-	private const float DoubleTapSlopPixels = 40f;
-	private const float FlingVelocityThreshold = 200f; // pixels per second
 
 	private readonly Dictionary<long, TouchState> _touches = new();
 	private readonly SKFlingTracker _flingTracker = new();
@@ -48,6 +42,27 @@ public class SKGestureEngine : IDisposable
 	private bool _disposed;
 
 	/// <summary>
+	/// Initializes a new instance of <see cref="SKGestureEngine"/> with default options.
+	/// </summary>
+	public SKGestureEngine()
+		: this(new SKGestureEngineOptions())
+	{
+	}
+
+	/// <summary>
+	/// Initializes a new instance of <see cref="SKGestureEngine"/> with the specified options.
+	/// </summary>
+	public SKGestureEngine(SKGestureEngineOptions options)
+	{
+		Options = options ?? throw new ArgumentNullException(nameof(options));
+	}
+
+	/// <summary>
+	/// Gets the configuration options for this engine.
+	/// </summary>
+	public SKGestureEngineOptions Options { get; }
+
+	/// <summary>
 	/// Gets or sets the current time provider. Used for testing.
 	/// </summary>
 	public Func<long> TimeProvider { get; set; } = () => DateTime.Now.Ticks;
@@ -56,26 +71,6 @@ public class SKGestureEngine : IDisposable
 	/// Gets or sets whether the engine is enabled.
 	/// </summary>
 	public bool IsEnabled { get; set; } = true;
-
-	/// <summary>
-	/// Gets or sets the touch slop (minimum movement distance to start a gesture).
-	/// </summary>
-	public float TouchSlop { get; set; } = TouchSlopPixels;
-
-	/// <summary>
-	/// Gets or sets the maximum distance between two taps for double-tap detection.
-	/// </summary>
-	public float DoubleTapSlop { get; set; } = DoubleTapSlopPixels;
-
-	/// <summary>
-	/// Gets or sets the fling velocity threshold.
-	/// </summary>
-	public float FlingThreshold { get; set; } = FlingVelocityThreshold;
-
-	/// <summary>
-	/// Gets or sets the long press duration in milliseconds.
-	/// </summary>
-	public int LongPressDuration { get; set; } = (int)(LongPressTicks / TimeSpan.TicksPerMillisecond);
 
 	/// <summary>
 	/// Gets whether a gesture is currently in progress.
@@ -166,7 +161,7 @@ public class SKGestureEngine : IDisposable
 		// Check for double tap using the last completed tap location
 		if (_touches.Count == 1 &&
 			ticks - _lastTapTicks < DoubleTapDelayTicks &&
-			SKPoint.Distance(location, _lastTapLocation) < DoubleTapSlop)
+			SKPoint.Distance(location, _lastTapLocation) < Options.DoubleTapSlop)
 		{
 			_tapCount++;
 		}
@@ -230,7 +225,7 @@ public class SKGestureEngine : IDisposable
 		var distance = SKPoint.Distance(location, _initialTouch);
 
 		// Start pan if moved beyond touch slop
-		if (_gestureState == GestureState.Detecting && distance >= TouchSlop)
+		if (_gestureState == GestureState.Detecting && distance >= Options.TouchSlop)
 		{
 			StopLongPressTimer();
 			_gestureState = GestureState.Panning;
@@ -298,7 +293,7 @@ public class SKGestureEngine : IDisposable
 			var velocity = _flingTracker.CalculateVelocity(id, ticks);
 			var velocityMagnitude = (float)Math.Sqrt(velocity.X * velocity.X + velocity.Y * velocity.Y);
 
-			if (velocityMagnitude > FlingThreshold)
+			if (velocityMagnitude > Options.FlingThreshold)
 			{
 				OnFlingDetected(new SKFlingEventArgs(velocity.X, velocity.Y));
 				handled = true;
@@ -310,9 +305,9 @@ public class SKGestureEngine : IDisposable
 		{
 			var distance = SKPoint.Distance(location, _initialTouch);
 			var duration = ticks - _touchStartTicks;
-			var maxTapDuration = isMouse ? ShortClickTicks : LongPressTicks;
+			var maxTapDuration = isMouse ? ShortClickTicks : Options.LongPressDuration * TimeSpan.TicksPerMillisecond;
 
-			if (distance < TouchSlop && duration < maxTapDuration && !_longPressTriggered)
+			if (distance < Options.TouchSlop && duration < maxTapDuration && !_longPressTriggered)
 			{
 				_lastTapTicks = ticks;
 				_lastTapLocation = location;
@@ -437,7 +432,7 @@ public class SKGestureEngine : IDisposable
 	{
 		StopLongPressTimer();
 		var token = Interlocked.Increment(ref _longPressToken);
-		var timer = new Timer(OnLongPressTimerTick, token, LongPressDuration, Timeout.Infinite);
+		var timer = new Timer(OnLongPressTimerTick, token, Options.LongPressDuration, Timeout.Infinite);
 		_longPressTimer = timer;
 	}
 
@@ -482,7 +477,7 @@ public class SKGestureEngine : IDisposable
 		if (touchPoints.Length == 1)
 		{
 			var distance = SKPoint.Distance(touchPoints[0], _initialTouch);
-			if (distance < TouchSlop)
+			if (distance < Options.TouchSlop)
 			{
 				_longPressTriggered = true;
 				StopLongPressTimer();

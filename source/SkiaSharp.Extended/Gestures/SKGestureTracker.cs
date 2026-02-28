@@ -102,29 +102,29 @@ public class SKGestureTracker : IDisposable
 	/// <summary>Gets or sets the touch slop (minimum movement to start a gesture).</summary>
 	public float TouchSlop
 	{
-		get => _engine.TouchSlop;
-		set => _engine.TouchSlop = value;
+		get => _engine.Options.TouchSlop;
+		set => _engine.Options.TouchSlop = value;
 	}
 
 	/// <summary>Gets or sets the double-tap slop distance.</summary>
 	public float DoubleTapSlop
 	{
-		get => _engine.DoubleTapSlop;
-		set => _engine.DoubleTapSlop = value;
+		get => _engine.Options.DoubleTapSlop;
+		set => _engine.Options.DoubleTapSlop = value;
 	}
 
 	/// <summary>Gets or sets the fling velocity detection threshold.</summary>
 	public float FlingThreshold
 	{
-		get => _engine.FlingThreshold;
-		set => _engine.FlingThreshold = value;
+		get => _engine.Options.FlingThreshold;
+		set => _engine.Options.FlingThreshold = value;
 	}
 
 	/// <summary>Gets or sets the long press duration in milliseconds.</summary>
 	public int LongPressDuration
 	{
-		get => _engine.LongPressDuration;
-		set => _engine.LongPressDuration = value;
+		get => _engine.Options.LongPressDuration;
+		set => _engine.Options.LongPressDuration = value;
 	}
 
 	/// <summary>Gets or sets the time provider (for testing).</summary>
