@@ -90,17 +90,5 @@ internal sealed class SKFlingTracker
 		return new SKPoint(totalVelocityX / totalWeight, totalVelocityY / totalWeight);
 	}
 
-	private readonly struct FlingEvent
-	{
-		public readonly float X;
-		public readonly float Y;
-		public readonly long Ticks;
-
-		public FlingEvent(float x, float y, long ticks)
-		{
-			X = x;
-			Y = y;
-			Ticks = ticks;
-		}
-	}
+	private readonly record struct FlingEvent(float X, float Y, long Ticks);
 }
