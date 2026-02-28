@@ -42,7 +42,7 @@ public class SKGestureEngine : IDisposable
 	private long _lastTapTicks;
 	private int _tapCount;
 	private GestureState _gestureState = GestureState.None;
-	private SKPinchState _pinchState;
+	private PinchState _pinchState;
 	private bool _longPressTriggered;
 	private long _touchStartTicks;
 	private bool _disposed;
@@ -184,12 +184,12 @@ public class SKGestureEngine : IDisposable
 
 			if (touchPoints.Length >= 2)
 			{
-				_pinchState = SKPinchState.FromLocations(touchPoints);
+				_pinchState = PinchState.FromLocations(touchPoints);
 				_gestureState = GestureState.Pinching;
 			}
 			else
 			{
-				_pinchState = new SKPinchState(touchPoints[0], 0, 0);
+				_pinchState = new PinchState(touchPoints[0], 0, 0);
 				_gestureState = GestureState.Detecting;
 			}
 
@@ -243,14 +243,14 @@ public class SKGestureEngine : IDisposable
 				{
 					var delta = location - _pinchState.Center;
 					OnPanDetected(new SKPanEventArgs(location, _pinchState.Center, delta));
-					_pinchState = new SKPinchState(location, 0, 0);
+					_pinchState = new PinchState(location, 0, 0);
 				}
 				break;
 
 			case GestureState.Pinching:
 				if (touchPoints.Length >= 2)
 				{
-					var newPinch = SKPinchState.FromLocations(touchPoints);
+					var newPinch = PinchState.FromLocations(touchPoints);
 
 					// Calculate scale
 					var scaleDelta = _pinchState.Radius > 0 ? newPinch.Radius / _pinchState.Radius : 1f;
@@ -351,12 +351,12 @@ public class SKGestureEngine : IDisposable
 				_flingTracker.Clear();
 			}
 			_gestureState = GestureState.Panning;
-			_pinchState = new SKPinchState(touchPoints[0], 0, 0);
+			_pinchState = new PinchState(touchPoints[0], 0, 0);
 		}
 		else if (touchPoints.Length >= 2)
 		{
 			// Recalculate pinch state for remaining fingers to avoid jumps
-			_pinchState = SKPinchState.FromLocations(touchPoints);
+			_pinchState = PinchState.FromLocations(touchPoints);
 		}
 
 		return handled;
@@ -531,4 +531,29 @@ public class SKGestureEngine : IDisposable
 	}
 
 	private readonly record struct TouchState(long Id, SKPoint Location, long Ticks, bool InContact);
+
+	private readonly record struct PinchState(SKPoint Center, float Radius, float Angle)
+	{
+		public static PinchState FromLocations(SKPoint[] locations)
+		{
+			if (locations == null || locations.Length < 2)
+				return new PinchState(locations?.Length > 0 ? locations[0] : SKPoint.Empty, 0, 0);
+
+			var centerX = 0f;
+			var centerY = 0f;
+			foreach (var loc in locations)
+			{
+				centerX += loc.X;
+				centerY += loc.Y;
+			}
+			centerX /= locations.Length;
+			centerY /= locations.Length;
+
+			var center = new SKPoint(centerX, centerY);
+			var radius = SKPoint.Distance(center, locations[0]);
+			var angle = (float)(Math.Atan2(locations[1].Y - locations[0].Y, locations[1].X - locations[0].X) * 180 / Math.PI);
+
+			return new PinchState(center, radius, angle);
+		}
+	}
 }
