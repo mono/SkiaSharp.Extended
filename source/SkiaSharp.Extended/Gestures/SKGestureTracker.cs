@@ -37,6 +37,7 @@ public class SKGestureTracker : IDisposable
 
 	// Drag lifecycle state
 	private bool _isDragging;
+	private bool _isDragHandled;
 	private SKPoint _dragStartLocation;
 
 	// Fling animation state
@@ -460,6 +461,7 @@ public class SKGestureTracker : IDisposable
 		if (!_isDragging)
 		{
 			_isDragging = true;
+			_isDragHandled = false;
 			_dragStartLocation = e.PreviousLocation;
 			dragArgs = new SKDragEventArgs(_dragStartLocation, e.Location, e.Delta);
 			DragStarted?.Invoke(this, dragArgs);
@@ -470,8 +472,12 @@ public class SKGestureTracker : IDisposable
 			DragUpdated?.Invoke(this, dragArgs);
 		}
 
+		// Track whether the consumer is handling this drag (e.g. sticker drag)
+		if (dragArgs?.Handled ?? false)
+			_isDragHandled = true;
+
 		// Skip offset update if consumer handled the pan or drag (e.g. sticker drag)
-		if (e.Handled || (dragArgs?.Handled ?? false))
+		if (e.Handled || _isDragHandled)
 			return;
 
 		// Update offset
@@ -520,7 +526,8 @@ public class SKGestureTracker : IDisposable
 	{
 		FlingDetected?.Invoke(this, e);
 
-		if (!IsFlingEnabled)
+		// Don't fling if the drag was handled by the consumer (e.g. sticker drag)
+		if (!IsFlingEnabled || _isDragHandled)
 			return;
 
 		StartFlingAnimation(e.VelocityX, e.VelocityY);
@@ -556,6 +563,7 @@ public class SKGestureTracker : IDisposable
 		if (_isDragging)
 		{
 			_isDragging = false;
+			_isDragHandled = false;
 			DragEnded?.Invoke(this, new SKDragEventArgs(_dragStartLocation, _dragStartLocation, SKPoint.Empty));
 		}
 		GestureEnded?.Invoke(this, e);

@@ -109,15 +109,13 @@ public partial class GesturePage : ContentPage
 
 	/// <summary>
 	/// Processes a MAUI SKTouchEventArgs through the gesture tracker.
-	/// Converts pixel coordinates to point coordinates using the tracker's DisplayScale.
+	/// SKTouchEventArgs.Location is already in device-pixel coordinates (same as the canvas),
+	/// so no coordinate conversion is needed.
 	/// </summary>
 	private static bool ProcessTouch(SKGestureTracker tracker, SKTouchEventArgs e)
 	{
 		var isMouse = e.DeviceType == SKTouchDeviceType.Mouse;
-		var scale = tracker.DisplayScale;
-		var location = scale > 0
-			? new SKPoint(e.Location.X / scale, e.Location.Y / scale)
-			: e.Location;
+		var location = e.Location;
 
 		return e.ActionType switch
 		{
@@ -148,14 +146,8 @@ public partial class GesturePage : ContentPage
 		_canvasWidth = width;
 		_canvasHeight = height;
 
-		// Update display scale (pixels / points) and view size
-		if (canvasView.Width > 0)
-			_tracker.DisplayScale = width / (float)canvasView.Width;
-		
-		var scale = _tracker.DisplayScale;
-		var pointWidth = scale > 0 ? (int)(width / scale) : width;
-		var pointHeight = scale > 0 ? (int)(height / scale) : height;
-		_tracker.SetViewSize(pointWidth, pointHeight);
+		// Set view size in pixel coordinates (same space as touch and canvas)
+		_tracker.SetViewSize(width, height);
 
 		// Clear background
 		canvas.Clear(SKColors.White);
