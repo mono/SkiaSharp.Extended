@@ -3,7 +3,7 @@
 /// <summary>
 /// The current state of a gesture.
 /// </summary>
-public enum SKGestureState
+internal enum SKGestureState
 {
 	/// <summary>
 	/// No gesture is active.

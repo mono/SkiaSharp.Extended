@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for gesture state changes.
 /// </summary>
-public class SKGestureStateEventArgs : EventArgs
+internal class SKGestureStateEventArgs : EventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
