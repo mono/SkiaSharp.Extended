@@ -267,12 +267,12 @@
   "api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEngineOptions.html",
     "title": "Class SKGestureEngineOptions | SkiaSharp.Extended",
-    "keywords": "Class SKGestureEngineOptions Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureEngineOptions Inheritance object SKGestureEngineOptions Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureEngineOptions() Properties DoubleTapSlop FlingThreshold LongPressDuration TouchSlop"
+    "keywords": "Class SKGestureEngineOptions Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureEngineOptions Inheritance object SKGestureEngineOptions Derived SKGestureTrackerOptions Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureEngineOptions() Properties DoubleTapSlop FlingThreshold LongPressDuration TouchSlop"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html",
     "title": "Constructor SKGestureTracker | SkiaSharp.Extended",
-    "keywords": "Constructor SKGestureTracker Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKGestureTracker() public SKGestureTracker()"
+    "keywords": "Constructor SKGestureTracker Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKGestureTracker() public SKGestureTracker() SKGestureTracker(SKGestureTrackerOptions) public SKGestureTracker(SKGestureTrackerOptions options) Parameters options SKGestureTrackerOptions"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Dispose.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Dispose.html",
@@ -439,6 +439,11 @@
     "title": "Property Offset | SkiaSharp.Extended",
     "keywords": "Property Offset Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Offset public SKPoint Offset { get; } Property Value SKPoint"
   },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Options.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Options.html",
+    "title": "Property Options | SkiaSharp.Extended",
+    "keywords": "Property Options Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Options public SKGestureTrackerOptions Options { get; } Property Value SKGestureTrackerOptions"
+  },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.PanDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.PanDetected.html",
     "title": "Event PanDetected | SkiaSharp.Extended",
@@ -552,7 +557,57 @@
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.html",
     "title": "Class SKGestureTracker | SkiaSharp.Extended",
-    "keywords": "Class SKGestureTracker Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureTracker : IDisposable Inheritance object SKGestureTracker Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureTracker() Properties DoubleTapSlop DoubleTapZoomFactor FlingFrameInterval FlingFriction FlingMinVelocity FlingThreshold IsDoubleTapZoomEnabled IsEnabled IsFlingEnabled IsFlinging IsGestureActive IsPanEnabled IsPinchEnabled IsRotateEnabled IsScrollZoomEnabled IsZoomAnimating LongPressDuration Matrix MaxScale MinScale Offset Rotation Scale ScrollZoomFactor TimeProvider TouchSlop ZoomAnimationDuration Methods Dispose() ProcessMouseWheel(SKPoint, float, float) ProcessTouchCancel(long) ProcessTouchDown(long, SKPoint, bool) ProcessTouchMove(long, SKPoint, bool) ProcessTouchUp(long, SKPoint, bool) Reset() SetViewSize(float, float) StopFling() StopZoomAnimation() ZoomTo(float, SKPoint) Events DoubleTapDetected DragEnded DragStarted DragUpdated FlingCompleted FlingDetected Flinging GestureEnded GestureStarted HoverDetected LongPressDetected PanDetected PinchDetected RotateDetected ScrollDetected TapDetected TransformChanged"
+    "keywords": "Class SKGestureTracker Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureTracker : IDisposable Inheritance object SKGestureTracker Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureTracker() SKGestureTracker(SKGestureTrackerOptions) Properties DoubleTapSlop DoubleTapZoomFactor FlingFrameInterval FlingFriction FlingMinVelocity FlingThreshold IsDoubleTapZoomEnabled IsEnabled IsFlingEnabled IsFlinging IsGestureActive IsPanEnabled IsPinchEnabled IsRotateEnabled IsScrollZoomEnabled IsZoomAnimating LongPressDuration Matrix MaxScale MinScale Offset Options Rotation Scale ScrollZoomFactor TimeProvider TouchSlop ZoomAnimationDuration Methods Dispose() ProcessMouseWheel(SKPoint, float, float) ProcessTouchCancel(long) ProcessTouchDown(long, SKPoint, bool) ProcessTouchMove(long, SKPoint, bool) ProcessTouchUp(long, SKPoint, bool) Reset() SetViewSize(float, float) StopFling() StopZoomAnimation() ZoomTo(float, SKPoint) Events DoubleTapDetected DragEnded DragStarted DragUpdated FlingCompleted FlingDetected Flinging GestureEnded GestureStarted HoverDetected LongPressDetected PanDetected PinchDetected RotateDetected ScrollDetected TapDetected TransformChanged"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.-ctor.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.-ctor.html",
+    "title": "Constructor SKGestureTrackerOptions | SkiaSharp.Extended",
+    "keywords": "Constructor SKGestureTrackerOptions Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKGestureTrackerOptions() public SKGestureTrackerOptions()"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor.html",
+    "title": "Property DoubleTapZoomFactor | SkiaSharp.Extended",
+    "keywords": "Property DoubleTapZoomFactor Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DoubleTapZoomFactor public float DoubleTapZoomFactor { get; set; } Property Value float"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval.html",
+    "title": "Property FlingFrameInterval | SkiaSharp.Extended",
+    "keywords": "Property FlingFrameInterval Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingFrameInterval public int FlingFrameInterval { get; set; } Property Value int"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction.html",
+    "title": "Property FlingFriction | SkiaSharp.Extended",
+    "keywords": "Property FlingFriction Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingFriction public float FlingFriction { get; set; } Property Value float"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity.html",
+    "title": "Property FlingMinVelocity | SkiaSharp.Extended",
+    "keywords": "Property FlingMinVelocity Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingMinVelocity public float FlingMinVelocity { get; set; } Property Value float"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale.html",
+    "title": "Property MaxScale | SkiaSharp.Extended",
+    "keywords": "Property MaxScale Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll MaxScale public float MaxScale { get; set; } Property Value float"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale.html",
+    "title": "Property MinScale | SkiaSharp.Extended",
+    "keywords": "Property MinScale Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll MinScale public float MinScale { get; set; } Property Value float"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor.html",
+    "title": "Property ScrollZoomFactor | SkiaSharp.Extended",
+    "keywords": "Property ScrollZoomFactor Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ScrollZoomFactor public float ScrollZoomFactor { get; set; } Property Value float"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration.html",
+    "title": "Property ZoomAnimationDuration | SkiaSharp.Extended",
+    "keywords": "Property ZoomAnimationDuration Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ZoomAnimationDuration public int ZoomAnimationDuration { get; set; } Property Value int"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.html",
+    "title": "Class SKGestureTrackerOptions | SkiaSharp.Extended",
+    "keywords": "Class SKGestureTrackerOptions Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureTrackerOptions : SKGestureEngineOptions Inheritance object SKGestureEngineOptions SKGestureTrackerOptions Inherited Members SKGestureEngineOptions.TouchSlop SKGestureEngineOptions.DoubleTapSlop SKGestureEngineOptions.FlingThreshold SKGestureEngineOptions.LongPressDuration object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureTrackerOptions() Properties DoubleTapZoomFactor FlingFrameInterval FlingFriction FlingMinVelocity MaxScale MinScale ScrollZoomFactor ZoomAnimationDuration"
   },
   "api/SkiaSharp.Extended.Gestures.SKHoverEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKHoverEventArgs.-ctor.html",
@@ -722,7 +777,7 @@
   "api/SkiaSharp.Extended.Gestures.html": {
     "href": "api/SkiaSharp.Extended.Gestures.html",
     "title": "Namespace SkiaSharp.Extended.Gestures | SkiaSharp.Extended",
-    "keywords": "Namespace SkiaSharp.Extended.Gestures Classes SKDragEventArgs SKFlingEventArgs SKGestureEngine SKGestureEngineOptions SKGestureTracker SKHoverEventArgs SKPanEventArgs SKPinchEventArgs SKRotateEventArgs SKScrollEventArgs SKTapEventArgs"
+    "keywords": "Namespace SkiaSharp.Extended.Gestures Classes SKDragEventArgs SKFlingEventArgs SKGestureEngine SKGestureEngineOptions SKGestureTracker SKGestureTrackerOptions SKHoverEventArgs SKPanEventArgs SKPinchEventArgs SKRotateEventArgs SKScrollEventArgs SKTapEventArgs"
   },
   "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html": {
     "href": "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html",

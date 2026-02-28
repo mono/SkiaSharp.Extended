@@ -631,6 +631,15 @@ references:
   fullName.vb: SkiaSharp.Extended.Gestures.SKGestureTracker.New()
   nameWithType: SKGestureTracker.SKGestureTracker()
   nameWithType.vb: SKGestureTracker.New()
+- uid: SkiaSharp.Extended.Gestures.SKGestureTracker.#ctor(SkiaSharp.Extended.Gestures.SKGestureTrackerOptions)
+  name: SKGestureTracker(SKGestureTrackerOptions)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html#SkiaSharp_Extended_Gestures_SKGestureTracker__ctor_SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureTracker.#ctor(SkiaSharp.Extended.Gestures.SKGestureTrackerOptions)
+  name.vb: New(SKGestureTrackerOptions)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.SKGestureTracker(SkiaSharp.Extended.Gestures.SKGestureTrackerOptions)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureTracker.New(SkiaSharp.Extended.Gestures.SKGestureTrackerOptions)
+  nameWithType: SKGestureTracker.SKGestureTracker(SKGestureTrackerOptions)
+  nameWithType.vb: SKGestureTracker.New(SKGestureTrackerOptions)
 - uid: SkiaSharp.Extended.Gestures.SKGestureTracker.#ctor*
   name: SKGestureTracker
   href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html
@@ -970,6 +979,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTracker.Offset
   fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.Offset
   nameWithType: SKGestureTracker.Offset
+- uid: SkiaSharp.Extended.Gestures.SKGestureTracker.Options
+  name: Options
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.Options.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Options
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureTracker.Options
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.Options
+  nameWithType: SKGestureTracker.Options
+- uid: SkiaSharp.Extended.Gestures.SKGestureTracker.Options*
+  name: Options
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.Options.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTracker.Options
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.Options
+  nameWithType: SKGestureTracker.Options
 - uid: SkiaSharp.Extended.Gestures.SKGestureTracker.PanDetected
   name: PanDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.PanDetected.html
@@ -1219,6 +1240,126 @@ references:
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTracker.ZoomTo
   fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.ZoomTo
   nameWithType: SKGestureTracker.ZoomTo
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions
+  name: SKGestureTrackerOptions
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions
+  nameWithType: SKGestureTrackerOptions
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.#ctor
+  name: SKGestureTrackerOptions()
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.-ctor.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions__ctor
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.#ctor
+  name.vb: New()
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.SKGestureTrackerOptions()
+  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.New()
+  nameWithType: SKGestureTrackerOptions.SKGestureTrackerOptions()
+  nameWithType.vb: SKGestureTrackerOptions.New()
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.#ctor*
+  name: SKGestureTrackerOptions
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.SKGestureTrackerOptions
+  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.New
+  nameWithType: SKGestureTrackerOptions.SKGestureTrackerOptions
+  nameWithType.vb: SKGestureTrackerOptions.New
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor
+  name: DoubleTapZoomFactor
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_DoubleTapZoomFactor
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor
+  nameWithType: SKGestureTrackerOptions.DoubleTapZoomFactor
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor*
+  name: DoubleTapZoomFactor
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor
+  nameWithType: SKGestureTrackerOptions.DoubleTapZoomFactor
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval
+  name: FlingFrameInterval
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_FlingFrameInterval
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval
+  nameWithType: SKGestureTrackerOptions.FlingFrameInterval
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval*
+  name: FlingFrameInterval
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval
+  nameWithType: SKGestureTrackerOptions.FlingFrameInterval
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction
+  name: FlingFriction
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_FlingFriction
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction
+  nameWithType: SKGestureTrackerOptions.FlingFriction
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction*
+  name: FlingFriction
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction
+  nameWithType: SKGestureTrackerOptions.FlingFriction
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity
+  name: FlingMinVelocity
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_FlingMinVelocity
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity
+  nameWithType: SKGestureTrackerOptions.FlingMinVelocity
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity*
+  name: FlingMinVelocity
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity
+  nameWithType: SKGestureTrackerOptions.FlingMinVelocity
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale
+  name: MaxScale
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_MaxScale
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale
+  nameWithType: SKGestureTrackerOptions.MaxScale
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale*
+  name: MaxScale
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale
+  nameWithType: SKGestureTrackerOptions.MaxScale
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale
+  name: MinScale
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_MinScale
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale
+  nameWithType: SKGestureTrackerOptions.MinScale
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale*
+  name: MinScale
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale
+  nameWithType: SKGestureTrackerOptions.MinScale
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor
+  name: ScrollZoomFactor
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_ScrollZoomFactor
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor
+  nameWithType: SKGestureTrackerOptions.ScrollZoomFactor
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor*
+  name: ScrollZoomFactor
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor
+  nameWithType: SKGestureTrackerOptions.ScrollZoomFactor
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration
+  name: ZoomAnimationDuration
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_ZoomAnimationDuration
+  commentId: P:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration
+  nameWithType: SKGestureTrackerOptions.ZoomAnimationDuration
+- uid: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration*
+  name: ZoomAnimationDuration
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration
+  nameWithType: SKGestureTrackerOptions.ZoomAnimationDuration
 - uid: SkiaSharp.Extended.Gestures.SKHoverEventArgs
   name: SKHoverEventArgs
   href: api/SkiaSharp.Extended.Gestures.SKHoverEventArgs.html
