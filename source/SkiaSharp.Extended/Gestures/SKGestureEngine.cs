@@ -301,8 +301,8 @@ public class SKGestureEngine : IDisposable
 		var touchPoints = GetActiveTouchPoints();
 		var handled = false;
 
-		// Check for fling
-		if (touchPoints.Length == 0)
+		// Check for fling — only after a single-finger pan, not after pinch/rotate
+		if (touchPoints.Length == 0 && _gestureState == SKGestureState.Panning)
 		{
 			var velocity = _flingTracker.CalculateVelocity(id, ticks);
 			var velocityMagnitude = (float)Math.Sqrt(velocity.X * velocity.X + velocity.Y * velocity.Y);
@@ -312,30 +312,30 @@ public class SKGestureEngine : IDisposable
 				OnFlingDetected(new SKFlingEventArgs(velocity.X, velocity.Y));
 				handled = true;
 			}
+		}
 
-			// Check for tap — only if we haven't transitioned to panning/pinching
-			if (_gestureState == SKGestureState.Detecting)
+		// Check for tap — only if we haven't transitioned to panning/pinching
+		if (touchPoints.Length == 0 && _gestureState == SKGestureState.Detecting)
+		{
+			var distance = SKPoint.Distance(location, _initialTouch);
+			var duration = ticks - _touchStartTicks;
+			var maxTapDuration = isMouse ? ShortClickTicks : LongPressTicks;
+
+			if (distance < TouchSlop && duration < maxTapDuration && !_longPressTriggered)
 			{
-				var distance = SKPoint.Distance(location, _initialTouch);
-				var duration = ticks - _touchStartTicks;
-				var maxTapDuration = isMouse ? ShortClickTicks : LongPressTicks;
+				_lastTapTicks = ticks;
+				_lastTapLocation = location;
 
-				if (distance < TouchSlop && duration < maxTapDuration && !_longPressTriggered)
+				if (_tapCount > 1)
 				{
-					_lastTapTicks = ticks;
-					_lastTapLocation = location;
-
-					if (_tapCount > 1)
-					{
-						OnDoubleTapDetected(new SKTapEventArgs(location, _tapCount));
-						_tapCount = 0;
-					}
-					else
-					{
-						OnTapDetected(new SKTapEventArgs(location, 1));
-					}
-					handled = true;
+					OnDoubleTapDetected(new SKTapEventArgs(location, _tapCount));
+					_tapCount = 0;
 				}
+				else
+				{
+					OnTapDetected(new SKTapEventArgs(location, 1));
+				}
+				handled = true;
 			}
 		}
 
@@ -356,6 +356,8 @@ public class SKGestureEngine : IDisposable
 			if (_gestureState == SKGestureState.Pinching)
 			{
 				_initialTouch = touchPoints[0];
+				// Clear velocity history so rotation movement doesn't cause a fling
+				_flingTracker.Clear();
 			}
 			_gestureState = SKGestureState.Panning;
 			_pinchState = new SKPinchState(touchPoints[0], 0, 0);
