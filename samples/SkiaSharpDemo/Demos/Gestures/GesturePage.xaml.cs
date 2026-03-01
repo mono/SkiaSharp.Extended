@@ -301,7 +301,7 @@ public partial class GesturePage : ContentPage
 		}
 	}
 
-	private void OnLongPress(object? sender, SKTapGestureEventArgs e)
+	private void OnLongPress(object? sender, SKLongPressGestureEventArgs e)
 	{
 		if (!_enableLongPress) return;
 		LogEvent($"Long press at ({e.Location.X:F0}, {e.Location.Y:F0})");

@@ -90,7 +90,7 @@ public class SKGestureDetector : IDisposable
 	/// <summary>
 	/// Occurs when a long press is detected.
 	/// </summary>
-	public event EventHandler<SKTapGestureEventArgs>? LongPressDetected;
+	public event EventHandler<SKLongPressGestureEventArgs>? LongPressDetected;
 
 	/// <summary>
 	/// Occurs when a pan gesture is detected.
@@ -482,7 +482,8 @@ public class SKGestureDetector : IDisposable
 			{
 				_longPressTriggered = true;
 				StopLongPressTimer();
-				OnLongPressDetected(new SKTapGestureEventArgs(touchPoints[0], 1));
+				var duration = TimeSpan.FromTicks(TimeProvider() - _touchStartTicks);
+				OnLongPressDetected(new SKLongPressGestureEventArgs(touchPoints[0], duration));
 			}
 		}
 	}
@@ -508,7 +509,7 @@ public class SKGestureDetector : IDisposable
 	// Event invokers
 	protected virtual void OnTapDetected(SKTapGestureEventArgs e) => TapDetected?.Invoke(this, e);
 	protected virtual void OnDoubleTapDetected(SKTapGestureEventArgs e) => DoubleTapDetected?.Invoke(this, e);
-	protected virtual void OnLongPressDetected(SKTapGestureEventArgs e) => LongPressDetected?.Invoke(this, e);
+	protected virtual void OnLongPressDetected(SKLongPressGestureEventArgs e) => LongPressDetected?.Invoke(this, e);
 	protected virtual void OnPanDetected(SKPanGestureEventArgs e) => PanDetected?.Invoke(this, e);
 	protected virtual void OnPinchDetected(SKPinchGestureEventArgs e) => PinchDetected?.Invoke(this, e);
 	protected virtual void OnRotateDetected(SKRotateGestureEventArgs e) => RotateDetected?.Invoke(this, e);
