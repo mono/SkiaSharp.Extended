@@ -4,7 +4,7 @@
 /// Configuration options for <see cref="SKGestureTracker"/>.
 /// Inherits engine-level options and adds tracker-specific settings.
 /// </summary>
-public class SKGestureTrackerOptions : SKGestureEngineOptions
+public class SKGestureTrackerOptions : SKGestureDetectorOptions
 {
 	/// <summary>
 	/// Gets or sets the minimum allowed scale.

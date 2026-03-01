@@ -18,7 +18,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// to marshal timer callbacks back to the UI thread.</para>
 /// <para>Call <see cref="Dispose"/> to clean up resources when done.</para>
 /// </remarks>
-public class SKGestureEngine : IDisposable
+public class SKGestureDetector : IDisposable
 {
 	// Timing constants
 	private const long ShortTapTicks = 125 * TimeSpan.TicksPerMillisecond;
@@ -42,17 +42,17 @@ public class SKGestureEngine : IDisposable
 	private bool _disposed;
 
 	/// <summary>
-	/// Initializes a new instance of <see cref="SKGestureEngine"/> with default options.
+	/// Initializes a new instance of <see cref="SKGestureDetector"/> with default options.
 	/// </summary>
-	public SKGestureEngine()
-		: this(new SKGestureEngineOptions())
+	public SKGestureDetector()
+		: this(new SKGestureDetectorOptions())
 	{
 	}
 
 	/// <summary>
-	/// Initializes a new instance of <see cref="SKGestureEngine"/> with the specified options.
+	/// Initializes a new instance of <see cref="SKGestureDetector"/> with the specified options.
 	/// </summary>
-	public SKGestureEngine(SKGestureEngineOptions options)
+	public SKGestureDetector(SKGestureDetectorOptions options)
 	{
 		Options = options ?? throw new ArgumentNullException(nameof(options));
 	}
@@ -60,7 +60,7 @@ public class SKGestureEngine : IDisposable
 	/// <summary>
 	/// Gets the configuration options for this engine.
 	/// </summary>
-	public SKGestureEngineOptions Options { get; }
+	public SKGestureDetectorOptions Options { get; }
 
 	/// <summary>
 	/// Gets or sets the current time provider. Used for testing.

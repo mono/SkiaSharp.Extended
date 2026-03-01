@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.Gestures;
 
 /// <summary>
 /// Tracks gesture state and maintains an absolute transform (scale, rotation, offset)
-/// by consuming events from an internal <see cref="SKGestureEngine"/>.
+/// by consuming events from an internal <see cref="SKGestureDetector"/>.
 /// </summary>
 /// <remarks>
 /// <para>The tracker is the primary public API for gesture handling. It accepts raw touch
@@ -14,7 +14,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// </remarks>
 public class SKGestureTracker : IDisposable
 {
-	private readonly SKGestureEngine _engine;
+	private readonly SKGestureDetector _engine;
 	private SynchronizationContext? _syncContext;
 	private bool _disposed;
 
@@ -61,7 +61,7 @@ public class SKGestureTracker : IDisposable
 	public SKGestureTracker(SKGestureTrackerOptions options)
 	{
 		Options = options ?? throw new ArgumentNullException(nameof(options));
-		_engine = new SKGestureEngine(options);
+		_engine = new SKGestureDetector(options);
 		SubscribeEngineEvents();
 	}
 
