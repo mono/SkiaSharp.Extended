@@ -132,9 +132,6 @@ tracker.LongPressDetected += (s, e) =&gt; Console.WriteLine(&quot;Long press!&qu
     var canvas = e.Surface.Canvas;
     canvas.Clear(SKColors.White);
 
-    // Tell the tracker the canvas size
-    tracker.SetViewSize(e.Info.Width, e.Info.Height);
-
     // Apply the tracked transform (pan + zoom + rotation)
     canvas.Save();
     canvas.Concat(tracker.Matrix);
@@ -170,7 +167,7 @@ tracker.LongPressDetected += (s, e) =&gt; Console.WriteLine(&quot;Long press!&qu
 </table>
 <p>Most apps only need <code>SKGestureTracker</code>. It wraps a detector internally and translates gesture events into transform updates. If you need raw gesture detection without transform management, you can use <code>SKGestureDetector</code> directly.</p>
 <h3 id="coordinate-spaces">Coordinate spaces</h3>
-<p>The tracker is coordinate-space-agnostic — it operates on whatever numbers you pass in. The important rule is: <strong>touch input, view size, and canvas drawing must all use the same coordinate space.</strong></p>
+<p>The tracker is coordinate-space-agnostic — it operates on whatever numbers you pass in. The important rule is: <strong>touch input and canvas drawing must use the same coordinate space.</strong></p>
 <ul>
 <li><strong>MAUI</strong>: <code>SKTouchEventArgs.Location</code> is already in device pixels (same as the canvas), so pass them through directly.</li>
 <li><strong>Blazor</strong>: <code>PointerEventArgs.OffsetX/Y</code> are in CSS pixels, but the canvas renders in device pixels. Multiply by <code>devicePixelRatio</code> to match.</li>
@@ -404,7 +401,7 @@ tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 4fa2ec8
+          source: PR #326 · ececde7
         </div>
       </div>
     </footer>

@@ -162,14 +162,12 @@ via <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTo
 and <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessMouseWheel.html#SkiaSharp_Extended_Gestures_SKGestureTracker_ProcessMouseWheel_SkiaSharp_SKPoint_System_Single_System_Single_">ProcessMouseWheel(SKPoint, float, float)</a>, detects gestures internally, and translates them into
 transform state changes and higher-level events such as drag lifecycle and fling animation.</p>
 <p>Use the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Matrix.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Matrix">Matrix</a> property to apply the current transform when painting.
-The matrix is computed relative to the view center, so call <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetViewSize_System_Single_System_Single_">SetViewSize(float, float)</a> with your
-canvas dimensions before reading <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Matrix.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Matrix">Matrix</a>.</p>
+The matrix uses (0,0) as its origin — no view size configuration is required.</p>
 <p>All coordinates are in view (screen) space. The tracker converts screen-space deltas
 to content-space deltas internally when updating <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Offset.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Offset">Offset</a>.</p>
 <example>
 <p>Basic usage with an SkiaSharp canvas:</p>
 <pre><code class="lang-csharp">var tracker = new SKGestureTracker();
-tracker.SetViewSize(canvasWidth, canvasHeight);
 <p>// Forward touch events from your platform:
 tracker.ProcessTouchDown(id, new SKPoint(x, y));
 tracker.ProcessTouchMove(id, new SKPoint(x, y));
@@ -274,7 +272,7 @@ tracker.TransformChanged += (s, e) =&gt; canvas.InvalidateVisual();</p></code></
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Matrix.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Matrix">Matrix</a></dt>
     <dd><p>Gets the composite transform matrix that combines scale, rotation, and offset,
-centered on the view midpoint.</p>
+using (0,0) as the transform origin.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -349,12 +347,12 @@ animations, and raises <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestu
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetRotation_System_Single_">SetRotation(float)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetRotation_System_Single_System_Nullable_SkiaSharp_SKPoint__">SetRotation(float, SKPoint?)</a></dt>
     <dd><p>Sets the rotation angle and raises <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.TransformChanged.html">TransformChanged</a>.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetScale_System_Single_">SetScale(float)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetScale_System_Single_System_Nullable_SkiaSharp_SKPoint__">SetScale(float, SKPoint?)</a></dt>
     <dd><p>Sets the zoom scale, clamping to <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_MinScale">MinScale</a>/<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_MaxScale">MaxScale</a>,
 and raises <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.TransformChanged.html">TransformChanged</a>.</p>
 </dd>
@@ -363,11 +361,6 @@ and raises <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Tr
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.SetTransform.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetTransform_System_Single_System_Single_SkiaSharp_SKPoint_">SetTransform(float, float, SKPoint)</a></dt>
     <dd><p>Sets the transform to the specified values, clamping scale to
 <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_MinScale">MinScale</a>/<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_MaxScale">MaxScale</a>.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetViewSize_System_Single_System_Single_">SetViewSize(float, float)</a></dt>
-    <dd><p>Sets the view dimensions used for pivot and matrix calculations.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -498,7 +491,7 @@ and raises <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Tr
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 4fa2ec8
+          source: PR #326 · ececde7
         </div>
       </div>
     </footer>

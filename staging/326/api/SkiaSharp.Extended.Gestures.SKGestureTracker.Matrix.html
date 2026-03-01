@@ -127,7 +127,7 @@
 </h3>
 
 <div class="markdown level1 summary"><p>Gets the composite transform matrix that combines scale, rotation, and offset,
-centered on the view midpoint.</p>
+using (0,0) as the transform origin.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -144,17 +144,13 @@ centered on the view midpoint.</p>
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skmatrix">SKMatrix</a></dt>
   <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skmatrix">SKMatrix</a> that can be applied to an <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skcanvas">SKCanvas</a> to render content
 with the current gesture transform. The matrix applies transformations in the order:
-translate to center, scale, rotate, offset, translate back.</p>
+scale, rotate, translate.</p>
 </dd>
 </dl>
 
 
 
 
-<h4 class="section" id="SkiaSharp_Extended_Gestures_SKGestureTracker_Matrix_remarks">Remarks</h4>
-<div class="markdown level1 remarks"><p>Call <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetViewSize_System_Single_System_Single_">SetViewSize(float, float)</a> before reading this property to ensure the pivot point
-is correctly calculated.</p>
-</div>
 
 
 
@@ -178,7 +174,7 @@ is correctly calculated.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 4fa2ec8
+          source: PR #326 · ececde7
         </div>
       </div>
     </footer>

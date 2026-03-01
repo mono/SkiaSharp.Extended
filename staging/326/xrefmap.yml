@@ -1138,30 +1138,30 @@ references:
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTracker.SetOffset
   fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.SetOffset
   nameWithType: SKGestureTracker.SetOffset
-- uid: SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation(System.Single)
-  name: SetRotation(float)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetRotation_System_Single_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation(System.Single)
-  name.vb: SetRotation(Single)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation(float)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation(Single)
-  nameWithType: SKGestureTracker.SetRotation(float)
-  nameWithType.vb: SKGestureTracker.SetRotation(Single)
+- uid: SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation(System.Single,System.Nullable{SkiaSharp.SKPoint})
+  name: SetRotation(float, SKPoint?)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetRotation_System_Single_System_Nullable_SkiaSharp_SKPoint__
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation(System.Single,System.Nullable{SkiaSharp.SKPoint})
+  name.vb: SetRotation(Single, SKPoint?)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation(float, SkiaSharp.SKPoint?)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation(Single, SkiaSharp.SKPoint?)
+  nameWithType: SKGestureTracker.SetRotation(float, SKPoint?)
+  nameWithType.vb: SKGestureTracker.SetRotation(Single, SKPoint?)
 - uid: SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation*
   name: SetRotation
   href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation.html
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation
   fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation
   nameWithType: SKGestureTracker.SetRotation
-- uid: SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale(System.Single)
-  name: SetScale(float)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetScale_System_Single_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale(System.Single)
-  name.vb: SetScale(Single)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale(float)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale(Single)
-  nameWithType: SKGestureTracker.SetScale(float)
-  nameWithType.vb: SKGestureTracker.SetScale(Single)
+- uid: SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale(System.Single,System.Nullable{SkiaSharp.SKPoint})
+  name: SetScale(float, SKPoint?)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetScale_System_Single_System_Nullable_SkiaSharp_SKPoint__
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale(System.Single,System.Nullable{SkiaSharp.SKPoint})
+  name.vb: SetScale(Single, SKPoint?)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale(float, SkiaSharp.SKPoint?)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale(Single, SkiaSharp.SKPoint?)
+  nameWithType: SKGestureTracker.SetScale(float, SKPoint?)
+  nameWithType.vb: SKGestureTracker.SetScale(Single, SKPoint?)
 - uid: SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale*
   name: SetScale
   href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale.html
@@ -1183,21 +1183,6 @@ references:
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTracker.SetTransform
   fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.SetTransform
   nameWithType: SKGestureTracker.SetTransform
-- uid: SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize(System.Single,System.Single)
-  name: SetViewSize(float, float)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetViewSize_System_Single_System_Single_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize(System.Single,System.Single)
-  name.vb: SetViewSize(Single, Single)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize(float, float)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize(Single, Single)
-  nameWithType: SKGestureTracker.SetViewSize(float, float)
-  nameWithType.vb: SKGestureTracker.SetViewSize(Single, Single)
-- uid: SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize*
-  name: SetViewSize
-  href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize
-  fullName: SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize
-  nameWithType: SKGestureTracker.SetViewSize
 - uid: SkiaSharp.Extended.Gestures.SKGestureTracker.StopFling
   name: StopFling()
   href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.StopFling.html#SkiaSharp_Extended_Gestures_SKGestureTracker_StopFling
