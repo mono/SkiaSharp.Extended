@@ -667,22 +667,22 @@
   "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.-ctor.html",
     "title": "Constructor SKPinchEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKPinchEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKPinchEventArgs(SKPoint, SKPoint, float) public SKPinchEventArgs(SKPoint center, SKPoint previousCenter, float scale) Parameters center SKPoint previousCenter SKPoint scale float"
+    "keywords": "Constructor SKPinchEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKPinchEventArgs(SKPoint, SKPoint, float) public SKPinchEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float scale) Parameters focalPoint SKPoint previousFocalPoint SKPoint scale float"
   },
-  "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.Center.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.Center.html",
-    "title": "Property Center | SkiaSharp.Extended",
-    "keywords": "Property Center Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Center public SKPoint Center { get; } Property Value SKPoint"
+  "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.FocalPoint.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.FocalPoint.html",
+    "title": "Property FocalPoint | SkiaSharp.Extended",
+    "keywords": "Property FocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FocalPoint public SKPoint FocalPoint { get; } Property Value SKPoint"
   },
   "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.Handled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.Handled.html",
     "title": "Property Handled | SkiaSharp.Extended",
     "keywords": "Property Handled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Handled public bool Handled { get; set; } Property Value bool"
   },
-  "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousCenter.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousCenter.html",
-    "title": "Property PreviousCenter | SkiaSharp.Extended",
-    "keywords": "Property PreviousCenter Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll PreviousCenter public SKPoint PreviousCenter { get; } Property Value SKPoint"
+  "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousFocalPoint.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousFocalPoint.html",
+    "title": "Property PreviousFocalPoint | SkiaSharp.Extended",
+    "keywords": "Property PreviousFocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll PreviousFocalPoint public SKPoint PreviousFocalPoint { get; } Property Value SKPoint"
   },
   "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.Scale.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.Scale.html",
@@ -692,27 +692,27 @@
   "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.html",
     "title": "Class SKPinchEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKPinchEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKPinchEventArgs : EventArgs Inheritance object EventArgs SKPinchEventArgs Inherited Members EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKPinchEventArgs(SKPoint, SKPoint, float) Properties Center Handled PreviousCenter Scale"
+    "keywords": "Class SKPinchEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKPinchEventArgs : EventArgs Inheritance object EventArgs SKPinchEventArgs Inherited Members EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKPinchEventArgs(SKPoint, SKPoint, float) Properties FocalPoint Handled PreviousFocalPoint Scale"
   },
   "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.-ctor.html",
     "title": "Constructor SKRotateEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKRotateEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKRotateEventArgs(SKPoint, SKPoint, float) public SKRotateEventArgs(SKPoint center, SKPoint previousCenter, float rotationDelta) Parameters center SKPoint previousCenter SKPoint rotationDelta float"
+    "keywords": "Constructor SKRotateEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKRotateEventArgs(SKPoint, SKPoint, float) public SKRotateEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float rotationDelta) Parameters focalPoint SKPoint previousFocalPoint SKPoint rotationDelta float"
   },
-  "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.Center.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.Center.html",
-    "title": "Property Center | SkiaSharp.Extended",
-    "keywords": "Property Center Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Center public SKPoint Center { get; } Property Value SKPoint"
+  "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.FocalPoint.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.FocalPoint.html",
+    "title": "Property FocalPoint | SkiaSharp.Extended",
+    "keywords": "Property FocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FocalPoint public SKPoint FocalPoint { get; } Property Value SKPoint"
   },
   "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.Handled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.Handled.html",
     "title": "Property Handled | SkiaSharp.Extended",
     "keywords": "Property Handled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Handled public bool Handled { get; set; } Property Value bool"
   },
-  "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousCenter.html": {
-    "href": "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousCenter.html",
-    "title": "Property PreviousCenter | SkiaSharp.Extended",
-    "keywords": "Property PreviousCenter Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll PreviousCenter public SKPoint PreviousCenter { get; } Property Value SKPoint"
+  "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousFocalPoint.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousFocalPoint.html",
+    "title": "Property PreviousFocalPoint | SkiaSharp.Extended",
+    "keywords": "Property PreviousFocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll PreviousFocalPoint public SKPoint PreviousFocalPoint { get; } Property Value SKPoint"
   },
   "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.RotationDelta.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.RotationDelta.html",
@@ -722,7 +722,7 @@
   "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.html",
     "title": "Class SKRotateEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKRotateEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKRotateEventArgs : EventArgs Inheritance object EventArgs SKRotateEventArgs Inherited Members EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKRotateEventArgs(SKPoint, SKPoint, float) Properties Center Handled PreviousCenter RotationDelta"
+    "keywords": "Class SKRotateEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKRotateEventArgs : EventArgs Inheritance object EventArgs SKRotateEventArgs Inherited Members EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKRotateEventArgs(SKPoint, SKPoint, float) Properties FocalPoint Handled PreviousFocalPoint RotationDelta"
   },
   "api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.-ctor.html",
