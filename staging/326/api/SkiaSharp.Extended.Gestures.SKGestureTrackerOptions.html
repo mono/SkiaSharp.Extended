@@ -99,7 +99,10 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Configuration options for <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.html">SKGestureTracker</a>. Inherits gesture detection thresholds
+from <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.html">SKGestureDetectorOptions</a> and adds tracker-specific settings for transform
+limits, animation, and feature toggles.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -161,6 +164,10 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.html">SKGestureTracker</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.html">SKGestureDetectorOptions</a></p>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
@@ -175,75 +182,93 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_DoubleTapZoomFactor">DoubleTapZoomFactor</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the multiplicative zoom factor applied when a double-tap is detected.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_FlingFrameInterval">FlingFrameInterval</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the fling animation frame interval, in milliseconds.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_FlingFriction">FlingFriction</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the fling friction coefficient that controls deceleration speed.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_FlingMinVelocity">FlingMinVelocity</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the minimum velocity, in pixels per second, below which the fling animation stops.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsDoubleTapEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_IsDoubleTapEnabled">IsDoubleTapEnabled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether double-tap detection is enabled.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsDoubleTapZoomEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_IsDoubleTapZoomEnabled">IsDoubleTapZoomEnabled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether double-tap triggers an animated zoom.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsFlingEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_IsFlingEnabled">IsFlingEnabled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether fling (inertia) animation is enabled after pan gestures.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsHoverEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_IsHoverEnabled">IsHoverEnabled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether hover (mouse move without contact) detection is enabled.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsLongPressEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_IsLongPressEnabled">IsLongPressEnabled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether long press detection is enabled.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsPanEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_IsPanEnabled">IsPanEnabled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether pan gestures update the tracker's offset.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsPinchEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_IsPinchEnabled">IsPinchEnabled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether pinch-to-zoom gestures update the tracker's scale.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsRotateEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_IsRotateEnabled">IsRotateEnabled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether rotation gestures update the tracker's rotation.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsScrollZoomEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_IsScrollZoomEnabled">IsScrollZoomEnabled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether scroll-wheel events trigger zoom.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsTapEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_IsTapEnabled">IsTapEnabled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether tap detection is enabled.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_MaxScale">MaxScale</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the maximum allowed zoom scale.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_MinScale">MinScale</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the minimum allowed zoom scale.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_ScrollZoomFactor">ScrollZoomFactor</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the scale sensitivity for mouse scroll-wheel zoom.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_ZoomAnimationDuration">ZoomAnimationDuration</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the duration of the double-tap zoom animation, in milliseconds.</p>
+</dd>
   </dl>
 
 
@@ -267,7 +292,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

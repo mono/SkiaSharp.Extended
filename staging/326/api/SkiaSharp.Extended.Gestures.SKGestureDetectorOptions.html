@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Configuration options for the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.html">SKGestureDetector</a> gesture recognition engine.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -154,6 +155,12 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKGestureDetectorOptions_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>These options control the thresholds and timing used to classify touch input into discrete
+gesture types. Adjust these values to fine-tune gesture sensitivity for your application.</p>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.html">SKGestureDetector</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.html">SKGestureTrackerOptions</a>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
@@ -168,19 +175,26 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.DoubleTapSlop.html#SkiaSharp_Extended_Gestures_SKGestureDetectorOptions_DoubleTapSlop">DoubleTapSlop</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the maximum distance, in pixels, between two taps for them to be recognized
+as a double-tap gesture.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.FlingThreshold.html#SkiaSharp_Extended_Gestures_SKGestureDetectorOptions_FlingThreshold">FlingThreshold</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the minimum velocity, in pixels per second, required for a pan gesture
+to be classified as a fling upon touch release.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.LongPressDuration.html#SkiaSharp_Extended_Gestures_SKGestureDetectorOptions_LongPressDuration">LongPressDuration</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the duration, in milliseconds, a touch must be held stationary before
+a long press gesture is recognized.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.TouchSlop.html#SkiaSharp_Extended_Gestures_SKGestureDetectorOptions_TouchSlop">TouchSlop</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the minimum movement distance, in pixels, before a touch is considered a pan gesture.</p>
+</dd>
   </dl>
 
 
@@ -204,7 +218,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

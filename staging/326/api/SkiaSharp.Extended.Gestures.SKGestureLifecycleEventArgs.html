@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides data for gesture lifecycle events that indicate when a gesture interaction begins or ends.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -152,6 +153,18 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKGestureLifecycleEventArgs_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>This class is used with the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.GestureStarted.html">GestureStarted</a> and
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.GestureEnded.html">GestureEnded</a> events, as well as the corresponding events on
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.html">SKGestureTracker</a>.</p>
+<p>A gesture starts when the first touch contact occurs and ends when all touches are released.
+These events are useful for managing UI state such as cancelling inertia animations when a new
+gesture begins, or triggering a redraw when a gesture ends.</p>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.GestureStarted.html">GestureStarted</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.GestureEnded.html">GestureEnded</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.GestureStarted.html">GestureStarted</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.GestureEnded.html">GestureEnded</a>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
@@ -182,7 +195,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

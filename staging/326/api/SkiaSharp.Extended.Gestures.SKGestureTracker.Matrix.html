@@ -126,7 +126,9 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTracker.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Gets the composite transform matrix that combines scale, rotation, and offset,
+centered on the view midpoint.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -140,12 +142,19 @@
 <h4 class="section">Property Value</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skmatrix">SKMatrix</a></dt>
-  <dd></dd>
+  <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skmatrix">SKMatrix</a> that can be applied to an <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skcanvas">SKCanvas</a> to render content
+with the current gesture transform. The matrix applies transformations in the order:
+translate to center, scale, rotate, offset, translate back.</p>
+</dd>
 </dl>
 
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_Gestures_SKGestureTracker_Matrix_remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>Call <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize.html#SkiaSharp_Extended_Gestures_SKGestureTracker_SetViewSize_System_Single_System_Single_">SetViewSize(float, float)</a> before reading this property to ensure the pivot point
+is correctly calculated.</p>
+</div>
 
 
 
@@ -169,7 +178,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

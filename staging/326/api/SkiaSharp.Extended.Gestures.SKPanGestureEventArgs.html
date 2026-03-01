@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides data for a pan (single-finger drag) gesture event.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,13 +157,21 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Pan events are raised continuously as a single touch moves beyond the
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.TouchSlop.html#SkiaSharp_Extended_Gestures_SKGestureDetectorOptions_TouchSlop">TouchSlop</a> threshold. Each event provides both
+the incremental <a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Delta">Delta</a> and the instantaneous <a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Velocity">Velocity</a>.</p>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.PanDetected.html">PanDetected</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.PanDetected.html">PanDetected</a>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_">SKPanGestureEventArgs(SKPoint, SKPoint, SKPoint, SKPoint)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.html">SKPanGestureEventArgs</a> class.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -170,19 +179,23 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Delta">Delta</a></dt>
-    <dd></dd>
+    <dd><p>Gets the displacement from <a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_PreviousLocation">PreviousLocation</a> to <a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Location">Location</a>.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Location">Location</a></dt>
-    <dd></dd>
+    <dd><p>Gets the current touch location in view coordinates.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_PreviousLocation">PreviousLocation</a></dt>
-    <dd></dd>
+    <dd><p>Gets the touch location from the previous pan event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Velocity">Velocity</a></dt>
-    <dd></dd>
+    <dd><p>Gets the current velocity of the touch movement.</p>
+</dd>
   </dl>
 
 
@@ -206,7 +219,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

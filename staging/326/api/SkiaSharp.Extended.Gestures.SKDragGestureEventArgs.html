@@ -99,7 +99,9 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides data for drag gesture lifecycle events (<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragStarted.html">DragStarted</a>,
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragUpdated.html">DragUpdated</a>, and <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragEnded.html">DragEnded</a>).</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,13 +158,30 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Drag events provide a higher-level lifecycle built on top of the underlying pan gesture.
+The lifecycle is:</p>
+<ol><li><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragStarted.html">DragStarted</a>: Fired once when the first pan movement
+occurs. <a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_StartLocation">StartLocation</a> and <a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_CurrentLocation">CurrentLocation</a> define the initial positions.</li><li><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragUpdated.html">DragUpdated</a>: Fired continuously as the touch moves.
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_Delta">Delta</a> contains the incremental displacement from the previous position.</li><li><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragEnded.html">DragEnded</a>: Fired once when all touches are released.
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_Delta">Delta</a> is <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint.empty">Empty</a>.</li></ol>
+<p>Set <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKGestureEventArgs_Handled">Handled</a> to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> during
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragStarted.html">DragStarted</a> or <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragUpdated.html">DragUpdated</a>
+to prevent the tracker from applying its default pan offset behavior (for example, when
+implementing custom object dragging).</p>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragStarted.html">DragStarted</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragUpdated.html">DragUpdated</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragEnded.html">DragEnded</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.html">SKPanGestureEventArgs</a>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_">SKDragGestureEventArgs(SKPoint, SKPoint, SKPoint)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.html">SKDragGestureEventArgs</a> class.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -170,15 +189,18 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_CurrentLocation">CurrentLocation</a></dt>
-    <dd></dd>
+    <dd><p>Gets the current touch location in view coordinates.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_Delta">Delta</a></dt>
-    <dd></dd>
+    <dd><p>Gets the displacement from the previous touch position to the current position.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_StartLocation">StartLocation</a></dt>
-    <dd></dd>
+    <dd><p>Gets the location where the drag began, in view coordinates.</p>
+</dd>
   </dl>
 
 
@@ -202,7 +224,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

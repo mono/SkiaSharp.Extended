@@ -99,7 +99,9 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>A platform-agnostic gesture recognition engine that detects taps, long presses,
+pan, pinch, rotation, and fling gestures from touch input.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -154,17 +156,28 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKGestureDetector_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>This engine is a pure gesture detector. It processes touch events and raises
+events when gestures are recognized. It does not maintain transform state or run
+animations — use <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.html">SKGestureTracker</a> for that.</p>
+<p>The engine must be used on the UI thread. It captures the current 
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.synchronizationcontext">SynchronizationContext</a> when processing touch events and uses it
+to marshal timer callbacks back to the UI thread.</p>
+<p>Call <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.Dispose.html#SkiaSharp_Extended_Gestures_SKGestureDetector_Dispose">Dispose()</a> to clean up resources when done.</p>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.-ctor.html#SkiaSharp_Extended_Gestures_SKGestureDetector__ctor">SKGestureDetector()</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.html">SKGestureDetector</a> with default options.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.-ctor.html#SkiaSharp_Extended_Gestures_SKGestureDetector__ctor_SkiaSharp_Extended_Gestures_SKGestureDetectorOptions_">SKGestureDetector(SKGestureDetectorOptions)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.html">SKGestureDetector</a> with the specified options.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -172,19 +185,23 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.IsEnabled.html#SkiaSharp_Extended_Gestures_SKGestureDetector_IsEnabled">IsEnabled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether the gesture detector is enabled.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.IsGestureActive.html#SkiaSharp_Extended_Gestures_SKGestureDetector_IsGestureActive">IsGestureActive</a></dt>
-    <dd></dd>
+    <dd><p>Gets a value indicating whether a gesture is currently in progress.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.Options.html#SkiaSharp_Extended_Gestures_SKGestureDetector_Options">Options</a></dt>
-    <dd></dd>
+    <dd><p>Gets the configuration options for this detector.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.TimeProvider.html#SkiaSharp_Extended_Gestures_SKGestureDetector_TimeProvider">TimeProvider</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the time provider function used to obtain the current time in ticks.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="methods">Methods
@@ -192,75 +209,94 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.Dispose.html#SkiaSharp_Extended_Gestures_SKGestureDetector_Dispose">Dispose()</a></dt>
-    <dd></dd>
+    <dd><p>Releases all resources used by this <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.html">SKGestureDetector</a> instance.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.OnDoubleTapDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnDoubleTapDetected_SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_">OnDoubleTapDetected(SKTapGestureEventArgs)</a></dt>
-    <dd></dd>
+    <dd><p>Raises the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.DoubleTapDetected.html">DoubleTapDetected</a> event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.OnFlingDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnFlingDetected_SkiaSharp_Extended_Gestures_SKFlingGestureEventArgs_">OnFlingDetected(SKFlingGestureEventArgs)</a></dt>
-    <dd></dd>
+    <dd><p>Raises the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.FlingDetected.html">FlingDetected</a> event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnGestureEnded_SkiaSharp_Extended_Gestures_SKGestureLifecycleEventArgs_">OnGestureEnded(SKGestureLifecycleEventArgs)</a></dt>
-    <dd></dd>
+    <dd><p>Raises the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.GestureEnded.html">GestureEnded</a> event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnGestureStarted_SkiaSharp_Extended_Gestures_SKGestureLifecycleEventArgs_">OnGestureStarted(SKGestureLifecycleEventArgs)</a></dt>
-    <dd></dd>
+    <dd><p>Raises the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.GestureStarted.html">GestureStarted</a> event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.OnHoverDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnHoverDetected_SkiaSharp_Extended_Gestures_SKHoverGestureEventArgs_">OnHoverDetected(SKHoverGestureEventArgs)</a></dt>
-    <dd></dd>
+    <dd><p>Raises the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.HoverDetected.html">HoverDetected</a> event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnLongPressDetected_SkiaSharp_Extended_Gestures_SKLongPressGestureEventArgs_">OnLongPressDetected(SKLongPressGestureEventArgs)</a></dt>
-    <dd></dd>
+    <dd><p>Raises the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.LongPressDetected.html">LongPressDetected</a> event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.OnPanDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnPanDetected_SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_">OnPanDetected(SKPanGestureEventArgs)</a></dt>
-    <dd></dd>
+    <dd><p>Raises the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.PanDetected.html">PanDetected</a> event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.OnPinchDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnPinchDetected_SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_">OnPinchDetected(SKPinchGestureEventArgs)</a></dt>
-    <dd></dd>
+    <dd><p>Raises the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.PinchDetected.html">PinchDetected</a> event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.OnRotateDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnRotateDetected_SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs_">OnRotateDetected(SKRotateGestureEventArgs)</a></dt>
-    <dd></dd>
+    <dd><p>Raises the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.RotateDetected.html">RotateDetected</a> event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.OnScrollDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnScrollDetected_SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_">OnScrollDetected(SKScrollGestureEventArgs)</a></dt>
-    <dd></dd>
+    <dd><p>Raises the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.ScrollDetected.html">ScrollDetected</a> event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.OnTapDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnTapDetected_SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_">OnTapDetected(SKTapGestureEventArgs)</a></dt>
-    <dd></dd>
+    <dd><p>Raises the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.TapDetected.html">TapDetected</a> event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessMouseWheel.html#SkiaSharp_Extended_Gestures_SKGestureDetector_ProcessMouseWheel_SkiaSharp_SKPoint_System_Single_System_Single_">ProcessMouseWheel(SKPoint, float, float)</a></dt>
-    <dd></dd>
+    <dd><p>Processes a mouse wheel (scroll) event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchCancel.html#SkiaSharp_Extended_Gestures_SKGestureDetector_ProcessTouchCancel_System_Int64_">ProcessTouchCancel(long)</a></dt>
-    <dd></dd>
+    <dd><p>Processes a touch cancel event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchDown.html#SkiaSharp_Extended_Gestures_SKGestureDetector_ProcessTouchDown_System_Int64_SkiaSharp_SKPoint_System_Boolean_">ProcessTouchDown(long, SKPoint, bool)</a></dt>
-    <dd></dd>
+    <dd><p>Processes a touch down event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchMove.html#SkiaSharp_Extended_Gestures_SKGestureDetector_ProcessTouchMove_System_Int64_SkiaSharp_SKPoint_System_Boolean_">ProcessTouchMove(long, SKPoint, bool)</a></dt>
-    <dd></dd>
+    <dd><p>Processes a touch move event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchUp.html#SkiaSharp_Extended_Gestures_SKGestureDetector_ProcessTouchUp_System_Int64_SkiaSharp_SKPoint_System_Boolean_">ProcessTouchUp(long, SKPoint, bool)</a></dt>
-    <dd></dd>
+    <dd><p>Processes a touch up event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.Reset.html#SkiaSharp_Extended_Gestures_SKGestureDetector_Reset">Reset()</a></dt>
-    <dd></dd>
+    <dd><p>Resets the gesture detector to its initial state, clearing all active touches and
+cancelling any pending timers.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="events">Events
@@ -268,47 +304,58 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.DoubleTapDetected.html">DoubleTapDetected</a></dt>
-    <dd></dd>
+    <dd><p>Occurs when a double tap is detected.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.FlingDetected.html">FlingDetected</a></dt>
-    <dd></dd>
+    <dd><p>Occurs when a fling gesture is detected (fired once with initial velocity upon touch release).</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.GestureEnded.html">GestureEnded</a></dt>
-    <dd></dd>
+    <dd><p>Occurs when a touch gesture interaction ends (last finger lifts from the surface).</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.GestureStarted.html">GestureStarted</a></dt>
-    <dd></dd>
+    <dd><p>Occurs when a touch gesture interaction begins (first finger touches the surface).</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.HoverDetected.html">HoverDetected</a></dt>
-    <dd></dd>
+    <dd><p>Occurs when a mouse hover (move without contact) is detected.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.LongPressDetected.html">LongPressDetected</a></dt>
-    <dd></dd>
+    <dd><p>Occurs when a long press is detected.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.PanDetected.html">PanDetected</a></dt>
-    <dd></dd>
+    <dd><p>Occurs when a single-finger pan (drag) gesture is detected.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.PinchDetected.html">PinchDetected</a></dt>
-    <dd></dd>
+    <dd><p>Occurs when a two-finger pinch (scale) gesture is detected.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.RotateDetected.html">RotateDetected</a></dt>
-    <dd></dd>
+    <dd><p>Occurs when a two-finger rotation gesture is detected.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.ScrollDetected.html">ScrollDetected</a></dt>
-    <dd></dd>
+    <dd><p>Occurs when a mouse scroll (wheel) event is detected.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.TapDetected.html">TapDetected</a></dt>
-    <dd></dd>
+    <dd><p>Occurs when a single tap is detected.</p>
+</dd>
   </dl>
 
 
@@ -332,7 +379,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides data for a long press gesture event.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,13 +157,21 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKLongPressGestureEventArgs_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>A long press is detected when a touch is held stationary (within the
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.TouchSlop.html#SkiaSharp_Extended_Gestures_SKGestureDetectorOptions_TouchSlop">TouchSlop</a> threshold) for at least
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.LongPressDuration.html#SkiaSharp_Extended_Gestures_SKGestureDetectorOptions_LongPressDuration">LongPressDuration</a> milliseconds.</p>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.LongPressDetected.html">LongPressDetected</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.LongPressDuration.html#SkiaSharp_Extended_Gestures_SKGestureDetectorOptions_LongPressDuration">LongPressDuration</a>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKLongPressGestureEventArgs__ctor_SkiaSharp_SKPoint_System_TimeSpan_">SKLongPressGestureEventArgs(SKPoint, TimeSpan)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.html">SKLongPressGestureEventArgs</a> class.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -170,11 +179,13 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration.html#SkiaSharp_Extended_Gestures_SKLongPressGestureEventArgs_Duration">Duration</a></dt>
-    <dd></dd>
+    <dd><p>Gets the duration the touch was held before the long press was recognized.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKLongPressGestureEventArgs_Location">Location</a></dt>
-    <dd></dd>
+    <dd><p>Gets the location of the long press in view coordinates.</p>
+</dd>
   </dl>
 
 
@@ -198,7 +209,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

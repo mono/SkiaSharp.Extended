@@ -126,7 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Gets or sets a value indicating whether the event has been handled.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -140,12 +141,19 @@
 <h4 class="section">Property Value</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-  <dd></dd>
+  <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the event has been handled by a consumer and default processing
+should be skipped; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>. The default is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
 </dl>
 
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_Gestures_SKGestureEventArgs_Handled_remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>Set this to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> in an event handler to prevent the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.html">SKGestureTracker</a>
+from applying its default transform behavior (for example, to implement custom drag handling
+instead of the built-in pan offset).</p>
+</div>
 
 
 
@@ -169,7 +177,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

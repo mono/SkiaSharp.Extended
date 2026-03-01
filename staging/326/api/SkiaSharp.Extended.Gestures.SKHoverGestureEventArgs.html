@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides data for a hover (mouse move without contact) gesture event.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,13 +157,21 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKHoverGestureEventArgs_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Hover events are raised when a mouse cursor moves over the surface without any buttons
+pressed (i.e., <code>inContact</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> in <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchMove.html#SkiaSharp_Extended_Gestures_SKGestureDetector_ProcessTouchMove_System_Int64_SkiaSharp_SKPoint_System_Boolean_">ProcessTouchMove(long, SKPoint, bool)</a>).
+This is a mouse-only gesture that has no equivalent on touch devices.</p>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.HoverDetected.html">HoverDetected</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.HoverDetected.html">HoverDetected</a>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKHoverGestureEventArgs__ctor_SkiaSharp_SKPoint_">SKHoverGestureEventArgs(SKPoint)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.html">SKHoverGestureEventArgs</a> class.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -170,7 +179,8 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKHoverGestureEventArgs_Location">Location</a></dt>
-    <dd></dd>
+    <dd><p>Gets the current position of the mouse cursor in view coordinates.</p>
+</dd>
   </dl>
 
 
@@ -194,7 +204,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

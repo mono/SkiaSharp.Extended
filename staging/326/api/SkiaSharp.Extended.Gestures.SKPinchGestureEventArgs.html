@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides data for a pinch (scale) gesture event detected from two or more simultaneous touches.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,13 +157,23 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Pinch events are raised continuously as two or more touches move relative to each other.
+The <a class="xref" href="SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.ScaleDelta.html#SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_ScaleDelta">ScaleDelta</a> is a relative (per-event) multiplier, not an absolute scale. To
+compute the cumulative scale, multiply successive <a class="xref" href="SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.ScaleDelta.html#SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_ScaleDelta">ScaleDelta</a> values together, or
+use the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Scale.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Scale">Scale</a> property which maintains the absolute value.</p>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.PinchDetected.html">PinchDetected</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.PinchDetected.html">PinchDetected</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.html">SKRotateGestureEventArgs</a>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_System_Single_">SKPinchGestureEventArgs(SKPoint, SKPoint, float)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.html">SKPinchGestureEventArgs</a> class.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -170,15 +181,18 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.FocalPoint.html#SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_FocalPoint">FocalPoint</a></dt>
-    <dd></dd>
+    <dd><p>Gets the current center point between the pinch fingers in view coordinates.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint.html#SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_PreviousFocalPoint">PreviousFocalPoint</a></dt>
-    <dd></dd>
+    <dd><p>Gets the center point between the pinch fingers from the previous event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.ScaleDelta.html#SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_ScaleDelta">ScaleDelta</a></dt>
-    <dd></dd>
+    <dd><p>Gets the relative scale change factor since the previous pinch event.</p>
+</dd>
   </dl>
 
 
@@ -202,7 +216,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

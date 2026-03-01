@@ -126,7 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureDetector.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Releases all resources used by this <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.html">SKGestureDetector</a> instance.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -141,6 +142,10 @@
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_Gestures_SKGestureDetector_Dispose_remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>Stops any active long press timer and resets all internal state. After disposal,
+all <code>ProcessTouch*</code> methods return <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</div>
 
 
 
@@ -164,7 +169,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

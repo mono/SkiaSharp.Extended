@@ -7,237 +7,237 @@
   "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.-ctor.html",
     "title": "Constructor SKDragGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKDragGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKDragGestureEventArgs(SKPoint, SKPoint, SKPoint) public SKDragGestureEventArgs(SKPoint startLocation, SKPoint currentLocation, SKPoint delta) Parameters startLocation SKPoint currentLocation SKPoint delta SKPoint"
+    "keywords": "Constructor SKDragGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKDragGestureEventArgs(SKPoint, SKPoint, SKPoint) Initializes a new instance of the SKDragGestureEventArgs class. public SKDragGestureEventArgs(SKPoint startLocation, SKPoint currentLocation, SKPoint delta) Parameters startLocation SKPoint The location where the drag began, in view coordinates. currentLocation SKPoint The current touch location, in view coordinates. delta SKPoint The displacement from the previous touch position to currentLocation."
   },
   "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation.html",
     "title": "Property CurrentLocation | SkiaSharp.Extended",
-    "keywords": "Property CurrentLocation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll CurrentLocation public SKPoint CurrentLocation { get; } Property Value SKPoint"
+    "keywords": "Property CurrentLocation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll CurrentLocation Gets the current touch location in view coordinates. public SKPoint CurrentLocation { get; } Property Value SKPoint An SKPoint representing the current position of the touch."
   },
   "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta.html",
     "title": "Property Delta | SkiaSharp.Extended",
-    "keywords": "Property Delta Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Delta public SKPoint Delta { get; } Property Value SKPoint"
+    "keywords": "Property Delta Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Delta Gets the displacement from the previous touch position to the current position. public SKPoint Delta { get; } Property Value SKPoint An SKPoint where X and Y represent the incremental change in pixels. This is Empty for DragEnded events."
   },
   "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation.html",
     "title": "Property StartLocation | SkiaSharp.Extended",
-    "keywords": "Property StartLocation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll StartLocation public SKPoint StartLocation { get; } Property Value SKPoint"
+    "keywords": "Property StartLocation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll StartLocation Gets the location where the drag began, in view coordinates. public SKPoint StartLocation { get; } Property Value SKPoint An SKPoint representing the initial touch position when the drag started."
   },
   "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.html",
     "title": "Class SKDragGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKDragGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKDragGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKDragGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKDragGestureEventArgs(SKPoint, SKPoint, SKPoint) Properties CurrentLocation Delta StartLocation"
+    "keywords": "Class SKDragGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Provides data for drag gesture lifecycle events (DragStarted, DragUpdated, and DragEnded). public class SKDragGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKDragGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks Drag events provide a higher-level lifecycle built on top of the underlying pan gesture. The lifecycle is: DragStarted: Fired once when the first pan movement occurs. StartLocation and CurrentLocation define the initial positions. DragUpdated: Fired continuously as the touch moves. Delta contains the incremental displacement from the previous position. DragEnded: Fired once when all touches are released. Delta is Empty. Set Handled to true during DragStarted or DragUpdated to prevent the tracker from applying its default pan offset behavior (for example, when implementing custom object dragging). DragStarted DragUpdated DragEnded SKPanGestureEventArgs Constructors SKDragGestureEventArgs(SKPoint, SKPoint, SKPoint) Initializes a new instance of the SKDragGestureEventArgs class. Properties CurrentLocation Gets the current touch location in view coordinates. Delta Gets the displacement from the previous touch position to the current position. StartLocation Gets the location where the drag began, in view coordinates."
   },
   "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.-ctor.html",
     "title": "Constructor SKFlingGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKFlingGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKFlingGestureEventArgs(float, float) public SKFlingGestureEventArgs(float velocityX, float velocityY) Parameters velocityX float velocityY float SKFlingGestureEventArgs(float, float, float, float) public SKFlingGestureEventArgs(float velocityX, float velocityY, float deltaX, float deltaY) Parameters velocityX float velocityY float deltaX float deltaY float"
+    "keywords": "Constructor SKFlingGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKFlingGestureEventArgs(float, float) Initializes a new instance of the SKFlingGestureEventArgs class with velocity only. Used for the initial FlingDetected event. public SKFlingGestureEventArgs(float velocityX, float velocityY) Parameters velocityX float The horizontal velocity in pixels per second. velocityY float The vertical velocity in pixels per second. SKFlingGestureEventArgs(float, float, float, float) Initializes a new instance of the SKFlingGestureEventArgs class with velocity and per-frame displacement. Used for FlingUpdated events. public SKFlingGestureEventArgs(float velocityX, float velocityY, float deltaX, float deltaY) Parameters velocityX float The current horizontal velocity in pixels per second. velocityY float The current vertical velocity in pixels per second. deltaX float The horizontal displacement for this animation frame, in pixels. deltaY float The vertical displacement for this animation frame, in pixels."
   },
   "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaX.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaX.html",
     "title": "Property DeltaX | SkiaSharp.Extended",
-    "keywords": "Property DeltaX Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DeltaX public float DeltaX { get; } Property Value float"
+    "keywords": "Property DeltaX Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DeltaX Gets the horizontal displacement for this animation frame. public float DeltaX { get; } Property Value float The per-frame horizontal displacement in pixels. This is 0 for FlingDetected events and contains the actual frame displacement for FlingUpdated events."
   },
   "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY.html",
     "title": "Property DeltaY | SkiaSharp.Extended",
-    "keywords": "Property DeltaY Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DeltaY public float DeltaY { get; } Property Value float"
+    "keywords": "Property DeltaY Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DeltaY Gets the vertical displacement for this animation frame. public float DeltaY { get; } Property Value float The per-frame vertical displacement in pixels. This is 0 for FlingDetected events and contains the actual frame displacement for FlingUpdated events."
   },
   "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed.html",
     "title": "Property Speed | SkiaSharp.Extended",
-    "keywords": "Property Speed Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Speed public float Speed { get; } Property Value float"
+    "keywords": "Property Speed Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Speed Gets the current speed (magnitude of the velocity vector). public float Speed { get; } Property Value float The speed in pixels per second, computed as sqrt(VelocityX² + VelocityY²)."
   },
   "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityX.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityX.html",
     "title": "Property VelocityX | SkiaSharp.Extended",
-    "keywords": "Property VelocityX Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll VelocityX public float VelocityX { get; } Property Value float"
+    "keywords": "Property VelocityX Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll VelocityX Gets the horizontal velocity component. public float VelocityX { get; } Property Value float The horizontal velocity in pixels per second. Positive values indicate rightward movement."
   },
   "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY.html",
     "title": "Property VelocityY | SkiaSharp.Extended",
-    "keywords": "Property VelocityY Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll VelocityY public float VelocityY { get; } Property Value float"
+    "keywords": "Property VelocityY Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll VelocityY Gets the vertical velocity component. public float VelocityY { get; } Property Value float The vertical velocity in pixels per second. Positive values indicate downward movement."
   },
   "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.html",
     "title": "Class SKFlingGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKFlingGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKFlingGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKFlingGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKFlingGestureEventArgs(float, float) SKFlingGestureEventArgs(float, float, float, float) Properties DeltaX DeltaY Speed VelocityX VelocityY"
+    "keywords": "Class SKFlingGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Provides data for fling gesture events, including the initial fling detection and per-frame animation updates. public class SKFlingGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKFlingGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks This class is used by two distinct events: FlingDetected / FlingDetected: Fired once when a fling is initiated. VelocityX and VelocityY contain the initial velocity. DeltaX and DeltaY are 0. FlingUpdated: Fired each animation frame during the fling deceleration. VelocityX and VelocityY contain the current (decaying) velocity, and DeltaX and DeltaY contain the per-frame displacement in pixels. FlingDetected FlingUpdated FlingCompleted Constructors SKFlingGestureEventArgs(float, float) Initializes a new instance of the SKFlingGestureEventArgs class with velocity only. Used for the initial FlingDetected event. SKFlingGestureEventArgs(float, float, float, float) Initializes a new instance of the SKFlingGestureEventArgs class with velocity and per-frame displacement. Used for FlingUpdated events. Properties DeltaX Gets the horizontal displacement for this animation frame. DeltaY Gets the vertical displacement for this animation frame. Speed Gets the current speed (magnitude of the velocity vector). VelocityX Gets the horizontal velocity component. VelocityY Gets the vertical velocity component."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.-ctor.html",
     "title": "Constructor SKGestureDetector | SkiaSharp.Extended",
-    "keywords": "Constructor SKGestureDetector Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKGestureDetector() public SKGestureDetector() SKGestureDetector(SKGestureDetectorOptions) public SKGestureDetector(SKGestureDetectorOptions options) Parameters options SKGestureDetectorOptions"
+    "keywords": "Constructor SKGestureDetector Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKGestureDetector() Initializes a new instance of SKGestureDetector with default options. public SKGestureDetector() SKGestureDetector(SKGestureDetectorOptions) Initializes a new instance of SKGestureDetector with the specified options. public SKGestureDetector(SKGestureDetectorOptions options) Parameters options SKGestureDetectorOptions"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Dispose.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Dispose.html",
     "title": "Method Dispose | SkiaSharp.Extended",
-    "keywords": "Method Dispose Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Dispose() public void Dispose()"
+    "keywords": "Method Dispose Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Dispose() Releases all resources used by this SKGestureDetector instance. public void Dispose() Remarks Stops any active long press timer and resets all internal state. After disposal, all ProcessTouch* methods return false."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.DoubleTapDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.DoubleTapDetected.html",
     "title": "Event DoubleTapDetected | SkiaSharp.Extended",
-    "keywords": "Event DoubleTapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKTapGestureEventArgs>? DoubleTapDetected Returns EventHandler<SKTapGestureEventArgs>"
+    "keywords": "Event DoubleTapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a double tap is detected. public event EventHandler<SKTapGestureEventArgs>? DoubleTapDetected Returns EventHandler<SKTapGestureEventArgs> Remarks A double tap is recognized when two taps occur within 300 ms of each other and within the DoubleTapSlop distance."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.FlingDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.FlingDetected.html",
     "title": "Event FlingDetected | SkiaSharp.Extended",
-    "keywords": "Event FlingDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKFlingGestureEventArgs>? FlingDetected Returns EventHandler<SKFlingGestureEventArgs>"
+    "keywords": "Event FlingDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a fling gesture is detected (fired once with initial velocity upon touch release). public event EventHandler<SKFlingGestureEventArgs>? FlingDetected Returns EventHandler<SKFlingGestureEventArgs> Remarks A fling is triggered when a single-finger pan ends with a velocity exceeding the FlingThreshold. Flings are not triggered after multi-finger gestures (pinch/rotate)."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.GestureEnded.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.GestureEnded.html",
     "title": "Event GestureEnded | SkiaSharp.Extended",
-    "keywords": "Event GestureEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKGestureLifecycleEventArgs>? GestureEnded Returns EventHandler<SKGestureLifecycleEventArgs>"
+    "keywords": "Event GestureEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a touch gesture interaction ends (last finger lifts from the surface). public event EventHandler<SKGestureLifecycleEventArgs>? GestureEnded Returns EventHandler<SKGestureLifecycleEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.GestureStarted.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.GestureStarted.html",
     "title": "Event GestureStarted | SkiaSharp.Extended",
-    "keywords": "Event GestureStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKGestureLifecycleEventArgs>? GestureStarted Returns EventHandler<SKGestureLifecycleEventArgs>"
+    "keywords": "Event GestureStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a touch gesture interaction begins (first finger touches the surface). public event EventHandler<SKGestureLifecycleEventArgs>? GestureStarted Returns EventHandler<SKGestureLifecycleEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.HoverDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.HoverDetected.html",
     "title": "Event HoverDetected | SkiaSharp.Extended",
-    "keywords": "Event HoverDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKHoverGestureEventArgs>? HoverDetected Returns EventHandler<SKHoverGestureEventArgs>"
+    "keywords": "Event HoverDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a mouse hover (move without contact) is detected. public event EventHandler<SKHoverGestureEventArgs>? HoverDetected Returns EventHandler<SKHoverGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.IsEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.IsEnabled.html",
     "title": "Property IsEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsEnabled public bool IsEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsEnabled Gets or sets a value indicating whether the gesture detector is enabled. public bool IsEnabled { get; set; } Property Value bool true if the detector processes touch events; otherwise, false. The default is true. When disabled, all ProcessTouch* methods return false."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.IsGestureActive.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.IsGestureActive.html",
     "title": "Property IsGestureActive | SkiaSharp.Extended",
-    "keywords": "Property IsGestureActive Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsGestureActive public bool IsGestureActive { get; } Property Value bool"
+    "keywords": "Property IsGestureActive Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsGestureActive Gets a value indicating whether a gesture is currently in progress. public bool IsGestureActive { get; } Property Value bool true if the detector is currently tracking an active gesture (detecting, panning, or pinching); otherwise, false."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.LongPressDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.LongPressDetected.html",
     "title": "Event LongPressDetected | SkiaSharp.Extended",
-    "keywords": "Event LongPressDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKLongPressGestureEventArgs>? LongPressDetected Returns EventHandler<SKLongPressGestureEventArgs>"
+    "keywords": "Event LongPressDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a long press is detected. public event EventHandler<SKLongPressGestureEventArgs>? LongPressDetected Returns EventHandler<SKLongPressGestureEventArgs> Remarks A long press is recognized when a touch is held stationary for at least LongPressDuration milliseconds without exceeding the TouchSlop distance."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnDoubleTapDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnDoubleTapDetected.html",
     "title": "Method OnDoubleTapDetected | SkiaSharp.Extended",
-    "keywords": "Method OnDoubleTapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnDoubleTapDetected(SKTapGestureEventArgs) protected virtual void OnDoubleTapDetected(SKTapGestureEventArgs e) Parameters e SKTapGestureEventArgs"
+    "keywords": "Method OnDoubleTapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnDoubleTapDetected(SKTapGestureEventArgs) Raises the DoubleTapDetected event. protected virtual void OnDoubleTapDetected(SKTapGestureEventArgs e) Parameters e SKTapGestureEventArgs The event data."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnFlingDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnFlingDetected.html",
     "title": "Method OnFlingDetected | SkiaSharp.Extended",
-    "keywords": "Method OnFlingDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnFlingDetected(SKFlingGestureEventArgs) protected virtual void OnFlingDetected(SKFlingGestureEventArgs e) Parameters e SKFlingGestureEventArgs"
+    "keywords": "Method OnFlingDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnFlingDetected(SKFlingGestureEventArgs) Raises the FlingDetected event. protected virtual void OnFlingDetected(SKFlingGestureEventArgs e) Parameters e SKFlingGestureEventArgs The event data."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded.html",
     "title": "Method OnGestureEnded | SkiaSharp.Extended",
-    "keywords": "Method OnGestureEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnGestureEnded(SKGestureLifecycleEventArgs) protected virtual void OnGestureEnded(SKGestureLifecycleEventArgs e) Parameters e SKGestureLifecycleEventArgs"
+    "keywords": "Method OnGestureEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnGestureEnded(SKGestureLifecycleEventArgs) Raises the GestureEnded event. protected virtual void OnGestureEnded(SKGestureLifecycleEventArgs e) Parameters e SKGestureLifecycleEventArgs The event data."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted.html",
     "title": "Method OnGestureStarted | SkiaSharp.Extended",
-    "keywords": "Method OnGestureStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnGestureStarted(SKGestureLifecycleEventArgs) protected virtual void OnGestureStarted(SKGestureLifecycleEventArgs e) Parameters e SKGestureLifecycleEventArgs"
+    "keywords": "Method OnGestureStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnGestureStarted(SKGestureLifecycleEventArgs) Raises the GestureStarted event. protected virtual void OnGestureStarted(SKGestureLifecycleEventArgs e) Parameters e SKGestureLifecycleEventArgs The event data."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnHoverDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnHoverDetected.html",
     "title": "Method OnHoverDetected | SkiaSharp.Extended",
-    "keywords": "Method OnHoverDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnHoverDetected(SKHoverGestureEventArgs) protected virtual void OnHoverDetected(SKHoverGestureEventArgs e) Parameters e SKHoverGestureEventArgs"
+    "keywords": "Method OnHoverDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnHoverDetected(SKHoverGestureEventArgs) Raises the HoverDetected event. protected virtual void OnHoverDetected(SKHoverGestureEventArgs e) Parameters e SKHoverGestureEventArgs The event data."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected.html",
     "title": "Method OnLongPressDetected | SkiaSharp.Extended",
-    "keywords": "Method OnLongPressDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnLongPressDetected(SKLongPressGestureEventArgs) protected virtual void OnLongPressDetected(SKLongPressGestureEventArgs e) Parameters e SKLongPressGestureEventArgs"
+    "keywords": "Method OnLongPressDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnLongPressDetected(SKLongPressGestureEventArgs) Raises the LongPressDetected event. protected virtual void OnLongPressDetected(SKLongPressGestureEventArgs e) Parameters e SKLongPressGestureEventArgs The event data."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnPanDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnPanDetected.html",
     "title": "Method OnPanDetected | SkiaSharp.Extended",
-    "keywords": "Method OnPanDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnPanDetected(SKPanGestureEventArgs) protected virtual void OnPanDetected(SKPanGestureEventArgs e) Parameters e SKPanGestureEventArgs"
+    "keywords": "Method OnPanDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnPanDetected(SKPanGestureEventArgs) Raises the PanDetected event. protected virtual void OnPanDetected(SKPanGestureEventArgs e) Parameters e SKPanGestureEventArgs The event data."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnPinchDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnPinchDetected.html",
     "title": "Method OnPinchDetected | SkiaSharp.Extended",
-    "keywords": "Method OnPinchDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnPinchDetected(SKPinchGestureEventArgs) protected virtual void OnPinchDetected(SKPinchGestureEventArgs e) Parameters e SKPinchGestureEventArgs"
+    "keywords": "Method OnPinchDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnPinchDetected(SKPinchGestureEventArgs) Raises the PinchDetected event. protected virtual void OnPinchDetected(SKPinchGestureEventArgs e) Parameters e SKPinchGestureEventArgs The event data."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnRotateDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnRotateDetected.html",
     "title": "Method OnRotateDetected | SkiaSharp.Extended",
-    "keywords": "Method OnRotateDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnRotateDetected(SKRotateGestureEventArgs) protected virtual void OnRotateDetected(SKRotateGestureEventArgs e) Parameters e SKRotateGestureEventArgs"
+    "keywords": "Method OnRotateDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnRotateDetected(SKRotateGestureEventArgs) Raises the RotateDetected event. protected virtual void OnRotateDetected(SKRotateGestureEventArgs e) Parameters e SKRotateGestureEventArgs The event data."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnScrollDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnScrollDetected.html",
     "title": "Method OnScrollDetected | SkiaSharp.Extended",
-    "keywords": "Method OnScrollDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnScrollDetected(SKScrollGestureEventArgs) protected virtual void OnScrollDetected(SKScrollGestureEventArgs e) Parameters e SKScrollGestureEventArgs"
+    "keywords": "Method OnScrollDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnScrollDetected(SKScrollGestureEventArgs) Raises the ScrollDetected event. protected virtual void OnScrollDetected(SKScrollGestureEventArgs e) Parameters e SKScrollGestureEventArgs The event data."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnTapDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnTapDetected.html",
     "title": "Method OnTapDetected | SkiaSharp.Extended",
-    "keywords": "Method OnTapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnTapDetected(SKTapGestureEventArgs) protected virtual void OnTapDetected(SKTapGestureEventArgs e) Parameters e SKTapGestureEventArgs"
+    "keywords": "Method OnTapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll OnTapDetected(SKTapGestureEventArgs) Raises the TapDetected event. protected virtual void OnTapDetected(SKTapGestureEventArgs e) Parameters e SKTapGestureEventArgs The event data."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Options.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Options.html",
     "title": "Property Options | SkiaSharp.Extended",
-    "keywords": "Property Options Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Options public SKGestureDetectorOptions Options { get; } Property Value SKGestureDetectorOptions"
+    "keywords": "Property Options Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Options Gets the configuration options for this detector. public SKGestureDetectorOptions Options { get; } Property Value SKGestureDetectorOptions The SKGestureDetectorOptions instance controlling detection thresholds."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.PanDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.PanDetected.html",
     "title": "Event PanDetected | SkiaSharp.Extended",
-    "keywords": "Event PanDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKPanGestureEventArgs>? PanDetected Returns EventHandler<SKPanGestureEventArgs>"
+    "keywords": "Event PanDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a single-finger pan (drag) gesture is detected. public event EventHandler<SKPanGestureEventArgs>? PanDetected Returns EventHandler<SKPanGestureEventArgs> Remarks Pan events fire continuously as a single touch moves beyond the TouchSlop threshold."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.PinchDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.PinchDetected.html",
     "title": "Event PinchDetected | SkiaSharp.Extended",
-    "keywords": "Event PinchDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKPinchGestureEventArgs>? PinchDetected Returns EventHandler<SKPinchGestureEventArgs>"
+    "keywords": "Event PinchDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a two-finger pinch (scale) gesture is detected. public event EventHandler<SKPinchGestureEventArgs>? PinchDetected Returns EventHandler<SKPinchGestureEventArgs> Remarks Pinch events fire continuously while two or more touches are active and moving. The ScaleDelta is a per-event relative multiplier."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessMouseWheel.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessMouseWheel.html",
     "title": "Method ProcessMouseWheel | SkiaSharp.Extended",
-    "keywords": "Method ProcessMouseWheel Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessMouseWheel(SKPoint, float, float) public bool ProcessMouseWheel(SKPoint location, float deltaX, float deltaY) Parameters location SKPoint deltaX float deltaY float Returns bool"
+    "keywords": "Method ProcessMouseWheel Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessMouseWheel(SKPoint, float, float) Processes a mouse wheel (scroll) event. public bool ProcessMouseWheel(SKPoint location, float deltaX, float deltaY) Parameters location SKPoint The location of the mouse pointer. deltaX float The horizontal scroll delta. deltaY float The vertical scroll delta. Returns bool True if the event was handled."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchCancel.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchCancel.html",
     "title": "Method ProcessTouchCancel | SkiaSharp.Extended",
-    "keywords": "Method ProcessTouchCancel Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchCancel(long) public bool ProcessTouchCancel(long id) Parameters id long Returns bool"
+    "keywords": "Method ProcessTouchCancel Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchCancel(long) Processes a touch cancel event. public bool ProcessTouchCancel(long id) Parameters id long The unique identifier for this touch. Returns bool True if the event was handled."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchDown.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchDown.html",
     "title": "Method ProcessTouchDown | SkiaSharp.Extended",
-    "keywords": "Method ProcessTouchDown Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchDown(long, SKPoint, bool) public bool ProcessTouchDown(long id, SKPoint location, bool isMouse = false) Parameters id long location SKPoint isMouse bool Returns bool"
+    "keywords": "Method ProcessTouchDown Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchDown(long, SKPoint, bool) Processes a touch down event. public bool ProcessTouchDown(long id, SKPoint location, bool isMouse = false) Parameters id long The unique identifier for this touch. location SKPoint The location of the touch. isMouse bool Whether this is a mouse event. Returns bool True if the event was handled."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchMove.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchMove.html",
     "title": "Method ProcessTouchMove | SkiaSharp.Extended",
-    "keywords": "Method ProcessTouchMove Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchMove(long, SKPoint, bool) public bool ProcessTouchMove(long id, SKPoint location, bool inContact = true) Parameters id long location SKPoint inContact bool Returns bool"
+    "keywords": "Method ProcessTouchMove Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchMove(long, SKPoint, bool) Processes a touch move event. public bool ProcessTouchMove(long id, SKPoint location, bool inContact = true) Parameters id long The unique identifier for this touch. location SKPoint The new location of the touch. inContact bool Whether the touch is in contact with the surface. Returns bool True if the event was handled."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchUp.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchUp.html",
     "title": "Method ProcessTouchUp | SkiaSharp.Extended",
-    "keywords": "Method ProcessTouchUp Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchUp(long, SKPoint, bool) public bool ProcessTouchUp(long id, SKPoint location, bool isMouse = false) Parameters id long location SKPoint isMouse bool Returns bool"
+    "keywords": "Method ProcessTouchUp Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchUp(long, SKPoint, bool) Processes a touch up event. public bool ProcessTouchUp(long id, SKPoint location, bool isMouse = false) Parameters id long The unique identifier for this touch. location SKPoint The final location of the touch. isMouse bool Whether this is a mouse event (kept for backward compatibility; the stored value from touch-down is used internally). Returns bool True if the event was handled."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Reset.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Reset.html",
     "title": "Method Reset | SkiaSharp.Extended",
-    "keywords": "Method Reset Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Reset() public void Reset()"
+    "keywords": "Method Reset Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Reset() Resets the gesture detector to its initial state, clearing all active touches and cancelling any pending timers. public void Reset()"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.RotateDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.RotateDetected.html",
     "title": "Event RotateDetected | SkiaSharp.Extended",
-    "keywords": "Event RotateDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKRotateGestureEventArgs>? RotateDetected Returns EventHandler<SKRotateGestureEventArgs>"
+    "keywords": "Event RotateDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a two-finger rotation gesture is detected. public event EventHandler<SKRotateGestureEventArgs>? RotateDetected Returns EventHandler<SKRotateGestureEventArgs> Remarks Rotation events fire simultaneously with pinch events when two or more touches are active."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ScrollDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ScrollDetected.html",
     "title": "Event ScrollDetected | SkiaSharp.Extended",
-    "keywords": "Event ScrollDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKScrollGestureEventArgs>? ScrollDetected Returns EventHandler<SKScrollGestureEventArgs>"
+    "keywords": "Event ScrollDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a mouse scroll (wheel) event is detected. public event EventHandler<SKScrollGestureEventArgs>? ScrollDetected Returns EventHandler<SKScrollGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.TapDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.TapDetected.html",
     "title": "Event TapDetected | SkiaSharp.Extended",
-    "keywords": "Event TapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKTapGestureEventArgs>? TapDetected Returns EventHandler<SKTapGestureEventArgs>"
+    "keywords": "Event TapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a single tap is detected. public event EventHandler<SKTapGestureEventArgs>? TapDetected Returns EventHandler<SKTapGestureEventArgs> Remarks A tap is recognized when a touch down and up occur within the TouchSlop distance and within the long press duration threshold."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.TimeProvider.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.TimeProvider.html",
     "title": "Property TimeProvider | SkiaSharp.Extended",
-    "keywords": "Property TimeProvider Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll TimeProvider public Func<long> TimeProvider { get; set; } Property Value Func<long>"
+    "keywords": "Property TimeProvider Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll TimeProvider Gets or sets the time provider function used to obtain the current time in ticks. public Func<long> TimeProvider { get; set; } Property Value Func<long> A Func<TResult> that returns the current time in Ticks. The default uses Now. Remarks Override this for deterministic testing by supplying a custom tick source."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetector.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.html",
     "title": "Class SKGestureDetector | SkiaSharp.Extended",
-    "keywords": "Class SKGestureDetector Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureDetector : IDisposable Inheritance object SKGestureDetector Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureDetector() SKGestureDetector(SKGestureDetectorOptions) Properties IsEnabled IsGestureActive Options TimeProvider Methods Dispose() OnDoubleTapDetected(SKTapGestureEventArgs) OnFlingDetected(SKFlingGestureEventArgs) OnGestureEnded(SKGestureLifecycleEventArgs) OnGestureStarted(SKGestureLifecycleEventArgs) OnHoverDetected(SKHoverGestureEventArgs) OnLongPressDetected(SKLongPressGestureEventArgs) OnPanDetected(SKPanGestureEventArgs) OnPinchDetected(SKPinchGestureEventArgs) OnRotateDetected(SKRotateGestureEventArgs) OnScrollDetected(SKScrollGestureEventArgs) OnTapDetected(SKTapGestureEventArgs) ProcessMouseWheel(SKPoint, float, float) ProcessTouchCancel(long) ProcessTouchDown(long, SKPoint, bool) ProcessTouchMove(long, SKPoint, bool) ProcessTouchUp(long, SKPoint, bool) Reset() Events DoubleTapDetected FlingDetected GestureEnded GestureStarted HoverDetected LongPressDetected PanDetected PinchDetected RotateDetected ScrollDetected TapDetected"
+    "keywords": "Class SKGestureDetector Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll A platform-agnostic gesture recognition engine that detects taps, long presses, pan, pinch, rotation, and fling gestures from touch input. public class SKGestureDetector : IDisposable Inheritance object SKGestureDetector Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks This engine is a pure gesture detector. It processes touch events and raises events when gestures are recognized. It does not maintain transform state or run animations — use SKGestureTracker for that. The engine must be used on the UI thread. It captures the current SynchronizationContext when processing touch events and uses it to marshal timer callbacks back to the UI thread. Call Dispose() to clean up resources when done. Constructors SKGestureDetector() Initializes a new instance of SKGestureDetector with default options. SKGestureDetector(SKGestureDetectorOptions) Initializes a new instance of SKGestureDetector with the specified options. Properties IsEnabled Gets or sets a value indicating whether the gesture detector is enabled. IsGestureActive Gets a value indicating whether a gesture is currently in progress. Options Gets the configuration options for this detector. TimeProvider Gets or sets the time provider function used to obtain the current time in ticks. Methods Dispose() Releases all resources used by this SKGestureDetector instance. OnDoubleTapDetected(SKTapGestureEventArgs) Raises the DoubleTapDetected event. OnFlingDetected(SKFlingGestureEventArgs) Raises the FlingDetected event. OnGestureEnded(SKGestureLifecycleEventArgs) Raises the GestureEnded event. OnGestureStarted(SKGestureLifecycleEventArgs) Raises the GestureStarted event. OnHoverDetected(SKHoverGestureEventArgs) Raises the HoverDetected event. OnLongPressDetected(SKLongPressGestureEventArgs) Raises the LongPressDetected event. OnPanDetected(SKPanGestureEventArgs) Raises the PanDetected event. OnPinchDetected(SKPinchGestureEventArgs) Raises the PinchDetected event. OnRotateDetected(SKRotateGestureEventArgs) Raises the RotateDetected event. OnScrollDetected(SKScrollGestureEventArgs) Raises the ScrollDetected event. OnTapDetected(SKTapGestureEventArgs) Raises the TapDetected event. ProcessMouseWheel(SKPoint, float, float) Processes a mouse wheel (scroll) event. ProcessTouchCancel(long) Processes a touch cancel event. ProcessTouchDown(long, SKPoint, bool) Processes a touch down event. ProcessTouchMove(long, SKPoint, bool) Processes a touch move event. ProcessTouchUp(long, SKPoint, bool) Processes a touch up event. Reset() Resets the gesture detector to its initial state, clearing all active touches and cancelling any pending timers. Events DoubleTapDetected Occurs when a double tap is detected. FlingDetected Occurs when a fling gesture is detected (fired once with initial velocity upon touch release). GestureEnded Occurs when a touch gesture interaction ends (last finger lifts from the surface). GestureStarted Occurs when a touch gesture interaction begins (first finger touches the surface). HoverDetected Occurs when a mouse hover (move without contact) is detected. LongPressDetected Occurs when a long press is detected. PanDetected Occurs when a single-finger pan (drag) gesture is detected. PinchDetected Occurs when a two-finger pinch (scale) gesture is detected. RotateDetected Occurs when a two-finger rotation gesture is detected. ScrollDetected Occurs when a mouse scroll (wheel) event is detected. TapDetected Occurs when a single tap is detected."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.-ctor.html",
@@ -247,27 +247,27 @@
   "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.DoubleTapSlop.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.DoubleTapSlop.html",
     "title": "Property DoubleTapSlop | SkiaSharp.Extended",
-    "keywords": "Property DoubleTapSlop Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DoubleTapSlop public float DoubleTapSlop { get; set; } Property Value float"
+    "keywords": "Property DoubleTapSlop Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DoubleTapSlop Gets or sets the maximum distance, in pixels, between two taps for them to be recognized as a double-tap gesture. public float DoubleTapSlop { get; set; } Property Value float The double-tap slop distance in pixels. The default is 40. Exceptions ArgumentOutOfRangeException value is negative."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.FlingThreshold.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.FlingThreshold.html",
     "title": "Property FlingThreshold | SkiaSharp.Extended",
-    "keywords": "Property FlingThreshold Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingThreshold public float FlingThreshold { get; set; } Property Value float"
+    "keywords": "Property FlingThreshold Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingThreshold Gets or sets the minimum velocity, in pixels per second, required for a pan gesture to be classified as a fling upon touch release. public float FlingThreshold { get; set; } Property Value float The fling velocity threshold in pixels per second. The default is 200. Exceptions ArgumentOutOfRangeException value is negative."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.LongPressDuration.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.LongPressDuration.html",
     "title": "Property LongPressDuration | SkiaSharp.Extended",
-    "keywords": "Property LongPressDuration Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll LongPressDuration public int LongPressDuration { get; set; } Property Value int"
+    "keywords": "Property LongPressDuration Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll LongPressDuration Gets or sets the duration, in milliseconds, a touch must be held stationary before a long press gesture is recognized. public int LongPressDuration { get; set; } Property Value int The long press duration in milliseconds. The default is 500. Must be positive. Exceptions ArgumentOutOfRangeException value is zero or negative."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.TouchSlop.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.TouchSlop.html",
     "title": "Property TouchSlop | SkiaSharp.Extended",
-    "keywords": "Property TouchSlop Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll TouchSlop public float TouchSlop { get; set; } Property Value float"
+    "keywords": "Property TouchSlop Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll TouchSlop Gets or sets the minimum movement distance, in pixels, before a touch is considered a pan gesture. public float TouchSlop { get; set; } Property Value float The touch slop distance in pixels. The default is 8. Remarks Touches that move less than this distance are classified as taps or long presses rather than pans. Exceptions ArgumentOutOfRangeException value is negative."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureDetectorOptions.html",
     "title": "Class SKGestureDetectorOptions | SkiaSharp.Extended",
-    "keywords": "Class SKGestureDetectorOptions Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureDetectorOptions Inheritance object SKGestureDetectorOptions Derived SKGestureTrackerOptions Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureDetectorOptions() Properties DoubleTapSlop FlingThreshold LongPressDuration TouchSlop"
+    "keywords": "Class SKGestureDetectorOptions Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Configuration options for the SKGestureDetector gesture recognition engine. public class SKGestureDetectorOptions Inheritance object SKGestureDetectorOptions Derived SKGestureTrackerOptions Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks These options control the thresholds and timing used to classify touch input into discrete gesture types. Adjust these values to fine-tune gesture sensitivity for your application. SKGestureDetector SKGestureTrackerOptions Constructors SKGestureDetectorOptions() Properties DoubleTapSlop Gets or sets the maximum distance, in pixels, between two taps for them to be recognized as a double-tap gesture. FlingThreshold Gets or sets the minimum velocity, in pixels per second, required for a pan gesture to be classified as a fling upon touch release. LongPressDuration Gets or sets the duration, in milliseconds, a touch must be held stationary before a long press gesture is recognized. TouchSlop Gets or sets the minimum movement distance, in pixels, before a touch is considered a pan gesture."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEventArgs.-ctor.html",
@@ -277,12 +277,12 @@
   "api/SkiaSharp.Extended.Gestures.SKGestureEventArgs.Handled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEventArgs.Handled.html",
     "title": "Property Handled | SkiaSharp.Extended",
-    "keywords": "Property Handled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Handled public bool Handled { get; set; } Property Value bool"
+    "keywords": "Property Handled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Handled Gets or sets a value indicating whether the event has been handled. public bool Handled { get; set; } Property Value bool true if the event has been handled by a consumer and default processing should be skipped; otherwise, false. The default is false. Remarks Set this to true in an event handler to prevent the SKGestureTracker from applying its default transform behavior (for example, to implement custom drag handling instead of the built-in pan offset)."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureEventArgs.html",
     "title": "Class SKGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureEventArgs : EventArgs Inheritance object EventArgs SKGestureEventArgs Derived SKDragGestureEventArgs SKFlingGestureEventArgs SKHoverGestureEventArgs SKLongPressGestureEventArgs SKPanGestureEventArgs SKPinchGestureEventArgs SKRotateGestureEventArgs SKScrollGestureEventArgs SKTapGestureEventArgs Inherited Members EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureEventArgs() Properties Handled"
+    "keywords": "Class SKGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Base class for all gesture event arguments in the SkiaSharp gesture recognition system. public class SKGestureEventArgs : EventArgs Inheritance object EventArgs SKGestureEventArgs Derived SKDragGestureEventArgs SKFlingGestureEventArgs SKHoverGestureEventArgs SKLongPressGestureEventArgs SKPanGestureEventArgs SKPinchGestureEventArgs SKRotateGestureEventArgs SKScrollGestureEventArgs SKTapGestureEventArgs Inherited Members EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks All specific gesture event argument types (such as SKTapGestureEventArgs, SKPanGestureEventArgs, and SKPinchGestureEventArgs) derive from this class. The Handled property allows event consumers to indicate that the gesture has been processed, preventing further default handling by the SKGestureTracker. SKGestureDetector SKGestureTracker Constructors SKGestureEventArgs() Properties Handled Gets or sets a value indicating whether the event has been handled."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.-ctor.html",
@@ -292,277 +292,277 @@
   "api/SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.html",
     "title": "Class SKGestureLifecycleEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKGestureLifecycleEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureLifecycleEventArgs : EventArgs Inheritance object EventArgs SKGestureLifecycleEventArgs Inherited Members EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureLifecycleEventArgs()"
+    "keywords": "Class SKGestureLifecycleEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Provides data for gesture lifecycle events that indicate when a gesture interaction begins or ends. public class SKGestureLifecycleEventArgs : EventArgs Inheritance object EventArgs SKGestureLifecycleEventArgs Inherited Members EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks This class is used with the GestureStarted and GestureEnded events, as well as the corresponding events on SKGestureTracker. A gesture starts when the first touch contact occurs and ends when all touches are released. These events are useful for managing UI state such as cancelling inertia animations when a new gesture begins, or triggering a redraw when a gesture ends. GestureStarted GestureEnded GestureStarted GestureEnded Constructors SKGestureLifecycleEventArgs()"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html",
     "title": "Constructor SKGestureTracker | SkiaSharp.Extended",
-    "keywords": "Constructor SKGestureTracker Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKGestureTracker() public SKGestureTracker() SKGestureTracker(SKGestureTrackerOptions) public SKGestureTracker(SKGestureTrackerOptions options) Parameters options SKGestureTrackerOptions"
+    "keywords": "Constructor SKGestureTracker Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKGestureTracker() Initializes a new instance of the SKGestureTracker class with default options. public SKGestureTracker() SKGestureTracker(SKGestureTrackerOptions) Initializes a new instance of the SKGestureTracker class with the specified options. public SKGestureTracker(SKGestureTrackerOptions options) Parameters options SKGestureTrackerOptions The configuration options for gesture detection and tracking. Exceptions ArgumentNullException options is null."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Dispose.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Dispose.html",
     "title": "Method Dispose | SkiaSharp.Extended",
-    "keywords": "Method Dispose Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Dispose() public void Dispose()"
+    "keywords": "Method Dispose Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Dispose() Releases all resources used by this SKGestureTracker instance, including stopping all animations and disposing the internal SKGestureDetector. public void Dispose()"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DoubleTapDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DoubleTapDetected.html",
     "title": "Event DoubleTapDetected | SkiaSharp.Extended",
-    "keywords": "Event DoubleTapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKTapGestureEventArgs>? DoubleTapDetected Returns EventHandler<SKTapGestureEventArgs>"
+    "keywords": "Event DoubleTapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a double tap is detected. Forwarded from the internal SKGestureDetector. public event EventHandler<SKTapGestureEventArgs>? DoubleTapDetected Returns EventHandler<SKTapGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragEnded.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragEnded.html",
     "title": "Event DragEnded | SkiaSharp.Extended",
-    "keywords": "Event DragEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKDragGestureEventArgs>? DragEnded Returns EventHandler<SKDragGestureEventArgs>"
+    "keywords": "Event DragEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a drag operation ends (all touches released). public event EventHandler<SKDragGestureEventArgs>? DragEnded Returns EventHandler<SKDragGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragStarted.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragStarted.html",
     "title": "Event DragStarted | SkiaSharp.Extended",
-    "keywords": "Event DragStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKDragGestureEventArgs>? DragStarted Returns EventHandler<SKDragGestureEventArgs>"
+    "keywords": "Event DragStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a drag operation starts (first pan movement after touch down). public event EventHandler<SKDragGestureEventArgs>? DragStarted Returns EventHandler<SKDragGestureEventArgs> Remarks Set Handled to true to prevent the tracker from updating Offset for this drag (useful for custom object dragging)."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragUpdated.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragUpdated.html",
     "title": "Event DragUpdated | SkiaSharp.Extended",
-    "keywords": "Event DragUpdated Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKDragGestureEventArgs>? DragUpdated Returns EventHandler<SKDragGestureEventArgs>"
+    "keywords": "Event DragUpdated Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs on each movement during a drag operation. public event EventHandler<SKDragGestureEventArgs>? DragUpdated Returns EventHandler<SKDragGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingCompleted.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingCompleted.html",
     "title": "Event FlingCompleted | SkiaSharp.Extended",
-    "keywords": "Event FlingCompleted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler? FlingCompleted Returns EventHandler"
+    "keywords": "Event FlingCompleted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a fling animation completes (velocity drops below FlingMinVelocity). public event EventHandler? FlingCompleted Returns EventHandler"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingDetected.html",
     "title": "Event FlingDetected | SkiaSharp.Extended",
-    "keywords": "Event FlingDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKFlingGestureEventArgs>? FlingDetected Returns EventHandler<SKFlingGestureEventArgs>"
+    "keywords": "Event FlingDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a fling gesture is detected (once, with initial velocity). Forwarded from the internal SKGestureDetector. public event EventHandler<SKFlingGestureEventArgs>? FlingDetected Returns EventHandler<SKFlingGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingUpdated.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingUpdated.html",
     "title": "Event FlingUpdated | SkiaSharp.Extended",
-    "keywords": "Event FlingUpdated Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKFlingGestureEventArgs>? FlingUpdated Returns EventHandler<SKFlingGestureEventArgs>"
+    "keywords": "Event FlingUpdated Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs each animation frame during a fling deceleration. public event EventHandler<SKFlingGestureEventArgs>? FlingUpdated Returns EventHandler<SKFlingGestureEventArgs> Remarks The DeltaX and DeltaY properties contain the per-frame displacement. The velocity decays each frame according to FlingFriction."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureEnded.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureEnded.html",
     "title": "Event GestureEnded | SkiaSharp.Extended",
-    "keywords": "Event GestureEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKGestureLifecycleEventArgs>? GestureEnded Returns EventHandler<SKGestureLifecycleEventArgs>"
+    "keywords": "Event GestureEnded Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a gesture interaction ends (last touch released). Forwarded from the internal SKGestureDetector. public event EventHandler<SKGestureLifecycleEventArgs>? GestureEnded Returns EventHandler<SKGestureLifecycleEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureStarted.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureStarted.html",
     "title": "Event GestureStarted | SkiaSharp.Extended",
-    "keywords": "Event GestureStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKGestureLifecycleEventArgs>? GestureStarted Returns EventHandler<SKGestureLifecycleEventArgs>"
+    "keywords": "Event GestureStarted Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a gesture interaction begins (first touch contact). Forwarded from the internal SKGestureDetector. public event EventHandler<SKGestureLifecycleEventArgs>? GestureStarted Returns EventHandler<SKGestureLifecycleEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.HoverDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.HoverDetected.html",
     "title": "Event HoverDetected | SkiaSharp.Extended",
-    "keywords": "Event HoverDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKHoverGestureEventArgs>? HoverDetected Returns EventHandler<SKHoverGestureEventArgs>"
+    "keywords": "Event HoverDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a hover is detected. Forwarded from the internal SKGestureDetector. public event EventHandler<SKHoverGestureEventArgs>? HoverDetected Returns EventHandler<SKHoverGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapEnabled.html",
     "title": "Property IsDoubleTapEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsDoubleTapEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsDoubleTapEnabled public bool IsDoubleTapEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsDoubleTapEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsDoubleTapEnabled Gets or sets a value indicating whether double-tap detection is enabled. public bool IsDoubleTapEnabled { get; set; } Property Value bool true to detect double taps; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapZoomEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapZoomEnabled.html",
     "title": "Property IsDoubleTapZoomEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsDoubleTapZoomEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsDoubleTapZoomEnabled public bool IsDoubleTapZoomEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsDoubleTapZoomEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsDoubleTapZoomEnabled Gets or sets a value indicating whether double-tap triggers an animated zoom. public bool IsDoubleTapZoomEnabled { get; set; } Property Value bool true to enable double-tap zoom; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsEnabled.html",
     "title": "Property IsEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsEnabled public bool IsEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsEnabled Gets or sets a value indicating whether gesture detection is enabled. public bool IsEnabled { get; set; } Property Value bool true if the tracker processes touch events; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsFlingEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsFlingEnabled.html",
     "title": "Property IsFlingEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsFlingEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsFlingEnabled public bool IsFlingEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsFlingEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsFlingEnabled Gets or sets a value indicating whether fling (inertia) animation is enabled after a pan gesture. public bool IsFlingEnabled { get; set; } Property Value bool true to run fling animations; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsFlinging.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsFlinging.html",
     "title": "Property IsFlinging | SkiaSharp.Extended",
-    "keywords": "Property IsFlinging Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsFlinging public bool IsFlinging { get; } Property Value bool"
+    "keywords": "Property IsFlinging Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsFlinging Gets a value indicating whether a fling (inertia) animation is in progress. public bool IsFlinging { get; } Property Value bool true if a fling animation is running; otherwise, false."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsGestureActive.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsGestureActive.html",
     "title": "Property IsGestureActive | SkiaSharp.Extended",
-    "keywords": "Property IsGestureActive Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsGestureActive public bool IsGestureActive { get; } Property Value bool"
+    "keywords": "Property IsGestureActive Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsGestureActive Gets a value indicating whether any gesture is currently active (touch contact in progress). public bool IsGestureActive { get; } Property Value bool true if the internal detector is tracking an active gesture; otherwise, false."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsHoverEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsHoverEnabled.html",
     "title": "Property IsHoverEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsHoverEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsHoverEnabled public bool IsHoverEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsHoverEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsHoverEnabled Gets or sets a value indicating whether hover (mouse move without contact) detection is enabled. public bool IsHoverEnabled { get; set; } Property Value bool true to detect hover events; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsLongPressEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsLongPressEnabled.html",
     "title": "Property IsLongPressEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsLongPressEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsLongPressEnabled public bool IsLongPressEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsLongPressEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsLongPressEnabled Gets or sets a value indicating whether long press detection is enabled. public bool IsLongPressEnabled { get; set; } Property Value bool true to detect long presses; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsPanEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsPanEnabled.html",
     "title": "Property IsPanEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsPanEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsPanEnabled public bool IsPanEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsPanEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsPanEnabled Gets or sets a value indicating whether pan gestures update the Offset. public bool IsPanEnabled { get; set; } Property Value bool true to apply pan deltas to the offset; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsPinchEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsPinchEnabled.html",
     "title": "Property IsPinchEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsPinchEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsPinchEnabled public bool IsPinchEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsPinchEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsPinchEnabled Gets or sets a value indicating whether pinch-to-zoom gestures update the Scale. public bool IsPinchEnabled { get; set; } Property Value bool true to apply pinch scale changes; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsRotateEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsRotateEnabled.html",
     "title": "Property IsRotateEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsRotateEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsRotateEnabled public bool IsRotateEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsRotateEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsRotateEnabled Gets or sets a value indicating whether rotation gestures update the Rotation. public bool IsRotateEnabled { get; set; } Property Value bool true to apply rotation changes; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsScrollZoomEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsScrollZoomEnabled.html",
     "title": "Property IsScrollZoomEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsScrollZoomEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsScrollZoomEnabled public bool IsScrollZoomEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsScrollZoomEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsScrollZoomEnabled Gets or sets a value indicating whether scroll-wheel events trigger zoom. public bool IsScrollZoomEnabled { get; set; } Property Value bool true to enable scroll-wheel zoom; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsTapEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsTapEnabled.html",
     "title": "Property IsTapEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsTapEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsTapEnabled public bool IsTapEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsTapEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsTapEnabled Gets or sets a value indicating whether tap detection is enabled. public bool IsTapEnabled { get; set; } Property Value bool true to detect single taps; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsZoomAnimating.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsZoomAnimating.html",
     "title": "Property IsZoomAnimating | SkiaSharp.Extended",
-    "keywords": "Property IsZoomAnimating Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsZoomAnimating public bool IsZoomAnimating { get; } Property Value bool"
+    "keywords": "Property IsZoomAnimating Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsZoomAnimating Gets a value indicating whether an animated zoom (from double-tap or ZoomTo(float, SKPoint)) is in progress. public bool IsZoomAnimating { get; } Property Value bool true if a zoom animation is running; otherwise, false."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.LongPressDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.LongPressDetected.html",
     "title": "Event LongPressDetected | SkiaSharp.Extended",
-    "keywords": "Event LongPressDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKLongPressGestureEventArgs>? LongPressDetected Returns EventHandler<SKLongPressGestureEventArgs>"
+    "keywords": "Event LongPressDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a long press is detected. Forwarded from the internal SKGestureDetector. public event EventHandler<SKLongPressGestureEventArgs>? LongPressDetected Returns EventHandler<SKLongPressGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Matrix.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Matrix.html",
     "title": "Property Matrix | SkiaSharp.Extended",
-    "keywords": "Property Matrix Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Matrix public SKMatrix Matrix { get; } Property Value SKMatrix"
+    "keywords": "Property Matrix Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Matrix Gets the composite transform matrix that combines scale, rotation, and offset, centered on the view midpoint. public SKMatrix Matrix { get; } Property Value SKMatrix An SKMatrix that can be applied to an SKCanvas to render content with the current gesture transform. The matrix applies transformations in the order: translate to center, scale, rotate, offset, translate back. Remarks Call SetViewSize(float, float) before reading this property to ensure the pivot point is correctly calculated."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Offset.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Offset.html",
     "title": "Property Offset | SkiaSharp.Extended",
-    "keywords": "Property Offset Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Offset public SKPoint Offset { get; } Property Value SKPoint"
+    "keywords": "Property Offset Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Offset Gets the current pan offset in content coordinates. public SKPoint Offset { get; } Property Value SKPoint An SKPoint representing the translation offset applied after scale and rotation. Remarks The offset is in content (post-scale, post-rotation) coordinate space, not screen space. Screen-space deltas are converted to content-space internally by accounting for the current Scale and Rotation."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Options.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Options.html",
     "title": "Property Options | SkiaSharp.Extended",
-    "keywords": "Property Options Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Options public SKGestureTrackerOptions Options { get; } Property Value SKGestureTrackerOptions"
+    "keywords": "Property Options Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Options Gets the configuration options for this tracker. public SKGestureTrackerOptions Options { get; } Property Value SKGestureTrackerOptions The SKGestureTrackerOptions instance controlling gesture detection thresholds, transform limits, and animation parameters."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.PanDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.PanDetected.html",
     "title": "Event PanDetected | SkiaSharp.Extended",
-    "keywords": "Event PanDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKPanGestureEventArgs>? PanDetected Returns EventHandler<SKPanGestureEventArgs>"
+    "keywords": "Event PanDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a pan gesture is detected. Forwarded from the internal SKGestureDetector. public event EventHandler<SKPanGestureEventArgs>? PanDetected Returns EventHandler<SKPanGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.PinchDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.PinchDetected.html",
     "title": "Event PinchDetected | SkiaSharp.Extended",
-    "keywords": "Event PinchDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKPinchGestureEventArgs>? PinchDetected Returns EventHandler<SKPinchGestureEventArgs>"
+    "keywords": "Event PinchDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a pinch (scale) gesture is detected. Forwarded from the internal SKGestureDetector. public event EventHandler<SKPinchGestureEventArgs>? PinchDetected Returns EventHandler<SKPinchGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessMouseWheel.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessMouseWheel.html",
     "title": "Method ProcessMouseWheel | SkiaSharp.Extended",
-    "keywords": "Method ProcessMouseWheel Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessMouseWheel(SKPoint, float, float) public bool ProcessMouseWheel(SKPoint location, float deltaX, float deltaY) Parameters location SKPoint deltaX float deltaY float Returns bool"
+    "keywords": "Method ProcessMouseWheel Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessMouseWheel(SKPoint, float, float) Processes a mouse wheel (scroll) event and forwards it to the internal gesture detector. public bool ProcessMouseWheel(SKPoint location, float deltaX, float deltaY) Parameters location SKPoint The position of the mouse cursor in view coordinates. deltaX float The horizontal scroll delta. deltaY float The vertical scroll delta. Returns bool true if the event was processed; otherwise, false."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchCancel.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchCancel.html",
     "title": "Method ProcessTouchCancel | SkiaSharp.Extended",
-    "keywords": "Method ProcessTouchCancel Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchCancel(long) public bool ProcessTouchCancel(long id) Parameters id long Returns bool"
+    "keywords": "Method ProcessTouchCancel Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchCancel(long) Processes a touch cancel event and forwards it to the internal gesture detector. public bool ProcessTouchCancel(long id) Parameters id long The unique identifier for the cancelled touch pointer. Returns bool true if the event was processed; otherwise, false."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchDown.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchDown.html",
     "title": "Method ProcessTouchDown | SkiaSharp.Extended",
-    "keywords": "Method ProcessTouchDown Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchDown(long, SKPoint, bool) public bool ProcessTouchDown(long id, SKPoint location, bool isMouse = false) Parameters id long location SKPoint isMouse bool Returns bool"
+    "keywords": "Method ProcessTouchDown Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchDown(long, SKPoint, bool) Processes a touch down event and forwards it to the internal gesture detector. public bool ProcessTouchDown(long id, SKPoint location, bool isMouse = false) Parameters id long The unique identifier for this touch pointer. location SKPoint The location of the touch in view coordinates. isMouse bool Whether this event originates from a mouse device. Returns bool true if the event was processed; otherwise, false."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchMove.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchMove.html",
     "title": "Method ProcessTouchMove | SkiaSharp.Extended",
-    "keywords": "Method ProcessTouchMove Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchMove(long, SKPoint, bool) public bool ProcessTouchMove(long id, SKPoint location, bool inContact = true) Parameters id long location SKPoint inContact bool Returns bool"
+    "keywords": "Method ProcessTouchMove Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchMove(long, SKPoint, bool) Processes a touch move event and forwards it to the internal gesture detector. public bool ProcessTouchMove(long id, SKPoint location, bool inContact = true) Parameters id long The unique identifier for this touch pointer. location SKPoint The new location of the touch in view coordinates. inContact bool true if the touch is in contact with the surface; false for hover (mouse move without button pressed). Returns bool true if the event was processed; otherwise, false."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchUp.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchUp.html",
     "title": "Method ProcessTouchUp | SkiaSharp.Extended",
-    "keywords": "Method ProcessTouchUp Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchUp(long, SKPoint, bool) public bool ProcessTouchUp(long id, SKPoint location, bool isMouse = false) Parameters id long location SKPoint isMouse bool Returns bool"
+    "keywords": "Method ProcessTouchUp Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ProcessTouchUp(long, SKPoint, bool) Processes a touch up event and forwards it to the internal gesture detector. public bool ProcessTouchUp(long id, SKPoint location, bool isMouse = false) Parameters id long The unique identifier for this touch pointer. location SKPoint The final location of the touch in view coordinates. isMouse bool Whether this event originates from a mouse device. Returns bool true if the event was processed; otherwise, false."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Reset.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Reset.html",
     "title": "Method Reset | SkiaSharp.Extended",
-    "keywords": "Method Reset Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Reset() public void Reset()"
+    "keywords": "Method Reset Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Reset() Resets the tracker to an identity transform (scale 1, rotation 0, offset zero), stops all animations, and raises TransformChanged. public void Reset()"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.RotateDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.RotateDetected.html",
     "title": "Event RotateDetected | SkiaSharp.Extended",
-    "keywords": "Event RotateDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKRotateGestureEventArgs>? RotateDetected Returns EventHandler<SKRotateGestureEventArgs>"
+    "keywords": "Event RotateDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a rotation gesture is detected. Forwarded from the internal SKGestureDetector. public event EventHandler<SKRotateGestureEventArgs>? RotateDetected Returns EventHandler<SKRotateGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Rotation.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Rotation.html",
     "title": "Property Rotation | SkiaSharp.Extended",
-    "keywords": "Property Rotation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Rotation public float Rotation { get; } Property Value float"
+    "keywords": "Property Rotation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Rotation Gets the current rotation angle in degrees. public float Rotation { get; } Property Value float The cumulative rotation in degrees. Positive values are clockwise."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Scale.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Scale.html",
     "title": "Property Scale | SkiaSharp.Extended",
-    "keywords": "Property Scale Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Scale public float Scale { get; } Property Value float"
+    "keywords": "Property Scale Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Scale Gets the current zoom scale factor. public float Scale { get; } Property Value float The absolute scale factor. A value of 1.0 represents the original (unscaled) view. Values greater than 1.0 are zoomed in; values less than 1.0 are zoomed out. The value is clamped between MinScale and MaxScale."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ScrollDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ScrollDetected.html",
     "title": "Event ScrollDetected | SkiaSharp.Extended",
-    "keywords": "Event ScrollDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKScrollGestureEventArgs>? ScrollDetected Returns EventHandler<SKScrollGestureEventArgs>"
+    "keywords": "Event ScrollDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a scroll (mouse wheel) event is detected. Forwarded from the internal SKGestureDetector. public event EventHandler<SKScrollGestureEventArgs>? ScrollDetected Returns EventHandler<SKScrollGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetOffset.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetOffset.html",
     "title": "Method SetOffset | SkiaSharp.Extended",
-    "keywords": "Method SetOffset Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SetOffset(SKPoint) public void SetOffset(SKPoint offset) Parameters offset SKPoint"
+    "keywords": "Method SetOffset Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SetOffset(SKPoint) Sets the pan offset and raises TransformChanged. public void SetOffset(SKPoint offset) Parameters offset SKPoint The desired pan offset in content coordinates."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetRotation.html",
     "title": "Method SetRotation | SkiaSharp.Extended",
-    "keywords": "Method SetRotation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SetRotation(float) public void SetRotation(float rotation) Parameters rotation float"
+    "keywords": "Method SetRotation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SetRotation(float) Sets the rotation angle and raises TransformChanged. public void SetRotation(float rotation) Parameters rotation float The desired rotation angle in degrees."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetScale.html",
     "title": "Method SetScale | SkiaSharp.Extended",
-    "keywords": "Method SetScale Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SetScale(float) public void SetScale(float scale) Parameters scale float"
+    "keywords": "Method SetScale Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SetScale(float) Sets the zoom scale, clamping to MinScale/MaxScale, and raises TransformChanged. public void SetScale(float scale) Parameters scale float The desired zoom scale factor."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetTransform.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetTransform.html",
     "title": "Method SetTransform | SkiaSharp.Extended",
-    "keywords": "Method SetTransform Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SetTransform(float, float, SKPoint) public void SetTransform(float scale, float rotation, SKPoint offset) Parameters scale float rotation float offset SKPoint"
+    "keywords": "Method SetTransform Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SetTransform(float, float, SKPoint) Sets the transform to the specified values, clamping scale to MinScale/MaxScale. public void SetTransform(float scale, float rotation, SKPoint offset) Parameters scale float The desired zoom scale factor. rotation float The desired rotation angle in degrees. offset SKPoint The desired pan offset in content coordinates."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.SetViewSize.html",
     "title": "Method SetViewSize | SkiaSharp.Extended",
-    "keywords": "Method SetViewSize Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SetViewSize(float, float) public void SetViewSize(float width, float height) Parameters width float height float"
+    "keywords": "Method SetViewSize Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SetViewSize(float, float) Sets the view dimensions used for pivot and matrix calculations. public void SetViewSize(float width, float height) Parameters width float The width of the view in pixels. height float The height of the view in pixels. Remarks This must be called (and updated on size changes) before reading Matrix, as the matrix pivots all transforms around the view center."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.StopFling.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.StopFling.html",
     "title": "Method StopFling | SkiaSharp.Extended",
-    "keywords": "Method StopFling Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll StopFling() public void StopFling()"
+    "keywords": "Method StopFling Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll StopFling() Stops any active fling animation and raises FlingCompleted. public void StopFling()"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.StopZoomAnimation.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.StopZoomAnimation.html",
     "title": "Method StopZoomAnimation | SkiaSharp.Extended",
-    "keywords": "Method StopZoomAnimation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll StopZoomAnimation() public void StopZoomAnimation()"
+    "keywords": "Method StopZoomAnimation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll StopZoomAnimation() Stops any active zoom animation immediately. public void StopZoomAnimation()"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.TapDetected.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.TapDetected.html",
     "title": "Event TapDetected | SkiaSharp.Extended",
-    "keywords": "Event TapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKTapGestureEventArgs>? TapDetected Returns EventHandler<SKTapGestureEventArgs>"
+    "keywords": "Event TapDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when a single tap is detected. Forwarded from the internal SKGestureDetector. public event EventHandler<SKTapGestureEventArgs>? TapDetected Returns EventHandler<SKTapGestureEventArgs>"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.TimeProvider.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.TimeProvider.html",
     "title": "Property TimeProvider | SkiaSharp.Extended",
-    "keywords": "Property TimeProvider Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll TimeProvider public Func<long> TimeProvider { get; set; } Property Value Func<long>"
+    "keywords": "Property TimeProvider Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll TimeProvider Gets or sets the time provider function used to obtain the current time in ticks. public Func<long> TimeProvider { get; set; } Property Value Func<long> A Func<TResult> that returns the current time in Ticks. Override this for deterministic testing."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.TransformChanged.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.TransformChanged.html",
     "title": "Event TransformChanged | SkiaSharp.Extended",
-    "keywords": "Event TransformChanged Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler? TransformChanged Returns EventHandler"
+    "keywords": "Event TransformChanged Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Occurs when the transform state (Scale, Rotation, Offset, or Matrix) changes. public event EventHandler? TransformChanged Returns EventHandler Remarks Subscribe to this event to trigger canvas redraws when the user interacts with the view. This event fires for pan, pinch, rotation, fling animation frames, zoom animation frames, and programmatic transform changes via SetTransform(float, float, SKPoint), SetScale(float), SetRotation(float), SetOffset(SKPoint), or Reset()."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ZoomTo.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ZoomTo.html",
     "title": "Method ZoomTo | SkiaSharp.Extended",
-    "keywords": "Method ZoomTo Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ZoomTo(float, SKPoint) public void ZoomTo(float factor, SKPoint focalPoint) Parameters factor float focalPoint SKPoint"
+    "keywords": "Method ZoomTo Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ZoomTo(float, SKPoint) Starts an animated zoom by the given multiplicative factor around a focal point. public void ZoomTo(float factor, SKPoint focalPoint) Parameters factor float The scale multiplier to apply (e.g., 2.0 to double the current zoom). focalPoint SKPoint The point in view coordinates to zoom towards. Remarks The animation uses a cubic-out easing curve and runs for ZoomAnimationDuration milliseconds. Any previously running zoom animation is stopped before the new one begins."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.html",
     "title": "Class SKGestureTracker | SkiaSharp.Extended",
-    "keywords": "Class SKGestureTracker Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureTracker : IDisposable Inheritance object SKGestureTracker Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureTracker() SKGestureTracker(SKGestureTrackerOptions) Properties IsDoubleTapEnabled IsDoubleTapZoomEnabled IsEnabled IsFlingEnabled IsFlinging IsGestureActive IsHoverEnabled IsLongPressEnabled IsPanEnabled IsPinchEnabled IsRotateEnabled IsScrollZoomEnabled IsTapEnabled IsZoomAnimating Matrix Offset Options Rotation Scale TimeProvider Methods Dispose() ProcessMouseWheel(SKPoint, float, float) ProcessTouchCancel(long) ProcessTouchDown(long, SKPoint, bool) ProcessTouchMove(long, SKPoint, bool) ProcessTouchUp(long, SKPoint, bool) Reset() SetOffset(SKPoint) SetRotation(float) SetScale(float) SetTransform(float, float, SKPoint) SetViewSize(float, float) StopFling() StopZoomAnimation() ZoomTo(float, SKPoint) Events DoubleTapDetected DragEnded DragStarted DragUpdated FlingCompleted FlingDetected FlingUpdated GestureEnded GestureStarted HoverDetected LongPressDetected PanDetected PinchDetected RotateDetected ScrollDetected TapDetected TransformChanged"
+    "keywords": "Class SKGestureTracker Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll A high-level gesture handler that tracks touch input and maintains an absolute transform (scale, rotation, and offset) by consuming events from an internal SKGestureDetector. public class SKGestureTracker : IDisposable Inheritance object SKGestureTracker Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks The tracker is the primary public API for gesture handling. It accepts raw touch input via ProcessTouchDown(long, SKPoint, bool), ProcessTouchMove(long, SKPoint, bool), ProcessTouchUp(long, SKPoint, bool), and ProcessMouseWheel(SKPoint, float, float), detects gestures internally, and translates them into transform state changes and higher-level events such as drag lifecycle and fling animation. Use the Matrix property to apply the current transform when painting. The matrix is computed relative to the view center, so call SetViewSize(float, float) with your canvas dimensions before reading Matrix. All coordinates are in view (screen) space. The tracker converts screen-space deltas to content-space deltas internally when updating Offset. Basic usage with an SkiaSharp canvas: var tracker = new SKGestureTracker(); tracker.SetViewSize(canvasWidth, canvasHeight); // Forward touch events from your platform: tracker.ProcessTouchDown(id, new SKPoint(x, y)); tracker.ProcessTouchMove(id, new SKPoint(x, y)); tracker.ProcessTouchUp(id, new SKPoint(x, y)); // In your paint handler: canvas.SetMatrix(tracker.Matrix); // Draw your content... // Listen for transform changes to trigger redraws: tracker.TransformChanged += (s, e) => canvas.InvalidateVisual(); SKGestureDetector SKGestureTrackerOptions Constructors SKGestureTracker() Initializes a new instance of the SKGestureTracker class with default options. SKGestureTracker(SKGestureTrackerOptions) Initializes a new instance of the SKGestureTracker class with the specified options. Properties IsDoubleTapEnabled Gets or sets a value indicating whether double-tap detection is enabled. IsDoubleTapZoomEnabled Gets or sets a value indicating whether double-tap triggers an animated zoom. IsEnabled Gets or sets a value indicating whether gesture detection is enabled. IsFlingEnabled Gets or sets a value indicating whether fling (inertia) animation is enabled after a pan gesture. IsFlinging Gets a value indicating whether a fling (inertia) animation is in progress. IsGestureActive Gets a value indicating whether any gesture is currently active (touch contact in progress). IsHoverEnabled Gets or sets a value indicating whether hover (mouse move without contact) detection is enabled. IsLongPressEnabled Gets or sets a value indicating whether long press detection is enabled. IsPanEnabled Gets or sets a value indicating whether pan gestures update the Offset. IsPinchEnabled Gets or sets a value indicating whether pinch-to-zoom gestures update the Scale. IsRotateEnabled Gets or sets a value indicating whether rotation gestures update the Rotation. IsScrollZoomEnabled Gets or sets a value indicating whether scroll-wheel events trigger zoom. IsTapEnabled Gets or sets a value indicating whether tap detection is enabled. IsZoomAnimating Gets a value indicating whether an animated zoom (from double-tap or ZoomTo(float, SKPoint)) is in progress. Matrix Gets the composite transform matrix that combines scale, rotation, and offset, centered on the view midpoint. Offset Gets the current pan offset in content coordinates. Options Gets the configuration options for this tracker. Rotation Gets the current rotation angle in degrees. Scale Gets the current zoom scale factor. TimeProvider Gets or sets the time provider function used to obtain the current time in ticks. Methods Dispose() Releases all resources used by this SKGestureTracker instance, including stopping all animations and disposing the internal SKGestureDetector. ProcessMouseWheel(SKPoint, float, float) Processes a mouse wheel (scroll) event and forwards it to the internal gesture detector. ProcessTouchCancel(long) Processes a touch cancel event and forwards it to the internal gesture detector. ProcessTouchDown(long, SKPoint, bool) Processes a touch down event and forwards it to the internal gesture detector. ProcessTouchMove(long, SKPoint, bool) Processes a touch move event and forwards it to the internal gesture detector. ProcessTouchUp(long, SKPoint, bool) Processes a touch up event and forwards it to the internal gesture detector. Reset() Resets the tracker to an identity transform (scale 1, rotation 0, offset zero), stops all animations, and raises TransformChanged. SetOffset(SKPoint) Sets the pan offset and raises TransformChanged. SetRotation(float) Sets the rotation angle and raises TransformChanged. SetScale(float) Sets the zoom scale, clamping to MinScale/MaxScale, and raises TransformChanged. SetTransform(float, float, SKPoint) Sets the transform to the specified values, clamping scale to MinScale/MaxScale. SetViewSize(float, float) Sets the view dimensions used for pivot and matrix calculations. StopFling() Stops any active fling animation and raises FlingCompleted. StopZoomAnimation() Stops any active zoom animation immediately. ZoomTo(float, SKPoint) Starts an animated zoom by the given multiplicative factor around a focal point. Events DoubleTapDetected Occurs when a double tap is detected. Forwarded from the internal SKGestureDetector. DragEnded Occurs when a drag operation ends (all touches released). DragStarted Occurs when a drag operation starts (first pan movement after touch down). DragUpdated Occurs on each movement during a drag operation. FlingCompleted Occurs when a fling animation completes (velocity drops below FlingMinVelocity). FlingDetected Occurs when a fling gesture is detected (once, with initial velocity). Forwarded from the internal SKGestureDetector. FlingUpdated Occurs each animation frame during a fling deceleration. GestureEnded Occurs when a gesture interaction ends (last touch released). Forwarded from the internal SKGestureDetector. GestureStarted Occurs when a gesture interaction begins (first touch contact). Forwarded from the internal SKGestureDetector. HoverDetected Occurs when a hover is detected. Forwarded from the internal SKGestureDetector. LongPressDetected Occurs when a long press is detected. Forwarded from the internal SKGestureDetector. PanDetected Occurs when a pan gesture is detected. Forwarded from the internal SKGestureDetector. PinchDetected Occurs when a pinch (scale) gesture is detected. Forwarded from the internal SKGestureDetector. RotateDetected Occurs when a rotation gesture is detected. Forwarded from the internal SKGestureDetector. ScrollDetected Occurs when a scroll (mouse wheel) event is detected. Forwarded from the internal SKGestureDetector. TapDetected Occurs when a single tap is detected. Forwarded from the internal SKGestureDetector. TransformChanged Occurs when the transform state (Scale, Rotation, Offset, or Matrix) changes."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.-ctor.html",
@@ -572,262 +572,262 @@
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor.html",
     "title": "Property DoubleTapZoomFactor | SkiaSharp.Extended",
-    "keywords": "Property DoubleTapZoomFactor Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DoubleTapZoomFactor public float DoubleTapZoomFactor { get; set; } Property Value float"
+    "keywords": "Property DoubleTapZoomFactor Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DoubleTapZoomFactor Gets or sets the multiplicative zoom factor applied when a double-tap is detected. public float DoubleTapZoomFactor { get; set; } Property Value float The zoom multiplier per double-tap. The default is 2.0. Must be positive. Remarks When the current scale is at or near MaxScale, a double-tap animates the scale back to 1.0 instead of zooming further. Exceptions ArgumentOutOfRangeException value is zero or negative."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval.html",
     "title": "Property FlingFrameInterval | SkiaSharp.Extended",
-    "keywords": "Property FlingFrameInterval Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingFrameInterval public int FlingFrameInterval { get; set; } Property Value int"
+    "keywords": "Property FlingFrameInterval Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingFrameInterval Gets or sets the fling animation frame interval, in milliseconds. public int FlingFrameInterval { get; set; } Property Value int The timer interval between fling animation frames in milliseconds. The default is 16 (approximately 60 FPS). Must be positive. Exceptions ArgumentOutOfRangeException value is zero or negative."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFriction.html",
     "title": "Property FlingFriction | SkiaSharp.Extended",
-    "keywords": "Property FlingFriction Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingFriction public float FlingFriction { get; set; } Property Value float"
+    "keywords": "Property FlingFriction Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingFriction Gets or sets the fling friction coefficient that controls deceleration speed. public float FlingFriction { get; set; } Property Value float A value between 0 (no friction, fling continues indefinitely) and 1 (full friction, fling stops immediately). The default is 0.08. Exceptions ArgumentOutOfRangeException value is less than 0 or greater than 1."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingMinVelocity.html",
     "title": "Property FlingMinVelocity | SkiaSharp.Extended",
-    "keywords": "Property FlingMinVelocity Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingMinVelocity public float FlingMinVelocity { get; set; } Property Value float"
+    "keywords": "Property FlingMinVelocity Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FlingMinVelocity Gets or sets the minimum velocity, in pixels per second, below which the fling animation stops. public float FlingMinVelocity { get; set; } Property Value float The minimum fling velocity threshold in pixels per second. The default is 5. Exceptions ArgumentOutOfRangeException value is negative."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsDoubleTapEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsDoubleTapEnabled.html",
     "title": "Property IsDoubleTapEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsDoubleTapEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsDoubleTapEnabled public bool IsDoubleTapEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsDoubleTapEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsDoubleTapEnabled Gets or sets a value indicating whether double-tap detection is enabled. public bool IsDoubleTapEnabled { get; set; } Property Value bool true to detect double taps; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsDoubleTapZoomEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsDoubleTapZoomEnabled.html",
     "title": "Property IsDoubleTapZoomEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsDoubleTapZoomEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsDoubleTapZoomEnabled public bool IsDoubleTapZoomEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsDoubleTapZoomEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsDoubleTapZoomEnabled Gets or sets a value indicating whether double-tap triggers an animated zoom. public bool IsDoubleTapZoomEnabled { get; set; } Property Value bool true to enable double-tap zoom; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsFlingEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsFlingEnabled.html",
     "title": "Property IsFlingEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsFlingEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsFlingEnabled public bool IsFlingEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsFlingEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsFlingEnabled Gets or sets a value indicating whether fling (inertia) animation is enabled after pan gestures. public bool IsFlingEnabled { get; set; } Property Value bool true to run fling animations; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsHoverEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsHoverEnabled.html",
     "title": "Property IsHoverEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsHoverEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsHoverEnabled public bool IsHoverEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsHoverEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsHoverEnabled Gets or sets a value indicating whether hover (mouse move without contact) detection is enabled. public bool IsHoverEnabled { get; set; } Property Value bool true to detect hover events; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsLongPressEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsLongPressEnabled.html",
     "title": "Property IsLongPressEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsLongPressEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsLongPressEnabled public bool IsLongPressEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsLongPressEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsLongPressEnabled Gets or sets a value indicating whether long press detection is enabled. public bool IsLongPressEnabled { get; set; } Property Value bool true to detect long presses; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsPanEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsPanEnabled.html",
     "title": "Property IsPanEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsPanEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsPanEnabled public bool IsPanEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsPanEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsPanEnabled Gets or sets a value indicating whether pan gestures update the tracker's offset. public bool IsPanEnabled { get; set; } Property Value bool true to apply pan deltas to the offset; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsPinchEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsPinchEnabled.html",
     "title": "Property IsPinchEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsPinchEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsPinchEnabled public bool IsPinchEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsPinchEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsPinchEnabled Gets or sets a value indicating whether pinch-to-zoom gestures update the tracker's scale. public bool IsPinchEnabled { get; set; } Property Value bool true to apply pinch scale changes; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsRotateEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsRotateEnabled.html",
     "title": "Property IsRotateEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsRotateEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsRotateEnabled public bool IsRotateEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsRotateEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsRotateEnabled Gets or sets a value indicating whether rotation gestures update the tracker's rotation. public bool IsRotateEnabled { get; set; } Property Value bool true to apply rotation changes; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsScrollZoomEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsScrollZoomEnabled.html",
     "title": "Property IsScrollZoomEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsScrollZoomEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsScrollZoomEnabled public bool IsScrollZoomEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsScrollZoomEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsScrollZoomEnabled Gets or sets a value indicating whether scroll-wheel events trigger zoom. public bool IsScrollZoomEnabled { get; set; } Property Value bool true to enable scroll-wheel zoom; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsTapEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsTapEnabled.html",
     "title": "Property IsTapEnabled | SkiaSharp.Extended",
-    "keywords": "Property IsTapEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsTapEnabled public bool IsTapEnabled { get; set; } Property Value bool"
+    "keywords": "Property IsTapEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsTapEnabled Gets or sets a value indicating whether tap detection is enabled. public bool IsTapEnabled { get; set; } Property Value bool true to detect single taps; otherwise, false. The default is true."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale.html",
     "title": "Property MaxScale | SkiaSharp.Extended",
-    "keywords": "Property MaxScale Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll MaxScale public float MaxScale { get; set; } Property Value float"
+    "keywords": "Property MaxScale Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll MaxScale Gets or sets the maximum allowed zoom scale. public float MaxScale { get; set; } Property Value float The maximum scale factor. The default is 10. Must be positive and greater than or equal to MinScale. Exceptions ArgumentOutOfRangeException value is zero, negative, or less than MinScale."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale.html",
     "title": "Property MinScale | SkiaSharp.Extended",
-    "keywords": "Property MinScale Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll MinScale public float MinScale { get; set; } Property Value float"
+    "keywords": "Property MinScale Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll MinScale Gets or sets the minimum allowed zoom scale. public float MinScale { get; set; } Property Value float The minimum scale factor. The default is 0.1. Must be positive. Exceptions ArgumentOutOfRangeException value is zero or negative."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ScrollZoomFactor.html",
     "title": "Property ScrollZoomFactor | SkiaSharp.Extended",
-    "keywords": "Property ScrollZoomFactor Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ScrollZoomFactor public float ScrollZoomFactor { get; set; } Property Value float"
+    "keywords": "Property ScrollZoomFactor Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ScrollZoomFactor Gets or sets the scale sensitivity for mouse scroll-wheel zoom. public float ScrollZoomFactor { get; set; } Property Value float A multiplier applied to each scroll tick's DeltaY to compute the scale change. The default is 0.1. Must be positive. Exceptions ArgumentOutOfRangeException value is zero or negative."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration.html",
     "title": "Property ZoomAnimationDuration | SkiaSharp.Extended",
-    "keywords": "Property ZoomAnimationDuration Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ZoomAnimationDuration public int ZoomAnimationDuration { get; set; } Property Value int"
+    "keywords": "Property ZoomAnimationDuration Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ZoomAnimationDuration Gets or sets the duration of the double-tap zoom animation, in milliseconds. public int ZoomAnimationDuration { get; set; } Property Value int The animation duration in milliseconds. The default is 250. A value of 0 applies the zoom instantly. Exceptions ArgumentOutOfRangeException value is negative."
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.html",
     "title": "Class SKGestureTrackerOptions | SkiaSharp.Extended",
-    "keywords": "Class SKGestureTrackerOptions Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureTrackerOptions : SKGestureDetectorOptions Inheritance object SKGestureDetectorOptions SKGestureTrackerOptions Inherited Members SKGestureDetectorOptions.TouchSlop SKGestureDetectorOptions.DoubleTapSlop SKGestureDetectorOptions.FlingThreshold SKGestureDetectorOptions.LongPressDuration object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureTrackerOptions() Properties DoubleTapZoomFactor FlingFrameInterval FlingFriction FlingMinVelocity IsDoubleTapEnabled IsDoubleTapZoomEnabled IsFlingEnabled IsHoverEnabled IsLongPressEnabled IsPanEnabled IsPinchEnabled IsRotateEnabled IsScrollZoomEnabled IsTapEnabled MaxScale MinScale ScrollZoomFactor ZoomAnimationDuration"
+    "keywords": "Class SKGestureTrackerOptions Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Configuration options for SKGestureTracker. Inherits gesture detection thresholds from SKGestureDetectorOptions and adds tracker-specific settings for transform limits, animation, and feature toggles. public class SKGestureTrackerOptions : SKGestureDetectorOptions Inheritance object SKGestureDetectorOptions SKGestureTrackerOptions Inherited Members SKGestureDetectorOptions.TouchSlop SKGestureDetectorOptions.DoubleTapSlop SKGestureDetectorOptions.FlingThreshold SKGestureDetectorOptions.LongPressDuration object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks SKGestureTracker SKGestureDetectorOptions Constructors SKGestureTrackerOptions() Properties DoubleTapZoomFactor Gets or sets the multiplicative zoom factor applied when a double-tap is detected. FlingFrameInterval Gets or sets the fling animation frame interval, in milliseconds. FlingFriction Gets or sets the fling friction coefficient that controls deceleration speed. FlingMinVelocity Gets or sets the minimum velocity, in pixels per second, below which the fling animation stops. IsDoubleTapEnabled Gets or sets a value indicating whether double-tap detection is enabled. IsDoubleTapZoomEnabled Gets or sets a value indicating whether double-tap triggers an animated zoom. IsFlingEnabled Gets or sets a value indicating whether fling (inertia) animation is enabled after pan gestures. IsHoverEnabled Gets or sets a value indicating whether hover (mouse move without contact) detection is enabled. IsLongPressEnabled Gets or sets a value indicating whether long press detection is enabled. IsPanEnabled Gets or sets a value indicating whether pan gestures update the tracker's offset. IsPinchEnabled Gets or sets a value indicating whether pinch-to-zoom gestures update the tracker's scale. IsRotateEnabled Gets or sets a value indicating whether rotation gestures update the tracker's rotation. IsScrollZoomEnabled Gets or sets a value indicating whether scroll-wheel events trigger zoom. IsTapEnabled Gets or sets a value indicating whether tap detection is enabled. MaxScale Gets or sets the maximum allowed zoom scale. MinScale Gets or sets the minimum allowed zoom scale. ScrollZoomFactor Gets or sets the scale sensitivity for mouse scroll-wheel zoom. ZoomAnimationDuration Gets or sets the duration of the double-tap zoom animation, in milliseconds."
   },
   "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.-ctor.html",
     "title": "Constructor SKHoverGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKHoverGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKHoverGestureEventArgs(SKPoint) public SKHoverGestureEventArgs(SKPoint location) Parameters location SKPoint"
+    "keywords": "Constructor SKHoverGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKHoverGestureEventArgs(SKPoint) Initializes a new instance of the SKHoverGestureEventArgs class. public SKHoverGestureEventArgs(SKPoint location) Parameters location SKPoint The current position of the mouse cursor in view coordinates."
   },
   "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location.html",
     "title": "Property Location | SkiaSharp.Extended",
-    "keywords": "Property Location Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Location public SKPoint Location { get; } Property Value SKPoint"
+    "keywords": "Property Location Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Location Gets the current position of the mouse cursor in view coordinates. public SKPoint Location { get; } Property Value SKPoint An SKPoint representing the hover position."
   },
   "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.html",
     "title": "Class SKHoverGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKHoverGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKHoverGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKHoverGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKHoverGestureEventArgs(SKPoint) Properties Location"
+    "keywords": "Class SKHoverGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Provides data for a hover (mouse move without contact) gesture event. public class SKHoverGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKHoverGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks Hover events are raised when a mouse cursor moves over the surface without any buttons pressed (i.e., inContact is false in ProcessTouchMove(long, SKPoint, bool)). This is a mouse-only gesture that has no equivalent on touch devices. HoverDetected HoverDetected Constructors SKHoverGestureEventArgs(SKPoint) Initializes a new instance of the SKHoverGestureEventArgs class. Properties Location Gets the current position of the mouse cursor in view coordinates."
   },
   "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.-ctor.html",
     "title": "Constructor SKLongPressGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKLongPressGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKLongPressGestureEventArgs(SKPoint, TimeSpan) public SKLongPressGestureEventArgs(SKPoint location, TimeSpan duration) Parameters location SKPoint duration TimeSpan"
+    "keywords": "Constructor SKLongPressGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKLongPressGestureEventArgs(SKPoint, TimeSpan) Initializes a new instance of the SKLongPressGestureEventArgs class. public SKLongPressGestureEventArgs(SKPoint location, TimeSpan duration) Parameters location SKPoint The location of the long press in view coordinates. duration TimeSpan The duration the touch was held before the long press was recognized."
   },
   "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration.html",
     "title": "Property Duration | SkiaSharp.Extended",
-    "keywords": "Property Duration Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Duration public TimeSpan Duration { get; } Property Value TimeSpan"
+    "keywords": "Property Duration Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Duration Gets the duration the touch was held before the long press was recognized. public TimeSpan Duration { get; } Property Value TimeSpan A TimeSpan representing the elapsed time from touch-down to long press detection."
   },
   "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Location.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Location.html",
     "title": "Property Location | SkiaSharp.Extended",
-    "keywords": "Property Location Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Location public SKPoint Location { get; } Property Value SKPoint"
+    "keywords": "Property Location Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Location Gets the location of the long press in view coordinates. public SKPoint Location { get; } Property Value SKPoint An SKPoint representing the position where the long press occurred."
   },
   "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.html",
     "title": "Class SKLongPressGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKLongPressGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKLongPressGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKLongPressGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKLongPressGestureEventArgs(SKPoint, TimeSpan) Properties Duration Location"
+    "keywords": "Class SKLongPressGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Provides data for a long press gesture event. public class SKLongPressGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKLongPressGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks A long press is detected when a touch is held stationary (within the TouchSlop threshold) for at least LongPressDuration milliseconds. LongPressDetected LongPressDuration Constructors SKLongPressGestureEventArgs(SKPoint, TimeSpan) Initializes a new instance of the SKLongPressGestureEventArgs class. Properties Duration Gets the duration the touch was held before the long press was recognized. Location Gets the location of the long press in view coordinates."
   },
   "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.-ctor.html",
     "title": "Constructor SKPanGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKPanGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKPanGestureEventArgs(SKPoint, SKPoint, SKPoint, SKPoint) public SKPanGestureEventArgs(SKPoint location, SKPoint previousLocation, SKPoint delta, SKPoint velocity) Parameters location SKPoint previousLocation SKPoint delta SKPoint velocity SKPoint"
+    "keywords": "Constructor SKPanGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKPanGestureEventArgs(SKPoint, SKPoint, SKPoint, SKPoint) Initializes a new instance of the SKPanGestureEventArgs class. public SKPanGestureEventArgs(SKPoint location, SKPoint previousLocation, SKPoint delta, SKPoint velocity) Parameters location SKPoint The current touch location in view coordinates. previousLocation SKPoint The touch location from the previous pan event. delta SKPoint The displacement from previousLocation to location. velocity SKPoint The current velocity of the touch in pixels per second."
   },
   "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta.html",
     "title": "Property Delta | SkiaSharp.Extended",
-    "keywords": "Property Delta Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Delta public SKPoint Delta { get; } Property Value SKPoint"
+    "keywords": "Property Delta Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Delta Gets the displacement from PreviousLocation to Location. public SKPoint Delta { get; } Property Value SKPoint An SKPoint where X and Y represent the change in position, in pixels."
   },
   "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location.html",
     "title": "Property Location | SkiaSharp.Extended",
-    "keywords": "Property Location Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Location public SKPoint Location { get; } Property Value SKPoint"
+    "keywords": "Property Location Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Location Gets the current touch location in view coordinates. public SKPoint Location { get; } Property Value SKPoint An SKPoint representing the current position of the touch."
   },
   "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation.html",
     "title": "Property PreviousLocation | SkiaSharp.Extended",
-    "keywords": "Property PreviousLocation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll PreviousLocation public SKPoint PreviousLocation { get; } Property Value SKPoint"
+    "keywords": "Property PreviousLocation Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll PreviousLocation Gets the touch location from the previous pan event. public SKPoint PreviousLocation { get; } Property Value SKPoint An SKPoint representing the previous position of the touch."
   },
   "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity.html",
     "title": "Property Velocity | SkiaSharp.Extended",
-    "keywords": "Property Velocity Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Velocity public SKPoint Velocity { get; } Property Value SKPoint"
+    "keywords": "Property Velocity Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Velocity Gets the current velocity of the touch movement. public SKPoint Velocity { get; } Property Value SKPoint An SKPoint where X and Y represent the velocity components in pixels per second. Positive X is rightward; positive Y is downward. Remarks The velocity is computed from a time-weighted average of recent touch events by the internal SKFlingTracker. This value is also used to determine whether a fling gesture should be triggered when the touch is released."
   },
   "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.html",
     "title": "Class SKPanGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKPanGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKPanGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKPanGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKPanGestureEventArgs(SKPoint, SKPoint, SKPoint, SKPoint) Properties Delta Location PreviousLocation Velocity"
+    "keywords": "Class SKPanGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Provides data for a pan (single-finger drag) gesture event. public class SKPanGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKPanGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks Pan events are raised continuously as a single touch moves beyond the TouchSlop threshold. Each event provides both the incremental Delta and the instantaneous Velocity. PanDetected PanDetected Constructors SKPanGestureEventArgs(SKPoint, SKPoint, SKPoint, SKPoint) Initializes a new instance of the SKPanGestureEventArgs class. Properties Delta Gets the displacement from PreviousLocation to Location. Location Gets the current touch location in view coordinates. PreviousLocation Gets the touch location from the previous pan event. Velocity Gets the current velocity of the touch movement."
   },
   "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.-ctor.html",
     "title": "Constructor SKPinchGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKPinchGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKPinchGestureEventArgs(SKPoint, SKPoint, float) public SKPinchGestureEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float scaleDelta) Parameters focalPoint SKPoint previousFocalPoint SKPoint scaleDelta float"
+    "keywords": "Constructor SKPinchGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKPinchGestureEventArgs(SKPoint, SKPoint, float) Initializes a new instance of the SKPinchGestureEventArgs class. public SKPinchGestureEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float scaleDelta) Parameters focalPoint SKPoint The current center point between the pinch fingers, in view coordinates. previousFocalPoint SKPoint The center point between the pinch fingers from the previous event. scaleDelta float The relative scale change factor since the previous event."
   },
   "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.FocalPoint.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.FocalPoint.html",
     "title": "Property FocalPoint | SkiaSharp.Extended",
-    "keywords": "Property FocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FocalPoint public SKPoint FocalPoint { get; } Property Value SKPoint"
+    "keywords": "Property FocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FocalPoint Gets the current center point between the pinch fingers in view coordinates. public SKPoint FocalPoint { get; } Property Value SKPoint An SKPoint representing the midpoint of all active touches."
   },
   "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint.html",
     "title": "Property PreviousFocalPoint | SkiaSharp.Extended",
-    "keywords": "Property PreviousFocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll PreviousFocalPoint public SKPoint PreviousFocalPoint { get; } Property Value SKPoint"
+    "keywords": "Property PreviousFocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll PreviousFocalPoint Gets the center point between the pinch fingers from the previous event. public SKPoint PreviousFocalPoint { get; } Property Value SKPoint An SKPoint representing the previous midpoint of all active touches."
   },
   "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.ScaleDelta.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.ScaleDelta.html",
     "title": "Property ScaleDelta | SkiaSharp.Extended",
-    "keywords": "Property ScaleDelta Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ScaleDelta public float ScaleDelta { get; } Property Value float"
+    "keywords": "Property ScaleDelta Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll ScaleDelta Gets the relative scale change factor since the previous pinch event. public float ScaleDelta { get; } Property Value float A value of 1.0 means no change. Values greater than 1.0 indicate zooming in (fingers spreading apart), and values less than 1.0 indicate zooming out (fingers pinching together). This is a per-event delta, not a cumulative scale."
   },
   "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.html",
     "title": "Class SKPinchGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKPinchGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKPinchGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKPinchGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKPinchGestureEventArgs(SKPoint, SKPoint, float) Properties FocalPoint PreviousFocalPoint ScaleDelta"
+    "keywords": "Class SKPinchGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Provides data for a pinch (scale) gesture event detected from two or more simultaneous touches. public class SKPinchGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKPinchGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks Pinch events are raised continuously as two or more touches move relative to each other. The ScaleDelta is a relative (per-event) multiplier, not an absolute scale. To compute the cumulative scale, multiply successive ScaleDelta values together, or use the Scale property which maintains the absolute value. PinchDetected PinchDetected SKRotateGestureEventArgs Constructors SKPinchGestureEventArgs(SKPoint, SKPoint, float) Initializes a new instance of the SKPinchGestureEventArgs class. Properties FocalPoint Gets the current center point between the pinch fingers in view coordinates. PreviousFocalPoint Gets the center point between the pinch fingers from the previous event. ScaleDelta Gets the relative scale change factor since the previous pinch event."
   },
   "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.-ctor.html",
     "title": "Constructor SKRotateGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKRotateGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKRotateGestureEventArgs(SKPoint, SKPoint, float) public SKRotateGestureEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float rotationDelta) Parameters focalPoint SKPoint previousFocalPoint SKPoint rotationDelta float"
+    "keywords": "Constructor SKRotateGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKRotateGestureEventArgs(SKPoint, SKPoint, float) Initializes a new instance of the SKRotateGestureEventArgs class. public SKRotateGestureEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float rotationDelta) Parameters focalPoint SKPoint The current center point between the rotation fingers, in view coordinates. previousFocalPoint SKPoint The center point between the rotation fingers from the previous event. rotationDelta float The incremental rotation angle in degrees since the previous event."
   },
   "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint.html",
     "title": "Property FocalPoint | SkiaSharp.Extended",
-    "keywords": "Property FocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FocalPoint public SKPoint FocalPoint { get; } Property Value SKPoint"
+    "keywords": "Property FocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll FocalPoint Gets the current center point between the rotation fingers in view coordinates. public SKPoint FocalPoint { get; } Property Value SKPoint An SKPoint representing the midpoint of the two touches."
   },
   "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.PreviousFocalPoint.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.PreviousFocalPoint.html",
     "title": "Property PreviousFocalPoint | SkiaSharp.Extended",
-    "keywords": "Property PreviousFocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll PreviousFocalPoint public SKPoint PreviousFocalPoint { get; } Property Value SKPoint"
+    "keywords": "Property PreviousFocalPoint Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll PreviousFocalPoint Gets the center point between the rotation fingers from the previous event. public SKPoint PreviousFocalPoint { get; } Property Value SKPoint An SKPoint representing the previous midpoint of the two touches."
   },
   "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta.html",
     "title": "Property RotationDelta | SkiaSharp.Extended",
-    "keywords": "Property RotationDelta Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll RotationDelta public float RotationDelta { get; } Property Value float"
+    "keywords": "Property RotationDelta Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll RotationDelta Gets the incremental rotation angle change since the previous event, in degrees. public float RotationDelta { get; } Property Value float A positive value indicates clockwise rotation; a negative value indicates counter-clockwise rotation. The value is normalized to the range (-180, 180]."
   },
   "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.html",
     "title": "Class SKRotateGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKRotateGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKRotateGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKRotateGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKRotateGestureEventArgs(SKPoint, SKPoint, float) Properties FocalPoint PreviousFocalPoint RotationDelta"
+    "keywords": "Class SKRotateGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Provides data for a rotation gesture event detected from two simultaneous touches. public class SKRotateGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKRotateGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks Rotation events are raised simultaneously with SKPinchGestureEventArgs when two or more touches are active. The RotationDelta is a per-event incremental angle change in degrees. To compute cumulative rotation, sum successive deltas or use the Rotation property. RotateDetected RotateDetected SKPinchGestureEventArgs Constructors SKRotateGestureEventArgs(SKPoint, SKPoint, float) Initializes a new instance of the SKRotateGestureEventArgs class. Properties FocalPoint Gets the current center point between the rotation fingers in view coordinates. PreviousFocalPoint Gets the center point between the rotation fingers from the previous event. RotationDelta Gets the incremental rotation angle change since the previous event, in degrees."
   },
   "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.-ctor.html",
     "title": "Constructor SKScrollGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKScrollGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKScrollGestureEventArgs(SKPoint, float, float) public SKScrollGestureEventArgs(SKPoint location, float deltaX, float deltaY) Parameters location SKPoint deltaX float deltaY float"
+    "keywords": "Constructor SKScrollGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKScrollGestureEventArgs(SKPoint, float, float) Initializes a new instance of the SKScrollGestureEventArgs class. public SKScrollGestureEventArgs(SKPoint location, float deltaX, float deltaY) Parameters location SKPoint The position of the mouse cursor when the scroll occurred, in view coordinates. deltaX float The horizontal scroll delta. deltaY float The vertical scroll delta."
   },
   "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaX.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaX.html",
     "title": "Property DeltaX | SkiaSharp.Extended",
-    "keywords": "Property DeltaX Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DeltaX public float DeltaX { get; } Property Value float"
+    "keywords": "Property DeltaX Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DeltaX Gets the horizontal scroll delta. public float DeltaX { get; } Property Value float The horizontal scroll amount. Positive values typically indicate scrolling to the right."
   },
   "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY.html",
     "title": "Property DeltaY | SkiaSharp.Extended",
-    "keywords": "Property DeltaY Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DeltaY public float DeltaY { get; } Property Value float"
+    "keywords": "Property DeltaY Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll DeltaY Gets the vertical scroll delta. public float DeltaY { get; } Property Value float The vertical scroll amount. Positive values typically indicate scrolling up or zooming in. When IsScrollZoomEnabled is true, this value is multiplied by ScrollZoomFactor to determine the zoom change."
   },
   "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Location.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Location.html",
     "title": "Property Location | SkiaSharp.Extended",
-    "keywords": "Property Location Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Location public SKPoint Location { get; } Property Value SKPoint"
+    "keywords": "Property Location Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Location Gets the position of the mouse cursor when the scroll occurred, in view coordinates. public SKPoint Location { get; } Property Value SKPoint An SKPoint representing the mouse position at the time of the scroll."
   },
   "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.html",
     "title": "Class SKScrollGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKScrollGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKScrollGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKScrollGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKScrollGestureEventArgs(SKPoint, float, float) Properties DeltaX DeltaY Location"
+    "keywords": "Class SKScrollGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Provides data for a mouse scroll (wheel) gesture event. public class SKScrollGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKScrollGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks Scroll events are raised when the mouse wheel is rotated or a trackpad scroll gesture is performed. The SKGestureTracker uses DeltaY for scroll-wheel zoom when IsScrollZoomEnabled is true. Platform note: The sign convention for scroll deltas may vary by platform and input device. Typically, positive DeltaY indicates scrolling up (or zooming in), but this depends on the platform's scroll event normalization. Consumers should test on their target platforms to confirm the expected behavior. ScrollDetected ProcessMouseWheel(SKPoint, float, float) ScrollDetected Constructors SKScrollGestureEventArgs(SKPoint, float, float) Initializes a new instance of the SKScrollGestureEventArgs class. Properties DeltaX Gets the horizontal scroll delta. DeltaY Gets the vertical scroll delta. Location Gets the position of the mouse cursor when the scroll occurred, in view coordinates."
   },
   "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.-ctor.html",
     "title": "Constructor SKTapGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Constructor SKTapGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKTapGestureEventArgs(SKPoint, int) public SKTapGestureEventArgs(SKPoint location, int tapCount) Parameters location SKPoint tapCount int"
+    "keywords": "Constructor SKTapGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll SKTapGestureEventArgs(SKPoint, int) Initializes a new instance of the SKTapGestureEventArgs class. public SKTapGestureEventArgs(SKPoint location, int tapCount) Parameters location SKPoint The location of the tap in view coordinates. tapCount int The number of consecutive taps detected."
   },
   "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location.html",
     "title": "Property Location | SkiaSharp.Extended",
-    "keywords": "Property Location Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Location public SKPoint Location { get; } Property Value SKPoint"
+    "keywords": "Property Location Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Location Gets the location of the tap in view coordinates. public SKPoint Location { get; } Property Value SKPoint An SKPoint representing the position where the tap occurred."
   },
   "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount.html",
     "title": "Property TapCount | SkiaSharp.Extended",
-    "keywords": "Property TapCount Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll TapCount public int TapCount { get; } Property Value int"
+    "keywords": "Property TapCount Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll TapCount Gets the number of consecutive taps detected. public int TapCount { get; } Property Value int 1 for a single tap, 2 or greater for multi-tap gestures."
   },
   "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.html",
     "title": "Class SKTapGestureEventArgs | SkiaSharp.Extended",
-    "keywords": "Class SKTapGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKTapGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKTapGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKTapGestureEventArgs(SKPoint, int) Properties Location TapCount"
+    "keywords": "Class SKTapGestureEventArgs Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll Provides data for tap gesture events, including single and multi-tap interactions. public class SKTapGestureEventArgs : SKGestureEventArgs Inheritance object EventArgs SKGestureEventArgs SKTapGestureEventArgs Inherited Members SKGestureEventArgs.Handled EventArgs.Empty object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks This event argument is used by both TapDetected and DoubleTapDetected events. For single taps, TapCount is 1. For double taps, it is 2 or greater. The following example shows how to handle tap events: var tracker = new SKGestureTracker(); tracker.TapDetected += (sender, e) => { Console.WriteLine($\"Tapped at ({e.Location.X}, {e.Location.Y}), count: {e.TapCount}\"); }; tracker.DoubleTapDetected += (sender, e) => { // Set Handled to true to prevent the default double-tap zoom behavior. e.Handled = true; Console.WriteLine($\"Double-tapped at ({e.Location.X}, {e.Location.Y})\"); }; TapDetected DoubleTapDetected Constructors SKTapGestureEventArgs(SKPoint, int) Initializes a new instance of the SKTapGestureEventArgs class. Properties Location Gets the location of the tap in view coordinates. TapCount Gets the number of consecutive taps detected."
   },
   "api/SkiaSharp.Extended.Gestures.html": {
     "href": "api/SkiaSharp.Extended.Gestures.html",
     "title": "Namespace SkiaSharp.Extended.Gestures | SkiaSharp.Extended",
-    "keywords": "Namespace SkiaSharp.Extended.Gestures Classes SKDragGestureEventArgs SKFlingGestureEventArgs SKGestureDetector SKGestureDetectorOptions SKGestureEventArgs SKGestureLifecycleEventArgs SKGestureTracker SKGestureTrackerOptions SKHoverGestureEventArgs SKLongPressGestureEventArgs SKPanGestureEventArgs SKPinchGestureEventArgs SKRotateGestureEventArgs SKScrollGestureEventArgs SKTapGestureEventArgs"
+    "keywords": "Namespace SkiaSharp.Extended.Gestures Classes SKDragGestureEventArgs Provides data for drag gesture lifecycle events (DragStarted, DragUpdated, and DragEnded). SKFlingGestureEventArgs Provides data for fling gesture events, including the initial fling detection and per-frame animation updates. SKGestureDetector A platform-agnostic gesture recognition engine that detects taps, long presses, pan, pinch, rotation, and fling gestures from touch input. SKGestureDetectorOptions Configuration options for the SKGestureDetector gesture recognition engine. SKGestureEventArgs Base class for all gesture event arguments in the SkiaSharp gesture recognition system. SKGestureLifecycleEventArgs Provides data for gesture lifecycle events that indicate when a gesture interaction begins or ends. SKGestureTracker A high-level gesture handler that tracks touch input and maintains an absolute transform (scale, rotation, and offset) by consuming events from an internal SKGestureDetector. SKGestureTrackerOptions Configuration options for SKGestureTracker. Inherits gesture detection thresholds from SKGestureDetectorOptions and adds tracker-specific settings for transform limits, animation, and feature toggles. SKHoverGestureEventArgs Provides data for a hover (mouse move without contact) gesture event. SKLongPressGestureEventArgs Provides data for a long press gesture event. SKPanGestureEventArgs Provides data for a pan (single-finger drag) gesture event. SKPinchGestureEventArgs Provides data for a pinch (scale) gesture event detected from two or more simultaneous touches. SKRotateGestureEventArgs Provides data for a rotation gesture event detected from two simultaneous touches. SKScrollGestureEventArgs Provides data for a mouse scroll (wheel) gesture event. SKTapGestureEventArgs Provides data for tap gesture events, including single and multi-tap interactions."
   },
   "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html": {
     "href": "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html",

@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides data for a mouse scroll (wheel) gesture event.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,13 +157,26 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Scroll events are raised when the mouse wheel is rotated or a trackpad scroll gesture
+is performed. The <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.html">SKGestureTracker</a> uses <a class="xref" href="SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY.html#SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_DeltaY">DeltaY</a> for scroll-wheel zoom
+when <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.IsScrollZoomEnabled.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_IsScrollZoomEnabled">IsScrollZoomEnabled</a> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>.</p>
+<p><strong>Platform note:</strong> The sign convention for scroll deltas may vary by platform
+and input device. Typically, positive <a class="xref" href="SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY.html#SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_DeltaY">DeltaY</a> indicates scrolling up (or zooming in),
+but this depends on the platform's scroll event normalization. Consumers should test on their
+target platforms to confirm the expected behavior.</p>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.ScrollDetected.html">ScrollDetected</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessMouseWheel.html#SkiaSharp_Extended_Gestures_SKGestureDetector_ProcessMouseWheel_SkiaSharp_SKPoint_System_Single_System_Single_">ProcessMouseWheel(SKPoint, float, float)</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.ScrollDetected.html">ScrollDetected</a>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs__ctor_SkiaSharp_SKPoint_System_Single_System_Single_">SKScrollGestureEventArgs(SKPoint, float, float)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.html">SKScrollGestureEventArgs</a> class.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -170,15 +184,18 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaX.html#SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_DeltaX">DeltaX</a></dt>
-    <dd></dd>
+    <dd><p>Gets the horizontal scroll delta.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY.html#SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_DeltaY">DeltaY</a></dt>
-    <dd></dd>
+    <dd><p>Gets the vertical scroll delta.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_Location">Location</a></dt>
-    <dd></dd>
+    <dd><p>Gets the position of the mouse cursor when the scroll occurred, in view coordinates.</p>
+</dd>
   </dl>
 
 
@@ -202,7 +219,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

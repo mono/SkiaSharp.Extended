@@ -126,7 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTracker.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Gets the current pan offset in content coordinates.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -140,12 +141,18 @@
 <h4 class="section">Property Value</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
-  <dd></dd>
+  <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a> representing the translation offset applied after scale and rotation.</p>
+</dd>
 </dl>
 
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_Gestures_SKGestureTracker_Offset_remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>The offset is in content (post-scale, post-rotation) coordinate space, not screen space.
+Screen-space deltas are converted to content-space internally by accounting for the
+current <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Scale.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Scale">Scale</a> and <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Rotation.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Rotation">Rotation</a>.</p>
+</div>
 
 
 
@@ -169,7 +176,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

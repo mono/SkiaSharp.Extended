@@ -126,7 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKPanGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Gets the current velocity of the touch movement.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -140,12 +141,19 @@
 <h4 class="section">Property Value</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
-  <dd></dd>
+  <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a> where <code>X</code> and <code>Y</code> represent the velocity components
+in pixels per second. Positive X is rightward; positive Y is downward.</p>
+</dd>
 </dl>
 
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Velocity_remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>The velocity is computed from a time-weighted average of recent touch events by the
+internal <code>SKFlingTracker</code>. This value is also used to determine whether a fling
+gesture should be triggered when the touch is released.</p>
+</div>
 
 
 
@@ -169,7 +177,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

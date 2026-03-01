@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Base class for all gesture event arguments in the SkiaSharp gesture recognition system.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -166,6 +167,15 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKGestureEventArgs_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>All specific gesture event argument types (such as <a class="xref" href="SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.html">SKTapGestureEventArgs</a>,
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.html">SKPanGestureEventArgs</a>, and <a class="xref" href="SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.html">SKPinchGestureEventArgs</a>) derive from
+this class. The <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKGestureEventArgs_Handled">Handled</a> property allows event consumers to indicate that the
+gesture has been processed, preventing further default handling by the
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.html">SKGestureTracker</a>.</p>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.html">SKGestureDetector</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.html">SKGestureTracker</a>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
@@ -180,7 +190,8 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKGestureEventArgs_Handled">Handled</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets a value indicating whether the event has been handled.</p>
+</dd>
   </dl>
 
 
@@ -204,7 +215,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

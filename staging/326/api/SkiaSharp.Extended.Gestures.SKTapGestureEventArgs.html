@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides data for tap gesture events, including single and multi-tap interactions.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,13 +157,35 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>This event argument is used by both <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.TapDetected.html">TapDetected</a> and
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.DoubleTapDetected.html">DoubleTapDetected</a> events. For single taps, <a class="xref" href="SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount.html#SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_TapCount">TapCount</a>
+is <code>1</code>. For double taps, it is <code>2</code> or greater.</p>
+<example>
+<p>The following example shows how to handle tap events:</p>
+<pre><code class="lang-csharp">var tracker = new SKGestureTracker();
+tracker.TapDetected += (sender, e) =&gt;
+{
+    Console.WriteLine($"Tapped at ({e.Location.X}, {e.Location.Y}), count: {e.TapCount}");
+};
+tracker.DoubleTapDetected += (sender, e) =&gt;
+{
+    // Set Handled to true to prevent the default double-tap zoom behavior.
+    e.Handled = true;
+    Console.WriteLine($"Double-tapped at ({e.Location.X}, {e.Location.Y})");
+};</code></pre>
+</example>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.TapDetected.html">TapDetected</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.DoubleTapDetected.html">DoubleTapDetected</a>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKTapGestureEventArgs__ctor_SkiaSharp_SKPoint_System_Int32_">SKTapGestureEventArgs(SKPoint, int)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.html">SKTapGestureEventArgs</a> class.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -170,11 +193,13 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_Location">Location</a></dt>
-    <dd></dd>
+    <dd><p>Gets the location of the tap in view coordinates.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount.html#SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_TapCount">TapCount</a></dt>
-    <dd></dd>
+    <dd><p>Gets the number of consecutive taps detected.</p>
+</dd>
   </dl>
 
 
@@ -198,7 +223,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

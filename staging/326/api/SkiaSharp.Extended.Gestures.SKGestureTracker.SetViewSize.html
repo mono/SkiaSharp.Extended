@@ -126,7 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTracker.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Sets the view dimensions used for pivot and matrix calculations.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -136,9 +137,11 @@
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd></dd>
+  <dd><p>The width of the view in pixels.</p>
+</dd>
   <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd></dd>
+  <dd><p>The height of the view in pixels.</p>
+</dd>
 </dl>
 
 
@@ -148,6 +151,10 @@
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_Gestures_SKGestureTracker_SetViewSize_System_Single_System_Single__remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>This must be called (and updated on size changes) before reading <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Matrix.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Matrix">Matrix</a>,
+as the matrix pivots all transforms around the view center.</p>
+</div>
 
 
 
@@ -171,7 +178,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

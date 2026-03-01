@@ -126,7 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTracker.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Starts an animated zoom by the given multiplicative factor around a focal point.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -136,9 +137,11 @@
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>factor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd></dd>
+  <dd><p>The scale multiplier to apply (e.g., <code>2.0</code> to double the current zoom).</p>
+</dd>
   <dt><code>focalPoint</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
-  <dd></dd>
+  <dd><p>The point in view coordinates to zoom towards.</p>
+</dd>
 </dl>
 
 
@@ -148,6 +151,11 @@
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_Gestures_SKGestureTracker_ZoomTo_System_Single_SkiaSharp_SKPoint__remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>The animation uses a cubic-out easing curve and runs for
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration.html#SkiaSharp_Extended_Gestures_SKGestureTrackerOptions_ZoomAnimationDuration">ZoomAnimationDuration</a> milliseconds. Any previously
+running zoom animation is stopped before the new one begins.</p>
+</div>
 
 
 
@@ -171,7 +179,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>

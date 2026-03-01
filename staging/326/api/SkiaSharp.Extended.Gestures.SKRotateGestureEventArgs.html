@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides data for a rotation gesture event detected from two simultaneous touches.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,13 +157,23 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Rotation events are raised simultaneously with <a class="xref" href="SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.html">SKPinchGestureEventArgs</a> when
+two or more touches are active. The <a class="xref" href="SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta.html#SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs_RotationDelta">RotationDelta</a> is a per-event incremental
+angle change in degrees. To compute cumulative rotation, sum successive deltas or use the
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Rotation.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Rotation">Rotation</a> property.</p>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureDetector.RotateDetected.html">RotateDetected</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.RotateDetected.html">RotateDetected</a>
+<a class="xref" href="SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.html">SKPinchGestureEventArgs</a>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_System_Single_">SKRotateGestureEventArgs(SKPoint, SKPoint, float)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.html">SKRotateGestureEventArgs</a> class.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -170,15 +181,18 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint.html#SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs_FocalPoint">FocalPoint</a></dt>
-    <dd></dd>
+    <dd><p>Gets the current center point between the rotation fingers in view coordinates.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.PreviousFocalPoint.html#SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs_PreviousFocalPoint">PreviousFocalPoint</a></dt>
-    <dd></dd>
+    <dd><p>Gets the center point between the rotation fingers from the previous event.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta.html#SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs_RotationDelta">RotationDelta</a></dt>
-    <dd></dd>
+    <dd><p>Gets the incremental rotation angle change since the previous event, in degrees.</p>
+</dd>
   </dl>
 
 
@@ -202,7 +216,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · a903366
+          source: PR #326 · 4fa2ec8
         </div>
       </div>
     </footer>
