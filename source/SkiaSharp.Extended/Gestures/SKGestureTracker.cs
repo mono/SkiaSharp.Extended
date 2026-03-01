@@ -241,6 +241,15 @@ public class SKGestureTracker : IDisposable
 
 	#region Feature Toggles
 
+	/// <summary>Gets or sets whether tap detection is enabled.</summary>
+	public bool IsTapEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether double-tap detection is enabled.</summary>
+	public bool IsDoubleTapEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether long press detection is enabled.</summary>
+	public bool IsLongPressEnabled { get; set; } = true;
+
 	/// <summary>Gets or sets whether pan is enabled.</summary>
 	public bool IsPanEnabled { get; set; } = true;
 
@@ -258,6 +267,9 @@ public class SKGestureTracker : IDisposable
 
 	/// <summary>Gets or sets whether scroll-wheel zoom is enabled.</summary>
 	public bool IsScrollZoomEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether hover detection is enabled.</summary>
+	public bool IsHoverEnabled { get; set; } = true;
 
 	#endregion
 
@@ -454,10 +466,17 @@ public class SKGestureTracker : IDisposable
 	#region Engine Event Handlers
 
 	private void OnEngineTapDetected(object? s, SKTapGestureEventArgs e)
-		=> TapDetected?.Invoke(this, e);
+	{
+		if (!IsTapEnabled)
+			return;
+		TapDetected?.Invoke(this, e);
+	}
 
 	private void OnEngineDoubleTapDetected(object? s, SKTapGestureEventArgs e)
 	{
+		if (!IsDoubleTapEnabled)
+			return;
+
 		DoubleTapDetected?.Invoke(this, e);
 
 		// If the consumer handled the event (e.g. sticker selection), skip zoom
@@ -480,7 +499,11 @@ public class SKGestureTracker : IDisposable
 	}
 
 	private void OnEngineLongPressDetected(object? s, SKTapGestureEventArgs e)
-		=> LongPressDetected?.Invoke(this, e);
+	{
+		if (!IsLongPressEnabled)
+			return;
+		LongPressDetected?.Invoke(this, e);
+	}
 
 	private void OnEnginePanDetected(object? s, SKPanGestureEventArgs e)
 	{
@@ -567,7 +590,11 @@ public class SKGestureTracker : IDisposable
 	}
 
 	private void OnEngineHoverDetected(object? s, SKHoverGestureEventArgs e)
-		=> HoverDetected?.Invoke(this, e);
+	{
+		if (!IsHoverEnabled)
+			return;
+		HoverDetected?.Invoke(this, e);
+	}
 
 	private void OnEngineScrollDetected(object? s, SKScrollGestureEventArgs e)
 	{
