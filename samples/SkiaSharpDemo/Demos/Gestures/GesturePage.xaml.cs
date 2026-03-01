@@ -146,9 +146,6 @@ public partial class GesturePage : ContentPage
 		_canvasWidth = width;
 		_canvasHeight = height;
 
-		// Set view size in pixel coordinates (same space as touch and canvas)
-		_tracker.SetViewSize(width, height);
-
 		// Clear background
 		canvas.Clear(SKColors.White);
 

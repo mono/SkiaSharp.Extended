@@ -20,7 +20,6 @@ public class SKGestureTrackerTests
 		{
 			TimeProvider = () => _testTicks
 		};
-		tracker.SetViewSize(400, 400);
 		return tracker;
 	}
 
@@ -992,7 +991,6 @@ public class SKGestureTrackerTests
 		{
 			TimeProvider = () => _testTicks
 		};
-		tracker.SetViewSize(400, 400);
 
 		Assert.Equal(0.5f, tracker.Options.MinScale);
 		Assert.Equal(5f, tracker.Options.MaxScale);
@@ -1013,6 +1011,66 @@ public class SKGestureTrackerTests
 		Assert.Equal(0.1f, tracker.Options.ScrollZoomFactor);
 		Assert.Equal(8f, tracker.Options.TouchSlop);
 		Assert.Equal(40f, tracker.Options.DoubleTapSlop);
+	}
+
+	#endregion
+
+	#region SetScale / SetRotation Pivot Tests
+
+	[Fact]
+	public void SetScale_WithPivot_AdjustsOffset()
+	{
+		var tracker = CreateTracker();
+		var pivot = new SKPoint(100, 100);
+
+		// Map pivot before scale
+		var before = tracker.Matrix.MapPoint(pivot);
+
+		tracker.SetScale(2f, pivot);
+
+		// The pivot point should stay at the same screen location
+		var after = tracker.Matrix.MapPoint(pivot);
+		Assert.Equal(before.X, after.X, 1);
+		Assert.Equal(before.Y, after.Y, 1);
+	}
+
+	[Fact]
+	public void SetScale_WithoutPivot_ScalesFromOrigin()
+	{
+		var tracker = CreateTracker();
+
+		tracker.SetScale(2f);
+
+		Assert.Equal(2f, tracker.Scale);
+		Assert.Equal(SKPoint.Empty, tracker.Offset);
+	}
+
+	[Fact]
+	public void SetRotation_WithPivot_AdjustsOffset()
+	{
+		var tracker = CreateTracker();
+		var pivot = new SKPoint(100, 100);
+
+		var before = tracker.Matrix.MapPoint(pivot);
+
+		tracker.SetRotation(45f, pivot);
+
+		var after = tracker.Matrix.MapPoint(pivot);
+		Assert.Equal(before.X, after.X, 1);
+		Assert.Equal(before.Y, after.Y, 1);
+	}
+
+	[Fact]
+	public void Matrix_NoViewSize_StillWorks()
+	{
+		var tracker = CreateTracker();
+		tracker.SetTransform(scale: 1f, rotation: 0f, offset: new SKPoint(10, 20));
+
+		var m = tracker.Matrix;
+		// Point (0,0) should map to (10, 20) in screen space at scale 1
+		var origin = m.MapPoint(0, 0);
+		Assert.Equal(10, origin.X, 1);
+		Assert.Equal(20, origin.Y, 1);
 	}
 
 	#endregion
