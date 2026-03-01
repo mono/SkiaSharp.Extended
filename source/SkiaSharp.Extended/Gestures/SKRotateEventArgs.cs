@@ -10,22 +10,22 @@ public class SKRotateEventArgs : EventArgs
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
-	public SKRotateEventArgs(SKPoint center, SKPoint previousCenter, float rotationDelta)
+	public SKRotateEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float rotationDelta)
 	{
-		Center = center;
-		PreviousCenter = previousCenter;
+		FocalPoint = focalPoint;
+		PreviousFocalPoint = previousFocalPoint;
 		RotationDelta = rotationDelta;
 	}
 
 	/// <summary>
-	/// Gets the center point of rotation.
+	/// Gets the focal point (center of the rotation fingers).
 	/// </summary>
-	public SKPoint Center { get; }
+	public SKPoint FocalPoint { get; }
 
 	/// <summary>
-	/// Gets the previous center point of rotation.
+	/// Gets the previous focal point.
 	/// </summary>
-	public SKPoint PreviousCenter { get; }
+	public SKPoint PreviousFocalPoint { get; }
 
 	/// <summary>
 	/// Gets the rotation delta in degrees.

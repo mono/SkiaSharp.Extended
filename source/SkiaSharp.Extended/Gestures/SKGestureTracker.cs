@@ -527,15 +527,15 @@ public class SKGestureTracker : IDisposable
 		if (IsPanEnabled)
 		{
 			var panDelta = ScreenToContentDelta(
-				e.Center.X - e.PreviousCenter.X,
-				e.Center.Y - e.PreviousCenter.Y);
+				e.FocalPoint.X - e.PreviousFocalPoint.X,
+				e.FocalPoint.Y - e.PreviousFocalPoint.Y);
 			_offset = new SKPoint(_offset.X + panDelta.X, _offset.Y + panDelta.Y);
 		}
 
 		if (IsPinchEnabled)
 		{
 			var newScale = Clamp(_scale * e.Scale, MinScale, MaxScale);
-			AdjustOffsetForPivot(e.Center, _scale, newScale, _rotation, _rotation);
+			AdjustOffsetForPivot(e.FocalPoint, _scale, newScale, _rotation, _rotation);
 			_scale = newScale;
 		}
 
@@ -550,7 +550,7 @@ public class SKGestureTracker : IDisposable
 			return;
 
 		var newRotation = _rotation + e.RotationDelta;
-		AdjustOffsetForPivot(e.Center, _scale, _scale, _rotation, newRotation);
+		AdjustOffsetForPivot(e.FocalPoint, _scale, _scale, _rotation, newRotation);
 		_rotation = newRotation;
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}

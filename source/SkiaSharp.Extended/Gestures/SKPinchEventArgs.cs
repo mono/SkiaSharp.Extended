@@ -10,22 +10,22 @@ public class SKPinchEventArgs : EventArgs
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
-	public SKPinchEventArgs(SKPoint center, SKPoint previousCenter, float scale)
+	public SKPinchEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float scale)
 	{
-		Center = center;
-		PreviousCenter = previousCenter;
+		FocalPoint = focalPoint;
+		PreviousFocalPoint = previousFocalPoint;
 		Scale = scale;
 	}
 
 	/// <summary>
-	/// Gets the center point of the pinch.
+	/// Gets the focal point (center of the pinch fingers).
 	/// </summary>
-	public SKPoint Center { get; }
+	public SKPoint FocalPoint { get; }
 
 	/// <summary>
-	/// Gets the previous center point.
+	/// Gets the previous focal point.
 	/// </summary>
-	public SKPoint PreviousCenter { get; }
+	public SKPoint PreviousFocalPoint { get; }
 
 	/// <summary>
 	/// Gets the scale factor (1.0 = no change).
