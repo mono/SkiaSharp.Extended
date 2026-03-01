@@ -808,7 +808,7 @@ public class SKGestureEngineTests
 	{
 		var engine = CreateEngine();
 		SKPoint? center = null;
-		engine.PinchDetected += (s, e) => center = e.Center;
+		engine.PinchDetected += (s, e) => center = e.FocalPoint;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 		engine.ProcessTouchDown(2, new SKPoint(200, 100));
@@ -837,9 +837,9 @@ public class SKGestureEngineTests
 
 		Assert.NotNull(lastArgs);
 		// PreviousCenter should be from the intermediate state (after finger1 moved)
-		Assert.NotNull(lastArgs!.PreviousCenter);
+		Assert.NotNull(lastArgs!.PreviousFocalPoint);
 		// Center should be midpoint of final positions
-		Assert.Equal(170, lastArgs.Center.X, 0.1);
+		Assert.Equal(170, lastArgs.FocalPoint.X, 0.1);
 	}
 
 	[Fact]
@@ -900,10 +900,10 @@ public class SKGestureEngineTests
 		engine.ProcessTouchMove(2, new SKPoint(200, 50));
 
 		Assert.NotNull(lastArgs);
-		Assert.NotNull(lastArgs!.PreviousCenter);
+		Assert.NotNull(lastArgs!.PreviousFocalPoint);
 		// Center should be midpoint of final positions
-		Assert.Equal(150, lastArgs.Center.X, 0.1);
-		Assert.Equal(100, lastArgs.Center.Y, 0.1);
+		Assert.Equal(150, lastArgs.FocalPoint.X, 0.1);
+		Assert.Equal(100, lastArgs.FocalPoint.Y, 0.1);
 	}
 
 	[Fact]
@@ -911,7 +911,7 @@ public class SKGestureEngineTests
 	{
 		var engine = CreateEngine();
 		SKPoint? center = null;
-		engine.RotateDetected += (s, e) => center = e.Center;
+		engine.RotateDetected += (s, e) => center = e.FocalPoint;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 		engine.ProcessTouchDown(2, new SKPoint(200, 100));
