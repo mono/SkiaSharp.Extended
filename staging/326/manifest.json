@@ -55,7 +55,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta.html"
         }
       },
       "version": ""
@@ -65,7 +65,47 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY.html"
         }
       },
       "version": ""
@@ -102,40 +142,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.IsGestureActive.html"
         }
       },
       "version": ""
@@ -145,7 +155,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnRotateDetected.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded.html"
         }
       },
       "version": ""
@@ -155,7 +165,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Dispose.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Options.html"
         }
       },
       "version": ""
@@ -165,7 +175,117 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnTapDetected.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.TimeProvider.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.IsEnabled.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.TapDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.HoverDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.LongPressDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.PanDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.PinchDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.RotateDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.FlingDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.DoubleTapDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnScrollDetected.html"
         }
       },
       "version": ""
@@ -185,7 +305,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Reset.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnFlingDetected.html"
         }
       },
       "version": ""
@@ -195,7 +315,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnPanDetected.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnRotateDetected.html"
         }
       },
       "version": ""
@@ -215,7 +335,107 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnFlingDetected.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnPanDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ScrollDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnTapDetected.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Dispose.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessMouseWheel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchCancel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchUp.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchMove.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchDown.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.-ctor.html"
         }
       },
       "version": ""
@@ -235,7 +455,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnScrollDetected.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.GestureStarted.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Reset.html"
         }
       },
       "version": ""
@@ -256,236 +486,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.GestureEnded.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.GestureStarted.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ScrollDetected.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.HoverDetected.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.FlingDetected.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.RotateDetected.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.PinchDetected.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessMouseWheel.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.PanDetected.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.DoubleTapDetected.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.TapDetected.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.IsGestureActive.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.IsEnabled.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.TimeProvider.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.Options.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.LongPressDetected.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchCancel.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchMove.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchUp.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureDetector.ProcessTouchDown.html"
         }
       },
       "version": ""
@@ -605,7 +605,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Rotation.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.HoverDetected.html"
         }
       },
       "version": ""
@@ -615,7 +615,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsPanEnabled.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ScrollDetected.html"
         }
       },
       "version": ""
@@ -625,7 +625,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsLongPressEnabled.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureStarted.html"
         }
       },
       "version": ""
@@ -635,7 +635,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingFrameInterval.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureEnded.html"
         }
       },
       "version": ""
@@ -645,7 +645,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingMinVelocity.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.TransformChanged.html"
         }
       },
       "version": ""
@@ -655,7 +655,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingFriction.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.html"
         }
       },
       "version": ""
@@ -665,7 +665,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ScrollZoomFactor.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragUpdated.html"
         }
       },
       "version": ""
@@ -675,7 +675,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ZoomAnimationDuration.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragEnded.html"
         }
       },
       "version": ""
@@ -685,67 +685,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DoubleTapZoomFactor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.MaxScale.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.MinScale.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Matrix.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Offset.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapEnabled.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsTapEnabled.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Flinging.html"
         }
       },
       "version": ""
@@ -765,7 +705,37 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Flinging.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapEnabled.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragStarted.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsLongPressEnabled.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsScrollZoomEnabled.html"
         }
       },
       "version": ""
@@ -805,16 +775,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Scale.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapZoomEnabled.html"
         }
       },
@@ -825,7 +785,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsScrollZoomEnabled.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsTapEnabled.html"
         }
       },
       "version": ""
@@ -925,7 +885,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.RotateDetected.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsPanEnabled.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingFrameInterval.html"
         }
       },
       "version": ""
@@ -945,7 +915,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.HoverDetected.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingFriction.html"
         }
       },
       "version": ""
@@ -955,7 +925,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ScrollDetected.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Matrix.html"
         }
       },
       "version": ""
@@ -965,7 +935,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureStarted.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Offset.html"
         }
       },
       "version": ""
@@ -975,7 +945,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.GestureEnded.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Rotation.html"
         }
       },
       "version": ""
@@ -985,47 +955,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.TransformChanged.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragStarted.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragUpdated.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DragEnded.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Scale.html"
         }
       },
       "version": ""
@@ -1045,7 +975,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.StopZoomAnimation.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.LongPressDuration.html"
         }
       },
       "version": ""
@@ -1065,7 +995,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DoubleTapSlop.html"
         }
       },
       "version": ""
@@ -1075,7 +1005,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchDown.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.TouchSlop.html"
         }
       },
       "version": ""
@@ -1085,7 +1015,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchMove.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.RotateDetected.html"
         }
       },
       "version": ""
@@ -1095,7 +1025,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchUp.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsEnabled.html"
         }
       },
       "version": ""
@@ -1105,7 +1035,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchCancel.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.MinScale.html"
         }
       },
       "version": ""
@@ -1115,7 +1045,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessMouseWheel.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Options.html"
         }
       },
       "version": ""
@@ -1125,7 +1055,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.LongPressDuration.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Reset.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.StopFling.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.StopZoomAnimation.html"
         }
       },
       "version": ""
@@ -1155,7 +1105,57 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Reset.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessMouseWheel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchCancel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchUp.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchMove.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ProcessTouchDown.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.-ctor.html"
         }
       },
       "version": ""
@@ -1175,7 +1175,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.Options.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.MaxScale.html"
         }
       },
       "version": ""
@@ -1185,7 +1185,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsEnabled.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DoubleTapZoomFactor.html"
         }
       },
       "version": ""
@@ -1195,7 +1195,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.TouchSlop.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ZoomAnimationDuration.html"
         }
       },
       "version": ""
@@ -1205,7 +1205,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.DoubleTapSlop.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.ScrollZoomFactor.html"
         }
       },
       "version": ""
@@ -1215,7 +1215,57 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.StopFling.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.FlingMinVelocity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration.html"
         }
       },
       "version": ""
@@ -1255,56 +1305,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.DoubleTapZoomFactor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MaxScale.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.MinScale.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.FlingFrameInterval.html"
         }
       },
@@ -1325,6 +1325,16 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.-ctor.html"
         }
       },
@@ -1336,16 +1346,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.html"
         }
       },
       "version": ""
@@ -1375,7 +1375,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration.html"
         }
       },
       "version": ""
@@ -1385,7 +1385,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.html"
         }
       },
       "version": ""
@@ -1395,37 +1395,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.-ctor.html"
         }
       },
       "version": ""
@@ -1445,7 +1415,37 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta.html"
         }
       },
       "version": ""
@@ -1455,7 +1455,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.-ctor.html"
         }
       },
       "version": ""
@@ -1475,6 +1475,26 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.ScaleDelta.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint.html"
         }
       },
@@ -1482,20 +1502,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Scale.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.html"
         }
       },
       "version": ""
@@ -1525,27 +1535,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta.html"
         }
       },
       "version": ""
@@ -1585,7 +1585,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.html"
         }
       },
       "version": ""
@@ -1595,7 +1595,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.html"
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY.html"
         }
       },
       "version": ""
@@ -1606,6 +1606,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location.html"
         }
       },
       "version": ""
@@ -1632,30 +1642,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.Gestures.yml",
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.Gestures.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKBlurHash.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.DeserializeImage.html"
         }
       },
       "version": ""
@@ -1675,7 +1665,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKBlurHash.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.Serialize.html"
+          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.DeserializeImage.html"
         }
       },
       "version": ""
@@ -1692,90 +1682,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.SKBlurHash.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.PI.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateInterpolation.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CirclePoint.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.Area.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.Perimeter.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.PointAlong.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateRegularPolygonPath.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateTrianglePath.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateRegularStarPath.html"
+          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.Serialize.html"
         }
       },
       "version": ""
@@ -1795,7 +1705,97 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateRegularStarPath.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateRegularPolygonPath.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateRectanglePath.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateTrianglePath.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.PointAlong.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.Perimeter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.Area.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CirclePoint.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateInterpolation.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.PI.html"
         }
       },
       "version": ""
@@ -1865,27 +1865,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.To.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.Prepare.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.html"
         }
       },
       "version": ""
@@ -1905,16 +1885,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.MaxSegmentLength.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.From.html"
         }
       },
@@ -1925,17 +1895,37 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.To.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparer.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparer.Compare.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.MaxSegmentLength.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.Prepare.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.-ctor.html"
         }
       },
       "version": ""
@@ -1946,6 +1936,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.SKPixelComparer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparer.Compare.html"
         }
       },
       "version": ""
@@ -2025,7 +2025,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.html"
         }
       },
       "version": ""
@@ -2045,7 +2045,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.-ctor.html"
         }
       },
       "version": ""
@@ -2065,7 +2065,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiEmitterBoundsTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiEmitterBoundsTypeConverter.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiEmitterBoundsTypeConverter.-ctor.html"
         }
       },
       "version": ""
@@ -2075,7 +2075,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiEmitterBoundsTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiEmitterBoundsTypeConverter.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiEmitterBoundsTypeConverter.html"
         }
       },
       "version": ""
@@ -2085,7 +2085,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.ConvertFromStringCore.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.html"
         }
       },
       "version": ""
@@ -2105,7 +2105,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.ConvertFromStringCore.html"
         }
       },
       "version": ""
@@ -2115,7 +2115,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertToStringCore.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertFromStringCore.html"
         }
       },
       "version": ""
@@ -2145,7 +2145,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertFromStringCore.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertToStringCore.html"
         }
       },
       "version": ""
@@ -2155,7 +2155,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.CanConvertFrom.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.html"
         }
       },
       "version": ""
@@ -2165,7 +2165,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.CanConvertTo.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertToStringCore.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertFromStringCore.html"
         }
       },
       "version": ""
@@ -2195,7 +2205,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertFromStringCore.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.CanConvertTo.html"
         }
       },
       "version": ""
@@ -2205,17 +2215,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertToStringCore.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.CanConvertFrom.html"
         }
       },
       "version": ""
@@ -2235,7 +2235,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabled.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabledProperty.html"
         }
       },
       "version": ""
@@ -2255,7 +2265,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabled.html"
         }
       },
       "version": ""
@@ -2272,20 +2282,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabledProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.OnDraw.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.html"
         }
       },
       "version": ""
@@ -2305,17 +2305,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.OnDraw.html"
         }
       },
       "version": ""
@@ -2332,50 +2322,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsComplete.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticlesProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRateProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.-ctor.html"
         }
       },
       "version": ""
@@ -2395,6 +2345,36 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Stream.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsComplete.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Duration.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Infinite.html"
         }
       },
@@ -2405,7 +2385,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Stream.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles.html"
         }
       },
       "version": ""
@@ -2425,7 +2405,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Duration.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRateProperty.html"
         }
       },
       "version": ""
@@ -2475,57 +2455,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticlesProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Update.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Side.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Rect.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Point.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bounds.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.op_Implicit.html"
         }
       },
       "version": ""
@@ -2545,7 +2495,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bottom.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Side.html"
         }
       },
       "version": ""
@@ -2555,7 +2505,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bounds.html"
         }
       },
       "version": ""
@@ -2565,7 +2515,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Center.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Point.html"
         }
       },
       "version": ""
@@ -2575,7 +2525,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Right.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Rect.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Top.html"
         }
       },
       "version": ""
@@ -2595,7 +2555,47 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Top.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Right.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bottom.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Center.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.op_Implicit.html"
         }
       },
       "version": ""
@@ -2615,7 +2615,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatioProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.html"
         }
       },
       "version": ""
@@ -2635,7 +2635,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio.html"
         }
       },
       "version": ""
@@ -2645,7 +2645,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatioProperty.html"
         }
       },
       "version": ""
@@ -2715,16 +2715,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.-ctor.html"
         }
       },
@@ -2752,10 +2742,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.html"
         }
       },
       "version": ""
@@ -2766,6 +2756,36 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.HeightRatio.html"
         }
       },
       "version": ""
@@ -2802,26 +2822,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.HeightRatio.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.yml",
       "output": {
         ".html": {
@@ -2845,7 +2845,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.-ctor.html"
         }
       },
       "version": ""
@@ -2855,17 +2855,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.html"
         }
       },
       "version": ""
@@ -2876,6 +2866,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.html"
         }
       },
       "version": ""
@@ -2895,7 +2895,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.OnDraw.html"
         }
       },
       "version": ""
@@ -2905,7 +2905,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.OnDraw.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.-ctor.html"
         }
       },
       "version": ""
@@ -2915,57 +2915,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Gravity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.ColorsProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBoundsProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngle.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Colors.html"
         }
       },
       "version": ""
@@ -2976,6 +2926,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.StartAngle.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngle.html"
         }
       },
       "version": ""
@@ -3005,16 +2965,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Colors.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Emitter.html"
         }
       },
@@ -3025,57 +2975,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBounds.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsAnimationEnabled.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.UpdateEmitterBounds.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Draw.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Update.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.PhysicsProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterProperty.html"
         }
       },
       "version": ""
@@ -3095,7 +2995,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.StartAngleProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.PhysicsProperty.html"
         }
       },
       "version": ""
@@ -3105,7 +3005,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsComplete.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.ColorsProperty.html"
         }
       },
       "version": ""
@@ -3115,7 +3015,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.FadeOut.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBoundsProperty.html"
         }
       },
       "version": ""
@@ -3125,7 +3025,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Lifetime.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocity.html"
         }
       },
       "version": ""
@@ -3135,7 +3035,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumVelocity.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsAnimationEnabled.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBounds.html"
         }
       },
       "version": ""
@@ -3155,7 +3075,77 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngleProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumRotationVelocity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocityProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocityProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumRotationVelocityProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumRotationVelocityProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.StartAngleProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumVelocityProperty.html"
         }
       },
       "version": ""
@@ -3195,7 +3185,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsAnimationEnabledProperty.html"
         }
       },
       "version": ""
@@ -3215,6 +3205,16 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Update.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.LifetimeProperty.html"
         }
       },
@@ -3225,7 +3225,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumVelocityProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Draw.html"
         }
       },
       "version": ""
@@ -3235,7 +3235,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocity.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.UpdateEmitterBounds.html"
         }
       },
       "version": ""
@@ -3245,7 +3245,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumRotationVelocityProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumVelocity.html"
         }
       },
       "version": ""
@@ -3255,7 +3255,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumRotationVelocityProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Lifetime.html"
         }
       },
       "version": ""
@@ -3265,7 +3265,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocityProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.FadeOut.html"
         }
       },
       "version": ""
@@ -3275,7 +3275,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocityProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Gravity.html"
         }
       },
       "version": ""
@@ -3285,7 +3285,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngleProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsComplete.html"
         }
       },
       "version": ""
@@ -3295,7 +3295,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsAnimationEnabledProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.html"
         }
       },
       "version": ""
@@ -3316,6 +3316,26 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystemCollection.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.IsComplete.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.html"
         }
       },
       "version": ""
@@ -3375,47 +3395,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.IsComplete.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.Systems.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.LoadAnimationAsync.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.html"
         }
       },
       "version": ""
@@ -3455,6 +3435,16 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.FileProperty.html"
         }
       },
@@ -3462,10 +3452,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.LoadAnimationAsync.html"
         }
       },
       "version": ""
@@ -3496,6 +3486,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.IsLoaded.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.html"
         }
       },
       "version": ""
@@ -3535,26 +3535,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Size.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Duration.html"
         }
       },
@@ -3582,10 +3562,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.LoadAnimationAsync.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Size.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.-ctor.html"
         }
       },
       "version": ""
@@ -3605,47 +3595,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromFile.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromStream.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.OnSourceChanged.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.IsEmpty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.html"
         }
       },
       "version": ""
@@ -3665,7 +3615,57 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.IsEmpty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.OnSourceChanged.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromStream.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromFile.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.LoadAnimationAsync.html"
         }
       },
       "version": ""
@@ -3685,6 +3685,36 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCountProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatModeProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationSpeedProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationFailed.html"
         }
       },
@@ -3695,7 +3725,97 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.SourceProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.DurationProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationCompleted.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationLoaded.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.IsCompleteProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.Duration.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatMode.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCount.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.IsComplete.html"
         }
       },
       "version": ""
@@ -3725,6 +3845,16 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.ProgressProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.Source.html"
         }
       },
@@ -3735,57 +3865,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.Duration.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationCompleted.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.IsComplete.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCount.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatMode.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.Update.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.SourceProperty.html"
         }
       },
       "version": ""
@@ -3805,97 +3885,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationSpeedProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationLoaded.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatModeProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCountProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.IsCompleteProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.DurationProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.ProgressProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.LoadAnimationAsync.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.Update.html"
         }
       },
       "version": ""
@@ -3925,7 +3915,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.Stream.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.LoadAnimationAsync.html"
         }
       },
       "version": ""
@@ -3946,6 +3936,26 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.Stream.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.OnApplyTemplate.html"
         }
       },
       "version": ""
@@ -3992,20 +4002,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.OnApplyTemplate.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.Uri.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.LoadAnimationAsync.html"
         }
       },
       "version": ""
@@ -4025,7 +4025,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.LoadAnimationAsync.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.Uri.html"
         }
       },
       "version": ""
@@ -4035,7 +4035,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.UriProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.IsEmpty.html"
         }
       },
       "version": ""
@@ -4055,17 +4055,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.IsEmpty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.UriProperty.html"
         }
       },
       "version": ""
@@ -4076,6 +4066,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.-ctor.html"
         }
       },
       "version": ""
@@ -4105,7 +4105,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKSurfaceViewResources.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKSurfaceViewResources.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKSurfaceViewResources.html"
         }
       },
       "version": ""
@@ -4115,7 +4115,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKSurfaceViewResources.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKSurfaceViewResources.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKSurfaceViewResources.-ctor.html"
         }
       },
       "version": ""

@@ -210,7 +210,7 @@ tracker.LongPressDetected += (s, e) =&gt;
 <p>Two finger pinch gesture. The tracker automatically updates its internal scale, clamped to <code>MinScale</code>/<code>MaxScale</code>.</p>
 <pre><code class="lang-csharp">tracker.PinchDetected += (s, e) =&gt;
 {
-    // e.Scale — relative scale change (&gt;1 = spread, &lt;1 = pinch)
+    // e.ScaleDelta — relative scale change (&gt;1 = spread, &lt;1 = pinch)
     // e.FocalPoint — midpoint between the two fingers
     // e.PreviousFocalPoint — previous midpoint
 };
@@ -386,7 +386,7 @@ tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 9b98b4a
+          source: PR #326 · b69d8fc
         </div>
       </div>
     </footer>
