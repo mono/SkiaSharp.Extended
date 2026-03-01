@@ -139,7 +139,7 @@ Two finger pinch gesture. The tracker automatically updates its internal scale, 
 ```csharp
 tracker.PinchDetected += (s, e) =>
 {
-    // e.Scale — relative scale change (>1 = spread, <1 = pinch)
+    // e.ScaleDelta — relative scale change (>1 = spread, <1 = pinch)
     // e.FocalPoint — midpoint between the two fingers
     // e.PreviousFocalPoint — previous midpoint
 };

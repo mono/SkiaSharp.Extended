@@ -294,7 +294,7 @@ public class SKGestureDetectorTests
 	{
 		var engine = CreateEngine();
 		float? scale = null;
-		engine.PinchDetected += (s, e) => scale = e.Scale;
+		engine.PinchDetected += (s, e) => scale = e.ScaleDelta;
 
 		// Initial position: fingers 100 apart (100,100) and (200,100), center at (150,100), radius = 50
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
@@ -847,7 +847,7 @@ public class SKGestureDetectorTests
 	{
 		var engine = CreateEngine();
 		var scales = new List<float>();
-		engine.PinchDetected += (s, e) => scales.Add(e.Scale);
+		engine.PinchDetected += (s, e) => scales.Add(e.ScaleDelta);
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 		engine.ProcessTouchDown(2, new SKPoint(200, 100));
@@ -868,7 +868,7 @@ public class SKGestureDetectorTests
 	{
 		var engine = CreateEngine();
 		float? scale = null;
-		engine.PinchDetected += (s, e) => scale = e.Scale;
+		engine.PinchDetected += (s, e) => scale = e.ScaleDelta;
 
 		// Initial: 100 apart
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
@@ -1249,7 +1249,7 @@ public class SKGestureDetectorTests
 	{
 		var engine = CreateEngine();
 		float? scale = null;
-		engine.PinchDetected += (s, e) => scale = e.Scale;
+		engine.PinchDetected += (s, e) => scale = e.ScaleDelta;
 
 		// Both fingers at the same point
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
@@ -1361,7 +1361,7 @@ public class SKGestureDetectorTests
 	{
 		var engine = CreateEngine();
 		var scales = new List<float>();
-		engine.PinchDetected += (s, e) => scales.Add(e.Scale);
+		engine.PinchDetected += (s, e) => scales.Add(e.ScaleDelta);
 
 		// Start 2-finger pinch
 		engine.ProcessTouchDown(1, new SKPoint(100, 200));
