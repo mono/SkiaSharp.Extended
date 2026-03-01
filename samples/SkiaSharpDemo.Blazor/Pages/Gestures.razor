@@ -216,7 +216,7 @@
         _tracker.PinchDetected += OnPinch;
         _tracker.RotateDetected += OnRotate;
         _tracker.FlingDetected += OnFling;
-        _tracker.Flinging += OnFlinging;
+        _tracker.FlingUpdated += OnFlingUpdated;
         _tracker.FlingCompleted += OnFlingCompleted;
         _tracker.ScrollDetected += OnScroll;
         _tracker.HoverDetected += OnHover;
@@ -235,7 +235,7 @@
         _tracker.PinchDetected -= OnPinch;
         _tracker.RotateDetected -= OnRotate;
         _tracker.FlingDetected -= OnFling;
-        _tracker.Flinging -= OnFlinging;
+        _tracker.FlingUpdated -= OnFlingUpdated;
         _tracker.FlingCompleted -= OnFlingCompleted;
         _tracker.ScrollDetected -= OnScroll;
         _tracker.HoverDetected -= OnHover;
@@ -509,7 +509,7 @@
         _statusText = $"Flinging at {e.Speed:F0} px/s";
     }
 
-    private void OnFlinging(object? sender, SKFlingGestureEventArgs e)
+    private void OnFlingUpdated(object? sender, SKFlingGestureEventArgs e)
     {
         _statusText = $"Flinging... ({e.Speed:F0} px/s)";
     }

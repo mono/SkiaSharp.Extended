@@ -291,18 +291,18 @@ public class SKGestureTrackerTests
 	}
 
 	[Fact]
-	public async Task Fling_FiresFlingingEvents()
+	public async Task Fling_FiresFlingUpdatedEvents()
 	{
 		var tracker = CreateTracker();
 		tracker.FlingFrameInterval = 16;
-		var flingingCount = 0;
-		tracker.Flinging += (s, e) => flingingCount++;
+		var flingUpdatedCount = 0;
+		tracker.FlingUpdated += (s, e) => flingUpdatedCount++;
 
 		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
 
 		await Task.Delay(200);
 
-		Assert.True(flingingCount > 0, $"Flinging should have fired, count was {flingingCount}");
+		Assert.True(flingUpdatedCount > 0, $"FlingUpdated should have fired, count was {flingUpdatedCount}");
 		tracker.Dispose();
 	}
 
@@ -311,15 +311,15 @@ public class SKGestureTrackerTests
 	{
 		var tracker = CreateTracker();
 		tracker.FlingFrameInterval = 16;
-		var flingingFired = false;
-		tracker.Flinging += (s, e) => flingingFired = true;
+		var flingUpdatedFired = false;
+		tracker.FlingUpdated += (s, e) => flingUpdatedFired = true;
 
 		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
 		var offsetAfterSwipe = tracker.Offset;
 
 		await Task.Delay(200);
 
-		Assert.True(flingingFired, "Flinging event should have fired");
+		Assert.True(flingUpdatedFired, "FlingUpdated event should have fired");
 		Assert.True(tracker.Offset.X > offsetAfterSwipe.X || !tracker.IsFlinging,
 			$"Offset should move during fling or fling already completed");
 		tracker.Dispose();
