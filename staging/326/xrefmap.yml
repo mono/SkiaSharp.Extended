@@ -13,183 +13,183 @@ references:
   commentId: N:SkiaSharp.Extended.Gestures
   fullName: SkiaSharp.Extended.Gestures
   nameWithType: SkiaSharp.Extended.Gestures
-- uid: SkiaSharp.Extended.Gestures.SKDragEventArgs
-  name: SKDragEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKDragEventArgs.html
-  commentId: T:SkiaSharp.Extended.Gestures.SKDragEventArgs
-  fullName: SkiaSharp.Extended.Gestures.SKDragEventArgs
-  nameWithType: SKDragEventArgs
-- uid: SkiaSharp.Extended.Gestures.SKDragEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint)
-  name: SKDragEventArgs(SKPoint, SKPoint, SKPoint)
-  href: api/SkiaSharp.Extended.Gestures.SKDragEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKDragEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_
-  commentId: M:SkiaSharp.Extended.Gestures.SKDragEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint)
+- uid: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs
+  name: SKDragGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKDragGestureEventArgs
+  fullName: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs
+  nameWithType: SKDragGestureEventArgs
+- uid: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint)
+  name: SKDragGestureEventArgs(SKPoint, SKPoint, SKPoint)
+  href: api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_
+  commentId: M:SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint)
   name.vb: New(SKPoint, SKPoint, SKPoint)
-  fullName: SkiaSharp.Extended.Gestures.SKDragEventArgs.SKDragEventArgs(SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKDragEventArgs.New(SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint)
-  nameWithType: SKDragEventArgs.SKDragEventArgs(SKPoint, SKPoint, SKPoint)
-  nameWithType.vb: SKDragEventArgs.New(SKPoint, SKPoint, SKPoint)
-- uid: SkiaSharp.Extended.Gestures.SKDragEventArgs.#ctor*
-  name: SKDragEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKDragEventArgs.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKDragEventArgs.#ctor
+  fullName: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.SKDragGestureEventArgs(SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.New(SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint)
+  nameWithType: SKDragGestureEventArgs.SKDragGestureEventArgs(SKPoint, SKPoint, SKPoint)
+  nameWithType.vb: SKDragGestureEventArgs.New(SKPoint, SKPoint, SKPoint)
+- uid: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.#ctor*
+  name: SKDragGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.#ctor
   name.vb: New
-  fullName: SkiaSharp.Extended.Gestures.SKDragEventArgs.SKDragEventArgs
-  fullName.vb: SkiaSharp.Extended.Gestures.SKDragEventArgs.New
-  nameWithType: SKDragEventArgs.SKDragEventArgs
-  nameWithType.vb: SKDragEventArgs.New
-- uid: SkiaSharp.Extended.Gestures.SKDragEventArgs.CurrentLocation
+  fullName: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.SKDragGestureEventArgs
+  fullName.vb: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.New
+  nameWithType: SKDragGestureEventArgs.SKDragGestureEventArgs
+  nameWithType.vb: SKDragGestureEventArgs.New
+- uid: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation
   name: CurrentLocation
-  href: api/SkiaSharp.Extended.Gestures.SKDragEventArgs.CurrentLocation.html#SkiaSharp_Extended_Gestures_SKDragEventArgs_CurrentLocation
-  commentId: P:SkiaSharp.Extended.Gestures.SKDragEventArgs.CurrentLocation
-  fullName: SkiaSharp.Extended.Gestures.SKDragEventArgs.CurrentLocation
-  nameWithType: SKDragEventArgs.CurrentLocation
-- uid: SkiaSharp.Extended.Gestures.SKDragEventArgs.CurrentLocation*
+  href: api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_CurrentLocation
+  commentId: P:SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation
+  fullName: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation
+  nameWithType: SKDragGestureEventArgs.CurrentLocation
+- uid: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation*
   name: CurrentLocation
-  href: api/SkiaSharp.Extended.Gestures.SKDragEventArgs.CurrentLocation.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKDragEventArgs.CurrentLocation
-  fullName: SkiaSharp.Extended.Gestures.SKDragEventArgs.CurrentLocation
-  nameWithType: SKDragEventArgs.CurrentLocation
-- uid: SkiaSharp.Extended.Gestures.SKDragEventArgs.Delta
+  href: api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation
+  fullName: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation
+  nameWithType: SKDragGestureEventArgs.CurrentLocation
+- uid: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta
   name: Delta
-  href: api/SkiaSharp.Extended.Gestures.SKDragEventArgs.Delta.html#SkiaSharp_Extended_Gestures_SKDragEventArgs_Delta
-  commentId: P:SkiaSharp.Extended.Gestures.SKDragEventArgs.Delta
-  fullName: SkiaSharp.Extended.Gestures.SKDragEventArgs.Delta
-  nameWithType: SKDragEventArgs.Delta
-- uid: SkiaSharp.Extended.Gestures.SKDragEventArgs.Delta*
+  href: api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_Delta
+  commentId: P:SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta
+  fullName: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta
+  nameWithType: SKDragGestureEventArgs.Delta
+- uid: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta*
   name: Delta
-  href: api/SkiaSharp.Extended.Gestures.SKDragEventArgs.Delta.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKDragEventArgs.Delta
-  fullName: SkiaSharp.Extended.Gestures.SKDragEventArgs.Delta
-  nameWithType: SKDragEventArgs.Delta
-- uid: SkiaSharp.Extended.Gestures.SKDragEventArgs.Handled
+  href: api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta
+  fullName: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta
+  nameWithType: SKDragGestureEventArgs.Delta
+- uid: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Handled
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKDragEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKDragEventArgs_Handled
-  commentId: P:SkiaSharp.Extended.Gestures.SKDragEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKDragEventArgs.Handled
-  nameWithType: SKDragEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKDragEventArgs.Handled*
+  href: api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_Handled
+  commentId: P:SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Handled
+  nameWithType: SKDragGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Handled*
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKDragEventArgs.Handled.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKDragEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKDragEventArgs.Handled
-  nameWithType: SKDragEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKDragEventArgs.StartLocation
+  href: api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Handled.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Handled
+  nameWithType: SKDragGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation
   name: StartLocation
-  href: api/SkiaSharp.Extended.Gestures.SKDragEventArgs.StartLocation.html#SkiaSharp_Extended_Gestures_SKDragEventArgs_StartLocation
-  commentId: P:SkiaSharp.Extended.Gestures.SKDragEventArgs.StartLocation
-  fullName: SkiaSharp.Extended.Gestures.SKDragEventArgs.StartLocation
-  nameWithType: SKDragEventArgs.StartLocation
-- uid: SkiaSharp.Extended.Gestures.SKDragEventArgs.StartLocation*
+  href: api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_StartLocation
+  commentId: P:SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation
+  fullName: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation
+  nameWithType: SKDragGestureEventArgs.StartLocation
+- uid: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation*
   name: StartLocation
-  href: api/SkiaSharp.Extended.Gestures.SKDragEventArgs.StartLocation.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKDragEventArgs.StartLocation
-  fullName: SkiaSharp.Extended.Gestures.SKDragEventArgs.StartLocation
-  nameWithType: SKDragEventArgs.StartLocation
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs
-  name: SKFlingEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.html
-  commentId: T:SkiaSharp.Extended.Gestures.SKFlingEventArgs
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs
-  nameWithType: SKFlingEventArgs
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.#ctor(System.Single,System.Single)
-  name: SKFlingEventArgs(float, float)
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKFlingEventArgs__ctor_System_Single_System_Single_
-  commentId: M:SkiaSharp.Extended.Gestures.SKFlingEventArgs.#ctor(System.Single,System.Single)
+  href: api/SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation
+  fullName: SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation
+  nameWithType: SKDragGestureEventArgs.StartLocation
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs
+  name: SKFlingGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs
+  nameWithType: SKFlingGestureEventArgs
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.#ctor(System.Single,System.Single)
+  name: SKFlingGestureEventArgs(float, float)
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKFlingGestureEventArgs__ctor_System_Single_System_Single_
+  commentId: M:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.#ctor(System.Single,System.Single)
   name.vb: New(Single, Single)
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.SKFlingEventArgs(float, float)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKFlingEventArgs.New(Single, Single)
-  nameWithType: SKFlingEventArgs.SKFlingEventArgs(float, float)
-  nameWithType.vb: SKFlingEventArgs.New(Single, Single)
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.#ctor(System.Single,System.Single,System.Single,System.Single)
-  name: SKFlingEventArgs(float, float, float, float)
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKFlingEventArgs__ctor_System_Single_System_Single_System_Single_System_Single_
-  commentId: M:SkiaSharp.Extended.Gestures.SKFlingEventArgs.#ctor(System.Single,System.Single,System.Single,System.Single)
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.SKFlingGestureEventArgs(float, float)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.New(Single, Single)
+  nameWithType: SKFlingGestureEventArgs.SKFlingGestureEventArgs(float, float)
+  nameWithType.vb: SKFlingGestureEventArgs.New(Single, Single)
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.#ctor(System.Single,System.Single,System.Single,System.Single)
+  name: SKFlingGestureEventArgs(float, float, float, float)
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKFlingGestureEventArgs__ctor_System_Single_System_Single_System_Single_System_Single_
+  commentId: M:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.#ctor(System.Single,System.Single,System.Single,System.Single)
   name.vb: New(Single, Single, Single, Single)
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.SKFlingEventArgs(float, float, float, float)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKFlingEventArgs.New(Single, Single, Single, Single)
-  nameWithType: SKFlingEventArgs.SKFlingEventArgs(float, float, float, float)
-  nameWithType.vb: SKFlingEventArgs.New(Single, Single, Single, Single)
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.#ctor*
-  name: SKFlingEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingEventArgs.#ctor
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.SKFlingGestureEventArgs(float, float, float, float)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.New(Single, Single, Single, Single)
+  nameWithType: SKFlingGestureEventArgs.SKFlingGestureEventArgs(float, float, float, float)
+  nameWithType.vb: SKFlingGestureEventArgs.New(Single, Single, Single, Single)
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.#ctor*
+  name: SKFlingGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.#ctor
   name.vb: New
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.SKFlingEventArgs
-  fullName.vb: SkiaSharp.Extended.Gestures.SKFlingEventArgs.New
-  nameWithType: SKFlingEventArgs.SKFlingEventArgs
-  nameWithType.vb: SKFlingEventArgs.New
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaX
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.SKFlingGestureEventArgs
+  fullName.vb: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.New
+  nameWithType: SKFlingGestureEventArgs.SKFlingGestureEventArgs
+  nameWithType.vb: SKFlingGestureEventArgs.New
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaX
   name: DeltaX
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaX.html#SkiaSharp_Extended_Gestures_SKFlingEventArgs_DeltaX
-  commentId: P:SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaX
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaX
-  nameWithType: SKFlingEventArgs.DeltaX
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaX*
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaX.html#SkiaSharp_Extended_Gestures_SKFlingGestureEventArgs_DeltaX
+  commentId: P:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaX
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaX
+  nameWithType: SKFlingGestureEventArgs.DeltaX
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaX*
   name: DeltaX
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaX.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaX
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaX
-  nameWithType: SKFlingEventArgs.DeltaX
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaY
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaX.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaX
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaX
+  nameWithType: SKFlingGestureEventArgs.DeltaX
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY
   name: DeltaY
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaY.html#SkiaSharp_Extended_Gestures_SKFlingEventArgs_DeltaY
-  commentId: P:SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaY
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaY
-  nameWithType: SKFlingEventArgs.DeltaY
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaY*
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY.html#SkiaSharp_Extended_Gestures_SKFlingGestureEventArgs_DeltaY
+  commentId: P:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY
+  nameWithType: SKFlingGestureEventArgs.DeltaY
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY*
   name: DeltaY
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaY.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaY
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.DeltaY
-  nameWithType: SKFlingEventArgs.DeltaY
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.Handled
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.DeltaY
+  nameWithType: SKFlingGestureEventArgs.DeltaY
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Handled
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKFlingEventArgs_Handled
-  commentId: P:SkiaSharp.Extended.Gestures.SKFlingEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.Handled
-  nameWithType: SKFlingEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.Handled*
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKFlingGestureEventArgs_Handled
+  commentId: P:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Handled
+  nameWithType: SKFlingGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Handled*
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.Handled.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.Handled
-  nameWithType: SKFlingEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.Speed
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Handled.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Handled
+  nameWithType: SKFlingGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed
   name: Speed
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.Speed.html#SkiaSharp_Extended_Gestures_SKFlingEventArgs_Speed
-  commentId: P:SkiaSharp.Extended.Gestures.SKFlingEventArgs.Speed
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.Speed
-  nameWithType: SKFlingEventArgs.Speed
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.Speed*
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed.html#SkiaSharp_Extended_Gestures_SKFlingGestureEventArgs_Speed
+  commentId: P:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed
+  nameWithType: SKFlingGestureEventArgs.Speed
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed*
   name: Speed
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.Speed.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingEventArgs.Speed
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.Speed
-  nameWithType: SKFlingEventArgs.Speed
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityX
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.Speed
+  nameWithType: SKFlingGestureEventArgs.Speed
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityX
   name: VelocityX
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityX.html#SkiaSharp_Extended_Gestures_SKFlingEventArgs_VelocityX
-  commentId: P:SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityX
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityX
-  nameWithType: SKFlingEventArgs.VelocityX
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityX*
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityX.html#SkiaSharp_Extended_Gestures_SKFlingGestureEventArgs_VelocityX
+  commentId: P:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityX
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityX
+  nameWithType: SKFlingGestureEventArgs.VelocityX
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityX*
   name: VelocityX
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityX.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityX
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityX
-  nameWithType: SKFlingEventArgs.VelocityX
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityY
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityX.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityX
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityX
+  nameWithType: SKFlingGestureEventArgs.VelocityX
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY
   name: VelocityY
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityY.html#SkiaSharp_Extended_Gestures_SKFlingEventArgs_VelocityY
-  commentId: P:SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityY
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityY
-  nameWithType: SKFlingEventArgs.VelocityY
-- uid: SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityY*
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY.html#SkiaSharp_Extended_Gestures_SKFlingGestureEventArgs_VelocityY
+  commentId: P:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY
+  nameWithType: SKFlingGestureEventArgs.VelocityY
+- uid: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY*
   name: VelocityY
-  href: api/SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityY.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityY
-  fullName: SkiaSharp.Extended.Gestures.SKFlingEventArgs.VelocityY
-  nameWithType: SKFlingEventArgs.VelocityY
+  href: api/SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY
+  fullName: SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs.VelocityY
+  nameWithType: SKFlingGestureEventArgs.VelocityY
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine
   name: SKGestureEngine
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.html
@@ -295,108 +295,108 @@ references:
   commentId: E:SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.LongPressDetected
   nameWithType: SKGestureEngine.LongPressDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected(SkiaSharp.Extended.Gestures.SKTapEventArgs)
-  name: OnDoubleTapDetected(SKTapEventArgs)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnDoubleTapDetected_SkiaSharp_Extended_Gestures_SKTapEventArgs_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected(SkiaSharp.Extended.Gestures.SKTapEventArgs)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected(SkiaSharp.Extended.Gestures.SKTapEventArgs)
-  nameWithType: SKGestureEngine.OnDoubleTapDetected(SKTapEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
+  name: OnDoubleTapDetected(SKTapGestureEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnDoubleTapDetected_SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
+  nameWithType: SKGestureEngine.OnDoubleTapDetected(SKTapGestureEventArgs)
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected*
   name: OnDoubleTapDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected.html
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnDoubleTapDetected
   nameWithType: SKGestureEngine.OnDoubleTapDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected(SkiaSharp.Extended.Gestures.SKFlingEventArgs)
-  name: OnFlingDetected(SKFlingEventArgs)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnFlingDetected_SkiaSharp_Extended_Gestures_SKFlingEventArgs_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected(SkiaSharp.Extended.Gestures.SKFlingEventArgs)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected(SkiaSharp.Extended.Gestures.SKFlingEventArgs)
-  nameWithType: SKGestureEngine.OnFlingDetected(SKFlingEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected(SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs)
+  name: OnFlingDetected(SKFlingGestureEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnFlingDetected_SkiaSharp_Extended_Gestures_SKFlingGestureEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected(SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected(SkiaSharp.Extended.Gestures.SKFlingGestureEventArgs)
+  nameWithType: SKGestureEngine.OnFlingDetected(SKFlingGestureEventArgs)
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected*
   name: OnFlingDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected.html
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnFlingDetected
   nameWithType: SKGestureEngine.OnFlingDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected(SkiaSharp.Extended.Gestures.SKHoverEventArgs)
-  name: OnHoverDetected(SKHoverEventArgs)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnHoverDetected_SkiaSharp_Extended_Gestures_SKHoverEventArgs_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected(SkiaSharp.Extended.Gestures.SKHoverEventArgs)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected(SkiaSharp.Extended.Gestures.SKHoverEventArgs)
-  nameWithType: SKGestureEngine.OnHoverDetected(SKHoverEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected(SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs)
+  name: OnHoverDetected(SKHoverGestureEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnHoverDetected_SkiaSharp_Extended_Gestures_SKHoverGestureEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected(SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected(SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs)
+  nameWithType: SKGestureEngine.OnHoverDetected(SKHoverGestureEventArgs)
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected*
   name: OnHoverDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected.html
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnHoverDetected
   nameWithType: SKGestureEngine.OnHoverDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKTapEventArgs)
-  name: OnLongPressDetected(SKTapEventArgs)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnLongPressDetected_SkiaSharp_Extended_Gestures_SKTapEventArgs_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKTapEventArgs)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKTapEventArgs)
-  nameWithType: SKGestureEngine.OnLongPressDetected(SKTapEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
+  name: OnLongPressDetected(SKTapGestureEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnLongPressDetected_SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
+  nameWithType: SKGestureEngine.OnLongPressDetected(SKTapGestureEventArgs)
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected*
   name: OnLongPressDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected.html
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnLongPressDetected
   nameWithType: SKGestureEngine.OnLongPressDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected(SkiaSharp.Extended.Gestures.SKPanEventArgs)
-  name: OnPanDetected(SKPanEventArgs)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnPanDetected_SkiaSharp_Extended_Gestures_SKPanEventArgs_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected(SkiaSharp.Extended.Gestures.SKPanEventArgs)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected(SkiaSharp.Extended.Gestures.SKPanEventArgs)
-  nameWithType: SKGestureEngine.OnPanDetected(SKPanEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected(SkiaSharp.Extended.Gestures.SKPanGestureEventArgs)
+  name: OnPanDetected(SKPanGestureEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnPanDetected_SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected(SkiaSharp.Extended.Gestures.SKPanGestureEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected(SkiaSharp.Extended.Gestures.SKPanGestureEventArgs)
+  nameWithType: SKGestureEngine.OnPanDetected(SKPanGestureEventArgs)
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected*
   name: OnPanDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected.html
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPanDetected
   nameWithType: SKGestureEngine.OnPanDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected(SkiaSharp.Extended.Gestures.SKPinchEventArgs)
-  name: OnPinchDetected(SKPinchEventArgs)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnPinchDetected_SkiaSharp_Extended_Gestures_SKPinchEventArgs_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected(SkiaSharp.Extended.Gestures.SKPinchEventArgs)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected(SkiaSharp.Extended.Gestures.SKPinchEventArgs)
-  nameWithType: SKGestureEngine.OnPinchDetected(SKPinchEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected(SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs)
+  name: OnPinchDetected(SKPinchGestureEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnPinchDetected_SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected(SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected(SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs)
+  nameWithType: SKGestureEngine.OnPinchDetected(SKPinchGestureEventArgs)
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected*
   name: OnPinchDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected.html
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnPinchDetected
   nameWithType: SKGestureEngine.OnPinchDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected(SkiaSharp.Extended.Gestures.SKRotateEventArgs)
-  name: OnRotateDetected(SKRotateEventArgs)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnRotateDetected_SkiaSharp_Extended_Gestures_SKRotateEventArgs_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected(SkiaSharp.Extended.Gestures.SKRotateEventArgs)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected(SkiaSharp.Extended.Gestures.SKRotateEventArgs)
-  nameWithType: SKGestureEngine.OnRotateDetected(SKRotateEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected(SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs)
+  name: OnRotateDetected(SKRotateGestureEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnRotateDetected_SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected(SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected(SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs)
+  nameWithType: SKGestureEngine.OnRotateDetected(SKRotateGestureEventArgs)
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected*
   name: OnRotateDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected.html
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnRotateDetected
   nameWithType: SKGestureEngine.OnRotateDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected(SkiaSharp.Extended.Gestures.SKScrollEventArgs)
-  name: OnScrollDetected(SKScrollEventArgs)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnScrollDetected_SkiaSharp_Extended_Gestures_SKScrollEventArgs_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected(SkiaSharp.Extended.Gestures.SKScrollEventArgs)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected(SkiaSharp.Extended.Gestures.SKScrollEventArgs)
-  nameWithType: SKGestureEngine.OnScrollDetected(SKScrollEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected(SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs)
+  name: OnScrollDetected(SKScrollGestureEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnScrollDetected_SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected(SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected(SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs)
+  nameWithType: SKGestureEngine.OnScrollDetected(SKScrollGestureEventArgs)
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected*
   name: OnScrollDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected.html
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnScrollDetected
   nameWithType: SKGestureEngine.OnScrollDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected(SkiaSharp.Extended.Gestures.SKTapEventArgs)
-  name: OnTapDetected(SKTapEventArgs)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnTapDetected_SkiaSharp_Extended_Gestures_SKTapEventArgs_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected(SkiaSharp.Extended.Gestures.SKTapEventArgs)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected(SkiaSharp.Extended.Gestures.SKTapEventArgs)
-  nameWithType: SKGestureEngine.OnTapDetected(SKTapEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
+  name: OnTapDetected(SKTapGestureEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected.html#SkiaSharp_Extended_Gestures_SKGestureEngine_OnTapDetected_SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
+  nameWithType: SKGestureEngine.OnTapDetected(SKTapGestureEventArgs)
 - uid: SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected*
   name: OnTapDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureEngine.OnTapDetected.html
@@ -1360,414 +1360,414 @@ references:
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration
   fullName: SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.ZoomAnimationDuration
   nameWithType: SKGestureTrackerOptions.ZoomAnimationDuration
-- uid: SkiaSharp.Extended.Gestures.SKHoverEventArgs
-  name: SKHoverEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKHoverEventArgs.html
-  commentId: T:SkiaSharp.Extended.Gestures.SKHoverEventArgs
-  fullName: SkiaSharp.Extended.Gestures.SKHoverEventArgs
-  nameWithType: SKHoverEventArgs
-- uid: SkiaSharp.Extended.Gestures.SKHoverEventArgs.#ctor(SkiaSharp.SKPoint)
-  name: SKHoverEventArgs(SKPoint)
-  href: api/SkiaSharp.Extended.Gestures.SKHoverEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKHoverEventArgs__ctor_SkiaSharp_SKPoint_
-  commentId: M:SkiaSharp.Extended.Gestures.SKHoverEventArgs.#ctor(SkiaSharp.SKPoint)
+- uid: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs
+  name: SKHoverGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs
+  fullName: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs
+  nameWithType: SKHoverGestureEventArgs
+- uid: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.#ctor(SkiaSharp.SKPoint)
+  name: SKHoverGestureEventArgs(SKPoint)
+  href: api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKHoverGestureEventArgs__ctor_SkiaSharp_SKPoint_
+  commentId: M:SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.#ctor(SkiaSharp.SKPoint)
   name.vb: New(SKPoint)
-  fullName: SkiaSharp.Extended.Gestures.SKHoverEventArgs.SKHoverEventArgs(SkiaSharp.SKPoint)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKHoverEventArgs.New(SkiaSharp.SKPoint)
-  nameWithType: SKHoverEventArgs.SKHoverEventArgs(SKPoint)
-  nameWithType.vb: SKHoverEventArgs.New(SKPoint)
-- uid: SkiaSharp.Extended.Gestures.SKHoverEventArgs.#ctor*
-  name: SKHoverEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKHoverEventArgs.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKHoverEventArgs.#ctor
+  fullName: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.SKHoverGestureEventArgs(SkiaSharp.SKPoint)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.New(SkiaSharp.SKPoint)
+  nameWithType: SKHoverGestureEventArgs.SKHoverGestureEventArgs(SKPoint)
+  nameWithType.vb: SKHoverGestureEventArgs.New(SKPoint)
+- uid: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.#ctor*
+  name: SKHoverGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.#ctor
   name.vb: New
-  fullName: SkiaSharp.Extended.Gestures.SKHoverEventArgs.SKHoverEventArgs
-  fullName.vb: SkiaSharp.Extended.Gestures.SKHoverEventArgs.New
-  nameWithType: SKHoverEventArgs.SKHoverEventArgs
-  nameWithType.vb: SKHoverEventArgs.New
-- uid: SkiaSharp.Extended.Gestures.SKHoverEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.SKHoverGestureEventArgs
+  fullName.vb: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.New
+  nameWithType: SKHoverGestureEventArgs.SKHoverGestureEventArgs
+  nameWithType.vb: SKHoverGestureEventArgs.New
+- uid: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Handled
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKHoverEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKHoverEventArgs_Handled
-  commentId: P:SkiaSharp.Extended.Gestures.SKHoverEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKHoverEventArgs.Handled
-  nameWithType: SKHoverEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKHoverEventArgs.Handled*
+  href: api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKHoverGestureEventArgs_Handled
+  commentId: P:SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Handled
+  nameWithType: SKHoverGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Handled*
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKHoverEventArgs.Handled.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKHoverEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKHoverEventArgs.Handled
-  nameWithType: SKHoverEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKHoverEventArgs.Location
+  href: api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Handled.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Handled
+  nameWithType: SKHoverGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location
   name: Location
-  href: api/SkiaSharp.Extended.Gestures.SKHoverEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKHoverEventArgs_Location
-  commentId: P:SkiaSharp.Extended.Gestures.SKHoverEventArgs.Location
-  fullName: SkiaSharp.Extended.Gestures.SKHoverEventArgs.Location
-  nameWithType: SKHoverEventArgs.Location
-- uid: SkiaSharp.Extended.Gestures.SKHoverEventArgs.Location*
+  href: api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKHoverGestureEventArgs_Location
+  commentId: P:SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location
+  fullName: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location
+  nameWithType: SKHoverGestureEventArgs.Location
+- uid: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location*
   name: Location
-  href: api/SkiaSharp.Extended.Gestures.SKHoverEventArgs.Location.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKHoverEventArgs.Location
-  fullName: SkiaSharp.Extended.Gestures.SKHoverEventArgs.Location
-  nameWithType: SKHoverEventArgs.Location
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs
-  name: SKPanEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.html
-  commentId: T:SkiaSharp.Extended.Gestures.SKPanEventArgs
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs
-  nameWithType: SKPanEventArgs
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint)
-  name: SKPanEventArgs(SKPoint, SKPoint, SKPoint, SKPoint)
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKPanEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_
-  commentId: M:SkiaSharp.Extended.Gestures.SKPanEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint)
+  href: api/SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location
+  fullName: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location
+  nameWithType: SKHoverGestureEventArgs.Location
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs
+  name: SKPanGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs
+  nameWithType: SKPanGestureEventArgs
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint)
+  name: SKPanGestureEventArgs(SKPoint, SKPoint, SKPoint, SKPoint)
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_
+  commentId: M:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint)
   name.vb: New(SKPoint, SKPoint, SKPoint, SKPoint)
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.SKPanEventArgs(SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKPanEventArgs.New(SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint)
-  nameWithType: SKPanEventArgs.SKPanEventArgs(SKPoint, SKPoint, SKPoint, SKPoint)
-  nameWithType.vb: SKPanEventArgs.New(SKPoint, SKPoint, SKPoint, SKPoint)
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.#ctor*
-  name: SKPanEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanEventArgs.#ctor
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.SKPanGestureEventArgs(SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.New(SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint, SkiaSharp.SKPoint)
+  nameWithType: SKPanGestureEventArgs.SKPanGestureEventArgs(SKPoint, SKPoint, SKPoint, SKPoint)
+  nameWithType.vb: SKPanGestureEventArgs.New(SKPoint, SKPoint, SKPoint, SKPoint)
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.#ctor*
+  name: SKPanGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.#ctor
   name.vb: New
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.SKPanEventArgs
-  fullName.vb: SkiaSharp.Extended.Gestures.SKPanEventArgs.New
-  nameWithType: SKPanEventArgs.SKPanEventArgs
-  nameWithType.vb: SKPanEventArgs.New
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.Delta
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.SKPanGestureEventArgs
+  fullName.vb: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.New
+  nameWithType: SKPanGestureEventArgs.SKPanGestureEventArgs
+  nameWithType.vb: SKPanGestureEventArgs.New
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta
   name: Delta
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.Delta.html#SkiaSharp_Extended_Gestures_SKPanEventArgs_Delta
-  commentId: P:SkiaSharp.Extended.Gestures.SKPanEventArgs.Delta
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.Delta
-  nameWithType: SKPanEventArgs.Delta
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.Delta*
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Delta
+  commentId: P:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta
+  nameWithType: SKPanGestureEventArgs.Delta
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta*
   name: Delta
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.Delta.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanEventArgs.Delta
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.Delta
-  nameWithType: SKPanEventArgs.Delta
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.Handled
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Delta
+  nameWithType: SKPanGestureEventArgs.Delta
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKPanEventArgs_Handled
-  commentId: P:SkiaSharp.Extended.Gestures.SKPanEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.Handled
-  nameWithType: SKPanEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.Handled*
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Handled
+  commentId: P:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled
+  nameWithType: SKPanGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled*
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.Handled.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.Handled
-  nameWithType: SKPanEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.Location
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled
+  nameWithType: SKPanGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location
   name: Location
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKPanEventArgs_Location
-  commentId: P:SkiaSharp.Extended.Gestures.SKPanEventArgs.Location
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.Location
-  nameWithType: SKPanEventArgs.Location
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.Location*
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Location
+  commentId: P:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location
+  nameWithType: SKPanGestureEventArgs.Location
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location*
   name: Location
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.Location.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanEventArgs.Location
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.Location
-  nameWithType: SKPanEventArgs.Location
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.PreviousLocation
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location
+  nameWithType: SKPanGestureEventArgs.Location
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation
   name: PreviousLocation
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.PreviousLocation.html#SkiaSharp_Extended_Gestures_SKPanEventArgs_PreviousLocation
-  commentId: P:SkiaSharp.Extended.Gestures.SKPanEventArgs.PreviousLocation
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.PreviousLocation
-  nameWithType: SKPanEventArgs.PreviousLocation
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.PreviousLocation*
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_PreviousLocation
+  commentId: P:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation
+  nameWithType: SKPanGestureEventArgs.PreviousLocation
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation*
   name: PreviousLocation
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.PreviousLocation.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanEventArgs.PreviousLocation
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.PreviousLocation
-  nameWithType: SKPanEventArgs.PreviousLocation
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.Velocity
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.PreviousLocation
+  nameWithType: SKPanGestureEventArgs.PreviousLocation
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity
   name: Velocity
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.Velocity.html#SkiaSharp_Extended_Gestures_SKPanEventArgs_Velocity
-  commentId: P:SkiaSharp.Extended.Gestures.SKPanEventArgs.Velocity
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.Velocity
-  nameWithType: SKPanEventArgs.Velocity
-- uid: SkiaSharp.Extended.Gestures.SKPanEventArgs.Velocity*
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Velocity
+  commentId: P:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity
+  nameWithType: SKPanGestureEventArgs.Velocity
+- uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity*
   name: Velocity
-  href: api/SkiaSharp.Extended.Gestures.SKPanEventArgs.Velocity.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanEventArgs.Velocity
-  fullName: SkiaSharp.Extended.Gestures.SKPanEventArgs.Velocity
-  nameWithType: SKPanEventArgs.Velocity
-- uid: SkiaSharp.Extended.Gestures.SKPinchEventArgs
-  name: SKPinchEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.html
-  commentId: T:SkiaSharp.Extended.Gestures.SKPinchEventArgs
-  fullName: SkiaSharp.Extended.Gestures.SKPinchEventArgs
-  nameWithType: SKPinchEventArgs
-- uid: SkiaSharp.Extended.Gestures.SKPinchEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,System.Single)
-  name: SKPinchEventArgs(SKPoint, SKPoint, float)
-  href: api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKPinchEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_System_Single_
-  commentId: M:SkiaSharp.Extended.Gestures.SKPinchEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,System.Single)
+  href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity
+  fullName: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Velocity
+  nameWithType: SKPanGestureEventArgs.Velocity
+- uid: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs
+  name: SKPinchGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs
+  fullName: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs
+  nameWithType: SKPinchGestureEventArgs
+- uid: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,System.Single)
+  name: SKPinchGestureEventArgs(SKPoint, SKPoint, float)
+  href: api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_System_Single_
+  commentId: M:SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,System.Single)
   name.vb: New(SKPoint, SKPoint, Single)
-  fullName: SkiaSharp.Extended.Gestures.SKPinchEventArgs.SKPinchEventArgs(SkiaSharp.SKPoint, SkiaSharp.SKPoint, float)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKPinchEventArgs.New(SkiaSharp.SKPoint, SkiaSharp.SKPoint, Single)
-  nameWithType: SKPinchEventArgs.SKPinchEventArgs(SKPoint, SKPoint, float)
-  nameWithType.vb: SKPinchEventArgs.New(SKPoint, SKPoint, Single)
-- uid: SkiaSharp.Extended.Gestures.SKPinchEventArgs.#ctor*
-  name: SKPinchEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKPinchEventArgs.#ctor
+  fullName: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.SKPinchGestureEventArgs(SkiaSharp.SKPoint, SkiaSharp.SKPoint, float)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.New(SkiaSharp.SKPoint, SkiaSharp.SKPoint, Single)
+  nameWithType: SKPinchGestureEventArgs.SKPinchGestureEventArgs(SKPoint, SKPoint, float)
+  nameWithType.vb: SKPinchGestureEventArgs.New(SKPoint, SKPoint, Single)
+- uid: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.#ctor*
+  name: SKPinchGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.#ctor
   name.vb: New
-  fullName: SkiaSharp.Extended.Gestures.SKPinchEventArgs.SKPinchEventArgs
-  fullName.vb: SkiaSharp.Extended.Gestures.SKPinchEventArgs.New
-  nameWithType: SKPinchEventArgs.SKPinchEventArgs
-  nameWithType.vb: SKPinchEventArgs.New
-- uid: SkiaSharp.Extended.Gestures.SKPinchEventArgs.FocalPoint
+  fullName: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.SKPinchGestureEventArgs
+  fullName.vb: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.New
+  nameWithType: SKPinchGestureEventArgs.SKPinchGestureEventArgs
+  nameWithType.vb: SKPinchGestureEventArgs.New
+- uid: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.FocalPoint
   name: FocalPoint
-  href: api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.FocalPoint.html#SkiaSharp_Extended_Gestures_SKPinchEventArgs_FocalPoint
-  commentId: P:SkiaSharp.Extended.Gestures.SKPinchEventArgs.FocalPoint
-  fullName: SkiaSharp.Extended.Gestures.SKPinchEventArgs.FocalPoint
-  nameWithType: SKPinchEventArgs.FocalPoint
-- uid: SkiaSharp.Extended.Gestures.SKPinchEventArgs.FocalPoint*
+  href: api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.FocalPoint.html#SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_FocalPoint
+  commentId: P:SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.FocalPoint
+  fullName: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.FocalPoint
+  nameWithType: SKPinchGestureEventArgs.FocalPoint
+- uid: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.FocalPoint*
   name: FocalPoint
-  href: api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.FocalPoint.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKPinchEventArgs.FocalPoint
-  fullName: SkiaSharp.Extended.Gestures.SKPinchEventArgs.FocalPoint
-  nameWithType: SKPinchEventArgs.FocalPoint
-- uid: SkiaSharp.Extended.Gestures.SKPinchEventArgs.Handled
+  href: api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.FocalPoint.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.FocalPoint
+  fullName: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.FocalPoint
+  nameWithType: SKPinchGestureEventArgs.FocalPoint
+- uid: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Handled
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKPinchEventArgs_Handled
-  commentId: P:SkiaSharp.Extended.Gestures.SKPinchEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKPinchEventArgs.Handled
-  nameWithType: SKPinchEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKPinchEventArgs.Handled*
+  href: api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_Handled
+  commentId: P:SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Handled
+  nameWithType: SKPinchGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Handled*
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.Handled.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKPinchEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKPinchEventArgs.Handled
-  nameWithType: SKPinchEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousFocalPoint
+  href: api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Handled.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Handled
+  nameWithType: SKPinchGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint
   name: PreviousFocalPoint
-  href: api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousFocalPoint.html#SkiaSharp_Extended_Gestures_SKPinchEventArgs_PreviousFocalPoint
-  commentId: P:SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousFocalPoint
-  fullName: SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousFocalPoint
-  nameWithType: SKPinchEventArgs.PreviousFocalPoint
-- uid: SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousFocalPoint*
+  href: api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint.html#SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_PreviousFocalPoint
+  commentId: P:SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint
+  fullName: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint
+  nameWithType: SKPinchGestureEventArgs.PreviousFocalPoint
+- uid: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint*
   name: PreviousFocalPoint
-  href: api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousFocalPoint.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousFocalPoint
-  fullName: SkiaSharp.Extended.Gestures.SKPinchEventArgs.PreviousFocalPoint
-  nameWithType: SKPinchEventArgs.PreviousFocalPoint
-- uid: SkiaSharp.Extended.Gestures.SKPinchEventArgs.Scale
+  href: api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint
+  fullName: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.PreviousFocalPoint
+  nameWithType: SKPinchGestureEventArgs.PreviousFocalPoint
+- uid: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Scale
   name: Scale
-  href: api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.Scale.html#SkiaSharp_Extended_Gestures_SKPinchEventArgs_Scale
-  commentId: P:SkiaSharp.Extended.Gestures.SKPinchEventArgs.Scale
-  fullName: SkiaSharp.Extended.Gestures.SKPinchEventArgs.Scale
-  nameWithType: SKPinchEventArgs.Scale
-- uid: SkiaSharp.Extended.Gestures.SKPinchEventArgs.Scale*
+  href: api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Scale.html#SkiaSharp_Extended_Gestures_SKPinchGestureEventArgs_Scale
+  commentId: P:SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Scale
+  fullName: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Scale
+  nameWithType: SKPinchGestureEventArgs.Scale
+- uid: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Scale*
   name: Scale
-  href: api/SkiaSharp.Extended.Gestures.SKPinchEventArgs.Scale.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKPinchEventArgs.Scale
-  fullName: SkiaSharp.Extended.Gestures.SKPinchEventArgs.Scale
-  nameWithType: SKPinchEventArgs.Scale
-- uid: SkiaSharp.Extended.Gestures.SKRotateEventArgs
-  name: SKRotateEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.html
-  commentId: T:SkiaSharp.Extended.Gestures.SKRotateEventArgs
-  fullName: SkiaSharp.Extended.Gestures.SKRotateEventArgs
-  nameWithType: SKRotateEventArgs
-- uid: SkiaSharp.Extended.Gestures.SKRotateEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,System.Single)
-  name: SKRotateEventArgs(SKPoint, SKPoint, float)
-  href: api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKRotateEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_System_Single_
-  commentId: M:SkiaSharp.Extended.Gestures.SKRotateEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,System.Single)
+  href: api/SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Scale.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Scale
+  fullName: SkiaSharp.Extended.Gestures.SKPinchGestureEventArgs.Scale
+  nameWithType: SKPinchGestureEventArgs.Scale
+- uid: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs
+  name: SKRotateGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs
+  fullName: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs
+  nameWithType: SKRotateGestureEventArgs
+- uid: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,System.Single)
+  name: SKRotateGestureEventArgs(SKPoint, SKPoint, float)
+  href: api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_System_Single_
+  commentId: M:SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,System.Single)
   name.vb: New(SKPoint, SKPoint, Single)
-  fullName: SkiaSharp.Extended.Gestures.SKRotateEventArgs.SKRotateEventArgs(SkiaSharp.SKPoint, SkiaSharp.SKPoint, float)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKRotateEventArgs.New(SkiaSharp.SKPoint, SkiaSharp.SKPoint, Single)
-  nameWithType: SKRotateEventArgs.SKRotateEventArgs(SKPoint, SKPoint, float)
-  nameWithType.vb: SKRotateEventArgs.New(SKPoint, SKPoint, Single)
-- uid: SkiaSharp.Extended.Gestures.SKRotateEventArgs.#ctor*
-  name: SKRotateEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKRotateEventArgs.#ctor
+  fullName: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.SKRotateGestureEventArgs(SkiaSharp.SKPoint, SkiaSharp.SKPoint, float)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.New(SkiaSharp.SKPoint, SkiaSharp.SKPoint, Single)
+  nameWithType: SKRotateGestureEventArgs.SKRotateGestureEventArgs(SKPoint, SKPoint, float)
+  nameWithType.vb: SKRotateGestureEventArgs.New(SKPoint, SKPoint, Single)
+- uid: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.#ctor*
+  name: SKRotateGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.#ctor
   name.vb: New
-  fullName: SkiaSharp.Extended.Gestures.SKRotateEventArgs.SKRotateEventArgs
-  fullName.vb: SkiaSharp.Extended.Gestures.SKRotateEventArgs.New
-  nameWithType: SKRotateEventArgs.SKRotateEventArgs
-  nameWithType.vb: SKRotateEventArgs.New
-- uid: SkiaSharp.Extended.Gestures.SKRotateEventArgs.FocalPoint
+  fullName: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.SKRotateGestureEventArgs
+  fullName.vb: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.New
+  nameWithType: SKRotateGestureEventArgs.SKRotateGestureEventArgs
+  nameWithType.vb: SKRotateGestureEventArgs.New
+- uid: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint
   name: FocalPoint
-  href: api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.FocalPoint.html#SkiaSharp_Extended_Gestures_SKRotateEventArgs_FocalPoint
-  commentId: P:SkiaSharp.Extended.Gestures.SKRotateEventArgs.FocalPoint
-  fullName: SkiaSharp.Extended.Gestures.SKRotateEventArgs.FocalPoint
-  nameWithType: SKRotateEventArgs.FocalPoint
-- uid: SkiaSharp.Extended.Gestures.SKRotateEventArgs.FocalPoint*
+  href: api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint.html#SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs_FocalPoint
+  commentId: P:SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint
+  fullName: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint
+  nameWithType: SKRotateGestureEventArgs.FocalPoint
+- uid: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint*
   name: FocalPoint
-  href: api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.FocalPoint.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKRotateEventArgs.FocalPoint
-  fullName: SkiaSharp.Extended.Gestures.SKRotateEventArgs.FocalPoint
-  nameWithType: SKRotateEventArgs.FocalPoint
-- uid: SkiaSharp.Extended.Gestures.SKRotateEventArgs.Handled
+  href: api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint
+  fullName: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.FocalPoint
+  nameWithType: SKRotateGestureEventArgs.FocalPoint
+- uid: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.Handled
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKRotateEventArgs_Handled
-  commentId: P:SkiaSharp.Extended.Gestures.SKRotateEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKRotateEventArgs.Handled
-  nameWithType: SKRotateEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKRotateEventArgs.Handled*
+  href: api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs_Handled
+  commentId: P:SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.Handled
+  nameWithType: SKRotateGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.Handled*
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.Handled.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKRotateEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKRotateEventArgs.Handled
-  nameWithType: SKRotateEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousFocalPoint
+  href: api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.Handled.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.Handled
+  nameWithType: SKRotateGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.PreviousFocalPoint
   name: PreviousFocalPoint
-  href: api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousFocalPoint.html#SkiaSharp_Extended_Gestures_SKRotateEventArgs_PreviousFocalPoint
-  commentId: P:SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousFocalPoint
-  fullName: SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousFocalPoint
-  nameWithType: SKRotateEventArgs.PreviousFocalPoint
-- uid: SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousFocalPoint*
+  href: api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.PreviousFocalPoint.html#SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs_PreviousFocalPoint
+  commentId: P:SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.PreviousFocalPoint
+  fullName: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.PreviousFocalPoint
+  nameWithType: SKRotateGestureEventArgs.PreviousFocalPoint
+- uid: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.PreviousFocalPoint*
   name: PreviousFocalPoint
-  href: api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousFocalPoint.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousFocalPoint
-  fullName: SkiaSharp.Extended.Gestures.SKRotateEventArgs.PreviousFocalPoint
-  nameWithType: SKRotateEventArgs.PreviousFocalPoint
-- uid: SkiaSharp.Extended.Gestures.SKRotateEventArgs.RotationDelta
+  href: api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.PreviousFocalPoint.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.PreviousFocalPoint
+  fullName: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.PreviousFocalPoint
+  nameWithType: SKRotateGestureEventArgs.PreviousFocalPoint
+- uid: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta
   name: RotationDelta
-  href: api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.RotationDelta.html#SkiaSharp_Extended_Gestures_SKRotateEventArgs_RotationDelta
-  commentId: P:SkiaSharp.Extended.Gestures.SKRotateEventArgs.RotationDelta
-  fullName: SkiaSharp.Extended.Gestures.SKRotateEventArgs.RotationDelta
-  nameWithType: SKRotateEventArgs.RotationDelta
-- uid: SkiaSharp.Extended.Gestures.SKRotateEventArgs.RotationDelta*
+  href: api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta.html#SkiaSharp_Extended_Gestures_SKRotateGestureEventArgs_RotationDelta
+  commentId: P:SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta
+  fullName: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta
+  nameWithType: SKRotateGestureEventArgs.RotationDelta
+- uid: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta*
   name: RotationDelta
-  href: api/SkiaSharp.Extended.Gestures.SKRotateEventArgs.RotationDelta.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKRotateEventArgs.RotationDelta
-  fullName: SkiaSharp.Extended.Gestures.SKRotateEventArgs.RotationDelta
-  nameWithType: SKRotateEventArgs.RotationDelta
-- uid: SkiaSharp.Extended.Gestures.SKScrollEventArgs
-  name: SKScrollEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.html
-  commentId: T:SkiaSharp.Extended.Gestures.SKScrollEventArgs
-  fullName: SkiaSharp.Extended.Gestures.SKScrollEventArgs
-  nameWithType: SKScrollEventArgs
-- uid: SkiaSharp.Extended.Gestures.SKScrollEventArgs.#ctor(SkiaSharp.SKPoint,System.Single,System.Single)
-  name: SKScrollEventArgs(SKPoint, float, float)
-  href: api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKScrollEventArgs__ctor_SkiaSharp_SKPoint_System_Single_System_Single_
-  commentId: M:SkiaSharp.Extended.Gestures.SKScrollEventArgs.#ctor(SkiaSharp.SKPoint,System.Single,System.Single)
+  href: api/SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta
+  fullName: SkiaSharp.Extended.Gestures.SKRotateGestureEventArgs.RotationDelta
+  nameWithType: SKRotateGestureEventArgs.RotationDelta
+- uid: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs
+  name: SKScrollGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs
+  fullName: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs
+  nameWithType: SKScrollGestureEventArgs
+- uid: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.#ctor(SkiaSharp.SKPoint,System.Single,System.Single)
+  name: SKScrollGestureEventArgs(SKPoint, float, float)
+  href: api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs__ctor_SkiaSharp_SKPoint_System_Single_System_Single_
+  commentId: M:SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.#ctor(SkiaSharp.SKPoint,System.Single,System.Single)
   name.vb: New(SKPoint, Single, Single)
-  fullName: SkiaSharp.Extended.Gestures.SKScrollEventArgs.SKScrollEventArgs(SkiaSharp.SKPoint, float, float)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKScrollEventArgs.New(SkiaSharp.SKPoint, Single, Single)
-  nameWithType: SKScrollEventArgs.SKScrollEventArgs(SKPoint, float, float)
-  nameWithType.vb: SKScrollEventArgs.New(SKPoint, Single, Single)
-- uid: SkiaSharp.Extended.Gestures.SKScrollEventArgs.#ctor*
-  name: SKScrollEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKScrollEventArgs.#ctor
+  fullName: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.SKScrollGestureEventArgs(SkiaSharp.SKPoint, float, float)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.New(SkiaSharp.SKPoint, Single, Single)
+  nameWithType: SKScrollGestureEventArgs.SKScrollGestureEventArgs(SKPoint, float, float)
+  nameWithType.vb: SKScrollGestureEventArgs.New(SKPoint, Single, Single)
+- uid: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.#ctor*
+  name: SKScrollGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.#ctor
   name.vb: New
-  fullName: SkiaSharp.Extended.Gestures.SKScrollEventArgs.SKScrollEventArgs
-  fullName.vb: SkiaSharp.Extended.Gestures.SKScrollEventArgs.New
-  nameWithType: SKScrollEventArgs.SKScrollEventArgs
-  nameWithType.vb: SKScrollEventArgs.New
-- uid: SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaX
+  fullName: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.SKScrollGestureEventArgs
+  fullName.vb: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.New
+  nameWithType: SKScrollGestureEventArgs.SKScrollGestureEventArgs
+  nameWithType.vb: SKScrollGestureEventArgs.New
+- uid: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaX
   name: DeltaX
-  href: api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaX.html#SkiaSharp_Extended_Gestures_SKScrollEventArgs_DeltaX
-  commentId: P:SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaX
-  fullName: SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaX
-  nameWithType: SKScrollEventArgs.DeltaX
-- uid: SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaX*
+  href: api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaX.html#SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_DeltaX
+  commentId: P:SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaX
+  fullName: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaX
+  nameWithType: SKScrollGestureEventArgs.DeltaX
+- uid: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaX*
   name: DeltaX
-  href: api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaX.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaX
-  fullName: SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaX
-  nameWithType: SKScrollEventArgs.DeltaX
-- uid: SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaY
+  href: api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaX.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaX
+  fullName: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaX
+  nameWithType: SKScrollGestureEventArgs.DeltaX
+- uid: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY
   name: DeltaY
-  href: api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaY.html#SkiaSharp_Extended_Gestures_SKScrollEventArgs_DeltaY
-  commentId: P:SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaY
-  fullName: SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaY
-  nameWithType: SKScrollEventArgs.DeltaY
-- uid: SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaY*
+  href: api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY.html#SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_DeltaY
+  commentId: P:SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY
+  fullName: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY
+  nameWithType: SKScrollGestureEventArgs.DeltaY
+- uid: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY*
   name: DeltaY
-  href: api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaY.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaY
-  fullName: SkiaSharp.Extended.Gestures.SKScrollEventArgs.DeltaY
-  nameWithType: SKScrollEventArgs.DeltaY
-- uid: SkiaSharp.Extended.Gestures.SKScrollEventArgs.Handled
+  href: api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY
+  fullName: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.DeltaY
+  nameWithType: SKScrollGestureEventArgs.DeltaY
+- uid: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Handled
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKScrollEventArgs_Handled
-  commentId: P:SkiaSharp.Extended.Gestures.SKScrollEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKScrollEventArgs.Handled
-  nameWithType: SKScrollEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKScrollEventArgs.Handled*
+  href: api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_Handled
+  commentId: P:SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Handled
+  nameWithType: SKScrollGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Handled*
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.Handled.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKScrollEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKScrollEventArgs.Handled
-  nameWithType: SKScrollEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKScrollEventArgs.Location
+  href: api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Handled.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Handled
+  nameWithType: SKScrollGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Location
   name: Location
-  href: api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKScrollEventArgs_Location
-  commentId: P:SkiaSharp.Extended.Gestures.SKScrollEventArgs.Location
-  fullName: SkiaSharp.Extended.Gestures.SKScrollEventArgs.Location
-  nameWithType: SKScrollEventArgs.Location
-- uid: SkiaSharp.Extended.Gestures.SKScrollEventArgs.Location*
+  href: api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKScrollGestureEventArgs_Location
+  commentId: P:SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Location
+  fullName: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Location
+  nameWithType: SKScrollGestureEventArgs.Location
+- uid: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Location*
   name: Location
-  href: api/SkiaSharp.Extended.Gestures.SKScrollEventArgs.Location.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKScrollEventArgs.Location
-  fullName: SkiaSharp.Extended.Gestures.SKScrollEventArgs.Location
-  nameWithType: SKScrollEventArgs.Location
-- uid: SkiaSharp.Extended.Gestures.SKTapEventArgs
-  name: SKTapEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKTapEventArgs.html
-  commentId: T:SkiaSharp.Extended.Gestures.SKTapEventArgs
-  fullName: SkiaSharp.Extended.Gestures.SKTapEventArgs
-  nameWithType: SKTapEventArgs
-- uid: SkiaSharp.Extended.Gestures.SKTapEventArgs.#ctor(SkiaSharp.SKPoint,System.Int32)
-  name: SKTapEventArgs(SKPoint, int)
-  href: api/SkiaSharp.Extended.Gestures.SKTapEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKTapEventArgs__ctor_SkiaSharp_SKPoint_System_Int32_
-  commentId: M:SkiaSharp.Extended.Gestures.SKTapEventArgs.#ctor(SkiaSharp.SKPoint,System.Int32)
+  href: api/SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Location.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Location
+  fullName: SkiaSharp.Extended.Gestures.SKScrollGestureEventArgs.Location
+  nameWithType: SKScrollGestureEventArgs.Location
+- uid: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs
+  name: SKTapGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKTapGestureEventArgs
+  fullName: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs
+  nameWithType: SKTapGestureEventArgs
+- uid: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.#ctor(SkiaSharp.SKPoint,System.Int32)
+  name: SKTapGestureEventArgs(SKPoint, int)
+  href: api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKTapGestureEventArgs__ctor_SkiaSharp_SKPoint_System_Int32_
+  commentId: M:SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.#ctor(SkiaSharp.SKPoint,System.Int32)
   name.vb: New(SKPoint, Integer)
-  fullName: SkiaSharp.Extended.Gestures.SKTapEventArgs.SKTapEventArgs(SkiaSharp.SKPoint, int)
-  fullName.vb: SkiaSharp.Extended.Gestures.SKTapEventArgs.New(SkiaSharp.SKPoint, Integer)
-  nameWithType: SKTapEventArgs.SKTapEventArgs(SKPoint, int)
-  nameWithType.vb: SKTapEventArgs.New(SKPoint, Integer)
-- uid: SkiaSharp.Extended.Gestures.SKTapEventArgs.#ctor*
-  name: SKTapEventArgs
-  href: api/SkiaSharp.Extended.Gestures.SKTapEventArgs.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKTapEventArgs.#ctor
+  fullName: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.SKTapGestureEventArgs(SkiaSharp.SKPoint, int)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.New(SkiaSharp.SKPoint, Integer)
+  nameWithType: SKTapGestureEventArgs.SKTapGestureEventArgs(SKPoint, int)
+  nameWithType.vb: SKTapGestureEventArgs.New(SKPoint, Integer)
+- uid: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.#ctor*
+  name: SKTapGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.#ctor
   name.vb: New
-  fullName: SkiaSharp.Extended.Gestures.SKTapEventArgs.SKTapEventArgs
-  fullName.vb: SkiaSharp.Extended.Gestures.SKTapEventArgs.New
-  nameWithType: SKTapEventArgs.SKTapEventArgs
-  nameWithType.vb: SKTapEventArgs.New
-- uid: SkiaSharp.Extended.Gestures.SKTapEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.SKTapGestureEventArgs
+  fullName.vb: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.New
+  nameWithType: SKTapGestureEventArgs.SKTapGestureEventArgs
+  nameWithType.vb: SKTapGestureEventArgs.New
+- uid: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Handled
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKTapEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKTapEventArgs_Handled
-  commentId: P:SkiaSharp.Extended.Gestures.SKTapEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKTapEventArgs.Handled
-  nameWithType: SKTapEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKTapEventArgs.Handled*
+  href: api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_Handled
+  commentId: P:SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Handled
+  nameWithType: SKTapGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Handled*
   name: Handled
-  href: api/SkiaSharp.Extended.Gestures.SKTapEventArgs.Handled.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKTapEventArgs.Handled
-  fullName: SkiaSharp.Extended.Gestures.SKTapEventArgs.Handled
-  nameWithType: SKTapEventArgs.Handled
-- uid: SkiaSharp.Extended.Gestures.SKTapEventArgs.Location
+  href: api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Handled.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Handled
+  fullName: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Handled
+  nameWithType: SKTapGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location
   name: Location
-  href: api/SkiaSharp.Extended.Gestures.SKTapEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKTapEventArgs_Location
-  commentId: P:SkiaSharp.Extended.Gestures.SKTapEventArgs.Location
-  fullName: SkiaSharp.Extended.Gestures.SKTapEventArgs.Location
-  nameWithType: SKTapEventArgs.Location
-- uid: SkiaSharp.Extended.Gestures.SKTapEventArgs.Location*
+  href: api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_Location
+  commentId: P:SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location
+  fullName: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location
+  nameWithType: SKTapGestureEventArgs.Location
+- uid: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location*
   name: Location
-  href: api/SkiaSharp.Extended.Gestures.SKTapEventArgs.Location.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKTapEventArgs.Location
-  fullName: SkiaSharp.Extended.Gestures.SKTapEventArgs.Location
-  nameWithType: SKTapEventArgs.Location
-- uid: SkiaSharp.Extended.Gestures.SKTapEventArgs.TapCount
+  href: api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location
+  fullName: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.Location
+  nameWithType: SKTapGestureEventArgs.Location
+- uid: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount
   name: TapCount
-  href: api/SkiaSharp.Extended.Gestures.SKTapEventArgs.TapCount.html#SkiaSharp_Extended_Gestures_SKTapEventArgs_TapCount
-  commentId: P:SkiaSharp.Extended.Gestures.SKTapEventArgs.TapCount
-  fullName: SkiaSharp.Extended.Gestures.SKTapEventArgs.TapCount
-  nameWithType: SKTapEventArgs.TapCount
-- uid: SkiaSharp.Extended.Gestures.SKTapEventArgs.TapCount*
+  href: api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount.html#SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_TapCount
+  commentId: P:SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount
+  fullName: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount
+  nameWithType: SKTapGestureEventArgs.TapCount
+- uid: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount*
   name: TapCount
-  href: api/SkiaSharp.Extended.Gestures.SKTapEventArgs.TapCount.html
-  commentId: Overload:SkiaSharp.Extended.Gestures.SKTapEventArgs.TapCount
-  fullName: SkiaSharp.Extended.Gestures.SKTapEventArgs.TapCount
-  nameWithType: SKTapEventArgs.TapCount
+  href: api/SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount
+  fullName: SkiaSharp.Extended.Gestures.SKTapGestureEventArgs.TapCount
+  nameWithType: SKTapGestureEventArgs.TapCount
 - uid: SkiaSharp.Extended.SKBlurHash
   name: SKBlurHash
   href: api/SkiaSharp.Extended.SKBlurHash.html
