@@ -338,7 +338,7 @@ public class SKGestureTracker : IDisposable
 	public event EventHandler<SKDragGestureEventArgs>? DragEnded;
 
 	/// <summary>Occurs each animation frame during a fling.</summary>
-	public event EventHandler<SKFlingGestureEventArgs>? Flinging;
+	public event EventHandler<SKFlingGestureEventArgs>? FlingUpdated;
 
 	/// <summary>Occurs when a fling animation completes.</summary>
 	public event EventHandler? FlingCompleted;
@@ -713,7 +713,7 @@ public class SKGestureTracker : IDisposable
 		var deltaX = _flingVelocityX * dt;
 		var deltaY = _flingVelocityY * dt;
 
-		Flinging?.Invoke(this, new SKFlingGestureEventArgs(_flingVelocityX, _flingVelocityY, deltaX, deltaY));
+		FlingUpdated?.Invoke(this, new SKFlingGestureEventArgs(_flingVelocityX, _flingVelocityY, deltaX, deltaY));
 
 		// Apply as pan offset
 		var d = ScreenToContentDelta(deltaX, deltaY);

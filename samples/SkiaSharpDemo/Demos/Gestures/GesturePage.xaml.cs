@@ -66,7 +66,7 @@ public partial class GesturePage : ContentPage
 		_tracker.PinchDetected += OnPinch;
 		_tracker.RotateDetected += OnRotate;
 		_tracker.FlingDetected += OnFling;
-		_tracker.Flinging += OnFlinging;
+		_tracker.FlingUpdated += OnFlingUpdated;
 		_tracker.FlingCompleted += OnFlingCompleted;
 		_tracker.ScrollDetected += OnScroll;
 		_tracker.HoverDetected += OnHover;
@@ -85,7 +85,7 @@ public partial class GesturePage : ContentPage
 		_tracker.PinchDetected -= OnPinch;
 		_tracker.RotateDetected -= OnRotate;
 		_tracker.FlingDetected -= OnFling;
-		_tracker.Flinging -= OnFlinging;
+		_tracker.FlingUpdated -= OnFlingUpdated;
 		_tracker.FlingCompleted -= OnFlingCompleted;
 		_tracker.ScrollDetected -= OnScroll;
 		_tracker.HoverDetected -= OnHover;
@@ -340,7 +340,7 @@ public partial class GesturePage : ContentPage
 		statusLabel.Text = $"Flinging at {e.Speed:F0} px/s";
 	}
 
-	private void OnFlinging(object? sender, SKFlingGestureEventArgs e)
+	private void OnFlingUpdated(object? sender, SKFlingGestureEventArgs e)
 	{
 		// Fling transform is handled by the tracker
 		statusLabel.Text = $"Flinging... ({e.Speed:F0} px/s)";
