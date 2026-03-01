@@ -316,10 +316,10 @@ public class SKGestureTracker : IDisposable
 	public event EventHandler<SKScrollGestureEventArgs>? ScrollDetected;
 
 	/// <summary>Occurs when a gesture starts.</summary>
-	public event EventHandler? GestureStarted;
+	public event EventHandler<SKGestureLifecycleEventArgs>? GestureStarted;
 
 	/// <summary>Occurs when a gesture ends.</summary>
-	public event EventHandler? GestureEnded;
+	public event EventHandler<SKGestureLifecycleEventArgs>? GestureEnded;
 
 	#endregion
 
@@ -610,15 +610,15 @@ public class SKGestureTracker : IDisposable
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
 
-	private void OnEngineGestureStarted(object? s, EventArgs e)
+	private void OnEngineGestureStarted(object? s, SKGestureLifecycleEventArgs e)
 	{
 		_syncContext ??= SynchronizationContext.Current;
 		StopFling();
 		StopZoomAnimation();
-		GestureStarted?.Invoke(this, EventArgs.Empty);
+		GestureStarted?.Invoke(this, new SKGestureLifecycleEventArgs());
 	}
 
-	private void OnEngineGestureEnded(object? s, EventArgs e)
+	private void OnEngineGestureEnded(object? s, SKGestureLifecycleEventArgs e)
 	{
 		if (_isDragging)
 		{
@@ -626,7 +626,7 @@ public class SKGestureTracker : IDisposable
 			_isDragHandled = false;
 			DragEnded?.Invoke(this, new SKDragGestureEventArgs(_dragStartLocation, _dragStartLocation, SKPoint.Empty));
 		}
-		GestureEnded?.Invoke(this, EventArgs.Empty);
+		GestureEnded?.Invoke(this, new SKGestureLifecycleEventArgs());
 	}
 
 	#endregion
