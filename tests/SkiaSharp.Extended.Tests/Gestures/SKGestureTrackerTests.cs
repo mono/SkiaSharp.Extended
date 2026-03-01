@@ -135,8 +135,8 @@ public class SKGestureTrackerTests
 	public void Pinch_ScaleClampedToMinMax()
 	{
 		var tracker = CreateTracker();
-		tracker.MinScale = 0.5f;
-		tracker.MaxScale = 3f;
+		tracker.Options.MinScale = 0.5f;
+		tracker.Options.MaxScale = 3f;
 
 		// Pinch fingers very close together
 		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
@@ -294,7 +294,7 @@ public class SKGestureTrackerTests
 	public async Task Fling_FiresFlingUpdatedEvents()
 	{
 		var tracker = CreateTracker();
-		tracker.FlingFrameInterval = 16;
+		tracker.Options.FlingFrameInterval = 16;
 		var flingUpdatedCount = 0;
 		tracker.FlingUpdated += (s, e) => flingUpdatedCount++;
 
@@ -310,7 +310,7 @@ public class SKGestureTrackerTests
 	public async Task Fling_UpdatesOffset()
 	{
 		var tracker = CreateTracker();
-		tracker.FlingFrameInterval = 16;
+		tracker.Options.FlingFrameInterval = 16;
 		var flingUpdatedFired = false;
 		tracker.FlingUpdated += (s, e) => flingUpdatedFired = true;
 
@@ -357,9 +357,9 @@ public class SKGestureTrackerTests
 	public async Task Fling_EventuallyCompletes()
 	{
 		var tracker = CreateTracker();
-		tracker.FlingFrameInterval = 16;
-		tracker.FlingFriction = 0.5f;
-		tracker.FlingMinVelocity = 100f;
+		tracker.Options.FlingFrameInterval = 16;
+		tracker.Options.FlingFriction = 0.5f;
+		tracker.Options.FlingMinVelocity = 100f;
 		var flingCompleted = false;
 		tracker.FlingCompleted += (s, e) => flingCompleted = true;
 
@@ -391,8 +391,8 @@ public class SKGestureTrackerTests
 	public async Task DoubleTap_ScaleChangesToDoubleTapZoomFactor()
 	{
 		var tracker = CreateTracker();
-		tracker.DoubleTapZoomFactor = 2f;
-		tracker.ZoomAnimationDuration = 100;
+		tracker.Options.DoubleTapZoomFactor = 2f;
+		tracker.Options.ZoomAnimationDuration = 100;
 
 		SimulateDoubleTap(tracker, new SKPoint(200, 200));
 
@@ -408,9 +408,9 @@ public class SKGestureTrackerTests
 	public async Task DoubleTap_AtMaxScale_ResetsToOne()
 	{
 		var tracker = CreateTracker();
-		tracker.DoubleTapZoomFactor = 2f;
-		tracker.MaxScale = 2f;
-		tracker.ZoomAnimationDuration = 100;
+		tracker.Options.DoubleTapZoomFactor = 2f;
+		tracker.Options.MaxScale = 2f;
+		tracker.Options.ZoomAnimationDuration = 100;
 
 		// First double tap: zoom to 2x
 		SimulateDoubleTap(tracker, new SKPoint(200, 200));
@@ -432,7 +432,7 @@ public class SKGestureTrackerTests
 	public async Task DoubleTap_FiresTransformChanged()
 	{
 		var tracker = CreateTracker();
-		tracker.ZoomAnimationDuration = 100;
+		tracker.Options.ZoomAnimationDuration = 100;
 		var changeCount = 0;
 		tracker.TransformChanged += (s, e) => changeCount++;
 
@@ -484,8 +484,8 @@ public class SKGestureTrackerTests
 	public void Scroll_ScaleClampedToMinMax()
 	{
 		var tracker = CreateTracker();
-		tracker.MinScale = 0.5f;
-		tracker.MaxScale = 3f;
+		tracker.Options.MinScale = 0.5f;
+		tracker.Options.MaxScale = 3f;
 
 		for (int i = 0; i < 100; i++)
 			tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, -1f);
@@ -693,7 +693,7 @@ public class SKGestureTrackerTests
 	public void TouchSlop_ForwardedToEngine()
 	{
 		var tracker = CreateTracker();
-		tracker.TouchSlop = 50;
+		tracker.Options.TouchSlop = 50;
 
 		var panRaised = false;
 		tracker.PanDetected += (s, e) => panRaised = true;
@@ -709,7 +709,7 @@ public class SKGestureTrackerTests
 	public void DoubleTapSlop_ForwardedToEngine()
 	{
 		var tracker = CreateTracker();
-		tracker.DoubleTapSlop = 10;
+		tracker.Options.DoubleTapSlop = 10;
 
 		var doubleTapRaised = false;
 		tracker.DoubleTapDetected += (s, e) => doubleTapRaised = true;
@@ -729,7 +729,7 @@ public class SKGestureTrackerTests
 	public void FlingThreshold_ForwardedToEngine()
 	{
 		var tracker = CreateTracker();
-		tracker.FlingThreshold = 50000;
+		tracker.Options.FlingThreshold = 50000;
 
 		var flingRaised = false;
 		tracker.FlingDetected += (s, e) => flingRaised = true;
@@ -754,8 +754,8 @@ public class SKGestureTrackerTests
 	public void LongPressDuration_ForwardedToEngine()
 	{
 		var tracker = CreateTracker();
-		tracker.LongPressDuration = 200;
-		Assert.Equal(200, tracker.LongPressDuration);
+		tracker.Options.LongPressDuration = 200;
+		Assert.Equal(200, tracker.Options.LongPressDuration);
 	}
 
 	#endregion
@@ -994,12 +994,12 @@ public class SKGestureTrackerTests
 		};
 		tracker.SetViewSize(400, 400);
 
-		Assert.Equal(0.5f, tracker.MinScale);
-		Assert.Equal(5f, tracker.MaxScale);
-		Assert.Equal(3f, tracker.DoubleTapZoomFactor);
-		Assert.Equal(0.2f, tracker.ScrollZoomFactor);
-		Assert.Equal(16f, tracker.TouchSlop);
-		Assert.Equal(80f, tracker.DoubleTapSlop);
+		Assert.Equal(0.5f, tracker.Options.MinScale);
+		Assert.Equal(5f, tracker.Options.MaxScale);
+		Assert.Equal(3f, tracker.Options.DoubleTapZoomFactor);
+		Assert.Equal(0.2f, tracker.Options.ScrollZoomFactor);
+		Assert.Equal(16f, tracker.Options.TouchSlop);
+		Assert.Equal(80f, tracker.Options.DoubleTapSlop);
 	}
 
 	[Fact]
@@ -1007,12 +1007,12 @@ public class SKGestureTrackerTests
 	{
 		var tracker = CreateTracker();
 
-		Assert.Equal(0.1f, tracker.MinScale);
-		Assert.Equal(10f, tracker.MaxScale);
-		Assert.Equal(2f, tracker.DoubleTapZoomFactor);
-		Assert.Equal(0.1f, tracker.ScrollZoomFactor);
-		Assert.Equal(8f, tracker.TouchSlop);
-		Assert.Equal(40f, tracker.DoubleTapSlop);
+		Assert.Equal(0.1f, tracker.Options.MinScale);
+		Assert.Equal(10f, tracker.Options.MaxScale);
+		Assert.Equal(2f, tracker.Options.DoubleTapZoomFactor);
+		Assert.Equal(0.1f, tracker.Options.ScrollZoomFactor);
+		Assert.Equal(8f, tracker.Options.TouchSlop);
+		Assert.Equal(40f, tracker.Options.DoubleTapSlop);
 	}
 
 	#endregion
