@@ -140,6 +140,51 @@ You can customize the rendering surface by overriding the control template:
 
 The `PART_DrawingSurface` name is required—it can be either `SKCanvasView` (software) or `SKGLView` (GPU).
 
+## Cross-Platform Usage with SKLottiePlayer
+
+The `SKLottiePlayer` class in `SkiaSharp.Extended` provides all the playback logic without any MAUI or Blazor dependency, so you can integrate Lottie animations into any .NET host — including Blazor WebAssembly, console renderers, or custom frameworks.
+
+### SKLottieRepeat
+
+`SKLottieRepeat` is a lightweight value type (struct) that describes how an animation repeats:
+
+| Factory | Behaviour |
+| :------ | :-------- |
+| `SKLottieRepeat.Never` | Play once, then stop (default). |
+| `SKLottieRepeat.Restart(count)` | Restart from the beginning. `count = -1` for infinite. |
+| `SKLottieRepeat.Reverse(count)` | Ping-pong (play forward, then backward). `count = -1` for infinite. |
+
+### Using SKLottiePlayer directly
+
+```csharp
+using SkiaSharp;
+using SkiaSharp.Extended;
+using SkiaSharp.Skottie;
+
+// 1. Load the animation from a stream
+using var stream = File.OpenRead("animation.json");
+var animation = Animation.Create(stream);
+
+// 2. Create a player and configure it
+var player = new SKLottiePlayer
+{
+    AnimationSpeed = 1.5,
+    Repeat = SKLottieRepeat.Restart(count: -1)  // loop forever
+};
+
+player.AnimationCompleted += (_, _) => Console.WriteLine("Done!");
+player.SetAnimation(animation);
+
+// 3. In your frame/paint loop:
+//    a) advance the playback position
+player.Update(deltaTime);
+
+//    b) draw the current frame
+player.Render(canvas, SKRect.Create(0, 0, 400, 400));
+```
+
+> **Blazor note:** The Blazor sample at `samples/SkiaSharpDemo.Blazor/` demonstrates `SKLottiePlayer` inside a `PeriodicTimer`-based animation loop. The `SKAnimatedCanvasView` component in `SkiaSharp.Extended.UI.Blazor` wraps this pattern as a reusable Blazor component.
+
 ## Learn More
 
 - [Lottie by Airbnb](https://airbnb.design/lottie/) — Official project page

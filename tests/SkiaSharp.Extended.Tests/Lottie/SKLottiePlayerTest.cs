@@ -345,4 +345,151 @@ public class SKLottiePlayerTest
 
 		Assert.True(raised >= 1);
 	}
+
+	// ── Negative deltaTime ────────────────────────────────────────────────────
+
+	[Fact]
+	public void Update_NegativeDelta_ClampsToZero()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.SetAnimation(anim);
+
+		player.Update(TimeSpan.FromSeconds(-1));
+
+		Assert.Equal(TimeSpan.Zero, player.Progress);
+		Assert.False(player.IsComplete);
+	}
+
+	[Fact]
+	public void Update_NegativeDeltaAfterPositive_MovesBack()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.SetAnimation(anim);
+		player.Update(TimeSpan.FromSeconds(0.5));
+
+		player.Update(TimeSpan.FromSeconds(-0.3));
+
+		Assert.Equal(TimeSpan.FromSeconds(0.2), player.Progress);
+		Assert.False(player.IsComplete);
+	}
+
+	// ── AnimationSpeed variants ───────────────────────────────────────────────
+
+	[Fact]
+	public void AnimationSpeed_Double_AdvancesAtDoubleRate()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.AnimationSpeed = 2.0;
+		player.SetAnimation(anim);
+
+		player.Update(TimeSpan.FromSeconds(0.3));
+
+		Assert.Equal(TimeSpan.FromSeconds(0.6), player.Progress);
+	}
+
+	[Fact]
+	public void AnimationSpeed_Half_AdvancesAtHalfRate()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.AnimationSpeed = 0.5;
+		player.SetAnimation(anim);
+
+		player.Update(TimeSpan.FromSeconds(0.5));
+
+		Assert.Equal(TimeSpan.FromSeconds(0.25), player.Progress);
+	}
+
+	[Fact]
+	public void AnimationSpeed_Zero_DoesNotAdvance()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.AnimationSpeed = 0;
+		player.SetAnimation(anim);
+
+		player.Update(TimeSpan.FromSeconds(1));
+
+		Assert.Equal(TimeSpan.Zero, player.Progress);
+		Assert.False(player.IsComplete);
+	}
+
+	[Fact]
+	public void AnimationSpeed_CanBeChangedDynamically()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.AnimationSpeed = 1.0;
+		player.SetAnimation(anim);
+
+		player.Update(TimeSpan.FromSeconds(0.3));
+		player.AnimationSpeed = 2.0;
+		player.Update(TimeSpan.FromSeconds(0.2));
+
+		// 0.3 + (0.2 × 2.0) = 0.7
+		Assert.Equal(TimeSpan.FromSeconds(0.7), player.Progress);
+	}
+
+	[Fact]
+	public void AnimationSpeed_NegativeMidPlayback_MovesBackward()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.AnimationSpeed = 1.0;
+		player.Repeat = SKLottieRepeat.Never;
+		player.SetAnimation(anim);
+
+		player.Update(TimeSpan.FromSeconds(0.5));
+		var progressBefore = player.Progress;
+
+		player.AnimationSpeed = -1.0;
+		player.Update(TimeSpan.FromSeconds(0.2));
+
+		Assert.True(player.Progress < progressBefore);
+	}
+
+	// ── Repeat.Reverse finite (count 0) ──────────────────────────────────────
+
+	[Fact]
+	public void RepeatReverse_FiniteCount_ZeroCount_CompletesAfterOneCycle()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.SetAnimation(anim);
+		player.Repeat = SKLottieRepeat.Reverse(count: 0);
+		var completed = 0;
+		player.AnimationCompleted += (_, _) => completed++;
+
+		// Forward to end — triggers direction flip, not completion
+		player.Update(TimeSpan.FromSeconds(10));
+		Assert.False(player.IsComplete);
+
+		// Backward to start — completes
+		player.Update(TimeSpan.FromSeconds(10));
+		Assert.True(player.IsComplete);
+		Assert.Equal(1, completed);
+	}
+
+	// ── Negative speed + Restart infinite ────────────────────────────────────
+
+	[Fact]
+	public void NegativeSpeed_RepeatRestart_Infinite_NeverCompletes()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.AnimationSpeed = -1.0;
+		player.Repeat = SKLottieRepeat.Restart();
+		player.SetAnimation(anim);
+		var completed = 0;
+		player.AnimationCompleted += (_, _) => completed++;
+
+		for (var i = 0; i < 5; i++)
+			player.Update(TimeSpan.FromSeconds(10));
+
+		Assert.False(player.IsComplete);
+		Assert.Equal(0, completed);
+	}
 }

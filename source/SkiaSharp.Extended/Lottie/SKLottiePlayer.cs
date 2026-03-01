@@ -4,8 +4,23 @@ namespace SkiaSharp.Extended;
 
 /// <summary>
 /// A platform-agnostic Skottie (Lottie) animation player that manages playback state
-/// and rendering. Can be shared between MAUI, Blazor, and other platforms.
+/// and rendering. Can be used directly from any .NET host including .NET MAUI, Blazor,
+/// console apps, or custom renderers.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Typical usage:
+/// <list type="number">
+///   <item><description>Create a player and set <see cref="Repeat"/> and <see cref="AnimationSpeed"/>.</description></item>
+///   <item><description>Call <see cref="SetAnimation"/> with a loaded <see cref="Skottie.Animation"/>.</description></item>
+///   <item><description>On each frame tick, call <see cref="Update"/> with the elapsed time.</description></item>
+///   <item><description>Call <see cref="Render"/> inside your paint/draw callback.</description></item>
+/// </list>
+/// </para>
+/// <para>
+/// The player is not thread-safe; all calls should occur on the same thread (typically the UI thread).
+/// </para>
+/// </remarks>
 public class SKLottiePlayer
 {
 	private Skottie.Animation? animation;
@@ -43,9 +58,18 @@ public class SKLottiePlayer
 	public event EventHandler? AnimationUpdated;
 
 	/// <summary>
-	/// Sets the animation to play. Pass null to clear the current animation.
+	/// Sets the animation to play. Pass <see langword="null"/> to clear the current animation.
 	/// Resets playback state (Progress, IsComplete, repeat counters).
 	/// </summary>
+	/// <param name="newAnimation">
+	/// The <see cref="Skottie.Animation"/> to play, or <see langword="null"/> to clear.
+	/// The player does not take ownership of the animation; the caller is responsible for disposing it.
+	/// </param>
+	/// <remarks>
+	/// Calling this method always resets <see cref="Progress"/> to <see cref="TimeSpan.Zero"/>
+	/// (or <see cref="Duration"/> when <see cref="AnimationSpeed"/> is negative) and clears
+	/// <see cref="IsComplete"/>. It also raises <see cref="AnimationUpdated"/>.
+	/// </remarks>
 	public void SetAnimation(Skottie.Animation? newAnimation)
 	{
 		animation = newAnimation;
@@ -56,6 +80,14 @@ public class SKLottiePlayer
 	/// Seeks the animation to the specified position and raises <see cref="AnimationUpdated"/>.
 	/// Completion and repeat logic is applied as part of the seek.
 	/// </summary>
+	/// <param name="position">The absolute playback position to seek to.</param>
+	/// <remarks>
+	/// Unlike <see cref="Update"/>, <c>Seek</c> sets an absolute position rather than advancing
+	/// by a delta. The position is clamped to [<see cref="TimeSpan.Zero"/>, <see cref="Duration"/>]
+	/// and repeat/completion state is evaluated immediately.
+	/// Setting <see cref="Progress"/> to a boundary via <c>Seek</c> does <em>not</em> increment
+	/// the internal repeat counter; use <see cref="Update"/> for frame-by-frame playback.
+	/// </remarks>
 	public void Seek(TimeSpan position)
 	{
 		Progress = position;
@@ -64,9 +96,26 @@ public class SKLottiePlayer
 	}
 
 	/// <summary>
-	/// Advances the animation by the given time delta, applying AnimationSpeed and Repeat.
+	/// Advances the animation by the given time delta, applying <see cref="AnimationSpeed"/> and <see cref="Repeat"/>.
 	/// Call this on each frame tick.
 	/// </summary>
+	/// <param name="deltaTime">
+	/// The time elapsed since the last call. A positive value advances forward; a negative value
+	/// moves the position backward (subject to clamping at the boundaries).
+	/// </param>
+	/// <remarks>
+	/// <para>
+	/// The effective delta is scaled by <see cref="AnimationSpeed"/> before being applied:
+	/// a speed of 2.0 doubles the rate, 0.5 halves it, and -1.0 plays in reverse.
+	/// </para>
+	/// <para>
+	/// When <see cref="Repeat"/> is <see cref="SKLottieRepeat.Reverse"/>, the internal direction
+	/// is flipped automatically when the animation reaches a boundary, producing a ping-pong effect.
+	/// </para>
+	/// <para>
+	/// Has no effect when no animation is loaded (<see cref="HasAnimation"/> is <see langword="false"/>).
+	/// </para>
+	/// </remarks>
 	public void Update(TimeSpan deltaTime)
 	{
 		if (animation is null)
@@ -98,6 +147,12 @@ public class SKLottiePlayer
 	}
 
 	/// <summary>Renders the current animation frame to the given canvas within the specified rectangle.</summary>
+	/// <param name="canvas">The <see cref="SKCanvas"/> to draw onto.</param>
+	/// <param name="rect">The destination rectangle within the canvas.</param>
+	/// <remarks>
+	/// Has no effect when no animation is loaded (<see cref="HasAnimation"/> is <see langword="false"/>).
+	/// Call this inside your paint/draw callback after <see cref="Update"/> has been called for the current frame.
+	/// </remarks>
 	public void Render(SKCanvas canvas, SKRect rect)
 	{
 		animation?.Render(canvas, rect);
