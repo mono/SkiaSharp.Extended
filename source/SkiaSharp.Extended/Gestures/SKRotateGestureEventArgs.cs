@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a rotation gesture.
 /// </summary>
-public class SKRotateGestureEventArgs : EventArgs
+public class SKRotateGestureEventArgs : SKGestureEventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
@@ -32,8 +32,4 @@ public class SKRotateGestureEventArgs : EventArgs
 	/// </summary>
 	public float RotationDelta { get; }
 
-	/// <summary>
-	/// Gets or sets whether the event was handled.
-	/// </summary>
-	public bool Handled { get; set; }
 }

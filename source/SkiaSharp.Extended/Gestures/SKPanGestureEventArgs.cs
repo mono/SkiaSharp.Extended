@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a pan gesture.
 /// </summary>
-public class SKPanGestureEventArgs : EventArgs
+public class SKPanGestureEventArgs : SKGestureEventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
@@ -38,8 +38,4 @@ public class SKPanGestureEventArgs : EventArgs
 	/// </summary>
 	public SKPoint Velocity { get; }
 
-	/// <summary>
-	/// Gets or sets whether the event was handled.
-	/// </summary>
-	public bool Handled { get; set; }
 }

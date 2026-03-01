@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a hover event.
 /// </summary>
-public class SKHoverGestureEventArgs : EventArgs
+public class SKHoverGestureEventArgs : SKGestureEventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
@@ -20,8 +20,4 @@ public class SKHoverGestureEventArgs : EventArgs
 	/// </summary>
 	public SKPoint Location { get; }
 
-	/// <summary>
-	/// Gets or sets whether the event was handled.
-	/// </summary>
-	public bool Handled { get; set; }
 }

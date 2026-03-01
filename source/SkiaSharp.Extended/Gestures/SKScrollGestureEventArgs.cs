@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a mouse scroll (wheel) event.
 /// </summary>
-public class SKScrollGestureEventArgs : EventArgs
+public class SKScrollGestureEventArgs : SKGestureEventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
@@ -32,8 +32,4 @@ public class SKScrollGestureEventArgs : EventArgs
 	/// </summary>
 	public float DeltaY { get; }
 
-	/// <summary>
-	/// Gets or sets whether the event was handled.
-	/// </summary>
-	public bool Handled { get; set; }
 }

@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a tap gesture.
 /// </summary>
-public class SKTapGestureEventArgs : EventArgs
+public class SKTapGestureEventArgs : SKGestureEventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
@@ -26,8 +26,4 @@ public class SKTapGestureEventArgs : EventArgs
 	/// </summary>
 	public int TapCount { get; }
 
-	/// <summary>
-	/// Gets or sets whether the event was handled.
-	/// </summary>
-	public bool Handled { get; set; }
 }

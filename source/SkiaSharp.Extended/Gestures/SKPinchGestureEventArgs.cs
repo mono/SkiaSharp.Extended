@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a pinch (scale) gesture.
 /// </summary>
-public class SKPinchGestureEventArgs : EventArgs
+public class SKPinchGestureEventArgs : SKGestureEventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
@@ -32,8 +32,4 @@ public class SKPinchGestureEventArgs : EventArgs
 	/// </summary>
 	public float Scale { get; }
 
-	/// <summary>
-	/// Gets or sets whether the event was handled.
-	/// </summary>
-	public bool Handled { get; set; }
 }
