@@ -295,6 +295,30 @@ references:
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureDetector.OnFlingDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureDetector.OnFlingDetected
   nameWithType: SKGestureDetector.OnFlingDetected
+- uid: SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded(SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs)
+  name: OnGestureEnded(SKGestureLifecycleEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnGestureEnded_SkiaSharp_Extended_Gestures_SKGestureLifecycleEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded(SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded(SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs)
+  nameWithType: SKGestureDetector.OnGestureEnded(SKGestureLifecycleEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded*
+  name: OnGestureEnded
+  href: api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded
+  fullName: SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureEnded
+  nameWithType: SKGestureDetector.OnGestureEnded
+- uid: SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted(SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs)
+  name: OnGestureStarted(SKGestureLifecycleEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnGestureStarted_SkiaSharp_Extended_Gestures_SKGestureLifecycleEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted(SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted(SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs)
+  nameWithType: SKGestureDetector.OnGestureStarted(SKGestureLifecycleEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted*
+  name: OnGestureStarted
+  href: api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted
+  fullName: SkiaSharp.Extended.Gestures.SKGestureDetector.OnGestureStarted
+  nameWithType: SKGestureDetector.OnGestureStarted
 - uid: SkiaSharp.Extended.Gestures.SKGestureDetector.OnHoverDetected(SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs)
   name: OnHoverDetected(SKHoverGestureEventArgs)
   href: api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnHoverDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnHoverDetected_SkiaSharp_Extended_Gestures_SKHoverGestureEventArgs_
@@ -307,12 +331,12 @@ references:
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureDetector.OnHoverDetected
   fullName: SkiaSharp.Extended.Gestures.SKGestureDetector.OnHoverDetected
   nameWithType: SKGestureDetector.OnHoverDetected
-- uid: SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
-  name: OnLongPressDetected(SKTapGestureEventArgs)
-  href: api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnLongPressDetected_SkiaSharp_Extended_Gestures_SKTapGestureEventArgs_
-  commentId: M:SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
-  fullName: SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKTapGestureEventArgs)
-  nameWithType: SKGestureDetector.OnLongPressDetected(SKTapGestureEventArgs)
+- uid: SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs)
+  name: OnLongPressDetected(SKLongPressGestureEventArgs)
+  href: api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected.html#SkiaSharp_Extended_Gestures_SKGestureDetector_OnLongPressDetected_SkiaSharp_Extended_Gestures_SKLongPressGestureEventArgs_
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs)
+  fullName: SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected(SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs)
+  nameWithType: SKGestureDetector.OnLongPressDetected(SKLongPressGestureEventArgs)
 - uid: SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected*
   name: OnLongPressDetected
   href: api/SkiaSharp.Extended.Gestures.SKGestureDetector.OnLongPressDetected.html
@@ -628,6 +652,30 @@ references:
   commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureEventArgs.Handled
   fullName: SkiaSharp.Extended.Gestures.SKGestureEventArgs.Handled
   nameWithType: SKGestureEventArgs.Handled
+- uid: SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs
+  name: SKGestureLifecycleEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs
+  fullName: SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs
+  nameWithType: SKGestureLifecycleEventArgs
+- uid: SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.#ctor
+  name: SKGestureLifecycleEventArgs()
+  href: api/SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKGestureLifecycleEventArgs__ctor
+  commentId: M:SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.#ctor
+  name.vb: New()
+  fullName: SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.SKGestureLifecycleEventArgs()
+  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.New()
+  nameWithType: SKGestureLifecycleEventArgs.SKGestureLifecycleEventArgs()
+  nameWithType.vb: SKGestureLifecycleEventArgs.New()
+- uid: SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.#ctor*
+  name: SKGestureLifecycleEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.SKGestureLifecycleEventArgs
+  fullName.vb: SkiaSharp.Extended.Gestures.SKGestureLifecycleEventArgs.New
+  nameWithType: SKGestureLifecycleEventArgs.SKGestureLifecycleEventArgs
+  nameWithType.vb: SKGestureLifecycleEventArgs.New
 - uid: SkiaSharp.Extended.Gestures.SKGestureTracker
   name: SKGestureTracker
   href: api/SkiaSharp.Extended.Gestures.SKGestureTracker.html
@@ -1456,6 +1504,54 @@ references:
   commentId: Overload:SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location
   fullName: SkiaSharp.Extended.Gestures.SKHoverGestureEventArgs.Location
   nameWithType: SKHoverGestureEventArgs.Location
+- uid: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs
+  name: SKLongPressGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.html
+  commentId: T:SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs
+  fullName: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs
+  nameWithType: SKLongPressGestureEventArgs
+- uid: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.#ctor(SkiaSharp.SKPoint,System.TimeSpan)
+  name: SKLongPressGestureEventArgs(SKPoint, TimeSpan)
+  href: api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.-ctor.html#SkiaSharp_Extended_Gestures_SKLongPressGestureEventArgs__ctor_SkiaSharp_SKPoint_System_TimeSpan_
+  commentId: M:SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.#ctor(SkiaSharp.SKPoint,System.TimeSpan)
+  name.vb: New(SKPoint, TimeSpan)
+  fullName: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.SKLongPressGestureEventArgs(SkiaSharp.SKPoint, System.TimeSpan)
+  fullName.vb: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.New(SkiaSharp.SKPoint, System.TimeSpan)
+  nameWithType: SKLongPressGestureEventArgs.SKLongPressGestureEventArgs(SKPoint, TimeSpan)
+  nameWithType.vb: SKLongPressGestureEventArgs.New(SKPoint, TimeSpan)
+- uid: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.#ctor*
+  name: SKLongPressGestureEventArgs
+  href: api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.SKLongPressGestureEventArgs
+  fullName.vb: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.New
+  nameWithType: SKLongPressGestureEventArgs.SKLongPressGestureEventArgs
+  nameWithType.vb: SKLongPressGestureEventArgs.New
+- uid: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration
+  name: Duration
+  href: api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration.html#SkiaSharp_Extended_Gestures_SKLongPressGestureEventArgs_Duration
+  commentId: P:SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration
+  fullName: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration
+  nameWithType: SKLongPressGestureEventArgs.Duration
+- uid: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration*
+  name: Duration
+  href: api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration
+  fullName: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Duration
+  nameWithType: SKLongPressGestureEventArgs.Duration
+- uid: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Location
+  name: Location
+  href: api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKLongPressGestureEventArgs_Location
+  commentId: P:SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Location
+  fullName: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Location
+  nameWithType: SKLongPressGestureEventArgs.Location
+- uid: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Location*
+  name: Location
+  href: api/SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Location.html
+  commentId: Overload:SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Location
+  fullName: SkiaSharp.Extended.Gestures.SKLongPressGestureEventArgs.Location
+  nameWithType: SKLongPressGestureEventArgs.Location
 - uid: SkiaSharp.Extended.Gestures.SKPanGestureEventArgs
   name: SKPanGestureEventArgs
   href: api/SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.html
