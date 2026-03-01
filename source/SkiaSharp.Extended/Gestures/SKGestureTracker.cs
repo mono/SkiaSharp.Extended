@@ -295,7 +295,7 @@ public class SKGestureTracker : IDisposable
 	public event EventHandler<SKTapGestureEventArgs>? DoubleTapDetected;
 
 	/// <summary>Occurs when a long press is detected.</summary>
-	public event EventHandler<SKTapGestureEventArgs>? LongPressDetected;
+	public event EventHandler<SKLongPressGestureEventArgs>? LongPressDetected;
 
 	/// <summary>Occurs when a pan gesture is detected.</summary>
 	public event EventHandler<SKPanGestureEventArgs>? PanDetected;
@@ -498,7 +498,7 @@ public class SKGestureTracker : IDisposable
 		}
 	}
 
-	private void OnEngineLongPressDetected(object? s, SKTapGestureEventArgs e)
+	private void OnEngineLongPressDetected(object? s, SKLongPressGestureEventArgs e)
 	{
 		if (!IsLongPressEnabled)
 			return;
