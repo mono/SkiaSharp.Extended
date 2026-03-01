@@ -103,34 +103,6 @@ public class SKGestureTracker : IDisposable
 		set => _engine.IsEnabled = value;
 	}
 
-	/// <summary>Gets or sets the touch slop (minimum movement to start a gesture).</summary>
-	public float TouchSlop
-	{
-		get => Options.TouchSlop;
-		set => Options.TouchSlop = value;
-	}
-
-	/// <summary>Gets or sets the double-tap slop distance.</summary>
-	public float DoubleTapSlop
-	{
-		get => Options.DoubleTapSlop;
-		set => Options.DoubleTapSlop = value;
-	}
-
-	/// <summary>Gets or sets the fling velocity detection threshold.</summary>
-	public float FlingThreshold
-	{
-		get => Options.FlingThreshold;
-		set => Options.FlingThreshold = value;
-	}
-
-	/// <summary>Gets or sets the long press duration in milliseconds.</summary>
-	public int LongPressDuration
-	{
-		get => Options.LongPressDuration;
-		set => Options.LongPressDuration = value;
-	}
-
 	/// <summary>Gets or sets the time provider (for testing).</summary>
 	public Func<long> TimeProvider
 	{
@@ -172,69 +144,6 @@ public class SKGestureTracker : IDisposable
 	{
 		_viewWidth = width;
 		_viewHeight = height;
-	}
-
-	#endregion
-
-	#region Transform Config
-
-	/// <summary>Gets or sets the minimum allowed scale.</summary>
-	public float MinScale
-	{
-		get => Options.MinScale;
-		set => Options.MinScale = value;
-	}
-
-	/// <summary>Gets or sets the maximum allowed scale.</summary>
-	public float MaxScale
-	{
-		get => Options.MaxScale;
-		set => Options.MaxScale = value;
-	}
-
-	/// <summary>Gets or sets the zoom factor applied per double-tap.</summary>
-	public float DoubleTapZoomFactor
-	{
-		get => Options.DoubleTapZoomFactor;
-		set => Options.DoubleTapZoomFactor = value;
-	}
-
-	/// <summary>Gets or sets the zoom animation duration in milliseconds.</summary>
-	public int ZoomAnimationDuration
-	{
-		get => Options.ZoomAnimationDuration;
-		set => Options.ZoomAnimationDuration = value;
-	}
-
-	/// <summary>Gets or sets how much each scroll tick changes scale.</summary>
-	public float ScrollZoomFactor
-	{
-		get => Options.ScrollZoomFactor;
-		set => Options.ScrollZoomFactor = value;
-	}
-
-	/// <summary>
-	/// Gets or sets the fling friction (0 = no friction / infinite fling, 1 = full friction / no fling).
-	/// Default is 0.08.
-	/// </summary>
-	public float FlingFriction
-	{
-		get => Options.FlingFriction;
-		set => Options.FlingFriction = value;
-	}
-
-	/// <summary>Gets or sets the minimum fling velocity before the animation stops.</summary>
-	public float FlingMinVelocity
-	{
-		get => Options.FlingMinVelocity;
-		set => Options.FlingMinVelocity = value;
-	}
-
-	/// <summary>Gets or sets the fling animation frame interval in milliseconds.</summary>
-	public int FlingFrameInterval
-	{
-		get => Options.FlingFrameInterval;
-		set => Options.FlingFrameInterval = value;
 	}
 
 	#endregion
@@ -404,8 +313,8 @@ public class SKGestureTracker : IDisposable
 		_zoomTimer = new Timer(
 			OnZoomTimerTick,
 			token,
-			FlingFrameInterval,
-			FlingFrameInterval);
+			Options.FlingFrameInterval,
+			Options.FlingFrameInterval);
 	}
 
 	/// <summary>Stops any active zoom animation.</summary>
@@ -524,14 +433,14 @@ public class SKGestureTracker : IDisposable
 		if (!IsDoubleTapZoomEnabled)
 			return;
 
-		if (_scale >= MaxScale - 0.01f)
+		if (_scale >= Options.MaxScale - 0.01f)
 		{
 			// At max zoom — animate reset to 1.0
 			ZoomTo(1f / _scale, e.Location);
 		}
 		else
 		{
-			var factor = Math.Min(DoubleTapZoomFactor, MaxScale / _scale);
+			var factor = Math.Min(Options.DoubleTapZoomFactor, Options.MaxScale / _scale);
 			ZoomTo(factor, e.Location);
 		}
 	}
@@ -593,7 +502,7 @@ public class SKGestureTracker : IDisposable
 
 		if (IsPinchEnabled)
 		{
-			var newScale = Clamp(_scale * e.ScaleDelta, MinScale, MaxScale);
+			var newScale = Clamp(_scale * e.ScaleDelta, Options.MinScale, Options.MaxScale);
 			AdjustOffsetForPivot(e.FocalPoint, _scale, newScale, _rotation, _rotation);
 			_scale = newScale;
 		}
@@ -639,8 +548,8 @@ public class SKGestureTracker : IDisposable
 		if (!IsScrollZoomEnabled || e.DeltaY == 0)
 			return;
 
-		var scaleDelta = 1f + e.DeltaY * ScrollZoomFactor;
-		var newScale = Clamp(_scale * scaleDelta, MinScale, MaxScale);
+		var scaleDelta = 1f + e.DeltaY * Options.ScrollZoomFactor;
+		var newScale = Clamp(_scale * scaleDelta, Options.MinScale, Options.MaxScale);
 		AdjustOffsetForPivot(e.Location, _scale, newScale, _rotation, _rotation);
 		_scale = newScale;
 		TransformChanged?.Invoke(this, EventArgs.Empty);
@@ -715,8 +624,8 @@ public class SKGestureTracker : IDisposable
 		_flingTimer = new Timer(
 			OnFlingTimerTick,
 			token,
-			FlingFrameInterval,
-			FlingFrameInterval);
+			Options.FlingFrameInterval,
+			Options.FlingFrameInterval);
 	}
 
 	private void OnFlingTimerTick(object? state)
@@ -747,7 +656,7 @@ public class SKGestureTracker : IDisposable
 		if (!_isFlinging || _disposed)
 			return;
 
-		var dt = FlingFrameInterval / 1000f;
+		var dt = Options.FlingFrameInterval / 1000f;
 		var deltaX = _flingVelocityX * dt;
 		var deltaY = _flingVelocityY * dt;
 
@@ -759,12 +668,12 @@ public class SKGestureTracker : IDisposable
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 
 		// Apply friction (FlingFriction: 0 = no friction, 1 = full friction)
-		var decay = 1f - FlingFriction;
+		var decay = 1f - Options.FlingFriction;
 		_flingVelocityX *= decay;
 		_flingVelocityY *= decay;
 
 		var speed = (float)Math.Sqrt(_flingVelocityX * _flingVelocityX + _flingVelocityY * _flingVelocityY);
-		if (speed < FlingMinVelocity)
+		if (speed < Options.FlingMinVelocity)
 		{
 			StopFling();
 		}
@@ -803,7 +712,7 @@ public class SKGestureTracker : IDisposable
 			return;
 
 		var elapsed = TimeProvider() - _zoomStartTicks;
-		var duration = ZoomAnimationDuration * TimeSpan.TicksPerMillisecond;
+		var duration = Options.ZoomAnimationDuration * TimeSpan.TicksPerMillisecond;
 		var t = duration > 0 ? Math.Min(1.0, (double)elapsed / duration) : 1.0;
 
 		// CubicOut easing: 1 - (1 - t)^3
@@ -818,7 +727,7 @@ public class SKGestureTracker : IDisposable
 
 		// Apply scale change
 		var oldScale = _scale;
-		var newScale = Clamp(_zoomStartScale * cumulative, MinScale, MaxScale);
+		var newScale = Clamp(_zoomStartScale * cumulative, Options.MinScale, Options.MaxScale);
 		AdjustOffsetForPivot(_zoomFocalPoint, oldScale, newScale, _rotation, _rotation);
 		_scale = newScale;
 		TransformChanged?.Invoke(this, EventArgs.Empty);
