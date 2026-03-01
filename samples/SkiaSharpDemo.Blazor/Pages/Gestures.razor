@@ -34,6 +34,64 @@
     }
 </div>
 
+<div class="settings-panel">
+    <button class="btn btn-sm btn-outline-secondary mb-2" @onclick="ToggleSettings">
+        ⚙️ @(_showSettings ? "Hide" : "Show") Settings
+    </button>
+
+    @if (_showSettings)
+    {
+        <div class="settings-grid">
+            <h6>Feature Toggles</h6>
+            <div class="toggle-row">
+                <label><input type="checkbox" checked="@_tracker.IsTapEnabled" @onchange="e => { _tracker.IsTapEnabled = (bool)e.Value!; }" /> Tap</label>
+                <label><input type="checkbox" checked="@_tracker.IsDoubleTapEnabled" @onchange="e => { _tracker.IsDoubleTapEnabled = (bool)e.Value!; }" /> Double Tap</label>
+                <label><input type="checkbox" checked="@_tracker.IsLongPressEnabled" @onchange="e => { _tracker.IsLongPressEnabled = (bool)e.Value!; }" /> Long Press</label>
+                <label><input type="checkbox" checked="@_tracker.IsHoverEnabled" @onchange="e => { _tracker.IsHoverEnabled = (bool)e.Value!; }" /> Hover</label>
+            </div>
+            <div class="toggle-row">
+                <label><input type="checkbox" checked="@_tracker.IsPanEnabled" @onchange="e => { _tracker.IsPanEnabled = (bool)e.Value!; }" /> Pan</label>
+                <label><input type="checkbox" checked="@_tracker.IsPinchEnabled" @onchange="e => { _tracker.IsPinchEnabled = (bool)e.Value!; }" /> Pinch</label>
+                <label><input type="checkbox" checked="@_tracker.IsRotateEnabled" @onchange="e => { _tracker.IsRotateEnabled = (bool)e.Value!; }" /> Rotate</label>
+                <label><input type="checkbox" checked="@_tracker.IsFlingEnabled" @onchange="e => { _tracker.IsFlingEnabled = (bool)e.Value!; }" /> Fling</label>
+            </div>
+            <div class="toggle-row">
+                <label><input type="checkbox" checked="@_tracker.IsDoubleTapZoomEnabled" @onchange="e => { _tracker.IsDoubleTapZoomEnabled = (bool)e.Value!; }" /> Double Tap Zoom</label>
+                <label><input type="checkbox" checked="@_tracker.IsScrollZoomEnabled" @onchange="e => { _tracker.IsScrollZoomEnabled = (bool)e.Value!; }" /> Scroll Zoom</label>
+                <label><input type="checkbox" checked="@_enableTap" @onchange="e => { _enableTap = (bool)e.Value!; }" /> App Tap</label>
+                <label><input type="checkbox" checked="@_enableDrag" @onchange="e => { _enableDrag = (bool)e.Value!; }" /> App Drag</label>
+            </div>
+
+            <h6 class="mt-2">Options</h6>
+            <div class="slider-row">
+                <label>Min Scale: @_tracker.MinScale.ToString("F1")</label>
+                <input type="range" min="0.1" max="1.0" step="0.1" value="@_tracker.MinScale" @onchange="e => { _tracker.MinScale = float.Parse((string)e.Value!); }" />
+            </div>
+            <div class="slider-row">
+                <label>Max Scale: @_tracker.MaxScale.ToString("F1")</label>
+                <input type="range" min="2" max="20" step="1" value="@_tracker.MaxScale" @onchange="e => { _tracker.MaxScale = float.Parse((string)e.Value!); }" />
+            </div>
+            <div class="slider-row">
+                <label>Double Tap Zoom: @_tracker.DoubleTapZoomFactor.ToString("F1")x</label>
+                <input type="range" min="1.5" max="5.0" step="0.5" value="@_tracker.DoubleTapZoomFactor" @onchange="e => { _tracker.DoubleTapZoomFactor = float.Parse((string)e.Value!); }" />
+            </div>
+            <div class="slider-row">
+                <label>Scroll Zoom Factor: @_tracker.ScrollZoomFactor.ToString("F2")</label>
+                <input type="range" min="0.01" max="0.5" step="0.01" value="@_tracker.ScrollZoomFactor" @onchange="e => { _tracker.ScrollZoomFactor = float.Parse((string)e.Value!); }" />
+            </div>
+
+            <h6 class="mt-2">Current State</h6>
+            <div class="state-info">
+                Scale: @_tracker.Scale.ToString("F2")x &nbsp;|&nbsp;
+                Rotation: @_tracker.Rotation.ToString("F1")° &nbsp;|&nbsp;
+                Offset: (@_tracker.Offset.X.ToString("F0"), @_tracker.Offset.Y.ToString("F0"))
+            </div>
+
+            <button class="btn btn-sm btn-warning mt-2" @onclick="ResetView">Reset View</button>
+        </div>
+    }
+</div>
+
 <style>
     .gesture-container {
         border: 1px solid #ccc;
@@ -60,6 +118,45 @@
     .event-log {
         color: #666;
         font-size: 11px;
+    }
+    .settings-panel {
+        margin-top: 10px;
+    }
+    .settings-grid {
+        padding: 10px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        font-size: 13px;
+    }
+    .toggle-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 4px;
+    }
+    .toggle-row label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+    }
+    .slider-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+    .slider-row label {
+        min-width: 180px;
+        font-size: 12px;
+    }
+    .slider-row input[type=range] {
+        flex: 1;
+    }
+    .state-info {
+        font-family: monospace;
+        font-size: 12px;
+        color: #555;
     }
 </style>
 
@@ -88,6 +185,16 @@
     // Feature toggles
     private bool _enableTap = true;
     private bool _enableDrag = true;
+    private bool _showSettings;
+
+    private void ToggleSettings() => _showSettings = !_showSettings;
+
+    private void ResetView()
+    {
+        _tracker.Reset();
+        _selectedSticker = null;
+        Invalidate();
+    }
 
     protected override void OnInitialized()
     {
