@@ -8,15 +8,15 @@ using Xunit;
 namespace SkiaSharp.Extended.Tests.Gestures;
 
 /// <summary>
-/// Tests for <see cref="SKGestureEngine"/>.
+/// Tests for <see cref="SKGestureDetector"/>.
 /// </summary>
-public class SKGestureEngineTests
+public class SKGestureDetectorTests
 {
 	private long _testTicks = 1000000;
 
-	private SKGestureEngine CreateEngine()
+	private SKGestureDetector CreateEngine()
 	{
-		var engine = new SKGestureEngine
+		var engine = new SKGestureDetector
 		{
 			TimeProvider = () => _testTicks
 		};
@@ -171,7 +171,7 @@ public class SKGestureEngineTests
 	[Fact]
 	public async Task LongTouch_RaisesLongPressDetected()
 	{
-		var engine = new SKGestureEngine();
+		var engine = new SKGestureDetector();
 		engine.Options.LongPressDuration = 100; // Short duration for testing
 		var longPressRaised = false;
 		engine.LongPressDetected += (s, e) => longPressRaised = true;
@@ -186,7 +186,7 @@ public class SKGestureEngineTests
 	[Fact]
 	public async Task LongPress_DoesNotRaiseTapOnRelease()
 	{
-		var engine = new SKGestureEngine();
+		var engine = new SKGestureDetector();
 		engine.Options.LongPressDuration = 100;
 		var tapRaised = false;
 		var longPressRaised = false;
@@ -205,7 +205,7 @@ public class SKGestureEngineTests
 	[Fact]
 	public async Task LongPressDuration_CanBeCustomized()
 	{
-		var engine = new SKGestureEngine();
+		var engine = new SKGestureDetector();
 		engine.Options.LongPressDuration = 300;
 		var longPressRaised = false;
 		engine.LongPressDetected += (s, e) => longPressRaised = true;

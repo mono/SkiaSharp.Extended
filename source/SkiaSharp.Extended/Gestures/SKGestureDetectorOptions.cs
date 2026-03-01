@@ -1,9 +1,9 @@
 ﻿namespace SkiaSharp.Extended.Gestures;
 
 /// <summary>
-/// Configuration options for <see cref="SKGestureEngine"/>.
+/// Configuration options for <see cref="SKGestureDetector"/>.
 /// </summary>
-public class SKGestureEngineOptions
+public class SKGestureDetectorOptions
 {
 	/// <summary>
 	/// Gets or sets the touch slop (minimum movement distance to start a gesture).
