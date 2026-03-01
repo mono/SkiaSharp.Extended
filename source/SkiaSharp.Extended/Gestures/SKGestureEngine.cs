@@ -237,7 +237,8 @@ public class SKGestureEngine : IDisposable
 				if (touchPoints.Length == 1)
 				{
 					var delta = location - _pinchState.Center;
-					OnPanDetected(new SKPanEventArgs(location, _pinchState.Center, delta));
+					var velocity = _flingTracker.CalculateVelocity(id, ticks);
+					OnPanDetected(new SKPanEventArgs(location, _pinchState.Center, delta, velocity));
 					_pinchState = new PinchState(location, 0, 0);
 				}
 				break;
