@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a fling gesture.
 /// </summary>
-public class SKFlingGestureEventArgs : EventArgs
+public class SKFlingGestureEventArgs : SKGestureEventArgs
 {
 	/// <summary>
 	/// Creates a new instance with velocity only (used for FlingDetected).
@@ -51,8 +51,4 @@ public class SKFlingGestureEventArgs : EventArgs
 	/// </summary>
 	public float Speed => (float)Math.Sqrt(VelocityX * VelocityX + VelocityY * VelocityY);
 
-	/// <summary>
-	/// Gets or sets whether the event was handled.
-	/// </summary>
-	public bool Handled { get; set; }
 }

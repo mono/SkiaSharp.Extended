@@ -5,7 +5,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a drag operation.
 /// </summary>
-public class SKDragGestureEventArgs : EventArgs
+public class SKDragGestureEventArgs : SKGestureEventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
@@ -32,8 +32,4 @@ public class SKDragGestureEventArgs : EventArgs
 	/// </summary>
 	public SKPoint Delta { get; }
 
-	/// <summary>
-	/// Gets or sets whether the event was handled.
-	/// </summary>
-	public bool Handled { get; set; }
 }
