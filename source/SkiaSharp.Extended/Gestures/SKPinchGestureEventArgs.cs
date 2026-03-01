@@ -5,12 +5,12 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a pinch (scale) gesture.
 /// </summary>
-public class SKPinchEventArgs : EventArgs
+public class SKPinchGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
-	public SKPinchEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float scale)
+	public SKPinchGestureEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float scale)
 	{
 		FocalPoint = focalPoint;
 		PreviousFocalPoint = previousFocalPoint;

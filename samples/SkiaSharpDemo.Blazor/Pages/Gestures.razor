@@ -331,7 +331,7 @@
 
     #region Gesture Event Handlers
 
-    private void OnTap(object? sender, SKTapEventArgs e)
+    private void OnTap(object? sender, SKTapGestureEventArgs e)
     {
         if (!_enableTap) return;
         LogEvent($"Tap at ({e.Location.X:F0}, {e.Location.Y:F0})");
@@ -351,7 +351,7 @@
         Invalidate();
     }
 
-    private void OnDoubleTap(object? sender, SKTapEventArgs e)
+    private void OnDoubleTap(object? sender, SKTapGestureEventArgs e)
     {
         LogEvent($"Double tap ({e.TapCount}x) at ({e.Location.X:F0}, {e.Location.Y:F0})");
 
@@ -365,7 +365,7 @@
         }
     }
 
-    private void OnLongPress(object? sender, SKTapEventArgs e)
+    private void OnLongPress(object? sender, SKTapGestureEventArgs e)
     {
         LogEvent($"Long press at ({e.Location.X:F0}, {e.Location.Y:F0})");
 
@@ -379,30 +379,30 @@
         Invalidate();
     }
 
-    private void OnPan(object? sender, SKPanEventArgs e)
+    private void OnPan(object? sender, SKPanGestureEventArgs e)
     {
         _statusText = $"Pan: Δ({e.Delta.X:F1}, {e.Delta.Y:F1})";
     }
 
-    private void OnPinch(object? sender, SKPinchEventArgs e)
+    private void OnPinch(object? sender, SKPinchGestureEventArgs e)
     {
         LogEvent($"Pinch scale: {e.Scale:F2}");
         _statusText = $"Scale: {_tracker.Scale:F2}";
     }
 
-    private void OnRotate(object? sender, SKRotateEventArgs e)
+    private void OnRotate(object? sender, SKRotateGestureEventArgs e)
     {
         LogEvent($"Rotate: {e.RotationDelta:F1}°");
         _statusText = $"Rotation: {_tracker.Rotation:F1}°";
     }
 
-    private void OnFling(object? sender, SKFlingEventArgs e)
+    private void OnFling(object? sender, SKFlingGestureEventArgs e)
     {
         LogEvent($"Fling: ({e.VelocityX:F0}, {e.VelocityY:F0}) px/s");
         _statusText = $"Flinging at {e.Speed:F0} px/s";
     }
 
-    private void OnFlinging(object? sender, SKFlingEventArgs e)
+    private void OnFlinging(object? sender, SKFlingGestureEventArgs e)
     {
         _statusText = $"Flinging... ({e.Speed:F0} px/s)";
     }
@@ -412,17 +412,17 @@
         _statusText = "Fling ended";
     }
 
-    private void OnScroll(object? sender, SKScrollEventArgs e)
+    private void OnScroll(object? sender, SKScrollGestureEventArgs e)
     {
         _statusText = $"Scroll zoom: {_tracker.Scale:F2}x";
     }
 
-    private void OnHover(object? sender, SKHoverEventArgs e)
+    private void OnHover(object? sender, SKHoverGestureEventArgs e)
     {
         _statusText = $"Hover: ({e.Location.X:F0}, {e.Location.Y:F0})";
     }
 
-    private void OnDragStarted(object? sender, SKDragEventArgs e)
+    private void OnDragStarted(object? sender, SKDragGestureEventArgs e)
     {
         if (!_enableDrag) return;
         LogEvent($"Drag started at ({e.StartLocation.X:F0}, {e.StartLocation.Y:F0})");
@@ -434,7 +434,7 @@
         }
     }
 
-    private void OnDragUpdated(object? sender, SKDragEventArgs e)
+    private void OnDragUpdated(object? sender, SKDragGestureEventArgs e)
     {
         if (!_enableDrag) return;
 
@@ -454,7 +454,7 @@
         }
     }
 
-    private void OnDragEnded(object? sender, SKDragEventArgs e)
+    private void OnDragEnded(object? sender, SKDragGestureEventArgs e)
     {
         if (!_enableDrag) return;
         LogEvent($"Drag ended at ({e.CurrentLocation.X:F0}, {e.CurrentLocation.Y:F0})");

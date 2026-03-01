@@ -5,12 +5,12 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a rotation gesture.
 /// </summary>
-public class SKRotateEventArgs : EventArgs
+public class SKRotateGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
-	public SKRotateEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float rotationDelta)
+	public SKRotateGestureEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float rotationDelta)
 	{
 		FocalPoint = focalPoint;
 		PreviousFocalPoint = previousFocalPoint;

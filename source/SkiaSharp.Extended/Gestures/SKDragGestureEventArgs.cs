@@ -5,12 +5,12 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a drag operation.
 /// </summary>
-public class SKDragEventArgs : EventArgs
+public class SKDragGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
-	public SKDragEventArgs(SKPoint startLocation, SKPoint currentLocation, SKPoint delta)
+	public SKDragGestureEventArgs(SKPoint startLocation, SKPoint currentLocation, SKPoint delta)
 	{
 		StartLocation = startLocation;
 		CurrentLocation = currentLocation;

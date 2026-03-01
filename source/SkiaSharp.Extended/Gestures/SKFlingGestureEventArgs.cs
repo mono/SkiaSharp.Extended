@@ -5,12 +5,12 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a fling gesture.
 /// </summary>
-public class SKFlingEventArgs : EventArgs
+public class SKFlingGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Creates a new instance with velocity only (used for FlingDetected).
 	/// </summary>
-	public SKFlingEventArgs(float velocityX, float velocityY)
+	public SKFlingGestureEventArgs(float velocityX, float velocityY)
 		: this(velocityX, velocityY, 0f, 0f)
 	{
 	}
@@ -18,7 +18,7 @@ public class SKFlingEventArgs : EventArgs
 	/// <summary>
 	/// Creates a new instance with velocity and per-frame delta (used for Flinging).
 	/// </summary>
-	public SKFlingEventArgs(float velocityX, float velocityY, float deltaX, float deltaY)
+	public SKFlingGestureEventArgs(float velocityX, float velocityY, float deltaX, float deltaY)
 	{
 		VelocityX = velocityX;
 		VelocityY = velocityY;

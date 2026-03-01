@@ -80,47 +80,47 @@ public class SKGestureEngine : IDisposable
 	/// <summary>
 	/// Occurs when a tap is detected.
 	/// </summary>
-	public event EventHandler<SKTapEventArgs>? TapDetected;
+	public event EventHandler<SKTapGestureEventArgs>? TapDetected;
 
 	/// <summary>
 	/// Occurs when a double tap is detected.
 	/// </summary>
-	public event EventHandler<SKTapEventArgs>? DoubleTapDetected;
+	public event EventHandler<SKTapGestureEventArgs>? DoubleTapDetected;
 
 	/// <summary>
 	/// Occurs when a long press is detected.
 	/// </summary>
-	public event EventHandler<SKTapEventArgs>? LongPressDetected;
+	public event EventHandler<SKTapGestureEventArgs>? LongPressDetected;
 
 	/// <summary>
 	/// Occurs when a pan gesture is detected.
 	/// </summary>
-	public event EventHandler<SKPanEventArgs>? PanDetected;
+	public event EventHandler<SKPanGestureEventArgs>? PanDetected;
 
 	/// <summary>
 	/// Occurs when a pinch (scale) gesture is detected.
 	/// </summary>
-	public event EventHandler<SKPinchEventArgs>? PinchDetected;
+	public event EventHandler<SKPinchGestureEventArgs>? PinchDetected;
 
 	/// <summary>
 	/// Occurs when a rotation gesture is detected.
 	/// </summary>
-	public event EventHandler<SKRotateEventArgs>? RotateDetected;
+	public event EventHandler<SKRotateGestureEventArgs>? RotateDetected;
 
 	/// <summary>
 	/// Occurs when a fling gesture is detected (fires once with initial velocity).
 	/// </summary>
-	public event EventHandler<SKFlingEventArgs>? FlingDetected;
+	public event EventHandler<SKFlingGestureEventArgs>? FlingDetected;
 
 	/// <summary>
 	/// Occurs when a hover is detected.
 	/// </summary>
-	public event EventHandler<SKHoverEventArgs>? HoverDetected;
+	public event EventHandler<SKHoverGestureEventArgs>? HoverDetected;
 
 	/// <summary>
 	/// Occurs when a mouse scroll (wheel) event is detected.
 	/// </summary>
-	public event EventHandler<SKScrollEventArgs>? ScrollDetected;
+	public event EventHandler<SKScrollGestureEventArgs>? ScrollDetected;
 
 	/// <summary>Occurs when a gesture starts.</summary>
 	public event EventHandler? GestureStarted;
@@ -211,7 +211,7 @@ public class SKGestureEngine : IDisposable
 		// Handle hover (mouse without contact) — no prior touch down required
 		if (!inContact)
 		{
-			OnHoverDetected(new SKHoverEventArgs(location));
+			OnHoverDetected(new SKHoverGestureEventArgs(location));
 			return true;
 		}
 
@@ -238,7 +238,7 @@ public class SKGestureEngine : IDisposable
 				{
 					var delta = location - _pinchState.Center;
 					var velocity = _flingTracker.CalculateVelocity(id, ticks);
-					OnPanDetected(new SKPanEventArgs(location, _pinchState.Center, delta, velocity));
+					OnPanDetected(new SKPanGestureEventArgs(location, _pinchState.Center, delta, velocity));
 					_pinchState = new PinchState(location, 0, 0);
 				}
 				break;
@@ -250,12 +250,12 @@ public class SKGestureEngine : IDisposable
 
 					// Calculate scale
 					var scaleDelta = _pinchState.Radius > 0 ? newPinch.Radius / _pinchState.Radius : 1f;
-					OnPinchDetected(new SKPinchEventArgs(newPinch.Center, _pinchState.Center, scaleDelta));
+					OnPinchDetected(new SKPinchGestureEventArgs(newPinch.Center, _pinchState.Center, scaleDelta));
 
 					// Calculate rotation
 					var rotationDelta = newPinch.Angle - _pinchState.Angle;
 					rotationDelta = NormalizeAngle(rotationDelta);
-					OnRotateDetected(new SKRotateEventArgs(newPinch.Center, _pinchState.Center, rotationDelta));
+					OnRotateDetected(new SKRotateGestureEventArgs(newPinch.Center, _pinchState.Center, rotationDelta));
 
 					_pinchState = newPinch;
 				}
@@ -296,7 +296,7 @@ public class SKGestureEngine : IDisposable
 
 			if (velocityMagnitude > Options.FlingThreshold)
 			{
-				OnFlingDetected(new SKFlingEventArgs(velocity.X, velocity.Y));
+				OnFlingDetected(new SKFlingGestureEventArgs(velocity.X, velocity.Y));
 				handled = true;
 			}
 		}
@@ -315,12 +315,12 @@ public class SKGestureEngine : IDisposable
 
 				if (_tapCount > 1)
 				{
-					OnDoubleTapDetected(new SKTapEventArgs(location, _tapCount));
+					OnDoubleTapDetected(new SKTapGestureEventArgs(location, _tapCount));
 					_tapCount = 0;
 				}
 				else
 				{
-					OnTapDetected(new SKTapEventArgs(location, 1));
+					OnTapDetected(new SKTapGestureEventArgs(location, 1));
 				}
 				handled = true;
 			}
@@ -397,7 +397,7 @@ public class SKGestureEngine : IDisposable
 		if (!IsEnabled || _disposed)
 			return false;
 
-		OnScrollDetected(new SKScrollEventArgs(location, deltaX, deltaY));
+		OnScrollDetected(new SKScrollGestureEventArgs(location, deltaX, deltaY));
 		return true;
 	}
 
@@ -482,7 +482,7 @@ public class SKGestureEngine : IDisposable
 			{
 				_longPressTriggered = true;
 				StopLongPressTimer();
-				OnLongPressDetected(new SKTapEventArgs(touchPoints[0], 1));
+				OnLongPressDetected(new SKTapGestureEventArgs(touchPoints[0], 1));
 			}
 		}
 	}
@@ -506,15 +506,15 @@ public class SKGestureEngine : IDisposable
 	}
 
 	// Event invokers
-	protected virtual void OnTapDetected(SKTapEventArgs e) => TapDetected?.Invoke(this, e);
-	protected virtual void OnDoubleTapDetected(SKTapEventArgs e) => DoubleTapDetected?.Invoke(this, e);
-	protected virtual void OnLongPressDetected(SKTapEventArgs e) => LongPressDetected?.Invoke(this, e);
-	protected virtual void OnPanDetected(SKPanEventArgs e) => PanDetected?.Invoke(this, e);
-	protected virtual void OnPinchDetected(SKPinchEventArgs e) => PinchDetected?.Invoke(this, e);
-	protected virtual void OnRotateDetected(SKRotateEventArgs e) => RotateDetected?.Invoke(this, e);
-	protected virtual void OnFlingDetected(SKFlingEventArgs e) => FlingDetected?.Invoke(this, e);
-	protected virtual void OnHoverDetected(SKHoverEventArgs e) => HoverDetected?.Invoke(this, e);
-	protected virtual void OnScrollDetected(SKScrollEventArgs e) => ScrollDetected?.Invoke(this, e);
+	protected virtual void OnTapDetected(SKTapGestureEventArgs e) => TapDetected?.Invoke(this, e);
+	protected virtual void OnDoubleTapDetected(SKTapGestureEventArgs e) => DoubleTapDetected?.Invoke(this, e);
+	protected virtual void OnLongPressDetected(SKTapGestureEventArgs e) => LongPressDetected?.Invoke(this, e);
+	protected virtual void OnPanDetected(SKPanGestureEventArgs e) => PanDetected?.Invoke(this, e);
+	protected virtual void OnPinchDetected(SKPinchGestureEventArgs e) => PinchDetected?.Invoke(this, e);
+	protected virtual void OnRotateDetected(SKRotateGestureEventArgs e) => RotateDetected?.Invoke(this, e);
+	protected virtual void OnFlingDetected(SKFlingGestureEventArgs e) => FlingDetected?.Invoke(this, e);
+	protected virtual void OnHoverDetected(SKHoverGestureEventArgs e) => HoverDetected?.Invoke(this, e);
+	protected virtual void OnScrollDetected(SKScrollGestureEventArgs e) => ScrollDetected?.Invoke(this, e);
 	private void OnGestureStarted() => GestureStarted?.Invoke(this, EventArgs.Empty);
 	private void OnGestureEnded() => GestureEnded?.Invoke(this, EventArgs.Empty);
 

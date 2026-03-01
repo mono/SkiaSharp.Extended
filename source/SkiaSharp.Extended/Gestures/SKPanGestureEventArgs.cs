@@ -5,12 +5,12 @@ namespace SkiaSharp.Extended.Gestures;
 /// <summary>
 /// Event arguments for a pan gesture.
 /// </summary>
-public class SKPanEventArgs : EventArgs
+public class SKPanGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
-	public SKPanEventArgs(SKPoint location, SKPoint previousLocation, SKPoint delta, SKPoint velocity)
+	public SKPanGestureEventArgs(SKPoint location, SKPoint previousLocation, SKPoint delta, SKPoint velocity)
 	{
 		Location = location;
 		PreviousLocation = previousLocation;

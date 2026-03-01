@@ -488,7 +488,7 @@ public class SKGestureEngineTests
 	public void ProcessMouseWheel_HasCorrectData()
 	{
 		var engine = CreateEngine();
-		SKScrollEventArgs? args = null;
+		SKScrollGestureEventArgs? args = null;
 		engine.ScrollDetected += (s, e) => args = e;
 
 		engine.ProcessMouseWheel(new SKPoint(150, 250), 0, -3f);
@@ -825,7 +825,7 @@ public class SKGestureEngineTests
 	public void PinchDetected_PreviousCenterIsProvided()
 	{
 		var engine = CreateEngine();
-		SKPinchEventArgs? lastArgs = null;
+		SKPinchGestureEventArgs? lastArgs = null;
 		engine.PinchDetected += (s, e) => lastArgs = e;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
@@ -890,7 +890,7 @@ public class SKGestureEngineTests
 	public void RotateDetected_PreviousCenterIsProvided()
 	{
 		var engine = CreateEngine();
-		SKRotateEventArgs? lastArgs = null;
+		SKRotateGestureEventArgs? lastArgs = null;
 		engine.RotateDetected += (s, e) => lastArgs = e;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
