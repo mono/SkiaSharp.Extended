@@ -121,8 +121,8 @@
 
 <a id="SkiaSharp_Extended_Gestures_SKPanEventArgs__ctor_" data-uid="SkiaSharp.Extended.Gestures.SKPanEventArgs.#ctor*"></a>
 
-<h3 id="SkiaSharp_Extended_Gestures_SKPanEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_" data-uid="SkiaSharp.Extended.Gestures.SKPanEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint)">
-  SKPanEventArgs(SKPoint, SKPoint, SKPoint)
+<h3 id="SkiaSharp_Extended_Gestures_SKPanEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_" data-uid="SkiaSharp.Extended.Gestures.SKPanEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint)">
+  SKPanEventArgs(SKPoint, SKPoint, SKPoint, SKPoint)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKPanEventArgs.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
@@ -130,7 +130,7 @@
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKPanEventArgs(SKPoint location, SKPoint previousLocation, SKPoint delta)</code></pre>
+  <pre><code class="lang-csharp hljs">public SKPanEventArgs(SKPoint location, SKPoint previousLocation, SKPoint delta, SKPoint velocity)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
@@ -140,6 +140,8 @@
   <dt><code>previousLocation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
   <dd></dd>
   <dt><code>delta</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
+  <dd></dd>
+  <dt><code>velocity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
   <dd></dd>
 </dl>
 
@@ -173,7 +175,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 9b6d98d
+          source: PR #326 · 3f8da03
         </div>
       </div>
     </footer>
