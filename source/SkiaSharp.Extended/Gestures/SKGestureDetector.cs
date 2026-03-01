@@ -453,9 +453,10 @@ public class SKGestureDetector : IDisposable
 			return;
 
 		// Marshal to UI thread if we have a sync context
-		if (_syncContext != null)
+		var ctx = _syncContext;
+		if (ctx != null)
 		{
-			_syncContext.Post(_ =>
+			ctx.Post(_ =>
 			{
 				if (token == Volatile.Read(ref _longPressToken))
 					HandleLongPress();
