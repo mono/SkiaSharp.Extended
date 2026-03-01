@@ -4,13 +4,40 @@ using System.Threading;
 namespace SkiaSharp.Extended.Gestures;
 
 /// <summary>
-/// Tracks gesture state and maintains an absolute transform (scale, rotation, offset)
-/// by consuming events from an internal <see cref="SKGestureDetector"/>.
+/// A high-level gesture handler that tracks touch input and maintains an absolute transform
+/// (scale, rotation, and offset) by consuming events from an internal <see cref="SKGestureDetector"/>.
 /// </summary>
 /// <remarks>
-/// <para>The tracker is the primary public API for gesture handling. It accepts raw touch
-/// input, detects gestures internally, and translates them into transform state changes.</para>
-/// <para>Use <see cref="Matrix"/> to apply the current transform when painting.</para>
+/// <para>The tracker is the primary public API for gesture handling. It accepts raw touch input
+/// via <see cref="ProcessTouchDown"/>, <see cref="ProcessTouchMove"/>, <see cref="ProcessTouchUp"/>,
+/// and <see cref="ProcessMouseWheel"/>, detects gestures internally, and translates them into
+/// transform state changes and higher-level events such as drag lifecycle and fling animation.</para>
+/// <para>Use the <see cref="Matrix"/> property to apply the current transform when painting.
+/// The matrix is computed relative to the view center, so call <see cref="SetViewSize"/> with your
+/// canvas dimensions before reading <see cref="Matrix"/>.</para>
+/// <para>All coordinates are in view (screen) space. The tracker converts screen-space deltas
+/// to content-space deltas internally when updating <see cref="Offset"/>.</para>
+/// <example>
+/// <para>Basic usage with an SkiaSharp canvas:</para>
+/// <code>
+/// var tracker = new SKGestureTracker();
+/// tracker.SetViewSize(canvasWidth, canvasHeight);
+///
+/// // Forward touch events from your platform:
+/// tracker.ProcessTouchDown(id, new SKPoint(x, y));
+/// tracker.ProcessTouchMove(id, new SKPoint(x, y));
+/// tracker.ProcessTouchUp(id, new SKPoint(x, y));
+///
+/// // In your paint handler:
+/// canvas.SetMatrix(tracker.Matrix);
+/// // Draw your content...
+///
+/// // Listen for transform changes to trigger redraws:
+/// tracker.TransformChanged += (s, e) => canvas.InvalidateVisual();
+/// </code>
+/// </example>
+/// <seealso cref="SKGestureDetector"/>
+/// <seealso cref="SKGestureTrackerOptions"/>
 /// </remarks>
 public class SKGestureTracker : IDisposable
 {
@@ -48,7 +75,7 @@ public class SKGestureTracker : IDisposable
 	private float _zoomPrevCumulative;
 
 	/// <summary>
-	/// Creates a new gesture tracker with default options.
+	/// Initializes a new instance of the <see cref="SKGestureTracker"/> class with default options.
 	/// </summary>
 	public SKGestureTracker()
 		: this(new SKGestureTrackerOptions())
@@ -56,8 +83,10 @@ public class SKGestureTracker : IDisposable
 	}
 
 	/// <summary>
-	/// Creates a new gesture tracker with the specified options.
+	/// Initializes a new instance of the <see cref="SKGestureTracker"/> class with the specified options.
 	/// </summary>
+	/// <param name="options">The configuration options for gesture detection and tracking.</param>
+	/// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
 	public SKGestureTracker(SKGestureTrackerOptions options)
 	{
 		Options = options ?? throw new ArgumentNullException(nameof(options));
@@ -68,27 +97,60 @@ public class SKGestureTracker : IDisposable
 	/// <summary>
 	/// Gets the configuration options for this tracker.
 	/// </summary>
+	/// <value>The <see cref="SKGestureTrackerOptions"/> instance controlling gesture detection
+	/// thresholds, transform limits, and animation parameters.</value>
 	public SKGestureTrackerOptions Options { get; }
 
 	#region Touch Input
 
-	/// <summary>Processes a touch down event.</summary>
+	/// <summary>
+	/// Processes a touch down event and forwards it to the internal gesture detector.
+	/// </summary>
+	/// <param name="id">The unique identifier for this touch pointer.</param>
+	/// <param name="location">The location of the touch in view coordinates.</param>
+	/// <param name="isMouse">Whether this event originates from a mouse device.</param>
+	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
 	public bool ProcessTouchDown(long id, SKPoint location, bool isMouse = false)
 		=> _engine.ProcessTouchDown(id, location, isMouse);
 
-	/// <summary>Processes a touch move event.</summary>
+	/// <summary>
+	/// Processes a touch move event and forwards it to the internal gesture detector.
+	/// </summary>
+	/// <param name="id">The unique identifier for this touch pointer.</param>
+	/// <param name="location">The new location of the touch in view coordinates.</param>
+	/// <param name="inContact">
+	/// <see langword="true"/> if the touch is in contact with the surface; <see langword="false"/>
+	/// for hover (mouse move without button pressed).
+	/// </param>
+	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
 	public bool ProcessTouchMove(long id, SKPoint location, bool inContact = true)
 		=> _engine.ProcessTouchMove(id, location, inContact);
 
-	/// <summary>Processes a touch up event.</summary>
+	/// <summary>
+	/// Processes a touch up event and forwards it to the internal gesture detector.
+	/// </summary>
+	/// <param name="id">The unique identifier for this touch pointer.</param>
+	/// <param name="location">The final location of the touch in view coordinates.</param>
+	/// <param name="isMouse">Whether this event originates from a mouse device.</param>
+	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
 	public bool ProcessTouchUp(long id, SKPoint location, bool isMouse = false)
 		=> _engine.ProcessTouchUp(id, location, isMouse);
 
-	/// <summary>Processes a touch cancel event.</summary>
+	/// <summary>
+	/// Processes a touch cancel event and forwards it to the internal gesture detector.
+	/// </summary>
+	/// <param name="id">The unique identifier for the cancelled touch pointer.</param>
+	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
 	public bool ProcessTouchCancel(long id)
 		=> _engine.ProcessTouchCancel(id);
 
-	/// <summary>Processes a mouse wheel event.</summary>
+	/// <summary>
+	/// Processes a mouse wheel (scroll) event and forwards it to the internal gesture detector.
+	/// </summary>
+	/// <param name="location">The position of the mouse cursor in view coordinates.</param>
+	/// <param name="deltaX">The horizontal scroll delta.</param>
+	/// <param name="deltaY">The vertical scroll delta.</param>
+	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
 	public bool ProcessMouseWheel(SKPoint location, float deltaX, float deltaY)
 		=> _engine.ProcessMouseWheel(location, deltaX, deltaY);
 
@@ -96,14 +158,26 @@ public class SKGestureTracker : IDisposable
 
 	#region Detection Config (forwarded to engine)
 
-	/// <summary>Gets or sets whether gesture detection is enabled.</summary>
+	/// <summary>
+	/// Gets or sets a value indicating whether gesture detection is enabled.
+	/// </summary>
+	/// <value>
+	/// <see langword="true"/> if the tracker processes touch events; otherwise, <see langword="false"/>.
+	/// The default is <see langword="true"/>.
+	/// </value>
 	public bool IsEnabled
 	{
 		get => _engine.IsEnabled;
 		set => _engine.IsEnabled = value;
 	}
 
-	/// <summary>Gets or sets the time provider (for testing).</summary>
+	/// <summary>
+	/// Gets or sets the time provider function used to obtain the current time in ticks.
+	/// </summary>
+	/// <value>
+	/// A <see cref="Func{T}"/> that returns the current time in <see cref="DateTime.Ticks"/>.
+	/// Override this for deterministic testing.
+	/// </value>
 	public Func<long> TimeProvider
 	{
 		get => _engine.TimeProvider;
@@ -114,16 +188,47 @@ public class SKGestureTracker : IDisposable
 
 	#region Transform State (read-only)
 
-	/// <summary>Gets the current zoom scale.</summary>
+	/// <summary>
+	/// Gets the current zoom scale factor.
+	/// </summary>
+	/// <value>
+	/// The absolute scale factor. A value of <c>1.0</c> represents the original (unscaled) view.
+	/// Values greater than <c>1.0</c> are zoomed in; values less than <c>1.0</c> are zoomed out.
+	/// The value is clamped between <see cref="SKGestureTrackerOptions.MinScale"/> and
+	/// <see cref="SKGestureTrackerOptions.MaxScale"/>.
+	/// </value>
 	public float Scale => _scale;
 
-	/// <summary>Gets the current rotation in degrees.</summary>
+	/// <summary>
+	/// Gets the current rotation angle in degrees.
+	/// </summary>
+	/// <value>The cumulative rotation in degrees. Positive values are clockwise.</value>
 	public float Rotation => _rotation;
 
-	/// <summary>Gets the current pan offset.</summary>
+	/// <summary>
+	/// Gets the current pan offset in content coordinates.
+	/// </summary>
+	/// <value>An <see cref="SKPoint"/> representing the translation offset applied after scale and rotation.</value>
+	/// <remarks>
+	/// The offset is in content (post-scale, post-rotation) coordinate space, not screen space.
+	/// Screen-space deltas are converted to content-space internally by accounting for the
+	/// current <see cref="Scale"/> and <see cref="Rotation"/>.
+	/// </remarks>
 	public SKPoint Offset => _offset;
 
-	/// <summary>Gets the composite transform matrix.</summary>
+	/// <summary>
+	/// Gets the composite transform matrix that combines scale, rotation, and offset,
+	/// centered on the view midpoint.
+	/// </summary>
+	/// <value>
+	/// An <see cref="SKMatrix"/> that can be applied to an <see cref="SKCanvas"/> to render content
+	/// with the current gesture transform. The matrix applies transformations in the order:
+	/// translate to center, scale, rotate, offset, translate back.
+	/// </value>
+	/// <remarks>
+	/// Call <see cref="SetViewSize"/> before reading this property to ensure the pivot point
+	/// is correctly calculated.
+	/// </remarks>
 	public SKMatrix Matrix
 	{
 		get
@@ -139,7 +244,15 @@ public class SKGestureTracker : IDisposable
 		}
 	}
 
-	/// <summary>Sets the view dimensions (needed for pivot and matrix calculations).</summary>
+	/// <summary>
+	/// Sets the view dimensions used for pivot and matrix calculations.
+	/// </summary>
+	/// <param name="width">The width of the view in pixels.</param>
+	/// <param name="height">The height of the view in pixels.</param>
+	/// <remarks>
+	/// This must be called (and updated on size changes) before reading <see cref="Matrix"/>,
+	/// as the matrix pivots all transforms around the view center.
+	/// </remarks>
 	public void SetViewSize(float width, float height)
 	{
 		_viewWidth = width;
@@ -150,106 +263,148 @@ public class SKGestureTracker : IDisposable
 
 	#region Feature Toggles
 
-	/// <summary>Gets or sets whether tap detection is enabled.</summary>
+	/// <summary>Gets or sets a value indicating whether tap detection is enabled.</summary>
+	/// <value><see langword="true"/> to detect single taps; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
 	public bool IsTapEnabled { get => Options.IsTapEnabled; set => Options.IsTapEnabled = value; }
 
-	/// <summary>Gets or sets whether double-tap detection is enabled.</summary>
+	/// <summary>Gets or sets a value indicating whether double-tap detection is enabled.</summary>
+	/// <value><see langword="true"/> to detect double taps; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
 	public bool IsDoubleTapEnabled { get => Options.IsDoubleTapEnabled; set => Options.IsDoubleTapEnabled = value; }
 
-	/// <summary>Gets or sets whether long press detection is enabled.</summary>
+	/// <summary>Gets or sets a value indicating whether long press detection is enabled.</summary>
+	/// <value><see langword="true"/> to detect long presses; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
 	public bool IsLongPressEnabled { get => Options.IsLongPressEnabled; set => Options.IsLongPressEnabled = value; }
 
-	/// <summary>Gets or sets whether pan is enabled.</summary>
+	/// <summary>Gets or sets a value indicating whether pan gestures update the <see cref="Offset"/>.</summary>
+	/// <value><see langword="true"/> to apply pan deltas to the offset; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
 	public bool IsPanEnabled { get => Options.IsPanEnabled; set => Options.IsPanEnabled = value; }
 
-	/// <summary>Gets or sets whether pinch-to-zoom is enabled.</summary>
+	/// <summary>Gets or sets a value indicating whether pinch-to-zoom gestures update the <see cref="Scale"/>.</summary>
+	/// <value><see langword="true"/> to apply pinch scale changes; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
 	public bool IsPinchEnabled { get => Options.IsPinchEnabled; set => Options.IsPinchEnabled = value; }
 
-	/// <summary>Gets or sets whether rotation is enabled.</summary>
+	/// <summary>Gets or sets a value indicating whether rotation gestures update the <see cref="Rotation"/>.</summary>
+	/// <value><see langword="true"/> to apply rotation changes; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
 	public bool IsRotateEnabled { get => Options.IsRotateEnabled; set => Options.IsRotateEnabled = value; }
 
-	/// <summary>Gets or sets whether fling animation is enabled.</summary>
+	/// <summary>Gets or sets a value indicating whether fling (inertia) animation is enabled after a pan gesture.</summary>
+	/// <value><see langword="true"/> to run fling animations; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
 	public bool IsFlingEnabled { get => Options.IsFlingEnabled; set => Options.IsFlingEnabled = value; }
 
-	/// <summary>Gets or sets whether double-tap zoom is enabled.</summary>
+	/// <summary>Gets or sets a value indicating whether double-tap triggers an animated zoom.</summary>
+	/// <value><see langword="true"/> to enable double-tap zoom; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
 	public bool IsDoubleTapZoomEnabled { get => Options.IsDoubleTapZoomEnabled; set => Options.IsDoubleTapZoomEnabled = value; }
 
-	/// <summary>Gets or sets whether scroll-wheel zoom is enabled.</summary>
+	/// <summary>Gets or sets a value indicating whether scroll-wheel events trigger zoom.</summary>
+	/// <value><see langword="true"/> to enable scroll-wheel zoom; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
 	public bool IsScrollZoomEnabled { get => Options.IsScrollZoomEnabled; set => Options.IsScrollZoomEnabled = value; }
 
-	/// <summary>Gets or sets whether hover detection is enabled.</summary>
+	/// <summary>Gets or sets a value indicating whether hover (mouse move without contact) detection is enabled.</summary>
+	/// <value><see langword="true"/> to detect hover events; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
 	public bool IsHoverEnabled { get => Options.IsHoverEnabled; set => Options.IsHoverEnabled = value; }
 
 	#endregion
 
 	#region Animation State
 
-	/// <summary>Gets whether a zoom animation is currently running.</summary>
+	/// <summary>Gets a value indicating whether an animated zoom (from double-tap or <see cref="ZoomTo"/>) is in progress.</summary>
+	/// <value><see langword="true"/> if a zoom animation is running; otherwise, <see langword="false"/>.</value>
 	public bool IsZoomAnimating => _isZoomAnimating;
 
-	/// <summary>Gets whether a fling animation is currently running.</summary>
+	/// <summary>Gets a value indicating whether a fling (inertia) animation is in progress.</summary>
+	/// <value><see langword="true"/> if a fling animation is running; otherwise, <see langword="false"/>.</value>
 	public bool IsFlinging => _isFlinging;
 
-	/// <summary>Gets whether any gesture is currently active.</summary>
+	/// <summary>Gets a value indicating whether any gesture is currently active (touch contact in progress).</summary>
+	/// <value><see langword="true"/> if the internal detector is tracking an active gesture; otherwise, <see langword="false"/>.</value>
 	public bool IsGestureActive => _engine.IsGestureActive;
 
 	#endregion
 
 	#region Gesture Events (forwarded from engine)
 
-	/// <summary>Occurs when a tap is detected.</summary>
+	/// <summary>Occurs when a single tap is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
 	public event EventHandler<SKTapGestureEventArgs>? TapDetected;
 
-	/// <summary>Occurs when a double tap is detected.</summary>
+	/// <summary>Occurs when a double tap is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
 	public event EventHandler<SKTapGestureEventArgs>? DoubleTapDetected;
 
-	/// <summary>Occurs when a long press is detected.</summary>
+	/// <summary>Occurs when a long press is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
 	public event EventHandler<SKLongPressGestureEventArgs>? LongPressDetected;
 
-	/// <summary>Occurs when a pan gesture is detected.</summary>
+	/// <summary>Occurs when a pan gesture is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
 	public event EventHandler<SKPanGestureEventArgs>? PanDetected;
 
-	/// <summary>Occurs when a pinch gesture is detected.</summary>
+	/// <summary>Occurs when a pinch (scale) gesture is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
 	public event EventHandler<SKPinchGestureEventArgs>? PinchDetected;
 
-	/// <summary>Occurs when a rotation gesture is detected.</summary>
+	/// <summary>Occurs when a rotation gesture is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
 	public event EventHandler<SKRotateGestureEventArgs>? RotateDetected;
 
-	/// <summary>Occurs when a fling gesture is detected (once, with velocity).</summary>
+	/// <summary>Occurs when a fling gesture is detected (once, with initial velocity). Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
 	public event EventHandler<SKFlingGestureEventArgs>? FlingDetected;
 
-	/// <summary>Occurs when a hover is detected.</summary>
+	/// <summary>Occurs when a hover is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
 	public event EventHandler<SKHoverGestureEventArgs>? HoverDetected;
 
-	/// <summary>Occurs when a scroll event is detected.</summary>
+	/// <summary>Occurs when a scroll (mouse wheel) event is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
 	public event EventHandler<SKScrollGestureEventArgs>? ScrollDetected;
 
-	/// <summary>Occurs when a gesture starts.</summary>
+	/// <summary>Occurs when a gesture interaction begins (first touch contact). Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
 	public event EventHandler<SKGestureLifecycleEventArgs>? GestureStarted;
 
-	/// <summary>Occurs when a gesture ends.</summary>
+	/// <summary>Occurs when a gesture interaction ends (last touch released). Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
 	public event EventHandler<SKGestureLifecycleEventArgs>? GestureEnded;
 
 	#endregion
 
 	#region Tracker Events
 
-	/// <summary>Occurs when the transform (Scale, Rotation, Offset, Matrix) changes.</summary>
+	/// <summary>
+	/// Occurs when the transform state (<see cref="Scale"/>, <see cref="Rotation"/>,
+	/// <see cref="Offset"/>, or <see cref="Matrix"/>) changes.
+	/// </summary>
+	/// <remarks>
+	/// Subscribe to this event to trigger canvas redraws when the user interacts with the view.
+	/// This event fires for pan, pinch, rotation, fling animation frames, zoom animation frames,
+	/// and programmatic transform changes via <see cref="SetTransform"/>, <see cref="SetScale"/>,
+	/// <see cref="SetRotation"/>, <see cref="SetOffset"/>, or <see cref="Reset"/>.
+	/// </remarks>
 	public event EventHandler? TransformChanged;
 
-	/// <summary>Occurs when a drag operation starts.</summary>
+	/// <summary>
+	/// Occurs when a drag operation starts (first pan movement after touch down).
+	/// </summary>
+	/// <remarks>
+	/// Set <see cref="SKGestureEventArgs.Handled"/> to <see langword="true"/> to prevent the
+	/// tracker from updating <see cref="Offset"/> for this drag (useful for custom object dragging).
+	/// </remarks>
 	public event EventHandler<SKDragGestureEventArgs>? DragStarted;
 
-	/// <summary>Occurs during a drag operation.</summary>
+	/// <summary>
+	/// Occurs on each movement during a drag operation.
+	/// </summary>
 	public event EventHandler<SKDragGestureEventArgs>? DragUpdated;
 
-	/// <summary>Occurs when a drag operation ends.</summary>
+	/// <summary>
+	/// Occurs when a drag operation ends (all touches released).
+	/// </summary>
 	public event EventHandler<SKDragGestureEventArgs>? DragEnded;
 
-	/// <summary>Occurs each animation frame during a fling.</summary>
+	/// <summary>
+	/// Occurs each animation frame during a fling deceleration.
+	/// </summary>
+	/// <remarks>
+	/// The <see cref="SKFlingGestureEventArgs.DeltaX"/> and <see cref="SKFlingGestureEventArgs.DeltaY"/>
+	/// properties contain the per-frame displacement. The velocity decays each frame according to
+	/// <see cref="SKGestureTrackerOptions.FlingFriction"/>.
+	/// </remarks>
 	public event EventHandler<SKFlingGestureEventArgs>? FlingUpdated;
 
-	/// <summary>Occurs when a fling animation completes.</summary>
+	/// <summary>
+	/// Occurs when a fling animation completes (velocity drops below
+	/// <see cref="SKGestureTrackerOptions.FlingMinVelocity"/>).
+	/// </summary>
 	public event EventHandler? FlingCompleted;
 
 	#endregion
@@ -257,8 +412,12 @@ public class SKGestureTracker : IDisposable
 	#region Public Methods
 
 	/// <summary>
-	/// Sets the transform to the specified values, clamping scale to MinScale/MaxScale.
+	/// Sets the transform to the specified values, clamping scale to
+	/// <see cref="SKGestureTrackerOptions.MinScale"/>/<see cref="SKGestureTrackerOptions.MaxScale"/>.
 	/// </summary>
+	/// <param name="scale">The desired zoom scale factor.</param>
+	/// <param name="rotation">The desired rotation angle in degrees.</param>
+	/// <param name="offset">The desired pan offset in content coordinates.</param>
 	public void SetTransform(float scale, float rotation, SKPoint offset)
 	{
 		_scale = Clamp(scale, Options.MinScale, Options.MaxScale);
@@ -268,8 +427,10 @@ public class SKGestureTracker : IDisposable
 	}
 
 	/// <summary>
-	/// Sets the scale, clamping to MinScale/MaxScale, and fires TransformChanged.
+	/// Sets the zoom scale, clamping to <see cref="SKGestureTrackerOptions.MinScale"/>/<see cref="SKGestureTrackerOptions.MaxScale"/>,
+	/// and raises <see cref="TransformChanged"/>.
 	/// </summary>
+	/// <param name="scale">The desired zoom scale factor.</param>
 	public void SetScale(float scale)
 	{
 		_scale = Clamp(scale, Options.MinScale, Options.MaxScale);
@@ -277,8 +438,9 @@ public class SKGestureTracker : IDisposable
 	}
 
 	/// <summary>
-	/// Sets the rotation in degrees and fires TransformChanged.
+	/// Sets the rotation angle and raises <see cref="TransformChanged"/>.
 	/// </summary>
+	/// <param name="rotation">The desired rotation angle in degrees.</param>
 	public void SetRotation(float rotation)
 	{
 		_rotation = rotation;
@@ -286,8 +448,9 @@ public class SKGestureTracker : IDisposable
 	}
 
 	/// <summary>
-	/// Sets the pan offset and fires TransformChanged.
+	/// Sets the pan offset and raises <see cref="TransformChanged"/>.
 	/// </summary>
+	/// <param name="offset">The desired pan offset in content coordinates.</param>
 	public void SetOffset(SKPoint offset)
 	{
 		_offset = offset;
@@ -297,6 +460,13 @@ public class SKGestureTracker : IDisposable
 	/// <summary>
 	/// Starts an animated zoom by the given multiplicative factor around a focal point.
 	/// </summary>
+	/// <param name="factor">The scale multiplier to apply (e.g., <c>2.0</c> to double the current zoom).</param>
+	/// <param name="focalPoint">The point in view coordinates to zoom towards.</param>
+	/// <remarks>
+	/// The animation uses a cubic-out easing curve and runs for
+	/// <see cref="SKGestureTrackerOptions.ZoomAnimationDuration"/> milliseconds. Any previously
+	/// running zoom animation is stopped before the new one begins.
+	/// </remarks>
 	public void ZoomTo(float factor, SKPoint focalPoint)
 	{
 		StopZoomAnimation();
@@ -317,7 +487,7 @@ public class SKGestureTracker : IDisposable
 			Options.FlingFrameInterval);
 	}
 
-	/// <summary>Stops any active zoom animation.</summary>
+	/// <summary>Stops any active zoom animation immediately.</summary>
 	public void StopZoomAnimation()
 	{
 		if (!_isZoomAnimating)
@@ -331,7 +501,9 @@ public class SKGestureTracker : IDisposable
 		timer?.Dispose();
 	}
 
-	/// <summary>Stops any active fling animation.</summary>
+	/// <summary>
+	/// Stops any active fling animation and raises <see cref="FlingCompleted"/>.
+	/// </summary>
 	public void StopFling()
 	{
 		if (!_isFlinging)
@@ -348,7 +520,10 @@ public class SKGestureTracker : IDisposable
 		FlingCompleted?.Invoke(this, EventArgs.Empty);
 	}
 
-	/// <summary>Resets the tracker to identity transform.</summary>
+	/// <summary>
+	/// Resets the tracker to an identity transform (scale 1, rotation 0, offset zero), stops all
+	/// animations, and raises <see cref="TransformChanged"/>.
+	/// </summary>
 	public void Reset()
 	{
 		StopFling();
@@ -361,7 +536,10 @@ public class SKGestureTracker : IDisposable
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
 
-	/// <summary>Disposes the tracker and its internal engine.</summary>
+	/// <summary>
+	/// Releases all resources used by this <see cref="SKGestureTracker"/> instance, including
+	/// stopping all animations and disposing the internal <see cref="SKGestureDetector"/>.
+	/// </summary>
 	public void Dispose()
 	{
 		if (_disposed)

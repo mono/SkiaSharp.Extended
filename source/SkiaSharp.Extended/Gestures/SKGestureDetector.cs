@@ -58,62 +58,107 @@ public class SKGestureDetector : IDisposable
 	}
 
 	/// <summary>
-	/// Gets the configuration options for this engine.
+	/// Gets the configuration options for this detector.
 	/// </summary>
+	/// <value>The <see cref="SKGestureDetectorOptions"/> instance controlling detection thresholds.</value>
 	public SKGestureDetectorOptions Options { get; }
 
 	/// <summary>
-	/// Gets or sets the current time provider. Used for testing.
+	/// Gets or sets the time provider function used to obtain the current time in ticks.
 	/// </summary>
+	/// <value>
+	/// A <see cref="Func{T}"/> that returns the current time in <see cref="DateTime.Ticks"/>.
+	/// The default uses <see cref="DateTime.Now"/>.
+	/// </value>
+	/// <remarks>
+	/// Override this for deterministic testing by supplying a custom tick source.
+	/// </remarks>
 	public Func<long> TimeProvider { get; set; } = () => DateTime.Now.Ticks;
 
 	/// <summary>
-	/// Gets or sets whether the engine is enabled.
+	/// Gets or sets a value indicating whether the gesture detector is enabled.
 	/// </summary>
+	/// <value>
+	/// <see langword="true"/> if the detector processes touch events; otherwise, <see langword="false"/>.
+	/// The default is <see langword="true"/>. When disabled, all <c>ProcessTouch*</c> methods return <see langword="false"/>.
+	/// </value>
 	public bool IsEnabled { get; set; } = true;
 
 	/// <summary>
-	/// Gets whether a gesture is currently in progress.
+	/// Gets a value indicating whether a gesture is currently in progress.
 	/// </summary>
+	/// <value>
+	/// <see langword="true"/> if the detector is currently tracking an active gesture (detecting, panning,
+	/// or pinching); otherwise, <see langword="false"/>.
+	/// </value>
 	public bool IsGestureActive => _gestureState != GestureState.None;
 
 	/// <summary>
-	/// Occurs when a tap is detected.
+	/// Occurs when a single tap is detected.
 	/// </summary>
+	/// <remarks>
+	/// A tap is recognized when a touch down and up occur within the <see cref="SKGestureDetectorOptions.TouchSlop"/>
+	/// distance and within the long press duration threshold.
+	/// </remarks>
 	public event EventHandler<SKTapGestureEventArgs>? TapDetected;
 
 	/// <summary>
 	/// Occurs when a double tap is detected.
 	/// </summary>
+	/// <remarks>
+	/// A double tap is recognized when two taps occur within 300 ms of each other and within the
+	/// <see cref="SKGestureDetectorOptions.DoubleTapSlop"/> distance.
+	/// </remarks>
 	public event EventHandler<SKTapGestureEventArgs>? DoubleTapDetected;
 
 	/// <summary>
 	/// Occurs when a long press is detected.
 	/// </summary>
+	/// <remarks>
+	/// A long press is recognized when a touch is held stationary for at least
+	/// <see cref="SKGestureDetectorOptions.LongPressDuration"/> milliseconds without exceeding
+	/// the <see cref="SKGestureDetectorOptions.TouchSlop"/> distance.
+	/// </remarks>
 	public event EventHandler<SKLongPressGestureEventArgs>? LongPressDetected;
 
 	/// <summary>
-	/// Occurs when a pan gesture is detected.
+	/// Occurs when a single-finger pan (drag) gesture is detected.
 	/// </summary>
+	/// <remarks>
+	/// Pan events fire continuously as a single touch moves beyond the
+	/// <see cref="SKGestureDetectorOptions.TouchSlop"/> threshold.
+	/// </remarks>
 	public event EventHandler<SKPanGestureEventArgs>? PanDetected;
 
 	/// <summary>
-	/// Occurs when a pinch (scale) gesture is detected.
+	/// Occurs when a two-finger pinch (scale) gesture is detected.
 	/// </summary>
+	/// <remarks>
+	/// Pinch events fire continuously while two or more touches are active and moving.
+	/// The <see cref="SKPinchGestureEventArgs.ScaleDelta"/> is a per-event relative multiplier.
+	/// </remarks>
 	public event EventHandler<SKPinchGestureEventArgs>? PinchDetected;
 
 	/// <summary>
-	/// Occurs when a rotation gesture is detected.
+	/// Occurs when a two-finger rotation gesture is detected.
 	/// </summary>
+	/// <remarks>
+	/// Rotation events fire simultaneously with pinch events when two or more touches are active.
+	/// </remarks>
 	public event EventHandler<SKRotateGestureEventArgs>? RotateDetected;
 
 	/// <summary>
-	/// Occurs when a fling gesture is detected (fires once with initial velocity).
+	/// Occurs when a fling gesture is detected (fired once with initial velocity upon touch release).
 	/// </summary>
+	/// <remarks>
+	/// A fling is triggered when a single-finger pan ends with a velocity exceeding the
+	/// <see cref="SKGestureDetectorOptions.FlingThreshold"/>. Flings are not triggered after
+	/// multi-finger gestures (pinch/rotate).
+	/// </remarks>
 	public event EventHandler<SKFlingGestureEventArgs>? FlingDetected;
 
 	/// <summary>
-	/// Occurs when a hover is detected.
+	/// Occurs when a mouse hover (move without contact) is detected.
 	/// </summary>
 	public event EventHandler<SKHoverGestureEventArgs>? HoverDetected;
 
@@ -122,10 +167,14 @@ public class SKGestureDetector : IDisposable
 	/// </summary>
 	public event EventHandler<SKScrollGestureEventArgs>? ScrollDetected;
 
-	/// <summary>Occurs when a gesture starts.</summary>
+	/// <summary>
+	/// Occurs when a touch gesture interaction begins (first finger touches the surface).
+	/// </summary>
 	public event EventHandler<SKGestureLifecycleEventArgs>? GestureStarted;
 
-	/// <summary>Occurs when a gesture ends.</summary>
+	/// <summary>
+	/// Occurs when a touch gesture interaction ends (last finger lifts from the surface).
+	/// </summary>
 	public event EventHandler<SKGestureLifecycleEventArgs>? GestureEnded;
 
 	/// <summary>
@@ -405,7 +454,8 @@ public class SKGestureDetector : IDisposable
 	}
 
 	/// <summary>
-	/// Resets the gesture engine state.
+	/// Resets the gesture detector to its initial state, clearing all active touches and
+	/// cancelling any pending timers.
 	/// </summary>
 	public void Reset()
 	{
@@ -420,8 +470,12 @@ public class SKGestureDetector : IDisposable
 	}
 
 	/// <summary>
-	/// Disposes the gesture engine and releases resources.
+	/// Releases all resources used by this <see cref="SKGestureDetector"/> instance.
 	/// </summary>
+	/// <remarks>
+	/// Stops any active long press timer and resets all internal state. After disposal,
+	/// all <c>ProcessTouch*</c> methods return <see langword="false"/>.
+	/// </remarks>
 	public void Dispose()
 	{
 		if (_disposed)
@@ -511,16 +565,49 @@ public class SKGestureDetector : IDisposable
 	}
 
 	// Event invokers
+
+	/// <summary>Raises the <see cref="TapDetected"/> event.</summary>
+	/// <param name="e">The event data.</param>
 	protected virtual void OnTapDetected(SKTapGestureEventArgs e) => TapDetected?.Invoke(this, e);
+
+	/// <summary>Raises the <see cref="DoubleTapDetected"/> event.</summary>
+	/// <param name="e">The event data.</param>
 	protected virtual void OnDoubleTapDetected(SKTapGestureEventArgs e) => DoubleTapDetected?.Invoke(this, e);
+
+	/// <summary>Raises the <see cref="LongPressDetected"/> event.</summary>
+	/// <param name="e">The event data.</param>
 	protected virtual void OnLongPressDetected(SKLongPressGestureEventArgs e) => LongPressDetected?.Invoke(this, e);
+
+	/// <summary>Raises the <see cref="PanDetected"/> event.</summary>
+	/// <param name="e">The event data.</param>
 	protected virtual void OnPanDetected(SKPanGestureEventArgs e) => PanDetected?.Invoke(this, e);
+
+	/// <summary>Raises the <see cref="PinchDetected"/> event.</summary>
+	/// <param name="e">The event data.</param>
 	protected virtual void OnPinchDetected(SKPinchGestureEventArgs e) => PinchDetected?.Invoke(this, e);
+
+	/// <summary>Raises the <see cref="RotateDetected"/> event.</summary>
+	/// <param name="e">The event data.</param>
 	protected virtual void OnRotateDetected(SKRotateGestureEventArgs e) => RotateDetected?.Invoke(this, e);
+
+	/// <summary>Raises the <see cref="FlingDetected"/> event.</summary>
+	/// <param name="e">The event data.</param>
 	protected virtual void OnFlingDetected(SKFlingGestureEventArgs e) => FlingDetected?.Invoke(this, e);
+
+	/// <summary>Raises the <see cref="HoverDetected"/> event.</summary>
+	/// <param name="e">The event data.</param>
 	protected virtual void OnHoverDetected(SKHoverGestureEventArgs e) => HoverDetected?.Invoke(this, e);
+
+	/// <summary>Raises the <see cref="ScrollDetected"/> event.</summary>
+	/// <param name="e">The event data.</param>
 	protected virtual void OnScrollDetected(SKScrollGestureEventArgs e) => ScrollDetected?.Invoke(this, e);
+
+	/// <summary>Raises the <see cref="GestureStarted"/> event.</summary>
+	/// <param name="e">The event data.</param>
 	protected virtual void OnGestureStarted(SKGestureLifecycleEventArgs e) => GestureStarted?.Invoke(this, e);
+
+	/// <summary>Raises the <see cref="GestureEnded"/> event.</summary>
+	/// <param name="e">The event data.</param>
 	protected virtual void OnGestureEnded(SKGestureLifecycleEventArgs e) => GestureEnded?.Invoke(this, e);
 
 	private enum GestureState
