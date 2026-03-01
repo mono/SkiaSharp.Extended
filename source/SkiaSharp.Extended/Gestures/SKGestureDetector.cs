@@ -123,10 +123,10 @@ public class SKGestureDetector : IDisposable
 	public event EventHandler<SKScrollGestureEventArgs>? ScrollDetected;
 
 	/// <summary>Occurs when a gesture starts.</summary>
-	public event EventHandler? GestureStarted;
+	public event EventHandler<SKGestureLifecycleEventArgs>? GestureStarted;
 
 	/// <summary>Occurs when a gesture ends.</summary>
-	public event EventHandler? GestureEnded;
+	public event EventHandler<SKGestureLifecycleEventArgs>? GestureEnded;
 
 	/// <summary>
 	/// Processes a touch down event.
@@ -175,7 +175,7 @@ public class SKGestureDetector : IDisposable
 		if (touchPoints.Length > 0)
 		{
 			// Raise gesture started
-			OnGestureStarted();
+			OnGestureStarted(new SKGestureLifecycleEventArgs());
 
 			if (touchPoints.Length >= 2)
 			{
@@ -333,7 +333,7 @@ public class SKGestureDetector : IDisposable
 		{
 			if (_gestureState != GestureState.None)
 			{
-				OnGestureEnded();
+				OnGestureEnded(new SKGestureLifecycleEventArgs());
 				_gestureState = GestureState.None;
 			}
 		}
@@ -377,7 +377,7 @@ public class SKGestureDetector : IDisposable
 		{
 			if (_gestureState != GestureState.None)
 			{
-				OnGestureEnded();
+				OnGestureEnded(new SKGestureLifecycleEventArgs());
 				_gestureState = GestureState.None;
 			}
 		}
@@ -515,8 +515,8 @@ public class SKGestureDetector : IDisposable
 	protected virtual void OnFlingDetected(SKFlingGestureEventArgs e) => FlingDetected?.Invoke(this, e);
 	protected virtual void OnHoverDetected(SKHoverGestureEventArgs e) => HoverDetected?.Invoke(this, e);
 	protected virtual void OnScrollDetected(SKScrollGestureEventArgs e) => ScrollDetected?.Invoke(this, e);
-	private void OnGestureStarted() => GestureStarted?.Invoke(this, EventArgs.Empty);
-	private void OnGestureEnded() => GestureEnded?.Invoke(this, EventArgs.Empty);
+	protected virtual void OnGestureStarted(SKGestureLifecycleEventArgs e) => GestureStarted?.Invoke(this, e);
+	protected virtual void OnGestureEnded(SKGestureLifecycleEventArgs e) => GestureEnded?.Invoke(this, e);
 
 	private enum GestureState
 	{
