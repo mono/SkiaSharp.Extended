@@ -348,6 +348,44 @@ public class SKGestureTracker : IDisposable
 	#region Public Methods
 
 	/// <summary>
+	/// Sets the transform to the specified values, clamping scale to MinScale/MaxScale.
+	/// </summary>
+	public void SetTransform(float scale, float rotation, SKPoint offset)
+	{
+		_scale = Clamp(scale, Options.MinScale, Options.MaxScale);
+		_rotation = rotation;
+		_offset = offset;
+		TransformChanged?.Invoke(this, EventArgs.Empty);
+	}
+
+	/// <summary>
+	/// Sets the scale, clamping to MinScale/MaxScale, and fires TransformChanged.
+	/// </summary>
+	public void SetScale(float scale)
+	{
+		_scale = Clamp(scale, Options.MinScale, Options.MaxScale);
+		TransformChanged?.Invoke(this, EventArgs.Empty);
+	}
+
+	/// <summary>
+	/// Sets the rotation in degrees and fires TransformChanged.
+	/// </summary>
+	public void SetRotation(float rotation)
+	{
+		_rotation = rotation;
+		TransformChanged?.Invoke(this, EventArgs.Empty);
+	}
+
+	/// <summary>
+	/// Sets the pan offset and fires TransformChanged.
+	/// </summary>
+	public void SetOffset(SKPoint offset)
+	{
+		_offset = offset;
+		TransformChanged?.Invoke(this, EventArgs.Empty);
+	}
+
+	/// <summary>
 	/// Starts an animated zoom by the given multiplicative factor around a focal point.
 	/// </summary>
 	public void ZoomTo(float factor, SKPoint focalPoint)
