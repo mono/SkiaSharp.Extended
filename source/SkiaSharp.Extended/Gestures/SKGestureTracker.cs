@@ -507,10 +507,8 @@ public class SKGestureTracker : IDisposable
 
 	private void OnEnginePanDetected(object? s, SKPanGestureEventArgs e)
 	{
-		PanDetected?.Invoke(this, e);
-
-		if (!IsPanEnabled)
-			return;
+		if (IsPanEnabled)
+			PanDetected?.Invoke(this, e);
 
 		// Derive drag lifecycle
 		SKDragGestureEventArgs? dragArgs = null;
@@ -533,7 +531,7 @@ public class SKGestureTracker : IDisposable
 			_isDragHandled = true;
 
 		// Skip offset update if consumer handled the pan or drag (e.g. sticker drag)
-		if (e.Handled || _isDragHandled)
+		if (!IsPanEnabled || e.Handled || _isDragHandled)
 			return;
 
 		// Update offset
