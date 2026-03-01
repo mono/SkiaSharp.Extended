@@ -194,6 +194,8 @@ tracker.DoubleTapDetected += (s, e) =&gt;
 tracker.LongPressDetected += (s, e) =&gt;
 {
     // Finger held down without moving for LongPressDuration (default 500ms)
+    // e.Location — where the press occurred
+    // e.Duration — how long the finger was held
 };
 </code></pre>
 <h3 id="pan">Pan</h3>
@@ -230,7 +232,7 @@ tracker.LongPressDetected += (s, e) =&gt;
     // Fling started — e.VelocityX, e.VelocityY in px/s
 };
 
-tracker.Flinging += (s, e) =&gt;
+tracker.FlingUpdated += (s, e) =&gt;
 {
     // Called each frame during fling animation
 };
@@ -314,14 +316,24 @@ tracker.DragEnded += (s, e) =&gt;
 
 var tracker = new SKGestureTracker(options);
 </code></pre>
-<p>Options can also be modified at runtime through the tracker's properties:</p>
-<pre><code class="lang-csharp">tracker.MinScale = 0.5f;
-tracker.MaxScale = 20f;
-tracker.DoubleTapZoomFactor = 3f;
+<p>Options can also be modified at runtime through the tracker's Options property:</p>
+<pre><code class="lang-csharp">tracker.Options.MinScale = 0.5f;
+tracker.Options.MaxScale = 20f;
+tracker.Options.DoubleTapZoomFactor = 3f;
 </code></pre>
 <h3 id="feature-toggles">Feature Toggles</h3>
-<p>Enable or disable individual gesture types at runtime:</p>
-<pre><code class="lang-csharp">// Disable gestures you don't need
+<p>Enable or disable individual gesture types at runtime. Feature toggles live on the Options and can be set at construction time or modified later:</p>
+<pre><code class="lang-csharp">// Configure at construction time via options
+var options = new SKGestureTrackerOptions
+{
+    IsTapEnabled = true,
+    IsPanEnabled = true,
+    IsPinchEnabled = false,
+    IsRotateEnabled = false,
+};
+var tracker = new SKGestureTracker(options);
+
+// Or toggle at runtime
 tracker.IsTapEnabled = false;
 tracker.IsDoubleTapEnabled = false;
 tracker.IsLongPressEnabled = false;
@@ -342,6 +354,12 @@ SKMatrix matrix = tracker.Matrix;  // Combined transform matrix
 
 // Reset everything back to identity
 tracker.Reset();
+
+// Programmatically set the transform
+tracker.SetTransform(scale: 2f, rotation: 45f, offset: new SKPoint(100, 50));
+tracker.SetScale(1.5f);
+tracker.SetRotation(0f);
+tracker.SetOffset(SKPoint.Empty);
 </code></pre>
 <h3 id="lifecycle-events">Lifecycle Events</h3>
 <pre><code class="lang-csharp">// Fired when any finger touches down
@@ -386,7 +404,7 @@ tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · ec71268
+          source: PR #326 · 1bc20bf
         </div>
       </div>
     </footer>
