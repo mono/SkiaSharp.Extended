@@ -145,7 +145,7 @@ public class SKGestureDetector : IDisposable
 
 		var ticks = TimeProvider();
 
-		_touches[id] = new TouchState(id, location, ticks, true);
+		_touches[id] = new TouchState(id, location, ticks, true, isMouse);
 
 		// Only set initial touch state for the first finger
 		if (_touches.Count == 1)
@@ -215,10 +215,10 @@ public class SKGestureDetector : IDisposable
 			return true;
 		}
 
-		if (!_touches.ContainsKey(id))
+		if (!_touches.TryGetValue(id, out var existingTouch))
 			return false;
 
-		_touches[id] = new TouchState(id, location, ticks, inContact);
+		_touches[id] = new TouchState(id, location, ticks, inContact, existingTouch.IsMouse);
 		_flingTracker.AddEvent(id, location, ticks);
 
 		var touchPoints = GetActiveTouchPoints();
@@ -270,7 +270,7 @@ public class SKGestureDetector : IDisposable
 	/// </summary>
 	/// <param name="id">The unique identifier for this touch.</param>
 	/// <param name="location">The final location of the touch.</param>
-	/// <param name="isMouse">Whether this is a mouse event.</param>
+	/// <param name="isMouse">Whether this is a mouse event (kept for backward compatibility; the stored value from touch-down is used internally).</param>
 	/// <returns>True if the event was handled.</returns>
 	public bool ProcessTouchUp(long id, SKPoint location, bool isMouse = false)
 	{
@@ -282,6 +282,9 @@ public class SKGestureDetector : IDisposable
 
 		if (!_touches.TryGetValue(id, out var releasedTouch))
 			return false;
+
+		// Use the stored IsMouse value from touch-down (more reliable than caller-supplied value)
+		var storedIsMouse = releasedTouch.IsMouse;
 
 		_touches.Remove(id);
 
@@ -306,7 +309,7 @@ public class SKGestureDetector : IDisposable
 		{
 			var distance = SKPoint.Distance(location, _initialTouch);
 			var duration = ticks - _touchStartTicks;
-			var maxTapDuration = isMouse ? ShortClickTicks : Options.LongPressDuration * TimeSpan.TicksPerMillisecond;
+			var maxTapDuration = storedIsMouse ? ShortClickTicks : Options.LongPressDuration * TimeSpan.TicksPerMillisecond;
 
 			if (distance < Options.TouchSlop && duration < maxTapDuration && !_longPressTriggered)
 			{
@@ -528,7 +531,7 @@ public class SKGestureDetector : IDisposable
 		Pinching
 	}
 
-	private readonly record struct TouchState(long Id, SKPoint Location, long Ticks, bool InContact);
+	private readonly record struct TouchState(long Id, SKPoint Location, long Ticks, bool InContact, bool IsMouse);
 
 	private readonly record struct PinchState(SKPoint Center, float Radius, float Angle)
 	{
