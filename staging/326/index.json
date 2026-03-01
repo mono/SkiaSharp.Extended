@@ -359,6 +359,11 @@
     "title": "Event HoverDetected | SkiaSharp.Extended",
     "keywords": "Event HoverDetected Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public event EventHandler<SKHoverGestureEventArgs>? HoverDetected Returns EventHandler<SKHoverGestureEventArgs>"
   },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapEnabled.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapEnabled.html",
+    "title": "Property IsDoubleTapEnabled | SkiaSharp.Extended",
+    "keywords": "Property IsDoubleTapEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsDoubleTapEnabled public bool IsDoubleTapEnabled { get; set; } Property Value bool"
+  },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapZoomEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsDoubleTapZoomEnabled.html",
     "title": "Property IsDoubleTapZoomEnabled | SkiaSharp.Extended",
@@ -384,6 +389,16 @@
     "title": "Property IsGestureActive | SkiaSharp.Extended",
     "keywords": "Property IsGestureActive Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsGestureActive public bool IsGestureActive { get; } Property Value bool"
   },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsHoverEnabled.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsHoverEnabled.html",
+    "title": "Property IsHoverEnabled | SkiaSharp.Extended",
+    "keywords": "Property IsHoverEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsHoverEnabled public bool IsHoverEnabled { get; set; } Property Value bool"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsLongPressEnabled.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsLongPressEnabled.html",
+    "title": "Property IsLongPressEnabled | SkiaSharp.Extended",
+    "keywords": "Property IsLongPressEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsLongPressEnabled public bool IsLongPressEnabled { get; set; } Property Value bool"
+  },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsPanEnabled.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsPanEnabled.html",
     "title": "Property IsPanEnabled | SkiaSharp.Extended",
@@ -403,6 +418,11 @@
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsScrollZoomEnabled.html",
     "title": "Property IsScrollZoomEnabled | SkiaSharp.Extended",
     "keywords": "Property IsScrollZoomEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsScrollZoomEnabled public bool IsScrollZoomEnabled { get; set; } Property Value bool"
+  },
+  "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsTapEnabled.html": {
+    "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsTapEnabled.html",
+    "title": "Property IsTapEnabled | SkiaSharp.Extended",
+    "keywords": "Property IsTapEnabled Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll IsTapEnabled public bool IsTapEnabled { get; set; } Property Value bool"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsZoomAnimating.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.IsZoomAnimating.html",
@@ -557,7 +577,7 @@
   "api/SkiaSharp.Extended.Gestures.SKGestureTracker.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTracker.html",
     "title": "Class SKGestureTracker | SkiaSharp.Extended",
-    "keywords": "Class SKGestureTracker Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureTracker : IDisposable Inheritance object SKGestureTracker Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureTracker() SKGestureTracker(SKGestureTrackerOptions) Properties DoubleTapSlop DoubleTapZoomFactor FlingFrameInterval FlingFriction FlingMinVelocity FlingThreshold IsDoubleTapZoomEnabled IsEnabled IsFlingEnabled IsFlinging IsGestureActive IsPanEnabled IsPinchEnabled IsRotateEnabled IsScrollZoomEnabled IsZoomAnimating LongPressDuration Matrix MaxScale MinScale Offset Options Rotation Scale ScrollZoomFactor TimeProvider TouchSlop ZoomAnimationDuration Methods Dispose() ProcessMouseWheel(SKPoint, float, float) ProcessTouchCancel(long) ProcessTouchDown(long, SKPoint, bool) ProcessTouchMove(long, SKPoint, bool) ProcessTouchUp(long, SKPoint, bool) Reset() SetViewSize(float, float) StopFling() StopZoomAnimation() ZoomTo(float, SKPoint) Events DoubleTapDetected DragEnded DragStarted DragUpdated FlingCompleted FlingDetected Flinging GestureEnded GestureStarted HoverDetected LongPressDetected PanDetected PinchDetected RotateDetected ScrollDetected TapDetected TransformChanged"
+    "keywords": "Class SKGestureTracker Namespace SkiaSharp.Extended.Gestures Assembly SkiaSharp.Extended.dll public class SKGestureTracker : IDisposable Inheritance object SKGestureTracker Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKGestureTracker() SKGestureTracker(SKGestureTrackerOptions) Properties DoubleTapSlop DoubleTapZoomFactor FlingFrameInterval FlingFriction FlingMinVelocity FlingThreshold IsDoubleTapEnabled IsDoubleTapZoomEnabled IsEnabled IsFlingEnabled IsFlinging IsGestureActive IsHoverEnabled IsLongPressEnabled IsPanEnabled IsPinchEnabled IsRotateEnabled IsScrollZoomEnabled IsTapEnabled IsZoomAnimating LongPressDuration Matrix MaxScale MinScale Offset Options Rotation Scale ScrollZoomFactor TimeProvider TouchSlop ZoomAnimationDuration Methods Dispose() ProcessMouseWheel(SKPoint, float, float) ProcessTouchCancel(long) ProcessTouchDown(long, SKPoint, bool) ProcessTouchMove(long, SKPoint, bool) ProcessTouchUp(long, SKPoint, bool) Reset() SetViewSize(float, float) StopFling() StopZoomAnimation() ZoomTo(float, SKPoint) Events DoubleTapDetected DragEnded DragStarted DragUpdated FlingCompleted FlingDetected Flinging GestureEnded GestureStarted HoverDetected LongPressDetected PanDetected PinchDetected RotateDetected ScrollDetected TapDetected TransformChanged"
   },
   "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.-ctor.html": {
     "href": "api/SkiaSharp.Extended.Gestures.SKGestureTrackerOptions.-ctor.html",
