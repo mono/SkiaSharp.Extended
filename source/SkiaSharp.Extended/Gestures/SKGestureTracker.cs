@@ -555,7 +555,7 @@ public class SKGestureTracker : IDisposable
 
 		if (IsPinchEnabled)
 		{
-			var newScale = Clamp(_scale * e.Scale, MinScale, MaxScale);
+			var newScale = Clamp(_scale * e.ScaleDelta, MinScale, MaxScale);
 			AdjustOffsetForPivot(e.FocalPoint, _scale, newScale, _rotation, _rotation);
 			_scale = newScale;
 		}

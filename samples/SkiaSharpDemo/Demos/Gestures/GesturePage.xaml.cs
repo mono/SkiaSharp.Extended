@@ -324,7 +324,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnPinch(object? sender, SKPinchGestureEventArgs e)
 	{
-		LogEvent($"Pinch scale: {e.Scale:F2}");
+		LogEvent($"Pinch scale: {e.ScaleDelta:F2}");
 		statusLabel.Text = $"Scale: {_tracker.Scale:F2}";
 	}
 

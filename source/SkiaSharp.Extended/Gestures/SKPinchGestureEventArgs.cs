@@ -10,11 +10,11 @@ public class SKPinchGestureEventArgs : SKGestureEventArgs
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
-	public SKPinchGestureEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float scale)
+	public SKPinchGestureEventArgs(SKPoint focalPoint, SKPoint previousFocalPoint, float scaleDelta)
 	{
 		FocalPoint = focalPoint;
 		PreviousFocalPoint = previousFocalPoint;
-		Scale = scale;
+		ScaleDelta = scaleDelta;
 	}
 
 	/// <summary>
@@ -28,8 +28,8 @@ public class SKPinchGestureEventArgs : SKGestureEventArgs
 	public SKPoint PreviousFocalPoint { get; }
 
 	/// <summary>
-	/// Gets the scale factor (1.0 = no change).
+	/// Gets the scale delta factor (1.0 = no change).
 	/// </summary>
-	public float Scale { get; }
+	public float ScaleDelta { get; }
 
 }
