@@ -130,4 +130,34 @@ public class SKGestureTrackerOptions : SKGestureDetectorOptions
 			_flingFrameInterval = value;
 		}
 	}
+
+	/// <summary>Gets or sets whether tap detection is enabled.</summary>
+	public bool IsTapEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether double-tap detection is enabled.</summary>
+	public bool IsDoubleTapEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether long press detection is enabled.</summary>
+	public bool IsLongPressEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether pan is enabled.</summary>
+	public bool IsPanEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether pinch-to-zoom is enabled.</summary>
+	public bool IsPinchEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether rotation is enabled.</summary>
+	public bool IsRotateEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether fling animation is enabled.</summary>
+	public bool IsFlingEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether double-tap zoom is enabled.</summary>
+	public bool IsDoubleTapZoomEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether scroll-wheel zoom is enabled.</summary>
+	public bool IsScrollZoomEnabled { get; set; } = true;
+
+	/// <summary>Gets or sets whether hover detection is enabled.</summary>
+	public bool IsHoverEnabled { get; set; } = true;
 }

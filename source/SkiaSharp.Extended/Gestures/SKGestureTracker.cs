@@ -242,34 +242,34 @@ public class SKGestureTracker : IDisposable
 	#region Feature Toggles
 
 	/// <summary>Gets or sets whether tap detection is enabled.</summary>
-	public bool IsTapEnabled { get; set; } = true;
+	public bool IsTapEnabled { get => Options.IsTapEnabled; set => Options.IsTapEnabled = value; }
 
 	/// <summary>Gets or sets whether double-tap detection is enabled.</summary>
-	public bool IsDoubleTapEnabled { get; set; } = true;
+	public bool IsDoubleTapEnabled { get => Options.IsDoubleTapEnabled; set => Options.IsDoubleTapEnabled = value; }
 
 	/// <summary>Gets or sets whether long press detection is enabled.</summary>
-	public bool IsLongPressEnabled { get; set; } = true;
+	public bool IsLongPressEnabled { get => Options.IsLongPressEnabled; set => Options.IsLongPressEnabled = value; }
 
 	/// <summary>Gets or sets whether pan is enabled.</summary>
-	public bool IsPanEnabled { get; set; } = true;
+	public bool IsPanEnabled { get => Options.IsPanEnabled; set => Options.IsPanEnabled = value; }
 
 	/// <summary>Gets or sets whether pinch-to-zoom is enabled.</summary>
-	public bool IsPinchEnabled { get; set; } = true;
+	public bool IsPinchEnabled { get => Options.IsPinchEnabled; set => Options.IsPinchEnabled = value; }
 
 	/// <summary>Gets or sets whether rotation is enabled.</summary>
-	public bool IsRotateEnabled { get; set; } = true;
+	public bool IsRotateEnabled { get => Options.IsRotateEnabled; set => Options.IsRotateEnabled = value; }
 
 	/// <summary>Gets or sets whether fling animation is enabled.</summary>
-	public bool IsFlingEnabled { get; set; } = true;
+	public bool IsFlingEnabled { get => Options.IsFlingEnabled; set => Options.IsFlingEnabled = value; }
 
 	/// <summary>Gets or sets whether double-tap zoom is enabled.</summary>
-	public bool IsDoubleTapZoomEnabled { get; set; } = true;
+	public bool IsDoubleTapZoomEnabled { get => Options.IsDoubleTapZoomEnabled; set => Options.IsDoubleTapZoomEnabled = value; }
 
 	/// <summary>Gets or sets whether scroll-wheel zoom is enabled.</summary>
-	public bool IsScrollZoomEnabled { get; set; } = true;
+	public bool IsScrollZoomEnabled { get => Options.IsScrollZoomEnabled; set => Options.IsScrollZoomEnabled = value; }
 
 	/// <summary>Gets or sets whether hover detection is enabled.</summary>
-	public bool IsHoverEnabled { get; set; } = true;
+	public bool IsHoverEnabled { get => Options.IsHoverEnabled; set => Options.IsHoverEnabled = value; }
 
 	#endregion
 
