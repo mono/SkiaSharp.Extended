@@ -861,4 +861,180 @@ public class SKGestureTrackerTests
 	}
 
 	#endregion
+
+	#region Feature Toggle Tests
+
+	[Fact]
+	public void IsTapEnabled_False_SuppressesTap()
+	{
+		var tracker = CreateTracker();
+		tracker.IsTapEnabled = false;
+		var tapFired = false;
+		tracker.TapDetected += (s, e) => tapFired = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		tracker.ProcessTouchUp(1, new SKPoint(100, 100));
+		AdvanceTime(350);
+
+		Assert.False(tapFired);
+	}
+
+	[Fact]
+	public void IsDoubleTapEnabled_False_SuppressesDoubleTap()
+	{
+		var tracker = CreateTracker();
+		tracker.IsDoubleTapEnabled = false;
+		var doubleTapFired = false;
+		tracker.DoubleTapDetected += (s, e) => doubleTapFired = true;
+
+		SimulateDoubleTap(tracker, new SKPoint(200, 200));
+		AdvanceTime(350);
+
+		Assert.False(doubleTapFired);
+	}
+
+	[Fact]
+	public async Task IsLongPressEnabled_False_SuppressesLongPress()
+	{
+		var tracker = CreateTracker();
+		tracker.IsTapEnabled = false;
+		tracker.IsLongPressEnabled = false;
+		var longPressFired = false;
+		tracker.LongPressDetected += (s, e) => longPressFired = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		await Task.Delay(600);
+		tracker.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		Assert.False(longPressFired);
+	}
+
+	[Fact]
+	public void IsHoverEnabled_False_SuppressesHover()
+	{
+		var tracker = CreateTracker();
+		tracker.IsHoverEnabled = false;
+		var hoverFired = false;
+		tracker.HoverDetected += (s, e) => hoverFired = true;
+
+		tracker.ProcessTouchMove(1, new SKPoint(100, 100), false);
+
+		Assert.False(hoverFired);
+	}
+
+	[Fact]
+	public void IsTapEnabled_True_AllowsTap()
+	{
+		var tracker = CreateTracker();
+		tracker.IsTapEnabled = true;
+		var tapFired = false;
+		tracker.TapDetected += (s, e) => tapFired = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		tracker.ProcessTouchUp(1, new SKPoint(100, 100));
+		AdvanceTime(350);
+
+		Assert.True(tapFired);
+	}
+
+	[Fact]
+	public void IsHoverEnabled_True_AllowsHover()
+	{
+		var tracker = CreateTracker();
+		tracker.IsHoverEnabled = true;
+		var hoverFired = false;
+		tracker.HoverDetected += (s, e) => hoverFired = true;
+
+		tracker.ProcessTouchMove(1, new SKPoint(100, 100), false);
+
+		Assert.True(hoverFired);
+	}
+
+	#endregion
+
+	#region Pan Velocity Tests
+
+	[Fact]
+	public void PanDetected_HasVelocity()
+	{
+		var tracker = CreateTracker();
+		SKPoint? velocity = null;
+		tracker.PanDetected += (s, e) => velocity = e.Velocity;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(150, 100));
+
+		Assert.NotNull(velocity);
+	}
+
+	#endregion
+
+	#region Options Pattern Tests
+
+	[Fact]
+	public void ConstructorWithOptions_AppliesValues()
+	{
+		var options = new SKGestureTrackerOptions
+		{
+			MinScale = 0.5f,
+			MaxScale = 5f,
+			DoubleTapZoomFactor = 3f,
+			ScrollZoomFactor = 0.2f,
+			TouchSlop = 16f,
+			DoubleTapSlop = 80f,
+		};
+		var tracker = new SKGestureTracker(options)
+		{
+			TimeProvider = () => _testTicks
+		};
+		tracker.SetViewSize(400, 400);
+
+		Assert.Equal(0.5f, tracker.MinScale);
+		Assert.Equal(5f, tracker.MaxScale);
+		Assert.Equal(3f, tracker.DoubleTapZoomFactor);
+		Assert.Equal(0.2f, tracker.ScrollZoomFactor);
+		Assert.Equal(16f, tracker.TouchSlop);
+		Assert.Equal(80f, tracker.DoubleTapSlop);
+	}
+
+	[Fact]
+	public void DefaultOptions_HaveExpectedValues()
+	{
+		var tracker = CreateTracker();
+
+		Assert.Equal(0.1f, tracker.MinScale);
+		Assert.Equal(10f, tracker.MaxScale);
+		Assert.Equal(2f, tracker.DoubleTapZoomFactor);
+		Assert.Equal(0.1f, tracker.ScrollZoomFactor);
+		Assert.Equal(8f, tracker.TouchSlop);
+		Assert.Equal(40f, tracker.DoubleTapSlop);
+	}
+
+	#endregion
+
+	#region Drag-Handled Suppresses Fling
+
+	[Fact]
+	public async Task DragHandled_SuppressesFlingAnimation()
+	{
+		var tracker = CreateTracker();
+		tracker.DragStarted += (s, e) => e.Handled = true;
+		tracker.DragUpdated += (s, e) => e.Handled = true;
+
+		SimulateFastSwipe(tracker, new SKPoint(100, 100), new SKPoint(300, 100));
+		var offsetAfterSwipe = tracker.Offset;
+
+		// Wait for potential fling animation
+		await Task.Delay(100);
+
+		// Offset should not have changed — fling animation was suppressed
+		Assert.Equal(offsetAfterSwipe, tracker.Offset);
+	}
+
+	#endregion
 }
