@@ -264,7 +264,7 @@ public partial class GesturePage : ContentPage
 		canvas.DrawText(sticker.Label, sticker.Position.X, sticker.Position.Y + textFont.Size * 0.35f, SKTextAlign.Center, textFont, textPaint);
 	}
 
-	private void OnTap(object? sender, SKTapEventArgs e)
+	private void OnTap(object? sender, SKTapGestureEventArgs e)
 	{
 		if (!_enableTap) return;
 		LogEvent($"Tap at ({e.Location.X:F0}, {e.Location.Y:F0})");
@@ -285,7 +285,7 @@ public partial class GesturePage : ContentPage
 		canvasView.InvalidateSurface();
 	}
 
-	private void OnDoubleTap(object? sender, SKTapEventArgs e)
+	private void OnDoubleTap(object? sender, SKTapGestureEventArgs e)
 	{
 		if (!_enableDoubleTap) return;
 		LogEvent($"Double tap ({e.TapCount}x) at ({e.Location.X:F0}, {e.Location.Y:F0})");
@@ -301,7 +301,7 @@ public partial class GesturePage : ContentPage
 		}
 	}
 
-	private void OnLongPress(object? sender, SKTapEventArgs e)
+	private void OnLongPress(object? sender, SKTapGestureEventArgs e)
 	{
 		if (!_enableLongPress) return;
 		LogEvent($"Long press at ({e.Location.X:F0}, {e.Location.Y:F0})");
@@ -316,31 +316,31 @@ public partial class GesturePage : ContentPage
 		canvasView.InvalidateSurface();
 	}
 
-	private void OnPan(object? sender, SKPanEventArgs e)
+	private void OnPan(object? sender, SKPanGestureEventArgs e)
 	{
 		// Transform is handled by the tracker
 		statusLabel.Text = $"Pan: Δ({e.Delta.X:F1}, {e.Delta.Y:F1})";
 	}
 
-	private void OnPinch(object? sender, SKPinchEventArgs e)
+	private void OnPinch(object? sender, SKPinchGestureEventArgs e)
 	{
 		LogEvent($"Pinch scale: {e.Scale:F2}");
 		statusLabel.Text = $"Scale: {_tracker.Scale:F2}";
 	}
 
-	private void OnRotate(object? sender, SKRotateEventArgs e)
+	private void OnRotate(object? sender, SKRotateGestureEventArgs e)
 	{
 		LogEvent($"Rotate: {e.RotationDelta:F1}°");
 		statusLabel.Text = $"Rotation: {_tracker.Rotation:F1}°";
 	}
 
-	private void OnFling(object? sender, SKFlingEventArgs e)
+	private void OnFling(object? sender, SKFlingGestureEventArgs e)
 	{
 		LogEvent($"Fling: ({e.VelocityX:F0}, {e.VelocityY:F0}) px/s");
 		statusLabel.Text = $"Flinging at {e.Speed:F0} px/s";
 	}
 
-	private void OnFlinging(object? sender, SKFlingEventArgs e)
+	private void OnFlinging(object? sender, SKFlingGestureEventArgs e)
 	{
 		// Fling transform is handled by the tracker
 		statusLabel.Text = $"Flinging... ({e.Speed:F0} px/s)";
@@ -351,18 +351,18 @@ public partial class GesturePage : ContentPage
 		statusLabel.Text = "Fling ended";
 	}
 
-	private void OnScroll(object? sender, SKScrollEventArgs e)
+	private void OnScroll(object? sender, SKScrollGestureEventArgs e)
 	{
 		// Scroll zoom is handled by the tracker
 		statusLabel.Text = $"Scroll zoom: {_tracker.Scale:F2}x";
 	}
 
-	private void OnHover(object? sender, SKHoverEventArgs e)
+	private void OnHover(object? sender, SKHoverGestureEventArgs e)
 	{
 		statusLabel.Text = $"Hover: ({e.Location.X:F0}, {e.Location.Y:F0})";
 	}
 
-	private void OnDragStarted(object? sender, SKDragEventArgs e)
+	private void OnDragStarted(object? sender, SKDragGestureEventArgs e)
 	{
 		if (!_enableDrag) return;
 		LogEvent($"Drag started at ({e.StartLocation.X:F0}, {e.StartLocation.Y:F0})");
@@ -374,7 +374,7 @@ public partial class GesturePage : ContentPage
 		}
 	}
 
-	private void OnDragUpdated(object? sender, SKDragEventArgs e)
+	private void OnDragUpdated(object? sender, SKDragGestureEventArgs e)
 	{
 		if (!_enableDrag) return;
 		// Move selected sticker in content-space
@@ -395,7 +395,7 @@ public partial class GesturePage : ContentPage
 		}
 	}
 
-	private void OnDragEnded(object? sender, SKDragEventArgs e)
+	private void OnDragEnded(object? sender, SKDragGestureEventArgs e)
 	{
 		if (!_enableDrag) return;
 		LogEvent($"Drag ended at ({e.CurrentLocation.X:F0}, {e.CurrentLocation.Y:F0})");

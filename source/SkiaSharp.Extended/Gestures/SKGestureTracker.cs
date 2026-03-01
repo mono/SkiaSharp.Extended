@@ -277,31 +277,31 @@ public class SKGestureTracker : IDisposable
 	#region Gesture Events (forwarded from engine)
 
 	/// <summary>Occurs when a tap is detected.</summary>
-	public event EventHandler<SKTapEventArgs>? TapDetected;
+	public event EventHandler<SKTapGestureEventArgs>? TapDetected;
 
 	/// <summary>Occurs when a double tap is detected.</summary>
-	public event EventHandler<SKTapEventArgs>? DoubleTapDetected;
+	public event EventHandler<SKTapGestureEventArgs>? DoubleTapDetected;
 
 	/// <summary>Occurs when a long press is detected.</summary>
-	public event EventHandler<SKTapEventArgs>? LongPressDetected;
+	public event EventHandler<SKTapGestureEventArgs>? LongPressDetected;
 
 	/// <summary>Occurs when a pan gesture is detected.</summary>
-	public event EventHandler<SKPanEventArgs>? PanDetected;
+	public event EventHandler<SKPanGestureEventArgs>? PanDetected;
 
 	/// <summary>Occurs when a pinch gesture is detected.</summary>
-	public event EventHandler<SKPinchEventArgs>? PinchDetected;
+	public event EventHandler<SKPinchGestureEventArgs>? PinchDetected;
 
 	/// <summary>Occurs when a rotation gesture is detected.</summary>
-	public event EventHandler<SKRotateEventArgs>? RotateDetected;
+	public event EventHandler<SKRotateGestureEventArgs>? RotateDetected;
 
 	/// <summary>Occurs when a fling gesture is detected (once, with velocity).</summary>
-	public event EventHandler<SKFlingEventArgs>? FlingDetected;
+	public event EventHandler<SKFlingGestureEventArgs>? FlingDetected;
 
 	/// <summary>Occurs when a hover is detected.</summary>
-	public event EventHandler<SKHoverEventArgs>? HoverDetected;
+	public event EventHandler<SKHoverGestureEventArgs>? HoverDetected;
 
 	/// <summary>Occurs when a scroll event is detected.</summary>
-	public event EventHandler<SKScrollEventArgs>? ScrollDetected;
+	public event EventHandler<SKScrollGestureEventArgs>? ScrollDetected;
 
 	/// <summary>Occurs when a gesture starts.</summary>
 	public event EventHandler? GestureStarted;
@@ -317,16 +317,16 @@ public class SKGestureTracker : IDisposable
 	public event EventHandler? TransformChanged;
 
 	/// <summary>Occurs when a drag operation starts.</summary>
-	public event EventHandler<SKDragEventArgs>? DragStarted;
+	public event EventHandler<SKDragGestureEventArgs>? DragStarted;
 
 	/// <summary>Occurs during a drag operation.</summary>
-	public event EventHandler<SKDragEventArgs>? DragUpdated;
+	public event EventHandler<SKDragGestureEventArgs>? DragUpdated;
 
 	/// <summary>Occurs when a drag operation ends.</summary>
-	public event EventHandler<SKDragEventArgs>? DragEnded;
+	public event EventHandler<SKDragGestureEventArgs>? DragEnded;
 
 	/// <summary>Occurs each animation frame during a fling.</summary>
-	public event EventHandler<SKFlingEventArgs>? Flinging;
+	public event EventHandler<SKFlingGestureEventArgs>? Flinging;
 
 	/// <summary>Occurs when a fling animation completes.</summary>
 	public event EventHandler? FlingCompleted;
@@ -453,10 +453,10 @@ public class SKGestureTracker : IDisposable
 
 	#region Engine Event Handlers
 
-	private void OnEngineTapDetected(object? s, SKTapEventArgs e)
+	private void OnEngineTapDetected(object? s, SKTapGestureEventArgs e)
 		=> TapDetected?.Invoke(this, e);
 
-	private void OnEngineDoubleTapDetected(object? s, SKTapEventArgs e)
+	private void OnEngineDoubleTapDetected(object? s, SKTapGestureEventArgs e)
 	{
 		DoubleTapDetected?.Invoke(this, e);
 
@@ -479,10 +479,10 @@ public class SKGestureTracker : IDisposable
 		}
 	}
 
-	private void OnEngineLongPressDetected(object? s, SKTapEventArgs e)
+	private void OnEngineLongPressDetected(object? s, SKTapGestureEventArgs e)
 		=> LongPressDetected?.Invoke(this, e);
 
-	private void OnEnginePanDetected(object? s, SKPanEventArgs e)
+	private void OnEnginePanDetected(object? s, SKPanGestureEventArgs e)
 	{
 		PanDetected?.Invoke(this, e);
 
@@ -490,18 +490,18 @@ public class SKGestureTracker : IDisposable
 			return;
 
 		// Derive drag lifecycle
-		SKDragEventArgs? dragArgs = null;
+		SKDragGestureEventArgs? dragArgs = null;
 		if (!_isDragging)
 		{
 			_isDragging = true;
 			_isDragHandled = false;
 			_dragStartLocation = e.PreviousLocation;
-			dragArgs = new SKDragEventArgs(_dragStartLocation, e.Location, e.Delta);
+			dragArgs = new SKDragGestureEventArgs(_dragStartLocation, e.Location, e.Delta);
 			DragStarted?.Invoke(this, dragArgs);
 		}
 		else
 		{
-			dragArgs = new SKDragEventArgs(_dragStartLocation, e.Location, e.Delta);
+			dragArgs = new SKDragGestureEventArgs(_dragStartLocation, e.Location, e.Delta);
 			DragUpdated?.Invoke(this, dragArgs);
 		}
 
@@ -519,7 +519,7 @@ public class SKGestureTracker : IDisposable
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
 
-	private void OnEnginePinchDetected(object? s, SKPinchEventArgs e)
+	private void OnEnginePinchDetected(object? s, SKPinchGestureEventArgs e)
 	{
 		PinchDetected?.Invoke(this, e);
 
@@ -542,7 +542,7 @@ public class SKGestureTracker : IDisposable
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
 
-	private void OnEngineRotateDetected(object? s, SKRotateEventArgs e)
+	private void OnEngineRotateDetected(object? s, SKRotateGestureEventArgs e)
 	{
 		RotateDetected?.Invoke(this, e);
 
@@ -555,7 +555,7 @@ public class SKGestureTracker : IDisposable
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
 
-	private void OnEngineFlingDetected(object? s, SKFlingEventArgs e)
+	private void OnEngineFlingDetected(object? s, SKFlingGestureEventArgs e)
 	{
 		FlingDetected?.Invoke(this, e);
 
@@ -566,10 +566,10 @@ public class SKGestureTracker : IDisposable
 		StartFlingAnimation(e.VelocityX, e.VelocityY);
 	}
 
-	private void OnEngineHoverDetected(object? s, SKHoverEventArgs e)
+	private void OnEngineHoverDetected(object? s, SKHoverGestureEventArgs e)
 		=> HoverDetected?.Invoke(this, e);
 
-	private void OnEngineScrollDetected(object? s, SKScrollEventArgs e)
+	private void OnEngineScrollDetected(object? s, SKScrollGestureEventArgs e)
 	{
 		ScrollDetected?.Invoke(this, e);
 
@@ -597,7 +597,7 @@ public class SKGestureTracker : IDisposable
 		{
 			_isDragging = false;
 			_isDragHandled = false;
-			DragEnded?.Invoke(this, new SKDragEventArgs(_dragStartLocation, _dragStartLocation, SKPoint.Empty));
+			DragEnded?.Invoke(this, new SKDragGestureEventArgs(_dragStartLocation, _dragStartLocation, SKPoint.Empty));
 		}
 		GestureEnded?.Invoke(this, EventArgs.Empty);
 	}
@@ -687,7 +687,7 @@ public class SKGestureTracker : IDisposable
 		var deltaX = _flingVelocityX * dt;
 		var deltaY = _flingVelocityY * dt;
 
-		Flinging?.Invoke(this, new SKFlingEventArgs(_flingVelocityX, _flingVelocityY, deltaX, deltaY));
+		Flinging?.Invoke(this, new SKFlingGestureEventArgs(_flingVelocityX, _flingVelocityY, deltaX, deltaY));
 
 		// Apply as pan offset
 		var d = ScreenToContentDelta(deltaX, deltaY);

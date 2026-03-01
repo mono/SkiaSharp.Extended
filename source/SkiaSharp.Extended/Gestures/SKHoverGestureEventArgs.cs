@@ -3,28 +3,22 @@
 namespace SkiaSharp.Extended.Gestures;
 
 /// <summary>
-/// Event arguments for a tap gesture.
+/// Event arguments for a hover event.
 /// </summary>
-public class SKTapEventArgs : EventArgs
+public class SKHoverGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
-	public SKTapEventArgs(SKPoint location, int tapCount)
+	public SKHoverGestureEventArgs(SKPoint location)
 	{
 		Location = location;
-		TapCount = tapCount;
 	}
 
 	/// <summary>
-	/// Gets the location of the tap.
+	/// Gets the hover location.
 	/// </summary>
 	public SKPoint Location { get; }
-
-	/// <summary>
-	/// Gets the number of taps (1 for single, 2+ for multi-tap).
-	/// </summary>
-	public int TapCount { get; }
 
 	/// <summary>
 	/// Gets or sets whether the event was handled.
