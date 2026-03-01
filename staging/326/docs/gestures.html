@@ -1,0 +1,394 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Gestures | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Gestures | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/docs/docs/gestures.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="gestures">Gestures</h1>
+
+<p>Add pan, pinch, rotate, fling, tap, and more to any SkiaSharp canvas — on any platform — with a single, unified API. <code>SKGestureTracker</code> handles all the math so you can focus on what your app does with the gestures.</p>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="1-create-a-tracker-and-subscribe-to-events">1. Create a tracker and subscribe to events</h3>
+<pre><code class="lang-csharp">using SkiaSharp.Extended.Gestures;
+
+var tracker = new SKGestureTracker();
+
+// Transform events — the tracker manages the matrix for you
+tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
+
+// Discrete gesture events
+tracker.TapDetected += (s, e) =&gt; Console.WriteLine($&quot;Tap at {e.Location}&quot;);
+tracker.DoubleTapDetected += (s, e) =&gt; Console.WriteLine(&quot;Double tap!&quot;);
+tracker.LongPressDetected += (s, e) =&gt; Console.WriteLine(&quot;Long press!&quot;);
+</code></pre>
+<h3 id="2-feed-touch-events-from-your-platform">2. Feed touch events from your platform</h3>
+<p><strong>MAUI</strong> — forward <code>SKTouchEventArgs</code>:</p>
+<pre><code class="lang-csharp">private void OnTouch(object? sender, SKTouchEventArgs e)
+{
+    e.Handled = e.ActionType switch
+    {
+        SKTouchAction.Pressed =&gt; tracker.ProcessTouchDown(e.Id, e.Location, e.DeviceType == SKTouchDeviceType.Mouse),
+        SKTouchAction.Moved =&gt; tracker.ProcessTouchMove(e.Id, e.Location, e.InContact),
+        SKTouchAction.Released =&gt; tracker.ProcessTouchUp(e.Id, e.Location, e.DeviceType == SKTouchDeviceType.Mouse),
+        SKTouchAction.Cancelled =&gt; tracker.ProcessTouchCancel(e.Id),
+        SKTouchAction.WheelChanged =&gt; tracker.ProcessMouseWheel(e.Location, 0, e.WheelDelta),
+        _ =&gt; true,
+    };
+
+    if (e.Handled)
+        canvasView.InvalidateSurface();
+}
+</code></pre>
+<p><strong>Blazor</strong> — forward <code>PointerEventArgs</code>:</p>
+<pre><code class="lang-csharp">private void OnPointerDown(PointerEventArgs e)
+{
+    var location = new SKPoint((float)e.OffsetX * displayScale, (float)e.OffsetY * displayScale);
+    tracker.ProcessTouchDown(e.PointerId, location, e.PointerType == &quot;mouse&quot;);
+}
+</code></pre>
+<h3 id="3-apply-the-transform-when-drawing">3. Apply the transform when drawing</h3>
+<pre><code class="lang-csharp">private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
+{
+    var canvas = e.Surface.Canvas;
+    canvas.Clear(SKColors.White);
+
+    // Tell the tracker the canvas size
+    tracker.SetViewSize(e.Info.Width, e.Info.Height);
+
+    // Apply the tracked transform (pan + zoom + rotation)
+    canvas.Save();
+    canvas.Concat(tracker.Matrix);
+
+    // Draw your content here — it will pan, zoom, and rotate
+    DrawContent(canvas);
+
+    canvas.Restore();
+}
+</code></pre>
+<h2 id="how-it-works">How It Works</h2>
+<p>The gesture system has two layers:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Layer</th>
+<th style="text-align: left;">Class</th>
+<th style="text-align: left;">Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Detection</strong></td>
+<td style="text-align: left;"><code>SKGestureDetector</code></td>
+<td style="text-align: left;">Recognizes raw touch sequences as gestures (tap, pan, pinch, etc.)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Tracking</strong></td>
+<td style="text-align: left;"><code>SKGestureTracker</code></td>
+<td style="text-align: left;">Manages a transform matrix (pan/zoom/rotate), fling animation, and drag lifecycle</td>
+</tr>
+</tbody>
+</table>
+<p>Most apps only need <code>SKGestureTracker</code>. It wraps a detector internally and translates gesture events into transform updates. If you need raw gesture detection without transform management, you can use <code>SKGestureDetector</code> directly.</p>
+<h3 id="coordinate-spaces">Coordinate spaces</h3>
+<p>The tracker is coordinate-space-agnostic — it operates on whatever numbers you pass in. The important rule is: <strong>touch input, view size, and canvas drawing must all use the same coordinate space.</strong></p>
+<ul>
+<li><strong>MAUI</strong>: <code>SKTouchEventArgs.Location</code> is already in device pixels (same as the canvas), so pass them through directly.</li>
+<li><strong>Blazor</strong>: <code>PointerEventArgs.OffsetX/Y</code> are in CSS pixels, but the canvas renders in device pixels. Multiply by <code>devicePixelRatio</code> to match.</li>
+</ul>
+<h2 id="supported-gestures">Supported Gestures</h2>
+<h3 id="tap-double-tap-long-press">Tap, Double Tap, Long Press</h3>
+<p>Single finger gestures detected after the finger lifts (or after a timeout for long press).</p>
+<pre><code class="lang-csharp">tracker.TapDetected += (s, e) =&gt;
+{
+    // e.Location — where the tap occurred
+    // e.TapCount — always 1 for single tap
+};
+
+tracker.DoubleTapDetected += (s, e) =&gt;
+{
+    // Two taps within DoubleTapSlop distance and timing
+    // By default, also triggers a zoom animation (see Double Tap Zoom below)
+    // Set e.Handled = true to prevent the zoom
+};
+
+tracker.LongPressDetected += (s, e) =&gt;
+{
+    // Finger held down without moving for LongPressDuration (default 500ms)
+};
+</code></pre>
+<h3 id="pan">Pan</h3>
+<p>Single finger drag. The tracker automatically updates its internal offset.</p>
+<pre><code class="lang-csharp">tracker.PanDetected += (s, e) =&gt;
+{
+    // e.Location — current position
+    // e.PreviousLocation — previous position
+    // e.Delta — movement since last event
+    // e.Velocity — current velocity in pixels/second
+};
+</code></pre>
+<h3 id="pinch-scale">Pinch (Scale)</h3>
+<p>Two finger pinch gesture. The tracker automatically updates its internal scale, clamped to <code>MinScale</code>/<code>MaxScale</code>.</p>
+<pre><code class="lang-csharp">tracker.PinchDetected += (s, e) =&gt;
+{
+    // e.Scale — relative scale change (&gt;1 = spread, &lt;1 = pinch)
+    // e.FocalPoint — midpoint between the two fingers
+    // e.PreviousFocalPoint — previous midpoint
+};
+</code></pre>
+<h3 id="rotate">Rotate</h3>
+<p>Two finger rotation. The tracker automatically updates its internal rotation.</p>
+<pre><code class="lang-csharp">tracker.RotateDetected += (s, e) =&gt;
+{
+    // e.RotationDelta — change in degrees
+    // e.FocalPoint — center of rotation
+};
+</code></pre>
+<h3 id="fling">Fling</h3>
+<p>Momentum-based animation after a fast pan. The tracker runs a fling animation that decays over time.</p>
+<pre><code class="lang-csharp">tracker.FlingDetected += (s, e) =&gt;
+{
+    // Fling started — e.VelocityX, e.VelocityY in px/s
+};
+
+tracker.Flinging += (s, e) =&gt;
+{
+    // Called each frame during fling animation
+};
+
+tracker.FlingCompleted += (s, e) =&gt;
+{
+    // Fling animation finished
+};
+</code></pre>
+<h3 id="drag-app-level-object-dragging">Drag (App-Level Object Dragging)</h3>
+<p>The tracker provides a drag lifecycle derived from pan events. Use this to move objects within your canvas (e.g., stickers, nodes).</p>
+<pre><code class="lang-csharp">tracker.DragStarted += (s, e) =&gt;
+{
+    if (HitTest(e.StartLocation) is { } item)
+    {
+        selectedItem = item;
+        e.Handled = true; // Prevents pan from updating the transform
+    }
+};
+
+tracker.DragUpdated += (s, e) =&gt;
+{
+    if (selectedItem != null)
+    {
+        // Convert screen delta to content coordinates
+        var inverse = tracker.Matrix; inverse.TryInvert(out inverse);
+        var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
+        selectedItem.Position += contentDelta;
+        e.Handled = true;
+    }
+};
+
+tracker.DragEnded += (s, e) =&gt;
+{
+    selectedItem = null;
+};
+</code></pre>
+<p>When <code>DragStarted</code> or <code>DragUpdated</code> sets <code>Handled = true</code>, the tracker skips its normal pan offset update <strong>and</strong> suppresses fling after release.</p>
+<h3 id="scroll-mouse-wheel">Scroll (Mouse Wheel)</h3>
+<p>Mouse wheel zoom. Call <code>ProcessMouseWheel</code> to feed wheel events.</p>
+<pre><code class="lang-csharp">tracker.ScrollDetected += (s, e) =&gt;
+{
+    // e.Location — mouse position
+    // e.DeltaX, e.DeltaY — scroll amounts
+};
+</code></pre>
+<h3 id="hover">Hover</h3>
+<p>Mouse movement without any buttons pressed. Useful for cursor-based UI feedback.</p>
+<pre><code class="lang-csharp">tracker.HoverDetected += (s, e) =&gt;
+{
+    // e.Location — current mouse position
+};
+</code></pre>
+<h2 id="customization">Customization</h2>
+<h3 id="options">Options</h3>
+<p>Configure thresholds and behavior through <code>SKGestureTrackerOptions</code>:</p>
+<pre><code class="lang-csharp">var options = new SKGestureTrackerOptions
+{
+    // Detection thresholds (inherited from SKGestureDetectorOptions)
+    TouchSlop = 8f,           // Pixels to move before pan starts (default: 8)
+    DoubleTapSlop = 40f,      // Max distance between double-tap taps (default: 40)
+    FlingThreshold = 200f,    // Min velocity (px/s) to trigger fling (default: 200)
+    LongPressDuration = 500,  // Milliseconds to hold for long press (default: 500)
+
+    // Scale limits
+    MinScale = 0.1f,          // Minimum zoom level (default: 0.1)
+    MaxScale = 10f,           // Maximum zoom level (default: 10)
+
+    // Double-tap zoom
+    DoubleTapZoomFactor = 2f, // Scale multiplier on double tap (default: 2)
+    ZoomAnimationDuration = 250, // Animation duration in ms (default: 250)
+
+    // Scroll zoom
+    ScrollZoomFactor = 0.1f,  // Zoom per scroll unit (default: 0.1)
+
+    // Fling animation
+    FlingFriction = 0.08f,    // Velocity decay per frame (default: 0.08)
+    FlingMinVelocity = 5f,    // Stop threshold in px/s (default: 5)
+    FlingFrameInterval = 16,  // Frame interval in ms (~60fps) (default: 16)
+};
+
+var tracker = new SKGestureTracker(options);
+</code></pre>
+<p>Options can also be modified at runtime through the tracker's properties:</p>
+<pre><code class="lang-csharp">tracker.MinScale = 0.5f;
+tracker.MaxScale = 20f;
+tracker.DoubleTapZoomFactor = 3f;
+</code></pre>
+<h3 id="feature-toggles">Feature Toggles</h3>
+<p>Enable or disable individual gesture types at runtime:</p>
+<pre><code class="lang-csharp">// Disable gestures you don't need
+tracker.IsTapEnabled = false;
+tracker.IsDoubleTapEnabled = false;
+tracker.IsLongPressEnabled = false;
+tracker.IsPanEnabled = false;
+tracker.IsPinchEnabled = false;
+tracker.IsRotateEnabled = false;
+tracker.IsFlingEnabled = false;
+tracker.IsDoubleTapZoomEnabled = false;
+tracker.IsScrollZoomEnabled = false;
+tracker.IsHoverEnabled = false;
+</code></pre>
+<p>When a gesture is disabled, the tracker suppresses its events. The underlying detector still recognizes the gesture (enabling toggling at runtime without losing state).</p>
+<h3 id="reading-transform-state">Reading Transform State</h3>
+<pre><code class="lang-csharp">float scale = tracker.Scale;       // Current zoom level
+float rotation = tracker.Rotation; // Current rotation in degrees
+SKPoint offset = tracker.Offset;   // Current pan offset
+SKMatrix matrix = tracker.Matrix;  // Combined transform matrix
+
+// Reset everything back to identity
+tracker.Reset();
+</code></pre>
+<h3 id="lifecycle-events">Lifecycle Events</h3>
+<pre><code class="lang-csharp">// Fired when any finger touches down
+tracker.GestureStarted += (s, e) =&gt; { /* gesture began */ };
+
+// Fired when all fingers lift
+tracker.GestureEnded += (s, e) =&gt; { /* gesture ended */ };
+
+// Fired whenever the transform matrix changes (pan, zoom, rotate, fling frame)
+tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
+</code></pre>
+<h2 id="double-tap-zoom">Double Tap Zoom</h2>
+<p>By default, double-tapping zooms in by <code>DoubleTapZoomFactor</code> (2x). Double-tapping again at max scale resets to 1x. The zoom animates smoothly over <code>ZoomAnimationDuration</code> milliseconds.</p>
+<p>To use double tap for your own logic instead, set <code>e.Handled = true</code> in your <code>DoubleTapDetected</code> handler, or disable it entirely:</p>
+<pre><code class="lang-csharp">tracker.IsDoubleTapZoomEnabled = false;
+</code></pre>
+<h2 id="learn-more">Learn More</h2>
+<ul>
+<li><a class="xref" href="../api/SkiaSharp.Extended.Gestures.SKGestureTracker.html">API Reference — SKGestureTracker</a> — Full property and event documentation</li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.Gestures.SKGestureDetector.html">API Reference — SKGestureDetector</a> — Low-level gesture detection</li>
+<li><a href="https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo/Demos/Gestures">MAUI Sample</a> — Full MAUI demo with stickers</li>
+<li><a href="https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo.Blazor/Pages/Gestures.razor">Blazor Sample</a> — Full Blazor demo</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/docs/docs/gestures.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #326 · d331bdd
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
