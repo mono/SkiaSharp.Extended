@@ -115,6 +115,8 @@ tracker.DoubleTapDetected += (s, e) =>
 tracker.LongPressDetected += (s, e) =>
 {
     // Finger held down without moving for LongPressDuration (default 500ms)
+    // e.Location — where the press occurred
+    // e.Duration — how long the finger was held
 };
 ```
 
@@ -167,7 +169,7 @@ tracker.FlingDetected += (s, e) =>
     // Fling started — e.VelocityX, e.VelocityY in px/s
 };
 
-tracker.Flinging += (s, e) =>
+tracker.FlingUpdated += (s, e) =>
 {
     // Called each frame during fling animation
 };
@@ -270,20 +272,30 @@ var options = new SKGestureTrackerOptions
 var tracker = new SKGestureTracker(options);
 ```
 
-Options can also be modified at runtime through the tracker's properties:
+Options can also be modified at runtime through the tracker's Options property:
 
 ```csharp
-tracker.MinScale = 0.5f;
-tracker.MaxScale = 20f;
-tracker.DoubleTapZoomFactor = 3f;
+tracker.Options.MinScale = 0.5f;
+tracker.Options.MaxScale = 20f;
+tracker.Options.DoubleTapZoomFactor = 3f;
 ```
 
 ### Feature Toggles
 
-Enable or disable individual gesture types at runtime:
+Enable or disable individual gesture types at runtime. Feature toggles live on the Options and can be set at construction time or modified later:
 
 ```csharp
-// Disable gestures you don't need
+// Configure at construction time via options
+var options = new SKGestureTrackerOptions
+{
+    IsTapEnabled = true,
+    IsPanEnabled = true,
+    IsPinchEnabled = false,
+    IsRotateEnabled = false,
+};
+var tracker = new SKGestureTracker(options);
+
+// Or toggle at runtime
 tracker.IsTapEnabled = false;
 tracker.IsDoubleTapEnabled = false;
 tracker.IsLongPressEnabled = false;
@@ -308,6 +320,12 @@ SKMatrix matrix = tracker.Matrix;  // Combined transform matrix
 
 // Reset everything back to identity
 tracker.Reset();
+
+// Programmatically set the transform
+tracker.SetTransform(scale: 2f, rotation: 45f, offset: new SKPoint(100, 50));
+tracker.SetScale(1.5f);
+tracker.SetRotation(0f);
+tracker.SetOffset(SKPoint.Empty);
 ```
 
 ### Lifecycle Events
