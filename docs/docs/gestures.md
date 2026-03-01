@@ -60,9 +60,6 @@ private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
     var canvas = e.Surface.Canvas;
     canvas.Clear(SKColors.White);
 
-    // Tell the tracker the canvas size
-    tracker.SetViewSize(e.Info.Width, e.Info.Height);
-
     // Apply the tracked transform (pan + zoom + rotation)
     canvas.Save();
     canvas.Concat(tracker.Matrix);
@@ -87,7 +84,7 @@ Most apps only need `SKGestureTracker`. It wraps a detector internally and trans
 
 ### Coordinate spaces
 
-The tracker is coordinate-space-agnostic — it operates on whatever numbers you pass in. The important rule is: **touch input, view size, and canvas drawing must all use the same coordinate space.**
+The tracker is coordinate-space-agnostic — it operates on whatever numbers you pass in. The important rule is: **touch input and canvas drawing must use the same coordinate space.**
 
 - **MAUI**: `SKTouchEventArgs.Location` is already in device pixels (same as the canvas), so pass them through directly.
 - **Blazor**: `PointerEventArgs.OffsetX/Y` are in CSS pixels, but the canvas renders in device pixels. Multiply by `devicePixelRatio` to match.

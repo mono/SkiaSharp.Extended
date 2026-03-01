@@ -316,9 +316,6 @@
         // This handles high-DPI displays where devicePixelRatio > 1
         const float expectedCssHeight = 600f;
         _displayScale = height / expectedCssHeight;
-        
-        // Set view size in device pixels (same units as scaled touch events and canvas)
-        _tracker.SetViewSize(width, height);
 
         // Clear background
         canvas.Clear(SKColors.White);

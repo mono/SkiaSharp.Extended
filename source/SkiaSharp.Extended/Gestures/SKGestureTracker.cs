@@ -13,15 +13,13 @@ namespace SkiaSharp.Extended.Gestures;
 /// and <see cref="ProcessMouseWheel"/>, detects gestures internally, and translates them into
 /// transform state changes and higher-level events such as drag lifecycle and fling animation.</para>
 /// <para>Use the <see cref="Matrix"/> property to apply the current transform when painting.
-/// The matrix is computed relative to the view center, so call <see cref="SetViewSize"/> with your
-/// canvas dimensions before reading <see cref="Matrix"/>.</para>
+/// The matrix uses (0,0) as its origin — no view size configuration is required.</para>
 /// <para>All coordinates are in view (screen) space. The tracker converts screen-space deltas
 /// to content-space deltas internally when updating <see cref="Offset"/>.</para>
 /// <example>
 /// <para>Basic usage with an SkiaSharp canvas:</para>
 /// <code>
 /// var tracker = new SKGestureTracker();
-/// tracker.SetViewSize(canvasWidth, canvasHeight);
 ///
 /// // Forward touch events from your platform:
 /// tracker.ProcessTouchDown(id, new SKPoint(x, y));
@@ -49,8 +47,6 @@ public class SKGestureTracker : IDisposable
 	private float _scale = 1f;
 	private float _rotation;
 	private SKPoint _offset = SKPoint.Empty;
-	private float _viewWidth;
-	private float _viewHeight;
 
 	// Drag lifecycle state
 	private bool _isDragging;
@@ -218,45 +214,22 @@ public class SKGestureTracker : IDisposable
 
 	/// <summary>
 	/// Gets the composite transform matrix that combines scale, rotation, and offset,
-	/// centered on the view midpoint.
+	/// using (0,0) as the transform origin.
 	/// </summary>
 	/// <value>
 	/// An <see cref="SKMatrix"/> that can be applied to an <see cref="SKCanvas"/> to render content
 	/// with the current gesture transform. The matrix applies transformations in the order:
-	/// translate to center, scale, rotate, offset, translate back.
+	/// scale, rotate, translate.
 	/// </value>
-	/// <remarks>
-	/// Call <see cref="SetViewSize"/> before reading this property to ensure the pivot point
-	/// is correctly calculated.
-	/// </remarks>
 	public SKMatrix Matrix
 	{
 		get
 		{
-			var w2 = _viewWidth / 2f;
-			var h2 = _viewHeight / 2f;
-			var m = SKMatrix.CreateTranslation(w2, h2);
-			m = m.PreConcat(SKMatrix.CreateScale(_scale, _scale));
+			var m = SKMatrix.CreateScale(_scale, _scale);
 			m = m.PreConcat(SKMatrix.CreateRotationDegrees(_rotation));
 			m = m.PreConcat(SKMatrix.CreateTranslation(_offset.X, _offset.Y));
-			m = m.PreConcat(SKMatrix.CreateTranslation(-w2, -h2));
 			return m;
 		}
-	}
-
-	/// <summary>
-	/// Sets the view dimensions used for pivot and matrix calculations.
-	/// </summary>
-	/// <param name="width">The width of the view in pixels.</param>
-	/// <param name="height">The height of the view in pixels.</param>
-	/// <remarks>
-	/// This must be called (and updated on size changes) before reading <see cref="Matrix"/>,
-	/// as the matrix pivots all transforms around the view center.
-	/// </remarks>
-	public void SetViewSize(float width, float height)
-	{
-		_viewWidth = width;
-		_viewHeight = height;
 	}
 
 	#endregion
@@ -431,9 +404,14 @@ public class SKGestureTracker : IDisposable
 	/// and raises <see cref="TransformChanged"/>.
 	/// </summary>
 	/// <param name="scale">The desired zoom scale factor.</param>
-	public void SetScale(float scale)
+	/// <param name="pivot">Optional pivot point in view coordinates. When provided, the offset is
+	/// adjusted so the pivot point remains stationary after the scale change.</param>
+	public void SetScale(float scale, SKPoint? pivot = null)
 	{
-		_scale = Clamp(scale, Options.MinScale, Options.MaxScale);
+		var newScale = Clamp(scale, Options.MinScale, Options.MaxScale);
+		if (pivot.HasValue)
+			AdjustOffsetForPivot(pivot.Value, _scale, newScale, _rotation, _rotation);
+		_scale = newScale;
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
 
@@ -441,8 +419,12 @@ public class SKGestureTracker : IDisposable
 	/// Sets the rotation angle and raises <see cref="TransformChanged"/>.
 	/// </summary>
 	/// <param name="rotation">The desired rotation angle in degrees.</param>
-	public void SetRotation(float rotation)
+	/// <param name="pivot">Optional pivot point in view coordinates. When provided, the offset is
+	/// adjusted so the pivot point remains stationary after the rotation change.</param>
+	public void SetRotation(float rotation, SKPoint? pivot = null)
 	{
+		if (pivot.HasValue)
+			AdjustOffsetForPivot(pivot.Value, _scale, _scale, _rotation, rotation);
 		_rotation = rotation;
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
@@ -763,18 +745,14 @@ public class SKGestureTracker : IDisposable
 		return new SKPoint(mapped.X / _scale, mapped.Y / _scale);
 	}
 
-	private void AdjustOffsetForPivot(SKPoint screenPivot, float oldScale, float newScale, float oldRotDeg, float newRotDeg)
+	private void AdjustOffsetForPivot(SKPoint pivot, float oldScale, float newScale, float oldRotDeg, float newRotDeg)
 	{
-		var w2 = _viewWidth / 2f;
-		var h2 = _viewHeight / 2f;
-		var d = new SKPoint(screenPivot.X - w2, screenPivot.Y - h2);
-
 		var rotOld = SKMatrix.CreateRotationDegrees(-oldRotDeg);
-		var qOld = rotOld.MapVector(d.X, d.Y);
+		var qOld = rotOld.MapVector(pivot.X, pivot.Y);
 		qOld = new SKPoint(qOld.X / oldScale, qOld.Y / oldScale);
 
 		var rotNew = SKMatrix.CreateRotationDegrees(-newRotDeg);
-		var qNew = rotNew.MapVector(d.X, d.Y);
+		var qNew = rotNew.MapVector(pivot.X, pivot.Y);
 		qNew = new SKPoint(qNew.X / newScale, qNew.Y / newScale);
 
 		_offset = new SKPoint(
