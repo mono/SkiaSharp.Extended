@@ -199,7 +199,7 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     needs: [build, deploy]
-    if: needs.build.outputs.is_staging == 'true' && (github.event.action == 'opened' || github.event.action == 'reopened')
+    if: needs.build.outputs.is_staging == 'true' && (github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize')
     permissions:
       pull-requests: write
     steps:
@@ -210,21 +210,6 @@ jobs:
             const prNumber = context.issue.number;
             const stagingUrl = `https://mono.github.io/SkiaSharp.Extended/staging/${prNumber}/`;
             const sampleUrl = `https://mono.github.io/SkiaSharp.Extended/staging/${prNumber}/sample/`;
-
-            // Only comment once; check for an existing bot comment to avoid duplicates on reopen
-            const comments = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber
-            });
-            const botComment = comments.data.find(c =>
-              c.user.type === 'Bot' &&
-              c.body.includes('Documentation Preview')
-            );
-            if (botComment) {
-              console.log('Bot comment already exists, skipping.');
-              return;
-            }
 
             const commentBody = [
               '📖 **Documentation Preview**',
@@ -241,9 +226,28 @@ jobs:
               '*This comment is automatically updated by the documentation staging workflow.*'
             ].join('\n');
 
-            await github.rest.issues.createComment({
+            // Update existing bot comment if present, otherwise create a new one
+            const comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: prNumber,
-              body: commentBody
+              issue_number: prNumber
             });
+            const botComment = comments.data.find(c =>
+              c.user.type === 'Bot' &&
+              c.body.includes('Documentation Preview')
+            );
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: commentBody
+              });
+            }
