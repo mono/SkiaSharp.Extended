@@ -59,6 +59,7 @@ public sealed class SKGestureTracker : IDisposable
 	private float _flingVelocityX;
 	private float _flingVelocityY;
 	private bool _isFlinging;
+	private long _flingLastFrameTimestamp; // Environment.TickCount64 (ms) for frame-rate-independent timing
 
 	// Zoom animation state
 	private Timer? _zoomTimer;
@@ -451,6 +452,9 @@ public sealed class SKGestureTracker : IDisposable
 	/// </remarks>
 	public void ZoomTo(float factor, SKPoint focalPoint)
 	{
+		if (factor <= 0 || float.IsNaN(factor) || float.IsInfinity(factor))
+			throw new ArgumentOutOfRangeException(nameof(factor), factor, "Factor must be a positive finite number.");
+
 		StopZoomAnimation();
 		_syncContext ??= SynchronizationContext.Current;
 
@@ -667,19 +671,23 @@ public sealed class SKGestureTracker : IDisposable
 			_scale = newScale;
 		}
 
-		TransformChanged?.Invoke(this, EventArgs.Empty);
+		// TransformChanged is deferred to OnEngineRotateDetected, which always fires
+		// immediately after this handler for the same gesture frame, to avoid two
+		// notifications per two-finger move frame.
 	}
 
 	private void OnEngineRotateDetected(object? s, SKRotateGestureEventArgs e)
 	{
 		RotateDetected?.Invoke(this, e);
 
-		if (!IsRotateEnabled)
-			return;
+		if (IsRotateEnabled)
+		{
+			var newRotation = _rotation + e.RotationDelta;
+			AdjustOffsetForPivot(e.FocalPoint, _scale, _scale, _rotation, newRotation);
+			_rotation = newRotation;
+		}
 
-		var newRotation = _rotation + e.RotationDelta;
-		AdjustOffsetForPivot(e.FocalPoint, _scale, _scale, _rotation, newRotation);
-		_rotation = newRotation;
+		// Fire TransformChanged once per two-finger frame (batched with pinch changes above)
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
 
@@ -775,6 +783,7 @@ public sealed class SKGestureTracker : IDisposable
 		_flingVelocityX = velocityX;
 		_flingVelocityY = velocityY;
 		_isFlinging = true;
+		_flingLastFrameTimestamp = Environment.TickCount64;
 
 		var token = Interlocked.Increment(ref _flingToken);
 		_flingTimer = new Timer(
@@ -812,7 +821,12 @@ public sealed class SKGestureTracker : IDisposable
 		if (!_isFlinging || _disposed)
 			return;
 
-		var dt = Options.FlingFrameInterval / 1000f;
+		// Use actual elapsed time for frame-rate-independent deceleration
+		var now = Environment.TickCount64;
+		var actualDtMs = Math.Max(1f, now - _flingLastFrameTimestamp);
+		_flingLastFrameTimestamp = now;
+
+		var dt = actualDtMs / 1000f;
 		var deltaX = _flingVelocityX * dt;
 		var deltaY = _flingVelocityY * dt;
 
@@ -823,8 +837,11 @@ public sealed class SKGestureTracker : IDisposable
 		_offset = new SKPoint(_offset.X + d.X, _offset.Y + d.Y);
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 
-		// Apply friction (FlingFriction: 0 = no friction, 1 = full friction)
-		var decay = 1f - Options.FlingFriction;
+		// Apply time-scaled friction so deceleration is consistent regardless of frame rate
+		var nominalDtMs = (float)Options.FlingFrameInterval;
+		var decay = nominalDtMs > 0
+			? (float)Math.Pow(1.0 - Options.FlingFriction, actualDtMs / nominalDtMs)
+			: 1f - Options.FlingFriction;
 		_flingVelocityX *= decay;
 		_flingVelocityY *= decay;
 
