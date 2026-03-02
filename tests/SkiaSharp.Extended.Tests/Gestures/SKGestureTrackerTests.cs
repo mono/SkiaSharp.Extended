@@ -1095,4 +1095,174 @@ public class SKGestureTrackerTests
 	}
 
 	#endregion
+
+	#region SKGestureTrackerOptions Validation Tests
+
+	[Fact]
+	public void Options_MinScale_ZeroOrNegative_Throws()
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.MinScale = 0f);
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.MinScale = -1f);
+	}
+
+	[Fact]
+	public void Options_MaxScale_ZeroOrNegative_Throws()
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.MaxScale = 0f);
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.MaxScale = -1f);
+	}
+
+	[Fact]
+	public void Options_MaxScale_LessThanMinScale_Throws()
+	{
+		var options = new SKGestureTrackerOptions { MinScale = 1f, MaxScale = 5f };
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.MaxScale = 0.5f);
+	}
+
+	[Fact]
+	public void Options_MinScale_GreaterThanMaxScale_Throws()
+	{
+		var options = new SKGestureTrackerOptions { MinScale = 1f, MaxScale = 5f };
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.MinScale = 6f);
+	}
+
+	[Fact]
+	public void Options_DoubleTapZoomFactor_ZeroOrNegative_Throws()
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.DoubleTapZoomFactor = 0f);
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.DoubleTapZoomFactor = -1f);
+	}
+
+	[Fact]
+	public void Options_ScrollZoomFactor_ZeroOrNegative_Throws()
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.ScrollZoomFactor = 0f);
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.ScrollZoomFactor = -1f);
+	}
+
+	[Theory]
+	[InlineData(-0.1f)]
+	[InlineData(1.1f)]
+	public void Options_FlingFriction_OutOfRange_Throws(float value)
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.FlingFriction = value);
+	}
+
+	[Fact]
+	public void Options_FlingMinVelocity_Negative_Throws()
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.FlingMinVelocity = -1f);
+	}
+
+	[Theory]
+	[InlineData(0)]
+	[InlineData(-1)]
+	public void Options_FlingFrameInterval_ZeroOrNegative_Throws(int value)
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.FlingFrameInterval = value);
+	}
+
+	[Fact]
+	public void Constructor_NullOptions_Throws()
+	{
+		Assert.Throws<ArgumentNullException>(() => new SKGestureTracker(null!));
+	}
+
+	#endregion
+
+	#region Strengthened Pinch Scale Assertions
+
+	[Fact]
+	public void Pinch_ScaleDelta_MatchesExpectedRatio()
+	{
+		var tracker = CreateTracker();
+
+		// Fingers start 100px apart, spread to 200px → expected scale ≈ 2.0
+		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(200, 200));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(50, 200));
+		tracker.ProcessTouchMove(2, new SKPoint(250, 200));
+
+		Assert.Equal(2.0f, tracker.Scale, 2);
+	}
+
+	[Fact]
+	public void Pinch_PinchIn_HalvesScale()
+	{
+		var tracker = CreateTracker();
+
+		// Fingers start 200px apart, pinch to 100px → expected scale ≈ 0.5
+		tracker.ProcessTouchDown(1, new SKPoint(50, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(250, 200));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(100, 200));
+		tracker.ProcessTouchMove(2, new SKPoint(200, 200));
+
+		Assert.Equal(0.5f, tracker.Scale, 2);
+	}
+
+	#endregion
+
+	#region EventArgs Verification Tests
+
+	[Fact]
+	public void PanEventArgs_PreviousLocation_IsCorrect()
+	{
+		var tracker = CreateTracker();
+		SKPanGestureEventArgs? captured = null;
+		tracker.PanDetected += (s, e) => captured = e;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
+
+		Assert.NotNull(captured);
+		Assert.Equal(100, captured.PreviousLocation.X, 1);
+		Assert.Equal(100, captured.PreviousLocation.Y, 1);
+	}
+
+	[Fact]
+	public void PinchEventArgs_ScaleDelta_ProductMatchesCumulativeScale()
+	{
+		var tracker = CreateTracker();
+		var scaleDeltas = new List<float>();
+		tracker.PinchDetected += (s, e) => scaleDeltas.Add(e.ScaleDelta);
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(200, 200));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(50, 200));
+		tracker.ProcessTouchMove(2, new SKPoint(250, 200));
+
+		Assert.NotEmpty(scaleDeltas);
+		var cumulativeScale = 1f;
+		foreach (var delta in scaleDeltas)
+			cumulativeScale *= delta;
+		Assert.Equal(2.0f, cumulativeScale, 2);
+	}
+
+	[Fact]
+	public void FlingEventArgs_SpeedMatchesVelocityMagnitude()
+	{
+		var tracker = CreateTracker();
+		SKFlingGestureEventArgs? captured = null;
+		tracker.FlingDetected += (s, e) => captured = e;
+
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+
+		Assert.NotNull(captured);
+		var expectedSpeed = (float)Math.Sqrt(captured.VelocityX * captured.VelocityX + captured.VelocityY * captured.VelocityY);
+		Assert.Equal(expectedSpeed, captured.Speed, 1);
+		tracker.Dispose();
+	}
+
+	#endregion
 }
