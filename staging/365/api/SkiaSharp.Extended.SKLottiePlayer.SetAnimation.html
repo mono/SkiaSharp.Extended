@@ -126,7 +126,9 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended/Lottie/SKLottiePlayer.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Sets the animation to play. Pass <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to clear the current animation.
+Resets playback state (Progress, IsComplete, repeat counters).</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -136,7 +138,9 @@
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>newAnimation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a></dt>
-  <dd></dd>
+  <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a> to play, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to clear.
+The player does not take ownership of the animation; the caller is responsible for disposing it.</p>
+</dd>
 </dl>
 
 
@@ -146,6 +150,11 @@
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_SKLottiePlayer_SetAnimation_SkiaSharp_Skottie_Animation__remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>Calling this method always resets <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Progress.html#SkiaSharp_Extended_SKLottiePlayer_Progress">Progress</a> to <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan.zero">Zero</a>
+(or <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Duration.html#SkiaSharp_Extended_SKLottiePlayer_Duration">Duration</a> when <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html#SkiaSharp_Extended_SKLottiePlayer_AnimationSpeed">AnimationSpeed</a> is negative) and clears
+<a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.IsComplete.html#SkiaSharp_Extended_SKLottiePlayer_IsComplete">IsComplete</a>. It also raises <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated.html">AnimationUpdated</a>.</p>
+</div>
 
 
 
@@ -169,7 +178,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · db9c58e
+          source: PR #365 · 43fc037
         </div>
       </div>
     </footer>

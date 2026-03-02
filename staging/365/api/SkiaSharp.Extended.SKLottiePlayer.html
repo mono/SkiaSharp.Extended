@@ -99,7 +99,10 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>A platform-agnostic Skottie (Lottie) animation player that manages playback state
+and rendering. Can be used directly from any .NET host including .NET MAUI, Blazor,
+console apps, or custom renderers.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -148,6 +151,15 @@
 
 
 
+  <h2 id="SkiaSharp_Extended_SKLottiePlayer_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>
+Typical usage:
+<ol><li>Create a player and set <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Repeat.html#SkiaSharp_Extended_SKLottiePlayer_Repeat">Repeat</a> and <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html#SkiaSharp_Extended_SKLottiePlayer_AnimationSpeed">AnimationSpeed</a>.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.SetAnimation.html#SkiaSharp_Extended_SKLottiePlayer_SetAnimation_SkiaSharp_Skottie_Animation_">SetAnimation(Animation?)</a> with a loaded <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a>.</li><li>On each frame tick, call <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Update.html#SkiaSharp_Extended_SKLottiePlayer_Update_System_TimeSpan_">Update(TimeSpan)</a> with the elapsed time.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Render.html#SkiaSharp_Extended_SKLottiePlayer_Render_SkiaSharp_SKCanvas_SkiaSharp_SKRect_">Render(SKCanvas, SKRect)</a> inside your paint/draw callback.</li></ol>
+
+<p>
+The player is not thread-safe; all calls should occur on the same thread (typically the UI thread).
+</p>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
@@ -162,27 +174,34 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html#SkiaSharp_Extended_SKLottiePlayer_AnimationSpeed">AnimationSpeed</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets the playback speed multiplier.
+1.0 = normal speed, 2.0 = double speed, 0.5 = half speed, negative = reverse.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Duration.html#SkiaSharp_Extended_SKLottiePlayer_Duration">Duration</a></dt>
-    <dd></dd>
+    <dd><p>Gets the total duration of the loaded animation.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.HasAnimation.html#SkiaSharp_Extended_SKLottiePlayer_HasAnimation">HasAnimation</a></dt>
-    <dd></dd>
+    <dd><p>Gets whether an animation is currently loaded.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.IsComplete.html#SkiaSharp_Extended_SKLottiePlayer_IsComplete">IsComplete</a></dt>
-    <dd></dd>
+    <dd><p>Gets whether the animation has completed all repeats.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Progress.html#SkiaSharp_Extended_SKLottiePlayer_Progress">Progress</a></dt>
-    <dd></dd>
+    <dd><p>Gets the current playback position.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Repeat.html#SkiaSharp_Extended_SKLottiePlayer_Repeat">Repeat</a></dt>
-    <dd></dd>
+    <dd><p>Gets or sets how the animation repeats. Defaults to <a class="xref" href="SkiaSharp.Extended.SKLottieRepeat.Never.html#SkiaSharp_Extended_SKLottieRepeat_Never">Never</a>.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="methods">Methods
@@ -190,19 +209,26 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Render.html#SkiaSharp_Extended_SKLottiePlayer_Render_SkiaSharp_SKCanvas_SkiaSharp_SKRect_">Render(SKCanvas, SKRect)</a></dt>
-    <dd></dd>
+    <dd><p>Renders the current animation frame to the given canvas within the specified rectangle.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Seek.html#SkiaSharp_Extended_SKLottiePlayer_Seek_System_TimeSpan_">Seek(TimeSpan)</a></dt>
-    <dd></dd>
+    <dd><p>Seeks the animation to the specified position and raises <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated.html">AnimationUpdated</a>.
+Completion and repeat logic is applied as part of the seek.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.SetAnimation.html#SkiaSharp_Extended_SKLottiePlayer_SetAnimation_SkiaSharp_Skottie_Animation_">SetAnimation(Animation?)</a></dt>
-    <dd></dd>
+    <dd><p>Sets the animation to play. Pass <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to clear the current animation.
+Resets playback state (Progress, IsComplete, repeat counters).</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Update.html#SkiaSharp_Extended_SKLottiePlayer_Update_System_TimeSpan_">Update(TimeSpan)</a></dt>
-    <dd></dd>
+    <dd><p>Advances the animation by the given time delta, applying <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html#SkiaSharp_Extended_SKLottiePlayer_AnimationSpeed">AnimationSpeed</a> and <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Repeat.html#SkiaSharp_Extended_SKLottiePlayer_Repeat">Repeat</a>.
+Call this on each frame tick.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="events">Events
@@ -210,11 +236,14 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationCompleted.html">AnimationCompleted</a></dt>
-    <dd></dd>
+    <dd><p>Fires when the animation completes all repeats.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated.html">AnimationUpdated</a></dt>
-    <dd></dd>
+    <dd><p>Fires after each <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Seek.html#SkiaSharp_Extended_SKLottiePlayer_Seek_System_TimeSpan_">Seek(TimeSpan)</a> call, notifying subscribers of
+updated state (Progress, Duration, IsComplete).</p>
+</dd>
   </dl>
 
 
@@ -238,7 +267,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · db9c58e
+          source: PR #365 · 43fc037
         </div>
       </div>
     </footer>

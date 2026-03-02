@@ -126,7 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended/Lottie/SKLottiePlayer.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Renders the current animation frame to the given canvas within the specified rectangle.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -136,9 +137,11 @@
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>canvas</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skcanvas">SKCanvas</a></dt>
-  <dd></dd>
+  <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skcanvas">SKCanvas</a> to draw onto.</p>
+</dd>
   <dt><code>rect</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></dt>
-  <dd></dd>
+  <dd><p>The destination rectangle within the canvas.</p>
+</dd>
 </dl>
 
 
@@ -148,6 +151,10 @@
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_SKLottiePlayer_Render_SkiaSharp_SKCanvas_SkiaSharp_SKRect__remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>Has no effect when no animation is loaded (<a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.HasAnimation.html#SkiaSharp_Extended_SKLottiePlayer_HasAnimation">HasAnimation</a> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>).
+Call this inside your paint/draw callback after <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Update.html#SkiaSharp_Extended_SKLottiePlayer_Update_System_TimeSpan_">Update(TimeSpan)</a> has been called for the current frame.</p>
+</div>
 
 
 
@@ -171,7 +178,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · db9c58e
+          source: PR #365 · 43fc037
         </div>
       </div>
     </footer>

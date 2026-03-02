@@ -235,6 +235,61 @@ lottieView.AnimationCompleted += (s, e) =&gt;
 &lt;/skia:SKLottieView&gt;
 </code></pre>
 <p>The <code>PART_DrawingSurface</code> name is required—it can be either <code>SKCanvasView</code> (software) or <code>SKGLView</code> (GPU).</p>
+<h2 id="cross-platform-usage-with-sklottieplayer">Cross-Platform Usage with SKLottiePlayer</h2>
+<p>The <code>SKLottiePlayer</code> class in <code>SkiaSharp.Extended</code> provides all the playback logic without any MAUI or Blazor dependency, so you can integrate Lottie animations into any .NET host — including Blazor WebAssembly, console renderers, or custom frameworks.</p>
+<h3 id="sklottierepeat">SKLottieRepeat</h3>
+<p><code>SKLottieRepeat</code> is a lightweight value type (struct) that describes how an animation repeats:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Factory</th>
+<th style="text-align: left;">Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>SKLottieRepeat.Never</code></td>
+<td style="text-align: left;">Play once, then stop (default).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKLottieRepeat.Restart(count)</code></td>
+<td style="text-align: left;">Restart from the beginning. <code>count = -1</code> for infinite.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKLottieRepeat.Reverse(count)</code></td>
+<td style="text-align: left;">Ping-pong (play forward, then backward). <code>count = -1</code> for infinite.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="using-sklottieplayer-directly">Using SKLottiePlayer directly</h3>
+<pre><code class="lang-csharp">using SkiaSharp;
+using SkiaSharp.Extended;
+using SkiaSharp.Skottie;
+
+// 1. Load the animation from a stream
+using var stream = File.OpenRead(&quot;animation.json&quot;);
+var animation = Animation.Create(stream);
+
+// 2. Create a player and configure it
+var player = new SKLottiePlayer
+{
+    AnimationSpeed = 1.5,
+    Repeat = SKLottieRepeat.Restart(count: -1)  // loop forever
+};
+
+player.AnimationCompleted += (_, _) =&gt; Console.WriteLine(&quot;Done!&quot;);
+player.SetAnimation(animation);
+
+// 3. In your frame/paint loop:
+//    a) advance the playback position
+player.Update(deltaTime);
+
+//    b) draw the current frame
+player.Render(canvas, SKRect.Create(0, 0, 400, 400));
+</code></pre>
+<blockquote>
+<p><strong>Blazor note:</strong> The Blazor sample at <code>samples/SkiaSharpDemo.Blazor/</code> demonstrates <code>SKLottiePlayer</code> inside a <code>PeriodicTimer</code>-based animation loop. The <code>SKAnimatedCanvasView</code> component in <code>SkiaSharp.Extended.UI.Blazor</code> wraps this pattern as a reusable Blazor component.</p>
+</blockquote>
 <h2 id="learn-more">Learn More</h2>
 <ul>
 <li><a href="https://airbnb.design/lottie/">Lottie by Airbnb</a> — Official project page</li>
@@ -263,7 +318,7 @@ lottieView.AnimationCompleted += (s, e) =&gt;
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · db9c58e
+          source: PR #365 · 43fc037
         </div>
       </div>
     </footer>

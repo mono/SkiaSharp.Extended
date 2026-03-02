@@ -126,7 +126,9 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended/Lottie/SKLottiePlayer.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Advances the animation by the given time delta, applying <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html#SkiaSharp_Extended_SKLottiePlayer_AnimationSpeed">AnimationSpeed</a> and <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Repeat.html#SkiaSharp_Extended_SKLottiePlayer_Repeat">Repeat</a>.
+Call this on each frame tick.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -136,7 +138,9 @@
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>deltaTime</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></dt>
-  <dd></dd>
+  <dd><p>The time elapsed since the last call. A positive value advances forward; a negative value
+moves the position backward (subject to clamping at the boundaries).</p>
+</dd>
 </dl>
 
 
@@ -146,6 +150,19 @@
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_SKLottiePlayer_Update_System_TimeSpan__remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>
+The effective delta is scaled by <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html#SkiaSharp_Extended_SKLottiePlayer_AnimationSpeed">AnimationSpeed</a> before being applied:
+a speed of 2.0 doubles the rate, 0.5 halves it, and -1.0 plays in reverse.
+</p>
+<p>
+When <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Repeat.html#SkiaSharp_Extended_SKLottiePlayer_Repeat">Repeat</a> is <a class="xref" href="SkiaSharp.Extended.SKLottieRepeat.Reverse.html#SkiaSharp_Extended_SKLottieRepeat_Reverse_System_Int32_">Reverse(int)</a>, the internal direction
+is flipped automatically when the animation reaches a boundary, producing a ping-pong effect.
+</p>
+<p>
+Has no effect when no animation is loaded (<a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.HasAnimation.html#SkiaSharp_Extended_SKLottiePlayer_HasAnimation">HasAnimation</a> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>).
+</p>
+</div>
 
 
 
@@ -169,7 +186,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · db9c58e
+          source: PR #365 · 43fc037
         </div>
       </div>
     </footer>
