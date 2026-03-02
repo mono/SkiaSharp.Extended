@@ -14,7 +14,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <seealso cref="SKGestureTracker.RotateDetected"/>
 /// <seealso cref="SKPinchGestureEventArgs"/>
 /// </remarks>
-public class SKRotateGestureEventArgs : SKGestureEventArgs
+public class SKRotateGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKRotateGestureEventArgs"/> class.
