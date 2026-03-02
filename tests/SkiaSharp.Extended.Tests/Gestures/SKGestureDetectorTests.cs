@@ -1602,4 +1602,79 @@ public class SKGestureDetectorTests
 	}
 
 	#endregion
+
+	#region Double Dispose Safety
+
+	[Fact]
+	public void Dispose_CalledTwice_DoesNotThrow()
+	{
+		var engine = CreateEngine();
+		engine.Dispose();
+		engine.Dispose(); // should not throw
+	}
+
+	#endregion
+
+	#region Touch ID Reuse
+
+	[Fact]
+	public void TouchIdReuse_AfterTouchUp_StartsNewGesture()
+	{
+		var engine = CreateEngine();
+		var tapCount = 0;
+		engine.TapDetected += (s, e) => tapCount++;
+
+		// First gesture with ID 1
+		engine.ProcessTouchDown(1, new SKPoint(100, 100), false);
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100), false);
+
+		// Wait past double-tap window
+		AdvanceTime(500);
+
+		// Reuse ID 1 at a different location
+		engine.ProcessTouchDown(1, new SKPoint(300, 300), false);
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(300, 300), false);
+		AdvanceTime(500);
+
+		Assert.Equal(2, tapCount);
+	}
+
+	#endregion
+
+	#region Triple Tap Sequence
+
+	[Fact]
+	public void ThreeTaps_RapidSequence_FiresDoubleTapAndSingleTap()
+	{
+		var engine = CreateEngine();
+		var tapCount = 0;
+		var doubleTapCount = 0;
+		engine.TapDetected += (s, e) => tapCount++;
+		engine.DoubleTapDetected += (s, e) => doubleTapCount++;
+
+		// Tap 1
+		engine.ProcessTouchDown(1, new SKPoint(100, 100), false);
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100), false);
+		AdvanceTime(100);
+
+		// Tap 2 — triggers double tap
+		engine.ProcessTouchDown(1, new SKPoint(100, 100), false);
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100), false);
+		AdvanceTime(500); // Wait past double-tap window
+
+		// Tap 3 — new single tap
+		engine.ProcessTouchDown(1, new SKPoint(100, 100), false);
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100), false);
+		AdvanceTime(500);
+
+		Assert.True(doubleTapCount >= 1, $"Expected at least 1 double tap, got {doubleTapCount}");
+		Assert.True(tapCount >= 2, $"Expected at least 2 taps, got {tapCount}");
+	}
+
+	#endregion
 }

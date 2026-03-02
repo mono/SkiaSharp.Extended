@@ -1265,4 +1265,92 @@ public class SKGestureTrackerTests
 	}
 
 	#endregion
+
+	#region Double Dispose Safety
+
+	[Fact]
+	public void Dispose_CalledTwice_DoesNotThrow()
+	{
+		var tracker = CreateTracker();
+		tracker.Dispose();
+		tracker.Dispose(); // should not throw
+	}
+
+	#endregion
+
+	#region SetScale Boundary Values
+
+	[Fact]
+	public void SetScale_NegativeValue_ClampsToMinScale()
+	{
+		var tracker = CreateTracker();
+		tracker.SetScale(-5f);
+		Assert.Equal(tracker.Options.MinScale, tracker.Scale);
+	}
+
+	[Fact]
+	public void SetScale_Zero_ClampsToMinScale()
+	{
+		var tracker = CreateTracker();
+		tracker.SetScale(0f);
+		Assert.Equal(tracker.Options.MinScale, tracker.Scale);
+	}
+
+	[Fact]
+	public void SetScale_AboveMaxScale_ClampsToMaxScale()
+	{
+		var tracker = CreateTracker();
+		tracker.SetScale(999f);
+		Assert.Equal(tracker.Options.MaxScale, tracker.Scale);
+	}
+
+	#endregion
+
+	#region TransformChanged from Programmatic Methods
+
+	[Fact]
+	public void SetScale_RaisesTransformChanged()
+	{
+		var tracker = CreateTracker();
+		var fired = 0;
+		tracker.TransformChanged += (s, e) => fired++;
+
+		tracker.SetScale(2f);
+		Assert.Equal(1, fired);
+	}
+
+	[Fact]
+	public void SetRotation_RaisesTransformChanged()
+	{
+		var tracker = CreateTracker();
+		var fired = 0;
+		tracker.TransformChanged += (s, e) => fired++;
+
+		tracker.SetRotation(45f);
+		Assert.Equal(1, fired);
+	}
+
+	[Fact]
+	public void SetOffset_RaisesTransformChanged()
+	{
+		var tracker = CreateTracker();
+		var fired = 0;
+		tracker.TransformChanged += (s, e) => fired++;
+
+		tracker.SetOffset(new SKPoint(100, 200));
+		Assert.Equal(1, fired);
+	}
+
+	[Fact]
+	public void SetTransform_RaisesTransformChanged()
+	{
+		var tracker = CreateTracker();
+		var fired = 0;
+		tracker.TransformChanged += (s, e) => fired++;
+
+		tracker.SetTransform(2f, 45f, new SKPoint(100, 200));
+		Assert.Equal(1, fired);
+	}
+
+	#endregion
 }
