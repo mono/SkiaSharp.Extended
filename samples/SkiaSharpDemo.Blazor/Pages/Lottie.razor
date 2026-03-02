@@ -77,6 +77,7 @@
     private readonly SKLottiePlayer player = new();
     private Animation? loadedAnimation;
     private CancellationTokenSource? animationCts;
+    private Task? animationLoopTask;
     private bool isLoading = true;
     private string repeatKind = "restart";
     private double animationSpeed = 1.0;
@@ -91,7 +92,7 @@
         await LoadAnimationAsync();
 
         animationCts = new CancellationTokenSource();
-        _ = AnimationLoop(animationCts.Token);
+        animationLoopTask = AnimationLoop(animationCts.Token);
     }
 
     private async Task LoadAnimationAsync()
@@ -170,10 +171,14 @@
         player.AnimationSpeed = animationSpeed;
     }
 
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         animationCts?.Cancel();
+        if (animationLoopTask is not null)
+        {
+            try { await animationLoopTask; }
+            catch (Exception) { }
+        }
         animationCts?.Dispose();
-        return ValueTask.CompletedTask;
     }
 }

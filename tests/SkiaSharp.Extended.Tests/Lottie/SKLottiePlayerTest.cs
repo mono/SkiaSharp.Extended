@@ -346,6 +346,36 @@ public class SKLottiePlayerTest
 		Assert.True(raised >= 1);
 	}
 
+	[Fact]
+	public void RepeatRestart_AnimationUpdated_FiresExactlyOncePerUpdate()
+	{
+		// Regression: Seek() called inside UpdateProgress for restart fired the
+		// event once internally, then the outer Seek() fired it again — 2x per cycle.
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.SetAnimation(anim);
+		player.Repeat = SKLottieRepeat.Restart(2);
+
+		// Advance to well past the first cycle boundary so a restart is triggered.
+		var raised = 0;
+		player.AnimationUpdated += (_, _) => raised++;
+
+		player.Update(TimeSpan.FromSeconds(1.5));
+
+		Assert.Equal(1, raised);
+	}
+
+	[Fact]
+	public void Seek_BeforeSetAnimation_DoesNotSetIsComplete()
+	{
+		// Regression: UpdateProgress with null animation was setting IsComplete=true.
+		var player = new SKLottiePlayer();
+
+		player.Seek(TimeSpan.FromSeconds(1));
+
+		Assert.False(player.IsComplete);
+	}
+
 	// ── Negative deltaTime ────────────────────────────────────────────────────
 
 	[Fact]

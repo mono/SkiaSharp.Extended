@@ -23,7 +23,7 @@ namespace SkiaSharp.Extended.UI.Blazor.Controls;
 /// </remarks>
 public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
 {
-    private bool _isAnimationEnabled;
+    private bool _isAnimationEnabled = true;
     private CancellationTokenSource? _cts;
     private Task? _loopTask;
 
@@ -126,7 +126,7 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
         if (_loopTask is not null)
         {
             try { await _loopTask; }
-            catch (OperationCanceledException) { }
+            catch (Exception) { }
         }
     }
 }

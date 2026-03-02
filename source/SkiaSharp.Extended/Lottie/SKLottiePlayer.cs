@@ -161,10 +161,7 @@ public class SKLottiePlayer
 	private void UpdateProgress(TimeSpan progress)
 	{
 		if (animation is null)
-		{
-			IsComplete = true;
 			return;
-		}
 
 		animation.SeekFrameTime(progress.TotalSeconds);
 
@@ -178,11 +175,13 @@ public class SKLottiePlayer
 		var atStart = !movingForward && progress <= TimeSpan.Zero;
 		var atEnd = movingForward && progress >= duration;
 
-		// A run is "finished" based on repeat kind
+		// A run is "finished" based on repeat kind.
+		// For Reverse, the finish point is the start of the return trip (atStart for +speed, atEnd for -speed).
+		// For Never and Restart, the finish point is simply the end of the movement direction.
 		var reverseFinishPoint = AnimationSpeed >= 0 ? atStart : atEnd;
-		var isFinishedRun = repeat.IsRestartRepeating
-			? (movingForward ? atEnd : atStart)
-			: reverseFinishPoint;
+		var isFinishedRun = repeat.IsReverseRepeating
+			? reverseFinishPoint
+			: (movingForward ? atEnd : atStart);
 
 		// For Reverse mode: flip direction when hitting a boundary (but not the finish boundary)
 		var needsFlip = repeat.IsReverseRepeating &&
@@ -212,7 +211,10 @@ public class SKLottiePlayer
 
 				if (repeat.IsRestartRepeating)
 				{
-					Seek(AnimationSpeed >= 0 ? TimeSpan.Zero : Duration);
+					// Reset position directly without going through Seek(), to avoid
+					// firing AnimationUpdated twice (once here, once in the outer Seek).
+					Progress = AnimationSpeed >= 0 ? TimeSpan.Zero : Duration;
+					animation.SeekFrameTime(Progress.TotalSeconds);
 				}
 				else if (repeat.IsReverseRepeating)
 					isInForwardPhase = !isInForwardPhase;
