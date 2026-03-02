@@ -53,8 +53,19 @@ public partial class GesturePage : ContentPage
 	protected override void OnDisappearing()
 	{
 		base.OnDisappearing();
-		UnsubscribeTrackerEvents();
-		_tracker.Dispose();
+		// Don't dispose here — OnDisappearing fires when pushing settings.
+		// The tracker must survive sub-page navigation.
+	}
+
+	// Clean up when the page is unloaded from the visual tree
+	protected override void OnHandlerChanged()
+	{
+		base.OnHandlerChanged();
+		if (Handler == null)
+		{
+			UnsubscribeTrackerEvents();
+			_tracker.Dispose();
+		}
 	}
 
 	private void SubscribeTrackerEvents()
@@ -426,29 +437,49 @@ public partial class GesturePage : ContentPage
 	{
 		var page = new ContentPage { Title = "Gesture Settings" };
 
-		var touchSlop = _tracker.Options.TouchSlop;
-		var longPressDuration = _tracker.Options.LongPressDuration;
-
 		var layout = new VerticalStackLayout { Padding = 20, Spacing = 12 };
 
-		// --- Feature Toggles ---
-		layout.Children.Add(new Label { Text = "Feature Toggles", FontAttributes = FontAttributes.Bold, FontSize = 16 });
+		// --- Feature Toggles (Tracker-level) ---
+		layout.Children.Add(new Label { Text = "Tracker Feature Toggles", FontAttributes = FontAttributes.Bold, FontSize = 16 });
 
-		var toggles = new (string Label, bool Value, Action<bool> Setter)[]
+		var trackerToggles = new (string Label, bool Value, Action<bool> Setter)[]
 		{
+			("Tap", _tracker.IsTapEnabled, v => _tracker.IsTapEnabled = v),
+			("Double Tap", _tracker.IsDoubleTapEnabled, v => _tracker.IsDoubleTapEnabled = v),
+			("Long Press", _tracker.IsLongPressEnabled, v => _tracker.IsLongPressEnabled = v),
 			("Pan", _tracker.IsPanEnabled, v => _tracker.IsPanEnabled = v),
 			("Pinch (Zoom)", _tracker.IsPinchEnabled, v => _tracker.IsPinchEnabled = v),
 			("Rotate", _tracker.IsRotateEnabled, v => _tracker.IsRotateEnabled = v),
 			("Fling", _tracker.IsFlingEnabled, v => _tracker.IsFlingEnabled = v),
 			("Double Tap Zoom", _tracker.IsDoubleTapZoomEnabled, v => _tracker.IsDoubleTapZoomEnabled = v),
 			("Scroll Zoom", _tracker.IsScrollZoomEnabled, v => _tracker.IsScrollZoomEnabled = v),
-			("Tap (App)", _enableTap, v => _enableTap = v),
+			("Hover", _tracker.IsHoverEnabled, v => _tracker.IsHoverEnabled = v),
+		};
+
+		foreach (var (label, value, setter) in trackerToggles)
+		{
+			var sw = new Switch { IsToggled = value };
+			var captured = setter;
+			sw.Toggled += (_, args) => captured(args.Value);
+			layout.Children.Add(new HorizontalStackLayout
+			{
+				Spacing = 10,
+				Children = { sw, new Label { Text = label, VerticalOptions = LayoutOptions.Center } }
+			});
+		}
+
+		// --- App-level Toggles ---
+		layout.Children.Add(new Label { Text = "App Toggles", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
+
+		var appToggles = new (string Label, bool Value, Action<bool> Setter)[]
+		{
+			("Tap Selection (App)", _enableTap, v => _enableTap = v),
 			("Double Tap Log (App)", _enableDoubleTap, v => _enableDoubleTap = v),
-			("Long Press (App)", _enableLongPress, v => _enableLongPress = v),
+			("Long Press Info (App)", _enableLongPress, v => _enableLongPress = v),
 			("Drag Sticker (App)", _enableDrag, v => _enableDrag = v),
 		};
 
-		foreach (var (label, value, setter) in toggles)
+		foreach (var (label, value, setter) in appToggles)
 		{
 			var sw = new Switch { IsToggled = value };
 			var captured = setter;
@@ -463,117 +494,26 @@ public partial class GesturePage : ContentPage
 		// --- Detection Thresholds ---
 		layout.Children.Add(new Label { Text = "Detection Thresholds", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
 
-		// Touch slop
-		var slopLabel = new Label { Text = $"Touch Slop: {touchSlop:F0} px" };
-		var slopSlider = new Slider { Minimum = 1, Maximum = 50, Value = touchSlop };
-		slopSlider.ValueChanged += (_, args) =>
-		{
-			_tracker.Options.TouchSlop = (float)args.NewValue;
-			slopLabel.Text = $"Touch Slop: {args.NewValue:F0} px";
-		};
-		layout.Children.Add(slopLabel);
-		layout.Children.Add(slopSlider);
-
-		// Long press duration
-		var lpLabel = new Label { Text = $"Long Press: {longPressDuration} ms" };
-		var lpSlider = new Slider { Minimum = 100, Maximum = 2000, Value = longPressDuration };
-		lpSlider.ValueChanged += (_, args) =>
-		{
-			_tracker.Options.LongPressDuration = (int)args.NewValue;
-			lpLabel.Text = $"Long Press: {(int)args.NewValue} ms";
-		};
-		layout.Children.Add(lpLabel);
-		layout.Children.Add(lpSlider);
+		AddSlider(layout, "Touch Slop", "px", 1, 50, _tracker.Options.TouchSlop, v => _tracker.Options.TouchSlop = v);
+		AddSlider(layout, "Double Tap Slop", "px", 10, 200, _tracker.Options.DoubleTapSlop, v => _tracker.Options.DoubleTapSlop = v);
+		AddSlider(layout, "Fling Threshold", "px/s", 50, 1000, _tracker.Options.FlingThreshold, v => _tracker.Options.FlingThreshold = v);
+		AddSliderInt(layout, "Long Press Duration", "ms", 100, 2000, _tracker.Options.LongPressDuration, v => _tracker.Options.LongPressDuration = v);
 
 		// --- Fling Settings ---
 		layout.Children.Add(new Label { Text = "Fling Settings", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
 
-		// Fling friction
-		var frictionLabel = new Label { Text = $"Friction: {_tracker.Options.FlingFriction:F2}" };
-		var frictionSlider = new Slider { Minimum = 0.0, Maximum = 1.0, Value = _tracker.Options.FlingFriction };
-		frictionSlider.ValueChanged += (_, args) =>
-		{
-			_tracker.Options.FlingFriction = (float)args.NewValue;
-			frictionLabel.Text = $"Friction: {args.NewValue:F2}";
-		};
-		layout.Children.Add(frictionLabel);
-		layout.Children.Add(frictionSlider);
-
-		// Fling min velocity
-		var minVelLabel = new Label { Text = $"Min Velocity: {_tracker.Options.FlingMinVelocity:F0} px/s" };
-		var minVelSlider = new Slider { Minimum = 1, Maximum = 50, Value = _tracker.Options.FlingMinVelocity };
-		minVelSlider.ValueChanged += (_, args) =>
-		{
-			_tracker.Options.FlingMinVelocity = (float)args.NewValue;
-			minVelLabel.Text = $"Min Velocity: {args.NewValue:F0} px/s";
-		};
-		layout.Children.Add(minVelLabel);
-		layout.Children.Add(minVelSlider);
-
-		// Fling detection threshold
-		var threshLabel = new Label { Text = $"Fling Threshold: {_tracker.Options.FlingThreshold:F0} px/s" };
-		var threshSlider = new Slider { Minimum = 50, Maximum = 1000, Value = _tracker.Options.FlingThreshold };
-		threshSlider.ValueChanged += (_, args) =>
-		{
-			_tracker.Options.FlingThreshold = (float)args.NewValue;
-			threshLabel.Text = $"Fling Threshold: {args.NewValue:F0} px/s";
-		};
-		layout.Children.Add(threshLabel);
-		layout.Children.Add(threshSlider);
-
-		// Double tap slop
-		var dtSlopLabel = new Label { Text = $"Double Tap Slop: {_tracker.Options.DoubleTapSlop:F0} px" };
-		var dtSlopSlider = new Slider { Minimum = 10, Maximum = 200, Value = _tracker.Options.DoubleTapSlop };
-		dtSlopSlider.ValueChanged += (_, args) =>
-		{
-			_tracker.Options.DoubleTapSlop = (float)args.NewValue;
-			dtSlopLabel.Text = $"Double Tap Slop: {args.NewValue:F0} px";
-		};
-		layout.Children.Add(dtSlopLabel);
-		layout.Children.Add(dtSlopSlider);
+		AddSlider(layout, "Friction", "", 0.01f, 0.5f, _tracker.Options.FlingFriction, v => _tracker.Options.FlingFriction = v, "F3");
+		AddSlider(layout, "Min Velocity", "px/s", 1, 50, _tracker.Options.FlingMinVelocity, v => _tracker.Options.FlingMinVelocity = v);
+		AddSliderInt(layout, "Frame Interval", "ms", 8, 50, _tracker.Options.FlingFrameInterval, v => _tracker.Options.FlingFrameInterval = v);
 
 		// --- Zoom Settings ---
 		layout.Children.Add(new Label { Text = "Zoom Settings", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
 
-		var zoomFactorLabel = new Label { Text = $"Double Tap Zoom: {_tracker.Options.DoubleTapZoomFactor:F1}x" };
-		var zoomFactorSlider = new Slider { Minimum = 1.5, Maximum = 5.0, Value = _tracker.Options.DoubleTapZoomFactor };
-		zoomFactorSlider.ValueChanged += (_, args) =>
-		{
-			_tracker.Options.DoubleTapZoomFactor = (float)args.NewValue;
-			zoomFactorLabel.Text = $"Double Tap Zoom: {args.NewValue:F1}x";
-		};
-		layout.Children.Add(zoomFactorLabel);
-		layout.Children.Add(zoomFactorSlider);
-
-		var scrollZoomLabel = new Label { Text = $"Scroll Zoom Factor: {_tracker.Options.ScrollZoomFactor:F2}" };
-		var scrollZoomSlider = new Slider { Minimum = 0.01, Maximum = 0.5, Value = _tracker.Options.ScrollZoomFactor };
-		scrollZoomSlider.ValueChanged += (_, args) =>
-		{
-			_tracker.Options.ScrollZoomFactor = (float)args.NewValue;
-			scrollZoomLabel.Text = $"Scroll Zoom Factor: {args.NewValue:F2}";
-		};
-		layout.Children.Add(scrollZoomLabel);
-		layout.Children.Add(scrollZoomSlider);
-
-		var minScaleLabel = new Label { Text = $"Min Scale: {_tracker.Options.MinScale:F1}x" };
-		var minScaleSlider = new Slider { Minimum = 0.1, Maximum = 1.0, Value = _tracker.Options.MinScale };
-		minScaleSlider.ValueChanged += (_, args) =>
-		{
-			_tracker.Options.MinScale = (float)args.NewValue;
-			minScaleLabel.Text = $"Min Scale: {args.NewValue:F1}x";
-		};
-		layout.Children.Add(minScaleLabel);
-		layout.Children.Add(minScaleSlider);
-
-		var maxScaleLabel = new Label { Text = $"Max Scale: {_tracker.Options.MaxScale:F1}x" };
-		var maxScaleSlider = new Slider { Minimum = 2.0, Maximum = 20.0, Value = _tracker.Options.MaxScale };
-		maxScaleSlider.ValueChanged += (_, args) =>
-		{
-			_tracker.Options.MaxScale = (float)args.NewValue;
-			maxScaleLabel.Text = $"Max Scale: {args.NewValue:F1}x";
-		};
-		layout.Children.Add(maxScaleLabel);
-		layout.Children.Add(maxScaleSlider);
+		AddSlider(layout, "Double Tap Zoom", "x", 1.5f, 5, _tracker.Options.DoubleTapZoomFactor, v => _tracker.Options.DoubleTapZoomFactor = v, "F1");
+		AddSliderInt(layout, "Zoom Animation", "ms", 50, 1000, _tracker.Options.ZoomAnimationDuration, v => _tracker.Options.ZoomAnimationDuration = v);
+		AddSlider(layout, "Scroll Zoom Factor", "", 0.01f, 0.5f, _tracker.Options.ScrollZoomFactor, v => _tracker.Options.ScrollZoomFactor = v, "F3");
+		AddSlider(layout, "Min Scale", "x", 0.1f, 1, _tracker.Options.MinScale, v => _tracker.Options.MinScale = v, "F2");
+		AddSlider(layout, "Max Scale", "x", 2, 20, _tracker.Options.MaxScale, v => _tracker.Options.MaxScale = v, "F1");
 
 		// --- Current State ---
 		layout.Children.Add(new Label { Text = "Current State", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
@@ -594,6 +534,33 @@ public partial class GesturePage : ContentPage
 
 		page.Content = new ScrollView { Content = layout };
 		await Navigation.PushAsync(page);
+	}
+
+	private static void AddSlider(VerticalStackLayout layout, string name, string unit, float min, float max, float value, Action<float> setter, string format = "F0")
+	{
+		var suffix = string.IsNullOrEmpty(unit) ? "" : $" {unit}";
+		var label = new Label { Text = $"{name}: {value.ToString(format)}{suffix}" };
+		var slider = new Slider { Minimum = min, Maximum = max, Value = value };
+		slider.ValueChanged += (_, args) =>
+		{
+			setter((float)args.NewValue);
+			label.Text = $"{name}: {((float)args.NewValue).ToString(format)}{suffix}";
+		};
+		layout.Children.Add(label);
+		layout.Children.Add(slider);
+	}
+
+	private static void AddSliderInt(VerticalStackLayout layout, string name, string unit, int min, int max, int value, Action<int> setter)
+	{
+		var label = new Label { Text = $"{name}: {value} {unit}" };
+		var slider = new Slider { Minimum = min, Maximum = max, Value = value };
+		slider.ValueChanged += (_, args) =>
+		{
+			setter((int)args.NewValue);
+			label.Text = $"{name}: {(int)args.NewValue} {unit}";
+		};
+		layout.Children.Add(label);
+		layout.Children.Add(slider);
 	}
 
 	private void LogEvent(string message)
