@@ -100,8 +100,11 @@
 
         try
         {
-            using var stream = await Http.GetStreamAsync("animations/trophy.json");
-            loadedAnimation = Animation.Create(stream);
+            // Use GetStringAsync so all JSON is in memory before passing to the native parser.
+            // In WASM, the HTTP response stream is lazy/async and cannot be read synchronously
+            // by native Skottie code, causing Animation.Create(stream) to return null.
+            var json = await Http.GetStringAsync("animations/trophy.json");
+            loadedAnimation = Animation.Parse(json);
             ApplySettings();
             player.SetAnimation(loadedAnimation);
         }
