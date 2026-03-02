@@ -18,7 +18,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// to marshal timer callbacks back to the UI thread.</para>
 /// <para>Call <see cref="Dispose"/> to clean up resources when done.</para>
 /// </remarks>
-public class SKGestureDetector : IDisposable
+public sealed class SKGestureDetector : IDisposable
 {
 	// Timing constants
 	private const long ShortTapTicks = 125 * TimeSpan.TicksPerMillisecond;
@@ -569,47 +569,47 @@ public class SKGestureDetector : IDisposable
 
 	/// <summary>Raises the <see cref="TapDetected"/> event.</summary>
 	/// <param name="e">The event data.</param>
-	protected virtual void OnTapDetected(SKTapGestureEventArgs e) => TapDetected?.Invoke(this, e);
+	private void OnTapDetected(SKTapGestureEventArgs e) => TapDetected?.Invoke(this, e);
 
 	/// <summary>Raises the <see cref="DoubleTapDetected"/> event.</summary>
 	/// <param name="e">The event data.</param>
-	protected virtual void OnDoubleTapDetected(SKTapGestureEventArgs e) => DoubleTapDetected?.Invoke(this, e);
+	private void OnDoubleTapDetected(SKTapGestureEventArgs e) => DoubleTapDetected?.Invoke(this, e);
 
 	/// <summary>Raises the <see cref="LongPressDetected"/> event.</summary>
 	/// <param name="e">The event data.</param>
-	protected virtual void OnLongPressDetected(SKLongPressGestureEventArgs e) => LongPressDetected?.Invoke(this, e);
+	private void OnLongPressDetected(SKLongPressGestureEventArgs e) => LongPressDetected?.Invoke(this, e);
 
 	/// <summary>Raises the <see cref="PanDetected"/> event.</summary>
 	/// <param name="e">The event data.</param>
-	protected virtual void OnPanDetected(SKPanGestureEventArgs e) => PanDetected?.Invoke(this, e);
+	private void OnPanDetected(SKPanGestureEventArgs e) => PanDetected?.Invoke(this, e);
 
 	/// <summary>Raises the <see cref="PinchDetected"/> event.</summary>
 	/// <param name="e">The event data.</param>
-	protected virtual void OnPinchDetected(SKPinchGestureEventArgs e) => PinchDetected?.Invoke(this, e);
+	private void OnPinchDetected(SKPinchGestureEventArgs e) => PinchDetected?.Invoke(this, e);
 
 	/// <summary>Raises the <see cref="RotateDetected"/> event.</summary>
 	/// <param name="e">The event data.</param>
-	protected virtual void OnRotateDetected(SKRotateGestureEventArgs e) => RotateDetected?.Invoke(this, e);
+	private void OnRotateDetected(SKRotateGestureEventArgs e) => RotateDetected?.Invoke(this, e);
 
 	/// <summary>Raises the <see cref="FlingDetected"/> event.</summary>
 	/// <param name="e">The event data.</param>
-	protected virtual void OnFlingDetected(SKFlingGestureEventArgs e) => FlingDetected?.Invoke(this, e);
+	private void OnFlingDetected(SKFlingGestureEventArgs e) => FlingDetected?.Invoke(this, e);
 
 	/// <summary>Raises the <see cref="HoverDetected"/> event.</summary>
 	/// <param name="e">The event data.</param>
-	protected virtual void OnHoverDetected(SKHoverGestureEventArgs e) => HoverDetected?.Invoke(this, e);
+	private void OnHoverDetected(SKHoverGestureEventArgs e) => HoverDetected?.Invoke(this, e);
 
 	/// <summary>Raises the <see cref="ScrollDetected"/> event.</summary>
 	/// <param name="e">The event data.</param>
-	protected virtual void OnScrollDetected(SKScrollGestureEventArgs e) => ScrollDetected?.Invoke(this, e);
+	private void OnScrollDetected(SKScrollGestureEventArgs e) => ScrollDetected?.Invoke(this, e);
 
 	/// <summary>Raises the <see cref="GestureStarted"/> event.</summary>
 	/// <param name="e">The event data.</param>
-	protected virtual void OnGestureStarted(SKGestureLifecycleEventArgs e) => GestureStarted?.Invoke(this, e);
+	private void OnGestureStarted(SKGestureLifecycleEventArgs e) => GestureStarted?.Invoke(this, e);
 
 	/// <summary>Raises the <see cref="GestureEnded"/> event.</summary>
 	/// <param name="e">The event data.</param>
-	protected virtual void OnGestureEnded(SKGestureLifecycleEventArgs e) => GestureEnded?.Invoke(this, e);
+	private void OnGestureEnded(SKGestureLifecycleEventArgs e) => GestureEnded?.Invoke(this, e);
 
 	private enum GestureState
 	{
