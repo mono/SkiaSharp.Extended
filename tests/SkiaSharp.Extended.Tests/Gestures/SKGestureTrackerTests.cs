@@ -1428,4 +1428,59 @@ public class SKGestureTrackerTests
 	}
 
 	#endregion
+
+	#region Bug Regression Tests
+
+	[Fact]
+	public void DragEnded_ReportsActualEndLocation_NotStartLocation()
+	{
+		// Regression: DragEnded was passing _dragStartLocation as both start and end,
+		// so CurrentLocation and Delta were always wrong.
+		var tracker = CreateTracker();
+		SKDragGestureEventArgs? dragEndedArgs = null;
+		tracker.DragEnded += (s, e) => dragEndedArgs = e;
+
+		var startPoint = new SKPoint(100, 100);
+		var midPoint = new SKPoint(150, 100);
+		var endPoint = new SKPoint(200, 100);
+
+		tracker.ProcessTouchDown(1, startPoint);
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, midPoint);
+		AdvanceTime(500); // Long pause to avoid fling
+		tracker.ProcessTouchMove(1, endPoint);
+		AdvanceTime(500);
+		tracker.ProcessTouchUp(1, endPoint);
+
+		Assert.NotNull(dragEndedArgs);
+		// CurrentLocation must reflect the final touch position, not the start
+		Assert.NotEqual(dragEndedArgs!.StartLocation, dragEndedArgs.CurrentLocation);
+		Assert.Equal(endPoint.X, dragEndedArgs.CurrentLocation.X, 1f);
+		Assert.Equal(endPoint.Y, dragEndedArgs.CurrentLocation.Y, 1f);
+	}
+
+	[Fact]
+	public void FlingCompleted_DoesNotFire_WhenFlingInterruptedByNewGesture()
+	{
+		// Regression: StopFling() unconditionally raised FlingCompleted, so starting a new
+		// gesture while a fling was in progress incorrectly fired FlingCompleted.
+		var tracker = CreateTracker();
+		tracker.Options.FlingFriction = 0.001f; // Near-zero friction so fling persists
+		tracker.Options.FlingMinVelocity = 1f;
+		tracker.Options.FlingFrameInterval = 1000; // Slow timer — won't fire during test
+
+		var flingCompletedCount = 0;
+		tracker.FlingCompleted += (s, e) => flingCompletedCount++;
+
+		// Start a fling
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+		Assert.True(tracker.IsFlinging, "Fling should be active after fast swipe");
+
+		// Interrupt with a new touch — should NOT fire FlingCompleted
+		tracker.ProcessTouchDown(1, new SKPoint(300, 300));
+
+		Assert.Equal(0, flingCompletedCount);
+	}
+
+	#endregion
 }

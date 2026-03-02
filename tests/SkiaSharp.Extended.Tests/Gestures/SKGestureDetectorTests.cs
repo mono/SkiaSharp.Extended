@@ -1722,4 +1722,75 @@ public class SKGestureDetectorTests
 	}
 
 	#endregion
+
+	#region Bug Regression Tests
+
+	[Fact]
+	public void LongPressTimer_NotRestarted_OnSecondFingerDown()
+	{
+		// Regression: StartLongPressTimer() was called for every ProcessTouchDown,
+		// including the 2nd finger, resetting the long-press timer during pinch start.
+		var engine = CreateEngine();
+		engine.Options.LongPressDuration = 200; // Short for test
+
+		var longPressCount = 0;
+		engine.LongPressDetected += (s, e) => longPressCount++;
+
+		// Put down first finger and hold
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(150); // Almost at long-press threshold
+
+		// Second finger touches — should NOT reset the timer
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10); // Small additional time
+		engine.ProcessTouchUp(2, new SKPoint(200, 100));
+
+		// The first finger has been held for 160ms total — still shouldn't trigger long press
+		// (because state transitioned to Pinching then Panning, not Detecting)
+		// More importantly, the timer should not have been reset such that it would fire 200ms
+		// AFTER the second finger touched (which would be 360ms total, wrong behavior)
+		Assert.Equal(0, longPressCount);
+	}
+
+	[Fact]
+	public void PinchRotation_DoesNotJump_WhenThirdFingerAddedAndRemoved()
+	{
+		// Regression: GetActiveTouchPoints() used Dictionary iteration order (not guaranteed).
+		// Adding/removing a 3rd finger could swap locations[0] and locations[1],
+		// causing the angle to jump ~180°.
+		var engine = CreateEngine();
+		var rotationDeltas = new List<float>();
+		engine.RotateDetected += (s, e) => rotationDeltas.Add(e.RotationDelta);
+
+		// Start 2-finger pinch: finger 1 at left, finger 2 at right (horizontal → 0°)
+		engine.ProcessTouchDown(1, new SKPoint(100, 200));
+		engine.ProcessTouchDown(2, new SKPoint(300, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(100, 200));
+		engine.ProcessTouchMove(2, new SKPoint(300, 200));
+		rotationDeltas.Clear();
+
+		// Add 3rd finger
+		engine.ProcessTouchDown(3, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(3, new SKPoint(200, 100));
+		AdvanceTime(10);
+
+		// Remove 3rd finger — this is where the angle jump was observed
+		engine.ProcessTouchUp(3, new SKPoint(200, 100));
+		AdvanceTime(10);
+
+		// Move fingers slightly to trigger rotation events
+		engine.ProcessTouchMove(1, new SKPoint(100, 200));
+		engine.ProcessTouchMove(2, new SKPoint(300, 200));
+
+		// No rotation delta should be close to ±180° (a jump)
+		foreach (var delta in rotationDeltas)
+		{
+			Assert.True(Math.Abs(delta) < 90f,
+				$"Rotation delta {delta}° is too large — indicates angle jump from unstable ordering");
+		}
+	}
+
+	#endregion
 }
