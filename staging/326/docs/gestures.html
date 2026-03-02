@@ -355,11 +355,13 @@ tracker.Reset();
 // Programmatically set the transform
 tracker.SetTransform(scale: 2f, rotation: 45f, offset: new SKPoint(100, 50));
 tracker.SetScale(1.5f);
+tracker.SetScale(2f, pivot: new SKPoint(400, 300));  // Scale around a specific point
 tracker.SetRotation(0f);
+tracker.SetRotation(45f, pivot: new SKPoint(400, 300));  // Rotate around a specific point
 tracker.SetOffset(SKPoint.Empty);
 </code></pre>
 <h3 id="lifecycle-events">Lifecycle Events</h3>
-<pre><code class="lang-csharp">// Fired when any finger touches down
+<pre><code class="lang-csharp">// Fired when the first finger touches down (once per gesture sequence)
 tracker.GestureStarted += (s, e) =&gt; { /* gesture began */ };
 
 // Fired when all fingers lift
@@ -401,7 +403,7 @@ tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · ececde7
+          source: PR #326 · bf8918d
         </div>
       </div>
     </footer>
