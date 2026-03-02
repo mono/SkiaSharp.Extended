@@ -34,6 +34,8 @@ public class SKGestureTrackerOptions : SKGestureDetectorOptions
 		{
 			if (value <= 0)
 				throw new ArgumentOutOfRangeException(nameof(value), value, "MinScale must be positive.");
+			if (value > _maxScale)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "MinScale must not be greater than MaxScale.");
 			_minScale = value;
 		}
 	}

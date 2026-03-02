@@ -223,8 +223,9 @@ public class SKGestureDetector : IDisposable
 
 		if (touchPoints.Length > 0)
 		{
-			// Raise gesture started
-			OnGestureStarted(new SKGestureLifecycleEventArgs());
+			// Only raise GestureStarted for the first touch
+			if (_touches.Count == 1)
+				OnGestureStarted(new SKGestureLifecycleEventArgs());
 
 			if (touchPoints.Length >= 2)
 			{
@@ -638,7 +639,10 @@ public class SKGestureDetector : IDisposable
 			centerY /= locations.Length;
 
 			var center = new SKPoint(centerX, centerY);
-			var radius = SKPoint.Distance(center, locations[0]);
+			var radius = 0f;
+			foreach (var loc in locations)
+				radius += SKPoint.Distance(center, loc);
+			radius /= locations.Length;
 			var angle = (float)(Math.Atan2(locations[1].Y - locations[0].Y, locations[1].X - locations[0].X) * 180 / Math.PI);
 
 			return new PinchState(center, radius, angle);
