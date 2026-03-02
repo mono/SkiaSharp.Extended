@@ -1464,4 +1464,142 @@ public class SKGestureDetectorTests
 	}
 
 	#endregion
+
+	#region Options Validation Tests
+
+	[Fact]
+	public void Options_TouchSlop_Negative_Throws()
+	{
+		var options = new SKGestureDetectorOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.TouchSlop = -1f);
+	}
+
+	[Fact]
+	public void Options_DoubleTapSlop_Negative_Throws()
+	{
+		var options = new SKGestureDetectorOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.DoubleTapSlop = -1f);
+	}
+
+	[Fact]
+	public void Options_FlingThreshold_Negative_Throws()
+	{
+		var options = new SKGestureDetectorOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.FlingThreshold = -1f);
+	}
+
+	[Theory]
+	[InlineData(0)]
+	[InlineData(-1)]
+	public void Options_LongPressDuration_ZeroOrNegative_Throws(int value)
+	{
+		var options = new SKGestureDetectorOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.LongPressDuration = value);
+	}
+
+	[Fact]
+	public void Constructor_NullOptions_Throws()
+	{
+		Assert.Throws<ArgumentNullException>(() => new SKGestureDetector(null!));
+	}
+
+	[Fact]
+	public void Options_ValidValues_PassThrough()
+	{
+		var options = new SKGestureDetectorOptions
+		{
+			TouchSlop = 16f,
+			DoubleTapSlop = 80f,
+			FlingThreshold = 400f,
+			LongPressDuration = 1000,
+		};
+		var engine = new SKGestureDetector(options);
+
+		Assert.Equal(16f, engine.Options.TouchSlop);
+		Assert.Equal(80f, engine.Options.DoubleTapSlop);
+		Assert.Equal(400f, engine.Options.FlingThreshold);
+		Assert.Equal(1000, engine.Options.LongPressDuration);
+	}
+
+	#endregion
+
+	#region GestureStarted Bug Fix Verification
+
+	[Fact]
+	public void GestureStarted_OnlyFiresOnce_WhenMultipleFingersTouch()
+	{
+		var engine = CreateEngine();
+		var count = 0;
+		engine.GestureStarted += (s, e) => count++;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 200));
+		engine.ProcessTouchDown(3, new SKPoint(300, 300));
+
+		Assert.Equal(1, count);
+	}
+
+	#endregion
+
+	#region EventArgs Verification Tests
+
+	[Fact]
+	public void PanEventArgs_PreviousLocation_IsSetCorrectly()
+	{
+		var engine = CreateEngine();
+		SKPanGestureEventArgs? captured = null;
+		engine.PanDetected += (s, e) => captured = e;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(120, 100));
+
+		Assert.NotNull(captured);
+		Assert.Equal(100, captured.PreviousLocation.X, 1);
+		Assert.Equal(100, captured.PreviousLocation.Y, 1);
+	}
+
+	[Fact]
+	public void PinchEventArgs_ScaleDelta_ProductMatchesCumulativeScale()
+	{
+		var engine = CreateEngine();
+		var scaleDeltas = new List<float>();
+		engine.PinchDetected += (s, e) => scaleDeltas.Add(e.ScaleDelta);
+
+		// Fingers start 100px apart, spread to 200px → cumulative scale ≈ 2.0
+		engine.ProcessTouchDown(1, new SKPoint(100, 200));
+		engine.ProcessTouchDown(2, new SKPoint(200, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(50, 200));
+		engine.ProcessTouchMove(2, new SKPoint(250, 200));
+
+		Assert.NotEmpty(scaleDeltas);
+		var cumulativeScale = 1f;
+		foreach (var delta in scaleDeltas)
+			cumulativeScale *= delta;
+		Assert.Equal(2.0f, cumulativeScale, 2);
+	}
+
+	[Fact]
+	public void FlingEventArgs_HasVelocityAndSpeed()
+	{
+		var engine = CreateEngine();
+		SKFlingGestureEventArgs? captured = null;
+		engine.FlingDetected += (s, e) => captured = e;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(300, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(500, 200));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(500, 200));
+
+		Assert.NotNull(captured);
+		Assert.True(captured.VelocityX > 0, $"VelocityX should be positive for rightward fling, was {captured.VelocityX}");
+		Assert.True(captured.Speed > 0, $"Speed should be positive, was {captured.Speed}");
+		Assert.Equal((float)Math.Sqrt(captured.VelocityX * captured.VelocityX + captured.VelocityY * captured.VelocityY), captured.Speed, 1);
+	}
+
+	#endregion
 }

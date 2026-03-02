@@ -321,14 +321,16 @@ tracker.Reset();
 // Programmatically set the transform
 tracker.SetTransform(scale: 2f, rotation: 45f, offset: new SKPoint(100, 50));
 tracker.SetScale(1.5f);
+tracker.SetScale(2f, pivot: new SKPoint(400, 300));  // Scale around a specific point
 tracker.SetRotation(0f);
+tracker.SetRotation(45f, pivot: new SKPoint(400, 300));  // Rotate around a specific point
 tracker.SetOffset(SKPoint.Empty);
 ```
 
 ### Lifecycle Events
 
 ```csharp
-// Fired when any finger touches down
+// Fired when the first finger touches down (once per gesture sequence)
 tracker.GestureStarted += (s, e) => { /* gesture began */ };
 
 // Fired when all fingers lift
