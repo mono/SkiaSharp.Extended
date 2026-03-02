@@ -12,7 +12,7 @@ namespace SkiaSharpDemo.Demos;
 public partial class GesturePage : ContentPage
 {
 	// Gesture tracker - the core gesture recognition component
-	private readonly SKGestureTracker _tracker;
+	private SKGestureTracker _tracker = null!;
 
 	// Sticker data for demonstration
 	private readonly List<Sticker> _stickers = new();
@@ -34,38 +34,39 @@ public partial class GesturePage : ContentPage
 	{
 		InitializeComponent();
 
-		// Create and configure the gesture tracker
-		_tracker = new SKGestureTracker();
-		SubscribeTrackerEvents();
-
 		// Initialize with some stickers
 		_stickers.Add(new Sticker { Position = new SKPoint(100, 100), Size = 80, Color = SKColors.Red, Label = "1" });
 		_stickers.Add(new Sticker { Position = new SKPoint(200, 200), Size = 60, Color = SKColors.Green, Label = "2" });
 		_stickers.Add(new Sticker { Position = new SKPoint(300, 150), Size = 70, Color = SKColors.Blue, Label = "3" });
+
+		CreateTracker();
 	}
 
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
+
+		// Recreate if previously disposed (e.g. returning from settings)
+		if (_tracker == null!)
+			CreateTracker();
+
 		canvasView.InvalidateSurface();
 	}
 
 	protected override void OnDisappearing()
 	{
 		base.OnDisappearing();
-		// Don't dispose here — OnDisappearing fires when pushing settings.
-		// The tracker must survive sub-page navigation.
+
+		// Dispose to release timers and event subscriptions; recreated in OnAppearing
+		UnsubscribeTrackerEvents();
+		_tracker.Dispose();
+		_tracker = null!;
 	}
 
-	// Clean up when the page is unloaded from the visual tree
-	protected override void OnHandlerChanged()
+	private void CreateTracker()
 	{
-		base.OnHandlerChanged();
-		if (Handler == null)
-		{
-			UnsubscribeTrackerEvents();
-			_tracker.Dispose();
-		}
+		_tracker = new SKGestureTracker();
+		SubscribeTrackerEvents();
 	}
 
 	private void SubscribeTrackerEvents()
