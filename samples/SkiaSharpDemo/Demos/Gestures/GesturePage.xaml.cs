@@ -45,22 +45,32 @@ public partial class GesturePage : ContentPage
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
-
-		// Recreate if previously disposed (e.g. returning from settings)
-		if (_tracker == null!)
-			CreateTracker();
-
 		canvasView.InvalidateSurface();
 	}
 
-	protected override void OnDisappearing()
+	// Dispose on handler detach, recreate on handler attach.
+	// This survives push/pop navigation (which doesn't change handler)
+	// but properly cleans up when the page is removed from the tree.
+	protected override void OnHandlerChanged()
 	{
-		base.OnDisappearing();
+		base.OnHandlerChanged();
 
-		// Dispose to release timers and event subscriptions; recreated in OnAppearing
-		UnsubscribeTrackerEvents();
-		_tracker.Dispose();
-		_tracker = null!;
+		if (Handler != null)
+		{
+			// Page attached to visual tree — ensure tracker exists
+			if (_tracker == null!)
+				CreateTracker();
+		}
+		else
+		{
+			// Page removed from visual tree — dispose to release timers
+			if (_tracker != null!)
+			{
+				UnsubscribeTrackerEvents();
+				_tracker.Dispose();
+				_tracker = null!;
+			}
+		}
 	}
 
 	private void CreateTracker()
