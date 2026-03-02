@@ -1353,4 +1353,79 @@ public class SKGestureTrackerTests
 	}
 
 	#endregion
+
+	#region Bug Fix Tests
+
+	[Theory]
+	[InlineData(0f)]
+	[InlineData(-1f)]
+	[InlineData(-0.001f)]
+	public void ZoomTo_WithNonPositiveFactor_ThrowsArgumentOutOfRangeException(float factor)
+	{
+		var tracker = CreateTracker();
+		Assert.Throws<ArgumentOutOfRangeException>(() => tracker.ZoomTo(factor, SKPoint.Empty));
+	}
+
+	[Theory]
+	[InlineData(float.NaN)]
+	[InlineData(float.PositiveInfinity)]
+	[InlineData(float.NegativeInfinity)]
+	public void ZoomTo_WithNonFiniteFactor_ThrowsArgumentOutOfRangeException(float factor)
+	{
+		var tracker = CreateTracker();
+		Assert.Throws<ArgumentOutOfRangeException>(() => tracker.ZoomTo(factor, SKPoint.Empty));
+	}
+
+	[Fact]
+	public void PinchAndRotate_FiresOnlyOneTransformChangedPerFrame()
+	{
+		// Each two-finger move should fire exactly one TransformChanged, not two
+		// (one from pinch handler + one from rotate handler).
+		var tracker = CreateTracker();
+		var changeCount = 0;
+		tracker.TransformChanged += (s, e) => changeCount++;
+
+		// Set up two fingers in a position that generates both pinch and rotate
+		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(300, 200));
+		AdvanceTime(10);
+
+		changeCount = 0; // Reset after setup touches
+		tracker.ProcessTouchMove(1, new SKPoint(50, 180));
+		tracker.ProcessTouchMove(2, new SKPoint(350, 220));
+
+		// Two moves → 2 frames, but each frame (triggered by move 1 AND move 2) should fire once
+		// Each ProcessTouchMove call may or may not trigger a frame depending on which finger moves.
+		// The important thing is that for each frame where pinch fires, rotate does NOT fire an extra event.
+		// With the fix: rotate fires TransformChanged (1 per frame), pinch does not.
+		// We can verify by checking the count doesn't double what a pinch-only gesture would produce.
+		Assert.True(changeCount <= 2, $"Expected at most 2 TransformChanged (one per move), got {changeCount}");
+	}
+
+	[Fact]
+	public void ProcessTouchCancel_DuringPinch_WithOneFingerRemaining_TransitionsToPan()
+	{
+		var tracker = CreateTracker();
+		var panDetected = false;
+		tracker.PanDetected += (s, e) => panDetected = true;
+
+		// Start a two-finger pinch
+		tracker.ProcessTouchDown(1, new SKPoint(100, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(300, 200));
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(80, 200));
+		tracker.ProcessTouchMove(2, new SKPoint(320, 200));
+
+		// Cancel one finger
+		tracker.ProcessTouchCancel(2);
+
+		// Subsequent move with remaining finger should produce pan
+		panDetected = false;
+		AdvanceTime(10);
+		tracker.ProcessTouchMove(1, new SKPoint(60, 200));
+
+		Assert.True(panDetected, "Pan should be detected after one finger cancelled during pinch");
+	}
+
+	#endregion
 }

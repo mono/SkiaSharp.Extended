@@ -434,6 +434,23 @@ public sealed class SKGestureDetector : IDisposable
 				_gestureState = GestureState.None;
 			}
 		}
+		else if (touchPoints.Length == 1)
+		{
+			// Transition from pinch to pan when one finger is cancelled
+			if (_gestureState == GestureState.Pinching)
+			{
+				_initialTouch = touchPoints[0];
+				// Clear velocity history so rotation movement doesn't cause a fling
+				_flingTracker.Clear();
+			}
+			_gestureState = GestureState.Panning;
+			_pinchState = new PinchState(touchPoints[0], 0, 0);
+		}
+		else if (touchPoints.Length >= 2)
+		{
+			// Recalculate pinch state for remaining fingers to avoid jumps
+			_pinchState = PinchState.FromLocations(touchPoints);
+		}
 
 		return true;
 	}

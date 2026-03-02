@@ -672,6 +672,51 @@ public class SKGestureDetectorTests
 		Assert.True(gestureEnded);
 	}
 
+	[Fact]
+	public void ProcessTouchCancel_DuringPinch_WithOneFingerRemaining_TransitionsToPanning()
+	{
+		// When one finger is cancelled during a two-finger pinch, the remaining finger
+		// should continue generating pan events rather than the gesture freezing.
+		var engine = CreateEngine();
+		var panRaised = false;
+		engine.PanDetected += (s, e) => panRaised = true;
+
+		// Start a two-finger pinch
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(90, 100));
+		engine.ProcessTouchMove(2, new SKPoint(210, 100));
+
+		// Cancel one finger — should transition to Panning
+		engine.ProcessTouchCancel(2);
+
+		// Subsequent moves with the remaining finger should produce pan events
+		panRaised = false;
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(80, 100));
+
+		Assert.True(panRaised, "Pan should fire after cancelling one finger during a pinch");
+	}
+
+	[Fact]
+	public void ProcessTouchCancel_DuringPinch_WithOneFingerRemaining_GestureStaysActive()
+	{
+		var engine = CreateEngine();
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(90, 100));
+		engine.ProcessTouchMove(2, new SKPoint(210, 100));
+
+		// Cancel one finger
+		engine.ProcessTouchCancel(2);
+
+		// Gesture should still be active (remaining finger is panning)
+		Assert.True(engine.IsGestureActive, "Gesture should remain active after one finger cancelled during pinch");
+	}
+
 	#endregion
 
 	#region Bug Fix Tests
