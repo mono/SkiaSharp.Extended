@@ -202,10 +202,9 @@ public sealed class SKGestureDetector : IDisposable
 			_initialTouch = location;
 			_touchStartTicks = ticks;
 			_longPressTriggered = false;
+			// Start the long press timer only on the first finger (not on 2nd+ during pinch)
+			StartLongPressTimer();
 		}
-
-		// Start the long press timer
-		StartLongPressTimer();
 
 		// Check for double tap using the last completed tap location
 		if (_touches.Count == 1 &&
@@ -566,9 +565,12 @@ public sealed class SKGestureDetector : IDisposable
 
 	private SKPoint[] GetActiveTouchPoints()
 	{
-		return _touches.Values
-			.Where(t => t.InContact)
-			.Select(t => t.Location)
+		// Sort by touch ID for stable ordering — prevents angle jumps when fingers
+		// are added/removed and Dictionary iteration order changes.
+		return _touches
+			.Where(kv => kv.Value.InContact)
+			.OrderBy(kv => kv.Key)
+			.Select(kv => kv.Value.Location)
 			.ToArray();
 	}
 

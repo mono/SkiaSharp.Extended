@@ -52,6 +52,7 @@ public sealed class SKGestureTracker : IDisposable
 	private bool _isDragging;
 	private bool _isDragHandled;
 	private SKPoint _dragStartLocation;
+	private SKPoint _lastPanLocation;
 
 	// Fling animation state
 	private Timer? _flingTimer;
@@ -495,6 +496,16 @@ public sealed class SKGestureTracker : IDisposable
 		if (!_isFlinging)
 			return;
 
+		CancelFlingInternal();
+		FlingCompleted?.Invoke(this, EventArgs.Empty);
+	}
+
+	/// <summary>Cancels any active fling animation without raising <see cref="FlingCompleted"/>.</summary>
+	private void CancelFlingInternal()
+	{
+		if (!_isFlinging)
+			return;
+
 		_isFlinging = false;
 		_flingVelocityX = 0;
 		_flingVelocityY = 0;
@@ -503,7 +514,6 @@ public sealed class SKGestureTracker : IDisposable
 		_flingTimer = null;
 		timer?.Change(Timeout.Infinite, Timeout.Infinite);
 		timer?.Dispose();
-		FlingCompleted?.Invoke(this, EventArgs.Empty);
 	}
 
 	/// <summary>
@@ -621,6 +631,9 @@ public sealed class SKGestureTracker : IDisposable
 		if (IsPanEnabled)
 			PanDetected?.Invoke(this, e);
 
+		// Track last pan position for DragEnded
+		_lastPanLocation = e.Location;
+
 		// Derive drag lifecycle
 		SKDragGestureEventArgs? dragArgs = null;
 		if (!_isDragging)
@@ -628,6 +641,7 @@ public sealed class SKGestureTracker : IDisposable
 			_isDragging = true;
 			_isDragHandled = false;
 			_dragStartLocation = e.PreviousLocation;
+			_lastPanLocation = e.Location;
 			dragArgs = new SKDragGestureEventArgs(_dragStartLocation, e.Location, e.Delta);
 			DragStarted?.Invoke(this, dragArgs);
 		}
@@ -726,7 +740,7 @@ public sealed class SKGestureTracker : IDisposable
 	private void OnEngineGestureStarted(object? s, SKGestureLifecycleEventArgs e)
 	{
 		_syncContext ??= SynchronizationContext.Current;
-		StopFling();
+		CancelFlingInternal(); // Don't fire FlingCompleted — fling was interrupted by new touch
 		StopZoomAnimation();
 		GestureStarted?.Invoke(this, new SKGestureLifecycleEventArgs());
 	}
@@ -737,7 +751,8 @@ public sealed class SKGestureTracker : IDisposable
 		{
 			_isDragging = false;
 			_isDragHandled = false;
-			DragEnded?.Invoke(this, new SKDragGestureEventArgs(_dragStartLocation, _dragStartLocation, SKPoint.Empty));
+			var delta = new SKPoint(_lastPanLocation.X - _dragStartLocation.X, _lastPanLocation.Y - _dragStartLocation.Y);
+			DragEnded?.Invoke(this, new SKDragGestureEventArgs(_dragStartLocation, _lastPanLocation, delta));
 		}
 		GestureEnded?.Invoke(this, new SKGestureLifecycleEventArgs());
 	}
