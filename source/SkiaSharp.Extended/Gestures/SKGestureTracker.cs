@@ -37,7 +37,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <seealso cref="SKGestureDetector"/>
 /// <seealso cref="SKGestureTrackerOptions"/>
 /// </remarks>
-public class SKGestureTracker : IDisposable
+public sealed class SKGestureTracker : IDisposable
 {
 	private readonly SKGestureDetector _engine;
 	private SynchronizationContext? _syncContext;
