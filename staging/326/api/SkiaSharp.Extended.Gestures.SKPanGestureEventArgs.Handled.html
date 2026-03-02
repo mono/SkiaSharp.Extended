@@ -2,10 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Constructor SKGestureEventArgs
+      <title>Property Handled
  | SkiaSharp.Extended </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Constructor SKGestureEventArgs
+      <meta name="title" content="Property Handled
  | SkiaSharp.Extended ">
       
       <link rel="icon" href="../images/logo.ico">
@@ -85,15 +85,15 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="SkiaSharp.Extended.Gestures.SKGestureEventArgs.#ctor*">
+        <article data-uid="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled*">
 
 
 
 
 
-<h1 id="SkiaSharp_Extended_Gestures_SKGestureEventArgs__ctor_" data-uid="SkiaSharp.Extended.Gestures.SKGestureEventArgs.#ctor*" class="text-break">
-  Constructor SKGestureEventArgs
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
+<h1 id="SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Handled_" data-uid="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled*" class="text-break">
+  Property Handled
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKPanGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
@@ -119,28 +119,40 @@
 
 
 
-<a id="SkiaSharp_Extended_Gestures_SKGestureEventArgs__ctor_" data-uid="SkiaSharp.Extended.Gestures.SKGestureEventArgs.#ctor*"></a>
+<a id="SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Handled_" data-uid="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled*"></a>
 
-<h3 id="SkiaSharp_Extended_Gestures_SKGestureEventArgs__ctor" data-uid="SkiaSharp.Extended.Gestures.SKGestureEventArgs.#ctor">
-  SKGestureEventArgs()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Handled" data-uid="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled">
+  Handled
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKPanGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Gets or sets a value indicating whether the event has been handled.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKGestureEventArgs()</code></pre>
+  <pre><code class="lang-csharp hljs">public bool Handled { get; set; }</code></pre>
 </div>
 
 
 
 
 
+<h4 class="section">Property Value</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+  <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the event has been handled by a consumer and default processing
+should be skipped; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>. The default is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+</dl>
 
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Handled_remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>Set this to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> in a <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.PanDetected.html">PanDetected</a> handler
+to prevent the <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.html">SKGestureTracker</a> from updating <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.Offset.html#SkiaSharp_Extended_Gestures_SKGestureTracker_Offset">Offset</a>.</p>
+</div>
 
 
 
@@ -148,7 +160,7 @@
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureEventArgs.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKPanGestureEventArgs.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -164,7 +176,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · e254be5
+          source: PR #326 · 67daedf
         </div>
       </div>
     </footer>

@@ -104,7 +104,7 @@
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKPanGestureEventArgs : SKGestureEventArgs</code></pre>
+    <pre><code class="lang-csharp hljs">public class SKPanGestureEventArgs : EventArgs</code></pre>
   </div>
 
 
@@ -115,7 +115,6 @@
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventargs">EventArgs</a></div>
-      <div><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureEventArgs.html">SKGestureEventArgs</a></div>
       <div><span class="xref">SKPanGestureEventArgs</span></div>
     </dd>
   </dl>
@@ -125,9 +124,6 @@
   <dl class="typelist derived">
     <dt>Inherited Members</dt>
     <dd>
-    <div>
-      <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKGestureEventArgs_Handled">SKGestureEventArgs.Handled</a>
-    </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventargs.empty">EventArgs.Empty</a>
     </div>
@@ -183,6 +179,11 @@ the incremental <a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEv
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Handled">Handled</a></dt>
+    <dd><p>Gets or sets a value indicating whether the event has been handled.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEventArgs.Location.html#SkiaSharp_Extended_Gestures_SKPanGestureEventArgs_Location">Location</a></dt>
     <dd><p>Gets the current touch location in view coordinates.</p>
 </dd>
@@ -219,7 +220,7 @@ the incremental <a class="xref" href="SkiaSharp.Extended.Gestures.SKPanGestureEv
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · e254be5
+          source: PR #326 · 67daedf
         </div>
       </div>
     </footer>

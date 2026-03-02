@@ -105,7 +105,7 @@
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKDragGestureEventArgs : SKGestureEventArgs</code></pre>
+    <pre><code class="lang-csharp hljs">public class SKDragGestureEventArgs : EventArgs</code></pre>
   </div>
 
 
@@ -116,7 +116,6 @@
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventargs">EventArgs</a></div>
-      <div><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureEventArgs.html">SKGestureEventArgs</a></div>
       <div><span class="xref">SKDragGestureEventArgs</span></div>
     </dd>
   </dl>
@@ -126,9 +125,6 @@
   <dl class="typelist derived">
     <dt>Inherited Members</dt>
     <dd>
-    <div>
-      <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKGestureEventArgs_Handled">SKGestureEventArgs.Handled</a>
-    </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventargs.empty">EventArgs.Empty</a>
     </div>
@@ -165,7 +161,7 @@ The lifecycle is:</p>
 occurs. <a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_StartLocation">StartLocation</a> and <a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.CurrentLocation.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_CurrentLocation">CurrentLocation</a> define the initial positions.</li><li><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragUpdated.html">DragUpdated</a>: Fired continuously as the touch moves.
 <a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_Delta">Delta</a> contains the incremental displacement from the previous position.</li><li><a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragEnded.html">DragEnded</a>: Fired once when all touches are released.
 <a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Delta.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_Delta">Delta</a> is <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint.empty">Empty</a>.</li></ol>
-<p>Set <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKGestureEventArgs_Handled">Handled</a> to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> during
+<p>Set <a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_Handled">Handled</a> to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> during
 <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragStarted.html">DragStarted</a> or <a class="xref" href="SkiaSharp.Extended.Gestures.SKGestureTracker.DragUpdated.html">DragUpdated</a>
 to prevent the tracker from applying its default pan offset behavior (for example, when
 implementing custom object dragging).</p>
@@ -198,6 +194,11 @@ implementing custom object dragging).</p>
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.Handled.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_Handled">Handled</a></dt>
+    <dd><p>Gets or sets a value indicating whether the event has been handled.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.Gestures.SKDragGestureEventArgs.StartLocation.html#SkiaSharp_Extended_Gestures_SKDragGestureEventArgs_StartLocation">StartLocation</a></dt>
     <dd><p>Gets the location where the drag began, in view coordinates.</p>
 </dd>
@@ -224,7 +225,7 @@ implementing custom object dragging).</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · e254be5
+          source: PR #326 · 67daedf
         </div>
       </div>
     </footer>
