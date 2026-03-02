@@ -12,7 +12,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <seealso cref="SKGestureDetector.PanDetected"/>
 /// <seealso cref="SKGestureTracker.PanDetected"/>
 /// </remarks>
-public class SKPanGestureEventArgs : SKGestureEventArgs
+public class SKPanGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKPanGestureEventArgs"/> class.
@@ -28,6 +28,19 @@ public class SKPanGestureEventArgs : SKGestureEventArgs
 		Delta = delta;
 		Velocity = velocity;
 	}
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the event has been handled.
+	/// </summary>
+	/// <value>
+	/// <see langword="true"/> if the event has been handled by a consumer and default processing
+	/// should be skipped; otherwise, <see langword="false"/>. The default is <see langword="false"/>.
+	/// </value>
+	/// <remarks>
+	/// Set this to <see langword="true"/> in a <see cref="SKGestureTracker.PanDetected"/> handler
+	/// to prevent the <see cref="SKGestureTracker"/> from updating <see cref="SKGestureTracker.Offset"/>.
+	/// </remarks>
+	public bool Handled { get; set; }
 
 	/// <summary>
 	/// Gets the current touch location in view coordinates.

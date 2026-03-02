@@ -17,7 +17,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <item><description><see cref="SKGestureTracker.DragEnded"/>: Fired once when all touches are released.
 /// <see cref="Delta"/> is <see cref="SKPoint.Empty"/>.</description></item>
 /// </list>
-/// <para>Set <see cref="SKGestureEventArgs.Handled"/> to <see langword="true"/> during
+/// <para>Set <see cref="Handled"/> to <see langword="true"/> during
 /// <see cref="SKGestureTracker.DragStarted"/> or <see cref="SKGestureTracker.DragUpdated"/>
 /// to prevent the tracker from applying its default pan offset behavior (for example, when
 /// implementing custom object dragging).</para>
@@ -26,7 +26,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <seealso cref="SKGestureTracker.DragEnded"/>
 /// <seealso cref="SKPanGestureEventArgs"/>
 /// </remarks>
-public class SKDragGestureEventArgs : SKGestureEventArgs
+public class SKDragGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKDragGestureEventArgs"/> class.
@@ -40,6 +40,20 @@ public class SKDragGestureEventArgs : SKGestureEventArgs
 		CurrentLocation = currentLocation;
 		Delta = delta;
 	}
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the event has been handled.
+	/// </summary>
+	/// <value>
+	/// <see langword="true"/> if the event has been handled by a consumer and default processing
+	/// should be skipped; otherwise, <see langword="false"/>. The default is <see langword="false"/>.
+	/// </value>
+	/// <remarks>
+	/// Set this to <see langword="true"/> during <see cref="SKGestureTracker.DragStarted"/> or
+	/// <see cref="SKGestureTracker.DragUpdated"/> to prevent the <see cref="SKGestureTracker"/>
+	/// from updating <see cref="SKGestureTracker.Offset"/> for this drag operation.
+	/// </remarks>
+	public bool Handled { get; set; }
 
 	/// <summary>
 	/// Gets the location where the drag began, in view coordinates.

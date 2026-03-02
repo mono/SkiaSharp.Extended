@@ -349,7 +349,7 @@ public class SKGestureTracker : IDisposable
 	/// Occurs when a drag operation starts (first pan movement after touch down).
 	/// </summary>
 	/// <remarks>
-	/// Set <see cref="SKGestureEventArgs.Handled"/> to <see langword="true"/> to prevent the
+	/// Set <see cref="SKDragGestureEventArgs.Handled"/> to <see langword="true"/> to prevent the
 	/// tracker from updating <see cref="Offset"/> for this drag (useful for custom object dragging).
 	/// </remarks>
 	public event EventHandler<SKDragGestureEventArgs>? DragStarted;

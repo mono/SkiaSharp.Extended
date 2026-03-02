@@ -28,7 +28,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <seealso cref="SKGestureDetector.TapDetected"/>
 /// <seealso cref="SKGestureDetector.DoubleTapDetected"/>
 /// </remarks>
-public class SKTapGestureEventArgs : SKGestureEventArgs
+public class SKTapGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKTapGestureEventArgs"/> class.
@@ -40,6 +40,20 @@ public class SKTapGestureEventArgs : SKGestureEventArgs
 		Location = location;
 		TapCount = tapCount;
 	}
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the event has been handled.
+	/// </summary>
+	/// <value>
+	/// <see langword="true"/> if the event has been handled by a consumer and default processing
+	/// should be skipped; otherwise, <see langword="false"/>. The default is <see langword="false"/>.
+	/// </value>
+	/// <remarks>
+	/// Set this to <see langword="true"/> in a <see cref="SKGestureDetector.DoubleTapDetected"/>
+	/// handler to prevent the <see cref="SKGestureTracker"/> from applying its default
+	/// double-tap zoom behavior.
+	/// </remarks>
+	public bool Handled { get; set; }
 
 	/// <summary>
 	/// Gets the location of the tap in view coordinates.

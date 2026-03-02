@@ -12,7 +12,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <seealso cref="SKGestureDetector.LongPressDetected"/>
 /// <seealso cref="SKGestureDetectorOptions.LongPressDuration"/>
 /// </remarks>
-public class SKLongPressGestureEventArgs : SKGestureEventArgs
+public class SKLongPressGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKLongPressGestureEventArgs"/> class.

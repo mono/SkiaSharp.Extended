@@ -21,7 +21,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <seealso cref="SKGestureTracker.FlingUpdated"/>
 /// <seealso cref="SKGestureTracker.FlingCompleted"/>
 /// </remarks>
-public class SKFlingGestureEventArgs : SKGestureEventArgs
+public class SKFlingGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKFlingGestureEventArgs"/> class with

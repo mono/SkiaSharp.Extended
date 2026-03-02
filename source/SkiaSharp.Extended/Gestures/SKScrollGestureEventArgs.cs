@@ -17,7 +17,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <seealso cref="SKGestureDetector.ProcessMouseWheel"/>
 /// <seealso cref="SKGestureTracker.ScrollDetected"/>
 /// </remarks>
-public class SKScrollGestureEventArgs : SKGestureEventArgs
+public class SKScrollGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKScrollGestureEventArgs"/> class.

@@ -12,7 +12,7 @@ namespace SkiaSharp.Extended.Gestures;
 /// <seealso cref="SKGestureDetector.HoverDetected"/>
 /// <seealso cref="SKGestureTracker.HoverDetected"/>
 /// </remarks>
-public class SKHoverGestureEventArgs : SKGestureEventArgs
+public class SKHoverGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKHoverGestureEventArgs"/> class.
