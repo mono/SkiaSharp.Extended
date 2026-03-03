@@ -124,9 +124,19 @@ public class SKGestureTrackerFlingTests
 		var flingCompleted = false;
 		tracker.FlingCompleted += (s, e) => flingCompleted = true;
 
-		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+		// Use the tracker's own TimeProvider for touch timestamps so velocity is computed correctly
+		var start = new SKPoint(100, 200);
+		var mid = new SKPoint(300, 200);
+		var end = new SKPoint(500, 200);
+		tracker.ProcessTouchDown(1, start);
+		await Task.Delay(20);
+		tracker.ProcessTouchMove(1, mid);
+		await Task.Delay(20);
+		tracker.ProcessTouchMove(1, end);
+		await Task.Delay(20);
+		tracker.ProcessTouchUp(1, end);
 
-		await Task.Delay(1000);
+		await Task.Delay(2000);
 
 		Assert.True(flingCompleted, "Fling should eventually complete");
 		Assert.False(tracker.IsFlinging);
