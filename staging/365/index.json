@@ -319,6 +319,176 @@
     "title": "Class SKPixelComparisonResult | SkiaSharp.Extended",
     "keywords": "Class SKPixelComparisonResult Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll public class SKPixelComparisonResult Inheritance object SKPixelComparisonResult Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKPixelComparisonResult(int, int, int) Properties AbsoluteError ErrorPixelCount ErrorPixelPercentage TotalPixels"
   },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.-ctor.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.-ctor.html",
+    "title": "Constructor SKAnimatedCanvasView | SkiaSharp.Extended",
+    "keywords": "Constructor SKAnimatedCanvasView Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll SKAnimatedCanvasView() public SKAnimatedCanvasView()"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.AdditionalAttributes.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.AdditionalAttributes.html",
+    "title": "Property AdditionalAttributes | SkiaSharp.Extended",
+    "keywords": "Property AdditionalAttributes Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll AdditionalAttributes Additional HTML attributes to be applied to the underlying SKCanvasView element (e.g., style, class). [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; } Property Value IDictionary<string, object>"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.BuildRenderTree.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.BuildRenderTree.html",
+    "title": "Method BuildRenderTree | SkiaSharp.Extended",
+    "keywords": "Method BuildRenderTree Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll BuildRenderTree(RenderTreeBuilder) Renders the component to the supplied RenderTreeBuilder. protected override void BuildRenderTree(RenderTreeBuilder __builder) Parameters __builder RenderTreeBuilder"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.DisposeAsync.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.DisposeAsync.html",
+    "title": "Method DisposeAsync | SkiaSharp.Extended",
+    "keywords": "Method DisposeAsync Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll DisposeAsync() public ValueTask DisposeAsync() Returns ValueTask"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.IsAnimationEnabled.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.IsAnimationEnabled.html",
+    "title": "Property IsAnimationEnabled | SkiaSharp.Extended",
+    "keywords": "Property IsAnimationEnabled Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll IsAnimationEnabled Gets or sets whether the animation loop is running. Defaults to true. [Parameter] public bool IsAnimationEnabled { get; set; } Property Value bool"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnAfterRenderAsync.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnAfterRenderAsync.html",
+    "title": "Method OnAfterRenderAsync | SkiaSharp.Extended",
+    "keywords": "Method OnAfterRenderAsync Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll OnAfterRenderAsync(bool) Method invoked after each time the component has been rendered interactively and the UI has finished updating (for example, after elements have been added to the browser DOM). Any ElementReference fields will be populated by the time this runs. This method is not invoked during prerendering or server-side rendering, because those processes are not attached to any live browser DOM and are already complete before the DOM is updated. Note that the component does not automatically re-render after the completion of any returned Task, because that would cause an infinite render loop. protected override Task OnAfterRenderAsync(bool firstRender) Parameters firstRender bool Set to true if this is the first time OnAfterRender(bool) has been invoked on this component instance; otherwise false. Returns Task A Task representing any asynchronous operation. Remarks The OnAfterRender(bool) and OnAfterRenderAsync(bool) lifecycle methods are useful for performing interop, or interacting with values received from @ref. Use the firstRender parameter to ensure that initialization work is only performed once."
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnPaintSurface.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnPaintSurface.html",
+    "title": "Property OnPaintSurface | SkiaSharp.Extended",
+    "keywords": "Property OnPaintSurface Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll OnPaintSurface Callback invoked each time the canvas needs to be redrawn. Subscribe here to render your content onto the SKCanvas. [Parameter] public EventCallback<SKPaintSurfaceEventArgs> OnPaintSurface { get; set; } Property Value EventCallback<SKPaintSurfaceEventArgs>"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnParametersSetAsync.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnParametersSetAsync.html",
+    "title": "Method OnParametersSetAsync | SkiaSharp.Extended",
+    "keywords": "Method OnParametersSetAsync Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll OnParametersSetAsync() Method invoked when the component has received parameters from its parent in the render tree, and the incoming values have been assigned to properties. protected override Task OnParametersSetAsync() Returns Task A Task representing any asynchronous operation."
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnUpdate.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnUpdate.html",
+    "title": "Property OnUpdate | SkiaSharp.Extended",
+    "keywords": "Property OnUpdate Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll OnUpdate Callback invoked on each frame tick with the elapsed time since the previous frame. Use this to update animation state from a parent component. [Parameter] public EventCallback<TimeSpan> OnUpdate { get; set; } Property Value EventCallback<TimeSpan>"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.UpdateAsync.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.UpdateAsync.html",
+    "title": "Method UpdateAsync | SkiaSharp.Extended",
+    "keywords": "Method UpdateAsync Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll UpdateAsync(TimeSpan) Called once per frame before the canvas is invalidated. Override this method in a subclass to update animation state. protected virtual Task UpdateAsync(TimeSpan deltaTime) Parameters deltaTime TimeSpan Time elapsed since the previous frame. Returns Task A Task representing the asynchronous update work."
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.html",
+    "title": "Class SKAnimatedCanvasView | SkiaSharp.Extended",
+    "keywords": "Class SKAnimatedCanvasView Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll A Blazor component that wraps SKCanvasView and drives a frame-update loop using a PeriodicTimer, mirroring the MAUI SKAnimatedSurfaceView pattern for Blazor applications. public class SKAnimatedCanvasView : ComponentBase, IComponent, IHandleEvent, IHandleAfterRender, IAsyncDisposable Inheritance object ComponentBase SKAnimatedCanvasView Implements IComponent IHandleEvent IHandleAfterRender IAsyncDisposable Inherited Members ComponentBase.OnInitialized() ComponentBase.OnInitializedAsync() ComponentBase.OnParametersSet() ComponentBase.StateHasChanged() ComponentBase.ShouldRender() ComponentBase.OnAfterRender(bool) ComponentBase.InvokeAsync(Action) ComponentBase.InvokeAsync(Func<Task>) ComponentBase.DispatchExceptionAsync(Exception) ComponentBase.SetParametersAsync(ParameterView) object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks Subclass this component and override UpdateAsync(TimeSpan) to update your animation state on each frame, and subscribe to OnPaintSurface to render your content. The animation loop runs at approximately 60 fps while IsAnimationEnabled is true. Setting it to false stops the loop; setting it back to true restarts it. Constructors SKAnimatedCanvasView() Properties AdditionalAttributes Additional HTML attributes to be applied to the underlying SKCanvasView element (e.g., style, class). IsAnimationEnabled Gets or sets whether the animation loop is running. Defaults to true. OnPaintSurface Callback invoked each time the canvas needs to be redrawn. Subscribe here to render your content onto the SKCanvas. OnUpdate Callback invoked on each frame tick with the elapsed time since the previous frame. Use this to update animation state from a parent component. Methods BuildRenderTree(RenderTreeBuilder) Renders the component to the supplied RenderTreeBuilder. DisposeAsync() OnAfterRenderAsync(bool) Method invoked after each time the component has been rendered interactively and the UI has finished updating (for example, after elements have been added to the browser DOM). Any ElementReference fields will be populated by the time this runs. This method is not invoked during prerendering or server-side rendering, because those processes are not attached to any live browser DOM and are already complete before the DOM is updated. Note that the component does not automatically re-render after the completion of any returned Task, because that would cause an infinite render loop. OnParametersSetAsync() Method invoked when the component has received parameters from its parent in the render tree, and the incoming values have been assigned to properties. UpdateAsync(TimeSpan) Called once per frame before the canvas is invalidated. Override this method in a subclass to update animation state."
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieRepeatMode.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieRepeatMode.html",
+    "title": "Enum SKLottieRepeatMode | SkiaSharp.Extended",
+    "keywords": "Enum SKLottieRepeatMode Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll Specifies how a Lottie animation repeats in the Blazor SKLottieView. public enum SKLottieRepeatMode Fields Restart = 0 Restart from the beginning after each cycle. Reverse = 1 Alternate between forward and backward (ping-pong) on each cycle."
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.-ctor.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.-ctor.html",
+    "title": "Constructor SKLottieView | SkiaSharp.Extended",
+    "keywords": "Constructor SKLottieView Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll SKLottieView() public SKLottieView()"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AdditionalAttributes.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AdditionalAttributes.html",
+    "title": "Property AdditionalAttributes | SkiaSharp.Extended",
+    "keywords": "Property AdditionalAttributes Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll AdditionalAttributes Additional HTML attributes forwarded to the underlying canvas element. [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; } Property Value IDictionary<string, object>"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationCompleted.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationCompleted.html",
+    "title": "Property AnimationCompleted | SkiaSharp.Extended",
+    "keywords": "Property AnimationCompleted Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll AnimationCompleted Fires when all repeats complete. [Parameter] public EventCallback AnimationCompleted { get; set; } Property Value EventCallback"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationFailed.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationFailed.html",
+    "title": "Property AnimationFailed | SkiaSharp.Extended",
+    "keywords": "Property AnimationFailed Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll AnimationFailed Fires when loading fails. [Parameter] public EventCallback<Exception?> AnimationFailed { get; set; } Property Value EventCallback<Exception>"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationLoaded.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationLoaded.html",
+    "title": "Property AnimationLoaded | SkiaSharp.Extended",
+    "keywords": "Property AnimationLoaded Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll AnimationLoaded Fires when the animation is successfully loaded. [Parameter] public EventCallback AnimationLoaded { get; set; } Property Value EventCallback"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationSpeed.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationSpeed.html",
+    "title": "Property AnimationSpeed | SkiaSharp.Extended",
+    "keywords": "Property AnimationSpeed Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll AnimationSpeed Playback speed multiplier. Negative values play in reverse. Defaults to 1.0. [Parameter] public double AnimationSpeed { get; set; } Property Value double"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationUpdated.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationUpdated.html",
+    "title": "Property AnimationUpdated | SkiaSharp.Extended",
+    "keywords": "Property AnimationUpdated Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll AnimationUpdated Fires after each frame update, allowing the host to refresh displayed state. [Parameter] public EventCallback AnimationUpdated { get; set; } Property Value EventCallback"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.BuildRenderTree.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.BuildRenderTree.html",
+    "title": "Method BuildRenderTree | SkiaSharp.Extended",
+    "keywords": "Method BuildRenderTree Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll BuildRenderTree(RenderTreeBuilder) Renders the component to the supplied RenderTreeBuilder. protected override void BuildRenderTree(RenderTreeBuilder __builder) Parameters __builder RenderTreeBuilder"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.DisposeAsync.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.DisposeAsync.html",
+    "title": "Method DisposeAsync | SkiaSharp.Extended",
+    "keywords": "Method DisposeAsync Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll DisposeAsync() public ValueTask DisposeAsync() Returns ValueTask"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Duration.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Duration.html",
+    "title": "Property Duration | SkiaSharp.Extended",
+    "keywords": "Property Duration Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll Duration Gets the total animation duration. public TimeSpan Duration { get; } Property Value TimeSpan"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HasAnimation.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HasAnimation.html",
+    "title": "Property HasAnimation | SkiaSharp.Extended",
+    "keywords": "Property HasAnimation Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll HasAnimation Gets whether an animation is loaded and ready to play. public bool HasAnimation { get; } Property Value bool"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsAnimationEnabled.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsAnimationEnabled.html",
+    "title": "Property IsAnimationEnabled | SkiaSharp.Extended",
+    "keywords": "Property IsAnimationEnabled Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll IsAnimationEnabled Whether the animation loop is running. Defaults to true. [Parameter] public bool IsAnimationEnabled { get; set; } Property Value bool"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsComplete.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsComplete.html",
+    "title": "Property IsComplete | SkiaSharp.Extended",
+    "keywords": "Property IsComplete Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll IsComplete Gets whether the animation has completed all repeats. public bool IsComplete { get; } Property Value bool"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsLoading.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsLoading.html",
+    "title": "Property IsLoading | SkiaSharp.Extended",
+    "keywords": "Property IsLoading Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll IsLoading Gets whether the animation is currently loading. public bool IsLoading { get; } Property Value bool"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.OnParametersSetAsync.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.OnParametersSetAsync.html",
+    "title": "Method OnParametersSetAsync | SkiaSharp.Extended",
+    "keywords": "Method OnParametersSetAsync Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll OnParametersSetAsync() Method invoked when the component has received parameters from its parent in the render tree, and the incoming values have been assigned to properties. protected override Task OnParametersSetAsync() Returns Task A Task representing any asynchronous operation."
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Progress.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Progress.html",
+    "title": "Property Progress | SkiaSharp.Extended",
+    "keywords": "Property Progress Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll Progress Gets the current playback position. public TimeSpan Progress { get; } Property Value TimeSpan"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.RepeatCount.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.RepeatCount.html",
+    "title": "Property RepeatCount | SkiaSharp.Extended",
+    "keywords": "Property RepeatCount Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll RepeatCount Number of additional plays after the first. Use -1 for infinite, 0 for no repeat. Defaults to -1. [Parameter] public int RepeatCount { get; set; } Property Value int"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.RepeatMode.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.RepeatMode.html",
+    "title": "Property RepeatMode | SkiaSharp.Extended",
+    "keywords": "Property RepeatMode Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll RepeatMode How the animation repeats. Defaults to Restart. [Parameter] public SKLottieRepeatMode RepeatMode { get; set; } Property Value SKLottieRepeatMode"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Restart.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Restart.html",
+    "title": "Method Restart | SkiaSharp.Extended",
+    "keywords": "Method Restart Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll Restart() Restarts the animation from the beginning with current settings. public void Restart()"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Source.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Source.html",
+    "title": "Property Source | SkiaSharp.Extended",
+    "keywords": "Property Source Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll Source URL of the Lottie JSON file to load. [Parameter] public string? Source { get; set; } Property Value string"
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.html",
+    "title": "Class SKLottieView | SkiaSharp.Extended",
+    "keywords": "Class SKLottieView Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll A Blazor component that plays Lottie animations, mirroring the MAUI SKLottieView API. Wraps SKAnimatedCanvasView with an SKLottiePlayer to handle loading, playback, and rendering. public class SKLottieView : ComponentBase, IComponent, IHandleEvent, IHandleAfterRender, IAsyncDisposable Inheritance object ComponentBase SKLottieView Implements IComponent IHandleEvent IHandleAfterRender IAsyncDisposable Inherited Members ComponentBase.OnInitialized() ComponentBase.OnInitializedAsync() ComponentBase.OnParametersSet() ComponentBase.StateHasChanged() ComponentBase.ShouldRender() ComponentBase.OnAfterRender(bool) ComponentBase.OnAfterRenderAsync(bool) ComponentBase.InvokeAsync(Action) ComponentBase.InvokeAsync(Func<Task>) ComponentBase.DispatchExceptionAsync(Exception) ComponentBase.SetParametersAsync(ParameterView) object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks Point Source at a Lottie JSON URL, configure repeat and speed, and the component handles the rest—loading, frame updates, and rendering. Access read-only state (IsLoading, Progress, etc.) via an @ref to the component instance. Constructors SKLottieView() Properties AdditionalAttributes Additional HTML attributes forwarded to the underlying canvas element. AnimationCompleted Fires when all repeats complete. AnimationFailed Fires when loading fails. AnimationLoaded Fires when the animation is successfully loaded. AnimationSpeed Playback speed multiplier. Negative values play in reverse. Defaults to 1.0. AnimationUpdated Fires after each frame update, allowing the host to refresh displayed state. Duration Gets the total animation duration. HasAnimation Gets whether an animation is loaded and ready to play. IsAnimationEnabled Whether the animation loop is running. Defaults to true. IsComplete Gets whether the animation has completed all repeats. IsLoading Gets whether the animation is currently loading. Progress Gets the current playback position. RepeatCount Number of additional plays after the first. Use -1 for infinite, 0 for no repeat. Defaults to -1. RepeatMode How the animation repeats. Defaults to Restart. Source URL of the Lottie JSON file to load. Methods BuildRenderTree(RenderTreeBuilder) Renders the component to the supplied RenderTreeBuilder. DisposeAsync() OnParametersSetAsync() Method invoked when the component has received parameters from its parent in the render tree, and the incoming values have been assigned to properties. Restart() Restarts the animation from the beginning with current settings."
+  },
+  "api/SkiaSharp.Extended.UI.Blazor.Controls.html": {
+    "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.html",
+    "title": "Namespace SkiaSharp.Extended.UI.Blazor.Controls | SkiaSharp.Extended",
+    "keywords": "Namespace SkiaSharp.Extended.UI.Blazor.Controls Classes SKAnimatedCanvasView A Blazor component that wraps SKCanvasView and drives a frame-update loop using a PeriodicTimer, mirroring the MAUI SKAnimatedSurfaceView pattern for Blazor applications. SKLottieView A Blazor component that plays Lottie animations, mirroring the MAUI SKLottieView API. Wraps SKAnimatedCanvasView with an SKLottiePlayer to handle loading, playback, and rendering. Enums SKLottieRepeatMode Specifies how a Lottie animation repeats in the Blazor SKLottieView."
+  },
   "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.-ctor.html": {
     "href": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.-ctor.html",
     "title": "Constructor SKConfettiColorCollectionTypeConverter | SkiaSharp.Extended",

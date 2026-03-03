@@ -1,0 +1,346 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class SKLottieView
+ | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class SKLottieView
+ | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView">
+
+
+
+  <h1 id="SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView" data-uid="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView" class="text-break">
+    Class SKLottieView
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended.UI.Blazor/Controls/SKLottieView.razor.cs"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a>.<a class="xref" href="SkiaSharp.Extended.UI.html">UI</a>.<a class="xref" href="SkiaSharp.Extended.UI.Blazor.html">Blazor</a>.<a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.html">Controls</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.UI.Blazor.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>A Blazor component that plays Lottie animations, mirroring the MAUI
+<code>SKLottieView</code> API. Wraps <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.html">SKAnimatedCanvasView</a> with
+an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePlayer</a> to handle loading, playback, and rendering.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class SKLottieView : ComponentBase, IComponent, IHandleEvent, IHandleAfterRender, IAsyncDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase">ComponentBase</a></div>
+      <div><span class="xref">SKLottieView</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.icomponent">IComponent</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.ihandleevent">IHandleEvent</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.ihandleafterrender">IHandleAfterRender</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable">IAsyncDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.oninitialized">ComponentBase.OnInitialized()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.oninitializedasync">ComponentBase.OnInitializedAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onparametersset">ComponentBase.OnParametersSet()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.statehaschanged">ComponentBase.StateHasChanged()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.shouldrender">ComponentBase.ShouldRender()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onafterrender">ComponentBase.OnAfterRender(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onafterrenderasync">ComponentBase.OnAfterRenderAsync(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.invokeasync#microsoft-aspnetcore-components-componentbase-invokeasync(system-action)">ComponentBase.InvokeAsync(Action)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.invokeasync#microsoft-aspnetcore-components-componentbase-invokeasync(system-func((system-threading-tasks-task)))">ComponentBase.InvokeAsync(Func&lt;Task&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.dispatchexceptionasync">ComponentBase.DispatchExceptionAsync(Exception)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.setparametersasync">ComponentBase.SetParametersAsync(ParameterView)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+  <h2 id="SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>
+Point <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Source.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Source">Source</a> at a Lottie JSON URL, configure repeat and speed,
+and the component handles the rest—loading, frame updates, and rendering.
+</p>
+<p>
+Access read-only state (<a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsLoading.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_IsLoading">IsLoading</a>, <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Progress.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Progress">Progress</a>, etc.)
+via an <code>@ref</code> to the component instance.
+</p>
+</div>
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.-ctor.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView__ctor">SKLottieView()</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AdditionalAttributes.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_AdditionalAttributes">AdditionalAttributes</a></dt>
+    <dd><p>Additional HTML attributes forwarded to the underlying canvas element.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationCompleted.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_AnimationCompleted">AnimationCompleted</a></dt>
+    <dd><p>Fires when all repeats complete.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationFailed.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_AnimationFailed">AnimationFailed</a></dt>
+    <dd><p>Fires when loading fails.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationLoaded.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_AnimationLoaded">AnimationLoaded</a></dt>
+    <dd><p>Fires when the animation is successfully loaded.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationSpeed.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_AnimationSpeed">AnimationSpeed</a></dt>
+    <dd><p>Playback speed multiplier. Negative values play in reverse. Defaults to <code>1.0</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationUpdated.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_AnimationUpdated">AnimationUpdated</a></dt>
+    <dd><p>Fires after each frame update, allowing the host to refresh displayed state.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Duration.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Duration">Duration</a></dt>
+    <dd><p>Gets the total animation duration.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HasAnimation.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_HasAnimation">HasAnimation</a></dt>
+    <dd><p>Gets whether an animation is loaded and ready to play.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsAnimationEnabled.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_IsAnimationEnabled">IsAnimationEnabled</a></dt>
+    <dd><p>Whether the animation loop is running. Defaults to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsComplete.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_IsComplete">IsComplete</a></dt>
+    <dd><p>Gets whether the animation has completed all repeats.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsLoading.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_IsLoading">IsLoading</a></dt>
+    <dd><p>Gets whether the animation is currently loading.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Progress.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Progress">Progress</a></dt>
+    <dd><p>Gets the current playback position.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.RepeatCount.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_RepeatCount">RepeatCount</a></dt>
+    <dd><p>Number of additional plays after the first.
+Use <code>-1</code> for infinite, <code>0</code> for no repeat. Defaults to <code>-1</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.RepeatMode.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_RepeatMode">RepeatMode</a></dt>
+    <dd><p>How the animation repeats. Defaults to <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieRepeatMode.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieRepeatMode_Restart">Restart</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Source.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Source">Source</a></dt>
+    <dd><p>URL of the Lottie JSON file to load.</p>
+</dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.BuildRenderTree.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_BuildRenderTree_Microsoft_AspNetCore_Components_Rendering_RenderTreeBuilder_">BuildRenderTree(RenderTreeBuilder)</a></dt>
+    <dd><p>Renders the component to the supplied <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.rendering.rendertreebuilder">RenderTreeBuilder</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.DisposeAsync.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_DisposeAsync">DisposeAsync()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.OnParametersSetAsync.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_OnParametersSetAsync">OnParametersSetAsync()</a></dt>
+    <dd><p>Method invoked when the component has received parameters from its parent in
+the render tree, and the incoming values have been assigned to properties.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Restart.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Restart">Restart()</a></dt>
+    <dd><p>Restarts the animation from the beginning with current settings.</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended.UI.Blazor/Controls/SKLottieView.razor.cs" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #365 · 31a9d5b
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
