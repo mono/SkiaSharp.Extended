@@ -7,7 +7,7 @@ Add pan, pinch, rotate, fling, tap, and more to any SkiaSharp canvas — on any 
 ### 1. Create a tracker and subscribe to events
 
 ```csharp
-using SkiaSharp.Extended.Gestures;
+using SkiaSharp.Extended;
 
 var tracker = new SKGestureTracker();
 
@@ -91,269 +91,26 @@ The tracker is coordinate-space-agnostic — it operates on whatever numbers you
 
 ## Supported Gestures
 
-### Tap, Double Tap, Long Press
+| Gesture | Trigger | Key Event Args |
+| :------ | :------ | :------------- |
+| **Tap** | Single finger tap and release | `Location`, `TapCount` |
+| **Double Tap** | Two taps in quick succession | `Location`, `TapCount` |
+| **Long Press** | Finger held still for 500ms+ | `Location`, `Duration` |
+| **Pan** | Single finger drag | `Delta`, `Velocity` |
+| **Pinch** | Two finger spread/pinch | `ScaleDelta`, `FocalPoint` |
+| **Rotate** | Two finger rotation | `RotationDelta`, `FocalPoint` |
+| **Fling** | Fast pan with momentum | `VelocityX`, `VelocityY` |
+| **Drag** | App-level object dragging | `StartLocation`, `Delta` |
+| **Scroll** | Mouse wheel | `DeltaX`, `DeltaY` |
+| **Hover** | Mouse move (no buttons) | `Location` |
 
-Single finger gestures detected after the finger lifts (or after a timeout for long press).
+For detailed code examples and event handler patterns for each gesture, see [Gesture Events](gesture-events.md).
 
-```csharp
-tracker.TapDetected += (s, e) =>
-{
-    // e.Location — where the tap occurred
-    // e.TapCount — always 1 for single tap
-};
+## Next Steps
 
-tracker.DoubleTapDetected += (s, e) =>
-{
-    // Two taps within DoubleTapSlop distance and timing
-    // By default, also triggers a zoom animation (see Double Tap Zoom below)
-    // Set e.Handled = true to prevent the zoom
-};
-
-tracker.LongPressDetected += (s, e) =>
-{
-    // Finger held down without moving for LongPressDuration (default 500ms)
-    // e.Location — where the press occurred
-    // e.Duration — how long the finger was held
-};
-```
-
-### Pan
-
-Single finger drag. The tracker automatically updates its internal offset.
-
-```csharp
-tracker.PanDetected += (s, e) =>
-{
-    // e.Location — current position
-    // e.PreviousLocation — previous position
-    // e.Delta — movement since last event
-    // e.Velocity — current velocity in pixels/second
-};
-```
-
-### Pinch (Scale)
-
-Two finger pinch gesture. The tracker automatically updates its internal scale, clamped to `MinScale`/`MaxScale`.
-
-```csharp
-tracker.PinchDetected += (s, e) =>
-{
-    // e.ScaleDelta — relative scale change (>1 = spread, <1 = pinch)
-    // e.FocalPoint — midpoint between the two fingers
-    // e.PreviousFocalPoint — previous midpoint
-};
-```
-
-### Rotate
-
-Two finger rotation. The tracker automatically updates its internal rotation.
-
-```csharp
-tracker.RotateDetected += (s, e) =>
-{
-    // e.RotationDelta — change in degrees
-    // e.FocalPoint — center of rotation
-};
-```
-
-### Fling
-
-Momentum-based animation after a fast pan. The tracker runs a fling animation that decays over time.
-
-```csharp
-tracker.FlingDetected += (s, e) =>
-{
-    // Fling started — e.VelocityX, e.VelocityY in px/s
-};
-
-tracker.FlingUpdated += (s, e) =>
-{
-    // Called each frame during fling animation
-};
-
-tracker.FlingCompleted += (s, e) =>
-{
-    // Fling animation finished
-};
-```
-
-### Drag (App-Level Object Dragging)
-
-The tracker provides a drag lifecycle derived from pan events. Use this to move objects within your canvas (e.g., stickers, nodes).
-
-```csharp
-tracker.DragStarted += (s, e) =>
-{
-    if (HitTest(e.StartLocation) is { } item)
-    {
-        selectedItem = item;
-        e.Handled = true; // Prevents pan from updating the transform
-    }
-};
-
-tracker.DragUpdated += (s, e) =>
-{
-    if (selectedItem != null)
-    {
-        // Convert screen delta to content coordinates
-        var inverse = tracker.Matrix; inverse.TryInvert(out inverse);
-        var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
-        selectedItem.Position += contentDelta;
-        e.Handled = true;
-    }
-};
-
-tracker.DragEnded += (s, e) =>
-{
-    selectedItem = null;
-};
-```
-
-When `DragStarted` or `DragUpdated` sets `Handled = true`, the tracker skips its normal pan offset update **and** suppresses fling after release.
-
-### Scroll (Mouse Wheel)
-
-Mouse wheel zoom. Call `ProcessMouseWheel` to feed wheel events.
-
-```csharp
-tracker.ScrollDetected += (s, e) =>
-{
-    // e.Location — mouse position
-    // e.DeltaX, e.DeltaY — scroll amounts
-};
-```
-
-### Hover
-
-Mouse movement without any buttons pressed. Useful for cursor-based UI feedback.
-
-```csharp
-tracker.HoverDetected += (s, e) =>
-{
-    // e.Location — current mouse position
-};
-```
-
-## Customization
-
-### Options
-
-Configure thresholds and behavior through `SKGestureTrackerOptions`:
-
-```csharp
-var options = new SKGestureTrackerOptions
-{
-    // Detection thresholds (inherited from SKGestureDetectorOptions)
-    TouchSlop = 8f,           // Pixels to move before pan starts (default: 8)
-    DoubleTapSlop = 40f,      // Max distance between double-tap taps (default: 40)
-    FlingThreshold = 200f,    // Min velocity (px/s) to trigger fling (default: 200)
-    LongPressDuration = 500,  // Milliseconds to hold for long press (default: 500)
-
-    // Scale limits
-    MinScale = 0.1f,          // Minimum zoom level (default: 0.1)
-    MaxScale = 10f,           // Maximum zoom level (default: 10)
-
-    // Double-tap zoom
-    DoubleTapZoomFactor = 2f, // Scale multiplier on double tap (default: 2)
-    ZoomAnimationDuration = 250, // Animation duration in ms (default: 250)
-    ZoomAnimationInterval = 16,  // Frame interval for zoom animation in ms (~60fps) (default: 16)
-
-    // Scroll zoom
-    ScrollZoomFactor = 0.1f,  // Zoom per scroll unit (default: 0.1)
-
-    // Fling animation
-    FlingFriction = 0.08f,    // Velocity decay per frame (default: 0.08)
-    FlingMinVelocity = 5f,    // Stop threshold in px/s (default: 5)
-    FlingFrameInterval = 16,  // Frame interval in ms (~60fps) (default: 16)
-};
-
-var tracker = new SKGestureTracker(options);
-```
-
-Options can also be modified at runtime through the tracker's Options property:
-
-```csharp
-tracker.Options.MinScale = 0.5f;
-tracker.Options.MaxScale = 20f;
-tracker.Options.DoubleTapZoomFactor = 3f;
-```
-
-### Feature Toggles
-
-Enable or disable individual gesture types at runtime. Feature toggles live on the Options and can be set at construction time or modified later:
-
-```csharp
-// Configure at construction time via options
-var options = new SKGestureTrackerOptions
-{
-    IsTapEnabled = true,
-    IsPanEnabled = true,
-    IsPinchEnabled = false,
-    IsRotateEnabled = false,
-};
-var tracker = new SKGestureTracker(options);
-
-// Or toggle at runtime
-tracker.IsTapEnabled = false;
-tracker.IsDoubleTapEnabled = false;
-tracker.IsLongPressEnabled = false;
-tracker.IsPanEnabled = false;
-tracker.IsPinchEnabled = false;
-tracker.IsRotateEnabled = false;
-tracker.IsFlingEnabled = false;
-tracker.IsDoubleTapZoomEnabled = false;
-tracker.IsScrollZoomEnabled = false;
-tracker.IsHoverEnabled = false;
-```
-
-When a gesture is disabled, the tracker suppresses its events. The underlying detector still recognizes the gesture (enabling toggling at runtime without losing state).
-
-### Reading Transform State
-
-```csharp
-float scale = tracker.Scale;       // Current zoom level
-float rotation = tracker.Rotation; // Current rotation in degrees
-SKPoint offset = tracker.Offset;   // Current pan offset
-SKMatrix matrix = tracker.Matrix;  // Combined transform matrix
-
-// Reset everything back to identity
-tracker.Reset();
-
-// Programmatically set the transform
-tracker.SetTransform(scale: 2f, rotation: 45f, offset: new SKPoint(100, 50));
-tracker.SetScale(1.5f);
-tracker.SetScale(2f, pivot: new SKPoint(400, 300));  // Scale around a specific point
-tracker.SetRotation(0f);
-tracker.SetRotation(45f, pivot: new SKPoint(400, 300));  // Rotate around a specific point
-tracker.SetOffset(SKPoint.Empty);
-```
-
-### Lifecycle Events
-
-```csharp
-// Fired when the first finger touches down (once per gesture sequence)
-tracker.GestureStarted += (s, e) => { /* gesture began */ };
-
-// Fired when all fingers lift
-tracker.GestureEnded += (s, e) => { /* gesture ended */ };
-
-// Fired whenever the transform matrix changes (pan, zoom, rotate, fling frame)
-tracker.TransformChanged += (s, e) => canvas.Invalidate();
-```
-
-## Double Tap Zoom
-
-By default, double-tapping zooms in by `DoubleTapZoomFactor` (2x). Double-tapping again at max scale resets to 1x. The zoom animates smoothly over `ZoomAnimationDuration` milliseconds.
-
-To use double tap for your own logic instead, set `e.Handled = true` in your `DoubleTapDetected` handler, or disable it entirely:
-
-```csharp
-tracker.IsDoubleTapZoomEnabled = false;
-```
-
-## Learn More
-
-- [API Reference — SKGestureTracker](xref:SkiaSharp.Extended.Gestures.SKGestureTracker) — Full property and event documentation
-- [API Reference — SKGestureDetector](xref:SkiaSharp.Extended.Gestures.SKGestureDetector) — Low-level gesture detection
+- **[Gesture Events](gesture-events.md)** — Detailed reference for every gesture event with code examples
+- **[Configuration](gesture-configuration.md)** — Options, feature toggles, transform state, and programmatic control
+- [API Reference — SKGestureTracker](xref:SkiaSharp.Extended.SKGestureTracker) — Full property and event documentation
+- [API Reference — SKGestureDetector](xref:SkiaSharp.Extended.SKGestureDetector) — Low-level gesture detection
 - [MAUI Sample](https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo/Demos/Gestures) — Full MAUI demo with stickers
 - [Blazor Sample](https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo.Blazor/Pages/Gestures.razor) — Full Blazor demo
