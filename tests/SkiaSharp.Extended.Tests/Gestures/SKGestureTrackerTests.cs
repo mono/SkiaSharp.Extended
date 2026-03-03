@@ -1,5 +1,4 @@
 using SkiaSharp;
-using SkiaSharp.Extended.Gestures;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

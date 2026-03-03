@@ -1,5 +1,4 @@
 using SkiaSharp;
-using SkiaSharp.Extended.Gestures;
 using SkiaSharp.Views.Maui;
 
 namespace SkiaSharpDemo.Demos;
