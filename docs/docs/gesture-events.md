@@ -36,7 +36,7 @@ Single finger drag. The tracker automatically updates its internal offset.
 tracker.PanDetected += (s, e) =>
 {
     // e.Location — current position
-    // e.PrevLocation — previous position
+    // e.PreviousLocation — previous position
     // e.Delta — movement since last event
     // e.Velocity — current velocity in pixels/second
 };

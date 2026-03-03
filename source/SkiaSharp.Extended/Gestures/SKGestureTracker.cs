@@ -642,12 +642,12 @@ public sealed class SKGestureTracker : IDisposable
 			_isDragging = true;
 			_isDragHandled = false;
 			_lastPanLocation = e.Location;
-			dragArgs = new SKDragGestureEventArgs(e.Location, e.PrevLocation);
+			dragArgs = new SKDragGestureEventArgs(e.Location, e.PreviousLocation);
 			DragStarted?.Invoke(this, dragArgs);
 		}
 		else
 		{
-			dragArgs = new SKDragGestureEventArgs(e.Location, e.PrevLocation);
+			dragArgs = new SKDragGestureEventArgs(e.Location, e.PreviousLocation);
 			DragUpdated?.Invoke(this, dragArgs);
 		}
 
