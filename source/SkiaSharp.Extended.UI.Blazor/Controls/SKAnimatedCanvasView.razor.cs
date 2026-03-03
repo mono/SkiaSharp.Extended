@@ -35,6 +35,13 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
     public bool IsAnimationEnabled { get; set; } = true;
 
     /// <summary>
+    /// Callback invoked on each frame tick with the elapsed time since the
+    /// previous frame. Use this to update animation state from a parent component.
+    /// </summary>
+    [Parameter]
+    public EventCallback<TimeSpan> OnUpdate { get; set; }
+
+    /// <summary>
     /// Callback invoked each time the canvas needs to be redrawn.
     /// Subscribe here to render your content onto the <see cref="SKCanvas"/>.
     /// </summary>
@@ -74,7 +81,11 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
     /// </summary>
     /// <param name="deltaTime">Time elapsed since the previous frame.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous update work.</returns>
-    protected virtual Task UpdateAsync(TimeSpan deltaTime) => Task.CompletedTask;
+    protected virtual async Task UpdateAsync(TimeSpan deltaTime)
+    {
+        if (OnUpdate.HasDelegate)
+            await OnUpdate.InvokeAsync(deltaTime);
+    }
 
     private void HandlePaintSurface(SKPaintSurfaceEventArgs e)
     {
