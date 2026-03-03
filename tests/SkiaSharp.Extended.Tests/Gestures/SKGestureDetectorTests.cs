@@ -835,8 +835,8 @@ public class SKGestureDetectorTests
 		engine.ProcessTouchMove(1, new SKPoint(120, 100));
 
 		Assert.NotNull(captured);
-		Assert.Equal(100, captured.PrevLocation.X, 1);
-		Assert.Equal(100, captured.PrevLocation.Y, 1);
+		Assert.Equal(100, captured.PreviousLocation.X, 1);
+		Assert.Equal(100, captured.PreviousLocation.Y, 1);
 	}
 
 	[Fact]

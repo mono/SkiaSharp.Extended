@@ -806,8 +806,8 @@ public class SKGestureTrackerTests
 		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
 
 		Assert.NotNull(captured);
-		Assert.Equal(100, captured.PrevLocation.X, 1);
-		Assert.Equal(100, captured.PrevLocation.Y, 1);
+		Assert.Equal(100, captured.PreviousLocation.X, 1);
+		Assert.Equal(100, captured.PreviousLocation.Y, 1);
 	}
 
 	[Fact]
@@ -959,7 +959,7 @@ public class SKGestureTrackerTests
 
 		Assert.NotNull(dragEndedArgs);
 		// Location must reflect the final touch position, not the previous
-		Assert.NotEqual(dragEndedArgs!.PrevLocation, dragEndedArgs.Location);
+		Assert.NotEqual(dragEndedArgs!.PreviousLocation, dragEndedArgs.Location);
 		Assert.Equal(endPoint.X, dragEndedArgs.Location.X, 1f);
 		Assert.Equal(endPoint.Y, dragEndedArgs.Location.Y, 1f);
 	}
