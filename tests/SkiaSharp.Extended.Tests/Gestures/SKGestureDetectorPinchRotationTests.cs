@@ -24,7 +24,6 @@ public class SKGestureDetectorPinchRotationTests
 		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
 	}
 
-	#region Pinch Detection Tests
 
 	[Fact]
 	public void TwoFingerGesture_RaisesPinchDetected()
@@ -62,9 +61,7 @@ public class SKGestureDetectorPinchRotationTests
 		Assert.True(scale.Value > 1.0f, $"Scale should be > 1.0, was {scale.Value}");
 	}
 
-	#endregion
 
-	#region Rotation Detection Tests
 
 	[Fact]
 	public void TwoFingerRotation_RaisesRotateDetected()
@@ -101,9 +98,7 @@ public class SKGestureDetectorPinchRotationTests
 		Assert.True(rotation.Value >= -180 && rotation.Value <= 180);
 	}
 
-	#endregion
 
-	#region Pinch Event Data Tests
 
 	[Fact]
 	public void PinchDetected_CenterIsMidpointOfTouches()
@@ -184,9 +179,7 @@ public class SKGestureDetectorPinchRotationTests
 		Assert.True(scale.Value < 1.0f, $"Scale should be < 1 (zoom in), was {scale.Value}");
 	}
 
-	#endregion
 
-	#region Rotation Event Data Tests
 
 	[Fact]
 	public void RotateDetected_PreviousCenterIsProvided()
@@ -245,9 +238,7 @@ public class SKGestureDetectorPinchRotationTests
 		Assert.Equal(0f, rotationDelta.Value, 0.1);
 	}
 
-	#endregion
 
-	#region Three-Plus Touch Tests
 
 	[Fact]
 	public void ThreeFingers_DoesNotCrash()
@@ -290,6 +281,5 @@ public class SKGestureDetectorPinchRotationTests
 		Assert.True(pinchCount > 0, "Pinch should resume after lifting to 2 fingers");
 	}
 
-	#endregion
 
 }

@@ -23,7 +23,6 @@ public class SKGestureDetectorFlingTests
 		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
 	}
 
-	#region Fling Detection Tests
 
 	[Fact]
 	public void FastSwipe_RaisesFlingDetected()
@@ -80,9 +79,7 @@ public class SKGestureDetectorFlingTests
 		Assert.False(flingRaised);
 	}
 
-	#endregion
 
-	#region Fling Edge Case Tests
 
 	[Fact]
 	public void Fling_PauseBeforeRelease_NoFling()
@@ -146,9 +143,7 @@ public class SKGestureDetectorFlingTests
 		Assert.True(velocityY.Value > 200);
 	}
 
-	#endregion
 
-	#region Fling Animation Tests
 
 	[Fact]
 	public void FlingDetected_StillFiresOnceAtStart()
@@ -168,6 +163,5 @@ public class SKGestureDetectorFlingTests
 		Assert.Equal(1, flingDetectedCount);
 	}
 
-	#endregion
 
 }
