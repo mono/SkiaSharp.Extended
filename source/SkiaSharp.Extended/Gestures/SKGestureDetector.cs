@@ -73,7 +73,13 @@ public sealed class SKGestureDetector : IDisposable
 	/// <remarks>
 	/// Override this for deterministic testing by supplying a custom tick source.
 	/// </remarks>
-	public Func<long> TimeProvider { get; set; } = () => Environment.TickCount64 * TimeSpan.TicksPerMillisecond;
+	public Func<long> TimeProvider
+	{
+		get => _timeProvider;
+		set => _timeProvider = value ?? throw new ArgumentNullException(nameof(value));
+	}
+
+	private Func<long> _timeProvider = () => Environment.TickCount64 * TimeSpan.TicksPerMillisecond;
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the gesture detector is enabled.
@@ -228,6 +234,7 @@ public sealed class SKGestureDetector : IDisposable
 
 			if (touchPoints.Length >= 2)
 			{
+				StopLongPressTimer();
 				_pinchState = PinchState.FromLocations(touchPoints);
 				_gestureState = GestureState.Pinching;
 			}
