@@ -93,6 +93,18 @@ IDs to avoid processing them as new comments (see Security Rules).
 
 ## Polling Loop
 
+**CRITICAL: Use `detach: true` for the polling bash session.** The polling loop must
+survive session idle timeouts. When launching the loop via the `bash` tool, always use
+`mode: "async"` with `detach: true`. Without `detach: true`, the async shell session
+will be killed when the agent session goes idle, silently stopping the monitor.
+
+```
+bash(command: "...", mode: "async", detach: true, shellId: "pr-poll")
+```
+
+Since detached processes cannot be stopped with `stop_bash`, use `kill <PID>` when
+you need to terminate the loop. Record the PID from the shell output.
+
 **Use the bundled polling script** at `scripts/poll_comments.sh` in this skill's
 directory. The script handles pagination (GitHub API defaults to 30 results — PRs
 with many comments will silently miss new ones without `--paginate`), known-ID
