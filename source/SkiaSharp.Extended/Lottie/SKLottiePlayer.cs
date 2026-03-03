@@ -36,8 +36,27 @@ public class SKLottiePlayer
 	/// <summary>Gets whether the animation has completed all repeats.</summary>
 	public bool IsComplete { get; private set; } = false;
 
+	private SKLottieRepeat repeat = SKLottieRepeat.Never;
+
 	/// <summary>Gets or sets how the animation repeats. Defaults to <see cref="SKLottieRepeat.Never"/>.</summary>
-	public SKLottieRepeat Repeat { get; set; } = SKLottieRepeat.Never;
+	/// <remarks>
+	/// Changing this property resets the internal direction phase, repeat counter, and completion
+	/// state so the animation starts the new mode cleanly from its current position.
+	/// </remarks>
+	public SKLottieRepeat Repeat
+	{
+		get => repeat;
+		set
+		{
+			if (repeat != value)
+			{
+				repeat = value;
+				isInForwardPhase = true;
+				repeatsCompleted = 0;
+				IsComplete = false;
+			}
+		}
+	}
 
 	/// <summary>
 	/// Gets or sets the playback speed multiplier.

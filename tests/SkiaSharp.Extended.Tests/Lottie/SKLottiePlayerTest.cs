@@ -527,6 +527,54 @@ public class SKLottiePlayerTest
 		Assert.Equal(1, completed);
 	}
 
+	// ── Repeat mode change resets phase ──────────────────────────────────────
+
+	[Fact]
+	public void SwitchingFromReverseToRestart_WithNegativeSpeed_DoesNotStick()
+	{
+		// Regression: switching from Reverse to Restart while isInForwardPhase=false (set during
+		// ping-pong) caused Update() to drive progress the wrong way and Restart to reset to the
+		// same boundary, freezing the animation.
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.AnimationSpeed = -1.0;
+		player.Repeat = SKLottieRepeat.Reverse();
+		player.SetAnimation(anim); // starts at Duration (negative speed)
+
+		// Advance past the first boundary flip so isInForwardPhase becomes false internally.
+		// With -1 speed and Reverse, progress moves from Duration toward Zero, flips at Zero.
+		player.Update(TimeSpan.FromSeconds(10)); // reaches Zero → flip
+		player.Update(TimeSpan.FromSeconds(0.1)); // now moving away from Zero
+
+		// Switch to Restart — this must reset isInForwardPhase to true.
+		player.Repeat = SKLottieRepeat.Restart();
+
+		var progressBefore = player.Progress;
+		player.Update(TimeSpan.FromSeconds(0.2));
+		player.Update(TimeSpan.FromSeconds(0.2));
+
+		// Progress must have moved (animation not frozen at a boundary).
+		Assert.NotEqual(progressBefore, player.Progress);
+		Assert.False(player.IsComplete);
+	}
+
+	[Fact]
+	public void ChangingRepeatMode_ResetsCompletionState()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.SetAnimation(anim);
+		player.Repeat = SKLottieRepeat.Never;
+
+		// Advance to completion
+		player.Update(TimeSpan.FromSeconds(10));
+		Assert.True(player.IsComplete);
+
+		// Switching Repeat mode must clear IsComplete
+		player.Repeat = SKLottieRepeat.Restart();
+		Assert.False(player.IsComplete);
+	}
+
 	// ── Negative speed + Restart infinite ────────────────────────────────────
 
 	[Fact]
