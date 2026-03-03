@@ -51,8 +51,8 @@ public sealed class SKGestureTracker : IDisposable
 	// Drag lifecycle state
 	private bool _isDragging;
 	private bool _isDragHandled;
-	private SKPoint _dragStartLocation;
 	private SKPoint _lastPanLocation;
+	private SKPoint _prevPanLocation;
 
 	// Fling animation state
 	private Timer? _flingTimer;
@@ -370,7 +370,7 @@ public sealed class SKGestureTracker : IDisposable
 	/// Occurs each animation frame during a fling deceleration.
 	/// </summary>
 	/// <remarks>
-	/// The <see cref="SKFlingGestureEventArgs.DeltaX"/> and <see cref="SKFlingGestureEventArgs.DeltaY"/>
+	/// The <see cref="SKFlingGestureEventArgs.Delta"/>
 	/// properties contain the per-frame displacement. The velocity decays each frame according to
 	/// <see cref="SKGestureTrackerOptions.FlingFriction"/>.
 	/// </remarks>
@@ -632,6 +632,7 @@ public sealed class SKGestureTracker : IDisposable
 			PanDetected?.Invoke(this, e);
 
 		// Track last pan position for DragEnded
+		_prevPanLocation = _lastPanLocation;
 		_lastPanLocation = e.Location;
 
 		// Derive drag lifecycle
@@ -640,14 +641,13 @@ public sealed class SKGestureTracker : IDisposable
 		{
 			_isDragging = true;
 			_isDragHandled = false;
-			_dragStartLocation = e.PreviousLocation;
 			_lastPanLocation = e.Location;
-			dragArgs = new SKDragGestureEventArgs(_dragStartLocation, e.Location, e.Delta);
+			dragArgs = new SKDragGestureEventArgs(e.Location, e.PrevLocation);
 			DragStarted?.Invoke(this, dragArgs);
 		}
 		else
 		{
-			dragArgs = new SKDragGestureEventArgs(_dragStartLocation, e.Location, e.Delta);
+			dragArgs = new SKDragGestureEventArgs(e.Location, e.PrevLocation);
 			DragUpdated?.Invoke(this, dragArgs);
 		}
 
@@ -713,7 +713,7 @@ public sealed class SKGestureTracker : IDisposable
 		if (!IsFlingEnabled || _isDragHandled)
 			return;
 
-		StartFlingAnimation(e.VelocityX, e.VelocityY);
+		StartFlingAnimation(e.Velocity.X, e.Velocity.Y);
 	}
 
 	private void OnEngineHoverDetected(object? s, SKHoverGestureEventArgs e)
@@ -727,10 +727,10 @@ public sealed class SKGestureTracker : IDisposable
 	{
 		ScrollDetected?.Invoke(this, e);
 
-		if (!IsScrollZoomEnabled || e.DeltaY == 0)
+		if (!IsScrollZoomEnabled || e.Delta.Y == 0)
 			return;
 
-		var scaleDelta = 1f + e.DeltaY * Options.ScrollZoomFactor;
+		var scaleDelta = 1f + e.Delta.Y * Options.ScrollZoomFactor;
 		var newScale = Clamp(_scale * scaleDelta, Options.MinScale, Options.MaxScale);
 		AdjustOffsetForPivot(e.Location, _scale, newScale, _rotation, _rotation);
 		_scale = newScale;
@@ -751,8 +751,7 @@ public sealed class SKGestureTracker : IDisposable
 		{
 			_isDragging = false;
 			_isDragHandled = false;
-			var delta = new SKPoint(_lastPanLocation.X - _dragStartLocation.X, _lastPanLocation.Y - _dragStartLocation.Y);
-			DragEnded?.Invoke(this, new SKDragGestureEventArgs(_dragStartLocation, _lastPanLocation, delta));
+			DragEnded?.Invoke(this, new SKDragGestureEventArgs(_lastPanLocation, _prevPanLocation));
 		}
 		GestureEnded?.Invoke(this, new SKGestureLifecycleEventArgs());
 	}
@@ -844,7 +843,7 @@ public sealed class SKGestureTracker : IDisposable
 		var deltaX = _flingVelocityX * dt;
 		var deltaY = _flingVelocityY * dt;
 
-		FlingUpdated?.Invoke(this, new SKFlingGestureEventArgs(_flingVelocityX, _flingVelocityY, deltaX, deltaY));
+		FlingUpdated?.Invoke(this, new SKFlingGestureEventArgs(new SKPoint(_flingVelocityX, _flingVelocityY), new SKPoint(deltaX, deltaY)));
 
 		// Apply as pan offset
 		var d = ScreenToContentDelta(deltaX, deltaY);

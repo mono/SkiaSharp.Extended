@@ -288,9 +288,8 @@ public sealed class SKGestureDetector : IDisposable
 			case GestureState.Panning:
 				if (touchPoints.Length == 1)
 				{
-					var delta = location - _pinchState.Center;
 					var velocity = _flingTracker.CalculateVelocity(id, ticks);
-					OnPanDetected(new SKPanGestureEventArgs(location, _pinchState.Center, delta, velocity));
+					OnPanDetected(new SKPanGestureEventArgs(location, _pinchState.Center, velocity));
 					_pinchState = new PinchState(location, 0, 0);
 				}
 				break;
@@ -351,7 +350,7 @@ public sealed class SKGestureDetector : IDisposable
 
 			if (velocityMagnitude > Options.FlingThreshold)
 			{
-				OnFlingDetected(new SKFlingGestureEventArgs(velocity.X, velocity.Y));
+				OnFlingDetected(new SKFlingGestureEventArgs(velocity));
 				handled = true;
 			}
 		}
@@ -476,7 +475,7 @@ public sealed class SKGestureDetector : IDisposable
 		if (!IsEnabled || _disposed)
 			return false;
 
-		OnScrollDetected(new SKScrollGestureEventArgs(location, deltaX, deltaY));
+		OnScrollDetected(new SKScrollGestureEventArgs(location, new SKPoint(deltaX, deltaY)));
 		return true;
 	}
 

@@ -18,14 +18,12 @@ public class SKPanGestureEventArgs : EventArgs
 	/// Initializes a new instance of the <see cref="SKPanGestureEventArgs"/> class.
 	/// </summary>
 	/// <param name="location">The current touch location in view coordinates.</param>
-	/// <param name="previousLocation">The touch location from the previous pan event.</param>
-	/// <param name="delta">The displacement from <paramref name="previousLocation"/> to <paramref name="location"/>.</param>
+	/// <param name="prevLocation">The touch location from the previous pan event.</param>
 	/// <param name="velocity">The current velocity of the touch in pixels per second.</param>
-	public SKPanGestureEventArgs(SKPoint location, SKPoint previousLocation, SKPoint delta, SKPoint velocity)
+	public SKPanGestureEventArgs(SKPoint location, SKPoint prevLocation, SKPoint velocity)
 	{
 		Location = location;
-		PreviousLocation = previousLocation;
-		Delta = delta;
+		PrevLocation = prevLocation;
 		Velocity = velocity;
 	}
 
@@ -52,13 +50,14 @@ public class SKPanGestureEventArgs : EventArgs
 	/// Gets the touch location from the previous pan event.
 	/// </summary>
 	/// <value>An <see cref="SKPoint"/> representing the previous position of the touch.</value>
-	public SKPoint PreviousLocation { get; }
+	public SKPoint PrevLocation { get; }
 
 	/// <summary>
-	/// Gets the displacement from <see cref="PreviousLocation"/> to <see cref="Location"/>.
+	/// Gets the displacement from <see cref="PrevLocation"/> to <see cref="Location"/>.
 	/// </summary>
 	/// <value>An <see cref="SKPoint"/> where <c>X</c> and <c>Y</c> represent the change in position, in pixels.</value>
-	public SKPoint Delta { get; }
+	/// <remarks>Calculated as <c>Location - PrevLocation</c>.</remarks>
+	public SKPoint Delta => new SKPoint(Location.X - PrevLocation.X, Location.Y - PrevLocation.Y);
 
 	/// <summary>
 	/// Gets the current velocity of the touch movement.
@@ -67,11 +66,5 @@ public class SKPanGestureEventArgs : EventArgs
 	/// An <see cref="SKPoint"/> where <c>X</c> and <c>Y</c> represent the velocity components
 	/// in pixels per second. Positive X is rightward; positive Y is downward.
 	/// </value>
-	/// <remarks>
-	/// The velocity is computed from a time-weighted average of recent touch events by the
-	/// internal <c>SKFlingTracker</c>. This value is also used to determine whether a fling
-	/// gesture should be triggered when the touch is released.
-	/// </remarks>
 	public SKPoint Velocity { get; }
-
 }

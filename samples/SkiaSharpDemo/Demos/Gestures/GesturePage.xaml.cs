@@ -355,7 +355,7 @@ public partial class GesturePage : ContentPage
 
 	private void OnFling(object? sender, SKFlingGestureEventArgs e)
 	{
-		LogEvent($"Fling: ({e.VelocityX:F0}, {e.VelocityY:F0}) px/s");
+		LogEvent($"Fling: ({e.Velocity.X:F0}, {e.Velocity.Y:F0}) px/s");
 		statusLabel.Text = $"Flinging at {e.Speed:F0} px/s";
 	}
 
@@ -384,7 +384,7 @@ public partial class GesturePage : ContentPage
 	private void OnDragStarted(object? sender, SKDragGestureEventArgs e)
 	{
 		if (!_enableDrag) return;
-		LogEvent($"Drag started at ({e.StartLocation.X:F0}, {e.StartLocation.Y:F0})");
+		LogEvent($"Drag started at ({e.Location.X:F0}, {e.Location.Y:F0})");
 		
 		if (_selectedSticker != null)
 		{
@@ -417,7 +417,7 @@ public partial class GesturePage : ContentPage
 	private void OnDragEnded(object? sender, SKDragGestureEventArgs e)
 	{
 		if (!_enableDrag) return;
-		LogEvent($"Drag ended at ({e.CurrentLocation.X:F0}, {e.CurrentLocation.Y:F0})");
+		LogEvent($"Drag ended at ({e.Location.X:F0}, {e.Location.Y:F0})");
 		statusLabel.Text = "Drag completed";
 	}
 
