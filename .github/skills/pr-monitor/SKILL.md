@@ -14,16 +14,34 @@ Autonomous agent that polls a GitHub PR/issue for new comments from a specified 
 acknowledges them immediately, investigates or implements requested changes, and replies
 with findings — all while the user is away.
 
-## Cost Optimization
+## Cost Optimization & Agent Architecture
 
-**Use the cheapest available model for the polling loop.** Launch the monitoring agent
-with `model: "gpt-5-mini"` (or the cheapest model available at the time) via the `task`
-tool with `agent_type: "general-purpose"`. The polling itself is trivial — just `gh api`
-calls and string comparison. Only escalate to a more capable model (e.g., Sonnet or Opus)
-when a comment requires complex code changes or multi-file refactoring.
+**CRITICAL: The main agent (you) must NOT do the polling or checking yourself.**
+You are expensive (Opus/Sonnet). Delegate ALL monitoring to a cheap background agent.
 
-Pattern: run the poll loop yourself using bash, but dispatch `task` agents (cheap model)
-for simple replies and investigations, and `task` agents (capable model) for code changes.
+### Required Pattern
+
+1. **Bash detached process** (`poll_loop.sh`) — runs in background, writes new comments
+   to a results file. Launched with `mode: "async", detach: true`.
+
+2. **Cheap monitoring agent** — a `task` tool call with `agent_type: "general-purpose"`,
+   `model: "gpt-5-mini"`, `mode: "background"`. This agent:
+   - Loops indefinitely checking the results file every 60 seconds
+   - Acknowledges new comments immediately on the PR
+   - Handles simple questions/acknowledgments itself
+   - For complex code changes: posts "Escalating to main agent" and exits the loop
+     (which triggers main agent via `read_agent`)
+
+3. **Main agent (you)** — only wakes up when:
+   - The cheap agent exits because it found a complex change request
+   - The user sends a message
+   - You call `read_agent` to check on the background agent
+
+### What NOT to do
+- ❌ Do NOT `sleep` in your own context waiting for comments
+- ❌ Do NOT call `task_complete` while monitoring is active
+- ❌ Do NOT use `read_bash` in a loop to poll — you are too expensive for that
+- ✅ DO launch the cheap agent and let it handle everything autonomously
 
 ## Setup
 
@@ -93,74 +111,88 @@ IDs to avoid processing them as new comments (see Security Rules).
 
 ## Polling Loop
 
-**CRITICAL: Use `detach: true` for the polling bash session.** The polling loop must
-survive session idle timeouts. When launching the loop via the `bash` tool, always use
-`mode: "async"` with `detach: true`. Without `detach: true`, the async shell session
-will be killed when the agent session goes idle, silently stopping the monitor.
+### Why Detached Mode is Required
 
-```
-bash(command: "...", mode: "async", detach: true, shellId: "pr-poll")
-```
+**CRITICAL:** Async shell sessions without `detach: true` are killed when the agent
+session idles between user turns. This means a `mode: "async"` polling loop will
+silently die within minutes if the user goes away.
 
-Since detached processes cannot be stopped with `stop_bash`, use `kill <PID>` when
-you need to terminate the loop. Record the PID from the shell output.
+**Solution:** Use `mode: "async", detach: true` to launch a fully independent
+background process that survives session idle/shutdown. Since detached processes
+cannot be read with `read_bash`, the polling loop writes results to files that the
+agent checks on each turn.
 
-**Use the bundled polling script** at `scripts/poll_comments.sh` in this skill's
-directory. The script handles pagination (GitHub API defaults to 30 results — PRs
-with many comments will silently miss new ones without `--paginate`), known-ID
-tracking, own-reply filtering, and reviewer filtering in one call.
+### Scripts
 
-### Usage
+This skill provides two scripts in the `scripts/` directory:
+
+1. **`poll_comments.sh`** — Single-shot: fetches comments, filters, returns new ones.
+   - Uses `gh api --paginate` to fetch **all** comments (not just first 30)
+   - Compares against known IDs file and own-reply IDs file
+   - Filters to only the specified reviewer username
+   - Outputs new comments with `COMMENT_ID`, `USER`, `CREATED`, and `BODY` (truncated to 500 chars)
+   - Updates the known IDs file automatically
+   - Exit codes: `0` = new comments found, `1` = no new, `2` = API error
+
+2. **`poll_loop.sh`** — Continuous loop: runs `poll_comments.sh` repeatedly, writes
+   new comments to a results file. Designed to run as a detached background process.
+   - Writes new comments to `RESULTS_FILE` (one file, appended)
+   - Writes a heartbeat timestamp to `HEARTBEAT_FILE` on every poll cycle
+   - PID is written to `PID_FILE` for cleanup
+
+### Starting the Loop
 
 ```bash
 SKILL_DIR="<path to this skill>"  # e.g. ~/.copilot/skills/pr-monitor
 KNOWN_FILE="/tmp/pr_${PR_NUMBER}_known.txt"
 OWN_REPLIES="/tmp/pr_${PR_NUMBER}_own_replies.txt"
+RESULTS_FILE="/tmp/pr_${PR_NUMBER}_results.txt"
+HEARTBEAT_FILE="/tmp/pr_${PR_NUMBER}_heartbeat.txt"
+PID_FILE="/tmp/pr_${PR_NUMBER}_poll.pid"
+POLL_INTERVAL=300
 
-# Initialize (first run)
+# Initialize
 touch "$KNOWN_FILE" "$OWN_REPLIES"
+# Snapshot existing comments so we only see NEW ones from this point forward
 "$SKILL_DIR/scripts/poll_comments.sh" "$REPO" "$PR_NUMBER" "$REVIEWER" "$KNOWN_FILE" "$OWN_REPLIES"
 
-# Poll loop
-while true; do
-  sleep $POLL_INTERVAL
-  OUTPUT=$("$SKILL_DIR/scripts/poll_comments.sh" "$REPO" "$PR_NUMBER" "$REVIEWER" "$KNOWN_FILE" "$OWN_REPLIES" 2>&1)
-  EXIT_CODE=$?
-  case $EXIT_CODE in
-    0) echo "$OUTPUT"  ;; # New comments — process them
-    1) echo "$OUTPUT"  ;; # No new comments — continue
-    2) echo "$OUTPUT"  ;; # API error — back off
-  esac
-done
+# Clear previous results
+> "$RESULTS_FILE"
+
+# Launch detached loop — survives session idle
+# Use bash tool with: mode: "async", detach: true
+"$SKILL_DIR/scripts/poll_loop.sh" \
+  "$SKILL_DIR" "$REPO" "$PR_NUMBER" "$REVIEWER" \
+  "$KNOWN_FILE" "$OWN_REPLIES" "$RESULTS_FILE" \
+  "$HEARTBEAT_FILE" "$PID_FILE" "$POLL_INTERVAL"
 ```
 
-### Script Details
+### Checking for Results (on each turn)
 
-The script (`scripts/poll_comments.sh`):
-- Uses `gh api --paginate` to fetch **all** comments (not just first 30)
-- Compares against known IDs file and own-reply IDs file
-- Filters to only the specified reviewer username
-- Outputs new comments with `COMMENT_ID`, `USER`, `CREATED`, and `BODY` (truncated to 500 chars)
-- Updates the known IDs file automatically
-- Exit codes: `0` = new comments found, `1` = no new, `2` = API error
+Since the detached process can't be read with `read_bash`, check the results file:
 
-### Polling Pattern
+```bash
+# Check if loop is alive
+if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
+  echo "Loop alive. Last heartbeat: $(cat "$HEARTBEAT_FILE" 2>/dev/null)"
+else
+  echo "Loop dead — restart it"
+fi
 
+# Check for new comments
+if [ -s "$RESULTS_FILE" ]; then
+  cat "$RESULTS_FILE"
+  > "$RESULTS_FILE"  # Clear after reading
+fi
 ```
-1. Run poll script → check exit code
 
-2. If exit 0 (new comments):
-   - Parse each COMMENT_ID + BODY from output
-   - Process comment (see Comment Handling below)
+### Stopping the Loop
 
-3. If exit 1 (no new comments):
-   - Continue sleeping
-
-4. If exit 2 (API error):
-   - Log warning, double the interval (max 600s), retry
-   - On success → reset interval to POLL_INTERVAL
-
-5. Sleep POLL_INTERVAL, repeat from step 1
+```bash
+if [ -f "$PID_FILE" ]; then
+  kill "$(cat "$PID_FILE")" 2>/dev/null
+  rm -f "$PID_FILE"
+fi
 ```
 
 ## Comment Handling
@@ -234,4 +266,3 @@ Agent actions:
 1. Auto-detect: `REPO=myorg/myrepo`, branch has no PR
 2. User provided PR_NUMBER=42 and REVIEWER=alice directly — no questions needed
 3. Proceed to polling loop
-
