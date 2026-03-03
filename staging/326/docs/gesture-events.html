@@ -114,7 +114,7 @@ tracker.LongPressDetected += (s, e) =&gt;
 <pre><code class="lang-csharp">tracker.PanDetected += (s, e) =&gt;
 {
     // e.Location — current position
-    // e.PrevLocation — previous position
+    // e.PreviousLocation — previous position
     // e.Delta — movement since last event
     // e.Velocity — current velocity in pixels/second
 };
@@ -239,7 +239,7 @@ tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 1bf84b0
+          source: PR #326 · 5f68ea4
         </div>
       </div>
     </footer>
