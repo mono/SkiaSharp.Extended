@@ -94,7 +94,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 		// Initialize player from default property values (propertyChanged callbacks don't
 		// fire for the initial default, so we push the defaults explicitly here).
-		player.Repeat = SKLottieRepeat.Restart(RepeatCount);
+		player.Repeat = RepeatCount == 0
+			? SKLottieRepeat.Never
+			: SKLottieRepeat.Restart(RepeatCount);
 		player.AnimationSpeed = AnimationSpeed;
 
 		player.AnimationUpdated += OnPlayerAnimationUpdated;
@@ -251,6 +253,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 			player.SetAnimation(loadResult?.Animation);
 
+			if (!player.HasAnimation && loadResult is not null)
+				exception ??= new InvalidOperationException("The Lottie animation source could not be parsed.");
+
 			if (player.HasAnimation)
 				AnimationLoaded?.Invoke(this, SKLottieAnimationLoadedEventArgs.Create(loadResult!.Animation!));
 			else
@@ -305,9 +310,11 @@ public class SKLottieView : SKAnimatedSurfaceView
 		if (bindable is not SKLottieView lv)
 			return;
 
-		lv.player.Repeat = lv.RepeatMode == SKLottieRepeatMode.Reverse
-			? SKLottieRepeat.Reverse(lv.RepeatCount)
-			: SKLottieRepeat.Restart(lv.RepeatCount);
+		lv.player.Repeat = lv.RepeatCount == 0
+			? SKLottieRepeat.Never
+			: lv.RepeatMode == SKLottieRepeatMode.Reverse
+				? SKLottieRepeat.Reverse(lv.RepeatCount)
+				: SKLottieRepeat.Restart(lv.RepeatCount);
 	}
 
 	private static void OnAnimationSpeedPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)

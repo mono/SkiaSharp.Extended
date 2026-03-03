@@ -117,6 +117,30 @@ public class SKLottiePlayerTest
 		Assert.Equal(1, raised);
 	}
 
+	[Fact]
+	public void Seek_WithNegativePosition_ClampsToZero()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.SetAnimation(anim);
+
+		player.Seek(TimeSpan.FromSeconds(-5));
+
+		Assert.Equal(TimeSpan.Zero, player.Progress);
+	}
+
+	[Fact]
+	public void Seek_WithPositionBeyondDuration_ClampsToDuration()
+	{
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.SetAnimation(anim);
+
+		player.Seek(player.Duration + TimeSpan.FromSeconds(10));
+
+		Assert.Equal(player.Duration, player.Progress);
+	}
+
 	// ── Update / playback ────────────────────────────────────────────────────
 
 	[Fact]

@@ -90,6 +90,8 @@ public class SKLottiePlayer
 	/// </remarks>
 	public void Seek(TimeSpan position)
 	{
+		if (position < TimeSpan.Zero) position = TimeSpan.Zero;
+		if (position > Duration) position = Duration;
 		Progress = position;
 		UpdateProgress(Progress);
 		AnimationUpdated?.Invoke(this, EventArgs.Empty);

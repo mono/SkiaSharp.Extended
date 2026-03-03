@@ -49,23 +49,23 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
     public IDictionary<string, object>? AdditionalAttributes { get; set; }
 
     /// <inheritdoc />
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && IsAnimationEnabled)
-            StartLoop();
+            await StartLoopAsync();
     }
 
     /// <inheritdoc />
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (_isAnimationEnabled == IsAnimationEnabled)
             return;
 
         _isAnimationEnabled = IsAnimationEnabled;
         if (_isAnimationEnabled)
-            StartLoop();
+            await StartLoopAsync();
         else
-            StopLoop();
+            await StopLoopAsync();
     }
 
     /// <summary>
@@ -78,22 +78,35 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
 
     private void HandlePaintSurface(SKPaintSurfaceEventArgs e)
     {
-        if (OnPaintSurface.HasDelegate)
-            _ = OnPaintSurface.InvokeAsync(e);
+        if (!OnPaintSurface.HasDelegate)
+            return;
+
+        var task = OnPaintSurface.InvokeAsync(e);
+        if (!task.IsCompletedSuccessfully)
+            throw new InvalidOperationException(
+                $"{nameof(OnPaintSurface)} handlers must be synchronous; " +
+                "the underlying SKCanvas is only valid during the paint callback.");
     }
 
-    private void StartLoop()
+    private async Task StartLoopAsync()
     {
-        StopLoop();
+        await StopLoopAsync();
         _cts = new CancellationTokenSource();
         _loopTask = RunLoopAsync(_cts.Token);
     }
 
-    private void StopLoop()
+    private async Task StopLoopAsync()
     {
         _cts?.Cancel();
         _cts?.Dispose();
         _cts = null;
+        var loopTask = _loopTask;
+        _loopTask = null;
+        if (loopTask is not null)
+        {
+            try { await loopTask; }
+            catch (Exception) { }
+        }
     }
 
     private async Task RunLoopAsync(CancellationToken ct)
@@ -109,8 +122,11 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
                 var delta = now - lastTick;
                 lastTick = now;
 
-                await UpdateAsync(delta);
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(async () =>
+                {
+                    await UpdateAsync(delta);
+                    StateHasChanged();
+                });
             }
         }
         catch (OperationCanceledException)
@@ -122,11 +138,6 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
-        StopLoop();
-        if (_loopTask is not null)
-        {
-            try { await _loopTask; }
-            catch (Exception) { }
-        }
+        await StopLoopAsync();
     }
 }
