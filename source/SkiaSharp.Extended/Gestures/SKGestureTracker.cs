@@ -70,7 +70,6 @@ public sealed class SKGestureTracker : IDisposable
 	private float _zoomTargetFactor;
 	private SKPoint _zoomFocalPoint;
 	private long _zoomStartTicks;
-	private float _zoomPrevCumulative;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKGestureTracker"/> class with default options.
@@ -463,7 +462,6 @@ public sealed class SKGestureTracker : IDisposable
 		_zoomTargetFactor = factor;
 		_zoomFocalPoint = focalPoint;
 		_zoomStartTicks = TimeProvider();
-		_zoomPrevCumulative = 1f;
 		_isZoomAnimating = true;
 
 		var token = Interlocked.Increment(ref _zoomToken);
@@ -667,7 +665,8 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEnginePinchDetected(object? s, SKPinchGestureEventArgs e)
 	{
-		PinchDetected?.Invoke(this, e);
+		if (IsPinchEnabled || IsPanEnabled)
+			PinchDetected?.Invoke(this, e);
 
 		// Apply center movement as pan
 		if (IsPanEnabled)
@@ -692,27 +691,26 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEngineRotateDetected(object? s, SKRotateGestureEventArgs e)
 	{
-		RotateDetected?.Invoke(this, e);
-
 		if (IsRotateEnabled)
 		{
+			RotateDetected?.Invoke(this, e);
+
 			var newRotation = _rotation + e.RotationDelta;
 			AdjustOffsetForPivot(e.FocalPoint, _scale, _scale, _rotation, newRotation);
 			_rotation = newRotation;
 		}
 
 		// Fire TransformChanged once per two-finger frame (batched with pinch changes above)
-		TransformChanged?.Invoke(this, EventArgs.Empty);
+		if (IsPinchEnabled || IsRotateEnabled || IsPanEnabled)
+			TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
 
 	private void OnEngineFlingDetected(object? s, SKFlingGestureEventArgs e)
 	{
-		FlingDetected?.Invoke(this, e);
-
-		// Don't fling if the drag was handled by the consumer (e.g. sticker drag)
 		if (!IsFlingEnabled || _isDragHandled)
 			return;
 
+		FlingDetected?.Invoke(this, e);
 		StartFlingAnimation(e.Velocity.X, e.Velocity.Y);
 	}
 
@@ -906,8 +904,6 @@ public sealed class SKGestureTracker : IDisposable
 
 		// Log-space interpolation: cumulative = factor^eased(t)
 		var cumulative = (float)Math.Pow(_zoomTargetFactor, eased);
-
-		_zoomPrevCumulative = cumulative;
 
 		// Apply scale change
 		var oldScale = _scale;

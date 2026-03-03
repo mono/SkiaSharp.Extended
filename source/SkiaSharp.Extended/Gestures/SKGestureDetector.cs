@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace SkiaSharp.Extended;
@@ -67,13 +66,14 @@ public sealed class SKGestureDetector : IDisposable
 	/// Gets or sets the time provider function used to obtain the current time in ticks.
 	/// </summary>
 	/// <value>
-	/// A <see cref="Func{T}"/> that returns the current time in <see cref="DateTime.Ticks"/>.
-	/// The default uses <see cref="DateTime.Now"/>.
+	/// A <see cref="Func{T}"/> that returns the current time in ticks (10,000 ticks per millisecond).
+	/// The default uses <see cref="Environment.TickCount64"/> converted to tick units, which is
+	/// monotonic and immune to clock adjustments (unlike <see cref="DateTime.Now"/>).
 	/// </value>
 	/// <remarks>
 	/// Override this for deterministic testing by supplying a custom tick source.
 	/// </remarks>
-	public Func<long> TimeProvider { get; set; } = () => DateTime.Now.Ticks;
+	public Func<long> TimeProvider { get; set; } = () => Environment.TickCount64 * TimeSpan.TicksPerMillisecond;
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the gesture detector is enabled.
@@ -574,13 +574,49 @@ public sealed class SKGestureDetector : IDisposable
 
 	private SKPoint[] GetActiveTouchPoints()
 	{
+		// Avoid LINQ allocations in this 60Hz hot path.
 		// Sort by touch ID for stable ordering — prevents angle jumps when fingers
 		// are added/removed and Dictionary iteration order changes.
-		return _touches
-			.Where(kv => kv.Value.InContact)
-			.OrderBy(kv => kv.Key)
-			.Select(kv => kv.Value.Location)
-			.ToArray();
+		var count = 0;
+		foreach (var kv in _touches)
+		{
+			if (kv.Value.InContact)
+				count++;
+		}
+
+		if (count == 0)
+			return Array.Empty<SKPoint>();
+
+		var ids = new long[count];
+		var points = new SKPoint[count];
+		var i = 0;
+		foreach (var kv in _touches)
+		{
+			if (kv.Value.InContact)
+			{
+				ids[i] = kv.Key;
+				points[i] = kv.Value.Location;
+				i++;
+			}
+		}
+
+		// Simple insertion sort (typically 1-5 elements)
+		for (i = 1; i < count; i++)
+		{
+			var keyId = ids[i];
+			var keyPt = points[i];
+			var j = i - 1;
+			while (j >= 0 && ids[j] > keyId)
+			{
+				ids[j + 1] = ids[j];
+				points[j + 1] = points[j];
+				j--;
+			}
+			ids[j + 1] = keyId;
+			points[j + 1] = keyPt;
+		}
+
+		return points;
 	}
 
 	private static float NormalizeAngle(float angle)

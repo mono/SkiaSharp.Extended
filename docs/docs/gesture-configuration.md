@@ -104,11 +104,11 @@ tracker.SetOffset(SKPoint.Empty);
 
 ### Animated Zoom
 
-Use `ZoomTo` to animate to a target scale level with a smooth ease-out curve:
+Use `ZoomTo` to animate a zoom by a given factor with a smooth ease-out curve:
 
 ```csharp
-// Zoom to 3x at the center of the view
-tracker.ZoomTo(targetScale: 3f, pivot: new SKPoint(400, 300));
+// Zoom in by 3x at the center of the view
+tracker.ZoomTo(factor: 3f, focalPoint: new SKPoint(400, 300));
 
 // Check animation state
 bool animating = tracker.IsZoomAnimating;
