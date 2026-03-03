@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SkiaSharp.Extended.Gestures;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Configuration options for <see cref="SKGestureTracker"/>. Inherits gesture detection thresholds

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SkiaSharp.Extended.Gestures;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Tracks touch events to calculate fling velocity.

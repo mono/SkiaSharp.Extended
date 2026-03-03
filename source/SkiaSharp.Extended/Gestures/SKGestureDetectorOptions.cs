@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SkiaSharp.Extended.Gestures;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Configuration options for the <see cref="SKGestureDetector"/> gesture recognition engine.

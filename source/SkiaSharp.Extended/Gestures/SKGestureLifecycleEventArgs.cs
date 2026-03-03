@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SkiaSharp.Extended.Gestures;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Provides data for gesture lifecycle events that indicate when a gesture interaction begins or ends.

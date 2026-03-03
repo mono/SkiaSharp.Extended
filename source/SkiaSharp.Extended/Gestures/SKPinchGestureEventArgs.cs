@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SkiaSharp.Extended.Gestures;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Provides data for a pinch (scale) gesture event detected from two or more simultaneous touches.

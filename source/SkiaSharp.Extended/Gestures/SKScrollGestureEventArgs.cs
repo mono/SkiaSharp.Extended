@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SkiaSharp.Extended.Gestures;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Provides data for a mouse scroll (wheel) gesture event.

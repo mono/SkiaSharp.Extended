@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 
-namespace SkiaSharp.Extended.Gestures;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// A high-level gesture handler that tracks touch input and maintains an absolute transform

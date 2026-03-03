@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SkiaSharp.Extended.Gestures;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Provides data for drag gesture lifecycle events (<see cref="SKGestureTracker.DragStarted"/>,
