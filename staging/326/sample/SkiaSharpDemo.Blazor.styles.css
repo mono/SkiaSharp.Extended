@@ -183,3 +183,81 @@ main[b-u7t1t1ae9g] {
         overflow-y: auto;
     }
 }
+/* /Pages/Gestures.razor.rz.scp.css */
+.gesture-container[b-k8sbvxpgvc] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.gesture-container:active[b-k8sbvxpgvc] {
+    cursor: grabbing;
+}
+
+.status-panel[b-k8sbvxpgvc] {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.status-label[b-k8sbvxpgvc] {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.event-log[b-k8sbvxpgvc] {
+    color: #666;
+    font-size: 11px;
+}
+
+.settings-panel[b-k8sbvxpgvc] {
+    margin-top: 10px;
+}
+
+.settings-grid[b-k8sbvxpgvc] {
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.toggle-row[b-k8sbvxpgvc] {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+
+.toggle-row label[b-k8sbvxpgvc] {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.slider-row[b-k8sbvxpgvc] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.slider-row label[b-k8sbvxpgvc] {
+    min-width: 180px;
+    font-size: 12px;
+}
+
+.slider-row input[type=range][b-k8sbvxpgvc] {
+    flex: 1;
+}
+
+.state-info[b-k8sbvxpgvc] {
+    font-family: monospace;
+    font-size: 12px;
+    color: #555;
+}
