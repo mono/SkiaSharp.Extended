@@ -1053,4 +1053,11 @@ public class SKGestureDetectorTests
 		Assert.Equal(0, doubleTapCount);
 	}
 
+	[Fact]
+	public void TimeProvider_SetNull_ThrowsArgumentNullException()
+	{
+		using var engine = new SKGestureDetector();
+		Assert.Throws<ArgumentNullException>(() => engine.TimeProvider = null!);
+	}
+
 }

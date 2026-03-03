@@ -27,11 +27,13 @@ namespace SkiaSharp.Extended;
 /// tracker.ProcessTouchUp(id, new SKPoint(x, y));
 ///
 /// // In your paint handler:
-/// canvas.SetMatrix(tracker.Matrix);
+/// canvas.Save();
+/// canvas.Concat(tracker.Matrix);
 /// // Draw your content...
+/// canvas.Restore();
 ///
 /// // Listen for transform changes to trigger redraws:
-/// tracker.TransformChanged += (s, e) => canvas.InvalidateVisual();
+/// tracker.TransformChanged += (s, e) => canvasView.InvalidateSurface();
 /// </code>
 /// </example>
 /// <seealso cref="SKGestureDetector"/>
@@ -178,7 +180,7 @@ public sealed class SKGestureTracker : IDisposable
 	public Func<long> TimeProvider
 	{
 		get => _engine.TimeProvider;
-		set => _engine.TimeProvider = value;
+		set => _engine.TimeProvider = value ?? throw new ArgumentNullException(nameof(value));
 	}
 
 	#endregion
@@ -370,7 +372,7 @@ public sealed class SKGestureTracker : IDisposable
 	/// </summary>
 	/// <remarks>
 	/// The <see cref="SKFlingGestureEventArgs.Delta"/>
-	/// properties contain the per-frame displacement. The velocity decays each frame according to
+	/// property contains the per-frame displacement. The velocity decays each frame according to
 	/// <see cref="SKGestureTrackerOptions.FlingFriction"/>.
 	/// </remarks>
 	public event EventHandler<SKFlingGestureEventArgs>? FlingUpdated;
@@ -452,6 +454,8 @@ public sealed class SKGestureTracker : IDisposable
 	/// </remarks>
 	public void ZoomTo(float factor, SKPoint focalPoint)
 	{
+		ObjectDisposedException.ThrowIf(_disposed, this);
+
 		if (factor <= 0 || float.IsNaN(factor) || float.IsInfinity(factor))
 			throw new ArgumentOutOfRangeException(nameof(factor), factor, "Factor must be a positive finite number.");
 
@@ -728,7 +732,7 @@ public sealed class SKGestureTracker : IDisposable
 		if (!IsScrollZoomEnabled || e.Delta.Y == 0)
 			return;
 
-		var scaleDelta = 1f + e.Delta.Y * Options.ScrollZoomFactor;
+		var scaleDelta = Math.Max(0.01f, 1f + e.Delta.Y * Options.ScrollZoomFactor);
 		var newScale = Clamp(_scale * scaleDelta, Options.MinScale, Options.MaxScale);
 		AdjustOffsetForPivot(e.Location, _scale, newScale, _rotation, _rotation);
 		_scale = newScale;
@@ -780,7 +784,7 @@ public sealed class SKGestureTracker : IDisposable
 	}
 
 	private static float Clamp(float value, float min, float max)
-		=> value < min ? min : value > max ? max : value;
+		=> float.IsNaN(value) ? min : value < min ? min : value > max ? max : value;
 
 	#endregion
 

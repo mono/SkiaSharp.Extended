@@ -954,4 +954,34 @@ public class SKGestureTrackerTests
 		Assert.Equal(0, flingCompletedCount);
 	}
 
+	[Fact]
+	public void TimeProvider_SetNull_ThrowsArgumentNullException()
+	{
+		var tracker = CreateTracker();
+		Assert.Throws<ArgumentNullException>(() => tracker.TimeProvider = null!);
+	}
+
+	[Fact]
+	public void ZoomTo_AfterDispose_ThrowsObjectDisposedException()
+	{
+		var tracker = CreateTracker();
+		tracker.Dispose();
+		Assert.Throws<ObjectDisposedException>(() => tracker.ZoomTo(2f, new SKPoint(100, 100)));
+	}
+
+	[Fact]
+	public void ScrollZoom_LargeNegativeDelta_ClampsScaleDeltaPositive()
+	{
+		var tracker = CreateTracker();
+		tracker.IsScrollZoomEnabled = true;
+		var transformFired = false;
+		tracker.TransformChanged += (s, e) => transformFired = true;
+
+		// A large negative delta that would make scaleDelta <= 0 without clamping
+		tracker.ProcessMouseWheel(new SKPoint(100, 100), 0, -100f);
+
+		Assert.True(transformFired);
+		Assert.True(tracker.Scale > 0, "Scale must remain positive");
+	}
+
 }
