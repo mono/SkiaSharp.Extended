@@ -1,0 +1,411 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Blazor Lottie Animations | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Blazor Lottie Animations | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/docs/docs/lottie-blazor.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="blazor-lottie-animations">Blazor Lottie Animations</h1>
+
+<p>Play Lottie animations in Blazor WebAssembly apps with <a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.html"><code>SKLottieView</code></a>. This component wraps the shared <a href="lottie-player.html"><code>SKLottiePlayer</code></a> engine with a Blazor-friendly API — just point it at a JSON URL and it handles loading, frame updates, and rendering.</p>
+<p>For building custom animated canvases beyond Lottie, see <a href="#custom-animations-with-skanimatedcanvasview"><code>SKAnimatedCanvasView</code></a> below.</p>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="1-add-the-nuget-package">1. Add the NuGet package</h3>
+<pre><code class="lang-bash">dotnet add package SkiaSharp.Extended.UI.Blazor
+</code></pre>
+<h3 id="2-add-the-namespace">2. Add the namespace</h3>
+<p>In your <code>_Imports.razor</code>:</p>
+<pre><code class="lang-razor">@using SkiaSharp.Extended.UI.Blazor.Controls
+</code></pre>
+<h3 id="3-add-the-component">3. Add the component</h3>
+<pre><code class="lang-razor">&lt;SKLottieView Source=&quot;animations/trophy.json&quot;
+              RepeatCount=&quot;-1&quot;
+              style=&quot;width: 300px; height: 300px;&quot; /&gt;
+</code></pre>
+<p>That's it — the animation loads from the URL and starts playing automatically.</p>
+<h2 id="playback-controls">Playback Controls</h2>
+<h3 id="repeat-modes">Repeat modes</h3>
+<pre><code class="lang-razor">@* Loop forever, restarting each time *@
+&lt;SKLottieView Source=&quot;animation.json&quot;
+              RepeatMode=&quot;SKLottieRepeatMode.Restart&quot;
+              RepeatCount=&quot;-1&quot; /&gt;
+
+@* Ping-pong 3 times *@
+&lt;SKLottieView Source=&quot;animation.json&quot;
+              RepeatMode=&quot;SKLottieRepeatMode.Reverse&quot;
+              RepeatCount=&quot;3&quot; /&gt;
+
+@* Play once *@
+&lt;SKLottieView Source=&quot;animation.json&quot;
+              RepeatCount=&quot;0&quot; /&gt;
+</code></pre>
+<h3 id="speed-and-direction">Speed and direction</h3>
+<pre><code class="lang-razor">&lt;SKLottieView Source=&quot;animation.json&quot;
+              AnimationSpeed=&quot;2.0&quot;
+              RepeatCount=&quot;-1&quot; /&gt;
+
+@* Negative speed plays in reverse *@
+&lt;SKLottieView Source=&quot;animation.json&quot;
+              AnimationSpeed=&quot;-1.0&quot;
+              RepeatCount=&quot;-1&quot; /&gt;
+</code></pre>
+<h3 id="pause-and-resume">Pause and resume</h3>
+<pre><code class="lang-razor">&lt;SKLottieView Source=&quot;animation.json&quot;
+              IsAnimationEnabled=&quot;@isPlaying&quot;
+              RepeatCount=&quot;-1&quot; /&gt;
+
+&lt;button @onclick=&quot;() =&gt; isPlaying = !isPlaying&quot;&gt;
+    @(isPlaying ? &quot;Pause&quot; : &quot;Play&quot;)
+&lt;/button&gt;
+
+@code {
+    private bool isPlaying = true;
+}
+</code></pre>
+<h3 id="restart-programmatically">Restart programmatically</h3>
+<p>Use an <code>@ref</code> to call <code>Restart()</code>:</p>
+<pre><code class="lang-razor">&lt;SKLottieView @ref=&quot;lottieView&quot;
+              Source=&quot;animation.json&quot;
+              RepeatCount=&quot;-1&quot; /&gt;
+
+&lt;button @onclick=&quot;() =&gt; lottieView?.Restart()&quot;&gt;Restart&lt;/button&gt;
+
+@code {
+    private SKLottieView? lottieView;
+}
+</code></pre>
+<h2 id="reading-playback-state">Reading Playback State</h2>
+<p>Access read-only state through the component reference:</p>
+<pre><code class="lang-razor">&lt;SKLottieView @ref=&quot;lottieView&quot;
+              Source=&quot;animation.json&quot;
+              RepeatCount=&quot;-1&quot;
+              AnimationUpdated=&quot;StateHasChanged&quot; /&gt;
+
+@if (lottieView?.HasAnimation == true)
+{
+    &lt;p&gt;
+        Duration: @lottieView.Duration.TotalSeconds.ToString(&quot;0.00&quot;)s |
+        Progress: @lottieView.Progress.TotalSeconds.ToString(&quot;0.00&quot;)s |
+        @(lottieView.IsComplete ? &quot;Complete ✓&quot; : &quot;Playing&quot;)
+    &lt;/p&gt;
+}
+
+@code {
+    private SKLottieView? lottieView;
+}
+</code></pre>
+<blockquote>
+<p><strong>Tip:</strong> Bind <code>AnimationUpdated</code> to <code>StateHasChanged</code> so the UI refreshes with each frame. Without this, the displayed progress won't update live.</p>
+</blockquote>
+<h2 id="events">Events</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Event</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>AnimationLoaded</code></td>
+<td style="text-align: left;"><code>EventCallback</code></td>
+<td style="text-align: left;">The animation JSON was loaded and parsed successfully</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>AnimationCompleted</code></td>
+<td style="text-align: left;"><code>EventCallback</code></td>
+<td style="text-align: left;">All repeats finished (never fires for infinite loops)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>AnimationFailed</code></td>
+<td style="text-align: left;"><code>EventCallback&lt;Exception?&gt;</code></td>
+<td style="text-align: left;">Loading or parsing failed</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>AnimationUpdated</code></td>
+<td style="text-align: left;"><code>EventCallback</code></td>
+<td style="text-align: left;">Fires after each frame update</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-razor">&lt;SKLottieView Source=&quot;animation.json&quot;
+              AnimationLoaded=&quot;OnLoaded&quot;
+              AnimationFailed=&quot;OnFailed&quot;
+              AnimationCompleted=&quot;OnCompleted&quot; /&gt;
+
+@code {
+    private void OnLoaded() =&gt; Console.WriteLine(&quot;Loaded!&quot;);
+    private void OnFailed(Exception? ex) =&gt; Console.WriteLine($&quot;Failed: {ex?.Message}&quot;);
+    private void OnCompleted() =&gt; Console.WriteLine(&quot;Done!&quot;);
+}
+</code></pre>
+<h2 id="parameters-reference">Parameters Reference</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Source</code></td>
+<td style="text-align: left;"><code>string?</code></td>
+<td style="text-align: left;"><code>null</code></td>
+<td style="text-align: left;">URL of the Lottie JSON file to load</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>RepeatMode</code></td>
+<td style="text-align: left;"><code>SKLottieRepeatMode</code></td>
+<td style="text-align: left;"><code>Restart</code></td>
+<td style="text-align: left;"><code>Restart</code> or <code>Reverse</code> (ping-pong)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>RepeatCount</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;"><code>-1</code></td>
+<td style="text-align: left;">Additional plays after the first (<code>0</code> = once, <code>-1</code> = infinite)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>AnimationSpeed</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;"><code>1.0</code></td>
+<td style="text-align: left;">Speed multiplier (negative = reverse)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>IsAnimationEnabled</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;"><code>true</code></td>
+<td style="text-align: left;">Play/pause the animation loop</td>
+</tr>
+</tbody>
+</table>
+<p>Additional HTML attributes (like <code>style</code> and <code>class</code>) are forwarded to the underlying canvas element.</p>
+<h2 id="read-only-state-via-ref">Read-Only State (via <code>@ref</code>)</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>IsLoading</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Whether the animation is currently being fetched</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>HasAnimation</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Whether an animation is loaded and ready</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Duration</code></td>
+<td style="text-align: left;"><code>TimeSpan</code></td>
+<td style="text-align: left;">Total animation duration</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Progress</code></td>
+<td style="text-align: left;"><code>TimeSpan</code></td>
+<td style="text-align: left;">Current playback position</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>IsComplete</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Whether all repeats have finished</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sizing">Sizing</h2>
+<p>The component renders an HTML <code>&lt;canvas&gt;</code> element. Set the size using standard CSS:</p>
+<pre><code class="lang-razor">@* Fixed size *@
+&lt;SKLottieView Source=&quot;animation.json&quot; style=&quot;width: 300px; height: 300px;&quot; /&gt;
+
+@* Fill parent container *@
+&lt;div style=&quot;width: 100%; height: 400px;&quot;&gt;
+    &lt;SKLottieView Source=&quot;animation.json&quot; style=&quot;width: 100%; height: 100%;&quot; /&gt;
+&lt;/div&gt;
+</code></pre>
+<h2 id="custom-animations-with-skanimatedcanvasview">Custom Animations with SKAnimatedCanvasView</h2>
+<p>For animations beyond Lottie, <a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.html"><code>SKAnimatedCanvasView</code></a> provides a frame loop with a SkiaSharp canvas. It runs at ~60 fps and calls your update and paint callbacks each frame.</p>
+<pre><code class="lang-razor">@using SkiaSharp
+@using SkiaSharp.Extended.UI.Blazor.Controls
+
+&lt;SKAnimatedCanvasView OnUpdate=&quot;HandleUpdate&quot;
+                      OnPaintSurface=&quot;HandlePaint&quot;
+                      style=&quot;width: 400px; height: 400px;&quot; /&gt;
+
+@code {
+    private float angle = 0;
+
+    private void HandleUpdate(TimeSpan delta)
+    {
+        angle += (float)(delta.TotalSeconds * 90);  // 90° per second
+    }
+
+    private void HandlePaint(SKPaintSurfaceEventArgs e)
+    {
+        var canvas = e.Surface.Canvas;
+        canvas.Clear(SKColors.White);
+        canvas.RotateDegrees(angle, e.Info.Width / 2f, e.Info.Height / 2f);
+
+        using var paint = new SKPaint { Color = SKColors.CornflowerBlue };
+        canvas.DrawRect(
+            e.Info.Width / 2f - 50, e.Info.Height / 2f - 50,
+            100, 100, paint);
+    }
+}
+</code></pre>
+<h3 id="skanimatedcanvasview-parameters">SKAnimatedCanvasView Parameters</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>IsAnimationEnabled</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;"><code>true</code></td>
+<td style="text-align: left;">Start/stop the frame loop</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>OnUpdate</code></td>
+<td style="text-align: left;"><code>EventCallback&lt;TimeSpan&gt;</code></td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">Called each frame with delta time</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>OnPaintSurface</code></td>
+<td style="text-align: left;"><code>EventCallback&lt;SKPaintSurfaceEventArgs&gt;</code></td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">Called to render each frame</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Important:</strong> <code>OnPaintSurface</code> handlers must be synchronous. The canvas is only valid during the paint callback.</p>
+</blockquote>
+<h2 id="learn-more">Learn More</h2>
+<ul>
+<li><a href="lottie-player.html">Lottie Player</a> — The shared playback engine behind both MAUI and Blazor views</li>
+<li><a href="lottie-maui.html">MAUI Lottie Animations</a> — Use Lottie in .NET MAUI apps</li>
+<li><a href="https://airbnb.design/lottie/">Lottie by Airbnb</a> — Official project page</li>
+<li><a href="https://lottiefiles.com/">LottieFiles</a> — Free and premium animations</li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.html">API Reference</a> — Full method documentation</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/docs/docs/lottie-blazor.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #365 · b1faf2e
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

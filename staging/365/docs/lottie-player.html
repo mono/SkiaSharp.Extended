@@ -1,0 +1,315 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Lottie Player | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Lottie Player | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/docs/docs/lottie-player.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="lottie-player">Lottie Player</h1>
+
+<p><a class="xref" href="../api/SkiaSharp.Extended.SKLottiePlayer.html"><code>SKLottiePlayer</code></a> is the platform-agnostic engine that drives Lottie animation playback. It manages timing, repeat logic, and rendering — you just feed it frames. Both the <a href="lottie.md">MAUI <code>SKLottieView</code></a> and the <a href="blazor-lottie.md">Blazor <code>SKLottieView</code></a> are built on top of this player.</p>
+<h2 id="when-to-use-the-player-directly">When to Use the Player Directly</h2>
+<p>Most apps should use the higher-level view components for <a href="lottie.md">MAUI</a> or <a href="blazor-lottie.md">Blazor</a>. Use <code>SKLottiePlayer</code> directly when you need:</p>
+<ul>
+<li>A custom rendering host (WPF, Avalonia, console, tests)</li>
+<li>Full control over the frame loop</li>
+<li>Headless animation processing (e.g., exporting frames to images)</li>
+</ul>
+<h2 id="quick-start">Quick Start</h2>
+<pre><code class="lang-csharp">using SkiaSharp;
+using SkiaSharp.Extended;
+using SkiaSharp.Skottie;
+
+// 1. Create the player
+var player = new SKLottiePlayer
+{
+    Repeat = SKLottieRepeat.Restart(),   // loop forever
+    AnimationSpeed = 1.0
+};
+
+// 2. Load a Lottie animation
+var json = File.ReadAllText(&quot;animation.json&quot;);
+var animation = Animation.Parse(json);
+player.SetAnimation(animation);
+
+// 3. On each frame tick, advance and render
+player.Update(deltaTime);               // deltaTime = time since last frame
+player.Render(canvas, destRect);         // draw current frame
+</code></pre>
+<h2 id="the-frame-loop">The Frame Loop</h2>
+<p><code>SKLottiePlayer</code> follows a simple two-step pattern on every frame:</p>
+<ol>
+<li><strong><code>Update(deltaTime)</code></strong> — Advances the playback position by the elapsed time, applying speed, direction, and repeat logic.</li>
+<li><strong><code>Render(canvas, rect)</code></strong> — Draws the current frame onto the canvas within the given rectangle.</li>
+</ol>
+<pre><code class="lang-csharp">// Typical game/render loop integration
+var lastTick = DateTime.UtcNow;
+
+void OnFrame()
+{
+    var now = DateTime.UtcNow;
+    var delta = now - lastTick;
+    lastTick = now;
+
+    player.Update(delta);
+    canvas.Clear(SKColors.Transparent);
+    player.Render(canvas, SKRect.Create(0, 0, width, height));
+}
+</code></pre>
+<h2 id="playback-speed">Playback Speed</h2>
+<p>The <code>AnimationSpeed</code> property multiplies the time delta on every frame:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Speed</th>
+<th style="text-align: left;">Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>1.0</code></td>
+<td style="text-align: left;">Normal speed</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>2.0</code></td>
+<td style="text-align: left;">Double speed</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>0.5</code></td>
+<td style="text-align: left;">Half speed</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-1.0</code></td>
+<td style="text-align: left;">Play in reverse</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-2.0</code></td>
+<td style="text-align: left;">Double speed, reversed</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-csharp">player.AnimationSpeed = -1.5;   // 1.5× speed, playing backward
+</code></pre>
+<h2 id="repeat-modes">Repeat Modes</h2>
+<p>The <a class="xref" href="../api/SkiaSharp.Extended.SKLottieRepeat.html"><code>SKLottieRepeat</code></a> struct controls what happens when the animation reaches a boundary:</p>
+<pre><code class="lang-csharp">// Play once, then stop
+player.Repeat = SKLottieRepeat.Never;
+
+// Loop forever, restarting from the beginning each time
+player.Repeat = SKLottieRepeat.Restart();
+
+// Loop 3 additional times (4 total plays), restarting each time
+player.Repeat = SKLottieRepeat.Restart(3);
+
+// Ping-pong forever (forward → backward → forward → …)
+player.Repeat = SKLottieRepeat.Reverse();
+
+// Ping-pong 2 additional times (3 total plays)
+player.Repeat = SKLottieRepeat.Reverse(2);
+</code></pre>
+<p>You can change the repeat mode mid-playback. The player preserves the current direction until the animation hits its next boundary, preventing abrupt mid-animation direction changes.</p>
+<h2 id="seeking">Seeking</h2>
+<p>Use <code>Seek</code> to jump to an absolute position (clamped to <code>[0, Duration]</code>):</p>
+<pre><code class="lang-csharp">// Jump to the 1-second mark
+player.Seek(TimeSpan.FromSeconds(1.0));
+
+// Jump to the beginning
+player.Seek(TimeSpan.Zero);
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> <code>Seek</code> does not increment the internal repeat counter. Use <code>Update</code> for frame-by-frame playback with repeat/completion logic.</p>
+</blockquote>
+<h2 id="events">Events</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Event</th>
+<th style="text-align: left;">When It Fires</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>AnimationCompleted</code></td>
+<td style="text-align: left;">All repeats finished (never fires for infinite loops)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>AnimationUpdated</code></td>
+<td style="text-align: left;">After every <code>Seek</code> call, including those triggered by <code>Update</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-csharp">player.AnimationCompleted += (s, e) =&gt;
+{
+    Console.WriteLine(&quot;Animation finished!&quot;);
+};
+
+player.AnimationUpdated += (s, e) =&gt;
+{
+    Console.WriteLine($&quot;Progress: {player.Progress.TotalSeconds:0.00}s&quot;);
+};
+</code></pre>
+<h2 id="properties-reference">Properties Reference</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Duration</code></td>
+<td style="text-align: left;"><code>TimeSpan</code></td>
+<td style="text-align: left;">Total animation duration (read-only, set when animation loads)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Progress</code></td>
+<td style="text-align: left;"><code>TimeSpan</code></td>
+<td style="text-align: left;">Current playback position (read-only, advances via <code>Update</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>IsComplete</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Whether all repeats have finished</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>HasAnimation</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Whether an animation is currently loaded</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Repeat</code></td>
+<td style="text-align: left;"><a class="xref" href="../api/SkiaSharp.Extended.SKLottieRepeat.html"><code>SKLottieRepeat</code></a></td>
+<td style="text-align: left;">How the animation repeats</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>AnimationSpeed</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">Playback speed multiplier (negative = reverse)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="loading-and-resetting">Loading and Resetting</h2>
+<pre><code class="lang-csharp">// Load a new animation (resets progress, completion, and repeat counters)
+var animation = Animation.Parse(json);
+player.SetAnimation(animation);
+
+// Clear the animation
+player.SetAnimation(null);
+</code></pre>
+<p>The caller owns the <code>Skottie.Animation</code> instance and is responsible for disposing it when no longer needed.</p>
+<h2 id="learn-more">Learn More</h2>
+<ul>
+<li><a href="lottie-maui.html">MAUI Lottie Animations</a> — Use Lottie in .NET MAUI with <code>SKLottieView</code></li>
+<li><a href="lottie-blazor.html">Blazor Lottie Animations</a> — Use Lottie in Blazor WebAssembly</li>
+<li><a href="https://airbnb.design/lottie/">Lottie by Airbnb</a> — Official project page</li>
+<li><a href="https://lottiefiles.com/">LottieFiles</a> — Free and premium animations</li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKLottiePlayer.html">API Reference</a> — Full method documentation</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/docs/docs/lottie-player.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #365 · b1faf2e
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
