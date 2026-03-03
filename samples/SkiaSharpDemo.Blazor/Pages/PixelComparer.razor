@@ -1,0 +1,176 @@
+@page "/pixelcomparer"
+@inject HttpClient Http
+
+<PageTitle>Pixel Comparer</PageTitle>
+
+<h1>Pixel Comparer</h1>
+
+<p>
+    Compare two images pixel by pixel and visualize differences
+    using <code>SKPixelComparer</code>.
+</p>
+
+<div class="row mb-3">
+    <div class="col-auto">
+        <label class="form-label">Image Pair</label>
+        <select class="form-select" @bind="selectedPairIndex" @bind:after="OnPairChanged">
+            @for (var i = 0; i < imagePairs.Length; i++)
+            {
+                <option value="@i">@imagePairs[i].Name</option>
+            }
+        </select>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-4">
+        <h5>Image A</h5>
+        <img src="@($"images/Comparer/{imagePairs[selectedPairIndex].First}")"
+             style="max-width: 100%; height: auto;" />
+    </div>
+    <div class="col-4">
+        <h5>Image B</h5>
+        <img src="@($"images/Comparer/{imagePairs[selectedPairIndex].Second}")"
+             style="max-width: 100%; height: auto;" />
+    </div>
+    <div class="col-4">
+        <h5>Difference Mask</h5>
+        <div class="position-relative">
+            <SKCanvasView @ref="diffCanvas" OnPaintSurface="OnPaintSurface"
+                          style="width: 100%; height: 220px;" />
+            @if (isLoading)
+            {
+                <div class="position-absolute top-50 start-50 translate-middle">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (result != null)
+{
+    <div class="row mb-3">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Comparison Results</h5>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <strong>Total Pixels</strong>
+                            <p class="mb-0">@result.TotalPixels.ToString("N0")</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <strong>Error Pixels</strong>
+                            <p class="mb-0">@result.ErrorPixelCount.ToString("N0")</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <strong>Error Percentage</strong>
+                            <p class="mb-0">@result.ErrorPixelPercentage.ToString("P2")</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <strong>Absolute Error</strong>
+                            <p class="mb-0">@result.AbsoluteError.ToString("N0")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private record ImagePair(string Name, string First, string Second);
+
+    private readonly ImagePair[] imagePairs =
+    {
+        new("PNG pair", "First.png", "Second.png"),
+        new("JPEG pair", "First.jpg", "Second.jpg"),
+        new("PNG vs JPEG (First)", "First.png", "First.jpg"),
+        new("PNG vs JPEG (Second)", "Second.png", "Second.jpg"),
+    };
+
+    private SKCanvasView? diffCanvas;
+    private int selectedPairIndex;
+    private bool isLoading;
+    private SKPixelComparisonResult? result;
+    private SKImage? diffMask;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await RunComparison();
+        }
+    }
+
+    private async Task OnPairChanged()
+    {
+        await RunComparison();
+    }
+
+    private async Task RunComparison()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            var pair = imagePairs[selectedPairIndex];
+            var firstData = await Http.GetByteArrayAsync($"images/Comparer/{pair.First}");
+            var secondData = await Http.GetByteArrayAsync($"images/Comparer/{pair.Second}");
+
+            using var firstBitmap = SKBitmap.Decode(firstData);
+            using var secondBitmap = SKBitmap.Decode(secondData);
+
+            if (firstBitmap != null && secondBitmap != null)
+            {
+                using var firstImage = SKImage.FromBitmap(firstBitmap);
+                using var secondImage = SKImage.FromBitmap(secondBitmap);
+
+                result = SKPixelComparer.Compare(firstImage, secondImage);
+
+                diffMask?.Dispose();
+                diffMask = SKPixelComparer.GenerateDifferenceMask(firstImage, secondImage);
+
+                diffCanvas?.Invalidate();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error comparing images: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        var canvas = e.Surface.Canvas;
+        var info = e.Info;
+
+        canvas.Clear(SKColors.LightGray);
+
+        if (diffMask == null)
+            return;
+
+        var destRect = SKRect.Create(0, 0, info.Width, info.Height);
+        var srcRect = SKRect.Create(0, 0, diffMask.Width, diffMask.Height);
+
+        // Scale to fit while preserving aspect ratio
+        var scale = Math.Min(destRect.Width / srcRect.Width, destRect.Height / srcRect.Height);
+        var scaledWidth = srcRect.Width * scale;
+        var scaledHeight = srcRect.Height * scale;
+        var offsetX = (destRect.Width - scaledWidth) / 2;
+        var offsetY = (destRect.Height - scaledHeight) / 2;
+
+        var drawRect = SKRect.Create(offsetX, offsetY, scaledWidth, scaledHeight);
+
+        canvas.DrawImage(diffMask, drawRect);
+    }
+}
