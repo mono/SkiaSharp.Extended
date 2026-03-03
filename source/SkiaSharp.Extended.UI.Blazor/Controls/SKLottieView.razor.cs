@@ -22,6 +22,7 @@ namespace SkiaSharp.Extended.UI.Blazor.Controls;
 public partial class SKLottieView : ComponentBase, IAsyncDisposable
 {
 	private readonly SKLottiePlayer _player = new();
+	private CancellationTokenSource? _loadCts;
 	private Animation? _loadedAnimation;
 	private bool _isLoading;
 	private string? _currentSource;
@@ -118,6 +119,12 @@ public partial class SKLottieView : ComponentBase, IAsyncDisposable
 
 	private async Task LoadAnimationAsync()
 	{
+		// Cancel any in-flight load before starting a new one
+		_loadCts?.Cancel();
+		_loadCts?.Dispose();
+		_loadCts = new CancellationTokenSource();
+		var ct = _loadCts.Token;
+
 		if (string.IsNullOrEmpty(Source))
 		{
 			_loadedAnimation?.Dispose();
@@ -132,13 +139,24 @@ public partial class SKLottieView : ComponentBase, IAsyncDisposable
 		Exception? exception = null;
 		try
 		{
-			var json = await Http.GetStringAsync(Source);
+			var json = await Http.GetStringAsync(Source, ct);
+
+			if (ct.IsCancellationRequested)
+				return;
+
 			_loadedAnimation?.Dispose();
 			_loadedAnimation = Animation.Parse(json);
 			_player.SetAnimation(_loadedAnimation);
 		}
+		catch (OperationCanceledException) when (ct.IsCancellationRequested)
+		{
+			return;
+		}
 		catch (Exception ex)
 		{
+			if (ct.IsCancellationRequested)
+				return;
+
 			exception = ex;
 			_loadedAnimation?.Dispose();
 			_loadedAnimation = null;
@@ -184,6 +202,9 @@ public partial class SKLottieView : ComponentBase, IAsyncDisposable
 	/// <inheritdoc />
 	public ValueTask DisposeAsync()
 	{
+		_loadCts?.Cancel();
+		_loadCts?.Dispose();
+		_player.SetAnimation(null);
 		_loadedAnimation?.Dispose();
 		_loadedAnimation = null;
 		return ValueTask.CompletedTask;
