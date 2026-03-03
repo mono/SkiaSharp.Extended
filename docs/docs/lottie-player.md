@@ -155,8 +155,8 @@ The caller owns the `Skottie.Animation` instance and is responsible for disposin
 
 ## Learn More
 
-- [MAUI Lottie Animations](lottie.md) — Use Lottie in .NET MAUI with `SKLottieView`
-- [Blazor Lottie Animations](blazor-lottie.md) — Use Lottie in Blazor WebAssembly
+- [MAUI Lottie Animations](lottie-maui.md) — Use Lottie in .NET MAUI with `SKLottieView`
+- [Blazor Lottie Animations](lottie-blazor.md) — Use Lottie in Blazor WebAssembly
 - [Lottie by Airbnb](https://airbnb.design/lottie/) — Official project page
 - [LottieFiles](https://lottiefiles.com/) — Free and premium animations
 - [API Reference](xref:SkiaSharp.Extended.SKLottiePlayer) — Full method documentation

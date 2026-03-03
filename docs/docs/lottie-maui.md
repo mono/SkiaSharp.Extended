@@ -4,7 +4,7 @@ Lottie brings designer-created animations to your .NET MAUI apps. Instead of man
 
 ![Lottie animation preview][lottie-preview]
 
-> **Other platforms:** This page covers .NET MAUI. For Blazor WebAssembly, see [Blazor Lottie Animations](blazor-lottie.md). For the shared playback engine, see [Lottie Player](lottie-player.md).
+> **Other platforms:** This page covers .NET MAUI. For Blazor WebAssembly, see [Blazor Lottie Animations](lottie-blazor.md). For the shared playback engine, see [Lottie Player](lottie-player.md).
 
 ## What is Lottie?
 
@@ -158,7 +158,7 @@ The `PART_DrawingSurface` name is required — it can be either `SKCanvasView` (
 ## Learn More
 
 - [Lottie Player](lottie-player.md) — The shared playback engine behind MAUI and Blazor views
-- [Blazor Lottie Animations](blazor-lottie.md) — Use Lottie in Blazor WebAssembly
+- [Blazor Lottie Animations](lottie-blazor.md) — Use Lottie in Blazor WebAssembly
 - [Lottie by Airbnb](https://airbnb.design/lottie/) — Official project page
 - [Lottie Documentation](https://airbnb.io/lottie/) — Format specification and guides
 - [LottieFiles](https://lottiefiles.com/) — Animation marketplace

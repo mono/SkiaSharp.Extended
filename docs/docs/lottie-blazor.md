@@ -226,7 +226,7 @@ For animations beyond Lottie, [`SKAnimatedCanvasView`](xref:SkiaSharp.Extended.U
 ## Learn More
 
 - [Lottie Player](lottie-player.md) — The shared playback engine behind both MAUI and Blazor views
-- [MAUI Lottie Animations](lottie.md) — Use Lottie in .NET MAUI apps
+- [MAUI Lottie Animations](lottie-maui.md) — Use Lottie in .NET MAUI apps
 - [Lottie by Airbnb](https://airbnb.design/lottie/) — Official project page
 - [LottieFiles](https://lottiefiles.com/) — Free and premium animations
 - [API Reference](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView) — Full method documentation
