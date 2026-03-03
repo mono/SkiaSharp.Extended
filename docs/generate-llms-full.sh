@@ -1,50 +1,35 @@
 #!/usr/bin/env bash
 #
-# Generates llms-full.txt by concatenating all documentation markdown files.
-# This file provides the full documentation content in a single file for LLM ingestion.
+# Generates llms.txt and llms-full.txt for the documentation site.
 #
-# Usage: ./generate-llms-full.sh [output_path]
-#   output_path: Path for the generated file (default: docs/llms-full.txt)
+# - llms.txt:      Curated index for LLM discovery (from docs/llms.md)
+# - llms-full.txt: Full documentation content in one file (header + all docs)
+#
+# Usage: ./generate-llms-full.sh
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ARTICLES_DIR="$SCRIPT_DIR/docs"
-OUTPUT="${1:-$SCRIPT_DIR/llms-full.txt}"
 
-# Ordered list of documentation files to include
-DOC_FILES=(
-    "$SCRIPT_DIR/index.md"
-    "$ARTICLES_DIR/blurhash.md"
-    "$ARTICLES_DIR/geometry.md"
-    "$ARTICLES_DIR/path-interpolation.md"
-    "$ARTICLES_DIR/lottie.md"
-    "$ARTICLES_DIR/confetti.md"
-    "$ARTICLES_DIR/svg-migration.md"
-)
+# Generate llms.txt from the source template
+cp "$SCRIPT_DIR/llms.md" "$SCRIPT_DIR/llms.txt"
+echo "Generated $SCRIPT_DIR/llms.txt"
 
+# Generate llms-full.txt by concatenating all documentation markdown files
 {
-    cat <<'HEADER'
-# SkiaSharp.Extended
+    cat "$SCRIPT_DIR/llms-full-header.md"
+    printf '\n\n'
 
-> SkiaSharp.Extended provides powerful graphics utilities and .NET MAUI controls for SkiaSharp projects—from blur hash placeholders to Lottie animations and confetti effects.
+    # Start with the main index page, then include all article pages
+    cat "$SCRIPT_DIR/index.md"
+    printf '\n\n---\n\n'
 
-This file contains the complete documentation for SkiaSharp.Extended in a single document, suitable for LLM context ingestion. For the curated index, see llms.txt.
-
-Source: https://github.com/mono/SkiaSharp.Extended
-Docs: https://mono.github.io/SkiaSharp.Extended/
-API Reference: https://mono.github.io/SkiaSharp.Extended/api/
-
----
-
-HEADER
-
-    for file in "${DOC_FILES[@]}"; do
+    for file in "$SCRIPT_DIR"/docs/*.md; do
         if [ -f "$file" ]; then
             cat "$file"
             printf '\n\n---\n\n'
         fi
     done
-} > "$OUTPUT"
+} > "$SCRIPT_DIR/llms-full.txt"
 
-echo "Generated $OUTPUT"
+echo "Generated $SCRIPT_DIR/llms-full.txt"
