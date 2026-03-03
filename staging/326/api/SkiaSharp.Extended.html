@@ -101,6 +101,18 @@ Classes
       <dd></dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDragGestureEventArgs.html">SKDragGestureEventArgs</a></dt>
+      <dd><p>Provides data for drag gesture lifecycle events (<a class="xref" href="SkiaSharp.Extended.SKGestureTracker.DragStarted.html">DragStarted</a>,
+<a class="xref" href="SkiaSharp.Extended.SKGestureTracker.DragUpdated.html">DragUpdated</a>, and <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.DragEnded.html">DragEnded</a>).</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.html">SKFlingGestureEventArgs</a></dt>
+      <dd><p>Provides data for fling gesture events, including the initial fling detection and
+per-frame animation updates.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKGeometry.html">SKGeometry</a></dt>
       <dd></dd>
     </dl>
@@ -109,8 +121,57 @@ Classes
       <dd></dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKGestureDetector.html">SKGestureDetector</a></dt>
+      <dd><p>A platform-agnostic gesture recognition engine that detects taps, long presses,
+pan, pinch, rotation, and fling gestures from touch input.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKGestureDetectorOptions.html">SKGestureDetectorOptions</a></dt>
+      <dd><p>Configuration options for the <a class="xref" href="SkiaSharp.Extended.SKGestureDetector.html">SKGestureDetector</a> gesture recognition engine.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKGestureLifecycleEventArgs.html">SKGestureLifecycleEventArgs</a></dt>
+      <dd><p>Provides data for gesture lifecycle events that indicate when a gesture interaction begins or ends.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a></dt>
+      <dd><p>A high-level gesture handler that tracks touch input and maintains an absolute transform
+(scale, rotation, and offset) by consuming events from an internal <a class="xref" href="SkiaSharp.Extended.SKGestureDetector.html">SKGestureDetector</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.html">SKGestureTrackerOptions</a></dt>
+      <dd><p>Configuration options for <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a>. Inherits gesture detection thresholds
+from <a class="xref" href="SkiaSharp.Extended.SKGestureDetectorOptions.html">SKGestureDetectorOptions</a> and adds tracker-specific settings for transform
+limits, animation, and feature toggles.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKHoverGestureEventArgs.html">SKHoverGestureEventArgs</a></dt>
+      <dd><p>Provides data for a hover (mouse move without contact) gesture event.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKLongPressGestureEventArgs.html">SKLongPressGestureEventArgs</a></dt>
+      <dd><p>Provides data for a long press gesture event.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKPanGestureEventArgs.html">SKPanGestureEventArgs</a></dt>
+      <dd><p>Provides data for a pan (single-finger drag) gesture event.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.html">SKPathInterpolation</a></dt>
       <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKPinchGestureEventArgs.html">SKPinchGestureEventArgs</a></dt>
+      <dd><p>Provides data for a pinch (scale) gesture event detected from two or more simultaneous touches.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.html">SKPixelComparer</a></dt>
@@ -119,6 +180,21 @@ Classes
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
       <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKRotateGestureEventArgs.html">SKRotateGestureEventArgs</a></dt>
+      <dd><p>Provides data for a rotation gesture event detected from two simultaneous touches.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.html">SKScrollGestureEventArgs</a></dt>
+      <dd><p>Provides data for a mouse scroll (wheel) gesture event.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKTapGestureEventArgs.html">SKTapGestureEventArgs</a></dt>
+      <dd><p>Provides data for tap gesture events, including single and multi-tap interactions.</p>
+</dd>
     </dl>
 
 
@@ -140,7 +216,7 @@ Classes
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 9352517
+          source: PR #326 · 1c10ec8
         </div>
       </div>
     </footer>
