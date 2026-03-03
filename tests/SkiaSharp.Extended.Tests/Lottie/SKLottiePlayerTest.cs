@@ -559,6 +559,59 @@ public class SKLottiePlayerTest
 	}
 
 	[Fact]
+	public void SwitchingFromReverseToRestart_StillResetsPhase()
+	{
+		// After the Reverse→Restart fix: Restart must reset isInForwardPhase so the animation
+		// moves in the natural direction for the current speed (toward 0 for negative speed).
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.AnimationSpeed = -1.0;
+		player.Repeat = SKLottieRepeat.Reverse();
+		player.SetAnimation(anim); // starts at Duration
+
+		// Get into backward phase (isInForwardPhase=false: animation moving toward Duration)
+		player.Update(TimeSpan.FromSeconds(10)); // flip at Zero → isInForwardPhase=false
+		player.Update(TimeSpan.FromSeconds(0.3)); // now at ~0.3, moving toward Duration
+
+		// Switch to Restart — should reset phase, so progress will move toward Zero (negative speed)
+		player.Repeat = SKLottieRepeat.Restart();
+
+		var progressAfterSwitch = player.Progress;
+		player.Update(TimeSpan.FromSeconds(0.1));
+
+		// With negative speed and Restart (isInForwardPhase reset to true):
+		// movingForward = (speed<0) ? !isInForwardPhase = false → progress decreases toward Zero.
+		Assert.True(player.Progress < progressAfterSwitch);
+	}
+
+	[Fact]
+	public void ChangingReverseCount_PreservesPlaybackDirection()
+	{
+		// Regression: changing Repeat from Reverse(∞) to Reverse(2) mid-playback while in the
+		// backward phase (isInForwardPhase=false, moving toward Duration with negative speed)
+		// must NOT reset isInForwardPhase — the animation should continue moving forward.
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.AnimationSpeed = -1.0;
+		player.Repeat = SKLottieRepeat.Reverse();
+		player.SetAnimation(anim); // starts at Duration
+
+		// Advance to flip: isInForwardPhase becomes false (moving toward Duration with -1 speed)
+		player.Update(TimeSpan.FromSeconds(10)); // flip at Zero
+		player.Update(TimeSpan.FromSeconds(0.2)); // at ~0.2, moving toward Duration
+
+		var progressBeforeSwitch = player.Progress;
+
+		// Switch repeat count — must preserve direction
+		player.Repeat = SKLottieRepeat.Reverse(2);
+
+		player.Update(TimeSpan.FromSeconds(0.1));
+
+		// Direction preserved: progress should have increased (still moving toward Duration)
+		Assert.True(player.Progress > progressBeforeSwitch);
+	}
+
+	[Fact]
 	public void ChangingRepeatMode_ResetsCompletionState()
 	{
 		using var anim = CreateAnimation();

@@ -40,8 +40,10 @@ public class SKLottiePlayer
 
 	/// <summary>Gets or sets how the animation repeats. Defaults to <see cref="SKLottieRepeat.Never"/>.</summary>
 	/// <remarks>
-	/// Changing this property resets the internal direction phase, repeat counter, and completion
-	/// state so the animation starts the new mode cleanly from its current position.
+	/// Changing this property resets the repeat counter and completion state.
+	/// The internal direction phase is only reset when switching away from <see cref="SKLottieRepeat.Reverse"/>
+	/// mode; switching between <see cref="SKLottieRepeat.Reverse"/> counts preserves the current direction
+	/// so the animation does not abruptly reverse mid-playback.
 	/// </remarks>
 	public SKLottieRepeat Repeat
 	{
@@ -51,7 +53,11 @@ public class SKLottiePlayer
 			if (repeat != value)
 			{
 				repeat = value;
-				isInForwardPhase = true;
+				// Only reset phase when leaving Reverse mode. Non-Reverse modes (Never, Restart)
+				// don't use isInForwardPhase for ping-pong, so a stale false value would cause
+				// the Reverse→Restart freeze bug. Within Reverse, preserve the current direction.
+				if (!value.IsReverseRepeating)
+					isInForwardPhase = true;
 				repeatsCompleted = 0;
 				IsComplete = false;
 			}
