@@ -4,11 +4,21 @@ using System.Linq;
 
 namespace SkiaSharp.Extended
 {
+	/// <summary>
+	/// Interpolates between two <see cref="SKPath"/> objects by converting them to normalized point arrays and morphing between them.
+	/// </summary>
 	public class SKPathInterpolation
 	{
 		private List<SKPoint>? pointsFrom;
 		private List<SKPoint>? pointsTo;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="SKPathInterpolation"/> with the specified source and target paths.
+		/// </summary>
+		/// <param name="from">The starting path.</param>
+		/// <param name="to">The ending path.</param>
+		/// <param name="maxSegmentLength">The maximum length of a path segment used when normalizing curves. Smaller values produce smoother interpolation.</param>
+		/// <exception cref="ArgumentNullException"><paramref name="from"/> or <paramref name="to"/> is <c>null</c>.</exception>
 		public SKPathInterpolation(SKPath from, SKPath to, float maxSegmentLength = 5f)
 		{
 			if (from == null)
@@ -21,12 +31,26 @@ namespace SkiaSharp.Extended
 			MaxSegmentLength = maxSegmentLength;
 		}
 
+		/// <summary>
+		/// Gets the starting path.
+		/// </summary>
 		public SKPath From { get; private set; }
 
+		/// <summary>
+		/// Gets the ending path.
+		/// </summary>
 		public SKPath To { get; private set; }
 
+		/// <summary>
+		/// Gets the maximum segment length used when normalizing curves.
+		/// </summary>
 		public float MaxSegmentLength { get; private set; }
 
+		/// <summary>
+		/// Preprocesses the source and target paths by normalizing them into point arrays with matching point counts.
+		/// This is called automatically by <see cref="Interpolate(float)"/> if not called explicitly.
+		/// </summary>
+		/// <exception cref="ArgumentException">The paths cannot be normalized (e.g., they have fewer than 3 points).</exception>
 		public void Prepare()
 		{
 			pointsFrom = NormalizePath(From, MaxSegmentLength);
@@ -38,6 +62,12 @@ namespace SkiaSharp.Extended
 			InterpolatePath(pointsFrom, pointsTo);
 		}
 
+		/// <summary>
+		/// Returns an interpolated path at the specified position between the source and target paths.
+		/// Calls <see cref="Prepare"/> automatically if it has not been called.
+		/// </summary>
+		/// <param name="t">The interpolation position, where 0 returns the source path and 1 returns the target path.</param>
+		/// <returns>A new <see cref="SKPath"/> representing the interpolated shape.</returns>
 		public SKPath Interpolate(float t)
 		{
 			if (pointsFrom == null || pointsTo == null)
