@@ -1792,5 +1792,66 @@ public class SKGestureDetectorTests
 		}
 	}
 
+	[Fact]
+	public void TapCount_ResetsAfterFailedTap_DueToMovement()
+	{
+		// Regression: _tapCount was incremented on touch-down but not reset when the
+		// tap failed because the finger moved beyond TouchSlop. A subsequent valid tap
+		// could incorrectly inherit the stale count and fire as a double-tap.
+		var engine = CreateEngine();
+		engine.Options.TouchSlop = 8f;
+
+		var singleTapCount = 0;
+		var doubleTapCount = 0;
+		engine.TapDetected += (s, e) => { if (e.TapCount == 1) singleTapCount++; };
+		engine.DoubleTapDetected += (s, e) => doubleTapCount++;
+
+		// Touch down, then slide beyond slop (failed tap)
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchMove(1, new SKPoint(120, 100)); // 20px > 8px slop
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(120, 100));
+
+		AdvanceTime(100);
+
+		// A clean single tap now — should be count=1, NOT double-tap
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		Assert.Equal(1, singleTapCount);
+		Assert.Equal(0, doubleTapCount);
+	}
+
+	[Fact]
+	public void TapCount_ResetsAfterFailedTap_DueToLongHold()
+	{
+		// Regression: _tapCount was not reset when the finger was held too long
+		// (exceeding tap timeout), which could cause a subsequent valid tap to be
+		// counted as a double-tap.
+		var engine = CreateEngine();
+
+		var singleTapCount = 0;
+		var doubleTapCount = 0;
+		engine.TapDetected += (s, e) => { if (e.TapCount == 1) singleTapCount++; };
+		engine.DoubleTapDetected += (s, e) => doubleTapCount++;
+
+		// Touch down and hold beyond the tap timeout
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(600); // Far beyond any tap timeout
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		AdvanceTime(100);
+
+		// A clean single tap — should be count=1, NOT double-tap
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		Assert.Equal(1, singleTapCount);
+		Assert.Equal(0, doubleTapCount);
+	}
+
 	#endregion
 }

@@ -21,6 +21,7 @@ public class SKGestureTrackerOptions : SKGestureDetectorOptions
 	private float _flingFriction = 0.08f;
 	private float _flingMinVelocity = 5f;
 	private int _flingFrameInterval = 16;
+	private int _zoomAnimationInterval = 16;
 
 	/// <summary>
 	/// Gets or sets the minimum allowed zoom scale.
@@ -164,6 +165,25 @@ public class SKGestureTrackerOptions : SKGestureDetectorOptions
 			if (value <= 0)
 				throw new ArgumentOutOfRangeException(nameof(value), value, "FlingFrameInterval must be positive.");
 			_flingFrameInterval = value;
+		}
+	}
+
+	/// <summary>
+	/// Gets or sets the zoom animation frame interval, in milliseconds.
+	/// </summary>
+	/// <value>
+	/// The timer interval between zoom animation frames in milliseconds.
+	/// The default is <c>16</c> (approximately 60 FPS). Must be positive.
+	/// </value>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero or negative.</exception>
+	public int ZoomAnimationInterval
+	{
+		get => _zoomAnimationInterval;
+		set
+		{
+			if (value <= 0)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "ZoomAnimationInterval must be positive.");
+			_zoomAnimationInterval = value;
 		}
 	}
 

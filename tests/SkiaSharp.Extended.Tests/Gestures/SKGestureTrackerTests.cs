@@ -355,7 +355,8 @@ public class SKGestureTrackerTests
 	[Fact]
 	public async Task Fling_EventuallyCompletes()
 	{
-		var tracker = CreateTracker();
+		// Use real TimeProvider so fling frame timing advances with wall-clock time
+		var tracker = new SKGestureTracker();
 		tracker.Options.FlingFrameInterval = 16;
 		tracker.Options.FlingFriction = 0.5f;
 		tracker.Options.FlingMinVelocity = 100f;
@@ -1035,6 +1036,61 @@ public class SKGestureTrackerTests
 	}
 
 	[Fact]
+	public void SetScale_WithPivot_NonZeroInitialOffset_PivotRemainsFixed()
+	{
+		// Regression: AdjustOffsetForPivot previously ignored _offset when converting
+		// pivot to content space, causing the pivot point to jump when content was panned.
+		var tracker = CreateTracker();
+		tracker.SetTransform(scale: 1f, rotation: 0f, offset: new SKPoint(50, 30));
+
+		// Choose a content-space point and find its current screen position (the pivot)
+		var contentPoint = new SKPoint(100, 100);
+		var screenPivot = tracker.Matrix.MapPoint(contentPoint);
+
+		tracker.SetScale(2f, screenPivot);
+
+		// The content point should still map to the same screen position
+		var after = tracker.Matrix.MapPoint(contentPoint);
+		Assert.Equal(screenPivot.X, after.X, 1);
+		Assert.Equal(screenPivot.Y, after.Y, 1);
+	}
+
+	[Fact]
+	public void SetRotation_WithPivot_NonZeroInitialOffset_PivotRemainsFixed()
+	{
+		// Regression: AdjustOffsetForPivot previously ignored _offset when converting
+		// pivot to content space, causing the pivot point to drift during rotation.
+		var tracker = CreateTracker();
+		tracker.SetTransform(scale: 1f, rotation: 0f, offset: new SKPoint(50, 30));
+
+		var contentPoint = new SKPoint(100, 100);
+		var screenPivot = tracker.Matrix.MapPoint(contentPoint);
+
+		tracker.SetRotation(45f, screenPivot);
+
+		var after = tracker.Matrix.MapPoint(contentPoint);
+		Assert.Equal(screenPivot.X, after.X, 1);
+		Assert.Equal(screenPivot.Y, after.Y, 1);
+	}
+
+	[Fact]
+	public void SetScale_WithPivot_NonZeroScaleAndRotation_PivotRemainsFixed()
+	{
+		// Verify pivot correctness when both scale and rotation are non-trivial.
+		var tracker = CreateTracker();
+		tracker.SetTransform(scale: 1.5f, rotation: 30f, offset: new SKPoint(20, -10));
+
+		var contentPoint = new SKPoint(80, 60);
+		var screenPivot = tracker.Matrix.MapPoint(contentPoint);
+
+		tracker.SetScale(3f, screenPivot);
+
+		var after = tracker.Matrix.MapPoint(contentPoint);
+		Assert.Equal(screenPivot.X, after.X, 1);
+		Assert.Equal(screenPivot.Y, after.Y, 1);
+	}
+
+	[Fact]
 	public void SetScale_WithoutPivot_ScalesFromOrigin()
 	{
 		var tracker = CreateTracker();
@@ -1167,6 +1223,30 @@ public class SKGestureTrackerTests
 	{
 		var options = new SKGestureTrackerOptions();
 		Assert.Throws<ArgumentOutOfRangeException>(() => options.FlingFrameInterval = value);
+	}
+
+	[Theory]
+	[InlineData(0)]
+	[InlineData(-1)]
+	public void Options_ZoomAnimationInterval_ZeroOrNegative_Throws(int value)
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.ZoomAnimationInterval = value);
+	}
+
+	[Fact]
+	public void Options_ZoomAnimationInterval_DefaultIs16()
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Equal(16, options.ZoomAnimationInterval);
+	}
+
+	[Fact]
+	public void Options_ZoomAnimationInterval_AcceptsPositiveValue()
+	{
+		var options = new SKGestureTrackerOptions();
+		options.ZoomAnimationInterval = 33;
+		Assert.Equal(33, options.ZoomAnimationInterval);
 	}
 
 	[Fact]

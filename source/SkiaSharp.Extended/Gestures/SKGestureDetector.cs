@@ -278,6 +278,9 @@ public sealed class SKGestureDetector : IDisposable
 		{
 			StopLongPressTimer();
 			_gestureState = GestureState.Panning;
+			// Invalidate double-tap counter — this touch became a pan, not a tap
+			_tapCount = 0;
+			_lastTapTicks = 0;
 		}
 
 		switch (_gestureState)
@@ -375,6 +378,13 @@ public sealed class SKGestureDetector : IDisposable
 					OnTapDetected(new SKTapGestureEventArgs(location, 1));
 				}
 				handled = true;
+			}
+			else
+			{
+				// Touch ended but failed tap validation (moved too far or held too long).
+				// Reset the counter so the next touch-down is not misidentified as a double-tap.
+				_tapCount = 0;
+				_lastTapTicks = 0;
 			}
 		}
 
