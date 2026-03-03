@@ -12,6 +12,7 @@ SkiaSharp.Extended consists of two main libraries:
 - [Blur Hash](https://mono.github.io/SkiaSharp.Extended/docs/blurhash.html): Compact image placeholder encoding and decoding using the BlurHash algorithm
 - [Geometry Helpers](https://mono.github.io/SkiaSharp.Extended/docs/geometry.html): Create regular polygons, stars, and other shapes as SKPath objects
 - [Path Interpolation](https://mono.github.io/SkiaSharp.Extended/docs/path-interpolation.html): Smoothly morph between two SKPath objects for animated shape transitions
+- [Pixel Comparer](https://mono.github.io/SkiaSharp.Extended/docs/pixel-comparer.html): Compare images pixel by pixel, quantify differences, and generate visual difference masks for regression testing
 - [Lottie Animations](https://mono.github.io/SkiaSharp.Extended/docs/lottie.html): Play After Effects animations exported as Lottie JSON in .NET MAUI apps
 - [Confetti Effects](https://mono.github.io/SkiaSharp.Extended/docs/confetti.html): Customizable particle explosions with shapes, colors, and physics
 - [SVG Migration Guide](https://mono.github.io/SkiaSharp.Extended/docs/svg-migration.html): Migrate from deprecated SkiaSharp.Extended.Svg to Svg.Skia
