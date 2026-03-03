@@ -99,9 +99,9 @@ The tracker is coordinate-space-agnostic — it operates on whatever numbers you
 | **Pan** | Single finger drag | `Delta`, `Velocity` |
 | **Pinch** | Two finger spread/pinch | `ScaleDelta`, `FocalPoint` |
 | **Rotate** | Two finger rotation | `RotationDelta`, `FocalPoint` |
-| **Fling** | Fast pan with momentum | `VelocityX`, `VelocityY` |
-| **Drag** | App-level object dragging | `StartLocation`, `Delta` |
-| **Scroll** | Mouse wheel | `DeltaX`, `DeltaY` |
+| **Fling** | Fast pan with momentum | `Velocity` |
+| **Drag** | App-level object dragging | `Location`, `Delta` |
+| **Scroll** | Mouse wheel | `Delta` |
 | **Hover** | Mouse move (no buttons) | `Location` |
 
 For detailed code examples and event handler patterns for each gesture, see [Gesture Events](gesture-events.md).

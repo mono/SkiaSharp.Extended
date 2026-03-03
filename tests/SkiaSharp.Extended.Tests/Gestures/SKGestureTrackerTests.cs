@@ -236,14 +236,14 @@ public class SKGestureTrackerTests
 	{
 		var tracker = CreateTracker();
 		SKPoint? startLocation = null;
-		tracker.DragStarted += (s, e) => startLocation = e.StartLocation;
+		tracker.DragStarted += (s, e) => startLocation = e.Location;
 
 		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
 		AdvanceTime(10);
 		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
 
 		Assert.NotNull(startLocation);
-		Assert.Equal(100, startLocation.Value.X, 1);
+		Assert.Equal(120, startLocation.Value.X, 1);
 		Assert.Equal(100, startLocation.Value.Y, 1);
 	}
 
@@ -1304,8 +1304,8 @@ public class SKGestureTrackerTests
 		tracker.ProcessTouchMove(1, new SKPoint(120, 100));
 
 		Assert.NotNull(captured);
-		Assert.Equal(100, captured.PreviousLocation.X, 1);
-		Assert.Equal(100, captured.PreviousLocation.Y, 1);
+		Assert.Equal(100, captured.PrevLocation.X, 1);
+		Assert.Equal(100, captured.PrevLocation.Y, 1);
 	}
 
 	[Fact]
@@ -1338,7 +1338,7 @@ public class SKGestureTrackerTests
 		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
 
 		Assert.NotNull(captured);
-		var expectedSpeed = (float)Math.Sqrt(captured.VelocityX * captured.VelocityX + captured.VelocityY * captured.VelocityY);
+		var expectedSpeed = (float)Math.Sqrt(captured.Velocity.X * captured.Velocity.X + captured.Velocity.Y * captured.Velocity.Y);
 		Assert.Equal(expectedSpeed, captured.Speed, 1);
 		tracker.Dispose();
 	}
@@ -1532,10 +1532,10 @@ public class SKGestureTrackerTests
 		tracker.ProcessTouchUp(1, endPoint);
 
 		Assert.NotNull(dragEndedArgs);
-		// CurrentLocation must reflect the final touch position, not the start
-		Assert.NotEqual(dragEndedArgs!.StartLocation, dragEndedArgs.CurrentLocation);
-		Assert.Equal(endPoint.X, dragEndedArgs.CurrentLocation.X, 1f);
-		Assert.Equal(endPoint.Y, dragEndedArgs.CurrentLocation.Y, 1f);
+		// Location must reflect the final touch position, not the previous
+		Assert.NotEqual(dragEndedArgs!.PrevLocation, dragEndedArgs.Location);
+		Assert.Equal(endPoint.X, dragEndedArgs.Location.X, 1f);
+		Assert.Equal(endPoint.Y, dragEndedArgs.Location.Y, 1f);
 	}
 
 	[Fact]

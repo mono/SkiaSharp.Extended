@@ -36,7 +36,7 @@ Single finger drag. The tracker automatically updates its internal offset.
 tracker.PanDetected += (s, e) =>
 {
     // e.Location — current position
-    // e.PreviousLocation — previous position
+    // e.PrevLocation — previous position
     // e.Delta — movement since last event
     // e.Velocity — current velocity in pixels/second
 };
@@ -74,7 +74,7 @@ Momentum-based animation after a fast pan. The tracker runs a fling animation th
 ```csharp
 tracker.FlingDetected += (s, e) =>
 {
-    // Fling started — e.VelocityX, e.VelocityY in px/s
+    // Fling started — e.Velocity.X, e.Velocity.Y in px/s
 };
 
 tracker.FlingUpdated += (s, e) =>
@@ -95,7 +95,7 @@ The tracker provides a drag lifecycle derived from pan events. Use this to move 
 ```csharp
 tracker.DragStarted += (s, e) =>
 {
-    if (HitTest(e.StartLocation) is { } item)
+    if (HitTest(e.Location) is { } item)
     {
         selectedItem = item;
         e.Handled = true; // Prevents pan from updating the transform
@@ -130,7 +130,7 @@ Mouse wheel zoom. Call `ProcessMouseWheel` to feed wheel events.
 tracker.ScrollDetected += (s, e) =>
 {
     // e.Location — mouse position
-    // e.DeltaX, e.DeltaY — scroll amounts
+    // e.Delta.X, e.Delta.Y — scroll amounts
 };
 ```
 

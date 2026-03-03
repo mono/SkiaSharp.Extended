@@ -374,7 +374,7 @@ public class SKGestureDetectorTests
 	{
 		var engine = CreateEngine();
 		float? velocityX = null;
-		engine.FlingDetected += (s, e) => velocityX = e.VelocityX;
+		engine.FlingDetected += (s, e) => velocityX = e.Velocity.X;
 
 		// Start and immediately make fast movements
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
@@ -495,8 +495,8 @@ public class SKGestureDetectorTests
 		Assert.NotNull(args);
 		Assert.Equal(150, args.Location.X);
 		Assert.Equal(250, args.Location.Y);
-		Assert.Equal(0, args.DeltaX);
-		Assert.Equal(-3f, args.DeltaY);
+		Assert.Equal(0, args.Delta.X);
+		Assert.Equal(-3f, args.Delta.Y);
 	}
 
 	[Fact]
@@ -788,7 +788,7 @@ public class SKGestureDetectorTests
 	{
 		var engine = CreateEngine();
 		float? velocityX = null;
-		engine.FlingDetected += (s, e) => velocityX = e.VelocityX;
+		engine.FlingDetected += (s, e) => velocityX = e.Velocity.X;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 		AdvanceTime(10);
@@ -1056,7 +1056,7 @@ public class SKGestureDetectorTests
 	{
 		var engine = CreateEngine();
 		float? velocityX = null, velocityY = null;
-		engine.FlingDetected += (s, e) => { velocityX = e.VelocityX; velocityY = e.VelocityY; };
+		engine.FlingDetected += (s, e) => { velocityX = e.Velocity.X; velocityY = e.Velocity.Y; };
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 		AdvanceTime(10);
@@ -1079,7 +1079,7 @@ public class SKGestureDetectorTests
 	{
 		var engine = CreateEngine();
 		float? velocityX = null, velocityY = null;
-		engine.FlingDetected += (s, e) => { velocityX = e.VelocityX; velocityY = e.VelocityY; };
+		engine.FlingDetected += (s, e) => { velocityX = e.Velocity.X; velocityY = e.Velocity.Y; };
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 		AdvanceTime(10);
@@ -1599,8 +1599,8 @@ public class SKGestureDetectorTests
 		engine.ProcessTouchMove(1, new SKPoint(120, 100));
 
 		Assert.NotNull(captured);
-		Assert.Equal(100, captured.PreviousLocation.X, 1);
-		Assert.Equal(100, captured.PreviousLocation.Y, 1);
+		Assert.Equal(100, captured.PrevLocation.X, 1);
+		Assert.Equal(100, captured.PrevLocation.Y, 1);
 	}
 
 	[Fact]
@@ -1640,9 +1640,9 @@ public class SKGestureDetectorTests
 		engine.ProcessTouchUp(1, new SKPoint(500, 200));
 
 		Assert.NotNull(captured);
-		Assert.True(captured.VelocityX > 0, $"VelocityX should be positive for rightward fling, was {captured.VelocityX}");
+		Assert.True(captured.Velocity.X > 0, $"VelocityX should be positive for rightward fling, was {captured.Velocity.X}");
 		Assert.True(captured.Speed > 0, $"Speed should be positive, was {captured.Speed}");
-		Assert.Equal((float)Math.Sqrt(captured.VelocityX * captured.VelocityX + captured.VelocityY * captured.VelocityY), captured.Speed, 1);
+		Assert.Equal((float)Math.Sqrt(captured.Velocity.X * captured.Velocity.X + captured.Velocity.Y * captured.Velocity.Y), captured.Speed, 1);
 	}
 
 	#endregion

@@ -99,7 +99,7 @@ public class SKGestureTrackerOptions : SKGestureDetectorOptions
 	/// Gets or sets the scale sensitivity for mouse scroll-wheel zoom.
 	/// </summary>
 	/// <value>
-	/// A multiplier applied to each scroll tick's <see cref="SKScrollGestureEventArgs.DeltaY"/>
+	/// A multiplier applied to each scroll tick's <see cref="SKScrollGestureEventArgs.Delta"/>.Y
 	/// to compute the scale change. The default is <c>0.1</c>. Must be positive.
 	/// </value>
 	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero or negative.</exception>
