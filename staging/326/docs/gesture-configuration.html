@@ -169,9 +169,9 @@ tracker.SetRotation(45f, pivot: new SKPoint(400, 300));  // Rotate around a spec
 tracker.SetOffset(SKPoint.Empty);
 </code></pre>
 <h3 id="animated-zoom">Animated Zoom</h3>
-<p>Use <code>ZoomTo</code> to animate to a target scale level with a smooth ease-out curve:</p>
-<pre><code class="lang-csharp">// Zoom to 3x at the center of the view
-tracker.ZoomTo(targetScale: 3f, pivot: new SKPoint(400, 300));
+<p>Use <code>ZoomTo</code> to animate a zoom by a given factor with a smooth ease-out curve:</p>
+<pre><code class="lang-csharp">// Zoom in by 3x at the center of the view
+tracker.ZoomTo(factor: 3f, focalPoint: new SKPoint(400, 300));
 
 // Check animation state
 bool animating = tracker.IsZoomAnimating;
@@ -204,7 +204,7 @@ bool animating = tracker.IsZoomAnimating;
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 911cb19
+          source: PR #326 · e217fa0
         </div>
       </div>
     </footer>
