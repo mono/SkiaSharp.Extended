@@ -37,7 +37,6 @@ public class SKGestureTrackerDragTests
 		tracker.ProcessTouchUp(1, end);
 	}
 
-	#region Drag Lifecycle Tests
 
 	[Fact]
 	public void FirstPan_FiresDragStarted()
@@ -125,9 +124,7 @@ public class SKGestureTrackerDragTests
 		Assert.True(events.Count >= 3);
 	}
 
-	#endregion
 
-	#region Drag-Handled Suppresses Fling
 
 	[Fact]
 	public async Task DragHandled_SuppressesFlingAnimation()
@@ -146,6 +143,5 @@ public class SKGestureTrackerDragTests
 		Assert.Equal(offsetAfterSwipe, tracker.Offset);
 	}
 
-	#endregion
 
 }

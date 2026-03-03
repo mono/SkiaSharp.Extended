@@ -24,7 +24,6 @@ public class SKGestureDetectorTapTests
 		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
 	}
 
-	#region Tap Detection Tests
 
 	[Fact]
 	public void QuickTouchAndRelease_RaisesTapDetected()
@@ -70,9 +69,7 @@ public class SKGestureDetectorTapTests
 		Assert.Equal(1, tapCount);
 	}
 
-	#endregion
 
-	#region Double Tap Detection Tests
 
 	[Fact]
 	public void TwoQuickTaps_RaisesDoubleTapDetected()
@@ -115,9 +112,7 @@ public class SKGestureDetectorTapTests
 		Assert.Equal(2, tapCount);
 	}
 
-	#endregion
 
-	#region Long Press Tests
 
 	[Fact]
 	public async Task LongTouch_RaisesLongPressDetected()
@@ -170,9 +165,7 @@ public class SKGestureDetectorTapTests
 		engine.Dispose();
 	}
 
-	#endregion
 
-	#region Tap Duration Tests
 
 	[Fact]
 	public void MouseClick_BeyondShortClickDuration_DoesNotFireTap()
@@ -207,6 +200,5 @@ public class SKGestureDetectorTapTests
 		Assert.False(tapRaised, "Touch held too long should not fire tap");
 	}
 
-	#endregion
 
 }

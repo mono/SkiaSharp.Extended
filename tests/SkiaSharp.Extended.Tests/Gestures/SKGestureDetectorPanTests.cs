@@ -23,7 +23,6 @@ public class SKGestureDetectorPanTests
 		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
 	}
 
-	#region Pan Detection Tests
 
 	[Fact]
 	public void MoveBeyondTouchSlop_RaisesPanDetected()
@@ -71,6 +70,5 @@ public class SKGestureDetectorPanTests
 		Assert.False(panRaised);
 	}
 
-	#endregion
 
 }

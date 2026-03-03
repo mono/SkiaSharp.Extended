@@ -50,7 +50,6 @@ public class SKGestureTrackerTests
 		tracker.ProcessTouchUp(1, location);
 	}
 
-	#region Pan → Offset Tests
 
 	[Fact]
 	public void Pan_UpdatesOffset()
@@ -95,9 +94,7 @@ public class SKGestureTrackerTests
 		Assert.True(offset2.X > offset1.X, "Offset should accumulate with continued panning");
 	}
 
-	#endregion
 
-	#region Pinch → Scale Tests
 
 	[Fact]
 	public void Pinch_UpdatesScale()
@@ -147,9 +144,7 @@ public class SKGestureTrackerTests
 		Assert.True(tracker.Scale <= 3f, "Scale should not exceed MaxScale");
 	}
 
-	#endregion
 
-	#region Rotate → Rotation Tests
 
 	[Fact]
 	public void Rotate_UpdatesRotation()
@@ -181,9 +176,7 @@ public class SKGestureTrackerTests
 		Assert.True(changeCount > 0);
 	}
 
-	#endregion
 
-	#region Feature Toggle Tests
 
 	[Fact]
 	public void IsPanEnabled_False_DoesNotUpdateOffset()
@@ -262,9 +255,7 @@ public class SKGestureTrackerTests
 		Assert.Equal(1f, tracker.Scale);
 	}
 
-	#endregion
 
-	#region Reset Tests
 
 	[Fact]
 	public void Reset_RestoresDefaultTransform()
@@ -322,9 +313,7 @@ public class SKGestureTrackerTests
 		Assert.True(transformChanged);
 	}
 
-	#endregion
 
-	#region Config Forwarding Tests
 
 	[Fact]
 	public void TouchSlop_ForwardedToEngine()
@@ -395,9 +384,7 @@ public class SKGestureTrackerTests
 		Assert.Equal(200, tracker.Options.LongPressDuration);
 	}
 
-	#endregion
 
-	#region Dispose Tests
 
 	[Fact]
 	public void Dispose_StopsFlingAnimation()
@@ -425,9 +412,7 @@ public class SKGestureTrackerTests
 		Assert.False(tracker.IsZoomAnimating);
 	}
 
-	#endregion
 
-	#region Event Forwarding Tests
 
 	[Fact]
 	public void TapDetected_ForwardedFromEngine()
@@ -497,9 +482,7 @@ public class SKGestureTrackerTests
 		Assert.True(gestureEnded);
 	}
 
-	#endregion
 
-	#region Feature Toggle Tests
 
 	[Fact]
 	public void IsTapEnabled_False_SuppressesTap()
@@ -589,9 +572,7 @@ public class SKGestureTrackerTests
 		Assert.True(hoverFired);
 	}
 
-	#endregion
 
-	#region Pan Velocity Tests
 
 	[Fact]
 	public void PanDetected_HasVelocity()
@@ -609,9 +590,7 @@ public class SKGestureTrackerTests
 		Assert.NotNull(velocity);
 	}
 
-	#endregion
 
-	#region Options Pattern Tests
 
 	[Fact]
 	public void ConstructorWithOptions_AppliesValues()
@@ -651,9 +630,7 @@ public class SKGestureTrackerTests
 		Assert.Equal(40f, tracker.Options.DoubleTapSlop);
 	}
 
-	#endregion
 
-	#region SKGestureTrackerOptions Validation Tests
 
 	[Fact]
 	public void Options_MinScale_ZeroOrNegative_Throws()
@@ -756,9 +733,7 @@ public class SKGestureTrackerTests
 		Assert.Throws<ArgumentNullException>(() => new SKGestureTracker(null!));
 	}
 
-	#endregion
 
-	#region Strengthened Pinch Scale Assertions
 
 	[Fact]
 	public void Pinch_ScaleDelta_MatchesExpectedRatio()
@@ -790,9 +765,7 @@ public class SKGestureTrackerTests
 		Assert.Equal(0.5f, tracker.Scale, 2);
 	}
 
-	#endregion
 
-	#region EventArgs Verification Tests
 
 	[Fact]
 	public void PanEventArgs_PreviousLocation_IsCorrect()
@@ -845,9 +818,7 @@ public class SKGestureTrackerTests
 		tracker.Dispose();
 	}
 
-	#endregion
 
-	#region Double Dispose Safety
 
 	[Fact]
 	public void Dispose_CalledTwice_DoesNotThrow()
@@ -857,9 +828,7 @@ public class SKGestureTrackerTests
 		tracker.Dispose(); // should not throw
 	}
 
-	#endregion
 
-	#region Bug Fix Tests
 
 	[Theory]
 	[InlineData(0f)]
@@ -932,9 +901,7 @@ public class SKGestureTrackerTests
 		Assert.True(panDetected, "Pan should be detected after one finger cancelled during pinch");
 	}
 
-	#endregion
 
-	#region Bug Regression Tests
 
 	[Fact]
 	public void DragEnded_ReportsActualEndLocation_NotStartLocation()
@@ -987,5 +954,4 @@ public class SKGestureTrackerTests
 		Assert.Equal(0, flingCompletedCount);
 	}
 
-	#endregion
 }

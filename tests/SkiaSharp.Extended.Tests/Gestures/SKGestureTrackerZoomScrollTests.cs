@@ -35,7 +35,6 @@ public class SKGestureTrackerZoomScrollTests
 		tracker.ProcessTouchUp(1, location);
 	}
 
-	#region Zoom Animation (Double-Tap) Tests
 
 	[Fact]
 	public void DoubleTap_StartsZoomAnimation()
@@ -105,9 +104,7 @@ public class SKGestureTrackerZoomScrollTests
 		tracker.Dispose();
 	}
 
-	#endregion
 
-	#region Scroll Zoom Tests
 
 	[Fact]
 	public void ScrollUp_IncreasesScale()
@@ -159,6 +156,5 @@ public class SKGestureTrackerZoomScrollTests
 		Assert.True(tracker.Scale <= 3f, "Scale should not exceed MaxScale");
 	}
 
-	#endregion
 
 }

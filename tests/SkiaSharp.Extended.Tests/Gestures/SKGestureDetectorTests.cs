@@ -27,7 +27,6 @@ public class SKGestureDetectorTests
 		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
 	}
 
-	#region Basic Touch Tests
 
 	[Fact]
 	public void ProcessTouchDown_WhenEnabled_ReturnsTrue()
@@ -70,9 +69,7 @@ public class SKGestureDetectorTests
 		Assert.False(result);
 	}
 
-	#endregion
 
-	#region Gesture State Tests
 
 	[Fact]
 	public void TouchDown_RaisesGestureStarted()
@@ -126,8 +123,6 @@ public class SKGestureDetectorTests
 		Assert.False(engine.IsGestureActive);
 	}
 
-	#endregion
-	#region Reset Tests
 
 	[Fact]
 	public void Reset_ClearsState()
@@ -140,9 +135,7 @@ public class SKGestureDetectorTests
 		Assert.False(engine.IsGestureActive);
 	}
 
-	#endregion
 
-	#region Configuration Tests
 
 	[Fact]
 	public void TouchSlop_CanBeCustomized()
@@ -176,9 +169,7 @@ public class SKGestureDetectorTests
 		Assert.False(flingRaised);
 	}
 
-	#endregion
 
-	#region Cancel Tests
 
 	[Fact]
 	public void ProcessTouchCancel_ResetsGestureState()
@@ -265,9 +256,7 @@ public class SKGestureDetectorTests
 		Assert.True(engine.IsGestureActive, "Gesture should remain active after one finger cancelled during pinch");
 	}
 
-	#endregion
 
-	#region Bug Fix Tests
 
 	[Fact]
 	public void DoubleTap_FarApart_DoesNotTriggerDoubleTap()
@@ -355,9 +344,7 @@ public class SKGestureDetectorTests
 		Assert.True(velocityX.Value > 200, $"VelocityX should be > 200, was {velocityX.Value}");
 	}
 
-	#endregion
 
-	#region Cancel Edge Case Tests
 
 	[Fact]
 	public void CancelDuringPinch_ResetsState()
@@ -373,9 +360,7 @@ public class SKGestureDetectorTests
 		Assert.False(engine.IsGestureActive);
 	}
 
-	#endregion
 
-	#region Sequential Gesture Tests
 
 	[Fact]
 	public void MultipleSequentialTaps_EachFiresSeparately()
@@ -446,9 +431,7 @@ public class SKGestureDetectorTests
 		Assert.True(tapRaised);
 	}
 
-	#endregion
 
-	#region Dispose/Reset Edge Cases
 
 	[Fact]
 	public void Dispose_DuringGesture_StopsProcessing()
@@ -502,9 +485,7 @@ public class SKGestureDetectorTests
 		Assert.False(engine.ProcessTouchUp(1, new SKPoint(110, 110)));
 	}
 
-	#endregion
 
-	#region Zero/Edge Value Tests
 
 	[Fact]
 	public void TouchMove_ToSameLocation_ZeroDelta()
@@ -559,9 +540,7 @@ public class SKGestureDetectorTests
 		Assert.False(engine.IsGestureActive);
 	}
 
-	#endregion
 
-	#region Review Fix Tests
 
 	[Fact]
 	public void DoubleTapSlop_FarApartTaps_DoNotTriggerDoubleTap()
@@ -743,9 +722,7 @@ public class SKGestureDetectorTests
 		Assert.Equal(0, tapCount);
 	}
 
-	#endregion
 
-	#region Options Validation Tests
 
 	[Fact]
 	public void Options_TouchSlop_Negative_Throws()
@@ -801,9 +778,7 @@ public class SKGestureDetectorTests
 		Assert.Equal(1000, engine.Options.LongPressDuration);
 	}
 
-	#endregion
 
-	#region GestureStarted Bug Fix Verification
 
 	[Fact]
 	public void GestureStarted_OnlyFiresOnce_WhenMultipleFingersTouch()
@@ -819,9 +794,7 @@ public class SKGestureDetectorTests
 		Assert.Equal(1, count);
 	}
 
-	#endregion
 
-	#region EventArgs Verification Tests
 
 	[Fact]
 	public void PanEventArgs_PreviousLocation_IsSetCorrectly()
@@ -881,9 +854,7 @@ public class SKGestureDetectorTests
 		Assert.Equal((float)Math.Sqrt(captured.Velocity.X * captured.Velocity.X + captured.Velocity.Y * captured.Velocity.Y), captured.Speed, 1);
 	}
 
-	#endregion
 
-	#region Double Dispose Safety
 
 	[Fact]
 	public void Dispose_CalledTwice_DoesNotThrow()
@@ -893,9 +864,7 @@ public class SKGestureDetectorTests
 		engine.Dispose(); // should not throw
 	}
 
-	#endregion
 
-	#region Touch ID Reuse
 
 	[Fact]
 	public void TouchIdReuse_AfterTouchUp_StartsNewGesture()
@@ -921,9 +890,7 @@ public class SKGestureDetectorTests
 		Assert.Equal(2, tapCount);
 	}
 
-	#endregion
 
-	#region Triple Tap Sequence
 
 	[Fact]
 	public void ThreeTaps_RapidSequence_FiresDoubleTapAndSingleTap()
@@ -956,9 +923,7 @@ public class SKGestureDetectorTests
 		Assert.True(tapCount >= 2, $"Expected at least 2 taps, got {tapCount}");
 	}
 
-	#endregion
 
-	#region Bug Regression Tests
 
 	[Fact]
 	public void LongPressTimer_NotRestarted_OnSecondFingerDown()
@@ -1088,5 +1053,4 @@ public class SKGestureDetectorTests
 		Assert.Equal(0, doubleTapCount);
 	}
 
-	#endregion
 }

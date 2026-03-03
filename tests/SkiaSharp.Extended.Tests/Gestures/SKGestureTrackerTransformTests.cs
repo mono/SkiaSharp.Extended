@@ -23,7 +23,6 @@ public class SKGestureTrackerTransformTests
 		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
 	}
 
-	#region Matrix Composition Tests
 
 	[Fact]
 	public void Matrix_AtIdentity_IsIdentity()
@@ -67,9 +66,7 @@ public class SKGestureTrackerTransformTests
 		Assert.True(origin.X > 200, $"Mapped X should shift right, was {origin.X}");
 	}
 
-	#endregion
 
-	#region SetScale / SetRotation Pivot Tests
 
 	[Fact]
 	public void SetScale_WithPivot_AdjustsOffset()
@@ -182,9 +179,7 @@ public class SKGestureTrackerTransformTests
 		Assert.Equal(20, origin.Y, 1);
 	}
 
-	#endregion
 
-	#region SetScale Boundary Values
 
 	[Fact]
 	public void SetScale_NegativeValue_ClampsToMinScale()
@@ -210,9 +205,7 @@ public class SKGestureTrackerTransformTests
 		Assert.Equal(tracker.Options.MaxScale, tracker.Scale);
 	}
 
-	#endregion
 
-	#region TransformChanged from Programmatic Methods
 
 	[Fact]
 	public void SetScale_RaisesTransformChanged()
@@ -258,6 +251,5 @@ public class SKGestureTrackerTransformTests
 		Assert.Equal(1, fired);
 	}
 
-	#endregion
 
 }

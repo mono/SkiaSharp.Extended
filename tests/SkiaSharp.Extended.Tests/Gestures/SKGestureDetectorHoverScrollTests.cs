@@ -23,7 +23,6 @@ public class SKGestureDetectorHoverScrollTests
 		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
 	}
 
-	#region Hover Detection Tests
 
 	[Fact]
 	public void MoveWithoutContact_RaisesHoverDetected()
@@ -82,9 +81,7 @@ public class SKGestureDetectorHoverScrollTests
 		Assert.Equal(400, location.Value.Y);
 	}
 
-	#endregion
 
-	#region Scroll (Mouse Wheel) Tests
 
 	[Fact]
 	public void ProcessMouseWheel_RaisesScrollDetected()
@@ -136,6 +133,5 @@ public class SKGestureDetectorHoverScrollTests
 		Assert.False(result);
 	}
 
-	#endregion
 
 }

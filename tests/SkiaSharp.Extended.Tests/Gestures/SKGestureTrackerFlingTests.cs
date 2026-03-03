@@ -36,7 +36,6 @@ public class SKGestureTrackerFlingTests
 		tracker.ProcessTouchUp(1, end);
 	}
 
-	#region Fling Animation Tests
 
 	[Fact]
 	public void FastSwipe_FiresFlingDetected()
@@ -134,6 +133,5 @@ public class SKGestureTrackerFlingTests
 		tracker.Dispose();
 	}
 
-	#endregion
 
 }
