@@ -43,7 +43,7 @@ public partial class SKLottieView : ComponentBase, IAsyncDisposable
 	/// Use <c>-1</c> for infinite, <c>0</c> for no repeat. Defaults to <c>-1</c>.
 	/// </summary>
 	[Parameter]
-	public int RepeatCount { get; set; } = -1;
+	public int RepeatCount { get; set; } = 0;
 
 	/// <summary>Playback speed multiplier. Negative values play in reverse. Defaults to <c>1.0</c>.</summary>
 	[Parameter]
@@ -144,6 +144,7 @@ public partial class SKLottieView : ComponentBase, IAsyncDisposable
 			if (ct.IsCancellationRequested)
 				return;
 
+			_player.SetAnimation(null);
 			_loadedAnimation?.Dispose();
 			_loadedAnimation = Animation.Parse(json);
 			_player.SetAnimation(_loadedAnimation);

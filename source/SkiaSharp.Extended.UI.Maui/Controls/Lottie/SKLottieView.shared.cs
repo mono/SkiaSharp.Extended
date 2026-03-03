@@ -211,6 +211,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 
 	private void OnPlayerAnimationCompleted(object? sender, EventArgs e)
 	{
+		Duration = player.Duration;
+		Progress = player.Progress;
+		IsComplete = player.IsComplete;
 		AnimationCompleted?.Invoke(this, EventArgs.Empty);
 	}
 
