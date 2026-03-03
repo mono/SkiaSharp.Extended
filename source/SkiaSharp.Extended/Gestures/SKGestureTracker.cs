@@ -60,7 +60,7 @@ public sealed class SKGestureTracker : IDisposable
 	private float _flingVelocityX;
 	private float _flingVelocityY;
 	private bool _isFlinging;
-	private long _flingLastFrameTimestamp; // Environment.TickCount64 (ms) for frame-rate-independent timing
+	private long _flingLastFrameTimestamp; // TimeProvider() ticks at last fling frame
 
 	// Zoom animation state
 	private Timer? _zoomTimer;
@@ -470,8 +470,8 @@ public sealed class SKGestureTracker : IDisposable
 		_zoomTimer = new Timer(
 			OnZoomTimerTick,
 			token,
-			Options.FlingFrameInterval,
-			Options.FlingFrameInterval);
+			Options.ZoomAnimationInterval,
+			Options.ZoomAnimationInterval);
 	}
 
 	/// <summary>Stops any active zoom animation immediately.</summary>
@@ -770,17 +770,16 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void AdjustOffsetForPivot(SKPoint pivot, float oldScale, float newScale, float oldRotDeg, float newRotDeg)
 	{
+		// Matrix model: P_screen = S * R * (P_content + offset)
+		// To keep the same content point at screen position 'pivot':
+		//   new_offset = R(-newRot).MapVector(pivot / newScale)
+		//              - R(-oldRot).MapVector(pivot / oldScale)
+		//              + old_offset
 		var rotOld = SKMatrix.CreateRotationDegrees(-oldRotDeg);
-		var qOld = rotOld.MapVector(pivot.X, pivot.Y);
-		qOld = new SKPoint(qOld.X / oldScale, qOld.Y / oldScale);
-
 		var rotNew = SKMatrix.CreateRotationDegrees(-newRotDeg);
-		var qNew = rotNew.MapVector(pivot.X, pivot.Y);
-		qNew = new SKPoint(qNew.X / newScale, qNew.Y / newScale);
-
-		_offset = new SKPoint(
-			_offset.X + qNew.X - qOld.X,
-			_offset.Y + qNew.Y - qOld.Y);
+		var oldMapped = rotOld.MapVector(pivot.X / oldScale, pivot.Y / oldScale);
+		var newMapped = rotNew.MapVector(pivot.X / newScale, pivot.Y / newScale);
+		_offset = new SKPoint(newMapped.X - oldMapped.X + _offset.X, newMapped.Y - oldMapped.Y + _offset.Y);
 	}
 
 	private static float Clamp(float value, float min, float max)
@@ -798,7 +797,7 @@ public sealed class SKGestureTracker : IDisposable
 		_flingVelocityX = velocityX;
 		_flingVelocityY = velocityY;
 		_isFlinging = true;
-		_flingLastFrameTimestamp = Environment.TickCount64;
+		_flingLastFrameTimestamp = TimeProvider();
 
 		var token = Interlocked.Increment(ref _flingToken);
 		_flingTimer = new Timer(
@@ -837,8 +836,8 @@ public sealed class SKGestureTracker : IDisposable
 			return;
 
 		// Use actual elapsed time for frame-rate-independent deceleration
-		var now = Environment.TickCount64;
-		var actualDtMs = Math.Max(1f, now - _flingLastFrameTimestamp);
+		var now = TimeProvider();
+		var actualDtMs = Math.Max(1f, (float)((now - _flingLastFrameTimestamp) / (double)TimeSpan.TicksPerMillisecond));
 		_flingLastFrameTimestamp = now;
 
 		var dt = actualDtMs / 1000f;
@@ -909,8 +908,6 @@ public sealed class SKGestureTracker : IDisposable
 		// Log-space interpolation: cumulative = factor^eased(t)
 		var cumulative = (float)Math.Pow(_zoomTargetFactor, eased);
 
-		// Per-frame scale delta
-		var frameDelta = _zoomPrevCumulative > 0 ? cumulative / _zoomPrevCumulative : 1f;
 		_zoomPrevCumulative = cumulative;
 
 		// Apply scale change

@@ -256,6 +256,7 @@ var options = new SKGestureTrackerOptions
     // Double-tap zoom
     DoubleTapZoomFactor = 2f, // Scale multiplier on double tap (default: 2)
     ZoomAnimationDuration = 250, // Animation duration in ms (default: 250)
+    ZoomAnimationInterval = 16,  // Frame interval for zoom animation in ms (~60fps) (default: 16)
 
     // Scroll zoom
     ScrollZoomFactor = 0.1f,  // Zoom per scroll unit (default: 0.1)
