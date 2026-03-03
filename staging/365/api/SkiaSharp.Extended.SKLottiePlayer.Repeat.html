@@ -148,8 +148,10 @@
 
 
 <h4 class="section" id="SkiaSharp_Extended_SKLottiePlayer_Repeat_remarks">Remarks</h4>
-<div class="markdown level1 remarks"><p>Changing this property resets the internal direction phase, repeat counter, and completion
-state so the animation starts the new mode cleanly from its current position.</p>
+<div class="markdown level1 remarks"><p>Changing this property resets the repeat counter and completion state.
+The internal direction phase is only reset when switching away from <a class="xref" href="SkiaSharp.Extended.SKLottieRepeat.Reverse.html#SkiaSharp_Extended_SKLottieRepeat_Reverse_System_Int32_">Reverse(int)</a>
+mode; switching between <a class="xref" href="SkiaSharp.Extended.SKLottieRepeat.Reverse.html#SkiaSharp_Extended_SKLottieRepeat_Reverse_System_Int32_">Reverse(int)</a> counts preserves the current direction
+so the animation does not abruptly reverse mid-playback.</p>
 </div>
 
 
@@ -174,7 +176,7 @@ state so the animation starts the new mode cleanly from its current position.</p
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 31a9d5b
+          source: PR #365 · 1d9f4e8
         </div>
       </div>
     </footer>
