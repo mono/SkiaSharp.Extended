@@ -94,17 +94,17 @@
 </code></pre>
 <h3 id="2-add-the-namespace">2. Add the namespace</h3>
 <p>In your <code>_Imports.razor</code>:</p>
-<pre><code class="lang-razor">@using SkiaSharp.Extended.UI.Blazor.Controls
+<pre><code class="lang-cshtml-razor">@using SkiaSharp.Extended.UI.Blazor.Controls
 </code></pre>
 <h3 id="3-add-the-component">3. Add the component</h3>
-<pre><code class="lang-razor">&lt;SKLottieView Source=&quot;animations/trophy.json&quot;
+<pre><code class="lang-cshtml-razor">&lt;SKLottieView Source=&quot;animations/trophy.json&quot;
               RepeatCount=&quot;-1&quot;
               style=&quot;width: 300px; height: 300px;&quot; /&gt;
 </code></pre>
 <p>That's it — the animation loads from the URL and starts playing automatically.</p>
 <h2 id="playback-controls">Playback Controls</h2>
 <h3 id="repeat-modes">Repeat modes</h3>
-<pre><code class="lang-razor">@* Loop forever, restarting each time *@
+<pre><code class="lang-cshtml-razor">@* Loop forever, restarting each time *@
 &lt;SKLottieView Source=&quot;animation.json&quot;
               RepeatMode=&quot;SKLottieRepeatMode.Restart&quot;
               RepeatCount=&quot;-1&quot; /&gt;
@@ -119,7 +119,7 @@
               RepeatCount=&quot;0&quot; /&gt;
 </code></pre>
 <h3 id="speed-and-direction">Speed and direction</h3>
-<pre><code class="lang-razor">&lt;SKLottieView Source=&quot;animation.json&quot;
+<pre><code class="lang-cshtml-razor">&lt;SKLottieView Source=&quot;animation.json&quot;
               AnimationSpeed=&quot;2.0&quot;
               RepeatCount=&quot;-1&quot; /&gt;
 
@@ -129,7 +129,7 @@
               RepeatCount=&quot;-1&quot; /&gt;
 </code></pre>
 <h3 id="pause-and-resume">Pause and resume</h3>
-<pre><code class="lang-razor">&lt;SKLottieView Source=&quot;animation.json&quot;
+<pre><code class="lang-cshtml-razor">&lt;SKLottieView Source=&quot;animation.json&quot;
               IsAnimationEnabled=&quot;@isPlaying&quot;
               RepeatCount=&quot;-1&quot; /&gt;
 
@@ -143,7 +143,7 @@
 </code></pre>
 <h3 id="restart-programmatically">Restart programmatically</h3>
 <p>Use an <code>@ref</code> to call <code>Restart()</code>:</p>
-<pre><code class="lang-razor">&lt;SKLottieView @ref=&quot;lottieView&quot;
+<pre><code class="lang-cshtml-razor">&lt;SKLottieView @ref=&quot;lottieView&quot;
               Source=&quot;animation.json&quot;
               RepeatCount=&quot;-1&quot; /&gt;
 
@@ -155,7 +155,7 @@
 </code></pre>
 <h2 id="reading-playback-state">Reading Playback State</h2>
 <p>Access read-only state through the component reference:</p>
-<pre><code class="lang-razor">&lt;SKLottieView @ref=&quot;lottieView&quot;
+<pre><code class="lang-cshtml-razor">&lt;SKLottieView @ref=&quot;lottieView&quot;
               Source=&quot;animation.json&quot;
               RepeatCount=&quot;-1&quot;
               AnimationUpdated=&quot;StateHasChanged&quot; /&gt;
@@ -208,7 +208,7 @@
 </tr>
 </tbody>
 </table>
-<pre><code class="lang-razor">&lt;SKLottieView Source=&quot;animation.json&quot;
+<pre><code class="lang-cshtml-razor">&lt;SKLottieView Source=&quot;animation.json&quot;
               AnimationLoaded=&quot;OnLoaded&quot;
               AnimationFailed=&quot;OnFailed&quot;
               AnimationCompleted=&quot;OnCompleted&quot; /&gt;
@@ -302,7 +302,7 @@
 </table>
 <h2 id="sizing">Sizing</h2>
 <p>The component renders an HTML <code>&lt;canvas&gt;</code> element. Set the size using standard CSS:</p>
-<pre><code class="lang-razor">@* Fixed size *@
+<pre><code class="lang-cshtml-razor">@* Fixed size *@
 &lt;SKLottieView Source=&quot;animation.json&quot; style=&quot;width: 300px; height: 300px;&quot; /&gt;
 
 @* Fill parent container *@
@@ -312,7 +312,7 @@
 </code></pre>
 <h2 id="custom-animations-with-skanimatedcanvasview">Custom Animations with SKAnimatedCanvasView</h2>
 <p>For animations beyond Lottie, <a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.html"><code>SKAnimatedCanvasView</code></a> provides a frame loop with a SkiaSharp canvas. It runs at ~60 fps and calls your update and paint callbacks each frame.</p>
-<pre><code class="lang-razor">@using SkiaSharp
+<pre><code class="lang-cshtml-razor">@using SkiaSharp
 @using SkiaSharp.Extended.UI.Blazor.Controls
 
 &lt;SKAnimatedCanvasView OnUpdate=&quot;HandleUpdate&quot;
@@ -403,7 +403,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · c40dca0
+          source: PR #365 · 9fcbd31
         </div>
       </div>
     </footer>
