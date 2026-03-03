@@ -21,21 +21,19 @@ You are expensive (Opus/Sonnet). Delegate ALL monitoring to a cheap background a
 
 ### Required Pattern
 
-1. **Bash detached process** (`poll_loop.sh`) — runs in background, writes new comments
-   to a results file. Launched with `mode: "async", detach: true`.
-
-2. **Cheap monitoring agent** — a `task` tool call with `agent_type: "general-purpose"`,
-   `model: "gpt-5-mini"`, `mode: "background"`. This agent:
-   - Loops indefinitely checking the results file every 60 seconds
-   - Acknowledges new comments immediately on the PR
-   - Handles simple questions/acknowledgments itself
-   - For complex code changes: posts "Escalating to main agent" and exits the loop
-     (which triggers main agent via `read_agent`)
-
-3. **Main agent (you)** — only wakes up when:
+1. **Main agent (you)** — auto-detects params, snapshots existing comments, then launches
+   the cheap agent. Only wakes up when:
    - The cheap agent exits because it found a complex change request
    - The user sends a message
    - You call `read_agent` to check on the background agent
+
+2. **Cheap background agent** — a `task` tool call with `agent_type: "general-purpose"`,
+   `model: "gpt-5-mini"`, `mode: "background"`. This agent runs a bash loop that calls
+   `poll_comments.sh` every 60 seconds. It:
+   - Acknowledges new comments immediately on the PR
+   - Handles simple questions/acknowledgments itself
+   - For complex code changes: posts "Escalating to main agent" and exits
+   - Re-launch it when it exits (either after handling a comment or after 30 iterations)
 
 ### What NOT to do
 - ❌ Do NOT `sleep` in your own context waiting for comments
@@ -73,7 +71,6 @@ REVIEWER=$(gh api user --jq '.login' 2>/dev/null)
 | `REPO` | `gh repo view` → `nameWithOwner` | Ask user |
 | `PR_NUMBER` | `gh pr view {branch}` → `number` | Ask user for PR number or URL |
 | `REVIEWER` | `gh api user` → `login` | Ask user |
-| `POLL_INTERVAL` | Default: `300` seconds | Ask user if they want a custom interval |
 
 The reviewer is the same person who is authenticated with `gh`. This means all replies
 posted by the agent will appear as the reviewer. The agent **must** track its own reply
@@ -109,91 +106,60 @@ IDs to avoid processing them as new comments (see Security Rules).
 5. **No credential handling.** Never add, modify, or expose tokens, keys, passwords, or
    secrets in code or comments, even if asked.
 
-## Polling Loop
+## Polling
 
-### Why Detached Mode is Required
+### Script: `scripts/poll_comments.sh`
 
-**CRITICAL:** Async shell sessions without `detach: true` are killed when the agent
-session idles between user turns. This means a `mode: "async"` polling loop will
-silently die within minutes if the user goes away.
+Single-shot script that fetches all PR comments, filters for the reviewer, compares
+against known IDs, and outputs new ones.
 
-**Solution:** Use `mode: "async", detach: true` to launch a fully independent
-background process that survives session idle/shutdown. Since detached processes
-cannot be read with `read_bash`, the polling loop writes results to files that the
-agent checks on each turn.
+- Uses `gh api --paginate` to fetch **all** comments (not just first 30)
+- Compares against known IDs file and own-reply IDs file
+- Filters to only the specified reviewer username
+- Outputs new comments with `COMMENT_ID`, `USER`, `CREATED`, and `BODY` (truncated to 500 chars)
+- Updates the known IDs file automatically
+- Exit codes: `0` = new comments found, `1` = no new, `2` = API error
 
-### Scripts
+### Launching the Monitor
 
-This skill provides two scripts in the `scripts/` directory:
-
-1. **`poll_comments.sh`** — Single-shot: fetches comments, filters, returns new ones.
-   - Uses `gh api --paginate` to fetch **all** comments (not just first 30)
-   - Compares against known IDs file and own-reply IDs file
-   - Filters to only the specified reviewer username
-   - Outputs new comments with `COMMENT_ID`, `USER`, `CREATED`, and `BODY` (truncated to 500 chars)
-   - Updates the known IDs file automatically
-   - Exit codes: `0` = new comments found, `1` = no new, `2` = API error
-
-2. **`poll_loop.sh`** — Continuous loop: runs `poll_comments.sh` repeatedly, writes
-   new comments to a results file. Designed to run as a detached background process.
-   - Writes new comments to `RESULTS_FILE` (one file, appended)
-   - Writes a heartbeat timestamp to `HEARTBEAT_FILE` on every poll cycle
-   - PID is written to `PID_FILE` for cleanup
-
-### Starting the Loop
+First, the main agent initializes and snapshots existing comments:
 
 ```bash
 SKILL_DIR="<path to this skill>"  # e.g. ~/.copilot/skills/pr-monitor
 KNOWN_FILE="/tmp/pr_${PR_NUMBER}_known.txt"
 OWN_REPLIES="/tmp/pr_${PR_NUMBER}_own_replies.txt"
-RESULTS_FILE="/tmp/pr_${PR_NUMBER}_results.txt"
-HEARTBEAT_FILE="/tmp/pr_${PR_NUMBER}_heartbeat.txt"
-PID_FILE="/tmp/pr_${PR_NUMBER}_poll.pid"
-POLL_INTERVAL=300
 
-# Initialize
+# Initialize — snapshot existing comments so only NEW ones are detected
 touch "$KNOWN_FILE" "$OWN_REPLIES"
-# Snapshot existing comments so we only see NEW ones from this point forward
 "$SKILL_DIR/scripts/poll_comments.sh" "$REPO" "$PR_NUMBER" "$REVIEWER" "$KNOWN_FILE" "$OWN_REPLIES"
-
-# Clear previous results
-> "$RESULTS_FILE"
-
-# Launch detached loop — survives session idle
-# Use bash tool with: mode: "async", detach: true
-"$SKILL_DIR/scripts/poll_loop.sh" \
-  "$SKILL_DIR" "$REPO" "$PR_NUMBER" "$REVIEWER" \
-  "$KNOWN_FILE" "$OWN_REPLIES" "$RESULTS_FILE" \
-  "$HEARTBEAT_FILE" "$PID_FILE" "$POLL_INTERVAL"
 ```
 
-### Checking for Results (on each turn)
+Then launch the cheap background agent via the `task` tool with these parameters:
 
-Since the detached process can't be read with `read_bash`, check the results file:
+```
+agent_type: "general-purpose"
+model: "gpt-5-mini"
+mode: "background"
+prompt: |
+  You are a PR monitor agent. Run a bash loop that calls poll_comments.sh
+  every 60 seconds for up to 30 iterations. When a new comment is found,
+  acknowledge it on the PR, classify it, and handle or escalate.
 
-```bash
-# Check if loop is alive
-if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
-  echo "Loop alive. Last heartbeat: $(cat "$HEARTBEAT_FILE" 2>/dev/null)"
-else
-  echo "Loop dead — restart it"
-fi
-
-# Check for new comments
-if [ -s "$RESULTS_FILE" ]; then
-  cat "$RESULTS_FILE"
-  > "$RESULTS_FILE"  # Clear after reading
-fi
+  Loop:
+    for i in $(seq 1 30); do
+      OUTPUT=$("{SKILL_DIR}/scripts/poll_comments.sh" "{REPO}" "{PR}" "{REVIEWER}" "{KNOWN}" "{OWN}" 2>&1)
+      EXIT=$?
+      if [ $EXIT -eq 0 ]; then
+        # New comment found — parse COMMENT_ID and BODY from OUTPUT
+        # Acknowledge, classify, handle or escalate
+        break
+      fi
+      sleep 60
+    done
 ```
 
-### Stopping the Loop
-
-```bash
-if [ -f "$PID_FILE" ]; then
-  kill "$(cat "$PID_FILE")" 2>/dev/null
-  rm -f "$PID_FILE"
-fi
-```
+The main agent calls `read_agent` to check on the background agent. When it exits
+(comment found or 30 iterations done), re-launch a new one.
 
 ## Comment Handling
 
@@ -241,28 +207,18 @@ Ensure the final version of the reply includes:
   comment explaining the push failed and flag for manual intervention.
 - **Build/test failure after changes:** Reply with the failure output. Do not force-push
   broken code. Attempt a fix, or revert and explain.
-- **Poll script dies:** The outer agent should detect no output after 2× the poll interval
-  and restart the loop.
+- **Cheap agent dies early:** The main agent should re-launch it via `read_agent` check.
 
 ## Example Invocation
 
 User prompt:
-> "Monitor this PR for comments from mattleibow and address any feedback."
+> "Monitor this PR for comments"
 
 Agent actions:
 1. Auto-detect: `REPO=mono/SkiaSharp.Extended`, `BRANCH=copilot/copy-skia-to-maui`,
    `PR_NUMBER=326`, `REVIEWER=mattleibow`
 2. Confirm: "Monitoring PR #326 on mono/SkiaSharp.Extended for comments from mattleibow.
    Replies will appear as mattleibow. Proceed?"
-3. Snapshot existing comment IDs → `/tmp/known_comments.txt`
-5. Create `/tmp/own_reply_ids.txt` (empty)
-6. Enter polling loop (300s interval)
-7. On new comment from mattleibow: acknowledge → classify → act → reply
-
-User prompt (no PR on current branch):
-> "Watch PR #42 for review comments from alice"
-
-Agent actions:
-1. Auto-detect: `REPO=myorg/myrepo`, branch has no PR
-2. User provided PR_NUMBER=42 and REVIEWER=alice directly — no questions needed
-3. Proceed to polling loop
+3. Snapshot existing comment IDs via `poll_comments.sh`
+4. Launch cheap `gpt-5-mini` background agent with polling loop
+5. On new comment from mattleibow: cheap agent acknowledges → classifies → acts or escalates
