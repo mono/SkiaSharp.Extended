@@ -40,10 +40,9 @@ public class SKLottiePlayer
 
 	/// <summary>Gets or sets how the animation repeats. Defaults to <see cref="SKLottieRepeat.Never"/>.</summary>
 	/// <remarks>
-	/// Changing this property resets the repeat counter and completion state.
-	/// The internal direction phase is only reset when switching away from <see cref="SKLottieRepeat.Reverse"/>
-	/// mode; switching between <see cref="SKLottieRepeat.Reverse"/> counts preserves the current direction
-	/// so the animation does not abruptly reverse mid-playback.
+	/// Changing this property resets the repeat counter and completion state but preserves the
+	/// current playback direction. The direction phase is only reset when the animation actually
+	/// hits a boundary and restarts, preventing abrupt mid-animation direction changes.
 	/// </remarks>
 	public SKLottieRepeat Repeat
 	{
@@ -53,11 +52,6 @@ public class SKLottiePlayer
 			if (repeat != value)
 			{
 				repeat = value;
-				// Only reset phase when leaving Reverse mode. Non-Reverse modes (Never, Restart)
-				// don't use isInForwardPhase for ping-pong, so a stale false value would cause
-				// the Reverse→Restart freeze bug. Within Reverse, preserve the current direction.
-				if (!value.IsReverseRepeating)
-					isInForwardPhase = true;
 				repeatsCompleted = 0;
 				IsComplete = false;
 			}
@@ -238,6 +232,10 @@ public class SKLottiePlayer
 
 				if (repeat.IsRestartRepeating)
 				{
+					// Reset phase and position to the natural start for the current speed.
+					// Resetting phase here (at the boundary) rather than in the Repeat setter
+					// prevents abrupt mid-animation direction changes when the user switches modes.
+					isInForwardPhase = true;
 					// Reset position directly without going through Seek(), to avoid
 					// firing AnimationUpdated twice (once here, once in the outer Seek).
 					Progress = AnimationSpeed >= 0 ? TimeSpan.Zero : Duration;

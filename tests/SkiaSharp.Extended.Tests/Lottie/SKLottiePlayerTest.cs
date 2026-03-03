@@ -559,10 +559,11 @@ public class SKLottiePlayerTest
 	}
 
 	[Fact]
-	public void SwitchingFromReverseToRestart_StillResetsPhase()
+	public void SwitchingFromReverseToRestart_StillResetsPhaseAtBoundary()
 	{
-		// After the Reverse→Restart fix: Restart must reset isInForwardPhase so the animation
-		// moves in the natural direction for the current speed (toward 0 for negative speed).
+		// Phase reset now happens at the boundary (restart), not on property change.
+		// After switching to Restart mid-animation, the animation continues in its current
+		// direction until it hits a boundary, then restarts cleanly from the natural start.
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = -1.0;
@@ -573,15 +574,47 @@ public class SKLottiePlayerTest
 		player.Update(TimeSpan.FromSeconds(10)); // flip at Zero → isInForwardPhase=false
 		player.Update(TimeSpan.FromSeconds(0.3)); // now at ~0.3, moving toward Duration
 
-		// Switch to Restart — should reset phase, so progress will move toward Zero (negative speed)
+		// Switch to Restart — direction NOT changed yet (preserved until boundary)
 		player.Repeat = SKLottieRepeat.Restart();
 
+		// Short update — still moving toward Duration (isInForwardPhase still false)
 		var progressAfterSwitch = player.Progress;
 		player.Update(TimeSpan.FromSeconds(0.1));
+		Assert.True(player.Progress > progressAfterSwitch, "Should still move toward Duration before hitting boundary");
 
-		// With negative speed and Restart (isInForwardPhase reset to true):
-		// movingForward = (speed<0) ? !isInForwardPhase = false → progress decreases toward Zero.
-		Assert.True(player.Progress < progressAfterSwitch);
+		// Large update — hits Duration boundary, Restart resets phase + position to Duration (negative speed)
+		player.Update(TimeSpan.FromSeconds(10));
+
+		// After restart: position at Duration, movingForward=false → moves toward Zero
+		var progressAfterRestart = player.Progress;
+		player.Update(TimeSpan.FromSeconds(0.2));
+		Assert.True(player.Progress < progressAfterRestart, "After restart, should move toward Zero (negative speed)");
+	}
+
+	[Fact]
+	public void SwitchingReverseToRestart_NegativeSpeed_NoAbruptDirectionChange()
+	{
+		// Regression: switching from Reverse to Restart while isInForwardPhase=false
+		// must NOT abruptly flip direction mid-animation. Progress should continue increasing
+		// until the boundary is reached.
+		using var anim = CreateAnimation();
+		var player = new SKLottiePlayer();
+		player.AnimationSpeed = -1.0;
+		player.Repeat = SKLottieRepeat.Reverse();
+		player.SetAnimation(anim); // starts at Duration
+
+		// Advance past first flip: isInForwardPhase=false, progress moving toward Duration
+		player.Update(TimeSpan.FromSeconds(10)); // flip at Zero
+		player.Update(TimeSpan.FromSeconds(0.5)); // at ~0.5, moving toward Duration
+
+		var progressBefore = player.Progress;
+
+		// Switch to Restart -- must NOT cause abrupt direction change
+		player.Repeat = SKLottieRepeat.Restart();
+
+		// Progress should still increase (continuing toward Duration)
+		player.Update(TimeSpan.FromSeconds(0.1));
+		Assert.True(player.Progress > progressBefore, "Direction must not flip abruptly when switching Reverse→Restart mid-animation");
 	}
 
 	[Fact]

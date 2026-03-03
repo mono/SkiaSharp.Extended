@@ -26,6 +26,7 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
     private bool _isAnimationEnabled = true;
     private CancellationTokenSource? _cts;
     private Task? _loopTask;
+    private SKCanvasView? _canvasView;
 
     /// <summary>
     /// Gets or sets whether the animation loop is running.
@@ -136,6 +137,7 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
                 await InvokeAsync(async () =>
                 {
                     await UpdateAsync(delta);
+                    _canvasView?.Invalidate();
                     StateHasChanged();
                 });
             }
@@ -145,6 +147,9 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
             // Normal shutdown — ignore.
         }
     }
+
+    /// <summary>Forces the canvas to repaint on the next frame.</summary>
+    public void Invalidate() => _canvasView?.Invalidate();
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
