@@ -1,10 +1,10 @@
 # Lottie Player
 
-[`SKLottiePlayer`](xref:SkiaSharp.Extended.SKLottiePlayer) is the platform-agnostic engine that drives Lottie animation playback. It manages timing, repeat logic, and rendering — you just feed it frames. Both the [MAUI `SKLottieView`](lottie.md) and the [Blazor `SKLottieView`](blazor-lottie.md) are built on top of this player.
+[`SKLottiePlayer`](xref:SkiaSharp.Extended.SKLottiePlayer) is the platform-agnostic engine that drives Lottie animation playback. It manages timing, repeat logic, and rendering — you just feed it frames. Both the [MAUI `SKLottieView`](lottie-maui.md) and the [Blazor `SKLottieView`](lottie-blazor.md) are built on top of this player.
 
 ## When to Use the Player Directly
 
-Most apps should use the higher-level view components for [MAUI](lottie.md) or [Blazor](blazor-lottie.md). Use `SKLottiePlayer` directly when you need:
+Most apps should use the higher-level view components for [MAUI](lottie-maui.md) or [Blazor](lottie-blazor.md). Use `SKLottiePlayer` directly when you need:
 
 - A custom rendering host (WPF, Avalonia, console, tests)
 - Full control over the frame loop

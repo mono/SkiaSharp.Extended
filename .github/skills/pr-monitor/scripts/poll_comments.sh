@@ -82,3 +82,4 @@ fi
 echo "Found ${NEW_COUNT} new comment(s) from ${REVIEWER}:"
 echo "$NEW_COMMENTS"
 exit 0
+

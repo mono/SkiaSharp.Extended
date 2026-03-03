@@ -16,13 +16,13 @@ dotnet add package SkiaSharp.Extended.UI.Blazor
 
 In your `_Imports.razor`:
 
-```razor
+```cshtml-razor
 @using SkiaSharp.Extended.UI.Blazor.Controls
 ```
 
 ### 3. Add the component
 
-```razor
+```cshtml-razor
 <SKLottieView Source="animations/trophy.json"
               RepeatCount="-1"
               style="width: 300px; height: 300px;" />
@@ -34,7 +34,7 @@ That's it — the animation loads from the URL and starts playing automatically.
 
 ### Repeat modes
 
-```razor
+```cshtml-razor
 @* Loop forever, restarting each time *@
 <SKLottieView Source="animation.json"
               RepeatMode="SKLottieRepeatMode.Restart"
@@ -52,7 +52,7 @@ That's it — the animation loads from the URL and starts playing automatically.
 
 ### Speed and direction
 
-```razor
+```cshtml-razor
 <SKLottieView Source="animation.json"
               AnimationSpeed="2.0"
               RepeatCount="-1" />
@@ -65,7 +65,7 @@ That's it — the animation loads from the URL and starts playing automatically.
 
 ### Pause and resume
 
-```razor
+```cshtml-razor
 <SKLottieView Source="animation.json"
               IsAnimationEnabled="@isPlaying"
               RepeatCount="-1" />
@@ -83,7 +83,7 @@ That's it — the animation loads from the URL and starts playing automatically.
 
 Use an `@ref` to call `Restart()`:
 
-```razor
+```cshtml-razor
 <SKLottieView @ref="lottieView"
               Source="animation.json"
               RepeatCount="-1" />
@@ -99,7 +99,7 @@ Use an `@ref` to call `Restart()`:
 
 Access read-only state through the component reference:
 
-```razor
+```cshtml-razor
 <SKLottieView @ref="lottieView"
               Source="animation.json"
               RepeatCount="-1"
@@ -130,7 +130,7 @@ Access read-only state through the component reference:
 | `AnimationFailed` | `EventCallback<Exception?>` | Loading or parsing failed |
 | `AnimationUpdated` | `EventCallback` | Fires after each frame update |
 
-```razor
+```cshtml-razor
 <SKLottieView Source="animation.json"
               AnimationLoaded="OnLoaded"
               AnimationFailed="OnFailed"
@@ -169,7 +169,7 @@ Additional HTML attributes (like `style` and `class`) are forwarded to the under
 
 The component renders an HTML `<canvas>` element. Set the size using standard CSS:
 
-```razor
+```cshtml-razor
 @* Fixed size *@
 <SKLottieView Source="animation.json" style="width: 300px; height: 300px;" />
 
@@ -183,7 +183,7 @@ The component renders an HTML `<canvas>` element. Set the size using standard CS
 
 For animations beyond Lottie, [`SKAnimatedCanvasView`](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView) provides a frame loop with a SkiaSharp canvas. It runs at ~60 fps and calls your update and paint callbacks each frame.
 
-```razor
+```cshtml-razor
 @using SkiaSharp
 @using SkiaSharp.Extended.UI.Blazor.Controls
 

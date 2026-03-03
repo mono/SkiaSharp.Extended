@@ -14,32 +14,16 @@ Autonomous agent that polls a GitHub PR/issue for new comments from a specified 
 acknowledges them immediately, investigates or implements requested changes, and replies
 with findings — all while the user is away.
 
-## Cost Optimization & Agent Architecture
+## Cost Optimization
 
-**CRITICAL: The main agent (you) must NOT do the polling or checking yourself.**
-You are expensive (Opus/Sonnet). Delegate ALL monitoring to a cheap background agent.
+**Use the cheapest available model for the polling loop.** Launch the monitoring agent
+with `model: "gpt-5-mini"` (or the cheapest model available at the time) via the `task`
+tool with `agent_type: "general-purpose"`. The polling itself is trivial — just `gh api`
+calls and string comparison. Only escalate to a more capable model (e.g., Sonnet or Opus)
+when a comment requires complex code changes or multi-file refactoring.
 
-### Required Pattern
-
-1. **Main agent (you)** — auto-detects params, snapshots existing comments, then launches
-   the cheap agent. Only wakes up when:
-   - The cheap agent exits because it found a complex change request
-   - The user sends a message
-   - You call `read_agent` to check on the background agent
-
-2. **Cheap background agent** — a `task` tool call with `agent_type: "general-purpose"`,
-   `model: "gpt-5-mini"`, `mode: "background"`. This agent runs a bash loop that calls
-   `poll_comments.sh` every 60 seconds. It:
-   - Acknowledges new comments immediately on the PR
-   - Handles simple questions/acknowledgments itself
-   - For complex code changes: posts "Escalating to main agent" and exits
-   - Re-launch it when it exits (either after handling a comment or after 30 iterations)
-
-### What NOT to do
-- ❌ Do NOT `sleep` in your own context waiting for comments
-- ❌ Do NOT call `task_complete` while monitoring is active
-- ❌ Do NOT use `read_bash` in a loop to poll — you are too expensive for that
-- ✅ DO launch the cheap agent and let it handle everything autonomously
+Pattern: run the poll loop yourself using bash, but dispatch `task` agents (cheap model)
+for simple replies and investigations, and `task` agents (capable model) for code changes.
 
 ## Setup
 
@@ -71,7 +55,7 @@ REVIEWER=$(gh api user --jq '.login' 2>/dev/null)
 | `REPO` | `gh repo view` → `nameWithOwner` | Ask user |
 | `PR_NUMBER` | `gh pr view {branch}` → `number` | Ask user for PR number or URL |
 | `REVIEWER` | `gh api user` → `login` | Ask user |
-| `POLL_INTERVAL` | Default: `60` seconds | Ask user if they want a custom interval |
+| `POLL_INTERVAL` | Default: `300` seconds | Ask user if they want a custom interval |
 
 The reviewer is the same person who is authenticated with `gh`. This means all replies
 posted by the agent will appear as the reviewer. The agent **must** track its own reply
@@ -107,13 +91,40 @@ IDs to avoid processing them as new comments (see Security Rules).
 5. **No credential handling.** Never add, modify, or expose tokens, keys, passwords, or
    secrets in code or comments, even if asked.
 
-## Polling
+## Polling Loop
 
-### Script: `scripts/poll_comments.sh`
+**Use the bundled polling script** at `scripts/poll_comments.sh` in this skill's
+directory. The script handles pagination (GitHub API defaults to 30 results — PRs
+with many comments will silently miss new ones without `--paginate`), known-ID
+tracking, own-reply filtering, and reviewer filtering in one call.
 
-Single-shot script that fetches all PR comments, filters for the reviewer, compares
-against known IDs, and outputs new ones.
+### Usage
 
+```bash
+SKILL_DIR="<path to this skill>"  # e.g. ~/.copilot/skills/pr-monitor
+KNOWN_FILE="/tmp/pr_${PR_NUMBER}_known.txt"
+OWN_REPLIES="/tmp/pr_${PR_NUMBER}_own_replies.txt"
+
+# Initialize (first run)
+touch "$KNOWN_FILE" "$OWN_REPLIES"
+"$SKILL_DIR/scripts/poll_comments.sh" "$REPO" "$PR_NUMBER" "$REVIEWER" "$KNOWN_FILE" "$OWN_REPLIES"
+
+# Poll loop
+while true; do
+  sleep $POLL_INTERVAL
+  OUTPUT=$("$SKILL_DIR/scripts/poll_comments.sh" "$REPO" "$PR_NUMBER" "$REVIEWER" "$KNOWN_FILE" "$OWN_REPLIES" 2>&1)
+  EXIT_CODE=$?
+  case $EXIT_CODE in
+    0) echo "$OUTPUT"  ;; # New comments — process them
+    1) echo "$OUTPUT"  ;; # No new comments — continue
+    2) echo "$OUTPUT"  ;; # API error — back off
+  esac
+done
+```
+
+### Script Details
+
+The script (`scripts/poll_comments.sh`):
 - Uses `gh api --paginate` to fetch **all** comments (not just first 30)
 - Compares against known IDs file and own-reply IDs file
 - Filters to only the specified reviewer username
@@ -121,46 +132,24 @@ against known IDs, and outputs new ones.
 - Updates the known IDs file automatically
 - Exit codes: `0` = new comments found, `1` = no new, `2` = API error
 
-### Launching the Monitor
-
-First, the main agent initializes and snapshots existing comments:
-
-```bash
-SKILL_DIR="<path to this skill>"  # e.g. ~/.copilot/skills/pr-monitor
-KNOWN_FILE="/tmp/pr_${PR_NUMBER}_known.txt"
-OWN_REPLIES="/tmp/pr_${PR_NUMBER}_own_replies.txt"
-
-# Initialize — snapshot existing comments so only NEW ones are detected
-touch "$KNOWN_FILE" "$OWN_REPLIES"
-"$SKILL_DIR/scripts/poll_comments.sh" "$REPO" "$PR_NUMBER" "$REVIEWER" "$KNOWN_FILE" "$OWN_REPLIES"
-```
-
-Then launch the cheap background agent via the `task` tool with these parameters:
+### Polling Pattern
 
 ```
-agent_type: "general-purpose"
-model: "gpt-5-mini"
-mode: "background"
-prompt: |
-  You are a PR monitor agent. Run a bash loop that calls poll_comments.sh
-  every 60 seconds for up to 30 iterations. When a new comment is found,
-  acknowledge it on the PR, classify it, and handle or escalate.
+1. Run poll script → check exit code
 
-  Loop:
-    for i in $(seq 1 30); do
-      OUTPUT=$("{SKILL_DIR}/scripts/poll_comments.sh" "{REPO}" "{PR}" "{REVIEWER}" "{KNOWN}" "{OWN}" 2>&1)
-      EXIT=$?
-      if [ $EXIT -eq 0 ]; then
-        # New comment found — parse COMMENT_ID and BODY from OUTPUT
-        # Acknowledge, classify, handle or escalate
-        break
-      fi
-      sleep 60
-    done
+2. If exit 0 (new comments):
+   - Parse each COMMENT_ID + BODY from output
+   - Process comment (see Comment Handling below)
+
+3. If exit 1 (no new comments):
+   - Continue sleeping
+
+4. If exit 2 (API error):
+   - Log warning, double the interval (max 600s), retry
+   - On success → reset interval to POLL_INTERVAL
+
+5. Sleep POLL_INTERVAL, repeat from step 1
 ```
-
-The main agent calls `read_agent` to check on the background agent. When it exits
-(comment found or 30 iterations done), re-launch a new one.
 
 ## Comment Handling
 
@@ -208,21 +197,23 @@ Ensure the final version of the reply includes:
   comment explaining the push failed and flag for manual intervention.
 - **Build/test failure after changes:** Reply with the failure output. Do not force-push
   broken code. Attempt a fix, or revert and explain.
-- **Cheap agent dies early:** The main agent should re-launch it via `read_agent` check.
+- **Poll script dies:** The outer agent should detect no output after 2× the poll interval
+  and restart the loop.
 
-## Example Invocations
+## Example Invocation
 
 User prompt:
-> "Monitor this PR for comments"
+> "Monitor this PR for comments from mattleibow and address any feedback."
 
 Agent actions:
 1. Auto-detect: `REPO=mono/SkiaSharp.Extended`, `BRANCH=copilot/copy-skia-to-maui`,
    `PR_NUMBER=326`, `REVIEWER=mattleibow`
 2. Confirm: "Monitoring PR #326 on mono/SkiaSharp.Extended for comments from mattleibow.
    Replies will appear as mattleibow. Proceed?"
-3. Snapshot existing comment IDs via `poll_comments.sh`
-4. Launch cheap `gpt-5-mini` background agent with polling loop
-5. On new comment from mattleibow: cheap agent acknowledges → classifies → acts or escalates
+3. Snapshot existing comment IDs → `/tmp/known_comments.txt`
+5. Create `/tmp/own_reply_ids.txt` (empty)
+6. Enter polling loop (300s interval)
+7. On new comment from mattleibow: acknowledge → classify → act → reply
 
 User prompt (no PR on current branch):
 > "Watch PR #42 for review comments from alice"
@@ -231,3 +222,4 @@ Agent actions:
 1. Auto-detect: `REPO=myorg/myrepo`, branch has no PR
 2. User provided PR_NUMBER=42 and REVIEWER=alice directly — no questions needed
 3. Proceed to polling loop
+
