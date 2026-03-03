@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Pixel Comparer | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Pixel Comparer | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/372/merge/docs/docs/pixel-comparer.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="pixel-comparer">Pixel Comparer</h1>
+
+<div class="TIP">
+<h5>Tip</h5>
+<p><strong><a href="../sample/pixelcomparer">Try it live →</a></strong> — Interactive Pixel Comparer demo in the Blazor sample app.</p>
+</div>
+<p>Pixel Comparer lets you compare two images pixel by pixel and quantify their differences. It's ideal for visual regression testing, screenshot comparison in CI pipelines, and verifying that rendering output matches expected results.</p>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="compare-two-images">Compare two images</h3>
+<pre><code class="lang-csharp">using SkiaSharp;
+using SkiaSharp.Extended;
+
+var result = SKPixelComparer.Compare(&quot;expected.png&quot;, &quot;actual.png&quot;);
+
+Console.WriteLine($&quot;Total pixels: {result.TotalPixels}&quot;);
+Console.WriteLine($&quot;Error pixels: {result.ErrorPixelCount}&quot;);
+Console.WriteLine($&quot;Error percentage: {result.ErrorPixelPercentage:P2}&quot;);
+Console.WriteLine($&quot;Absolute error: {result.AbsoluteError}&quot;);
+</code></pre>
+<h3 id="generate-a-difference-mask">Generate a difference mask</h3>
+<pre><code class="lang-csharp">using var mask = SKPixelComparer.GenerateDifferenceMask(&quot;expected.png&quot;, &quot;actual.png&quot;);
+
+// Encode and save the mask
+using var data = mask.Encode(SKEncodedImageFormat.Png, 100);
+File.WriteAllBytes(&quot;diff-mask.png&quot;, data.ToArray());
+</code></pre>
+<p>The mask is a black-and-white image where <strong>white pixels</strong> indicate differences and <strong>black pixels</strong> indicate matching areas.</p>
+<h2 id="how-it-works">How It Works</h2>
+<p>The comparer normalizes both images to BGRA8888 format, then walks through every pixel and sums the per-channel (red, green, blue) absolute differences:</p>
+<ol>
+<li>For each pixel, compute <code>|R₁ − R₂| + |G₁ − G₂| + |B₁ − B₂|</code></li>
+<li>If the sum is greater than zero, that pixel is counted as an error</li>
+<li>The total per-pixel sums are accumulated into <code>AbsoluteError</code></li>
+</ol>
+<p>Both images must have the same dimensions; otherwise an <code>InvalidOperationException</code> is thrown.</p>
+<h2 id="comparison-results">Comparison Results</h2>
+<p>The <a class="xref" href="../api/SkiaSharp.Extended.SKPixelComparisonResult.html"><code>SKPixelComparisonResult</code></a> contains:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>TotalPixels</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Width × Height of the images</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ErrorPixelCount</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Number of pixels with any difference</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ErrorPixelPercentage</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;"><code>ErrorPixelCount / TotalPixels</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>AbsoluteError</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Sum of all per-channel differences</td>
+</tr>
+</tbody>
+</table>
+<h2 id="mask-based-comparison">Mask-Based Comparison</h2>
+<p>When comparing images that have expected minor differences (e.g., anti-aliasing, compression artifacts), you can supply a tolerance mask. The mask image uses per-channel thresholds—a difference is only counted if it exceeds the corresponding channel value in the mask pixel:</p>
+<pre><code class="lang-csharp">using var expected = SKImage.FromEncodedData(&quot;expected.png&quot;);
+using var actual = SKImage.FromEncodedData(&quot;actual.png&quot;);
+using var mask = SKImage.FromEncodedData(&quot;tolerance-mask.png&quot;);
+
+var result = SKPixelComparer.Compare(expected, actual, mask);
+</code></pre>
+<p>For example, if a mask pixel has RGB values of <code>(10, 10, 10)</code>, differences of up to 10 per channel at that location are ignored. This lets you define region-specific tolerances.</p>
+<h2 id="input-overloads">Input Overloads</h2>
+<p>All comparison methods accept multiple input types for convenience:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Input Type</th>
+<th style="text-align: left;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">File paths</td>
+<td style="text-align: left;"><code>Compare(&quot;a.png&quot;, &quot;b.png&quot;)</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKImage</code></td>
+<td style="text-align: left;"><code>Compare(imageA, imageB)</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKBitmap</code></td>
+<td style="text-align: left;"><code>Compare(bitmapA, bitmapB)</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKPixmap</code></td>
+<td style="text-align: left;"><code>Compare(pixmapA, pixmapB)</code></td>
+</tr>
+</tbody>
+</table>
+<p>The same overloads are available for <code>GenerateDifferenceMask</code> (without mask support) and for the three-argument masked <code>Compare</code>.</p>
+<h2 id="usage-patterns">Usage Patterns</h2>
+<h3 id="visual-regression-testing">Visual regression testing</h3>
+<p>Use the comparer in your test suite to catch unintended rendering changes:</p>
+<pre><code class="lang-csharp">[Fact]
+public void ChartRendering_MatchesBaseline()
+{
+    using var actual = RenderChart(testData);
+    using var expected = SKImage.FromEncodedData(&quot;baselines/chart.png&quot;);
+
+    var result = SKPixelComparer.Compare(expected, actual);
+
+    Assert.Equal(0, result.ErrorPixelCount);
+}
+</code></pre>
+<h3 id="ci-screenshot-comparison-with-tolerance">CI screenshot comparison with tolerance</h3>
+<p>For tests that may have minor platform-specific differences:</p>
+<pre><code class="lang-csharp">[Fact]
+public void UI_MatchesBaseline_WithTolerance()
+{
+    using var actual = CaptureScreenshot();
+    using var expected = SKImage.FromEncodedData(&quot;baselines/screen.png&quot;);
+
+    var result = SKPixelComparer.Compare(expected, actual);
+
+    // Allow up to 0.5% pixel difference
+    Assert.True(result.ErrorPixelPercentage &lt; 0.005,
+        $&quot;Too many differing pixels: {result.ErrorPixelPercentage:P2}&quot;);
+}
+</code></pre>
+<h3 id="saving-a-difference-mask-for-debugging">Saving a difference mask for debugging</h3>
+<p>When a comparison fails, generate and save the mask to help diagnose what changed:</p>
+<pre><code class="lang-csharp">if (result.ErrorPixelCount &gt; 0)
+{
+    using var diffMask = SKPixelComparer.GenerateDifferenceMask(expected, actual);
+    using var encoded = diffMask.Encode(SKEncodedImageFormat.Png, 100);
+    File.WriteAllBytes(&quot;test-output/diff-mask.png&quot;, encoded.ToArray());
+}
+</code></pre>
+<h2 id="learn-more">Learn More</h2>
+<ul>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKPixelComparer.html">API Reference — SKPixelComparer</a> — Full method documentation</li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKPixelComparisonResult.html">API Reference — SKPixelComparisonResult</a> — Result class documentation</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/372/merge/docs/docs/pixel-comparer.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #372 · 9ff3f36
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

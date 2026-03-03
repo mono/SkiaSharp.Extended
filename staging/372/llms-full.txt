@@ -10,6 +10,7 @@ API Reference: https://mono.github.io/SkiaSharp.Extended/api/
 
 ---
 
+
 # SkiaSharp.Extended
 
 SkiaSharp.Extended brings powerful graphics utilities and .NET MAUI controls to your SkiaSharp projects—from blur hash placeholders to Lottie animations and confetti effects.
@@ -63,6 +64,10 @@ Create regular polygons, stars, and other shapes with simple method calls.
 Smoothly morph between two paths for shape transitions and animations.
 
 ![Path Interpolation][interpolation-img]
+
+### [Pixel Comparer](docs/pixel-comparer.md)
+
+Compare two images pixel by pixel, quantify differences, and generate visual difference masks—ideal for visual regression testing.
 
 ---
 
@@ -234,475 +239,6 @@ Then use it in XAML:
 [blur]: ../images/extended/skblurhash/blur.png
 [components]: ../images/extended/skblurhash/components-comparison.png
 [punch]: ../images/extended/skblurhash/punch-comparison.png
-
-
----
-
-# Geometry Helpers
-
-> [!TIP]
-> **[Try it live →](../sample/shapes)** — Interactive Shapes demo in the Blazor sample app.
-
-Geometry Helpers provide simple methods to create common geometric shapes as [`SKPath`](xref:SkiaSharp.SKPath) objects. Instead of manually calculating points and angles, you can generate squares, triangles, polygons, and stars with a single method call.
-
-![Shapes overview][shapes-overview]
-
-## Quick Start
-
-### Create a shape path
-
-```csharp
-using SkiaSharp;
-using SkiaSharp.Extended;
-
-// Create a 5-pointed star
-var starPath = SKGeometry.CreateRegularStarPath(
-    outerRadius: 100,
-    innerRadius: 40,
-    points: 5);
-
-// Draw it on a canvas
-canvas.DrawPath(starPath, paint);
-```
-
-### Use canvas extension methods
-
-```csharp
-// Draw shapes directly on a canvas
-canvas.DrawStar(100, 100, outerRadius: 50, innerRadius: 20, points: 5, paint);
-canvas.DrawRegularPolygon(200, 100, radius: 40, points: 6, paint);
-canvas.DrawTriangle(300, 100, radius: 40, paint);
-```
-
-## Available Shapes
-
-### Basic Shapes
-
-| Method | Description |
-| :----- | :---------- |
-| `CreateSquarePath(side)` | Square centered at origin |
-| `CreateRectanglePath(width, height)` | Rectangle centered at origin |
-| `CreateTrianglePath(width, height)` | Isoceles triangle pointing up |
-| `CreateTrianglePath(radius)` | Equilateral triangle inscribed in circle |
-
-### Regular Polygons
-
-Create any regular polygon by specifying the number of sides:
-
-![Polygon variations][polygon-variations]
-
-```csharp
-// Pentagon (5 sides)
-var pentagon = SKGeometry.CreateRegularPolygonPath(radius: 50, points: 5);
-
-// Hexagon (6 sides)
-var hexagon = SKGeometry.CreateRegularPolygonPath(radius: 50, points: 6);
-
-// Octagon (8 sides)
-var octagon = SKGeometry.CreateRegularPolygonPath(radius: 50, points: 8);
-```
-
-### Stars
-
-Create stars with any number of points by specifying outer and inner radii:
-
-![Star variations][star-variations]
-
-```csharp
-// Classic 5-pointed star
-var star5 = SKGeometry.CreateRegularStarPath(
-    outerRadius: 50,
-    innerRadius: 20,
-    points: 5);
-
-// Star of David (6-pointed)
-var star6 = SKGeometry.CreateRegularStarPath(
-    outerRadius: 50,
-    innerRadius: 30,
-    points: 6);
-```
-
-The `innerRadius` controls how "pointy" the star is—smaller values create sharper points.
-
-## Canvas Extension Methods
-
-For convenience, you can draw shapes directly on a canvas without creating path objects:
-
-```csharp
-using SkiaSharp;
-using SkiaSharp.Extended;
-
-// Square
-canvas.DrawSquare(cx: 50, cy: 50, side: 40, paint);
-
-// Triangle (by radius)
-canvas.DrawTriangle(cx: 150, cy: 50, radius: 30, paint);
-
-// Regular polygon
-canvas.DrawRegularPolygon(cx: 250, cy: 50, radius: 30, points: 6, paint);
-
-// Star
-canvas.DrawStar(cx: 350, cy: 50, outerRadius: 30, innerRadius: 12, points: 5, paint);
-```
-
-## Utility Methods
-
-The [`SKGeometry`](xref:SkiaSharp.Extended.SKGeometry) class also provides utility methods for geometric calculations:
-
-| Method | Description |
-| :----- | :---------- |
-| `CirclePoint(radius, radians)` | Get a point on a circle at the given angle |
-| `Area(polygon)` | Calculate the area of a polygon from its points |
-| `Perimeter(polygon)` | Calculate the perimeter of a polygon |
-| `PointAlong(a, b, pct)` | Get a point along a line between two points |
-
-```csharp
-// Get a point on a circle
-var point = SKGeometry.CirclePoint(radius: 100, radians: Math.PI / 4);
-
-// Calculate polygon area
-var points = new[] { new SKPoint(0, 0), new SKPoint(100, 0), new SKPoint(50, 100) };
-var area = SKGeometry.Area(points);
-```
-
-## Customization
-
-### Path Direction
-
-All shape methods accept an optional [`SKPathDirection`](xref:SkiaSharp.SKPathDirection) parameter to control winding order:
-
-```csharp
-// Clockwise (default)
-var cwPath = SKGeometry.CreateSquarePath(50, SKPathDirection.Clockwise);
-
-// Counter-clockwise
-var ccwPath = SKGeometry.CreateSquarePath(50, SKPathDirection.CounterClockwise);
-```
-
-This is useful when combining paths or creating holes with path operations.
-
-### Centering
-
-All paths are created centered at the origin (0, 0). To position them, use `Offset`:
-
-```csharp
-var path = SKGeometry.CreateRegularStarPath(50, 20, 5);
-path.Offset(centerX, centerY);
-canvas.DrawPath(path, paint);
-```
-
-Or use the canvas extension methods which take position parameters directly.
-
-## Learn More
-
-- [API Reference](xref:SkiaSharp.Extended.SKGeometry) — Full method documentation
-- [SKGeometryExtensions](xref:SkiaSharp.Extended.SKGeometryExtensions) — Canvas extension methods
-
-[shapes-overview]: ../images/extended/geometry/shapes-overview.png
-[polygon-variations]: ../images/extended/geometry/polygon-variations.png
-[star-variations]: ../images/extended/geometry/star-variations.png
-
-
----
-
-# Path Interpolation
-
-> [!TIP]
-> **[Try it live →](../sample/interpolation)** — Interactive Path Interpolation demo in the Blazor sample app.
-
-Path Interpolation lets you smoothly morph one shape into another. This is perfect for creating animated transitions, loading indicators, or any UI effect where shapes need to transform fluidly.
-
-![Path Interpolation Animation][interpolation-gif]
-
-## Quick Start
-
-```csharp
-using SkiaSharp;
-using SkiaSharp.Extended;
-
-// Define your start and end paths
-var square = SKGeometry.CreateSquarePath(100);
-var star = SKGeometry.CreateRegularStarPath(100, 40, 5);
-
-// Create the interpolation
-var interpolation = new SKPathInterpolation(square, star);
-
-// Get paths at any point in the transition (0 to 1)
-var halfway = interpolation.Interpolate(0.5f);
-```
-
-## How It Works
-
-The interpolation works by:
-1. Converting both paths to a series of points
-2. Matching point counts between the paths
-3. Interpolating each point linearly from start to end position
-
-![Interpolation Steps][interpolation-steps]
-
-The `t` parameter controls the transition progress:
-- `t = 0` — Original path (from)
-- `t = 0.5` — Halfway between both shapes
-- `t = 1` — Final path (to)
-
-## Animation Example
-
-To animate the transition, vary `t` over time:
-
-```csharp
-public class MorphingShape
-{
-    private readonly SKPathInterpolation interpolation;
-    private float progress = 0f;
-    private float direction = 1f;
-
-    public MorphingShape(SKPath from, SKPath to)
-    {
-        interpolation = new SKPathInterpolation(from, to);
-    }
-
-    public void Update(float deltaTime)
-    {
-        progress += deltaTime * direction;
-        
-        if (progress >= 1f || progress <= 0f)
-            direction *= -1; // Reverse at ends
-    }
-
-    public void Draw(SKCanvas canvas, SKPaint paint)
-    {
-        var path = interpolation.Interpolate(progress);
-        canvas.DrawPath(path, paint);
-    }
-}
-```
-
-## Customization
-
-### Max Segment Length
-
-The `maxSegmentLength` parameter controls how finely paths are subdivided:
-
-```csharp
-// Default (5 units) - good balance of quality and performance
-var interpolation = new SKPathInterpolation(from, to);
-
-// Smoother curves (smaller segments)
-var smooth = new SKPathInterpolation(from, to, maxSegmentLength: 2f);
-
-// Faster performance (larger segments)  
-var fast = new SKPathInterpolation(from, to, maxSegmentLength: 10f);
-```
-
-Smaller values create smoother morphing but use more memory and processing power.
-
-### Pre-calculating
-
-For performance-critical animations, call `Prepare()` upfront:
-
-```csharp
-var interpolation = new SKPathInterpolation(from, to);
-interpolation.Prepare(); // Pre-calculate point mappings
-
-// Now Interpolate() calls are faster
-for (float t = 0; t <= 1; t += 0.1f)
-{
-    var path = interpolation.Interpolate(t);
-}
-```
-
-## Usage Patterns
-
-### Loading indicator
-
-```csharp
-// Morph between simple shapes for a loading animation
-var circle = new SKPath();
-circle.AddCircle(0, 0, 50);
-
-var square = SKGeometry.CreateSquarePath(80);
-
-var loading = new SKPathInterpolation(circle, square);
-```
-
-### Icon transitions
-
-```csharp
-// Smooth transition between UI states (play → pause)
-var playIcon = CreatePlayIconPath();
-var pauseIcon = CreatePauseIconPath();
-
-var transition = new SKPathInterpolation(playIcon, pauseIcon);
-var currentIcon = transition.Interpolate(animationProgress);
-```
-
-## Tips
-
-- **Similar shapes work best** — Morphing between shapes with similar complexity produces smoother results
-- **Closed paths recommended** — Both paths should be closed for predictable results
-- **Center your paths** — Paths centered at origin (0,0) morph more naturally
-
-## Learn More
-
-- [API Reference](xref:SkiaSharp.Extended.SKPathInterpolation) — Full method documentation
-- [Geometry Helpers](geometry.md) — Create shapes to interpolate between
-
-[interpolation-gif]: ../images/extended/skpathinterpolation/interpolation.gif
-[interpolation-steps]: ../images/extended/skpathinterpolation/interpolation-steps.png
-
-
----
-
-# Lottie Animations
-
-Lottie brings designer-created animations to your .NET MAUI apps. Instead of manually coding complex animations, designers export their After Effects animations as JSON files, and [`SKLottieView`](xref:SkiaSharp.Extended.UI.Controls.SKLottieView) plays them natively with smooth, scalable vector graphics.
-
-![Lottie animation preview][lottie-preview]
-
-## What is Lottie?
-
-[Lottie](https://airbnb.design/lottie/) is an animation format created by Airbnb. Animations are designed in Adobe After Effects, exported as JSON using the [Bodymovin](https://github.com/airbnb/lottie-web) plugin, and rendered natively on mobile and web. The name honors Lotte Reiniger, a pioneer of silhouette animation.
-
-**Why Lottie?**
-- 🎨 Designers create animations visually in After Effects
-- 📦 JSON files are tiny compared to GIFs or video
-- 🔍 Vector-based, so animations scale to any resolution
-- ⚡ Renders in real-time with smooth performance
-
-## Quick Start
-
-### Add to your XAML
-
-```xml
-<ContentPage xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI.Maui">
-    
-    <skia:SKLottieView 
-        Source="animation.json"
-        RepeatCount="-1"
-        WidthRequest="200"
-        HeightRequest="200" />
-        
-</ContentPage>
-```
-
-### Load from different sources
-
-```csharp
-// From app resources (recommended)
-lottieView.Source = new SKFileLottieImageSource { File = "animation.json" };
-
-// From a URL
-lottieView.Source = new SKUriLottieImageSource { Uri = new Uri("https://...") };
-
-// From a stream
-lottieView.Source = new SKStreamLottieImageSource { Stream = myStream };
-```
-
-## Playback Control
-
-### Repeat modes
-
-```xml
-<!-- Play once and stop -->
-<skia:SKLottieView Source="animation.json" RepeatCount="0" />
-
-<!-- Repeat 3 times -->
-<skia:SKLottieView Source="animation.json" RepeatCount="3" />
-
-<!-- Loop forever -->
-<skia:SKLottieView Source="animation.json" RepeatCount="-1" />
-
-<!-- Ping-pong (play forward, then backward) -->
-<skia:SKLottieView Source="animation.json" RepeatCount="-1" RepeatMode="Reverse" />
-```
-
-### Control playback programmatically
-
-```csharp
-// Pause the animation
-lottieView.IsAnimationEnabled = false;
-
-// Resume
-lottieView.IsAnimationEnabled = true;
-
-// Jump to specific progress
-lottieView.Progress = TimeSpan.FromSeconds(1.5);
-
-// Check if complete
-if (lottieView.IsComplete)
-{
-    // Animation finished
-}
-```
-
-## Events
-
-Handle animation lifecycle events:
-
-```csharp
-lottieView.AnimationLoaded += (s, e) =>
-{
-    Console.WriteLine($"Loaded! Duration: {lottieView.Duration}");
-};
-
-lottieView.AnimationFailed += (s, e) =>
-{
-    Console.WriteLine($"Failed to load animation");
-};
-
-lottieView.AnimationCompleted += (s, e) =>
-{
-    Console.WriteLine("Animation finished playing");
-};
-```
-
-> **Note:** `AnimationCompleted` only fires for finite animations. Infinite loops (`RepeatCount="-1"`) never complete.
-
-## Properties Reference
-
-| Property | Type | Description |
-| :------- | :--- | :---------- |
-| `Source` | [`SKLottieImageSource`](xref:SkiaSharp.Extended.UI.Controls.SKLottieImageSource) | The Lottie JSON file to play |
-| `Duration` | `TimeSpan` | Total duration of the animation (read-only) |
-| `Progress` | `TimeSpan` | Current playback position |
-| `RepeatCount` | `int` | Times to repeat (0 = once, -1 = forever) |
-| `RepeatMode` | [`SKLottieRepeatMode`](xref:SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode) | `Restart` or `Reverse` (ping-pong) |
-| `IsAnimationEnabled` | `bool` | Play/pause the animation |
-| `IsComplete` | `bool` | Whether playback has finished |
-
-## Where to Find Animations
-
-- [LottieFiles](https://lottiefiles.com/) — Free and premium Lottie animations
-- [IconScout Lottie](https://iconscout.com/lottie-animations) — Animated icons
-- [Lordicon](https://lordicon.com/) — Animated icon library
-
-Or create your own in Adobe After Effects using the [Bodymovin plugin](https://github.com/airbnb/lottie-web).
-
-## Template Customization
-
-You can customize the rendering surface by overriding the control template:
-
-```xml
-<skia:SKLottieView Source="animation.json">
-    <skia:SKLottieView.ControlTemplate>
-        <ControlTemplate>
-            <!-- Use SKGLView for GPU-accelerated rendering -->
-            <skia:SKGLView x:Name="PART_DrawingSurface" />
-        </ControlTemplate>
-    </skia:SKLottieView.ControlTemplate>
-</skia:SKLottieView>
-```
-
-The `PART_DrawingSurface` name is required—it can be either `SKCanvasView` (software) or `SKGLView` (GPU).
-
-## Learn More
-
-- [Lottie by Airbnb](https://airbnb.design/lottie/) — Official project page
-- [Lottie Documentation](https://airbnb.io/lottie/) — Format specification and guides
-- [LottieFiles](https://lottiefiles.com/) — Animation marketplace
-- [API Reference](xref:SkiaSharp.Extended.UI.Controls.SKLottieView) — Full method documentation
-
-[lottie-preview]: ../images/ui/controls/sklottieview/lottie.gif
 
 
 ---
@@ -926,6 +462,617 @@ void CelebrateAchievement()
 [top-stream]: ../images/ui/controls/skconfettiview/top-stream.gif
 [center-burst]: ../images/ui/controls/skconfettiview/center-burst.gif
 [sides-spray]: ../images/ui/controls/skconfettiview/sides-spray.gif
+
+
+---
+
+# Geometry Helpers
+
+> [!TIP]
+> **[Try it live →](../sample/shapes)** — Interactive Shapes demo in the Blazor sample app.
+
+Geometry Helpers provide simple methods to create common geometric shapes as [`SKPath`](xref:SkiaSharp.SKPath) objects. Instead of manually calculating points and angles, you can generate squares, triangles, polygons, and stars with a single method call.
+
+![Shapes overview][shapes-overview]
+
+## Quick Start
+
+### Create a shape path
+
+```csharp
+using SkiaSharp;
+using SkiaSharp.Extended;
+
+// Create a 5-pointed star
+var starPath = SKGeometry.CreateRegularStarPath(
+    outerRadius: 100,
+    innerRadius: 40,
+    points: 5);
+
+// Draw it on a canvas
+canvas.DrawPath(starPath, paint);
+```
+
+### Use canvas extension methods
+
+```csharp
+// Draw shapes directly on a canvas
+canvas.DrawStar(100, 100, outerRadius: 50, innerRadius: 20, points: 5, paint);
+canvas.DrawRegularPolygon(200, 100, radius: 40, points: 6, paint);
+canvas.DrawTriangle(300, 100, radius: 40, paint);
+```
+
+## Available Shapes
+
+### Basic Shapes
+
+| Method | Description |
+| :----- | :---------- |
+| `CreateSquarePath(side)` | Square centered at origin |
+| `CreateRectanglePath(width, height)` | Rectangle centered at origin |
+| `CreateTrianglePath(width, height)` | Isoceles triangle pointing up |
+| `CreateTrianglePath(radius)` | Equilateral triangle inscribed in circle |
+
+### Regular Polygons
+
+Create any regular polygon by specifying the number of sides:
+
+![Polygon variations][polygon-variations]
+
+```csharp
+// Pentagon (5 sides)
+var pentagon = SKGeometry.CreateRegularPolygonPath(radius: 50, points: 5);
+
+// Hexagon (6 sides)
+var hexagon = SKGeometry.CreateRegularPolygonPath(radius: 50, points: 6);
+
+// Octagon (8 sides)
+var octagon = SKGeometry.CreateRegularPolygonPath(radius: 50, points: 8);
+```
+
+### Stars
+
+Create stars with any number of points by specifying outer and inner radii:
+
+![Star variations][star-variations]
+
+```csharp
+// Classic 5-pointed star
+var star5 = SKGeometry.CreateRegularStarPath(
+    outerRadius: 50,
+    innerRadius: 20,
+    points: 5);
+
+// Star of David (6-pointed)
+var star6 = SKGeometry.CreateRegularStarPath(
+    outerRadius: 50,
+    innerRadius: 30,
+    points: 6);
+```
+
+The `innerRadius` controls how "pointy" the star is—smaller values create sharper points.
+
+## Canvas Extension Methods
+
+For convenience, you can draw shapes directly on a canvas without creating path objects:
+
+```csharp
+using SkiaSharp;
+using SkiaSharp.Extended;
+
+// Square
+canvas.DrawSquare(cx: 50, cy: 50, side: 40, paint);
+
+// Triangle (by radius)
+canvas.DrawTriangle(cx: 150, cy: 50, radius: 30, paint);
+
+// Regular polygon
+canvas.DrawRegularPolygon(cx: 250, cy: 50, radius: 30, points: 6, paint);
+
+// Star
+canvas.DrawStar(cx: 350, cy: 50, outerRadius: 30, innerRadius: 12, points: 5, paint);
+```
+
+## Utility Methods
+
+The [`SKGeometry`](xref:SkiaSharp.Extended.SKGeometry) class also provides utility methods for geometric calculations:
+
+| Method | Description |
+| :----- | :---------- |
+| `CirclePoint(radius, radians)` | Get a point on a circle at the given angle |
+| `Area(polygon)` | Calculate the area of a polygon from its points |
+| `Perimeter(polygon)` | Calculate the perimeter of a polygon |
+| `PointAlong(a, b, pct)` | Get a point along a line between two points |
+
+```csharp
+// Get a point on a circle
+var point = SKGeometry.CirclePoint(radius: 100, radians: Math.PI / 4);
+
+// Calculate polygon area
+var points = new[] { new SKPoint(0, 0), new SKPoint(100, 0), new SKPoint(50, 100) };
+var area = SKGeometry.Area(points);
+```
+
+## Customization
+
+### Path Direction
+
+All shape methods accept an optional [`SKPathDirection`](xref:SkiaSharp.SKPathDirection) parameter to control winding order:
+
+```csharp
+// Clockwise (default)
+var cwPath = SKGeometry.CreateSquarePath(50, SKPathDirection.Clockwise);
+
+// Counter-clockwise
+var ccwPath = SKGeometry.CreateSquarePath(50, SKPathDirection.CounterClockwise);
+```
+
+This is useful when combining paths or creating holes with path operations.
+
+### Centering
+
+All paths are created centered at the origin (0, 0). To position them, use `Offset`:
+
+```csharp
+var path = SKGeometry.CreateRegularStarPath(50, 20, 5);
+path.Offset(centerX, centerY);
+canvas.DrawPath(path, paint);
+```
+
+Or use the canvas extension methods which take position parameters directly.
+
+## Learn More
+
+- [API Reference](xref:SkiaSharp.Extended.SKGeometry) — Full method documentation
+- [SKGeometryExtensions](xref:SkiaSharp.Extended.SKGeometryExtensions) — Canvas extension methods
+
+[shapes-overview]: ../images/extended/geometry/shapes-overview.png
+[polygon-variations]: ../images/extended/geometry/polygon-variations.png
+[star-variations]: ../images/extended/geometry/star-variations.png
+
+
+---
+
+# Lottie Animations
+
+Lottie brings designer-created animations to your .NET MAUI apps. Instead of manually coding complex animations, designers export their After Effects animations as JSON files, and [`SKLottieView`](xref:SkiaSharp.Extended.UI.Controls.SKLottieView) plays them natively with smooth, scalable vector graphics.
+
+![Lottie animation preview][lottie-preview]
+
+## What is Lottie?
+
+[Lottie](https://airbnb.design/lottie/) is an animation format created by Airbnb. Animations are designed in Adobe After Effects, exported as JSON using the [Bodymovin](https://github.com/airbnb/lottie-web) plugin, and rendered natively on mobile and web. The name honors Lotte Reiniger, a pioneer of silhouette animation.
+
+**Why Lottie?**
+- 🎨 Designers create animations visually in After Effects
+- 📦 JSON files are tiny compared to GIFs or video
+- 🔍 Vector-based, so animations scale to any resolution
+- ⚡ Renders in real-time with smooth performance
+
+## Quick Start
+
+### Add to your XAML
+
+```xml
+<ContentPage xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI.Maui">
+    
+    <skia:SKLottieView 
+        Source="animation.json"
+        RepeatCount="-1"
+        WidthRequest="200"
+        HeightRequest="200" />
+        
+</ContentPage>
+```
+
+### Load from different sources
+
+```csharp
+// From app resources (recommended)
+lottieView.Source = new SKFileLottieImageSource { File = "animation.json" };
+
+// From a URL
+lottieView.Source = new SKUriLottieImageSource { Uri = new Uri("https://...") };
+
+// From a stream
+lottieView.Source = new SKStreamLottieImageSource { Stream = myStream };
+```
+
+## Playback Control
+
+### Repeat modes
+
+```xml
+<!-- Play once and stop -->
+<skia:SKLottieView Source="animation.json" RepeatCount="0" />
+
+<!-- Repeat 3 times -->
+<skia:SKLottieView Source="animation.json" RepeatCount="3" />
+
+<!-- Loop forever -->
+<skia:SKLottieView Source="animation.json" RepeatCount="-1" />
+
+<!-- Ping-pong (play forward, then backward) -->
+<skia:SKLottieView Source="animation.json" RepeatCount="-1" RepeatMode="Reverse" />
+```
+
+### Control playback programmatically
+
+```csharp
+// Pause the animation
+lottieView.IsAnimationEnabled = false;
+
+// Resume
+lottieView.IsAnimationEnabled = true;
+
+// Jump to specific progress
+lottieView.Progress = TimeSpan.FromSeconds(1.5);
+
+// Check if complete
+if (lottieView.IsComplete)
+{
+    // Animation finished
+}
+```
+
+## Events
+
+Handle animation lifecycle events:
+
+```csharp
+lottieView.AnimationLoaded += (s, e) =>
+{
+    Console.WriteLine($"Loaded! Duration: {lottieView.Duration}");
+};
+
+lottieView.AnimationFailed += (s, e) =>
+{
+    Console.WriteLine($"Failed to load animation");
+};
+
+lottieView.AnimationCompleted += (s, e) =>
+{
+    Console.WriteLine("Animation finished playing");
+};
+```
+
+> **Note:** `AnimationCompleted` only fires for finite animations. Infinite loops (`RepeatCount="-1"`) never complete.
+
+## Properties Reference
+
+| Property | Type | Description |
+| :------- | :--- | :---------- |
+| `Source` | [`SKLottieImageSource`](xref:SkiaSharp.Extended.UI.Controls.SKLottieImageSource) | The Lottie JSON file to play |
+| `Duration` | `TimeSpan` | Total duration of the animation (read-only) |
+| `Progress` | `TimeSpan` | Current playback position |
+| `RepeatCount` | `int` | Times to repeat (0 = once, -1 = forever) |
+| `RepeatMode` | [`SKLottieRepeatMode`](xref:SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode) | `Restart` or `Reverse` (ping-pong) |
+| `IsAnimationEnabled` | `bool` | Play/pause the animation |
+| `IsComplete` | `bool` | Whether playback has finished |
+
+## Where to Find Animations
+
+- [LottieFiles](https://lottiefiles.com/) — Free and premium Lottie animations
+- [IconScout Lottie](https://iconscout.com/lottie-animations) — Animated icons
+- [Lordicon](https://lordicon.com/) — Animated icon library
+
+Or create your own in Adobe After Effects using the [Bodymovin plugin](https://github.com/airbnb/lottie-web).
+
+## Template Customization
+
+You can customize the rendering surface by overriding the control template:
+
+```xml
+<skia:SKLottieView Source="animation.json">
+    <skia:SKLottieView.ControlTemplate>
+        <ControlTemplate>
+            <!-- Use SKGLView for GPU-accelerated rendering -->
+            <skia:SKGLView x:Name="PART_DrawingSurface" />
+        </ControlTemplate>
+    </skia:SKLottieView.ControlTemplate>
+</skia:SKLottieView>
+```
+
+The `PART_DrawingSurface` name is required—it can be either `SKCanvasView` (software) or `SKGLView` (GPU).
+
+## Learn More
+
+- [Lottie by Airbnb](https://airbnb.design/lottie/) — Official project page
+- [Lottie Documentation](https://airbnb.io/lottie/) — Format specification and guides
+- [LottieFiles](https://lottiefiles.com/) — Animation marketplace
+- [API Reference](xref:SkiaSharp.Extended.UI.Controls.SKLottieView) — Full method documentation
+
+[lottie-preview]: ../images/ui/controls/sklottieview/lottie.gif
+
+
+---
+
+# Path Interpolation
+
+> [!TIP]
+> **[Try it live →](../sample/interpolation)** — Interactive Path Interpolation demo in the Blazor sample app.
+
+Path Interpolation lets you smoothly morph one shape into another. This is perfect for creating animated transitions, loading indicators, or any UI effect where shapes need to transform fluidly.
+
+![Path Interpolation Animation][interpolation-gif]
+
+## Quick Start
+
+```csharp
+using SkiaSharp;
+using SkiaSharp.Extended;
+
+// Define your start and end paths
+var square = SKGeometry.CreateSquarePath(100);
+var star = SKGeometry.CreateRegularStarPath(100, 40, 5);
+
+// Create the interpolation
+var interpolation = new SKPathInterpolation(square, star);
+
+// Get paths at any point in the transition (0 to 1)
+var halfway = interpolation.Interpolate(0.5f);
+```
+
+## How It Works
+
+The interpolation works by:
+1. Converting both paths to a series of points
+2. Matching point counts between the paths
+3. Interpolating each point linearly from start to end position
+
+![Interpolation Steps][interpolation-steps]
+
+The `t` parameter controls the transition progress:
+- `t = 0` — Original path (from)
+- `t = 0.5` — Halfway between both shapes
+- `t = 1` — Final path (to)
+
+## Animation Example
+
+To animate the transition, vary `t` over time:
+
+```csharp
+public class MorphingShape
+{
+    private readonly SKPathInterpolation interpolation;
+    private float progress = 0f;
+    private float direction = 1f;
+
+    public MorphingShape(SKPath from, SKPath to)
+    {
+        interpolation = new SKPathInterpolation(from, to);
+    }
+
+    public void Update(float deltaTime)
+    {
+        progress += deltaTime * direction;
+        
+        if (progress >= 1f || progress <= 0f)
+            direction *= -1; // Reverse at ends
+    }
+
+    public void Draw(SKCanvas canvas, SKPaint paint)
+    {
+        var path = interpolation.Interpolate(progress);
+        canvas.DrawPath(path, paint);
+    }
+}
+```
+
+## Customization
+
+### Max Segment Length
+
+The `maxSegmentLength` parameter controls how finely paths are subdivided:
+
+```csharp
+// Default (5 units) - good balance of quality and performance
+var interpolation = new SKPathInterpolation(from, to);
+
+// Smoother curves (smaller segments)
+var smooth = new SKPathInterpolation(from, to, maxSegmentLength: 2f);
+
+// Faster performance (larger segments)  
+var fast = new SKPathInterpolation(from, to, maxSegmentLength: 10f);
+```
+
+Smaller values create smoother morphing but use more memory and processing power.
+
+### Pre-calculating
+
+For performance-critical animations, call `Prepare()` upfront:
+
+```csharp
+var interpolation = new SKPathInterpolation(from, to);
+interpolation.Prepare(); // Pre-calculate point mappings
+
+// Now Interpolate() calls are faster
+for (float t = 0; t <= 1; t += 0.1f)
+{
+    var path = interpolation.Interpolate(t);
+}
+```
+
+## Usage Patterns
+
+### Loading indicator
+
+```csharp
+// Morph between simple shapes for a loading animation
+var circle = new SKPath();
+circle.AddCircle(0, 0, 50);
+
+var square = SKGeometry.CreateSquarePath(80);
+
+var loading = new SKPathInterpolation(circle, square);
+```
+
+### Icon transitions
+
+```csharp
+// Smooth transition between UI states (play → pause)
+var playIcon = CreatePlayIconPath();
+var pauseIcon = CreatePauseIconPath();
+
+var transition = new SKPathInterpolation(playIcon, pauseIcon);
+var currentIcon = transition.Interpolate(animationProgress);
+```
+
+## Tips
+
+- **Similar shapes work best** — Morphing between shapes with similar complexity produces smoother results
+- **Closed paths recommended** — Both paths should be closed for predictable results
+- **Center your paths** — Paths centered at origin (0,0) morph more naturally
+
+## Learn More
+
+- [API Reference](xref:SkiaSharp.Extended.SKPathInterpolation) — Full method documentation
+- [Geometry Helpers](geometry.md) — Create shapes to interpolate between
+
+[interpolation-gif]: ../images/extended/skpathinterpolation/interpolation.gif
+[interpolation-steps]: ../images/extended/skpathinterpolation/interpolation-steps.png
+
+
+---
+
+# Pixel Comparer
+
+> [!TIP]
+> **[Try it live →](../sample/pixelcomparer)** — Interactive Pixel Comparer demo in the Blazor sample app.
+
+Pixel Comparer lets you compare two images pixel by pixel and quantify their differences. It's ideal for visual regression testing, screenshot comparison in CI pipelines, and verifying that rendering output matches expected results.
+
+## Quick Start
+
+### Compare two images
+
+```csharp
+using SkiaSharp;
+using SkiaSharp.Extended;
+
+var result = SKPixelComparer.Compare("expected.png", "actual.png");
+
+Console.WriteLine($"Total pixels: {result.TotalPixels}");
+Console.WriteLine($"Error pixels: {result.ErrorPixelCount}");
+Console.WriteLine($"Error percentage: {result.ErrorPixelPercentage:P2}");
+Console.WriteLine($"Absolute error: {result.AbsoluteError}");
+```
+
+### Generate a difference mask
+
+```csharp
+using var mask = SKPixelComparer.GenerateDifferenceMask("expected.png", "actual.png");
+
+// Encode and save the mask
+using var data = mask.Encode(SKEncodedImageFormat.Png, 100);
+File.WriteAllBytes("diff-mask.png", data.ToArray());
+```
+
+The mask is a black-and-white image where **white pixels** indicate differences and **black pixels** indicate matching areas.
+
+## How It Works
+
+The comparer normalizes both images to BGRA8888 format, then walks through every pixel and sums the per-channel (red, green, blue) absolute differences:
+
+1. For each pixel, compute `|R₁ − R₂| + |G₁ − G₂| + |B₁ − B₂|`
+2. If the sum is greater than zero, that pixel is counted as an error
+3. The total per-pixel sums are accumulated into `AbsoluteError`
+
+Both images must have the same dimensions; otherwise an `InvalidOperationException` is thrown.
+
+## Comparison Results
+
+The [`SKPixelComparisonResult`](xref:SkiaSharp.Extended.SKPixelComparisonResult) contains:
+
+| Property | Type | Description |
+| :------- | :--- | :---------- |
+| `TotalPixels` | `int` | Width × Height of the images |
+| `ErrorPixelCount` | `int` | Number of pixels with any difference |
+| `ErrorPixelPercentage` | `double` | `ErrorPixelCount / TotalPixels` |
+| `AbsoluteError` | `int` | Sum of all per-channel differences |
+
+## Mask-Based Comparison
+
+When comparing images that have expected minor differences (e.g., anti-aliasing, compression artifacts), you can supply a tolerance mask. The mask image uses per-channel thresholds—a difference is only counted if it exceeds the corresponding channel value in the mask pixel:
+
+```csharp
+using var expected = SKImage.FromEncodedData("expected.png");
+using var actual = SKImage.FromEncodedData("actual.png");
+using var mask = SKImage.FromEncodedData("tolerance-mask.png");
+
+var result = SKPixelComparer.Compare(expected, actual, mask);
+```
+
+For example, if a mask pixel has RGB values of `(10, 10, 10)`, differences of up to 10 per channel at that location are ignored. This lets you define region-specific tolerances.
+
+## Input Overloads
+
+All comparison methods accept multiple input types for convenience:
+
+| Input Type | Example |
+| :--------- | :------ |
+| File paths | `Compare("a.png", "b.png")` |
+| `SKImage` | `Compare(imageA, imageB)` |
+| `SKBitmap` | `Compare(bitmapA, bitmapB)` |
+| `SKPixmap` | `Compare(pixmapA, pixmapB)` |
+
+The same overloads are available for `GenerateDifferenceMask` (without mask support) and for the three-argument masked `Compare`.
+
+## Usage Patterns
+
+### Visual regression testing
+
+Use the comparer in your test suite to catch unintended rendering changes:
+
+```csharp
+[Fact]
+public void ChartRendering_MatchesBaseline()
+{
+    using var actual = RenderChart(testData);
+    using var expected = SKImage.FromEncodedData("baselines/chart.png");
+
+    var result = SKPixelComparer.Compare(expected, actual);
+
+    Assert.Equal(0, result.ErrorPixelCount);
+}
+```
+
+### CI screenshot comparison with tolerance
+
+For tests that may have minor platform-specific differences:
+
+```csharp
+[Fact]
+public void UI_MatchesBaseline_WithTolerance()
+{
+    using var actual = CaptureScreenshot();
+    using var expected = SKImage.FromEncodedData("baselines/screen.png");
+
+    var result = SKPixelComparer.Compare(expected, actual);
+
+    // Allow up to 0.5% pixel difference
+    Assert.True(result.ErrorPixelPercentage < 0.005,
+        $"Too many differing pixels: {result.ErrorPixelPercentage:P2}");
+}
+```
+
+### Saving a difference mask for debugging
+
+When a comparison fails, generate and save the mask to help diagnose what changed:
+
+```csharp
+if (result.ErrorPixelCount > 0)
+{
+    using var diffMask = SKPixelComparer.GenerateDifferenceMask(expected, actual);
+    using var encoded = diffMask.Encode(SKEncodedImageFormat.Png, 100);
+    File.WriteAllBytes("test-output/diff-mask.png", encoded.ToArray());
+}
+```
+
+## Learn More
+
+- [API Reference — SKPixelComparer](xref:SkiaSharp.Extended.SKPixelComparer) — Full method documentation
+- [API Reference — SKPixelComparisonResult](xref:SkiaSharp.Extended.SKPixelComparisonResult) — Result class documentation
 
 
 ---
