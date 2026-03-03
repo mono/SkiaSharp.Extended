@@ -52,6 +52,13 @@
     </div>
 </div>
 
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
+
 @if (result != null)
 {
     <div class="row mb-3">
@@ -99,6 +106,7 @@
     private bool isLoading;
     private SKPixelComparisonResult? result;
     private SKImage? diffMask;
+    private string? errorMessage;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -116,6 +124,7 @@
     private async Task RunComparison()
     {
         isLoading = true;
+        errorMessage = null;
         StateHasChanged();
 
         try
@@ -143,6 +152,7 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error comparing images: {ex.Message}");
+            errorMessage = $"Error comparing images: {ex.Message}";
             result = null;
             diffMask?.Dispose();
             diffMask = null;
