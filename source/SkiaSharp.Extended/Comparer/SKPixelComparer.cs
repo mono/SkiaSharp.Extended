@@ -35,6 +35,7 @@ namespace SkiaSharp.Extended
 			var totalPixels = width * height;
 			var errorPixels = 0;
 			var absoluteError = 0;
+			var sumSquaredError = 0L;
 
 			using var firstBitmap = GetNormalizedBitmap(first);
 			using var firstPixmap = firstBitmap.PeekPixels();
@@ -55,11 +56,12 @@ namespace SkiaSharp.Extended
 				var d = r + g + b;
 
 				absoluteError += d;
+				sumSquaredError += (long)r * r + (long)g * g + (long)b * b;
 				if (d > 0)
 					errorPixels++;
 			}
 
-			return new SKPixelComparisonResult(totalPixels, errorPixels, absoluteError);
+			return new SKPixelComparisonResult(totalPixels, errorPixels, absoluteError, sumSquaredError);
 		}
 
 		public static SKPixelComparisonResult Compare(string firstFilename, string secondFilename, string maskFilename)
@@ -97,6 +99,7 @@ namespace SkiaSharp.Extended
 			var totalPixels = width * height;
 			var errorPixels = 0;
 			var absoluteError = 0;
+			var sumSquaredError = 0L;
 
 			using var firstBitmap = GetNormalizedBitmap(first);
 			using var firstPixmap = firstBitmap.PeekPixels();
@@ -121,19 +124,95 @@ namespace SkiaSharp.Extended
 				var b = Math.Abs(secondPixel.Blue - firstPixel.Blue);
 
 				var d = 0;
+				var sq = 0L;
 				if (r > maskPixel.Red)
+				{
 					d += r;
+					sq += (long)r * r;
+				}
 				if (g > maskPixel.Green)
+				{
 					d += g;
+					sq += (long)g * g;
+				}
 				if (b > maskPixel.Blue)
+				{
 					d += b;
+					sq += (long)b * b;
+				}
 
 				absoluteError += d;
+				sumSquaredError += sq;
 				if (d > 0)
 					errorPixels++;
 			}
 
-			return new SKPixelComparisonResult(totalPixels, errorPixels, absoluteError);
+			return new SKPixelComparisonResult(totalPixels, errorPixels, absoluteError, sumSquaredError);
+		}
+
+		public static SKPixelComparisonResult Compare(string firstFilename, string secondFilename, int tolerance)
+		{
+			using var first = SKImage.FromEncodedData(firstFilename);
+			using var second = SKImage.FromEncodedData(secondFilename);
+			return Compare(first, second, tolerance);
+		}
+
+		public static SKPixelComparisonResult Compare(SKBitmap first, SKBitmap second, int tolerance)
+		{
+			using var firstPixmap = first.PeekPixels();
+			using var secondPixmap = second.PeekPixels();
+			return Compare(firstPixmap, secondPixmap, tolerance);
+		}
+
+		public static SKPixelComparisonResult Compare(SKPixmap first, SKPixmap second, int tolerance)
+		{
+			using var firstWrapper = SKImage.FromPixels(first);
+			using var secondWrapper = SKImage.FromPixels(second);
+			return Compare(firstWrapper, secondWrapper, tolerance);
+		}
+
+		public static SKPixelComparisonResult Compare(SKImage first, SKImage second, int tolerance)
+		{
+			if (tolerance < 0)
+				throw new ArgumentOutOfRangeException(nameof(tolerance), "Tolerance must be non-negative.");
+
+			Validate(first, second);
+
+			var width = first.Width;
+			var height = first.Height;
+
+			var totalPixels = width * height;
+			var errorPixels = 0;
+			var absoluteError = 0;
+			var sumSquaredError = 0L;
+
+			using var firstBitmap = GetNormalizedBitmap(first);
+			using var firstPixmap = firstBitmap.PeekPixels();
+			var firstPixels = firstPixmap.GetPixelSpan<SKColor>();
+
+			using var secondBitmap = GetNormalizedBitmap(second);
+			using var secondPixmap = secondBitmap.PeekPixels();
+			var secondPixels = secondPixmap.GetPixelSpan<SKColor>();
+
+			for (var idx = 0; idx < totalPixels; idx++)
+			{
+				var firstPixel = firstPixels[idx];
+				var secondPixel = secondPixels[idx];
+
+				var r = Math.Abs(secondPixel.Red - firstPixel.Red);
+				var g = Math.Abs(secondPixel.Green - firstPixel.Green);
+				var b = Math.Abs(secondPixel.Blue - firstPixel.Blue);
+				var d = r + g + b;
+
+				if (d > tolerance)
+				{
+					absoluteError += d;
+					sumSquaredError += (long)r * r + (long)g * g + (long)b * b;
+					errorPixels++;
+				}
+			}
+
+			return new SKPixelComparisonResult(totalPixels, errorPixels, absoluteError, sumSquaredError);
 		}
 
 		public static SKImage GenerateDifferenceMask(string firstFilename, string secondFilename)
@@ -188,6 +267,63 @@ namespace SkiaSharp.Extended
 				var b = (byte)Math.Abs(secondPixel.Blue - firstPixel.Blue);
 
 				diffPixels[idx] = (r + g + b) > 0 ? SKColors.White : SKColors.Black;
+			}
+
+			return SKImage.FromBitmap(diffBitmap);
+		}
+
+		public static SKImage GenerateDifferenceImage(string firstFilename, string secondFilename)
+		{
+			using var first = SKImage.FromEncodedData(firstFilename);
+			using var second = SKImage.FromEncodedData(secondFilename);
+			return GenerateDifferenceImage(first, second);
+		}
+
+		public static SKImage GenerateDifferenceImage(SKBitmap first, SKBitmap second)
+		{
+			using var firstPixmap = first.PeekPixels();
+			using var secondPixmap = second.PeekPixels();
+			return GenerateDifferenceImage(firstPixmap, secondPixmap);
+		}
+
+		public static SKImage GenerateDifferenceImage(SKPixmap first, SKPixmap second)
+		{
+			using var firstWrapper = SKImage.FromPixels(first);
+			using var secondWrapper = SKImage.FromPixels(second);
+			return GenerateDifferenceImage(firstWrapper, secondWrapper);
+		}
+
+		public static SKImage GenerateDifferenceImage(SKImage first, SKImage second)
+		{
+			Validate(first, second);
+
+			var width = first.Width;
+			var height = first.Height;
+
+			var totalPixels = width * height;
+
+			using var firstBitmap = GetNormalizedBitmap(first);
+			using var firstPixmap = firstBitmap.PeekPixels();
+			var firstPixels = firstPixmap.GetPixelSpan<SKColor>();
+
+			using var secondBitmap = GetNormalizedBitmap(second);
+			using var secondPixmap = secondBitmap.PeekPixels();
+			var secondPixels = secondPixmap.GetPixelSpan<SKColor>();
+
+			var diffBitmap = new SKBitmap(new SKImageInfo(width, height));
+			using var diffPixmap = diffBitmap.PeekPixels();
+			var diffPixels = diffPixmap.GetPixelSpan<SKColor>();
+
+			for (var idx = 0; idx < totalPixels; idx++)
+			{
+				var firstPixel = firstPixels[idx];
+				var secondPixel = secondPixels[idx];
+
+				var r = (byte)Math.Abs(secondPixel.Red - firstPixel.Red);
+				var g = (byte)Math.Abs(secondPixel.Green - firstPixel.Green);
+				var b = (byte)Math.Abs(secondPixel.Blue - firstPixel.Blue);
+
+				diffPixels[idx] = new SKColor(r, g, b);
 			}
 
 			return SKImage.FromBitmap(diffBitmap);

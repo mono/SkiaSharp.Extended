@@ -218,5 +218,205 @@ namespace SkiaSharp.Extended.Tests
 			using (var str = File.Create(GetImagePath("diff.png")))
 				data.SaveTo(str);
 		}
+
+		[Theory]
+		[InlineData(0xFFFFFFFF, 0xFF000000, 4876875)]
+		[InlineData(0xFF000000, 0xFFFFFFFF, 4876875)]
+		[InlineData(0xFF000000, 0xFF000001, 25)]
+		[InlineData(0xFFFFFFFF, 0xFFFFFFFF, 0)]
+		[InlineData(0xFF000000, 0xFF000000, 0)]
+		public void CompareTracksSumSquaredError(uint firstColor, uint secondColor, long expectedSumSquaredError)
+		{
+			using var first = CreateTestImage(firstColor);
+			using var second = CreateTestImage(secondColor);
+
+			var result = SKPixelComparer.Compare(first, second);
+
+			Assert.Equal(expectedSumSquaredError, result.SumSquaredError);
+		}
+
+		[Fact]
+		public void IdenticalImagesHaveZeroMetrics()
+		{
+			using var first = CreateTestImage(0xFF808080);
+			using var second = CreateTestImage(0xFF808080);
+
+			var result = SKPixelComparer.Compare(first, second);
+
+			Assert.Equal(0, result.SumSquaredError);
+			Assert.Equal(0.0, result.MeanAbsoluteError);
+			Assert.Equal(0.0, result.MeanSquaredError);
+			Assert.Equal(0.0, result.RootMeanSquaredError);
+			Assert.Equal(0.0, result.NormalizedRootMeanSquaredError);
+			Assert.Equal(double.PositiveInfinity, result.PeakSignalToNoiseRatio);
+		}
+
+		[Fact]
+		public void MaxDifferenceImagesHaveCorrectMetrics()
+		{
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFFFFFFFF);
+
+			var result = SKPixelComparer.Compare(first, second);
+
+			Assert.Equal(255.0, result.MeanAbsoluteError);
+			Assert.Equal(65025.0, result.MeanSquaredError);
+			Assert.Equal(255.0, result.RootMeanSquaredError);
+			Assert.Equal(1.0, result.NormalizedRootMeanSquaredError);
+			Assert.Equal(0.0, result.PeakSignalToNoiseRatio);
+		}
+
+		[Fact]
+		public void MetricsAreConsistentWithFormulas()
+		{
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFF010203);
+
+			var result = SKPixelComparer.Compare(first, second);
+
+			// Per pixel: ΔR=1, ΔG=2, ΔB=3
+			// 25 pixels, 3 channels per pixel = 75 channel values
+			var expectedAbsoluteError = (1 + 2 + 3) * 25;
+			var expectedSumSquared = (long)(1 * 1 + 2 * 2 + 3 * 3) * 25;
+
+			Assert.Equal(expectedAbsoluteError, result.AbsoluteError);
+			Assert.Equal(expectedSumSquared, result.SumSquaredError);
+			Assert.Equal((double)expectedAbsoluteError / (25 * 3.0), result.MeanAbsoluteError);
+			Assert.Equal((double)expectedSumSquared / (25 * 3.0), result.MeanSquaredError);
+			Assert.Equal(Math.Sqrt((double)expectedSumSquared / (25 * 3.0)), result.RootMeanSquaredError);
+		}
+
+		[Theory]
+		[InlineData(0xFF000000, 0xFF030303, 0, 25)]
+		[InlineData(0xFF000000, 0xFF030303, 8, 25)]
+		[InlineData(0xFF000000, 0xFF030303, 9, 0)]
+		[InlineData(0xFF000000, 0xFF030303, 100, 0)]
+		[InlineData(0xFF000000, 0xFFFFFFFF, 764, 25)]
+		[InlineData(0xFF000000, 0xFFFFFFFF, 765, 0)]
+		public void ToleranceBasedCompareFiltersSmallDifferences(uint firstColor, uint secondColor, int tolerance, int expectedErrorPixels)
+		{
+			using var first = CreateTestImage(firstColor);
+			using var second = CreateTestImage(secondColor);
+
+			var result = SKPixelComparer.Compare(first, second, tolerance);
+
+			Assert.Equal(expectedErrorPixels, result.ErrorPixelCount);
+		}
+
+		[Fact]
+		public void ToleranceZeroMatchesStandardCompare()
+		{
+			using var first = CreateTestImage(0xFF102030);
+			using var second = CreateTestImage(0xFF112233);
+
+			var standard = SKPixelComparer.Compare(first, second);
+			var withTolerance = SKPixelComparer.Compare(first, second, 0);
+
+			Assert.Equal(standard.ErrorPixelCount, withTolerance.ErrorPixelCount);
+			Assert.Equal(standard.AbsoluteError, withTolerance.AbsoluteError);
+			Assert.Equal(standard.SumSquaredError, withTolerance.SumSquaredError);
+		}
+
+		[Fact]
+		public void NegativeToleranceThrows()
+		{
+			using var first = CreateTestImage(SKColors.Black);
+			using var second = CreateTestImage(SKColors.White);
+
+			Assert.Throws<ArgumentOutOfRangeException>(() => SKPixelComparer.Compare(first, second, -1));
+		}
+
+		[Theory]
+		[InlineData(0xFF000000, 0xFF030303, 10)]
+		public void ToleranceCompareWithBitmapsWorks(uint firstColor, uint secondColor, int tolerance)
+		{
+			using var first = CreateTestBitmap(firstColor);
+			using var second = CreateTestBitmap(secondColor);
+
+			var result = SKPixelComparer.Compare(first, second, tolerance);
+
+			Assert.Equal(0, result.ErrorPixelCount);
+		}
+
+		[Theory]
+		[InlineData(0xFF000000, 0xFF030303, 10)]
+		public void ToleranceCompareWithPixmapsWorks(uint firstColor, uint secondColor, int tolerance)
+		{
+			using var firstBitmap = CreateTestBitmap(firstColor);
+			using var first = firstBitmap.PeekPixels();
+			using var secondBitmap = CreateTestBitmap(secondColor);
+			using var second = secondBitmap.PeekPixels();
+
+			var result = SKPixelComparer.Compare(first, second, tolerance);
+
+			Assert.Equal(0, result.ErrorPixelCount);
+		}
+
+		[Fact]
+		public void GenerateDifferenceImageShowsPerChannelDifferences()
+		{
+			using var first = CreateTestImage(0xFF102030);
+			using var second = CreateTestImage(0xFF132639);
+
+			using var diff = SKPixelComparer.GenerateDifferenceImage(first, second);
+
+			Assert.Equal(5, diff.Width);
+			Assert.Equal(5, diff.Height);
+
+			using var bitmap = GetNormalizedBitmap(diff);
+			using var pixmap = bitmap.PeekPixels();
+			var pixel = pixmap.GetPixelSpan<SKColor>()[0];
+
+			Assert.Equal(3, pixel.Red);
+			Assert.Equal(6, pixel.Green);
+			Assert.Equal(9, pixel.Blue);
+		}
+
+		[Fact]
+		public void GenerateDifferenceImageIdenticalIsBlack()
+		{
+			using var first = CreateTestImage(0xFFAABBCC);
+			using var second = CreateTestImage(0xFFAABBCC);
+
+			using var diff = SKPixelComparer.GenerateDifferenceImage(first, second);
+
+			using var bitmap = GetNormalizedBitmap(diff);
+			using var pixmap = bitmap.PeekPixels();
+			var pixel = pixmap.GetPixelSpan<SKColor>()[0];
+
+			Assert.Equal(0, pixel.Red);
+			Assert.Equal(0, pixel.Green);
+			Assert.Equal(0, pixel.Blue);
+		}
+
+		[Fact]
+		public void GenerateDifferenceImageWithBitmapsWorks()
+		{
+			using var first = CreateTestBitmap(0xFF000000);
+			using var second = CreateTestBitmap(0xFF050505);
+
+			using var diff = SKPixelComparer.GenerateDifferenceImage(first, second);
+
+			Assert.NotNull(diff);
+			Assert.Equal(5, diff.Width);
+			Assert.Equal(5, diff.Height);
+		}
+
+		[Fact]
+		public void GenerateDifferenceImageWithDifferentSizesFails()
+		{
+			using var first = CreateTestImage(SKColors.Black, 5, 5);
+			using var second = CreateTestImage(SKColors.Black, 10, 10);
+
+			Assert.Throws<InvalidOperationException>(() => SKPixelComparer.GenerateDifferenceImage(first, second));
+		}
+
+		static SKBitmap GetNormalizedBitmap(SKImage image)
+		{
+			var bitmap = new SKBitmap(new SKImageInfo(image.Width, image.Height, SKColorType.Bgra8888));
+			using (var canvas = new SKCanvas(bitmap))
+				canvas.DrawImage(image, 0, 0);
+			return bitmap;
+		}
 	}
 }
