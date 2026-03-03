@@ -170,10 +170,12 @@ tracker.ProcessTouchDown(id, new SKPoint(x, y));
 tracker.ProcessTouchMove(id, new SKPoint(x, y));
 tracker.ProcessTouchUp(id, new SKPoint(x, y));</p>
 <p>// In your paint handler:
-canvas.SetMatrix(tracker.Matrix);
-// Draw your content...</p>
+canvas.Save();
+canvas.Concat(tracker.Matrix);
+// Draw your content...
+canvas.Restore();</p>
 <p>// Listen for transform changes to trigger redraws:
-tracker.TransformChanged += (s, e) =&gt; canvas.InvalidateVisual();</p></code></pre>
+tracker.TransformChanged += (s, e) =&gt; canvasView.InvalidateSurface();</p></code></pre>
 </example>
 <a class="xref" href="SkiaSharp.Extended.SKGestureDetector.html">SKGestureDetector</a>
 <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.html">SKGestureTrackerOptions</a>
@@ -488,7 +490,7 @@ and raises <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.TransformCh
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · e217fa0
+          source: PR #326 · 2145aba
         </div>
       </div>
     </footer>
