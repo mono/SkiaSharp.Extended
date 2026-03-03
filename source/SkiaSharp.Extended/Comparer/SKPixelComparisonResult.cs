@@ -4,7 +4,12 @@ namespace SkiaSharp.Extended
 {
 	public class SKPixelComparisonResult
 	{
-		public SKPixelComparisonResult(int totalPixels, int errorPixelCount, int absoluteError, long sumSquaredError = 0)
+		public SKPixelComparisonResult(int totalPixels, int errorPixelCount, int absoluteError)
+			: this(totalPixels, errorPixelCount, absoluteError, 0)
+		{
+		}
+
+		public SKPixelComparisonResult(int totalPixels, int errorPixelCount, int absoluteError, long sumSquaredError)
 		{
 			TotalPixels = totalPixels;
 			ErrorPixelCount = errorPixelCount;
