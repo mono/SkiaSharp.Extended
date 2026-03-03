@@ -157,7 +157,7 @@
   "api/SkiaSharp.Extended.SKLottiePlayer.Repeat.html": {
     "href": "api/SkiaSharp.Extended.SKLottiePlayer.Repeat.html",
     "title": "Property Repeat | SkiaSharp.Extended",
-    "keywords": "Property Repeat Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Repeat Gets or sets how the animation repeats. Defaults to Never. public SKLottieRepeat Repeat { get; set; } Property Value SKLottieRepeat"
+    "keywords": "Property Repeat Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll Repeat Gets or sets how the animation repeats. Defaults to Never. public SKLottieRepeat Repeat { get; set; } Property Value SKLottieRepeat Remarks Changing this property resets the internal direction phase, repeat counter, and completion state so the animation starts the new mode cleanly from its current position."
   },
   "api/SkiaSharp.Extended.SKLottiePlayer.Seek.html": {
     "href": "api/SkiaSharp.Extended.SKLottiePlayer.Seek.html",
