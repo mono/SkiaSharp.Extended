@@ -1,4 +1,5 @@
 @page "/pixelcomparer"
+@implements IDisposable
 @inject HttpClient Http
 
 <PageTitle>Pixel Comparer</PageTitle>
@@ -13,40 +14,41 @@
 <div class="row mb-3">
     <div class="col-auto">
         <label class="form-label">Image Pair</label>
-        <select class="form-select" @bind="selectedPairIndex" @bind:after="OnPairChanged">
+        <select class="form-select" @bind="selectedPairIndex" @bind:after="OnPairChanged" disabled="@isLoading">
             @for (var i = 0; i < imagePairs.Length; i++)
             {
                 <option value="@i">@imagePairs[i].Name</option>
             }
         </select>
     </div>
+    @if (isLoading)
+    {
+        <div class="col-auto d-flex align-items-end">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Comparing...</span>
+            </div>
+            <span class="ms-2 text-muted">Comparing…</span>
+        </div>
+    }
 </div>
 
 <div class="row mb-3">
     <div class="col-4">
         <h5>Image A</h5>
         <img src="@($"images/Comparer/{imagePairs[selectedPairIndex].First}")"
+             alt="@($"Image A – {imagePairs[selectedPairIndex].Name}")"
              style="max-width: 100%; height: auto;" />
     </div>
     <div class="col-4">
         <h5>Image B</h5>
         <img src="@($"images/Comparer/{imagePairs[selectedPairIndex].Second}")"
+             alt="@($"Image B – {imagePairs[selectedPairIndex].Name}")"
              style="max-width: 100%; height: auto;" />
     </div>
     <div class="col-4">
         <h5>Difference Mask</h5>
-        <div class="position-relative">
-            <SKCanvasView @ref="diffCanvas" OnPaintSurface="OnPaintSurface"
-                          style="width: 100%; height: 220px;" />
-            @if (isLoading)
-            {
-                <div class="position-absolute top-50 start-50 translate-middle">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            }
-        </div>
+        <SKCanvasView @ref="diffCanvas" OnPaintSurface="OnPaintSurface"
+                      style="width: 100%; height: 220px;" />
     </div>
 </div>
 
@@ -141,6 +143,10 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error comparing images: {ex.Message}");
+            result = null;
+            diffMask?.Dispose();
+            diffMask = null;
+            diffCanvas?.Invalidate();
         }
         finally
         {
@@ -172,5 +178,11 @@
         var drawRect = SKRect.Create(offsetX, offsetY, scaledWidth, scaledHeight);
 
         canvas.DrawImage(diffMask, drawRect);
+    }
+
+    public void Dispose()
+    {
+        diffMask?.Dispose();
+        diffMask = null;
     }
 }
