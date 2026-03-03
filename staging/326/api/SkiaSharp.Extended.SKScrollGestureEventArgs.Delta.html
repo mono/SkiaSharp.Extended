@@ -2,10 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Property DeltaX
+      <title>Property Delta
  | SkiaSharp.Extended </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Property DeltaX
+      <meta name="title" content="Property Delta
  | SkiaSharp.Extended ">
       
       <link rel="icon" href="../images/logo.ico">
@@ -85,14 +85,14 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="SkiaSharp.Extended.SKScrollGestureEventArgs.DeltaX*">
+        <article data-uid="SkiaSharp.Extended.SKScrollGestureEventArgs.Delta*">
 
 
 
 
 
-<h1 id="SkiaSharp_Extended_SKScrollGestureEventArgs_DeltaX_" data-uid="SkiaSharp.Extended.SKScrollGestureEventArgs.DeltaX*" class="text-break">
-  Property DeltaX
+<h1 id="SkiaSharp_Extended_SKScrollGestureEventArgs_Delta_" data-uid="SkiaSharp.Extended.SKScrollGestureEventArgs.Delta*" class="text-break">
+  Property Delta
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKScrollGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
@@ -119,19 +119,19 @@
 
 
 
-<a id="SkiaSharp_Extended_SKScrollGestureEventArgs_DeltaX_" data-uid="SkiaSharp.Extended.SKScrollGestureEventArgs.DeltaX*"></a>
+<a id="SkiaSharp_Extended_SKScrollGestureEventArgs_Delta_" data-uid="SkiaSharp.Extended.SKScrollGestureEventArgs.Delta*"></a>
 
-<h3 id="SkiaSharp_Extended_SKScrollGestureEventArgs_DeltaX" data-uid="SkiaSharp.Extended.SKScrollGestureEventArgs.DeltaX">
-  DeltaX
+<h3 id="SkiaSharp_Extended_SKScrollGestureEventArgs_Delta" data-uid="SkiaSharp.Extended.SKScrollGestureEventArgs.Delta">
+  Delta
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKScrollGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Gets the horizontal scroll delta.</p>
+<div class="markdown level1 summary"><p>Gets the scroll delta.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public float DeltaX { get; }</code></pre>
+  <pre><code class="lang-csharp hljs">public SKPoint Delta { get; }</code></pre>
 </div>
 
 
@@ -140,8 +140,11 @@
 
 <h4 class="section">Property Value</h4>
 <dl class="parameters">
-  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd><p>The horizontal scroll amount. Positive values typically indicate scrolling to the right.</p>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
+  <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a> where <code>X</code> is the horizontal scroll amount and <code>Y</code> is the
+vertical scroll amount. Positive <code>Y</code> typically indicates scrolling up or zooming in.
+When <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.IsScrollZoomEnabled.html#SkiaSharp_Extended_SKGestureTrackerOptions_IsScrollZoomEnabled">IsScrollZoomEnabled</a> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>, <code>Y</code>
+is multiplied by <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.ScrollZoomFactor.html#SkiaSharp_Extended_SKGestureTrackerOptions_ScrollZoomFactor">ScrollZoomFactor</a> to determine the zoom change.</p>
 </dd>
 </dl>
 
@@ -171,7 +174,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · d6bc6a9
+          source: PR #326 · 0bac1d2
         </div>
       </div>
     </footer>

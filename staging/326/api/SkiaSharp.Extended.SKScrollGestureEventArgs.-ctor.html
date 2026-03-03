@@ -121,8 +121,8 @@
 
 <a id="SkiaSharp_Extended_SKScrollGestureEventArgs__ctor_" data-uid="SkiaSharp.Extended.SKScrollGestureEventArgs.#ctor*"></a>
 
-<h3 id="SkiaSharp_Extended_SKScrollGestureEventArgs__ctor_SkiaSharp_SKPoint_System_Single_System_Single_" data-uid="SkiaSharp.Extended.SKScrollGestureEventArgs.#ctor(SkiaSharp.SKPoint,System.Single,System.Single)">
-  SKScrollGestureEventArgs(SKPoint, float, float)
+<h3 id="SkiaSharp_Extended_SKScrollGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_" data-uid="SkiaSharp.Extended.SKScrollGestureEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint)">
+  SKScrollGestureEventArgs(SKPoint, SKPoint)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKScrollGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
@@ -131,7 +131,7 @@
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKScrollGestureEventArgs(SKPoint location, float deltaX, float deltaY)</code></pre>
+  <pre><code class="lang-csharp hljs">public SKScrollGestureEventArgs(SKPoint location, SKPoint delta)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
@@ -139,11 +139,8 @@
   <dt><code>location</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
   <dd><p>The position of the mouse cursor when the scroll occurred, in view coordinates.</p>
 </dd>
-  <dt><code>deltaX</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd><p>The horizontal scroll delta.</p>
-</dd>
-  <dt><code>deltaY</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd><p>The vertical scroll delta.</p>
+  <dt><code>delta</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
+  <dd><p>The scroll delta.</p>
 </dd>
 </dl>
 
@@ -177,7 +174,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · d6bc6a9
+          source: PR #326 · 0bac1d2
         </div>
       </div>
     </footer>

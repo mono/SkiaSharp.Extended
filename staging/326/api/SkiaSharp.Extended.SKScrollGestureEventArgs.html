@@ -155,12 +155,11 @@
 
   <h2 id="SkiaSharp_Extended_SKScrollGestureEventArgs_remarks">Remarks</h2>
   <div class="markdown level0 remarks"><p>Scroll events are raised when the mouse wheel is rotated or a trackpad scroll gesture
-is performed. The <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a> uses <a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.DeltaY.html#SkiaSharp_Extended_SKScrollGestureEventArgs_DeltaY">DeltaY</a> for scroll-wheel zoom
+is performed. The <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a> uses <a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.Delta.html#SkiaSharp_Extended_SKScrollGestureEventArgs_Delta">Delta</a>.Y for scroll-wheel zoom
 when <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.IsScrollZoomEnabled.html#SkiaSharp_Extended_SKGestureTrackerOptions_IsScrollZoomEnabled">IsScrollZoomEnabled</a> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>.</p>
 <p><strong>Platform note:</strong> The sign convention for scroll deltas may vary by platform
-and input device. Typically, positive <a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.DeltaY.html#SkiaSharp_Extended_SKScrollGestureEventArgs_DeltaY">DeltaY</a> indicates scrolling up (or zooming in),
-but this depends on the platform's scroll event normalization. Consumers should test on their
-target platforms to confirm the expected behavior.</p>
+and input device. Typically, positive <a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.Delta.html#SkiaSharp_Extended_SKScrollGestureEventArgs_Delta">Delta</a>.Y indicates scrolling up (or zooming in),
+but this depends on the platform's scroll event normalization.</p>
 <a class="xref" href="SkiaSharp.Extended.SKGestureDetector.ScrollDetected.html">ScrollDetected</a>
 <a class="xref" href="SkiaSharp.Extended.SKGestureDetector.ProcessMouseWheel.html#SkiaSharp_Extended_SKGestureDetector_ProcessMouseWheel_SkiaSharp_SKPoint_System_Single_System_Single_">ProcessMouseWheel(SKPoint, float, float)</a>
 <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.ScrollDetected.html">ScrollDetected</a>
@@ -170,7 +169,7 @@ target platforms to confirm the expected behavior.</p>
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.-ctor.html#SkiaSharp_Extended_SKScrollGestureEventArgs__ctor_SkiaSharp_SKPoint_System_Single_System_Single_">SKScrollGestureEventArgs(SKPoint, float, float)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.-ctor.html#SkiaSharp_Extended_SKScrollGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_">SKScrollGestureEventArgs(SKPoint, SKPoint)</a></dt>
     <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.html">SKScrollGestureEventArgs</a> class.</p>
 </dd>
   </dl>
@@ -179,13 +178,8 @@ target platforms to confirm the expected behavior.</p>
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.DeltaX.html#SkiaSharp_Extended_SKScrollGestureEventArgs_DeltaX">DeltaX</a></dt>
-    <dd><p>Gets the horizontal scroll delta.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.DeltaY.html#SkiaSharp_Extended_SKScrollGestureEventArgs_DeltaY">DeltaY</a></dt>
-    <dd><p>Gets the vertical scroll delta.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.Delta.html#SkiaSharp_Extended_SKScrollGestureEventArgs_Delta">Delta</a></dt>
+    <dd><p>Gets the scroll delta.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -215,7 +209,7 @@ target platforms to confirm the expected behavior.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · d6bc6a9
+          source: PR #326 · 0bac1d2
         </div>
       </div>
     </footer>

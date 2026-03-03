@@ -114,7 +114,7 @@ tracker.LongPressDetected += (s, e) =&gt;
 <pre><code class="lang-csharp">tracker.PanDetected += (s, e) =&gt;
 {
     // e.Location — current position
-    // e.PreviousLocation — previous position
+    // e.PrevLocation — previous position
     // e.Delta — movement since last event
     // e.Velocity — current velocity in pixels/second
 };
@@ -140,7 +140,7 @@ tracker.LongPressDetected += (s, e) =&gt;
 <p>Momentum-based animation after a fast pan. The tracker runs a fling animation that decays over time.</p>
 <pre><code class="lang-csharp">tracker.FlingDetected += (s, e) =&gt;
 {
-    // Fling started — e.VelocityX, e.VelocityY in px/s
+    // Fling started — e.Velocity.X, e.Velocity.Y in px/s
 };
 
 tracker.FlingUpdated += (s, e) =&gt;
@@ -157,7 +157,7 @@ tracker.FlingCompleted += (s, e) =&gt;
 <p>The tracker provides a drag lifecycle derived from pan events. Use this to move objects within your canvas (e.g., stickers, nodes in a graph editor).</p>
 <pre><code class="lang-csharp">tracker.DragStarted += (s, e) =&gt;
 {
-    if (HitTest(e.StartLocation) is { } item)
+    if (HitTest(e.Location) is { } item)
     {
         selectedItem = item;
         e.Handled = true; // Prevents pan from updating the transform
@@ -187,7 +187,7 @@ tracker.DragEnded += (s, e) =&gt;
 <pre><code class="lang-csharp">tracker.ScrollDetected += (s, e) =&gt;
 {
     // e.Location — mouse position
-    // e.DeltaX, e.DeltaY — scroll amounts
+    // e.Delta.X, e.Delta.Y — scroll amounts
 };
 </code></pre>
 <h2 id="hover">Hover</h2>
@@ -239,7 +239,7 @@ tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · d6bc6a9
+          source: PR #326 · 0bac1d2
         </div>
       </div>
     </footer>

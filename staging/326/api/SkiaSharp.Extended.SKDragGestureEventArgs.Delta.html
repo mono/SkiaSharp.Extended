@@ -126,7 +126,7 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKDragGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Gets the displacement from the previous touch position to the current position.</p>
+<div class="markdown level1 summary"><p>Gets the displacement from <a class="xref" href="SkiaSharp.Extended.SKDragGestureEventArgs.PrevLocation.html#SkiaSharp_Extended_SKDragGestureEventArgs_PrevLocation">PrevLocation</a> to <a class="xref" href="SkiaSharp.Extended.SKDragGestureEventArgs.Location.html#SkiaSharp_Extended_SKDragGestureEventArgs_Location">Location</a>.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -141,14 +141,16 @@
 <h4 class="section">Property Value</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
-  <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a> where <code>X</code> and <code>Y</code> represent the incremental change in pixels.
-This is <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint.empty">Empty</a> for <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.DragEnded.html">DragEnded</a> events.</p>
+  <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a> where <code>X</code> and <code>Y</code> represent the incremental change in pixels.</p>
 </dd>
 </dl>
 
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_SKDragGestureEventArgs_Delta_remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>Calculated as <code>Location - PrevLocation</code>.</p>
+</div>
 
 
 
@@ -172,7 +174,7 @@ This is <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.s
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · d6bc6a9
+          source: PR #326 · 0bac1d2
         </div>
       </div>
     </footer>

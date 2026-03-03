@@ -157,11 +157,10 @@ per-frame animation updates.</p>
   <h2 id="SkiaSharp_Extended_SKFlingGestureEventArgs_remarks">Remarks</h2>
   <div class="markdown level0 remarks"><p>This class is used by two distinct events:</p>
 <ul><li><a class="xref" href="SkiaSharp.Extended.SKGestureDetector.FlingDetected.html">FlingDetected</a> / <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingDetected.html">FlingDetected</a>:
-Fired once when a fling is initiated. <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.VelocityX.html#SkiaSharp_Extended_SKFlingGestureEventArgs_VelocityX">VelocityX</a> and <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.VelocityY.html#SkiaSharp_Extended_SKFlingGestureEventArgs_VelocityY">VelocityY</a>
-contain the initial velocity. <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.DeltaX.html#SkiaSharp_Extended_SKFlingGestureEventArgs_DeltaX">DeltaX</a> and <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.DeltaY.html#SkiaSharp_Extended_SKFlingGestureEventArgs_DeltaY">DeltaY</a> are <code>0</code>.</li><li><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingUpdated.html">FlingUpdated</a>: Fired each animation frame during
-the fling deceleration. <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.VelocityX.html#SkiaSharp_Extended_SKFlingGestureEventArgs_VelocityX">VelocityX</a> and <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.VelocityY.html#SkiaSharp_Extended_SKFlingGestureEventArgs_VelocityY">VelocityY</a> contain the
-current (decaying) velocity, and <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.DeltaX.html#SkiaSharp_Extended_SKFlingGestureEventArgs_DeltaX">DeltaX</a> and <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.DeltaY.html#SkiaSharp_Extended_SKFlingGestureEventArgs_DeltaY">DeltaY</a> contain
-the per-frame displacement in pixels.</li></ul>
+Fired once when a fling is initiated. <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.Velocity.html#SkiaSharp_Extended_SKFlingGestureEventArgs_Velocity">Velocity</a> contains the initial velocity.
+<a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.Delta.html#SkiaSharp_Extended_SKFlingGestureEventArgs_Delta">Delta</a> is <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint.empty">Empty</a>.</li><li><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingUpdated.html">FlingUpdated</a>: Fired each animation frame during
+the fling deceleration. <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.Velocity.html#SkiaSharp_Extended_SKFlingGestureEventArgs_Velocity">Velocity</a> contains the current (decaying) velocity, and
+<a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.Delta.html#SkiaSharp_Extended_SKFlingGestureEventArgs_Delta">Delta</a> contains the per-frame displacement in pixels.</li></ul>
 <a class="xref" href="SkiaSharp.Extended.SKGestureDetector.FlingDetected.html">FlingDetected</a>
 <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingUpdated.html">FlingUpdated</a>
 <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingCompleted.html">FlingCompleted</a>
@@ -171,13 +170,13 @@ the per-frame displacement in pixels.</li></ul>
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.-ctor.html#SkiaSharp_Extended_SKFlingGestureEventArgs__ctor_System_Single_System_Single_">SKFlingGestureEventArgs(float, float)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.-ctor.html#SkiaSharp_Extended_SKFlingGestureEventArgs__ctor_SkiaSharp_SKPoint_">SKFlingGestureEventArgs(SKPoint)</a></dt>
     <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.html">SKFlingGestureEventArgs</a> class with
 velocity only. Used for the initial <a class="xref" href="SkiaSharp.Extended.SKGestureDetector.FlingDetected.html">FlingDetected</a> event.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.-ctor.html#SkiaSharp_Extended_SKFlingGestureEventArgs__ctor_System_Single_System_Single_System_Single_System_Single_">SKFlingGestureEventArgs(float, float, float, float)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.-ctor.html#SkiaSharp_Extended_SKFlingGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_">SKFlingGestureEventArgs(SKPoint, SKPoint)</a></dt>
     <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.html">SKFlingGestureEventArgs</a> class with
 velocity and per-frame displacement. Used for <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingUpdated.html">FlingUpdated</a> events.</p>
 </dd>
@@ -187,13 +186,8 @@ velocity and per-frame displacement. Used for <a class="xref" href="SkiaSharp.Ex
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.DeltaX.html#SkiaSharp_Extended_SKFlingGestureEventArgs_DeltaX">DeltaX</a></dt>
-    <dd><p>Gets the horizontal displacement for this animation frame.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.DeltaY.html#SkiaSharp_Extended_SKFlingGestureEventArgs_DeltaY">DeltaY</a></dt>
-    <dd><p>Gets the vertical displacement for this animation frame.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.Delta.html#SkiaSharp_Extended_SKFlingGestureEventArgs_Delta">Delta</a></dt>
+    <dd><p>Gets the displacement for this animation frame.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -202,13 +196,8 @@ velocity and per-frame displacement. Used for <a class="xref" href="SkiaSharp.Ex
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.VelocityX.html#SkiaSharp_Extended_SKFlingGestureEventArgs_VelocityX">VelocityX</a></dt>
-    <dd><p>Gets the horizontal velocity component.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.VelocityY.html#SkiaSharp_Extended_SKFlingGestureEventArgs_VelocityY">VelocityY</a></dt>
-    <dd><p>Gets the vertical velocity component.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.Velocity.html#SkiaSharp_Extended_SKFlingGestureEventArgs_Velocity">Velocity</a></dt>
+    <dd><p>Gets the velocity of the fling.</p>
 </dd>
   </dl>
 
@@ -233,7 +222,7 @@ velocity and per-frame displacement. Used for <a class="xref" href="SkiaSharp.Ex
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · d6bc6a9
+          source: PR #326 · 0bac1d2
         </div>
       </div>
     </footer>

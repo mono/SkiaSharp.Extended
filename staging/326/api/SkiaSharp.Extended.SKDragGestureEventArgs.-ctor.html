@@ -121,8 +121,8 @@
 
 <a id="SkiaSharp_Extended_SKDragGestureEventArgs__ctor_" data-uid="SkiaSharp.Extended.SKDragGestureEventArgs.#ctor*"></a>
 
-<h3 id="SkiaSharp_Extended_SKDragGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_SkiaSharp_SKPoint_" data-uid="SkiaSharp.Extended.SKDragGestureEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint)">
-  SKDragGestureEventArgs(SKPoint, SKPoint, SKPoint)
+<h3 id="SkiaSharp_Extended_SKDragGestureEventArgs__ctor_SkiaSharp_SKPoint_SkiaSharp_SKPoint_" data-uid="SkiaSharp.Extended.SKDragGestureEventArgs.#ctor(SkiaSharp.SKPoint,SkiaSharp.SKPoint)">
+  SKDragGestureEventArgs(SKPoint, SKPoint)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKDragGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
@@ -131,19 +131,16 @@
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKDragGestureEventArgs(SKPoint startLocation, SKPoint currentLocation, SKPoint delta)</code></pre>
+  <pre><code class="lang-csharp hljs">public SKDragGestureEventArgs(SKPoint location, SKPoint prevLocation)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
-  <dt><code>startLocation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
-  <dd><p>The location where the drag began, in view coordinates.</p>
-</dd>
-  <dt><code>currentLocation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
+  <dt><code>location</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
   <dd><p>The current touch location, in view coordinates.</p>
 </dd>
-  <dt><code>delta</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
-  <dd><p>The displacement from the previous touch position to <code class="paramref">currentLocation</code>.</p>
+  <dt><code>prevLocation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
+  <dd><p>The previous touch location, in view coordinates.</p>
 </dd>
 </dl>
 
@@ -177,7 +174,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · d6bc6a9
+          source: PR #326 · 0bac1d2
         </div>
       </div>
     </footer>
