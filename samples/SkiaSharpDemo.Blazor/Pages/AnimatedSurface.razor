@@ -1,0 +1,127 @@
+@page "/animatedsurface"
+
+<PageTitle>Animated Surface</PageTitle>
+
+<h1>Animated Surface View</h1>
+
+<p>
+    A frame-update loop powered by <code>SKAnimatedSurfaceView</code> from
+    <code>SkiaSharp.Extended.UI.Blazor</code>. Toggle between software rendering
+    (<code>SKCanvasView</code>) and GPU-accelerated rendering (<code>SKGLView</code>)
+    at runtime — this is the Blazor equivalent of the MAUI control-template pattern.
+</p>
+
+<div class="row mb-3 align-items-end">
+    <div class="col-auto">
+        <label class="form-label">Rendering Backend</label>
+        <div class="form-check form-switch mt-1">
+            <input class="form-check-input" type="checkbox" id="useGLSwitch" @bind="useGL" @bind:after="OnBackendChanged" />
+            <label class="form-check-label" for="useGLSwitch">
+                @(useGL ? "GPU (SKGLView)" : "Software (SKCanvasView)")
+            </label>
+        </div>
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Animation</label>
+        <div class="form-check form-switch mt-1">
+            <input class="form-check-input" type="checkbox" id="enabledSwitch" @bind="isEnabled" />
+            <label class="form-check-label" for="enabledSwitch">
+                @(isEnabled ? "Running" : "Paused")
+            </label>
+        </div>
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Speed (@(speed)&#xD7;)</label>
+        <input type="range" class="form-range speed-slider"
+               min="0.25" max="4" step="0.25" @bind="speed" />
+    </div>
+</div>
+
+@if (backendChanged)
+{
+    <div class="alert alert-info py-1 mb-3">
+        <small>Switched to <strong>@(useGL ? "GL (WebGL)" : "Canvas (software)")</strong> rendering.</small>
+    </div>
+}
+
+<div class="canvas-wrapper">
+    <SKAnimatedSurfaceView IsAnimationEnabled="isEnabled"
+                           UseGL="useGL"
+                           OnUpdate="HandleUpdate"
+                           OnPaintSurface="HandlePaintSurface"
+                           style="width: 100%; height: 100%;" />
+</div>
+
+<div class="mt-2 text-muted small">
+    <code>angle = @angle.ToString("0.0")°</code>
+</div>
+
+@code {
+    private bool isEnabled = true;
+    private bool useGL = false;
+    private double speed = 1.0;
+    private float angle = 0f;
+    private bool backendChanged = false;
+
+    private void HandleUpdate(TimeSpan delta)
+    {
+        // Rotate 90° per second, scaled by speed
+        angle += (float)(delta.TotalSeconds * 90.0 * speed);
+        if (angle >= 360f)
+            angle -= 360f;
+    }
+
+    private void HandlePaintSurface(SKSurface surface, SKSize size)
+    {
+        var canvas = surface.Canvas;
+        canvas.Clear(SKColors.White);
+
+        var cx = size.Width / 2f;
+        var cy = size.Height / 2f;
+        var side = Math.Min(cx, cy) * 0.6f;
+
+        canvas.Save();
+        canvas.Translate(cx, cy);
+        canvas.RotateDegrees(angle);
+
+        using var fillPaint = new SKPaint
+        {
+            IsAntialias = true,
+            Color = SKColors.CornflowerBlue
+        };
+        canvas.DrawRect(-side, -side, side * 2, side * 2, fillPaint);
+
+        using var strokePaint = new SKPaint
+        {
+            IsAntialias = true,
+            Style = SKPaintStyle.Stroke,
+            Color = SKColors.DarkBlue,
+            StrokeWidth = 4
+        };
+        canvas.DrawRect(-side, -side, side * 2, side * 2, strokePaint);
+
+        using var textFont = new SKFont
+        {
+            Size = Math.Max(14, side * 0.25f)
+        };
+        using var textPaint = new SKPaint
+        {
+            IsAntialias = true,
+            Color = SKColors.White,
+        };
+        canvas.DrawText(useGL ? "GL" : "CPU", 0, textFont.Size / 3f, SKTextAlign.Center, textFont, textPaint);
+
+        canvas.Restore();
+    }
+
+    private void OnBackendChanged()
+    {
+        backendChanged = true;
+        // Hide the notification after a short delay
+        _ = Task.Delay(3000).ContinueWith(_ =>
+        {
+            backendChanged = false;
+            InvokeAsync(StateHasChanged);
+        });
+    }
+}
