@@ -126,7 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended/BlurHash/SKBlurHash.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Decodes a BlurHash string into an <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a> of the specified dimensions.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -136,19 +137,24 @@
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>blurHash</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-  <dd></dd>
+  <dd><p>The BlurHash string to decode.</p>
+</dd>
   <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-  <dd></dd>
+  <dd><p>The width of the resulting bitmap in pixels.</p>
+</dd>
   <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-  <dd></dd>
+  <dd><p>The height of the resulting bitmap in pixels.</p>
+</dd>
   <dt><code>punch</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd></dd>
+  <dd><p>A factor that adjusts color intensity. Values greater than 1 increase contrast.</p>
+</dd>
 </dl>
 
 <h4 class="section">Returns</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
-  <dd></dd>
+  <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a> representing the decoded BlurHash.</p>
+</dd>
 </dl>
 
 
@@ -158,6 +164,15 @@
 
 
 
+<h4 class="section">Exceptions</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+  <dd><p><code class="paramref">blurHash</code> is <code>null</code>.</p>
+</dd>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
+  <dd><p><code class="paramref">width</code> or <code class="paramref">height</code> is less than or equal to zero.</p>
+</dd>
+</dl>
 
 
 
@@ -168,7 +183,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended/BlurHash/SKBlurHash.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Decodes a BlurHash string into an <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a> of the specified dimensions.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -178,19 +194,24 @@
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>blurHash</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.readonlyspan-1">ReadOnlySpan</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a>&gt;</dt>
-  <dd></dd>
+  <dd><p>The BlurHash character span to decode.</p>
+</dd>
   <dt><code>width</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-  <dd></dd>
+  <dd><p>The width of the resulting bitmap in pixels.</p>
+</dd>
   <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-  <dd></dd>
+  <dd><p>The height of the resulting bitmap in pixels.</p>
+</dd>
   <dt><code>punch</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd></dd>
+  <dd><p>A factor that adjusts color intensity. Values greater than 1 increase contrast.</p>
+</dd>
 </dl>
 
 <h4 class="section">Returns</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
-  <dd></dd>
+  <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a> representing the decoded BlurHash.</p>
+</dd>
 </dl>
 
 
@@ -200,6 +221,12 @@
 
 
 
+<h4 class="section">Exceptions</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
+  <dd><p><code class="paramref">width</code> or <code class="paramref">height</code> is less than or equal to zero.</p>
+</dd>
+</dl>
 
 
 
@@ -222,7 +249,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · a424ac2
+          source: PR #365 · c456ddf
         </div>
       </div>
     </footer>

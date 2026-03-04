@@ -126,7 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended/PathInterpolation/SKPathInterpolation.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Initializes a new instance of <a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.html">SKPathInterpolation</a> with the specified source and target paths.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -136,11 +137,14 @@
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>from</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpath">SKPath</a></dt>
-  <dd></dd>
+  <dd><p>The starting path.</p>
+</dd>
   <dt><code>to</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpath">SKPath</a></dt>
-  <dd></dd>
+  <dd><p>The ending path.</p>
+</dd>
   <dt><code>maxSegmentLength</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd></dd>
+  <dd><p>The maximum length of a path segment used when normalizing curves. Smaller values produce smoother interpolation.</p>
+</dd>
 </dl>
 
 
@@ -151,6 +155,12 @@
 
 
 
+<h4 class="section">Exceptions</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+  <dd><p><code class="paramref">from</code> or <code class="paramref">to</code> is <code>null</code>.</p>
+</dd>
+</dl>
 
 
 
@@ -173,7 +183,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · a424ac2
+          source: PR #365 · c456ddf
         </div>
       </div>
     </footer>
