@@ -71,6 +71,7 @@ REVIEWER=$(gh api user --jq '.login' 2>/dev/null)
 | `REPO` | `gh repo view` → `nameWithOwner` | Ask user |
 | `PR_NUMBER` | `gh pr view {branch}` → `number` | Ask user for PR number or URL |
 | `REVIEWER` | `gh api user` → `login` | Ask user |
+| `POLL_INTERVAL` | Default: `60` seconds | Ask user if they want a custom interval |
 
 The reviewer is the same person who is authenticated with `gh`. This means all replies
 posted by the agent will appear as the reviewer. The agent **must** track its own reply
@@ -209,7 +210,7 @@ Ensure the final version of the reply includes:
   broken code. Attempt a fix, or revert and explain.
 - **Cheap agent dies early:** The main agent should re-launch it via `read_agent` check.
 
-## Example Invocation
+## Example Invocations
 
 User prompt:
 > "Monitor this PR for comments"
@@ -222,3 +223,11 @@ Agent actions:
 3. Snapshot existing comment IDs via `poll_comments.sh`
 4. Launch cheap `gpt-5-mini` background agent with polling loop
 5. On new comment from mattleibow: cheap agent acknowledges → classifies → acts or escalates
+
+User prompt (no PR on current branch):
+> "Watch PR #42 for review comments from alice"
+
+Agent actions:
+1. Auto-detect: `REPO=myorg/myrepo`, branch has no PR
+2. User provided PR_NUMBER=42 and REVIEWER=alice directly — no questions needed
+3. Proceed to polling loop
