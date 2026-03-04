@@ -41,25 +41,25 @@
     }
 </div>
 
-<div class="row mb-3">
-    <div class="col-3">
+<div class="row mb-3 g-3">
+    <div class="col-6 col-lg-3">
         <h5>Image A</h5>
         <img src="@($"images/Comparer/{imagePairs[selectedPairIndex].First}")"
              alt="@($"Image A – {imagePairs[selectedPairIndex].Name}")"
              style="max-width: 100%; height: auto;" />
     </div>
-    <div class="col-3">
+    <div class="col-6 col-lg-3">
         <h5>Image B</h5>
         <img src="@($"images/Comparer/{imagePairs[selectedPairIndex].Second}")"
              alt="@($"Image B – {imagePairs[selectedPairIndex].Name}")"
              style="max-width: 100%; height: auto;" />
     </div>
-    <div class="col-3">
+    <div class="col-6 col-lg-3">
         <h5>Difference Mask</h5>
         <SKCanvasView @ref="diffMaskCanvas" OnPaintSurface="OnPaintMaskSurface"
                       style="width: 100%; height: 220px;" />
     </div>
-    <div class="col-3">
+    <div class="col-6 col-lg-3">
         <h5>Difference Image</h5>
         <SKCanvasView @ref="diffImageCanvas" OnPaintSurface="OnPaintDiffSurface"
                       style="width: 100%; height: 220px;" />
@@ -81,40 +81,40 @@
                 <div class="card-body">
                     <h5 class="card-title">Comparison Results</h5>
                     <div class="row mb-2">
-                        <div class="col-sm-3">
+                        <div class="col-6 col-sm-3">
                             <strong>Total Pixels</strong>
                             <p class="mb-0">@result.TotalPixels.ToString("N0")</p>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-6 col-sm-3">
                             <strong>Error Pixels</strong>
                             <p class="mb-0">@result.ErrorPixelCount.ToString("N0")</p>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-6 col-sm-3">
                             <strong>Error Percentage</strong>
                             <p class="mb-0">@result.ErrorPixelPercentage.ToString("P2")</p>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-6 col-sm-3">
                             <strong>Absolute Error</strong>
                             <p class="mb-0">@result.AbsoluteError.ToString("N0")</p>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-3">
+                        <div class="col-6 col-sm-3">
                             <strong>MAE</strong>
                             <p class="mb-0 text-muted small">Mean Absolute Error</p>
                             <p class="mb-0">@result.MeanAbsoluteError.ToString("F4")</p>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-6 col-sm-3">
                             <strong>RMSE</strong>
                             <p class="mb-0 text-muted small">Root Mean Squared Error</p>
                             <p class="mb-0">@result.RootMeanSquaredError.ToString("F4")</p>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-6 col-sm-3">
                             <strong>NRMSE</strong>
                             <p class="mb-0 text-muted small">Normalized RMSE (0–1)</p>
                             <p class="mb-0">@result.NormalizedRootMeanSquaredError.ToString("F6")</p>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-6 col-sm-3">
                             <strong>PSNR</strong>
                             <p class="mb-0 text-muted small">Peak Signal-to-Noise (dB)</p>
                             <p class="mb-0">@FormatPsnr(result.PeakSignalToNoiseRatio)</p>
