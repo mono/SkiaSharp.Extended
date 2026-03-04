@@ -277,7 +277,7 @@
   "api/SkiaSharp.Extended.SKGestureDetector.TimeProvider.html": {
     "href": "api/SkiaSharp.Extended.SKGestureDetector.TimeProvider.html",
     "title": "Property TimeProvider | SkiaSharp.Extended",
-    "keywords": "Property TimeProvider Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll TimeProvider Gets or sets the time provider function used to obtain the current time in ticks. public Func<long> TimeProvider { get; set; } Property Value Func<long> A Func<TResult> that returns the current time in ticks (10,000 ticks per millisecond). The default uses TickCount64 converted to tick units, which is monotonic and immune to clock adjustments (unlike Now). Remarks Override this for deterministic testing by supplying a custom tick source."
+    "keywords": "Property TimeProvider Namespace SkiaSharp.Extended Assembly SkiaSharp.Extended.dll TimeProvider Gets or sets the time provider function used to obtain the current time in ticks. public Func<long> TimeProvider { get; set; } Property Value Func<long> A Func<TResult> that returns the current time in ticks (10,000 ticks per millisecond). The default uses UtcNow ticks, which provides consistent behavior across all target frameworks including netstandard2.0. Remarks Override this for deterministic testing by supplying a custom tick source."
   },
   "api/SkiaSharp.Extended.SKGestureDetector.html": {
     "href": "api/SkiaSharp.Extended.SKGestureDetector.html",
