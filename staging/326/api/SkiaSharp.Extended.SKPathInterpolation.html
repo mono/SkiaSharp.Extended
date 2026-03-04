@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Interpolates between two <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpath">SKPath</a> objects by converting them to normalized point arrays and morphing between them.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -154,7 +155,8 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.-ctor.html#SkiaSharp_Extended_SKPathInterpolation__ctor_SkiaSharp_SKPath_SkiaSharp_SKPath_System_Single_">SKPathInterpolation(SKPath, SKPath, float)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of <a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.html">SKPathInterpolation</a> with the specified source and target paths.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -162,15 +164,18 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.From.html#SkiaSharp_Extended_SKPathInterpolation_From">From</a></dt>
-    <dd></dd>
+    <dd><p>Gets the starting path.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.MaxSegmentLength.html#SkiaSharp_Extended_SKPathInterpolation_MaxSegmentLength">MaxSegmentLength</a></dt>
-    <dd></dd>
+    <dd><p>Gets the maximum segment length used when normalizing curves.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.To.html#SkiaSharp_Extended_SKPathInterpolation_To">To</a></dt>
-    <dd></dd>
+    <dd><p>Gets the ending path.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="methods">Methods
@@ -178,11 +183,15 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.Interpolate.html#SkiaSharp_Extended_SKPathInterpolation_Interpolate_System_Single_">Interpolate(float)</a></dt>
-    <dd></dd>
+    <dd><p>Returns an interpolated path at the specified position between the source and target paths.
+Calls <a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.Prepare.html#SkiaSharp_Extended_SKPathInterpolation_Prepare">Prepare()</a> automatically if it has not been called.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.Prepare.html#SkiaSharp_Extended_SKPathInterpolation_Prepare">Prepare()</a></dt>
-    <dd></dd>
+    <dd><p>Preprocesses the source and target paths by normalizing them into point arrays with matching point counts.
+This is called automatically by <a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.Interpolate.html#SkiaSharp_Extended_SKPathInterpolation_Interpolate_System_Single_">Interpolate(float)</a> if not called explicitly.</p>
+</dd>
   </dl>
 
 
@@ -206,7 +215,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 2145aba
+          source: PR #326 · e68d7ac
         </div>
       </div>
     </footer>
