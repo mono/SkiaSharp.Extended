@@ -304,8 +304,7 @@ public class SKGestureDetectorTests
 	public void SecondFingerDown_DoesNotBreakFirstFingerTap()
 	{
 		var engine = CreateEngine();
-		var tapRaised = false;
-		engine.TapDetected += (s, e) => tapRaised = true;
+		engine.TapDetected += (s, e) => { };
 
 		// First finger down
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
@@ -528,8 +527,7 @@ public class SKGestureDetectorTests
 	public void TouchDown_DuplicateId_UpdatesExistingTouch()
 	{
 		var engine = CreateEngine();
-		var tapRaised = false;
-		engine.TapDetected += (s, e) => tapRaised = true;
+		engine.TapDetected += (s, e) => { };
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
 		engine.ProcessTouchDown(1, new SKPoint(200, 200)); // Same ID

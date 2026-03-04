@@ -67,8 +67,8 @@ public sealed class SKGestureDetector : IDisposable
 	/// </summary>
 	/// <value>
 	/// A <see cref="Func{T}"/> that returns the current time in ticks (10,000 ticks per millisecond).
-	/// The default uses <see cref="Environment.TickCount64"/> converted to tick units, which is
-	/// monotonic and immune to clock adjustments (unlike <see cref="DateTime.Now"/>).
+	/// The default uses <see cref="DateTime.UtcNow"/> ticks, which provides
+	/// consistent behavior across all target frameworks including netstandard2.0.
 	/// </value>
 	/// <remarks>
 	/// Override this for deterministic testing by supplying a custom tick source.
@@ -79,7 +79,7 @@ public sealed class SKGestureDetector : IDisposable
 		set => _timeProvider = value ?? throw new ArgumentNullException(nameof(value));
 	}
 
-	private Func<long> _timeProvider = () => Environment.TickCount64 * TimeSpan.TicksPerMillisecond;
+	private Func<long> _timeProvider = () => DateTime.UtcNow.Ticks;
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the gesture detector is enabled.
