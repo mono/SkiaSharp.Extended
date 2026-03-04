@@ -2,6 +2,9 @@
 
 namespace SkiaSharp.Extended.UI.Controls;
 
+/// <summary>
+/// A view that displays confetti particle animations.
+/// </summary>
 public class SKConfettiView : SKAnimatedSurfaceView
 {
 	private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
@@ -11,8 +14,14 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		false,
 		defaultBindingMode: BindingMode.OneWayToSource);
 
+	/// <summary>
+	/// Identifies the <see cref="IsComplete"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 
+	/// <summary>
+	/// Identifies the <see cref="Systems"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty SystemsProperty = BindableProperty.Create(
 		nameof(Systems),
 		typeof(SKConfettiSystemCollection),
@@ -21,6 +30,9 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		propertyChanged: OnSystemsPropertyChanged,
 		defaultValueCreator: _ => CreateDefaultSystems());
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="SKConfettiView"/> class.
+	/// </summary>
 	public SKConfettiView()
 	{
 		ResourceLoader<Themes.SKConfettiViewResources>.EnsureRegistered(this);
@@ -37,18 +49,25 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		OnSystemsPropertyChanged(this, null, Systems);
 	}
 
+	/// <summary>
+	/// Gets a value indicating whether all confetti systems have completed.
+	/// </summary>
 	public bool IsComplete
 	{
 		get => (bool)GetValue(IsCompleteProperty);
 		private set => SetValue(IsCompletePropertyKey, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the collection of confetti particle systems.
+	/// </summary>
 	public SKConfettiSystemCollection? Systems
 	{
 		get => (SKConfettiSystemCollection?)GetValue(SystemsProperty);
 		set => SetValue(SystemsProperty, value);
 	}
 
+	/// <inheritdoc/>
 	protected override void Update(TimeSpan deltaTime)
 	{
 		if (Systems is null)
@@ -64,6 +83,7 @@ public class SKConfettiView : SKAnimatedSurfaceView
 		}
 	}
 
+	/// <inheritdoc/>
 	protected override void OnPaintSurface(SKCanvas canvas, SKSize size)
 	{
 		var particles = 0;

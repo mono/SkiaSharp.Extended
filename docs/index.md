@@ -52,6 +52,10 @@ Smoothly morph between two paths for shape transitions and animations.
 
 ![Path Interpolation][interpolation-img]
 
+### [Pixel Comparer](docs/pixel-comparer.md)
+
+Compare two images pixel by pixel, quantify differences, and generate visual difference masks—ideal for visual regression testing.
+
 ---
 
 ## SkiaSharp.Extended.UI.Maui

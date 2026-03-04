@@ -1,7 +1,11 @@
 ﻿namespace SkiaSharp.Extended.UI.Controls.Converters;
 
+/// <summary>
+/// Converts comma-separated color strings to <see cref="SKConfettiColorCollection"/> instances.
+/// </summary>
 public class SKConfettiColorCollectionTypeConverter : StringTypeConverter
 {
+	/// <inheritdoc/>
 	protected override object? ConvertFromStringCore(string? value)
 	{
 		if (value == null)

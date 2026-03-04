@@ -91,6 +91,9 @@ jobs:
             -c Release -o publish/sample \
             -p:BuildInfo="$BUILD_INFO"
 
+      - name: Generate llms.txt and llms-full.txt
+        run: ./docs/generate-llms-full.sh
+
       - name: Build docs
         env:
           SOURCE_LABEL: ${{ steps.vars.outputs.source_label }}

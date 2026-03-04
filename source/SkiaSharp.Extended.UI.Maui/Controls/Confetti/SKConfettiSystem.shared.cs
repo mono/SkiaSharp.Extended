@@ -1,13 +1,22 @@
 ﻿namespace SkiaSharp.Extended.UI.Controls;
 
+/// <summary>
+/// Represents a single confetti particle system with emitter, physics, and rendering configuration.
+/// </summary>
 public class SKConfettiSystem : BindableObject
 {
+	/// <summary>
+	/// Identifies the <see cref="EmitterBounds"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty EmitterBoundsProperty = BindableProperty.Create(
 		nameof(EmitterBounds),
 		typeof(SKConfettiEmitterBounds),
 		typeof(SKConfettiSystem),
 		SKConfettiEmitterBounds.Top);
 
+	/// <summary>
+	/// Identifies the <see cref="Emitter"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty EmitterProperty = BindableProperty.Create(
 		nameof(Emitter),
 		typeof(SKConfettiEmitter),
@@ -16,6 +25,9 @@ public class SKConfettiSystem : BindableObject
 		propertyChanged: OnEmitterChanged,
 		defaultValueCreator: _ => new SKConfettiEmitter());
 
+	/// <summary>
+	/// Identifies the <see cref="Colors"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty ColorsProperty = BindableProperty.Create(
 		nameof(Colors),
 		typeof(SKConfettiColorCollection),
@@ -23,6 +35,9 @@ public class SKConfettiSystem : BindableObject
 		null,
 		defaultValueCreator: _ => CreateDefaultColors());
 
+	/// <summary>
+	/// Identifies the <see cref="Physics"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty PhysicsProperty = BindableProperty.Create(
 		nameof(Physics),
 		typeof(SKConfettiPhysicsCollection),
@@ -30,6 +45,9 @@ public class SKConfettiSystem : BindableObject
 		null,
 		defaultValueCreator: _ => CreateDefaultPhysics());
 
+	/// <summary>
+	/// Identifies the <see cref="Shapes"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty ShapesProperty = BindableProperty.Create(
 		nameof(Shapes),
 		typeof(SKConfettiShapeCollection),
@@ -37,60 +55,90 @@ public class SKConfettiSystem : BindableObject
 		null,
 		defaultValueCreator: _ => CreateDefaultShapes());
 
+	/// <summary>
+	/// Identifies the <see cref="StartAngle"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty StartAngleProperty = BindableProperty.Create(
 		nameof(StartAngle),
 		typeof(double),
 		typeof(SKConfettiSystem),
 		0.0);
 
+	/// <summary>
+	/// Identifies the <see cref="EndAngle"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty EndAngleProperty = BindableProperty.Create(
 		nameof(EndAngle),
 		typeof(double),
 		typeof(SKConfettiSystem),
 		360.0);
 
+	/// <summary>
+	/// Identifies the <see cref="MinimumInitialVelocity"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty MinimumInitialVelocityProperty = BindableProperty.Create(
 		nameof(MinimumInitialVelocity),
 		typeof(double),
 		typeof(SKConfettiSystem),
 		100.0);
 
+	/// <summary>
+	/// Identifies the <see cref="MaximumInitialVelocity"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty MaximumInitialVelocityProperty = BindableProperty.Create(
 		nameof(MaximumInitialVelocity),
 		typeof(double),
 		typeof(SKConfettiSystem),
 		200.0);
 
+	/// <summary>
+	/// Identifies the <see cref="MinimumRotationVelocity"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty MinimumRotationVelocityProperty = BindableProperty.Create(
 		nameof(MinimumRotationVelocity),
 		typeof(double),
 		typeof(SKConfettiSystem),
 		10.0);
 
+	/// <summary>
+	/// Identifies the <see cref="MaximumRotationVelocity"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty MaximumRotationVelocityProperty = BindableProperty.Create(
 		nameof(MaximumRotationVelocity),
 		typeof(double),
 		typeof(SKConfettiSystem),
 		75.0);
 
+	/// <summary>
+	/// Identifies the <see cref="MaximumVelocity"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty MaximumVelocityProperty = BindableProperty.Create(
 		nameof(MaximumVelocity),
 		typeof(double),
 		typeof(SKConfettiSystem),
 		0.0);
 
+	/// <summary>
+	/// Identifies the <see cref="Lifetime"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty LifetimeProperty = BindableProperty.Create(
 		nameof(Lifetime),
 		typeof(double),
 		typeof(SKConfettiSystem),
 		2.0);
 
+	/// <summary>
+	/// Identifies the <see cref="FadeOut"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty FadeOutProperty = BindableProperty.Create(
 		nameof(FadeOut),
 		typeof(bool),
 		typeof(SKConfettiSystem),
 		true);
 
+	/// <summary>
+	/// Identifies the <see cref="Gravity"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty GravityProperty = BindableProperty.Create(
 		nameof(Gravity),
 		typeof(Point),
@@ -104,8 +152,14 @@ public class SKConfettiSystem : BindableObject
 		false,
 		defaultBindingMode: BindingMode.OneWayToSource);
 
+	/// <summary>
+	/// Identifies the <see cref="IsComplete"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 
+	/// <summary>
+	/// Identifies the <see cref="IsAnimationEnabled"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty IsAnimationEnabledProperty = BindableProperty.Create(
 		nameof(IsAnimationEnabled),
 		typeof(bool),
@@ -119,6 +173,9 @@ public class SKConfettiSystem : BindableObject
 	private SKRect lastViewBounds;
 	private Rect actualEmitterBounds;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="SKConfettiSystem"/> class.
+	/// </summary>
 	public SKConfettiSystem()
 	{
 		DebugUtils.LogPropertyChanged(this);
@@ -126,102 +183,153 @@ public class SKConfettiSystem : BindableObject
 		OnEmitterChanged(this, null, Emitter);
 	}
 
+	/// <summary>
+	/// Gets or sets a value indicating whether the animation is enabled.
+	/// </summary>
 	public bool IsAnimationEnabled
 	{
 		get => (bool)GetValue(IsAnimationEnabledProperty);
 		set => SetValue(IsAnimationEnabledProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the bounds from which particles are emitted.
+	/// </summary>
 	public SKConfettiEmitterBounds EmitterBounds
 	{
 		get => (SKConfettiEmitterBounds)GetValue(EmitterBoundsProperty);
 		set => SetValue(EmitterBoundsProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the particle emitter.
+	/// </summary>
 	public SKConfettiEmitter? Emitter
 	{
 		get => (SKConfettiEmitter?)GetValue(EmitterProperty);
 		set => SetValue(EmitterProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the collection of colors used for particles.
+	/// </summary>
 	public SKConfettiColorCollection? Colors
 	{
 		get => (SKConfettiColorCollection?)GetValue(ColorsProperty);
 		set => SetValue(ColorsProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the collection of physics configurations for particles.
+	/// </summary>
 	public SKConfettiPhysicsCollection? Physics
 	{
 		get => (SKConfettiPhysicsCollection?)GetValue(PhysicsProperty);
 		set => SetValue(PhysicsProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the collection of shapes used for particles.
+	/// </summary>
 	public SKConfettiShapeCollection? Shapes
 	{
 		get => (SKConfettiShapeCollection?)GetValue(ShapesProperty);
 		set => SetValue(ShapesProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the start angle in degrees for particle emission direction.
+	/// </summary>
 	public double StartAngle
 	{
 		get => (double)GetValue(StartAngleProperty);
 		set => SetValue(StartAngleProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the end angle in degrees for particle emission direction.
+	/// </summary>
 	public double EndAngle
 	{
 		get => (double)GetValue(EndAngleProperty);
 		set => SetValue(EndAngleProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the minimum initial velocity of particles.
+	/// </summary>
 	public double MinimumInitialVelocity
 	{
 		get => (double)GetValue(MinimumInitialVelocityProperty);
 		set => SetValue(MinimumInitialVelocityProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the maximum initial velocity of particles.
+	/// </summary>
 	public double MaximumInitialVelocity
 	{
 		get => (double)GetValue(MaximumInitialVelocityProperty);
 		set => SetValue(MaximumInitialVelocityProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the minimum rotation velocity of particles in degrees per second.
+	/// </summary>
 	public double MinimumRotationVelocity
 	{
 		get => (double)GetValue(MinimumRotationVelocityProperty);
 		set => SetValue(MinimumRotationVelocityProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the maximum rotation velocity of particles in degrees per second.
+	/// </summary>
 	public double MaximumRotationVelocity
 	{
 		get => (double)GetValue(MaximumRotationVelocityProperty);
 		set => SetValue(MaximumRotationVelocityProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the maximum velocity cap for particles. A value of 0 means no cap.
+	/// </summary>
 	public double MaximumVelocity
 	{
 		get => (double)GetValue(MaximumVelocityProperty);
 		set => SetValue(MaximumVelocityProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the lifetime of each particle in seconds.
+	/// </summary>
 	public double Lifetime
 	{
 		get => (double)GetValue(LifetimeProperty);
 		set => SetValue(LifetimeProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets a value indicating whether particles fade out at the end of their lifetime.
+	/// </summary>
 	public bool FadeOut
 	{
 		get => (bool)GetValue(FadeOutProperty);
 		set => SetValue(FadeOutProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the gravity vector applied to particles.
+	/// </summary>
 	public Point Gravity
 	{
 		get => (Point)GetValue(GravityProperty);
 		set => SetValue(GravityProperty, value);
 	}
 
+	/// <summary>
+	/// Gets a value indicating whether this system has completed emitting and all particles are gone.
+	/// </summary>
 	public bool IsComplete
 	{
 		get => (bool)GetValue(IsCompleteProperty);
@@ -230,6 +338,10 @@ public class SKConfettiSystem : BindableObject
 
 	internal int ParticleCount => particles.Count;
 
+	/// <summary>
+	/// Updates the particle system state for the given elapsed time.
+	/// </summary>
+	/// <param name="deltaTime">The time elapsed since the last update.</param>
 	public void Update(TimeSpan deltaTime)
 	{
 		if (IsAnimationEnabled)
@@ -255,6 +367,10 @@ public class SKConfettiSystem : BindableObject
 			UpdateIsComplete();
 	}
 
+	/// <summary>
+	/// Draws all particles onto the specified canvas.
+	/// </summary>
+	/// <param name="canvas">The canvas to draw on.</param>
 	public void Draw(SKCanvas canvas)
 	{
 		foreach (var particle in particles)
@@ -263,6 +379,11 @@ public class SKConfettiSystem : BindableObject
 		}
 	}
 
+	/// <summary>
+	/// Updates the emitter bounds based on the view dimensions.
+	/// </summary>
+	/// <param name="width">The width of the view.</param>
+	/// <param name="height">The height of the view.</param>
 	public void UpdateEmitterBounds(double width, double height)
 	{
 		lastViewBounds = new SKRect(0, 0, (float)width, (float)height);
