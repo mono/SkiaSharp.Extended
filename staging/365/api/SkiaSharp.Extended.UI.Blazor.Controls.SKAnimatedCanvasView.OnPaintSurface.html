@@ -133,7 +133,7 @@ Subscribe here to render your content onto the <a class="xref" href="https://lea
 
 <div class="codewrapper">
   <pre><code class="lang-csharp hljs">[Parameter]
-public EventCallback&lt;SKPaintSurfaceEventArgs&gt; OnPaintSurface { get; set; }</code></pre>
+public Action&lt;SKPaintSurfaceEventArgs&gt;? OnPaintSurface { get; set; }</code></pre>
 </div>
 
 
@@ -142,7 +142,7 @@ public EventCallback&lt;SKPaintSurfaceEventArgs&gt; OnPaintSurface { get; set; }
 
 <h4 class="section">Property Value</h4>
 <dl class="parameters">
-  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.eventcallback-1">EventCallback</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor.skpaintsurfaceeventargs">SKPaintSurfaceEventArgs</a>&gt;</dt>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor.skpaintsurfaceeventargs">SKPaintSurfaceEventArgs</a>&gt;</dt>
   <dd></dd>
 </dl>
 
@@ -172,7 +172,7 @@ public EventCallback&lt;SKPaintSurfaceEventArgs&gt; OnPaintSurface { get; set; }
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · aadcb2e
+          source: PR #365 · 1707d9c
         </div>
       </div>
     </footer>

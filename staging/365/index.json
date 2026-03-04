@@ -357,7 +357,7 @@
   "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnPaintSurface.html": {
     "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnPaintSurface.html",
     "title": "Property OnPaintSurface | SkiaSharp.Extended",
-    "keywords": "Property OnPaintSurface Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll OnPaintSurface Callback invoked each time the canvas needs to be redrawn. Subscribe here to render your content onto the SKCanvas. [Parameter] public EventCallback<SKPaintSurfaceEventArgs> OnPaintSurface { get; set; } Property Value EventCallback<SKPaintSurfaceEventArgs>"
+    "keywords": "Property OnPaintSurface Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll OnPaintSurface Callback invoked each time the canvas needs to be redrawn. Subscribe here to render your content onto the SKCanvas. [Parameter] public Action<SKPaintSurfaceEventArgs>? OnPaintSurface { get; set; } Property Value Action<SKPaintSurfaceEventArgs>"
   },
   "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnParametersSetAsync.html": {
     "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnParametersSetAsync.html",
@@ -367,7 +367,7 @@
   "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnUpdate.html": {
     "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.OnUpdate.html",
     "title": "Property OnUpdate | SkiaSharp.Extended",
-    "keywords": "Property OnUpdate Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll OnUpdate Callback invoked on each frame tick with the elapsed time since the previous frame. Use this to update animation state from a parent component. [Parameter] public EventCallback<TimeSpan> OnUpdate { get; set; } Property Value EventCallback<TimeSpan>"
+    "keywords": "Property OnUpdate Namespace SkiaSharp.Extended.UI.Blazor.Controls Assembly SkiaSharp.Extended.UI.Blazor.dll OnUpdate Callback invoked on each frame tick with the elapsed time since the previous frame. Use this to update animation state from a parent component. [Parameter] public Action<TimeSpan>? OnUpdate { get; set; } Property Value Action<TimeSpan>"
   },
   "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.UpdateAsync.html": {
     "href": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView.UpdateAsync.html",
