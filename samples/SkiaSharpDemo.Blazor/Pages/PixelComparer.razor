@@ -8,7 +8,8 @@
 
 <p>
     Compare two images pixel by pixel and visualize differences
-    using <code>SKPixelComparer</code>.
+    using <a href="https://mono.github.io/SkiaSharp.Extended/api/SkiaSharp.Extended.SKPixelComparer.html" target="_blank"><code>SKPixelComparer</code></a>.
+    <a href="https://mono.github.io/SkiaSharp.Extended/docs/pixel-comparer.html" target="_blank">View documentation ↗</a>
 </p>
 
 <div class="row mb-3">
@@ -20,6 +21,14 @@
                 <option value="@i">@imagePairs[i].Name</option>
             }
         </select>
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Tolerance</label>
+        <div class="d-flex align-items-center">
+            <input type="range" class="form-range" style="width: 150px"
+                   min="0" max="100" @bind="tolerance" @bind:after="OnToleranceChanged" />
+            <span class="ms-2 text-muted" style="min-width: 30px">@tolerance</span>
+        </div>
     </div>
     @if (isLoading)
     {
@@ -33,21 +42,26 @@
 </div>
 
 <div class="row mb-3">
-    <div class="col-4">
+    <div class="col-3">
         <h5>Image A</h5>
         <img src="@($"images/Comparer/{imagePairs[selectedPairIndex].First}")"
              alt="@($"Image A – {imagePairs[selectedPairIndex].Name}")"
              style="max-width: 100%; height: auto;" />
     </div>
-    <div class="col-4">
+    <div class="col-3">
         <h5>Image B</h5>
         <img src="@($"images/Comparer/{imagePairs[selectedPairIndex].Second}")"
              alt="@($"Image B – {imagePairs[selectedPairIndex].Name}")"
              style="max-width: 100%; height: auto;" />
     </div>
-    <div class="col-4">
+    <div class="col-3">
         <h5>Difference Mask</h5>
-        <SKCanvasView @ref="diffCanvas" OnPaintSurface="OnPaintSurface"
+        <SKCanvasView @ref="diffMaskCanvas" OnPaintSurface="OnPaintMaskSurface"
+                      style="width: 100%; height: 220px;" />
+    </div>
+    <div class="col-3">
+        <h5>Difference Image</h5>
+        <SKCanvasView @ref="diffImageCanvas" OnPaintSurface="OnPaintDiffSurface"
                       style="width: 100%; height: 220px;" />
     </div>
 </div>
@@ -66,7 +80,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Comparison Results</h5>
-                    <div class="row">
+                    <div class="row mb-2">
                         <div class="col-sm-3">
                             <strong>Total Pixels</strong>
                             <p class="mb-0">@result.TotalPixels.ToString("N0")</p>
@@ -82,6 +96,28 @@
                         <div class="col-sm-3">
                             <strong>Absolute Error</strong>
                             <p class="mb-0">@result.AbsoluteError.ToString("N0")</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <strong>MAE</strong>
+                            <p class="mb-0 text-muted small">Mean Absolute Error</p>
+                            <p class="mb-0">@result.MeanAbsoluteError.ToString("F4")</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <strong>RMSE</strong>
+                            <p class="mb-0 text-muted small">Root Mean Squared Error</p>
+                            <p class="mb-0">@result.RootMeanSquaredError.ToString("F4")</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <strong>NRMSE</strong>
+                            <p class="mb-0 text-muted small">Normalized RMSE (0–1)</p>
+                            <p class="mb-0">@result.NormalizedRootMeanSquaredError.ToString("F6")</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <strong>PSNR</strong>
+                            <p class="mb-0 text-muted small">Peak Signal-to-Noise (dB)</p>
+                            <p class="mb-0">@FormatPsnr(result.PeakSignalToNoiseRatio)</p>
                         </div>
                     </div>
                 </div>
@@ -101,12 +137,20 @@
         new("PNG vs JPEG (Second)", "Second.png", "Second.jpg"),
     };
 
-    private SKCanvasView? diffCanvas;
+    private SKCanvasView? diffMaskCanvas;
+    private SKCanvasView? diffImageCanvas;
     private int selectedPairIndex;
+    private int tolerance;
     private bool isLoading;
     private SKPixelComparisonResult? result;
     private SKImage? diffMask;
+    private SKImage? diffImage;
     private string? errorMessage;
+
+    // Cache loaded images to avoid re-fetching on tolerance change
+    private SKImage? cachedFirst;
+    private SKImage? cachedSecond;
+    private int cachedPairIndex = -1;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -121,6 +165,11 @@
         await RunComparison();
     }
 
+    private async Task OnToleranceChanged()
+    {
+        await RunComparison();
+    }
+
     private async Task RunComparison()
     {
         isLoading = true;
@@ -129,24 +178,45 @@
 
         try
         {
-            var pair = imagePairs[selectedPairIndex];
-            var firstData = await Http.GetByteArrayAsync($"images/Comparer/{pair.First}");
-            var secondData = await Http.GetByteArrayAsync($"images/Comparer/{pair.Second}");
-
-            using var firstBitmap = SKBitmap.Decode(firstData);
-            using var secondBitmap = SKBitmap.Decode(secondData);
-
-            if (firstBitmap != null && secondBitmap != null)
+            // Only reload images if the pair changed
+            if (cachedPairIndex != selectedPairIndex)
             {
-                using var firstImage = SKImage.FromBitmap(firstBitmap);
-                using var secondImage = SKImage.FromBitmap(secondBitmap);
+                var pair = imagePairs[selectedPairIndex];
+                var firstData = await Http.GetByteArrayAsync($"images/Comparer/{pair.First}");
+                var secondData = await Http.GetByteArrayAsync($"images/Comparer/{pair.Second}");
 
-                result = SKPixelComparer.Compare(firstImage, secondImage);
+                using var firstBitmap = SKBitmap.Decode(firstData);
+                using var secondBitmap = SKBitmap.Decode(secondData);
 
+                cachedFirst?.Dispose();
+                cachedSecond?.Dispose();
+                cachedFirst = firstBitmap != null ? SKImage.FromBitmap(firstBitmap) : null;
+                cachedSecond = secondBitmap != null ? SKImage.FromBitmap(secondBitmap) : null;
+                cachedPairIndex = selectedPairIndex;
+
+                // Regenerate visual diffs (not affected by tolerance)
                 diffMask?.Dispose();
-                diffMask = SKPixelComparer.GenerateDifferenceMask(firstImage, secondImage);
+                diffImage?.Dispose();
+                if (cachedFirst != null && cachedSecond != null)
+                {
+                    diffMask = SKPixelComparer.GenerateDifferenceMask(cachedFirst, cachedSecond);
+                    diffImage = SKPixelComparer.GenerateDifferenceImage(cachedFirst, cachedSecond);
+                }
+                else
+                {
+                    diffMask = null;
+                    diffImage = null;
+                }
 
-                diffCanvas?.Invalidate();
+                diffMaskCanvas?.Invalidate();
+                diffImageCanvas?.Invalidate();
+            }
+
+            if (cachedFirst != null && cachedSecond != null)
+            {
+                result = tolerance > 0
+                    ? SKPixelComparer.Compare(cachedFirst, cachedSecond, tolerance)
+                    : SKPixelComparer.Compare(cachedFirst, cachedSecond);
             }
         }
         catch (Exception ex)
@@ -156,7 +226,10 @@
             result = null;
             diffMask?.Dispose();
             diffMask = null;
-            diffCanvas?.Invalidate();
+            diffImage?.Dispose();
+            diffImage = null;
+            diffMaskCanvas?.Invalidate();
+            diffImageCanvas?.Invalidate();
         }
         finally
         {
@@ -165,18 +238,28 @@
         }
     }
 
-    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    private void OnPaintMaskSurface(SKPaintSurfaceEventArgs e)
+    {
+        PaintScaledImage(e, diffMask);
+    }
+
+    private void OnPaintDiffSurface(SKPaintSurfaceEventArgs e)
+    {
+        PaintScaledImage(e, diffImage);
+    }
+
+    private static void PaintScaledImage(SKPaintSurfaceEventArgs e, SKImage? image)
     {
         var canvas = e.Surface.Canvas;
         var info = e.Info;
 
         canvas.Clear(SKColors.LightGray);
 
-        if (diffMask == null)
+        if (image == null)
             return;
 
         var destRect = SKRect.Create(0, 0, info.Width, info.Height);
-        var srcRect = SKRect.Create(0, 0, diffMask.Width, diffMask.Height);
+        var srcRect = SKRect.Create(0, 0, image.Width, image.Height);
 
         // Scale to fit while preserving aspect ratio
         var scale = Math.Min(destRect.Width / srcRect.Width, destRect.Height / srcRect.Height);
@@ -187,12 +270,23 @@
 
         var drawRect = SKRect.Create(offsetX, offsetY, scaledWidth, scaledHeight);
 
-        canvas.DrawImage(diffMask, drawRect);
+        canvas.DrawImage(image, drawRect);
+    }
+
+    private static string FormatPsnr(double psnr)
+    {
+        return double.IsPositiveInfinity(psnr) ? "∞ (identical)" : $"{psnr:F2} dB";
     }
 
     public void Dispose()
     {
         diffMask?.Dispose();
         diffMask = null;
+        diffImage?.Dispose();
+        diffImage = null;
+        cachedFirst?.Dispose();
+        cachedFirst = null;
+        cachedSecond?.Dispose();
+        cachedSecond = null;
     }
 }

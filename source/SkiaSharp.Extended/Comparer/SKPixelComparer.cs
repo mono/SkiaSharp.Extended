@@ -210,6 +210,14 @@ namespace SkiaSharp.Extended
 			return new SKPixelComparisonResult(totalPixels, errorPixels, absoluteError, sumSquaredError);
 		}
 
+		/// <summary>
+		/// Compares two images loaded from file paths pixel by pixel, using a uniform per-pixel tolerance threshold.
+		/// Pixels where the total per-channel difference (<c>|ΔR| + |ΔG| + |ΔB|</c>) is at or below the tolerance are not counted as errors.
+		/// </summary>
+		/// <param name="firstFilename">The file path of the first image.</param>
+		/// <param name="secondFilename">The file path of the second image.</param>
+		/// <param name="tolerance">The maximum allowed sum of per-channel differences per pixel. Must be non-negative.</param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
 		public static SKPixelComparisonResult Compare(string firstFilename, string secondFilename, int tolerance)
 		{
 			using var first = SKImage.FromEncodedData(firstFilename);
@@ -217,6 +225,13 @@ namespace SkiaSharp.Extended
 			return Compare(first, second, tolerance);
 		}
 
+		/// <summary>
+		/// Compares two bitmaps pixel by pixel, using a uniform per-pixel tolerance threshold.
+		/// </summary>
+		/// <param name="first">The first bitmap.</param>
+		/// <param name="second">The second bitmap.</param>
+		/// <param name="tolerance">The maximum allowed sum of per-channel differences per pixel. Must be non-negative.</param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
 		public static SKPixelComparisonResult Compare(SKBitmap first, SKBitmap second, int tolerance)
 		{
 			using var firstPixmap = first.PeekPixels();
@@ -224,6 +239,13 @@ namespace SkiaSharp.Extended
 			return Compare(firstPixmap, secondPixmap, tolerance);
 		}
 
+		/// <summary>
+		/// Compares two pixmaps pixel by pixel, using a uniform per-pixel tolerance threshold.
+		/// </summary>
+		/// <param name="first">The first pixmap.</param>
+		/// <param name="second">The second pixmap.</param>
+		/// <param name="tolerance">The maximum allowed sum of per-channel differences per pixel. Must be non-negative.</param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
 		public static SKPixelComparisonResult Compare(SKPixmap first, SKPixmap second, int tolerance)
 		{
 			using var firstWrapper = SKImage.FromPixels(first);
@@ -231,6 +253,17 @@ namespace SkiaSharp.Extended
 			return Compare(firstWrapper, secondWrapper, tolerance);
 		}
 
+		/// <summary>
+		/// Compares two images pixel by pixel, using a uniform per-pixel tolerance threshold.
+		/// Pixels where the total per-channel difference (<c>|ΔR| + |ΔG| + |ΔB|</c>) is at or below the tolerance are not counted as errors.
+		/// </summary>
+		/// <param name="first">The first image.</param>
+		/// <param name="second">The second image.</param>
+		/// <param name="tolerance">The maximum allowed sum of per-channel differences per pixel. Must be non-negative.</param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
+		/// <exception cref="ArgumentNullException"><paramref name="first"/> or <paramref name="second"/> is <c>null</c>.</exception>
+		/// <exception cref="ArgumentOutOfRangeException"><paramref name="tolerance"/> is negative.</exception>
+		/// <exception cref="InvalidOperationException">The images have different dimensions.</exception>
 		public static SKPixelComparisonResult Compare(SKImage first, SKImage second, int tolerance)
 		{
 			if (tolerance < 0)
@@ -358,6 +391,13 @@ namespace SkiaSharp.Extended
 			return SKImage.FromBitmap(diffBitmap);
 		}
 
+		/// <summary>
+		/// Generates a per-channel difference image from two images loaded from file paths.
+		/// Each pixel in the result contains the absolute per-channel differences as RGB values.
+		/// </summary>
+		/// <param name="firstFilename">The file path of the first image.</param>
+		/// <param name="secondFilename">The file path of the second image.</param>
+		/// <returns>An <see cref="SKImage"/> where each pixel's RGB values represent the absolute per-channel differences.</returns>
 		public static SKImage GenerateDifferenceImage(string firstFilename, string secondFilename)
 		{
 			using var first = SKImage.FromEncodedData(firstFilename);
@@ -365,6 +405,12 @@ namespace SkiaSharp.Extended
 			return GenerateDifferenceImage(first, second);
 		}
 
+		/// <summary>
+		/// Generates a per-channel difference image from two bitmaps.
+		/// </summary>
+		/// <param name="first">The first bitmap.</param>
+		/// <param name="second">The second bitmap.</param>
+		/// <returns>An <see cref="SKImage"/> where each pixel's RGB values represent the absolute per-channel differences.</returns>
 		public static SKImage GenerateDifferenceImage(SKBitmap first, SKBitmap second)
 		{
 			using var firstPixmap = first.PeekPixels();
@@ -372,6 +418,12 @@ namespace SkiaSharp.Extended
 			return GenerateDifferenceImage(firstPixmap, secondPixmap);
 		}
 
+		/// <summary>
+		/// Generates a per-channel difference image from two pixmaps.
+		/// </summary>
+		/// <param name="first">The first pixmap.</param>
+		/// <param name="second">The second pixmap.</param>
+		/// <returns>An <see cref="SKImage"/> where each pixel's RGB values represent the absolute per-channel differences.</returns>
 		public static SKImage GenerateDifferenceImage(SKPixmap first, SKPixmap second)
 		{
 			using var firstWrapper = SKImage.FromPixels(first);
@@ -379,6 +431,16 @@ namespace SkiaSharp.Extended
 			return GenerateDifferenceImage(firstWrapper, secondWrapper);
 		}
 
+		/// <summary>
+		/// Generates a per-channel difference image from two images. Each pixel in the result contains
+		/// the absolute per-channel differences as RGB values, unlike <see cref="GenerateDifferenceMask(SKImage, SKImage)"/>
+		/// which produces a binary black-and-white mask.
+		/// </summary>
+		/// <param name="first">The first image.</param>
+		/// <param name="second">The second image.</param>
+		/// <returns>An <see cref="SKImage"/> where each pixel's RGB values represent the absolute per-channel differences.</returns>
+		/// <exception cref="ArgumentNullException"><paramref name="first"/> or <paramref name="second"/> is <c>null</c>.</exception>
+		/// <exception cref="InvalidOperationException">The images have different dimensions.</exception>
 		public static SKImage GenerateDifferenceImage(SKImage first, SKImage second)
 		{
 			Validate(first, second);
