@@ -83,18 +83,22 @@
                     <div class="row mb-2">
                         <div class="col-6 col-sm-3">
                             <strong>Total Pixels</strong>
+                            <p class="mb-0 text-muted small">Pixels in each image</p>
                             <p class="mb-0">@result.TotalPixels.ToString("N0")</p>
                         </div>
                         <div class="col-6 col-sm-3">
                             <strong>Error Pixels</strong>
+                            <p class="mb-0 text-muted small">Pixels that differ</p>
                             <p class="mb-0">@result.ErrorPixelCount.ToString("N0")</p>
                         </div>
                         <div class="col-6 col-sm-3">
                             <strong>Error Percentage</strong>
+                            <p class="mb-0 text-muted small">Ratio of differing pixels</p>
                             <p class="mb-0">@result.ErrorPixelPercentage.ToString("P2")</p>
                         </div>
                         <div class="col-6 col-sm-3">
                             <strong>Absolute Error</strong>
+                            <p class="mb-0 text-muted small">Sum of channel differences</p>
                             <p class="mb-0">@result.AbsoluteError.ToString("N0")</p>
                         </div>
                     </div>
