@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides methods for pixel-by-pixel comparison of images.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -154,83 +155,109 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKBitmap_SkiaSharp_SKBitmap_">Compare(SKBitmap, SKBitmap)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two bitmaps pixel by pixel.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKBitmap_SkiaSharp_SKBitmap_SkiaSharp_SKBitmap_">Compare(SKBitmap, SKBitmap, SKBitmap)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two bitmaps pixel by pixel, using a tolerance mask.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKBitmap_SkiaSharp_SKBitmap_System_Int32_">Compare(SKBitmap, SKBitmap, int)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two bitmaps pixel by pixel, using a uniform per-pixel tolerance threshold.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKImage_SkiaSharp_SKImage_">Compare(SKImage, SKImage)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two images pixel by pixel.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKImage_SkiaSharp_SKImage_SkiaSharp_SKImage_">Compare(SKImage, SKImage, SKImage)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two images pixel by pixel, using a tolerance mask. Pixel differences that fall within
+the mask's per-channel values are not counted as errors.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKImage_SkiaSharp_SKImage_System_Int32_">Compare(SKImage, SKImage, int)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two images pixel by pixel, using a uniform per-pixel tolerance threshold.
+Pixels where the total per-channel difference (<code>|ΔR| + |ΔG| + |ΔB|</code>) is at or below the tolerance are not counted as errors.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKPixmap_SkiaSharp_SKPixmap_">Compare(SKPixmap, SKPixmap)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two pixmaps pixel by pixel.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKPixmap_SkiaSharp_SKPixmap_SkiaSharp_SKPixmap_">Compare(SKPixmap, SKPixmap, SKPixmap)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two pixmaps pixel by pixel, using a tolerance mask.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKPixmap_SkiaSharp_SKPixmap_System_Int32_">Compare(SKPixmap, SKPixmap, int)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two pixmaps pixel by pixel, using a uniform per-pixel tolerance threshold.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_System_String_System_String_">Compare(string, string)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two images loaded from file paths pixel by pixel.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_System_String_System_String_System_Int32_">Compare(string, string, int)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two images loaded from file paths pixel by pixel, using a uniform per-pixel tolerance threshold.
+Pixels where the total per-channel difference (<code>|ΔR| + |ΔG| + |ΔB|</code>) is at or below the tolerance are not counted as errors.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.Compare.html#SkiaSharp_Extended_SKPixelComparer_Compare_System_String_System_String_System_String_">Compare(string, string, string)</a></dt>
-    <dd></dd>
+    <dd><p>Compares two images loaded from file paths pixel by pixel, using a tolerance mask.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceImage.html#SkiaSharp_Extended_SKPixelComparer_GenerateDifferenceImage_SkiaSharp_SKBitmap_SkiaSharp_SKBitmap_">GenerateDifferenceImage(SKBitmap, SKBitmap)</a></dt>
-    <dd></dd>
+    <dd><p>Generates a per-channel difference image from two bitmaps.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceImage.html#SkiaSharp_Extended_SKPixelComparer_GenerateDifferenceImage_SkiaSharp_SKImage_SkiaSharp_SKImage_">GenerateDifferenceImage(SKImage, SKImage)</a></dt>
-    <dd></dd>
+    <dd><p>Generates a per-channel difference image from two images. Each pixel in the result contains
+the absolute per-channel differences as RGB values, unlike <a class="xref" href="SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceMask.html#SkiaSharp_Extended_SKPixelComparer_GenerateDifferenceMask_SkiaSharp_SKImage_SkiaSharp_SKImage_">GenerateDifferenceMask(SKImage, SKImage)</a>
+which produces a binary black-and-white mask.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceImage.html#SkiaSharp_Extended_SKPixelComparer_GenerateDifferenceImage_SkiaSharp_SKPixmap_SkiaSharp_SKPixmap_">GenerateDifferenceImage(SKPixmap, SKPixmap)</a></dt>
-    <dd></dd>
+    <dd><p>Generates a per-channel difference image from two pixmaps.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceImage.html#SkiaSharp_Extended_SKPixelComparer_GenerateDifferenceImage_System_String_System_String_">GenerateDifferenceImage(string, string)</a></dt>
-    <dd></dd>
+    <dd><p>Generates a per-channel difference image from two images loaded from file paths.
+Each pixel in the result contains the absolute per-channel differences as RGB values.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceMask.html#SkiaSharp_Extended_SKPixelComparer_GenerateDifferenceMask_SkiaSharp_SKBitmap_SkiaSharp_SKBitmap_">GenerateDifferenceMask(SKBitmap, SKBitmap)</a></dt>
-    <dd></dd>
+    <dd><p>Generates a black-and-white mask image highlighting pixel differences between two bitmaps.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceMask.html#SkiaSharp_Extended_SKPixelComparer_GenerateDifferenceMask_SkiaSharp_SKImage_SkiaSharp_SKImage_">GenerateDifferenceMask(SKImage, SKImage)</a></dt>
-    <dd></dd>
+    <dd><p>Generates a black-and-white mask image highlighting pixel differences between two images.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceMask.html#SkiaSharp_Extended_SKPixelComparer_GenerateDifferenceMask_SkiaSharp_SKPixmap_SkiaSharp_SKPixmap_">GenerateDifferenceMask(SKPixmap, SKPixmap)</a></dt>
-    <dd></dd>
+    <dd><p>Generates a black-and-white mask image highlighting pixel differences between two pixmaps.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceMask.html#SkiaSharp_Extended_SKPixelComparer_GenerateDifferenceMask_System_String_System_String_">GenerateDifferenceMask(string, string)</a></dt>
-    <dd></dd>
+    <dd><p>Generates a black-and-white mask image highlighting pixel differences between two images loaded from file paths.</p>
+</dd>
   </dl>
 
 
@@ -254,7 +281,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #374 · 4e2df09
+          source: PR #374 · 79260ff
         </div>
       </div>
     </footer>

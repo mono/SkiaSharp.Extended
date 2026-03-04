@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Holds the results of a pixel-by-pixel image comparison.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -154,11 +155,13 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.-ctor.html#SkiaSharp_Extended_SKPixelComparisonResult__ctor_System_Int32_System_Int32_System_Int32_">SKPixelComparisonResult(int, int, int)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a>.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.-ctor.html#SkiaSharp_Extended_SKPixelComparisonResult__ctor_System_Int32_System_Int32_System_Int32_System_Int64_">SKPixelComparisonResult(int, int, int, long)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a>.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -166,43 +169,58 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError.html#SkiaSharp_Extended_SKPixelComparisonResult_AbsoluteError">AbsoluteError</a></dt>
-    <dd></dd>
+    <dd><p>Gets the sum of per-channel (RGB) absolute differences across all pixels.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelCount.html#SkiaSharp_Extended_SKPixelComparisonResult_ErrorPixelCount">ErrorPixelCount</a></dt>
-    <dd></dd>
+    <dd><p>Gets the number of pixels that differ between the two images.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelPercentage.html#SkiaSharp_Extended_SKPixelComparisonResult_ErrorPixelPercentage">ErrorPixelPercentage</a></dt>
-    <dd></dd>
+    <dd><p>Gets the ratio of differing pixels to total pixels (0.0 to 1.0).</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.MeanAbsoluteError.html#SkiaSharp_Extended_SKPixelComparisonResult_MeanAbsoluteError">MeanAbsoluteError</a></dt>
-    <dd></dd>
+    <dd><p>Gets the mean absolute error per channel, computed as <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError.html#SkiaSharp_Extended_SKPixelComparisonResult_AbsoluteError">AbsoluteError</a> / (<a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> × 3).
+Range: 0 (identical) to 255 (maximum difference).</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_MeanSquaredError">MeanSquaredError</a></dt>
-    <dd></dd>
+    <dd><p>Gets the mean squared error per channel, computed as <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.SumSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_SumSquaredError">SumSquaredError</a> / (<a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> × 3).
+Range: 0 (identical) to 65025 (maximum difference).</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.NormalizedRootMeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_NormalizedRootMeanSquaredError">NormalizedRootMeanSquaredError</a></dt>
-    <dd></dd>
+    <dd><p>Gets the normalized root mean squared error, computed as <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.RootMeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_RootMeanSquaredError">RootMeanSquaredError</a> / 255.
+Range: 0 (identical) to 1 (maximum difference). Useful for threshold-based pass/fail testing.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.PeakSignalToNoiseRatio.html#SkiaSharp_Extended_SKPixelComparisonResult_PeakSignalToNoiseRatio">PeakSignalToNoiseRatio</a></dt>
-    <dd></dd>
+    <dd><p>Gets the peak signal-to-noise ratio in decibels, computed as 10 × log₁₀(255² / <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_MeanSquaredError">MeanSquaredError</a>).
+Returns <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double.positiveinfinity">PositiveInfinity</a> for identical images.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.RootMeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_RootMeanSquaredError">RootMeanSquaredError</a></dt>
-    <dd></dd>
+    <dd><p>Gets the root mean squared error, computed as the square root of <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_MeanSquaredError">MeanSquaredError</a>.
+Range: 0 (identical) to 255 (maximum difference).</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.SumSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_SumSquaredError">SumSquaredError</a></dt>
-    <dd></dd>
+    <dd><p>Gets the sum of per-channel (RGB) squared differences across all pixels: Σ(ΔR² + ΔG² + ΔB²).</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a></dt>
-    <dd></dd>
+    <dd><p>Gets the total number of pixels compared.</p>
+</dd>
   </dl>
 
 
@@ -226,7 +244,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #374 · 4e2df09
+          source: PR #374 · 79260ff
         </div>
       </div>
     </footer>
