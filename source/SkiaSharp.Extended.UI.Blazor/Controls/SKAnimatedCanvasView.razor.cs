@@ -40,14 +40,14 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
     /// previous frame. Use this to update animation state from a parent component.
     /// </summary>
     [Parameter]
-    public EventCallback<TimeSpan> OnUpdate { get; set; }
+    public Action<TimeSpan>? OnUpdate { get; set; }
 
     /// <summary>
     /// Callback invoked each time the canvas needs to be redrawn.
     /// Subscribe here to render your content onto the <see cref="SKCanvas"/>.
     /// </summary>
     [Parameter]
-    public EventCallback<SKPaintSurfaceEventArgs> OnPaintSurface { get; set; }
+    public Action<SKPaintSurfaceEventArgs>? OnPaintSurface { get; set; }
 
     /// <summary>
     /// Additional HTML attributes to be applied to the underlying
@@ -82,22 +82,15 @@ public partial class SKAnimatedCanvasView : ComponentBase, IAsyncDisposable
     /// </summary>
     /// <param name="deltaTime">Time elapsed since the previous frame.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous update work.</returns>
-    protected virtual async Task UpdateAsync(TimeSpan deltaTime)
+    protected virtual Task UpdateAsync(TimeSpan deltaTime)
     {
-        if (OnUpdate.HasDelegate)
-            await OnUpdate.InvokeAsync(deltaTime);
+        OnUpdate?.Invoke(deltaTime);
+        return Task.CompletedTask;
     }
 
     private void HandlePaintSurface(SKPaintSurfaceEventArgs e)
     {
-        if (!OnPaintSurface.HasDelegate)
-            return;
-
-        var task = OnPaintSurface.InvokeAsync(e);
-        if (!task.IsCompletedSuccessfully)
-            throw new InvalidOperationException(
-                $"{nameof(OnPaintSurface)} handlers must be synchronous; " +
-                "the underlying SKCanvas is only valid during the paint callback.");
+        OnPaintSurface?.Invoke(e);
     }
 
     private async Task StartLoopAsync()

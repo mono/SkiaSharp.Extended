@@ -179,16 +179,16 @@ public partial class SKLottieView : ComponentBase, IAsyncDisposable
 		StateHasChanged();
 	}
 
-	private async Task HandleUpdate(TimeSpan delta)
+	private void HandleUpdate(TimeSpan delta)
 	{
 		var wasComplete = _player.IsComplete;
 		_player.Update(delta);
 
 		if (_player.IsComplete && !wasComplete)
-			await AnimationCompleted.InvokeAsync();
+			_ = AnimationCompleted.InvokeAsync();
 
 		if (AnimationUpdated.HasDelegate)
-			await AnimationUpdated.InvokeAsync();
+			_ = AnimationUpdated.InvokeAsync();
 	}
 
 	private void HandlePaintSurface(SKPaintSurfaceEventArgs e)
