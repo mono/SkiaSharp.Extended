@@ -23,7 +23,9 @@
         ],
         "exclude": [
           "_site/**",
-          "obj/**"
+          "obj/**",
+          "llms.md",
+          "llms-full-header.md"
         ]
       }
     ],
@@ -31,7 +33,9 @@
       {
         "files": [
           "images/**",
-          "404.html"
+          "404.html",
+          "llms.txt",
+          "llms-full.txt"
         ]
       }
     ],
