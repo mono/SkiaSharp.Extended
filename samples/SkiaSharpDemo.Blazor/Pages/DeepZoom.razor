@@ -1,0 +1,197 @@
+@page "/deepzoom"
+@implements IDisposable
+@inject HttpClient Http
+@using SkiaSharp.Extended.DeepZoom
+
+<PageTitle>Deep Zoom</PageTitle>
+
+<h1>Deep Zoom</h1>
+
+<p>
+    Pan, zoom, and explore a tiled deep zoom image powered by
+    <code>DeepZoomController</code> from the shared core library.
+    Use mouse wheel to zoom, click and drag to pan.
+</p>
+
+<div class="row mb-3">
+    <div class="col-auto">
+        <button class="btn btn-outline-secondary btn-sm" @onclick="OnReset">Reset</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="OnZoomIn">Zoom In</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="OnZoomOut">Zoom Out</button>
+    </div>
+    <div class="col-auto d-flex align-items-center">
+        <div class="form-check form-switch me-3">
+            <input class="form-check-input" type="checkbox" id="showBorders" @bind="showBorders" @bind:after="OnDebugChanged" />
+            <label class="form-check-label" for="showBorders">Tile Borders</label>
+        </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="showStats" @bind="showStats" @bind:after="OnDebugChanged" />
+            <label class="form-check-label" for="showStats">Stats</label>
+        </div>
+    </div>
+    <div class="col-auto d-flex align-items-center">
+        <small class="text-muted">@statusText</small>
+    </div>
+</div>
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger" role="alert">@errorMessage</div>
+}
+
+<div @onmousedown="OnMouseDown"
+     @onmousemove="OnMouseMove"
+     @onmouseup="OnMouseUp"
+     @onmouseleave="OnMouseUp"
+     @onwheel="OnWheel"
+     @onwheel:preventDefault
+     style="cursor: @(isDragging ? "grabbing" : "grab"); border: 1px solid #ccc; user-select: none;">
+    <SKCanvasView @ref="canvasView"
+                  OnPaintSurface="OnPaintSurface"
+                  style="width: 100%; height: 600px;" />
+</div>
+
+@code {
+    private SKCanvasView? canvasView;
+    private DeepZoomController? controller;
+    private System.Timers.Timer? animationTimer;
+    private DateTime lastUpdate = DateTime.UtcNow;
+
+    private bool showBorders;
+    private bool showStats;
+    private bool isDragging;
+    private double lastMouseX, lastMouseY;
+    private string statusText = "Loading...";
+    private string? errorMessage;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        try
+        {
+            controller = new DeepZoomController();
+            controller.InvalidateRequired += (_, _) => canvasView?.Invalidate();
+
+            var dziXml = await Http.GetStringAsync("deepzoom/testgrid.dzi");
+            var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/testgrid_files/").ToString();
+            var tileSource = DziTileSource.Parse(dziXml, baseUrl);
+
+            var fetcher = new HttpTileFetcher(new HttpClient());
+            controller.Load(tileSource, fetcher);
+
+            statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}, {tileSource.MaxLevel + 1} levels";
+
+            animationTimer = new System.Timers.Timer(16); // ~60fps
+            animationTimer.Elapsed += OnTimerTick;
+            animationTimer.Start();
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load: {ex.Message}";
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void OnTimerTick(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        if (controller == null)
+            return;
+
+        var now = DateTime.UtcNow;
+        var delta = now - lastUpdate;
+        lastUpdate = now;
+
+        if (controller.Update(delta))
+        {
+            canvasView?.Invalidate();
+        }
+    }
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        if (controller == null)
+            return;
+
+        var canvas = e.Surface.Canvas;
+        var info = e.Info;
+
+        controller.SetControlSize(info.Width, info.Height);
+        canvas.Clear(SKColors.White);
+        controller.Render(canvas);
+    }
+
+    private void OnMouseDown(MouseEventArgs e)
+    {
+        isDragging = true;
+        lastMouseX = e.ClientX;
+        lastMouseY = e.ClientY;
+    }
+
+    private void OnMouseMove(MouseEventArgs e)
+    {
+        if (!isDragging || controller == null)
+            return;
+
+        var dx = e.ClientX - lastMouseX;
+        var dy = e.ClientY - lastMouseY;
+        lastMouseX = e.ClientX;
+        lastMouseY = e.ClientY;
+
+        controller.Pan(dx, dy);
+        canvasView?.Invalidate();
+    }
+
+    private void OnMouseUp(MouseEventArgs e)
+    {
+        isDragging = false;
+    }
+
+    private void OnWheel(WheelEventArgs e)
+    {
+        if (controller == null)
+            return;
+
+        var factor = e.DeltaY < 0 ? 1.2 : 1.0 / 1.2;
+        controller.ZoomAboutScreenPoint(factor, e.OffsetX, e.OffsetY);
+        canvasView?.Invalidate();
+    }
+
+    private void OnReset()
+    {
+        controller?.ResetView();
+        canvasView?.Invalidate();
+    }
+
+    private void OnZoomIn()
+    {
+        controller?.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
+        canvasView?.Invalidate();
+    }
+
+    private void OnZoomOut()
+    {
+        controller?.ZoomAboutLogicalPoint(0.5, 0.5, 0.5);
+        canvasView?.Invalidate();
+    }
+
+    private void OnDebugChanged()
+    {
+        if (controller == null)
+            return;
+
+        controller.ShowTileBorders = showBorders;
+        controller.ShowDebugStats = showStats;
+        canvasView?.Invalidate();
+    }
+
+    public void Dispose()
+    {
+        animationTimer?.Stop();
+        animationTimer?.Dispose();
+        controller?.Dispose();
+    }
+}

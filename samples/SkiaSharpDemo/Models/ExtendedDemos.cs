@@ -35,6 +35,13 @@ public static class ExtendedDemos
 			{
 				new Demo
 				{
+					Title = "Deep Zoom",
+					Description = "Pan, pinch, and zoom into a tiled deep zoom image with smooth spring animations.",
+					PageType = typeof(DeepZoomPage),
+					Color = Colors.Teal,
+				},
+				new Demo
+				{
 					Title = "Confetti",
 					Description = "Yeaaahhhhh! Throw that confetti! Woooooaaaaahhhh! We are the winners! Celebration words! Congrats! Yay!",
 					PageType = typeof(ConfettiPage),

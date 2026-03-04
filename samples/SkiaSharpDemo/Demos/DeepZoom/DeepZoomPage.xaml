@@ -2,18 +2,18 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:dz="clr-namespace:SkiaSharp.Extended.UI.Maui.DeepZoom;assembly=SkiaSharp.Extended.UI.Maui.DeepZoom"
-             x:Class="MauiDeepZoom.MainPage"
-             Title="Deep Zoom Test">
+             x:Class="SkiaSharpDemo.Demos.DeepZoomPage"
+             Title="Deep Zoom">
 
     <Grid RowDefinitions="Auto,*">
         <HorizontalStackLayout Grid.Row="0" Spacing="8" Padding="8" BackgroundColor="#333">
             <Label x:Name="statusLabel" Text="Loading..." TextColor="White" VerticalOptions="Center" />
             <Button Text="Reset" Clicked="OnReset" BackgroundColor="#555" TextColor="White" />
-            <Button Text="Zoom In" Clicked="OnZoomIn" BackgroundColor="#555" TextColor="White" />
-            <Button Text="Zoom Out" Clicked="OnZoomOut" BackgroundColor="#555" TextColor="White" />
-            <Switch x:Name="debugSwitch" IsToggled="True" Toggled="OnDebugToggled" />
+            <Button Text="+" Clicked="OnZoomIn" BackgroundColor="#555" TextColor="White" WidthRequest="40" />
+            <Button Text="−" Clicked="OnZoomOut" BackgroundColor="#555" TextColor="White" WidthRequest="40" />
+            <Switch x:Name="debugSwitch" IsToggled="False" Toggled="OnDebugToggled" />
             <Label Text="Borders" TextColor="White" VerticalOptions="Center" />
-            <Switch x:Name="statsSwitch" IsToggled="True" Toggled="OnStatsToggled" />
+            <Switch x:Name="statsSwitch" IsToggled="False" Toggled="OnStatsToggled" />
             <Label Text="Stats" TextColor="White" VerticalOptions="Center" />
         </HorizontalStackLayout>
 

@@ -2,11 +2,11 @@ using SkiaSharp;
 using SkiaSharp.Extended.DeepZoom;
 using SkiaSharp.Extended.UI.Maui.DeepZoom;
 
-namespace MauiDeepZoom;
+namespace SkiaSharpDemo.Demos;
 
-public partial class MainPage : ContentPage
+public partial class DeepZoomPage : ContentPage
 {
-    public MainPage()
+    public DeepZoomPage()
     {
         InitializeComponent();
         LoadTestGrid();
@@ -29,7 +29,7 @@ public partial class MainPage : ContentPage
             deepZoomView.ShowDebugStats = statsSwitch.IsToggled;
             deepZoomView.Load(tileSource, new AppPackageTileFetcher());
 
-            statusLabel.Text = $"{tileSource.ImageWidth}x{tileSource.ImageHeight}, " +
+            statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}, " +
                 $"{tileSource.MaxLevel + 1} levels";
         }
         catch (Exception ex)
@@ -62,6 +62,7 @@ public partial class MainPage : ContentPage
             }
             catch { return null; }
         }
+
         public void Dispose() { }
     }
 }
