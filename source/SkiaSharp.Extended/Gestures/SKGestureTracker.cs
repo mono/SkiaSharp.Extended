@@ -454,7 +454,7 @@ public sealed class SKGestureTracker : IDisposable
 	/// </remarks>
 	public void ZoomTo(float factor, SKPoint focalPoint)
 	{
-		ObjectDisposedException.ThrowIf(_disposed, this);
+		if (_disposed) throw new ObjectDisposedException(GetType().FullName);
 
 		if (factor <= 0 || float.IsNaN(factor) || float.IsInfinity(factor))
 			throw new ArgumentOutOfRangeException(nameof(factor), factor, "Factor must be a positive finite number.");

@@ -984,4 +984,124 @@ public class SKGestureTrackerTests
 		Assert.True(tracker.Scale > 0, "Scale must remain positive");
 	}
 
+	[Fact]
+	public void ProcessTouchDown_WithNaNCoordinates_DoesNotCorruptState()
+	{
+		var tracker = CreateTracker();
+		tracker.ProcessTouchDown(1, new SKPoint(float.NaN, float.NaN));
+		tracker.ProcessTouchUp(1, new SKPoint(float.NaN, float.NaN));
+
+		// State should remain valid
+		Assert.False(float.IsNaN(tracker.Scale));
+		Assert.False(float.IsNaN(tracker.Offset.X));
+		Assert.False(float.IsNaN(tracker.Offset.Y));
+	}
+
+	[Fact]
+	public void ProcessTouchDown_WithInfinityCoordinates_DoesNotCorruptState()
+	{
+		var tracker = CreateTracker();
+		tracker.ProcessTouchDown(1, new SKPoint(float.PositiveInfinity, float.NegativeInfinity));
+		tracker.ProcessTouchUp(1, new SKPoint(float.PositiveInfinity, float.NegativeInfinity));
+
+		Assert.False(float.IsInfinity(tracker.Scale));
+		Assert.False(float.IsInfinity(tracker.Offset.X));
+	}
+
+	[Fact]
+	public void Detector_ProcessTouchDown_AfterDispose_ReturnsFalse()
+	{
+		var detector = new SKGestureDetector();
+		detector.Dispose();
+		var result = detector.ProcessTouchDown(1, new SKPoint(100, 100));
+		Assert.False(result);
+	}
+
+	[Fact]
+	public void Detector_ProcessTouchMove_AfterDispose_ReturnsFalse()
+	{
+		var detector = new SKGestureDetector();
+		detector.Dispose();
+		var result = detector.ProcessTouchMove(1, new SKPoint(100, 100));
+		Assert.False(result);
+	}
+
+	[Fact]
+	public void Detector_ProcessTouchUp_AfterDispose_ReturnsFalse()
+	{
+		var detector = new SKGestureDetector();
+		detector.Dispose();
+		var result = detector.ProcessTouchUp(1, new SKPoint(100, 100));
+		Assert.False(result);
+	}
+
+	[Fact]
+	public void ZeroDistanceTouch_DoesNotTriggerPan()
+	{
+		var tracker = CreateTracker();
+		var panFired = false;
+		tracker.PanDetected += (s, e) => panFired = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		tracker.ProcessTouchMove(1, new SKPoint(100, 100)); // same point
+		tracker.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		Assert.False(panFired);
+	}
+
+	[Fact]
+	public void Reset_ClearsAllTransformState()
+	{
+		var tracker = CreateTracker();
+		tracker.SetTransform(2f, 45f, new SKPoint(50, 50));
+
+		Assert.NotEqual(1f, tracker.Scale);
+		Assert.NotEqual(0f, tracker.Rotation);
+
+		tracker.Reset();
+
+		Assert.Equal(1f, tracker.Scale);
+		Assert.Equal(0f, tracker.Rotation);
+		Assert.Equal(SKPoint.Empty, tracker.Offset);
+	}
+
+	[Fact]
+	public void SetScale_ClampsToMinMax()
+	{
+		var tracker = new SKGestureTracker
+		{
+			TimeProvider = () => _testTicks
+		};
+		tracker.Options.MinScale = 0.5f;
+		tracker.Options.MaxScale = 3f;
+
+		tracker.SetScale(10f);
+		Assert.Equal(3f, tracker.Scale);
+
+		tracker.SetScale(0.1f);
+		Assert.Equal(0.5f, tracker.Scale);
+	}
+
+	[Fact]
+	public void PinchAndPan_Simultaneously_BothApply()
+	{
+		var tracker = CreateTracker();
+		var panFired = false;
+		var pinchFired = false;
+		tracker.PanDetected += (s, e) => panFired = true;
+		tracker.PinchDetected += (s, e) => pinchFired = true;
+
+		// Two finger down
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		tracker.ProcessTouchDown(2, new SKPoint(200, 100));
+
+		// Move both fingers apart and to the right (pinch + pan)
+		tracker.ProcessTouchMove(1, new SKPoint(80, 100));
+		tracker.ProcessTouchMove(2, new SKPoint(250, 100));
+
+		Assert.True(pinchFired);
+		// Pan during pinch should also update offset
+		Assert.NotEqual(SKPoint.Empty, tracker.Offset);
+	}
+
 }

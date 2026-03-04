@@ -134,7 +134,7 @@ public class SKGestureDetectorPinchRotationTests
 
 		Assert.NotNull(lastArgs);
 		// PreviousCenter should be from the intermediate state (after finger1 moved)
-		Assert.NotNull(lastArgs!.PreviousFocalPoint);
+		Assert.NotEqual(default, lastArgs!.PreviousFocalPoint);
 		// Center should be midpoint of final positions
 		Assert.Equal(170, lastArgs.FocalPoint.X, 0.1);
 	}
@@ -195,7 +195,7 @@ public class SKGestureDetectorPinchRotationTests
 		engine.ProcessTouchMove(2, new SKPoint(200, 50));
 
 		Assert.NotNull(lastArgs);
-		Assert.NotNull(lastArgs!.PreviousFocalPoint);
+		Assert.NotEqual(default, lastArgs!.PreviousFocalPoint);
 		// Center should be midpoint of final positions
 		Assert.Equal(150, lastArgs.FocalPoint.X, 0.1);
 		Assert.Equal(100, lastArgs.FocalPoint.Y, 0.1);
