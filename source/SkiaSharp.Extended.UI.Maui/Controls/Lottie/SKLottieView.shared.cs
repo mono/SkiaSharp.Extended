@@ -1,7 +1,13 @@
 ﻿namespace SkiaSharp.Extended.UI.Controls;
 
+/// <summary>
+/// A view that plays Lottie animations using the Skottie library.
+/// </summary>
 public class SKLottieView : SKAnimatedSurfaceView
 {
+	/// <summary>
+	/// Identifies the <see cref="Source"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty SourceProperty = BindableProperty.Create(
 		nameof(Source),
 		typeof(SKLottieImageSource),
@@ -17,8 +23,14 @@ public class SKLottieView : SKAnimatedSurfaceView
 		defaultBindingMode: BindingMode.OneWayToSource,
 		propertyChanged: OnProgressDurationPropertyChanged);
 
+	/// <summary>
+	/// Identifies the <see cref="Duration"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty DurationProperty = DurationPropertyKey.BindableProperty;
 
+	/// <summary>
+	/// Identifies the <see cref="Progress"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty ProgressProperty = BindableProperty.Create(
 		nameof(Progress),
 		typeof(TimeSpan),
@@ -34,20 +46,32 @@ public class SKLottieView : SKAnimatedSurfaceView
 		false,
 		defaultBindingMode: BindingMode.OneWayToSource);
 
+	/// <summary>
+	/// Identifies the <see cref="IsComplete"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty IsCompleteProperty = IsCompletePropertyKey.BindableProperty;
 
+	/// <summary>
+	/// Identifies the <see cref="RepeatCount"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty RepeatCountProperty = BindableProperty.Create(
 		nameof(RepeatCount),
 		typeof(int),
 		typeof(SKLottieView),
 		0);
 
+	/// <summary>
+	/// Identifies the <see cref="RepeatMode"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty RepeatModeProperty = BindableProperty.Create(
 		nameof(RepeatMode),
 		typeof(SKLottieRepeatMode),
 		typeof(SKLottieView),
 		SKLottieRepeatMode.Restart);
 
+	/// <summary>
+	/// Identifies the <see cref="AnimationSpeed"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty AnimationSpeedProperty = BindableProperty.Create(
 		nameof(AnimationSpeed),
 		typeof(double),
@@ -60,6 +84,9 @@ public class SKLottieView : SKAnimatedSurfaceView
 	CancellationTokenSource? loadCancellation;
 	bool isResetting;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="SKLottieView"/> class.
+	/// </summary>
 	public SKLottieView()
 	{
 		ResourceLoader<Themes.SKLottieViewResources>.EnsureRegistered(this);
@@ -73,36 +100,54 @@ public class SKLottieView : SKAnimatedSurfaceView
 #endif
 	}
 
+	/// <summary>
+	/// Gets or sets the Lottie animation image source.
+	/// </summary>
 	public SKLottieImageSource? Source
 	{
 		get => (SKLottieImageSource?)GetValue(SourceProperty);
 		set => SetValue(SourceProperty, value);
 	}
 
+	/// <summary>
+	/// Gets the total duration of the animation.
+	/// </summary>
 	public TimeSpan Duration
 	{
 		get => (TimeSpan)GetValue(DurationProperty);
 		private set => SetValue(DurationPropertyKey, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the current playback progress of the animation.
+	/// </summary>
 	public TimeSpan Progress
 	{
 		get => (TimeSpan)GetValue(ProgressProperty);
 		set => SetValue(ProgressProperty, value);
 	}
 
+	/// <summary>
+	/// Gets a value indicating whether the animation has completed all repeats.
+	/// </summary>
 	public bool IsComplete
 	{
 		get => (bool)GetValue(IsCompleteProperty);
 		private set => SetValue(IsCompletePropertyKey, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the number of times to repeat the animation. Use -1 for infinite.
+	/// </summary>
 	public int RepeatCount
 	{
 		get => (int)GetValue(RepeatCountProperty);
 		set => SetValue(RepeatCountProperty, value);
 	}
 
+	/// <summary>
+	/// Gets or sets the repeat mode for the animation.
+	/// </summary>
 	public SKLottieRepeatMode RepeatMode
 	{
 		get => (SKLottieRepeatMode)GetValue(RepeatModeProperty);
@@ -121,12 +166,22 @@ public class SKLottieView : SKAnimatedSurfaceView
 		set => SetValue(AnimationSpeedProperty, value);
 	}
 
+	/// <summary>
+	/// Occurs when the animation fails to load.
+	/// </summary>
 	public event EventHandler<SKLottieAnimationFailedEventArgs>? AnimationFailed;
 
+	/// <summary>
+	/// Occurs when the animation has been successfully loaded.
+	/// </summary>
 	public event EventHandler<SKLottieAnimationLoadedEventArgs>? AnimationLoaded;
 
+	/// <summary>
+	/// Occurs when the animation has completed playback.
+	/// </summary>
 	public event EventHandler? AnimationCompleted;
 
+	/// <inheritdoc/>
 	protected override void Update(TimeSpan deltaTime)
 	{
 		if (animation is null)
@@ -158,6 +213,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		Progress = newProgress;
 	}
 
+	/// <inheritdoc/>
 	protected override void OnPaintSurface(SKCanvas canvas, SKSize size)
 	{
 		if (animation is null)

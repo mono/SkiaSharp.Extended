@@ -1,7 +1,13 @@
 ﻿namespace SkiaSharp.Extended.UI.Controls;
 
+/// <summary>
+/// An animated surface view that extends <see cref="SKSurfaceView"/> with a timer-based rendering loop.
+/// </summary>
 public class SKAnimatedSurfaceView : SKSurfaceView
 {
+	/// <summary>
+	/// Identifies the <see cref="IsAnimationEnabled"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty IsAnimationEnabledProperty = BindableProperty.Create(
 		nameof(IsAnimationEnabled),
 		typeof(bool),
@@ -12,6 +18,9 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 
 	private readonly SKFrameCounter frameCounter = new SKFrameCounter();
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="SKAnimatedSurfaceView"/> class.
+	/// </summary>
 	public SKAnimatedSurfaceView()
 	{
 		Loaded += OnLoaded;
@@ -26,6 +35,10 @@ public class SKAnimatedSurfaceView : SKSurfaceView
 		set => SetValue(IsAnimationEnabledProperty, value);
 	}
 
+	/// <summary>
+	/// Called to update the animation state for the given elapsed time.
+	/// </summary>
+	/// <param name="deltaTime">The time elapsed since the last update.</param>
 	protected virtual void Update(TimeSpan deltaTime)
 	{
 	}
