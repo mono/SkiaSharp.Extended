@@ -126,7 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/main/source/SkiaSharp.Extended/Geometry/SKGeometry.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Creates a new <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpath">SKPath</a> that is an interpolation between two paths at the given position.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
@@ -136,17 +137,21 @@
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>from</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpath">SKPath</a></dt>
-  <dd></dd>
+  <dd><p>The starting path.</p>
+</dd>
   <dt><code>to</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpath">SKPath</a></dt>
-  <dd></dd>
+  <dd><p>The ending path.</p>
+</dd>
   <dt><code>t</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd></dd>
+  <dd><p>The interpolation position, where 0 returns <code class="paramref">from</code> and 1 returns <code class="paramref">to</code>.</p>
+</dd>
 </dl>
 
 <h4 class="section">Returns</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpath">SKPath</a></dt>
-  <dd></dd>
+  <dd><p>An interpolated <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpath">SKPath</a>.</p>
+</dd>
 </dl>
 
 
@@ -156,6 +161,12 @@
 
 
 
+<h4 class="section">Exceptions</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+  <dd><p><code class="paramref">from</code> or <code class="paramref">to</code> is <code>null</code>.</p>
+</dd>
+</dl>
 
 
 
@@ -178,7 +189,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: main · bedc9ad
+          source: main · 72c04db
         </div>
       </div>
     </footer>
