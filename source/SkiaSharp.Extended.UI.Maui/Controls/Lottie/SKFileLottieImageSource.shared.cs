@@ -1,20 +1,31 @@
 ﻿namespace SkiaSharp.Extended.UI.Controls;
 
+/// <summary>
+/// A Lottie image source that loads animations from a file.
+/// </summary>
 public class SKFileLottieImageSource : SKLottieImageSource
 {
+	/// <summary>
+	/// Identifies the <see cref="File"/> bindable property.
+	/// </summary>
 	public static readonly BindableProperty FileProperty = BindableProperty.Create(
 		nameof(File), typeof(string), typeof(SKFileLottieImageSource),
 		propertyChanged: OnSourceChanged);
 
+	/// <summary>
+	/// Gets or sets the file path of the Lottie animation.
+	/// </summary>
 	public string? File
 	{
 		get => (string?)GetValue(FileProperty);
 		set => SetValue(FileProperty, value);
 	}
 
+	/// <inheritdoc/>
 	public override bool IsEmpty =>
 		string.IsNullOrEmpty(File);
 
+	/// <inheritdoc/>
 	public override async Task<SKLottieAnimation> LoadAnimationAsync(CancellationToken cancellationToken = default)
 	{
 		if (IsEmpty || string.IsNullOrEmpty(File))

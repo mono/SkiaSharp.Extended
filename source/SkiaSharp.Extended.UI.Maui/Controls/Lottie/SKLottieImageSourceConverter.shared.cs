@@ -1,7 +1,11 @@
 ﻿namespace SkiaSharp.Extended.UI.Controls.Converters;
 
+/// <summary>
+/// Converts string values to <see cref="SKLottieImageSource"/> instances.
+/// </summary>
 public sealed class SKLottieImageSourceConverter : StringTypeConverter
 {
+	/// <inheritdoc/>
 	protected override object? ConvertFromStringCore(string? value)
 	{
 		if (string.IsNullOrEmpty(value))
@@ -13,6 +17,7 @@ public sealed class SKLottieImageSourceConverter : StringTypeConverter
 		return SKLottieImageSource.FromFile(value!);
 	}
 
+	/// <inheritdoc/>
 	protected override string? ConvertToStringCore(object? value) =>
 		value switch
 		{

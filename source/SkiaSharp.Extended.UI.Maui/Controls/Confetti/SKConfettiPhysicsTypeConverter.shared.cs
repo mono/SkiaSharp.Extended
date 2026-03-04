@@ -1,7 +1,11 @@
 ﻿namespace SkiaSharp.Extended.UI.Controls.Converters;
 
+/// <summary>
+/// Converts string values to <see cref="SKConfettiPhysics"/> instances.
+/// </summary>
 public class SKConfettiPhysicsTypeConverter : StringTypeConverter
 {
+	/// <inheritdoc/>
 	protected override object? ConvertFromStringCore(string? value)
 	{
 		if (value == null)

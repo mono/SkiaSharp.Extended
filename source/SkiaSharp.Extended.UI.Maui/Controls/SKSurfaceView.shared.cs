@@ -1,5 +1,8 @@
 ﻿namespace SkiaSharp.Extended.UI.Controls;
 
+/// <summary>
+/// A base SkiaSharp surface view that wraps an <see cref="SKCanvasView"/> inside a <see cref="TemplatedView"/>.
+/// </summary>
 public class SKSurfaceView : TemplatedView
 {
 #if DEBUG
@@ -17,6 +20,9 @@ public class SKSurfaceView : TemplatedView
 	private SKCanvasView? canvasView;
 	private SKGLView? glView;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="SKSurfaceView"/> class.
+	/// </summary>
 	public SKSurfaceView()
 	{
 		ResourceLoader<Themes.SKSurfaceViewResources>.EnsureRegistered(this);
@@ -24,6 +30,7 @@ public class SKSurfaceView : TemplatedView
 		DebugUtils.LogPropertyChanged(this);
 	}
 
+	/// <inheritdoc/>
 	protected override void OnApplyTemplate()
 	{
 		var templateChild = GetTemplateChild("PART_DrawingSurface");
@@ -53,10 +60,18 @@ public class SKSurfaceView : TemplatedView
 		}
 	}
 
+	/// <summary>
+	/// Called when the surface needs to be painted.
+	/// </summary>
+	/// <param name="canvas">The canvas to draw on.</param>
+	/// <param name="size">The size of the drawing surface.</param>
 	protected virtual void OnPaintSurface(SKCanvas canvas, SKSize size)
 	{
 	}
 
+	/// <summary>
+	/// Invalidates the surface, causing a repaint.
+	/// </summary>
 	public void Invalidate()
 	{
 		InvalidateCore();
