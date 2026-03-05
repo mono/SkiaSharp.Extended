@@ -208,14 +208,16 @@ Console.WriteLine($&quot;Pixels exceeding tolerance: {result.ErrorPixelCount}&qu
 <p>When a pixel falls within tolerance, it is completely excluded from <strong>all</strong> metrics — not just <code>ErrorPixelCount</code>, but also <code>AbsoluteError</code>, <code>SumSquaredError</code>, and all derived metrics (MAE, MSE, RMSE, NRMSE, PSNR).</p>
 <p>A tolerance of <code>0</code> is equivalent to the standard comparison. The maximum possible per-pixel difference is 765 (255 × 3 channels).</p>
 <h3 id="per-channel-tolerance-mode">Per-Channel Tolerance Mode</h3>
-<p>You can also apply tolerance independently to each channel using the <code>tolerancePerChannel</code> parameter. In this mode, each channel is checked separately — only channels that exceed the tolerance contribute to the error metrics:</p>
+<p>You can also apply tolerance independently to each channel using <code>SKPixelComparerOptions</code>. In this mode, each channel is checked separately — only channels that exceed the tolerance contribute to the error metrics:</p>
 <pre><code class="lang-csharp">// Per-channel: ignore channels where the individual difference is 5 or less
-var result = SKPixelComparer.Compare(expected, actual, tolerance: 5, tolerancePerChannel: true);
+var options = new SKPixelComparerOptions { TolerancePerChannel = true };
+var result = SKPixelComparer.Compare(expected, actual, tolerance: 5, options);
 </code></pre>
 <p>This behaves like a mask where every pixel has the same tolerance value per channel. A pixel is counted as an error only if at least one channel exceeds the tolerance.</p>
-<p>The same <code>tolerancePerChannel</code> parameter is available for mask-based comparison. When <code>false</code>, the mask comparison uses sum-based semantics (the sum of channel differences is checked against the sum of the mask's channel values):</p>
+<p>The same option is available for mask-based comparison. When <code>TolerancePerChannel</code> is <code>false</code>, the mask comparison uses sum-based semantics (the sum of channel differences is checked against the sum of the mask's channel values):</p>
 <pre><code class="lang-csharp">// Mask with sum-based semantics
-var result = SKPixelComparer.Compare(expected, actual, mask, tolerancePerChannel: false);
+var options = new SKPixelComparerOptions { TolerancePerChannel = false };
+var result = SKPixelComparer.Compare(expected, actual, mask, options);
 </code></pre>
 <h2 id="comparison-options">Comparison Options</h2>
 <p>For more control over comparison behavior, use <a class="xref" href="../api/SkiaSharp.Extended.SKPixelComparerOptions.html"><code>SKPixelComparerOptions</code></a>:</p>
@@ -380,7 +382,7 @@ public void UI_MatchesBaseline_WithTolerance()
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #374 · ea78562
+          source: PR #374 · 79695e9
         </div>
       </div>
     </footer>
