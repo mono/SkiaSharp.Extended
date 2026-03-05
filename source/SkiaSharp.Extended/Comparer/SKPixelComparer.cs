@@ -112,56 +112,8 @@ namespace SkiaSharp.Extended
 		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
 		/// <exception cref="ArgumentNullException"><paramref name="first"/> or <paramref name="second"/> is <c>null</c>.</exception>
 		/// <exception cref="InvalidOperationException">The images have different dimensions.</exception>
-		public static SKPixelComparisonResult Compare(SKImage first, SKImage second, SKPixelComparerOptions? options)
-		{
-			Validate(first, second);
-
-			var compareAlpha = options?.CompareAlpha ?? false;
-			var channelCount = compareAlpha ? 4 : 3;
-
-			var width = first.Width;
-			var height = first.Height;
-
-			var totalPixels = width * height;
-			var errorPixels = 0;
-			var absoluteError = 0;
-			var sumSquaredError = 0L;
-
-			using var firstBitmap = GetNormalizedBitmap(first);
-			using var firstPixmap = firstBitmap.PeekPixels();
-			var firstPixels = firstPixmap.GetPixelSpan<SKColor>();
-
-			using var secondBitmap = GetNormalizedBitmap(second);
-			using var secondPixmap = secondBitmap.PeekPixels();
-			var secondPixels = secondPixmap.GetPixelSpan<SKColor>();
-
-			for (var idx = 0; idx < totalPixels; idx++)
-			{
-				var firstPixel = firstPixels[idx];
-				var secondPixel = secondPixels[idx];
-
-				var r = Math.Abs(secondPixel.Red - firstPixel.Red);
-				var g = Math.Abs(secondPixel.Green - firstPixel.Green);
-				var b = Math.Abs(secondPixel.Blue - firstPixel.Blue);
-				var d = r + g + b;
-
-				var sq = (long)r * r + (long)g * g + (long)b * b;
-
-				if (compareAlpha)
-				{
-					var a = Math.Abs(secondPixel.Alpha - firstPixel.Alpha);
-					d += a;
-					sq += (long)a * a;
-				}
-
-				absoluteError += d;
-				sumSquaredError += sq;
-				if (d > 0)
-					errorPixels++;
-			}
-
-			return new SKPixelComparisonResult(totalPixels, errorPixels, absoluteError, sumSquaredError, channelCount);
-		}
+		public static SKPixelComparisonResult Compare(SKImage first, SKImage second, SKPixelComparerOptions? options) =>
+			Compare(first, second, 0, options);
 
 		/// <summary>
 		/// Compares two images loaded from file paths pixel by pixel, using a tolerance mask.
