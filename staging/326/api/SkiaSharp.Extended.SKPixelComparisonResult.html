@@ -158,13 +158,28 @@
     <dd><p>Initializes a new instance of <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a>.</p>
 </dd>
   </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.-ctor.html#SkiaSharp_Extended_SKPixelComparisonResult__ctor_System_Int32_System_Int32_System_Int32_System_Int64_">SKPixelComparisonResult(int, int, int, long)</a></dt>
+    <dd><p>Initializes a new instance of <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.-ctor.html#SkiaSharp_Extended_SKPixelComparisonResult__ctor_System_Int32_System_Int32_System_Int32_System_Int64_System_Int32_">SKPixelComparisonResult(int, int, int, long, int)</a></dt>
+    <dd><p>Initializes a new instance of <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a>.</p>
+</dd>
+  </dl>
 
   <h2 class="section" id="properties">Properties
 </h2>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError.html#SkiaSharp_Extended_SKPixelComparisonResult_AbsoluteError">AbsoluteError</a></dt>
-    <dd><p>Gets the sum of per-channel (RGB) absolute differences across all pixels.</p>
+    <dd><p>Gets the sum of per-channel absolute differences across all pixels.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.ChannelCount.html#SkiaSharp_Extended_SKPixelComparisonResult_ChannelCount">ChannelCount</a></dt>
+    <dd><p>Gets the number of channels compared (3 for RGB, 4 for RGBA).</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -174,7 +189,43 @@
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelPercentage.html#SkiaSharp_Extended_SKPixelComparisonResult_ErrorPixelPercentage">ErrorPixelPercentage</a></dt>
-    <dd><p>Gets the ratio of differing pixels to total pixels (0.0 to 1.0).</p>
+    <dd><p>Gets the ratio of differing pixels to total pixels (0.0 to 1.0).
+Returns 0 if <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> is 0.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.MeanAbsoluteError.html#SkiaSharp_Extended_SKPixelComparisonResult_MeanAbsoluteError">MeanAbsoluteError</a></dt>
+    <dd><p>Gets the mean absolute error per channel, computed as <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError.html#SkiaSharp_Extended_SKPixelComparisonResult_AbsoluteError">AbsoluteError</a> / (<a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> × <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.ChannelCount.html#SkiaSharp_Extended_SKPixelComparisonResult_ChannelCount">ChannelCount</a>).
+Range: 0 (identical) to 255 (maximum difference). Returns 0 if <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> is 0.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_MeanSquaredError">MeanSquaredError</a></dt>
+    <dd><p>Gets the mean squared error per channel, computed as <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.SumSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_SumSquaredError">SumSquaredError</a> / (<a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> × <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.ChannelCount.html#SkiaSharp_Extended_SKPixelComparisonResult_ChannelCount">ChannelCount</a>).
+Range: 0 (identical) to 65025 (maximum difference). Returns 0 if <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> is 0.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.NormalizedRootMeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_NormalizedRootMeanSquaredError">NormalizedRootMeanSquaredError</a></dt>
+    <dd><p>Gets the normalized root mean squared error, computed as <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.RootMeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_RootMeanSquaredError">RootMeanSquaredError</a> / 255.
+Range: 0 (identical) to 1 (maximum difference). Useful for threshold-based pass/fail testing.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.PeakSignalToNoiseRatio.html#SkiaSharp_Extended_SKPixelComparisonResult_PeakSignalToNoiseRatio">PeakSignalToNoiseRatio</a></dt>
+    <dd><p>Gets the peak signal-to-noise ratio in decibels, computed as 10 × log₁₀(255² / <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_MeanSquaredError">MeanSquaredError</a>).
+Returns <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double.positiveinfinity">PositiveInfinity</a> for identical images.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.RootMeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_RootMeanSquaredError">RootMeanSquaredError</a></dt>
+    <dd><p>Gets the root mean squared error, computed as the square root of <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_MeanSquaredError">MeanSquaredError</a>.
+Range: 0 (identical) to 255 (maximum difference).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.SumSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_SumSquaredError">SumSquaredError</a></dt>
+    <dd><p>Gets the sum of per-channel squared differences across all pixels.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -204,7 +255,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 8fe01f0
+          source: PR #326 · 198974a
         </div>
       </div>
     </footer>

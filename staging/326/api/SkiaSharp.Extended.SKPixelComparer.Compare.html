@@ -298,6 +298,196 @@
 
 <a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
 
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_System_String_System_String_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(System.String,System.String,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(string, string, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two images loaded from file paths pixel by pixel, using the specified comparison options.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(string firstFilename, string secondFilename, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>firstFilename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd><p>The file path of the first image.</p>
+</dd>
+  <dt><code>secondFilename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd><p>The file path of the second image.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior, such as whether to include the alpha channel. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKBitmap_SkiaSharp_SKBitmap_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(SKBitmap, SKBitmap, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two bitmaps pixel by pixel, using the specified comparison options.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKBitmap first, SKBitmap second, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dd><p>The first bitmap.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dd><p>The second bitmap.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior, such as whether to include the alpha channel. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKPixmap_SkiaSharp_SKPixmap_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKPixmap,SkiaSharp.SKPixmap,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(SKPixmap, SKPixmap, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two pixmaps pixel by pixel, using the specified comparison options.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKPixmap first, SKPixmap second, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpixmap">SKPixmap</a></dt>
+  <dd><p>The first pixmap.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpixmap">SKPixmap</a></dt>
+  <dd><p>The second pixmap.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior, such as whether to include the alpha channel. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKImage_SkiaSharp_SKImage_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKImage,SkiaSharp.SKImage,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(SKImage, SKImage, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two images pixel by pixel, using the specified comparison options.
+When <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.CompareAlpha.html#SkiaSharp_Extended_SKPixelComparerOptions_CompareAlpha">CompareAlpha</a> is <code>true</code>, the alpha channel is included in the comparison.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKImage first, SKImage second, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a></dt>
+  <dd><p>The first image.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a></dt>
+  <dd><p>The second image.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior, such as whether to include the alpha channel. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+<h4 class="section">Exceptions</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+  <dd><p><code class="paramref">first</code> or <code class="paramref">second</code> is <code>null</code>.</p>
+</dd>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+  <dd><p>The images have different dimensions.</p>
+</dd>
+</dl>
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
 <h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_System_String_System_String_System_String_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(System.String,System.String,System.String)">
   Compare(string, string, string)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
@@ -439,7 +629,7 @@
 </h3>
 
 <div class="markdown level1 summary"><p>Compares two images pixel by pixel, using a tolerance mask. Pixel differences that fall within
-the mask's per-channel values are not counted as errors.</p>
+the mask's per-channel values are not counted as errors. Each channel is checked independently.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -486,6 +676,612 @@ the mask's per-channel values are not counted as errors.</p>
 
 
 
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_System_String_System_String_System_String_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(System.String,System.String,System.String,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(string, string, string, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two images loaded from file paths pixel by pixel, using a tolerance mask and the specified comparison options.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(string firstFilename, string secondFilename, string maskFilename, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>firstFilename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd><p>The file path of the first image.</p>
+</dd>
+  <dt><code>secondFilename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd><p>The file path of the second image.</p>
+</dd>
+  <dt><code>maskFilename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd><p>The file path of the mask image defining per-channel tolerance thresholds.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior via <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a>. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKBitmap_SkiaSharp_SKBitmap_SkiaSharp_SKBitmap_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap,SkiaSharp.SKBitmap,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(SKBitmap, SKBitmap, SKBitmap, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two bitmaps pixel by pixel, using a tolerance mask and the specified comparison options.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKBitmap first, SKBitmap second, SKBitmap mask, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dd><p>The first bitmap.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dd><p>The second bitmap.</p>
+</dd>
+  <dt><code>mask</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dd><p>The mask bitmap defining per-channel tolerance thresholds.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior via <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a>. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKPixmap_SkiaSharp_SKPixmap_SkiaSharp_SKPixmap_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKPixmap,SkiaSharp.SKPixmap,SkiaSharp.SKPixmap,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(SKPixmap, SKPixmap, SKPixmap, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two pixmaps pixel by pixel, using a tolerance mask and the specified comparison options.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKPixmap first, SKPixmap second, SKPixmap mask, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpixmap">SKPixmap</a></dt>
+  <dd><p>The first pixmap.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpixmap">SKPixmap</a></dt>
+  <dd><p>The second pixmap.</p>
+</dd>
+  <dt><code>mask</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpixmap">SKPixmap</a></dt>
+  <dd><p>The mask pixmap defining per-channel tolerance thresholds.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior via <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a>. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKImage_SkiaSharp_SKImage_SkiaSharp_SKImage_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKImage,SkiaSharp.SKImage,SkiaSharp.SKImage,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(SKImage, SKImage, SKImage, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two images pixel by pixel, using a tolerance mask and the specified comparison options.
+When <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.TolerancePerChannel.html#SkiaSharp_Extended_SKPixelComparerOptions_TolerancePerChannel">TolerancePerChannel</a> is <code>true</code>, each channel is checked independently
+against the corresponding mask channel value. When <code>false</code>, the sum of per-channel differences is checked
+against the sum of the mask's channel values.
+When <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.CompareAlpha.html#SkiaSharp_Extended_SKPixelComparerOptions_CompareAlpha">CompareAlpha</a> is <code>true</code>, the alpha channel is included in the comparison.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKImage first, SKImage second, SKImage mask, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a></dt>
+  <dd><p>The first image.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a></dt>
+  <dd><p>The second image.</p>
+</dd>
+  <dt><code>mask</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a></dt>
+  <dd><p>The mask image defining per-channel tolerance thresholds.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior via <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a>. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+<h4 class="section">Exceptions</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+  <dd><p><code class="paramref">first</code>, <code class="paramref">second</code>, or <code class="paramref">mask</code> is <code>null</code>.</p>
+</dd>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+  <dd><p>The images or mask have different dimensions.</p>
+</dd>
+</dl>
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_System_String_System_String_System_Int32_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(System.String,System.String,System.Int32)">
+  Compare(string, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two images loaded from file paths pixel by pixel, using a uniform per-pixel tolerance threshold.
+Pixels where the total per-channel difference (<code>|ΔR| + |ΔG| + |ΔB|</code>) is at or below the tolerance are not counted as errors.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(string firstFilename, string secondFilename, int tolerance)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>firstFilename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd><p>The file path of the first image.</p>
+</dd>
+  <dt><code>secondFilename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd><p>The file path of the second image.</p>
+</dd>
+  <dt><code>tolerance</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The maximum allowed sum of per-channel differences per pixel. Must be non-negative.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKBitmap_SkiaSharp_SKBitmap_System_Int32_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap,System.Int32)">
+  Compare(SKBitmap, SKBitmap, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two bitmaps pixel by pixel, using a uniform per-pixel tolerance threshold.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKBitmap first, SKBitmap second, int tolerance)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dd><p>The first bitmap.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dd><p>The second bitmap.</p>
+</dd>
+  <dt><code>tolerance</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The maximum allowed sum of per-channel differences per pixel. Must be non-negative.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKPixmap_SkiaSharp_SKPixmap_System_Int32_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKPixmap,SkiaSharp.SKPixmap,System.Int32)">
+  Compare(SKPixmap, SKPixmap, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two pixmaps pixel by pixel, using a uniform per-pixel tolerance threshold.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKPixmap first, SKPixmap second, int tolerance)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpixmap">SKPixmap</a></dt>
+  <dd><p>The first pixmap.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpixmap">SKPixmap</a></dt>
+  <dd><p>The second pixmap.</p>
+</dd>
+  <dt><code>tolerance</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The maximum allowed sum of per-channel differences per pixel. Must be non-negative.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKImage_SkiaSharp_SKImage_System_Int32_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKImage,SkiaSharp.SKImage,System.Int32)">
+  Compare(SKImage, SKImage, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two images pixel by pixel, using a uniform per-pixel tolerance threshold.
+Pixels where the total per-channel difference (<code>|ΔR| + |ΔG| + |ΔB|</code>) is at or below the tolerance are not counted as errors.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKImage first, SKImage second, int tolerance)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a></dt>
+  <dd><p>The first image.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a></dt>
+  <dd><p>The second image.</p>
+</dd>
+  <dt><code>tolerance</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The maximum allowed sum of per-channel differences per pixel. Must be non-negative.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+<h4 class="section">Exceptions</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+  <dd><p><code class="paramref">first</code> or <code class="paramref">second</code> is <code>null</code>.</p>
+</dd>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
+  <dd><p><code class="paramref">tolerance</code> is negative.</p>
+</dd>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+  <dd><p>The images have different dimensions.</p>
+</dd>
+</dl>
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_System_String_System_String_System_Int32_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(System.String,System.String,System.Int32,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(string, string, int, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two images loaded from file paths pixel by pixel, using a uniform tolerance threshold and the specified comparison options.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(string firstFilename, string secondFilename, int tolerance, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>firstFilename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd><p>The file path of the first image.</p>
+</dd>
+  <dt><code>secondFilename</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd><p>The file path of the second image.</p>
+</dd>
+  <dt><code>tolerance</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The maximum allowed per-channel or total per-pixel difference. Must be non-negative.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior via <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a>. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKBitmap_SkiaSharp_SKBitmap_System_Int32_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap,System.Int32,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(SKBitmap, SKBitmap, int, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two bitmaps pixel by pixel, using a uniform tolerance threshold and the specified comparison options.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKBitmap first, SKBitmap second, int tolerance, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dd><p>The first bitmap.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dd><p>The second bitmap.</p>
+</dd>
+  <dt><code>tolerance</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The maximum allowed per-channel or total per-pixel difference. Must be non-negative.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior via <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a>. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKPixmap_SkiaSharp_SKPixmap_System_Int32_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKPixmap,SkiaSharp.SKPixmap,System.Int32,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(SKPixmap, SKPixmap, int, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two pixmaps pixel by pixel, using a uniform tolerance threshold and the specified comparison options.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKPixmap first, SKPixmap second, int tolerance, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpixmap">SKPixmap</a></dt>
+  <dd><p>The first pixmap.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpixmap">SKPixmap</a></dt>
+  <dd><p>The second pixmap.</p>
+</dd>
+  <dt><code>tolerance</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The maximum allowed per-channel or total per-pixel difference. Must be non-negative.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior via <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a>. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKPixelComparer_Compare_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparer_Compare_SkiaSharp_SKImage_SkiaSharp_SKImage_System_Int32_SkiaSharp_Extended_SKPixelComparerOptions_" data-uid="SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKImage,SkiaSharp.SKImage,System.Int32,SkiaSharp.Extended.SKPixelComparerOptions)">
+  Compare(SKImage, SKImage, int, SKPixelComparerOptions?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparer.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Compares two images pixel by pixel, using a uniform tolerance threshold and the specified comparison options.
+When <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.TolerancePerChannel.html#SkiaSharp_Extended_SKPixelComparerOptions_TolerancePerChannel">TolerancePerChannel</a> is <code>true</code>, each channel is checked independently
+against the tolerance value. When <code>false</code>, the sum of per-channel differences is checked against the tolerance.
+When <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.CompareAlpha.html#SkiaSharp_Extended_SKPixelComparerOptions_CompareAlpha">CompareAlpha</a> is <code>true</code>, the alpha channel is included in the comparison.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKPixelComparisonResult Compare(SKImage first, SKImage second, int tolerance, SKPixelComparerOptions? options)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>first</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a></dt>
+  <dd><p>The first image.</p>
+</dd>
+  <dt><code>second</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a></dt>
+  <dd><p>The second image.</p>
+</dd>
+  <dt><code>tolerance</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The maximum allowed per-channel or total per-pixel difference. Must be non-negative.</p>
+</dd>
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a></dt>
+  <dd><p>Options controlling comparison behavior via <a class="xref" href="SkiaSharp.Extended.SKPixelComparerOptions.html">SKPixelComparerOptions</a>. Pass <code>null</code> for default behavior.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a> containing the comparison statistics.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+<h4 class="section">Exceptions</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+  <dd><p><code class="paramref">first</code> or <code class="paramref">second</code> is <code>null</code>.</p>
+</dd>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
+  <dd><p><code class="paramref">tolerance</code> is negative.</p>
+</dd>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+  <dd><p>The images have different dimensions.</p>
+</dd>
+</dl>
+
+
+
 </article>
 
         <div class="contribution d-print-none">
@@ -505,7 +1301,7 @@ the mask's per-channel values are not counted as errors.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 8fe01f0
+          source: PR #326 · 198974a
         </div>
       </div>
     </footer>
