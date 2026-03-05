@@ -35,7 +35,7 @@ The mask is a black-and-white image where **white pixels** indicate differences 
 
 ## How It Works
 
-The comparer normalizes both images to BGRA8888 format, then walks through every pixel and computes per-channel differences:
+The comparer normalizes both images to BGRA8888 unpremultiplied format, then walks through every pixel and computes per-channel differences:
 
 1. For each pixel, compute per-channel differences: `ΔR = |R₁ − R₂|`, `ΔG = |G₁ − G₂|`, `ΔB = |B₁ − B₂|`
 2. If the sum `ΔR + ΔG + ΔB` is greater than zero, that pixel is counted as an error

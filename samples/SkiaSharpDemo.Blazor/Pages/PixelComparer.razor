@@ -102,7 +102,12 @@
                             <p class="mb-0">@result.AbsoluteError.ToString("N0")</p>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-2">
+                        <div class="col-6 col-sm-3">
+                            <strong>SSE</strong>
+                            <p class="mb-0 text-muted small">Sum of Squared Errors</p>
+                            <p class="mb-0">@result.SumSquaredError.ToString("N0")</p>
+                        </div>
                         <div class="col-6 col-sm-3">
                             <strong>MAE</strong>
                             <p class="mb-0 text-muted small">Mean Absolute Error</p>
@@ -118,17 +123,22 @@
                             <p class="mb-0 text-muted small">Root Mean Squared Error</p>
                             <p class="mb-0">@result.RootMeanSquaredError.ToString("F4")</p>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-6 col-sm-3">
                             <strong>NRMSE</strong>
                             <p class="mb-0 text-muted small">Normalized RMSE (0–1)</p>
                             <p class="mb-0">@result.NormalizedRootMeanSquaredError.ToString("F6")</p>
                         </div>
-                    </div>
-                    <div class="row mt-2">
                         <div class="col-6 col-sm-3">
                             <strong>PSNR</strong>
                             <p class="mb-0 text-muted small">Peak Signal-to-Noise (dB)</p>
                             <p class="mb-0">@FormatPsnr(result.PeakSignalToNoiseRatio)</p>
+                        </div>
+                        <div class="col-6 col-sm-3">
+                            <strong>Channels</strong>
+                            <p class="mb-0 text-muted small">Channels compared</p>
+                            <p class="mb-0">@result.ChannelCount (@(result.ChannelCount == 4 ? "RGBA" : "RGB"))</p>
                         </div>
                     </div>
                 </div>
