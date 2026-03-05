@@ -113,5 +113,33 @@ namespace SkiaSharp.Extended.Tests
 			Assert.Equal(25, result.ErrorPixelCount);
 			Assert.Equal(4, result.ChannelCount);
 		}
+
+		[Fact]
+		public void SemiTransparentPixelsCompareAlphaFalseIgnoresAlpha()
+		{
+			// Same RGB (0x80, 0x40, 0x20), different alpha (0xFF vs 0x80)
+			using var first = CreateTestImage(0xFF804020);
+			using var second = CreateTestImage(0x80804020);
+
+			var result = SKPixelComparer.Compare(first, second);
+
+			Assert.Equal(0, result.ErrorPixelCount);
+			Assert.Equal(0, result.AbsoluteError);
+		}
+
+		[Fact]
+		public void SemiTransparentPixelsCompareAlphaTrueDetectsAlpha()
+		{
+			// Same RGB (0x80, 0x40, 0x20), different alpha (0xFF vs 0x80)
+			using var first = CreateTestImage(0xFF804020);
+			using var second = CreateTestImage(0x80804020);
+
+			var opts = new SKPixelComparerOptions { CompareAlpha = true };
+			var result = SKPixelComparer.Compare(first, second, opts);
+
+			Assert.Equal(25, result.ErrorPixelCount);
+			Assert.True(result.AbsoluteError > 0);
+			Assert.Equal(4, result.ChannelCount);
+		}
 	}
 }

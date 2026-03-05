@@ -1,4 +1,6 @@
-﻿using Xunit;
+﻿#nullable enable
+using System;
+using Xunit;
 
 namespace SkiaSharp.Extended.Tests
 {
@@ -80,6 +82,65 @@ namespace SkiaSharp.Extended.Tests
 			var opts = new SKPixelComparerOptions { CompareAlpha = true, TolerancePerChannel = false };
 			var result = SKPixelComparer.Compare(first, second, mask, opts);
 			Assert.Equal(0, result.ErrorPixelCount);
+		}
+
+		[Fact]
+		public void NullMaskThrows()
+		{
+			using var first = CreateTestImage(SKColors.Black);
+			using var second = CreateTestImage(SKColors.White);
+
+			Assert.Throws<ArgumentNullException>(() => SKPixelComparer.Compare(first, second, (SKImage)null!));
+		}
+
+		[Fact]
+		public void MaskDimensionMismatchThrows()
+		{
+			using var first = CreateTestImage(SKColors.Black, 5, 5);
+			using var second = CreateTestImage(SKColors.White, 5, 5);
+			using var mask = CreateTestImage(SKColors.White, 10, 10);
+
+			Assert.Throws<InvalidOperationException>(() => SKPixelComparer.Compare(first, second, mask));
+		}
+
+		[Fact]
+		public void MaskCompareWithBitmapsWorks()
+		{
+			using var first = CreateTestBitmap(0xFF000000);
+			using var second = CreateTestBitmap(0xFF050505);
+			using var mask = CreateTestBitmap(0xFF050505);
+
+			using var firstImg = CreateTestImage(0xFF000000);
+			using var secondImg = CreateTestImage(0xFF050505);
+			using var maskImg = CreateTestImage(0xFF050505);
+
+			var bmpResult = SKPixelComparer.Compare(first, second, mask);
+			var imgResult = SKPixelComparer.Compare(firstImg, secondImg, maskImg);
+
+			Assert.Equal(imgResult.ErrorPixelCount, bmpResult.ErrorPixelCount);
+			Assert.Equal(imgResult.AbsoluteError, bmpResult.AbsoluteError);
+		}
+
+		[Fact]
+		public void MaskCompareWithPixmapsWorks()
+		{
+			using var firstBmp = CreateTestBitmap(0xFF000000);
+			using var secondBmp = CreateTestBitmap(0xFF050505);
+			using var maskBmp = CreateTestBitmap(0xFF050505);
+
+			using var first = firstBmp.PeekPixels();
+			using var second = secondBmp.PeekPixels();
+			using var mask = maskBmp.PeekPixels();
+
+			using var firstImg = CreateTestImage(0xFF000000);
+			using var secondImg = CreateTestImage(0xFF050505);
+			using var maskImg = CreateTestImage(0xFF050505);
+
+			var pxResult = SKPixelComparer.Compare(first, second, mask);
+			var imgResult = SKPixelComparer.Compare(firstImg, secondImg, maskImg);
+
+			Assert.Equal(imgResult.ErrorPixelCount, pxResult.ErrorPixelCount);
+			Assert.Equal(imgResult.AbsoluteError, pxResult.AbsoluteError);
 		}
 	}
 }

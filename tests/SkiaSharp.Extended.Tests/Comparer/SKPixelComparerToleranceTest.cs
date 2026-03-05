@@ -181,14 +181,18 @@ namespace SkiaSharp.Extended.Tests
 		{
 			// RGB diff = (5,5,5), alpha diff = 127
 			using var first = CreateTestImage(0xFF000000);
-			using var second = CreateTestImage(0x80050505);
+			using var second = CreateTestImage(0xFF050505);
 
-			// Without alpha: tolerance 5 per-channel covers RGB → no error
+			// Without alpha: tolerance 5 per-channel covers RGB (5 > 5 is false) → no error
 			var rgbResult = SKPixelComparer.Compare(first, second, 5, new SKPixelComparerOptions { TolerancePerChannel = true });
 			Assert.Equal(0, rgbResult.ErrorPixelCount);
 
-			// With alpha: RGB within tolerance but alpha (127) exceeds → error
-			var alphaResult = SKPixelComparer.Compare(first, second, 5, new SKPixelComparerOptions { TolerancePerChannel = true, CompareAlpha = true });
+			// Now use images that differ only in alpha
+			using var alphaFirst = CreateTestImage(0xFF000000);
+			using var alphaSecond = CreateTestImage(0x80000000); // alpha diff = 127, RGB identical
+
+			// With alpha: alpha (127) exceeds tolerance → error
+			var alphaResult = SKPixelComparer.Compare(alphaFirst, alphaSecond, 5, new SKPixelComparerOptions { TolerancePerChannel = true, CompareAlpha = true });
 			Assert.Equal(25, alphaResult.ErrorPixelCount);
 		}
 
@@ -211,6 +215,35 @@ namespace SkiaSharp.Extended.Tests
 			using var secondPx = second.PeekPixels();
 			var pxResult = SKPixelComparer.Compare(firstPx, secondPx, 3, opts);
 			Assert.Equal(0, pxResult.ErrorPixelCount);
+		}
+
+		[Fact]
+		public void MaxToleranceValueExcludesAllPixels()
+		{
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFFFFFFFF);
+
+			var result = SKPixelComparer.Compare(first, second, int.MaxValue);
+
+			Assert.Equal(0, result.ErrorPixelCount);
+		}
+
+		[Fact]
+		public void CompareAlphaWithToleranceSumBasedCombined()
+		{
+			// RGB diff: ΔR=1, ΔG=2, ΔB=3, alpha diff = 4, sum = 10
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFB010203);
+
+			var opts = new SKPixelComparerOptions { CompareAlpha = true, TolerancePerChannel = false };
+
+			// tolerance=10, sum(10) > 10 is false → no error
+			var withinResult = SKPixelComparer.Compare(first, second, 10, opts);
+			Assert.Equal(0, withinResult.ErrorPixelCount);
+
+			// tolerance=9, sum(10) > 9 → error
+			var overResult = SKPixelComparer.Compare(first, second, 9, opts);
+			Assert.Equal(25, overResult.ErrorPixelCount);
 		}
 	}
 }

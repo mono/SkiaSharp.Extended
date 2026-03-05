@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using Xunit;
 
 namespace SkiaSharp.Extended.Tests
@@ -244,6 +245,51 @@ namespace SkiaSharp.Extended.Tests
 			// MAE differs due to different divisors
 			Assert.Equal(50.0 / (100 * 3.0), rgb.MeanAbsoluteError);
 			Assert.Equal(50.0 / (100 * 4.0), rgba.MeanAbsoluteError);
+		}
+
+		[Fact]
+		public void NullFirstImageThrows()
+		{
+			using var second = CreateTestImage(SKColors.Black);
+
+			Assert.Throws<ArgumentNullException>(() => SKPixelComparer.Compare(null!, second));
+		}
+
+		[Fact]
+		public void NullSecondImageThrows()
+		{
+			using var first = CreateTestImage(SKColors.Black);
+
+			Assert.Throws<ArgumentNullException>(() => SKPixelComparer.Compare(first, null!));
+		}
+
+		[Fact]
+		public void FilePathOverloadMatchesImageOverload()
+		{
+			var firstPath = GetImagePath("First.png");
+			var secondPath = GetImagePath("Second.png");
+
+			using var firstImage = SKImage.FromEncodedData(firstPath);
+			using var secondImage = SKImage.FromEncodedData(secondPath);
+
+			var fileResult = SKPixelComparer.Compare(firstPath, secondPath);
+			var imageResult = SKPixelComparer.Compare(firstImage, secondImage);
+
+			Assert.Equal(imageResult.AbsoluteError, fileResult.AbsoluteError);
+			Assert.Equal(imageResult.ErrorPixelCount, fileResult.ErrorPixelCount);
+			Assert.Equal(imageResult.TotalPixels, fileResult.TotalPixels);
+		}
+
+		[Fact]
+		public void ToleranceBoundaryDiffEqualToToleranceIsNotError()
+		{
+			// ΔR=0, ΔG=0, ΔB=10, sum=10
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFF00000A);
+
+			var result = SKPixelComparer.Compare(first, second, 10);
+
+			Assert.Equal(0, result.ErrorPixelCount);
 		}
 	}
 }

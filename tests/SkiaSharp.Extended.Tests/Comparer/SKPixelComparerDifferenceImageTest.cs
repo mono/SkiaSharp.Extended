@@ -1,4 +1,6 @@
-﻿using Xunit;
+﻿#nullable enable
+using System;
+using Xunit;
 
 namespace SkiaSharp.Extended.Tests
 {
@@ -74,6 +76,15 @@ namespace SkiaSharp.Extended.Tests
 			Assert.NotNull(diff);
 			Assert.Equal(5, diff.Width);
 			Assert.Equal(5, diff.Height);
+		}
+
+		[Fact]
+		public void NullImagesThrowForDifferenceImage()
+		{
+			using var image = CreateTestImage(SKColors.Black);
+
+			Assert.Throws<ArgumentNullException>(() => SKPixelComparer.GenerateDifferenceImage(null!, image));
+			Assert.Throws<ArgumentNullException>(() => SKPixelComparer.GenerateDifferenceImage(image, null!));
 		}
 	}
 }
