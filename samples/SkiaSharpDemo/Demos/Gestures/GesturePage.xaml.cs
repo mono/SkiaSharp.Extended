@@ -508,20 +508,20 @@ public partial class GesturePage : ContentPage
 		AddSlider(layout, "Touch Slop", "px", 1, 50, _tracker.Options.TouchSlop, v => _tracker.Options.TouchSlop = v);
 		AddSlider(layout, "Double Tap Slop", "px", 10, 200, _tracker.Options.DoubleTapSlop, v => _tracker.Options.DoubleTapSlop = v);
 		AddSlider(layout, "Fling Threshold", "px/s", 50, 1000, _tracker.Options.FlingThreshold, v => _tracker.Options.FlingThreshold = v);
-		AddSliderInt(layout, "Long Press Duration", "ms", 100, 2000, _tracker.Options.LongPressDuration, v => _tracker.Options.LongPressDuration = v);
+		AddSliderInt(layout, "Long Press Duration", "ms", 100, 2000, (int)_tracker.Options.LongPressDuration.TotalMilliseconds, v => _tracker.Options.LongPressDuration = TimeSpan.FromMilliseconds(v));
 
 		// --- Fling Settings ---
 		layout.Children.Add(new Label { Text = "Fling Settings", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
 
 		AddSlider(layout, "Friction", "", 0.01f, 0.5f, _tracker.Options.FlingFriction, v => _tracker.Options.FlingFriction = v, "F3");
 		AddSlider(layout, "Min Velocity", "px/s", 1, 50, _tracker.Options.FlingMinVelocity, v => _tracker.Options.FlingMinVelocity = v);
-		AddSliderInt(layout, "Frame Interval", "ms", 8, 50, _tracker.Options.FlingFrameInterval, v => _tracker.Options.FlingFrameInterval = v);
+		AddSliderInt(layout, "Frame Interval", "ms", 8, 50, (int)_tracker.Options.FlingFrameInterval.TotalMilliseconds, v => _tracker.Options.FlingFrameInterval = TimeSpan.FromMilliseconds(v));
 
 		// --- Zoom Settings ---
 		layout.Children.Add(new Label { Text = "Zoom Settings", FontAttributes = FontAttributes.Bold, FontSize = 16, Margin = new Thickness(0, 10, 0, 0) });
 
 		AddSlider(layout, "Double Tap Zoom", "x", 1.5f, 5, _tracker.Options.DoubleTapZoomFactor, v => _tracker.Options.DoubleTapZoomFactor = v, "F1");
-		AddSliderInt(layout, "Zoom Animation", "ms", 50, 1000, _tracker.Options.ZoomAnimationDuration, v => _tracker.Options.ZoomAnimationDuration = v);
+		AddSliderInt(layout, "Zoom Animation", "ms", 50, 1000, (int)_tracker.Options.ZoomAnimationDuration.TotalMilliseconds, v => _tracker.Options.ZoomAnimationDuration = TimeSpan.FromMilliseconds(v));
 		AddSlider(layout, "Scroll Zoom Factor", "", 0.01f, 0.5f, _tracker.Options.ScrollZoomFactor, v => _tracker.Options.ScrollZoomFactor = v, "F3");
 		AddSlider(layout, "Min Scale", "x", 0.1f, 1, _tracker.Options.MinScale, v => _tracker.Options.MinScale = v, "F2");
 		AddSlider(layout, "Max Scale", "x", 2, 20, _tracker.Options.MaxScale, v => _tracker.Options.MaxScale = v, "F1");

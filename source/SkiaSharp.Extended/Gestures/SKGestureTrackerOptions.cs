@@ -16,12 +16,12 @@ public class SKGestureTrackerOptions : SKGestureDetectorOptions
 	private float _minScale = 0.1f;
 	private float _maxScale = 10f;
 	private float _doubleTapZoomFactor = 2f;
-	private int _zoomAnimationDuration = 250;
+	private TimeSpan _zoomAnimationDuration = TimeSpan.FromMilliseconds(250);
 	private float _scrollZoomFactor = 0.1f;
 	private float _flingFriction = 0.08f;
 	private float _flingMinVelocity = 5f;
-	private int _flingFrameInterval = 16;
-	private int _zoomAnimationInterval = 16;
+	private TimeSpan _flingFrameInterval = TimeSpan.FromMilliseconds(16);
+	private TimeSpan _zoomAnimationInterval = TimeSpan.FromMilliseconds(16);
 
 	/// <summary>
 	/// Gets or sets the minimum allowed zoom scale.
@@ -60,6 +60,30 @@ public class SKGestureTrackerOptions : SKGestureDetectorOptions
 	}
 
 	/// <summary>
+	/// Sets both <see cref="MinScale"/> and <see cref="MaxScale"/> atomically,
+	/// avoiding ordering-dependent validation errors when the desired range lies
+	/// entirely outside the current default range of [0.1, 10].
+	/// </summary>
+	/// <param name="minScale">The minimum scale value. Must be positive and less than <paramref name="maxScale"/>.</param>
+	/// <param name="maxScale">The maximum scale value. Must be positive and greater than <paramref name="minScale"/>.</param>
+	/// <exception cref="ArgumentOutOfRangeException">
+	/// Thrown when <paramref name="minScale"/> is less than or equal to zero, <paramref name="maxScale"/> is less than
+	/// or equal to zero, or <paramref name="minScale"/> is greater than or equal to <paramref name="maxScale"/>.
+	/// </exception>
+	public void SetScaleRange(float minScale, float maxScale)
+	{
+		if (minScale <= 0)
+			throw new ArgumentOutOfRangeException(nameof(minScale), minScale, "MinScale must be positive.");
+		if (maxScale <= 0)
+			throw new ArgumentOutOfRangeException(nameof(maxScale), maxScale, "MaxScale must be positive.");
+		if (minScale >= maxScale)
+			throw new ArgumentOutOfRangeException(nameof(minScale), minScale, "MinScale must be less than MaxScale.");
+
+		_minScale = minScale;
+		_maxScale = maxScale;
+	}
+
+	/// <summary>
 	/// Gets or sets the multiplicative zoom factor applied when a double-tap is detected.
 	/// </summary>
 	/// <value>The zoom multiplier per double-tap. The default is <c>2.0</c>. Must be positive.</value>
@@ -80,16 +104,16 @@ public class SKGestureTrackerOptions : SKGestureDetectorOptions
 	}
 
 	/// <summary>
-	/// Gets or sets the duration of the double-tap zoom animation, in milliseconds.
+	/// Gets or sets the duration of the double-tap zoom animation.
 	/// </summary>
-	/// <value>The animation duration in milliseconds. The default is <c>250</c>. A value of <c>0</c> applies the zoom instantly.</value>
+	/// <value>The animation duration. The default is <c>250 ms</c>. A value of <see cref="TimeSpan.Zero"/> applies the zoom instantly.</value>
 	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-	public int ZoomAnimationDuration
+	public TimeSpan ZoomAnimationDuration
 	{
 		get => _zoomAnimationDuration;
 		set
 		{
-			if (value < 0)
+			if (value < TimeSpan.Zero)
 				throw new ArgumentOutOfRangeException(nameof(value), value, "ZoomAnimationDuration must not be negative.");
 			_zoomAnimationDuration = value;
 		}
@@ -150,38 +174,38 @@ public class SKGestureTrackerOptions : SKGestureDetectorOptions
 	}
 
 	/// <summary>
-	/// Gets or sets the fling animation frame interval, in milliseconds.
+	/// Gets or sets the fling animation frame interval.
 	/// </summary>
 	/// <value>
-	/// The timer interval between fling animation frames in milliseconds.
-	/// The default is <c>16</c> (approximately 60 FPS). Must be positive.
+	/// The timer interval between fling animation frames.
+	/// The default is <c>16 ms</c> (approximately 60 FPS). Must be positive.
 	/// </value>
 	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero or negative.</exception>
-	public int FlingFrameInterval
+	public TimeSpan FlingFrameInterval
 	{
 		get => _flingFrameInterval;
 		set
 		{
-			if (value <= 0)
+			if (value <= TimeSpan.Zero)
 				throw new ArgumentOutOfRangeException(nameof(value), value, "FlingFrameInterval must be positive.");
 			_flingFrameInterval = value;
 		}
 	}
 
 	/// <summary>
-	/// Gets or sets the zoom animation frame interval, in milliseconds.
+	/// Gets or sets the zoom animation frame interval.
 	/// </summary>
 	/// <value>
-	/// The timer interval between zoom animation frames in milliseconds.
-	/// The default is <c>16</c> (approximately 60 FPS). Must be positive.
+	/// The timer interval between zoom animation frames.
+	/// The default is <c>16 ms</c> (approximately 60 FPS). Must be positive.
 	/// </value>
 	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero or negative.</exception>
-	public int ZoomAnimationInterval
+	public TimeSpan ZoomAnimationInterval
 	{
 		get => _zoomAnimationInterval;
 		set
 		{
-			if (value <= 0)
+			if (value <= TimeSpan.Zero)
 				throw new ArgumentOutOfRangeException(nameof(value), value, "ZoomAnimationInterval must be positive.");
 			_zoomAnimationInterval = value;
 		}

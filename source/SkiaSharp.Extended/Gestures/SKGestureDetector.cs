@@ -235,6 +235,8 @@ public sealed class SKGestureDetector : IDisposable
 			if (touchPoints.Length >= 2)
 			{
 				StopLongPressTimer();
+				_tapCount = 0;
+				_lastTapTicks = 0;
 				_pinchState = PinchState.FromLocations(touchPoints);
 				_gestureState = GestureState.Pinching;
 			}
@@ -367,7 +369,7 @@ public sealed class SKGestureDetector : IDisposable
 		{
 			var distance = SKPoint.Distance(location, _initialTouch);
 			var duration = ticks - _touchStartTicks;
-			var maxTapDuration = storedIsMouse ? ShortClickTicks : Options.LongPressDuration * TimeSpan.TicksPerMillisecond;
+			var maxTapDuration = storedIsMouse ? ShortClickTicks : Options.LongPressDuration.Ticks;
 
 			if (distance < Options.TouchSlop && duration < maxTapDuration && !_longPressTriggered)
 			{
@@ -523,7 +525,7 @@ public sealed class SKGestureDetector : IDisposable
 	{
 		StopLongPressTimer();
 		var token = Interlocked.Increment(ref _longPressToken);
-		var timer = new Timer(OnLongPressTimerTick, token, Options.LongPressDuration, Timeout.Infinite);
+		var timer = new Timer(OnLongPressTimerTick, token, (int)Options.LongPressDuration.TotalMilliseconds, Timeout.Infinite);
 		_longPressTimer = timer;
 	}
 

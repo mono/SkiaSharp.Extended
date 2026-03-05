@@ -16,7 +16,7 @@ public class SKGestureDetectorOptions
 	private float _touchSlop = 8f;
 	private float _doubleTapSlop = 40f;
 	private float _flingThreshold = 200f;
-	private int _longPressDuration = 500;
+	private TimeSpan _longPressDuration = TimeSpan.FromMilliseconds(500);
 
 	/// <summary>
 	/// Gets or sets the minimum movement distance, in pixels, before a touch is considered a pan gesture.
@@ -72,17 +72,16 @@ public class SKGestureDetectorOptions
 	}
 
 	/// <summary>
-	/// Gets or sets the duration, in milliseconds, a touch must be held stationary before
-	/// a long press gesture is recognized.
+	/// Gets or sets the duration a touch must be held stationary before a long press gesture is recognized.
 	/// </summary>
-	/// <value>The long press duration in milliseconds. The default is <c>500</c>. Must be positive.</value>
+	/// <value>The long press duration. The default is <c>500 ms</c>. Must be positive.</value>
 	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero or negative.</exception>
-	public int LongPressDuration
+	public TimeSpan LongPressDuration
 	{
 		get => _longPressDuration;
 		set
 		{
-			if (value <= 0)
+			if (value <= TimeSpan.Zero)
 				throw new ArgumentOutOfRangeException(nameof(value), value, "LongPressDuration must be positive.");
 			_longPressDuration = value;
 		}
