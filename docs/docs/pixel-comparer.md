@@ -19,6 +19,8 @@ Console.WriteLine($"Total pixels: {result.TotalPixels}");
 Console.WriteLine($"Error pixels: {result.ErrorPixelCount}");
 Console.WriteLine($"Error percentage: {result.ErrorPixelPercentage:P2}");
 Console.WriteLine($"Absolute error: {result.AbsoluteError}");
+Console.WriteLine($"RMSE: {result.RootMeanSquaredError:F4}");
+Console.WriteLine($"PSNR: {result.PeakSignalToNoiseRatio:F2} dB");
 ```
 
 ### Generate a difference mask
@@ -35,11 +37,12 @@ The mask is a black-and-white image where **white pixels** indicate differences 
 
 ## How It Works
 
-The comparer normalizes both images to BGRA8888 format, then walks through every pixel and sums the per-channel (red, green, blue) absolute differences:
+The comparer normalizes both images to BGRA8888 unpremultiplied format, then walks through every pixel and computes per-channel differences:
 
-1. For each pixel, compute `|R₁ − R₂| + |G₁ − G₂| + |B₁ − B₂|`
-2. If the sum is greater than zero, that pixel is counted as an error
-3. The total per-pixel sums are accumulated into `AbsoluteError`
+1. For each pixel, compute per-channel differences: `ΔR = |R₁ − R₂|`, `ΔG = |G₁ − G₂|`, `ΔB = |B₁ − B₂|`
+2. If the sum `ΔR + ΔG + ΔB` is greater than zero, that pixel is counted as an error
+3. The per-pixel sums are accumulated into `AbsoluteError`
+4. The per-channel squared differences (`ΔR² + ΔG² + ΔB²`) are accumulated into `SumSquaredError`, which drives the MSE, RMSE, NRMSE, and PSNR metrics
 
 Both images must have the same dimensions; otherwise an `InvalidOperationException` is thrown.
 
@@ -53,10 +56,19 @@ The [`SKPixelComparisonResult`](xref:SkiaSharp.Extended.SKPixelComparisonResult)
 | `ErrorPixelCount` | `int` | Number of pixels with any difference |
 | `ErrorPixelPercentage` | `double` | `ErrorPixelCount / TotalPixels` |
 | `AbsoluteError` | `int` | Sum of all per-channel differences |
+| `SumSquaredError` | `long` | Sum of all per-channel squared differences |
+| `ChannelCount` | `int` | Number of channels compared (3 for RGB, 4 for RGBA) |
+| `MeanAbsoluteError` | `double` | Average absolute error per channel (range: 0–255) |
+| `MeanSquaredError` | `double` | Average squared error per channel (range: 0–65025) |
+| `RootMeanSquaredError` | `double` | Square root of MSE (range: 0–255) |
+| `NormalizedRootMeanSquaredError` | `double` | RMSE divided by 255 (range: 0–1) |
+| `PeakSignalToNoiseRatio` | `double` | PSNR in dB (∞ for identical images) |
+
+The **RMSE** metric is commonly used in visual testing tools (such as .NET MAUI's `VisualTestUtils.MagickNet`) to quantify image differences as a single number. The **NormalizedRootMeanSquaredError** maps this to a 0–1 range, where 0 means identical and 1 means maximum difference—useful for threshold-based pass/fail testing.
 
 ## Mask-Based Comparison
 
-When comparing images that have expected minor differences (e.g., anti-aliasing, compression artifacts), you can supply a tolerance mask. The mask image uses per-channel thresholds—a difference is only counted if it exceeds the corresponding channel value in the mask pixel:
+When comparing images that have expected minor differences (e.g., anti-aliasing, compression artifacts), you can supply a tolerance mask. By default, the mask uses per-channel thresholds — each channel's difference is checked independently against the corresponding mask channel value:
 
 ```csharp
 using var expected = SKImage.FromEncodedData("expected.png");
@@ -66,7 +78,90 @@ using var mask = SKImage.FromEncodedData("tolerance-mask.png");
 var result = SKPixelComparer.Compare(expected, actual, mask);
 ```
 
-For example, if a mask pixel has RGB values of `(10, 10, 10)`, differences of up to 10 per channel at that location are ignored. This lets you define region-specific tolerances.
+For example, if a mask pixel has RGB values of `(10, 10, 10)`, each channel is independently checked — a red difference of 12 would be counted but a green difference of 8 would be ignored. The mask must have the same dimensions as the images being compared; otherwise an `InvalidOperationException` is thrown.
+
+## Tolerance-Based Comparison
+
+For a simpler approach than mask-based comparison, you can specify a uniform per-pixel tolerance threshold (similar to ImageMagick's "fuzz" parameter). By default, tolerance is applied **per channel** — each channel (R, G, B) is checked independently, and only channels that exceed the tolerance contribute to error metrics:
+
+```csharp
+// Ignore channels where the individual difference is 10 or less
+var result = SKPixelComparer.Compare(expected, actual, tolerance: 10);
+
+Console.WriteLine($"Pixels exceeding tolerance: {result.ErrorPixelCount}");
+```
+
+When a pixel falls within tolerance, it is completely excluded from **all** metrics — not just `ErrorPixelCount`, but also `AbsoluteError`, `SumSquaredError`, and all derived metrics (MAE, MSE, RMSE, NRMSE, PSNR).
+
+A tolerance of `0` is equivalent to the standard comparison. In per-channel mode (the default), the maximum meaningful tolerance is 255. In summed mode (`TolerancePerChannel = false`), the maximum is 765 (255 × 3 channels), or 1020 (255 × 4) when `CompareAlpha` is enabled. A negative tolerance throws `ArgumentOutOfRangeException`.
+
+### Summed Tolerance Mode
+
+By default, `TolerancePerChannel` is `true` and each channel is checked independently. You can switch to summed mode where the total difference (`|ΔR| + |ΔG| + |ΔB|`) is compared against the tolerance:
+
+```csharp
+// Summed: ignore pixels where the total RGB difference is 15 or less
+var options = new SKPixelComparerOptions { TolerancePerChannel = false };
+var result = SKPixelComparer.Compare(expected, actual, tolerance: 15, options);
+```
+
+In summed mode, the entire pixel is either counted as an error (all channels contribute) or excluded (none do).
+
+The same option is available for mask-based comparison. When `TolerancePerChannel` is `false`, the sum of channel differences is checked against the sum of the mask's channel values — the pixel is either fully counted or fully excluded:
+
+```csharp
+// Mask with sum-based semantics
+var options = new SKPixelComparerOptions { TolerancePerChannel = false };
+var result = SKPixelComparer.Compare(expected, actual, mask, options);
+```
+
+## Comparison Options
+
+For more control over comparison behavior, use [`SKPixelComparerOptions`](xref:SkiaSharp.Extended.SKPixelComparerOptions):
+
+```csharp
+var options = new SKPixelComparerOptions
+{
+    TolerancePerChannel = true,  // Check each channel independently (default: true)
+    CompareAlpha = true          // Include alpha channel in comparison (default: false)
+};
+
+var result = SKPixelComparer.Compare(expected, actual, options);
+```
+
+| Property | Type | Default | Description |
+| :------- | :--- | :------ | :---------- |
+| `TolerancePerChannel` | `bool` | `true` | When `true`, each channel is checked independently against the tolerance. When `false`, the sum of per-channel differences is used. |
+| `CompareAlpha` | `bool` | `false` | When `true`, the alpha channel is included in all error calculations and metrics. |
+
+Options can be used with all comparison modes:
+
+```csharp
+// Base comparison with alpha
+var result = SKPixelComparer.Compare(expected, actual, options);
+
+// Tolerance-based with options
+var result = SKPixelComparer.Compare(expected, actual, tolerance: 10, options);
+
+// Mask-based with options
+var result = SKPixelComparer.Compare(expected, actual, mask, options);
+```
+
+### Alpha Channel Comparison
+
+By default, only RGB channels are compared. Set `CompareAlpha = true` to include the alpha channel in difference detection and error metrics. When enabled:
+
+- Alpha differences contribute to `AbsoluteError`, `SumSquaredError`, and all derived metrics
+- The `ChannelCount` in the result is set to 4 (instead of 3), so MAE and MSE are normalized per 4 channels
+- Tolerance and mask thresholds apply to the alpha channel as well
+
+```csharp
+var options = new SKPixelComparerOptions { CompareAlpha = true };
+
+var result = SKPixelComparer.Compare(expected, actual, options);
+Console.WriteLine($"Channels compared: {result.ChannelCount}"); // 4
+Console.WriteLine($"MAE: {result.MeanAbsoluteError}"); // Normalized over RGBA
+```
 
 ## Input Overloads
 
@@ -79,7 +174,21 @@ All comparison methods accept multiple input types for convenience:
 | `SKBitmap` | `Compare(bitmapA, bitmapB)` |
 | `SKPixmap` | `Compare(pixmapA, pixmapB)` |
 
-The same overloads are available for `GenerateDifferenceMask` (without mask support) and for the three-argument masked `Compare`.
+The same input type overloads are available for `GenerateDifferenceMask`, `GenerateDifferenceImage`, mask-based `Compare`, and tolerance-based `Compare`.
+
+### Generate a difference image
+
+Unlike the binary black-and-white mask, `GenerateDifferenceImage` produces a full-color visualization of per-channel differences:
+
+```csharp
+using var diff = SKPixelComparer.GenerateDifferenceImage("expected.png", "actual.png");
+
+// Each pixel's R, G, B values represent the absolute channel differences
+using var data = diff.Encode(SKEncodedImageFormat.Png, 100);
+File.WriteAllBytes("diff-image.png", data.ToArray());
+```
+
+This is similar to the difference visualization produced by ImageMagick's `compare` command and is useful for understanding the magnitude and distribution of differences across channels.
 
 ## Usage Patterns
 
@@ -111,11 +220,14 @@ public void UI_MatchesBaseline_WithTolerance()
     using var actual = CaptureScreenshot();
     using var expected = SKImage.FromEncodedData("baselines/screen.png");
 
-    var result = SKPixelComparer.Compare(expected, actual);
+    // Option 1: Use per-pixel tolerance to ignore minor differences
+    var result = SKPixelComparer.Compare(expected, actual, tolerance: 10);
+    Assert.Equal(0, result.ErrorPixelCount);
 
-    // Allow up to 0.5% pixel difference
-    Assert.True(result.ErrorPixelPercentage < 0.005,
-        $"Too many differing pixels: {result.ErrorPixelPercentage:P2}");
+    // Option 2: Use RMSE threshold (like .NET MAUI VisualTestUtils)
+    var result2 = SKPixelComparer.Compare(expected, actual);
+    Assert.True(result2.NormalizedRootMeanSquaredError < 0.005,
+        $"NRMSE too high: {result2.NormalizedRootMeanSquaredError:F4}");
 }
 ```
 
@@ -136,3 +248,4 @@ if (result.ErrorPixelCount > 0)
 
 - [API Reference — SKPixelComparer](xref:SkiaSharp.Extended.SKPixelComparer) — Full method documentation
 - [API Reference — SKPixelComparisonResult](xref:SkiaSharp.Extended.SKPixelComparisonResult) — Result class documentation
+- [API Reference — SKPixelComparerOptions](xref:SkiaSharp.Extended.SKPixelComparerOptions) — Options class documentation

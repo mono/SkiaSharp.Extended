@@ -1,23 +1,11 @@
-﻿using System;
-using System.IO;
+﻿#nullable enable
+using System;
 using Xunit;
 
 namespace SkiaSharp.Extended.Tests
 {
-	public class SKPixelComparerTest
+	public class SKPixelComparerCompareTest : SKPixelComparerTestBase
 	{
-		private const string jpgFirst = "First.jpg";
-		private const string pngFirst = "First.png";
-		private const string jpgSecond = "Second.jpg";
-		private const string pngSecond = "Second.png";
-		private const string jpgMask = "MaskJpg.png";
-		private const string pngMask = "MaskPng.png";
-
-		public static readonly string BaseImages = Path.Combine("images", "Comparer");
-
-		public static string GetImagePath(string filename) =>
-			Path.Combine(BaseImages, filename);
-
 		[Theory]
 		[InlineData(0xFFFFFFFF, 0xFF000000, 19125, 25)]
 		[InlineData(0xFF000000, 0xFFFFFFFF, 19125, 25)]
@@ -152,38 +140,6 @@ namespace SkiaSharp.Extended.Tests
 		}
 
 		[Theory]
-		[InlineData(jpgFirst, jpgSecond)]
-		[InlineData(pngFirst, pngSecond)]
-		public void GeneratedMaskResultsInZeroDifferences(string first, string second)
-		{
-			using var firstImage = SKImage.FromEncodedData(GetImagePath(first));
-			using var secondImage = SKImage.FromEncodedData(GetImagePath(second));
-
-			var mask = SKPixelComparer.GenerateDifferenceMask(firstImage, secondImage);
-			var result = SKPixelComparer.Compare(firstImage, secondImage, mask);
-
-			Assert.Equal(0, result.AbsoluteError);
-			Assert.Equal(0, result.ErrorPixelCount);
-			Assert.Equal(0, result.ErrorPixelPercentage);
-		}
-
-		[Theory]
-		[InlineData(jpgFirst, jpgSecond, jpgMask)]
-		[InlineData(pngFirst, pngSecond, pngMask)]
-		public void LoadedMaskResultsInZeroDifferences(string first, string second, string mask)
-		{
-			using var firstImage = SKImage.FromEncodedData(GetImagePath(first));
-			using var secondImage = SKImage.FromEncodedData(GetImagePath(second));
-			using var maskImage = SKImage.FromEncodedData(GetImagePath(mask));
-
-			var result = SKPixelComparer.Compare(firstImage, secondImage, maskImage);
-
-			Assert.Equal(0, result.AbsoluteError);
-			Assert.Equal(0, result.ErrorPixelCount);
-			Assert.Equal(0, result.ErrorPixelPercentage);
-		}
-
-		[Theory]
 		[InlineData(10, 3, 10, 10)]
 		[InlineData(10, 10, 10, 3)]
 		[InlineData(3, 10, 10, 10)]
@@ -197,26 +153,143 @@ namespace SkiaSharp.Extended.Tests
 			Assert.Contains($"{w1}x{h1} vs {w2}x{h2}", ex.Message);
 		}
 
-		static SKImage CreateTestImage(SKColor color, int width = 5, int height = 5)
+		[Theory]
+		[InlineData(0xFFFFFFFF, 0xFF000000, 4876875)]
+		[InlineData(0xFF000000, 0xFFFFFFFF, 4876875)]
+		[InlineData(0xFF000000, 0xFF000001, 25)]
+		[InlineData(0xFFFFFFFF, 0xFFFFFFFF, 0)]
+		[InlineData(0xFF000000, 0xFF000000, 0)]
+		public void CompareTracksSumSquaredError(uint firstColor, uint secondColor, long expectedSumSquaredError)
 		{
-			using var surface = SKSurface.Create(new SKImageInfo(width, height));
-			surface.Canvas.Clear(color);
-			return surface.Snapshot();
+			using var first = CreateTestImage(firstColor);
+			using var second = CreateTestImage(secondColor);
+
+			var result = SKPixelComparer.Compare(first, second);
+
+			Assert.Equal(expectedSumSquaredError, result.SumSquaredError);
 		}
 
-		static SKBitmap CreateTestBitmap(SKColor color, int width = 5, int height = 5)
+		[Fact]
+		public void IdenticalImagesHaveZeroMetrics()
 		{
-			var bmp = new SKBitmap(new SKImageInfo(width, height));
-			bmp.Erase(color);
-			return bmp;
+			using var first = CreateTestImage(0xFF808080);
+			using var second = CreateTestImage(0xFF808080);
+
+			var result = SKPixelComparer.Compare(first, second);
+
+			Assert.Equal(0, result.SumSquaredError);
+			Assert.Equal(0.0, result.MeanAbsoluteError);
+			Assert.Equal(0.0, result.MeanSquaredError);
+			Assert.Equal(0.0, result.RootMeanSquaredError);
+			Assert.Equal(0.0, result.NormalizedRootMeanSquaredError);
+			Assert.Equal(double.PositiveInfinity, result.PeakSignalToNoiseRatio);
 		}
 
-		static void SaveOutputDiff(SKImage first, SKImage second)
+		[Fact]
+		public void MaxDifferenceImagesHaveCorrectMetrics()
 		{
-			using var img = SKPixelComparer.GenerateDifferenceMask(first, second);
-			using var data = img.Encode(SKEncodedImageFormat.Png, 100);
-			using (var str = File.Create(GetImagePath("diff.png")))
-				data.SaveTo(str);
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFFFFFFFF);
+
+			var result = SKPixelComparer.Compare(first, second);
+
+			Assert.Equal(255.0, result.MeanAbsoluteError);
+			Assert.Equal(65025.0, result.MeanSquaredError);
+			Assert.Equal(255.0, result.RootMeanSquaredError);
+			Assert.Equal(1.0, result.NormalizedRootMeanSquaredError);
+			Assert.Equal(0.0, result.PeakSignalToNoiseRatio);
+		}
+
+		[Fact]
+		public void MetricsAreConsistentWithFormulas()
+		{
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFF010203);
+
+			var result = SKPixelComparer.Compare(first, second);
+
+			// Per pixel: ΔR=1, ΔG=2, ΔB=3
+			// 25 pixels, 3 channels per pixel = 75 channel values
+			var expectedAbsoluteError = (1 + 2 + 3) * 25;
+			var expectedSumSquared = (long)(1 * 1 + 2 * 2 + 3 * 3) * 25;
+
+			Assert.Equal(expectedAbsoluteError, result.AbsoluteError);
+			Assert.Equal(expectedSumSquared, result.SumSquaredError);
+			Assert.Equal((double)expectedAbsoluteError / (25 * 3.0), result.MeanAbsoluteError);
+			Assert.Equal((double)expectedSumSquared / (25 * 3.0), result.MeanSquaredError);
+			Assert.Equal(Math.Sqrt((double)expectedSumSquared / (25 * 3.0)), result.RootMeanSquaredError);
+		}
+
+		[Fact]
+		public void ZeroTotalPixelsResultDoesNotThrow()
+		{
+			var result = new SKPixelComparisonResult(0, 0, 0, 0);
+
+			Assert.Equal(0.0, result.ErrorPixelPercentage);
+			Assert.Equal(0.0, result.MeanAbsoluteError);
+			Assert.Equal(0.0, result.MeanSquaredError);
+			Assert.Equal(0.0, result.RootMeanSquaredError);
+			Assert.Equal(0.0, result.NormalizedRootMeanSquaredError);
+			Assert.Equal(double.PositiveInfinity, result.PeakSignalToNoiseRatio);
+		}
+
+		[Fact]
+		public void ChannelCountReflectsCompareAlpha()
+		{
+			var rgb = new SKPixelComparisonResult(100, 10, 50, 200);
+			var rgba = new SKPixelComparisonResult(100, 10, 50, 200, 4);
+
+			Assert.Equal(3, rgb.ChannelCount);
+			Assert.Equal(4, rgba.ChannelCount);
+
+			// MAE differs due to different divisors
+			Assert.Equal(50.0 / (100 * 3.0), rgb.MeanAbsoluteError);
+			Assert.Equal(50.0 / (100 * 4.0), rgba.MeanAbsoluteError);
+		}
+
+		[Fact]
+		public void NullFirstImageThrows()
+		{
+			using var second = CreateTestImage(SKColors.Black);
+
+			Assert.Throws<ArgumentNullException>(() => SKPixelComparer.Compare(null!, second));
+		}
+
+		[Fact]
+		public void NullSecondImageThrows()
+		{
+			using var first = CreateTestImage(SKColors.Black);
+
+			Assert.Throws<ArgumentNullException>(() => SKPixelComparer.Compare(first, null!));
+		}
+
+		[Fact]
+		public void FilePathOverloadMatchesImageOverload()
+		{
+			var firstPath = GetImagePath("First.png");
+			var secondPath = GetImagePath("Second.png");
+
+			using var firstImage = SKImage.FromEncodedData(firstPath);
+			using var secondImage = SKImage.FromEncodedData(secondPath);
+
+			var fileResult = SKPixelComparer.Compare(firstPath, secondPath);
+			var imageResult = SKPixelComparer.Compare(firstImage, secondImage);
+
+			Assert.Equal(imageResult.AbsoluteError, fileResult.AbsoluteError);
+			Assert.Equal(imageResult.ErrorPixelCount, fileResult.ErrorPixelCount);
+			Assert.Equal(imageResult.TotalPixels, fileResult.TotalPixels);
+		}
+
+		[Fact]
+		public void ToleranceBoundaryDiffEqualToToleranceIsNotError()
+		{
+			// ΔR=0, ΔG=0, ΔB=10, sum=10
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFF00000A);
+
+			var result = SKPixelComparer.Compare(first, second, 10);
+
+			Assert.Equal(0, result.ErrorPixelCount);
 		}
 	}
 }
