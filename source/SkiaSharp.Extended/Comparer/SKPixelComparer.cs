@@ -4,6 +4,7 @@ namespace SkiaSharp.Extended
 {
 	/// <summary>
 	/// Provides methods for pixel-by-pixel comparison of images.
+	/// This class is thread-safe as all methods are stateless static operations.
 	/// </summary>
 	public static class SKPixelComparer
 	{
@@ -140,7 +141,7 @@ namespace SkiaSharp.Extended
 
 		/// <summary>
 		/// Compares two images pixel by pixel, using a tolerance mask. Pixel differences that fall within
-		/// the mask's per-channel values are not counted as errors.
+		/// the mask's per-channel values are not counted as errors. Each channel is checked independently.
 		/// </summary>
 		/// <param name="first">The first image.</param>
 		/// <param name="second">The second image.</param>
@@ -148,7 +149,80 @@ namespace SkiaSharp.Extended
 		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
 		/// <exception cref="ArgumentNullException"><paramref name="first"/>, <paramref name="second"/>, or <paramref name="mask"/> is <c>null</c>.</exception>
 		/// <exception cref="InvalidOperationException">The images or mask have different dimensions.</exception>
-		public static SKPixelComparisonResult Compare(SKImage first, SKImage second, SKImage mask)
+		public static SKPixelComparisonResult Compare(SKImage first, SKImage second, SKImage mask) =>
+			Compare(first, second, mask, tolerancePerChannel: true);
+
+		/// <summary>
+		/// Compares two images loaded from file paths pixel by pixel, using a tolerance mask and specifying the tolerance mode.
+		/// </summary>
+		/// <param name="firstFilename">The file path of the first image.</param>
+		/// <param name="secondFilename">The file path of the second image.</param>
+		/// <param name="maskFilename">The file path of the mask image defining per-channel tolerance thresholds.</param>
+		/// <param name="tolerancePerChannel">
+		/// When <c>true</c>, each channel is checked independently against the corresponding mask channel value.
+		/// When <c>false</c>, the sum of per-channel differences is checked against the sum of the mask's channel values.
+		/// </param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
+		public static SKPixelComparisonResult Compare(string firstFilename, string secondFilename, string maskFilename, bool tolerancePerChannel)
+		{
+			using var first = SKImage.FromEncodedData(firstFilename);
+			using var second = SKImage.FromEncodedData(secondFilename);
+			using var mask = SKImage.FromEncodedData(maskFilename);
+			return Compare(first, second, mask, tolerancePerChannel);
+		}
+
+		/// <summary>
+		/// Compares two bitmaps pixel by pixel, using a tolerance mask and specifying the tolerance mode.
+		/// </summary>
+		/// <param name="first">The first bitmap.</param>
+		/// <param name="second">The second bitmap.</param>
+		/// <param name="mask">The mask bitmap defining per-channel tolerance thresholds.</param>
+		/// <param name="tolerancePerChannel">
+		/// When <c>true</c>, each channel is checked independently against the corresponding mask channel value.
+		/// When <c>false</c>, the sum of per-channel differences is checked against the sum of the mask's channel values.
+		/// </param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
+		public static SKPixelComparisonResult Compare(SKBitmap first, SKBitmap second, SKBitmap mask, bool tolerancePerChannel)
+		{
+			using var firstPixmap = first.PeekPixels();
+			using var secondPixmap = second.PeekPixels();
+			using var maskPixmap = mask.PeekPixels();
+			return Compare(firstPixmap, secondPixmap, maskPixmap, tolerancePerChannel);
+		}
+
+		/// <summary>
+		/// Compares two pixmaps pixel by pixel, using a tolerance mask and specifying the tolerance mode.
+		/// </summary>
+		/// <param name="first">The first pixmap.</param>
+		/// <param name="second">The second pixmap.</param>
+		/// <param name="mask">The mask pixmap defining per-channel tolerance thresholds.</param>
+		/// <param name="tolerancePerChannel">
+		/// When <c>true</c>, each channel is checked independently against the corresponding mask channel value.
+		/// When <c>false</c>, the sum of per-channel differences is checked against the sum of the mask's channel values.
+		/// </param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
+		public static SKPixelComparisonResult Compare(SKPixmap first, SKPixmap second, SKPixmap mask, bool tolerancePerChannel)
+		{
+			using var firstWrapper = SKImage.FromPixels(first);
+			using var secondWrapper = SKImage.FromPixels(second);
+			using var maskWrapper = SKImage.FromPixels(mask);
+			return Compare(firstWrapper, secondWrapper, maskWrapper, tolerancePerChannel);
+		}
+
+		/// <summary>
+		/// Compares two images pixel by pixel, using a tolerance mask and specifying the tolerance mode.
+		/// </summary>
+		/// <param name="first">The first image.</param>
+		/// <param name="second">The second image.</param>
+		/// <param name="mask">The mask image defining per-channel tolerance thresholds.</param>
+		/// <param name="tolerancePerChannel">
+		/// When <c>true</c>, each channel is checked independently against the corresponding mask channel value.
+		/// When <c>false</c>, the sum of per-channel differences is checked against the sum of the mask's channel values.
+		/// </param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
+		/// <exception cref="ArgumentNullException"><paramref name="first"/>, <paramref name="second"/>, or <paramref name="mask"/> is <c>null</c>.</exception>
+		/// <exception cref="InvalidOperationException">The images or mask have different dimensions.</exception>
+		public static SKPixelComparisonResult Compare(SKImage first, SKImage second, SKImage mask, bool tolerancePerChannel)
 		{
 			Validate(first, second);
 			ValidateMask(first, mask);
@@ -183,28 +257,42 @@ namespace SkiaSharp.Extended
 				var g = Math.Abs(secondPixel.Green - firstPixel.Green);
 				var b = Math.Abs(secondPixel.Blue - firstPixel.Blue);
 
-				var d = 0;
-				var sq = 0L;
-				if (r > maskPixel.Red)
+				if (tolerancePerChannel)
 				{
-					d += r;
-					sq += (long)r * r;
-				}
-				if (g > maskPixel.Green)
-				{
-					d += g;
-					sq += (long)g * g;
-				}
-				if (b > maskPixel.Blue)
-				{
-					d += b;
-					sq += (long)b * b;
-				}
+					var d = 0;
+					var sq = 0L;
+					if (r > maskPixel.Red)
+					{
+						d += r;
+						sq += (long)r * r;
+					}
+					if (g > maskPixel.Green)
+					{
+						d += g;
+						sq += (long)g * g;
+					}
+					if (b > maskPixel.Blue)
+					{
+						d += b;
+						sq += (long)b * b;
+					}
 
-				absoluteError += d;
-				sumSquaredError += sq;
-				if (d > 0)
-					errorPixels++;
+					absoluteError += d;
+					sumSquaredError += sq;
+					if (d > 0)
+						errorPixels++;
+				}
+				else
+				{
+					var d = r + g + b;
+					var maskSum = maskPixel.Red + maskPixel.Green + maskPixel.Blue;
+					if (d > maskSum)
+					{
+						absoluteError += d;
+						sumSquaredError += (long)r * r + (long)g * g + (long)b * b;
+						errorPixels++;
+					}
+				}
 			}
 
 			return new SKPixelComparisonResult(totalPixels, errorPixels, absoluteError, sumSquaredError);
@@ -264,7 +352,79 @@ namespace SkiaSharp.Extended
 		/// <exception cref="ArgumentNullException"><paramref name="first"/> or <paramref name="second"/> is <c>null</c>.</exception>
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="tolerance"/> is negative.</exception>
 		/// <exception cref="InvalidOperationException">The images have different dimensions.</exception>
-		public static SKPixelComparisonResult Compare(SKImage first, SKImage second, int tolerance)
+		public static SKPixelComparisonResult Compare(SKImage first, SKImage second, int tolerance) =>
+			Compare(first, second, tolerance, tolerancePerChannel: false);
+
+		/// <summary>
+		/// Compares two images loaded from file paths pixel by pixel, using a uniform tolerance threshold and specifying the tolerance mode.
+		/// </summary>
+		/// <param name="firstFilename">The file path of the first image.</param>
+		/// <param name="secondFilename">The file path of the second image.</param>
+		/// <param name="tolerance">The maximum allowed per-channel or total per-pixel difference. Must be non-negative.</param>
+		/// <param name="tolerancePerChannel">
+		/// When <c>true</c>, each channel is checked independently against the tolerance value.
+		/// When <c>false</c>, the sum of per-channel differences is checked against the tolerance value.
+		/// </param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
+		public static SKPixelComparisonResult Compare(string firstFilename, string secondFilename, int tolerance, bool tolerancePerChannel)
+		{
+			using var first = SKImage.FromEncodedData(firstFilename);
+			using var second = SKImage.FromEncodedData(secondFilename);
+			return Compare(first, second, tolerance, tolerancePerChannel);
+		}
+
+		/// <summary>
+		/// Compares two bitmaps pixel by pixel, using a uniform tolerance threshold and specifying the tolerance mode.
+		/// </summary>
+		/// <param name="first">The first bitmap.</param>
+		/// <param name="second">The second bitmap.</param>
+		/// <param name="tolerance">The maximum allowed per-channel or total per-pixel difference. Must be non-negative.</param>
+		/// <param name="tolerancePerChannel">
+		/// When <c>true</c>, each channel is checked independently against the tolerance value.
+		/// When <c>false</c>, the sum of per-channel differences is checked against the tolerance value.
+		/// </param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
+		public static SKPixelComparisonResult Compare(SKBitmap first, SKBitmap second, int tolerance, bool tolerancePerChannel)
+		{
+			using var firstPixmap = first.PeekPixels();
+			using var secondPixmap = second.PeekPixels();
+			return Compare(firstPixmap, secondPixmap, tolerance, tolerancePerChannel);
+		}
+
+		/// <summary>
+		/// Compares two pixmaps pixel by pixel, using a uniform tolerance threshold and specifying the tolerance mode.
+		/// </summary>
+		/// <param name="first">The first pixmap.</param>
+		/// <param name="second">The second pixmap.</param>
+		/// <param name="tolerance">The maximum allowed per-channel or total per-pixel difference. Must be non-negative.</param>
+		/// <param name="tolerancePerChannel">
+		/// When <c>true</c>, each channel is checked independently against the tolerance value.
+		/// When <c>false</c>, the sum of per-channel differences is checked against the tolerance value.
+		/// </param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
+		public static SKPixelComparisonResult Compare(SKPixmap first, SKPixmap second, int tolerance, bool tolerancePerChannel)
+		{
+			using var firstWrapper = SKImage.FromPixels(first);
+			using var secondWrapper = SKImage.FromPixels(second);
+			return Compare(firstWrapper, secondWrapper, tolerance, tolerancePerChannel);
+		}
+
+		/// <summary>
+		/// Compares two images pixel by pixel, using a uniform tolerance threshold and specifying the tolerance mode.
+		/// </summary>
+		/// <param name="first">The first image.</param>
+		/// <param name="second">The second image.</param>
+		/// <param name="tolerance">The maximum allowed per-channel or total per-pixel difference. Must be non-negative.</param>
+		/// <param name="tolerancePerChannel">
+		/// When <c>true</c>, each channel is checked independently against the tolerance value.
+		/// A pixel is counted as an error only if at least one channel exceeds the tolerance.
+		/// When <c>false</c>, the sum of per-channel differences (<c>|ΔR| + |ΔG| + |ΔB|</c>) is checked against the tolerance value.
+		/// </param>
+		/// <returns>An <see cref="SKPixelComparisonResult"/> containing the comparison statistics.</returns>
+		/// <exception cref="ArgumentNullException"><paramref name="first"/> or <paramref name="second"/> is <c>null</c>.</exception>
+		/// <exception cref="ArgumentOutOfRangeException"><paramref name="tolerance"/> is negative.</exception>
+		/// <exception cref="InvalidOperationException">The images have different dimensions.</exception>
+		public static SKPixelComparisonResult Compare(SKImage first, SKImage second, int tolerance, bool tolerancePerChannel)
 		{
 			if (tolerance < 0)
 				throw new ArgumentOutOfRangeException(nameof(tolerance), "Tolerance must be non-negative.");
@@ -295,13 +455,41 @@ namespace SkiaSharp.Extended
 				var r = Math.Abs(secondPixel.Red - firstPixel.Red);
 				var g = Math.Abs(secondPixel.Green - firstPixel.Green);
 				var b = Math.Abs(secondPixel.Blue - firstPixel.Blue);
-				var d = r + g + b;
 
-				if (d > tolerance)
+				if (tolerancePerChannel)
 				{
+					var d = 0;
+					var sq = 0L;
+					if (r > tolerance)
+					{
+						d += r;
+						sq += (long)r * r;
+					}
+					if (g > tolerance)
+					{
+						d += g;
+						sq += (long)g * g;
+					}
+					if (b > tolerance)
+					{
+						d += b;
+						sq += (long)b * b;
+					}
+
 					absoluteError += d;
-					sumSquaredError += (long)r * r + (long)g * g + (long)b * b;
-					errorPixels++;
+					sumSquaredError += sq;
+					if (d > 0)
+						errorPixels++;
+				}
+				else
+				{
+					var d = r + g + b;
+					if (d > tolerance)
+					{
+						absoluteError += d;
+						sumSquaredError += (long)r * r + (long)g * g + (long)b * b;
+						errorPixels++;
+					}
 				}
 			}
 

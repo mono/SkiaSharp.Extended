@@ -45,9 +45,10 @@ namespace SkiaSharp.Extended
 
 		/// <summary>
 		/// Gets the ratio of differing pixels to total pixels (0.0 to 1.0).
+		/// Returns 0 if <see cref="TotalPixels"/> is 0.
 		/// </summary>
 		public double ErrorPixelPercentage =>
-			(double)ErrorPixelCount / TotalPixels;
+			TotalPixels == 0 ? 0.0 : (double)ErrorPixelCount / TotalPixels;
 
 		/// <summary>
 		/// Gets the sum of per-channel (RGB) absolute differences across all pixels.
@@ -61,17 +62,17 @@ namespace SkiaSharp.Extended
 
 		/// <summary>
 		/// Gets the mean absolute error per channel, computed as <see cref="AbsoluteError"/> / (<see cref="TotalPixels"/> × 3).
-		/// Range: 0 (identical) to 255 (maximum difference).
+		/// Range: 0 (identical) to 255 (maximum difference). Returns 0 if <see cref="TotalPixels"/> is 0.
 		/// </summary>
 		public double MeanAbsoluteError =>
-			(double)AbsoluteError / (TotalPixels * 3.0);
+			TotalPixels == 0 ? 0.0 : (double)AbsoluteError / (TotalPixels * 3.0);
 
 		/// <summary>
 		/// Gets the mean squared error per channel, computed as <see cref="SumSquaredError"/> / (<see cref="TotalPixels"/> × 3).
-		/// Range: 0 (identical) to 65025 (maximum difference).
+		/// Range: 0 (identical) to 65025 (maximum difference). Returns 0 if <see cref="TotalPixels"/> is 0.
 		/// </summary>
 		public double MeanSquaredError =>
-			(double)SumSquaredError / (TotalPixels * 3.0);
+			TotalPixels == 0 ? 0.0 : (double)SumSquaredError / (TotalPixels * 3.0);
 
 		/// <summary>
 		/// Gets the root mean squared error, computed as the square root of <see cref="MeanSquaredError"/>.

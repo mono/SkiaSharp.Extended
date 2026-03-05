@@ -109,6 +109,11 @@
                             <p class="mb-0">@result.MeanAbsoluteError.ToString("F4")</p>
                         </div>
                         <div class="col-6 col-sm-3">
+                            <strong>MSE</strong>
+                            <p class="mb-0 text-muted small">Mean Squared Error</p>
+                            <p class="mb-0">@result.MeanSquaredError.ToString("F4")</p>
+                        </div>
+                        <div class="col-6 col-sm-3">
                             <strong>RMSE</strong>
                             <p class="mb-0 text-muted small">Root Mean Squared Error</p>
                             <p class="mb-0">@result.RootMeanSquaredError.ToString("F4")</p>
@@ -118,6 +123,8 @@
                             <p class="mb-0 text-muted small">Normalized RMSE (0–1)</p>
                             <p class="mb-0">@result.NormalizedRootMeanSquaredError.ToString("F6")</p>
                         </div>
+                    </div>
+                    <div class="row mt-2">
                         <div class="col-6 col-sm-3">
                             <strong>PSNR</strong>
                             <p class="mb-0 text-muted small">Peak Signal-to-Noise (dB)</p>

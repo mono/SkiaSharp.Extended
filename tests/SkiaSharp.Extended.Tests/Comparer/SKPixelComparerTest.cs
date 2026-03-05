@@ -418,5 +418,108 @@ namespace SkiaSharp.Extended.Tests
 				canvas.DrawImage(image, 0, 0);
 			return bitmap;
 		}
+
+		[Fact]
+		public void ZeroTotalPixelsResultDoesNotThrow()
+		{
+			var result = new SKPixelComparisonResult(0, 0, 0, 0);
+
+			Assert.Equal(0.0, result.ErrorPixelPercentage);
+			Assert.Equal(0.0, result.MeanAbsoluteError);
+			Assert.Equal(0.0, result.MeanSquaredError);
+			Assert.Equal(0.0, result.RootMeanSquaredError);
+			Assert.Equal(0.0, result.NormalizedRootMeanSquaredError);
+			Assert.Equal(double.PositiveInfinity, result.PeakSignalToNoiseRatio);
+		}
+
+		[Theory]
+		[InlineData(0xFF000000, 0xFF030303, 2, 25)]
+		[InlineData(0xFF000000, 0xFF030303, 3, 0)]
+		[InlineData(0xFF000000, 0xFF030303, 4, 0)]
+		[InlineData(0xFF010203, 0xFF000000, 2, 25)]
+		[InlineData(0xFF010203, 0xFF000000, 3, 0)]
+		public void TolerancePerChannelChecksEachChannelIndependently(uint firstColor, uint secondColor, int tolerance, int expectedErrorPixels)
+		{
+			using var first = CreateTestImage(firstColor);
+			using var second = CreateTestImage(secondColor);
+
+			var result = SKPixelComparer.Compare(first, second, tolerance, tolerancePerChannel: true);
+
+			Assert.Equal(expectedErrorPixels, result.ErrorPixelCount);
+		}
+
+		[Fact]
+		public void TolerancePerChannelDiffersFromSumBehavior()
+		{
+			// Color diff: ΔR=1, ΔG=2, ΔB=3, sum=6
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFF010203);
+
+			// Sum-based: tolerance=5, sum(6) > 5 → error
+			var sumResult = SKPixelComparer.Compare(first, second, 5, tolerancePerChannel: false);
+			Assert.Equal(25, sumResult.ErrorPixelCount);
+
+			// Per-channel: tolerance=5, each channel (1,2,3) ≤ 5 → no error
+			var perChResult = SKPixelComparer.Compare(first, second, 5, tolerancePerChannel: true);
+			Assert.Equal(0, perChResult.ErrorPixelCount);
+		}
+
+		[Fact]
+		public void TolerancePerChannelPartialChannelExclusion()
+		{
+			// ΔR=1, ΔG=2, ΔB=10
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFF01020A);
+
+			// Per-channel with tolerance=5: R(1)≤5, G(2)≤5, B(10)>5 → only B counted
+			var result = SKPixelComparer.Compare(first, second, 5, tolerancePerChannel: true);
+			Assert.Equal(25, result.ErrorPixelCount);
+			Assert.Equal(10 * 25, result.AbsoluteError);
+			Assert.Equal((long)10 * 10 * 25, result.SumSquaredError);
+		}
+
+		[Fact]
+		public void MaskTolerancePerChannelFalseUsesSumSemantics()
+		{
+			// ΔR=1, ΔG=2, ΔB=3, sum=6
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFF010203);
+
+			// Mask with per-channel values (2,2,2) → sum = 6
+			// Per-channel (default): R(1)≤2 skip, G(2)≤2 skip, B(3)>2 count → error
+			using var mask = CreateTestImage(0xFF020202);
+			var perChResult = SKPixelComparer.Compare(first, second, mask, tolerancePerChannel: true);
+			Assert.Equal(25, perChResult.ErrorPixelCount);
+
+			// Sum mode: sum(6) > maskSum(6) → false, no error
+			var sumResult = SKPixelComparer.Compare(first, second, mask, tolerancePerChannel: false);
+			Assert.Equal(0, sumResult.ErrorPixelCount);
+		}
+
+		[Fact]
+		public void GenerateDifferenceMaskProducesValidImage()
+		{
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFF050505);
+
+			using var mask = SKPixelComparer.GenerateDifferenceMask(first, second);
+
+			Assert.NotNull(mask);
+			Assert.Equal(5, mask.Width);
+			Assert.Equal(5, mask.Height);
+		}
+
+		[Fact]
+		public void GenerateDifferenceImageProducesValidImage()
+		{
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xFF050505);
+
+			using var diff = SKPixelComparer.GenerateDifferenceImage(first, second);
+
+			Assert.NotNull(diff);
+			Assert.Equal(5, diff.Width);
+			Assert.Equal(5, diff.Height);
+		}
 	}
 }
