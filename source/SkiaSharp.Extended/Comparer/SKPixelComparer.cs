@@ -604,7 +604,7 @@ namespace SkiaSharp.Extended
 			using var secondPixmap = secondBitmap.PeekPixels();
 			var secondPixels = secondPixmap.GetPixelSpan<SKColor>();
 
-			var diffBitmap = new SKBitmap(new SKImageInfo(width, height));
+			var diffBitmap = new SKBitmap(new SKImageInfo(width, height, SKColorType.Bgra8888));
 			using var diffPixmap = diffBitmap.PeekPixels();
 			var diffPixels = diffPixmap.GetPixelSpan<SKColor>();
 
@@ -690,7 +690,7 @@ namespace SkiaSharp.Extended
 			using var secondPixmap = secondBitmap.PeekPixels();
 			var secondPixels = secondPixmap.GetPixelSpan<SKColor>();
 
-			var diffBitmap = new SKBitmap(new SKImageInfo(width, height));
+			var diffBitmap = new SKBitmap(new SKImageInfo(width, height, SKColorType.Bgra8888));
 			using var diffPixmap = diffBitmap.PeekPixels();
 			var diffPixels = diffPixmap.GetPixelSpan<SKColor>();
 
