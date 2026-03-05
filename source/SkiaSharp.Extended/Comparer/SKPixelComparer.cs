@@ -604,8 +604,9 @@ namespace SkiaSharp.Extended
 			using var secondPixmap = secondBitmap.PeekPixels();
 			var secondPixels = secondPixmap.GetPixelSpan<SKColor>();
 
-			var diffBitmap = new SKBitmap(new SKImageInfo(width, height, SKColorType.Bgra8888));
-			using var diffPixmap = diffBitmap.PeekPixels();
+			// Build diff in BGRA8888 (matches SKColor memory layout for raw span writes)
+			using var diffBgra = new SKBitmap(new SKImageInfo(width, height, SKColorType.Bgra8888));
+			using var diffPixmap = diffBgra.PeekPixels();
 			var diffPixels = diffPixmap.GetPixelSpan<SKColor>();
 
 			for (var idx = 0; idx < totalPixels; idx++)
@@ -620,7 +621,12 @@ namespace SkiaSharp.Extended
 				diffPixels[idx] = (r + g + b) > 0 ? SKColors.White : SKColors.Black;
 			}
 
-			return SKImage.FromBitmap(diffBitmap);
+			// Convert to platform color type so the returned image has the expected layout
+			var resultBitmap = new SKBitmap(new SKImageInfo(width, height));
+			using (var canvas = new SKCanvas(resultBitmap))
+				canvas.DrawBitmap(diffBgra, 0, 0);
+
+			return SKImage.FromBitmap(resultBitmap);
 		}
 
 		/// <summary>
@@ -690,8 +696,9 @@ namespace SkiaSharp.Extended
 			using var secondPixmap = secondBitmap.PeekPixels();
 			var secondPixels = secondPixmap.GetPixelSpan<SKColor>();
 
-			var diffBitmap = new SKBitmap(new SKImageInfo(width, height, SKColorType.Bgra8888));
-			using var diffPixmap = diffBitmap.PeekPixels();
+			// Build diff in BGRA8888 (matches SKColor memory layout for raw span writes)
+			using var diffBgra = new SKBitmap(new SKImageInfo(width, height, SKColorType.Bgra8888));
+			using var diffPixmap = diffBgra.PeekPixels();
 			var diffPixels = diffPixmap.GetPixelSpan<SKColor>();
 
 			for (var idx = 0; idx < totalPixels; idx++)
@@ -706,7 +713,12 @@ namespace SkiaSharp.Extended
 				diffPixels[idx] = new SKColor(r, g, b);
 			}
 
-			return SKImage.FromBitmap(diffBitmap);
+			// Convert to platform color type so the returned image has the expected layout
+			var resultBitmap = new SKBitmap(new SKImageInfo(width, height));
+			using (var canvas = new SKCanvas(resultBitmap))
+				canvas.DrawBitmap(diffBgra, 0, 0);
+
+			return SKImage.FromBitmap(resultBitmap);
 		}
 
 		private static void ValidateMask(SKImage first, SKImage mask)
