@@ -95,20 +95,22 @@ A tolerance of `0` is equivalent to the standard comparison. The maximum possibl
 
 ### Per-Channel Tolerance Mode
 
-You can also apply tolerance independently to each channel using the `tolerancePerChannel` parameter. In this mode, each channel is checked separately — only channels that exceed the tolerance contribute to the error metrics:
+You can also apply tolerance independently to each channel using `SKPixelComparerOptions`. In this mode, each channel is checked separately — only channels that exceed the tolerance contribute to the error metrics:
 
 ```csharp
 // Per-channel: ignore channels where the individual difference is 5 or less
-var result = SKPixelComparer.Compare(expected, actual, tolerance: 5, tolerancePerChannel: true);
+var options = new SKPixelComparerOptions { TolerancePerChannel = true };
+var result = SKPixelComparer.Compare(expected, actual, tolerance: 5, options);
 ```
 
 This behaves like a mask where every pixel has the same tolerance value per channel. A pixel is counted as an error only if at least one channel exceeds the tolerance.
 
-The same `tolerancePerChannel` parameter is available for mask-based comparison. When `false`, the mask comparison uses sum-based semantics (the sum of channel differences is checked against the sum of the mask's channel values):
+The same option is available for mask-based comparison. When `TolerancePerChannel` is `false`, the mask comparison uses sum-based semantics (the sum of channel differences is checked against the sum of the mask's channel values):
 
 ```csharp
 // Mask with sum-based semantics
-var result = SKPixelComparer.Compare(expected, actual, mask, tolerancePerChannel: false);
+var options = new SKPixelComparerOptions { TolerancePerChannel = false };
+var result = SKPixelComparer.Compare(expected, actual, mask, options);
 ```
 
 ## Comparison Options

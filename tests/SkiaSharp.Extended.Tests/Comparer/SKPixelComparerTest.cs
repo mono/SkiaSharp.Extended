@@ -443,7 +443,7 @@ namespace SkiaSharp.Extended.Tests
 			using var first = CreateTestImage(firstColor);
 			using var second = CreateTestImage(secondColor);
 
-			var result = SKPixelComparer.Compare(first, second, tolerance, tolerancePerChannel: true);
+			var result = SKPixelComparer.Compare(first, second, tolerance, new SKPixelComparerOptions { TolerancePerChannel = true });
 
 			Assert.Equal(expectedErrorPixels, result.ErrorPixelCount);
 		}
@@ -456,11 +456,11 @@ namespace SkiaSharp.Extended.Tests
 			using var second = CreateTestImage(0xFF010203);
 
 			// Sum-based: tolerance=5, sum(6) > 5 → error
-			var sumResult = SKPixelComparer.Compare(first, second, 5, tolerancePerChannel: false);
+			var sumResult = SKPixelComparer.Compare(first, second, 5, new SKPixelComparerOptions { TolerancePerChannel = false });
 			Assert.Equal(25, sumResult.ErrorPixelCount);
 
 			// Per-channel: tolerance=5, each channel (1,2,3) ≤ 5 → no error
-			var perChResult = SKPixelComparer.Compare(first, second, 5, tolerancePerChannel: true);
+			var perChResult = SKPixelComparer.Compare(first, second, 5, new SKPixelComparerOptions { TolerancePerChannel = true });
 			Assert.Equal(0, perChResult.ErrorPixelCount);
 		}
 
@@ -472,7 +472,7 @@ namespace SkiaSharp.Extended.Tests
 			using var second = CreateTestImage(0xFF01020A);
 
 			// Per-channel with tolerance=5: R(1)≤5, G(2)≤5, B(10)>5 → only B counted
-			var result = SKPixelComparer.Compare(first, second, 5, tolerancePerChannel: true);
+			var result = SKPixelComparer.Compare(first, second, 5, new SKPixelComparerOptions { TolerancePerChannel = true });
 			Assert.Equal(25, result.ErrorPixelCount);
 			Assert.Equal(10 * 25, result.AbsoluteError);
 			Assert.Equal((long)10 * 10 * 25, result.SumSquaredError);
@@ -488,11 +488,11 @@ namespace SkiaSharp.Extended.Tests
 			// Mask with per-channel values (2,2,2) → sum = 6
 			// Per-channel (default): R(1)≤2 skip, G(2)≤2 skip, B(3)>2 count → error
 			using var mask = CreateTestImage(0xFF020202);
-			var perChResult = SKPixelComparer.Compare(first, second, mask, tolerancePerChannel: true);
+			var perChResult = SKPixelComparer.Compare(first, second, mask, new SKPixelComparerOptions { TolerancePerChannel = true });
 			Assert.Equal(25, perChResult.ErrorPixelCount);
 
 			// Sum mode: sum(6) > maskSum(6) → false, no error
-			var sumResult = SKPixelComparer.Compare(first, second, mask, tolerancePerChannel: false);
+			var sumResult = SKPixelComparer.Compare(first, second, mask, new SKPixelComparerOptions { TolerancePerChannel = false });
 			Assert.Equal(0, sumResult.ErrorPixelCount);
 		}
 
@@ -625,17 +625,19 @@ namespace SkiaSharp.Extended.Tests
 		}
 
 		[Fact]
-		public void TolerancePerChannelWithOptionsMatchesBoolOverload()
+		public void TolerancePerChannelOptionControlsBehavior()
 		{
+			// ΔR=5, ΔG=5, ΔB=5, sum=15
 			using var first = CreateTestImage(0xFF102030);
 			using var second = CreateTestImage(0xFF152535);
 
-			var boolResult = SKPixelComparer.Compare(first, second, 3, true);
-			var optsResult = SKPixelComparer.Compare(first, second, 3, new SKPixelComparerOptions { TolerancePerChannel = true });
+			var perCh = SKPixelComparer.Compare(first, second, 5, new SKPixelComparerOptions { TolerancePerChannel = true });
+			var sum = SKPixelComparer.Compare(first, second, 5, new SKPixelComparerOptions { TolerancePerChannel = false });
 
-			Assert.Equal(boolResult.AbsoluteError, optsResult.AbsoluteError);
-			Assert.Equal(boolResult.ErrorPixelCount, optsResult.ErrorPixelCount);
-			Assert.Equal(boolResult.SumSquaredError, optsResult.SumSquaredError);
+			// Per-channel: each channel exactly at tolerance → no error
+			Assert.Equal(0, perCh.ErrorPixelCount);
+			// Sum: 15 > 5 → error
+			Assert.Equal(25, sum.ErrorPixelCount);
 		}
 
 		[Fact]
