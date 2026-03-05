@@ -112,7 +112,7 @@ File.WriteAllBytes(&quot;diff-mask.png&quot;, data.ToArray());
 </code></pre>
 <p>The mask is a black-and-white image where <strong>white pixels</strong> indicate differences and <strong>black pixels</strong> indicate matching areas.</p>
 <h2 id="how-it-works">How It Works</h2>
-<p>The comparer normalizes both images to BGRA8888 format, then walks through every pixel and computes per-channel differences:</p>
+<p>The comparer normalizes both images to BGRA8888 unpremultiplied format, then walks through every pixel and computes per-channel differences:</p>
 <ol>
 <li>For each pixel, compute per-channel differences: <code>ΔR = |R₁ − R₂|</code>, <code>ΔG = |G₁ − G₂|</code>, <code>ΔB = |B₁ − B₂|</code></li>
 <li>If the sum <code>ΔR + ΔG + ΔB</code> is greater than zero, that pixel is counted as an error</li>
@@ -382,7 +382,7 @@ public void UI_MatchesBaseline_WithTolerance()
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #374 · 1d3caad
+          source: PR #374 · 249d412
         </div>
       </div>
     </footer>
