@@ -1,4 +1,6 @@
-﻿namespace SkiaSharp.Extended
+﻿#nullable enable
+
+namespace SkiaSharp.Extended
 {
 	/// <summary>
 	/// Options for configuring pixel-by-pixel image comparison behavior.
