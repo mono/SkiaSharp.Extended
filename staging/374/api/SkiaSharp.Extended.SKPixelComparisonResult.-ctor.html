@@ -200,6 +200,51 @@
 
 
 
+<a id="SkiaSharp_Extended_SKPixelComparisonResult__ctor_" data-uid="SkiaSharp.Extended.SKPixelComparisonResult.#ctor*"></a>
+
+<h3 id="SkiaSharp_Extended_SKPixelComparisonResult__ctor_System_Int32_System_Int32_System_Int32_System_Int64_System_Int32_" data-uid="SkiaSharp.Extended.SKPixelComparisonResult.#ctor(System.Int32,System.Int32,System.Int32,System.Int64,System.Int32)">
+  SKPixelComparisonResult(int, int, int, long, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/374/merge/source/SkiaSharp.Extended/Comparer/SKPixelComparisonResult.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Initializes a new instance of <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a>.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public SKPixelComparisonResult(int totalPixels, int errorPixelCount, int absoluteError, long sumSquaredError, int channelCount)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>totalPixels</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The total number of pixels compared.</p>
+</dd>
+  <dt><code>errorPixelCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The number of pixels that differ between the two images.</p>
+</dd>
+  <dt><code>absoluteError</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The sum of per-channel differences across all pixels.</p>
+</dd>
+  <dt><code>sumSquaredError</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+  <dd><p>The sum of per-channel squared differences across all pixels.</p>
+</dd>
+  <dt><code>channelCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>The number of channels compared (3 for RGB, 4 for RGBA).</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
 </article>
 
         <div class="contribution d-print-none">
@@ -219,7 +264,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #374 · 646c741
+          source: PR #374 · ea78562
         </div>
       </div>
     </footer>

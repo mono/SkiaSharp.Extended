@@ -992,6 +992,7 @@ The [`SKPixelComparisonResult`](xref:SkiaSharp.Extended.SKPixelComparisonResult)
 | `ErrorPixelPercentage` | `double` | `ErrorPixelCount / TotalPixels` |
 | `AbsoluteError` | `int` | Sum of all per-channel differences |
 | `SumSquaredError` | `long` | Sum of all per-channel squared differences |
+| `ChannelCount` | `int` | Number of channels compared (3 for RGB, 4 for RGBA) |
 | `MeanAbsoluteError` | `double` | Average absolute error per channel (range: 0–255) |
 | `MeanSquaredError` | `double` | Average squared error per channel (range: 0–65025) |
 | `RootMeanSquaredError` | `double` | Square root of MSE (range: 0–255) |
@@ -1045,6 +1046,54 @@ The same `tolerancePerChannel` parameter is available for mask-based comparison.
 ```csharp
 // Mask with sum-based semantics
 var result = SKPixelComparer.Compare(expected, actual, mask, tolerancePerChannel: false);
+```
+
+## Comparison Options
+
+For more control over comparison behavior, use [`SKPixelComparerOptions`](xref:SkiaSharp.Extended.SKPixelComparerOptions):
+
+```csharp
+var options = new SKPixelComparerOptions
+{
+    TolerancePerChannel = true,  // Check each channel independently (default: true)
+    CompareAlpha = true          // Include alpha channel in comparison (default: false)
+};
+
+var result = SKPixelComparer.Compare(expected, actual, options);
+```
+
+| Property | Type | Default | Description |
+| :------- | :--- | :------ | :---------- |
+| `TolerancePerChannel` | `bool` | `true` | When `true`, each channel is checked independently against the tolerance. When `false`, the sum of per-channel differences is used. |
+| `CompareAlpha` | `bool` | `false` | When `true`, the alpha channel is included in all error calculations and metrics. |
+
+Options can be used with all comparison modes:
+
+```csharp
+// Base comparison with alpha
+var result = SKPixelComparer.Compare(expected, actual, options);
+
+// Tolerance-based with options
+var result = SKPixelComparer.Compare(expected, actual, tolerance: 10, options);
+
+// Mask-based with options
+var result = SKPixelComparer.Compare(expected, actual, mask, options);
+```
+
+### Alpha Channel Comparison
+
+By default, only RGB channels are compared. Set `CompareAlpha = true` to include the alpha channel in difference detection and error metrics. When enabled:
+
+- Alpha differences contribute to `AbsoluteError`, `SumSquaredError`, and all derived metrics
+- The `ChannelCount` in the result is set to 4 (instead of 3), so MAE and MSE are normalized per 4 channels
+- Tolerance and mask thresholds apply to the alpha channel as well
+
+```csharp
+var options = new SKPixelComparerOptions { CompareAlpha = true };
+
+var result = SKPixelComparer.Compare(expected, actual, options);
+Console.WriteLine($"Channels compared: {result.ChannelCount}"); // 4
+Console.WriteLine($"MAE: {result.MeanAbsoluteError}"); // Normalized over RGBA
 ```
 
 ## Input Overloads
@@ -1132,6 +1181,7 @@ if (result.ErrorPixelCount > 0)
 
 - [API Reference — SKPixelComparer](xref:SkiaSharp.Extended.SKPixelComparer) — Full method documentation
 - [API Reference — SKPixelComparisonResult](xref:SkiaSharp.Extended.SKPixelComparisonResult) — Result class documentation
+- [API Reference — SKPixelComparerOptions](xref:SkiaSharp.Extended.SKPixelComparerOptions) — Options class documentation
 
 
 ---

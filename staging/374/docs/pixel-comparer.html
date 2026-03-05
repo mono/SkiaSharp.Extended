@@ -157,6 +157,11 @@ File.WriteAllBytes(&quot;diff-mask.png&quot;, data.ToArray());
 <td style="text-align: left;">Sum of all per-channel squared differences</td>
 </tr>
 <tr>
+<td style="text-align: left;"><code>ChannelCount</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Number of channels compared (3 for RGB, 4 for RGBA)</td>
+</tr>
+<tr>
 <td style="text-align: left;"><code>MeanAbsoluteError</code></td>
 <td style="text-align: left;"><code>double</code></td>
 <td style="text-align: left;">Average absolute error per channel (range: 0–255)</td>
@@ -211,6 +216,63 @@ var result = SKPixelComparer.Compare(expected, actual, tolerance: 5, tolerancePe
 <p>The same <code>tolerancePerChannel</code> parameter is available for mask-based comparison. When <code>false</code>, the mask comparison uses sum-based semantics (the sum of channel differences is checked against the sum of the mask's channel values):</p>
 <pre><code class="lang-csharp">// Mask with sum-based semantics
 var result = SKPixelComparer.Compare(expected, actual, mask, tolerancePerChannel: false);
+</code></pre>
+<h2 id="comparison-options">Comparison Options</h2>
+<p>For more control over comparison behavior, use <a class="xref" href="../api/SkiaSharp.Extended.SKPixelComparerOptions.html"><code>SKPixelComparerOptions</code></a>:</p>
+<pre><code class="lang-csharp">var options = new SKPixelComparerOptions
+{
+    TolerancePerChannel = true,  // Check each channel independently (default: true)
+    CompareAlpha = true          // Include alpha channel in comparison (default: false)
+};
+
+var result = SKPixelComparer.Compare(expected, actual, options);
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>TolerancePerChannel</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;"><code>true</code></td>
+<td style="text-align: left;">When <code>true</code>, each channel is checked independently against the tolerance. When <code>false</code>, the sum of per-channel differences is used.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>CompareAlpha</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;"><code>false</code></td>
+<td style="text-align: left;">When <code>true</code>, the alpha channel is included in all error calculations and metrics.</td>
+</tr>
+</tbody>
+</table>
+<p>Options can be used with all comparison modes:</p>
+<pre><code class="lang-csharp">// Base comparison with alpha
+var result = SKPixelComparer.Compare(expected, actual, options);
+
+// Tolerance-based with options
+var result = SKPixelComparer.Compare(expected, actual, tolerance: 10, options);
+
+// Mask-based with options
+var result = SKPixelComparer.Compare(expected, actual, mask, options);
+</code></pre>
+<h3 id="alpha-channel-comparison">Alpha Channel Comparison</h3>
+<p>By default, only RGB channels are compared. Set <code>CompareAlpha = true</code> to include the alpha channel in difference detection and error metrics. When enabled:</p>
+<ul>
+<li>Alpha differences contribute to <code>AbsoluteError</code>, <code>SumSquaredError</code>, and all derived metrics</li>
+<li>The <code>ChannelCount</code> in the result is set to 4 (instead of 3), so MAE and MSE are normalized per 4 channels</li>
+<li>Tolerance and mask thresholds apply to the alpha channel as well</li>
+</ul>
+<pre><code class="lang-csharp">var options = new SKPixelComparerOptions { CompareAlpha = true };
+
+var result = SKPixelComparer.Compare(expected, actual, options);
+Console.WriteLine($&quot;Channels compared: {result.ChannelCount}&quot;); // 4
+Console.WriteLine($&quot;MAE: {result.MeanAbsoluteError}&quot;); // Normalized over RGBA
 </code></pre>
 <h2 id="input-overloads">Input Overloads</h2>
 <p>All comparison methods accept multiple input types for convenience:</p>
@@ -295,6 +357,7 @@ public void UI_MatchesBaseline_WithTolerance()
 <ul>
 <li><a class="xref" href="../api/SkiaSharp.Extended.SKPixelComparer.html">API Reference — SKPixelComparer</a> — Full method documentation</li>
 <li><a class="xref" href="../api/SkiaSharp.Extended.SKPixelComparisonResult.html">API Reference — SKPixelComparisonResult</a> — Result class documentation</li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKPixelComparerOptions.html">API Reference — SKPixelComparerOptions</a> — Options class documentation</li>
 </ul>
 
 </article>
@@ -317,7 +380,7 @@ public void UI_MatchesBaseline_WithTolerance()
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #374 · 646c741
+          source: PR #374 · ea78562
         </div>
       </div>
     </footer>
