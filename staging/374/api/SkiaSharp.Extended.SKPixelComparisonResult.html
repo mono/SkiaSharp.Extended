@@ -179,19 +179,20 @@
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelPercentage.html#SkiaSharp_Extended_SKPixelComparisonResult_ErrorPixelPercentage">ErrorPixelPercentage</a></dt>
-    <dd><p>Gets the ratio of differing pixels to total pixels (0.0 to 1.0).</p>
+    <dd><p>Gets the ratio of differing pixels to total pixels (0.0 to 1.0).
+Returns 0 if <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> is 0.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.MeanAbsoluteError.html#SkiaSharp_Extended_SKPixelComparisonResult_MeanAbsoluteError">MeanAbsoluteError</a></dt>
     <dd><p>Gets the mean absolute error per channel, computed as <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError.html#SkiaSharp_Extended_SKPixelComparisonResult_AbsoluteError">AbsoluteError</a> / (<a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> × 3).
-Range: 0 (identical) to 255 (maximum difference).</p>
+Range: 0 (identical) to 255 (maximum difference). Returns 0 if <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> is 0.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_MeanSquaredError">MeanSquaredError</a></dt>
     <dd><p>Gets the mean squared error per channel, computed as <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.SumSquaredError.html#SkiaSharp_Extended_SKPixelComparisonResult_SumSquaredError">SumSquaredError</a> / (<a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> × 3).
-Range: 0 (identical) to 65025 (maximum difference).</p>
+Range: 0 (identical) to 65025 (maximum difference). Returns 0 if <a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html#SkiaSharp_Extended_SKPixelComparisonResult_TotalPixels">TotalPixels</a> is 0.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -244,7 +245,7 @@ Range: 0 (identical) to 255 (maximum difference).</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #374 · ec438bd
+          source: PR #374 · 646c741
         </div>
       </div>
     </footer>

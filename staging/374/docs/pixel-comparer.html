@@ -112,11 +112,12 @@ File.WriteAllBytes(&quot;diff-mask.png&quot;, data.ToArray());
 </code></pre>
 <p>The mask is a black-and-white image where <strong>white pixels</strong> indicate differences and <strong>black pixels</strong> indicate matching areas.</p>
 <h2 id="how-it-works">How It Works</h2>
-<p>The comparer normalizes both images to BGRA8888 format, then walks through every pixel and sums the per-channel (red, green, blue) absolute differences:</p>
+<p>The comparer normalizes both images to BGRA8888 format, then walks through every pixel and computes per-channel differences:</p>
 <ol>
-<li>For each pixel, compute <code>|R₁ − R₂| + |G₁ − G₂| + |B₁ − B₂|</code></li>
-<li>If the sum is greater than zero, that pixel is counted as an error</li>
-<li>The total per-pixel sums are accumulated into <code>AbsoluteError</code></li>
+<li>For each pixel, compute per-channel differences: <code>ΔR = |R₁ − R₂|</code>, <code>ΔG = |G₁ − G₂|</code>, <code>ΔB = |B₁ − B₂|</code></li>
+<li>If the sum <code>ΔR + ΔG + ΔB</code> is greater than zero, that pixel is counted as an error</li>
+<li>The per-pixel sums are accumulated into <code>AbsoluteError</code></li>
+<li>The per-channel squared differences (<code>ΔR² + ΔG² + ΔB²</code>) are accumulated into <code>SumSquaredError</code>, which drives the MSE, RMSE, NRMSE, and PSNR metrics</li>
 </ol>
 <p>Both images must have the same dimensions; otherwise an <code>InvalidOperationException</code> is thrown.</p>
 <h2 id="comparison-results">Comparison Results</h2>
@@ -193,13 +194,24 @@ var result = SKPixelComparer.Compare(expected, actual, mask);
 </code></pre>
 <p>For example, if a mask pixel has RGB values of <code>(10, 10, 10)</code>, differences of up to 10 per channel at that location are ignored. This lets you define region-specific tolerances.</p>
 <h2 id="tolerance-based-comparison">Tolerance-Based Comparison</h2>
-<p>For a simpler approach than mask-based comparison, you can specify a uniform per-pixel tolerance threshold (similar to ImageMagick's &quot;fuzz&quot; parameter). The tolerance is the maximum allowed sum of per-channel differences (<code>|ΔR| + |ΔG| + |ΔB|</code>) per pixel:</p>
+<p>For a simpler approach than mask-based comparison, you can specify a uniform per-pixel tolerance threshold (similar to ImageMagick's &quot;fuzz&quot; parameter). By default, the tolerance is the maximum allowed sum of per-channel differences (<code>|ΔR| + |ΔG| + |ΔB|</code>) per pixel:</p>
 <pre><code class="lang-csharp">// Ignore pixels where the total RGB difference is 10 or less
 var result = SKPixelComparer.Compare(expected, actual, tolerance: 10);
 
 Console.WriteLine($&quot;Pixels exceeding tolerance: {result.ErrorPixelCount}&quot;);
 </code></pre>
+<p>When a pixel falls within tolerance, it is completely excluded from <strong>all</strong> metrics — not just <code>ErrorPixelCount</code>, but also <code>AbsoluteError</code>, <code>SumSquaredError</code>, and all derived metrics (MAE, MSE, RMSE, NRMSE, PSNR).</p>
 <p>A tolerance of <code>0</code> is equivalent to the standard comparison. The maximum possible per-pixel difference is 765 (255 × 3 channels).</p>
+<h3 id="per-channel-tolerance-mode">Per-Channel Tolerance Mode</h3>
+<p>You can also apply tolerance independently to each channel using the <code>tolerancePerChannel</code> parameter. In this mode, each channel is checked separately — only channels that exceed the tolerance contribute to the error metrics:</p>
+<pre><code class="lang-csharp">// Per-channel: ignore channels where the individual difference is 5 or less
+var result = SKPixelComparer.Compare(expected, actual, tolerance: 5, tolerancePerChannel: true);
+</code></pre>
+<p>This behaves like a mask where every pixel has the same tolerance value per channel. A pixel is counted as an error only if at least one channel exceeds the tolerance.</p>
+<p>The same <code>tolerancePerChannel</code> parameter is available for mask-based comparison. When <code>false</code>, the mask comparison uses sum-based semantics (the sum of channel differences is checked against the sum of the mask's channel values):</p>
+<pre><code class="lang-csharp">// Mask with sum-based semantics
+var result = SKPixelComparer.Compare(expected, actual, mask, tolerancePerChannel: false);
+</code></pre>
 <h2 id="input-overloads">Input Overloads</h2>
 <p>All comparison methods accept multiple input types for convenience:</p>
 <table>
@@ -228,7 +240,7 @@ Console.WriteLine($&quot;Pixels exceeding tolerance: {result.ErrorPixelCount}&qu
 </tr>
 </tbody>
 </table>
-<p>The same overloads are available for <code>GenerateDifferenceMask</code> (without mask support) and for the three-argument masked <code>Compare</code>.</p>
+<p>The same input type overloads are available for <code>GenerateDifferenceMask</code>, <code>GenerateDifferenceImage</code>, mask-based <code>Compare</code>, and tolerance-based <code>Compare</code>.</p>
 <h3 id="generate-a-difference-image">Generate a difference image</h3>
 <p>Unlike the binary black-and-white mask, <code>GenerateDifferenceImage</code> produces a full-color visualization of per-channel differences:</p>
 <pre><code class="lang-csharp">using var diff = SKPixelComparer.GenerateDifferenceImage(&quot;expected.png&quot;, &quot;actual.png&quot;);
@@ -305,7 +317,7 @@ public void UI_MatchesBaseline_WithTolerance()
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #374 · ec438bd
+          source: PR #374 · 646c741
         </div>
       </div>
     </footer>
