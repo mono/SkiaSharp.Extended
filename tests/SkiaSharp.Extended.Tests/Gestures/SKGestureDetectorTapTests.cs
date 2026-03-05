@@ -118,7 +118,7 @@ public class SKGestureDetectorTapTests
 	public async Task LongTouch_RaisesLongPressDetected()
 	{
 		var engine = new SKGestureDetector();
-		engine.Options.LongPressDuration = 100; // Short duration for testing
+		engine.Options.LongPressDuration = TimeSpan.FromMilliseconds(100); // Short duration for testing
 		var longPressRaised = false;
 		engine.LongPressDetected += (s, e) => longPressRaised = true;
 
@@ -133,7 +133,7 @@ public class SKGestureDetectorTapTests
 	public async Task LongPress_DoesNotRaiseTapOnRelease()
 	{
 		var engine = new SKGestureDetector();
-		engine.Options.LongPressDuration = 100;
+		engine.Options.LongPressDuration = TimeSpan.FromMilliseconds(100);
 		var tapRaised = false;
 		var longPressRaised = false;
 		engine.TapDetected += (s, e) => tapRaised = true;
@@ -152,7 +152,7 @@ public class SKGestureDetectorTapTests
 	public async Task LongPressDuration_CanBeCustomized()
 	{
 		var engine = new SKGestureDetector();
-		engine.Options.LongPressDuration = 300;
+		engine.Options.LongPressDuration = TimeSpan.FromMilliseconds(300);
 		var longPressRaised = false;
 		engine.LongPressDetected += (s, e) => longPressRaised = true;
 
@@ -200,5 +200,34 @@ public class SKGestureDetectorTapTests
 		Assert.False(tapRaised, "Touch held too long should not fire tap");
 	}
 
+	[Fact]
+	public void TapThenPinchThenTap_DoesNotFireDoubleTap()
+	{
+		// Bug fix: _tapCount was not cleared when entering Pinching state, causing
+		// a false DoubleTapDetected on the subsequent single tap.
+		var engine = CreateEngine();
+		var doubleTapRaised = false;
+		engine.DoubleTapDetected += (s, e) => doubleTapRaised = true;
+
+		// First tap
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		// Immediately start a pinch (within double-tap time window)
+		AdvanceTime(100); // < 300ms double-tap delay
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchDown(2, new SKPoint(200, 100));
+		engine.ProcessTouchMove(1, new SKPoint(80, 100));
+		engine.ProcessTouchMove(2, new SKPoint(220, 100));
+		engine.ProcessTouchUp(2, new SKPoint(220, 100));
+		engine.ProcessTouchUp(1, new SKPoint(80, 100));
+
+		// Third tap shortly after pinch completes (still within original 300ms window from first tap)
+		AdvanceTime(50);
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		Assert.False(doubleTapRaised, "DoubleTapDetected must not fire after tap → pinch → single tap sequence");
+	}
 
 }

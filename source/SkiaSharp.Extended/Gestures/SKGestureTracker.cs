@@ -472,8 +472,8 @@ public sealed class SKGestureTracker : IDisposable
 		_zoomTimer = new Timer(
 			OnZoomTimerTick,
 			token,
-			Options.ZoomAnimationInterval,
-			Options.ZoomAnimationInterval);
+			(int)Options.ZoomAnimationInterval.TotalMilliseconds,
+			(int)Options.ZoomAnimationInterval.TotalMilliseconds);
 	}
 
 	/// <summary>Stops any active zoom animation immediately.</summary>
@@ -669,7 +669,7 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEnginePinchDetected(object? s, SKPinchGestureEventArgs e)
 	{
-		if (IsPinchEnabled || IsPanEnabled)
+		if (IsPinchEnabled)
 			PinchDetected?.Invoke(this, e);
 
 		// Apply center movement as pan
@@ -804,8 +804,8 @@ public sealed class SKGestureTracker : IDisposable
 		_flingTimer = new Timer(
 			OnFlingTimerTick,
 			token,
-			Options.FlingFrameInterval,
-			Options.FlingFrameInterval);
+			(int)Options.FlingFrameInterval.TotalMilliseconds,
+			(int)Options.FlingFrameInterval.TotalMilliseconds);
 	}
 
 	private void OnFlingTimerTick(object? state)
@@ -853,7 +853,7 @@ public sealed class SKGestureTracker : IDisposable
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 
 		// Apply time-scaled friction so deceleration is consistent regardless of frame rate
-		var nominalDtMs = (float)Options.FlingFrameInterval;
+		var nominalDtMs = (float)Options.FlingFrameInterval.TotalMilliseconds;
 		var decay = nominalDtMs > 0
 			? (float)Math.Pow(1.0 - Options.FlingFriction, actualDtMs / nominalDtMs)
 			: 1f - Options.FlingFriction;
@@ -900,7 +900,7 @@ public sealed class SKGestureTracker : IDisposable
 			return;
 
 		var elapsed = TimeProvider() - _zoomStartTicks;
-		var duration = Options.ZoomAnimationDuration * TimeSpan.TicksPerMillisecond;
+		var duration = Options.ZoomAnimationDuration.Ticks;
 		var t = duration > 0 ? Math.Min(1.0, (double)elapsed / duration) : 1.0;
 
 		// CubicOut easing: 1 - (1 - t)^3

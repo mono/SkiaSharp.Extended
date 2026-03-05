@@ -749,7 +749,7 @@ public class SKGestureDetectorTests
 	public void Options_LongPressDuration_ZeroOrNegative_Throws(int value)
 	{
 		var options = new SKGestureDetectorOptions();
-		Assert.Throws<ArgumentOutOfRangeException>(() => options.LongPressDuration = value);
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.LongPressDuration = TimeSpan.FromMilliseconds(value));
 	}
 
 	[Fact]
@@ -766,14 +766,14 @@ public class SKGestureDetectorTests
 			TouchSlop = 16f,
 			DoubleTapSlop = 80f,
 			FlingThreshold = 400f,
-			LongPressDuration = 1000,
+			LongPressDuration = TimeSpan.FromSeconds(1),
 		};
 		var engine = new SKGestureDetector(options);
 
 		Assert.Equal(16f, engine.Options.TouchSlop);
 		Assert.Equal(80f, engine.Options.DoubleTapSlop);
 		Assert.Equal(400f, engine.Options.FlingThreshold);
-		Assert.Equal(1000, engine.Options.LongPressDuration);
+		Assert.Equal(TimeSpan.FromSeconds(1), engine.Options.LongPressDuration);
 	}
 
 
@@ -929,7 +929,7 @@ public class SKGestureDetectorTests
 		// Regression: StartLongPressTimer() was called for every ProcessTouchDown,
 		// including the 2nd finger, resetting the long-press timer during pinch start.
 		var engine = CreateEngine();
-		engine.Options.LongPressDuration = 200; // Short for test
+		engine.Options.LongPressDuration = TimeSpan.FromMilliseconds(200); // Short for test
 
 		var longPressCount = 0;
 		engine.LongPressDetected += (s, e) => longPressCount++;

@@ -380,8 +380,8 @@ public class SKGestureTrackerTests
 	public void LongPressDuration_ForwardedToEngine()
 	{
 		var tracker = CreateTracker();
-		tracker.Options.LongPressDuration = 200;
-		Assert.Equal(200, tracker.Options.LongPressDuration);
+		tracker.Options.LongPressDuration = TimeSpan.FromMilliseconds(200);
+		Assert.Equal(TimeSpan.FromMilliseconds(200), tracker.Options.LongPressDuration);
 	}
 
 
@@ -700,7 +700,7 @@ public class SKGestureTrackerTests
 	public void Options_FlingFrameInterval_ZeroOrNegative_Throws(int value)
 	{
 		var options = new SKGestureTrackerOptions();
-		Assert.Throws<ArgumentOutOfRangeException>(() => options.FlingFrameInterval = value);
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.FlingFrameInterval = TimeSpan.FromMilliseconds(value));
 	}
 
 	[Theory]
@@ -709,22 +709,22 @@ public class SKGestureTrackerTests
 	public void Options_ZoomAnimationInterval_ZeroOrNegative_Throws(int value)
 	{
 		var options = new SKGestureTrackerOptions();
-		Assert.Throws<ArgumentOutOfRangeException>(() => options.ZoomAnimationInterval = value);
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.ZoomAnimationInterval = TimeSpan.FromMilliseconds(value));
 	}
 
 	[Fact]
 	public void Options_ZoomAnimationInterval_DefaultIs16()
 	{
 		var options = new SKGestureTrackerOptions();
-		Assert.Equal(16, options.ZoomAnimationInterval);
+		Assert.Equal(TimeSpan.FromMilliseconds(16), options.ZoomAnimationInterval);
 	}
 
 	[Fact]
 	public void Options_ZoomAnimationInterval_AcceptsPositiveValue()
 	{
 		var options = new SKGestureTrackerOptions();
-		options.ZoomAnimationInterval = 33;
-		Assert.Equal(33, options.ZoomAnimationInterval);
+		options.ZoomAnimationInterval = TimeSpan.FromMilliseconds(33);
+		Assert.Equal(TimeSpan.FromMilliseconds(33), options.ZoomAnimationInterval);
 	}
 
 	[Fact]
@@ -939,7 +939,7 @@ public class SKGestureTrackerTests
 		var tracker = CreateTracker();
 		tracker.Options.FlingFriction = 0.001f; // Near-zero friction so fling persists
 		tracker.Options.FlingMinVelocity = 1f;
-		tracker.Options.FlingFrameInterval = 1000; // Slow timer — won't fire during test
+		tracker.Options.FlingFrameInterval = TimeSpan.FromSeconds(1); // Slow timer — won't fire during test
 
 		var flingCompletedCount = 0;
 		tracker.FlingCompleted += (s, e) => flingCompletedCount++;
@@ -1102,6 +1102,55 @@ public class SKGestureTrackerTests
 		Assert.True(pinchFired);
 		// Pan during pinch should also update offset
 		Assert.NotEqual(SKPoint.Empty, tracker.Offset);
+	}
+
+	[Fact]
+	public void IsPinchEnabled_False_PanEnabled_True_PinchDetected_NotRaised()
+	{
+		// Bug fix: PinchDetected was incorrectly raised when only IsPanEnabled=true
+		var tracker = CreateTracker();
+		tracker.IsPinchEnabled = false;
+		tracker.IsPanEnabled = true;
+		var pinchFired = false;
+		tracker.PinchDetected += (s, e) => pinchFired = true;
+
+		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
+		tracker.ProcessTouchDown(2, new SKPoint(200, 100));
+		tracker.ProcessTouchMove(1, new SKPoint(50, 100));
+		tracker.ProcessTouchMove(2, new SKPoint(250, 100));
+
+		Assert.False(pinchFired, "PinchDetected must not fire when IsPinchEnabled is false");
+	}
+
+	[Fact]
+	public void SetScaleRange_SetsMinAndMaxAtomically()
+	{
+		var options = new SKGestureTrackerOptions();
+		options.SetScaleRange(15f, 20f);
+
+		Assert.Equal(15f, options.MinScale);
+		Assert.Equal(20f, options.MaxScale);
+	}
+
+	[Fact]
+	public void SetScaleRange_InvalidOrder_Throws()
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.SetScaleRange(20f, 15f));
+	}
+
+	[Fact]
+	public void SetScaleRange_EqualValues_Throws()
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.SetScaleRange(5f, 5f));
+	}
+
+	[Fact]
+	public void SetScaleRange_NegativeMin_Throws()
+	{
+		var options = new SKGestureTrackerOptions();
+		Assert.Throws<ArgumentOutOfRangeException>(() => options.SetScaleRange(-1f, 10f));
 	}
 
 }

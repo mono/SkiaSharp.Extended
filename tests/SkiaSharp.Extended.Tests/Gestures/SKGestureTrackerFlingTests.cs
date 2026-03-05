@@ -54,7 +54,7 @@ public class SKGestureTrackerFlingTests
 	public async Task Fling_FiresFlingUpdatedEvents()
 	{
 		var tracker = CreateTracker();
-		tracker.Options.FlingFrameInterval = 16;
+		tracker.Options.FlingFrameInterval = TimeSpan.FromMilliseconds(16);
 		var flingUpdatedCount = 0;
 		tracker.FlingUpdated += (s, e) => flingUpdatedCount++;
 
@@ -70,7 +70,7 @@ public class SKGestureTrackerFlingTests
 	public async Task Fling_UpdatesOffset()
 	{
 		var tracker = CreateTracker();
-		tracker.Options.FlingFrameInterval = 16;
+		tracker.Options.FlingFrameInterval = TimeSpan.FromMilliseconds(16);
 		var flingUpdatedFired = false;
 		tracker.FlingUpdated += (s, e) => flingUpdatedFired = true;
 
@@ -118,7 +118,7 @@ public class SKGestureTrackerFlingTests
 	{
 		// Use real TimeProvider so fling frame timing advances with wall-clock time
 		var tracker = new SKGestureTracker();
-		tracker.Options.FlingFrameInterval = 16;
+		tracker.Options.FlingFrameInterval = TimeSpan.FromMilliseconds(16);
 		tracker.Options.FlingFriction = 0.5f;
 		tracker.Options.FlingMinVelocity = 100f;
 		var flingCompleted = false;

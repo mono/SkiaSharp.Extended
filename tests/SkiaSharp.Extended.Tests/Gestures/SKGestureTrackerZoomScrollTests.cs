@@ -52,7 +52,7 @@ public class SKGestureTrackerZoomScrollTests
 	{
 		var tracker = CreateTracker();
 		tracker.Options.DoubleTapZoomFactor = 2f;
-		tracker.Options.ZoomAnimationDuration = 100;
+		tracker.Options.ZoomAnimationDuration = TimeSpan.FromMilliseconds(100);
 
 		SimulateDoubleTap(tracker, new SKPoint(200, 200));
 
@@ -70,7 +70,7 @@ public class SKGestureTrackerZoomScrollTests
 		var tracker = CreateTracker();
 		tracker.Options.DoubleTapZoomFactor = 2f;
 		tracker.Options.MaxScale = 2f;
-		tracker.Options.ZoomAnimationDuration = 100;
+		tracker.Options.ZoomAnimationDuration = TimeSpan.FromMilliseconds(100);
 
 		// First double tap: zoom to 2x
 		SimulateDoubleTap(tracker, new SKPoint(200, 200));
@@ -92,7 +92,7 @@ public class SKGestureTrackerZoomScrollTests
 	public async Task DoubleTap_FiresTransformChanged()
 	{
 		var tracker = CreateTracker();
-		tracker.Options.ZoomAnimationDuration = 100;
+		tracker.Options.ZoomAnimationDuration = TimeSpan.FromMilliseconds(100);
 		var changeCount = 0;
 		tracker.TransformChanged += (s, e) => changeCount++;
 
