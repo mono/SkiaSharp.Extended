@@ -653,5 +653,123 @@ namespace SkiaSharp.Extended.Tests
 			Assert.Equal(50.0 / (100 * 3.0), rgb.MeanAbsoluteError);
 			Assert.Equal(50.0 / (100 * 4.0), rgba.MeanAbsoluteError);
 		}
+
+		[Fact]
+		public void CompareWithOptionsMatchesToleranceZeroWithOptions()
+		{
+			using var first = CreateTestImage(0xFF102030);
+			using var second = CreateTestImage(0xFF152535);
+
+			var opts = new SKPixelComparerOptions { CompareAlpha = true };
+			var optsResult = SKPixelComparer.Compare(first, second, opts);
+			var tolResult = SKPixelComparer.Compare(first, second, 0, opts);
+
+			Assert.Equal(tolResult.AbsoluteError, optsResult.AbsoluteError);
+			Assert.Equal(tolResult.ErrorPixelCount, optsResult.ErrorPixelCount);
+			Assert.Equal(tolResult.SumSquaredError, optsResult.SumSquaredError);
+			Assert.Equal(tolResult.ChannelCount, optsResult.ChannelCount);
+		}
+
+		[Fact]
+		public void CompareAlphaWithToleranceSumBased()
+		{
+			// RGB identical, alpha diff = 10
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xF5000000); // alpha diff = 10
+
+			var opts = new SKPixelComparerOptions { CompareAlpha = true, TolerancePerChannel = false };
+
+			// Sum of diffs = 0 + 0 + 0 + 10 = 10; tolerance 15 → no error
+			var withinResult = SKPixelComparer.Compare(first, second, 15, opts);
+			Assert.Equal(0, withinResult.ErrorPixelCount);
+
+			// tolerance 5 → error (10 > 5)
+			var overResult = SKPixelComparer.Compare(first, second, 5, opts);
+			Assert.Equal(25, overResult.ErrorPixelCount);
+		}
+
+		[Fact]
+		public void CompareAlphaWithMaskSumBased()
+		{
+			// RGB identical, alpha diff = 10
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0xF5000000);
+			// Mask sum = 0+0+0+20 = 20, alpha diff 10 ≤ 20 → no error
+			using var mask = CreateTestImage(0x14000000);
+
+			var opts = new SKPixelComparerOptions { CompareAlpha = true, TolerancePerChannel = false };
+			var result = SKPixelComparer.Compare(first, second, mask, opts);
+			Assert.Equal(0, result.ErrorPixelCount);
+		}
+
+		[Fact]
+		public void CompareWithBitmapsAndOptions()
+		{
+			using var first = new SKBitmap(5, 5);
+			using var second = new SKBitmap(5, 5);
+			first.Erase(new SKColor(0xFF000000));
+			second.Erase(new SKColor(0x80000000));
+
+			var opts = new SKPixelComparerOptions { CompareAlpha = true };
+			var result = SKPixelComparer.Compare(first, second, opts);
+
+			Assert.Equal(25, result.ErrorPixelCount);
+			Assert.Equal(4, result.ChannelCount);
+		}
+
+		[Fact]
+		public void CompareWithPixmapsAndOptions()
+		{
+			using var first = new SKBitmap(5, 5);
+			using var second = new SKBitmap(5, 5);
+			first.Erase(new SKColor(0xFF000000));
+			second.Erase(new SKColor(0x80000000));
+
+			using var firstPx = first.PeekPixels();
+			using var secondPx = second.PeekPixels();
+
+			var opts = new SKPixelComparerOptions { CompareAlpha = true };
+			var result = SKPixelComparer.Compare(firstPx, secondPx, opts);
+
+			Assert.Equal(25, result.ErrorPixelCount);
+			Assert.Equal(4, result.ChannelCount);
+		}
+
+		[Fact]
+		public void CompareAlphaOnlyDiffWithRgbTolerance()
+		{
+			// RGB diff = (5,5,5), alpha diff = 127
+			using var first = CreateTestImage(0xFF000000);
+			using var second = CreateTestImage(0x80050505);
+
+			// Without alpha: tolerance 5 per-channel covers RGB → no error
+			var rgbResult = SKPixelComparer.Compare(first, second, 5, new SKPixelComparerOptions { TolerancePerChannel = true });
+			Assert.Equal(0, rgbResult.ErrorPixelCount);
+
+			// With alpha: RGB within tolerance but alpha (127) exceeds → error
+			var alphaResult = SKPixelComparer.Compare(first, second, 5, new SKPixelComparerOptions { TolerancePerChannel = true, CompareAlpha = true });
+			Assert.Equal(25, alphaResult.ErrorPixelCount);
+		}
+
+		[Fact]
+		public void ToleranceBitmapAndPixmapWithOptions()
+		{
+			using var first = new SKBitmap(5, 5);
+			using var second = new SKBitmap(5, 5);
+			first.Erase(new SKColor(0xFF000000));
+			second.Erase(new SKColor(0xFF030303));
+
+			var opts = new SKPixelComparerOptions { TolerancePerChannel = true };
+
+			// Bitmap overload
+			var bmpResult = SKPixelComparer.Compare(first, second, 3, opts);
+			Assert.Equal(0, bmpResult.ErrorPixelCount);
+
+			// Pixmap overload
+			using var firstPx = first.PeekPixels();
+			using var secondPx = second.PeekPixels();
+			var pxResult = SKPixelComparer.Compare(firstPx, secondPx, 3, opts);
+			Assert.Equal(0, pxResult.ErrorPixelCount);
+		}
 	}
 }
