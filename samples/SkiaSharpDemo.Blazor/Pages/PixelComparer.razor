@@ -26,8 +26,23 @@
         <label class="form-label">Tolerance</label>
         <div class="d-flex align-items-center">
             <input type="range" class="form-range" style="width: 150px"
-                   min="0" max="765" @bind="tolerance" @bind:event="oninput" @bind:after="OnToleranceChanged" />
+                   min="0" max="@maxTolerance" @bind="tolerance" @bind:event="oninput" @bind:after="OnToleranceChanged" />
             <span class="ms-2 text-muted" style="min-width: 30px">@tolerance</span>
+        </div>
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Options</label>
+        <div class="d-flex flex-column gap-1">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="tolerancePerChannel"
+                       @bind="tolerancePerChannel" @bind:after="OnOptionsChanged" />
+                <label class="form-check-label" for="tolerancePerChannel">Tolerance Per Channel</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="compareAlpha"
+                       @bind="compareAlpha" @bind:after="OnOptionsChanged" />
+                <label class="form-check-label" for="compareAlpha">Compare Alpha</label>
+            </div>
         </div>
     </div>
     @if (isLoading)
@@ -162,6 +177,8 @@
     private SKCanvasView? diffImageCanvas;
     private int selectedPairIndex;
     private int tolerance;
+    private bool tolerancePerChannel = true;
+    private bool compareAlpha;
     private bool isLoading;
     private SKPixelComparisonResult? result;
     private SKImage? diffMask;
@@ -191,7 +208,23 @@
         await RunComparison();
     }
 
-    private async Task RunComparison()
+    private async Task OnOptionsChanged()
+    {
+        // Clamp tolerance if switching between per-channel and summed modes
+        if (tolerance > maxTolerance)
+            tolerance = maxTolerance;
+        await RunComparison(forceRegenerateDiffs: true);
+    }
+
+    private int maxTolerance => tolerancePerChannel ? 255 : (compareAlpha ? 1020 : 765);
+
+    private SKPixelComparerOptions CurrentOptions => new()
+    {
+        TolerancePerChannel = tolerancePerChannel,
+        CompareAlpha = compareAlpha,
+    };
+
+    private async Task RunComparison(bool forceRegenerateDiffs = false)
     {
         isLoading = true;
         errorMessage = null;
@@ -214,8 +247,12 @@
                 cachedFirst = firstBitmap != null ? SKImage.FromBitmap(firstBitmap) : null;
                 cachedSecond = secondBitmap != null ? SKImage.FromBitmap(secondBitmap) : null;
                 cachedPairIndex = selectedPairIndex;
+                forceRegenerateDiffs = true;
+            }
 
-                // Regenerate visual diffs (not affected by tolerance)
+            // Regenerate visual diffs when images or options change
+            if (forceRegenerateDiffs)
+            {
                 diffMask?.Dispose();
                 diffImage?.Dispose();
                 if (cachedFirst != null && cachedSecond != null)
@@ -235,9 +272,10 @@
 
             if (cachedFirst != null && cachedSecond != null)
             {
+                var opts = CurrentOptions;
                 result = tolerance > 0
-                    ? SKPixelComparer.Compare(cachedFirst, cachedSecond, tolerance)
-                    : SKPixelComparer.Compare(cachedFirst, cachedSecond);
+                    ? SKPixelComparer.Compare(cachedFirst, cachedSecond, tolerance, opts)
+                    : SKPixelComparer.Compare(cachedFirst, cachedSecond, opts);
             }
         }
         catch (Exception ex)
