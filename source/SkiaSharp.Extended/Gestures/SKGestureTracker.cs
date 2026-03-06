@@ -72,6 +72,7 @@ public sealed class SKGestureTracker : IDisposable
 	private float _zoomTargetFactor;
 	private SKPoint _zoomFocalPoint;
 	private long _zoomStartTicks;
+	private SKPoint? _pinchFocalPointOverride;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKGestureTracker"/> class with default options.
@@ -683,8 +684,16 @@ public sealed class SKGestureTracker : IDisposable
 
 		if (IsPinchEnabled)
 		{
+			// When pan is disabled, lock the zoom pivot to where the pinch started
+			// so that moving fingers during a pinch doesn't cause effective panning.
+			if (!IsPanEnabled)
+				_pinchFocalPointOverride ??= e.FocalPoint;
+			else
+				_pinchFocalPointOverride = null;
+
+			var pivot = _pinchFocalPointOverride ?? e.FocalPoint;
 			var newScale = Clamp(_scale * e.ScaleDelta, Options.MinScale, Options.MaxScale);
-			AdjustOffsetForPivot(e.FocalPoint, _scale, newScale, _rotation, _rotation);
+			AdjustOffsetForPivot(pivot, _scale, newScale, _rotation, _rotation);
 			_scale = newScale;
 		}
 
@@ -749,6 +758,8 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEngineGestureEnded(object? s, SKGestureLifecycleEventArgs e)
 	{
+		_pinchFocalPointOverride = null;
+
 		if (_isDragging)
 		{
 			_isDragging = false;

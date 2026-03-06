@@ -1152,5 +1152,33 @@ public class SKGestureTrackerTests
 		var options = new SKGestureTrackerOptions();
 		Assert.Throws<ArgumentOutOfRangeException>(() => options.SetScaleRange(-1f, 10f));
 	}
+	[Fact]
+	public void PinchWithPanDisabled_FingersTranslate_OffsetDoesNotChange()
+	{
+		// Bug fix: when IsPanEnabled=false, moving the finger midpoint during a pinch
+		// (translation, no scale change) should not cause the content to pan.
+		var tracker = CreateTracker();
+		tracker.IsPanEnabled = false;
+		tracker.IsPinchEnabled = true;
+		tracker.IsRotateEnabled = false; // isolate pinch-only behavior
+
+		var initialOffset = tracker.Offset;
+
+		// Both fingers go down 100px apart
+		tracker.ProcessTouchDown(1, new SKPoint(150, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(250, 200));
+
+		// Both fingers translate upward together (same distance = scale delta 1.0)
+		tracker.ProcessTouchMove(1, new SKPoint(150, 100));
+		tracker.ProcessTouchMove(2, new SKPoint(250, 100));
+
+		// Translate further
+		tracker.ProcessTouchMove(1, new SKPoint(150, 50));
+		tracker.ProcessTouchMove(2, new SKPoint(250, 50));
+
+		// Offset must not change -- pure translation with pan disabled should be ignored
+		Assert.Equal(initialOffset.X, tracker.Offset.X, 1f);
+		Assert.Equal(initialOffset.Y, tracker.Offset.Y, 1f);
+	}
 
 }
