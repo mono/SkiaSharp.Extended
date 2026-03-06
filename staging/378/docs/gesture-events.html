@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Gesture Events | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Gesture Events | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/378/merge/docs/docs/gesture-events.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="gesture-events">Gesture Events</h1>
+
+<p>This page covers all gesture events raised by <code>SKGestureTracker</code>, with code examples for each. For the quick-start guide and architecture overview, see <a href="gestures.html">Gestures</a>.</p>
+<h2 id="tap-double-tap-long-press">Tap, Double Tap, Long Press</h2>
+<p>Single finger gestures detected after the finger lifts (or after a timeout for long press).</p>
+<pre><code class="lang-csharp">tracker.TapDetected += (s, e) =&gt;
+{
+    // e.Location — where the tap occurred
+    // e.TapCount — always 1 for single tap
+};
+
+tracker.DoubleTapDetected += (s, e) =&gt;
+{
+    // Two taps within DoubleTapSlop distance and timing
+    // By default, also triggers a zoom animation (see Double Tap Zoom below)
+    // Set e.Handled = true to prevent the zoom
+};
+
+tracker.LongPressDetected += (s, e) =&gt;
+{
+    // Finger held down without moving for LongPressDuration (default 500ms)
+    // e.Location — where the press occurred
+    // e.Duration — how long the finger was held
+};
+</code></pre>
+<h2 id="pan">Pan</h2>
+<p>Single finger drag. The tracker automatically updates its internal offset.</p>
+<pre><code class="lang-csharp">tracker.PanDetected += (s, e) =&gt;
+{
+    // e.Location — current position
+    // e.PreviousLocation — previous position
+    // e.Delta — movement since last event
+    // e.Velocity — current velocity in pixels/second
+};
+</code></pre>
+<h2 id="pinch-scale">Pinch (Scale)</h2>
+<p>Two finger pinch gesture. The tracker automatically updates its internal scale, clamped to <code>MinScale</code>/<code>MaxScale</code>.</p>
+<pre><code class="lang-csharp">tracker.PinchDetected += (s, e) =&gt;
+{
+    // e.ScaleDelta — relative scale change (&gt;1 = spread, &lt;1 = pinch)
+    // e.FocalPoint — midpoint between the two fingers
+    // e.PreviousFocalPoint — previous midpoint
+};
+</code></pre>
+<h2 id="rotate">Rotate</h2>
+<p>Two finger rotation. The tracker automatically updates its internal rotation.</p>
+<pre><code class="lang-csharp">tracker.RotateDetected += (s, e) =&gt;
+{
+    // e.RotationDelta — change in degrees
+    // e.FocalPoint — center of rotation
+};
+</code></pre>
+<h2 id="fling">Fling</h2>
+<p>Momentum-based animation after a fast pan. The tracker runs a fling animation that decays over time.</p>
+<pre><code class="lang-csharp">tracker.FlingDetected += (s, e) =&gt;
+{
+    // Fling started — e.Velocity.X, e.Velocity.Y in px/s
+};
+
+tracker.FlingUpdated += (s, e) =&gt;
+{
+    // Called each frame during fling animation
+};
+
+tracker.FlingCompleted += (s, e) =&gt;
+{
+    // Fling animation finished
+};
+</code></pre>
+<h2 id="drag-app-level-object-dragging">Drag (App-Level Object Dragging)</h2>
+<p>The tracker provides a drag lifecycle derived from pan events. Use this to move objects within your canvas (e.g., stickers, nodes in a graph editor).</p>
+<pre><code class="lang-csharp">tracker.DragStarted += (s, e) =&gt;
+{
+    if (HitTest(e.Location) is { } item)
+    {
+        selectedItem = item;
+        e.Handled = true; // Prevents pan from updating the transform
+    }
+};
+
+tracker.DragUpdated += (s, e) =&gt;
+{
+    if (selectedItem != null)
+    {
+        // Convert screen delta to content coordinates
+        var inverse = tracker.Matrix; inverse.TryInvert(out inverse);
+        var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
+        selectedItem.Position += contentDelta;
+        e.Handled = true;
+    }
+};
+
+tracker.DragEnded += (s, e) =&gt;
+{
+    selectedItem = null;
+};
+</code></pre>
+<p>When <code>DragStarted</code> or <code>DragUpdated</code> sets <code>Handled = true</code>, the tracker skips its normal pan offset update <strong>and</strong> suppresses fling after release.</p>
+<h2 id="scroll-mouse-wheel">Scroll (Mouse Wheel)</h2>
+<p>Mouse wheel zoom. Call <code>ProcessMouseWheel</code> to feed wheel events.</p>
+<pre><code class="lang-csharp">tracker.ScrollDetected += (s, e) =&gt;
+{
+    // e.Location — mouse position
+    // e.Delta.X, e.Delta.Y — scroll amounts
+};
+</code></pre>
+<h2 id="hover">Hover</h2>
+<p>Mouse movement without any buttons pressed. Useful for cursor-based UI feedback.</p>
+<pre><code class="lang-csharp">tracker.HoverDetected += (s, e) =&gt;
+{
+    // e.Location — current mouse position
+};
+</code></pre>
+<h2 id="double-tap-zoom">Double Tap Zoom</h2>
+<p>By default, double-tapping zooms in by <code>DoubleTapZoomFactor</code> (2×). Double-tapping again at max scale resets to 1×. The zoom animates smoothly over <code>ZoomAnimationDuration</code> milliseconds.</p>
+<p>To use double tap for your own logic instead, set <code>e.Handled = true</code> in your <code>DoubleTapDetected</code> handler, or disable it entirely:</p>
+<pre><code class="lang-csharp">tracker.IsDoubleTapZoomEnabled = false;
+</code></pre>
+<h2 id="lifecycle-events">Lifecycle Events</h2>
+<pre><code class="lang-csharp">// Fired when the first finger touches down (once per gesture sequence)
+tracker.GestureStarted += (s, e) =&gt; { /* gesture began */ };
+
+// Fired when all fingers lift
+tracker.GestureEnded += (s, e) =&gt; { /* gesture ended */ };
+
+// Fired whenever the transform matrix changes (pan, zoom, rotate, fling frame)
+tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
+</code></pre>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="gestures.html">Gestures — Quick Start</a></li>
+<li><a href="gesture-configuration.html">Configuration &amp; Customization</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKGestureTracker.html">API Reference — SKGestureTracker</a></li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/378/merge/docs/docs/gesture-events.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #378 · b00187a
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

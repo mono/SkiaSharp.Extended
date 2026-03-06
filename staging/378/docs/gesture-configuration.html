@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Configuration &amp; Customization | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Configuration &amp; Customization | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/378/merge/docs/docs/gesture-configuration.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="configuration--customization">Configuration &amp; Customization</h1>
+
+<p>This page covers how to configure gesture thresholds, enable/disable features, read transform state, and programmatically control <code>SKGestureTracker</code>. For the quick-start guide, see <a href="gestures.html">Gestures</a>.</p>
+<h2 id="options">Options</h2>
+<p>Configure thresholds and behavior through <code>SKGestureTrackerOptions</code>:</p>
+<pre><code class="lang-csharp">var options = new SKGestureTrackerOptions
+{
+    // Detection thresholds (inherited from SKGestureDetectorOptions)
+    TouchSlop = 8f,           // Pixels to move before pan starts (default: 8)
+    DoubleTapSlop = 40f,      // Max distance between double-tap taps (default: 40)
+    FlingThreshold = 200f,    // Min velocity (px/s) to trigger fling (default: 200)
+    LongPressDuration = 500,  // Milliseconds to hold for long press (default: 500)
+
+    // Scale limits
+    MinScale = 0.1f,          // Minimum zoom level (default: 0.1)
+    MaxScale = 10f,           // Maximum zoom level (default: 10)
+
+    // Double-tap zoom
+    DoubleTapZoomFactor = 2f, // Scale multiplier on double tap (default: 2)
+    ZoomAnimationDuration = 250, // Animation duration in ms (default: 250)
+    ZoomAnimationInterval = 16,  // Frame interval for zoom animation in ms (~60fps) (default: 16)
+
+    // Scroll zoom
+    ScrollZoomFactor = 0.1f,  // Zoom per scroll unit (default: 0.1)
+
+    // Fling animation
+    FlingFriction = 0.08f,    // Velocity decay per frame (default: 0.08)
+    FlingMinVelocity = 5f,    // Stop threshold in px/s (default: 5)
+    FlingFrameInterval = 16,  // Frame interval in ms (~60fps) (default: 16)
+};
+
+var tracker = new SKGestureTracker(options);
+</code></pre>
+<p>You can also modify options at runtime:</p>
+<pre><code class="lang-csharp">tracker.Options.MinScale = 0.5f;
+tracker.Options.MaxScale = 20f;
+tracker.Options.DoubleTapZoomFactor = 3f;
+</code></pre>
+<h2 id="feature-toggles">Feature Toggles</h2>
+<p>Enable or disable individual gesture types at runtime. Feature toggles can be set at construction time or modified later:</p>
+<pre><code class="lang-csharp">// Configure at construction time via options
+var options = new SKGestureTrackerOptions
+{
+    IsTapEnabled = true,
+    IsPanEnabled = true,
+    IsPinchEnabled = false,
+    IsRotateEnabled = false,
+};
+var tracker = new SKGestureTracker(options);
+
+// Or toggle at runtime
+tracker.IsTapEnabled = false;
+tracker.IsDoubleTapEnabled = false;
+tracker.IsLongPressEnabled = false;
+tracker.IsPanEnabled = false;
+tracker.IsPinchEnabled = false;
+tracker.IsRotateEnabled = false;
+tracker.IsFlingEnabled = false;
+tracker.IsDoubleTapZoomEnabled = false;
+tracker.IsScrollZoomEnabled = false;
+tracker.IsHoverEnabled = false;
+</code></pre>
+<p>When a gesture is disabled, the tracker suppresses its events. The underlying detector still recognizes the gesture, so you can re-enable it at runtime without losing state.</p>
+<h2 id="reading-transform-state">Reading Transform State</h2>
+<pre><code class="lang-csharp">float scale = tracker.Scale;       // Current zoom level
+float rotation = tracker.Rotation; // Current rotation in degrees
+SKPoint offset = tracker.Offset;   // Current pan offset
+SKMatrix matrix = tracker.Matrix;  // Combined transform matrix
+</code></pre>
+<h2 id="programmatic-transform-control">Programmatic Transform Control</h2>
+<p>You can set the transform directly without any touch input:</p>
+<pre><code class="lang-csharp">// Reset everything back to identity
+tracker.Reset();
+
+// Set all values at once
+tracker.SetTransform(scale: 2f, rotation: 45f, offset: new SKPoint(100, 50));
+
+// Set individual components
+tracker.SetScale(1.5f);
+tracker.SetScale(2f, pivot: new SKPoint(400, 300));  // Scale around a specific point
+tracker.SetRotation(0f);
+tracker.SetRotation(45f, pivot: new SKPoint(400, 300));  // Rotate around a specific point
+tracker.SetOffset(SKPoint.Empty);
+</code></pre>
+<h3 id="animated-zoom">Animated Zoom</h3>
+<p>Use <code>ZoomTo</code> to animate a zoom by a given factor with a smooth ease-out curve:</p>
+<pre><code class="lang-csharp">// Zoom in by 3x at the center of the view
+tracker.ZoomTo(factor: 3f, focalPoint: new SKPoint(400, 300));
+
+// Check animation state
+bool animating = tracker.IsZoomAnimating;
+</code></pre>
+<p>The animation duration and frame interval are controlled by <code>ZoomAnimationDuration</code> and <code>ZoomAnimationInterval</code> in the options.</p>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="gestures.html">Gestures — Quick Start</a></li>
+<li><a href="gesture-events.html">Gesture Events</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKGestureTrackerOptions.html">API Reference — SKGestureTrackerOptions</a></li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/378/merge/docs/docs/gesture-configuration.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #378 · b00187a
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
