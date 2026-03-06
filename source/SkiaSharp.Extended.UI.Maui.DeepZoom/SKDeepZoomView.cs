@@ -485,6 +485,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             _controller.Pan(e.Delta.X, e.Delta.Y);
             CaptureControllerViewportToSpringTarget();
             _spring.SnapToTarget();
+            ViewportChanged?.Invoke(this, EventArgs.Empty);
             StartAnimation();
         }
 
@@ -495,6 +496,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             _controller.ZoomAboutScreenPoint(e.ScaleDelta, e.FocalPoint.X, e.FocalPoint.Y);
             CaptureControllerViewportToSpringTarget();
             _spring.SnapToTarget();
+            ViewportChanged?.Invoke(this, EventArgs.Empty);
             StartAnimation();
         }
 
@@ -528,6 +530,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             _controller.Pan(e.Delta.X, e.Delta.Y);
             CaptureControllerViewportToSpringTarget();
             _spring.SnapToTarget();
+            ViewportChanged?.Invoke(this, EventArgs.Empty);
             StartAnimation();
         }
 

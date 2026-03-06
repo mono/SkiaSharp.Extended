@@ -1,6 +1,7 @@
 @page "/deepzoom"
 @implements IDisposable
 @inject HttpClient Http
+@using SkiaSharp.Extended
 @using SkiaSharp.Extended.DeepZoom
 
 <PageTitle>Deep Zoom</PageTitle>
@@ -69,12 +70,17 @@
 @code {
     private SKCanvasView? canvasView;
     private DeepZoomController? controller;
+
+    // ViewportSpring is owned here (Blazor page = view layer), not inside DeepZoomController.
+    // Data flow: gesture events → _spring target → OnTimerTick reads spring state → controller viewport
+    private readonly ViewportSpring _spring = new();
+
     private readonly SKGestureTracker _tracker = new(new SKGestureTrackerOptions
     {
-        IsRotateEnabled = false,        // Deep zoom doesn't support rotation
-        IsDoubleTapZoomEnabled = false, // Deep zoom handles zoom animation via spring physics
-        IsScrollZoomEnabled = false,    // We forward scroll to controller ourselves
-        IsFlingEnabled = true,          // Add momentum scrolling via fling
+        IsRotateEnabled = false,
+        IsDoubleTapZoomEnabled = false,
+        IsScrollZoomEnabled = false,
+        IsFlingEnabled = true,
     });
     private System.Timers.Timer? animationTimer;
     private DateTime lastUpdate = DateTime.UtcNow;
@@ -98,12 +104,12 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender)
-            return;
+        if (!firstRender) return;
 
         try
         {
             controller = new DeepZoomController();
+            controller.ImageOpenSucceeded += (_, _) => _spring.Reset(0, 0, 1.0);
             controller.InvalidateRequired += (_, _) => StartAnimation();
 
             var dziXml = await Http.GetStringAsync("deepzoom/testgrid.dzi");
@@ -117,7 +123,6 @@
 
             animationTimer = new System.Timers.Timer(16); // ~60fps
             animationTimer.Elapsed += OnTimerTick;
-            // Don't auto-start; StartAnimation() is called when the controller needs rendering
 
             await InvokeAsync(StateHasChanged);
         }
@@ -128,158 +133,174 @@
         }
     }
 
-    /// <summary>Starts the animation timer if it's not already running.</summary>
     private void StartAnimation()
     {
         if (animationTimer == null) return;
         lastUpdate = DateTime.UtcNow;
-        animationTimer.Start(); // no-op if already running
+        animationTimer.Start();
         canvasView?.Invalidate();
     }
 
     private void OnTimerTick(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        if (controller == null)
-            return;
+        if (controller == null) return;
 
         var now = DateTime.UtcNow;
         var delta = now - lastUpdate;
         lastUpdate = now;
+        if (delta.TotalMilliseconds > 100) delta = TimeSpan.FromMilliseconds(100);
 
-        if (controller.Update(delta))
-        {
+        // 1. Advance spring physics
+        _spring.Update(delta.TotalSeconds);
+
+        // 2. Push spring current state into the controller viewport
+        var (ox, oy, w) = _spring.GetCurrentState();
+        controller.Viewport.ViewportOriginX = ox;
+        controller.Viewport.ViewportOriginY = oy;
+        controller.Viewport.ViewportWidth = w;
+
+        // 3. Schedule tile loads; render on next paint
+        bool hasPendingTiles = controller.Update();
+
+        if (hasPendingTiles || !_spring.IsSettled)
             canvasView?.Invalidate();
-        }
-        else if (controller.IsIdle)
-        {
-            // Stop polling when no animation is running; InvalidateRequired will restart us
+        else
             animationTimer?.Stop();
-        }
     }
 
     private void OnPaintSurface(SKPaintSurfaceEventArgs e)
     {
-        if (controller == null)
-            return;
+        if (controller == null) return;
 
-        var canvas = e.Surface.Canvas;
         var info = e.Info;
-
-        // Compute display scale: PointerEventArgs gives CSS pixels, canvas is in device pixels
         const float expectedCssHeight = 600f;
         _displayScale = info.Height / expectedCssHeight;
 
         controller.SetControlSize(info.Width, info.Height);
-        canvas.Clear(SKColors.White);
-        controller.Render(canvas);
+        e.Surface.Canvas.Clear(SKColors.White);
+        controller.Render(e.Surface.Canvas);
     }
 
-    // --- Pointer Events → SKGestureTracker ---
+    // --- Spring helpers ---
+
+    private void SyncViewportToSpringTarget()
+    {
+        if (controller == null) return;
+        controller.Viewport.ViewportWidth = _spring.Width.Target;
+        controller.Viewport.ViewportOriginX = _spring.OriginX.Target;
+        controller.Viewport.ViewportOriginY = _spring.OriginY.Target;
+    }
+
+    private void CaptureViewportToSpring()
+    {
+        if (controller == null) return;
+        _spring.SetTarget(
+            controller.Viewport.ViewportOriginX,
+            controller.Viewport.ViewportOriginY,
+            controller.Viewport.ViewportWidth);
+    }
+
+    // --- Pointer Events ---
 
     private void OnPointerDown(PointerEventArgs e)
-    {
-        var isMouse = e.PointerType == "mouse";
-        _tracker.ProcessTouchDown(e.PointerId, GetCanvasLocation(e), isMouse);
-    }
+        => _tracker.ProcessTouchDown(e.PointerId, GetCanvasLocation(e), e.PointerType == "mouse");
 
     private void OnPointerMove(PointerEventArgs e)
-    {
-        var inContact = e.Buttons > 0 || e.PointerType != "mouse";
-        _tracker.ProcessTouchMove(e.PointerId, GetCanvasLocation(e), inContact);
-    }
+        => _tracker.ProcessTouchMove(e.PointerId, GetCanvasLocation(e), e.Buttons > 0 || e.PointerType != "mouse");
 
     private void OnPointerUp(PointerEventArgs e)
-    {
-        var isMouse = e.PointerType == "mouse";
-        _tracker.ProcessTouchUp(e.PointerId, GetCanvasLocation(e), isMouse);
-    }
+        => _tracker.ProcessTouchUp(e.PointerId, GetCanvasLocation(e), e.PointerType == "mouse");
 
     private void OnPointerCancel(PointerEventArgs e)
-    {
-        _tracker.ProcessTouchCancel(e.PointerId);
-    }
+        => _tracker.ProcessTouchCancel(e.PointerId);
 
     private void OnWheel(WheelEventArgs e)
     {
         var location = new SKPoint((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
-        // Normalize: negative deltaY = scroll down = zoom out; positive = zoom in
         var deltaY = e.DeltaY < 0 ? 1f : -1f;
         _tracker.ProcessMouseWheel(location, 0, deltaY);
     }
 
-    /// <summary>Converts pointer CSS coordinates to canvas device-pixel coordinates.</summary>
     private SKPoint GetCanvasLocation(PointerEventArgs e)
         => new SKPoint((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
 
-    // --- SKGestureTracker Event Handlers → DeepZoomController ---
+    // --- Gesture handlers ---
 
     private void OnTrackerPan(object? sender, SKPanGestureEventArgs e)
     {
-        e.Handled = true; // Prevent tracker from also updating its internal matrix
+        e.Handled = true;
+        SyncViewportToSpringTarget();
         controller?.Pan(e.Delta.X, e.Delta.Y);
-        controller?.SnapSpringToTarget();
+        CaptureViewportToSpring();
+        _spring.SnapToTarget(); // direct manipulation — no spring delay
         StartAnimation();
     }
 
     private void OnTrackerPinch(object? sender, SKPinchGestureEventArgs e)
     {
+        SyncViewportToSpringTarget();
         controller?.ZoomAboutScreenPoint(e.ScaleDelta, e.FocalPoint.X, e.FocalPoint.Y);
-        controller?.SnapSpringToTarget();
+        CaptureViewportToSpring();
+        _spring.SnapToTarget(); // direct manipulation — no spring delay
         StartAnimation();
     }
 
     private void OnTrackerDoubleTap(object? sender, SKTapGestureEventArgs e)
     {
         if (controller == null) return;
-        // Toggle: if zoomed in, zoom out to fit; otherwise zoom in 2x
-        if (controller.TargetViewportWidth < 0.95)
-            controller.ZoomAboutScreenPoint(0.5, e.Location.X, e.Location.Y);
-        else
-            controller.ZoomAboutScreenPoint(2.0, e.Location.X, e.Location.Y);
-        StartAnimation();
+        SyncViewportToSpringTarget();
+        double factor = _spring.Width.Target < 0.95 ? 0.5 : 2.0;
+        controller.ZoomAboutScreenPoint(factor, e.Location.X, e.Location.Y);
+        CaptureViewportToSpring();
+        StartAnimation(); // animated — spring eases to target
     }
 
     private void OnTrackerScroll(object? sender, SKScrollGestureEventArgs e)
     {
-        // Positive Y = scroll up = zoom in (normalized in OnWheel)
         double factor = e.Delta.Y > 0 ? 1.2 : 1.0 / 1.2;
+        SyncViewportToSpringTarget();
         controller?.ZoomAboutScreenPoint(factor, e.Location.X, e.Location.Y);
-        StartAnimation();
+        CaptureViewportToSpring();
+        StartAnimation(); // animated — spring eases to target
     }
 
     private void OnTrackerFlingUpdated(object? sender, SKFlingGestureEventArgs e)
     {
         if (e.Delta == SKPoint.Empty || controller == null) return;
+        SyncViewportToSpringTarget();
         controller.Pan(e.Delta.X, e.Delta.Y);
-        controller.SnapSpringToTarget();
+        CaptureViewportToSpring();
+        _spring.SnapToTarget(); // direct manipulation — no spring delay
         StartAnimation();
     }
 
-    // --- Button Handlers ---
+    // --- Buttons ---
 
     private void OnReset()
     {
-        controller?.ResetView();
+        _spring.SetTarget(0, 0, 1.0);
         StartAnimation();
     }
 
     private void OnZoomIn()
     {
+        SyncViewportToSpringTarget();
         controller?.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
+        CaptureViewportToSpring();
         StartAnimation();
     }
 
     private void OnZoomOut()
     {
+        SyncViewportToSpringTarget();
         controller?.ZoomAboutLogicalPoint(0.5, 0.5, 0.5);
+        CaptureViewportToSpring();
         StartAnimation();
     }
 
     private void OnDebugChanged()
     {
-        if (controller == null)
-            return;
-
+        if (controller == null) return;
         controller.ShowTileBorders = showBorders;
         controller.ShowDebugStats = showStats;
         canvasView?.Invalidate();
@@ -287,11 +308,8 @@
 
     private void OnSpringChanged()
     {
-        if (controller == null)
-            return;
-
-        controller.SpringStiffness = springStiffness;
-        controller.SpringDampingRatio = springDampingRatio;
+        _spring.Stiffness = springStiffness;
+        _spring.DampingRatio = springDampingRatio;
     }
 
     public void Dispose()
