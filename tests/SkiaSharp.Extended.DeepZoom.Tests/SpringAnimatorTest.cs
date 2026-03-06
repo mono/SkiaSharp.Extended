@@ -1,3 +1,4 @@
+using SkiaSharp.Extended;
 using SkiaSharp.Extended.DeepZoom;
 
 namespace SkiaSharp.Extended.DeepZoom.Tests;

@@ -56,17 +56,15 @@ public sealed class SKGestureTracker : IDisposable
 	private SKPoint _lastPanLocation;
 	private SKPoint _prevPanLocation;
 
-	// Fling animation state
-	private Timer? _flingTimer;
-	private int _flingToken;
+	// Fling animation state — driven by SKTimerAnimation
+	private readonly SKTimerAnimation _flingAnimation = new();
 	private float _flingVelocityX;
 	private float _flingVelocityY;
 	private bool _isFlinging;
 	private long _flingLastFrameTimestamp; // TimeProvider() ticks at last fling frame
 
-	// Zoom animation state
-	private Timer? _zoomTimer;
-	private int _zoomToken;
+	// Zoom animation state — driven by SKTimerAnimation
+	private readonly SKTimerAnimation _zoomAnimation = new();
 	private bool _isZoomAnimating;
 	private float _zoomStartScale;
 	private float _zoomTargetFactor;
@@ -469,12 +467,7 @@ public sealed class SKGestureTracker : IDisposable
 		_zoomStartTicks = TimeProvider();
 		_isZoomAnimating = true;
 
-		var token = Interlocked.Increment(ref _zoomToken);
-		_zoomTimer = new Timer(
-			OnZoomTimerTick,
-			token,
-			(int)Options.ZoomAnimationInterval.TotalMilliseconds,
-			(int)Options.ZoomAnimationInterval.TotalMilliseconds);
+		_zoomAnimation.Start(Options.ZoomAnimationInterval, HandleZoomFrame, _syncContext);
 	}
 
 	/// <summary>Stops any active zoom animation immediately.</summary>
@@ -484,11 +477,7 @@ public sealed class SKGestureTracker : IDisposable
 			return;
 
 		_isZoomAnimating = false;
-		Interlocked.Increment(ref _zoomToken);
-		var timer = _zoomTimer;
-		_zoomTimer = null;
-		timer?.Change(Timeout.Infinite, Timeout.Infinite);
-		timer?.Dispose();
+		_zoomAnimation.Stop();
 	}
 
 	/// <summary>
@@ -512,11 +501,7 @@ public sealed class SKGestureTracker : IDisposable
 		_isFlinging = false;
 		_flingVelocityX = 0;
 		_flingVelocityY = 0;
-		Interlocked.Increment(ref _flingToken);
-		var timer = _flingTimer;
-		_flingTimer = null;
-		timer?.Change(Timeout.Infinite, Timeout.Infinite);
-		timer?.Dispose();
+		_flingAnimation.Stop();
 	}
 
 	/// <summary>
@@ -547,6 +532,8 @@ public sealed class SKGestureTracker : IDisposable
 		_disposed = true;
 		StopFling();
 		StopZoomAnimation();
+		_flingAnimation.Dispose();
+		_zoomAnimation.Dispose();
 		UnsubscribeEngineEvents();
 		_engine.Dispose();
 	}
@@ -817,35 +804,7 @@ public sealed class SKGestureTracker : IDisposable
 		_isFlinging = true;
 		_flingLastFrameTimestamp = TimeProvider();
 
-		var token = Interlocked.Increment(ref _flingToken);
-		_flingTimer = new Timer(
-			OnFlingTimerTick,
-			token,
-			(int)Options.FlingFrameInterval.TotalMilliseconds,
-			(int)Options.FlingFrameInterval.TotalMilliseconds);
-	}
-
-	private void OnFlingTimerTick(object? state)
-	{
-		if (state is not int token || token != Volatile.Read(ref _flingToken))
-			return;
-
-		if (!_isFlinging || _disposed)
-			return;
-
-		var ctx = _syncContext;
-		if (ctx != null)
-		{
-			ctx.Post(_ =>
-			{
-				if (token == Volatile.Read(ref _flingToken))
-					HandleFlingFrame();
-			}, null);
-		}
-		else
-		{
-			HandleFlingFrame();
-		}
+		_flingAnimation.Start(Options.FlingFrameInterval, HandleFlingFrame, _syncContext);
 	}
 
 	private void HandleFlingFrame()
@@ -888,29 +847,6 @@ public sealed class SKGestureTracker : IDisposable
 
 	#region Zoom Animation
 
-	private void OnZoomTimerTick(object? state)
-	{
-		if (state is not int token || token != Volatile.Read(ref _zoomToken))
-			return;
-
-		if (!_isZoomAnimating || _disposed)
-			return;
-
-		var ctx = _syncContext;
-		if (ctx != null)
-		{
-			ctx.Post(_ =>
-			{
-				if (token == Volatile.Read(ref _zoomToken))
-					HandleZoomFrame();
-			}, null);
-		}
-		else
-		{
-			HandleZoomFrame();
-		}
-	}
-
 	private void HandleZoomFrame()
 	{
 		if (!_isZoomAnimating || _disposed)
@@ -920,8 +856,8 @@ public sealed class SKGestureTracker : IDisposable
 		var duration = Options.ZoomAnimationDuration.Ticks;
 		var t = duration > 0 ? Math.Min(1.0, (double)elapsed / duration) : 1.0;
 
-		// CubicOut easing: 1 - (1 - t)^3
-		var eased = 1.0 - Math.Pow(1.0 - t, 3);
+		// CubicOut easing via shared SKEasingFunctions
+		var eased = SKEasingFunctions.CubicOut(t);
 
 		// Log-space interpolation: cumulative = factor^eased(t)
 		var cumulative = (float)Math.Pow(_zoomTargetFactor, eased);
@@ -936,11 +872,7 @@ public sealed class SKGestureTracker : IDisposable
 		if (t >= 1.0)
 		{
 			_isZoomAnimating = false;
-			Interlocked.Increment(ref _zoomToken);
-			var timer = _zoomTimer;
-			_zoomTimer = null;
-			timer?.Change(Timeout.Infinite, Timeout.Infinite);
-			timer?.Dispose();
+			_zoomAnimation.Stop();
 		}
 	}
 
