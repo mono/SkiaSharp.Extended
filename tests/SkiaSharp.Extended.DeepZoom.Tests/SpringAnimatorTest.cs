@@ -157,7 +157,7 @@ public class SpringAnimatorTest
         var state = vpSpring.GetCurrentState();
         Assert.Equal(0.5, state.OriginX, 2);
         Assert.Equal(0.3, state.OriginY, 2);
-        Assert.Equal(0.5, state.ViewportWidth, 2);
+        Assert.Equal(0.5, state.Width, 2);
     }
 
     [Fact]
@@ -170,7 +170,7 @@ public class SpringAnimatorTest
         var state = vpSpring.GetCurrentState();
         Assert.Equal(0.5, state.OriginX);
         Assert.Equal(0.3, state.OriginY);
-        Assert.Equal(0.5, state.ViewportWidth);
+        Assert.Equal(0.5, state.Width);
         Assert.True(vpSpring.IsSettled);
     }
 
@@ -186,7 +186,7 @@ public class SpringAnimatorTest
         var state = vpSpring.GetCurrentState();
         Assert.Equal(0.0, state.OriginX);
         Assert.Equal(0.0, state.OriginY);
-        Assert.Equal(1.0, state.ViewportWidth);
+        Assert.Equal(1.0, state.Width);
     }
 
     [Fact]
@@ -308,7 +308,7 @@ public class SpringAnimatorTest
         var state = vpSpring.GetCurrentState();
         Assert.Equal(0.0, state.OriginX);
         Assert.Equal(0.0, state.OriginY);
-        Assert.Equal(1.0, state.ViewportWidth);
+        Assert.Equal(1.0, state.Width);
     }
 
     [Fact]
@@ -342,21 +342,20 @@ public class SpringAnimatorTest
     }
 
     [Fact]
-    public void DeepZoomController_SpringStiffness_RoundTrips()
+    public void ViewportSpring_Stiffness_RoundTrips()
     {
-        using var controller = new DeepZoomController();
-
-        controller.SpringStiffness = 55.0;
-        Assert.Equal(55.0, controller.SpringStiffness);
+        // SpringStiffness/DampingRatio are on ViewportSpring (view layer), not DeepZoomController
+        var spring = new ViewportSpring();
+        spring.Stiffness = 55.0;
+        Assert.Equal(55.0, spring.Stiffness);
     }
 
     [Fact]
-    public void DeepZoomController_SpringDampingRatio_RoundTrips()
+    public void ViewportSpring_DampingRatio_RoundTrips()
     {
-        using var controller = new DeepZoomController();
-
-        controller.SpringDampingRatio = 0.8;
-        Assert.Equal(0.8, controller.SpringDampingRatio);
+        var spring = new ViewportSpring();
+        spring.DampingRatio = 0.8;
+        Assert.Equal(0.8, spring.DampingRatio);
     }
 
     [Fact]

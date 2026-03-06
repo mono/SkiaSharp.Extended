@@ -63,12 +63,11 @@ public class DeepZoomControllerTest
         using var controller = new DeepZoomController();
 
         Assert.NotNull(controller.Viewport);
-        Assert.NotNull(controller.Spring);
         Assert.NotNull(controller.Cache);
         Assert.NotNull(controller.Scheduler);
         Assert.NotNull(controller.Renderer);
         Assert.Null(controller.TileSource);
-        Assert.True(controller.UseSprings);
+        // Animation (spring, UseSprings) is NOT part of the controller; it lives in the view layer
     }
 
     [Fact]
@@ -94,7 +93,6 @@ public class DeepZoomControllerTest
     public void ZoomAboutScreenPoint_ChangesViewportWidth()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
@@ -102,9 +100,8 @@ public class DeepZoomControllerTest
 
         double initialWidth = controller.Viewport.ViewportWidth;
 
-        // Zoom in 2x at center
+        // Zoom in 2x at center — controller applies immediately (no spring)
         controller.ZoomAboutScreenPoint(2.0, 400, 300);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
 
         Assert.True(controller.Viewport.ViewportWidth < initialWidth,
             $"Expected viewport width < {initialWidth} but got {controller.Viewport.ViewportWidth}");
@@ -114,7 +111,6 @@ public class DeepZoomControllerTest
     public void Pan_MovesViewportOrigin()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
@@ -122,14 +118,12 @@ public class DeepZoomControllerTest
 
         // First zoom in so there's room to pan
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
 
         double originX = controller.Viewport.ViewportOriginX;
 
         controller.Pan(100, 0); // Pan right
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
 
-        // Origin should have moved (panning right means origin moves left in logical space)
+        // Origin should have moved (panning right means origin moves in logical space)
         Assert.NotEqual(originX, controller.Viewport.ViewportOriginX);
     }
 
@@ -137,104 +131,36 @@ public class DeepZoomControllerTest
     public void ResetView_RestoresToInitialState()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
         controller.Load(dzi, fetcher);
 
-        // Zoom and pan
+        // Zoom and pan, then reset
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-
-        // Reset
         controller.ResetView();
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
 
         Assert.Equal(1.0, controller.Viewport.ViewportWidth, 6);
     }
 
     [Fact]
-    public void UseSprings_True_AnimatesGradually()
+    public void Update_ReturnsFalse_WhenIdleAndNoPendingTiles()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = true;
-        controller.SetControlSize(800, 600);
-        var dzi = CreateSampleDzi();
-        using var fetcher = new MemoryTileFetcher();
-        controller.Load(dzi, fetcher);
-
-        controller.ZoomAboutScreenPoint(4.0, 400, 300);
-
-        // After one frame, should NOT have reached target yet
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-        double afterOneFrame = controller.Viewport.ViewportWidth;
-
-        Assert.True(afterOneFrame > 0.25 + 0.01,
-            $"Expected spring to not reach target immediately, but got {afterOneFrame}");
-    }
-
-    [Fact]
-    public void UseSprings_False_JumpsImmediately()
-    {
-        using var controller = new DeepZoomController();
-        controller.UseSprings = false;
-        controller.SetControlSize(800, 600);
-        var dzi = CreateSampleDzi();
-        using var fetcher = new MemoryTileFetcher();
-        controller.Load(dzi, fetcher);
-
-        controller.ZoomAboutScreenPoint(4.0, 400, 300);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-
-        // Should be at target immediately (0.25 = 1.0 / 4.0)
-        Assert.Equal(0.25, controller.Viewport.ViewportWidth, 2);
-    }
-
-    [Fact]
-    public void Update_ReturnsFalse_WhenIdleAndSettled()
-    {
-        using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
         controller.Load(dzi, fetcher);
 
         // First update may schedule tiles
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // Give tiles a moment to "load" (they'll return null from empty fetcher)
         Task.Delay(100).Wait();
 
-        // After settling, update should return false
-        bool needsRepaint = controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-        Assert.False(needsRepaint, "Update should return false when idle and settled");
-    }
-
-    [Fact]
-    public void MotionFinished_FiredWhenSpringSettles()
-    {
-        using var controller = new DeepZoomController();
-        controller.UseSprings = true;
-        controller.SetControlSize(800, 600);
-        var dzi = CreateSampleDzi();
-        using var fetcher = new MemoryTileFetcher();
-        controller.Load(dzi, fetcher);
-
-        bool motionFinished = false;
-        controller.MotionFinished += (s, e) => motionFinished = true;
-
-        controller.ZoomAboutScreenPoint(2.0, 400, 300);
-
-        // Advance many frames until settled
-        for (int i = 0; i < 600; i++)
-        {
-            controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-            if (motionFinished) break;
-        }
-
-        Assert.True(motionFinished, "MotionFinished should fire when spring settles");
+        // After settling, update should return false (no pending tiles)
+        bool needsRepaint = controller.Update();
+        Assert.False(needsRepaint, "Update should return false when idle and no pending tiles");
     }
 
     [Fact]
@@ -252,13 +178,9 @@ public class DeepZoomControllerTest
     {
         using var controller = new DeepZoomController();
         controller.SetControlSize(800, 600);
-        var dzi = CreateSampleDzi();
-        using var fetcher = new MemoryTileFetcher();
-        controller.Load(dzi, fetcher);
+        controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
-
-        // Should not throw even with empty cache
         controller.Render(surface.Canvas);
     }
 
@@ -266,31 +188,36 @@ public class DeepZoomControllerTest
     public void Render_DrawsCachedTiles()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
+
         var dzi = CreateSampleDzi();
-
         using var fetcher = new MemoryTileFetcher();
-        controller.Load(dzi, fetcher);
+        // Add tiles for level 9 (512x512 image) at all positions
+        for (int col = 0; col < 3; col++)
+            for (int row = 0; row < 3; row++)
+            {
+                fetcher.AddSolidTile($"http://example.com/test9/{col}_{row}.jpg", 256, 256, SKColors.Red);
+                fetcher.AddSolidTile($"http://example.com/test8/{col}_{row}.jpg", 256, 256, SKColors.Red);
+                fetcher.AddSolidTile($"http://example.com/test7/{col}_{row}.jpg", 256, 256, SKColors.Red);
+            }
 
-        // Add tile to cache AFTER loading (Load clears the cache)
-        var tileId = new TileId(0, 0, 0);
-        var tileBmp = new SKBitmap(256, 256);
-        using (var canvas = new SKCanvas(tileBmp))
-            canvas.Clear(SKColors.Red);
-        controller.Cache.Put(tileId, tileBmp);
+        controller.Load(dzi, fetcher);
+        controller.Update();
+
+        // Wait for tile loads
+        Task.Delay(500).Wait();
 
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
-        surface.Canvas.Clear(SKColors.White);
         controller.Render(surface.Canvas);
 
-        // Verify something was drawn (pixel at center shouldn't be white/default)
-        using var snapshot = surface.Snapshot();
-        using var pixmap = snapshot.PeekPixels();
-        // The low-level tile 0,0,0 covers the whole image at level 0
-        // At full viewport, it should be rendered somewhere
-        var centerPixel = pixmap.GetPixelColor(400, 300);
-        Assert.NotEqual(SKColors.White, centerPixel);
+        // Verify some tiles were drawn by checking pixels
+        using var pixmap = surface.PeekPixels();
+        bool hasRed = false;
+        for (int y = 0; y < pixmap.Height && !hasRed; y += 10)
+            for (int x = 0; x < pixmap.Width && !hasRed; x += 10)
+                if (pixmap.GetPixelColor(x, y).Red > 200) hasRed = true;
+
+        Assert.True(hasRed, "Expected rendered tiles to include red pixels");
     }
 
     [Fact]
@@ -312,16 +239,15 @@ public class DeepZoomControllerTest
     public void AspectRatio_ReturnsZero_WhenNoSource()
     {
         using var controller = new DeepZoomController();
-        Assert.Equal(0, controller.AspectRatio);
+        Assert.Equal(0.0, controller.AspectRatio);
     }
 
     [Fact]
     public void AspectRatio_ReturnsCorrectValue_WhenLoaded()
     {
         using var controller = new DeepZoomController();
-        var dzi = CreateSampleDzi(); // 512x512 = 1.0
-        using var fetcher = new MemoryTileFetcher();
-        controller.Load(dzi, fetcher);
+        var dzi = CreateSampleDzi(); // 512x512 → 1.0
+        controller.Load(dzi, new MemoryTileFetcher());
 
         Assert.Equal(1.0, controller.AspectRatio, 6);
     }
@@ -345,18 +271,16 @@ public class DeepZoomControllerTest
     public void Load_DzcTileSource_PopulatesSubImages()
     {
         using var controller = new DeepZoomController();
-        var items = new List<DzcSubImage>
+        var dzc = new DzcTileSource(8, 256, "jpg", new[]
         {
-            new DzcSubImage(0, 0, 256, 128, null) { ViewportWidth = 2.0, ViewportX = -0.5, ViewportY = -0.25 },
-            new DzcSubImage(1, 1, 512, 512, "img1.dzi") { ViewportWidth = 1.0, ViewportX = 0, ViewportY = 0 },
-        };
-        var dzc = new DzcTileSource(8, 256, "jpg", items);
-        using var fetcher = new MemoryTileFetcher();
+            new DzcSubImage(0, 0, 512, 256, "img0.dzi"),
+            new DzcSubImage(512, 0, 256, 256, "img1.dzi"),
+        });
 
+        using var fetcher = new MemoryTileFetcher();
         controller.Load(dzc, fetcher);
 
         Assert.Equal(2, controller.SubImages.Count);
-        Assert.Equal(0, controller.SubImages[0].Id);
         Assert.Equal(2.0, controller.SubImages[0].AspectRatio, 6);
         Assert.Equal("img1.dzi", controller.SubImages[1].Source);
     }
@@ -365,7 +289,6 @@ public class DeepZoomControllerTest
     public async Task TileScheduling_FetchesTiles()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(512, 512);
         var dzi = CreateSampleDzi();
 
@@ -373,7 +296,7 @@ public class DeepZoomControllerTest
         controller.Load(dzi, fetcher);
 
         // Update to trigger tile scheduling
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // Wait for async tile loads
         await Task.Delay(200);
@@ -403,28 +326,6 @@ public class DeepZoomControllerTest
 
         controller.Pan(10, 10);
         Assert.True(count > 0);
-    }
-
-    [Fact]
-    public void Update_DuringSpringAnimation_FiresViewportChanged()
-    {
-        using var controller = new DeepZoomController();
-        controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
-        controller.UseSprings = true;
-
-        // Subscribe before zoom to catch all events
-        int count = 0;
-        controller.ViewportChanged += (s, e) => count++;
-
-        // Zoom triggers ApplyViewportToSpring which fires ViewportChanged
-        controller.ZoomAboutLogicalPoint(0.5, 0.5, 0.5);
-        Assert.True(count > 0);
-
-        // Update during animation should also fire if viewport moves
-        int preUpdateCount = count;
-        controller.Update(TimeSpan.FromMilliseconds(16));
-        // Spring may or may not have moved — either way the zoom already proved it works
-        Assert.True(count >= preUpdateCount);
     }
 
     [Fact]
@@ -465,7 +366,7 @@ public class DeepZoomControllerTest
 
         // Trigger tile scheduling
         controller.SetControlSize(800, 600);
-        controller.Update(TimeSpan.FromMilliseconds(16));
+        controller.Update();
 
         // Now reload — cache should be cleared
         controller.Load(CreateSampleDzi(), fetcher);
@@ -473,7 +374,7 @@ public class DeepZoomControllerTest
         // After reload, fetcher should get new tile requests
         int fetchesBefore = fetcher.FetchCount;
         controller.SetControlSize(800, 600);
-        controller.Update(TimeSpan.FromMilliseconds(16));
+        controller.Update();
         // New fetches should occur since cache was cleared
         Assert.True(fetcher.FetchCount > fetchesBefore, "Cache clear should trigger new tile fetches");
     }
@@ -496,7 +397,6 @@ public class DeepZoomControllerTest
     public async Task LoadTileAsync_WithTilesBaseUri_FetcherReceivesFullUrl()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(512, 512);
 
         var dzi = CreateSampleDzi(); // TilesBaseUri = "http://example.com/test"
@@ -504,7 +404,7 @@ public class DeepZoomControllerTest
         controller.Load(dzi, fetcher);
 
         // Trigger tile scheduling
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // Wait for async tile loads
         await Task.Delay(300);
@@ -523,7 +423,6 @@ public class DeepZoomControllerTest
     public void GetZoomRect_ReturnsCurrentViewportBounds()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi(); // 512x512, aspect ratio 1.0
         using var fetcher = new MemoryTileFetcher();
@@ -537,9 +436,8 @@ public class DeepZoomControllerTest
         Assert.Equal(1.0, w, 6);
         Assert.Equal(1.0, h, 6);
 
-        // Zoom in and verify the rect changes
+        // Zoom in and verify the rect changes (immediate — no spring)
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
 
         var (x2, y2, w2, h2) = controller.GetZoomRect();
         Assert.True(w2 < w, $"Zoomed width {w2} should be less than initial {w}");
@@ -550,7 +448,6 @@ public class DeepZoomControllerTest
     public void ViewportChanged_FiresOnZoom()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -565,13 +462,11 @@ public class DeepZoomControllerTest
     public void ViewportChanged_FiresOnPan()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
         // Zoom in first so panning changes the viewport
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
 
         int count = 0;
         controller.ViewportChanged += (s, e) => count++;
@@ -581,70 +476,13 @@ public class DeepZoomControllerTest
     }
 
     [Fact]
-    public void ViewportChanged_FiresDuringSpringAnimation()
+    public void IsIdle_TrueWhenNoPendingTiles()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = true;
-        controller.SetControlSize(800, 600);
-        controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
-
-        controller.ZoomAboutScreenPoint(4.0, 400, 300);
-
-        int count = 0;
-        controller.ViewportChanged += (s, e) => count++;
-
-        // During animation, Update should fire ViewportChanged as viewport moves
-        controller.Update(TimeSpan.FromMilliseconds(16));
-        controller.Update(TimeSpan.FromMilliseconds(16));
-        controller.Update(TimeSpan.FromMilliseconds(16));
-
-        Assert.True(count > 0, "ViewportChanged should fire during spring animation");
-    }
-
-    [Fact]
-    public void IsIdle_TrueWhenSettledAndNoPendingTiles()
-    {
-        using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
 
-        // Before load, should be idle
+        // Before any Update, no tiles are pending
         Assert.True(controller.IsIdle);
-    }
-
-    [Fact]
-    public void IsIdle_FalseDuringSpringAnimation()
-    {
-        using var controller = new DeepZoomController();
-        controller.UseSprings = true;
-        controller.SetControlSize(800, 600);
-        controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
-
-        controller.ZoomAboutScreenPoint(4.0, 400, 300);
-        controller.Update(TimeSpan.FromMilliseconds(16));
-
-        // Spring should not be settled yet
-        Assert.False(controller.IsIdle, "Should not be idle during spring animation");
-    }
-
-    [Fact]
-    public void IsIdle_TransitionsToTrueAfterSettling()
-    {
-        using var controller = new DeepZoomController();
-        controller.UseSprings = true;
-        controller.SetControlSize(800, 600);
-        controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
-
-        controller.ZoomAboutScreenPoint(2.0, 400, 300);
-
-        // Run many frames until settled
-        for (int i = 0; i < 600; i++)
-        {
-            controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-            if (controller.IsIdle) break;
-        }
-
-        Assert.True(controller.IsIdle, "Should eventually become idle after settling");
     }
 
     [Fact]
@@ -675,86 +513,13 @@ public class DeepZoomControllerTest
     }
 
     [Fact]
-    public void MotionFinished_FiresWhenSpringSettlesAfterZoom()
-    {
-        using var controller = new DeepZoomController();
-        controller.UseSprings = true;
-        controller.SetControlSize(800, 600);
-        controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
-
-        bool motionFinished = false;
-        controller.MotionFinished += (s, e) => motionFinished = true;
-
-        controller.ZoomAboutScreenPoint(2.0, 400, 300);
-
-        for (int i = 0; i < 600; i++)
-        {
-            controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-            if (motionFinished) break;
-        }
-
-        Assert.True(motionFinished, "MotionFinished should fire when spring settles after zoom");
-    }
-
-    [Fact]
-    public void MotionFinished_FiresWhenSpringSettlesAfterPan()
-    {
-        using var controller = new DeepZoomController();
-        controller.UseSprings = true;
-        controller.SetControlSize(800, 600);
-        controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
-
-        // Zoom in first so panning has effect
-        controller.ZoomAboutScreenPoint(4.0, 400, 300);
-        for (int i = 0; i < 600; i++)
-        {
-            controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-            if (controller.IsIdle) break;
-        }
-
-        bool motionFinished = false;
-        controller.MotionFinished += (s, e) => motionFinished = true;
-
-        controller.Pan(50, 50);
-
-        for (int i = 0; i < 600; i++)
-        {
-            controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-            if (motionFinished) break;
-        }
-
-        Assert.True(motionFinished, "MotionFinished should fire when spring settles after pan");
-    }
-
-    [Fact]
-    public void MotionFinished_DoesNotFireWithSpringsDisabled()
-    {
-        using var controller = new DeepZoomController();
-        controller.UseSprings = false;
-        controller.SetControlSize(800, 600);
-        controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
-
-        bool motionFinished = false;
-        controller.MotionFinished += (s, e) => motionFinished = true;
-
-        controller.ZoomAboutScreenPoint(2.0, 400, 300);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-
-        // With springs disabled, spring snaps to target instantly (already settled → no transition)
-        // MotionFinished fires when !wasSettled && IsSettled, so if it was already settled, no event
-        Assert.False(motionFinished, "MotionFinished should not fire with springs disabled");
-    }
-
-    [Fact]
     public void ResetView_FiresViewportChanged()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
 
         int count = 0;
         controller.ViewportChanged += (s, e) => count++;
@@ -767,7 +532,6 @@ public class DeepZoomControllerTest
     public async Task InvalidateRequired_FiresWhenTileLoads()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(512, 512);
         var dzi = CreateSampleDzi();
 
@@ -781,7 +545,7 @@ public class DeepZoomControllerTest
         controller.InvalidateRequired += (s, e) => invalidated = true;
 
         controller.Load(dzi, fetcher);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // Wait for async tile load with polling
         for (int i = 0; i < 40 && !invalidated; i++)
@@ -794,14 +558,12 @@ public class DeepZoomControllerTest
     public void ZoomAboutLogicalPoint_ChangesViewport()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
         double initialWidth = controller.Viewport.ViewportWidth;
 
         controller.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
 
         Assert.True(controller.Viewport.ViewportWidth < initialWidth);
     }
@@ -817,48 +579,33 @@ public class DeepZoomControllerTest
     }
 
     [Fact]
-    public void SetViewport_UpdatesViewportAndSpring()
+    public void SetViewport_UpdatesViewport()
     {
         using var controller = new DeepZoomController();
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
         controller.SetControlSize(800, 600);
-        controller.UseSprings = false; // snap immediately
 
         controller.SetViewport(0.5, 0.1, 0.2);
 
-        Assert.Equal(0.5, controller.Viewport.ViewportWidth, 4);
-        Assert.Equal(0.1, controller.Viewport.ViewportOriginX, 4);
-        Assert.Equal(0.2, controller.Viewport.ViewportOriginY, 4);
-
-        // After Update, values should remain (springs snapped)
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        // Controller applies viewport changes immediately (no spring in controller)
         Assert.Equal(0.5, controller.Viewport.ViewportWidth, 4);
         Assert.Equal(0.1, controller.Viewport.ViewportOriginX, 4);
         Assert.Equal(0.2, controller.Viewport.ViewportOriginY, 4);
     }
 
     [Fact]
-    public void SetViewport_WithSprings_AnimatesToTarget()
+    public void SetViewport_FiresViewportChanged()
     {
         using var controller = new DeepZoomController();
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
         controller.SetControlSize(800, 600);
-        controller.UseSprings = true;
 
-        // Set initial state
-        controller.SetViewport(1.0, 0, 0);
-        controller.Spring.SnapToTarget();
-        controller.Update(TimeSpan.FromSeconds(0.001));
+        int count = 0;
+        controller.ViewportChanged += (s, e) => count++;
 
-        double initialWidth = controller.Viewport.ViewportWidth;
+        controller.SetViewport(0.5, 0.0, 0.0);
 
-        // Set new target
-        controller.SetViewport(0.5, 0.1, 0.1);
-
-        // After one frame, should be moving toward target (not at 1.0 anymore)
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-        // Spring should be animating — not yet at target but closer than start
-        Assert.True(controller.Viewport.ViewportWidth < initialWidth || !controller.IsIdle);
+        Assert.True(count > 0, "ViewportChanged should fire on SetViewport");
     }
 
     [Fact]

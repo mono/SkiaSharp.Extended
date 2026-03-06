@@ -1,4 +1,5 @@
 using SkiaSharp;
+using SkiaSharp.Extended;
 using SkiaSharp.Extended.DeepZoom;
 using Xunit;
 
@@ -70,22 +71,17 @@ public class DeepZoomRenderPipelineTest
         var fetcher = new MemoryTileFetcher();
         controller.Load(dzi, fetcher);
 
-        // Verify initial state
-        Assert.True(controller.IsIdle || true); // May have pending tiles
         Assert.Equal(dzi, controller.TileSource);
 
-        // Zoom in
+        // Zoom in — directly mutates viewport (no spring)
         controller.ZoomAboutScreenPoint(2.0, 400, 300);
-        Assert.True(controller.Viewport.ViewportWidth < 1.0 || true);
+        Assert.True(controller.Viewport.ViewportWidth < 1.0);
 
         // Pan
         controller.Pan(100, 50);
 
-        // Update animation
-        for (int i = 0; i < 60; i++)
-        {
-            controller.Update(TimeSpan.FromMilliseconds(16.67));
-        }
+        // Update tile scheduling (no delta time — no animation in controller)
+        controller.Update();
 
         // Render
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
@@ -93,23 +89,20 @@ public class DeepZoomRenderPipelineTest
 
         // Reset
         controller.ResetView();
-        controller.Spring.SnapToTarget();
         Assert.Equal(1.0, controller.Viewport.ViewportWidth, 0.01);
     }
 
     [Fact]
-    public void Controller_WithSpringsDisabled()
+    public void Controller_SetViewport_AppliesImmediately()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
-
         controller.Load(CreateTestDzi(1024, 768), new MemoryTileFetcher());
 
-        controller.ZoomAboutScreenPoint(4.0, 400, 300);
+        controller.SetViewport(0.5, 0.1, 0.05);
 
-        // Springs disabled = immediate transition
-        Assert.True(controller.Spring.IsSettled);
+        // Viewport changes are immediate — no spring in the controller
+        Assert.Equal(0.5, controller.Viewport.ViewportWidth, 3);
     }
 
     [Fact]
@@ -126,28 +119,35 @@ public class DeepZoomRenderPipelineTest
     }
 
     [Fact]
-    public void Controller_MotionFinished_AfterAnimation()
+    public void Controller_ViewportChanged_FiresOnNavigation()
     {
         using var controller = new DeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
 
-        bool motionFinished = false;
-        controller.MotionFinished += (s, e) => motionFinished = true;
+        int changeCount = 0;
+        controller.ViewportChanged += (s, e) => changeCount++;
 
         controller.ZoomAboutScreenPoint(2.0, 400, 300);
+        controller.Pan(50, 50);
+        controller.ResetView();
 
-        // Simulate lots of frames to let spring settle
-        for (int i = 0; i < 500; i++)
-        {
-            controller.Update(TimeSpan.FromMilliseconds(16.67));
-        }
-
-        // MotionFinished should fire once spring settles
-        // (may not fire if spring settles very quickly)
-        Assert.True(motionFinished || controller.Spring.IsSettled,
-            "Either MotionFinished should fire or spring should settle");
+        Assert.Equal(3, changeCount);
     }
+
+    [Fact]
+    public void Controller_IsIdle_WhenNoPendingTiles()
+    {
+        using var controller = new DeepZoomController();
+        controller.SetControlSize(800, 600);
+        controller.Load(CreateTestDzi(512, 512), new MemoryTileFetcher());
+
+        // IsIdle is based only on pending tiles (no spring)
+        // Right after load, no tiles are fetching yet (fetching starts on Update())
+        Assert.True(controller.IsIdle);
+    }
+
+    // --- ViewportSpring tests (SkiaSharp.Extended) ---
 
     [Fact]
     public void ViewportSpring_AnimatesToTarget()
@@ -157,14 +157,12 @@ public class DeepZoomRenderPipelineTest
         spring.SetTarget(0.5, 0.3, 0.5);
 
         for (int i = 0; i < 500; i++)
-        {
             spring.Update(0.016);
-        }
 
         Assert.True(spring.IsSettled, "Spring should settle after enough frames");
-        Assert.Equal(0.5, spring.OriginX.Current, 0.05);
-        Assert.Equal(0.3, spring.OriginY.Current, 0.05);
-        Assert.Equal(0.5, spring.Width.Current, 0.05);
+        Assert.Equal(0.5, spring.OriginX.Current, 2);
+        Assert.Equal(0.3, spring.OriginY.Current, 2);
+        Assert.Equal(0.5, spring.Width.Current, 2);
     }
 
     [Fact]
@@ -182,28 +180,30 @@ public class DeepZoomRenderPipelineTest
     }
 
     [Fact]
+    public void ViewportSpring_GetCurrentState_MatchesAxes()
+    {
+        var spring = new ViewportSpring();
+        spring.Reset(0.1, 0.2, 0.8);
+        spring.SnapToTarget();
+
+        var (ox, oy, w) = spring.GetCurrentState();
+        Assert.Equal(spring.OriginX.Current, ox);
+        Assert.Equal(spring.OriginY.Current, oy);
+        Assert.Equal(spring.Width.Current, w);
+    }
+
+    // --- DziTileSource tests ---
+
+    [Fact]
     public void DziTileSource_GetOptimalLevel()
     {
         var dzi = CreateTestDzi(4096, 4096);
 
-        // At full view (viewport width = 1.0, control = 800px)
         int overviewLevel = dzi.GetOptimalLevel(1.0, 800);
-
-        // At zoomed in (viewport width = 0.01, control = 800px)
         int zoomLevel = dzi.GetOptimalLevel(0.01, 800);
 
-        // Zoomed level should be >= overview level (need more detail)
         Assert.True(zoomLevel >= overviewLevel,
             $"Zoom level {zoomLevel} should be >= overview level {overviewLevel}");
-    }
-
-    [Fact]
-    public void DziTileSource_TileUrl()
-    {
-        var dzi = CreateTestDzi(2048, 1536);
-        string url = dzi.GetTileUrl(5, 2, 3);
-        Assert.Contains("5/2_3", url);
-        Assert.Contains(".jpg", url);
     }
 
     [Fact]
@@ -211,11 +211,8 @@ public class DeepZoomRenderPipelineTest
     {
         var dzi = CreateTestDzi(2048, 1536);
 
-        // Level 0 should be 1x1
         Assert.Equal(1, dzi.GetLevelWidth(0));
         Assert.Equal(1, dzi.GetLevelHeight(0));
-
-        // Max level should be full resolution
         Assert.Equal(2048, dzi.GetLevelWidth(dzi.MaxLevel));
         Assert.Equal(1536, dzi.GetLevelHeight(dzi.MaxLevel));
     }

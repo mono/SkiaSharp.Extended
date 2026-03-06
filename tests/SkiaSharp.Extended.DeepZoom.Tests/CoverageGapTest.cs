@@ -270,7 +270,7 @@ public class CoverageGapTest
     public void DeepZoomController_Update_BeforeLoad()
     {
         var controller = new DeepZoomController();
-        controller.Update(TimeSpan.FromMilliseconds(16));
+        controller.Update();
         controller.Dispose();
     }
 
@@ -289,7 +289,7 @@ public class CoverageGapTest
         var xml = TestDataHelper.GetString("sample.dzi");        var dzi = DziTileSource.Parse(xml);
         var controller = new DeepZoomController();
         controller.Load(dzi, new NullTileFetcher());
-        controller.Update(TimeSpan.FromMilliseconds(16));
+        controller.Update();
         using var surface = SKSurface.Create(new SKImageInfo(400, 300));
         controller.Render(surface.Canvas);
         controller.Dispose();

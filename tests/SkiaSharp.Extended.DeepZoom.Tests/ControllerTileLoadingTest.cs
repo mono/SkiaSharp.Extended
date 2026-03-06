@@ -26,7 +26,6 @@ public class ControllerTileLoadingTest
     public async Task TileLoad_Success_CachesTileAndFiresInvalidate()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(256, 256);
 
         var dzi = CreateDzi(256, 256);
@@ -39,7 +38,7 @@ public class ControllerTileLoadingTest
         controller.InvalidateRequired += (s, e) => invalidated = true;
 
         controller.Load(dzi, fetcher);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // Wait for async tile loading
         await Task.Delay(500);
@@ -51,7 +50,6 @@ public class ControllerTileLoadingTest
     public async Task TileLoad_NullBitmap_RemovesFromPending()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(256, 256);
 
         var dzi = CreateDzi(256, 256);
@@ -59,7 +57,7 @@ public class ControllerTileLoadingTest
         // Don't add any tiles — fetcher will return null
 
         controller.Load(dzi, fetcher);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         await Task.Delay(300);
 
@@ -71,7 +69,6 @@ public class ControllerTileLoadingTest
     public async Task TileLoad_FetcherThrows_FiresTileFailed()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(256, 256);
 
         var dzi = CreateDzi(256, 256);
@@ -81,7 +78,7 @@ public class ControllerTileLoadingTest
         controller.TileFailed += (s, e) => failedTile = e.TileId;
 
         controller.Load(dzi, fetcher);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         await Task.Delay(500);
 
@@ -92,14 +89,13 @@ public class ControllerTileLoadingTest
     public void Dispose_CancelsPendingLoads()
     {
         var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(512, 512);
 
         var dzi = CreateDzi(512, 512);
         using var fetcher = new SlowTileFetcher();
 
         controller.Load(dzi, fetcher);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // Dispose should cancel pending loads without hanging
         controller.Dispose();
@@ -112,7 +108,7 @@ public class ControllerTileLoadingTest
         controller.SetControlSize(800, 600);
 
         // Should not throw when no tile source is loaded
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
     }
 
     [Fact]
@@ -129,7 +125,6 @@ public class ControllerTileLoadingTest
     public async Task TileScheduling_RequestsTilesForVisibleArea()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
 
         var dzi = CreateDzi(2048, 2048);
@@ -140,7 +135,7 @@ public class ControllerTileLoadingTest
         // Multiple frames to trigger scheduling
         for (int i = 0; i < 5; i++)
         {
-            controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+            controller.Update();
             await Task.Delay(50);
         }
 
@@ -159,7 +154,6 @@ public class ControllerTileLoadingTest
     public void Render_WithTileBorders_DoesNotThrow()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.ShowTileBorders = true;
         controller.SetControlSize(400, 400);
 
@@ -179,7 +173,6 @@ public class ControllerTileLoadingTest
     public void CoordinateConversion_ElementToLogical_Roundtrips()
     {
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
 
         var dzi = CreateDzi(1000, 750);

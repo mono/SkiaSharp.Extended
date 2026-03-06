@@ -8,14 +8,26 @@ using System.Threading.Tasks;
 namespace SkiaSharp.Extended.DeepZoom
 {
     /// <summary>
-    /// Orchestrates the Deep Zoom rendering pipeline: viewport management, spring animation,
-    /// tile scheduling, cache management, and rendering. Platform-agnostic — no MAUI dependency.
+    /// Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling,
+    /// cache management, and rendering. Platform-agnostic — no MAUI dependency.
     /// </summary>
+    /// <remarks>
+    /// This class handles only the <em>tile and rendering</em> concerns. Animation (spring physics,
+    /// easing) and gesture recognition belong in the consuming layer (e.g. a MAUI view).
+    /// <para>
+    /// Typical usage:
+    /// <list type="number">
+    ///   <item><description>Call <see cref="Load(DziTileSource, ITileFetcher)"/> to load an image.</description></item>
+    ///   <item><description>Call <see cref="SetControlSize"/> when the canvas size changes.</description></item>
+    ///   <item><description>Call <see cref="SetViewport"/> / <see cref="Pan"/> / <see cref="ZoomAboutScreenPoint"/> to navigate.</description></item>
+    ///   <item><description>Call <see cref="Update"/> and <see cref="Render"/> from your render loop.</description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DeepZoomController : IDisposable
     {
         private DziTileSource? _tileSource;
         private readonly Viewport _viewport;
-        private readonly ViewportSpring _spring;
         private readonly TileScheduler _scheduler;
         private readonly TileCache _cache;
         private readonly DeepZoomRenderer _renderer;
@@ -25,29 +37,18 @@ namespace SkiaSharp.Extended.DeepZoom
         private CancellationTokenSource? _cts;
         private bool _disposed;
 
+        /// <summary>Initializes a new <see cref="DeepZoomController"/> with an optional tile cache capacity.</summary>
+        /// <param name="cacheCapacity">Maximum number of tiles to cache. Default is 1024.</param>
         public DeepZoomController(int cacheCapacity = 1024)
         {
             _viewport = new Viewport();
-            _spring = new ViewportSpring();
             _scheduler = new TileScheduler();
             _cache = new TileCache(cacheCapacity);
             _renderer = new DeepZoomRenderer();
         }
 
-        /// <summary>The current viewport (read-only access). During animation, this reflects the animated position.</summary>
+        /// <summary>The current viewport. Use this to read the current position and zoom level.</summary>
         public Viewport Viewport => _viewport;
-
-        /// <summary>The target viewport width. During spring animation, this is the destination value.</summary>
-        public double TargetViewportWidth => _spring.Width.Target;
-
-        /// <summary>The target viewport origin X. During spring animation, this is the destination value.</summary>
-        public double TargetOriginX => _spring.OriginX.Target;
-
-        /// <summary>The target viewport origin Y. During spring animation, this is the destination value.</summary>
-        public double TargetOriginY => _spring.OriginY.Target;
-
-        /// <summary>The spring animator for smooth transitions.</summary>
-        public ViewportSpring Spring => _spring;
 
         /// <summary>The tile cache.</summary>
         public TileCache Cache => _cache;
@@ -64,43 +65,18 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>The sub-images from the loaded DZC, or empty if not loaded from a DZC.</summary>
         public IReadOnlyList<DeepZoomSubImage> SubImages => _subImages;
 
-        /// <summary>Whether spring animations are enabled. Default true.</summary>
-        public bool UseSprings { get; set; } = true;
-
-        /// <summary>
-        /// Spring stiffness for viewport animations. Higher values = faster snap, lower = slower/smoother.
-        /// Default is 100.0.
-        /// </summary>
-        public double SpringStiffness
-        {
-            get => _spring.Stiffness;
-            set => _spring.Stiffness = value;
-        }
-
-        /// <summary>
-        /// Spring damping ratio for viewport animations.
-        /// 1.0 = critically damped (no overshoot), &lt;1.0 = underdamped (bouncy), &gt;1.0 = overdamped (sluggish).
-        /// Default is 1.0.
-        /// </summary>
-        public double SpringDampingRatio
-        {
-            get => _spring.DampingRatio;
-            set => _spring.DampingRatio = value;
-        }
-
         /// <summary>
         /// The aspect ratio of the loaded image (width/height). 0 if not loaded.
         /// </summary>
         public double AspectRatio => _tileSource?.AspectRatio ?? 0;
 
         /// <summary>
-        /// Whether the controller is idle (no pending tile loads and no active animation).
+        /// Whether the controller is idle (no pending tile loads).
         /// </summary>
-        public bool IsIdle => _pendingTiles.IsEmpty && _spring.IsSettled;
+        public bool IsIdle => _pendingTiles.IsEmpty;
 
         /// <summary>
         /// Returns the logical rectangle visible at the current viewport state.
-        /// Convenience method that uses the current ViewportWidth.
         /// </summary>
         public (double X, double Y, double Width, double Height) GetZoomRect()
             => _viewport.GetZoomRect(_viewport.ViewportWidth);
@@ -125,9 +101,6 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>Fired when the image source fails to load.</summary>
         public event EventHandler<Exception>? ImageOpenFailed;
 
-        /// <summary>Fired when spring animation completes.</summary>
-        public event EventHandler? MotionFinished;
-
         /// <summary>Fired when the viewport position or zoom level changes.</summary>
         public event EventHandler? ViewportChanged;
 
@@ -139,6 +112,7 @@ namespace SkiaSharp.Extended.DeepZoom
 
         /// <summary>
         /// Loads a DZI tile source and sets up the tile fetcher.
+        /// Resets the viewport to show the full image.
         /// </summary>
         public void Load(DziTileSource tileSource, ITileFetcher fetcher)
         {
@@ -149,14 +123,12 @@ namespace SkiaSharp.Extended.DeepZoom
             _cache.Clear();
             _subImages.Clear();
 
-            // Dispose previous fetcher if it's a different instance
             if (_fetcher != null && !ReferenceEquals(_fetcher, fetcher))
                 (_fetcher as IDisposable)?.Dispose();
 
             _tileSource = tileSource;
             _fetcher = fetcher;
 
-            // Reset viewport to show the full image
             _viewport.AspectRatio = tileSource.AspectRatio;
             _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
             _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
@@ -164,17 +136,11 @@ namespace SkiaSharp.Extended.DeepZoom
             _viewport.ViewportOriginY = 0;
             _viewport.ViewportWidth = 1.0;
 
-            var state = _viewport.GetState();
-            _spring.Reset(state.OriginX, state.OriginY, state.ViewportWidth);
-
             ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
         /// Loads a DZC tile source, populates SubImages, and sets up the tile fetcher.
-        /// DZC collections are rendered externally by consuming the <see cref="SubImages"/> property.
-        /// Each sub-image can be loaded individually via its Source DZI descriptor.
-        /// The PivotViewer's CollectionImageProvider handles composite thumbnail rendering.
         /// </summary>
         public void Load(DzcTileSource dzcTileSource, ITileFetcher fetcher)
         {
@@ -184,7 +150,6 @@ namespace SkiaSharp.Extended.DeepZoom
             _pendingTiles.Clear();
             _cache.Clear();
 
-            // DZC is a collection, not a single image — clear single-image state
             _tileSource = null!;
             _subImages = new List<DeepZoomSubImage>();
             foreach (var item in dzcTileSource.Items)
@@ -198,27 +163,22 @@ namespace SkiaSharp.Extended.DeepZoom
                 _subImages.Add(sub);
             }
 
-            // Dispose previous fetcher if it's a different instance
             if (_fetcher != null && !ReferenceEquals(_fetcher, fetcher))
                 (_fetcher as IDisposable)?.Dispose();
 
             _fetcher = fetcher;
 
-            // Reset viewport
             _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
             _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
             _viewport.ViewportOriginX = 0;
             _viewport.ViewportOriginY = 0;
             _viewport.ViewportWidth = 1.0;
 
-            var state = _viewport.GetState();
-            _spring.Reset(state.OriginX, state.OriginY, state.ViewportWidth);
-
             ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// Sets the control (canvas) size. Call when the view is resized.
+        /// Sets the control (canvas) size. Call whenever the canvas is resized.
         /// </summary>
         public void SetControlSize(double width, double height)
         {
@@ -227,54 +187,7 @@ namespace SkiaSharp.Extended.DeepZoom
         }
 
         /// <summary>
-        /// Zooms about a logical point. Factor > 1 zooms in, &lt; 1 zooms out.
-        /// The logical point stays fixed on screen.
-        /// </summary>
-        public void ZoomAboutLogicalPoint(double factor, double logicalX, double logicalY)
-        {
-            SyncViewportToTarget();
-            _viewport.ZoomAboutLogicalPoint(factor, logicalX, logicalY);
-            _viewport.Constrain();
-            ApplyViewportToSpring();
-        }
-
-        /// <summary>
-        /// Zooms about a screen-space point. Factor > 1 zooms in, &lt; 1 zooms out.
-        /// </summary>
-        public void ZoomAboutScreenPoint(double factor, double screenX, double screenY)
-        {
-            SyncViewportToTarget();
-            var (lx, ly) = _viewport.ElementToLogicalPoint(screenX, screenY);
-            _viewport.ZoomAboutLogicalPoint(factor, lx, ly);
-            _viewport.Constrain();
-            ApplyViewportToSpring();
-        }
-
-        /// <summary>
-        /// Pans by the given screen-space delta.
-        /// </summary>
-        public void Pan(double deltaScreenX, double deltaScreenY)
-        {
-            SyncViewportToTarget();
-            _viewport.PanByScreenDelta(deltaScreenX, deltaScreenY);
-            _viewport.Constrain();
-            ApplyViewportToSpring();
-        }
-
-        /// <summary>
-        /// Sets the viewport to show the entire image.
-        /// </summary>
-        public void ResetView()
-        {
-            _viewport.ViewportOriginX = 0;
-            _viewport.ViewportOriginY = 0;
-            _viewport.ViewportWidth = 1.0;
-            _viewport.Constrain();
-            ApplyViewportToSpring();
-        }
-
-        /// <summary>
-        /// Sets the viewport state directly. Springs animate to this state if enabled.
+        /// Sets the viewport directly to the given state and constrains it.
         /// </summary>
         public void SetViewport(double viewportWidth, double originX, double originY)
         {
@@ -282,89 +195,67 @@ namespace SkiaSharp.Extended.DeepZoom
             _viewport.ViewportOriginX = originX;
             _viewport.ViewportOriginY = originY;
             _viewport.Constrain();
-            ApplyViewportToSpring();
-        }
-
-        /// <summary>
-        /// Restores the viewport to the spring's target state so that
-        /// programmatic operations (Zoom, Pan) compound on the intended
-        /// destination rather than the mid-animation position.
-        /// </summary>
-        private void SyncViewportToTarget()
-        {
-            _viewport.ViewportWidth = _spring.Width.Target;
-            _viewport.ViewportOriginX = _spring.OriginX.Target;
-            _viewport.ViewportOriginY = _spring.OriginY.Target;
-        }
-
-        private void ApplyViewportToSpring()
-        {
-            var state = _viewport.GetState();
-            if (UseSprings)
-            {
-                _spring.SetTarget(state.OriginX, state.OriginY, state.ViewportWidth);
-            }
-            else
-            {
-                _spring.SetTarget(state.OriginX, state.OriginY, state.ViewportWidth);
-                _spring.SnapToTarget();
-            }
             ViewportChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// Immediately snaps the spring animation to its target.
-        /// Useful for direct-manipulation gestures (pan, pinch) where the
-        /// user expects instant feedback rather than spring lag.
+        /// Zooms about a logical point. Factor &gt; 1 zooms in, &lt; 1 zooms out.
         /// </summary>
-        public void SnapSpringToTarget()
+        public void ZoomAboutLogicalPoint(double factor, double logicalX, double logicalY)
         {
-            _spring.SnapToTarget();
-            var state = _spring.GetCurrentState();
-            _viewport.ViewportOriginX = state.OriginX;
-            _viewport.ViewportOriginY = state.OriginY;
-            _viewport.ViewportWidth = state.ViewportWidth;
+            _viewport.ZoomAboutLogicalPoint(factor, logicalX, logicalY);
+            _viewport.Constrain();
+            ViewportChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// Advances animation and returns true if the view needs repainting.
-        /// Call from the render loop with the time since last frame.
+        /// Zooms about a screen-space point. Factor &gt; 1 zooms in, &lt; 1 zooms out.
         /// </summary>
-        public bool Update(TimeSpan deltaTime)
+        public void ZoomAboutScreenPoint(double factor, double screenX, double screenY)
         {
-            bool wasSettled = _spring.IsSettled;
-            _spring.Update(deltaTime.TotalSeconds);
+            var (lx, ly) = _viewport.ElementToLogicalPoint(screenX, screenY);
+            _viewport.ZoomAboutLogicalPoint(factor, lx, ly);
+            _viewport.Constrain();
+            ViewportChanged?.Invoke(this, EventArgs.Empty);
+        }
 
-            // Apply spring state to viewport
-            var state = _spring.GetCurrentState();
-            bool viewportMoved = state.OriginX != _viewport.ViewportOriginX ||
-                                 state.OriginY != _viewport.ViewportOriginY ||
-                                 state.ViewportWidth != _viewport.ViewportWidth;
-            _viewport.ViewportOriginX = state.OriginX;
-            _viewport.ViewportOriginY = state.OriginY;
-            _viewport.ViewportWidth = state.ViewportWidth;
+        /// <summary>
+        /// Pans by the given screen-space delta.
+        /// </summary>
+        public void Pan(double deltaScreenX, double deltaScreenY)
+        {
+            _viewport.PanByScreenDelta(deltaScreenX, deltaScreenY);
+            _viewport.Constrain();
+            ViewportChanged?.Invoke(this, EventArgs.Empty);
+        }
 
-            if (viewportMoved)
-            {
-                ViewportChanged?.Invoke(this, EventArgs.Empty);
-            }
+        /// <summary>
+        /// Resets the viewport to show the entire image.
+        /// </summary>
+        public void ResetView()
+        {
+            _viewport.ViewportOriginX = 0;
+            _viewport.ViewportOriginY = 0;
+            _viewport.ViewportWidth = 1.0;
+            _viewport.Constrain();
+            ViewportChanged?.Invoke(this, EventArgs.Empty);
+        }
 
-            if (!wasSettled && _spring.IsSettled)
-            {
-                MotionFinished?.Invoke(this, EventArgs.Empty);
-            }
-
-            // Schedule tile loading
+        /// <summary>
+        /// Schedules loading for visible tiles and returns whether any tiles are still pending.
+        /// Call from your render loop on every frame.
+        /// </summary>
+        /// <returns><see langword="true"/> if tile loads are still in progress; otherwise <see langword="false"/>.</returns>
+        public bool Update()
+        {
             if (_tileSource != null && _fetcher != null)
-            {
                 ScheduleTileLoads();
-            }
 
-            return !_spring.IsSettled || _pendingTiles.Count > 0;
+            return _pendingTiles.Count > 0;
         }
 
         /// <summary>
-        /// Renders the current state onto the given canvas.
+        /// Renders the current viewport state onto the given canvas.
         /// </summary>
         public void Render(SKCanvas canvas)
         {
@@ -374,9 +265,6 @@ namespace SkiaSharp.Extended.DeepZoom
             _renderer.Render(canvas, _tileSource, _viewport, _cache, _scheduler);
         }
 
-        /// <summary>
-        /// Schedules loading for visible tiles that aren't cached.
-        /// </summary>
         private void ScheduleTileLoads()
         {
             if (_tileSource == null || _fetcher == null) return;
@@ -416,14 +304,11 @@ namespace SkiaSharp.Extended.DeepZoom
                 if (bitmap != null && !ct.IsCancellationRequested && !_disposed)
                 {
                     _cache.Put(tileId, bitmap);
-                    bitmap = null; // cache owns the bitmap now
+                    bitmap = null;
                     InvalidateRequired?.Invoke(this, EventArgs.Empty);
                 }
             }
-            catch (OperationCanceledException)
-            {
-                // Expected during controller dispose or source change
-            }
+            catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 TileFailed?.Invoke(this, new TileFailedEventArgs(tileId, ex));
@@ -435,6 +320,7 @@ namespace SkiaSharp.Extended.DeepZoom
             }
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             if (_disposed) return;
@@ -453,6 +339,7 @@ namespace SkiaSharp.Extended.DeepZoom
     /// </summary>
     public class TileFailedEventArgs : EventArgs
     {
+        /// <summary>Initializes a new <see cref="TileFailedEventArgs"/>.</summary>
         public TileFailedEventArgs(TileId tileId, Exception exception)
         {
             TileId = tileId;

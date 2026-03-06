@@ -25,17 +25,16 @@ public class DeepZoomIntegrationTest
     {
         using var controller = new DeepZoomController();
         using var fetcher = new MemoryTileFetcher();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
 
         // Zoom in
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // Pan right
         controller.Pan(200, 0);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // Render
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
@@ -49,7 +48,6 @@ public class DeepZoomIntegrationTest
     {
         using var controller = new DeepZoomController();
         using var fetcher = new MemoryTileFetcher();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
 
@@ -57,7 +55,7 @@ public class DeepZoomIntegrationTest
         for (int i = 0; i < 5; i++)
         {
             controller.ZoomAboutScreenPoint(2.0, 400, 300);
-            controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+            controller.Update();
         }
 
         double zoomedWidth = controller.Viewport.ViewportWidth;
@@ -67,36 +65,27 @@ public class DeepZoomIntegrationTest
         for (int i = 0; i < 5; i++)
         {
             controller.ZoomAboutScreenPoint(0.5, 400, 300);
-            controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+            controller.Update();
         }
 
         Assert.True(controller.Viewport.ViewportWidth > zoomedWidth);
     }
 
     [Fact]
-    public void SpringAnimation_SettlesInReasonableTime()
+    public void Zoom_AppliesImmediately()
     {
+        // Spring animation is owned by the view layer (SKDeepZoomView), not the controller.
+        // The controller applies viewport changes directly/immediately.
         using var controller = new DeepZoomController();
         using var fetcher = new MemoryTileFetcher();
-        controller.UseSprings = true;
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
 
+        double before = controller.Viewport.ViewportWidth;
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
-
-        // Should settle within 10 seconds (600 frames at 60fps)
-        bool settled = false;
-        for (int i = 0; i < 600; i++)
-        {
-            controller.Update(TimeSpan.FromSeconds(1.0 / 60));
-            if (controller.Spring.IsSettled)
-            {
-                settled = true;
-                break;
-            }
-        }
-
-        Assert.True(settled, "Spring should settle within 10 seconds");
+        // No spring — viewport updates immediately
+        Assert.True(controller.Viewport.ViewportWidth < before,
+            "Viewport should update immediately after zoom");
     }
 
     [Fact]
@@ -104,19 +93,18 @@ public class DeepZoomIntegrationTest
     {
         using var controller = new DeepZoomController();
         using var fetcher = new MemoryTileFetcher();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
 
         // Zoom in
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // Pan far to the right (beyond image bounds)
         for (int i = 0; i < 100; i++)
         {
             controller.Pan(-100, 0);
-            controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+            controller.Update();
         }
 
         // Viewport origin should be constrained
@@ -129,7 +117,6 @@ public class DeepZoomIntegrationTest
     {
         using var controller = new DeepZoomController();
         using var fetcher = new MemoryTileFetcher();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
 
@@ -137,7 +124,7 @@ public class DeepZoomIntegrationTest
 
         // Resize to larger
         controller.SetControlSize(1600, 1200);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // Viewport width should remain the same (it's in logical units)
         Assert.Equal(initialWidth, controller.Viewport.ViewportWidth, 6);
@@ -148,7 +135,6 @@ public class DeepZoomIntegrationTest
     {
         using var controller = new DeepZoomController();
         using var fetcher = new MemoryTileFetcher();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(1600, 900), fetcher);
 
@@ -160,7 +146,6 @@ public class DeepZoomIntegrationTest
     {
         using var controller = new DeepZoomController();
         using var fetcher = new MemoryTileFetcher();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
 
         // Load first source
@@ -177,11 +162,10 @@ public class DeepZoomIntegrationTest
     {
         using var controller = new DeepZoomController();
         using var fetcher = new MemoryTileFetcher();
-        controller.UseSprings = false;
         controller.SetControlSize(512, 512);
         controller.Load(CreateDzi(512, 512), fetcher);
 
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // Wait for async tile loading
         await Task.Delay(300);
@@ -196,7 +180,7 @@ public class DeepZoomIntegrationTest
         var fetcher = new MemoryTileFetcher();
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         controller.Dispose();
         fetcher.Dispose();
@@ -208,7 +192,6 @@ public class DeepZoomIntegrationTest
     {
         using var controller = new DeepZoomController();
         using var fetcher = new MemoryTileFetcher();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
 
@@ -217,7 +200,7 @@ public class DeepZoomIntegrationTest
 
         // Zoom about that logical point
         controller.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
-        controller.Update(TimeSpan.FromSeconds(1.0 / 60));
+        controller.Update();
 
         // The same logical point should map to the same screen position
         var (sx2, sy2) = controller.Viewport.LogicalToElementPoint(0.5, 0.5);

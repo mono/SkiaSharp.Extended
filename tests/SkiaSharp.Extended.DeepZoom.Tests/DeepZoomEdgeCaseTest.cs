@@ -400,11 +400,9 @@ public class DeepZoomEdgeCaseTest
         controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
 
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
-
         controller.ResetView();
-        // Spring target is now 1.0
-        controller.Spring.SnapToTarget();
 
+        // Controller applies changes immediately (no spring)
         Assert.Equal(1.0, controller.Viewport.ViewportWidth, 0.01);
     }
 
@@ -438,21 +436,22 @@ public class DeepZoomEdgeCaseTest
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(512, 512), new MemoryTileFetcher());
 
-        // After loading with springs snapped, should be idle
-        controller.Spring.SnapToTarget();
+        // IsIdle = no pending tiles (spring is view-layer concern)
         Assert.True(controller.IsIdle);
     }
 
     [Fact]
-    public void Controller_UseSprings_False_ImmediateTransition()
+    public void Controller_ImmediateTransition_NoSpring()
     {
+        // Spring belongs to the view (SKDeepZoomView), not the controller.
+        // Viewport changes via ZoomAboutScreenPoint are immediate.
         using var controller = new DeepZoomController();
-        controller.UseSprings = false;
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
 
+        double before = controller.Viewport.ViewportWidth;
         controller.ZoomAboutScreenPoint(2.0, 400, 300);
-        Assert.True(controller.Spring.IsSettled);
+        Assert.True(controller.Viewport.ViewportWidth < before);
     }
 
     private static DziTileSource CreateTestDzi(int width, int height)
