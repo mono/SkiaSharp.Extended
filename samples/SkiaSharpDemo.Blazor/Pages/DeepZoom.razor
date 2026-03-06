@@ -1,0 +1,270 @@
+@page "/deepzoom"
+@implements IDisposable
+@inject HttpClient Http
+@using SkiaSharp.Extended.DeepZoom
+
+<PageTitle>Deep Zoom</PageTitle>
+
+<h1>Deep Zoom</h1>
+
+<p>
+    Pan, zoom, and explore a tiled deep zoom image powered by
+    <code>DeepZoomController</code> from the shared core library.
+    Use mouse wheel to zoom, click and drag to pan, double-click to zoom in/out.
+</p>
+
+<div class="row mb-3">
+    <div class="col-auto">
+        <button class="btn btn-outline-secondary btn-sm" @onclick="OnReset">Reset</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="OnZoomIn">Zoom In</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="OnZoomOut">Zoom Out</button>
+    </div>
+    <div class="col-auto d-flex align-items-center">
+        <div class="form-check form-switch me-3">
+            <input class="form-check-input" type="checkbox" id="showBorders" @bind="showBorders" @bind:after="OnDebugChanged" />
+            <label class="form-check-label" for="showBorders">Tile Borders</label>
+        </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="showStats" @bind="showStats" @bind:after="OnDebugChanged" />
+            <label class="form-check-label" for="showStats">Stats</label>
+        </div>
+    </div>
+    <div class="col-auto d-flex align-items-center">
+        <small class="text-muted">@statusText</small>
+    </div>
+</div>
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger" role="alert">@errorMessage</div>
+}
+
+<div @onpointerdown="OnPointerDown"
+     @onpointermove="OnPointerMove"
+     @onpointerup="OnPointerUp"
+     @onpointercancel="OnPointerCancel"
+     @onwheel="OnWheel"
+     @onwheel:preventDefault
+     style="touch-action: none; cursor: grab; border: 1px solid #ccc; user-select: none;">
+    <SKCanvasView @ref="canvasView"
+                  OnPaintSurface="OnPaintSurface"
+                  style="width: 100%; height: 600px;" />
+</div>
+
+@code {
+    private SKCanvasView? canvasView;
+    private DeepZoomController? controller;
+    private readonly SKGestureTracker _tracker = new(new SKGestureTrackerOptions
+    {
+        IsRotateEnabled = false,        // Deep zoom doesn't support rotation
+        IsDoubleTapZoomEnabled = false, // Deep zoom handles zoom animation via spring physics
+        IsScrollZoomEnabled = false,    // We forward scroll to controller ourselves
+        IsFlingEnabled = true,          // Add momentum scrolling via fling
+    });
+    private System.Timers.Timer? animationTimer;
+    private DateTime lastUpdate = DateTime.UtcNow;
+    private float _displayScale = 1f;
+
+    private bool showBorders;
+    private bool showStats;
+    private string statusText = "Loading...";
+    private string? errorMessage;
+
+    protected override void OnInitialized()
+    {
+        _tracker.PanDetected += OnTrackerPan;
+        _tracker.PinchDetected += OnTrackerPinch;
+        _tracker.DoubleTapDetected += OnTrackerDoubleTap;
+        _tracker.ScrollDetected += OnTrackerScroll;
+        _tracker.FlingUpdated += OnTrackerFlingUpdated;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        try
+        {
+            controller = new DeepZoomController();
+            controller.InvalidateRequired += (_, _) => canvasView?.Invalidate();
+
+            var dziXml = await Http.GetStringAsync("deepzoom/testgrid.dzi");
+            var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/testgrid_files/").ToString();
+            var tileSource = DziTileSource.Parse(dziXml, baseUrl);
+
+            var fetcher = new HttpTileFetcher(new HttpClient());
+            controller.Load(tileSource, fetcher);
+
+            statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}, {tileSource.MaxLevel + 1} levels";
+
+            animationTimer = new System.Timers.Timer(16); // ~60fps
+            animationTimer.Elapsed += OnTimerTick;
+            animationTimer.Start();
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load: {ex.Message}";
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void OnTimerTick(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        if (controller == null)
+            return;
+
+        var now = DateTime.UtcNow;
+        var delta = now - lastUpdate;
+        lastUpdate = now;
+
+        if (controller.Update(delta))
+        {
+            canvasView?.Invalidate();
+        }
+    }
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        if (controller == null)
+            return;
+
+        var canvas = e.Surface.Canvas;
+        var info = e.Info;
+
+        // Compute display scale: PointerEventArgs gives CSS pixels, canvas is in device pixels
+        const float expectedCssHeight = 600f;
+        _displayScale = info.Height / expectedCssHeight;
+
+        controller.SetControlSize(info.Width, info.Height);
+        canvas.Clear(SKColors.White);
+        controller.Render(canvas);
+    }
+
+    // --- Pointer Events → SKGestureTracker ---
+
+    private void OnPointerDown(PointerEventArgs e)
+    {
+        var isMouse = e.PointerType == "mouse";
+        _tracker.ProcessTouchDown(e.PointerId, GetCanvasLocation(e), isMouse);
+    }
+
+    private void OnPointerMove(PointerEventArgs e)
+    {
+        var inContact = e.Buttons > 0 || e.PointerType != "mouse";
+        _tracker.ProcessTouchMove(e.PointerId, GetCanvasLocation(e), inContact);
+    }
+
+    private void OnPointerUp(PointerEventArgs e)
+    {
+        var isMouse = e.PointerType == "mouse";
+        _tracker.ProcessTouchUp(e.PointerId, GetCanvasLocation(e), isMouse);
+    }
+
+    private void OnPointerCancel(PointerEventArgs e)
+    {
+        _tracker.ProcessTouchCancel(e.PointerId);
+    }
+
+    private void OnWheel(WheelEventArgs e)
+    {
+        var location = new SKPoint((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
+        // Normalize: negative deltaY = scroll down = zoom out; positive = zoom in
+        var deltaY = e.DeltaY < 0 ? 1f : -1f;
+        _tracker.ProcessMouseWheel(location, 0, deltaY);
+    }
+
+    /// <summary>Converts pointer CSS coordinates to canvas device-pixel coordinates.</summary>
+    private SKPoint GetCanvasLocation(PointerEventArgs e)
+        => new SKPoint((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
+
+    // --- SKGestureTracker Event Handlers → DeepZoomController ---
+
+    private void OnTrackerPan(object? sender, SKPanGestureEventArgs e)
+    {
+        e.Handled = true; // Prevent tracker from also updating its internal matrix
+        controller?.Pan(e.Delta.X, e.Delta.Y);
+        controller?.SnapSpringToTarget();
+        canvasView?.Invalidate();
+    }
+
+    private void OnTrackerPinch(object? sender, SKPinchGestureEventArgs e)
+    {
+        controller?.ZoomAboutScreenPoint(e.ScaleDelta, e.FocalPoint.X, e.FocalPoint.Y);
+        controller?.SnapSpringToTarget();
+        canvasView?.Invalidate();
+    }
+
+    private void OnTrackerDoubleTap(object? sender, SKTapGestureEventArgs e)
+    {
+        if (controller == null) return;
+        // Toggle: if zoomed in, zoom out to fit; otherwise zoom in 2x
+        if (controller.TargetViewportWidth < 0.95)
+            controller.ZoomAboutScreenPoint(0.5, e.Location.X, e.Location.Y);
+        else
+            controller.ZoomAboutScreenPoint(2.0, e.Location.X, e.Location.Y);
+        canvasView?.Invalidate();
+    }
+
+    private void OnTrackerScroll(object? sender, SKScrollGestureEventArgs e)
+    {
+        // Positive Y = scroll up = zoom in (normalized in OnWheel)
+        double factor = e.Delta.Y > 0 ? 1.2 : 1.0 / 1.2;
+        controller?.ZoomAboutScreenPoint(factor, e.Location.X, e.Location.Y);
+        canvasView?.Invalidate();
+    }
+
+    private void OnTrackerFlingUpdated(object? sender, SKFlingGestureEventArgs e)
+    {
+        if (e.Delta == SKPoint.Empty || controller == null) return;
+        controller.Pan(e.Delta.X, e.Delta.Y);
+        controller.SnapSpringToTarget();
+        canvasView?.Invalidate();
+    }
+
+    // --- Button Handlers ---
+
+    private void OnReset()
+    {
+        controller?.ResetView();
+        canvasView?.Invalidate();
+    }
+
+    private void OnZoomIn()
+    {
+        controller?.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
+        canvasView?.Invalidate();
+    }
+
+    private void OnZoomOut()
+    {
+        controller?.ZoomAboutLogicalPoint(0.5, 0.5, 0.5);
+        canvasView?.Invalidate();
+    }
+
+    private void OnDebugChanged()
+    {
+        if (controller == null)
+            return;
+
+        controller.ShowTileBorders = showBorders;
+        controller.ShowDebugStats = showStats;
+        canvasView?.Invalidate();
+    }
+
+    public void Dispose()
+    {
+        _tracker.PanDetected -= OnTrackerPan;
+        _tracker.PinchDetected -= OnTrackerPinch;
+        _tracker.DoubleTapDetected -= OnTrackerDoubleTap;
+        _tracker.ScrollDetected -= OnTrackerScroll;
+        _tracker.FlingUpdated -= OnTrackerFlingUpdated;
+        _tracker.Dispose();
+
+        animationTimer?.Stop();
+        animationTimer?.Dispose();
+        controller?.Dispose();
+    }
+}

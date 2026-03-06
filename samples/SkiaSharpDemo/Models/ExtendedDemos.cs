@@ -35,6 +35,20 @@ public static class ExtendedDemos
 			{
 				new Demo
 				{
+					Title = "Deep Zoom",
+					Description = "Pan, pinch, and zoom into a tiled deep zoom image with smooth spring animations.",
+					PageType = typeof(DeepZoomPage),
+					Color = Colors.Teal,
+				},
+				new Demo
+				{
+					Title = "Gestures",
+					Description = "Pan, pinch, rotate, tap, long press, fling - all the gestures you need for interactive SkiaSharp views!",
+					PageType = typeof(GesturePage),
+					Color = Colors.DarkOrange,
+				},
+				new Demo
+				{
 					Title = "Confetti",
 					Description = "Yeaaahhhhh! Throw that confetti! Woooooaaaaahhhh! We are the winners! Celebration words! Congrats! Yay!",
 					PageType = typeof(ConfettiPage),
@@ -46,13 +60,6 @@ public static class ExtendedDemos
 					Description = "Ooooh! Lottie animations are really cool and now super easy to do!",
 					PageType = typeof(LottiePage),
 					Color = Colors.SteelBlue,
-				},
-				new Demo
-				{
-					Title = "Gestures",
-					Description = "Pan, pinch, rotate, tap, long press, fling - all the gestures you need for interactive SkiaSharp views!",
-					PageType = typeof(GesturePage),
-					Color = Colors.DarkOrange,
 				},
 				//new Demo
 				//{

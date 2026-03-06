@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.2" />
+    <PackageReference Include="xunit.v3" Version="3.1.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\source\SkiaSharp.Extended.DeepZoom\SkiaSharp.Extended.DeepZoom.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\resources\collections\conceptcars\deepzoom\conceptcars.dzc" Link="TestData\conceptcars.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\hungarian-blog\deepzoom\collection-dz.dzc" Link="TestData\collection-dz.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\nigeria-state\deepzoom\images.dzc" Link="TestData\nigeria_images.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\ski-resorts\deepzoom\ski_resorts.dzc" Link="TestData\ski_resorts.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\stockport\deepzoom\images.dzc" Link="TestData\stockport_images.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\shapes\deepzoom\area.dzc" Link="TestData\area.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\shapes\deepzoom\geometry.dzc" Link="TestData\geometry.dzc" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\sample\deepzoom\sample.dzi" Link="TestData\sample.dzi" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\sample\deepzoom\sample_files\**" Link="TestData\sample_files\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\hungarian-blog\deepzoom\0.dzi" Link="TestData\collection-dz_0.dzi" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\conceptcars\deepzoom\10014035633840664012396073.dzi" Link="TestData\conceptcar_sample.dzi" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
