@@ -87,7 +87,7 @@
         try
         {
             controller = new DeepZoomController();
-            controller.InvalidateRequired += (_, _) => canvasView?.Invalidate();
+            controller.InvalidateRequired += (_, _) => StartAnimation();
 
             var dziXml = await Http.GetStringAsync("deepzoom/testgrid.dzi");
             var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/testgrid_files/").ToString();
@@ -100,7 +100,7 @@
 
             animationTimer = new System.Timers.Timer(16); // ~60fps
             animationTimer.Elapsed += OnTimerTick;
-            animationTimer.Start();
+            // Don't auto-start; StartAnimation() is called when the controller needs rendering
 
             await InvokeAsync(StateHasChanged);
         }
@@ -109,6 +109,15 @@
             errorMessage = $"Failed to load: {ex.Message}";
             await InvokeAsync(StateHasChanged);
         }
+    }
+
+    /// <summary>Starts the animation timer if it's not already running.</summary>
+    private void StartAnimation()
+    {
+        if (animationTimer == null) return;
+        lastUpdate = DateTime.UtcNow;
+        animationTimer.Start(); // no-op if already running
+        canvasView?.Invalidate();
     }
 
     private void OnTimerTick(object? sender, System.Timers.ElapsedEventArgs e)
@@ -123,6 +132,11 @@
         if (controller.Update(delta))
         {
             canvasView?.Invalidate();
+        }
+        else if (controller.IsIdle)
+        {
+            // Stop polling when no animation is running; InvalidateRequired will restart us
+            animationTimer?.Stop();
         }
     }
 
@@ -187,14 +201,14 @@
         e.Handled = true; // Prevent tracker from also updating its internal matrix
         controller?.Pan(e.Delta.X, e.Delta.Y);
         controller?.SnapSpringToTarget();
-        canvasView?.Invalidate();
+        StartAnimation();
     }
 
     private void OnTrackerPinch(object? sender, SKPinchGestureEventArgs e)
     {
         controller?.ZoomAboutScreenPoint(e.ScaleDelta, e.FocalPoint.X, e.FocalPoint.Y);
         controller?.SnapSpringToTarget();
-        canvasView?.Invalidate();
+        StartAnimation();
     }
 
     private void OnTrackerDoubleTap(object? sender, SKTapGestureEventArgs e)
@@ -205,7 +219,7 @@
             controller.ZoomAboutScreenPoint(0.5, e.Location.X, e.Location.Y);
         else
             controller.ZoomAboutScreenPoint(2.0, e.Location.X, e.Location.Y);
-        canvasView?.Invalidate();
+        StartAnimation();
     }
 
     private void OnTrackerScroll(object? sender, SKScrollGestureEventArgs e)
@@ -213,7 +227,7 @@
         // Positive Y = scroll up = zoom in (normalized in OnWheel)
         double factor = e.Delta.Y > 0 ? 1.2 : 1.0 / 1.2;
         controller?.ZoomAboutScreenPoint(factor, e.Location.X, e.Location.Y);
-        canvasView?.Invalidate();
+        StartAnimation();
     }
 
     private void OnTrackerFlingUpdated(object? sender, SKFlingGestureEventArgs e)
@@ -221,7 +235,7 @@
         if (e.Delta == SKPoint.Empty || controller == null) return;
         controller.Pan(e.Delta.X, e.Delta.Y);
         controller.SnapSpringToTarget();
-        canvasView?.Invalidate();
+        StartAnimation();
     }
 
     // --- Button Handlers ---
@@ -229,19 +243,19 @@
     private void OnReset()
     {
         controller?.ResetView();
-        canvasView?.Invalidate();
+        StartAnimation();
     }
 
     private void OnZoomIn()
     {
         controller?.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
-        canvasView?.Invalidate();
+        StartAnimation();
     }
 
     private void OnZoomOut()
     {
         controller?.ZoomAboutLogicalPoint(0.5, 0.5, 0.5);
-        canvasView?.Invalidate();
+        StartAnimation();
     }
 
     private void OnDebugChanged()
