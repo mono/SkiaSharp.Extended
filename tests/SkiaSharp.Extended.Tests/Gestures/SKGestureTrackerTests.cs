@@ -1181,4 +1181,33 @@ public class SKGestureTrackerTests
 		Assert.Equal(initialOffset.Y, tracker.Offset.Y, 1f);
 	}
 
+	[Fact]
+	public void RotateWithPanDisabled_FingersTranslate_OffsetDoesNotChange()
+	{
+		// Bug fix: when IsPanEnabled=false, moving the finger midpoint during rotation
+		// should not cause content drift -- the pivot must be locked via GetEffectiveGesturePivot.
+		var tracker = CreateTracker();
+		tracker.IsPanEnabled = false;
+		tracker.IsPinchEnabled = false; // isolate rotation-only behavior
+		tracker.IsRotateEnabled = true;
+
+		var initialOffset = tracker.Offset;
+
+		// Both fingers down, equidistant from center
+		tracker.ProcessTouchDown(1, new SKPoint(150, 200));
+		tracker.ProcessTouchDown(2, new SKPoint(250, 200));
+
+		// Both fingers translate upward together (no scale change, some rotation)
+		tracker.ProcessTouchMove(1, new SKPoint(150, 100));
+		tracker.ProcessTouchMove(2, new SKPoint(250, 100));
+
+		// Translate further
+		tracker.ProcessTouchMove(1, new SKPoint(150, 50));
+		tracker.ProcessTouchMove(2, new SKPoint(250, 50));
+
+		// Offset must not change -- translation with pan disabled should be ignored
+		Assert.Equal(initialOffset.X, tracker.Offset.X, 1f);
+		Assert.Equal(initialOffset.Y, tracker.Offset.Y, 1f);
+	}
+
 }

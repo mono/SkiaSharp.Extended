@@ -72,7 +72,7 @@ public sealed class SKGestureTracker : IDisposable
 	private float _zoomTargetFactor;
 	private SKPoint _zoomFocalPoint;
 	private long _zoomStartTicks;
-	private SKPoint? _pinchFocalPointOverride;
+	private SKPoint? _gesturePivotOverride;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKGestureTracker"/> class with default options.
@@ -684,14 +684,7 @@ public sealed class SKGestureTracker : IDisposable
 
 		if (IsPinchEnabled)
 		{
-			// When pan is disabled, lock the zoom pivot to where the pinch started
-			// so that moving fingers during a pinch doesn't cause effective panning.
-			if (!IsPanEnabled)
-				_pinchFocalPointOverride ??= e.FocalPoint;
-			else
-				_pinchFocalPointOverride = null;
-
-			var pivot = _pinchFocalPointOverride ?? e.FocalPoint;
+			var pivot = GetEffectiveGesturePivot(e.FocalPoint);
 			var newScale = Clamp(_scale * e.ScaleDelta, Options.MinScale, Options.MaxScale);
 			AdjustOffsetForPivot(pivot, _scale, newScale, _rotation, _rotation);
 			_scale = newScale;
@@ -708,8 +701,9 @@ public sealed class SKGestureTracker : IDisposable
 		{
 			RotateDetected?.Invoke(this, e);
 
+			var pivot = GetEffectiveGesturePivot(e.FocalPoint);
 			var newRotation = _rotation + e.RotationDelta;
-			AdjustOffsetForPivot(e.FocalPoint, _scale, _scale, _rotation, newRotation);
+			AdjustOffsetForPivot(pivot, _scale, _scale, _rotation, newRotation);
 			_rotation = newRotation;
 		}
 
@@ -758,7 +752,7 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEngineGestureEnded(object? s, SKGestureLifecycleEventArgs e)
 	{
-		_pinchFocalPointOverride = null;
+		_gesturePivotOverride = null;
 
 		if (_isDragging)
 		{
@@ -778,6 +772,18 @@ public sealed class SKGestureTracker : IDisposable
 		var inv = SKMatrix.CreateRotationDegrees(-_rotation);
 		var mapped = inv.MapVector(dx, dy);
 		return new SKPoint(mapped.X / _scale, mapped.Y / _scale);
+	}
+
+	private SKPoint GetEffectiveGesturePivot(SKPoint focalPoint)
+	{
+		if (!IsPanEnabled)
+		{
+			_gesturePivotOverride ??= focalPoint;
+			return _gesturePivotOverride.Value;
+		}
+
+		_gesturePivotOverride = null;
+		return focalPoint;
 	}
 
 	private void AdjustOffsetForPivot(SKPoint pivot, float oldScale, float newScale, float oldRotDeg, float newRotDeg)
