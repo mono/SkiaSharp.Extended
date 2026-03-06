@@ -187,7 +187,7 @@ limits, animation, and feature toggles.</p>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.FlingFrameInterval.html#SkiaSharp_Extended_SKGestureTrackerOptions_FlingFrameInterval">FlingFrameInterval</a></dt>
-    <dd><p>Gets or sets the fling animation frame interval, in milliseconds.</p>
+    <dd><p>Gets or sets the fling animation frame interval.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -267,12 +267,23 @@ limits, animation, and feature toggles.</p>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.ZoomAnimationDuration.html#SkiaSharp_Extended_SKGestureTrackerOptions_ZoomAnimationDuration">ZoomAnimationDuration</a></dt>
-    <dd><p>Gets or sets the duration of the double-tap zoom animation, in milliseconds.</p>
+    <dd><p>Gets or sets the duration of the double-tap zoom animation.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.ZoomAnimationInterval.html#SkiaSharp_Extended_SKGestureTrackerOptions_ZoomAnimationInterval">ZoomAnimationInterval</a></dt>
-    <dd><p>Gets or sets the zoom animation frame interval, in milliseconds.</p>
+    <dd><p>Gets or sets the zoom animation frame interval.</p>
+</dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.SetScaleRange.html#SkiaSharp_Extended_SKGestureTrackerOptions_SetScaleRange_System_Single_System_Single_">SetScaleRange(float, float)</a></dt>
+    <dd><p>Sets both <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.MinScale.html#SkiaSharp_Extended_SKGestureTrackerOptions_MinScale">MinScale</a> and <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.MaxScale.html#SkiaSharp_Extended_SKGestureTrackerOptions_MaxScale">MaxScale</a> atomically,
+avoiding ordering-dependent validation errors when the desired range lies
+entirely outside the current default range of [0.1, 10].</p>
 </dd>
   </dl>
 
@@ -297,7 +308,7 @@ limits, animation, and feature toggles.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 198974a
+          source: PR #326 · a29d4d5
         </div>
       </div>
     </footer>
