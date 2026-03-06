@@ -130,11 +130,13 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
 
         public static readonly BindableProperty SpringStiffnessProperty =
             BindableProperty.Create(nameof(SpringStiffness), typeof(double), typeof(SKDeepZoomView), 100.0,
-                propertyChanged: (b, o, n) => ((SKDeepZoomView)b)._controller.SpringStiffness = (double)n);
+                propertyChanged: (b, o, n) => ((SKDeepZoomView)b)._controller.SpringStiffness = (double)n,
+                validateValue: (_, v) => v is double d && !double.IsNaN(d) && !double.IsInfinity(d) && d > 0);
 
         public static readonly BindableProperty SpringDampingRatioProperty =
             BindableProperty.Create(nameof(SpringDampingRatio), typeof(double), typeof(SKDeepZoomView), 1.0,
-                propertyChanged: (b, o, n) => ((SKDeepZoomView)b)._controller.SpringDampingRatio = (double)n);
+                propertyChanged: (b, o, n) => ((SKDeepZoomView)b)._controller.SpringDampingRatio = (double)n,
+                validateValue: (_, v) => v is double d && !double.IsNaN(d) && !double.IsInfinity(d) && d > 0);
 
         public static readonly BindableProperty ShowTileBordersProperty =
             BindableProperty.Create(nameof(ShowTileBorders), typeof(bool), typeof(SKDeepZoomView), false,

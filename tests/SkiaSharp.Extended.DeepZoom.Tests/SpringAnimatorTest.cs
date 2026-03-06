@@ -247,9 +247,9 @@ public class SpringAnimatorTest
         spring.DampingRatio = 0.5;
         Assert.Equal(0.5, spring.DampingRatio);
 
-        // Negative is clamped to 0
+        // Negative is clamped to 0.01
         spring.DampingRatio = -1.0;
-        Assert.Equal(0.0, spring.DampingRatio);
+        Assert.Equal(0.01, spring.DampingRatio);
     }
 
     [Fact]
@@ -308,6 +308,54 @@ public class SpringAnimatorTest
         Assert.Equal(0.0, state.OriginX);
         Assert.Equal(0.0, state.OriginY);
         Assert.Equal(1.0, state.ViewportWidth);
+    }
+
+    [Fact]
+    public void DampingRatio_ClampedAt001_NotZero()
+    {
+        var spring = new SpringAnimator(0.0);
+        spring.DampingRatio = 0.0;
+        Assert.Equal(0.01, spring.DampingRatio);
+    }
+
+    [Fact]
+    public void ViewportSpring_Stiffness_PropagatesToAllSprings()
+    {
+        var vpSpring = new ViewportSpring();
+        vpSpring.Stiffness = 42.0;
+
+        Assert.Equal(42.0, vpSpring.OriginX.Stiffness);
+        Assert.Equal(42.0, vpSpring.OriginY.Stiffness);
+        Assert.Equal(42.0, vpSpring.Width.Stiffness);
+    }
+
+    [Fact]
+    public void ViewportSpring_DampingRatio_PropagatesToAllSprings()
+    {
+        var vpSpring = new ViewportSpring();
+        vpSpring.DampingRatio = 0.7;
+
+        Assert.Equal(0.7, vpSpring.OriginX.DampingRatio);
+        Assert.Equal(0.7, vpSpring.OriginY.DampingRatio);
+        Assert.Equal(0.7, vpSpring.Width.DampingRatio);
+    }
+
+    [Fact]
+    public void DeepZoomController_SpringStiffness_RoundTrips()
+    {
+        using var controller = new DeepZoomController();
+
+        controller.SpringStiffness = 55.0;
+        Assert.Equal(55.0, controller.SpringStiffness);
+    }
+
+    [Fact]
+    public void DeepZoomController_SpringDampingRatio_RoundTrips()
+    {
+        using var controller = new DeepZoomController();
+
+        controller.SpringDampingRatio = 0.8;
+        Assert.Equal(0.8, controller.SpringDampingRatio);
     }
 
     [Fact]

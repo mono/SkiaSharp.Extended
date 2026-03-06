@@ -61,7 +61,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public double DampingRatio
         {
             get => _dampingRatio;
-            set => _dampingRatio = Math.Max(0.0, value);
+            set => _dampingRatio = Math.Max(0.01, value);
         }
 
         /// <summary>Whether the spring has settled (within epsilon of target with near-zero velocity).</summary>
