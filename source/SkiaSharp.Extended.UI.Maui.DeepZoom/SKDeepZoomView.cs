@@ -128,6 +128,14 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             BindableProperty.Create(nameof(UseSprings), typeof(bool), typeof(SKDeepZoomView), true,
                 propertyChanged: (b, o, n) => ((SKDeepZoomView)b)._controller.UseSprings = (bool)n);
 
+        public static readonly BindableProperty SpringStiffnessProperty =
+            BindableProperty.Create(nameof(SpringStiffness), typeof(double), typeof(SKDeepZoomView), 100.0,
+                propertyChanged: (b, o, n) => ((SKDeepZoomView)b)._controller.SpringStiffness = (double)n);
+
+        public static readonly BindableProperty SpringDampingRatioProperty =
+            BindableProperty.Create(nameof(SpringDampingRatio), typeof(double), typeof(SKDeepZoomView), 1.0,
+                propertyChanged: (b, o, n) => ((SKDeepZoomView)b)._controller.SpringDampingRatio = (double)n);
+
         public static readonly BindableProperty ShowTileBordersProperty =
             BindableProperty.Create(nameof(ShowTileBorders), typeof(bool), typeof(SKDeepZoomView), false,
                 propertyChanged: (b, o, n) => ((SKDeepZoomView)b)._controller.ShowTileBorders = (bool)n);
@@ -150,6 +158,20 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         {
             get => (bool)GetValue(UseSpringsProperty);
             set => SetValue(UseSpringsProperty, value);
+        }
+
+        /// <summary>Spring stiffness. Higher = faster snap, lower = slower/smoother. Default 100.0.</summary>
+        public double SpringStiffness
+        {
+            get => (double)GetValue(SpringStiffnessProperty);
+            set => SetValue(SpringStiffnessProperty, value);
+        }
+
+        /// <summary>Spring damping ratio. 1.0 = no overshoot, &lt;1.0 = bouncy, &gt;1.0 = sluggish. Default 1.0.</summary>
+        public double SpringDampingRatio
+        {
+            get => (double)GetValue(SpringDampingRatioProperty);
+            set => SetValue(SpringDampingRatioProperty, value);
         }
 
         /// <summary>Whether to show tile borders for debugging.</summary>

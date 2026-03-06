@@ -145,6 +145,8 @@ The tracker's built-in pan/zoom animation is **disabled** for deep zoom — the 
 | :------- | :--- | :------ | :---------- |
 | `Source` | `string?` | `null` | URI to a `.dzi` file. Setting this fetches and loads the image automatically. |
 | `UseSprings` | `bool` | `true` | Enable spring-physics transitions for smooth pan/zoom. |
+| `SpringStiffness` | `double` | `100.0` | Spring stiffness — higher values snap faster, lower values feel smoother. |
+| `SpringDampingRatio` | `double` | `1.0` | Damping ratio — 1.0 = no overshoot, &lt;1.0 = bouncy, &gt;1.0 = sluggish. |
 | `ShowTileBorders` | `bool` | `false` | Draw a colored border around each tile (debug aid). |
 | `ShowDebugStats` | `bool` | `false` | Overlay viewport, level, and tile cache statistics. |
 | `ViewportWidth` | `double` | `1.0` | Current zoom level in normalized units (1.0 = full image visible). |
@@ -206,6 +208,10 @@ controller.ZoomAboutScreenPoint(factor, cx, cy);     // Zoom around a point
 controller.ZoomAboutLogicalPoint(factor, lx, ly);    // Zoom around logical coords
 controller.ResetView();                              // Fit to viewport
 controller.SnapSpringToTarget();                     // Skip to spring target (during gestures)
+
+// Configure spring animation feel
+controller.SpringStiffness = 200;    // Faster snap (default 100)
+controller.SpringDampingRatio = 0.8; // Slightly bouncy (default 1.0 = no overshoot)
 ```
 
 ### DziTileSource
@@ -303,7 +309,7 @@ controller.Cache.Clear();
 ## Performance Tips
 
 - **Cache capacity**: The default of 1024 tiles is generous for most use cases. Reduce for memory-constrained devices: `new DeepZoomController(cacheCapacity: 256)`.
-- **Spring physics**: Disable `UseSprings = false` for simpler/faster rendering if you don't need animated transitions.
+- **Spring physics**: Disable `UseSprings = false` for simpler/faster rendering if you don't need animated transitions. Use `SpringStiffness` and `SpringDampingRatio` to tune the animation feel — higher stiffness snaps faster, damping ratio below 1.0 adds bounce.
 - **Stop the timer when idle**: Check `controller.IsIdle` in your animation loop and stop the timer to avoid burning CPU between interactions.
 
 ## Next Steps

@@ -68,6 +68,27 @@ namespace SkiaSharp.Extended.DeepZoom
         public bool UseSprings { get; set; } = true;
 
         /// <summary>
+        /// Spring stiffness for viewport animations. Higher values = faster snap, lower = slower/smoother.
+        /// Default is 100.0.
+        /// </summary>
+        public double SpringStiffness
+        {
+            get => _spring.Stiffness;
+            set => _spring.Stiffness = value;
+        }
+
+        /// <summary>
+        /// Spring damping ratio for viewport animations.
+        /// 1.0 = critically damped (no overshoot), &lt;1.0 = underdamped (bouncy), &gt;1.0 = overdamped (sluggish).
+        /// Default is 1.0.
+        /// </summary>
+        public double SpringDampingRatio
+        {
+            get => _spring.DampingRatio;
+            set => _spring.DampingRatio = value;
+        }
+
+        /// <summary>
         /// The aspect ratio of the loaded image (width/height). 0 if not loaded.
         /// </summary>
         public double AspectRatio => _tileSource?.AspectRatio ?? 0;

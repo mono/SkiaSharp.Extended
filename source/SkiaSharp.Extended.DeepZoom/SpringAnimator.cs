@@ -157,6 +157,37 @@ namespace SkiaSharp.Extended.DeepZoom
         public SpringAnimator OriginY { get; }
         public SpringAnimator Width { get; }
 
+        /// <summary>
+        /// Spring stiffness applied to all three axes. Higher = faster snap, lower = slower/smoother.
+        /// Default is 100.0.
+        /// </summary>
+        public double Stiffness
+        {
+            get => Width.Stiffness;
+            set
+            {
+                OriginX.Stiffness = value;
+                OriginY.Stiffness = value;
+                Width.Stiffness = value;
+            }
+        }
+
+        /// <summary>
+        /// Damping ratio applied to all three axes.
+        /// 1.0 = critically damped (no overshoot), &lt;1.0 = underdamped (bouncy), &gt;1.0 = overdamped (sluggish).
+        /// Default is 1.0.
+        /// </summary>
+        public double DampingRatio
+        {
+            get => Width.DampingRatio;
+            set
+            {
+                OriginX.DampingRatio = value;
+                OriginY.DampingRatio = value;
+                Width.DampingRatio = value;
+            }
+        }
+
         /// <summary>Whether all three springs have settled.</summary>
         public bool IsSettled => OriginX.IsSettled && OriginY.IsSettled && Width.IsSettled;
 
