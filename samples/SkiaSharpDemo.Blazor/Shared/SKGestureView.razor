@@ -1,0 +1,86 @@
+@using SkiaSharp.Extended
+@implements IDisposable
+
+<div @onpointerdown="OnPointerDown"
+     @onpointermove="OnPointerMove"
+     @onpointerup="OnPointerUp"
+     @onpointercancel="OnPointerCancel"
+     @onwheel="OnWheel"
+     @onwheel:preventDefault
+     style="@ContainerStyle touch-action: none; user-select: none;">
+    <SKCanvasView @ref="_canvasView"
+                  OnPaintSurface="OnPaintSurface"
+                  style="width: 100%; height: 100%;" />
+</div>
+
+@code {
+    private SKCanvasView? _canvasView;
+    private float _displayScale = 1f;
+
+    /// <summary>The gesture tracker. Subscribe to its events or read Scale/Offset after render.</summary>
+    public SKGestureTracker GestureTracker { get; } = new(new SKGestureTrackerOptions
+    {
+        IsDoubleTapZoomEnabled = true,
+        IsScrollZoomEnabled = true,
+        IsFlingEnabled = true,
+    });
+
+    /// <summary>CSS for the outer container div (width, height, cursor, etc.).</summary>
+    [Parameter] public string ContainerStyle { get; set; } = "width: 100%; height: 600px;";
+
+    /// <summary>The expected CSS height of the canvas in pixels. Used to compute the DPI display scale for pointer event coordinates.</summary>
+    [Parameter] public float CssHeight { get; set; } = 600f;
+
+    /// <summary>Called whenever the canvas needs to be painted.</summary>
+    [Parameter] public EventCallback<SKPaintSurfaceEventArgs> OnPaint { get; set; }
+
+    protected override void OnInitialized()
+    {
+        GestureTracker.TransformChanged += OnTransformChanged;
+    }
+
+    /// <summary>Invalidates the canvas, scheduling a repaint.</summary>
+    public void Invalidate() => _canvasView?.Invalidate();
+
+    private void OnTransformChanged(object? sender, EventArgs e)
+        => InvokeAsync(() => _canvasView?.Invalidate());
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        // Compute display scale (physical canvas pixels / CSS pixels).
+        // CSS height drives pointer event coordinates; canvas height is in physical pixels.
+        // This matches the pattern used throughout the Blazor sample pages.
+        if (e.Info.Height > 0 && CssHeight > 0)
+            _displayScale = e.Info.Height / CssHeight;
+        OnPaint.InvokeAsync(e);
+    }
+
+    // ── Pointer routing ────────────────────────────────────────────────────
+
+    private void OnPointerDown(PointerEventArgs e)
+        => GestureTracker.ProcessTouchDown(e.PointerId, ToCanvas(e), e.PointerType == "mouse");
+
+    private void OnPointerMove(PointerEventArgs e)
+        => GestureTracker.ProcessTouchMove(e.PointerId, ToCanvas(e), e.Buttons > 0 || e.PointerType != "mouse");
+
+    private void OnPointerUp(PointerEventArgs e)
+        => GestureTracker.ProcessTouchUp(e.PointerId, ToCanvas(e), e.PointerType == "mouse");
+
+    private void OnPointerCancel(PointerEventArgs e)
+        => GestureTracker.ProcessTouchCancel(e.PointerId);
+
+    private void OnWheel(WheelEventArgs e)
+    {
+        var loc = new SKPoint((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
+        GestureTracker.ProcessMouseWheel(loc, 0, e.DeltaY < 0 ? 1f : -1f);
+    }
+
+    private SKPoint ToCanvas(PointerEventArgs e)
+        => new SKPoint((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
+
+    public void Dispose()
+    {
+        GestureTracker.TransformChanged -= OnTransformChanged;
+        GestureTracker.Dispose();
+    }
+}
