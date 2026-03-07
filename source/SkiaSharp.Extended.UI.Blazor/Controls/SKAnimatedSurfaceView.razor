@@ -1,14 +1,5 @@
 @namespace SkiaSharp.Extended.UI.Blazor.Controls
 
-@if (UseGL)
-{
-    <SkiaSharp.Views.Blazor.SKGLView @ref="_glView"
-                                      OnPaintSurface="HandleGLPaintSurface"
+<SkiaSharp.Views.Blazor.SKCanvasView @ref="_canvasView"
+                                      OnPaintSurface="HandlePaintSurface"
                                       @attributes="AdditionalAttributes" />
-}
-else
-{
-    <SkiaSharp.Views.Blazor.SKCanvasView @ref="_canvasView"
-                                          OnPaintSurface="HandleCanvasPaintSurface"
-                                          @attributes="AdditionalAttributes" />
-}

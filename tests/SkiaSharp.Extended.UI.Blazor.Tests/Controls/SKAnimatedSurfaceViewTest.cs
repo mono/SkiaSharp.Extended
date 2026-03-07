@@ -1,4 +1,5 @@
 using SkiaSharp.Extended.UI.Blazor.Controls;
+using SkiaSharp.Views.Blazor;
 
 namespace SkiaSharp.Extended.UI.Blazor.Tests.Controls;
 
@@ -13,7 +14,6 @@ public class SKAnimatedSurfaceViewTest
         var view = new TestSKAnimatedSurfaceView();
 
         Assert.True(view.IsAnimationEnabled);
-        Assert.False(view.UseGL);
         Assert.Null(view.OnUpdate);
         Assert.Null(view.OnPaintSurface);
         Assert.Null(view.AdditionalAttributes);
@@ -36,25 +36,6 @@ public class SKAnimatedSurfaceViewTest
         var ex2 = Record.Exception(() => view.IsAnimationEnabled = true);
         Assert.Null(ex2);
         Assert.True(view.IsAnimationEnabled);
-    }
-
-    /// <summary>
-    /// Verifies that toggling <c>UseGL</c> does not throw.
-    /// </summary>
-    [Fact]
-    public void ToggleUseGL_DoesNotThrow()
-    {
-        var view = new TestSKAnimatedSurfaceView();
-
-        Assert.False(view.UseGL);
-
-        var ex1 = Record.Exception(() => view.UseGL = true);
-        Assert.Null(ex1);
-        Assert.True(view.UseGL);
-
-        var ex2 = Record.Exception(() => view.UseGL = false);
-        Assert.Null(ex2);
-        Assert.False(view.UseGL);
     }
 
     /// <summary>
@@ -99,19 +80,13 @@ public class SKAnimatedSurfaceViewTest
             set => base.IsAnimationEnabled = value;
         }
 
-        public new bool UseGL
-        {
-            get => base.UseGL;
-            set => base.UseGL = value;
-        }
-
         public new Action<TimeSpan>? OnUpdate
         {
             get => base.OnUpdate;
             set => base.OnUpdate = value;
         }
 
-        public new Action<SKSurface, SKSize>? OnPaintSurface
+        public new Action<SKPaintSurfaceEventArgs>? OnPaintSurface
         {
             get => base.OnPaintSurface;
             set => base.OnPaintSurface = value;
