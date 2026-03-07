@@ -156,10 +156,12 @@ double eased = SKEasingFunctions.Linear(t);
 <p>A single-axis spring simulation. Useful for smooth animated transitions where you want physical feel (configurable stiffness and damping).</p>
 <pre><code class="lang-csharp">using SkiaSharp.Extended;
 
-var spring = new SpringAnimator(stiffness: 100.0, dampingRatio: 1.0);
+var spring = new SpringAnimator(0.0); // initialValue
+spring.Stiffness = 100.0;
+spring.DampingRatio = 1.0;
 
 // Set target (current position stays where it is, velocity carries through)
-spring.SetTarget(1.0);
+spring.Target = 1.0;
 
 // Advance simulation (call ~60 fps)
 spring.Update(deltaTime: 0.016); // seconds
@@ -168,10 +170,13 @@ spring.Update(deltaTime: 0.016); // seconds
 double position = spring.Current;
 bool settled = spring.IsSettled;
 </code></pre>
-<p><strong>Parameters:</strong></p>
+<p><strong>Properties:</strong></p>
 <ul>
-<li><code>stiffness</code> — how fast the spring snaps to target (higher = faster). Default <code>100.0</code>.</li>
-<li><code>dampingRatio</code> — <code>1.0</code> = critically damped (no overshoot), <code>&lt; 1.0</code> = bouncy, <code>&gt; 1.0</code> = sluggish.</li>
+<li><code>Stiffness</code> — how fast the spring snaps to target (higher = faster). Default <code>100.0</code>.</li>
+<li><code>DampingRatio</code> — <code>1.0</code> = critically damped (no overshoot), <code>&lt; 1.0</code> = bouncy, <code>&gt; 1.0</code> = sluggish.</li>
+<li><code>Target</code> — the target value the spring is animating toward.</li>
+<li><code>Current</code> — the current interpolated value.</li>
+<li><code>IsSettled</code> — <code>true</code> when position and velocity are both near zero.</li>
 </ul>
 <h2 id="viewportspring">ViewportSpring</h2>
 <p>A convenience wrapper over three <code>SpringAnimator</code> axes — <code>OriginX</code>, <code>OriginY</code>, and <code>Width</code> — representing a deep zoom viewport.</p>
@@ -243,7 +248,7 @@ Canvas repaint
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #378 · 6af222d
+          source: PR #378 · d8fe1ca
         </div>
       </div>
     </footer>

@@ -172,10 +172,12 @@ A single-axis spring simulation. Useful for smooth animated transitions where yo
 ```csharp
 using SkiaSharp.Extended;
 
-var spring = new SpringAnimator(stiffness: 100.0, dampingRatio: 1.0);
+var spring = new SpringAnimator(0.0); // initialValue
+spring.Stiffness = 100.0;
+spring.DampingRatio = 1.0;
 
 // Set target (current position stays where it is, velocity carries through)
-spring.SetTarget(1.0);
+spring.Target = 1.0;
 
 // Advance simulation (call ~60 fps)
 spring.Update(deltaTime: 0.016); // seconds
@@ -185,9 +187,12 @@ double position = spring.Current;
 bool settled = spring.IsSettled;
 ```
 
-**Parameters:**
-- `stiffness` — how fast the spring snaps to target (higher = faster). Default `100.0`.
-- `dampingRatio` — `1.0` = critically damped (no overshoot), `< 1.0` = bouncy, `> 1.0` = sluggish.
+**Properties:**
+- `Stiffness` — how fast the spring snaps to target (higher = faster). Default `100.0`.
+- `DampingRatio` — `1.0` = critically damped (no overshoot), `< 1.0` = bouncy, `> 1.0` = sluggish.
+- `Target` — the target value the spring is animating toward.
+- `Current` — the current interpolated value.
+- `IsSettled` — `true` when position and velocity are both near zero.
 
 ## ViewportSpring
 
