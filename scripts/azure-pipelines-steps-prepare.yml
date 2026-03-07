@@ -29,5 +29,11 @@ steps:
       Write-Host "##vso[task.setvariable variable=JavaSdkDirectory]$env:JAVA_HOME"
     displayName: Set Java SDK Directory
 
+  - pwsh: dotnet workload install maui
+    displayName: Install MAUI workload
+
+  - pwsh: dotnet workload install wasm-tools
+    displayName: Install WASM tools workload
+
   - pwsh: dotnet tool restore
     displayName: Restore the dotnet tools

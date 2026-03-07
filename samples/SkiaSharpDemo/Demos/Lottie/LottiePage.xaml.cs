@@ -13,6 +13,9 @@ public partial class LottiePage : ContentPage
 	private SKLottieImageSource? lottieSource;
 	private string selectedAnimationType = "Base64 Embedded (dotnetbot)";
 	private string animationDescription = "Images embedded as base64 in JSON";
+	private double animationSpeed = 1.0;
+	private SKLottieRepeatMode repeatMode = SKLottieRepeatMode.Restart;
+	private int repeatCount = -1;
 
 	public LottiePage()
 	{
@@ -22,6 +25,7 @@ public partial class LottiePage : ContentPage
 		StepCommand = new Command<string>(OnStep);
 		EndCommand = new Command(OnEnd);
 		PlayPauseCommand = new Command(OnPlayPause);
+		SetSpeedCommand = new Command<string>(OnSetSpeed);
 
 		AnimationTypes = new ObservableCollection<string>
 		{
@@ -111,6 +115,36 @@ public partial class LottiePage : ContentPage
 		}
 	}
 
+	public double AnimationSpeed
+	{
+		get => animationSpeed;
+		set
+		{
+			animationSpeed = value;
+			OnPropertyChanged();
+		}
+	}
+
+	public SKLottieRepeatMode RepeatMode
+	{
+		get => repeatMode;
+		set
+		{
+			repeatMode = value;
+			OnPropertyChanged();
+		}
+	}
+
+	public int RepeatCount
+	{
+		get => repeatCount;
+		set
+		{
+			repeatCount = value;
+			OnPropertyChanged();
+		}
+	}
+
 	public ICommand ResetCommand { get; }
 
 	public ICommand StepCommand { get; }
@@ -118,6 +152,8 @@ public partial class LottiePage : ContentPage
 	public ICommand PlayPauseCommand { get; }
 
 	public ICommand EndCommand { get; }
+
+	public ICommand SetSpeedCommand { get; }
 
 	private void OnReset() =>
 		Progress = TimeSpan.Zero;
@@ -130,6 +166,9 @@ public partial class LottiePage : ContentPage
 
 	private void OnPlayPause() =>
 		IsPlaying = !IsPlaying;
+
+	private void OnSetSpeed(string speed) =>
+		AnimationSpeed = double.Parse(speed);
 
 	private void OnAnimationTypeChanged(object? sender, EventArgs e)
 	{

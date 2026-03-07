@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://schemas.microsoft.com/deepzoom/2008" xmlns:dz="http://schemas.microsoft.com/deepzoom/2008">
+  <xs:complexType name="uint32size">
+    <xs:attribute name="Width" type="xs:unsignedLong" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The width of the image.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute >
+    <xs:attribute name="Height" type="xs:unsignedLong" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The height of the image.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute >
+  </xs:complexType>
+  <xs:complexType name="uint32rect">
+    <xs:attribute name="X" type="xs:unsignedLong" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          X coordinate of the upper-left corner of the rectangle.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute >
+    <xs:attribute name="Y" type="xs:unsignedLong" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Y coordinate of the upper-left corner of the rectangle.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute >
+    <xs:attribute name="Width" type="xs:unsignedLong" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Width of the rectangle.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Height" type="xs:unsignedLong" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Height of the rectangle.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute >
+  </xs:complexType>
+  <xs:element name="Image">
+    <xs:annotation>
+      <xs:documentation>
+        If you are defining a single image (versus a collection of images) for Deep Zoom, this element is the root element of the schema.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Size" type="dz:uint32size" minOccurs="1" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Defines the size of the image in pixels.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="DisplayRects" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              If this element is not present, the image is not sparse - all pixels are available at all levels. Otherwise, you can use the DisplayRect elements to describe all the available pixels.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="DisplayRect" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    One or more of these elements are used to describe available pixels.
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Rect" type="dz:uint32rect" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Defines the rectangle to be displayed.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="MinLevel" type="xs:unsignedLong" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Index of the lowest level at which the rectangle is displayed.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="MaxLevel" type="xs:unsignedLong" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Index of the highest level at which the rectangle is displayed.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="TileSize" type="xs:unsignedLong" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The tile size of the level in pixels. Note that these have to be square. Unlike Collection.TileSize, the TileSize for an Image does not have to be a power of 2 value.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Overlap" type="xs:unsignedLong" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The tile overlap on all four sides of the tiles. A value of 0 is allowed for Deep Zoom images.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Format" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            This defines the file format of the tiles as an extension.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Collection">
+    <xs:annotation>
+      <xs:documentation>
+        If you are defining a collection, this element is the root element of schema.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Items" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Contains the items in the collection.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="I" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    Defines an image in the collection.
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Size" type="dz:uint32size" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Size of the image in pixels.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Viewport" minOccurs="0" maxOccurs="1">
+                      <xs:complexType>
+                        <xs:annotation>
+                          <xs:documentation>
+                            Location of the image in the viewport.
+                          </xs:documentation>
+                        </xs:annotation>
+                        <xs:attribute name="Width" type="xs:double" use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              The width of the area of the image displayed. This value is in logical coordinates. For example a value of 1 displays the entire image (no zoom), a value of 0.5 is 200% zoomed in and a value of 0 is completely zoomed (user cannot see the image at all). A value above 1 is zooming out from the image. For example, a value of 2 means that the image will take up half the size of the MultiScaleSubImage control area (50% zoom).
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
+                        <xs:attribute name="X" type="xs:double" use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              The left coordinate of the rectangular area of the image to be displayed. The coordinates of the point are in local coordinates (0-1) relative to the displayed image width.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
+                        <xs:attribute name="Y" type="xs:double" use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              The top coordinate of the rectangular area of the image to be displayed. The coordinates of the point are in local coordinates (0-1) relative to the displayed image width.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="N" type="xs:unsignedLong" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        This is the number of the item (Morton Number) where it appears in the tiles.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="Id" type="xs:unsignedLong" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        This is a number associated with the item. It could be a database key or any other number that you will find useful. By default it’s the same as I.N.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="Source" type="xs:string">
+                    <xs:annotation>
+                      <xs:documentation>
+                        This is the path to the .dzi file associated with this item in the collection. It can be absolute or relative.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="IsPath" type="xs:boolean" default="true" use="optional">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Determines whether the Source is a path. Always 1 for Deep Zoom images so this attribute does not need to be included.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="Type" type="xs:string" default="ImagePixelSource" use="optional">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The pixel source type. Always ImagePixelSource for Deep Zoom images so this attribute does not need to be included.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="MaxLevel" type="xs:unsignedByte" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The maximum pyramid level the tiles are stored at. This must be less than or equal to log2(TileSize) - typically equal to this value or one less.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="TileSize" type="xs:unsignedLong" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The size of the tiles. Note they have to be square. This is true for both images and collections. However, for collections, the TileSize also has to be a power of 2 (e.g. 128, 256, 512, etc).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Format" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>This defines the file format of the tiles.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Quality" type="xs:float" default="1" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            Used when creating thumbnail tiles, from 0 to 1. 1 is highest quality, 0 is lowest. Generally this value should be 0.8 or higher; however, for Deep Zoom this does not matter since collections are read-only.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="NextItemId" type="xs:unsignedLong" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Gets the count of items in the collection; however this does not actually matter for Deep Zoom since collections are read only.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

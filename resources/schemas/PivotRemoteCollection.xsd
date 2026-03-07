@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://schemas.microsoft.com/livelabs/pivot/collection/2009"
+    xmlns="http://schemas.microsoft.com/livelabs/pivot/collection/2009"
+    elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    
+    <!--An icon identifier.-->
+    <xs:attribute name="Icon" type="lengthLimitedUri"/>
+    <xs:attribute name="BrandImage" type="lengthLimitedUri"/>
+    <xs:attribute name="Supplement" type="lengthLimitedUri"/>
+    <xs:attribute name="AdditionalSearchText" type="nonEmptyString"/>
+    <xs:attribute name="CollectionPage" type="lengthLimitedUri" />
+
+    <xs:attribute name="IsFilterVisible" type="xs:boolean"/>
+    <xs:attribute name="IsMetaDataVisible" type="xs:boolean"/>
+    <xs:attribute name="IsWordWheelVisible" type="xs:boolean"/>
+
+    <!--Property Definitions for DateTime properties can optionally add range presets.-->
+    <xs:element name="DateRange">
+        <xs:complexType>
+            <xs:attribute name="LowerBound" type="xs:dateTime" use="required"/>
+            <xs:attribute name="UpperBound" type="xs:dateTime" use="required"/>
+            <xs:attribute name="Name" type="nonEmptyString" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:complexType name="facetCategoryExtension">
+        <xs:sequence>
+            <xs:element name="DateRanges" type="presetDateRangeList" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="SortOrder" type="sortOrderList" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="presetDateRangeList">
+        <xs:sequence>
+            <xs:element name="DateRange" type="presetDateRange" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="presetDateRange">
+        <xs:attribute name="LowerBound" type="xs:dateTime" use="required"/>
+        <xs:attribute name="UpperBound" type="xs:dateTime" use="required"/>
+        <xs:attribute name="Name" type="nonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="sortOrderList">
+        <xs:sequence>
+            <xs:element name="SortValue" type="sortValueType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Name" type="nonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <!-- Facet value sort order only applies to strings for now -->
+    <xs:complexType name="sortValueType">
+        <xs:attribute name="Value" type="nonEmptyString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="collectionExtension">
+        <xs:sequence>
+            <xs:element name="Copyright" type="relatedLinkType" minOccurs="0" maxOccurs="1"/>
+	</xs:sequence>
+    </xs:complexType>
+
+  <xs:complexType name="itemListExtension">
+        <xs:sequence>
+            <xs:element name="Visual" type="visual" minOccurs="0" maxOccurs="unbounded"/>
+	</xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="itemExtension">
+        <xs:sequence>
+            <xs:element name="Related" type="relatedList" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Copyright" type="relatedLinkType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Visual" type="visual" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+  
+    <xs:complexType name="visual">
+        <xs:attribute name="Img" type="lengthLimitedUri" use="required"/>
+        <xs:attribute name="MinWidth" type="xs:integer" use="required"/>
+    </xs:complexType>
+
+  <xs:complexType name="relatedList">
+        <xs:sequence>
+            <xs:element name="Link" type="relatedLinkType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--The uri goes in the href attribute and the display text goes in the name attribute-->
+    <xs:complexType name="relatedLinkType">
+        <xs:attribute name="Href" type="lengthLimitedUri" use="optional"/>
+        <xs:attribute name="Name" type="nonEmptyString" use="required"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+
+  <!--All uris must be limited to 2048 characters-->
+    <xs:simpleType name="lengthLimitedUri">
+        <xs:restriction base="xs:anyURI">
+            <xs:minLength value="1" id="minurilengthid"/>
+            <xs:maxLength value="2048" id="maxurilengthid"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!--If a value is specified it cannot be empty-->
+    <xs:simpleType name="nonEmptyString">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" id="nonemptystringlengthid"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

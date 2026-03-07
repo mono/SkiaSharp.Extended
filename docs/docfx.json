@@ -5,7 +5,7 @@
       "src": [
         {
           "files": [
-            "**/bin/Release/net9.0/**.dll"
+            "**/bin/Release/net10.0/**.dll"
           ],
           "src": "../source/"
         }
@@ -23,14 +23,19 @@
         ],
         "exclude": [
           "_site/**",
-          "obj/**"
+          "obj/**",
+          "llms.md",
+          "llms-full-header.md"
         ]
       }
     ],
     "resource": [
       {
         "files": [
-          "images/**"
+          "images/**",
+          "404.html",
+          "llms.txt",
+          "llms-full.txt"
         ]
       }
     ],
