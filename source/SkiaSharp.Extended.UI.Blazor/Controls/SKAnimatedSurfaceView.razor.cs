@@ -4,14 +4,10 @@ using SkiaSharp.Views.Blazor;
 namespace SkiaSharp.Extended.UI.Blazor.Controls;
 
 /// <summary>
-/// A Blazor component that drives a frame-update loop and renders to either a
-/// software-rendered <see cref="SKCanvasView"/> or a GPU-accelerated <see cref="SKGLView"/>.
+/// A Blazor component that drives a frame-update loop and renders onto a
+/// software-rendered <see cref="SKCanvasView"/>.
 /// </summary>
 /// <remarks>
-/// <para>
-/// Set <see cref="UseGL"/> to <see langword="true"/> to switch to GPU-accelerated rendering
-/// using <see cref="SKGLView"/> (WebGL). The default is software rendering via <see cref="SKCanvasView"/>.
-/// </para>
 /// <para>
 /// The animation loop runs at approximately 60 fps while <see cref="IsAnimationEnabled"/> is
 /// <see langword="true"/>. Setting it to <see langword="false"/> stops the loop; setting it back
@@ -19,18 +15,15 @@ namespace SkiaSharp.Extended.UI.Blazor.Controls;
 /// </para>
 /// <para>
 /// Subscribe to <see cref="OnPaintSurface"/> to render content, and <see cref="OnUpdate"/> to
-/// update animation state each frame. Both callbacks receive the same types regardless of the
-/// underlying rendering backend.
+/// update animation state each frame. Subclasses can override <see cref="UpdateAsync"/> instead.
 /// </para>
 /// </remarks>
 public partial class SKAnimatedSurfaceView : ComponentBase, IAsyncDisposable
 {
     private bool _isAnimationEnabled = true;
-    private bool _useGL = false;
     private CancellationTokenSource? _cts;
     private Task? _loopTask;
     private SKCanvasView? _canvasView;
-    private SKGLView? _glView;
 
     /// <summary>
     /// Gets or sets whether the animation loop is running.
@@ -40,19 +33,6 @@ public partial class SKAnimatedSurfaceView : ComponentBase, IAsyncDisposable
     public bool IsAnimationEnabled { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets whether to use GPU-accelerated rendering via <see cref="SKGLView"/> (WebGL).
-    /// When <see langword="false"/> (default), uses software rendering via <see cref="SKCanvasView"/>.
-    /// </summary>
-    /// <remarks>
-    /// Changing this value at runtime causes the underlying view to be swapped. The animation
-    /// loop is restarted automatically. This is the Blazor equivalent of the MAUI
-    /// <c>PART_DrawingSurface</c> control-template pattern, where the consumer decides the
-    /// rendering backend.
-    /// </remarks>
-    [Parameter]
-    public bool UseGL { get; set; } = false;
-
-    /// <summary>
     /// Callback invoked on each frame tick with the elapsed time since the previous frame.
     /// Use this to update animation state.
     /// </summary>
@@ -60,11 +40,11 @@ public partial class SKAnimatedSurfaceView : ComponentBase, IAsyncDisposable
     public Action<TimeSpan>? OnUpdate { get; set; }
 
     /// <summary>
-    /// Callback invoked each time the canvas needs to be redrawn. The <see cref="SKSurface"/>
-    /// and logical size (in DIPs) are provided regardless of the underlying rendering backend.
+    /// Callback invoked each time the canvas needs to be redrawn.
+    /// Subscribe here to render content onto the <see cref="SKCanvas"/>.
     /// </summary>
     [Parameter]
-    public Action<SKSurface, SKSize>? OnPaintSurface { get; set; }
+    public Action<SKPaintSurfaceEventArgs>? OnPaintSurface { get; set; }
 
     /// <summary>
     /// Additional HTML attributes forwarded to the underlying canvas element
@@ -76,20 +56,10 @@ public partial class SKAnimatedSurfaceView : ComponentBase, IAsyncDisposable
     /// <inheritdoc />
     protected override async Task OnParametersSetAsync()
     {
-        // Restart the loop when UseGL changes so the new view reference is used.
-        var useGLChanged = _useGL != UseGL;
-        _useGL = UseGL;
-
         var enabledChanged = _isAnimationEnabled != IsAnimationEnabled;
         _isAnimationEnabled = IsAnimationEnabled;
 
-        if (useGLChanged)
-        {
-            // Stop the loop; the new view is not yet rendered. OnAfterRenderAsync
-            // will restart it once the new view element is in the DOM.
-            await StopLoopAsync();
-        }
-        else if (enabledChanged)
+        if (enabledChanged)
         {
             if (_isAnimationEnabled)
                 await StartLoopAsync();
@@ -101,8 +71,7 @@ public partial class SKAnimatedSurfaceView : ComponentBase, IAsyncDisposable
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Start the loop on first render, or after a UseGL toggle swaps the canvas element.
-        if (IsAnimationEnabled && _loopTask is null)
+        if (firstRender && IsAnimationEnabled)
             await StartLoopAsync();
     }
 
@@ -122,15 +91,11 @@ public partial class SKAnimatedSurfaceView : ComponentBase, IAsyncDisposable
     {
 #pragma warning disable CA1416 // Blazor canvas views are browser-only
         _canvasView?.Invalidate();
-        _glView?.Invalidate();
 #pragma warning restore CA1416
     }
 
-    private void HandleCanvasPaintSurface(SKPaintSurfaceEventArgs e) =>
-        OnPaintSurface?.Invoke(e.Surface, e.Info.Size);
-
-    private void HandleGLPaintSurface(SKPaintGLSurfaceEventArgs e) =>
-        OnPaintSurface?.Invoke(e.Surface, e.BackendRenderTarget.Size);
+    private void HandlePaintSurface(SKPaintSurfaceEventArgs e) =>
+        OnPaintSurface?.Invoke(e);
 
     private async Task StartLoopAsync()
     {
