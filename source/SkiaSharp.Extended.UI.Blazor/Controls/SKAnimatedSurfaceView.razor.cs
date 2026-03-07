@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using SkiaSharp.Extended;
 using SkiaSharp.Views.Blazor;
 
 namespace SkiaSharp.Extended.UI.Blazor.Controls;
@@ -24,6 +25,14 @@ public partial class SKAnimatedSurfaceView : ComponentBase, IAsyncDisposable
     private CancellationTokenSource? _cts;
     private Task? _loopTask;
     private SKCanvasView? _canvasView;
+    private readonly SKFrameCounter _frameCounter = new SKFrameCounter();
+
+#if DEBUG
+    private const float DebugOverlayMargin = 12f;
+    private const float DebugOverlayTextSize = 24f; // physical pixels; appearance varies with device pixel ratio
+    private SKFont? _debugFont;
+    private SKPaint? _debugPaint;
+#endif
 
     /// <summary>
     /// Gets or sets whether the animation loop is running.
@@ -94,12 +103,34 @@ public partial class SKAnimatedSurfaceView : ComponentBase, IAsyncDisposable
 #pragma warning restore CA1416
     }
 
-    private void HandlePaintSurface(SKPaintSurfaceEventArgs e) =>
+    private void HandlePaintSurface(SKPaintSurfaceEventArgs e)
+    {
         OnPaintSurface?.Invoke(e);
+
+#if DEBUG
+        DrawDebugOverlay(e.Surface.Canvas);
+#endif
+    }
+
+#if DEBUG
+    private void DrawDebugOverlay(SKCanvas canvas)
+    {
+        var font = _debugFont ??= new SKFont { Size = DebugOverlayTextSize };
+        var paint = _debugPaint ??= new SKPaint { IsAntialias = true, Color = SKColors.Black };
+        canvas.DrawText(
+            $"FPS: {_frameCounter.Rate:0.0}",
+            DebugOverlayMargin,
+            DebugOverlayMargin + DebugOverlayTextSize,
+            SKTextAlign.Left,
+            font,
+            paint);
+    }
+#endif
 
     private async Task StartLoopAsync()
     {
         await StopLoopAsync();
+        _frameCounter.Reset();
         _cts = new CancellationTokenSource();
         _loopTask = RunLoopAsync(_cts.Token);
     }
@@ -116,20 +147,18 @@ public partial class SKAnimatedSurfaceView : ComponentBase, IAsyncDisposable
             try { await loopTask; }
             catch (Exception) { }
         }
+        _frameCounter.Reset();
     }
 
     private async Task RunLoopAsync(CancellationToken ct)
     {
         using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000.0 / 60));
-        var lastTick = DateTime.UtcNow;
 
         try
         {
             while (await timer.WaitForNextTickAsync(ct))
             {
-                var now = DateTime.UtcNow;
-                var delta = now - lastTick;
-                lastTick = now;
+                var delta = _frameCounter.NextFrame();
 
                 await InvokeAsync(async () =>
                 {
@@ -149,5 +178,10 @@ public partial class SKAnimatedSurfaceView : ComponentBase, IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         await StopLoopAsync();
+
+#if DEBUG
+        _debugFont?.Dispose();
+        _debugPaint?.Dispose();
+#endif
     }
 }
