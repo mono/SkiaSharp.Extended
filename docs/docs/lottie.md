@@ -41,7 +41,45 @@ lottieView.Source = new SKUriLottieImageSource { Uri = new Uri("https://...") };
 
 // From a stream
 lottieView.Source = new SKStreamLottieImageSource { Stream = myStream };
+
+// From .lottie file (dotLottie format - bundled animation + assets)
+lottieView.Source = new SKFileLottieImageSource { File = "animation.lottie" };
 ```
+
+## External Image Assets
+
+Lottie animations can reference external image files. Use the `ImageAssetsFolder` property to specify where images are located:
+
+```csharp
+// Load animation with external images
+lottieView.Source = new SKFileLottieImageSource 
+{
+    File = "animation.json",
+    ImageAssetsFolder = "/path/to/images"  // File system path
+};
+```
+
+> **Important:** `ImageAssetsFolder` currently only works with file system paths. It cannot access MAUI app package resources.
+
+**Workarounds for MAUI apps:**
+- Use .lottie format (bundles images in ZIP) — recommended
+- Extract images from app package to file system at runtime
+- Embed images as base64 data URIs in the JSON
+
+### Using .lottie Format (Recommended)
+
+The [dotLottie format](https://dotlottie.io/) bundles animations and assets into a single ZIP file. This is the recommended approach for animations with images:
+
+```csharp
+// .lottie format automatically detected and handled
+lottieView.Source = new SKFileLottieImageSource { File = "animation.lottie" };
+```
+
+**Supported versions:**
+- dotLottie v1.0: `animations/` and `images/` directories
+- dotLottie v2.0: `a/`, `i/`, `s/`, `t/`, `f/` directories
+
+All image sources (File, Uri, Stream) automatically detect and extract .lottie files.
 
 ## Playback Control
 
