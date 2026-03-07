@@ -96,240 +96,78 @@
 <li>🔬 Medical imaging, microscopy slides</li>
 <li>📸 Any image too large to load in full at once</li>
 </ul>
-<h2 id="quick-start">Quick Start</h2>
-<h3 id="maui--add-skdeepzoomview">MAUI — Add SKDeepZoomView</h3>
-<p>Add the view to your XAML:</p>
-<pre><code class="lang-xml">&lt;ContentPage xmlns:dz=&quot;clr-namespace:SkiaSharp.Extended.UI.Maui.DeepZoom;assembly=SkiaSharp.Extended.UI.Maui.DeepZoom&quot;&gt;
-
-    &lt;dz:SKDeepZoomView x:Name=&quot;deepZoomView&quot;
-                       Source=&quot;https://example.com/image.dzi&quot; /&gt;
-
-&lt;/ContentPage&gt;
+<h2 id="architecture">Architecture</h2>
+<p>The deep zoom system is split into three layers with strict separation of concerns:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Layer</th>
+<th style="text-align: left;">Package</th>
+<th style="text-align: left;">Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>DeepZoomController</strong></td>
+<td style="text-align: left;"><code>SkiaSharp.Extended.DeepZoom</code></td>
+<td style="text-align: left;">Tile loading, caching, viewport math, rendering. No animation, no gestures.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>SKGestureTracker</strong></td>
+<td style="text-align: left;"><code>SkiaSharp.Extended</code></td>
+<td style="text-align: left;">Gesture detection and animation (fling, double-tap zoom, scroll zoom). No tile awareness.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>View</strong></td>
+<td style="text-align: left;">Platform-specific</td>
+<td style="text-align: left;">Composes the controller and gesture tracker. Translates tracker transforms into viewport coordinates.</td>
+</tr>
+</tbody>
+</table>
+<pre><code>Touch events
+    ↓
+SKGestureTracker  ← owns all animation (fling, zoom easing)
+    ↓ TransformChanged (every frame while animating)
+View layer  →  translate scale/offset → controller.Viewport
+    ↓
+DeepZoomController  →  schedule tiles → render
+    ↓
+Canvas
 </code></pre>
-<p>Or load programmatically from app resources:</p>
+<p>For platform-specific integration, see:</p>
+<ul>
+<li><a href="deep-zoom-maui.html">Deep Zoom for MAUI</a> — <code>SKDeepZoomView</code> control</li>
+<li><a href="deep-zoom-blazor.html">Deep Zoom for Blazor</a> — Using <code>DeepZoomController</code> with <code>SKGestureTracker</code></li>
+</ul>
+<h2 id="deepzoomcontroller">DeepZoomController</h2>
+<p>The platform-agnostic rendering engine. It manages the viewport, tile scheduling, tile cache, and rendering — but has <strong>no animation and no gesture handling</strong>.</p>
 <pre><code class="lang-csharp">using SkiaSharp.Extended.DeepZoom;
-using SkiaSharp.Extended.UI.Maui.DeepZoom;
 
-// Load from a bundled .dzi file
-using var stream = await FileSystem.OpenAppPackageFileAsync(&quot;image.dzi&quot;);
-using var reader = new StreamReader(stream);
-var xml = await reader.ReadToEndAsync();
+var controller = new DeepZoomController(cacheCapacity: 1024);
 
-var tileSource = DziTileSource.Parse(xml, &quot;asset://image_files/&quot;);
-deepZoomView.Load(tileSource, new AppPackageTileFetcher());
+// Load a DZI image
+controller.Load(tileSource, fetcher);
+
+// Called each frame to schedule tile loading (returns true while tiles are loading)
+bool hasPendingTiles = controller.Update();
+
+// Called in the paint handler
+controller.SetControlSize(width, height);
+controller.Render(canvas);
+
+// Programmatic navigation (instant; no animation)
+controller.Pan(dx, dy);                              // Pan by pixel delta
+controller.ZoomAboutScreenPoint(factor, cx, cy);     // Zoom around a screen point
+controller.ZoomAboutLogicalPoint(factor, lx, ly);    // Zoom around logical coords
+controller.SetViewport(viewportWidth, originX, originY);  // Set viewport directly
+controller.ResetView();                              // Fit to viewport
+
+// Read current viewport state
+double vw = controller.Viewport.ViewportWidth;   // 1.0 = full image
+double ox = controller.Viewport.ViewportOriginX;
+double oy = controller.Viewport.ViewportOriginY;
 </code></pre>
-<h3 id="blazor--use-deepzoomcontroller-with-skgesturetracker">Blazor — Use DeepZoomController with SKGestureTracker</h3>
-<pre><code class="lang-razor">@page &quot;/deepzoom&quot;
-@implements IDisposable
-@inject HttpClient Http
-@using SkiaSharp.Extended
-@using SkiaSharp.Extended.DeepZoom
-
-&lt;div @onpointerdown=&quot;OnPointerDown&quot;
-     @onpointermove=&quot;OnPointerMove&quot;
-     @onpointerup=&quot;OnPointerUp&quot;
-     @onpointercancel=&quot;OnPointerCancel&quot;
-     @onwheel=&quot;OnWheel&quot;
-     @onwheel:preventDefault
-     style=&quot;touch-action: none; cursor: grab;&quot;&gt;
-    &lt;SKCanvasView @ref=&quot;_canvas&quot; OnPaintSurface=&quot;OnPaintSurface&quot;
-                  style=&quot;width: 100%; height: 600px;&quot; /&gt;
-&lt;/div&gt;
-
-@code {
-    private SKCanvasView? _canvas;
-    private DeepZoomController? _controller;
-    private readonly SKGestureTracker _tracker = new(new SKGestureTrackerOptions
-    {
-        IsRotateEnabled = false,
-        IsDoubleTapZoomEnabled = true,   // Tracker animates double-tap zoom
-        IsScrollZoomEnabled = true,      // Tracker handles scroll/wheel zoom
-        IsFlingEnabled = true,           // Tracker animates fling deceleration
-        MinScale = 1f,                   // Can't zoom out past the full image
-        MaxScale = 32f,
-    });
-    private float _displayScale = 1f;
-    private bool _suppressSync;
-
-    protected override void OnInitialized()
-    {
-        _tracker.TransformChanged += OnTrackerTransformChanged;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-
-        _controller = new DeepZoomController();
-        _controller.ImageOpenSucceeded += (_, _) =&gt; _tracker.Reset();
-        _controller.InvalidateRequired += (_, _) =&gt; InvokeAsync(() =&gt; _canvas?.Invalidate());
-
-        var xml = await Http.GetStringAsync(&quot;deepzoom/image.dzi&quot;);
-        var baseUrl = new Uri(Http.BaseAddress!, &quot;deepzoom/image_files/&quot;).ToString();
-        var tileSource = DziTileSource.Parse(xml, baseUrl);
-        _controller.Load(tileSource, new HttpTileFetcher(new HttpClient()));
-    }
-
-    private void OnTrackerTransformChanged(object? sender, EventArgs e)
-    {
-        if (_suppressSync || _controller == null) return;
-        var w = _controller.Viewport.ControlWidth;
-        if (w &lt;= 0) { InvokeAsync(() =&gt; _canvas?.Invalidate()); return; }
-
-        double scale = _tracker.Scale;
-        _controller.Viewport.ViewportWidth = 1.0 / scale;
-        _controller.Viewport.ViewportOriginX = -_tracker.Offset.X / (w * scale);
-        _controller.Viewport.ViewportOriginY = -_tracker.Offset.Y / (w * scale);
-        _controller.Viewport.Constrain();
-
-        var vp = _controller.Viewport;
-        float ns = (float)(1.0 / vp.ViewportWidth);
-        _suppressSync = true;
-        _tracker.SetTransform(ns, 0f, new SKPoint(
-            (float)(-vp.ViewportOriginX * w * ns),
-            (float)(-vp.ViewportOriginY * w * ns)));
-        _suppressSync = false;
-
-        InvokeAsync(() =&gt; _canvas?.Invalidate());
-    }
-
-    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
-    {
-        _displayScale = e.Info.Height / 600f; // CSS height
-        _controller?.SetControlSize(e.Info.Width, e.Info.Height);
-        _controller?.Update();
-        e.Surface.Canvas.Clear(SKColors.White);
-        _controller?.Render(e.Surface.Canvas);
-    }
-
-    private SKPoint Scale(PointerEventArgs e) =&gt;
-        new((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
-
-    private void OnPointerDown(PointerEventArgs e) =&gt;
-        _tracker.ProcessTouchDown(e.PointerId, Scale(e), e.PointerType == &quot;mouse&quot;);
-    private void OnPointerMove(PointerEventArgs e) =&gt;
-        _tracker.ProcessTouchMove(e.PointerId, Scale(e), e.Buttons &gt; 0 || e.PointerType != &quot;mouse&quot;);
-    private void OnPointerUp(PointerEventArgs e) =&gt;
-        _tracker.ProcessTouchUp(e.PointerId, Scale(e), e.PointerType == &quot;mouse&quot;);
-    private void OnPointerCancel(PointerEventArgs e) =&gt;
-        _tracker.ProcessTouchCancel(e.PointerId);
-    private void OnWheel(WheelEventArgs e) =&gt;
-        _tracker.ProcessMouseWheel(new((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale), 0, e.DeltaY &lt; 0 ? 1f : -1f);
-
-    public void Dispose()
-    {
-        _tracker.TransformChanged -= OnTrackerTransformChanged;
-        _tracker.Dispose();
-        _controller?.Dispose();
-    }
-}
-</code></pre>
-<h2 id="gestures">Gestures</h2>
-<p><code>SKDeepZoomView</code> (MAUI) and the Blazor sample both use <a class="xref" href="../api/SkiaSharp.Extended.SKGestureTracker.html"><code>SKGestureTracker</code></a> for unified gesture handling. The tracker owns all gesture animation — fling deceleration, double-tap zoom easing, and scroll zoom — via the built-in <code>SKTimerAnimation</code> and <code>SKEasingFunctions</code> animation system.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Gesture</th>
-<th style="text-align: left;">Action</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Pan</strong> (single finger / mouse drag)</td>
-<td style="text-align: left;">Pan the image</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Pinch</strong> (two fingers)</td>
-<td style="text-align: left;">Zoom in or out around the pinch center</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Double-tap</strong></td>
-<td style="text-align: left;">Toggle between fit-to-screen and 2× zoom (animated via the tracker)</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Scroll</strong> (mouse wheel)</td>
-<td style="text-align: left;">Zoom in or out at the cursor position (animated via the tracker)</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Fling</strong></td>
-<td style="text-align: left;">Momentum scrolling after a fast pan (decelerated via the tracker)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="skdeepzoomview-properties-maui">SKDeepZoomView Properties (MAUI)</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Property</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Default</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>Source</code></td>
-<td style="text-align: left;"><code>string?</code></td>
-<td style="text-align: left;"><code>null</code></td>
-<td style="text-align: left;">URI to a <code>.dzi</code> file. Setting this fetches and loads the image automatically.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ShowTileBorders</code></td>
-<td style="text-align: left;"><code>bool</code></td>
-<td style="text-align: left;"><code>false</code></td>
-<td style="text-align: left;">Draw a colored border around each tile (debug aid).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ShowDebugStats</code></td>
-<td style="text-align: left;"><code>bool</code></td>
-<td style="text-align: left;"><code>false</code></td>
-<td style="text-align: left;">Overlay viewport, level, and tile cache statistics.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ViewportWidth</code></td>
-<td style="text-align: left;"><code>double</code></td>
-<td style="text-align: left;"><code>1.0</code></td>
-<td style="text-align: left;">Current zoom level in normalized units (1.0 = full image visible).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ViewportOriginX</code></td>
-<td style="text-align: left;"><code>double</code></td>
-<td style="text-align: left;"><code>0.0</code></td>
-<td style="text-align: left;">Normalized horizontal pan offset.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ViewportOriginY</code></td>
-<td style="text-align: left;"><code>double</code></td>
-<td style="text-align: left;"><code>0.0</code></td>
-<td style="text-align: left;">Normalized vertical pan offset.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>AspectRatio</code></td>
-<td style="text-align: left;"><code>double</code></td>
-<td style="text-align: left;"><code>0</code></td>
-<td style="text-align: left;">Image width / height (read-only, 0 when not loaded).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>IsIdle</code></td>
-<td style="text-align: left;"><code>bool</code></td>
-<td style="text-align: left;"><code>true</code></td>
-<td style="text-align: left;">True when no gesture animation is running and no tiles are loading.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>Controller</code></td>
-<td style="text-align: left;"><code>DeepZoomController</code></td>
-<td style="text-align: left;">—</td>
-<td style="text-align: left;">Access the underlying controller for advanced use.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>GestureTracker</code></td>
-<td style="text-align: left;"><code>SKGestureTracker</code></td>
-<td style="text-align: left;">—</td>
-<td style="text-align: left;">Access the gesture tracker to configure thresholds, scale limits, or feature toggles.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="skdeepzoomview-events-maui">SKDeepZoomView Events (MAUI)</h2>
+<h3 id="events">Events</h3>
 <table>
 <thead>
 <tr>
@@ -342,66 +180,33 @@ deepZoomView.Load(tileSource, new AppPackageTileFetcher());
 <tr>
 <td style="text-align: left;"><code>ImageOpenSucceeded</code></td>
 <td style="text-align: left;"><code>EventArgs</code></td>
-<td style="text-align: left;">Fired after the DZI source is parsed and the controller is ready.</td>
+<td style="text-align: left;">Fired after the source is parsed and the controller is ready.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ImageOpenFailed</code></td>
 <td style="text-align: left;"><code>Exception</code></td>
-<td style="text-align: left;">Fired when the source URI fails to load or parse.</td>
+<td style="text-align: left;">Fired when the source fails to load or parse.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ViewportChanged</code></td>
 <td style="text-align: left;"><code>EventArgs</code></td>
-<td style="text-align: left;">Fired on every viewport change (pan or zoom).</td>
+<td style="text-align: left;">Fired on every viewport change (pan, zoom, or <code>SetViewport</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>InvalidateRequired</code></td>
+<td style="text-align: left;"><code>EventArgs</code></td>
+<td style="text-align: left;">Fired when a tile finishes loading and the view should repaint.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TileFailed</code></td>
+<td style="text-align: left;"><code>TileFailedEventArgs</code></td>
+<td style="text-align: left;">Fired when a tile fails to download.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="methods">Methods</h2>
-<pre><code class="lang-csharp">// Zoom to fit the whole image in the viewport
-deepZoomView.ResetView();
-
-// Zoom 2× around the center of the image in logical coordinates
-deepZoomView.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
-
-// Load a DZI tile source manually (e.g., from a file or stream)
-deepZoomView.Load(tileSource, fetcher);
-
-// Convert between screen and logical coordinate spaces
-var (lx, ly) = deepZoomView.ElementToLogicalPoint(screenX, screenY);
-var (sx, sy) = deepZoomView.LogicalToElementPoint(logicalX, logicalY);
-</code></pre>
-<h2 id="core-classes">Core Classes</h2>
-<h3 id="deepzoomcontroller">DeepZoomController</h3>
-<p>The platform-agnostic rendering engine. Used directly in Blazor and internally by <code>SKDeepZoomView</code>.</p>
-<pre><code class="lang-csharp">var controller = new DeepZoomController(cacheCapacity: 1024);
-
-// Load a DZI image
-controller.Load(tileSource, fetcher);
-
-// Called each frame to schedule tile loading (returns true while tiles are loading)
-bool needsRepaint = controller.Update();
-
-// Called in the paint handler
-controller.SetControlSize(width, height);
-controller.Render(canvas);
-
-// Programmatic navigation (instant; no animation)
-controller.Pan(dx, dy);                              // Pan by pixel delta
-controller.ZoomAboutScreenPoint(factor, cx, cy);     // Zoom around a point
-controller.ZoomAboutLogicalPoint(factor, lx, ly);    // Zoom around logical coords
-controller.ResetView();                              // Fit to viewport
-
-// Read current viewport state
-double vw = controller.Viewport.ViewportWidth;   // 1.0 = full image
-double ox = controller.Viewport.ViewportOriginX;
-double oy = controller.Viewport.ViewportOriginY;
-</code></pre>
-<blockquote>
-<p><strong>Note</strong>: <code>DeepZoomController</code> is animation-free by design — it just manages tiles and provides a viewport. All animation (fling, double-tap zoom, scroll zoom) is handled by <code>SKGestureTracker</code>.</p>
-</blockquote>
-<h3 id="dzitilesource">DziTileSource</h3>
+<h2 id="dzitilesource">DziTileSource</h2>
 <p>Parses <code>.dzi</code> (Deep Zoom Image) XML descriptors:</p>
-<pre><code class="lang-csharp">// From a URI string (sets TilesBaseUri automatically)
+<pre><code class="lang-csharp">// From a string with base URI
 var tileSource = DziTileSource.Parse(xmlString, &quot;https://example.com/image_files/&quot;);
 
 // From a stream
@@ -416,7 +221,7 @@ int tileSize = tileSource.TileSize;
 int maxLevel = tileSource.MaxLevel;
 double aspectRatio = tileSource.AspectRatio;
 </code></pre>
-<h3 id="dzctilesource">DzcTileSource</h3>
+<h2 id="dzctilesource">DzcTileSource</h2>
 <p>Parses <code>.cxml</code> (Deep Zoom Collection) descriptors for multi-image mosaics:</p>
 <pre><code class="lang-csharp">var dzcSource = DzcTileSource.Parse(xmlString, baseUri);
 controller.Load(dzcSource, fetcher);
@@ -427,9 +232,9 @@ foreach (var sub in controller.SubImages)
     Console.WriteLine($&quot;Sub-image at ({sub.X}, {sub.Y}), size {sub.Width}×{sub.Height}&quot;);
 }
 </code></pre>
-<h3 id="tile-fetchers">Tile Fetchers</h3>
+<h2 id="tile-fetchers">Tile Fetchers</h2>
 <p>Two built-in fetchers are provided:</p>
-<pre><code class="lang-csharp">// HTTP — fetches tiles from a URL (requires HttpClient)
+<pre><code class="lang-csharp">// HTTP — fetches tiles from a URL
 var fetcher = new HttpTileFetcher();           // Creates its own HttpClient
 var fetcher = new HttpTileFetcher(httpClient); // Reuse an existing client
 
@@ -449,7 +254,7 @@ var fetcher = new FileTileFetcher(baseDirectory);
     public void Dispose() { }
 }
 </code></pre>
-<h3 id="viewport">Viewport</h3>
+<h2 id="viewport">Viewport</h2>
 <p>Handles the coordinate transforms between screen pixels, logical (0–1) image coordinates, and tile pixel coordinates:</p>
 <pre><code class="lang-csharp">var viewport = controller.Viewport;
 
@@ -461,27 +266,59 @@ double viewportWidth = viewport.ViewportWidth;   // 1.0 = full image visible
 double originX = viewport.ViewportOriginX;
 double originY = viewport.ViewportOriginY;
 </code></pre>
-<h3 id="tilecache">TileCache</h3>
+<h2 id="tilecache">TileCache</h2>
 <p>LRU cache for decoded tile bitmaps. Deferred disposal prevents GPU stalls:</p>
 <pre><code class="lang-csharp">// Inspect cache state (via controller)
 int count = controller.Cache.Count;
 int capacity = controller.Cache.Capacity;
 controller.Cache.Clear();
 </code></pre>
+<h2 id="gestures">Gestures</h2>
+<p>Both the MAUI and Blazor integrations use <a href="gestures.html"><code>SKGestureTracker</code></a> for unified gesture handling. The tracker owns all gesture animation — fling deceleration, double-tap zoom easing, and scroll zoom — via the built-in <a href="animation.html">animation system</a>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Gesture</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Pan</strong> (single finger / mouse drag)</td>
+<td style="text-align: left;">Pan the image</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Pinch</strong> (two fingers)</td>
+<td style="text-align: left;">Zoom in or out around the pinch center</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Double-tap</strong></td>
+<td style="text-align: left;">Toggle between fit-to-screen and 2× zoom (animated)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Scroll</strong> (mouse wheel)</td>
+<td style="text-align: left;">Zoom in or out at the cursor position (animated)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Fling</strong></td>
+<td style="text-align: left;">Momentum scrolling after a fast pan (decelerated)</td>
+</tr>
+</tbody>
+</table>
 <h2 id="performance-tips">Performance Tips</h2>
 <ul>
 <li><strong>Cache capacity</strong>: The default of 1024 tiles is generous for most use cases. Reduce for memory-constrained devices: <code>new DeepZoomController(cacheCapacity: 256)</code>.</li>
-<li><strong>Stop rendering when idle</strong>: Check <code>controller.IsIdle</code> and stop your animation loop when there are no pending tile loads and no active gesture.</li>
-<li><strong>Gesture tracker limits</strong>: Configure <code>MinScale</code>/<code>MaxScale</code> on <code>SKGestureTrackerOptions</code> to bound zoom range and prevent users from zooming too far out or in.</li>
+<li><strong>Stop rendering when idle</strong>: Check <code>controller.IsIdle</code> and stop your render loop when there are no pending tile loads.</li>
+<li><strong>Gesture tracker limits</strong>: Configure <code>MinScale</code>/<code>MaxScale</code> on <code>SKGestureTrackerOptions</code> to bound the zoom range.</li>
 </ul>
 <h2 id="next-steps">Next Steps</h2>
 <ul>
+<li><a href="deep-zoom-maui.html">Deep Zoom for MAUI</a> — <code>SKDeepZoomView</code> control</li>
+<li><a href="deep-zoom-blazor.html">Deep Zoom for Blazor</a> — Blazor integration guide</li>
+<li><a href="gestures.html">Gestures</a> — SKGestureTracker documentation</li>
+<li><a href="animation.html">Animation</a> — Animation utilities used by the gesture system</li>
 <li><a href="xref:SkiaSharp.Extended.DeepZoom.DeepZoomController">API Reference — DeepZoomController</a></li>
-<li><a href="xref:SkiaSharp.Extended.UI.Maui.DeepZoom.SKDeepZoomView">API Reference — SKDeepZoomView</a></li>
 <li><a href="xref:SkiaSharp.Extended.DeepZoom.DziTileSource">API Reference — DziTileSource</a></li>
-<li><a href="https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo/Demos/DeepZoom">MAUI Sample</a></li>
-<li><a href="https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo.Blazor/Pages/DeepZoom.razor">Blazor Sample</a></li>
-<li><a href="gestures.html">Gestures</a> — SKGestureTracker used for deep zoom input handling</li>
 </ul>
 
 </article>
@@ -504,7 +341,7 @@ controller.Cache.Clear();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #378 · d8fe1ca
+          source: PR #378 · 29f0458
         </div>
       </div>
     </footer>

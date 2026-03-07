@@ -1,0 +1,301 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Deep Zoom for Blazor | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Deep Zoom for Blazor | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/378/merge/docs/docs/deep-zoom-blazor.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="deep-zoom-for-blazor">Deep Zoom for Blazor</h1>
+
+<p>In Blazor WebAssembly, you compose <code>DeepZoomController</code> and <code>SKGestureTracker</code> yourself — there is no single wrapper component like the MAUI <code>SKDeepZoomView</code>. This gives you full control over the rendering loop, pointer event wiring, and layout.</p>
+<h2 id="quick-start">Quick Start</h2>
+<pre><code class="lang-razor">@page &quot;/deepzoom&quot;
+@implements IDisposable
+@inject HttpClient Http
+@using SkiaSharp.Extended
+@using SkiaSharp.Extended.DeepZoom
+
+&lt;div @onpointerdown=&quot;OnPointerDown&quot;
+     @onpointermove=&quot;OnPointerMove&quot;
+     @onpointerup=&quot;OnPointerUp&quot;
+     @onpointercancel=&quot;OnPointerCancel&quot;
+     @onwheel=&quot;OnWheel&quot;
+     @onwheel:preventDefault
+     style=&quot;touch-action: none; cursor: grab; border: 1px solid #ccc; user-select: none;&quot;&gt;
+    &lt;SKCanvasView @ref=&quot;_canvas&quot; OnPaintSurface=&quot;OnPaintSurface&quot;
+                  style=&quot;width: 100%; height: 600px;&quot; /&gt;
+&lt;/div&gt;
+
+@code {
+    private SKCanvasView? _canvas;
+    private DeepZoomController? _controller;
+    private bool _suppressSync;
+    private float _displayScale = 1f;
+
+    private readonly SKGestureTracker _tracker = new(new SKGestureTrackerOptions
+    {
+        IsRotateEnabled = false,
+        IsDoubleTapZoomEnabled = true,
+        IsScrollZoomEnabled = true,
+        IsFlingEnabled = true,
+        MinScale = 1f,
+        MaxScale = 32f,
+    });
+
+    protected override void OnInitialized()
+    {
+        _tracker.TransformChanged += OnTransformChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        _controller = new DeepZoomController();
+        _controller.ImageOpenSucceeded += (_, _) =&gt; _tracker.Reset();
+        _controller.InvalidateRequired += (_, _) =&gt; InvokeAsync(() =&gt; _canvas?.Invalidate());
+
+        var xml = await Http.GetStringAsync(&quot;deepzoom/image.dzi&quot;);
+        var baseUrl = new Uri(Http.BaseAddress!, &quot;deepzoom/image_files/&quot;).ToString();
+        var tileSource = DziTileSource.Parse(xml, baseUrl);
+        _controller.Load(tileSource, new HttpTileFetcher(new HttpClient()));
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    // ── Tracker → Viewport sync ────────────────────────────────────────
+
+    private void OnTransformChanged(object? sender, EventArgs e)
+    {
+        if (_suppressSync || _controller == null) return;
+        var controlW = _controller.Viewport.ControlWidth;
+        if (controlW &lt;= 0) { InvokeAsync(() =&gt; _canvas?.Invalidate()); return; }
+
+        // Translate tracker (scale + pixel offset) → deep zoom viewport
+        double scale = _tracker.Scale;
+        _controller.Viewport.ViewportWidth = 1.0 / scale;
+        _controller.Viewport.ViewportOriginX = -_tracker.Offset.X / (controlW * scale);
+        _controller.Viewport.ViewportOriginY = -_tracker.Offset.Y / (controlW * scale);
+        _controller.Viewport.Constrain();
+
+        // Sync tracker back to the (possibly constrained) viewport
+        var vp = _controller.Viewport;
+        float ns = (float)(1.0 / vp.ViewportWidth);
+        _suppressSync = true;
+        _tracker.SetTransform(ns, 0f, new SKPoint(
+            (float)(-vp.ViewportOriginX * controlW * ns),
+            (float)(-vp.ViewportOriginY * controlW * ns)));
+        _suppressSync = false;
+
+        InvokeAsync(() =&gt; _canvas?.Invalidate());
+    }
+
+    // ── Rendering ──────────────────────────────────────────────────────
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        if (_controller == null) return;
+        _displayScale = e.Info.Height / 600f; // CSS height
+        _controller.SetControlSize(e.Info.Width, e.Info.Height);
+        _controller.Update();
+        e.Surface.Canvas.Clear(SKColors.White);
+        _controller.Render(e.Surface.Canvas);
+    }
+
+    // ── Pointer events ─────────────────────────────────────────────────
+
+    private SKPoint ToCanvas(PointerEventArgs e) =&gt;
+        new((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
+
+    private void OnPointerDown(PointerEventArgs e) =&gt;
+        _tracker.ProcessTouchDown(e.PointerId, ToCanvas(e), e.PointerType == &quot;mouse&quot;);
+    private void OnPointerMove(PointerEventArgs e) =&gt;
+        _tracker.ProcessTouchMove(e.PointerId, ToCanvas(e), e.Buttons &gt; 0 || e.PointerType != &quot;mouse&quot;);
+    private void OnPointerUp(PointerEventArgs e) =&gt;
+        _tracker.ProcessTouchUp(e.PointerId, ToCanvas(e), e.PointerType == &quot;mouse&quot;);
+    private void OnPointerCancel(PointerEventArgs e) =&gt;
+        _tracker.ProcessTouchCancel(e.PointerId);
+    private void OnWheel(WheelEventArgs e) =&gt;
+        _tracker.ProcessMouseWheel(
+            new((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale),
+            0, e.DeltaY &lt; 0 ? 1f : -1f);
+
+    public void Dispose()
+    {
+        _tracker.TransformChanged -= OnTransformChanged;
+        _tracker.Dispose();
+        _controller?.Dispose();
+    }
+}
+</code></pre>
+<h2 id="how-it-works">How It Works</h2>
+<p>The pattern is the same one used inside <code>SKDeepZoomView</code> on MAUI — you're just doing the wiring yourself:</p>
+<ol>
+<li><strong>Pointer events</strong> are routed to <code>SKGestureTracker</code> via <code>ProcessTouchDown/Move/Up</code> and <code>ProcessMouseWheel</code>.</li>
+<li>The tracker detects gestures and animates fling/zoom. On each frame it fires <strong><code>TransformChanged</code></strong>.</li>
+<li>In your <code>TransformChanged</code> handler you translate the tracker's <code>Scale</code> and <code>Offset</code> into the controller's viewport coordinates, call <code>Viewport.Constrain()</code>, then sync the constrained result back to the tracker.</li>
+<li>Call <code>_canvas.Invalidate()</code> to schedule a repaint, which calls <code>controller.Update()</code> and <code>controller.Render()</code>.</li>
+</ol>
+<h3 id="coordinate-translation">Coordinate Translation</h3>
+<p>The tracker works in pixel-space (scale factor + pixel offset), while the deep zoom viewport works in normalised image-space (viewport width 0–1 + origin). The translation is:</p>
+<pre><code class="lang-csharp">// Tracker → Viewport
+viewportWidth  = 1.0 / scale
+viewportOriginX = -offset.X / (controlWidth * scale)
+viewportOriginY = -offset.Y / (controlWidth * scale)
+
+// Viewport → Tracker (inverse)
+scale   = 1.0 / viewportWidth
+offsetX = -viewportOriginX * controlWidth * scale
+offsetY = -viewportOriginY * controlWidth * scale
+</code></pre>
+<p>Both X and Y use <code>controlWidth</code> (not height) because deep zoom normalises coordinates to the image width.</p>
+<h3 id="the-_suppresssync-flag">The <code>_suppressSync</code> Flag</h3>
+<p>When you call <code>_tracker.SetTransform(...)</code> to sync the constrained viewport back, the tracker fires <code>TransformChanged</code> again. The <code>_suppressSync</code> flag prevents this from re-entering your handler. Since Blazor component code runs on a single synchronisation context, this is safe without locks.</p>
+<h2 id="display-scale">Display Scale</h2>
+<p>Blazor pointer events report coordinates in CSS pixels, but the SkiaSharp canvas renders in physical (device) pixels. You need to scale pointer coordinates:</p>
+<pre><code class="lang-csharp">// Compute scale: physical canvas height / expected CSS height
+_displayScale = canvasInfo.Height / 600f; // 600 = your CSS height in px
+
+// Apply to every pointer event
+var canvasPoint = new SKPoint((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
+</code></pre>
+<h2 id="programmatic-navigation">Programmatic Navigation</h2>
+<pre><code class="lang-csharp">// Zoom in 2× at the center (animated via tracker)
+var cx = (float)(_controller.Viewport.ControlWidth / 2);
+var cy = (float)(_controller.Viewport.ControlHeight / 2);
+_tracker.ZoomTo(2f, new SKPoint(cx, cy));
+
+// Reset to full image
+_tracker.Reset();
+</code></pre>
+<h2 id="using-skgestureview">Using SKGestureView</h2>
+<p>If you prefer a reusable component that handles the pointer-event wiring for you, the Blazor sample includes <code>SKGestureView.razor</code>:</p>
+<pre><code class="lang-razor">&lt;SKGestureView @ref=&quot;_gestureView&quot; OnPaint=&quot;OnPaint&quot; CssHeight=&quot;600&quot; /&gt;
+
+@code {
+    private SKGestureView? _gestureView;
+
+    private void OnPaint(SKPaintSurfaceEventArgs e)
+    {
+        var tracker = _gestureView!.GestureTracker;
+        // Use tracker.Scale, tracker.Offset, tracker.Matrix
+        // to transform your drawing
+    }
+}
+</code></pre>
+<p><code>SKGestureView</code> wraps an <code>SKCanvasView</code> with pointer-event routing and automatic invalidation on <code>TransformChanged</code>. You can use it for any gesture-driven SkiaSharp content, not just deep zoom.</p>
+<h2 id="next-steps">Next Steps</h2>
+<ul>
+<li><a href="deep-zoom.html">Deep Zoom Core</a> — Core classes shared by MAUI and Blazor</li>
+<li><a href="deep-zoom-maui.html">Deep Zoom for MAUI</a> — MAUI <code>SKDeepZoomView</code> control</li>
+<li><a href="gestures.html">Gestures</a> — SKGestureTracker documentation</li>
+<li><a href="animation.html">Animation</a> — Animation utilities used by the gesture system</li>
+<li><a href="xref:SkiaSharp.Extended.DeepZoom.DeepZoomController">API Reference — DeepZoomController</a></li>
+<li><a href="https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo.Blazor/Pages/DeepZoom.razor">Blazor Sample</a></li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/378/merge/docs/docs/deep-zoom-blazor.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #378 · 29f0458
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
