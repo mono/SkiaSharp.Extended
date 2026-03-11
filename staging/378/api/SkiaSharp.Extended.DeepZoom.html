@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Namespace SkiaSharp.Extended.DeepZoom
+ | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Namespace SkiaSharp.Extended.DeepZoom
+ | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="SkiaSharp.Extended.DeepZoom">
+
+  <h1 id="SkiaSharp_Extended_DeepZoom" data-uid="SkiaSharp.Extended.DeepZoom" class="text-break">Namespace SkiaSharp.Extended.DeepZoom
+</h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="markdown level0 remarks"></div>
+
+    <h3 id="classes">
+Classes
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.html">SKDeepZoomCollectionSource</a></dt>
+      <dd><p>Represents a Deep Zoom Collection (DZC) — a composite tiled pyramid of multiple images.
+Parses the DZC XML descriptor and provides access to sub-images and composite tile math.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.html">SKDeepZoomCollectionSubImage</a></dt>
+      <dd><p>Represents a single sub-image within a DZC collection.
+Maps to Silverlight's MultiScaleSubImage.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">SKDeepZoomController</a></dt>
+      <dd><p>Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling,
+cache management, and rendering.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.html">SKDeepZoomFileTileFetcher</a></dt>
+      <dd><p>Fetches tiles from the local file system.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">SKDeepZoomHttpTileFetcher</a></dt>
+      <dd><p>Fetches tiles over HTTP. Thread-safe and reusable.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.html">SKDeepZoomImageSource</a></dt>
+      <dd><p>Represents a Deep Zoom Image (DZI) tile source. Parses the DZI XML descriptor
+and provides tile pyramid math for computing tile URLs and dimensions.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a></dt>
+      <dd><p>Renders Deep Zoom tiles onto an SKCanvas. Handles LOD blending and fallback rendering.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.html">SKDeepZoomSubImage</a></dt>
+      <dd><p>Represents a single sub-image within a DZC collection, with its position in the mosaic.
+Mirrors Silverlight's MultiScaleSubImage with inverted viewport coordinates.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.html">SKDeepZoomTileCache</a></dt>
+      <dd><p>LRU cache for decoded tile bitmaps.
+Evicted bitmaps are deferred for disposal to avoid race conditions
+with the renderer (which may hold references to recently-returned bitmaps).
+Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.FlushEvicted.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_FlushEvicted">FlushEvicted()</a> at the start of each render frame.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileFailedEventArgs.html">SKDeepZoomTileFailedEventArgs</a></dt>
+      <dd><p>Event args for when a tile fails to load.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.html">SKDeepZoomTileScheduler</a></dt>
+      <dd><p>Determines which tiles are needed for the current viewport and prioritizes them.
+Handles parent tile fallback when tiles are loading or missing.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.html">SKDeepZoomViewport</a></dt>
+      <dd><p>Manages the Deep Zoom viewport — the logical window into the image.
+Handles coordinate conversions between element (screen), logical (0-1 normalized),
+and image pixel spaces. Mirrors Silverlight's MultiScaleImage viewport behavior.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ViewportSpring.html">ViewportSpring</a></dt>
+      <dd><p>Manages three <a class="xref" href="SkiaSharp.Extended.SpringAnimator.html">SpringAnimator</a> instances (X, Y, width) for animating
+deep-zoom-style viewport transitions with spring physics.</p>
+</dd>
+    </dl>
+    <h3 id="structs">
+Structs
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.html">SKDeepZoomDisplayRect</a></dt>
+      <dd><p>Represents a display rectangle in a sparse Deep Zoom Image.
+Defines a region of available pixels and the pyramid levels at which it is visible.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.html">SKDeepZoomTileId</a></dt>
+      <dd><p>Identifies a single tile in the pyramid.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.html">SKDeepZoomTileRequest</a></dt>
+      <dd><p>A tile to be fetched, with a priority value (lower = higher priority).</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.html">SKDeepZoomViewportState</a></dt>
+      <dd><p>Immutable snapshot of viewport position and zoom.</p>
+</dd>
+    </dl>
+    <h3 id="interfaces">
+Interfaces
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.html">ISKDeepZoomTileFetcher</a></dt>
+      <dd><p>Interface for fetching tile image data from various sources (HTTP, file, memory).</p>
+</dd>
+    </dl>
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #378 · 081253b
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
