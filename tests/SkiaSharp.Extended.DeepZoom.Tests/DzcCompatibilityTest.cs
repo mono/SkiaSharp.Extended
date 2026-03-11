@@ -19,7 +19,7 @@ public class DzcCompatibilityTest
     public void Parse_AllDzc_LoadsSuccessfully(string file, int expectedItems, string expectedFormat, int expectedTileSize)
     {
         using var stream = TestDataHelper.GetStream(file);
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         Assert.Equal(expectedItems, dzc.Items.Count);
         Assert.Equal(expectedFormat, dzc.Format);
@@ -35,7 +35,7 @@ public class DzcCompatibilityTest
     public void Parse_DzcWithSources_ItemsHaveValidSources(string file)
     {
         using var stream = TestDataHelper.GetStream(file);
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         foreach (var item in dzc.Items)
         {
@@ -58,7 +58,7 @@ public class DzcCompatibilityTest
     <I Id=""1"" N=""1""><Size Width=""320"" Height=""240""/></I>
   </Items>
 </Collection>";
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
 
         Assert.Equal(2, dzc.Items.Count);
         Assert.Null(dzc.Items[0].Source);
@@ -73,7 +73,7 @@ public class DzcCompatibilityTest
     public void Parse_AllDzc_ItemsHavePositiveDimensions(string file)
     {
         using var stream = TestDataHelper.GetStream(file);
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         foreach (var item in dzc.Items)
         {
@@ -86,7 +86,7 @@ public class DzcCompatibilityTest
     public void Parse_ConceptCars_FirstItemHasTileSource()
     {
         using var stream = TestDataHelper.GetStream("conceptcars.dzc");
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         var first = dzc.Items[0];
         Assert.True(first.Width > 100, "First concept car should have substantial width");
@@ -97,7 +97,7 @@ public class DzcCompatibilityTest
     public void Parse_SampleDzi_LoadsSuccessfully()
     {
         var xml = TestDataHelper.GetString("sample.dzi");
-        var dzi = DziTileSource.Parse(xml, "http://example.com/sample");
+        var dzi = SKDeepZoomImageSource.Parse(xml, "http://example.com/sample");
 
         Assert.True(dzi.ImageWidth > 0);
         Assert.True(dzi.ImageHeight > 0);
@@ -111,7 +111,7 @@ public class DzcCompatibilityTest
     public void Parse_Dzc_MaxLevelIsReasonable(string file)
     {
         using var stream = TestDataHelper.GetStream(file);
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         Assert.True(dzc.MaxLevel >= 0, "MaxLevel should be non-negative");
         Assert.True(dzc.MaxLevel <= 20, "MaxLevel should be <= 20 (reasonable bound)");
@@ -126,7 +126,7 @@ public class DzcCompatibilityTest
         foreach (var file in files)
         {
             using var stream = TestDataHelper.GetStream(file);
-            var dzc = DzcTileSource.Parse(stream);
+            var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
             var ids = dzc.Items.Select(i => i.Id).ToList();
             var uniqueIds = ids.Distinct().ToList();

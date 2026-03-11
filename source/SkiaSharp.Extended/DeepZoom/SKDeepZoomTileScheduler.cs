@@ -1,6 +1,7 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SkiaSharp.Extended.DeepZoom
 {
@@ -8,13 +9,13 @@ namespace SkiaSharp.Extended.DeepZoom
     /// Determines which tiles are needed for the current viewport and prioritizes them.
     /// Handles parent tile fallback when tiles are loading or missing.
     /// </summary>
-    public class TileScheduler
+    public class SKDeepZoomTileScheduler
     {
         /// <summary>
         /// Computes the set of tiles visible in the current viewport at the optimal level.
         /// </summary>
-        public IReadOnlyList<TileRequest> GetVisibleTiles(
-            DziTileSource tileSource, Viewport viewport)
+        public IReadOnlyList<SKDeepZoomTileRequest> GetVisibleTiles(
+            SKDeepZoomImageSource tileSource, SKDeepZoomViewport viewport)
         {
             int optimalLevel = tileSource.GetOptimalLevel(viewport.ViewportWidth, viewport.ControlWidth);
 
@@ -51,13 +52,13 @@ namespace SkiaSharp.Extended.DeepZoom
             int endCol = Math.Min(tileSource.GetTileCountX(optimalLevel) - 1, (pixelRight - 1) / tileSize);
             int endRow = Math.Min(tileSource.GetTileCountY(optimalLevel) - 1, (pixelBottom - 1) / tileSize);
 
-            var tiles = new List<TileRequest>();
+            var tiles = new List<SKDeepZoomTileRequest>();
 
             for (int row = startRow; row <= endRow; row++)
             {
                 for (int col = startCol; col <= endCol; col++)
                 {
-                    var id = new TileId(optimalLevel, col, row);
+                    var id = new SKDeepZoomTileId(optimalLevel, col, row);
                     double centerX = (col + 0.5) * tileSize / scaleX;
                     double centerY = (row + 0.5) * tileSize / scaleY;
 
@@ -68,7 +69,7 @@ namespace SkiaSharp.Extended.DeepZoom
                         (centerX - vpCenterX) * (centerX - vpCenterX) +
                         (centerY - vpCenterY) * (centerY - vpCenterY));
 
-                    tiles.Add(new TileRequest(id, dist));
+                    tiles.Add(new SKDeepZoomTileRequest(id, dist));
                 }
             }
 
@@ -81,7 +82,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// For a missing tile, finds the best available parent tile as a fallback.
         /// Walks up the pyramid from the requested level until a cached tile is found.
         /// </summary>
-        public TileId? FindBestFallback(TileId requested, TileCache cache, int minLevel = 0)
+        public SKDeepZoomTileId? FindBestFallback(SKDeepZoomTileId requested, SKDeepZoomTileCache cache, int minLevel = 0)
         {
             int col = requested.Col;
             int row = requested.Row;
@@ -90,7 +91,7 @@ namespace SkiaSharp.Extended.DeepZoom
             {
                 col /= 2;
                 row /= 2;
-                var parentId = new TileId(level, col, row);
+                var parentId = new SKDeepZoomTileId(level, col, row);
                 if (cache.Contains(parentId))
                     return parentId;
             }
@@ -103,7 +104,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// Used for rendering a scaled portion of a lower-resolution tile as a fallback.
         /// </summary>
         public (float SrcX, float SrcY, float SrcW, float SrcH) GetFallbackSourceRect(
-            TileId requested, TileId parent, DziTileSource tileSource)
+            SKDeepZoomTileId requested, SKDeepZoomTileId parent, SKDeepZoomImageSource tileSource)
         {
             int levelDiff = requested.Level - parent.Level;
             int scale = 1 << levelDiff;
@@ -123,24 +124,5 @@ namespace SkiaSharp.Extended.DeepZoom
 
             return (srcX, srcY, reqWidthInParent, reqHeightInParent);
         }
-    }
-
-    /// <summary>
-    /// A tile to be fetched, with a priority value (lower = higher priority).
-    /// </summary>
-    public readonly struct TileRequest : IEquatable<TileRequest>
-    {
-        public TileRequest(TileId tileId, double priority)
-        {
-            TileId = tileId;
-            Priority = priority;
-        }
-
-        public TileId TileId { get; }
-        public double Priority { get; }
-
-        public bool Equals(TileRequest other) => TileId.Equals(other.TileId);
-        public override bool Equals(object? obj) => obj is TileRequest r && Equals(r);
-        public override int GetHashCode() => TileId.GetHashCode();
     }
 }

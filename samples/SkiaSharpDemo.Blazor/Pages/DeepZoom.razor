@@ -10,7 +10,7 @@
 
 <p>
     Pan, zoom, and explore a tiled deep zoom image powered by
-    <code>DeepZoomController</code> from the shared core library.
+    <code>SKDeepZoomController</code> from the shared core library.
     Use mouse wheel to zoom, click and drag to pan, double-click to zoom in/out.
 </p>
 
@@ -54,7 +54,7 @@
 
 @code {
     private SKCanvasView? canvasView;
-    private DeepZoomController? controller;
+    private SKDeepZoomController? controller;
     private bool _suppressTransformSync;
     private float _displayScale = 1f;
 
@@ -87,15 +87,15 @@
 
         try
         {
-            controller = new DeepZoomController();
+            controller = new SKDeepZoomController();
             controller.ImageOpenSucceeded += (_, _) => _tracker.Reset();
             controller.InvalidateRequired += (_, _) => InvokeAsync(() => canvasView?.Invalidate());
 
             var dziXml = await Http.GetStringAsync("deepzoom/testgrid.dzi");
             var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/testgrid_files/").ToString();
-            var tileSource = DziTileSource.Parse(dziXml, baseUrl);
+            var tileSource = SKDeepZoomImageSource.Parse(dziXml, baseUrl);
 
-            var fetcher = new HttpTileFetcher(new HttpClient());
+            var fetcher = new SKDeepZoomHttpTileFetcher(new HttpClient());
             controller.Load(tileSource, fetcher);
 
             statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}, {tileSource.MaxLevel + 1} levels";

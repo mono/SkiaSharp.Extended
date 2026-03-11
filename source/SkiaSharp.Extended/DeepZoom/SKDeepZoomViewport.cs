@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 namespace SkiaSharp.Extended.DeepZoom
@@ -7,7 +9,7 @@ namespace SkiaSharp.Extended.DeepZoom
     /// Handles coordinate conversions between element (screen), logical (0-1 normalized),
     /// and image pixel spaces. Mirrors Silverlight's MultiScaleImage viewport behavior.
     /// </summary>
-    public class Viewport
+    public class SKDeepZoomViewport
     {
         private double _viewportWidth;
         private double _viewportOriginX;
@@ -16,7 +18,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private double _controlHeight;
         private double _aspectRatio;
 
-        public Viewport()
+        public SKDeepZoomViewport()
         {
             _viewportWidth = 1.0;
             _viewportOriginX = 0.0;
@@ -197,50 +199,17 @@ namespace SkiaSharp.Extended.DeepZoom
         }
 
         /// <summary>Creates a snapshot of the current viewport state.</summary>
-        public ViewportState GetState()
+        public SKDeepZoomViewportState GetState()
         {
-            return new ViewportState(_viewportWidth, _viewportOriginX, _viewportOriginY);
+            return new SKDeepZoomViewportState(_viewportWidth, _viewportOriginX, _viewportOriginY);
         }
 
         /// <summary>Restores a previously captured viewport state.</summary>
-        public void SetState(ViewportState state)
+        public void SetState(SKDeepZoomViewportState state)
         {
             _viewportWidth = state.ViewportWidth;
             _viewportOriginX = state.OriginX;
             _viewportOriginY = state.OriginY;
         }
-    }
-
-    /// <summary>Immutable snapshot of viewport position and zoom.</summary>
-    public readonly struct ViewportState : IEquatable<ViewportState>
-    {
-        public ViewportState(double viewportWidth, double originX, double originY)
-        {
-            ViewportWidth = viewportWidth;
-            OriginX = originX;
-            OriginY = originY;
-        }
-
-        public double ViewportWidth { get; }
-        public double OriginX { get; }
-        public double OriginY { get; }
-
-        public bool Equals(ViewportState other)
-            => ViewportWidth == other.ViewportWidth && OriginX == other.OriginX && OriginY == other.OriginY;
-
-        public override bool Equals(object? obj) => obj is ViewportState s && Equals(s);
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hash = 17;
-                hash = hash * 31 + ViewportWidth.GetHashCode();
-                hash = hash * 31 + OriginX.GetHashCode();
-                hash = hash * 31 + OriginY.GetHashCode();
-                return hash;
-            }
-        }
-        public static bool operator ==(ViewportState left, ViewportState right) => left.Equals(right);
-        public static bool operator !=(ViewportState left, ViewportState right) => !left.Equals(right);
     }
 }

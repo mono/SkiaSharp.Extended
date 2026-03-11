@@ -8,7 +8,7 @@ public class DzcTileSourceTest
     public void Parse_EmbeddedConceptCarsDzc_ParsesCorrectly()
     {
         using var stream = TestDataHelper.GetStream("conceptcars.dzc");
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         Assert.Equal(8, dzc.MaxLevel);
         Assert.Equal(256, dzc.TileSize);
@@ -21,7 +21,7 @@ public class DzcTileSourceTest
     public void Parse_ConceptCarsDzc_HasCorrectItemCount()
     {
         using var stream = TestDataHelper.GetStream("conceptcars.dzc");
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         // The DZC has many items with IsPath=1
         Assert.True(dzc.ItemCount > 50);
@@ -31,7 +31,7 @@ public class DzcTileSourceTest
     public void Parse_ConceptCarsDzc_FirstItemHasCorrectProperties()
     {
         using var stream = TestDataHelper.GetStream("conceptcars.dzc");
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         var first = dzc.Items[0];
         Assert.Equal(0, first.Id);
@@ -61,7 +61,7 @@ public class DzcTileSourceTest
     </Items>
 </Collection>";
 
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
 
         Assert.Equal(7, dzc.MaxLevel);
         Assert.Equal(256, dzc.TileSize);
@@ -83,7 +83,7 @@ public class DzcTileSourceTest
     </Items>
 </Collection>";
 
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         var item = dzc.Items[0];
 
         Assert.Equal(0.5, item.ViewportWidth);
@@ -95,15 +95,15 @@ public class DzcTileSourceTest
     public void MortonToGrid_KnownValues()
     {
         // Morton index 0 → (0,0)
-        Assert.Equal((0, 0), DzcTileSource.MortonToGrid(0));
+        Assert.Equal((0, 0), SKDeepZoomCollectionSource.MortonToGrid(0));
         // Morton index 1 → (1,0)
-        Assert.Equal((1, 0), DzcTileSource.MortonToGrid(1));
+        Assert.Equal((1, 0), SKDeepZoomCollectionSource.MortonToGrid(1));
         // Morton index 2 → (0,1)
-        Assert.Equal((0, 1), DzcTileSource.MortonToGrid(2));
+        Assert.Equal((0, 1), SKDeepZoomCollectionSource.MortonToGrid(2));
         // Morton index 3 → (1,1)
-        Assert.Equal((1, 1), DzcTileSource.MortonToGrid(3));
+        Assert.Equal((1, 1), SKDeepZoomCollectionSource.MortonToGrid(3));
         // Morton index 4 → (2,0)
-        Assert.Equal((2, 0), DzcTileSource.MortonToGrid(4));
+        Assert.Equal((2, 0), SKDeepZoomCollectionSource.MortonToGrid(4));
     }
 
     [Fact]
@@ -111,8 +111,8 @@ public class DzcTileSourceTest
     {
         for (int i = 0; i < 100; i++)
         {
-            var (col, row) = DzcTileSource.MortonToGrid(i);
-            int morton = DzcTileSource.GridToMorton(col, row);
+            var (col, row) = SKDeepZoomCollectionSource.MortonToGrid(i);
+            int morton = SKDeepZoomCollectionSource.GridToMorton(col, row);
             Assert.Equal(i, morton);
         }
     }
@@ -129,7 +129,7 @@ public class DzcTileSourceTest
     </Items>
 </Collection>";
 
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         // 4 items → ceil(sqrt(4)) = 2, ceil(log2(2)) = 1, 2^1 = 2
         Assert.Equal(2, dzc.GetMortonGridSize());
     }
@@ -137,7 +137,7 @@ public class DzcTileSourceTest
     [Fact]
     public void GetCompositeTileUrl_FormatsCorrectly()
     {
-        var dzc = new DzcTileSource(8, 256, "jpg", Array.Empty<DzcSubImage>());
+        var dzc = new SKDeepZoomCollectionSource(8, 256, "jpg", Array.Empty<SKDeepZoomCollectionSubImage>());
         Assert.Equal("5/3_2.jpg", dzc.GetCompositeTileUrl(5, 3, 2));
     }
 
@@ -145,7 +145,7 @@ public class DzcTileSourceTest
     public void Parse_MissingCollection_ThrowsFormatException()
     {
         var xml = @"<Root xmlns=""http://schemas.microsoft.com/deepzoom/2008""></Root>";
-        Assert.Throws<FormatException>(() => DzcTileSource.Parse(xml));
+        Assert.Throws<FormatException>(() => SKDeepZoomCollectionSource.Parse(xml));
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class DzcTileSourceTest
     </Items>
 </Collection>";
 
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         Assert.Equal(5, dzc.MaxLevel);
         Assert.Equal("png", dzc.Format);
         Assert.Equal(1, dzc.ItemCount);
@@ -166,14 +166,14 @@ public class DzcTileSourceTest
     [Fact]
     public void SubImage_AspectRatio_CalculatedCorrectly()
     {
-        var subImage = new DzcSubImage(0, 0, 800, 600, null);
+        var subImage = new SKDeepZoomCollectionSubImage(0, 0, 800, 600, null);
         Assert.Equal(800.0 / 600.0, subImage.AspectRatio, 6);
     }
 
     [Fact]
     public void SubImage_ZeroHeight_AspectRatioIs1()
     {
-        var subImage = new DzcSubImage(0, 0, 100, 0, null);
+        var subImage = new SKDeepZoomCollectionSubImage(0, 0, 100, 0, null);
         Assert.Equal(1.0, subImage.AspectRatio);
     }
 
@@ -182,24 +182,24 @@ public class DzcTileSourceTest
     {
         // XML with a root element that is not <Collection> in either DZ namespace
         var xml = @"<?xml version=""1.0"" encoding=""UTF-8""?><Images><I Id=""0"" /></Images>";
-        Assert.Throws<FormatException>(() => DzcTileSource.Parse(xml));
+        Assert.Throws<FormatException>(() => SKDeepZoomCollectionSource.Parse(xml));
     }
 
     [Fact]
     public void MortonToGrid_HigherIndices()
     {
         // Index 5 → col=3, row=0
-        Assert.Equal((3, 0), DzcTileSource.MortonToGrid(5));
+        Assert.Equal((3, 0), SKDeepZoomCollectionSource.MortonToGrid(5));
         // Index 6 → col=2, row=1
-        Assert.Equal((2, 1), DzcTileSource.MortonToGrid(6));
+        Assert.Equal((2, 1), SKDeepZoomCollectionSource.MortonToGrid(6));
         // Index 7 → col=3, row=1
-        Assert.Equal((3, 1), DzcTileSource.MortonToGrid(7));
+        Assert.Equal((3, 1), SKDeepZoomCollectionSource.MortonToGrid(7));
     }
 
     [Fact]
     public void GetCompositeTileUrl_DifferentLevelsAndPositions()
     {
-        var dzc = new DzcTileSource(8, 256, "png", Array.Empty<DzcSubImage>());
+        var dzc = new SKDeepZoomCollectionSource(8, 256, "png", Array.Empty<SKDeepZoomCollectionSubImage>());
 
         Assert.Equal("0/0_0.png", dzc.GetCompositeTileUrl(0, 0, 0));
         Assert.Equal("3/1_2.png", dzc.GetCompositeTileUrl(3, 1, 2));
@@ -209,7 +209,7 @@ public class DzcTileSourceTest
     [Fact]
     public void TilesBaseUri_CanBeSetAndRetrieved()
     {
-        var dzc = new DzcTileSource(8, 256, "jpg", Array.Empty<DzcSubImage>());
+        var dzc = new SKDeepZoomCollectionSource(8, 256, "jpg", Array.Empty<SKDeepZoomCollectionSubImage>());
         Assert.Null(dzc.TilesBaseUri);
 
         dzc.TilesBaseUri = "http://example.com/tiles";
@@ -226,7 +226,7 @@ public class DzcTileSourceTest
 </Collection>";
 
         using var stream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(xml));
-        var dzc = DzcTileSource.Parse(stream, "http://example.com/collection.dzc");
+        var dzc = SKDeepZoomCollectionSource.Parse(stream, "http://example.com/collection.dzc");
 
         Assert.NotNull(dzc.TilesBaseUri);
         Assert.Contains("example.com", dzc.TilesBaseUri!);
@@ -235,7 +235,7 @@ public class DzcTileSourceTest
     [Fact]
     public void SubImage_WidthAndHeight_AreCorrect()
     {
-        var subImage = new DzcSubImage(0, 0, 1920, 1080, "test.dzi");
+        var subImage = new SKDeepZoomCollectionSubImage(0, 0, 1920, 1080, "test.dzi");
         Assert.Equal(1920, subImage.Width);
         Assert.Equal(1080, subImage.Height);
         Assert.Equal("test.dzi", subImage.Source);
@@ -244,7 +244,7 @@ public class DzcTileSourceTest
     [Fact]
     public void SubImage_ViewportProperties_Default()
     {
-        var subImage = new DzcSubImage(0, 0, 100, 100, null);
+        var subImage = new SKDeepZoomCollectionSubImage(0, 0, 100, 100, null);
         // Default viewport properties
         Assert.Equal(0.0, subImage.ViewportX);
         Assert.Equal(0.0, subImage.ViewportY);
@@ -253,12 +253,12 @@ public class DzcTileSourceTest
     [Fact]
     public void GridToMorton_SpecificValues()
     {
-        Assert.Equal(0, DzcTileSource.GridToMorton(0, 0));
-        Assert.Equal(1, DzcTileSource.GridToMorton(1, 0));
-        Assert.Equal(2, DzcTileSource.GridToMorton(0, 1));
-        Assert.Equal(3, DzcTileSource.GridToMorton(1, 1));
-        Assert.Equal(4, DzcTileSource.GridToMorton(2, 0));
-        Assert.Equal(5, DzcTileSource.GridToMorton(3, 0));
+        Assert.Equal(0, SKDeepZoomCollectionSource.GridToMorton(0, 0));
+        Assert.Equal(1, SKDeepZoomCollectionSource.GridToMorton(1, 0));
+        Assert.Equal(2, SKDeepZoomCollectionSource.GridToMorton(0, 1));
+        Assert.Equal(3, SKDeepZoomCollectionSource.GridToMorton(1, 1));
+        Assert.Equal(4, SKDeepZoomCollectionSource.GridToMorton(2, 0));
+        Assert.Equal(5, SKDeepZoomCollectionSource.GridToMorton(3, 0));
     }
 
     [Fact]
@@ -279,7 +279,7 @@ public class DzcTileSourceTest
             </Items>
         </Collection>";
 
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         Assert.Equal(3, dzc.ItemCount);
 
         // Items with IsPath=1 have Source
@@ -302,7 +302,7 @@ public class DzcTileSourceTest
             </Items>
         </Collection>";
 
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         Assert.Equal(4, dzc.ItemCount);
 
         // 16:9
@@ -324,7 +324,7 @@ public class DzcTileSourceTest
             </Items>
         </Collection>";
 
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
 
         // MaxLevel defaults to 0, TileSize defaults to 256, Format to "jpg"
         Assert.Equal(0, dzc.MaxLevel);
@@ -359,7 +359,7 @@ public class DzcTileSourceTest
             </Items>
         </Collection>";
 
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
 
         // First item has viewport
         Assert.Equal(2.5, dzc.Items[0].ViewportWidth);
@@ -380,8 +380,8 @@ public class DzcTileSourceTest
     [Fact]
     public void GetCompositeTileUrl_VaryingLevelsAndFormats()
     {
-        var jpgDzc = new DzcTileSource(8, 256, "jpg", Array.Empty<DzcSubImage>());
-        var pngDzc = new DzcTileSource(8, 256, "png", Array.Empty<DzcSubImage>());
+        var jpgDzc = new SKDeepZoomCollectionSource(8, 256, "jpg", Array.Empty<SKDeepZoomCollectionSubImage>());
+        var pngDzc = new SKDeepZoomCollectionSource(8, 256, "png", Array.Empty<SKDeepZoomCollectionSubImage>());
 
         Assert.Equal("0/0_0.jpg", jpgDzc.GetCompositeTileUrl(0, 0, 0));
         Assert.Equal("0/0_0.png", pngDzc.GetCompositeTileUrl(0, 0, 0));
@@ -397,7 +397,7 @@ public class DzcTileSourceTest
             <Items />
         </Collection>";
 
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         Assert.Equal(0, dzc.ItemCount);
         Assert.Empty(dzc.Items);
         Assert.Equal(0, dzc.GetMortonGridSize());
@@ -407,22 +407,22 @@ public class DzcTileSourceTest
     public void Constructor_InvalidTileSize_Throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new DzcTileSource(8, 0, "jpg", Array.Empty<DzcSubImage>()));
+            new SKDeepZoomCollectionSource(8, 0, "jpg", Array.Empty<SKDeepZoomCollectionSubImage>()));
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new DzcTileSource(8, -1, "jpg", Array.Empty<DzcSubImage>()));
+            new SKDeepZoomCollectionSource(8, -1, "jpg", Array.Empty<SKDeepZoomCollectionSubImage>()));
     }
 
     [Fact]
     public void Constructor_EmptyFormat_Throws()
     {
         Assert.Throws<ArgumentException>(() =>
-            new DzcTileSource(8, 256, "", Array.Empty<DzcSubImage>()));
+            new SKDeepZoomCollectionSource(8, 256, "", Array.Empty<SKDeepZoomCollectionSubImage>()));
     }
 
     [Fact]
     public void SubImage_ViewportProperties_SetAndGet()
     {
-        var sub = new DzcSubImage(0, 0, 100, 100, null);
+        var sub = new SKDeepZoomCollectionSubImage(0, 0, 100, 100, null);
         sub.ViewportWidth = 3.5;
         sub.ViewportX = -1.5;
         sub.ViewportY = -0.75;
@@ -445,7 +445,7 @@ public class DzcTileSourceTest
             <Items>{items}</Items>
         </Collection>";
 
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         Assert.Equal(16, dzc.ItemCount);
         Assert.Equal(4, dzc.GetMortonGridSize());
     }
@@ -456,10 +456,10 @@ public class DzcTileSourceTest
     public void MortonToGrid_LargeIndices()
     {
         // Index 8 → (0,2), Index 9 → (1,2), Index 10 → (0,3), Index 15 → (3,3)
-        Assert.Equal((0, 2), DzcTileSource.MortonToGrid(8));
-        Assert.Equal((1, 2), DzcTileSource.MortonToGrid(9));
-        Assert.Equal((0, 3), DzcTileSource.MortonToGrid(10));
-        Assert.Equal((3, 3), DzcTileSource.MortonToGrid(15));
+        Assert.Equal((0, 2), SKDeepZoomCollectionSource.MortonToGrid(8));
+        Assert.Equal((1, 2), SKDeepZoomCollectionSource.MortonToGrid(9));
+        Assert.Equal((0, 3), SKDeepZoomCollectionSource.MortonToGrid(10));
+        Assert.Equal((3, 3), SKDeepZoomCollectionSource.MortonToGrid(15));
     }
 
     [Fact]
@@ -467,7 +467,7 @@ public class DzcTileSourceTest
     {
         // Powers of 4 map to increasing columns: 4^n → col=2^n, row=0
         // 16 = 4^2, deinterleave: bit4 → col bit 2 → col=4, row=0
-        var (c16, r16) = DzcTileSource.MortonToGrid(16);
+        var (c16, r16) = SKDeepZoomCollectionSource.MortonToGrid(16);
         Assert.Equal(4, c16);
         Assert.Equal(0, r16);
     }
@@ -481,7 +481,7 @@ public class DzcTileSourceTest
             xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
             <Items><I Id=""0"" N=""0""><Size Width=""100"" Height=""100"" /></I></Items>
         </Collection>";
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         Assert.Equal(1, dzc.GetMortonGridSize());
     }
 
@@ -496,7 +496,7 @@ public class DzcTileSourceTest
             xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
             <Items>{items}</Items>
         </Collection>";
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         Assert.Equal(4, dzc.GetMortonGridSize());
     }
 
@@ -510,7 +510,7 @@ public class DzcTileSourceTest
             xmlns=""http://schemas.microsoft.com/deepzoom/2008"">
             <Items>{items}</Items>
         </Collection>";
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         Assert.Equal(2, dzc.GetMortonGridSize());
     }
 
@@ -519,7 +519,7 @@ public class DzcTileSourceTest
     [Fact]
     public void GetCompositeTileUrl_MatchesDziTileUrlFormat()
     {
-        var dzc = new DzcTileSource(8, 256, "jpg", Array.Empty<DzcSubImage>());
+        var dzc = new SKDeepZoomCollectionSource(8, 256, "jpg", Array.Empty<SKDeepZoomCollectionSubImage>());
         // URL format should match "{level}/{col}_{row}.{format}"
         Assert.Equal("0/0_0.jpg", dzc.GetCompositeTileUrl(0, 0, 0));
         Assert.Equal("8/255_127.jpg", dzc.GetCompositeTileUrl(8, 255, 127));

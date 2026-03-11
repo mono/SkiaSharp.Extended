@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,60 +9,17 @@ using System.Xml.Linq;
 namespace SkiaSharp.Extended.DeepZoom
 {
     /// <summary>
-    /// Represents a single sub-image within a DZC collection.
-    /// Maps to Silverlight's MultiScaleSubImage.
-    /// </summary>
-    public class DzcSubImage
-    {
-        public DzcSubImage(int id, int mortonIndex, int width, int height, string? source)
-        {
-            Id = id;
-            MortonIndex = mortonIndex;
-            Width = width;
-            Height = height;
-            Source = source;
-        }
-
-        /// <summary>Item ID from the DZC.</summary>
-        public int Id { get; }
-
-        /// <summary>Morton (Z-order) index in the mosaic grid.</summary>
-        public int MortonIndex { get; }
-
-        /// <summary>Full image width in pixels.</summary>
-        public int Width { get; }
-
-        /// <summary>Full image height in pixels.</summary>
-        public int Height { get; }
-
-        /// <summary>Optional individual DZI source path.</summary>
-        public string? Source { get; }
-
-        /// <summary>Aspect ratio (width / height).</summary>
-        public double AspectRatio => Height == 0 ? 1.0 : (double)Width / Height;
-
-        /// <summary>Viewport width in the DZC mosaic coordinate system.</summary>
-        public double ViewportWidth { get; set; }
-
-        /// <summary>Viewport X origin in the DZC mosaic coordinate system.</summary>
-        public double ViewportX { get; set; }
-
-        /// <summary>Viewport Y origin in the DZC mosaic coordinate system.</summary>
-        public double ViewportY { get; set; }
-    }
-
-    /// <summary>
     /// Represents a Deep Zoom Collection (DZC) — a composite tiled pyramid of multiple images.
     /// Parses the DZC XML descriptor and provides access to sub-images and composite tile math.
     /// </summary>
-    public class DzcTileSource
+    public class SKDeepZoomCollectionSource
     {
         private const string DeepZoomNamespace2008 = "http://schemas.microsoft.com/deepzoom/2008";
         private const string DeepZoomNamespace2009 = "http://schemas.microsoft.com/deepzoom/2009";
 
-        private readonly List<DzcSubImage> _items;
+        private readonly List<SKDeepZoomCollectionSubImage> _items;
 
-        public DzcTileSource(int maxLevel, int tileSize, string format, IReadOnlyList<DzcSubImage> items)
+        public SKDeepZoomCollectionSource(int maxLevel, int tileSize, string format, IReadOnlyList<SKDeepZoomCollectionSubImage> items)
         {
             if (tileSize <= 0) throw new ArgumentOutOfRangeException(nameof(tileSize));
             if (string.IsNullOrEmpty(format)) throw new ArgumentException("Format cannot be null or empty.", nameof(format));
@@ -68,7 +27,7 @@ namespace SkiaSharp.Extended.DeepZoom
             MaxLevel = maxLevel;
             TileSize = tileSize;
             Format = format;
-            _items = new List<DzcSubImage>(items);
+            _items = new List<SKDeepZoomCollectionSubImage>(items);
         }
 
         /// <summary>Maximum composite pyramid level.</summary>
@@ -84,7 +43,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public int ItemCount => _items.Count;
 
         /// <summary>Read-only list of all sub-images.</summary>
-        public IReadOnlyList<DzcSubImage> Items => _items;
+        public IReadOnlyList<SKDeepZoomCollectionSubImage> Items => _items;
 
         /// <summary>Next item ID (from DZC NextItemId attribute).</summary>
         public int NextItemId { get; set; }
@@ -136,27 +95,27 @@ namespace SkiaSharp.Extended.DeepZoom
         }
 
         /// <summary>Parses a DZC XML string.</summary>
-        public static DzcTileSource Parse(string xml)
+        public static SKDeepZoomCollectionSource Parse(string xml)
         {
             var doc = XDocument.Parse(xml);
             return ParseDocument(doc, null);
         }
 
         /// <summary>Parses a DZC XML from a stream.</summary>
-        public static DzcTileSource Parse(Stream stream)
+        public static SKDeepZoomCollectionSource Parse(Stream stream)
         {
             var doc = XDocument.Load(stream);
             return ParseDocument(doc, null);
         }
 
         /// <summary>Parses a DZC XML from a stream with a base URI.</summary>
-        public static DzcTileSource Parse(Stream stream, string? baseUri)
+        public static SKDeepZoomCollectionSource Parse(Stream stream, string? baseUri)
         {
             var doc = XDocument.Load(stream);
             return ParseDocument(doc, baseUri);
         }
 
-        private static DzcTileSource ParseDocument(XDocument doc, string? baseUri)
+        private static SKDeepZoomCollectionSource ParseDocument(XDocument doc, string? baseUri)
         {
             // Try both 2008 and 2009 namespaces
             var ns = XNamespace.Get(DeepZoomNamespace2008);
@@ -174,7 +133,7 @@ namespace SkiaSharp.Extended.DeepZoom
             string format = collectionElement.Attribute("Format")?.Value ?? "jpg";
             int nextItemId = int.Parse(collectionElement.Attribute("NextItemId")?.Value ?? "0");
 
-            var items = new List<DzcSubImage>();
+            var items = new List<SKDeepZoomCollectionSubImage>();
             var itemsElement = collectionElement.Element(ns + "Items");
             if (itemsElement != null)
             {
@@ -183,13 +142,12 @@ namespace SkiaSharp.Extended.DeepZoom
                     int id = int.Parse(iElement.Attribute("Id")?.Value ?? "0");
                     int n = int.Parse(iElement.Attribute("N")?.Value ?? "0");
                     string? source = iElement.Attribute("Source")?.Value;
-                    bool isPath = iElement.Attribute("IsPath")?.Value == "1";
 
                     var sizeElement = iElement.Element(ns + "Size");
                     int width = int.Parse(sizeElement?.Attribute("Width")?.Value ?? "0");
                     int height = int.Parse(sizeElement?.Attribute("Height")?.Value ?? "0");
 
-                    var subImage = new DzcSubImage(id, n, width, height, source);
+                    var subImage = new SKDeepZoomCollectionSubImage(id, n, width, height, source);
 
                     // Parse viewport if present
                     var viewportElement = iElement.Element(ns + "Viewport");
@@ -204,7 +162,7 @@ namespace SkiaSharp.Extended.DeepZoom
                 }
             }
 
-            var result = new DzcTileSource(maxLevel, tileSize, format, items)
+            var result = new SKDeepZoomCollectionSource(maxLevel, tileSize, format, items)
             {
                 NextItemId = nextItemId,
                 TilesBaseUri = baseUri

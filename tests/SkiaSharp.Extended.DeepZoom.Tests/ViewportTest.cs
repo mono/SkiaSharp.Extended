@@ -7,7 +7,7 @@ public class ViewportTest
     [Fact]
     public void DefaultViewport_IsFullyZoomedOut()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         Assert.Equal(1.0, vp.ViewportWidth);
         Assert.Equal(0.0, vp.ViewportOriginX);
         Assert.Equal(0.0, vp.ViewportOriginY);
@@ -16,7 +16,7 @@ public class ViewportTest
     [Fact]
     public void Scale_CalculatedCorrectly()
     {
-        var vp = new Viewport { ControlWidth = 800, ViewportWidth = 1.0 };
+        var vp = new SKDeepZoomViewport { ControlWidth = 800, ViewportWidth = 1.0 };
         Assert.Equal(800.0, vp.Scale);
 
         vp.ViewportWidth = 0.5;
@@ -26,7 +26,7 @@ public class ViewportTest
     [Fact]
     public void ViewportHeight_DerivedFromWidthAndControlAspect()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -38,7 +38,7 @@ public class ViewportTest
     [Fact]
     public void ElementToLogicalPoint_Origin()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -55,7 +55,7 @@ public class ViewportTest
     [Fact]
     public void ElementToLogicalPoint_Center()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -72,7 +72,7 @@ public class ViewportTest
     [Fact]
     public void LogicalToElementPoint_RoundTrips()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -91,7 +91,7 @@ public class ViewportTest
     [Fact]
     public void ZoomAboutLogicalPoint_DoubleZoom_PointStaysFixed()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -117,7 +117,7 @@ public class ViewportTest
     [Fact]
     public void ZoomAboutLogicalPoint_ZoomOut_PointStaysFixed()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -138,7 +138,7 @@ public class ViewportTest
     [Fact]
     public void ZoomAboutLogicalPoint_InvalidFactor_Throws()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         Assert.Throws<ArgumentOutOfRangeException>(() => vp.ZoomAboutLogicalPoint(0, 0.5, 0.5));
         Assert.Throws<ArgumentOutOfRangeException>(() => vp.ZoomAboutLogicalPoint(-1, 0.5, 0.5));
     }
@@ -146,10 +146,10 @@ public class ViewportTest
     [Fact]
     public void ZoomAboutLogicalPoint_ExtremeZoom_ClampsToMinViewportWidth()
     {
-        var vp = new Viewport { ViewportWidth = 0.001 };
+        var vp = new SKDeepZoomViewport { ViewportWidth = 0.001 };
         // Zoom in by 1 billion — should clamp to MinViewportWidth
         vp.ZoomAboutLogicalPoint(1_000_000_000, 0.5, 0.5);
-        Assert.True(vp.ViewportWidth >= Viewport.MinViewportWidth);
+        Assert.True(vp.ViewportWidth >= SKDeepZoomViewport.MinViewportWidth);
         Assert.True(double.IsFinite(vp.Zoom));
         Assert.True(double.IsFinite(vp.Scale));
     }
@@ -157,12 +157,12 @@ public class ViewportTest
     [Fact]
     public void ZoomAboutLogicalPoint_AtMinWidth_NoPan()
     {
-        var vp = new Viewport { ViewportWidth = Viewport.MinViewportWidth };
+        var vp = new SKDeepZoomViewport { ViewportWidth = SKDeepZoomViewport.MinViewportWidth };
         double origOriginX = vp.ViewportOriginX;
         double origOriginY = vp.ViewportOriginY;
         // Trying to zoom further should not shift the viewport
         vp.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
-        Assert.Equal(Viewport.MinViewportWidth, vp.ViewportWidth);
+        Assert.Equal(SKDeepZoomViewport.MinViewportWidth, vp.ViewportWidth);
         Assert.Equal(origOriginX, vp.ViewportOriginX);
         Assert.Equal(origOriginY, vp.ViewportOriginY);
     }
@@ -170,7 +170,7 @@ public class ViewportTest
     [Fact]
     public void PanByScreenDelta_MovesOrigin()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ViewportWidth = 1.0,
@@ -187,7 +187,7 @@ public class ViewportTest
     [Fact]
     public void GetLogicalBounds_FullView()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -206,7 +206,7 @@ public class ViewportTest
     [Fact]
     public void Constrain_ClampsToImageBounds()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -223,7 +223,7 @@ public class ViewportTest
     [Fact]
     public void Constrain_ZoomedOut_CentersImage()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ViewportWidth = 2.0, // zoomed out beyond image
             AspectRatio = 1.0
@@ -238,7 +238,7 @@ public class ViewportTest
     [Fact]
     public void GetState_SetState_RoundTrips()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ViewportWidth = 0.3,
             ViewportOriginX = 0.25,
@@ -246,7 +246,7 @@ public class ViewportTest
         };
 
         var state = vp.GetState();
-        var vp2 = new Viewport();
+        var vp2 = new SKDeepZoomViewport();
         vp2.SetState(state);
 
         Assert.Equal(0.3, vp2.ViewportWidth, 10);
@@ -257,7 +257,7 @@ public class ViewportTest
     [Fact]
     public void Constrain_NegativeOrigin_ClampsToZero()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -275,7 +275,7 @@ public class ViewportTest
     [Fact]
     public void GetState_SetState_IndependentCopies()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ViewportWidth = 0.5,
             ViewportOriginX = 0.1,
@@ -304,7 +304,7 @@ public class ViewportTest
     [Fact]
     public void Zoom_Property_ReflectsViewportWidth()
     {
-        var vp = new Viewport { ViewportWidth = 0.5 };
+        var vp = new SKDeepZoomViewport { ViewportWidth = 0.5 };
         Assert.Equal(2.0, vp.Zoom);
 
         vp.ViewportWidth = 0.25;
@@ -314,9 +314,9 @@ public class ViewportTest
     [Fact]
     public void ViewportState_Equality()
     {
-        var a = new ViewportState(1.0, 0.5, 0.25);
-        var b = new ViewportState(1.0, 0.5, 0.25);
-        var c = new ViewportState(0.5, 0.5, 0.25);
+        var a = new SKDeepZoomViewportState(1.0, 0.5, 0.25);
+        var b = new SKDeepZoomViewportState(1.0, 0.5, 0.25);
+        var c = new SKDeepZoomViewportState(0.5, 0.5, 0.25);
 
         Assert.Equal(a, b);
         Assert.True(a == b);
@@ -327,7 +327,7 @@ public class ViewportTest
     [Fact]
     public void GetZoomRect_InitialViewport_ReturnsFullWidth()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -347,7 +347,7 @@ public class ViewportTest
     [Fact]
     public void GetZoomRect_AfterZoom_ReturnsSmallerRect()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -369,7 +369,7 @@ public class ViewportTest
     [Fact]
     public void Constrain_ExtremeZoom_ClampsToValid()
     {
-        var vp = new Viewport { AspectRatio = 1.5 };
+        var vp = new SKDeepZoomViewport { AspectRatio = 1.5 };
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.ViewportWidth = 0.0001;
@@ -380,7 +380,7 @@ public class ViewportTest
     [Fact]
     public void ZeroSize_DoesNotThrow()
     {
-        var vp = new Viewport { AspectRatio = 1.5 };
+        var vp = new SKDeepZoomViewport { AspectRatio = 1.5 };
         vp.ControlWidth = 0;
         vp.ControlHeight = 0;
         var state = vp.GetState();
@@ -390,7 +390,7 @@ public class ViewportTest
     [Fact]
     public void Constrain_LargePositiveOrigin_ClampsToMaximum()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -409,7 +409,7 @@ public class ViewportTest
     [Fact]
     public void Constrain_VeryWideAspectRatio_StaysWithinBounds()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 1920,
             ControlHeight = 200,
@@ -430,7 +430,7 @@ public class ViewportTest
     [Fact]
     public void Constrain_VeryTallAspectRatio_StaysWithinBounds()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 200,
             ControlHeight = 1920,
@@ -451,23 +451,23 @@ public class ViewportTest
     [Fact]
     public void ViewportWidth_Zero_ClampsToMinViewportWidth()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ViewportWidth = 0;
-        Assert.Equal(Viewport.MinViewportWidth, vp.ViewportWidth);
+        Assert.Equal(SKDeepZoomViewport.MinViewportWidth, vp.ViewportWidth);
     }
 
     [Fact]
     public void ViewportWidth_Negative_ClampsToMinViewportWidth()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ViewportWidth = -1.0;
-        Assert.Equal(Viewport.MinViewportWidth, vp.ViewportWidth);
+        Assert.Equal(SKDeepZoomViewport.MinViewportWidth, vp.ViewportWidth);
     }
 
     [Fact]
     public void Zoom_WithMinViewportWidth_ReturnsFiniteValue()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ViewportWidth = 0;
         Assert.True(double.IsFinite(vp.Zoom));
         Assert.True(vp.Zoom > 0);
@@ -476,7 +476,7 @@ public class ViewportTest
     [Fact]
     public void GetLogicalBounds_AfterZoomAndPan_ReturnsCorrectBounds()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -497,7 +497,7 @@ public class ViewportTest
     public void Constrain_ZoomedOut_CentersImageLandscape()
     {
         // When zoomed out, the image should be centered
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 1000,
             ControlHeight = 200,
@@ -523,7 +523,7 @@ public class ViewportTest
     [Fact]
     public void Constrain_SquareAspect_ClampsOriginXAndY()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 500,
             ControlHeight = 500,
@@ -540,7 +540,7 @@ public class ViewportTest
     [Fact]
     public void Constrain_ViewportExactlyFitsImage_OriginIsZero()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 800,
@@ -559,7 +559,7 @@ public class ViewportTest
     [Fact]
     public void GetLogicalBounds_ZoomedIn4x_ReturnsQuarterWidth()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 1000,
             ControlHeight = 1000,
@@ -577,7 +577,7 @@ public class ViewportTest
     [Fact]
     public void GetLogicalBounds_WidthEqualsHeight_SquareViewport()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 400,
             ControlHeight = 400,
@@ -597,7 +597,7 @@ public class ViewportTest
     [Fact]
     public void ElementToLogicalPoint_WithOffset_ConvertsCorrectly()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -614,7 +614,7 @@ public class ViewportTest
     [Fact]
     public void ElementToLogicalPoint_BottomRightCorner()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -632,7 +632,7 @@ public class ViewportTest
     [Fact]
     public void GetZoomRect_HalfWidth_ReturnsHalfSizeRect()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -651,7 +651,7 @@ public class ViewportTest
     [Fact]
     public void GetZoomRect_DifferentViewportWidthParam_UsesParam()
     {
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,

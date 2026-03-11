@@ -1,4 +1,6 @@
-namespace SkiaSharp.Extended;
+using SkiaSharp.Extended;
+
+namespace SkiaSharp.Extended.DeepZoom;
 
 /// <summary>
 /// Manages three <see cref="SpringAnimator"/> instances (X, Y, width) for animating

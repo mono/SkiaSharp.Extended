@@ -1,4 +1,5 @@
-using SkiaSharp;
+#nullable enable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace SkiaSharp.Extended.DeepZoom
 {
     /// <summary>
     /// Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling,
-    /// cache management, and rendering. Platform-agnostic — no MAUI dependency.
+    /// cache management, and rendering.
     /// </summary>
     /// <remarks>
     /// This class handles only the <em>tile and rendering</em> concerns. Animation (spring physics,
@@ -17,53 +18,53 @@ namespace SkiaSharp.Extended.DeepZoom
     /// <para>
     /// Typical usage:
     /// <list type="number">
-    ///   <item><description>Call <see cref="Load(DziTileSource, ITileFetcher)"/> to load an image.</description></item>
+    ///   <item><description>Call <see cref="Load(SKDeepZoomImageSource, ISKDeepZoomTileFetcher)"/> to load an image.</description></item>
     ///   <item><description>Call <see cref="SetControlSize"/> when the canvas size changes.</description></item>
     ///   <item><description>Call <see cref="SetViewport"/> / <see cref="Pan"/> / <see cref="ZoomAboutScreenPoint"/> to navigate.</description></item>
     ///   <item><description>Call <see cref="Update"/> and <see cref="Render"/> from your render loop.</description></item>
     /// </list>
     /// </para>
     /// </remarks>
-    public class DeepZoomController : IDisposable
+    public class SKDeepZoomController : IDisposable
     {
-        private DziTileSource? _tileSource;
-        private readonly Viewport _viewport;
-        private readonly TileScheduler _scheduler;
-        private readonly TileCache _cache;
-        private readonly DeepZoomRenderer _renderer;
-        private List<DeepZoomSubImage> _subImages = new List<DeepZoomSubImage>();
-        private ITileFetcher? _fetcher;
-        private readonly ConcurrentDictionary<TileId, byte> _pendingTiles = new ConcurrentDictionary<TileId, byte>();
+        private SKDeepZoomImageSource? _tileSource;
+        private readonly SKDeepZoomViewport _viewport;
+        private readonly SKDeepZoomTileScheduler _scheduler;
+        private readonly SKDeepZoomTileCache _cache;
+        private readonly SKDeepZoomRenderer _renderer;
+        private List<SKDeepZoomSubImage> _subImages = new List<SKDeepZoomSubImage>();
+        private ISKDeepZoomTileFetcher? _fetcher;
+        private readonly ConcurrentDictionary<SKDeepZoomTileId, byte> _pendingTiles = new ConcurrentDictionary<SKDeepZoomTileId, byte>();
         private CancellationTokenSource? _cts;
         private bool _disposed;
 
-        /// <summary>Initializes a new <see cref="DeepZoomController"/> with an optional tile cache capacity.</summary>
+        /// <summary>Initializes a new <see cref="SKDeepZoomController"/> with an optional tile cache capacity.</summary>
         /// <param name="cacheCapacity">Maximum number of tiles to cache. Default is 1024.</param>
-        public DeepZoomController(int cacheCapacity = 1024)
+        public SKDeepZoomController(int cacheCapacity = 1024)
         {
-            _viewport = new Viewport();
-            _scheduler = new TileScheduler();
-            _cache = new TileCache(cacheCapacity);
-            _renderer = new DeepZoomRenderer();
+            _viewport = new SKDeepZoomViewport();
+            _scheduler = new SKDeepZoomTileScheduler();
+            _cache = new SKDeepZoomTileCache(cacheCapacity);
+            _renderer = new SKDeepZoomRenderer();
         }
 
         /// <summary>The current viewport. Use this to read the current position and zoom level.</summary>
-        public Viewport Viewport => _viewport;
+        public SKDeepZoomViewport Viewport => _viewport;
 
         /// <summary>The tile cache.</summary>
-        public TileCache Cache => _cache;
+        public SKDeepZoomTileCache Cache => _cache;
 
         /// <summary>The tile scheduler.</summary>
-        public TileScheduler Scheduler => _scheduler;
+        public SKDeepZoomTileScheduler Scheduler => _scheduler;
 
         /// <summary>The renderer.</summary>
-        public DeepZoomRenderer Renderer => _renderer;
+        public SKDeepZoomRenderer Renderer => _renderer;
 
         /// <summary>The loaded tile source, or null if not loaded.</summary>
-        public DziTileSource? TileSource => _tileSource;
+        public SKDeepZoomImageSource? TileSource => _tileSource;
 
         /// <summary>The sub-images from the loaded DZC, or empty if not loaded from a DZC.</summary>
-        public IReadOnlyList<DeepZoomSubImage> SubImages => _subImages;
+        public IReadOnlyList<SKDeepZoomSubImage> SubImages => _subImages;
 
         /// <summary>
         /// The aspect ratio of the loaded image (width/height). 0 if not loaded.
@@ -105,7 +106,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public event EventHandler? ViewportChanged;
 
         /// <summary>Fired when a tile fails to load.</summary>
-        public event EventHandler<TileFailedEventArgs>? TileFailed;
+        public event EventHandler<SKDeepZoomTileFailedEventArgs>? TileFailed;
 
         /// <summary>Fired when new tiles are loaded and the view needs repainting.</summary>
         public event EventHandler? InvalidateRequired;
@@ -114,7 +115,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// Loads a DZI tile source and sets up the tile fetcher.
         /// Resets the viewport to show the full image.
         /// </summary>
-        public void Load(DziTileSource tileSource, ITileFetcher fetcher)
+        public void Load(SKDeepZoomImageSource tileSource, ISKDeepZoomTileFetcher fetcher)
         {
             _cts?.Cancel();
             _cts?.Dispose();
@@ -142,7 +143,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>
         /// Loads a DZC tile source, populates SubImages, and sets up the tile fetcher.
         /// </summary>
-        public void Load(DzcTileSource dzcTileSource, ITileFetcher fetcher)
+        public void Load(SKDeepZoomCollectionSource dzcTileSource, ISKDeepZoomTileFetcher fetcher)
         {
             _cts?.Cancel();
             _cts?.Dispose();
@@ -151,10 +152,10 @@ namespace SkiaSharp.Extended.DeepZoom
             _cache.Clear();
 
             _tileSource = null!;
-            _subImages = new List<DeepZoomSubImage>();
+            _subImages = new List<SKDeepZoomSubImage>();
             foreach (var item in dzcTileSource.Items)
             {
-                var sub = new DeepZoomSubImage(item.Id, item.MortonIndex, item.AspectRatio, item.Source)
+                var sub = new SKDeepZoomSubImage(item.Id, item.MortonIndex, item.AspectRatio, item.Source)
                 {
                     ViewportWidth = item.ViewportWidth,
                     ViewportOriginX = item.ViewportX,
@@ -290,7 +291,7 @@ namespace SkiaSharp.Extended.DeepZoom
             }
         }
 
-        private async Task LoadTileAsync(TileId tileId, CancellationToken ct)
+        private async Task LoadTileAsync(SKDeepZoomTileId tileId, CancellationToken ct)
         {
             SKBitmap? bitmap = null;
             try
@@ -311,7 +312,7 @@ namespace SkiaSharp.Extended.DeepZoom
             catch (OperationCanceledException) { }
             catch (Exception ex)
             {
-                TileFailed?.Invoke(this, new TileFailedEventArgs(tileId, ex));
+                TileFailed?.Invoke(this, new SKDeepZoomTileFailedEventArgs(tileId, ex));
             }
             finally
             {
@@ -332,24 +333,5 @@ namespace SkiaSharp.Extended.DeepZoom
             _cache.Dispose();
             _renderer.Dispose();
         }
-    }
-
-    /// <summary>
-    /// Event args for when a tile fails to load.
-    /// </summary>
-    public class TileFailedEventArgs : EventArgs
-    {
-        /// <summary>Initializes a new <see cref="TileFailedEventArgs"/>.</summary>
-        public TileFailedEventArgs(TileId tileId, Exception exception)
-        {
-            TileId = tileId;
-            Exception = exception;
-        }
-
-        /// <summary>The tile that failed to load.</summary>
-        public TileId TileId { get; }
-
-        /// <summary>The exception that caused the failure.</summary>
-        public Exception Exception { get; }
     }
 }

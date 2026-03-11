@@ -18,19 +18,19 @@ public class DeepZoomRenderPipelineTest
         var dzi = CreateTestDzi(2048, 1536);
 
         // Set up viewport
-        var viewport = new Viewport();
+        var viewport = new SKDeepZoomViewport();
         viewport.ControlWidth = 800;
         viewport.ControlHeight = 600;
         viewport.AspectRatio = dzi.AspectRatio;
 
         // Get visible tiles
-        var scheduler = new TileScheduler();
+        var scheduler = new SKDeepZoomTileScheduler();
         var tiles = scheduler.GetVisibleTiles(dzi, viewport);
 
         Assert.True(tiles.Count > 0);
 
         // Create cache with some test tiles
-        var cache = new TileCache(100);
+        var cache = new SKDeepZoomTileCache(100);
         foreach (var request in tiles)
         {
             var bmp = new SKBitmap(dzi.TileSize, dzi.TileSize);
@@ -40,7 +40,7 @@ public class DeepZoomRenderPipelineTest
         }
 
         // Render
-        var renderer = new DeepZoomRenderer();
+        var renderer = new SKDeepZoomRenderer();
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
         var canvas = surface.Canvas;
         canvas.Clear(SKColors.White);
@@ -64,7 +64,7 @@ public class DeepZoomRenderPipelineTest
     [Fact]
     public void Controller_FullLifecycle()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
 
         var dzi = CreateTestDzi(2048, 1536);
@@ -95,20 +95,20 @@ public class DeepZoomRenderPipelineTest
     [Fact]
     public void Controller_SetViewport_AppliesImmediately()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(1024, 768), new MemoryTileFetcher());
 
         controller.SetViewport(0.5, 0.1, 0.05);
 
-        // Viewport changes are immediate — no spring in the controller
+        // SKDeepZoomViewport changes are immediate — no spring in the controller
         Assert.Equal(0.5, controller.Viewport.ViewportWidth, 3);
     }
 
     [Fact]
     public void Controller_EventsFire()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
 
         bool openSucceeded = false;
@@ -121,7 +121,7 @@ public class DeepZoomRenderPipelineTest
     [Fact]
     public void Controller_ViewportChanged_FiresOnNavigation()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
 
@@ -138,7 +138,7 @@ public class DeepZoomRenderPipelineTest
     [Fact]
     public void Controller_IsIdle_WhenNoPendingTiles()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(512, 512), new MemoryTileFetcher());
 
@@ -192,7 +192,7 @@ public class DeepZoomRenderPipelineTest
         Assert.Equal(spring.Width.Current, w);
     }
 
-    // --- DziTileSource tests ---
+    // --- SKDeepZoomImageSource tests ---
 
     [Fact]
     public void DziTileSource_GetOptimalLevel()
@@ -217,11 +217,11 @@ public class DeepZoomRenderPipelineTest
         Assert.Equal(1536, dzi.GetLevelHeight(dzi.MaxLevel));
     }
 
-    private static DziTileSource CreateTestDzi(int width, int height)
+    private static SKDeepZoomImageSource CreateTestDzi(int width, int height)
     {
         var xml = $@"<Image xmlns='http://schemas.microsoft.com/deepzoom/2008'
                      Format='jpg' TileSize='256' Overlap='1'>
                      <Size Width='{width}' Height='{height}'/></Image>";
-        return DziTileSource.Parse(xml, "http://test.com/img");
+        return SKDeepZoomImageSource.Parse(xml, "http://test.com/img");
     }
 }

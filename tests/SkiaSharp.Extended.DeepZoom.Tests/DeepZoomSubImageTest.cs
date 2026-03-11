@@ -8,7 +8,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void Constructor_SetsProperties()
     {
-        var sub = new DeepZoomSubImage(42, 7, 1.5, "http://example.com/42.dzi");
+        var sub = new SKDeepZoomSubImage(42, 7, 1.5, "http://example.com/42.dzi");
 
         Assert.Equal(42, sub.Id);
         Assert.Equal(7, sub.MortonIndex);
@@ -21,7 +21,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void Opacity_ClampedTo01()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.0, null);
 
         sub.Opacity = 1.5;
         Assert.Equal(1.0, sub.Opacity);
@@ -36,7 +36,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void GetMosaicBounds_InvertsViewportCoords()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.0, null);
 
         // In SL inverted coords:
         // ViewportWidth = 10 means the sub-image occupies 1/10 of the mosaic width
@@ -56,7 +56,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void GetMosaicBounds_RespectsAspectRatio()
     {
-        var sub = new DeepZoomSubImage(0, 0, 2.0, null); // Width is 2x height
+        var sub = new SKDeepZoomSubImage(0, 0, 2.0, null); // Width is 2x height
 
         sub.ViewportWidth = 10;
         sub.ViewportOriginX = 0;
@@ -73,7 +73,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void ParentToLocal_RoundTrip()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.5, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.5, null);
         sub.ViewportWidth = 5;
         sub.ViewportOriginX = -2;
         sub.ViewportOriginY = -1;
@@ -91,7 +91,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void LocalToParent_AtOrigin_ReturnsMosaicPosition()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.0, null);
         sub.ViewportWidth = 10;
         sub.ViewportOriginX = -5;
         sub.ViewportOriginY = -3;
@@ -106,7 +106,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void ParentToLocal_NonSquareAspect_YUsesHeight()
     {
-        var sub = new DeepZoomSubImage(0, 0, 2.0, null); // width:height = 2:1
+        var sub = new SKDeepZoomSubImage(0, 0, 2.0, null); // width:height = 2:1
         sub.ViewportWidth = 10;
         sub.ViewportOriginX = 0;
         sub.ViewportOriginY = 0;
@@ -129,7 +129,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void ZIndex_Settable()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.0, null);
 
         sub.ZIndex = 5;
         Assert.Equal(5, sub.ZIndex);
@@ -141,7 +141,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void ViewportOrigin_DefaultsToZero()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.0, null);
 
         Assert.Equal(0, sub.ViewportOriginX);
         Assert.Equal(0, sub.ViewportOriginY);
@@ -151,7 +151,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void LocalToParent_ParentToLocal_RoundTrip_MultiplePoints()
     {
-        var sub = new DeepZoomSubImage(1, 0, 2.0, null);
+        var sub = new SKDeepZoomSubImage(1, 0, 2.0, null);
         sub.ViewportWidth = 4;
         sub.ViewportOriginX = -1;
         sub.ViewportOriginY = -0.5;
@@ -170,7 +170,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void ParentToLocal_KnownCoordinates()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.0, null);
         sub.ViewportWidth = 10;
         sub.ViewportOriginX = -5;
         sub.ViewportOriginY = -3;
@@ -195,7 +195,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void GetMosaicBounds_ZeroViewportWidth_ReturnsZeroBounds()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.5, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.5, null);
         // ViewportWidth defaults to 0 — should not produce Infinity
         var (x, y, w, h) = sub.GetMosaicBounds();
         Assert.Equal(0, x);
@@ -207,7 +207,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void ParentToLocal_ZeroViewportWidth_ReturnsZero()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.5, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.5, null);
         var (lx, ly) = sub.ParentToLocal(0.5, 0.5);
         Assert.Equal(0, lx);
         Assert.Equal(0, ly);
@@ -216,7 +216,7 @@ public class DeepZoomSubImageTest
     [Fact]
     public void GetMosaicBounds_ZeroAspectRatio_ReturnsZeroHeight()
     {
-        var sub = new DeepZoomSubImage(0, 0, 0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 0, null);
         sub.ViewportWidth = 2.0;
         var (_, _, w, h) = sub.GetMosaicBounds();
         Assert.Equal(0.5, w, 6);

@@ -62,12 +62,12 @@ public class DeepZoomEdgeCaseTest
         Assert.True(spring.DampingRatio >= 0);
     }
 
-    // --- Viewport edge cases ---
+    // --- SKDeepZoomViewport edge cases ---
 
     [Fact]
     public void Viewport_VerySmallViewportWidth_HighZoom()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.ViewportWidth = 0.001;
@@ -78,7 +78,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Viewport_NegativeOrigin_PushesContentRight()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.ViewportOriginX = -0.5;
@@ -90,7 +90,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Viewport_ElementToLogical_RoundTrip()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.ViewportWidth = 0.5;
@@ -107,7 +107,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Viewport_ZoomAboutCenter_InvariantHolds()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.AspectRatio = 4.0 / 3.0;
@@ -123,7 +123,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Viewport_Constrain_ClampsOrigin()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.AspectRatio = 1.0;
@@ -136,7 +136,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Viewport_Pan_MovesLogicalOrigin()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         var origX = vp.ViewportOriginX;
@@ -148,13 +148,13 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Viewport_GetState_RoundTrip()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ViewportWidth = 0.3;
         vp.ViewportOriginX = 0.2;
         vp.ViewportOriginY = 0.1;
 
         var state = vp.GetState();
-        var vp2 = new Viewport();
+        var vp2 = new SKDeepZoomViewport();
         vp2.SetState(state);
 
         Assert.Equal(vp.ViewportWidth, vp2.ViewportWidth);
@@ -170,7 +170,7 @@ public class DeepZoomEdgeCaseTest
         var xml = @"<Image xmlns='http://schemas.microsoft.com/deepzoom/2008'
                      Format='png' TileSize='256' Overlap='0'>
                      <Size Width='100' Height='100'/></Image>";
-        var dzi = DziTileSource.Parse(xml, "http://example.com/img");
+        var dzi = SKDeepZoomImageSource.Parse(xml, "http://example.com/img");
         Assert.Equal(100, dzi.ImageWidth);
         Assert.Equal(100, dzi.ImageHeight);
         Assert.Equal("png", dzi.Format);
@@ -182,7 +182,7 @@ public class DeepZoomEdgeCaseTest
         var xml = @"<Image xmlns='http://schemas.microsoft.com/deepzoom/2008'
                      Format='jpg' TileSize='512' Overlap='1'>
                      <Size Width='100000' Height='80000'/></Image>";
-        var dzi = DziTileSource.Parse(xml, "http://example.com/big");
+        var dzi = SKDeepZoomImageSource.Parse(xml, "http://example.com/big");
         Assert.Equal(100000, dzi.ImageWidth);
         Assert.True(dzi.MaxLevel > 15);
     }
@@ -193,7 +193,7 @@ public class DeepZoomEdgeCaseTest
         var xml = @"<Image xmlns='http://schemas.microsoft.com/deepzoom/2008'
                      Format='jpg' TileSize='256' Overlap='0'>
                      <Size Width='1024' Height='768'/></Image>";
-        var dzi = DziTileSource.Parse(xml, "http://example.com/nooverlap");
+        var dzi = SKDeepZoomImageSource.Parse(xml, "http://example.com/nooverlap");
         Assert.Equal(0, dzi.Overlap);
     }
 
@@ -203,7 +203,7 @@ public class DeepZoomEdgeCaseTest
         var xml = @"<Image xmlns='http://schemas.microsoft.com/deepzoom/2008'
                      Format='png' TileSize='256' Overlap='0'>
                      <Size Width='1' Height='1'/></Image>";
-        var dzi = DziTileSource.Parse(xml, "http://example.com/tiny");
+        var dzi = SKDeepZoomImageSource.Parse(xml, "http://example.com/tiny");
         Assert.Equal(0, dzi.MaxLevel);
     }
 
@@ -221,7 +221,7 @@ public class DeepZoomEdgeCaseTest
                        </I>
                      </Items></Collection>";
         using var stream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(xml));
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
         Assert.Single(dzc.Items);
     }
 
@@ -230,7 +230,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Morton_ZeroIndex()
     {
-        var (col, row) = DzcTileSource.MortonToGrid(0);
+        var (col, row) = SKDeepZoomCollectionSource.MortonToGrid(0);
         Assert.Equal(0, col);
         Assert.Equal(0, row);
     }
@@ -238,15 +238,15 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Morton_SmallIndices()
     {
-        var (c1, r1) = DzcTileSource.MortonToGrid(1);
+        var (c1, r1) = SKDeepZoomCollectionSource.MortonToGrid(1);
         Assert.Equal(1, c1);
         Assert.Equal(0, r1);
 
-        var (c2, r2) = DzcTileSource.MortonToGrid(2);
+        var (c2, r2) = SKDeepZoomCollectionSource.MortonToGrid(2);
         Assert.Equal(0, c2);
         Assert.Equal(1, r2);
 
-        var (c3, r3) = DzcTileSource.MortonToGrid(3);
+        var (c3, r3) = SKDeepZoomCollectionSource.MortonToGrid(3);
         Assert.Equal(1, c3);
         Assert.Equal(1, r3);
     }
@@ -256,8 +256,8 @@ public class DeepZoomEdgeCaseTest
     {
         for (int i = 0; i < 256; i++)
         {
-            var (col, row) = DzcTileSource.MortonToGrid(i);
-            var back = DzcTileSource.GridToMorton(col, row);
+            var (col, row) = SKDeepZoomCollectionSource.MortonToGrid(i);
+            var back = SKDeepZoomCollectionSource.GridToMorton(col, row);
             Assert.Equal(i, back);
         }
     }
@@ -275,14 +275,14 @@ public class DeepZoomEdgeCaseTest
         Assert.Equal(4, dzc.GetMortonGridSize());
     }
 
-    // --- TileCache edge cases ---
+    // --- SKDeepZoomTileCache edge cases ---
 
     [Fact]
     public void TileCache_SingleCapacity()
     {
-        var cache = new TileCache(1);
-        var a = new TileId(0, 0, 0);
-        var b = new TileId(1, 0, 0);
+        var cache = new SKDeepZoomTileCache(1);
+        var a = new SKDeepZoomTileId(0, 0, 0);
+        var b = new SKDeepZoomTileId(1, 0, 0);
         var bmp1 = new SKBitmap(10, 10);
         var bmp2 = new SKBitmap(10, 10);
 
@@ -297,10 +297,10 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void TileCache_Clear_EmptiesCache()
     {
-        var cache = new TileCache(10);
+        var cache = new SKDeepZoomTileCache(10);
         for (int i = 0; i < 5; i++)
         {
-            cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+            cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
         }
 
         Assert.Equal(5, cache.Count);
@@ -311,8 +311,8 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void TileCache_Remove_Returns()
     {
-        var cache = new TileCache(10);
-        var id = new TileId(0, 0, 0);
+        var cache = new SKDeepZoomTileCache(10);
+        var id = new SKDeepZoomTileId(0, 0, 0);
         cache.Put(id, new SKBitmap(10, 10));
         Assert.True(cache.Remove(id));
         Assert.False(cache.Remove(id));
@@ -321,11 +321,11 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void TileCache_LRU_EvictsOldest()
     {
-        var cache = new TileCache(3);
-        var a = new TileId(0, 0, 0);
-        var b = new TileId(0, 1, 0);
-        var c = new TileId(0, 0, 1);
-        var d = new TileId(0, 1, 1);
+        var cache = new SKDeepZoomTileCache(3);
+        var a = new SKDeepZoomTileId(0, 0, 0);
+        var b = new SKDeepZoomTileId(0, 1, 0);
+        var c = new SKDeepZoomTileId(0, 0, 1);
+        var d = new SKDeepZoomTileId(0, 1, 1);
 
         cache.Put(a, new SKBitmap(10, 10));
         cache.Put(b, new SKBitmap(10, 10));
@@ -341,13 +341,13 @@ public class DeepZoomEdgeCaseTest
         Assert.True(cache.TryGet(d, out _));
     }
 
-    // --- TileScheduler edge cases ---
+    // --- SKDeepZoomTileScheduler edge cases ---
 
     [Fact]
     public void TileScheduler_VeryHighZoom_FewTiles()
     {
         var dzi = CreateTestDzi(1024, 1024);
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 1024,
             ControlHeight = 768,
@@ -356,7 +356,7 @@ public class DeepZoomEdgeCaseTest
             ViewportOriginY = 0.5
         };
 
-        var scheduler = new TileScheduler();
+        var scheduler = new SKDeepZoomTileScheduler();
         var tiles = scheduler.GetVisibleTiles(dzi, vp);
         Assert.True(tiles.Count > 0);
         Assert.True(tiles.Count < 20);
@@ -366,24 +366,24 @@ public class DeepZoomEdgeCaseTest
     public void TileScheduler_MinZoom_ReturnsTiles()
     {
         var dzi = CreateTestDzi(4096, 4096);
-        var vp = new Viewport
+        var vp = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
             ViewportWidth = 1.0
         };
 
-        var scheduler = new TileScheduler();
+        var scheduler = new SKDeepZoomTileScheduler();
         var tiles = scheduler.GetVisibleTiles(dzi, vp);
         Assert.True(tiles.Count > 0);
     }
 
-    // --- DeepZoomController edge cases ---
+    // --- SKDeepZoomController edge cases ---
 
     [Fact]
     public void Controller_Load_SetsUpState()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         var dzi = CreateTestDzi(2048, 1536);
         controller.SetControlSize(800, 600);
         controller.Load(dzi, new MemoryTileFetcher());
@@ -395,7 +395,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Controller_ResetView_GoesToFitAll()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
 
@@ -409,7 +409,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Controller_DoubleDispose_Safe()
     {
-        var controller = new DeepZoomController();
+        var controller = new SKDeepZoomController();
         controller.Dispose();
         controller.Dispose();
     }
@@ -417,7 +417,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Controller_Pan_MovesOrigin()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
 
@@ -432,7 +432,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Controller_IsIdle_WhenNoActivity()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(512, 512), new MemoryTileFetcher());
 
@@ -444,8 +444,8 @@ public class DeepZoomEdgeCaseTest
     public void Controller_ImmediateTransition_NoSpring()
     {
         // Spring belongs to the view (SKDeepZoomView), not the controller.
-        // Viewport changes via ZoomAboutScreenPoint are immediate.
-        using var controller = new DeepZoomController();
+        // SKDeepZoomViewport changes via ZoomAboutScreenPoint are immediate.
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
 
@@ -454,21 +454,21 @@ public class DeepZoomEdgeCaseTest
         Assert.True(controller.Viewport.ViewportWidth < before);
     }
 
-    private static DziTileSource CreateTestDzi(int width, int height)
+    private static SKDeepZoomImageSource CreateTestDzi(int width, int height)
     {
         var xml = $@"<Image xmlns='http://schemas.microsoft.com/deepzoom/2008'
                      Format='jpg' TileSize='256' Overlap='1'>
                      <Size Width='{width}' Height='{height}'/></Image>";
-        return DziTileSource.Parse(xml, "http://test.com/img");
+        return SKDeepZoomImageSource.Parse(xml, "http://test.com/img");
     }
 
-    private static DzcTileSource CreateTestDzc(int itemCount)
+    private static SKDeepZoomCollectionSource CreateTestDzc(int itemCount)
     {
-        var items = new List<DzcSubImage>();
+        var items = new List<SKDeepZoomCollectionSubImage>();
         for (int i = 0; i < itemCount; i++)
         {
-            items.Add(new DzcSubImage(i, i, 256, 256, null));
+            items.Add(new SKDeepZoomCollectionSubImage(i, i, 256, 256, null));
         }
-        return new DzcTileSource(8, 256, "jpg", items);
+        return new SKDeepZoomCollectionSource(8, 256, "jpg", items);
     }
 }

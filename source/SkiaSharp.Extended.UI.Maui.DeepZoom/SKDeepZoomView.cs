@@ -18,18 +18,18 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
     ///     Detects and animates pan, pinch, double-tap zoom, scroll zoom, and fling gestures.
     ///     All animation (fling deceleration, double-tap zoom easing) lives here.
     ///   </description></item>
-    ///   <item><term><see cref="DeepZoomController"/></term><description>
+    ///   <item><term><see cref="SKDeepZoomController"/></term><description>
     ///     Handles tile loading and rendering — no animation, no gesture awareness.
     ///   </description></item>
     /// </list>
     /// <para>
-    /// The data flow is: <c>Touch events → SKGestureTracker → TransformChanged → DeepZoomController.Viewport → Render</c>
+    /// The data flow is: <c>Touch events → SKGestureTracker → TransformChanged → SKDeepZoomController.Viewport → Render</c>
     /// </para>
     /// </remarks>
     public class SKDeepZoomView : ContentView, IDisposable
     {
         private readonly SKCanvasView _canvasView;
-        private readonly DeepZoomController _controller;
+        private readonly SKDeepZoomController _controller;
         private readonly SKGestureTracker _tracker;
         private bool _suppressTransformSync;
         private bool _disposed;
@@ -44,7 +44,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         /// <summary>Initializes a new <see cref="SKDeepZoomView"/>.</summary>
         public SKDeepZoomView()
         {
-            _controller = new DeepZoomController();
+            _controller = new SKDeepZoomController();
 
             _canvasView = new SKCanvasView
             {
@@ -165,7 +165,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         public bool IsIdle => !_tracker.IsZoomAnimating && !_tracker.IsFlinging && _controller.IsIdle;
 
         /// <summary>The underlying controller for advanced tile/render access.</summary>
-        public DeepZoomController Controller => _controller;
+        public SKDeepZoomController Controller => _controller;
 
         /// <summary>The underlying gesture tracker for advanced configuration.</summary>
         public SKGestureTracker GestureTracker => _tracker;
@@ -203,7 +203,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             var activeCts = _sourceCts;
             var ct = activeCts.Token;
 
-            HttpTileFetcher? fetcher = null;
+            SKDeepZoomHttpTileFetcher? fetcher = null;
             HttpClient? httpClient = null;
             bool loadedOk = false;
 
@@ -222,14 +222,14 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                 var dotIdx = pathPart.LastIndexOf('.');
                 var tilesBase = (dotIdx >= 0 ? pathPart.Substring(0, dotIdx) : pathPart) + "_files/";
 
-                var tileSource = DziTileSource.Parse(stream);
+                var tileSource = SKDeepZoomImageSource.Parse(stream);
                 tileSource.TilesBaseUri = tilesBase;
                 if (!string.IsNullOrEmpty(parsed.Query))
                     tileSource.TilesQueryString = parsed.Query;
 
                 if (_disposed || _sourceCts != activeCts || ct.IsCancellationRequested) return;
 
-                fetcher = new HttpTileFetcher();
+                fetcher = new SKDeepZoomHttpTileFetcher();
                 Load(tileSource, fetcher);
                 loadedOk = true;
             }
@@ -248,7 +248,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         // ── Public methods ─────────────────────────────────────────────────────
 
         /// <summary>Loads a DZI tile source with the specified fetcher.</summary>
-        public void Load(DziTileSource tileSource, ITileFetcher fetcher)
+        public void Load(SKDeepZoomImageSource tileSource, ISKDeepZoomTileFetcher fetcher)
         {
             _controller.Load(tileSource, fetcher);
             // ImageOpenSucceeded resets the tracker; trigger an initial render
@@ -259,14 +259,14 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         /// Loads a DZC collection source with the specified fetcher.
         /// Populates <see cref="SubImages"/> for multi-image mosaic display.
         /// </summary>
-        public void Load(DzcTileSource tileSource, ITileFetcher fetcher)
+        public void Load(SKDeepZoomCollectionSource tileSource, ISKDeepZoomTileFetcher fetcher)
         {
             _controller.Load(tileSource, fetcher);
             _canvasView.InvalidateSurface();
         }
 
         /// <summary>Sub-images when a DZC collection is loaded. Empty for single DZI images.</summary>
-        public IReadOnlyList<DeepZoomSubImage> SubImages => _controller.SubImages;
+        public IReadOnlyList<SKDeepZoomSubImage> SubImages => _controller.SubImages;
 
         /// <summary>
         /// Sets the viewport instantly (no animation).

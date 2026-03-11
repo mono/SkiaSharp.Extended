@@ -1,6 +1,6 @@
-using SkiaSharp;
+#nullable enable
+
 using System;
-using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,25 +10,25 @@ namespace SkiaSharp.Extended.DeepZoom
     /// <summary>
     /// Fetches tiles over HTTP. Thread-safe and reusable.
     /// </summary>
-    public class HttpTileFetcher : ITileFetcher
+    public class SKDeepZoomHttpTileFetcher : ISKDeepZoomTileFetcher
     {
         private readonly HttpClient _httpClient;
         private readonly bool _ownsClient;
 
         /// <summary>
-        /// Creates a new HttpTileFetcher with an internal HttpClient.
+        /// Creates a new <see cref="SKDeepZoomHttpTileFetcher"/> with an internal HttpClient.
         /// </summary>
-        public HttpTileFetcher()
+        public SKDeepZoomHttpTileFetcher()
         {
             _httpClient = new HttpClient();
             _ownsClient = true;
         }
 
         /// <summary>
-        /// Creates a new HttpTileFetcher using an existing HttpClient.
+        /// Creates a new <see cref="SKDeepZoomHttpTileFetcher"/> using an existing HttpClient.
         /// The caller retains ownership of the HttpClient.
         /// </summary>
-        public HttpTileFetcher(HttpClient httpClient)
+        public SKDeepZoomHttpTileFetcher(HttpClient httpClient)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _ownsClient = false;
@@ -66,43 +66,5 @@ namespace SkiaSharp.Extended.DeepZoom
             if (_ownsClient)
                 _httpClient.Dispose();
         }
-    }
-
-    /// <summary>
-    /// Fetches tiles from the local file system.
-    /// </summary>
-    public class FileTileFetcher : ITileFetcher
-    {
-        public Task<SKBitmap?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            try
-            {
-                // Handle both file:// URIs and plain paths
-                string path = url;
-                if (url.StartsWith("file://", StringComparison.OrdinalIgnoreCase))
-                {
-                    path = new Uri(url).LocalPath;
-                }
-
-                if (!File.Exists(path))
-                    return Task.FromResult<SKBitmap?>(null);
-
-                cancellationToken.ThrowIfCancellationRequested();
-                var bitmap = SKBitmap.Decode(path);
-                return Task.FromResult<SKBitmap?>(bitmap);
-            }
-            catch (OperationCanceledException)
-            {
-                throw; // Propagate cancellation
-            }
-            catch
-            {
-                return Task.FromResult<SKBitmap?>(null);
-            }
-        }
-
-        public void Dispose() { }
     }
 }

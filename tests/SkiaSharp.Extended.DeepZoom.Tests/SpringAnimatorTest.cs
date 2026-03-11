@@ -344,7 +344,7 @@ public class SpringAnimatorTest
     [Fact]
     public void ViewportSpring_Stiffness_RoundTrips()
     {
-        // SpringStiffness/DampingRatio are on ViewportSpring (view layer), not DeepZoomController
+        // SpringStiffness/DampingRatio are on ViewportSpring (view layer), not SKDeepZoomController
         var spring = new ViewportSpring();
         spring.Stiffness = 55.0;
         Assert.Equal(55.0, spring.Stiffness);

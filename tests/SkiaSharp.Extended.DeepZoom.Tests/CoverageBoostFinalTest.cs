@@ -45,12 +45,12 @@ public class CoverageBoostFinalTest
         Assert.Equal(0.0, spring.Velocity);
     }
 
-    // --- FileTileFetcher: OperationCanceledException rethrown (lines 96-98) ---
+    // --- SKDeepZoomFileTileFetcher: OperationCanceledException rethrown (lines 96-98) ---
 
     [Fact]
     public async Task FileTileFetcher_CancelledTokenDuringFetch_ThrowsOperationCanceledException()
     {
-        var fetcher = new FileTileFetcher();
+        var fetcher = new SKDeepZoomFileTileFetcher();
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
@@ -59,12 +59,12 @@ public class CoverageBoostFinalTest
             () => fetcher.FetchTileAsync("/some/path.png", cts.Token));
     }
 
-    // --- FileTileFetcher: Generic exception returns null (lines 100-102) ---
+    // --- SKDeepZoomFileTileFetcher: Generic exception returns null (lines 100-102) ---
 
     [Fact]
     public async Task FileTileFetcher_CorruptedFilePath_ReturnsNull()
     {
-        var fetcher = new FileTileFetcher();
+        var fetcher = new SKDeepZoomFileTileFetcher();
 
         // A file URI with invalid characters causes an exception in Uri parsing
         // that should be caught by the generic catch and return null.
@@ -73,14 +73,14 @@ public class CoverageBoostFinalTest
         Assert.Null(result);
     }
 
-    // --- HttpTileFetcher: non-success status code (lines 43-44) ---
+    // --- SKDeepZoomHttpTileFetcher: non-success status code (lines 43-44) ---
 
     [Fact]
     public async Task HttpTileFetcher_NonSuccessStatusCode_ReturnsNull()
     {
         var handler = new MockHttpMessageHandler(HttpStatusCode.NotFound, "");
         var client = new HttpClient(handler);
-        var fetcher = new HttpTileFetcher(client);
+        var fetcher = new SKDeepZoomHttpTileFetcher(client);
 
         var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
         Assert.Null(result);
@@ -94,7 +94,7 @@ public class CoverageBoostFinalTest
     {
         var handler = new MockHttpMessageHandler(HttpStatusCode.InternalServerError, "error");
         var client = new HttpClient(handler);
-        var fetcher = new HttpTileFetcher(client);
+        var fetcher = new SKDeepZoomHttpTileFetcher(client);
 
         var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
         Assert.Null(result);
@@ -103,14 +103,14 @@ public class CoverageBoostFinalTest
         client.Dispose();
     }
 
-    // --- HttpTileFetcher: exception path (HttpRequestException) ---
+    // --- SKDeepZoomHttpTileFetcher: exception path (HttpRequestException) ---
 
     [Fact]
     public async Task HttpTileFetcher_HttpRequestException_ReturnsNull()
     {
         var handler = new ThrowingHttpMessageHandler(new HttpRequestException("Network error"));
         var client = new HttpClient(handler);
-        var fetcher = new HttpTileFetcher(client);
+        var fetcher = new SKDeepZoomHttpTileFetcher(client);
 
         var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
         Assert.Null(result);
@@ -119,14 +119,14 @@ public class CoverageBoostFinalTest
         client.Dispose();
     }
 
-    // --- HttpTileFetcher: TaskCanceledException path ---
+    // --- SKDeepZoomHttpTileFetcher: TaskCanceledException path ---
 
     [Fact]
     public async Task HttpTileFetcher_TaskCanceledException_ReturnsNull()
     {
         var handler = new ThrowingHttpMessageHandler(new TaskCanceledException("Timeout"));
         var client = new HttpClient(handler);
-        var fetcher = new HttpTileFetcher(client);
+        var fetcher = new SKDeepZoomHttpTileFetcher(client);
 
         var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
         Assert.Null(result);
@@ -167,7 +167,7 @@ public class CoverageBoostFinalTest
         Assert.True(spring.IsSettled);
     }
 
-    // --- Mock handlers for HttpTileFetcher testing ---
+    // --- Mock handlers for SKDeepZoomHttpTileFetcher testing ---
 
     private class MockHttpMessageHandler : HttpMessageHandler
     {

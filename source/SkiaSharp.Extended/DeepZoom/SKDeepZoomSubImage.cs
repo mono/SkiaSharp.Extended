@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 namespace SkiaSharp.Extended.DeepZoom
@@ -6,7 +8,7 @@ namespace SkiaSharp.Extended.DeepZoom
     /// Represents a single sub-image within a DZC collection, with its position in the mosaic.
     /// Mirrors Silverlight's MultiScaleSubImage with inverted viewport coordinates.
     /// </summary>
-    public class DeepZoomSubImage
+    public class SKDeepZoomSubImage
     {
         private double _viewportOriginX;
         private double _viewportOriginY;
@@ -14,7 +16,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private double _opacity = 1.0;
         private int _zIndex;
 
-        public DeepZoomSubImage(int id, int mortonIndex, double aspectRatio, string? source)
+        public SKDeepZoomSubImage(int id, int mortonIndex, double aspectRatio, string? source)
         {
             Id = id;
             MortonIndex = mortonIndex;

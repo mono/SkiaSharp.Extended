@@ -13,7 +13,7 @@ public class DziCompatibilityIntegrationTest
     {
         // A real DZI from conceptcars collection (2008 namespace)
         using var stream = TestDataHelper.GetStream("conceptcar_sample.dzi");
-        var dzi = DziTileSource.Parse(stream);
+        var dzi = SKDeepZoomImageSource.Parse(stream);
 
         Assert.Equal(394, dzi.ImageWidth);
         Assert.Equal(263, dzi.ImageHeight);
@@ -26,7 +26,7 @@ public class DziCompatibilityIntegrationTest
     public void Parse_ConceptCarSample_TilePyramidLevelsAreCorrect()
     {
         using var stream = TestDataHelper.GetStream("conceptcar_sample.dzi");
-        var dzi = DziTileSource.Parse(stream);
+        var dzi = SKDeepZoomImageSource.Parse(stream);
 
         // MaxLevel = ceil(log2(max(394, 263))) = ceil(log2(394)) = ceil(8.62) = 9
         Assert.Equal(9, dzi.MaxLevel);
@@ -55,7 +55,7 @@ public class DziCompatibilityIntegrationTest
     public void Parse_ConceptCarSample_TileUrlsAreCorrect()
     {
         using var stream = TestDataHelper.GetStream("conceptcar_sample.dzi");
-        var dzi = DziTileSource.Parse(stream);
+        var dzi = SKDeepZoomImageSource.Parse(stream);
         dzi.TilesBaseUri = "http://example.com/deepzoom/10014035633840664012396073_files/";
 
         // Relative URL
@@ -75,7 +75,7 @@ public class DziCompatibilityIntegrationTest
     public void Parse_ConceptCarSample_TileBoundsWithOverlap()
     {
         using var stream = TestDataHelper.GetStream("conceptcar_sample.dzi");
-        var dzi = DziTileSource.Parse(stream);
+        var dzi = SKDeepZoomImageSource.Parse(stream);
 
         // First tile at max level: x=0, width=min(254+1, 394)=255
         var first = dzi.GetTileBounds(dzi.MaxLevel, 0, 0);
@@ -99,7 +99,7 @@ public class DziCompatibilityIntegrationTest
     public void Parse_SampleDzi_FullPyramidValidation()
     {
         using var stream = TestDataHelper.GetStream("sample.dzi");
-        var dzi = DziTileSource.Parse(stream);
+        var dzi = SKDeepZoomImageSource.Parse(stream);
 
         Assert.Equal(240, dzi.ImageWidth);
         Assert.Equal(160, dzi.ImageHeight);
@@ -122,7 +122,7 @@ public class DziCompatibilityIntegrationTest
     public void Parse_RealDzi_AspectRatioIsCorrect()
     {
         using var stream = TestDataHelper.GetStream("conceptcar_sample.dzi");
-        var dzi = DziTileSource.Parse(stream);
+        var dzi = SKDeepZoomImageSource.Parse(stream);
 
         Assert.Equal(394.0 / 263.0, dzi.AspectRatio, 4);
     }
@@ -132,7 +132,7 @@ public class DziCompatibilityIntegrationTest
     {
         // collection-dz DZI files use the 2009 namespace, which the parser now supports via fallback
         using var stream = TestDataHelper.GetStream("collection-dz_0.dzi");
-        var dzi = DziTileSource.Parse(stream);
+        var dzi = SKDeepZoomImageSource.Parse(stream);
         Assert.True(dzi.ImageWidth > 0);
         Assert.True(dzi.ImageHeight > 0);
     }

@@ -6,60 +6,60 @@ namespace SkiaSharp.Extended.DeepZoom.Tests;
 /// <summary>Tests targeting specific uncovered branches for higher branch coverage.</summary>
 public class BranchCoverageTest
 {
-    // --- TileId branch coverage ---
+    // --- SKDeepZoomTileId branch coverage ---
 
     [Fact]
     public void TileId_Equals_WithNull_ReturnsFalse()
     {
-        var id = new TileId(1, 2, 3);
+        var id = new SKDeepZoomTileId(1, 2, 3);
         Assert.False(id.Equals(null));
     }
 
     [Fact]
     public void TileId_Equals_WithDifferentType_ReturnsFalse()
     {
-        var id = new TileId(1, 2, 3);
+        var id = new SKDeepZoomTileId(1, 2, 3);
         Assert.False(id.Equals("not a tile id"));
     }
 
     [Fact]
     public void TileId_Equals_WithBoxedEqual_ReturnsTrue()
     {
-        var id1 = new TileId(1, 2, 3);
-        object id2 = new TileId(1, 2, 3);
+        var id1 = new SKDeepZoomTileId(1, 2, 3);
+        object id2 = new SKDeepZoomTileId(1, 2, 3);
         Assert.True(id1.Equals(id2));
     }
 
     [Fact]
     public void TileId_Equals_DifferentLevel_ReturnsFalse()
     {
-        var id1 = new TileId(1, 2, 3);
-        var id2 = new TileId(2, 2, 3);
+        var id1 = new SKDeepZoomTileId(1, 2, 3);
+        var id2 = new SKDeepZoomTileId(2, 2, 3);
         Assert.NotEqual(id1, id2);
     }
 
     [Fact]
     public void TileId_Equals_DifferentCol_ReturnsFalse()
     {
-        var id1 = new TileId(1, 2, 3);
-        var id2 = new TileId(1, 3, 3);
+        var id1 = new SKDeepZoomTileId(1, 2, 3);
+        var id2 = new SKDeepZoomTileId(1, 3, 3);
         Assert.NotEqual(id1, id2);
     }
 
     [Fact]
     public void TileId_Equals_DifferentRow_ReturnsFalse()
     {
-        var id1 = new TileId(1, 2, 3);
-        var id2 = new TileId(1, 2, 4);
+        var id1 = new SKDeepZoomTileId(1, 2, 3);
+        var id2 = new SKDeepZoomTileId(1, 2, 4);
         Assert.NotEqual(id1, id2);
     }
 
     [Fact]
     public void TileId_Operators()
     {
-        var id1 = new TileId(1, 2, 3);
-        var id2 = new TileId(1, 2, 3);
-        var id3 = new TileId(4, 5, 6);
+        var id1 = new SKDeepZoomTileId(1, 2, 3);
+        var id2 = new SKDeepZoomTileId(1, 2, 3);
+        var id3 = new SKDeepZoomTileId(4, 5, 6);
 
         Assert.True(id1 == id2);
         Assert.False(id1 != id2);
@@ -67,7 +67,7 @@ public class BranchCoverageTest
         Assert.False(id1 == id3);
     }
 
-    // --- DzcTileSource branch coverage ---
+    // --- SKDeepZoomCollectionSource branch coverage ---
 
     [Fact]
     public void DzcTileSource_SmallCollection_MortonGrid()
@@ -83,7 +83,7 @@ public class BranchCoverageTest
         </I>
     </Items>
 </Collection>";
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         Assert.Equal(1, dzc.Items.Count);
     }
 
@@ -100,18 +100,18 @@ public class BranchCoverageTest
     MaxLevel='8' TileSize='256' Format='jpg'>
     <Items>{items}</Items>
 </Collection>";
-        var dzc = DzcTileSource.Parse(xml);
+        var dzc = SKDeepZoomCollectionSource.Parse(xml);
         Assert.Equal(10, dzc.Items.Count);
     }
 
-    // --- TileRequest branch coverage ---
+    // --- SKDeepZoomTileRequest branch coverage ---
 
     [Fact]
     public void TileRequest_Equality()
     {
-        var req1 = new TileRequest(new TileId(1, 2, 3), 1.0);
-        var req2 = new TileRequest(new TileId(1, 2, 3), 1.0);
-        var req3 = new TileRequest(new TileId(4, 5, 6), 2.0);
+        var req1 = new SKDeepZoomTileRequest(new SKDeepZoomTileId(1, 2, 3), 1.0);
+        var req2 = new SKDeepZoomTileRequest(new SKDeepZoomTileId(1, 2, 3), 1.0);
+        var req3 = new SKDeepZoomTileRequest(new SKDeepZoomTileId(4, 5, 6), 2.0);
 
         Assert.Equal(req1, req2);
         Assert.NotEqual(req1, req3);
@@ -121,23 +121,23 @@ public class BranchCoverageTest
     [Fact]
     public void TileRequest_Equals_WithNull_ReturnsFalse()
     {
-        var req = new TileRequest(new TileId(1, 2, 3), 1.0);
+        var req = new SKDeepZoomTileRequest(new SKDeepZoomTileId(1, 2, 3), 1.0);
         Assert.False(req.Equals(null));
     }
 
     [Fact]
     public void TileRequest_Equals_WithDifferentType_ReturnsFalse()
     {
-        var req = new TileRequest(new TileId(1, 2, 3), 1.0);
+        var req = new SKDeepZoomTileRequest(new SKDeepZoomTileId(1, 2, 3), 1.0);
         Assert.False(req.Equals("not a request"));
     }
 
-    // --- Viewport edge cases ---
+    // --- SKDeepZoomViewport edge cases ---
 
     [Fact]
     public void Viewport_SetControlSize_Zero()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 0;
         vp.ControlHeight = 0;
         // Min is clamped to 1
@@ -148,7 +148,7 @@ public class BranchCoverageTest
     [Fact]
     public void Viewport_ZoomAboutLogicalPoint_AtOrigin()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.AspectRatio = 1.0;
@@ -160,7 +160,7 @@ public class BranchCoverageTest
     [Fact]
     public void Viewport_ZoomAboutLogicalPoint_AtCenter()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.AspectRatio = 1.0;
@@ -174,7 +174,7 @@ public class BranchCoverageTest
     [Fact]
     public void Viewport_PanByScreenDelta()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.AspectRatio = 1.0;
@@ -215,13 +215,13 @@ public class BranchCoverageTest
         Assert.False(spring.IsSettled);
     }
 
-    // --- TileScheduler edge cases ---
+    // --- SKDeepZoomTileScheduler edge cases ---
 
     [Fact]
     public void TileScheduler_SmallViewport_FewTiles()
     {
-        var scheduler = new TileScheduler();
-        var vp = new Viewport();
+        var scheduler = new SKDeepZoomTileScheduler();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 100;
         vp.ControlHeight = 100;
         vp.AspectRatio = 1.0;
@@ -230,18 +230,18 @@ public class BranchCoverageTest
 <Image xmlns='http://schemas.microsoft.com/deepzoom/2008' Format='jpg' Overlap='1' TileSize='256'>
     <Size Width='1000' Height='1000'/>
 </Image>";
-        var dzi = DziTileSource.Parse(dziXml);
+        var dzi = SKDeepZoomImageSource.Parse(dziXml);
 
         var requests = scheduler.GetVisibleTiles(dzi, vp);
         Assert.NotEmpty(requests);
     }
 
-    // --- DeepZoomSubImage ---
+    // --- SKDeepZoomSubImage ---
 
     [Fact]
     public void DeepZoomSubImage_ViewportOrigin_InvertedCoords()
     {
-        var sub = new DeepZoomSubImage(0, 0, 4.0 / 3.0, "items/0.dzi");
+        var sub = new SKDeepZoomSubImage(0, 0, 4.0 / 3.0, "items/0.dzi");
         sub.ViewportOriginX = -0.5;
         sub.ViewportOriginY = -0.25;
         sub.ViewportWidth = 0.5;
@@ -254,14 +254,14 @@ public class BranchCoverageTest
     [Fact]
     public void DeepZoomSubImage_Opacity_DefaultsToOne()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.0, null);
         Assert.Equal(1.0, sub.Opacity);
     }
 
     [Fact]
     public void DeepZoomSubImage_Opacity_Clamped()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.0, null);
         sub.Opacity = 1.5;
         Assert.Equal(1.0, sub.Opacity);
 
@@ -272,14 +272,14 @@ public class BranchCoverageTest
     [Fact]
     public void DeepZoomSubImage_ZIndex_DefaultsToZero()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.0, null);
         Assert.Equal(0, sub.ZIndex);
     }
 
     [Fact]
     public void DeepZoomSubImage_GetMosaicBounds()
     {
-        var sub = new DeepZoomSubImage(0, 0, 2.0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 2.0, null);
         sub.ViewportOriginX = -1.0;
         sub.ViewportOriginY = -0.5;
         sub.ViewportWidth = 2.0;
@@ -294,7 +294,7 @@ public class BranchCoverageTest
     [Fact]
     public void DeepZoomSubImage_ParentToLocal_RoundTrips()
     {
-        var sub = new DeepZoomSubImage(0, 0, 1.0, null);
+        var sub = new SKDeepZoomSubImage(0, 0, 1.0, null);
         sub.ViewportOriginX = -0.5;
         sub.ViewportOriginY = -0.25;
         sub.ViewportWidth = 0.5;

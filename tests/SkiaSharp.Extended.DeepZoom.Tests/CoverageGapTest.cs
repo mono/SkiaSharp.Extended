@@ -6,7 +6,7 @@ using System.Threading;
 namespace SkiaSharp.Extended.DeepZoom.Tests;
 
 /// <summary>
-/// Tests for low-coverage areas: SpringAnimator, ViewportState, TileRequest.
+/// Tests for low-coverage areas: SpringAnimator, SKDeepZoomViewportState, SKDeepZoomTileRequest.
 /// </summary>
 public class CoverageGapTest
 {
@@ -113,12 +113,12 @@ public class CoverageGapTest
         Assert.Equal(0.5, spring.DampingRatio);
     }
 
-    // --- ViewportState ---
+    // --- SKDeepZoomViewportState ---
 
     [Fact]
     public void ViewportState_Construction()
     {
-        var state = new ViewportState(0.5, 0.1, 0.2);
+        var state = new SKDeepZoomViewportState(0.5, 0.1, 0.2);
         Assert.Equal(0.5, state.ViewportWidth);
         Assert.Equal(0.1, state.OriginX);
         Assert.Equal(0.2, state.OriginY);
@@ -127,9 +127,9 @@ public class CoverageGapTest
     [Fact]
     public void ViewportState_Equality()
     {
-        var s1 = new ViewportState(0.5, 0.1, 0.2);
-        var s2 = new ViewportState(0.5, 0.1, 0.2);
-        var s3 = new ViewportState(0.3, 0.1, 0.2);
+        var s1 = new SKDeepZoomViewportState(0.5, 0.1, 0.2);
+        var s2 = new SKDeepZoomViewportState(0.5, 0.1, 0.2);
+        var s3 = new SKDeepZoomViewportState(0.3, 0.1, 0.2);
 
         Assert.Equal(s1, s2);
         Assert.True(s1 == s2);
@@ -140,25 +140,25 @@ public class CoverageGapTest
     [Fact]
     public void ViewportState_GetHashCode_SameForEqual()
     {
-        var s1 = new ViewportState(0.5, 0.1, 0.2);
-        var s2 = new ViewportState(0.5, 0.1, 0.2);
+        var s1 = new SKDeepZoomViewportState(0.5, 0.1, 0.2);
+        var s2 = new SKDeepZoomViewportState(0.5, 0.1, 0.2);
         Assert.Equal(s1.GetHashCode(), s2.GetHashCode());
     }
 
     [Fact]
     public void ViewportState_Equals_Object()
     {
-        var s1 = new ViewportState(0.5, 0.1, 0.2);
+        var s1 = new SKDeepZoomViewportState(0.5, 0.1, 0.2);
         Assert.False(s1.Equals((object)"not a state"));
-        Assert.True(s1.Equals((object)new ViewportState(0.5, 0.1, 0.2)));
+        Assert.True(s1.Equals((object)new SKDeepZoomViewportState(0.5, 0.1, 0.2)));
     }
 
-    // --- Viewport ---
+    // --- SKDeepZoomViewport ---
 
     [Fact]
     public void Viewport_ElementToLogical_FullImage()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.ViewportWidth = 1.0;
@@ -172,7 +172,7 @@ public class CoverageGapTest
     [Fact]
     public void Viewport_LogicalToElement_Roundtrip()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 1024;
         vp.ControlHeight = 768;
         vp.ViewportWidth = 0.5;
@@ -190,7 +190,7 @@ public class CoverageGapTest
     [Fact]
     public void Viewport_ZoomAboutLogicalPoint()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.ViewportWidth = 1.0;
@@ -203,7 +203,7 @@ public class CoverageGapTest
     [Fact]
     public void Viewport_PanByScreenDelta()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.ViewportWidth = 0.5;
@@ -217,7 +217,7 @@ public class CoverageGapTest
     [Fact]
     public void Viewport_Scale()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ViewportWidth = 0.5;
         Assert.Equal(1600.0, vp.Scale, 5);
@@ -226,7 +226,7 @@ public class CoverageGapTest
     [Fact]
     public void Viewport_GetState_SetState()
     {
-        var vp = new Viewport();
+        var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 800;
         vp.ControlHeight = 600;
         vp.ViewportWidth = 0.5;
@@ -243,14 +243,14 @@ public class CoverageGapTest
         Assert.Equal(0.5, vp.ViewportWidth);
     }
 
-    // --- DeepZoomController ---
+    // --- SKDeepZoomController ---
 
     [Fact]
     public void DeepZoomController_LoadAndDispose()
     {
         var xml = TestDataHelper.GetString("sample.dzi");
-        var dzi = DziTileSource.Parse(xml);
-        var controller = new DeepZoomController();
+        var dzi = SKDeepZoomImageSource.Parse(xml);
+        var controller = new SKDeepZoomController();
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Dispose();
     }
@@ -259,8 +259,8 @@ public class CoverageGapTest
     public void DeepZoomController_Dispose_MultipleTimes()
     {
         var xml = TestDataHelper.GetString("sample.dzi");
-        var dzi = DziTileSource.Parse(xml);
-        var controller = new DeepZoomController();
+        var dzi = SKDeepZoomImageSource.Parse(xml);
+        var controller = new SKDeepZoomController();
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Dispose();
         controller.Dispose(); // Should not throw
@@ -269,7 +269,7 @@ public class CoverageGapTest
     [Fact]
     public void DeepZoomController_Update_BeforeLoad()
     {
-        var controller = new DeepZoomController();
+        var controller = new SKDeepZoomController();
         controller.Update();
         controller.Dispose();
     }
@@ -277,7 +277,7 @@ public class CoverageGapTest
     [Fact]
     public void DeepZoomController_Render_BeforeLoad()
     {
-        var controller = new DeepZoomController();
+        var controller = new SKDeepZoomController();
         using var surface = SKSurface.Create(new SKImageInfo(100, 100));
         controller.Render(surface.Canvas);
         controller.Dispose();
@@ -286,8 +286,8 @@ public class CoverageGapTest
     [Fact]
     public void DeepZoomController_NullFetcher_GracefulDegradation()
     {
-        var xml = TestDataHelper.GetString("sample.dzi");        var dzi = DziTileSource.Parse(xml);
-        var controller = new DeepZoomController();
+        var xml = TestDataHelper.GetString("sample.dzi");        var dzi = SKDeepZoomImageSource.Parse(xml);
+        var controller = new SKDeepZoomController();
         controller.Load(dzi, new NullTileFetcher());
         controller.Update();
         using var surface = SKSurface.Create(new SKImageInfo(400, 300));
@@ -296,7 +296,7 @@ public class CoverageGapTest
     }
 
     /// <summary>A tile fetcher that always returns null (simulates 404s).</summary>
-    private class NullTileFetcher : ITileFetcher
+    private class NullTileFetcher : ISKDeepZoomTileFetcher
     {
         public Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
             => Task.FromResult<SKBitmap?>(null);

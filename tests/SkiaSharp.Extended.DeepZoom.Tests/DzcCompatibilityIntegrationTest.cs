@@ -23,7 +23,7 @@ public class DzcCompatibilityIntegrationTest
     public void Parse_SubImageCount_MatchesExpectedCxmlItemCount(string file, int expectedCount)
     {
         using var stream = TestDataHelper.GetStream(file);
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         Assert.Equal(expectedCount, dzc.Items.Count);
     }
@@ -39,7 +39,7 @@ public class DzcCompatibilityIntegrationTest
     public void Parse_SubImageIds_AreZeroBasedSequential(string file)
     {
         using var stream = TestDataHelper.GetStream(file);
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         var ids = dzc.Items.Select(i => i.Id).OrderBy(i => i).ToList();
         for (int i = 0; i < ids.Count; i++)
@@ -57,7 +57,7 @@ public class DzcCompatibilityIntegrationTest
     public void Parse_NextItemId_IsConsistentWithCount(string file, int expectedNextId)
     {
         using var stream = TestDataHelper.GetStream(file);
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         Assert.Equal(expectedNextId, dzc.NextItemId);
     }
@@ -71,7 +71,7 @@ public class DzcCompatibilityIntegrationTest
     public void Parse_SubImageSources_AreValidDziPaths(string file)
     {
         using var stream = TestDataHelper.GetStream(file);
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         foreach (var item in dzc.Items)
         {
@@ -93,7 +93,7 @@ public class DzcCompatibilityIntegrationTest
     public void Parse_MortonIndices_AreUnique(string file)
     {
         using var stream = TestDataHelper.GetStream(file);
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         var mortons = dzc.Items.Select(i => i.MortonIndex).ToList();
         Assert.Equal(mortons.Count, mortons.Distinct().Count());
@@ -106,7 +106,7 @@ public class DzcCompatibilityIntegrationTest
     public void ConceptCars_CompositeTileUrl_FormatsCorrectly()
     {
         using var stream = TestDataHelper.GetStream("conceptcars.dzc");
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         Assert.Equal("jpg", dzc.Format);
         Assert.Equal("5/2_3.jpg", dzc.GetCompositeTileUrl(5, 2, 3));
@@ -123,7 +123,7 @@ public class DzcCompatibilityIntegrationTest
     public void Parse_MortonGridSize_IsReasonable(string file, int itemCount)
     {
         using var stream = TestDataHelper.GetStream(file);
-        var dzc = DzcTileSource.Parse(stream);
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
 
         int gridSize = dzc.GetMortonGridSize();
         // Grid must be large enough to contain all items (gridSize^2 >= itemCount)

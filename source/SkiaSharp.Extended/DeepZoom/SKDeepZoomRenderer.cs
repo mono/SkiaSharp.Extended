@@ -1,4 +1,5 @@
-using SkiaSharp;
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -6,15 +7,14 @@ namespace SkiaSharp.Extended.DeepZoom
 {
     /// <summary>
     /// Renders Deep Zoom tiles onto an SKCanvas. Handles LOD blending and fallback rendering.
-    /// Pure SkiaSharp — no MAUI dependency.
     /// </summary>
-    public class DeepZoomRenderer : IDisposable
+    public class SKDeepZoomRenderer : IDisposable
     {
         private readonly SKPaint _tilePaint;
         private readonly SKPaint _fadePaint;
         private readonly SKPaint _debugPaint;
 
-        public DeepZoomRenderer()
+        public SKDeepZoomRenderer()
         {
             _tilePaint = new SKPaint
             {
@@ -68,10 +68,10 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public void Render(
             SKCanvas canvas,
-            DziTileSource tileSource,
-            Viewport viewport,
-            TileCache cache,
-            TileScheduler scheduler)
+            SKDeepZoomImageSource tileSource,
+            SKDeepZoomViewport viewport,
+            SKDeepZoomTileCache cache,
+            SKDeepZoomTileScheduler scheduler)
         {
             // Flush deferred bitmap disposals before rendering
             cache.FlushEvicted();
@@ -151,9 +151,9 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         private void DrawTile(
             SKCanvas canvas,
-            DziTileSource tileSource,
-            Viewport viewport,
-            TileId tileId,
+            SKDeepZoomImageSource tileSource,
+            SKDeepZoomViewport viewport,
+            SKDeepZoomTileId tileId,
             SKBitmap bitmap)
         {
             var tileBounds = tileSource.GetTileBounds(tileId.Level, tileId.Col, tileId.Row);
@@ -191,12 +191,12 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         private void DrawFallbackTile(
             SKCanvas canvas,
-            DziTileSource tileSource,
-            Viewport viewport,
-            TileId requested,
-            TileId parent,
+            SKDeepZoomImageSource tileSource,
+            SKDeepZoomViewport viewport,
+            SKDeepZoomTileId requested,
+            SKDeepZoomTileId parent,
             SKBitmap parentBitmap,
-            TileScheduler scheduler)
+            SKDeepZoomTileScheduler scheduler)
         {
             var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(requested, parent, tileSource);
             var srcRect = new SKRect(srcX, srcY, srcX + srcW, srcY + srcH);
@@ -233,9 +233,9 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         private void RenderStatsOverlay(
             SKCanvas canvas,
-            DziTileSource tileSource,
-            Viewport viewport,
-            TileCache cache)
+            SKDeepZoomImageSource tileSource,
+            SKDeepZoomViewport viewport,
+            SKDeepZoomTileCache cache)
         {
             _statsBgPaint ??= new SKPaint { Color = new SKColor(0, 0, 0, 200) };
             _statsTextPaint ??= new SKPaint { Color = SKColors.White, IsAntialias = true };

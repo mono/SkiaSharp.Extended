@@ -5,20 +5,20 @@ using Xunit;
 namespace SkiaSharp.Extended.DeepZoom.Tests;
 
 /// <summary>
-/// Thread safety tests for TileCache.
+/// Thread safety tests for SKDeepZoomTileCache.
 /// </summary>
 public class TileCacheThreadSafetyTest
 {
     [Fact]
     public async Task ConcurrentPut_DoesNotCorrupt()
     {
-        var cache = new TileCache(50);
+        var cache = new SKDeepZoomTileCache(50);
 
         // Concurrent puts from multiple tasks
         var tasks = Enumerable.Range(0, 100).Select(i =>
             Task.Run(() =>
             {
-                var id = new TileId(i % 10, i / 10, 0);
+                var id = new SKDeepZoomTileId(i % 10, i / 10, 0);
                 cache.Put(id, new SKBitmap(10, 10));
             }));
 
@@ -32,12 +32,12 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentGetAndPut_DoesNotCorrupt()
     {
-        var cache = new TileCache(100);
+        var cache = new SKDeepZoomTileCache(100);
 
         // Pre-populate
         for (int i = 0; i < 50; i++)
         {
-            cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+            cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
         }
 
         // Concurrent reads and writes
@@ -47,11 +47,11 @@ public class TileCacheThreadSafetyTest
             int localI = i;
             tasks.Add(Task.Run(() =>
             {
-                cache.TryGet(new TileId(localI, 0, 0), out _);
+                cache.TryGet(new SKDeepZoomTileId(localI, 0, 0), out _);
             }));
             tasks.Add(Task.Run(() =>
             {
-                cache.Put(new TileId(50 + localI, 0, 0), new SKBitmap(10, 10));
+                cache.Put(new SKDeepZoomTileId(50 + localI, 0, 0), new SKBitmap(10, 10));
             }));
         }
 
@@ -64,13 +64,13 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentPutWithEviction_DoesNotCorrupt()
     {
-        var cache = new TileCache(10);
+        var cache = new SKDeepZoomTileCache(10);
 
         // Many concurrent puts that will trigger eviction
         var tasks = Enumerable.Range(0, 100).Select(i =>
             Task.Run(() =>
             {
-                cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+                cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
             }));
 
         await Task.WhenAll(tasks);
@@ -82,15 +82,15 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentRemove_DoesNotCorrupt()
     {
-        var cache = new TileCache(100);
+        var cache = new SKDeepZoomTileCache(100);
 
         for (int i = 0; i < 50; i++)
-            cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+            cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
 
         var tasks = Enumerable.Range(0, 50).Select(i =>
             Task.Run(() =>
             {
-                cache.Remove(new TileId(i, 0, 0));
+                cache.Remove(new SKDeepZoomTileId(i, 0, 0));
             }));
 
         await Task.WhenAll(tasks);
@@ -101,7 +101,7 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentClearAndPut_DoesNotCorrupt()
     {
-        var cache = new TileCache(50);
+        var cache = new SKDeepZoomTileCache(50);
 
         var tasks = new List<Task>();
         for (int i = 0; i < 20; i++)
@@ -110,7 +110,7 @@ public class TileCacheThreadSafetyTest
             tasks.Add(Task.Run(() =>
             {
                 for (int j = 0; j < 10; j++)
-                    cache.Put(new TileId(localI * 10 + j, 0, 0), new SKBitmap(10, 10));
+                    cache.Put(new SKDeepZoomTileId(localI * 10 + j, 0, 0), new SKBitmap(10, 10));
             }));
         }
 
@@ -135,14 +135,14 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentDisposeAndPut_NoExceptionsOrLeaks()
     {
-        var cache = new TileCache(100);
+        var cache = new SKDeepZoomTileCache(100);
         var lockObj = new object();
         var exceptions = new List<Exception>();
 
         // Pre-populate the cache to give it some initial state
         for (int i = 0; i < 50; i++)
         {
-            cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+            cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
         }
 
         var tasks = new List<Task>();
@@ -157,7 +157,7 @@ public class TileCacheThreadSafetyTest
                 {
                     for (int i = 0; i < 1000; i++)
                     {
-                        var tileId = new TileId(localThreadId * 1000 + i, i % 10, i % 5);
+                        var tileId = new SKDeepZoomTileId(localThreadId * 1000 + i, i % 10, i % 5);
                         var bmp = new SKBitmap(10, 10);
                         cache.Put(tileId, bmp);
                     }
@@ -177,7 +177,7 @@ public class TileCacheThreadSafetyTest
             {
                 for (int i = 0; i < 500; i++)
                 {
-                    var tileId = new TileId(i % 100, 0, 0);
+                    var tileId = new SKDeepZoomTileId(i % 100, 0, 0);
                     cache.TryGet(tileId, out _);
                     Thread.Yield();
                 }
@@ -232,7 +232,7 @@ public class TileCacheThreadSafetyTest
                 Thread.Sleep(60);
                 for (int i = 0; i < 500; i++)
                 {
-                    var tileId = new TileId(5000 + i, 0, 0);
+                    var tileId = new SKDeepZoomTileId(5000 + i, 0, 0);
                     var bmp = new SKBitmap(10, 10);
                     cache.Put(tileId, bmp);
                 }
@@ -258,7 +258,7 @@ public class TileCacheThreadSafetyTest
 
         // Verify that the cache state is valid (no corruption)
         // Attempting to access or modify after dispose should be safe
-        cache.Put(new TileId(9999, 0, 0), new SKBitmap(10, 10));
+        cache.Put(new SKDeepZoomTileId(9999, 0, 0), new SKBitmap(10, 10));
         Assert.Equal(0, cache.Count); // Should still be empty since disposed
 
         // Final flush should not throw
@@ -272,13 +272,13 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task PutDuringDispose_ItemsAreCleanedUp()
     {
-        var cache = new TileCache(50);
+        var cache = new SKDeepZoomTileCache(50);
         var disposeStartedEvent = new ManualResetEvent(false);
 
         // Pre-populate
         for (int i = 0; i < 20; i++)
         {
-            cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+            cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
         }
 
         // Start Dispose in one thread
@@ -300,7 +300,7 @@ public class TileCacheThreadSafetyTest
                 try
                 {
                     var bmp = new SKBitmap(10, 10);
-                    cache.Put(new TileId(100 + i, 0, 0), bmp);
+                    cache.Put(new SKDeepZoomTileId(100 + i, 0, 0), bmp);
                 }
                 catch (ObjectDisposedException)
                 {
@@ -332,11 +332,11 @@ public class TileCacheThreadSafetyTest
         // Run multiple rounds of rapid Dispose/Put cycles
         for (int round = 0; round < 10; round++)
         {
-            var cache = new TileCache(50);
+            var cache = new SKDeepZoomTileCache(50);
 
             // Pre-populate
             for (int i = 0; i < 20; i++)
-                cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+                cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
 
             var tasks = new List<Task>();
 
@@ -351,7 +351,7 @@ public class TileCacheThreadSafetyTest
                         for (int i = 0; i < 200; i++)
                         {
                             var bmp = new SKBitmap(10, 10);
-                            cache.Put(new TileId(localThreadId * 200 + i, 0, 0), bmp);
+                            cache.Put(new SKDeepZoomTileId(localThreadId * 200 + i, 0, 0), bmp);
                         }
                     }
                     catch (Exception ex)
@@ -391,11 +391,11 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public void FlushEvicted_AfterDispose_IsNoOp()
     {
-        var cache = new TileCache(50);
+        var cache = new SKDeepZoomTileCache(50);
 
         // Add some items that will be evicted
         for (int i = 0; i < 100; i++)
-            cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+            cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
 
         // Dispose the cache (should clear everything and pending disposals)
         cache.Dispose();
@@ -411,11 +411,11 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentDispose_DoesNotThrow()
     {
-        var cache = new TileCache(50);
+        var cache = new SKDeepZoomTileCache(50);
 
         // Add some items
         for (int i = 0; i < 30; i++)
-            cache.Put(new TileId(i, 0, 0), new SKBitmap(10, 10));
+            cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
 
         var tasks = Enumerable.Range(0, 10).Select(i =>
             Task.Run(() =>

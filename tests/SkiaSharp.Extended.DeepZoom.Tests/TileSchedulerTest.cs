@@ -5,31 +5,31 @@ namespace SkiaSharp.Extended.DeepZoom.Tests;
 
 public class TileSchedulerTest
 {
-    private static DziTileSource CreateSampleDzi()
+    private static SKDeepZoomImageSource CreateSampleDzi()
     {
         string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <Image xmlns=""http://schemas.microsoft.com/deepzoom/2008""
        Format=""jpg"" Overlap=""1"" TileSize=""256"">
   <Size Width=""1024"" Height=""768""/>
 </Image>";
-        return DziTileSource.Parse(xml, "http://example.com/test");
+        return SKDeepZoomImageSource.Parse(xml, "http://example.com/test");
     }
 
-    private static DziTileSource CreateLargeDzi()
+    private static SKDeepZoomImageSource CreateLargeDzi()
     {
         string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <Image xmlns=""http://schemas.microsoft.com/deepzoom/2008""
        Format=""jpg"" Overlap=""1"" TileSize=""256"">
   <Size Width=""4096"" Height=""4096""/>
 </Image>";
-        return DziTileSource.Parse(xml, "http://example.com/large");
+        return SKDeepZoomImageSource.Parse(xml, "http://example.com/large");
     }
 
     [Fact]
     public void GetVisibleTiles_FullView_ReturnsCorrectTiles()
     {
         var dzi = CreateSampleDzi();
-        var viewport = new Viewport
+        var viewport = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -37,7 +37,7 @@ public class TileSchedulerTest
             ViewportOriginX = 0,
             ViewportOriginY = 0
         };
-        var scheduler = new TileScheduler();
+        var scheduler = new SKDeepZoomTileScheduler();
 
         var tiles = scheduler.GetVisibleTiles(dzi, viewport);
 
@@ -50,9 +50,9 @@ public class TileSchedulerTest
     public void GetVisibleTiles_ZoomedIn_ReturnsFewerTiles()
     {
         var dzi = CreateLargeDzi();
-        var scheduler = new TileScheduler();
+        var scheduler = new SKDeepZoomTileScheduler();
 
-        var fullViewport = new Viewport
+        var fullViewport = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 800,
@@ -62,7 +62,7 @@ public class TileSchedulerTest
         };
         var fullTiles = scheduler.GetVisibleTiles(dzi, fullViewport);
 
-        var zoomedViewport = new Viewport
+        var zoomedViewport = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 800,
@@ -80,7 +80,7 @@ public class TileSchedulerTest
     public void GetVisibleTiles_SortedByPriority()
     {
         var dzi = CreateLargeDzi();
-        var viewport = new Viewport
+        var viewport = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 800,
@@ -88,7 +88,7 @@ public class TileSchedulerTest
             ViewportOriginX = 0.3,
             ViewportOriginY = 0.3
         };
-        var scheduler = new TileScheduler();
+        var scheduler = new SKDeepZoomTileScheduler();
 
         var tiles = scheduler.GetVisibleTiles(dzi, viewport);
 
@@ -104,7 +104,7 @@ public class TileSchedulerTest
     public void GetVisibleTiles_AllTilesAreUnique()
     {
         var dzi = CreateLargeDzi();
-        var viewport = new Viewport
+        var viewport = new SKDeepZoomViewport
         {
             ControlWidth = 1024,
             ControlHeight = 1024,
@@ -112,10 +112,10 @@ public class TileSchedulerTest
             ViewportOriginX = 0.2,
             ViewportOriginY = 0.2
         };
-        var scheduler = new TileScheduler();
+        var scheduler = new SKDeepZoomTileScheduler();
 
         var tiles = scheduler.GetVisibleTiles(dzi, viewport);
-        var uniqueIds = new HashSet<TileId>(tiles.Select(t => t.TileId));
+        var uniqueIds = new HashSet<SKDeepZoomTileId>(tiles.Select(t => t.TileId));
 
         Assert.Equal(tiles.Count, uniqueIds.Count);
     }
@@ -124,7 +124,7 @@ public class TileSchedulerTest
     public void GetVisibleTiles_AllTilesAtSameLevel()
     {
         var dzi = CreateSampleDzi();
-        var viewport = new Viewport
+        var viewport = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -132,7 +132,7 @@ public class TileSchedulerTest
             ViewportOriginX = 0,
             ViewportOriginY = 0
         };
-        var scheduler = new TileScheduler();
+        var scheduler = new SKDeepZoomTileScheduler();
 
         var tiles = scheduler.GetVisibleTiles(dzi, viewport);
 
@@ -146,16 +146,16 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_ReturnsCachedParent()
     {
-        var cache = new TileCache(100);
-        var scheduler = new TileScheduler();
+        var cache = new SKDeepZoomTileCache(100);
+        var scheduler = new SKDeepZoomTileScheduler();
 
         // Add parent tile to cache
-        var parentId = new TileId(5, 1, 1);
+        var parentId = new SKDeepZoomTileId(5, 1, 1);
         var bitmap = new SKBitmap(256, 256);
         cache.Put(parentId, bitmap);
 
         // Request child tile at level 7
-        var childId = new TileId(7, 4, 4); // (4/2=2, 4/2=2) -> (2/2=1, 2/2=1) at level 5
+        var childId = new SKDeepZoomTileId(7, 4, 4); // (4/2=2, 4/2=2) -> (2/2=1, 2/2=1) at level 5
 
         var fallback = scheduler.FindBestFallback(childId, cache);
 
@@ -168,10 +168,10 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_ReturnsNull_WhenNoParentCached()
     {
-        var cache = new TileCache(100);
-        var scheduler = new TileScheduler();
+        var cache = new SKDeepZoomTileCache(100);
+        var scheduler = new SKDeepZoomTileScheduler();
 
-        var childId = new TileId(5, 2, 3);
+        var childId = new SKDeepZoomTileId(5, 2, 3);
         var fallback = scheduler.FindBestFallback(childId, cache);
 
         Assert.Null(fallback);
@@ -181,17 +181,17 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_ReturnsClosestParent()
     {
-        var cache = new TileCache(100);
-        var scheduler = new TileScheduler();
+        var cache = new SKDeepZoomTileCache(100);
+        var scheduler = new SKDeepZoomTileScheduler();
 
         // Add tiles at levels 2 and 4
-        var level2 = new TileId(2, 0, 0);
-        var level4 = new TileId(4, 2, 2);
+        var level2 = new SKDeepZoomTileId(2, 0, 0);
+        var level4 = new SKDeepZoomTileId(4, 2, 2);
         cache.Put(level2, new SKBitmap(256, 256));
         cache.Put(level4, new SKBitmap(256, 256));
 
         // Request level 6, col=8, row=8 → parent at level 5 = (4,4), level 4 = (2,2)
-        var childId = new TileId(6, 8, 8);
+        var childId = new SKDeepZoomTileId(6, 8, 8);
         var fallback = scheduler.FindBestFallback(childId, cache);
 
         Assert.NotNull(fallback);
@@ -204,10 +204,10 @@ public class TileSchedulerTest
     public void GetFallbackSourceRect_CalculatesCorrectSubRegion()
     {
         var dzi = CreateSampleDzi();
-        var scheduler = new TileScheduler();
+        var scheduler = new SKDeepZoomTileScheduler();
 
-        var parent = new TileId(5, 0, 0);
-        var child = new TileId(6, 0, 0);
+        var parent = new SKDeepZoomTileId(5, 0, 0);
+        var child = new SKDeepZoomTileId(6, 0, 0);
 
         var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(child, parent, dzi);
 
@@ -226,8 +226,8 @@ public class TileSchedulerTest
        Format=""png"" Overlap=""0"" TileSize=""256"">
   <Size Width=""16"" Height=""16""/>
 </Image>";
-        var dzi = DziTileSource.Parse(xml, "http://example.com/tiny");
-        var viewport = new Viewport
+        var dzi = SKDeepZoomImageSource.Parse(xml, "http://example.com/tiny");
+        var viewport = new SKDeepZoomViewport
         {
             ControlWidth = 800,
             ControlHeight = 600,
@@ -235,7 +235,7 @@ public class TileSchedulerTest
             ViewportOriginX = 0,
             ViewportOriginY = 0
         };
-        var scheduler = new TileScheduler();
+        var scheduler = new SKDeepZoomTileScheduler();
 
         var tiles = scheduler.GetVisibleTiles(dzi, viewport);
 
@@ -247,17 +247,17 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_ReturnsParentTileInCache()
     {
-        var dzi = new DziTileSource(1024, 1024, 256, 0, "jpg");
-        var cache = new TileCache(100);
-        var scheduler = new TileScheduler();
+        var dzi = new SKDeepZoomImageSource(1024, 1024, 256, 0, "jpg");
+        var cache = new SKDeepZoomTileCache(100);
+        var scheduler = new SKDeepZoomTileScheduler();
 
         // Put parent tile (level 8, col 1, row 1) in cache
-        var parentId = new TileId(8, 1, 1);
+        var parentId = new SKDeepZoomTileId(8, 1, 1);
         var bitmap = new SKBitmap(256, 256);
         cache.Put(parentId, bitmap);
 
         // Request child at level 9 (col 2, row 2 → parent col=1, row=1 at level 8)
-        var childId = new TileId(9, 2, 2);
+        var childId = new SKDeepZoomTileId(9, 2, 2);
 
         var fallback = scheduler.FindBestFallback(childId, cache);
 
@@ -270,10 +270,10 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_ReturnsNull_WhenNoParentInCache()
     {
-        var cache = new TileCache(100);
-        var scheduler = new TileScheduler();
+        var cache = new SKDeepZoomTileCache(100);
+        var scheduler = new SKDeepZoomTileScheduler();
 
-        var childId = new TileId(8, 3, 3);
+        var childId = new SKDeepZoomTileId(8, 3, 3);
         var fallback = scheduler.FindBestFallback(childId, cache);
 
         Assert.Null(fallback);
@@ -283,11 +283,11 @@ public class TileSchedulerTest
     [Fact]
     public void GetFallbackSourceRect_ReturnsCorrectSubrect()
     {
-        var dzi = new DziTileSource(1024, 1024, 256, 0, "jpg");
-        var scheduler = new TileScheduler();
+        var dzi = new SKDeepZoomImageSource(1024, 1024, 256, 0, "jpg");
+        var scheduler = new SKDeepZoomTileScheduler();
 
-        var parent = new TileId(8, 0, 0);
-        var child = new TileId(9, 1, 1);
+        var parent = new SKDeepZoomTileId(8, 0, 0);
+        var child = new SKDeepZoomTileId(9, 1, 1);
 
         var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(child, parent, dzi);
 
@@ -306,15 +306,15 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_MinLevel_RespectsMinimum()
     {
-        var cache = new TileCache(100);
-        var scheduler = new TileScheduler();
+        var cache = new SKDeepZoomTileCache(100);
+        var scheduler = new SKDeepZoomTileScheduler();
 
         // Add tile at level 1
-        var level1 = new TileId(1, 0, 0);
+        var level1 = new SKDeepZoomTileId(1, 0, 0);
         cache.Put(level1, new SKBitmap(256, 256));
 
         // Request level 5, but set minLevel=3 — should not find level 1
-        var childId = new TileId(5, 0, 0);
+        var childId = new SKDeepZoomTileId(5, 0, 0);
         var fallback = scheduler.FindBestFallback(childId, cache, minLevel: 3);
         Assert.Null(fallback);
 
@@ -328,11 +328,11 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_Level0Requested_ReturnsNull()
     {
-        var cache = new TileCache(100);
-        var scheduler = new TileScheduler();
+        var cache = new SKDeepZoomTileCache(100);
+        var scheduler = new SKDeepZoomTileScheduler();
 
         // No parent exists below level 0
-        var tileId = new TileId(0, 0, 0);
+        var tileId = new SKDeepZoomTileId(0, 0, 0);
         var fallback = scheduler.FindBestFallback(tileId, cache);
         Assert.Null(fallback);
         cache.Dispose();
@@ -344,11 +344,11 @@ public class TileSchedulerTest
     public void GetFallbackSourceRect_TwoLevelDiff_QuarterSize()
     {
         // 2 levels up means scale=4, so child should map to ~1/4 of parent
-        var dzi = new DziTileSource(1024, 1024, 256, 0, "jpg");
-        var scheduler = new TileScheduler();
+        var dzi = new SKDeepZoomImageSource(1024, 1024, 256, 0, "jpg");
+        var scheduler = new SKDeepZoomTileScheduler();
 
-        var parent = new TileId(7, 0, 0);
-        var child = new TileId(9, 0, 0); // 2 levels deeper, same position
+        var parent = new SKDeepZoomTileId(7, 0, 0);
+        var child = new SKDeepZoomTileId(9, 0, 0); // 2 levels deeper, same position
 
         var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(child, parent, dzi);
 
@@ -364,11 +364,11 @@ public class TileSchedulerTest
     [Fact]
     public void GetFallbackSourceRect_ChildInBottomRightQuadrant_HasPositiveOffset()
     {
-        var dzi = new DziTileSource(1024, 1024, 256, 0, "jpg");
-        var scheduler = new TileScheduler();
+        var dzi = new SKDeepZoomImageSource(1024, 1024, 256, 0, "jpg");
+        var scheduler = new SKDeepZoomTileScheduler();
 
-        var parent = new TileId(8, 0, 0);
-        var child = new TileId(9, 1, 1); // bottom-right quadrant of parent (0,0)
+        var parent = new SKDeepZoomTileId(8, 0, 0);
+        var child = new SKDeepZoomTileId(9, 1, 1); // bottom-right quadrant of parent (0,0)
 
         var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(child, parent, dzi);
 

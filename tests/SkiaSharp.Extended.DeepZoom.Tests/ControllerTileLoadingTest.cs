@@ -4,7 +4,7 @@ using SkiaSharp.Extended.DeepZoom;
 namespace SkiaSharp.Extended.DeepZoom.Tests;
 
 /// <summary>
-/// Tests for tile loading paths through DeepZoomController:
+/// Tests for tile loading paths through SKDeepZoomController:
 /// - LoadTileAsync success (tile cached, InvalidateRequired fired)
 /// - LoadTileAsync failure (null bitmap, TileFailed event)
 /// - LoadTileAsync cancellation
@@ -12,20 +12,20 @@ namespace SkiaSharp.Extended.DeepZoom.Tests;
 /// </summary>
 public class ControllerTileLoadingTest
 {
-    private static DziTileSource CreateDzi(int width = 512, int height = 512)
+    private static SKDeepZoomImageSource CreateDzi(int width = 512, int height = 512)
     {
         string xml = $@"<?xml version=""1.0"" encoding=""UTF-8""?>
 <Image xmlns=""http://schemas.microsoft.com/deepzoom/2008""
        Format=""jpg"" Overlap=""0"" TileSize=""256"">
   <Size Width=""{width}"" Height=""{height}""/>
 </Image>";
-        return DziTileSource.Parse(xml, "http://test.com/image");
+        return SKDeepZoomImageSource.Parse(xml, "http://test.com/image");
     }
 
     [Fact]
     public async Task TileLoad_Success_CachesTileAndFiresInvalidate()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(256, 256);
 
         var dzi = CreateDzi(256, 256);
@@ -49,7 +49,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public async Task TileLoad_NullBitmap_RemovesFromPending()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(256, 256);
 
         var dzi = CreateDzi(256, 256);
@@ -68,13 +68,13 @@ public class ControllerTileLoadingTest
     [Fact]
     public async Task TileLoad_FetcherThrows_FiresTileFailed()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(256, 256);
 
         var dzi = CreateDzi(256, 256);
         using var fetcher = new ThrowingTileFetcher();
 
-        TileId? failedTile = null;
+        SKDeepZoomTileId? failedTile = null;
         controller.TileFailed += (s, e) => failedTile = e.TileId;
 
         controller.Load(dzi, fetcher);
@@ -88,7 +88,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public void Dispose_CancelsPendingLoads()
     {
-        var controller = new DeepZoomController();
+        var controller = new SKDeepZoomController();
         controller.SetControlSize(512, 512);
 
         var dzi = CreateDzi(512, 512);
@@ -104,7 +104,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public void Controller_WithNoSource_UpdateDoesNotThrow()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
 
         // Should not throw when no tile source is loaded
@@ -114,17 +114,17 @@ public class ControllerTileLoadingTest
     [Fact]
     public void Controller_SetControlSize_AffectsViewport()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
 
         controller.SetControlSize(1920, 1080);
-        // Viewport should be initialized
+        // SKDeepZoomViewport should be initialized
         Assert.NotNull(controller.Viewport);
     }
 
     [Fact]
     public async Task TileScheduling_RequestsTilesForVisibleArea()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
 
         var dzi = CreateDzi(2048, 2048);
@@ -153,7 +153,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public void Render_WithTileBorders_DoesNotThrow()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.ShowTileBorders = true;
         controller.SetControlSize(400, 400);
 
@@ -162,7 +162,7 @@ public class ControllerTileLoadingTest
         fetcher.AddSolidTile("http://test.com/image_files/0/0_0.jpg", 256, 256, SKColors.Blue);
 
         controller.Load(dzi, fetcher);
-        controller.Cache.Put(new TileId(0, 0, 0),
+        controller.Cache.Put(new SKDeepZoomTileId(0, 0, 0),
             CreateSolidBitmap(256, 256, SKColors.Blue));
 
         using var surface = SKSurface.Create(new SKImageInfo(400, 400));
@@ -172,7 +172,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public void CoordinateConversion_ElementToLogical_Roundtrips()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
 
         var dzi = CreateDzi(1000, 750);
@@ -198,7 +198,7 @@ public class ControllerTileLoadingTest
 /// <summary>
 /// Tile fetcher that always throws for testing error paths.
 /// </summary>
-internal class ThrowingTileFetcher : ITileFetcher
+internal class ThrowingTileFetcher : ISKDeepZoomTileFetcher
 {
     public Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
     {
@@ -211,7 +211,7 @@ internal class ThrowingTileFetcher : ITileFetcher
 /// <summary>
 /// Tile fetcher that delays forever (for testing cancellation).
 /// </summary>
-internal class SlowTileFetcher : ITileFetcher
+internal class SlowTileFetcher : ISKDeepZoomTileFetcher
 {
     public async Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
     {

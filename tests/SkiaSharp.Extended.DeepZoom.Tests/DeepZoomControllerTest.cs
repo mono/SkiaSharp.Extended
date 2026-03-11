@@ -8,7 +8,7 @@ namespace SkiaSharp.Extended.DeepZoom.Tests;
 /// <summary>
 /// In-memory tile fetcher for testing. Returns solid-colored tiles.
 /// </summary>
-internal class MemoryTileFetcher : ITileFetcher
+internal class MemoryTileFetcher : ISKDeepZoomTileFetcher
 {
     private readonly ConcurrentDictionary<string, SKBitmap> _tiles = new();
     public int FetchCount { get; private set; }
@@ -47,20 +47,20 @@ internal class MemoryTileFetcher : ITileFetcher
 
 public class DeepZoomControllerTest
 {
-    private static DziTileSource CreateSampleDzi()
+    private static SKDeepZoomImageSource CreateSampleDzi()
     {
         string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <Image xmlns=""http://schemas.microsoft.com/deepzoom/2008""
        Format=""jpg"" Overlap=""0"" TileSize=""256"">
   <Size Width=""512"" Height=""512""/>
 </Image>";
-        return DziTileSource.Parse(xml, "http://example.com/test");
+        return SKDeepZoomImageSource.Parse(xml, "http://example.com/test");
     }
 
     [Fact]
     public void Constructor_CreatesAllComponents()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
 
         Assert.NotNull(controller.Viewport);
         Assert.NotNull(controller.Cache);
@@ -73,7 +73,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void Load_SetsUpTileSourceAndResetsViewport()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
 
@@ -92,7 +92,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void ZoomAboutScreenPoint_ChangesViewportWidth()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
@@ -110,7 +110,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void Pan_MovesViewportOrigin()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
@@ -130,7 +130,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void ResetView_RestoresToInitialState()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
@@ -146,7 +146,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void Update_ReturnsFalse_WhenIdleAndNoPendingTiles()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
@@ -166,7 +166,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void Render_DoesNotThrow_WhenNoTileSource()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
 
         // Should not throw
@@ -176,7 +176,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void Render_DoesNotThrow_WhenLoaded()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -187,7 +187,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void Render_DrawsCachedTiles()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
 
         var dzi = CreateSampleDzi();
@@ -223,14 +223,14 @@ public class DeepZoomControllerTest
     [Fact]
     public void ShowTileBorders_DefaultsFalse()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         Assert.False(controller.ShowTileBorders);
     }
 
     [Fact]
     public void ShowTileBorders_Settable()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.ShowTileBorders = true;
         Assert.True(controller.ShowTileBorders);
     }
@@ -238,14 +238,14 @@ public class DeepZoomControllerTest
     [Fact]
     public void AspectRatio_ReturnsZero_WhenNoSource()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         Assert.Equal(0.0, controller.AspectRatio);
     }
 
     [Fact]
     public void AspectRatio_ReturnsCorrectValue_WhenLoaded()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         var dzi = CreateSampleDzi(); // 512x512 → 1.0
         controller.Load(dzi, new MemoryTileFetcher());
 
@@ -255,7 +255,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void Dispose_CanBeCalledMultipleTimes()
     {
-        var controller = new DeepZoomController();
+        var controller = new SKDeepZoomController();
         controller.Dispose();
         controller.Dispose(); // Should not throw
     }
@@ -263,18 +263,18 @@ public class DeepZoomControllerTest
     [Fact]
     public void SubImages_EmptyByDefault()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         Assert.Empty(controller.SubImages);
     }
 
     [Fact]
     public void Load_DzcTileSource_PopulatesSubImages()
     {
-        using var controller = new DeepZoomController();
-        var dzc = new DzcTileSource(8, 256, "jpg", new[]
+        using var controller = new SKDeepZoomController();
+        var dzc = new SKDeepZoomCollectionSource(8, 256, "jpg", new[]
         {
-            new DzcSubImage(0, 0, 512, 256, "img0.dzi"),
-            new DzcSubImage(512, 0, 256, 256, "img1.dzi"),
+            new SKDeepZoomCollectionSubImage(0, 0, 512, 256, "img0.dzi"),
+            new SKDeepZoomCollectionSubImage(512, 0, 256, 256, "img1.dzi"),
         });
 
         using var fetcher = new MemoryTileFetcher();
@@ -288,7 +288,7 @@ public class DeepZoomControllerTest
     [Fact]
     public async Task TileScheduling_FetchesTiles()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(512, 512);
         var dzi = CreateSampleDzi();
 
@@ -307,7 +307,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void ZoomAboutLogicalPoint_FiresViewportChanged()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
         int count = 0;
         controller.ViewportChanged += (s, e) => count++;
@@ -319,7 +319,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void Pan_FiresViewportChanged()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
         int count = 0;
         controller.ViewportChanged += (s, e) => count++;
@@ -332,7 +332,7 @@ public class DeepZoomControllerTest
     public void Dispose_DisposesFetcher()
     {
         var fetcher = new MemoryTileFetcher();
-        var controller = new DeepZoomController();
+        var controller = new SKDeepZoomController();
         controller.Load(CreateSampleDzi(), fetcher);
 
         controller.Dispose();
@@ -345,7 +345,7 @@ public class DeepZoomControllerTest
     public void Load_Reload_DisposesPreviousFetcher()
     {
         var fetcher1 = new MemoryTileFetcher();
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.Load(CreateSampleDzi(), fetcher1);
 
         var fetcher2 = new MemoryTileFetcher();
@@ -359,7 +359,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void Load_ClearsCacheFromPreviousImage()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         var fetcher = new MemoryTileFetcher();
         fetcher.AddSolidTile("http://example.com/image_files/0/0_0.jpg", 256, 256, SkiaSharp.SKColors.Red);
         controller.Load(CreateSampleDzi(), fetcher);
@@ -383,8 +383,8 @@ public class DeepZoomControllerTest
     public void Load_DzcFromFile_PopulatesSubImagesWithCorrectCount()
     {
         using var stream = TestDataHelper.GetStream("conceptcars.dzc");
-        var dzc = DzcTileSource.Parse(stream);
-        using var controller = new DeepZoomController();
+        var dzc = SKDeepZoomCollectionSource.Parse(stream);
+        using var controller = new SKDeepZoomController();
         using var fetcher = new MemoryTileFetcher();
 
         controller.Load(dzc, fetcher);
@@ -396,7 +396,7 @@ public class DeepZoomControllerTest
     [Fact]
     public async Task LoadTileAsync_WithTilesBaseUri_FetcherReceivesFullUrl()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(512, 512);
 
         var dzi = CreateSampleDzi(); // TilesBaseUri = "http://example.com/test"
@@ -422,7 +422,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void GetZoomRect_ReturnsCurrentViewportBounds()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi(); // 512x512, aspect ratio 1.0
         using var fetcher = new MemoryTileFetcher();
@@ -447,7 +447,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void ViewportChanged_FiresOnZoom()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -461,7 +461,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void ViewportChanged_FiresOnPan()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -478,7 +478,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void IsIdle_TrueWhenNoPendingTiles()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
 
         // Before any Update, no tiles are pending
@@ -488,7 +488,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void ImageOpenSucceeded_FiresOnDziLoad()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         bool fired = false;
         controller.ImageOpenSucceeded += (s, e) => fired = true;
 
@@ -499,13 +499,13 @@ public class DeepZoomControllerTest
     [Fact]
     public void ImageOpenSucceeded_FiresOnDzcLoad()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         bool fired = false;
         controller.ImageOpenSucceeded += (s, e) => fired = true;
 
-        var dzc = new DzcTileSource(8, 256, "jpg", new[]
+        var dzc = new SKDeepZoomCollectionSource(8, 256, "jpg", new[]
         {
-            new DzcSubImage(0, 0, 256, 256, null)
+            new SKDeepZoomCollectionSubImage(0, 0, 256, 256, null)
         });
         controller.Load(dzc, new MemoryTileFetcher());
 
@@ -515,7 +515,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void ResetView_FiresViewportChanged()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -531,7 +531,7 @@ public class DeepZoomControllerTest
     [Fact]
     public async Task InvalidateRequired_FiresWhenTileLoads()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(512, 512);
         var dzi = CreateSampleDzi();
 
@@ -557,7 +557,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void ZoomAboutLogicalPoint_ChangesViewport()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -571,7 +571,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void SetControlSize_UpdatesViewportDimensions()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.SetControlSize(1024, 768);
 
         Assert.Equal(1024, controller.Viewport.ControlWidth);
@@ -581,7 +581,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void SetViewport_UpdatesViewport()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
         controller.SetControlSize(800, 600);
 
@@ -596,7 +596,7 @@ public class DeepZoomControllerTest
     [Fact]
     public void SetViewport_FiresViewportChanged()
     {
-        using var controller = new DeepZoomController();
+        using var controller = new SKDeepZoomController();
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
         controller.SetControlSize(800, 600);
 
@@ -611,9 +611,9 @@ public class DeepZoomControllerTest
     [Fact]
     public void TileFailedEventArgs_Properties()
     {
-        var tileId = new TileId(3, 1, 2);
+        var tileId = new SKDeepZoomTileId(3, 1, 2);
         var ex = new InvalidOperationException("test error");
-        var args = new TileFailedEventArgs(tileId, ex);
+        var args = new SKDeepZoomTileFailedEventArgs(tileId, ex);
 
         Assert.Equal(tileId, args.TileId);
         Assert.Same(ex, args.Exception);
