@@ -23,7 +23,7 @@ public partial class DeepZoomPage : ContentPage
             var dziXml = await reader.ReadToEndAsync();
 
             var tileBase = "asset://TestGrid/testgrid_files/";
-            var tileSource = DziTileSource.Parse(dziXml, tileBase);
+            var tileSource = SKDeepZoomImageSource.Parse(dziXml, tileBase);
 
             deepZoomView.ShowTileBorders = debugSwitch.IsToggled;
             deepZoomView.ShowDebugStats = statsSwitch.IsToggled;
@@ -50,7 +50,7 @@ public partial class DeepZoomPage : ContentPage
         deepZoomView.Dispose();
     }
 
-    private class AppPackageTileFetcher : ITileFetcher
+    private class AppPackageTileFetcher : ISKDeepZoomTileFetcher
     {
         public async Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
         {
