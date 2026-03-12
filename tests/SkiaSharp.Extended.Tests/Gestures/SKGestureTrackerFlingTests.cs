@@ -116,29 +116,25 @@ public class SKGestureTrackerFlingTests
 	[Fact]
 	public async Task Fling_EventuallyCompletes()
 	{
-		// Use real TimeProvider so fling frame timing advances with wall-clock time
-		var tracker = new SKGestureTracker();
+		var tracker = CreateTracker();
 		tracker.Options.FlingFrameInterval = TimeSpan.FromMilliseconds(16);
 		tracker.Options.FlingFriction = 0.5f;
 		tracker.Options.FlingMinVelocity = 100f;
-		var flingCompleted = false;
-		tracker.FlingCompleted += (s, e) => flingCompleted = true;
 
-		// Use the tracker's own TimeProvider for touch timestamps so velocity is computed correctly
-		var start = new SKPoint(100, 200);
-		var mid = new SKPoint(300, 200);
-		var end = new SKPoint(500, 200);
-		tracker.ProcessTouchDown(1, start);
-		await Task.Delay(20);
-		tracker.ProcessTouchMove(1, mid);
-		await Task.Delay(20);
-		tracker.ProcessTouchMove(1, end);
-		await Task.Delay(20);
-		tracker.ProcessTouchUp(1, end);
+		// Advance fake time on each fling frame so HandleFlingFrame computes a valid
+		// actualDtMs (matching the nominal frame interval). With friction=0.5 this halves
+		// velocity each frame, so a high-velocity fling will drop below FlingMinVelocity
+		// in ~7 frames regardless of real wall-clock scheduling.
+		tracker.FlingUpdated += (s, e) => AdvanceTime(16);
 
-		await Task.Delay(2000);
+		var tcs = new TaskCompletionSource<bool>();
+		tracker.FlingCompleted += (s, e) => tcs.TrySetResult(true);
 
-		Assert.True(flingCompleted, "Fling should eventually complete");
+		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
+		Assert.True(tracker.IsFlinging, "Fling should start after fast swipe");
+
+		var completed = await Task.WhenAny(tcs.Task, Task.Delay(5000));
+		Assert.True(tcs.Task.IsCompletedSuccessfully, "Fling should complete within 5 seconds");
 		Assert.False(tracker.IsFlinging);
 		tracker.Dispose();
 	}
