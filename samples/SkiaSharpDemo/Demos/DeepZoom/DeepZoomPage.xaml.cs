@@ -6,6 +6,11 @@ namespace SkiaSharpDemo.Demos;
 
 public partial class DeepZoomPage : ContentPage
 {
+    private const string DziUrl =
+        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid.dzi";
+    private const string TilesBaseUrl =
+        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid_files/";
+
     private SKDeepZoomController? _controller;
 
     public DeepZoomPage()
@@ -34,14 +39,12 @@ public partial class DeepZoomPage : ContentPage
     {
         try
         {
-            statusLabel.Text = "Loading...";
+            statusLabel.Text = "Loading…";
 
-            using var dziStream = await FileSystem.OpenAppPackageFileAsync("TestGrid/testgrid.dzi");
-            using var reader = new StreamReader(dziStream);
-            var dziXml = await reader.ReadToEndAsync();
-
-            var tileSource = SKDeepZoomImageSource.Parse(dziXml, "TestGrid/testgrid_files/");
-            _controller?.Load(tileSource, new AppPackageFetcher());
+            using var client = new HttpClient();
+            var dziXml = await client.GetStringAsync(DziUrl);
+            var tileSource = SKDeepZoomImageSource.Parse(dziXml, TilesBaseUrl);
+            _controller?.Load(tileSource, new SKDeepZoomHttpTileFetcher(new HttpClient()));
 
             statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             canvas.InvalidateSurface();
@@ -58,24 +61,5 @@ public partial class DeepZoomPage : ContentPage
         _controller.SetControlSize(e.Info.Width, e.Info.Height);
         _controller.Update();
         _controller.Render(e.Surface.Canvas);
-    }
-
-    // Fetches tiles bundled as MAUI app-package assets.
-    private sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
-    {
-        public async Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
-        {
-            try
-            {
-                using var stream = await FileSystem.OpenAppPackageFileAsync(url);
-                return SKBitmap.Decode(stream);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public void Dispose() { }
     }
 }

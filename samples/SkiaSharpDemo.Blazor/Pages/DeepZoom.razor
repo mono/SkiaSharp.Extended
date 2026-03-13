@@ -1,34 +1,184 @@
 @page "/deepzoom"
 @implements IDisposable
 @inject HttpClient Http
+@inject IJSRuntime JS
 @using SkiaSharp.Extended.DeepZoom
 
 <PageTitle>Deep Zoom</PageTitle>
 
-<h1>Deep Zoom</h1>
+<div class="dz-layout @(_showInspector ? "dz-with-inspector" : "")">
 
-<p>
-    A gigapixel-capable image viewer powered by <code>SKDeepZoomController</code>.
-    Tiles are loaded on demand at the resolution that best matches the canvas size.
-    The image is rendered centered and scaled to fit.
-</p>
+    <div class="dz-canvas-area">
+        @if (_statusText != null)
+        {
+            <div class="dz-status">@_statusText</div>
+        }
+        @if (_errorMessage != null)
+        {
+            <div class="dz-error">@_errorMessage</div>
+        }
+        <SKGLView @ref="_canvas"
+                  OnPaintSurface="OnPaintSurface"
+                  class="dz-canvas" />
+    </div>
 
-@if (_statusText != null)
-{
-    <p class="text-muted"><small>@_statusText</small></p>
-}
+    @if (_showInspector)
+    {
+        <aside class="dz-inspector">
+            <h3>🔍 Inspector</h3>
 
-@if (_errorMessage != null)
-{
-    <div class="alert alert-danger" role="alert">@_errorMessage</div>
-}
+            @if (_controller?.TileSource is { } src)
+            {
+                <section>
+                    <h4>Image Source</h4>
+                    <dl>
+                        <dt>Dimensions</dt><dd>@src.ImageWidth × @src.ImageHeight px</dd>
+                        <dt>Tile size</dt><dd>@src.TileSize px (+@src.Overlap overlap)</dd>
+                        <dt>Format</dt><dd>@src.Format</dd>
+                        <dt>Levels</dt><dd>@(src.MaxLevel + 1)  (0–@src.MaxLevel)</dd>
+                        <dt>Aspect ratio</dt><dd>@src.AspectRatio.ToString("F4")</dd>
+                    </dl>
+                </section>
+            }
+            else
+            {
+                <p class="dz-muted">No source loaded.</p>
+            }
 
-<SKGLView @ref="_canvas"
-          OnPaintSurface="OnPaintSurface"
-          style="width: 100%; height: 600px; border: 1px solid #ccc;" />
+            @if (_controller != null)
+            {
+                var vp = _controller.Viewport;
+                <section>
+                    <h4>Viewport</h4>
+                    <dl>
+                        <dt>Control size</dt><dd>@vp.ControlWidth.ToString("F0") × @vp.ControlHeight.ToString("F0")</dd>
+                        <dt>Viewport width</dt><dd>@vp.ViewportWidth.ToString("F6")</dd>
+                        <dt>Viewport height</dt><dd>@vp.ViewportHeight.ToString("F6")</dd>
+                        <dt>Origin</dt><dd>(@vp.ViewportOriginX.ToString("F6"), @vp.ViewportOriginY.ToString("F6"))</dd>
+                        <dt>Scale</dt><dd>@vp.Scale.ToString("F2") px/unit</dd>
+                        <dt>Zoom</dt><dd>@vp.Zoom.ToString("F2")×</dd>
+                    </dl>
+                </section>
+
+                var cache = _controller.Cache;
+                <section>
+                    <h4>Tile Cache</h4>
+                    <dl>
+                        <dt>Cached</dt><dd>@cache.Count / @cache.MaxEntries</dd>
+                        <dt>Pending</dt><dd>@_controller.PendingTileCount</dd>
+                        <dt>Status</dt><dd>@(_controller.IsIdle ? "✅ Idle" : "⏳ Loading…")</dd>
+                    </dl>
+                </section>
+
+                <section>
+                    <h4>Visible Tiles</h4>
+                    @if (_controller.TileSource != null)
+                    {
+                        var tiles = _controller.Scheduler.GetVisibleTiles(_controller.TileSource, _controller.Viewport);
+                        <p class="dz-muted">@tiles.Count tile(s) at current viewport</p>
+                        <table class="dz-tile-table">
+                            <thead><tr><th>Lvl</th><th>Col</th><th>Row</th><th>Pri</th><th>Status</th></tr></thead>
+                            <tbody>
+                                @foreach (var t in tiles.Take(50))
+                                {
+                                    var cached = cache.Contains(t.TileId);
+                                    <tr class="@(cached ? "tile-ok" : "tile-missing")">
+                                        <td>@t.TileId.Level</td>
+                                        <td>@t.TileId.Col</td>
+                                        <td>@t.TileId.Row</td>
+                                        <td>@t.Priority.ToString("F2")</td>
+                                        <td>@(cached ? "✅" : "⏳")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (tiles.Count > 50)
+                        {
+                            <p class="dz-muted">… and @(tiles.Count - 50) more</p>
+                        }
+                    }
+                    else
+                    {
+                        <p class="dz-muted">No source loaded.</p>
+                    }
+                </section>
+            }
+        </aside>
+    }
+</div>
+
+<button class="dz-toggle-btn" @onclick="ToggleInspector">
+    @(_showInspector ? "Hide Inspector" : "Show Inspector")
+</button>
+
+<style>
+    .dz-layout {
+        display: flex;
+        width: 100%;
+        height: calc(100vh - 120px);
+        min-height: 300px;
+    }
+
+    .dz-canvas-area {
+        position: relative;
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .dz-canvas {
+        flex: 1 1 auto;
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .dz-inspector {
+        flex: 0 0 320px;
+        overflow-y: auto;
+        border-left: 1px solid #444;
+        padding: 0.75rem;
+        font-size: 0.8rem;
+        font-family: monospace;
+        background: #1a1a2e;
+        color: #e0e0e0;
+    }
+
+    .dz-inspector h3 { margin: 0 0 0.5rem; font-size: 1rem; }
+    .dz-inspector h4 { margin: 0.75rem 0 0.25rem; color: #90caf9; border-bottom: 1px solid #333; padding-bottom: 2px; }
+    .dz-inspector dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; margin: 0; }
+    .dz-inspector dt { color: #aaa; white-space: nowrap; }
+    .dz-inspector dd { margin: 0; word-break: break-all; }
+    .dz-inspector section { margin-bottom: 0.5rem; }
+
+    .dz-tile-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+    .dz-tile-table th, .dz-tile-table td { padding: 1px 4px; text-align: center; }
+    .dz-tile-table th { color: #90caf9; }
+    .tile-ok td { color: #81c784; }
+    .tile-missing td { color: #ffb74d; }
+
+    .dz-status { padding: 4px 8px; background: #222; font-size: 0.8rem; color: #aaa; }
+    .dz-error { padding: 4px 8px; background: #5c1010; color: #ff8a80; font-size: 0.8rem; }
+    .dz-muted { color: #888; font-size: 0.75rem; margin: 2px 0; }
+
+    .dz-toggle-btn {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        z-index: 100;
+        padding: 0.4rem 0.8rem;
+        background: #1976d2;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+    .dz-toggle-btn:hover { background: #1565c0; }
+</style>
 
 @code {
-    // Testgrid DZI served directly from the main branch on GitHub.
     private const string DziUrl =
         "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid.dzi";
     private const string TilesBaseUrl =
@@ -38,13 +188,25 @@
     private SKDeepZoomController? _controller;
     private string? _statusText;
     private string? _errorMessage;
+    private bool _showInspector = true;
+
+    private System.Threading.Timer? _inspectorTimer;
+    private DotNetObjectReference<DeepZoom>? _thisRef;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
 
+        // Wire up window-resize → canvas invalidate via JS
+        _thisRef = DotNetObjectReference.Create(this);
+        await JS.InvokeVoidAsync("deepZoomRegisterResize", _thisRef);
+
         _controller = new SKDeepZoomController();
         _controller.InvalidateRequired += OnInvalidateRequired;
+
+        // Refresh inspector every 250ms while loading tiles
+        _inspectorTimer = new System.Threading.Timer(_ =>
+            InvokeAsync(StateHasChanged), null, 250, 250);
 
         try
         {
@@ -53,7 +215,6 @@
 
             var dziXml = await Http.GetStringAsync(DziUrl);
             var tileSource = SKDeepZoomImageSource.Parse(dziXml, TilesBaseUrl);
-
             _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new HttpClient()));
 
             _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
@@ -70,7 +231,6 @@
     private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
     {
         if (_controller == null) return;
-
         _controller.SetControlSize(e.BackendRenderTarget.Width, e.BackendRenderTarget.Height);
         _controller.Update();
         _controller.Render(e.Surface.Canvas);
@@ -79,8 +239,20 @@
     private void OnInvalidateRequired(object? sender, EventArgs e)
         => InvokeAsync(() => _canvas?.Invalidate());
 
+    [JSInvokable]
+    public void OnWindowResize() => InvokeAsync(() => _canvas?.Invalidate());
+
+    private void ToggleInspector()
+    {
+        _showInspector = !_showInspector;
+        // Let the canvas resize settle then repaint
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
     public void Dispose()
     {
+        _inspectorTimer?.Dispose();
+        _thisRef?.Dispose();
         if (_controller != null)
         {
             _controller.InvalidateRequired -= OnInvalidateRequired;

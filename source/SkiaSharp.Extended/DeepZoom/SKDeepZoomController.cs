@@ -76,6 +76,9 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public bool IsIdle => _pendingTiles.IsEmpty;
 
+        /// <summary>Number of tile fetches currently in flight.</summary>
+        public int PendingTileCount => _pendingTiles.Count;
+
         /// <summary>
         /// Returns the logical rectangle visible at the current viewport state.
         /// </summary>
