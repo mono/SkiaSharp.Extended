@@ -265,6 +265,23 @@ namespace SkiaSharp.Extended.DeepZoom
         }
 
         /// <summary>
+        /// Sets an absolute zoom level (1.0 = image fills the control width).
+        /// Zooms about the center of the control.
+        /// </summary>
+        public void SetZoom(double zoom)
+        {
+            if (zoom <= 0) throw new ArgumentOutOfRangeException(nameof(zoom));
+            var cx = _viewport.ControlWidth / 2.0;
+            var cy = _viewport.ControlHeight / 2.0;
+            var (lx, ly) = _viewport.ElementToLogicalPoint(cx, cy);
+            double newViewportWidth = Math.Max(SKDeepZoomViewport.MinViewportWidth, 1.0 / zoom);
+            double factor = _viewport.ViewportWidth / newViewportWidth;
+            _viewport.ZoomAboutLogicalPoint(factor, lx, ly);
+            _viewport.Constrain();
+            ViewportChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
         /// Schedules loading for visible tiles and returns whether any tiles are still pending.
         /// Call from your render loop on every frame.
         /// </summary>

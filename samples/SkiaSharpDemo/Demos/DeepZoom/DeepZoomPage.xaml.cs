@@ -62,4 +62,22 @@ public partial class DeepZoomPage : ContentPage
         _controller.Update();
         _controller.Render(e.Surface.Canvas);
     }
+
+    private void OnZoomChanged(object? sender, ValueChangedEventArgs e)
+    {
+        if (_controller == null) return;
+        _controller.SetZoom(e.NewValue);
+        zoomLabel.Text = $"{e.NewValue:F2}×";
+        canvas.InvalidateSurface();
+    }
+
+    private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
+    {
+        if (_controller == null) return;
+        if (e.StatusType == GestureStatus.Running)
+        {
+            _controller.Pan(-e.TotalX, -e.TotalY);
+            canvas.InvalidateSurface();
+        }
+    }
 }

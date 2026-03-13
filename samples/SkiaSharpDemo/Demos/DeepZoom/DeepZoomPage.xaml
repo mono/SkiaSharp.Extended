@@ -5,17 +5,47 @@
              x:Class="SkiaSharpDemo.Demos.DeepZoomPage"
              Title="Deep Zoom">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <!-- Status bar -->
         <Label x:Name="statusLabel"
                Grid.Row="0"
                Text="Loading..."
-               Padding="12,8"
+               Padding="12,6"
                BackgroundColor="#333"
-               TextColor="White" />
+               TextColor="White"
+               FontSize="13" />
 
+        <!-- Zoom toolbar -->
+        <Grid Grid.Row="1"
+              Padding="12,6"
+              BackgroundColor="#222"
+              ColumnDefinitions="Auto,*,Auto">
+            <Label Grid.Column="0" Text="Zoom:" TextColor="#ccc" FontSize="13" VerticalOptions="Center" />
+            <Slider x:Name="zoomSlider"
+                    Grid.Column="1"
+                    Minimum="0.1" Maximum="10" Value="1"
+                    Margin="8,0"
+                    ValueChanged="OnZoomChanged" />
+            <Label x:Name="zoomLabel"
+                   Grid.Column="2"
+                   Text="1.00×"
+                   TextColor="#ccc"
+                   FontSize="13"
+                   WidthRequest="52"
+                   HorizontalTextAlignment="End"
+                   VerticalOptions="Center" />
+        </Grid>
+
+        <!-- Canvas with pan gesture -->
         <skia:SKCanvasView x:Name="canvas"
-                           Grid.Row="1"
-                           PaintSurface="OnPaintSurface" />
+                           Grid.Row="2"
+                           PaintSurface="OnPaintSurface">
+            <skia:SKCanvasView.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="OnPanUpdated" TouchPoints="1" />
+            </skia:SKCanvasView.GestureRecognizers>
+        </skia:SKCanvasView>
+
     </Grid>
 
 </ContentPage>
