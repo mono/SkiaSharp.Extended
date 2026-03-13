@@ -112,20 +112,19 @@ SkiaSharp.Extended ships a small, composable animation toolkit in the `SkiaSharp
 
 | Class | Role |
 | :---- | :--- |
-| `SKTimerAnimation` | Runs an animation loop at ~60 fps using a platform timer. Cancels itself when done. |
-| `SKEasingFunctions` | Static easing functions (e.g., `CubicOut`, `Linear`). |
-| `SpringAnimator` | Single-axis spring physics (position + velocity). |
-| `ViewportSpring` | Wraps three `SpringAnimator` axes (OriginX, OriginY, Width) for viewport animation. |
+| `SKAnimationTimer` | Runs an animation loop at ~60 fps using a platform timer. Cancels itself when done. |
+| `SKAnimationEasing` | Static easing functions (e.g., `CubicOut`, `Linear`). |
+| `SKAnimationSpring` | Single-axis spring physics (position + velocity). |
 
 All classes live in the `SkiaSharp.Extended` namespace.
 
-## SKTimerAnimation
+## SKAnimationTimer
 
 An internal animation runner used by `SKGestureTracker`. On each tick it fires a callback with the elapsed fraction (0 → 1). When the callback returns `false` the animation stops.
 
 ```csharp
-// SKTimerAnimation is internal — use it via SKGestureTracker, or via SKEasingFunctions for your own easing.
-// To run your own animation, simply use a platform timer + SKEasingFunctions:
+// SKAnimationTimer is internal — use it via SKGestureTracker, or via SKAnimationEasing for your own easing.
+// To run your own animation, simply use a platform timer + SKAnimationEasing:
 
 private async void AnimateSomething()
 {
@@ -137,7 +136,7 @@ private async void AnimateSomething()
         var t = (DateTimeOffset.UtcNow - start).TotalSeconds / duration.TotalSeconds;
         if (t >= 1.0) { t = 1.0; break; }
 
-        var eased = SKEasingFunctions.CubicOut(t);
+        var eased = SKAnimationEasing.CubicOut(t);
         ApplyValue(Lerp(fromValue, toValue, eased));
 
         await Task.Delay(16); // ~60 fps
@@ -146,7 +145,7 @@ private async void AnimateSomething()
 }
 ```
 
-## SKEasingFunctions
+## SKAnimationEasing
 
 A static class providing common easing curves. All functions take a `double t` in `[0, 1]` and return an eased value in approximately `[0, 1]`.
 
@@ -154,25 +153,25 @@ A static class providing common easing curves. All functions take a `double t` i
 using SkiaSharp.Extended;
 
 // Ease-out cubic: fast start, slows near end (the default for double-tap zoom)
-double eased = SKEasingFunctions.CubicOut(t);
+double eased = SKAnimationEasing.CubicOut(t);
 
 // Ease-in-out cubic: slow start, fast middle, slow end
-double eased = SKEasingFunctions.CubicInOut(t);
+double eased = SKAnimationEasing.CubicInOut(t);
 
 // Linear (no easing)
-double eased = SKEasingFunctions.Linear(t);
+double eased = SKAnimationEasing.Linear(t);
 ```
 
 All easing functions are pure static methods — no allocation, no state.
 
-## SpringAnimator
+## SKAnimationSpring
 
 A single-axis spring simulation. Useful for smooth animated transitions where you want physical feel (configurable stiffness and damping).
 
 ```csharp
 using SkiaSharp.Extended;
 
-var spring = new SpringAnimator(0.0); // initialValue
+var spring = new SKAnimationSpring(0.0); // initialValue
 spring.Stiffness = 100.0;
 spring.DampingRatio = 1.0;
 
@@ -194,62 +193,27 @@ bool settled = spring.IsSettled;
 - `Current` — the current interpolated value.
 - `IsSettled` — `true` when position and velocity are both near zero.
 
-## ViewportSpring
-
-A convenience wrapper over three `SpringAnimator` axes — `OriginX`, `OriginY`, and `Width` — representing a deep zoom viewport.
-
-```csharp
-using SkiaSharp.Extended;
-
-var spring = new ViewportSpring();
-
-// Move to a new viewport
-spring.SetTarget(originX: 0.25, originY: 0.0, width: 0.5);
-
-// In your animation loop (~60 fps)
-spring.Update(deltaSeconds);
-
-// Get current state for rendering
-var (ox, oy, w) = spring.GetCurrentState();
-
-// Snap instantly to target (during direct touch manipulation)
-spring.SnapToTarget();
-
-// Reset to full-image view
-spring.Reset(originX: 0, originY: 0, width: 1.0);
-
-// Check if animation is complete
-bool done = spring.IsSettled;
-```
-
-**Properties:**
-- `spring.OriginX` / `spring.OriginY` / `spring.Width` — individual `SpringAnimator` axes for fine-grained access.
-- `spring.Stiffness` / `spring.DampingRatio` — applied to all three axes atomically.
-
 ## Relationship to SKGestureTracker
 
-`SKGestureTracker` uses `SKTimerAnimation` and `SKEasingFunctions` internally to animate fling deceleration and double-tap zoom. These animations fire `TransformChanged` events on each frame — you don't need to manage a timer yourself.
+`SKGestureTracker` uses `SKAnimationTimer` and `SKAnimationEasing` internally to animate fling deceleration and double-tap zoom. These animations fire `TransformChanged` events on each frame — you don't need to manage a timer yourself.
 
 ```
 Touch events
     ↓
-SKGestureTracker  ← owns SKTimerAnimation + SKEasingFunctions
+SKGestureTracker  ← owns SKAnimationTimer + SKAnimationEasing
     ↓ TransformChanged (every frame while animating)
 Your code  →  update viewport / deep zoom controller / canvas
     ↓ InvalidateSurface
 Canvas repaint
 ```
 
-`ViewportSpring` is provided for cases where you want viewport animation that doesn't come from gesture events — for example, programmatically navigating to a bookmark, or animating a "fit to screen" button. In `SKDeepZoomView` (MAUI) and the Blazor deep zoom sample, all animation is gesture-tracker-driven; `ViewportSpring` is available as a standalone utility for other scenarios.
-
 ## Next Steps
 
 - [Gestures](gestures.md) — SKGestureTracker and how animation integrates with gesture handling
 - [Gesture Configuration](gesture-configuration.md) — Fine-tune zoom speed, fling behavior, and easing
 - [Deep Zoom](deep-zoom.md) — How animation and gestures compose with tile loading
-- [API Reference — SKEasingFunctions](xref:SkiaSharp.Extended.SKEasingFunctions)
-- [API Reference — SpringAnimator](xref:SkiaSharp.Extended.SpringAnimator)
-- [API Reference — ViewportSpring](xref:SkiaSharp.Extended.DeepZoom.ViewportSpring)
+- [API Reference — SKAnimationEasing](xref:SkiaSharp.Extended.SKAnimationEasing)
+- [API Reference — SKAnimationSpring](xref:SkiaSharp.Extended.SKAnimationSpring)
 
 
 ---
@@ -798,26 +762,29 @@ _tracker.ZoomTo(2f, new SKPoint(cx, cy));
 _tracker.Reset();
 ```
 
-## Using SKGestureView
+## Using SKDeepZoomView
 
-If you prefer a reusable component that handles the pointer-event wiring for you, the Blazor sample includes `SKGestureView.razor`:
+The Blazor sample includes a reusable `SKDeepZoomView` component that encapsulates the gesture tracker, deep zoom controller, and pointer-event wiring:
 
 ```razor
-<SKGestureView @ref="_gestureView" OnPaint="OnPaint" CssHeight="600" />
+<SKDeepZoomView @ref="_deepZoomView"
+                TileSource="@_tileSource"
+                Fetcher="@_fetcher"
+                ShowTileBorders="@showBorders"
+                ShowDebugStats="@showStats"
+                Style="height: 600px; border: 1px solid #ccc;" />
 
 @code {
-    private SKGestureView? _gestureView;
+    private SKDeepZoomView? _deepZoomView;
+    private ISKDeepZoomTileSource? _tileSource;
+    private ISKDeepZoomTileFetcher? _fetcher;
 
-    private void OnPaint(SKPaintSurfaceEventArgs e)
-    {
-        var tracker = _gestureView!.GestureTracker;
-        // Use tracker.Scale, tracker.Offset, tracker.Matrix
-        // to transform your drawing
-    }
+    // Call Reset(), ZoomIn(), ZoomOut() on the @ref
+    private void OnReset() => _deepZoomView?.Reset();
 }
 ```
 
-`SKGestureView` wraps an `SKCanvasView` with pointer-event routing and automatic invalidation on `TransformChanged`. You can use it for any gesture-driven SkiaSharp content, not just deep zoom.
+`SKDeepZoomView` handles all pointer event routing, gesture animation via `SKGestureTracker`, and tile loading via `SKDeepZoomController`. Pass a tile source and fetcher to load an image.
 
 ## Next Steps
 

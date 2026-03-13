@@ -247,22 +247,25 @@ _tracker.ZoomTo(2f, new SKPoint(cx, cy));
 // Reset to full image
 _tracker.Reset();
 </code></pre>
-<h2 id="using-skgestureview">Using SKGestureView</h2>
-<p>If you prefer a reusable component that handles the pointer-event wiring for you, the Blazor sample includes <code>SKGestureView.razor</code>:</p>
-<pre><code class="lang-razor">&lt;SKGestureView @ref=&quot;_gestureView&quot; OnPaint=&quot;OnPaint&quot; CssHeight=&quot;600&quot; /&gt;
+<h2 id="using-skdeepzoomview">Using SKDeepZoomView</h2>
+<p>The Blazor sample includes a reusable <code>SKDeepZoomView</code> component that encapsulates the gesture tracker, deep zoom controller, and pointer-event wiring:</p>
+<pre><code class="lang-razor">&lt;SKDeepZoomView @ref=&quot;_deepZoomView&quot;
+                TileSource=&quot;@_tileSource&quot;
+                Fetcher=&quot;@_fetcher&quot;
+                ShowTileBorders=&quot;@showBorders&quot;
+                ShowDebugStats=&quot;@showStats&quot;
+                Style=&quot;height: 600px; border: 1px solid #ccc;&quot; /&gt;
 
 @code {
-    private SKGestureView? _gestureView;
+    private SKDeepZoomView? _deepZoomView;
+    private ISKDeepZoomTileSource? _tileSource;
+    private ISKDeepZoomTileFetcher? _fetcher;
 
-    private void OnPaint(SKPaintSurfaceEventArgs e)
-    {
-        var tracker = _gestureView!.GestureTracker;
-        // Use tracker.Scale, tracker.Offset, tracker.Matrix
-        // to transform your drawing
-    }
+    // Call Reset(), ZoomIn(), ZoomOut() on the @ref
+    private void OnReset() =&gt; _deepZoomView?.Reset();
 }
 </code></pre>
-<p><code>SKGestureView</code> wraps an <code>SKCanvasView</code> with pointer-event routing and automatic invalidation on <code>TransformChanged</code>. You can use it for any gesture-driven SkiaSharp content, not just deep zoom.</p>
+<p><code>SKDeepZoomView</code> handles all pointer event routing, gesture animation via <code>SKGestureTracker</code>, and tile loading via <code>SKDeepZoomController</code>. Pass a tile source and fetcher to load an image.</p>
 <h2 id="next-steps">Next Steps</h2>
 <ul>
 <li><a href="deep-zoom.html">Deep Zoom Core</a> — Core classes shared by MAUI and Blazor</li>
@@ -293,7 +296,7 @@ _tracker.Reset();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #378 · f44d324
+          source: PR #378 · f813fcd
         </div>
       </div>
     </footer>

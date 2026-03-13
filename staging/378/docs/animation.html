@@ -97,28 +97,24 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>SKTimerAnimation</code></td>
+<td style="text-align: left;"><code>SKAnimationTimer</code></td>
 <td style="text-align: left;">Runs an animation loop at ~60 fps using a platform timer. Cancels itself when done.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>SKEasingFunctions</code></td>
+<td style="text-align: left;"><code>SKAnimationEasing</code></td>
 <td style="text-align: left;">Static easing functions (e.g., <code>CubicOut</code>, <code>Linear</code>).</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>SpringAnimator</code></td>
+<td style="text-align: left;"><code>SKAnimationSpring</code></td>
 <td style="text-align: left;">Single-axis spring physics (position + velocity).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ViewportSpring</code></td>
-<td style="text-align: left;">Wraps three <code>SpringAnimator</code> axes (OriginX, OriginY, Width) for viewport animation.</td>
 </tr>
 </tbody>
 </table>
 <p>All classes live in the <code>SkiaSharp.Extended</code> namespace.</p>
-<h2 id="sktimeranimation">SKTimerAnimation</h2>
+<h2 id="skanimationtimer">SKAnimationTimer</h2>
 <p>An internal animation runner used by <code>SKGestureTracker</code>. On each tick it fires a callback with the elapsed fraction (0 → 1). When the callback returns <code>false</code> the animation stops.</p>
-<pre><code class="lang-csharp">// SKTimerAnimation is internal — use it via SKGestureTracker, or via SKEasingFunctions for your own easing.
-// To run your own animation, simply use a platform timer + SKEasingFunctions:
+<pre><code class="lang-csharp">// SKAnimationTimer is internal — use it via SKGestureTracker, or via SKAnimationEasing for your own easing.
+// To run your own animation, simply use a platform timer + SKAnimationEasing:
 
 private async void AnimateSomething()
 {
@@ -130,7 +126,7 @@ private async void AnimateSomething()
         var t = (DateTimeOffset.UtcNow - start).TotalSeconds / duration.TotalSeconds;
         if (t &gt;= 1.0) { t = 1.0; break; }
 
-        var eased = SKEasingFunctions.CubicOut(t);
+        var eased = SKAnimationEasing.CubicOut(t);
         ApplyValue(Lerp(fromValue, toValue, eased));
 
         await Task.Delay(16); // ~60 fps
@@ -138,25 +134,25 @@ private async void AnimateSomething()
     ApplyValue(toValue);
 }
 </code></pre>
-<h2 id="skeasingfunctions">SKEasingFunctions</h2>
+<h2 id="skanimationeasing">SKAnimationEasing</h2>
 <p>A static class providing common easing curves. All functions take a <code>double t</code> in <code>[0, 1]</code> and return an eased value in approximately <code>[0, 1]</code>.</p>
 <pre><code class="lang-csharp">using SkiaSharp.Extended;
 
 // Ease-out cubic: fast start, slows near end (the default for double-tap zoom)
-double eased = SKEasingFunctions.CubicOut(t);
+double eased = SKAnimationEasing.CubicOut(t);
 
 // Ease-in-out cubic: slow start, fast middle, slow end
-double eased = SKEasingFunctions.CubicInOut(t);
+double eased = SKAnimationEasing.CubicInOut(t);
 
 // Linear (no easing)
-double eased = SKEasingFunctions.Linear(t);
+double eased = SKAnimationEasing.Linear(t);
 </code></pre>
 <p>All easing functions are pure static methods — no allocation, no state.</p>
-<h2 id="springanimator">SpringAnimator</h2>
+<h2 id="skanimationspring">SKAnimationSpring</h2>
 <p>A single-axis spring simulation. Useful for smooth animated transitions where you want physical feel (configurable stiffness and damping).</p>
 <pre><code class="lang-csharp">using SkiaSharp.Extended;
 
-var spring = new SpringAnimator(0.0); // initialValue
+var spring = new SKAnimationSpring(0.0); // initialValue
 spring.Stiffness = 100.0;
 spring.DampingRatio = 1.0;
 
@@ -178,54 +174,23 @@ bool settled = spring.IsSettled;
 <li><code>Current</code> — the current interpolated value.</li>
 <li><code>IsSettled</code> — <code>true</code> when position and velocity are both near zero.</li>
 </ul>
-<h2 id="viewportspring">ViewportSpring</h2>
-<p>A convenience wrapper over three <code>SpringAnimator</code> axes — <code>OriginX</code>, <code>OriginY</code>, and <code>Width</code> — representing a deep zoom viewport.</p>
-<pre><code class="lang-csharp">using SkiaSharp.Extended;
-
-var spring = new ViewportSpring();
-
-// Move to a new viewport
-spring.SetTarget(originX: 0.25, originY: 0.0, width: 0.5);
-
-// In your animation loop (~60 fps)
-spring.Update(deltaSeconds);
-
-// Get current state for rendering
-var (ox, oy, w) = spring.GetCurrentState();
-
-// Snap instantly to target (during direct touch manipulation)
-spring.SnapToTarget();
-
-// Reset to full-image view
-spring.Reset(originX: 0, originY: 0, width: 1.0);
-
-// Check if animation is complete
-bool done = spring.IsSettled;
-</code></pre>
-<p><strong>Properties:</strong></p>
-<ul>
-<li><code>spring.OriginX</code> / <code>spring.OriginY</code> / <code>spring.Width</code> — individual <code>SpringAnimator</code> axes for fine-grained access.</li>
-<li><code>spring.Stiffness</code> / <code>spring.DampingRatio</code> — applied to all three axes atomically.</li>
-</ul>
 <h2 id="relationship-to-skgesturetracker">Relationship to SKGestureTracker</h2>
-<p><code>SKGestureTracker</code> uses <code>SKTimerAnimation</code> and <code>SKEasingFunctions</code> internally to animate fling deceleration and double-tap zoom. These animations fire <code>TransformChanged</code> events on each frame — you don't need to manage a timer yourself.</p>
+<p><code>SKGestureTracker</code> uses <code>SKAnimationTimer</code> and <code>SKAnimationEasing</code> internally to animate fling deceleration and double-tap zoom. These animations fire <code>TransformChanged</code> events on each frame — you don't need to manage a timer yourself.</p>
 <pre><code>Touch events
     ↓
-SKGestureTracker  ← owns SKTimerAnimation + SKEasingFunctions
+SKGestureTracker  ← owns SKAnimationTimer + SKAnimationEasing
     ↓ TransformChanged (every frame while animating)
 Your code  →  update viewport / deep zoom controller / canvas
     ↓ InvalidateSurface
 Canvas repaint
 </code></pre>
-<p><code>ViewportSpring</code> is provided for cases where you want viewport animation that doesn't come from gesture events — for example, programmatically navigating to a bookmark, or animating a &quot;fit to screen&quot; button. In <code>SKDeepZoomView</code> (MAUI) and the Blazor deep zoom sample, all animation is gesture-tracker-driven; <code>ViewportSpring</code> is available as a standalone utility for other scenarios.</p>
 <h2 id="next-steps">Next Steps</h2>
 <ul>
 <li><a href="gestures.html">Gestures</a> — SKGestureTracker and how animation integrates with gesture handling</li>
 <li><a href="gesture-configuration.html">Gesture Configuration</a> — Fine-tune zoom speed, fling behavior, and easing</li>
 <li><a href="deep-zoom.html">Deep Zoom</a> — How animation and gestures compose with tile loading</li>
-<li><a class="xref" href="../api/SkiaSharp.Extended.SKEasingFunctions.html">API Reference — SKEasingFunctions</a></li>
-<li><a class="xref" href="../api/SkiaSharp.Extended.SpringAnimator.html">API Reference — SpringAnimator</a></li>
-<li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.ViewportSpring.html">API Reference — ViewportSpring</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKAnimationEasing.html">API Reference — SKAnimationEasing</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.SKAnimationSpring.html">API Reference — SKAnimationSpring</a></li>
 </ul>
 
 </article>
@@ -248,7 +213,7 @@ Canvas repaint
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #378 · f44d324
+          source: PR #378 · f813fcd
         </div>
       </div>
     </footer>
