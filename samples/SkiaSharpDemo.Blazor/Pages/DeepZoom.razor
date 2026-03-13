@@ -318,7 +318,7 @@
         var dy = e.ClientY - _lastMouseY;
         _lastMouseX = e.ClientX;
         _lastMouseY = e.ClientY;
-        _controller.Pan(-dx, -dy);
+        _controller.Pan(dx, dy);
         InvokeAsync(() => _canvas?.Invalidate());
     }
 

@@ -71,13 +71,25 @@ public partial class DeepZoomPage : ContentPage
         canvas.InvalidateSurface();
     }
 
+    private double _lastPanX, _lastPanY;
+
     private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
     {
         if (_controller == null) return;
-        if (e.StatusType == GestureStatus.Running)
+        switch (e.StatusType)
         {
-            _controller.Pan(-e.TotalX, -e.TotalY);
-            canvas.InvalidateSurface();
+            case GestureStatus.Started:
+                _lastPanX = 0;
+                _lastPanY = 0;
+                break;
+            case GestureStatus.Running:
+                var dx = e.TotalX - _lastPanX;
+                var dy = e.TotalY - _lastPanY;
+                _lastPanX = e.TotalX;
+                _lastPanY = e.TotalY;
+                _controller.Pan(dx, dy);
+                canvas.InvalidateSurface();
+                break;
         }
     }
 }
