@@ -133,9 +133,7 @@ namespace SkiaSharp.Extended.DeepZoom
             _viewport.AspectRatio = tileSource.AspectRatio;
             _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
             _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
-            _viewport.ViewportOriginX = 0;
-            _viewport.ViewportOriginY = 0;
-            _viewport.ViewportWidth = 1.0;
+            _viewport.FitToView();
 
             ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
         }
@@ -235,9 +233,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public void ResetView()
         {
-            _viewport.ViewportOriginX = 0;
-            _viewport.ViewportOriginY = 0;
-            _viewport.ViewportWidth = 1.0;
+            _viewport.FitToView();
             _viewport.Constrain();
             ViewportChanged?.Invoke(this, EventArgs.Empty);
         }

@@ -198,6 +198,40 @@ namespace SkiaSharp.Extended.DeepZoom
             }
         }
 
+        /// <summary>
+        /// Sets the viewport to "fit" mode — the entire image is visible and centered.
+        /// Also sets <see cref="MaxViewportWidth"/> to the computed fit width so the user
+        /// cannot zoom out further than this.
+        /// </summary>
+        public void FitToView()
+        {
+            // Image in logical space: width = 1.0, height = 1.0 / AspectRatio
+            double imageLogicalHeight = 1.0 / _aspectRatio;
+
+            // Fit ViewportWidth = max(1.0, imageLogicalHeight * controlWidth / controlHeight)
+            // This ensures both dimensions are fully visible.
+            double fitWidth = (_controlHeight > 0)
+                ? Math.Max(1.0, imageLogicalHeight * _controlWidth / _controlHeight)
+                : 1.0;
+
+            MaxViewportWidth = fitWidth;
+            _viewportWidth = fitWidth;
+
+            if (fitWidth > 1.0)
+            {
+                // Image is taller than control — center horizontally (image narrower than viewport)
+                _viewportOriginX = (1.0 - fitWidth) / 2.0;
+                double vpHeight = fitWidth * _controlHeight / _controlWidth;
+                _viewportOriginY = (imageLogicalHeight - vpHeight) / 2.0;
+            }
+            else
+            {
+                // Image fits in width, may still need vertical centering if shorter
+                _viewportOriginX = 0;
+                _viewportOriginY = 0;
+            }
+        }
+
         /// <summary>Creates a snapshot of the current viewport state.</summary>
         public SKDeepZoomViewportState GetState()
         {

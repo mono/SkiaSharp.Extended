@@ -58,8 +58,8 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             _onInvalidateRequired = (s, e) => _canvasView.InvalidateSurface();
             _onImageOpenSucceeded = (s, e) =>
             {
-                // Reset tracker to initial state when a new image loads
-                _tracker.Reset();
+                // Sync tracker from the fit viewport the controller set up (don't reset to scale=1)
+                SyncTrackerFromViewport();
                 ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
             };
             _onImageOpenFailed = (s, e) => ImageOpenFailed?.Invoke(this, e);
@@ -76,7 +76,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
                 IsDoubleTapZoomEnabled = true, // Tracker animates double-tap zoom via SKAnimationTimer
                 IsScrollZoomEnabled = true,    // Tracker handles scroll/wheel zoom
                 IsFlingEnabled = true,         // Tracker animates fling deceleration
-                MinScale = 1f,                 // Can't zoom out past the full image (viewportWidth = 1.0)
+                MinScale = 0.001f,             // Zoom-out floor enforced by viewport MaxViewportWidth via Constrain()
                 MaxScale = 32f,                // 32× zoom limit
             });
             _tracker.TransformChanged += OnTrackerTransformChanged;
@@ -287,8 +287,8 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
         /// </summary>
         public void ResetView()
         {
-            _tracker.Reset();
-            // TransformChanged fires → OnTrackerTransformChanged updates viewport
+            _controller.ResetView();
+            SyncTrackerFromViewport();
         }
 
         /// <summary>

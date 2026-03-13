@@ -162,6 +162,57 @@ public class DeepZoomEdgeCaseTest
         Assert.Equal(vp.ViewportOriginY, vp2.ViewportOriginY);
     }
 
+    [Fact]
+    public void Viewport_FitToView_WideImage_ViewportWidthIs1()
+    {
+        // Wide image (16:9) in a 4:3 control → fits in width, ViewportWidth = 1.0
+        var vp = new SKDeepZoomViewport();
+        vp.ControlWidth = 800;
+        vp.ControlHeight = 600;
+        vp.AspectRatio = 16.0 / 9.0; // wide
+        vp.FitToView();
+
+        Assert.Equal(1.0, vp.ViewportWidth, 6);
+        // Image is narrower than control height allows → centered vertically
+        Assert.Equal(0.0, vp.ViewportOriginX, 6);
+    }
+
+    [Fact]
+    public void Viewport_FitToView_TallImage_ViewportWidthGreaterThan1()
+    {
+        // Square image in 800×600 control → image is taller relative to control
+        // controlAspectRatio = 800/600 = 1.333, imageAspectRatio = 1.0
+        // fitWidth = max(1, (1/1.0) * 800/600) = 1.333
+        var vp = new SKDeepZoomViewport();
+        vp.ControlWidth = 800;
+        vp.ControlHeight = 600;
+        vp.AspectRatio = 1.0; // square image
+        vp.FitToView();
+
+        double expected = 800.0 / 600.0; // ≈ 1.333
+        Assert.Equal(expected, vp.ViewportWidth, 6);
+        // MaxViewportWidth is set to fit width so user can't zoom out further
+        Assert.Equal(expected, vp.MaxViewportWidth, 6);
+    }
+
+    [Fact]
+    public void Viewport_FitToView_EntireImageVisible()
+    {
+        // After FitToView, the visible logical bounds must contain the full image [0,1]×[0, 1/AR]
+        var vp = new SKDeepZoomViewport();
+        vp.ControlWidth = 800;
+        vp.ControlHeight = 600;
+        vp.AspectRatio = 1.5; // landscape image, narrower than control
+        vp.FitToView();
+
+        var (left, top, right, bottom) = vp.GetLogicalBounds();
+        // Full image spans x=[0,1], y=[0, 1/1.5]
+        Assert.True(left <= 0.0, $"left={left} should be <= 0");
+        Assert.True(top <= 0.0, $"top={top} should be <= 0");
+        Assert.True(right >= 1.0, $"right={right} should be >= 1");
+        Assert.True(bottom >= 1.0 / 1.5, $"bottom={bottom} should be >= {1.0 / 1.5}");
+    }
+
     // --- DZI parsing edge cases ---
 
     [Fact]

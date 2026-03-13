@@ -25,7 +25,7 @@
         IsDoubleTapZoomEnabled = true,
         IsScrollZoomEnabled = true,
         IsFlingEnabled = true,
-        MinScale = 1f,
+        MinScale = 0.001f,  // Zoom-out floor is enforced by viewport MaxViewportWidth via Constrain()
         MaxScale = 32f,
     });
 
@@ -70,7 +70,8 @@
 
         _controller = new SKDeepZoomController();
         _controller.InvalidateRequired += (_, _) => InvokeAsync(() => _canvasView?.Invalidate());
-        _controller.ImageOpenSucceeded += (_, _) => _tracker.Reset();
+        // After controller sets fit viewport, sync tracker from it (don't reset tracker to scale=1)
+        _controller.ImageOpenSucceeded += (_, _) => SyncTrackerFromViewport();
 
         if (TileSource != null && Fetcher != null)
             _controller.Load(TileSource, Fetcher);
@@ -86,8 +87,12 @@
         _controller?.Load(tileSource, fetcher);
     }
 
-    /// <summary>Reset the viewport to the initial (full-image-fit) position.</summary>
-    public void Reset() => _tracker.Reset();
+    /// <summary>Reset the viewport to fit the entire image.</summary>
+    public void Reset()
+    {
+        _controller?.ResetView();
+        SyncTrackerFromViewport();
+    }
 
     /// <summary>Zoom in by 2× about the center of the view.</summary>
     public void ZoomIn() => ZoomAboutCenter(2f);
