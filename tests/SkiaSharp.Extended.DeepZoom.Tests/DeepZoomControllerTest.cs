@@ -85,8 +85,9 @@ public class DeepZoomControllerTest
 
         Assert.Equal(dzi, controller.TileSource);
         Assert.True(openFired);
-        Assert.Equal(1.0, controller.Viewport.ViewportWidth, 6);
-        Assert.Equal(0.0, controller.Viewport.ViewportOriginX, 6);
+        // 512x512 image in 800x600 control: fitWidth = 800/600 ≈ 1.333333, originX = (1-fitWidth)/2 ≈ -0.166667
+        Assert.Equal(800.0 / 600.0, controller.Viewport.ViewportWidth, 6);
+        Assert.Equal((1.0 - 800.0 / 600.0) / 2.0, controller.Viewport.ViewportOriginX, 6);
     }
 
     [Fact]
@@ -140,7 +141,8 @@ public class DeepZoomControllerTest
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
         controller.ResetView();
 
-        Assert.Equal(1.0, controller.Viewport.ViewportWidth, 6);
+        // After reset: should restore to fit mode (same as after load)
+        Assert.Equal(800.0 / 600.0, controller.Viewport.ViewportWidth, 6);
     }
 
     [Fact]
@@ -430,11 +432,13 @@ public class DeepZoomControllerTest
 
         var (x, y, w, h) = controller.GetZoomRect();
 
-        // At initial load: origin (0,0), width 1.0, height = width / aspect = 1.0
-        Assert.Equal(0.0, x, 6);
+        // At initial load with fit mode: 512x512 in 800x600 → fitWidth = 800/600 ≈ 1.333333
+        double fitWidth = 800.0 / 600.0;
+        double fitOriginX = (1.0 - fitWidth) / 2.0;
+        Assert.Equal(fitOriginX, x, 6);
         Assert.Equal(0.0, y, 6);
-        Assert.Equal(1.0, w, 6);
-        Assert.Equal(1.0, h, 6);
+        Assert.Equal(fitWidth, w, 6);
+        Assert.Equal(fitWidth / 1.0 /*aspectRatio*/, h, 6);
 
         // Zoom in and verify the rect changes (immediate — no spring)
         controller.ZoomAboutScreenPoint(4.0, 400, 300);

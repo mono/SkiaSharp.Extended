@@ -182,13 +182,22 @@ namespace SkiaSharp.Extended.DeepZoom
             {
                 // Zoomed in or exactly fitting: clamp origin to keep image in view
                 if (_viewportOriginX < 0) _viewportOriginX = 0;
-                if (_viewportOriginY < 0) _viewportOriginY = 0;
                 if (_viewportOriginX + _viewportWidth > 1.0)
                     _viewportOriginX = 1.0 - _viewportWidth;
-                if (_viewportOriginY + vpHeight > imageLogicalHeight)
-                    _viewportOriginY = imageLogicalHeight - vpHeight;
                 if (_viewportOriginX < 0) _viewportOriginX = 0;
-                if (_viewportOriginY < 0) _viewportOriginY = 0;
+
+                // Vertical: center if viewport is taller than image, otherwise clamp
+                if (vpHeight >= imageLogicalHeight)
+                {
+                    _viewportOriginY = (imageLogicalHeight - vpHeight) / 2.0;
+                }
+                else
+                {
+                    if (_viewportOriginY < 0) _viewportOriginY = 0;
+                    if (_viewportOriginY + vpHeight > imageLogicalHeight)
+                        _viewportOriginY = imageLogicalHeight - vpHeight;
+                    if (_viewportOriginY < 0) _viewportOriginY = 0;
+                }
             }
             else
             {
@@ -226,9 +235,10 @@ namespace SkiaSharp.Extended.DeepZoom
             }
             else
             {
-                // Image fits in width, may still need vertical centering if shorter
+                // Image fits in width (fitWidth = 1.0). Center vertically if viewport is taller than image.
                 _viewportOriginX = 0;
-                _viewportOriginY = 0;
+                double vpHeight = _controlHeight / _controlWidth;
+                _viewportOriginY = (imageLogicalHeight - vpHeight) / 2.0; // negative when image is shorter
             }
         }
 
