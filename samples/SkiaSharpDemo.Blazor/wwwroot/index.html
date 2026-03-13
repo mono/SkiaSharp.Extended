@@ -41,9 +41,15 @@
     <script src="_framework/blazor.webassembly.js"></script>
     <script>
         window.deepZoomRegisterResize = function (dotNetRef) {
-            window.addEventListener('resize', function () {
-                dotNetRef.invokeMethodAsync('OnWindowResize');
-            });
+            var handler = function () { dotNetRef.invokeMethodAsync('OnWindowResize'); };
+            window.addEventListener('resize', handler);
+            window._deepZoomResizeHandler = handler;
+        };
+        window.deepZoomUnregisterResize = function () {
+            if (window._deepZoomResizeHandler) {
+                window.removeEventListener('resize', window._deepZoomResizeHandler);
+                window._deepZoomResizeHandler = null;
+            }
         };
     </script>
 </body>

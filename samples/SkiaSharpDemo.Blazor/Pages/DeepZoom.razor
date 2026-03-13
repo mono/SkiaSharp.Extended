@@ -1,5 +1,5 @@
 @page "/deepzoom"
-@implements IDisposable
+@implements IAsyncDisposable
 @inject HttpClient Http
 @inject IJSRuntime JS
 @using SkiaSharp.Extended.DeepZoom
@@ -215,7 +215,7 @@
 
             var dziXml = await Http.GetStringAsync(DziUrl);
             var tileSource = SKDeepZoomImageSource.Parse(dziXml, TilesBaseUrl);
-            _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new HttpClient()));
+            _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher());
 
             _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
         }
@@ -249,9 +249,10 @@
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         _inspectorTimer?.Dispose();
+        try { await JS.InvokeVoidAsync("deepZoomUnregisterResize"); } catch { }
         _thisRef?.Dispose();
         if (_controller != null)
         {

@@ -44,7 +44,7 @@ public partial class DeepZoomPage : ContentPage
             using var client = new HttpClient();
             var dziXml = await client.GetStringAsync(DziUrl);
             var tileSource = SKDeepZoomImageSource.Parse(dziXml, TilesBaseUrl);
-            _controller?.Load(tileSource, new SKDeepZoomHttpTileFetcher(new HttpClient()));
+            _controller?.Load(tileSource, new SKDeepZoomHttpTileFetcher());
 
             statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             canvas.InvalidateSurface();
