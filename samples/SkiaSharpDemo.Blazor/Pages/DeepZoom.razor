@@ -23,12 +23,18 @@
     <div class="alert alert-danger" role="alert">@_errorMessage</div>
 }
 
-<SKCanvasView @ref="_canvas"
-              OnPaintSurface="OnPaintSurface"
-              style="width: 100%; height: 600px; border: 1px solid #ccc;" />
+<SKGLView @ref="_canvas"
+          OnPaintSurface="OnPaintSurface"
+          style="width: 100%; height: 600px; border: 1px solid #ccc;" />
 
 @code {
-    private SKCanvasView? _canvas;
+    // Testgrid DZI served directly from the main branch on GitHub.
+    private const string DziUrl =
+        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid.dzi";
+    private const string TilesBaseUrl =
+        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid_files/";
+
+    private SKGLView? _canvas;
     private SKDeepZoomController? _controller;
     private string? _statusText;
     private string? _errorMessage;
@@ -42,9 +48,11 @@
 
         try
         {
-            var dziXml = await Http.GetStringAsync("deepzoom/testgrid.dzi");
-            var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/testgrid_files/").ToString();
-            var tileSource = SKDeepZoomImageSource.Parse(dziXml, baseUrl);
+            _statusText = "Loading…";
+            StateHasChanged();
+
+            var dziXml = await Http.GetStringAsync(DziUrl);
+            var tileSource = SKDeepZoomImageSource.Parse(dziXml, TilesBaseUrl);
 
             _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new HttpClient()));
 
@@ -53,16 +61,17 @@
         catch (Exception ex)
         {
             _errorMessage = $"Failed to load: {ex.Message}";
+            _statusText = null;
         }
 
         await InvokeAsync(StateHasChanged);
     }
 
-    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
     {
         if (_controller == null) return;
 
-        _controller.SetControlSize(e.Info.Width, e.Info.Height);
+        _controller.SetControlSize(e.BackendRenderTarget.Width, e.BackendRenderTarget.Height);
         _controller.Update();
         _controller.Render(e.Surface.Canvas);
     }

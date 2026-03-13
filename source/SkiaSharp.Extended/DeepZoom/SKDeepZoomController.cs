@@ -192,11 +192,20 @@ namespace SkiaSharp.Extended.DeepZoom
 
         /// <summary>
         /// Sets the control (canvas) size. Call whenever the canvas is resized.
+        /// When a source is loaded, automatically refits the viewport to the new size.
         /// </summary>
         public void SetControlSize(double width, double height)
         {
+            bool sizeChanged = Math.Abs(_viewport.ControlWidth - width) > 0.5 ||
+                               Math.Abs(_viewport.ControlHeight - height) > 0.5;
+
             _viewport.ControlWidth = width;
             _viewport.ControlHeight = height;
+
+            // Refit whenever the canvas size changes and a source is loaded,
+            // so the image always fills the view correctly in any aspect ratio.
+            if (sizeChanged && _tileSource != null)
+                _viewport.FitToView();
         }
 
         /// <summary>
