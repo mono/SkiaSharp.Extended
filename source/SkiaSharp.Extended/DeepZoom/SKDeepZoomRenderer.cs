@@ -11,19 +11,12 @@ namespace SkiaSharp.Extended.DeepZoom
     public class SKDeepZoomRenderer : IDisposable
     {
         private readonly SKPaint _tilePaint;
-        private readonly SKPaint _fadePaint;
         private readonly SKPaint _debugPaint;
 
         public SKDeepZoomRenderer()
         {
             _tilePaint = new SKPaint
             {
-                FilterQuality = SKFilterQuality.High,
-                IsAntialias = true,
-            };
-            _fadePaint = new SKPaint
-            {
-                FilterQuality = SKFilterQuality.High,
                 IsAntialias = true,
             };
             _debugPaint = new SKPaint
@@ -279,7 +272,6 @@ namespace SkiaSharp.Extended.DeepZoom
         public void Dispose()
         {
             _tilePaint.Dispose();
-            _fadePaint.Dispose();
             _debugPaint.Dispose();
             _statsBgPaint?.Dispose();
             _statsTextPaint?.Dispose();

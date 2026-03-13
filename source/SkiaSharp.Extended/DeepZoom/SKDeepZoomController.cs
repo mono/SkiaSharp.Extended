@@ -117,25 +117,32 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public void Load(SKDeepZoomImageSource tileSource, ISKDeepZoomTileFetcher fetcher)
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
-            _cts = new CancellationTokenSource();
-            _pendingTiles.Clear();
-            _cache.Clear();
-            _subImages.Clear();
+            try
+            {
+                _cts?.Cancel();
+                _cts?.Dispose();
+                _cts = new CancellationTokenSource();
+                _pendingTiles.Clear();
+                _cache.Clear();
+                _subImages.Clear();
 
-            if (_fetcher != null && !ReferenceEquals(_fetcher, fetcher))
-                (_fetcher as IDisposable)?.Dispose();
+                if (_fetcher != null && !ReferenceEquals(_fetcher, fetcher))
+                    (_fetcher as IDisposable)?.Dispose();
 
-            _tileSource = tileSource;
-            _fetcher = fetcher;
+                _tileSource = tileSource;
+                _fetcher = fetcher;
 
-            _viewport.AspectRatio = tileSource.AspectRatio;
-            _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
-            _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
-            _viewport.FitToView();
+                _viewport.AspectRatio = tileSource.AspectRatio;
+                _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
+                _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
+                _viewport.FitToView();
 
-            ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
+                ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception ex)
+            {
+                ImageOpenFailed?.Invoke(this, ex);
+            }
         }
 
         /// <summary>
@@ -143,37 +150,44 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public void Load(SKDeepZoomCollectionSource dzcTileSource, ISKDeepZoomTileFetcher fetcher)
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
-            _cts = new CancellationTokenSource();
-            _pendingTiles.Clear();
-            _cache.Clear();
-
-            _tileSource = null!;
-            _subImages = new List<SKDeepZoomSubImage>();
-            foreach (var item in dzcTileSource.Items)
+            try
             {
-                var sub = new SKDeepZoomSubImage(item.Id, item.MortonIndex, item.AspectRatio, item.Source)
+                _cts?.Cancel();
+                _cts?.Dispose();
+                _cts = new CancellationTokenSource();
+                _pendingTiles.Clear();
+                _cache.Clear();
+
+                _tileSource = null!;
+                _subImages = new List<SKDeepZoomSubImage>();
+                foreach (var item in dzcTileSource.Items)
                 {
-                    ViewportWidth = item.ViewportWidth,
-                    ViewportOriginX = item.ViewportX,
-                    ViewportOriginY = item.ViewportY,
-                };
-                _subImages.Add(sub);
+                    var sub = new SKDeepZoomSubImage(item.Id, item.MortonIndex, item.AspectRatio, item.Source)
+                    {
+                        ViewportWidth = item.ViewportWidth,
+                        ViewportOriginX = item.ViewportX,
+                        ViewportOriginY = item.ViewportY,
+                    };
+                    _subImages.Add(sub);
+                }
+
+                if (_fetcher != null && !ReferenceEquals(_fetcher, fetcher))
+                    (_fetcher as IDisposable)?.Dispose();
+
+                _fetcher = fetcher;
+
+                _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
+                _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
+                _viewport.ViewportOriginX = 0;
+                _viewport.ViewportOriginY = 0;
+                _viewport.ViewportWidth = 1.0;
+
+                ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
             }
-
-            if (_fetcher != null && !ReferenceEquals(_fetcher, fetcher))
-                (_fetcher as IDisposable)?.Dispose();
-
-            _fetcher = fetcher;
-
-            _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
-            _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
-            _viewport.ViewportOriginX = 0;
-            _viewport.ViewportOriginY = 0;
-            _viewport.ViewportWidth = 1.0;
-
-            ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
+            catch (Exception ex)
+            {
+                ImageOpenFailed?.Invoke(this, ex);
+            }
         }
 
         /// <summary>
