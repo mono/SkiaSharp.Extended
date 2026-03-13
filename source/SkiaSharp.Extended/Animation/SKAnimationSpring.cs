@@ -13,7 +13,7 @@ namespace SkiaSharp.Extended;
 /// For critical damping use an exact analytical solution; for other ratios it uses
 /// a sub-stepped semi-implicit Euler integration for stability.
 /// </remarks>
-public class SpringAnimator
+public class SKAnimationSpring
 {
 	private const double DefaultSpringStiffness = 100.0;
 	private const double DefaultDampingRatio = 1.0; // critically damped
@@ -25,10 +25,10 @@ public class SpringAnimator
 	private double _dampingRatio;
 
 	/// <summary>
-	/// Initializes a new <see cref="SpringAnimator"/> starting at <paramref name="initialValue"/>.
+	/// Initializes a new <see cref="SKAnimationSpring"/> starting at <paramref name="initialValue"/>.
 	/// </summary>
 	/// <param name="initialValue">The starting and initial target value.</param>
-	public SpringAnimator(double initialValue = 0.0)
+	public SKAnimationSpring(double initialValue = 0.0)
 	{
 		_current = initialValue;
 		_target = initialValue;

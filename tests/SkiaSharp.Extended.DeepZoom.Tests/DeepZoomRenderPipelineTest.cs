@@ -147,51 +147,6 @@ public class DeepZoomRenderPipelineTest
         Assert.True(controller.IsIdle);
     }
 
-    // --- ViewportSpring tests (SkiaSharp.Extended) ---
-
-    [Fact]
-    public void ViewportSpring_AnimatesToTarget()
-    {
-        var spring = new ViewportSpring();
-        spring.Reset(0, 0, 1.0);
-        spring.SetTarget(0.5, 0.3, 0.5);
-
-        for (int i = 0; i < 500; i++)
-            spring.Update(0.016);
-
-        Assert.True(spring.IsSettled, "Spring should settle after enough frames");
-        Assert.Equal(0.5, spring.OriginX.Current, 2);
-        Assert.Equal(0.3, spring.OriginY.Current, 2);
-        Assert.Equal(0.5, spring.Width.Current, 2);
-    }
-
-    [Fact]
-    public void ViewportSpring_SnapToTarget()
-    {
-        var spring = new ViewportSpring();
-        spring.Reset(0, 0, 1.0);
-        spring.SetTarget(0.5, 0.3, 0.25);
-        spring.SnapToTarget();
-
-        Assert.True(spring.IsSettled);
-        Assert.Equal(0.5, spring.OriginX.Current);
-        Assert.Equal(0.3, spring.OriginY.Current);
-        Assert.Equal(0.25, spring.Width.Current);
-    }
-
-    [Fact]
-    public void ViewportSpring_GetCurrentState_MatchesAxes()
-    {
-        var spring = new ViewportSpring();
-        spring.Reset(0.1, 0.2, 0.8);
-        spring.SnapToTarget();
-
-        var (ox, oy, w) = spring.GetCurrentState();
-        Assert.Equal(spring.OriginX.Current, ox);
-        Assert.Equal(spring.OriginY.Current, oy);
-        Assert.Equal(spring.Width.Current, w);
-    }
-
     // --- SKDeepZoomImageSource tests ---
 
     [Fact]

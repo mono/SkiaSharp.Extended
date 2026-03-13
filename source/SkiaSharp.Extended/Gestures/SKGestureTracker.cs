@@ -56,15 +56,15 @@ public sealed class SKGestureTracker : IDisposable
 	private SKPoint _lastPanLocation;
 	private SKPoint _prevPanLocation;
 
-	// Fling animation state — driven by SKTimerAnimation
-	private readonly SKTimerAnimation _flingAnimation = new();
+	// Fling animation state — driven by SKAnimationTimer
+	private readonly SKAnimationTimer _flingAnimation = new();
 	private float _flingVelocityX;
 	private float _flingVelocityY;
 	private bool _isFlinging;
 	private long _flingLastFrameTimestamp; // TimeProvider() ticks at last fling frame
 
-	// Zoom animation state — driven by SKTimerAnimation
-	private readonly SKTimerAnimation _zoomAnimation = new();
+	// Zoom animation state — driven by SKAnimationTimer
+	private readonly SKAnimationTimer _zoomAnimation = new();
 	private bool _isZoomAnimating;
 	private float _zoomStartScale;
 	private float _zoomTargetFactor;
@@ -856,8 +856,8 @@ public sealed class SKGestureTracker : IDisposable
 		var duration = Options.ZoomAnimationDuration.Ticks;
 		var t = duration > 0 ? Math.Min(1.0, (double)elapsed / duration) : 1.0;
 
-		// CubicOut easing via shared SKEasingFunctions
-		var eased = SKEasingFunctions.CubicOut(t);
+		// CubicOut easing via shared SKAnimationEasing
+		var eased = SKAnimationEasing.CubicOut(t);
 
 		// Log-space interpolation: cumulative = factor^eased(t)
 		var cumulative = (float)Math.Pow(_zoomTargetFactor, eased);

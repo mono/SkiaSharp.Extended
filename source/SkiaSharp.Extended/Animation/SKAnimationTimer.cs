@@ -8,7 +8,7 @@ namespace SkiaSharp.Extended;
 /// and <see cref="SynchronizationContext"/> dispatch in one place.
 /// Used internally by <see cref="SKGestureTracker"/> for fling and zoom animations.
 /// </summary>
-internal sealed class SKTimerAnimation : IDisposable
+internal sealed class SKAnimationTimer : IDisposable
 {
 	private Timer? _timer;
 	private int _token;
@@ -29,7 +29,7 @@ internal sealed class SKTimerAnimation : IDisposable
 	public void Start(TimeSpan interval, Action tick, SynchronizationContext? syncContext = null)
 	{
 		if (_disposed)
-			throw new ObjectDisposedException(nameof(SKTimerAnimation));
+			throw new ObjectDisposedException(nameof(SKAnimationTimer));
 
 		StopCore(); // cancel any running timer
 

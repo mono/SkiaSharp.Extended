@@ -73,7 +73,7 @@ namespace SkiaSharp.Extended.UI.Maui.DeepZoom
             _tracker = new SKGestureTracker(new SKGestureTrackerOptions
             {
                 IsRotateEnabled = false,       // Deep zoom doesn't use rotation
-                IsDoubleTapZoomEnabled = true, // Tracker animates double-tap zoom via SKTimerAnimation
+                IsDoubleTapZoomEnabled = true, // Tracker animates double-tap zoom via SKAnimationTimer
                 IsScrollZoomEnabled = true,    // Tracker handles scroll/wheel zoom
                 IsFlingEnabled = true,         // Tracker animates fling deceleration
                 MinScale = 1f,                 // Can't zoom out past the full image (viewportWidth = 1.0)

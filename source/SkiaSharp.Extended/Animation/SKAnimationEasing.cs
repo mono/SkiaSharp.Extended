@@ -7,7 +7,7 @@ namespace SkiaSharp.Extended;
 /// Each function takes a normalized time value <c>t</c> in [0, 1] and returns
 /// an eased value in [0, 1].
 /// </summary>
-public static class SKEasingFunctions
+public static class SKAnimationEasing
 {
 	/// <summary>Linear easing — no acceleration or deceleration.</summary>
 	/// <param name="t">Normalized time in [0, 1].</param>

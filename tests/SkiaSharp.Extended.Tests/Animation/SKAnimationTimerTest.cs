@@ -5,9 +5,9 @@ using Xunit;
 
 namespace SkiaSharp.Extended.Tests.Animation;
 
-public class SKTimerAnimationTest : IDisposable
+public class SKAnimationTimerTest : IDisposable
 {
-	private readonly SKTimerAnimation _anim = new();
+	private readonly SKAnimationTimer _anim = new();
 
 	public void Dispose() => _anim.Dispose();
 
@@ -231,7 +231,7 @@ public class SKTimerAnimationTest : IDisposable
 	[Fact]
 	public void Dispose_SafeToCallMultipleTimes()
 	{
-		var anim = new SKTimerAnimation();
+		var anim = new SKAnimationTimer();
 		anim.Dispose();
 		var ex = Record.Exception(() => anim.Dispose());
 		Assert.Null(ex);
@@ -240,7 +240,7 @@ public class SKTimerAnimationTest : IDisposable
 	[Fact]
 	public void Dispose_StopsRunningAnimation()
 	{
-		var anim = new SKTimerAnimation();
+		var anim = new SKAnimationTimer();
 		anim.Start(TimeSpan.FromSeconds(60), () => { });
 		Assert.True(anim.IsRunning);
 		anim.Dispose();
@@ -251,7 +251,7 @@ public class SKTimerAnimationTest : IDisposable
 	public async Task Dispose_NoCallbacksFireAfterDispose()
 	{
 		var count = 0;
-		var anim = new SKTimerAnimation();
+		var anim = new SKAnimationTimer();
 		anim.Start(TimeSpan.FromMilliseconds(20), () => Interlocked.Increment(ref count));
 		await Task.Delay(60); // let at least one tick fire
 
@@ -266,7 +266,7 @@ public class SKTimerAnimationTest : IDisposable
 	[Fact]
 	public void Start_AfterDispose_ThrowsObjectDisposedException()
 	{
-		var anim = new SKTimerAnimation();
+		var anim = new SKAnimationTimer();
 		anim.Dispose();
 		Assert.Throws<ObjectDisposedException>(() =>
 			anim.Start(TimeSpan.FromSeconds(1), () => { }));

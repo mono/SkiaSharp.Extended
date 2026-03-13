@@ -180,26 +180,29 @@ _tracker.ZoomTo(2f, new SKPoint(cx, cy));
 _tracker.Reset();
 ```
 
-## Using SKGestureView
+## Using SKDeepZoomView
 
-If you prefer a reusable component that handles the pointer-event wiring for you, the Blazor sample includes `SKGestureView.razor`:
+The Blazor sample includes a reusable `SKDeepZoomView` component that encapsulates the gesture tracker, deep zoom controller, and pointer-event wiring:
 
 ```razor
-<SKGestureView @ref="_gestureView" OnPaint="OnPaint" CssHeight="600" />
+<SKDeepZoomView @ref="_deepZoomView"
+                TileSource="@_tileSource"
+                Fetcher="@_fetcher"
+                ShowTileBorders="@showBorders"
+                ShowDebugStats="@showStats"
+                Style="height: 600px; border: 1px solid #ccc;" />
 
 @code {
-    private SKGestureView? _gestureView;
+    private SKDeepZoomView? _deepZoomView;
+    private ISKDeepZoomTileSource? _tileSource;
+    private ISKDeepZoomTileFetcher? _fetcher;
 
-    private void OnPaint(SKPaintSurfaceEventArgs e)
-    {
-        var tracker = _gestureView!.GestureTracker;
-        // Use tracker.Scale, tracker.Offset, tracker.Matrix
-        // to transform your drawing
-    }
+    // Call Reset(), ZoomIn(), ZoomOut() on the @ref
+    private void OnReset() => _deepZoomView?.Reset();
 }
 ```
 
-`SKGestureView` wraps an `SKCanvasView` with pointer-event routing and automatic invalidation on `TransformChanged`. You can use it for any gesture-driven SkiaSharp content, not just deep zoom.
+`SKDeepZoomView` handles all pointer event routing, gesture animation via `SKGestureTracker`, and tile loading via `SKDeepZoomController`. Pass a tile source and fetcher to load an image.
 
 ## Next Steps
 

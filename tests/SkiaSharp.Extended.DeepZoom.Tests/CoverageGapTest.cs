@@ -6,16 +6,16 @@ using System.Threading;
 namespace SkiaSharp.Extended.DeepZoom.Tests;
 
 /// <summary>
-/// Tests for low-coverage areas: SpringAnimator, SKDeepZoomViewportState, SKDeepZoomTileRequest.
+/// Tests for low-coverage areas: SKAnimationSpring, SKDeepZoomViewportState, SKDeepZoomTileRequest.
 /// </summary>
 public class CoverageGapTest
 {
-    // --- SpringAnimator ---
+    // --- SKAnimationSpring ---
 
     [Fact]
-    public void SpringAnimator_Update_ConvergesToTarget()
+    public void SKAnimationSpring_Update_ConvergesToTarget()
     {
-        var spring = new SpringAnimator();
+        var spring = new SKAnimationSpring();
         spring.Target = 100.0;
 
         for (int i = 0; i < 500; i++)
@@ -26,9 +26,9 @@ public class CoverageGapTest
     }
 
     [Fact]
-    public void SpringAnimator_SnapToTarget()
+    public void SKAnimationSpring_SnapToTarget()
     {
-        var spring = new SpringAnimator();
+        var spring = new SKAnimationSpring();
         spring.Target = 42.0;
         spring.SnapToTarget();
 
@@ -38,9 +38,9 @@ public class CoverageGapTest
     }
 
     [Fact]
-    public void SpringAnimator_Reset()
+    public void SKAnimationSpring_Reset()
     {
-        var spring = new SpringAnimator();
+        var spring = new SKAnimationSpring();
         spring.Target = 50.0;
         spring.Update(0.1);
         spring.Reset(0.0);
@@ -51,9 +51,9 @@ public class CoverageGapTest
     }
 
     [Fact]
-    public void SpringAnimator_MultipleTargetChanges()
+    public void SKAnimationSpring_MultipleTargetChanges()
     {
-        var spring = new SpringAnimator();
+        var spring = new SKAnimationSpring();
         spring.Target = 50.0;
         spring.Update(0.1);
         spring.Target = 100.0;
@@ -64,9 +64,9 @@ public class CoverageGapTest
     }
 
     [Fact]
-    public void SpringAnimator_NegativeTarget()
+    public void SKAnimationSpring_NegativeTarget()
     {
-        var spring = new SpringAnimator();
+        var spring = new SKAnimationSpring();
         spring.Target = -50.0;
 
         for (int i = 0; i < 500; i++)
@@ -77,9 +77,9 @@ public class CoverageGapTest
     }
 
     [Fact]
-    public void SpringAnimator_ZeroDeltaTime()
+    public void SKAnimationSpring_ZeroDeltaTime()
     {
-        var spring = new SpringAnimator();
+        var spring = new SKAnimationSpring();
         spring.Target = 100.0;
         double before = spring.Current;
         spring.Update(0.0);
@@ -87,26 +87,26 @@ public class CoverageGapTest
     }
 
     [Fact]
-    public void SpringAnimator_InitialValue()
+    public void SKAnimationSpring_InitialValue()
     {
-        var spring = new SpringAnimator(50.0);
+        var spring = new SKAnimationSpring(50.0);
         Assert.Equal(50.0, spring.Current);
         Assert.Equal(50.0, spring.Target);
     }
 
     [Fact]
-    public void SpringAnimator_Velocity()
+    public void SKAnimationSpring_Velocity()
     {
-        var spring = new SpringAnimator();
+        var spring = new SKAnimationSpring();
         spring.Target = 100.0;
         spring.Update(0.016);
         Assert.True(spring.Velocity > 0);
     }
 
     [Fact]
-    public void SpringAnimator_StiffnessAndDamping()
+    public void SKAnimationSpring_StiffnessAndDamping()
     {
-        var spring = new SpringAnimator();
+        var spring = new SKAnimationSpring();
         spring.Stiffness = 200.0;
         spring.DampingRatio = 0.5;
         Assert.Equal(200.0, spring.Stiffness);

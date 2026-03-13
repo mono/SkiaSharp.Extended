@@ -8,14 +8,14 @@ namespace SkiaSharp.Extended.DeepZoom.Tests;
 
 public class CoverageBoostFinalTest
 {
-    // --- SpringAnimator: snap-to-target branch (lines 101-105) ---
+    // --- SKAnimationSpring: snap-to-target branch (lines 101-105) ---
 
     [Fact]
-    public void SpringAnimator_SnapToTarget_WhenNearlySettled()
+    public void SKAnimationSpring_SnapToTarget_WhenNearlySettled()
     {
         // Run the spring until nearly settled, then call Update once more
         // to trigger the IsSettled snap path at lines 78-83.
-        var spring = new SpringAnimator(0.0);
+        var spring = new SKAnimationSpring(0.0);
         spring.Target = 1.0;
 
         for (int i = 0; i < 10000; i++)
@@ -30,11 +30,11 @@ public class CoverageBoostFinalTest
     }
 
     [Fact]
-    public void SpringAnimator_SnapToTarget_SmallDisplacement()
+    public void SKAnimationSpring_SnapToTarget_SmallDisplacement()
     {
         // Start very close to target so the inner snap check (lines 101-105)
         // triggers within the physics step, before the outer IsSettled check.
-        var spring = new SpringAnimator(1.0 - 1e-9);
+        var spring = new SKAnimationSpring(1.0 - 1e-9);
         spring.Target = 1.0;
 
         // With displacement ~1e-9 and velocity 0, the first update should
@@ -135,12 +135,12 @@ public class CoverageBoostFinalTest
         client.Dispose();
     }
 
-    // --- SpringAnimator snap: verify exact snap after many iterations ---
+    // --- SKAnimationSpring snap: verify exact snap after many iterations ---
 
     [Fact]
-    public void SpringAnimator_LargeTarget_SnapsExactly()
+    public void SKAnimationSpring_LargeTarget_SnapsExactly()
     {
-        var spring = new SpringAnimator(0.0);
+        var spring = new SKAnimationSpring(0.0);
         spring.Target = 100.0;
 
         // Run many frames, then one more to trigger the snap via IsSettled
@@ -154,9 +154,9 @@ public class CoverageBoostFinalTest
     }
 
     [Fact]
-    public void SpringAnimator_NegativeTarget_SnapsExactly()
+    public void SKAnimationSpring_NegativeTarget_SnapsExactly()
     {
-        var spring = new SpringAnimator(0.0);
+        var spring = new SKAnimationSpring(0.0);
         spring.Target = -50.0;
 
         for (int i = 0; i < 20000; i++)

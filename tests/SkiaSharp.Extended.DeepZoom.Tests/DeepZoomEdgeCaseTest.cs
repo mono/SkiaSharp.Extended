@@ -14,7 +14,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Spring_VeryLargeDeltaTime_Clamped()
     {
-        var spring = new SpringAnimator();
+        var spring = new SKAnimationSpring();
         spring.Target = 1.0;
         spring.Update(100.0);
         Assert.InRange(spring.Current, 0.0, 1.1);
@@ -23,7 +23,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Spring_TargetEqualsCurrent_IsSettled()
     {
-        var spring = new SpringAnimator(5.0);
+        var spring = new SKAnimationSpring(5.0);
         spring.Target = 5.0;
         Assert.True(spring.IsSettled);
     }
@@ -31,7 +31,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Spring_SnapToTarget_Immediate()
     {
-        var spring = new SpringAnimator(0.0);
+        var spring = new SKAnimationSpring(0.0);
         spring.Target = 10.0;
         spring.SnapToTarget();
         Assert.Equal(10.0, spring.Current);
@@ -41,7 +41,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Spring_ChangingTarget_ConvergesToNew()
     {
-        var spring = new SpringAnimator(0.0);
+        var spring = new SKAnimationSpring(0.0);
         spring.Target = 1.0;
         spring.Update(0.01);
 
@@ -55,7 +55,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void Spring_StiffnessAndDamping_Clamp()
     {
-        var spring = new SpringAnimator();
+        var spring = new SKAnimationSpring();
         spring.Stiffness = -10;
         Assert.True(spring.Stiffness >= 0);
         spring.DampingRatio = -1;

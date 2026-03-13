@@ -1,8 +1,8 @@
 @page "/deepzoom"
 @implements IDisposable
 @inject HttpClient Http
-@using SkiaSharp.Extended
 @using SkiaSharp.Extended.DeepZoom
+@using SkiaSharpDemo.Blazor.Components
 
 <PageTitle>Deep Zoom</PageTitle>
 
@@ -16,17 +16,17 @@
 
 <div class="row mb-3">
     <div class="col-auto">
-        <button class="btn btn-outline-secondary btn-sm" @onclick="OnReset">Reset</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="OnZoomIn">Zoom In</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="OnZoomOut">Zoom Out</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="() => _view?.Reset()">Reset</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="() => _view?.ZoomIn()">Zoom In</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="() => _view?.ZoomOut()">Zoom Out</button>
     </div>
     <div class="col-auto d-flex align-items-center">
         <div class="form-check form-switch me-3">
-            <input class="form-check-input" type="checkbox" id="showBorders" @bind="showBorders" @bind:after="OnDebugChanged" />
+            <input class="form-check-input" type="checkbox" id="showBorders" @bind="showBorders" />
             <label class="form-check-label" for="showBorders">Tile Borders</label>
         </div>
         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="showStats" @bind="showStats" @bind:after="OnDebugChanged" />
+            <input class="form-check-input" type="checkbox" id="showStats" @bind="showStats" />
             <label class="form-check-label" for="showStats">Stats</label>
         </div>
     </div>
@@ -40,46 +40,22 @@
     <div class="alert alert-danger" role="alert">@errorMessage</div>
 }
 
-<div @onpointerdown="OnPointerDown"
-     @onpointermove="OnPointerMove"
-     @onpointerup="OnPointerUp"
-     @onpointercancel="OnPointerCancel"
-     @onwheel="OnWheel"
-     @onwheel:preventDefault
-     style="touch-action: none; cursor: grab; border: 1px solid #ccc; user-select: none;">
-    <SKCanvasView @ref="canvasView"
-                  OnPaintSurface="OnPaintSurface"
-                  style="width: 100%; height: 600px;" />
-</div>
+<SKDeepZoomView @ref="_view"
+                TileSource="@_tileSource"
+                Fetcher="@_fetcher"
+                ShowTileBorders="@showBorders"
+                ShowDebugStats="@showStats"
+                Style="height: 600px; border: 1px solid #ccc;" />
 
 @code {
-    private SKCanvasView? canvasView;
-    private SKDeepZoomController? controller;
-    private bool _suppressTransformSync;
-    private float _displayScale = 1f;
-
-    // The gesture tracker owns ALL gesture detection AND gesture animation:
-    // fling deceleration, double-tap zoom easing, scroll zoom — all via SKTimerAnimation.
-    // Data flow: pointer events → tracker → TransformChanged → controller.Viewport → Render
-    private readonly SKGestureTracker _tracker = new(new SKGestureTrackerOptions
-    {
-        IsRotateEnabled = false,
-        IsDoubleTapZoomEnabled = true,  // Tracker animates double-tap zoom via SKTimerAnimation
-        IsScrollZoomEnabled = true,     // Tracker handles scroll/wheel zoom
-        IsFlingEnabled = true,          // Tracker animates fling deceleration
-        MinScale = 1f,                  // Can't zoom out past the full image
-        MaxScale = 32f,                 // 32× zoom limit
-    });
+    private SKDeepZoomView? _view;
+    private ISKDeepZoomTileSource? _tileSource;
+    private ISKDeepZoomTileFetcher? _fetcher;
 
     private bool showBorders;
     private bool showStats;
     private string statusText = "Loading...";
     private string? errorMessage;
-
-    protected override void OnInitialized()
-    {
-        _tracker.TransformChanged += OnTrackerTransformChanged;
-    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -87,19 +63,12 @@
 
         try
         {
-            controller = new SKDeepZoomController();
-            controller.ImageOpenSucceeded += (_, _) => _tracker.Reset();
-            controller.InvalidateRequired += (_, _) => InvokeAsync(() => canvasView?.Invalidate());
-
             var dziXml = await Http.GetStringAsync("deepzoom/testgrid.dzi");
             var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/testgrid_files/").ToString();
-            var tileSource = SKDeepZoomImageSource.Parse(dziXml, baseUrl);
+            _tileSource = SKDeepZoomImageSource.Parse(dziXml, baseUrl);
+            _fetcher = new SKDeepZoomHttpTileFetcher(new HttpClient());
 
-            var fetcher = new SKDeepZoomHttpTileFetcher(new HttpClient());
-            controller.Load(tileSource, fetcher);
-
-            statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}, {tileSource.MaxLevel + 1} levels";
-
+            statusText = $"{_tileSource.ImageWidth}×{_tileSource.ImageHeight}, {_tileSource.MaxLevel + 1} levels";
             await InvokeAsync(StateHasChanged);
         }
         catch (Exception ex)
@@ -109,117 +78,9 @@
         }
     }
 
-    // ── Tracker → Viewport sync ────────────────────────────────────────────
-
-    private void OnTrackerTransformChanged(object? sender, EventArgs e)
-    {
-        if (_suppressTransformSync || controller == null) return;
-
-        var controlW = controller.Viewport.ControlWidth;
-        if (controlW <= 0)
-        {
-            InvokeAsync(() => canvasView?.Invalidate());
-            return;
-        }
-
-        // Translate tracker (scale + pixel offset) → deep zoom viewport (logical coordinates)
-        double scale = _tracker.Scale;
-        controller.Viewport.ViewportWidth = 1.0 / scale;
-        controller.Viewport.ViewportOriginX = -_tracker.Offset.X / (controlW * scale);
-        controller.Viewport.ViewportOriginY = -_tracker.Offset.Y / (controlW * scale);
-        controller.Viewport.Constrain();
-
-        // Sync tracker back to the (possibly constrained) viewport
-        SyncTrackerFromViewport();
-
-        InvokeAsync(() => canvasView?.Invalidate());
-    }
-
-    private void SyncTrackerFromViewport()
-    {
-        if (controller == null) return;
-        var vp = controller.Viewport;
-        float newScale = (float)(1.0 / vp.ViewportWidth);
-        float offsetX = (float)(-vp.ViewportOriginX * vp.ControlWidth * newScale);
-        float offsetY = (float)(-vp.ViewportOriginY * vp.ControlWidth * newScale);
-
-        _suppressTransformSync = true;
-        _tracker.SetTransform(newScale, 0f, new SKPoint(offsetX, offsetY));
-        _suppressTransformSync = false;
-    }
-
-    // ── Rendering ─────────────────────────────────────────────────────────
-
-    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
-    {
-        if (controller == null) return;
-
-        var info = e.Info;
-        const float expectedCssHeight = 600f;
-        _displayScale = info.Height / expectedCssHeight;
-
-        controller.SetControlSize(info.Width, info.Height);
-        controller.Update();
-        e.Surface.Canvas.Clear(SKColors.White);
-        controller.Render(e.Surface.Canvas);
-    }
-
-    // ── Pointer Events ─────────────────────────────────────────────────────
-
-    private void OnPointerDown(PointerEventArgs e)
-        => _tracker.ProcessTouchDown(e.PointerId, GetCanvasLocation(e), e.PointerType == "mouse");
-
-    private void OnPointerMove(PointerEventArgs e)
-        => _tracker.ProcessTouchMove(e.PointerId, GetCanvasLocation(e), e.Buttons > 0 || e.PointerType != "mouse");
-
-    private void OnPointerUp(PointerEventArgs e)
-        => _tracker.ProcessTouchUp(e.PointerId, GetCanvasLocation(e), e.PointerType == "mouse");
-
-    private void OnPointerCancel(PointerEventArgs e)
-        => _tracker.ProcessTouchCancel(e.PointerId);
-
-    private void OnWheel(WheelEventArgs e)
-    {
-        var location = new SKPoint((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
-        var deltaY = e.DeltaY < 0 ? 1f : -1f;
-        _tracker.ProcessMouseWheel(location, 0, deltaY);
-    }
-
-    private SKPoint GetCanvasLocation(PointerEventArgs e)
-        => new SKPoint((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
-
-    // ── Buttons ────────────────────────────────────────────────────────────
-
-    private void OnReset() => _tracker.Reset();
-
-    private void OnZoomIn()
-    {
-        if (controller == null) return;
-        var cx = (float)(controller.Viewport.ControlWidth / 2);
-        var cy = (float)(controller.Viewport.ControlHeight / 2);
-        _tracker.ZoomTo(2f, new SKPoint(cx, cy));
-    }
-
-    private void OnZoomOut()
-    {
-        if (controller == null) return;
-        var cx = (float)(controller.Viewport.ControlWidth / 2);
-        var cy = (float)(controller.Viewport.ControlHeight / 2);
-        _tracker.ZoomTo(0.5f, new SKPoint(cx, cy));
-    }
-
-    private void OnDebugChanged()
-    {
-        if (controller == null) return;
-        controller.ShowTileBorders = showBorders;
-        controller.ShowDebugStats = showStats;
-        canvasView?.Invalidate();
-    }
-
     public void Dispose()
     {
-        _tracker.TransformChanged -= OnTrackerTransformChanged;
-        _tracker.Dispose();
-        controller?.Dispose();
+        (_fetcher as IDisposable)?.Dispose();
     }
 }
+

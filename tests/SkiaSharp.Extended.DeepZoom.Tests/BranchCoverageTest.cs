@@ -184,37 +184,6 @@ public class BranchCoverageTest
         Assert.NotEqual(origX, vp.ViewportOriginX);
     }
 
-    // --- ViewportSpring edge cases ---
-
-    [Fact]
-    public void ViewportSpring_SnapToTarget()
-    {
-        var spring = new ViewportSpring();
-        spring.SetTarget(0.25, 0.15, 0.5);
-        spring.SnapToTarget();
-
-        Assert.Equal(0.5, spring.Width.Current);
-        Assert.Equal(0.25, spring.OriginX.Current);
-        Assert.Equal(0.15, spring.OriginY.Current);
-    }
-
-    [Fact]
-    public void ViewportSpring_IsSettled_WhenAtTarget()
-    {
-        var spring = new ViewportSpring();
-        spring.SetTarget(0.0, 0.0, 1.0);
-        spring.SnapToTarget();
-        Assert.True(spring.IsSettled);
-    }
-
-    [Fact]
-    public void ViewportSpring_NotSettled_WhenMoving()
-    {
-        var spring = new ViewportSpring();
-        spring.SetTarget(0.25, 0.15, 0.5);
-        Assert.False(spring.IsSettled);
-    }
-
     // --- SKDeepZoomTileScheduler edge cases ---
 
     [Fact]
