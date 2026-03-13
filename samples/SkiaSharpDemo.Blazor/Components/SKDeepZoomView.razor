@@ -31,8 +31,8 @@
 
     // ── Parameters ─────────────────────────────────────────────────────────
 
-    /// <summary>Tile source loaded from a .dzi or .dzc file. Set after calling Load().</summary>
-    [Parameter] public ISKDeepZoomTileSource? TileSource { get; set; }
+    /// <summary>Tile source loaded from a .dzi file. Set after calling Load().</summary>
+    [Parameter] public SKDeepZoomImageSource? TileSource { get; set; }
 
     /// <summary>Fetcher used to retrieve tiles. Set together with TileSource.</summary>
     [Parameter] public ISKDeepZoomTileFetcher? Fetcher { get; set; }
@@ -42,12 +42,6 @@
 
     /// <summary>Show a debug statistics overlay.</summary>
     [Parameter] public bool ShowDebugStats { get; set; }
-
-    /// <summary>Raised when the image is loaded successfully. Argument is "Width×Height, N levels".</summary>
-    [Parameter] public EventCallback<string> OnImageLoaded { get; set; }
-
-    /// <summary>Raised when the image fails to load.</summary>
-    [Parameter] public EventCallback<string> OnImageError { get; set; }
 
     /// <summary>Additional CSS to apply to the container div (e.g. "height: 600px; border: 1px solid #ccc;").</summary>
     [Parameter] public string? Style { get; set; }
@@ -87,7 +81,7 @@
     // ── Public API ─────────────────────────────────────────────────────────
 
     /// <summary>Load a tile source and start rendering.</summary>
-    public void Load(ISKDeepZoomTileSource tileSource, ISKDeepZoomTileFetcher fetcher)
+    public void Load(SKDeepZoomImageSource tileSource, ISKDeepZoomTileFetcher fetcher)
     {
         _controller?.Load(tileSource, fetcher);
     }
