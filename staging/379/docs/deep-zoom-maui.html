@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Deep Zoom for MAUI | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Deep Zoom for MAUI | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-maui.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="deep-zoom-for-maui">Deep Zoom for MAUI</h1>
+
+<p>Use <code>SKDeepZoomController</code> with a plain <code>SKCanvasView</code> to render Deep Zoom images in .NET MAUI. There is no custom control — you wire the services directly to the canvas, which keeps the integration minimal and transparent.</p>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="xaml">XAML</h3>
+<p>Add a <code>SKCanvasView</code> to your page:</p>
+<pre><code class="lang-xml">&lt;ContentPage xmlns=&quot;http://schemas.microsoft.com/dotnet/2021/maui&quot;
+             xmlns:x=&quot;http://schemas.microsoft.com/winfx/2009/xaml&quot;
+             xmlns:skia=&quot;clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls&quot;
+             x:Class=&quot;MyApp.DeepZoomPage&quot;
+             Title=&quot;Deep Zoom&quot;&gt;
+
+    &lt;skia:SKCanvasView x:Name=&quot;canvas&quot; PaintSurface=&quot;OnPaintSurface&quot; /&gt;
+
+&lt;/ContentPage&gt;
+</code></pre>
+<h3 id="code-behind">Code-Behind</h3>
+<pre><code class="lang-csharp">using SkiaSharp;
+using SkiaSharp.Extended.DeepZoom;
+using SkiaSharp.Views.Maui;
+
+public partial class DeepZoomPage : ContentPage
+{
+    private readonly SKDeepZoomController _controller = new();
+
+    public DeepZoomPage()
+    {
+        InitializeComponent();
+        _controller.InvalidateRequired += (_, _) =&gt; canvas.InvalidateSurface();
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        LoadAsync();
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _controller.Dispose();
+    }
+
+    private async void LoadAsync()
+    {
+        // Load a .dzi bundled as a MAUI app-package asset
+        using var stream = await FileSystem.OpenAppPackageFileAsync(&quot;image.dzi&quot;);
+        using var reader = new StreamReader(stream);
+        var xml = await reader.ReadToEndAsync();
+
+        var tileSource = SKDeepZoomImageSource.Parse(xml, &quot;image_files/&quot;);
+        _controller.Load(tileSource, new AppPackageFetcher());
+        canvas.InvalidateSurface();
+    }
+
+    private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
+    {
+        _controller.SetControlSize(e.Info.Width, e.Info.Height);
+        _controller.Update();
+        _controller.Render(e.Surface.Canvas);
+    }
+}
+</code></pre>
+<h2 id="app-package-tile-fetcher">App-Package Tile Fetcher</h2>
+<p>When tiles are bundled as MAUI assets, implement <code>ISKDeepZoomTileFetcher</code> to read them via <code>FileSystem.OpenAppPackageFileAsync</code>:</p>
+<pre><code class="lang-csharp">public sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
+{
+    public async Task&lt;SKBitmap?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    {
+        try
+        {
+            using var stream = await FileSystem.OpenAppPackageFileAsync(url);
+            return SKBitmap.Decode(stream);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public void Dispose() { }
+}
+</code></pre>
+<p>Include the <code>.dzi</code> and tile folder in the project file:</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+    &lt;MauiAsset Include=&quot;Assets\image.dzi&quot;               LogicalName=&quot;image.dzi&quot; /&gt;
+    &lt;MauiAsset Include=&quot;Assets\image_files\**&quot;          LogicalName=&quot;image_files/%(RecursiveDir)%(Filename)%(Extension)&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<h2 id="http-tile-fetcher">HTTP Tile Fetcher</h2>
+<p>For remote images, use the built-in <code>SKDeepZoomHttpTileFetcher</code>:</p>
+<pre><code class="lang-csharp">var httpClient = new HttpClient();
+var fetcher    = new SKDeepZoomHttpTileFetcher(httpClient);
+
+var xml        = await httpClient.GetStringAsync(&quot;https://example.com/image.dzi&quot;);
+var tileSource = SKDeepZoomImageSource.Parse(xml, &quot;https://example.com/image_files/&quot;);
+
+_controller.Load(tileSource, fetcher);
+</code></pre>
+<h2 id="rendering-behaviour">Rendering Behaviour</h2>
+<ul>
+<li><strong>Fit and center</strong>: On load the controller fits the full image into the canvas with <code>FitToView()</code>. The image is centered horizontally and vertically; neither cropping nor distortion occurs.</li>
+<li><strong>Tile resolution</strong>: <code>Update()</code> selects the pyramid level that best matches the physical pixel size of the canvas. Only tiles visible in the current viewport are fetched.</li>
+<li><strong>Tile blending</strong>: While high-resolution tiles load, lower-resolution tiles from the parent level are upscaled and composited as a placeholder (LOD blending).</li>
+</ul>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="deep-zoom.html">Deep Zoom overview</a> — architecture, services, and API reference</li>
+<li><a href="deep-zoom-blazor.html">Deep Zoom for Blazor</a> — Blazor WebAssembly integration</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-maui.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #379 · 9f735f1
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
