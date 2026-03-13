@@ -2,85 +2,81 @@
 @implements IDisposable
 @inject HttpClient Http
 @using SkiaSharp.Extended.DeepZoom
-@using SkiaSharpDemo.Blazor.Components
 
 <PageTitle>Deep Zoom</PageTitle>
 
 <h1>Deep Zoom</h1>
 
 <p>
-    Pan, zoom, and explore a tiled deep zoom image powered by
-    <code>SKDeepZoomController</code> from the shared core library.
-    Use mouse wheel to zoom, click and drag to pan, double-click to zoom in/out.
+    A gigapixel-capable image viewer powered by <code>SKDeepZoomController</code>.
+    Tiles are loaded on demand at the resolution that best matches the canvas size.
+    The image is rendered centered and scaled to fit.
 </p>
 
-<div class="row mb-3">
-    <div class="col-auto">
-        <button class="btn btn-outline-secondary btn-sm" @onclick="() => _view?.Reset()">Reset</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="() => _view?.ZoomIn()">Zoom In</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="() => _view?.ZoomOut()">Zoom Out</button>
-    </div>
-    <div class="col-auto d-flex align-items-center">
-        <div class="form-check form-switch me-3">
-            <input class="form-check-input" type="checkbox" id="showBorders" @bind="showBorders" />
-            <label class="form-check-label" for="showBorders">Tile Borders</label>
-        </div>
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="showStats" @bind="showStats" />
-            <label class="form-check-label" for="showStats">Stats</label>
-        </div>
-    </div>
-    <div class="col-auto d-flex align-items-center">
-        <small class="text-muted">@statusText</small>
-    </div>
-</div>
-
-@if (errorMessage != null)
+@if (_statusText != null)
 {
-    <div class="alert alert-danger" role="alert">@errorMessage</div>
+    <p class="text-muted"><small>@_statusText</small></p>
 }
 
-<SKDeepZoomView @ref="_view"
-                TileSource="@_tileSource"
-                Fetcher="@_fetcher"
-                ShowTileBorders="@showBorders"
-                ShowDebugStats="@showStats"
-                Style="height: 600px; border: 1px solid #ccc;" />
+@if (_errorMessage != null)
+{
+    <div class="alert alert-danger" role="alert">@_errorMessage</div>
+}
+
+<SKCanvasView @ref="_canvas"
+              OnPaintSurface="OnPaintSurface"
+              style="width: 100%; height: 600px; border: 1px solid #ccc;" />
 
 @code {
-    private SKDeepZoomView? _view;
-    private SKDeepZoomImageSource? _tileSource;
-    private ISKDeepZoomTileFetcher? _fetcher;
-
-    private bool showBorders;
-    private bool showStats;
-    private string statusText = "Loading...";
-    private string? errorMessage;
+    private SKCanvasView? _canvas;
+    private SKDeepZoomController? _controller;
+    private string? _statusText;
+    private string? _errorMessage;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
 
+        _controller = new SKDeepZoomController();
+        _controller.InvalidateRequired += OnInvalidateRequired;
+
         try
         {
             var dziXml = await Http.GetStringAsync("deepzoom/testgrid.dzi");
             var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/testgrid_files/").ToString();
-            _tileSource = SKDeepZoomImageSource.Parse(dziXml, baseUrl);
-            _fetcher = new SKDeepZoomHttpTileFetcher(new HttpClient());
+            var tileSource = SKDeepZoomImageSource.Parse(dziXml, baseUrl);
 
-            statusText = $"{_tileSource.ImageWidth}×{_tileSource.ImageHeight}, {_tileSource.MaxLevel + 1} levels";
-            await InvokeAsync(StateHasChanged);
+            _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new HttpClient()));
+
+            _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
         }
         catch (Exception ex)
         {
-            errorMessage = $"Failed to load: {ex.Message}";
-            await InvokeAsync(StateHasChanged);
+            _errorMessage = $"Failed to load: {ex.Message}";
         }
+
+        await InvokeAsync(StateHasChanged);
     }
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        if (_controller == null) return;
+
+        _controller.SetControlSize(e.Info.Width, e.Info.Height);
+        _controller.Update();
+        _controller.Render(e.Surface.Canvas);
+    }
+
+    private void OnInvalidateRequired(object? sender, EventArgs e)
+        => InvokeAsync(() => _canvas?.Invalidate());
 
     public void Dispose()
     {
-        (_fetcher as IDisposable)?.Dispose();
+        if (_controller != null)
+        {
+            _controller.InvalidateRequired -= OnInvalidateRequired;
+            _controller.Dispose();
+        }
     }
 }
 

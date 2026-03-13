@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:dz="clr-namespace:SkiaSharp.Extended.UI.Maui.DeepZoom;assembly=SkiaSharp.Extended.UI.Maui.DeepZoom"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
              x:Class="SkiaSharpDemo.Demos.DeepZoomPage"
              Title="Deep Zoom">
 
     <Grid RowDefinitions="Auto,*">
-        <HorizontalStackLayout Grid.Row="0" Spacing="8" Padding="8" BackgroundColor="#333">
-            <Label x:Name="statusLabel" Text="Loading..." TextColor="White" VerticalOptions="Center" />
-            <Button Text="Reset" Clicked="OnReset" BackgroundColor="#555" TextColor="White" />
-            <Button Text="+" Clicked="OnZoomIn" BackgroundColor="#555" TextColor="White" WidthRequest="40" />
-            <Button Text="−" Clicked="OnZoomOut" BackgroundColor="#555" TextColor="White" WidthRequest="40" />
-            <Switch x:Name="debugSwitch" IsToggled="False" Toggled="OnDebugToggled" />
-            <Label Text="Borders" TextColor="White" VerticalOptions="Center" />
-            <Switch x:Name="statsSwitch" IsToggled="False" Toggled="OnStatsToggled" />
-            <Label Text="Stats" TextColor="White" VerticalOptions="Center" />
-        </HorizontalStackLayout>
+        <Label x:Name="statusLabel"
+               Grid.Row="0"
+               Text="Loading..."
+               Padding="12,8"
+               BackgroundColor="#333"
+               TextColor="White" />
 
-        <dz:SKDeepZoomView x:Name="deepZoomView" Grid.Row="1" />
+        <skia:SKCanvasView x:Name="canvas"
+                           Grid.Row="1"
+                           PaintSurface="OnPaintSurface" />
     </Grid>
 
 </ContentPage>

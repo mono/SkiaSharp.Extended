@@ -1,36 +1,50 @@
 using SkiaSharp;
 using SkiaSharp.Extended.DeepZoom;
-using SkiaSharp.Extended.UI.Maui.DeepZoom;
+using SkiaSharp.Views.Maui;
 
 namespace SkiaSharpDemo.Demos;
 
 public partial class DeepZoomPage : ContentPage
 {
+    private SKDeepZoomController? _controller;
+
     public DeepZoomPage()
     {
         InitializeComponent();
-        LoadTestGrid();
     }
 
-    private async void LoadTestGrid()
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        _controller = new SKDeepZoomController();
+        _controller.InvalidateRequired += (_, _) => canvas.InvalidateSurface();
+
+        LoadAsync();
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _controller?.Dispose();
+        _controller = null;
+    }
+
+    private async void LoadAsync()
     {
         try
         {
-            statusLabel.Text = "Loading test DZI...";
+            statusLabel.Text = "Loading...";
 
             using var dziStream = await FileSystem.OpenAppPackageFileAsync("TestGrid/testgrid.dzi");
             using var reader = new StreamReader(dziStream);
             var dziXml = await reader.ReadToEndAsync();
 
-            var tileBase = "asset://TestGrid/testgrid_files/";
-            var tileSource = SKDeepZoomImageSource.Parse(dziXml, tileBase);
+            var tileSource = SKDeepZoomImageSource.Parse(dziXml, "TestGrid/testgrid_files/");
+            _controller?.Load(tileSource, new AppPackageFetcher());
 
-            deepZoomView.ShowTileBorders = debugSwitch.IsToggled;
-            deepZoomView.ShowDebugStats = statsSwitch.IsToggled;
-            deepZoomView.Load(tileSource, new AppPackageTileFetcher());
-
-            statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}, " +
-                $"{tileSource.MaxLevel + 1} levels";
+            statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
+            canvas.InvalidateSurface();
         }
         catch (Exception ex)
         {
@@ -38,29 +52,28 @@ public partial class DeepZoomPage : ContentPage
         }
     }
 
-    private void OnReset(object? sender, EventArgs e) => deepZoomView.ResetView();
-    private void OnZoomIn(object? sender, EventArgs e) => deepZoomView.ZoomAboutLogicalPoint(2.0, 0.5, 0.5);
-    private void OnZoomOut(object? sender, EventArgs e) => deepZoomView.ZoomAboutLogicalPoint(0.5, 0.5, 0.5);
-    private void OnDebugToggled(object? sender, ToggledEventArgs e) => deepZoomView.ShowTileBorders = e.Value;
-    private void OnStatsToggled(object? sender, ToggledEventArgs e) => deepZoomView.ShowDebugStats = e.Value;
-
-    protected override void OnDisappearing()
+    private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
     {
-        base.OnDisappearing();
-        deepZoomView.Dispose();
+        if (_controller == null) return;
+        _controller.SetControlSize(e.Info.Width, e.Info.Height);
+        _controller.Update();
+        _controller.Render(e.Surface.Canvas);
     }
 
-    private class AppPackageTileFetcher : ISKDeepZoomTileFetcher
+    // Fetches tiles bundled as MAUI app-package assets.
+    private sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
     {
         public async Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
         {
             try
             {
-                var path = url.Replace("asset://", "");
-                using var stream = await FileSystem.OpenAppPackageFileAsync(path);
+                using var stream = await FileSystem.OpenAppPackageFileAsync(url);
                 return SKBitmap.Decode(stream);
             }
-            catch { return null; }
+            catch
+            {
+                return null;
+            }
         }
 
         public void Dispose() { }
