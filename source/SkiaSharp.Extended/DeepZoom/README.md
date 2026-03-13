@@ -113,14 +113,13 @@ classDiagram
         +int Id
         +int MortonIndex
         +double AspectRatio
-        +SKDeepZoomImageSource Source
+        +string? Source
         +double ViewportWidth
         +double ViewportOriginX
         +double ViewportOriginY
     }
 
     SKDeepZoomCollectionSource "1" --> "*" SKDeepZoomCollectionSubImage
-    SKDeepZoomCollectionSubImage --> SKDeepZoomImageSource
 ```
 
 ### 2 — Tile Infrastructure
@@ -139,7 +138,7 @@ flowchart LR
 
     subgraph "Scheduling"
         S["SKDeepZoomTileScheduler"]
-        TR["SKDeepZoomTileRequest\n{TileId, IsFallback, FallbackParent}"]
+        TR["SKDeepZoomTileRequest\n{TileId, Priority}"]
         TI["SKDeepZoomTileId\n{Level, Col, Row}"]
         S --> TR
         TR --> TI
