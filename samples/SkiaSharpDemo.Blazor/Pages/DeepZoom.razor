@@ -79,7 +79,7 @@
                     var levelH = lvlSrc.GetLevelHeight(optLevel);
                     // Tile logical width = tileSize / levelWidth; screen pixels = logical * scale
                     double tilePxW = lvlSrc.TileSize * vp2.Scale / levelW;
-                    double tilePxH = lvlSrc.TileSize * vp2.Scale / levelH * lvlSrc.AspectRatio;
+                    double tilePxH = lvlSrc.TileSize * vp2.Scale / levelH / lvlSrc.AspectRatio;
                     bool atMax = optLevel == lvlSrc.MaxLevel;
                     double nativeZoom = (double)lvlSrc.ImageWidth / vp2.ControlWidth;
 
