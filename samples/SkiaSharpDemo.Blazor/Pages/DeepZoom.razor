@@ -80,19 +80,20 @@
                     // Tile logical width = tileSize / levelWidth; screen pixels = logical * scale
                     double tilePxW = lvlSrc.TileSize * vp2.Scale / levelW;
                     double tilePxH = lvlSrc.TileSize * vp2.Scale / levelH / lvlSrc.AspectRatio;
-                    bool atMax = optLevel == lvlSrc.MaxLevel;
                     double nativeZoom = (double)lvlSrc.ImageWidth / vp2.ControlWidth;
+                    // Show warning only when zoom exceeds native 1:1 — i.e. tiles are being upscaled
+                    bool isUpscaling = optLevel >= lvlSrc.MaxLevel && vp2.Zoom > nativeZoom;
 
                     <section>
                         <h4>Level Selection</h4>
                         <dl>
-                            <dt>Current level</dt><dd>@optLevel / @lvlSrc.MaxLevel @(atMax ? "⚠️" : "")</dd>
+                            <dt>Current level</dt><dd>@optLevel / @lvlSrc.MaxLevel @(isUpscaling ? "⚠️" : "")</dd>
                             <dt>Level dims</dt><dd>@levelW × @levelH px</dd>
                             <dt>Tile actual size</dt><dd>@lvlSrc.TileSize × @lvlSrc.TileSize px</dd>
                             <dt>Tile on screen</dt><dd>@tilePxW.ToString("F1") × @tilePxH.ToString("F1") px</dd>
                             <dt>Native 1:1 zoom</dt><dd>≈ @nativeZoom.ToString("F2")×</dd>
                         </dl>
-                        @if (atMax)
+                        @if (isUpscaling)
                         {
                             <p class="dz-muted">⚠️ Max detail — level @lvlSrc.MaxLevel (@levelW×@levelH) is native resolution. Zooming further upscales tiles.</p>
                         }
