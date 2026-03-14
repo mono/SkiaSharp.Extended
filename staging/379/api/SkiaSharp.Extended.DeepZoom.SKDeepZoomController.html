@@ -268,13 +268,14 @@ Resets the viewport to show the full image.</p>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ResetView.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_ResetView">ResetView()</a></dt>
-    <dd><p>Resets the viewport to show the entire image.</p>
+    <dd><p>Resets the viewport to show the entire image and clears the manual-zoom flag.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetControlSize.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_SetControlSize_System_Double_System_Double_">SetControlSize(double, double)</a></dt>
     <dd><p>Sets the control (canvas) size. Call whenever the canvas is resized.
-When a source is loaded, automatically refits the viewport to the new size.</p>
+When a source is loaded and the user has not manually zoomed, automatically
+refits the viewport so the image remains fully visible in the new size.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -355,7 +356,7 @@ Call from your render loop on every frame.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 351fc26
+          source: PR #379 · 9cf2136
         </div>
       </div>
     </footer>

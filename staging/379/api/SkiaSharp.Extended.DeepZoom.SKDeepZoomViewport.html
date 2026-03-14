@@ -243,8 +243,7 @@ the image is centered within the viewport.</p>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.FitToView.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_FitToView">FitToView()</a></dt>
     <dd><p>Sets the viewport to &quot;fit&quot; mode — the entire image is visible and centered.
-Also sets <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.MaxViewportWidth.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_MaxViewportWidth">MaxViewportWidth</a> to the computed fit width so the user
-cannot zoom out further than this.</p>
+Does not alter <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.MaxViewportWidth.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_MaxViewportWidth">MaxViewportWidth</a>; callers may zoom out past fit.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -306,7 +305,7 @@ This is the core zoom algorithm from Silverlight's MultiScaleImage.ZoomAboutLogi
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 351fc26
+          source: PR #379 · 9cf2136
         </div>
       </div>
     </footer>
