@@ -34,25 +34,29 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>false</IsTestProject>
 
-    <!-- Git branch baked into the assembly so the app fetches tiles from the correct branch.
-         Auto-detected from git at build time; overridden by CI via -p:GitBranch="..." -->
+    <!-- Git branch default; auto-detected or overridden by CI via -p:GitBranch="..." -->
     <GitBranch Condition="'$(GitBranch)' == ''">main</GitBranch>
   </PropertyGroup>
 
-  <Target Name="DetectGitBranch" BeforeTargets="BeforeBuild" Condition="'$(GitBranch)' == 'main'">
-    <Exec Command="git rev-parse --abbrev-ref HEAD" ConsoleToMSBuild="true" IgnoreExitCode="true">
+  <Target Name="DetectAndWriteGitBranch" BeforeTargets="CoreCompile">
+    <!-- Auto-detect branch from git when not explicitly provided -->
+    <Exec Command="git rev-parse --abbrev-ref HEAD" ConsoleToMSBuild="true" IgnoreExitCode="true"
+          Condition="'$(GitBranch)' == 'main'">
       <Output TaskParameter="ConsoleOutput" PropertyName="GitBranch" />
     </Exec>
+    <!-- Detached HEAD (e.g. shallow CI checkout) produces 'HEAD' — fall back to main -->
+    <PropertyGroup Condition="'$(GitBranch)' == 'HEAD' Or '$(GitBranch)' == ''">
+      <GitBranch>main</GitBranch>
+    </PropertyGroup>
+    <!-- Write a source file with the branch as a compile-time constant -->
+    <WriteLinesToFile
+      File="$(IntermediateOutputPath)GitBranchInfo.cs"
+      Lines="// Auto-generated — do not edit%0Ausing System.Reflection%3B%0A[assembly: AssemblyMetadata(&quot;GitBranch&quot;, &quot;$(GitBranch)&quot;)]"
+      Overwrite="true" />
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)GitBranchInfo.cs" />
+    </ItemGroup>
   </Target>
-
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
-      <_Parameter1>GitBranch</_Parameter1>
-      <_Parameter2>$(GitBranch)</_Parameter2>
-    </AssemblyAttribute>
-  </ItemGroup>
-
-  <PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="HarfBuzzSharp" Version="8.3.0.1" />
