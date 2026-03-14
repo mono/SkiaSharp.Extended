@@ -33,7 +33,26 @@
     <!-- Do not make NuGet packages or include in tests -->
     <IsPackable>false</IsPackable>
     <IsTestProject>false</IsTestProject>
+
+    <!-- Git branch baked into the assembly so the app fetches tiles from the correct branch.
+         Auto-detected from git at build time; overridden by CI via -p:GitBranch="..." -->
+    <GitBranch Condition="'$(GitBranch)' == ''">main</GitBranch>
   </PropertyGroup>
+
+  <Target Name="DetectGitBranch" BeforeTargets="BeforeBuild" Condition="'$(GitBranch)' == 'main'">
+    <Exec Command="git rev-parse --abbrev-ref HEAD" ConsoleToMSBuild="true" IgnoreExitCode="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitBranch" />
+    </Exec>
+  </Target>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>GitBranch</_Parameter1>
+      <_Parameter2>$(GitBranch)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="HarfBuzzSharp" Version="8.3.0.1" />

@@ -1,15 +1,24 @@
 using SkiaSharp;
 using SkiaSharp.Extended.DeepZoom;
 using SkiaSharp.Views.Maui;
+using System.Reflection;
 
 namespace SkiaSharpDemo.Demos;
 
 public partial class DeepZoomPage : ContentPage
 {
-    private const string DziUrl =
-        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid.dzi";
-    private const string TilesBaseUrl =
-        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid_files/";
+    // Branch is baked into the assembly at build time so PR builds fetch
+    // tiles from their own branch rather than always from main.
+    private static readonly string GitBranch =
+        typeof(DeepZoomPage).Assembly
+            .GetCustomAttributes<AssemblyMetadataAttribute>()
+            .FirstOrDefault(a => a.Key == "GitBranch")?.Value ?? "main";
+
+    private static string RawBase =>
+        $"https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/{GitBranch}/resources/collections/testgrid";
+
+    private static string DziUrl     => $"{RawBase}/testgrid.dzi";
+    private static string TilesBaseUrl => $"{RawBase}/testgrid_files/";
 
     private SKDeepZoomController? _controller;
 
