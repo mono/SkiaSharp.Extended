@@ -3,7 +3,6 @@
 @inject HttpClient Http
 @inject IJSRuntime JS
 @using SkiaSharp.Extended.DeepZoom
-@using System.Reflection
 
 <PageTitle>Deep Zoom</PageTitle>
 
@@ -237,12 +236,24 @@
 </style>
 
 @code {
-    // Resolve the git branch baked into the assembly at build time, so PR builds
-    // fetch tiles from their own branch rather than always using main.
-    private static readonly string GitBranch =
-        typeof(DeepZoom).Assembly
-            .GetCustomAttributes<System.Reflection.AssemblyMetadataAttribute>()
-            .FirstOrDefault(a => a.Key == "GitBranch")?.Value ?? "main";
+    // Read the branch from the embedded build-info.json generated at build time.
+    // Priority: explicit MSBuild property → GitHub Actions env vars → AzDO env vars → local git → main
+    private static readonly string GitBranch = ReadBuildBranch();
+
+    private static string ReadBuildBranch()
+    {
+        try
+        {
+            var asm = typeof(DeepZoom).Assembly;
+            using var stream = asm.GetManifestResourceStream("build-info.json");
+            if (stream == null) return "main";
+            using var reader = new StreamReader(stream);
+            var json = reader.ReadToEnd();
+            var doc = System.Text.Json.JsonDocument.Parse(json);
+            return doc.RootElement.GetProperty("branch").GetString() ?? "main";
+        }
+        catch { return "main"; }
+    }
 
     private static string RawBase =>
         $"https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/{GitBranch}/resources/collections/testgrid";
