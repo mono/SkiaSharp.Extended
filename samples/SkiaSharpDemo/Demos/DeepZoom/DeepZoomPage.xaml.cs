@@ -19,7 +19,7 @@ public partial class DeepZoomPage : ContentPage
             if (stream == null) return "main";
             using var reader = new System.IO.StreamReader(stream);
             var json = reader.ReadToEnd();
-            var doc = System.Text.Json.JsonDocument.Parse(json);
+            using var doc = System.Text.Json.JsonDocument.Parse(json);
             return doc.RootElement.GetProperty("branch").GetString() ?? "main";
         }
         catch { return "main"; }

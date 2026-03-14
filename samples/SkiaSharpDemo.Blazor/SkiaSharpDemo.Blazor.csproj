@@ -35,7 +35,12 @@
       <GitBranch>$(GITHUB_REF_NAME)</GitBranch>
     </PropertyGroup>
 
-    <!-- Priority 4: Azure DevOps (strip refs/heads/ prefix) -->
+    <!-- Priority 4a: Azure DevOps PR source branch (BUILD_SOURCEBRANCH is refs/pull/N/merge on PRs) -->
+    <PropertyGroup Condition="'$(GitBranch)' == 'main' And '$(SYSTEM_PULLREQUEST_SOURCEBRANCH)' != ''">
+      <GitBranch>$(SYSTEM_PULLREQUEST_SOURCEBRANCH.Replace('refs/heads/', ''))</GitBranch>
+    </PropertyGroup>
+
+    <!-- Priority 4b: Azure DevOps push (strip refs/heads/ prefix) -->
     <PropertyGroup Condition="'$(GitBranch)' == 'main' And '$(BUILD_SOURCEBRANCH)' != ''">
       <GitBranch>$(BUILD_SOURCEBRANCH.Replace('refs/heads/', ''))</GitBranch>
     </PropertyGroup>
@@ -54,7 +59,7 @@
     <!-- Write embedded JSON config -->
     <WriteLinesToFile
       File="$(IntermediateOutputPath)build-info.json"
-      Lines='{"branch":"$(GitBranch)","buildInfo":"$(BuildInfo)"}'
+      Lines='{"branch":"$(GitBranch)"}'
       Overwrite="true" />
     <ItemGroup>
       <EmbeddedResource Include="$(IntermediateOutputPath)build-info.json" LogicalName="build-info.json" />
