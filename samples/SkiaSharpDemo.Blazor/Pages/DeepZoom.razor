@@ -24,7 +24,12 @@
          @onmousedown="OnMouseDown"
          @onmousemove="OnMouseMove"
          @onmouseup="OnMouseUp"
-         @onmouseleave="OnMouseUp">
+         @onmouseleave="OnMouseUp"
+         @ontouchstart="OnTouchStart"
+         @ontouchmove="OnTouchMove"
+         @ontouchend="OnTouchEnd"
+         @ontouchstart:preventDefault
+         @ontouchmove:preventDefault>
         @if (_statusText != null)
         {
             <div class="dz-status">@_statusText</div>
@@ -425,6 +430,33 @@
     }
 
     private void OnMouseUp(MouseEventArgs e)
+    {
+        _isDragging = false;
+    }
+
+    // --- Touch pan (mobile) ---
+    private void OnTouchStart(TouchEventArgs e)
+    {
+        if (e.Touches.Length > 0)
+        {
+            _isDragging = true;
+            _lastMouseX = e.Touches[0].ClientX;
+            _lastMouseY = e.Touches[0].ClientY;
+        }
+    }
+
+    private void OnTouchMove(TouchEventArgs e)
+    {
+        if (!_isDragging || _controller == null || e.Touches.Length == 0) return;
+        var dx = e.Touches[0].ClientX - _lastMouseX;
+        var dy = e.Touches[0].ClientY - _lastMouseY;
+        _lastMouseX = e.Touches[0].ClientX;
+        _lastMouseY = e.Touches[0].ClientY;
+        _controller.Pan(dx, dy);
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnTouchEnd(TouchEventArgs e)
     {
         _isDragging = false;
     }
