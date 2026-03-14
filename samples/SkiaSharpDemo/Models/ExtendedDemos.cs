@@ -1,4 +1,4 @@
-﻿using SkiaSharpDemo.Demos;
+using SkiaSharpDemo.Demos;
 
 namespace SkiaSharpDemo;
 
@@ -29,6 +29,13 @@ public static class ExtendedDemos
 					Description = "That time you wanted a compact representation of a placeholder for an image, but as a short data string.",
 					PageType = typeof(BlurHashPage),
 					Color = Colors.LightSkyBlue,
+				},
+				new Demo
+				{
+					Title = "Deep Zoom",
+					Description = "Render gigapixel images using the Deep Zoom protocol — tiles are loaded at the best resolution for the current view size.",
+					PageType = typeof(DeepZoomPage),
+					Color = Colors.DarkTurquoise,
 				},
 			},
 			new DemoGroup("UI & CONTROLS")
