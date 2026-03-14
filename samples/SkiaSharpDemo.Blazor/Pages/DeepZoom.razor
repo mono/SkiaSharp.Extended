@@ -342,6 +342,7 @@
     // --- URL loading ---
     private async Task OnUrlKeyDown(KeyboardEventArgs e)
     {
+        if (_urlLoading) return;
         if (e.Key == "Enter") await OnLoadUrl();
     }
 
@@ -379,7 +380,7 @@
                 coll.TilesBaseUri = baseDir;
                 _controller.Load(coll, new SKDeepZoomHttpTileFetcher());
                 _zoom = _controller.Viewport.Zoom;
-                _statusText = $"Collection: {coll.ItemCount} images  ({coll.MaxLevel + 1} levels)";
+                _statusText = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
             else
             {

@@ -35,8 +35,11 @@ public partial class DeepZoomPage : ContentPage
     }
 
     // --- URL loading ---
-    private void OnUrlEntryCompleted(object? sender, EventArgs e) =>
+    private void OnUrlEntryCompleted(object? sender, EventArgs e)
+    {
+        if (!loadButton.IsEnabled) return;
         LoadFromUrlAsync(urlEntry.Text?.Trim() ?? DefaultDziUrl);
+    }
 
     private void OnLoadButtonClicked(object? sender, EventArgs e) =>
         LoadFromUrlAsync(urlEntry.Text?.Trim() ?? DefaultDziUrl);
@@ -63,7 +66,7 @@ public partial class DeepZoomPage : ContentPage
                 var coll = SKDeepZoomCollectionSource.Parse(xml);
                 coll.TilesBaseUri = baseDir;
                 _controller.Load(coll, new SKDeepZoomHttpTileFetcher());
-                statusLabel.Text = $"Collection: {coll.ItemCount} images  ({coll.MaxLevel + 1} levels)";
+                statusLabel.Text = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
             else
             {
