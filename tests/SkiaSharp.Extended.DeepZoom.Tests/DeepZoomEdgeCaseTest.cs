@@ -138,8 +138,8 @@ public class DeepZoomEdgeCaseTest
 
         double expected = 800.0 / 600.0; // ≈ 1.333
         Assert.Equal(expected, vp.ViewportWidth, 6);
-        // MaxViewportWidth is set to fit width so user can't zoom out further
-        Assert.Equal(expected, vp.MaxViewportWidth, 6);
+        // MaxViewportWidth is left unchanged by FitToView so users can zoom out past fit
+        Assert.Equal(double.MaxValue, vp.MaxViewportWidth);
     }
 
     [Fact]
