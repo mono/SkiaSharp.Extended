@@ -15,56 +15,7 @@
 
     <!-- Build info shown in the app footer; overridden by CI via -p:BuildInfo="..." -->
     <BuildInfo Condition="'$(BuildInfo)' == ''">local</BuildInfo>
-
-    <!-- Git branch starting value; overridden by CI via -p:GitBranch="..." -->
-    <GitBranch Condition="'$(GitBranch)' == ''">main</GitBranch>
   </PropertyGroup>
-
-  <!-- Detect the current branch and embed it in build-info.json as a resource -->
-  <Target Name="DetectAndWriteBuildInfo" BeforeTargets="CoreCompile">
-
-    <!-- Priority 1: Explicit -p:GitBranch already set — skip detection -->
-
-    <!-- Priority 2: GitHub Actions PR source branch -->
-    <PropertyGroup Condition="'$(GitBranch)' == 'main' And '$(GITHUB_HEAD_REF)' != ''">
-      <GitBranch>$(GITHUB_HEAD_REF)</GitBranch>
-    </PropertyGroup>
-
-    <!-- Priority 3: GitHub Actions push branch -->
-    <PropertyGroup Condition="'$(GitBranch)' == 'main' And '$(GITHUB_REF_NAME)' != ''">
-      <GitBranch>$(GITHUB_REF_NAME)</GitBranch>
-    </PropertyGroup>
-
-    <!-- Priority 4a: Azure DevOps PR source branch (BUILD_SOURCEBRANCH is refs/pull/N/merge on PRs) -->
-    <PropertyGroup Condition="'$(GitBranch)' == 'main' And '$(SYSTEM_PULLREQUEST_SOURCEBRANCH)' != ''">
-      <GitBranch>$(SYSTEM_PULLREQUEST_SOURCEBRANCH.Replace('refs/heads/', ''))</GitBranch>
-    </PropertyGroup>
-
-    <!-- Priority 4b: Azure DevOps push (strip refs/heads/ prefix) -->
-    <PropertyGroup Condition="'$(GitBranch)' == 'main' And '$(BUILD_SOURCEBRANCH)' != ''">
-      <GitBranch>$(BUILD_SOURCEBRANCH.Replace('refs/heads/', ''))</GitBranch>
-    </PropertyGroup>
-
-    <!-- Priority 5: Local git -->
-    <Exec Command="git rev-parse --abbrev-ref HEAD" ConsoleToMSBuild="true" IgnoreExitCode="true"
-          Condition="'$(GitBranch)' == 'main'">
-      <Output TaskParameter="ConsoleOutput" PropertyName="GitBranch" />
-    </Exec>
-
-    <!-- Fallback: detached HEAD or empty -->
-    <PropertyGroup Condition="'$(GitBranch)' == 'HEAD' Or '$(GitBranch)' == ''">
-      <GitBranch>main</GitBranch>
-    </PropertyGroup>
-
-    <!-- Write embedded JSON config -->
-    <WriteLinesToFile
-      File="$(IntermediateOutputPath)build-info.json"
-      Lines='{"branch":"$(GitBranch)"}'
-      Overwrite="true" />
-    <ItemGroup>
-      <EmbeddedResource Include="$(IntermediateOutputPath)build-info.json" LogicalName="build-info.json" />
-    </ItemGroup>
-  </Target>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.3" />

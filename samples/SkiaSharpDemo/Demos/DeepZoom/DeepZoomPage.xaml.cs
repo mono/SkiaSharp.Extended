@@ -6,30 +6,11 @@ namespace SkiaSharpDemo.Demos;
 
 public partial class DeepZoomPage : ContentPage
 {
-    // Branch is read from the embedded build-info.json generated at build time.
-    // Priority: explicit MSBuild property → GitHub Actions env vars → AzDO env vars → local git → main
-    private static readonly string GitBranch = ReadBuildBranch();
+    private const string RawBase =
+        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid";
 
-    private static string ReadBuildBranch()
-    {
-        try
-        {
-            var asm = typeof(DeepZoomPage).Assembly;
-            using var stream = asm.GetManifestResourceStream("build-info.json");
-            if (stream == null) return "main";
-            using var reader = new System.IO.StreamReader(stream);
-            var json = reader.ReadToEnd();
-            using var doc = System.Text.Json.JsonDocument.Parse(json);
-            return doc.RootElement.GetProperty("branch").GetString() ?? "main";
-        }
-        catch { return "main"; }
-    }
-
-    private static string RawBase =>
-        $"https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/{GitBranch}/resources/collections/testgrid";
-
-    private static string DziUrl     => $"{RawBase}/testgrid.dzi";
-    private static string TilesBaseUrl => $"{RawBase}/testgrid_files/";
+    private const string DziUrl      = $"{RawBase}/testgrid.dzi";
+    private const string TilesBaseUrl = $"{RawBase}/testgrid_files/";
 
     private SKDeepZoomController? _controller;
 
