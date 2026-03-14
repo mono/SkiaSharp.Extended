@@ -5,7 +5,7 @@
              x:Class="SkiaSharpDemo.Demos.DeepZoomPage"
              Title="Deep Zoom">
 
-    <Grid RowDefinitions="Auto,Auto,*">
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
 
         <!-- Status bar -->
         <Label x:Name="statusLabel"
@@ -16,8 +16,32 @@
                TextColor="White"
                FontSize="13" />
 
-        <!-- Zoom toolbar -->
+        <!-- URL input row -->
         <Grid Grid.Row="1"
+              Padding="12,4"
+              BackgroundColor="#1a1a2e"
+              ColumnDefinitions="*,Auto">
+            <Entry x:Name="urlEntry"
+                   Grid.Column="0"
+                   Placeholder="Enter DZI or DZC URL…"
+                   PlaceholderColor="#888"
+                   TextColor="#eee"
+                   BackgroundColor="#333"
+                   FontSize="12"
+                   Margin="0,0,8,0"
+                   Completed="OnUrlEntryCompleted" />
+            <Button x:Name="loadButton"
+                    Grid.Column="1"
+                    Text="Load"
+                    FontSize="12"
+                    Padding="10,4"
+                    BackgroundColor="#1976d2"
+                    TextColor="White"
+                    Clicked="OnLoadButtonClicked" />
+        </Grid>
+
+        <!-- Zoom toolbar -->
+        <Grid Grid.Row="2"
               Padding="12,6"
               BackgroundColor="#222"
               ColumnDefinitions="Auto,*,Auto">
@@ -39,7 +63,7 @@
 
         <!-- Canvas with pan gesture -->
         <skia:SKCanvasView x:Name="canvas"
-                           Grid.Row="2"
+                           Grid.Row="3"
                            PaintSurface="OnPaintSurface">
             <skia:SKCanvasView.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnPanUpdated" TouchPoints="1" />

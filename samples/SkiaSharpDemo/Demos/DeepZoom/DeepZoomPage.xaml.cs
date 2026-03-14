@@ -6,17 +6,15 @@ namespace SkiaSharpDemo.Demos;
 
 public partial class DeepZoomPage : ContentPage
 {
-    private const string RawBase =
-        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid";
-
-    private const string DziUrl      = $"{RawBase}/testgrid.dzi";
-    private const string TilesBaseUrl = $"{RawBase}/testgrid_files/";
+    private const string DefaultDziUrl =
+        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid.dzi";
 
     private SKDeepZoomController? _controller;
 
     public DeepZoomPage()
     {
         InitializeComponent();
+        urlEntry.Text = DefaultDziUrl;
     }
 
     protected override void OnAppearing()
@@ -26,7 +24,7 @@ public partial class DeepZoomPage : ContentPage
         _controller = new SKDeepZoomController();
         _controller.InvalidateRequired += (_, _) => canvas.InvalidateSurface();
 
-        LoadAsync();
+        LoadFromUrlAsync(DefaultDziUrl);
     }
 
     protected override void OnDisappearing()
@@ -36,23 +34,54 @@ public partial class DeepZoomPage : ContentPage
         _controller = null;
     }
 
-    private async void LoadAsync()
+    // --- URL loading ---
+    private void OnUrlEntryCompleted(object? sender, EventArgs e) =>
+        LoadFromUrlAsync(urlEntry.Text?.Trim() ?? DefaultDziUrl);
+
+    private void OnLoadButtonClicked(object? sender, EventArgs e) =>
+        LoadFromUrlAsync(urlEntry.Text?.Trim() ?? DefaultDziUrl);
+
+    private async void LoadFromUrlAsync(string url)
     {
+        if (string.IsNullOrWhiteSpace(url) || _controller == null) return;
+
+        loadButton.IsEnabled = false;
+        statusLabel.Text = "Loading…";
+
         try
         {
-            statusLabel.Text = "Loading…";
-
             using var client = new HttpClient();
-            var dziXml = await client.GetStringAsync(DziUrl);
-            var tileSource = SKDeepZoomImageSource.Parse(dziXml, TilesBaseUrl);
-            _controller?.Load(tileSource, new SKDeepZoomHttpTileFetcher());
+            var xml = await client.GetStringAsync(url);
 
-            statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
+            // Derive tiles base URL from the manifest URL
+            bool isDzc    = url.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase);
+            string baseDir = url[..url.LastIndexOf('/')] + "/";
+            string stem    = System.IO.Path.GetFileNameWithoutExtension(url);
+
+            if (isDzc)
+            {
+                var coll = SKDeepZoomCollectionSource.Parse(xml);
+                coll.TilesBaseUri = baseDir;
+                _controller.Load(coll, new SKDeepZoomHttpTileFetcher());
+                statusLabel.Text = $"Collection: {coll.ItemCount} images  ({coll.MaxLevel + 1} levels)";
+            }
+            else
+            {
+                string tilesBase = $"{baseDir}{stem}_files/";
+                var tileSource = SKDeepZoomImageSource.Parse(xml, tilesBase);
+                _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher());
+                statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
+            }
+
             canvas.InvalidateSurface();
         }
         catch (Exception ex)
         {
             statusLabel.Text = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            loadButton.IsEnabled = true;
         }
     }
 

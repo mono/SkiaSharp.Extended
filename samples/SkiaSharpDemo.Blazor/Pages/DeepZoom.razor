@@ -11,6 +11,11 @@
     <input type="range" min="0.1" max="50" step="0.05" value="@_zoom"
            @oninput="OnZoomSlider" style="width:200px;vertical-align:middle;" />
     <button @onclick="OnResetView" style="margin-left:8px;">Fit</button>
+    <div class="dz-url-row">
+        <input type="url" @bind="_urlInput" @bind:event="oninput" placeholder="Enter DZI or DZC URL…"
+               @onkeydown="OnUrlKeyDown" class="dz-url-input" />
+        <button @onclick="OnLoadUrl" disabled="@_urlLoading">@(_urlLoading ? "Loading…" : "Load")</button>
+    </div>
 </div>
 
 <div class="dz-layout @(_showInspector ? "dz-with-inspector" : "")">
@@ -233,20 +238,39 @@
         font-size: 0.8rem;
     }
     .dz-toggle-btn:hover { background: #1565c0; }
+
+    .dz-url-row {
+        display: flex;
+        flex: 1 1 auto;
+        gap: 4px;
+        min-width: 0;
+    }
+
+    .dz-url-input {
+        flex: 1 1 auto;
+        min-width: 0;
+        background: #333;
+        color: #eee;
+        border: 1px solid #555;
+        border-radius: 3px;
+        padding: 2px 6px;
+        font-size: 0.8rem;
+    }
 </style>
 
 @code {
-    private const string RawBase =
-        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid";
-
-    private const string DziUrl      = $"{RawBase}/testgrid.dzi";
-    private const string TilesBaseUrl = $"{RawBase}/testgrid_files/";
+    private const string DefaultDziUrl =
+        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid.dzi";
 
     private SKGLView? _canvas;
     private SKDeepZoomController? _controller;
     private string? _statusText;
     private string? _errorMessage;
     private bool _showInspector = true;
+
+    // URL input
+    private string _urlInput = DefaultDziUrl;
+    private bool _urlLoading = false;
 
     // Pan state
     private bool _isDragging;
@@ -279,25 +303,7 @@
             InvokeAsync(StateHasChanged);
         }, null, 250, 250);
 
-        try
-        {
-            _statusText = "Loading…";
-            StateHasChanged();
-
-            var dziXml = await Http.GetStringAsync(DziUrl);
-            var tileSource = SKDeepZoomImageSource.Parse(dziXml, TilesBaseUrl);
-            _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher());
-            _zoom = _controller.Viewport.Zoom;
-
-            _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
-        }
-        catch (Exception ex)
-        {
-            _errorMessage = $"Failed to load: {ex.Message}";
-            _statusText = null;
-        }
-
-        await InvokeAsync(StateHasChanged);
+        await LoadFromUrlAsync(DefaultDziUrl);
     }
 
     private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
@@ -331,6 +337,71 @@
         _controller.ResetView();
         _zoom = _controller.Viewport.Zoom;
         InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    // --- URL loading ---
+    private async Task OnUrlKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await OnLoadUrl();
+    }
+
+    private async Task OnLoadUrl()
+    {
+        var url = _urlInput?.Trim();
+        if (string.IsNullOrEmpty(url)) return;
+        await LoadFromUrlAsync(url);
+    }
+
+    /// <summary>
+    /// Fetches a DZI or DZC URL, parses it, and loads it into the controller.
+    /// Derives the tiles base URL from the manifest URL automatically.
+    /// </summary>
+    private async Task LoadFromUrlAsync(string url)
+    {
+        if (_controller == null) return;
+        _urlLoading = true;
+        _errorMessage = null;
+        _statusText = "Loading…";
+        StateHasChanged();
+
+        try
+        {
+            var xml = await Http.GetStringAsync(url);
+
+            // Derive tiles base URL: strip the filename, append _files/ for DZI
+            bool isDzc = url.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase);
+            string baseDir = url[..url.LastIndexOf('/')] + "/";
+            string stem    = System.IO.Path.GetFileNameWithoutExtension(url);
+
+            if (isDzc)
+            {
+                var coll = SKDeepZoomCollectionSource.Parse(xml);
+                coll.TilesBaseUri = baseDir;
+                _controller.Load(coll, new SKDeepZoomHttpTileFetcher());
+                _zoom = _controller.Viewport.Zoom;
+                _statusText = $"Collection: {coll.ItemCount} images  ({coll.MaxLevel + 1} levels)";
+            }
+            else
+            {
+                string tilesBase = $"{baseDir}{stem}_files/";
+                var tileSource = SKDeepZoomImageSource.Parse(xml, tilesBase);
+                _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher());
+                _zoom = _controller.Viewport.Zoom;
+                _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Failed to load: {ex.Message}";
+            _statusText = null;
+        }
+        finally
+        {
+            _urlLoading = false;
+        }
+
+        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(() => _canvas?.Invalidate());
     }
 
     // --- Mouse pan ---
