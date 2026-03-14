@@ -8,7 +8,7 @@
 
 <div class="dz-toolbar">
     <label>Zoom: <strong>@_zoom.ToString("F2")×</strong></label>
-    <input type="range" min="0.1" max="10" step="0.01" value="@_zoom"
+    <input type="range" min="0.1" max="50" step="0.05" value="@_zoom"
            @oninput="OnZoomSlider" style="width:200px;vertical-align:middle;" />
     <button @onclick="OnResetView" style="margin-left:8px;">Fit</button>
 </div>
@@ -70,6 +70,34 @@
                         <dt>Zoom</dt><dd>@vp.Zoom.ToString("F2")×</dd>
                     </dl>
                 </section>
+
+                @if (_controller.TileSource is { } lvlSrc)
+                {
+                    var vp2 = _controller.Viewport;
+                    var optLevel = lvlSrc.GetOptimalLevel(vp2.ViewportWidth, vp2.ControlWidth);
+                    var levelW = lvlSrc.GetLevelWidth(optLevel);
+                    var levelH = lvlSrc.GetLevelHeight(optLevel);
+                    // Tile logical width = tileSize / levelWidth; screen pixels = logical * scale
+                    double tilePxW = lvlSrc.TileSize * vp2.Scale / levelW;
+                    double tilePxH = lvlSrc.TileSize * vp2.Scale / levelH * lvlSrc.AspectRatio;
+                    bool atMax = optLevel == lvlSrc.MaxLevel;
+                    double nativeZoom = (double)lvlSrc.ImageWidth / vp2.ControlWidth;
+
+                    <section>
+                        <h4>Level Selection</h4>
+                        <dl>
+                            <dt>Current level</dt><dd>@optLevel / @lvlSrc.MaxLevel @(atMax ? "⚠️" : "")</dd>
+                            <dt>Level dims</dt><dd>@levelW × @levelH px</dd>
+                            <dt>Tile actual size</dt><dd>@lvlSrc.TileSize × @lvlSrc.TileSize px</dd>
+                            <dt>Tile on screen</dt><dd>@tilePxW.ToString("F1") × @tilePxH.ToString("F1") px</dd>
+                            <dt>Native 1:1 zoom</dt><dd>≈ @nativeZoom.ToString("F2")×</dd>
+                        </dl>
+                        @if (atMax)
+                        {
+                            <p class="dz-muted">⚠️ Max detail — level @lvlSrc.MaxLevel (@levelW×@levelH) is native resolution. Zooming further upscales tiles.</p>
+                        }
+                    </section>
+                }
 
                 var cache = _controller.Cache;
                 <section>
