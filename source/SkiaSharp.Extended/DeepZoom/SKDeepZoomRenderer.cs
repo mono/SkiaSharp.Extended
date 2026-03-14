@@ -21,10 +21,10 @@ namespace SkiaSharp.Extended.DeepZoom
             };
             _debugPaint = new SKPaint
             {
-                Color = SKColors.Red.WithAlpha(128),
+                Color = new SKColor(128, 128, 128, 80),
                 IsStroke = true,
                 StrokeWidth = 1,
-                IsAntialias = true,
+                IsAntialias = false,
             };
         }
 
