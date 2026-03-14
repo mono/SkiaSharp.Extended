@@ -209,8 +209,7 @@ namespace SkiaSharp.Extended.DeepZoom
 
         /// <summary>
         /// Sets the viewport to "fit" mode — the entire image is visible and centered.
-        /// Also sets <see cref="MaxViewportWidth"/> to the computed fit width so the user
-        /// cannot zoom out further than this.
+        /// Does not alter <see cref="MaxViewportWidth"/>; callers may zoom out past fit.
         /// </summary>
         public void FitToView()
         {
@@ -223,7 +222,6 @@ namespace SkiaSharp.Extended.DeepZoom
                 ? Math.Max(1.0, imageLogicalHeight * _controlWidth / _controlHeight)
                 : 1.0;
 
-            MaxViewportWidth = fitWidth;
             _viewportWidth = fitWidth;
 
             if (fitWidth > 1.0)

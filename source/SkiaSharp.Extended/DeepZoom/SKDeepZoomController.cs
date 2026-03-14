@@ -37,6 +37,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private readonly ConcurrentDictionary<SKDeepZoomTileId, byte> _pendingTiles = new ConcurrentDictionary<SKDeepZoomTileId, byte>();
         private CancellationTokenSource? _cts;
         private bool _disposed;
+        private bool _userHasZoomed;
 
         /// <summary>Initializes a new <see cref="SKDeepZoomController"/> with an optional tile cache capacity.</summary>
         /// <param name="cacheCapacity">Maximum number of tiles to cache. Default is 1024.</param>
@@ -138,6 +139,7 @@ namespace SkiaSharp.Extended.DeepZoom
                 _viewport.AspectRatio = tileSource.AspectRatio;
                 _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
                 _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
+                _userHasZoomed = false;
                 _viewport.FitToView();
 
                 ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
@@ -181,6 +183,7 @@ namespace SkiaSharp.Extended.DeepZoom
 
                 _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
                 _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
+                _userHasZoomed = false;
                 _viewport.ViewportOriginX = 0;
                 _viewport.ViewportOriginY = 0;
                 _viewport.ViewportWidth = 1.0;
@@ -195,7 +198,8 @@ namespace SkiaSharp.Extended.DeepZoom
 
         /// <summary>
         /// Sets the control (canvas) size. Call whenever the canvas is resized.
-        /// When a source is loaded, automatically refits the viewport to the new size.
+        /// When a source is loaded and the user has not manually zoomed, automatically
+        /// refits the viewport so the image remains fully visible in the new size.
         /// </summary>
         public void SetControlSize(double width, double height)
         {
@@ -205,9 +209,8 @@ namespace SkiaSharp.Extended.DeepZoom
             _viewport.ControlWidth = width;
             _viewport.ControlHeight = height;
 
-            // Refit whenever the canvas size changes and a source is loaded,
-            // so the image always fills the view correctly in any aspect ratio.
-            if (sizeChanged && _tileSource != null)
+            // Only refit on resize when the user hasn't manually zoomed/panned.
+            if (sizeChanged && _tileSource != null && !_userHasZoomed)
                 _viewport.FitToView();
         }
 
@@ -228,6 +231,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public void ZoomAboutLogicalPoint(double factor, double logicalX, double logicalY)
         {
+            _userHasZoomed = true;
             _viewport.ZoomAboutLogicalPoint(factor, logicalX, logicalY);
             _viewport.Constrain();
             ViewportChanged?.Invoke(this, EventArgs.Empty);
@@ -238,6 +242,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public void ZoomAboutScreenPoint(double factor, double screenX, double screenY)
         {
+            _userHasZoomed = true;
             var (lx, ly) = _viewport.ElementToLogicalPoint(screenX, screenY);
             _viewport.ZoomAboutLogicalPoint(factor, lx, ly);
             _viewport.Constrain();
@@ -249,16 +254,18 @@ namespace SkiaSharp.Extended.DeepZoom
         /// </summary>
         public void Pan(double deltaScreenX, double deltaScreenY)
         {
+            _userHasZoomed = true;
             _viewport.PanByScreenDelta(deltaScreenX, deltaScreenY);
             _viewport.Constrain();
             ViewportChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// Resets the viewport to show the entire image.
+        /// Resets the viewport to show the entire image and clears the manual-zoom flag.
         /// </summary>
         public void ResetView()
         {
+            _userHasZoomed = false;
             _viewport.FitToView();
             _viewport.Constrain();
             ViewportChanged?.Invoke(this, EventArgs.Empty);
@@ -271,6 +278,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public void SetZoom(double zoom)
         {
             if (zoom <= 0) throw new ArgumentOutOfRangeException(nameof(zoom));
+            _userHasZoomed = true;
             var cx = _viewport.ControlWidth / 2.0;
             var cy = _viewport.ControlHeight / 2.0;
             var (lx, ly) = _viewport.ElementToLogicalPoint(cx, cy);
