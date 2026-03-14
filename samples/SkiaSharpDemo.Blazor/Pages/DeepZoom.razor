@@ -152,6 +152,18 @@
                         <p class="dz-muted">No source loaded.</p>
                     }
                 </section>
+
+                <section>
+                    <h4>🔧 Debug</h4>
+                    <label class="dz-debug-label">
+                        <input type="checkbox" @bind="_showTileBorders" @bind:after="OnDebugOptionsChanged" />
+                        Show Tile Borders
+                    </label>
+                    <label class="dz-debug-label">
+                        <input type="checkbox" @bind="_showDebugStats" @bind:after="OnDebugOptionsChanged" />
+                        Show Stats Overlay
+                    </label>
+                </section>
             }
         </aside>
     }
@@ -230,6 +242,15 @@
     .dz-error { padding: 4px 8px; background: #5c1010; color: #ff8a80; font-size: 0.8rem; }
     .dz-muted { color: #888; font-size: 0.75rem; margin: 2px 0; }
 
+    .dz-debug-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 4px 0;
+        cursor: pointer;
+        user-select: none;
+    }
+
     .dz-toggle-btn {
         position: fixed;
         bottom: 1rem;
@@ -273,6 +294,10 @@
     private string? _statusText;
     private string? _errorMessage;
     private bool _showInspector = true;
+
+    // Debug overlay toggles
+    private bool _showTileBorders;
+    private bool _showDebugStats;
 
     // URL input
     private string _urlInput = DefaultDziUrl;
@@ -465,6 +490,14 @@
     private void ToggleInspector()
     {
         _showInspector = !_showInspector;
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnDebugOptionsChanged()
+    {
+        if (_controller == null) return;
+        _controller.ShowTileBorders = _showTileBorders;
+        _controller.ShowDebugStats  = _showDebugStats;
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
