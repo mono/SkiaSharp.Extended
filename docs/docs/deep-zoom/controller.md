@@ -101,18 +101,42 @@ ISKDeepZoomRenderer myRenderer = new MyCustomRenderer();
 var controller = new SKDeepZoomController(renderer: myRenderer);
 ```
 
-**`EnableLodBlending`** (default `true`) controls whether lower-resolution fallback tiles are shown while high-resolution tiles are loading:
+#### How two-pass rendering works
 
-| Value | Behaviour |
-| :---- | :-------- |
-| `true` (default) | Lower-res parent tiles scale up as placeholders. The view is never blank — tiles appear immediately at reduced quality, then sharpen. |
-| `false` | Missing tiles show as empty space. Tiles appear all-or-nothing when loaded. Useful for testing load performance. |
+`SKDeepZoomRenderer` uses a two-pass strategy each frame:
+
+1. **Pass 1 — fallback tiles** *(only when `EnableLodBlending = true`)*: For each visible tile that is not yet cached, the renderer walks up the tile pyramid to find the nearest available parent tile and draws a magnified crop of it as a placeholder.
+2. **Pass 2 — exact tiles**: For each visible tile that is cached at the correct resolution, it is drawn on top. Missing tiles leave any placeholder from Pass 1 visible, or show blank if blending is off.
+
+#### `EnableLodBlending` — when to use each mode
+
+**`EnableLodBlending = true` (default):** The view always shows *something* — lower-resolution tiles are stretched up as blurry placeholders while high-res tiles stream in. As tiles arrive, they replace the placeholders and the image progressively sharpens.
+
+> **Best for:** interactive image exploration, presentations, consumer apps — any situation where a continuously filled viewport is more comfortable than flickering blanks.
+
+**`EnableLodBlending = false`:** Pass 1 is skipped entirely. Only fully loaded tiles at the exact requested zoom level are drawn; everything else is transparent/white until the tile arrives, then pops in.
+
+> **Best for:**
+> - **Scientific or medical imaging** — blurry placeholders could be confused with real image data; showing "not yet loaded" (blank) is more honest.
+> - **Pixel-accurate rendering** — when the consumer must see only confirmed, full-resolution data.
+> - **Load-performance testing** — blank tiles make it immediately obvious which tiles are still in-flight.
+> - **Bandwidth-constrained apps** — some UX designs prefer showing nothing over showing misleadingly blurry content.
+
+| Value | Pass 1 (fallbacks) | Pass 2 (exact tiles) | Missing tile appearance |
+| :---- | :----------------- | :------------------- | :---------------------- |
+| `true` (default) | Draws scaled parent tiles | Draws loaded tiles on top | Blurry placeholder from lower level |
+| `false` | Skipped | Draws loaded tiles only | Blank (white) |
 
 ```csharp
-// Cast to SKDeepZoomRenderer to access EnableLodBlending
+// Access via SKDeepZoomRenderer (the default concrete type)
 if (controller.Renderer is SKDeepZoomRenderer r)
     r.EnableLodBlending = false;
+
+// Or if using a DebugBorderRenderer decorator (as in the Blazor sample):
+debugRenderer.EnableLodBlending = false;
 ```
+
+> **Tip:** To see the difference interactively, load an image, add a simulated tile delay (e.g. 1–2 seconds), zoom in so new tiles must load, then toggle `EnableLodBlending`. With blending on you get a smooth blurry → sharp transition; with blending off you see white rectangles pop in.
 
 **Decorator pattern for debug overlays:**
 
