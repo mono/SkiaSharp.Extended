@@ -214,29 +214,61 @@ controller.ResetView();
 <pre><code class="lang-csharp">ISKDeepZoomRenderer myRenderer = new MyCustomRenderer();
 var controller = new SKDeepZoomController(renderer: myRenderer);
 </code></pre>
-<p><strong><code>EnableLodBlending</code></strong> (default <code>true</code>) controls whether lower-resolution fallback tiles are shown while high-resolution tiles are loading:</p>
+<h4 id="how-two-pass-rendering-works">How two-pass rendering works</h4>
+<p><code>SKDeepZoomRenderer</code> uses a two-pass strategy each frame:</p>
+<ol>
+<li><strong>Pass 1 — fallback tiles</strong> <em>(only when <code>EnableLodBlending = true</code>)</em>: For each visible tile that is not yet cached, the renderer walks up the tile pyramid to find the nearest available parent tile and draws a magnified crop of it as a placeholder.</li>
+<li><strong>Pass 2 — exact tiles</strong>: For each visible tile that is cached at the correct resolution, it is drawn on top. Missing tiles leave any placeholder from Pass 1 visible, or show blank if blending is off.</li>
+</ol>
+<h4 id="enablelodblending--when-to-use-each-mode"><code>EnableLodBlending</code> — when to use each mode</h4>
+<p><strong><code>EnableLodBlending = true</code> (default):</strong> The view always shows <em>something</em> — lower-resolution tiles are stretched up as blurry placeholders while high-res tiles stream in. As tiles arrive, they replace the placeholders and the image progressively sharpens.</p>
+<blockquote>
+<p><strong>Best for:</strong> interactive image exploration, presentations, consumer apps — any situation where a continuously filled viewport is more comfortable than flickering blanks.</p>
+</blockquote>
+<p><strong><code>EnableLodBlending = false</code>:</strong> Pass 1 is skipped entirely. Only fully loaded tiles at the exact requested zoom level are drawn; everything else is transparent/white until the tile arrives, then pops in.</p>
+<blockquote>
+<p><strong>Best for:</strong></p>
+<ul>
+<li><strong>Scientific or medical imaging</strong> — blurry placeholders could be confused with real image data; showing &quot;not yet loaded&quot; (blank) is more honest.</li>
+<li><strong>Pixel-accurate rendering</strong> — when the consumer must see only confirmed, full-resolution data.</li>
+<li><strong>Load-performance testing</strong> — blank tiles make it immediately obvious which tiles are still in-flight.</li>
+<li><strong>Bandwidth-constrained apps</strong> — some UX designs prefer showing nothing over showing misleadingly blurry content.</li>
+</ul>
+</blockquote>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Value</th>
-<th style="text-align: left;">Behaviour</th>
+<th style="text-align: left;">Pass 1 (fallbacks)</th>
+<th style="text-align: left;">Pass 2 (exact tiles)</th>
+<th style="text-align: left;">Missing tile appearance</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;"><code>true</code> (default)</td>
-<td style="text-align: left;">Lower-res parent tiles scale up as placeholders. The view is never blank — tiles appear immediately at reduced quality, then sharpen.</td>
+<td style="text-align: left;">Draws scaled parent tiles</td>
+<td style="text-align: left;">Draws loaded tiles on top</td>
+<td style="text-align: left;">Blurry placeholder from lower level</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>false</code></td>
-<td style="text-align: left;">Missing tiles show as empty space. Tiles appear all-or-nothing when loaded. Useful for testing load performance.</td>
+<td style="text-align: left;">Skipped</td>
+<td style="text-align: left;">Draws loaded tiles only</td>
+<td style="text-align: left;">Blank (white)</td>
 </tr>
 </tbody>
 </table>
-<pre><code class="lang-csharp">// Cast to SKDeepZoomRenderer to access EnableLodBlending
+<pre><code class="lang-csharp">// Access via SKDeepZoomRenderer (the default concrete type)
 if (controller.Renderer is SKDeepZoomRenderer r)
     r.EnableLodBlending = false;
+
+// Or if using a DebugBorderRenderer decorator (as in the Blazor sample):
+debugRenderer.EnableLodBlending = false;
 </code></pre>
+<blockquote>
+<p><strong>Tip:</strong> To see the difference interactively, load an image, add a simulated tile delay (e.g. 1–2 seconds), zoom in so new tiles must load, then toggle <code>EnableLodBlending</code>. With blending on you get a smooth blurry → sharp transition; with blending off you see white rectangles pop in.</p>
+</blockquote>
 <p><strong>Decorator pattern for debug overlays:</strong></p>
 <p>Instead of building debug features into the core renderer, wrap it with a decorator:</p>
 <pre><code class="lang-csharp">public sealed class TileBorderRenderer : ISKDeepZoomRenderer
@@ -726,7 +758,7 @@ foreach (var req in tiles)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 3710bee
+          source: PR #379 · b743a53
         </div>
       </div>
     </footer>
