@@ -61,26 +61,15 @@ namespace SkiaSharp.Extended.DeepZoom
                 }
             }
 
-            // Pass 2: Draw high-resolution tiles on top
+            // Pass 2: Draw high-resolution tiles on top (missing tiles left blank when LOD blending is off)
             foreach (var request in visibleTiles)
             {
                 var tileId = request.TileId;
                 cache.TryGet(tileId, out SKBitmap? bitmap);
 
                 if (bitmap != null)
-                {
                     DrawTile(canvas, tileSource, viewport, tileId, bitmap);
-                }
-                else if (!EnableLodBlending)
-                {
-                    var fallback = scheduler.FindBestFallback(tileId, cache);
-                    if (fallback.HasValue)
-                    {
-                        cache.TryGet(fallback.Value, out SKBitmap? parentBitmap);
-                        if (parentBitmap != null)
-                            DrawFallbackTile(canvas, tileSource, viewport, tileId, fallback.Value, parentBitmap, scheduler);
-                    }
-                }
+                // When EnableLodBlending is false, missing tiles intentionally show as blank/white.
             }
 
             canvas.Restore();
