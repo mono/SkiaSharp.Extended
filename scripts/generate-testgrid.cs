@@ -134,6 +134,17 @@ for (int level = 0; level <= maxLevel; level++)
             canvas.DrawRect(left, top, right - left, bottom - top, fill);
         }
 
+        // Gradient overlay: diagonal warm-to-cool across the entire level image.
+        // Each tile computes where its pixels fall in the full-image gradient.
+        // start = image origin in tile space, end = image far-corner in tile space
+        var gradStart = new SKPoint(-x0, -y0);
+        var gradEnd   = new SKPoint(levelSize - x0, levelSize - y0);
+        SKColor[] gradColors = [new(255, 210, 160, 55), new(160, 195, 255, 55)];
+        using var gradShader = SKShader.CreateLinearGradient(
+            gradStart, gradEnd, gradColors, SKShaderTileMode.Clamp);
+        using var gradPaint  = new SKPaint { Shader = gradShader };
+        canvas.DrawRect(0, 0, tw, th, gradPaint);
+
         // Draw tile-level label in top-left corner (only when tile is ≥ 16px)
         if (tw >= 16 && th >= 16 && fontSize >= 8f)
         {
