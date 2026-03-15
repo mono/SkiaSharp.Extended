@@ -7,13 +7,17 @@ namespace SkiaSharp.Extended.DeepZoom
     /// </summary>
     public readonly struct SKDeepZoomTileRequest : System.IEquatable<SKDeepZoomTileRequest>
     {
+        /// <summary>Initializes a new <see cref="SKDeepZoomTileRequest"/>.</summary>
         public SKDeepZoomTileRequest(SKDeepZoomTileId tileId, double priority)
         {
             TileId = tileId;
             Priority = priority;
         }
 
+        /// <summary>The tile to fetch.</summary>
         public SKDeepZoomTileId TileId { get; }
+
+        /// <summary>Fetch priority. Lower values are fetched first (higher visual importance).</summary>
         public double Priority { get; }
 
         public bool Equals(SKDeepZoomTileRequest other) => TileId.Equals(other.TileId);

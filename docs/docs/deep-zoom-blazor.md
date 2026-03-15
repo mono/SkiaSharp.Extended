@@ -1,18 +1,18 @@
 # Deep Zoom for Blazor
 
-Use `SKDeepZoomController` with a plain `SKCanvasView` to render Deep Zoom images in Blazor WebAssembly. There is no custom component — the page wires the services directly to the canvas.
+Use `SKDeepZoomController` with a plain `SKCanvasView` in Blazor WebAssembly to render Deep Zoom images. There is no custom component — the page wires the services directly to the canvas, giving you full control over layout, interaction, and lifecycle.
 
 ## Quick Start
 
 ```razor
 @page "/deepzoom"
-@implements IDisposable
+@implements IAsyncDisposable
 @inject HttpClient Http
 @using SkiaSharp.Extended.DeepZoom
 
 <SKCanvasView @ref="_canvas"
               OnPaintSurface="OnPaintSurface"
-              style="width: 100%; height: 600px; border: 1px solid #ccc;" />
+              style="width: 100%; height: 600px; touch-action: none;" />
 
 @code {
     private SKCanvasView? _canvas;
@@ -25,19 +25,16 @@ Use `SKDeepZoomController` with a plain `SKCanvasView` to render Deep Zoom image
         _controller = new SKDeepZoomController();
         _controller.InvalidateRequired += OnInvalidateRequired;
 
-        var xml        = await Http.GetStringAsync("deepzoom/image.dzi");
-        var baseUrl    = new Uri(Http.BaseAddress!, "deepzoom/image_files/").ToString();
-        var tileSource = SKDeepZoomImageSource.Parse(xml, baseUrl);
+        var xml     = await Http.GetStringAsync("deepzoom/image.dzi");
+        var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/image_files/").ToString();
+        var source  = SKDeepZoomImageSource.Parse(xml, baseUrl);
 
-        _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new HttpClient()));
-
-        await InvokeAsync(StateHasChanged);
+        _controller.Load(source, new SKDeepZoomHttpTileFetcher());
     }
 
     private void OnPaintSurface(SKPaintSurfaceEventArgs e)
     {
         if (_controller == null) return;
-
         _controller.SetControlSize(e.Info.Width, e.Info.Height);
         _controller.Update();
         _controller.Render(e.Surface.Canvas);
@@ -46,7 +43,7 @@ Use `SKDeepZoomController` with a plain `SKCanvasView` to render Deep Zoom image
     private void OnInvalidateRequired(object? sender, EventArgs e)
         => InvokeAsync(() => _canvas?.Invalidate());
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (_controller != null)
         {
@@ -59,7 +56,7 @@ Use `SKDeepZoomController` with a plain `SKCanvasView` to render Deep Zoom image
 
 ## Serving Tile Assets
 
-Place `.dzi` and tile folder under `wwwroot`. In the project file, reference them as content:
+Place `.dzi` and tile folder under `wwwroot`. In the project file, mark them as content:
 
 ```xml
 <ItemGroup>
@@ -68,16 +65,98 @@ Place `.dzi` and tile folder under `wwwroot`. In the project file, reference the
 </ItemGroup>
 ```
 
-The `SKDeepZoomHttpTileFetcher` fetches each tile URL via `HttpClient`; tile URLs are constructed automatically from the base URL you supply to `SKDeepZoomImageSource.Parse`.
+The `SKDeepZoomHttpTileFetcher` fetches each tile via `HttpClient`; tile URLs are constructed automatically from the base URL you pass to `SKDeepZoomImageSource.Parse`.
+
+## Pan and Zoom
+
+Wire mouse and touch events to the controller's navigation methods:
+
+```razor
+<SKCanvasView @ref="_canvas"
+              OnPaintSurface="OnPaintSurface"
+              @onmousedown="OnMouseDown"
+              @onmousemove="OnMouseMove"
+              @onmouseup="OnMouseUp"
+              @onwheel="OnWheel"
+              style="width: 100%; height: 600px; touch-action: none;" />
+
+@code {
+    private bool _dragging;
+    private double _lastX, _lastY;
+
+    private void OnMouseDown(MouseEventArgs e)
+    {
+        _dragging = true;
+        _lastX = e.ClientX;
+        _lastY = e.ClientY;
+    }
+
+    private void OnMouseMove(MouseEventArgs e)
+    {
+        if (!_dragging || _controller == null) return;
+        _controller.Pan(e.ClientX - _lastX, e.ClientY - _lastY);
+        _lastX = e.ClientX;
+        _lastY = e.ClientY;
+        _canvas?.Invalidate();
+    }
+
+    private void OnMouseUp(MouseEventArgs e) => _dragging = false;
+
+    private void OnWheel(WheelEventArgs e)
+    {
+        if (_controller == null) return;
+        double factor = e.DeltaY < 0 ? 1.15 : 1.0 / 1.15;
+        _controller.ZoomAboutScreenPoint(factor, e.OffsetX, e.OffsetY);
+        _canvas?.Invalidate();
+    }
+}
+```
+
+## Loading a DZC Collection
+
+```csharp
+var xml = await Http.GetStringAsync("collection.dzc");
+var collection = SKDeepZoomCollectionSource.Parse(xml);
+collection.TilesBaseUri = Http.BaseAddress!.ToString();
+_controller!.Load(collection, new SKDeepZoomHttpTileFetcher());
+```
+
+## Custom Cache
+
+Pass a custom `ISKDeepZoomTileCache` to the controller for tiered caching or controlled experiments:
+
+```csharp
+// Custom in-memory cache with explicit capacity
+var cache = new SKDeepZoomMemoryTileCache(maxEntries: 512);
+_controller = new SKDeepZoomController(cache: cache);
+```
+
+See the [Caching docs](deep-zoom-caching.md) for implementing browser storage tiers, delay wrappers, and other custom strategies.
+
+## Canvas Resize
+
+When the Blazor page resizes, `SetControlSize` automatically picks up the new dimensions on the next paint. If you want to trigger a reset to fit the image after a resize:
+
+```csharp
+// In a JS interop resize callback:
+[JSInvokable]
+public void OnCanvasResized()
+{
+    _controller?.ResetView();
+    InvokeAsync(() => _canvas?.Invalidate());
+}
+```
 
 ## Rendering Behaviour
 
-- **Fit and center**: On load the controller calls `FitToView()` so the full image is visible and centered in the canvas. Neither cropping nor distortion occurs.
-- **Tile resolution**: `Update()` selects the pyramid level whose tile size best matches the physical pixel dimensions of the canvas. Only visible tiles are requested.
-- **Tile blending**: While high-resolution tiles are in-flight, parent-level tiles are upscaled and drawn as placeholders.
+- **Fit and center**: On load the controller calls `FitToView()` — the full image is visible, centered horizontally and vertically, with aspect ratio preserved. No cropping or distortion.
+- **LOD blending**: While high-resolution tiles are in-flight, lower-resolution parent tiles are upscaled and composited as placeholders.
+- **Idle detection**: `controller.IsIdle` is `true` when no tiles are loading. You can pause periodic repaints when the view is idle.
 
 ## Related
 
-- [Deep Zoom overview](deep-zoom.md) — architecture, services, and API reference
-- [Deep Zoom for MAUI](deep-zoom-maui.md) — .NET MAUI integration
-
+- [Deep Zoom overview](deep-zoom.md)
+- [Controller & Viewport](deep-zoom-controller.md)
+- [Tile Fetching](deep-zoom-fetching.md)
+- [Caching](deep-zoom-caching.md)
+- [Deep Zoom for MAUI](deep-zoom-maui.md)

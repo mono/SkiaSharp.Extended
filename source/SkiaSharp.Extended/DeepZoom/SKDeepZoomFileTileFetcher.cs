@@ -9,9 +9,11 @@ namespace SkiaSharp.Extended.DeepZoom
 {
     /// <summary>
     /// Fetches tiles from the local file system.
+    /// Accepts both plain file paths and <c>file://</c> URIs.
     /// </summary>
     public class SKDeepZoomFileTileFetcher : ISKDeepZoomTileFetcher
     {
+        /// <inheritdoc />
         public Task<SKBitmap?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();

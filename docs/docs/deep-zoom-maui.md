@@ -1,12 +1,10 @@
 # Deep Zoom for MAUI
 
-Use `SKDeepZoomController` with a plain `SKCanvasView` to render Deep Zoom images in .NET MAUI. There is no custom control — you wire the services directly to the canvas, which keeps the integration minimal and transparent.
+Use `SKDeepZoomController` with a plain `SKCanvasView` in .NET MAUI to render Deep Zoom images. There is no custom control — you wire the services directly to the canvas, keeping the integration minimal and transparent.
 
 ## Quick Start
 
 ### XAML
-
-Add a `SKCanvasView` to your page:
 
 ```xml
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -51,13 +49,12 @@ public partial class DeepZoomPage : ContentPage
 
     private async void LoadAsync()
     {
-        // Load a .dzi bundled as a MAUI app-package asset
         using var stream = await FileSystem.OpenAppPackageFileAsync("image.dzi");
         using var reader = new StreamReader(stream);
         var xml = await reader.ReadToEndAsync();
 
-        var tileSource = SKDeepZoomImageSource.Parse(xml, "image_files/");
-        _controller.Load(tileSource, new AppPackageFetcher());
+        var source = SKDeepZoomImageSource.Parse(xml, "image_files/");
+        _controller.Load(source, new AppPackageFetcher());
         canvas.InvalidateSurface();
     }
 
@@ -94,12 +91,14 @@ public sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
 }
 ```
 
-Include the `.dzi` and tile folder in the project file:
+Include assets in the project file:
 
 ```xml
 <ItemGroup>
-    <MauiAsset Include="Assets\image.dzi"               LogicalName="image.dzi" />
-    <MauiAsset Include="Assets\image_files\**"          LogicalName="image_files/%(RecursiveDir)%(Filename)%(Extension)" />
+    <MauiAsset Include="Assets\image.dzi"
+               LogicalName="image.dzi" />
+    <MauiAsset Include="Assets\image_files\**"
+               LogicalName="image_files/%(RecursiveDir)%(Filename)%(Extension)" />
 </ItemGroup>
 ```
 
@@ -108,22 +107,86 @@ Include the `.dzi` and tile folder in the project file:
 For remote images, use the built-in `SKDeepZoomHttpTileFetcher`:
 
 ```csharp
-var httpClient = new HttpClient();
-var fetcher    = new SKDeepZoomHttpTileFetcher(httpClient);
+using var httpClient = new HttpClient();
+var fetcher = new SKDeepZoomHttpTileFetcher(httpClient);
 
-var xml        = await httpClient.GetStringAsync("https://example.com/image.dzi");
-var tileSource = SKDeepZoomImageSource.Parse(xml, "https://example.com/image_files/");
-
-_controller.Load(tileSource, fetcher);
+var xml    = await httpClient.GetStringAsync("https://example.com/image.dzi");
+var source = SKDeepZoomImageSource.Parse(xml, "https://example.com/image_files/");
+_controller.Load(source, fetcher);
 ```
+
+## Pan and Zoom
+
+Add gesture recognizers or pointer events to enable interactive navigation:
+
+```csharp
+public DeepZoomPage()
+{
+    InitializeComponent();
+    _controller.InvalidateRequired += (_, _) => canvas.InvalidateSurface();
+
+    // Pan with finger/mouse drag
+    var pan = new PanGestureRecognizer();
+    pan.PanUpdated += OnPanUpdated;
+    canvas.GestureRecognizers.Add(pan);
+
+    // Pinch to zoom
+    var pinch = new PinchGestureRecognizer();
+    pinch.PinchUpdated += OnPinchUpdated;
+    canvas.GestureRecognizers.Add(pinch);
+}
+
+private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
+{
+    if (e.StatusType == GestureStatus.Running)
+    {
+        _controller.Pan(e.TotalX, e.TotalY);
+        canvas.InvalidateSurface();
+    }
+}
+
+private void OnPinchUpdated(object? sender, PinchGestureUpdatedEventArgs e)
+{
+    if (e.Status == GestureStatus.Running)
+    {
+        _controller.SetZoom(_controller.Viewport.Zoom * e.Scale);
+        canvas.InvalidateSurface();
+    }
+}
+```
+
+## Loading a DZC Collection
+
+```csharp
+using var stream = await FileSystem.OpenAppPackageFileAsync("collection.dzc");
+using var reader = new StreamReader(stream);
+var xml = await reader.ReadToEndAsync();
+
+var collection = SKDeepZoomCollectionSource.Parse(xml);
+collection.TilesBaseUri = "collection_files/";
+_controller.Load(collection, new AppPackageFetcher());
+```
+
+## Custom Cache
+
+```csharp
+// Smaller cache for memory-constrained devices
+var cache = new SKDeepZoomMemoryTileCache(maxEntries: 256);
+var controller = new SKDeepZoomController(cache: cache);
+```
+
+See the [Caching docs](deep-zoom-caching.md) for custom disk-backed caches.
 
 ## Rendering Behaviour
 
-- **Fit and center**: On load the controller fits the full image into the canvas with `FitToView()`. The image is centered horizontally and vertically; neither cropping nor distortion occurs.
-- **Tile resolution**: `Update()` selects the pyramid level that best matches the physical pixel size of the canvas. Only tiles visible in the current viewport are fetched.
-- **Tile blending**: While high-resolution tiles load, lower-resolution tiles from the parent level are upscaled and composited as a placeholder (LOD blending).
+- **Fit and center**: On load the controller fits the full image into the canvas with `FitToView()`. The image is centered; neither cropping nor distortion occurs.
+- **LOD blending**: While high-resolution tiles load, lower-resolution tiles from parent levels are upscaled and composited as placeholders.
+- **Idle detection**: `controller.IsIdle` is `true` when no tiles are loading.
 
 ## Related
 
-- [Deep Zoom overview](deep-zoom.md) — architecture, services, and API reference
-- [Deep Zoom for Blazor](deep-zoom-blazor.md) — Blazor WebAssembly integration
+- [Deep Zoom overview](deep-zoom.md)
+- [Controller & Viewport](deep-zoom-controller.md)
+- [Tile Fetching](deep-zoom-fetching.md)
+- [Caching](deep-zoom-caching.md)
+- [Deep Zoom for Blazor](deep-zoom-blazor.md)
