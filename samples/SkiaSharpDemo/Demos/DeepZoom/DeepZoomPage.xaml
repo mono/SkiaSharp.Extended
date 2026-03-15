@@ -48,7 +48,7 @@
             <Label Grid.Column="0" Text="Zoom:" TextColor="#ccc" FontSize="13" VerticalOptions="Center" />
             <Slider x:Name="zoomSlider"
                     Grid.Column="1"
-                    Minimum="0.1" Maximum="50" Value="1"
+                    Minimum="0" Maximum="1" Value="0.5"
                     Margin="8,0"
                     ValueChanged="OnZoomChanged" />
             <Label x:Name="zoomLabel"

@@ -86,6 +86,15 @@ namespace SkiaSharp.Extended.DeepZoom
         public (double X, double Y, double Width, double Height) GetZoomRect()
             => _viewport.GetZoomRect(_viewport.ViewportWidth);
 
+        /// <summary>
+        /// The zoom level at which one image pixel maps to exactly one screen pixel (native 1:1 resolution).
+        /// Returns 0 if no image is loaded.
+        /// </summary>
+        public double NativeZoom =>
+            (_tileSource != null && _viewport.ControlWidth > 0)
+                ? (double)_tileSource.ImageWidth / _viewport.ControlWidth
+                : 0.0;
+
         /// <summary>Show tile borders for debugging.</summary>
         public bool ShowTileBorders
         {

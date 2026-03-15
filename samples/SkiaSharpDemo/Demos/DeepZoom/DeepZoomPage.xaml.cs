@@ -66,6 +66,7 @@ public partial class DeepZoomPage : ContentPage
                 var coll = SKDeepZoomCollectionSource.Parse(xml);
                 coll.TilesBaseUri = baseDir;
                 _controller.Load(coll, new SKDeepZoomHttpTileFetcher());
+                SyncSliderFromViewport();
                 statusLabel.Text = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
             else
@@ -73,6 +74,7 @@ public partial class DeepZoomPage : ContentPage
                 string tilesBase = $"{baseDir}{stem}_files/";
                 var tileSource = SKDeepZoomImageSource.Parse(xml, tilesBase);
                 _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher());
+                SyncSliderFromViewport();
                 statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             }
 
@@ -96,11 +98,26 @@ public partial class DeepZoomPage : ContentPage
         _controller.Render(e.Surface.Canvas);
     }
 
+    private const double MinZoom = 0.1;
+    private const double MaxZoom = 50.0;
+    private static double SliderToZoom(double s) => MinZoom * Math.Pow(MaxZoom / MinZoom, s);
+    private static double ZoomToSlider(double z) =>
+        (Math.Log(z) - Math.Log(MinZoom)) / (Math.Log(MaxZoom) - Math.Log(MinZoom));
+
+    private void SyncSliderFromViewport()
+    {
+        if (_controller == null) return;
+        var zoom = _controller.Viewport.Zoom;
+        zoomSlider.Value = Math.Clamp(ZoomToSlider(zoom), 0, 1);
+        zoomLabel.Text = $"{zoom:F2}×";
+    }
+
     private void OnZoomChanged(object? sender, ValueChangedEventArgs e)
     {
         if (_controller == null) return;
-        _controller.SetZoom(e.NewValue);
-        zoomLabel.Text = $"{e.NewValue:F2}×";
+        var zoom = SliderToZoom(e.NewValue);
+        _controller.SetZoom(zoom);
+        zoomLabel.Text = $"{zoom:F2}×";
         canvas.InvalidateSurface();
     }
 
