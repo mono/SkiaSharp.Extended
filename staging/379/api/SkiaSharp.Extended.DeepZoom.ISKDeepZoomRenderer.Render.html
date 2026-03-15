@@ -2,10 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Property ShowTileBorders
+      <title>Method Render
  | SkiaSharp.Extended </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Property ShowTileBorders
+      <meta name="title" content="Method Render
  | SkiaSharp.Extended ">
       
       <link rel="icon" href="../images/logo.ico">
@@ -85,15 +85,15 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowTileBorders*">
+        <article data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.Render*">
 
 
 
 
 
-<h1 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_ShowTileBorders_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowTileBorders*" class="text-break">
-  Property ShowTileBorders
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
+<h1 id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_Render_" data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.Render*" class="text-break">
+  Method Render
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomRenderer.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
@@ -119,30 +119,39 @@
 
 
 
-<a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_ShowTileBorders_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowTileBorders*"></a>
+<a id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_Render_" data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.Render*"></a>
 
-<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_ShowTileBorders" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowTileBorders">
-  ShowTileBorders
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_Render_SkiaSharp_SKCanvas_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileScheduler_" data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.Render(SkiaSharp.SKCanvas,SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource,SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport,SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache,SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler)">
+  Render(SKCanvas, SKDeepZoomImageSource, SKDeepZoomViewport, ISKDeepZoomTileCache, SKDeepZoomTileScheduler)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomRenderer.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Show tile borders for debugging.</p>
+<div class="markdown level1 summary"><p>Renders the visible Deep Zoom tiles onto <code class="paramref">canvas</code>.
+Called from the UI thread during the canvas paint callback.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public bool ShowTileBorders { get; set; }</code></pre>
+  <pre><code class="lang-csharp hljs">void Render(SKCanvas canvas, SKDeepZoomImageSource tileSource, SKDeepZoomViewport viewport, ISKDeepZoomTileCache cache, SKDeepZoomTileScheduler scheduler)</code></pre>
 </div>
 
-
-
-
-
-<h4 class="section">Property Value</h4>
+<h4 class="section">Parameters</h4>
 <dl class="parameters">
-  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+  <dt><code>canvas</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skcanvas">SKCanvas</a></dt>
+  <dd></dd>
+  <dt><code>tileSource</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.html">SKDeepZoomImageSource</a></dt>
+  <dd></dd>
+  <dt><code>viewport</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.html">SKDeepZoomViewport</a></dt>
+  <dd></dd>
+  <dt><code>cache</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.html">ISKDeepZoomTileCache</a></dt>
+  <dd></dd>
+  <dt><code>scheduler</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.html">SKDeepZoomTileScheduler</a></dt>
   <dd></dd>
 </dl>
+
+
+
+
 
 
 
@@ -154,7 +163,7 @@
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomRenderer.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -170,7 +179,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d7b5e23
+          source: PR #379 · d92acad
         </div>
       </div>
     </footer>

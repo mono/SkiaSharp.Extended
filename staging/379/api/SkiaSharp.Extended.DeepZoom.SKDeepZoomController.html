@@ -169,8 +169,8 @@ Typical usage:
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.-ctor.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController__ctor_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_System_Int32_">SKDeepZoomController(ISKDeepZoomTileCache?, int)</a></dt>
-    <dd><p>Initializes a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">SKDeepZoomController</a> with an optional custom tile cache.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.-ctor.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController__ctor_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_System_Int32_">SKDeepZoomController(ISKDeepZoomTileCache?, ISKDeepZoomRenderer?, int)</a></dt>
+    <dd><p>Initializes a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">SKDeepZoomController</a> with optional custom cache and renderer.</p>
 </dd>
   </dl>
 
@@ -211,11 +211,6 @@ Returns 0 if no image is loaded.</p>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Scheduler.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Scheduler">Scheduler</a></dt>
     <dd><p>The tile scheduler.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowTileBorders.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_ShowTileBorders">ShowTileBorders</a></dt>
-    <dd><p>Show tile borders for debugging.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -357,7 +352,7 @@ Call from your render loop on every frame.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d7b5e23
+          source: PR #379 · d92acad
         </div>
       </div>
     </footer>

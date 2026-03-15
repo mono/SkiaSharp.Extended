@@ -6,16 +6,16 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Controller &amp; Viewport | SkiaSharp.Extended ">
       
-      <link rel="icon" href="../images/logo.ico">
-      <link rel="stylesheet" href="../public/docfx.min.css">
-      <link rel="stylesheet" href="../public/main.css">
-      <meta name="docfx:navrel" content="../toc.html">
-      <meta name="docfx:tocrel" content="toc.html">
+      <link rel="icon" href="../../images/logo.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
       
-      <meta name="docfx:rel" content="../">
+      <meta name="docfx:rel" content="../../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-controller.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom/controller.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -30,7 +30,7 @@
       <meta name="loc:downloadPdf" content="Download PDF">
   </head>
 
-  <script type="module" src="./../public/docfx.min.js"></script>
+  <script type="module" src="./../../public/docfx.min.js"></script>
 
   <script>
     const theme = localStorage.getItem('theme') || 'auto'
@@ -42,8 +42,8 @@
     <header class="bg-body border-bottom">
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
-          <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo.png" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -173,8 +173,8 @@ controller.ResetView();
 </tr>
 <tr>
 <td style="text-align: left;"><code>Renderer</code></td>
-<td style="text-align: left;"><code>SKDeepZoomRenderer</code></td>
-<td style="text-align: left;">The tile renderer.</td>
+<td style="text-align: left;"><code>ISKDeepZoomRenderer</code></td>
+<td style="text-align: left;">The tile renderer (pluggable via <code>ISKDeepZoomRenderer</code>).</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>TileSource</code></td>
@@ -206,41 +206,70 @@ controller.ResetView();
 <td style="text-align: left;"><code>double</code></td>
 <td style="text-align: left;">Zoom level where 1 image pixel = 1 screen pixel.</td>
 </tr>
-<tr>
-<td style="text-align: left;"><code>ShowTileBorders</code></td>
-<td style="text-align: left;"><code>bool</code></td>
-<td style="text-align: left;">Debug: draw a border around each tile.</td>
-</tr>
 </tbody>
 </table>
-<h3 id="renderer-options">Renderer Options</h3>
-<p>The <code>SKDeepZoomRenderer</code> (accessible via <code>controller.Renderer</code>) exposes additional display settings:</p>
+<h3 id="renderer-and-lod-blending">Renderer and LOD Blending</h3>
+<p>The renderer is <strong>pluggable</strong> via <code>ISKDeepZoomRenderer</code>. The default implementation is <code>SKDeepZoomRenderer</code>.</p>
+<p>Pass a custom renderer at construction time:</p>
+<pre><code class="lang-csharp">ISKDeepZoomRenderer myRenderer = new MyCustomRenderer();
+var controller = new SKDeepZoomController(renderer: myRenderer);
+</code></pre>
+<p><strong><code>EnableLodBlending</code></strong> (default <code>true</code>) controls whether lower-resolution fallback tiles are shown while high-resolution tiles are loading:</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Property</th>
-<th style="text-align: left;">Default</th>
-<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Value</th>
+<th style="text-align: left;">Behaviour</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>ShowTileBorders</code></td>
-<td style="text-align: left;"><code>false</code></td>
-<td style="text-align: left;">Draw a dark border around each rendered tile (also on <code>controller</code>).</td>
+<td style="text-align: left;"><code>true</code> (default)</td>
+<td style="text-align: left;">Lower-res parent tiles scale up as placeholders. The view is never blank — tiles appear immediately at reduced quality, then sharpen.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>EnableLodBlending</code></td>
-<td style="text-align: left;"><code>true</code></td>
-<td style="text-align: left;">When <code>true</code>, lower-resolution parent tiles are scaled up and drawn as placeholders while higher-resolution tiles are loading. When <code>false</code>, missing tiles show as blank.</td>
+<td style="text-align: left;"><code>false</code></td>
+<td style="text-align: left;">Missing tiles show as empty space. Tiles appear all-or-nothing when loaded. Useful for testing load performance.</td>
 </tr>
 </tbody>
 </table>
-<pre><code class="lang-csharp">// Access via controller shortcut
-controller.ShowTileBorders = true;
+<pre><code class="lang-csharp">// Cast to SKDeepZoomRenderer to access EnableLodBlending
+if (controller.Renderer is SKDeepZoomRenderer r)
+    r.EnableLodBlending = false;
+</code></pre>
+<p><strong>Decorator pattern for debug overlays:</strong></p>
+<p>Instead of building debug features into the core renderer, wrap it with a decorator:</p>
+<pre><code class="lang-csharp">public sealed class TileBorderRenderer : ISKDeepZoomRenderer
+{
+    private readonly ISKDeepZoomRenderer _inner;
+    public bool ShowBorders { get; set; }
 
-// Or directly on the renderer
-controller.Renderer.EnableLodBlending = false;  // show blank while loading
+    public TileBorderRenderer(ISKDeepZoomRenderer inner) =&gt; _inner = inner;
+
+    public void Render(SKCanvas canvas, SKDeepZoomImageSource source,
+                       SKDeepZoomViewport viewport, ISKDeepZoomTileCache cache,
+                       SKDeepZoomTileScheduler scheduler)
+    {
+        _inner.Render(canvas, source, viewport, cache, scheduler);
+        if (!ShowBorders) return;
+
+        // Draw borders over each visible tile
+        using var paint = new SKPaint { IsStroke = true, Color = SKColors.Red.WithAlpha(120) };
+        var tiles = scheduler.GetVisibleTiles(source, viewport);
+        foreach (var req in tiles)
+        {
+            var rect = SKDeepZoomRenderer.GetTileDestRect(source, viewport, req.TileId);
+            canvas.DrawRect(rect, paint);
+        }
+    }
+
+    public void Dispose() =&gt; _inner.Dispose();
+}
+
+// Wire it up:
+var coreRenderer = new SKDeepZoomRenderer();
+var debugRenderer = new TileBorderRenderer(coreRenderer) { ShowBorders = true };
+var controller = new SKDeepZoomController(renderer: debugRenderer);
 </code></pre>
 <h3 id="events">Events</h3>
 <table>
@@ -668,19 +697,19 @@ foreach (var req in tiles)
 <hr>
 <h2 id="related">Related</h2>
 <ul>
-<li><a href="deep-zoom.html">Deep Zoom overview</a></li>
-<li><a href="deep-zoom-fetching.html">Tile Fetching</a></li>
-<li><a href="deep-zoom-caching.html">Caching</a></li>
-<li><a href="deep-zoom-blazor.html">Blazor Integration</a></li>
-<li><a href="deep-zoom-maui.html">MAUI Integration</a></li>
-<li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">API Reference — SKDeepZoomController</a></li>
-<li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.html">API Reference — SKDeepZoomViewport</a></li>
+<li><a href="index.html">Deep Zoom overview</a></li>
+<li><a href="fetching.html">Tile Fetching</a></li>
+<li><a href="caching.html">Caching</a></li>
+<li><a href="blazor.html">Blazor Integration</a></li>
+<li><a href="maui.html">MAUI Integration</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">API Reference — SKDeepZoomController</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.html">API Reference — SKDeepZoomViewport</a></li>
 </ul>
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-controller.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom/controller.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>
@@ -697,7 +726,7 @@ foreach (var req in tiles)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d7b5e23
+          source: PR #379 · d92acad
         </div>
       </div>
     </footer>

@@ -6,16 +6,16 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Deep Zoom for MAUI | SkiaSharp.Extended ">
       
-      <link rel="icon" href="../images/logo.ico">
-      <link rel="stylesheet" href="../public/docfx.min.css">
-      <link rel="stylesheet" href="../public/main.css">
-      <meta name="docfx:navrel" content="../toc.html">
-      <meta name="docfx:tocrel" content="toc.html">
+      <link rel="icon" href="../../images/logo.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
       
-      <meta name="docfx:rel" content="../">
+      <meta name="docfx:rel" content="../../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-maui.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom/maui.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -30,7 +30,7 @@
       <meta name="loc:downloadPdf" content="Download PDF">
   </head>
 
-  <script type="module" src="./../public/docfx.min.js"></script>
+  <script type="module" src="./../../public/docfx.min.js"></script>
 
   <script>
     const theme = localStorage.getItem('theme') || 'auto'
@@ -42,8 +42,8 @@
     <header class="bg-body border-bottom">
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
-          <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo.png" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -246,7 +246,7 @@ _controller.Load(collection, new AppPackageFetcher());
 var cache = new SKDeepZoomMemoryTileCache(maxEntries: 256);
 var controller = new SKDeepZoomController(cache: cache);
 </code></pre>
-<p>See the <a href="deep-zoom-caching.html">Caching docs</a> for custom disk-backed caches.</p>
+<p>See the <a href="caching.html">Caching docs</a> for custom disk-backed caches.</p>
 <h2 id="rendering-behaviour">Rendering Behaviour</h2>
 <ul>
 <li><strong>Fit and center</strong>: On load the controller fits the full image into the canvas with <code>FitToView()</code>. The image is centered; neither cropping nor distortion occurs.</li>
@@ -255,17 +255,17 @@ var controller = new SKDeepZoomController(cache: cache);
 </ul>
 <h2 id="related">Related</h2>
 <ul>
-<li><a href="deep-zoom.html">Deep Zoom overview</a></li>
-<li><a href="deep-zoom-controller.html">Controller &amp; Viewport</a></li>
-<li><a href="deep-zoom-fetching.html">Tile Fetching</a></li>
-<li><a href="deep-zoom-caching.html">Caching</a></li>
-<li><a href="deep-zoom-blazor.html">Deep Zoom for Blazor</a></li>
+<li><a href="index.html">Deep Zoom overview</a></li>
+<li><a href="controller.html">Controller &amp; Viewport</a></li>
+<li><a href="fetching.html">Tile Fetching</a></li>
+<li><a href="caching.html">Caching</a></li>
+<li><a href="blazor.html">Deep Zoom for Blazor</a></li>
 </ul>
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-maui.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom/maui.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>
@@ -282,7 +282,7 @@ var controller = new SKDeepZoomController(cache: cache);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d7b5e23
+          source: PR #379 · d92acad
         </div>
       </div>
     </footer>

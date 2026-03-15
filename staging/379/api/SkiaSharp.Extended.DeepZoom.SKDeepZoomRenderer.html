@@ -104,7 +104,7 @@
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKDeepZoomRenderer : IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public class SKDeepZoomRenderer : ISKDeepZoomRenderer, IDisposable</code></pre>
   </div>
 
 
@@ -121,6 +121,7 @@
   <dl class="typelist implements">
     <dt>Implements</dt>
     <dd>
+      <div><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.html">ISKDeepZoomRenderer</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
     </dd>
   </dl>
@@ -169,14 +170,10 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.EnableLodBlending.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_EnableLodBlending">EnableLodBlending</a></dt>
-    <dd><p>Whether to enable LOD cross-fade blending when transitioning between tile levels.
-When enabled, fallback (lower-resolution) tiles are drawn underneath with fading opacity.
-Default is true (matches Silverlight behavior).</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.ShowTileBorders.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_ShowTileBorders">ShowTileBorders</a></dt>
-    <dd><p>Whether to draw tile boundaries for debugging.</p>
+    <dd><p>Whether to enable LOD (Level-of-Detail) fallback blending.
+When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> (default), lower-resolution parent tiles are drawn as
+placeholders while higher-resolution tiles are loading — the view is never blank.
+When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>, missing tiles show as empty space until loaded.</p>
 </dd>
   </dl>
 
@@ -188,8 +185,16 @@ Default is true (matches Silverlight behavior).</p>
     <dd></dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.GetTileDestRect.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_GetTileDestRect_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_">GetTileDestRect(SKDeepZoomImageSource, SKDeepZoomViewport, SKDeepZoomTileId)</a></dt>
+    <dd><p>Computes the screen-space destination rect for a tile.
+Exposed as <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/internal">internal</a> so decorator renderers in the same assembly
+can reuse the coordinate math without re-implementing it.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Render_SkiaSharp_SKCanvas_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileScheduler_">Render(SKCanvas, SKDeepZoomImageSource, SKDeepZoomViewport, ISKDeepZoomTileCache, SKDeepZoomTileScheduler)</a></dt>
-    <dd><p>Renders visible tiles onto the canvas using the current viewport state.</p>
+    <dd><p>Renders the visible Deep Zoom tiles onto <code class="paramref">canvas</code>.
+Called from the UI thread during the canvas paint callback.</p>
 </dd>
   </dl>
 
@@ -214,7 +219,7 @@ Default is true (matches Silverlight behavior).</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d7b5e23
+          source: PR #379 · d92acad
         </div>
       </div>
     </footer>

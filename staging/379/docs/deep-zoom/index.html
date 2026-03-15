@@ -6,16 +6,16 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Deep Zoom | SkiaSharp.Extended ">
       
-      <link rel="icon" href="../images/logo.ico">
-      <link rel="stylesheet" href="../public/docfx.min.css">
-      <link rel="stylesheet" href="../public/main.css">
-      <meta name="docfx:navrel" content="../toc.html">
-      <meta name="docfx:tocrel" content="toc.html">
+      <link rel="icon" href="../../images/logo.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
       
-      <meta name="docfx:rel" content="../">
+      <meta name="docfx:rel" content="../../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom/index.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -30,7 +30,7 @@
       <meta name="loc:downloadPdf" content="Download PDF">
   </head>
 
-  <script type="module" src="./../public/docfx.min.js"></script>
+  <script type="module" src="./../../public/docfx.min.js"></script>
 
   <script>
     const theme = localStorage.getItem('theme') || 'auto'
@@ -42,8 +42,8 @@
     <header class="bg-body border-bottom">
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
-          <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo.png" alt="">
             
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -167,8 +167,12 @@
 <td style="text-align: left;">Built-in file system fetcher for local/bundled tiles.</td>
 </tr>
 <tr>
+<td style="text-align: left;"><code>ISKDeepZoomRenderer</code></td>
+<td style="text-align: left;">Pluggable renderer interface.</td>
+</tr>
+<tr>
 <td style="text-align: left;"><code>SKDeepZoomRenderer</code></td>
-<td style="text-align: left;">Draws visible tiles onto an <code>SKCanvas</code> with LOD fallback blending.</td>
+<td style="text-align: left;">Default renderer; LOD fallback blending, tile scheduling.</td>
 </tr>
 </tbody>
 </table>
@@ -306,26 +310,26 @@ controller.ResetView();
 </table>
 <h2 id="platform-integration">Platform Integration</h2>
 <ul>
-<li><a href="deep-zoom-blazor.html">Deep Zoom for Blazor</a> — Blazor WebAssembly integration guide</li>
-<li><a href="deep-zoom-maui.html">Deep Zoom for MAUI</a> — .NET MAUI integration guide</li>
+<li><a href="blazor.html">Deep Zoom for Blazor</a> — Blazor WebAssembly integration guide</li>
+<li><a href="maui.html">Deep Zoom for MAUI</a> — .NET MAUI integration guide</li>
 </ul>
 <h2 id="deeper-dives">Deeper Dives</h2>
 <ul>
-<li><a href="deep-zoom-controller.html">Controller &amp; Viewport</a> — Full controller API, viewport coordinate system, zoom semantics</li>
-<li><a href="deep-zoom-fetching.html">Tile Fetching</a> — Built-in fetchers and how to implement custom fetchers</li>
-<li><a href="deep-zoom-caching.html">Caching</a> — Cache interface, LRU memory cache, tiered caching, custom implementations</li>
+<li><a href="controller.html">Controller &amp; Viewport</a> — Full controller API, viewport coordinate system, zoom semantics</li>
+<li><a href="fetching.html">Tile Fetching</a> — Built-in fetchers and how to implement custom fetchers</li>
+<li><a href="caching.html">Caching</a> — Cache interface, LRU memory cache, tiered caching, custom implementations</li>
 </ul>
 <h2 id="learn-more">Learn More</h2>
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/cc645050(v=vs.95)">Deep Zoom specification</a> — Microsoft's original documentation</li>
 <li><a href="https://openseadragon.github.io/">OpenSeadragon</a> — Popular JavaScript Deep Zoom viewer</li>
-<li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">API Reference — SKDeepZoomController</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">API Reference — SKDeepZoomController</a></li>
 </ul>
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom/index.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>
@@ -342,7 +346,7 @@ controller.ResetView();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d7b5e23
+          source: PR #379 · d92acad
         </div>
       </div>
     </footer>

@@ -126,9 +126,10 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomRenderer.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Whether to enable LOD cross-fade blending when transitioning between tile levels.
-When enabled, fallback (lower-resolution) tiles are drawn underneath with fading opacity.
-Default is true (matches Silverlight behavior).</p>
+<div class="markdown level1 summary"><p>Whether to enable LOD (Level-of-Detail) fallback blending.
+When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> (default), lower-resolution parent tiles are drawn as
+placeholders while higher-resolution tiles are loading — the view is never blank.
+When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>, missing tiles show as empty space until loaded.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -172,7 +173,7 @@ Default is true (matches Silverlight behavior).</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d7b5e23
+          source: PR #379 · d92acad
         </div>
       </div>
     </footer>
