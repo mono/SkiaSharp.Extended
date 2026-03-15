@@ -139,7 +139,7 @@ for (int level = 0; level <= maxLevel; level++)
         // start = image origin in tile space, end = image far-corner in tile space
         var gradStart = new SKPoint(-x0, -y0);
         var gradEnd   = new SKPoint(levelSize - x0, levelSize - y0);
-        SKColor[] gradColors = [new(255, 210, 160, 55), new(160, 195, 255, 55)];
+        SKColor[] gradColors = [new(255, 200, 140, 110), new(140, 185, 255, 110)];
         using var gradShader = SKShader.CreateLinearGradient(
             gradStart, gradEnd, gradColors, SKShaderTileMode.Clamp);
         using var gradPaint  = new SKPaint { Shader = gradShader };
