@@ -984,6 +984,23 @@ controller.ResetView();
 | `NativeZoom` | `double` | Zoom level where 1 image pixel = 1 screen pixel. |
 | `ShowTileBorders` | `bool` | Debug: draw a border around each tile. |
 
+### Renderer Options
+
+The `SKDeepZoomRenderer` (accessible via `controller.Renderer`) exposes additional display settings:
+
+| Property | Default | Description |
+| :------- | :------ | :---------- |
+| `ShowTileBorders` | `false` | Draw a dark border around each rendered tile (also on `controller`). |
+| `EnableLodBlending` | `true` | When `true`, lower-resolution parent tiles are scaled up and drawn as placeholders while higher-resolution tiles are loading. When `false`, missing tiles show as blank. |
+
+```csharp
+// Access via controller shortcut
+controller.ShowTileBorders = true;
+
+// Or directly on the renderer
+controller.Renderer.EnableLodBlending = false;  // show blank while loading
+```
+
 ### Events
 
 | Event | Signature | Description |
@@ -1058,6 +1075,39 @@ double native = controller.NativeZoom;
 // Navigate to native zoom, centred on current view
 var (cx, cy) = vp.ElementToLogicalPoint(vp.ControlWidth / 2, vp.ControlHeight / 2);
 controller.ZoomAboutLogicalPoint(native / vp.Zoom, cx, cy);
+```
+
+---
+
+## SKDeepZoomViewportState
+
+An immutable `readonly record struct` snapshot of the current viewport position and zoom. Useful for saving/restoring viewport state (e.g., for undo/redo, navigation history, or persisting the last position across sessions).
+
+```csharp
+// Capture current state
+var state = new SKDeepZoomViewportState(
+    controller.Viewport.ViewportWidth,
+    controller.Viewport.ViewportOriginX,
+    controller.Viewport.ViewportOriginY);
+
+// Store it (e.g., in a stack for undo)
+_history.Push(state);
+
+// Restore it later
+controller.SetViewport(state.ViewportWidth, state.OriginX, state.OriginY);
+canvas.InvalidateSurface();
+```
+
+| Property | Type | Description |
+| :------- | :--- | :---------- |
+| `ViewportWidth` | `double` | Logical width of the visible area (1.0 = full image). |
+| `OriginX` | `double` | Logical X coordinate of the top-left corner. |
+| `OriginY` | `double` | Logical Y coordinate of the top-left corner. |
+
+Because it's a `record struct`, it has value equality, works as a dictionary key, and supports `with` expressions:
+
+```csharp
+var zoomed = state with { ViewportWidth = state.ViewportWidth * 0.5 };
 ```
 
 ---
@@ -1144,6 +1194,63 @@ foreach (var sub in controller.SubImages)
     double aspect = sub.AspectRatio;
     string? source = sub.Source;
 }
+```
+
+---
+
+## SKDeepZoomCollectionSubImage
+
+Represents a single image within a DZC collection, including its position in the Morton-indexed mosaic grid.
+
+| Property | Type | Description |
+| :------- | :--- | :---------- |
+| `Id` | `int` | Item ID from the DZC XML. |
+| `MortonIndex` | `int` | Z-order (Morton) index in the mosaic grid. |
+| `Width` | `int` | Full image width in pixels. |
+| `Height` | `int` | Full image height in pixels. |
+| `AspectRatio` | `double` | `Width / Height`. |
+| `Source` | `string?` | Optional path to the individual `.dzi` file. |
+| `ViewportWidth` | `double` | Position in the DZC mosaic coordinate system. |
+| `ViewportX` | `double` | X origin in the DZC mosaic coordinate system. |
+| `ViewportY` | `double` | Y origin in the DZC mosaic coordinate system. |
+
+---
+
+## SKDeepZoomDisplayRect
+
+Used in sparse Deep Zoom Images to describe a region of available pixels and the pyramid level range at which it appears. Typically set on `SKDeepZoomImageSource.DisplayRects` when parsing a sparse DZI.
+
+| Property | Type | Description |
+| :------- | :--- | :---------- |
+| `X` | `int` | X coordinate in full-image pixels. |
+| `Y` | `int` | Y coordinate in full-image pixels. |
+| `Width` | `int` | Width in full-image pixels. |
+| `Height` | `int` | Height in full-image pixels. |
+| `MinLevel` | `int` | Lowest pyramid level where this rect is visible. |
+| `MaxLevel` | `int` | Highest pyramid level where this rect is visible. |
+
+```csharp
+bool visible = rect.IsVisibleAtLevel(level: 12);  // true if MinLevel ≤ 12 ≤ MaxLevel
+```
+
+---
+
+## SKDeepZoomTileRequest
+
+Returned by `SKDeepZoomTileScheduler.GetVisibleTiles()` — represents a single tile that should be fetched, with a priority that controls fetch order.
+
+| Property | Type | Description |
+| :------- | :--- | :---------- |
+| `TileId` | `SKDeepZoomTileId` | The tile to fetch (`Level`, `Col`, `Row`). |
+| `Priority` | `double` | Fetch order: lower value = fetched first (higher visual importance). |
+
+Equality is based on `TileId` only, so a `SKDeepZoomTileRequest` can be de-duplicated by tile regardless of priority:
+
+```csharp
+// Inspect the scheduler's current view
+var tiles = controller.Scheduler.GetVisibleTiles(controller.TileSource, controller.Viewport);
+foreach (var req in tiles)
+    Console.WriteLine($"{req.TileId} priority={req.Priority:F2}");
 ```
 
 ---
@@ -1482,12 +1589,26 @@ public DeepZoomPage()
     canvas.GestureRecognizers.Add(pinch);
 }
 
+// TotalX/Y is cumulative per gesture, so we must track the previous value
+// to compute a per-frame delta.
+private double _lastPanX, _lastPanY;
+
 private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
 {
-    if (e.StatusType == GestureStatus.Running)
+    switch (e.StatusType)
     {
-        _controller.Pan(e.TotalX, e.TotalY);
-        canvas.InvalidateSurface();
+        case GestureStatus.Started:
+            _lastPanX = 0;
+            _lastPanY = 0;
+            break;
+        case GestureStatus.Running:
+            var dx = e.TotalX - _lastPanX;
+            var dy = e.TotalY - _lastPanY;
+            _lastPanX = e.TotalX;
+            _lastPanY = e.TotalY;
+            _controller.Pan(dx, dy);
+            canvas.InvalidateSurface();
+            break;
     }
 }
 

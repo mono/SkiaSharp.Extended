@@ -213,6 +213,35 @@ controller.ResetView();
 </tr>
 </tbody>
 </table>
+<h3 id="renderer-options">Renderer Options</h3>
+<p>The <code>SKDeepZoomRenderer</code> (accessible via <code>controller.Renderer</code>) exposes additional display settings:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ShowTileBorders</code></td>
+<td style="text-align: left;"><code>false</code></td>
+<td style="text-align: left;">Draw a dark border around each rendered tile (also on <code>controller</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>EnableLodBlending</code></td>
+<td style="text-align: left;"><code>true</code></td>
+<td style="text-align: left;">When <code>true</code>, lower-resolution parent tiles are scaled up and drawn as placeholders while higher-resolution tiles are loading. When <code>false</code>, missing tiles show as blank.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-csharp">// Access via controller shortcut
+controller.ShowTileBorders = true;
+
+// Or directly on the renderer
+controller.Renderer.EnableLodBlending = false;  // show blank while loading
+</code></pre>
 <h3 id="events">Events</h3>
 <table>
 <thead>
@@ -330,6 +359,51 @@ var (x, y, w, h) = controller.GetZoomRect();
 // Navigate to native zoom, centred on current view
 var (cx, cy) = vp.ElementToLogicalPoint(vp.ControlWidth / 2, vp.ControlHeight / 2);
 controller.ZoomAboutLogicalPoint(native / vp.Zoom, cx, cy);
+</code></pre>
+<hr>
+<h2 id="skdeepzoomviewportstate">SKDeepZoomViewportState</h2>
+<p>An immutable <code>readonly record struct</code> snapshot of the current viewport position and zoom. Useful for saving/restoring viewport state (e.g., for undo/redo, navigation history, or persisting the last position across sessions).</p>
+<pre><code class="lang-csharp">// Capture current state
+var state = new SKDeepZoomViewportState(
+    controller.Viewport.ViewportWidth,
+    controller.Viewport.ViewportOriginX,
+    controller.Viewport.ViewportOriginY);
+
+// Store it (e.g., in a stack for undo)
+_history.Push(state);
+
+// Restore it later
+controller.SetViewport(state.ViewportWidth, state.OriginX, state.OriginY);
+canvas.InvalidateSurface();
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ViewportWidth</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">Logical width of the visible area (1.0 = full image).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>OriginX</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">Logical X coordinate of the top-left corner.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>OriginY</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">Logical Y coordinate of the top-left corner.</td>
+</tr>
+</tbody>
+</table>
+<p>Because it's a <code>record struct</code>, it has value equality, works as a dictionary key, and supports <code>with</code> expressions:</p>
+<pre><code class="lang-csharp">var zoomed = state with { ViewportWidth = state.ViewportWidth * 0.5 };
 </code></pre>
 <hr>
 <h2 id="skdeepzoomimagesource">SKDeepZoomImageSource</h2>
@@ -457,6 +531,141 @@ foreach (var sub in controller.SubImages)
 }
 </code></pre>
 <hr>
+<h2 id="skdeepzoomcollectionsubimage">SKDeepZoomCollectionSubImage</h2>
+<p>Represents a single image within a DZC collection, including its position in the Morton-indexed mosaic grid.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Id</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Item ID from the DZC XML.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>MortonIndex</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Z-order (Morton) index in the mosaic grid.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Width</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Full image width in pixels.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Height</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Full image height in pixels.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>AspectRatio</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;"><code>Width / Height</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Source</code></td>
+<td style="text-align: left;"><code>string?</code></td>
+<td style="text-align: left;">Optional path to the individual <code>.dzi</code> file.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ViewportWidth</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">Position in the DZC mosaic coordinate system.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ViewportX</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">X origin in the DZC mosaic coordinate system.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ViewportY</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">Y origin in the DZC mosaic coordinate system.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="skdeepzoomdisplayrect">SKDeepZoomDisplayRect</h2>
+<p>Used in sparse Deep Zoom Images to describe a region of available pixels and the pyramid level range at which it appears. Typically set on <code>SKDeepZoomImageSource.DisplayRects</code> when parsing a sparse DZI.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>X</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">X coordinate in full-image pixels.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Y</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Y coordinate in full-image pixels.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Width</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Width in full-image pixels.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Height</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Height in full-image pixels.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>MinLevel</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Lowest pyramid level where this rect is visible.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>MaxLevel</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Highest pyramid level where this rect is visible.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-csharp">bool visible = rect.IsVisibleAtLevel(level: 12);  // true if MinLevel ≤ 12 ≤ MaxLevel
+</code></pre>
+<hr>
+<h2 id="skdeepzoomtilerequest">SKDeepZoomTileRequest</h2>
+<p>Returned by <code>SKDeepZoomTileScheduler.GetVisibleTiles()</code> — represents a single tile that should be fetched, with a priority that controls fetch order.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>TileId</code></td>
+<td style="text-align: left;"><code>SKDeepZoomTileId</code></td>
+<td style="text-align: left;">The tile to fetch (<code>Level</code>, <code>Col</code>, <code>Row</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Priority</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">Fetch order: lower value = fetched first (higher visual importance).</td>
+</tr>
+</tbody>
+</table>
+<p>Equality is based on <code>TileId</code> only, so a <code>SKDeepZoomTileRequest</code> can be de-duplicated by tile regardless of priority:</p>
+<pre><code class="lang-csharp">// Inspect the scheduler's current view
+var tiles = controller.Scheduler.GetVisibleTiles(controller.TileSource, controller.Viewport);
+foreach (var req in tiles)
+    Console.WriteLine($&quot;{req.TileId} priority={req.Priority:F2}&quot;);
+</code></pre>
+<hr>
 <h2 id="related">Related</h2>
 <ul>
 <li><a href="deep-zoom.html">Deep Zoom overview</a></li>
@@ -488,7 +697,7 @@ foreach (var sub in controller.SubImages)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · b2eb0ee
+          source: PR #379 · d7b5e23
         </div>
       </div>
     </footer>
