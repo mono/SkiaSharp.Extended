@@ -98,8 +98,8 @@ public partial class DeepZoomPage : ContentPage
         _controller.Render(e.Surface.Canvas);
     }
 
-    private const double MinZoom = 0.1;
-    private const double MaxZoom = 50.0;
+    private const double MinZoom = 0.01;
+    private const double MaxZoom = 100.0;
     private static double SliderToZoom(double s) => MinZoom * Math.Pow(MaxZoom / MinZoom, s);
     private static double ZoomToSlider(double z) =>
         (Math.Log(z) - Math.Log(MinZoom)) / (Math.Log(MaxZoom) - Math.Log(MinZoom));
