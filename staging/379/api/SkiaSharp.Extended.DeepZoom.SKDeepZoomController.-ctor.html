@@ -121,23 +121,27 @@
 
 <a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController__ctor_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.#ctor*"></a>
 
-<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController__ctor_System_Int32_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.#ctor(System.Int32)">
-  SKDeepZoomController(int)
+<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController__ctor_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_System_Int32_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.#ctor(SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache,System.Int32)">
+  SKDeepZoomController(ISKDeepZoomTileCache?, int)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Initializes a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">SKDeepZoomController</a> with an optional tile cache capacity.</p>
+<div class="markdown level1 summary"><p>Initializes a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">SKDeepZoomController</a> with an optional custom tile cache.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKDeepZoomController(int cacheCapacity = 1024)</code></pre>
+  <pre><code class="lang-csharp hljs">public SKDeepZoomController(ISKDeepZoomTileCache? cache = null, int defaultCacheCapacity = 1024)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
-  <dt><code>cacheCapacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-  <dd><p>Maximum number of tiles to cache. Default is 1024.</p>
+  <dt><code>cache</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.html">ISKDeepZoomTileCache</a></dt>
+  <dd><p>Custom tile cache implementation. When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, the default
+<a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.html">SKDeepZoomTileCache</a> is created with <code class="paramref">defaultCacheCapacity</code> entries.</p>
+</dd>
+  <dt><code>defaultCacheCapacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+  <dd><p>Maximum tiles for the default cache (ignored when <code class="paramref">cache</code> is provided).</p>
 </dd>
 </dl>
 
@@ -171,7 +175,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · b1285a3
+          source: PR #379 · 2953876
         </div>
       </div>
     </footer>

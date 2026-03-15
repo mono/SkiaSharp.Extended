@@ -195,6 +195,13 @@ Defines a region of available pixels and the pyramid levels at which it is visib
 Interfaces
 </h3>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.html">ISKDeepZoomTileCache</a></dt>
+      <dd><p>Pluggable tile bitmap cache for Deep Zoom rendering.
+Implement this interface to provide custom caching strategies
+(in-memory, disk, tiered, etc.).</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.html">ISKDeepZoomTileFetcher</a></dt>
       <dd><p>Interface for fetching tile image data from various sources (HTTP, file, memory).</p>
 </dd>
@@ -219,7 +226,7 @@ Interfaces
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · b1285a3
+          source: PR #379 · 2953876
         </div>
       </div>
     </footer>

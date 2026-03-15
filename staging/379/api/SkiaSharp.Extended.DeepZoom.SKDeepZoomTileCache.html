@@ -107,7 +107,7 @@ Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Flush
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKDeepZoomTileCache : IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public class SKDeepZoomTileCache : ISKDeepZoomTileCache, IDisposable</code></pre>
   </div>
 
 
@@ -124,6 +124,7 @@ Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Flush
   <dl class="typelist implements">
     <dt>Implements</dt>
     <dd>
+      <div><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.html">ISKDeepZoomTileCache</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
     </dd>
   </dl>
@@ -211,6 +212,11 @@ to safely dispose bitmaps that are no longer in use.</p>
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.PutAsync.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_PutAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_System_Threading_CancellationToken_">PutAsync(SKDeepZoomTileId, SKBitmap?, CancellationToken)</a></dt>
+    <dd><p>Adds a tile bitmap to the cache via the async interface. Calls <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Put.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_Put_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_">Put(SKDeepZoomTileId, SKBitmap?)</a> synchronously.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Remove.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_Remove_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_">Remove(SKDeepZoomTileId)</a></dt>
     <dd><p>Removes a specific tile from the cache.</p>
 </dd>
@@ -242,7 +248,7 @@ to safely dispose bitmaps that are no longer in use.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · b1285a3
+          source: PR #379 · 2953876
         </div>
       </div>
     </footer>
