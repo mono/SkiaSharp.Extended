@@ -24,6 +24,11 @@
     "title": "Method FlushEvicted | SkiaSharp.Extended",
     "keywords": "Method FlushEvicted Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll FlushEvicted() Disposes bitmaps evicted since the last call. Call once per render frame on the UI thread before drawing to safely release GPU-bound bitmaps. void FlushEvicted()"
   },
+  "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.Put.html": {
+    "href": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.Put.html",
+    "title": "Method Put | SkiaSharp.Extended",
+    "keywords": "Method Put Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Put(SKDeepZoomTileId, SKBitmap?) Stores a tile bitmap synchronously. Use this for simple in-memory caches. void Put(SKDeepZoomTileId id, SKBitmap? bitmap) Parameters id SKDeepZoomTileId bitmap SKBitmap"
+  },
   "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.PutAsync.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.PutAsync.html",
     "title": "Method PutAsync | SkiaSharp.Extended",
@@ -42,7 +47,7 @@
   "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.html",
     "title": "Interface ISKDeepZoomTileCache | SkiaSharp.Extended",
-    "keywords": "Interface ISKDeepZoomTileCache Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Pluggable tile bitmap cache for Deep Zoom rendering. Implement this interface to provide custom caching strategies (in-memory, disk, tiered, etc.). public interface ISKDeepZoomTileCache : IDisposable Inherited Members IDisposable.Dispose() Properties Count Number of tiles currently in the cache. Methods Clear() Clears all cached tiles. Contains(SKDeepZoomTileId) Returns true if the tile is cached. FlushEvicted() Disposes bitmaps evicted since the last call. Call once per render frame on the UI thread before drawing to safely release GPU-bound bitmaps. PutAsync(SKDeepZoomTileId, SKBitmap?, CancellationToken) Stores a tile bitmap. Implementations may apply delays or tiered writes. Called from a background thread; the ct should be respected. Remove(SKDeepZoomTileId) Removes a specific tile from the cache. TryGet(SKDeepZoomTileId, out SKBitmap?) Tries to retrieve a cached tile bitmap."
+    "keywords": "Interface ISKDeepZoomTileCache Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Pluggable tile bitmap cache for Deep Zoom rendering. Implement this interface to provide custom caching strategies (in-memory, disk, tiered, etc.). public interface ISKDeepZoomTileCache : IDisposable Inherited Members IDisposable.Dispose() Properties Count Number of tiles currently in the cache. Methods Clear() Clears all cached tiles. Contains(SKDeepZoomTileId) Returns true if the tile is cached. FlushEvicted() Disposes bitmaps evicted since the last call. Call once per render frame on the UI thread before drawing to safely release GPU-bound bitmaps. Put(SKDeepZoomTileId, SKBitmap?) Stores a tile bitmap synchronously. Use this for simple in-memory caches. PutAsync(SKDeepZoomTileId, SKBitmap?, CancellationToken) Stores a tile bitmap. Implementations may apply delays or tiered writes. Called from a background thread; the ct should be respected. Remove(SKDeepZoomTileId) Removes a specific tile from the cache. TryGet(SKDeepZoomTileId, out SKBitmap?) Tries to retrieve a cached tile bitmap."
   },
   "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.FetchTileAsync.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.FetchTileAsync.html",

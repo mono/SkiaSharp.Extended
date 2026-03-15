@@ -156,6 +156,11 @@ on the UI thread before drawing to safely release GPU-bound bitmaps.</p>
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.Put.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_Put_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_">Put(SKDeepZoomTileId, SKBitmap?)</a></dt>
+    <dd><p>Stores a tile bitmap synchronously. Use this for simple in-memory caches.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.PutAsync.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_PutAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_System_Threading_CancellationToken_">PutAsync(SKDeepZoomTileId, SKBitmap?, CancellationToken)</a></dt>
     <dd><p>Stores a tile bitmap. Implementations may apply delays or tiered writes.
 Called from a background thread; the <code class="paramref">ct</code> should be respected.</p>
@@ -193,7 +198,7 @@ Called from a background thread; the <code class="paramref">ct</code> should be 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 2953876
+          source: PR #379 · 34570b0
         </div>
       </div>
     </footer>
