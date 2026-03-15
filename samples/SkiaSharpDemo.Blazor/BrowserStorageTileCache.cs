@@ -21,7 +21,9 @@ namespace SkiaSharpDemo;
 public sealed class BrowserStorageTileCache : ISKDeepZoomTileCache
 {
     private readonly IJSRuntime _js;
-    // In-memory index so Contains/TryGet (sync) can return fast on hits without round-tripping JS.
+    // In-memory index so Contains/TryGet (sync) can return fast without JS interop round-trips.
+    // Capped to prevent unbounded growth (tiles still persist in sessionStorage beyond this limit).
+    private const int MaxMemoryEntries = 512;
     private readonly ConcurrentDictionary<SKDeepZoomTileId, SKBitmap> _memIndex = new();
     private int _storageCount;
 
@@ -59,7 +61,7 @@ public sealed class BrowserStorageTileCache : ISKDeepZoomTileCache
 
             var bytes = Convert.FromBase64String(base64);
             var bitmap = SKBitmap.Decode(bytes);
-            if (bitmap is not null)
+            if (bitmap is not null && _memIndex.Count < MaxMemoryEntries)
                 _memIndex.TryAdd(id, bitmap);
             return bitmap;
         }
@@ -71,7 +73,8 @@ public sealed class BrowserStorageTileCache : ISKDeepZoomTileCache
     public void Put(SKDeepZoomTileId id, SKBitmap? bitmap)
     {
         if (bitmap is null) return;
-        _memIndex[id] = bitmap;
+        if (_memIndex.Count < MaxMemoryEntries)
+            _memIndex[id] = bitmap;
         // Fire-and-forget write to storage (best-effort, no await)
         _ = WriteToBrowserAsync(id, bitmap, CancellationToken.None);
     }
@@ -79,11 +82,13 @@ public sealed class BrowserStorageTileCache : ISKDeepZoomTileCache
     public async Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default)
     {
         if (bitmap is null) return;
-        _memIndex[id] = bitmap;
-        await WriteToBrowserAsync(id, bitmap, ct).ConfigureAwait(false);
+        bool stored = await WriteToBrowserAsync(id, bitmap, ct).ConfigureAwait(false);
+        // Only cache in memory if the storage write succeeded and we have room.
+        if (stored && _memIndex.Count < MaxMemoryEntries)
+            _memIndex.TryAdd(id, bitmap);
     }
 
-    private async Task WriteToBrowserAsync(SKDeepZoomTileId id, SKBitmap bitmap, CancellationToken ct)
+    private async Task<bool> WriteToBrowserAsync(SKDeepZoomTileId id, SKBitmap bitmap, CancellationToken ct)
     {
         try
         {
@@ -93,8 +98,9 @@ public sealed class BrowserStorageTileCache : ISKDeepZoomTileCache
             await _js.InvokeVoidAsync("deepZoomCacheSet", ct, TileKey(id), base64)
                      .ConfigureAwait(false);
             Interlocked.Increment(ref _storageCount);
+            return true;
         }
-        catch { /* quota exceeded or interop unavailable */ }
+        catch { return false; /* quota exceeded or interop unavailable */ }
     }
 
     public bool Remove(SKDeepZoomTileId id)

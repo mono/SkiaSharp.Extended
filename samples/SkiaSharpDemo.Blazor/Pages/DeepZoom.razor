@@ -367,7 +367,9 @@
     private bool _useBrowserCache;
     private int  _cacheCapacity = 1024;
     private DelayTileCache? _delayCache;
-    private BrowserStorageTileCache? _browserCache;
+    // _innerCache is the cache directly wrapped by _delayCache (owned; dispose via _delayCache)
+    private ISKDeepZoomTileCache? _innerCache;
+    private BrowserStorageTileCache? _browserCache; // same ref as _innerCache when _useBrowserCache=true
 
     // URL input
     private string _urlInput = DefaultDziUrl;
@@ -402,8 +404,8 @@
         _thisRef = DotNetObjectReference.Create(this);
         await JS.InvokeVoidAsync("deepZoomRegisterResize", _thisRef);
 
-        _browserCache = new BrowserStorageTileCache(JS);
-        _delayCache = new DelayTileCache(new SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache(_cacheCapacity));
+        _innerCache = new SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache(_cacheCapacity);
+        _delayCache = new DelayTileCache(_innerCache);
         _controller = new SKDeepZoomController(_delayCache);
         _controller.InvalidateRequired += OnInvalidateRequired;
 
@@ -603,18 +605,20 @@
     private void OnCacheTypeChanged()
     {
         if (_controller == null) return;
-        // Reload with new cache type
+        var source = _controller.TileSource;  // save BEFORE dispose
         RebuildControllerCache();
-        var source = _controller.TileSource;
-        var fetcher = new SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher();
         if (source != null)
-            _controller.Load(source, fetcher);
+            _controller.Load(source, new SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher());
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
     private void OnCacheSizeChanged()
     {
+        if (_controller == null) return;
+        var source = _controller.TileSource;  // save BEFORE dispose
         RebuildControllerCache();
+        if (source != null)
+            _controller.Load(source, new SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher());
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
@@ -627,17 +631,26 @@
     private void RebuildControllerCache()
     {
         if (_controller == null) return;
-        // Dispose old caches
+
+        // _delayCache.Dispose() cascades to _innerCache (and transitively _browserCache)
+        // so we must NOT dispose _innerCache or _browserCache separately.
         _delayCache?.Dispose();
-        _browserCache?.Dispose();
+        _delayCache = null;
+        _innerCache = null;    // already disposed via _delayCache
+        _browserCache = null;  // same object as _innerCache when useBrowserCache=true
 
-        _browserCache = new BrowserStorageTileCache(JS);
+        // Build new cache chain
+        if (_useBrowserCache)
+        {
+            _browserCache = new BrowserStorageTileCache(JS);
+            _innerCache = _browserCache;
+        }
+        else
+        {
+            _innerCache = new SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache(_cacheCapacity);
+        }
 
-        ISKDeepZoomTileCache inner = _useBrowserCache
-            ? _browserCache
-            : new SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache(_cacheCapacity);
-
-        _delayCache = new DelayTileCache(inner)
+        _delayCache = new DelayTileCache(_innerCache)
         {
             IsEnabled  = _cacheDelayEnabled,
             MinDelayMs = _cacheDelayMin,
@@ -665,7 +678,8 @@
             _controller.InvalidateRequired -= OnInvalidateRequired;
             _controller.Dispose();
         }
-        _browserCache?.Dispose();
+        // _delayCache owns _innerCache (and transitively _browserCache); dispose cascades.
+        _delayCache?.Dispose();
     }
 }
 

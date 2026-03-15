@@ -25,7 +25,7 @@ flowchart TD
     Controller["SKDeepZoomController\n(orchestrator)"]
     Viewport["SKDeepZoomViewport\n(geometry)"]
     Scheduler["SKDeepZoomTileScheduler\n(tile selection)"]
-    Cache["SKDeepZoomTileCache\n(LRU bitmap store)"]
+    Cache["SKDeepZoomMemoryTileCache\n(LRU bitmap store)"]
     Renderer["SKDeepZoomRenderer\n(draws tiles)"]
     Fetcher["ISKDeepZoomTileFetcher\n(HTTP or file)"]
     TileSource["SKDeepZoomImageSource\n(DZI metadata)"]
@@ -145,7 +145,7 @@ flowchart LR
     end
 
     subgraph "Caching"
-        C["SKDeepZoomTileCache\n(LRU, configurable capacity)"]
+        C["SKDeepZoomMemoryTileCache\n(LRU, configurable capacity)"]
     end
 
     IF --> C
@@ -154,7 +154,7 @@ flowchart LR
 
 **`SKDeepZoomTileId`** — uniquely identifies a tile as `(level, col, row)`.  
 **`SKDeepZoomTileRequest`** — adds fallback context: if the exact tile isn't cached, a parent tile at a lower level is used to fill the space while the tile loads.  
-**`SKDeepZoomTileCache`** — thread-safe LRU cache of `SKBitmap` objects. Evicts least-recently-used tiles when capacity is reached.
+**`SKDeepZoomMemoryTileCache`** — thread-safe LRU cache of `SKBitmap` objects. Evicts least-recently-used tiles when capacity is reached.
 
 ### 3 — Viewport & Geometry
 
@@ -207,7 +207,7 @@ classDiagram
 ```mermaid
 flowchart TD
     Renderer["SKDeepZoomRenderer"]
-    Cache["SKDeepZoomTileCache"]
+    Cache["SKDeepZoomMemoryTileCache"]
     Viewport["SKDeepZoomViewport"]
     TileSource["SKDeepZoomImageSource"]
     Scheduler["SKDeepZoomTileScheduler"]
@@ -223,7 +223,7 @@ flowchart TD
     Cache --> note1
 ```
 
-The renderer always falls back to a lower-level tile while the correct tile is loading, so the display is never blank. Tile borders and a debug overlay can be enabled via `ShowTileBorders` / `ShowDebugStats`.
+The renderer always falls back to a lower-level tile while the correct tile is loading, so the display is never blank. Tile borders and a debug overlay can be enabled via `ShowTileBorders`.
 
 ---
 
@@ -233,7 +233,7 @@ The renderer always falls back to a lower-level tile while the correct tile is l
 classDiagram
     class SKDeepZoomController {
         +SKDeepZoomViewport Viewport
-        +SKDeepZoomTileCache Cache
+        +SKDeepZoomMemoryTileCache Cache
         +SKDeepZoomTileScheduler Scheduler
         +SKDeepZoomRenderer Renderer
         +SKDeepZoomImageSource? TileSource
@@ -341,7 +341,7 @@ public partial class MyPage : ContentPage
 | `SKDeepZoomViewportState.cs` | Snapshot struct for viewport state |
 | `SKDeepZoomRenderer.cs` | Draws tiles onto `SKCanvas` with fallback support |
 | `SKDeepZoomTileScheduler.cs` | Selects visible tiles at the optimal pyramid level |
-| `SKDeepZoomTileCache.cs` | Thread-safe LRU cache of decoded tile bitmaps |
+| `SKDeepZoomMemoryTileCache.cs` | Thread-safe LRU cache of decoded tile bitmaps |
 | `SKDeepZoomTileId.cs` | Identifies a tile: `(level, col, row)` |
 | `SKDeepZoomTileRequest.cs` | Tile + optional fallback parent tile |
 | `SKDeepZoomTileFailedEventArgs.cs` | Event args for tile load failures |
