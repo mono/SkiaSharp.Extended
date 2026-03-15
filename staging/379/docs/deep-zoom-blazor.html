@@ -86,16 +86,16 @@
         <article data-uid="">
 <h1 id="deep-zoom-for-blazor">Deep Zoom for Blazor</h1>
 
-<p>Use <code>SKDeepZoomController</code> with a plain <code>SKCanvasView</code> to render Deep Zoom images in Blazor WebAssembly. There is no custom component — the page wires the services directly to the canvas.</p>
+<p>Use <code>SKDeepZoomController</code> with a plain <code>SKCanvasView</code> in Blazor WebAssembly to render Deep Zoom images. There is no custom component — the page wires the services directly to the canvas, giving you full control over layout, interaction, and lifecycle.</p>
 <h2 id="quick-start">Quick Start</h2>
 <pre><code class="lang-razor">@page &quot;/deepzoom&quot;
-@implements IDisposable
+@implements IAsyncDisposable
 @inject HttpClient Http
 @using SkiaSharp.Extended.DeepZoom
 
 &lt;SKCanvasView @ref=&quot;_canvas&quot;
               OnPaintSurface=&quot;OnPaintSurface&quot;
-              style=&quot;width: 100%; height: 600px; border: 1px solid #ccc;&quot; /&gt;
+              style=&quot;width: 100%; height: 600px; touch-action: none;&quot; /&gt;
 
 @code {
     private SKCanvasView? _canvas;
@@ -108,19 +108,16 @@
         _controller = new SKDeepZoomController();
         _controller.InvalidateRequired += OnInvalidateRequired;
 
-        var xml        = await Http.GetStringAsync(&quot;deepzoom/image.dzi&quot;);
-        var baseUrl    = new Uri(Http.BaseAddress!, &quot;deepzoom/image_files/&quot;).ToString();
-        var tileSource = SKDeepZoomImageSource.Parse(xml, baseUrl);
+        var xml     = await Http.GetStringAsync(&quot;deepzoom/image.dzi&quot;);
+        var baseUrl = new Uri(Http.BaseAddress!, &quot;deepzoom/image_files/&quot;).ToString();
+        var source  = SKDeepZoomImageSource.Parse(xml, baseUrl);
 
-        _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new HttpClient()));
-
-        await InvokeAsync(StateHasChanged);
+        _controller.Load(source, new SKDeepZoomHttpTileFetcher());
     }
 
     private void OnPaintSurface(SKPaintSurfaceEventArgs e)
     {
         if (_controller == null) return;
-
         _controller.SetControlSize(e.Info.Width, e.Info.Height);
         _controller.Update();
         _controller.Render(e.Surface.Canvas);
@@ -129,7 +126,7 @@
     private void OnInvalidateRequired(object? sender, EventArgs e)
         =&gt; InvokeAsync(() =&gt; _canvas?.Invalidate());
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (_controller != null)
         {
@@ -140,23 +137,90 @@
 }
 </code></pre>
 <h2 id="serving-tile-assets">Serving Tile Assets</h2>
-<p>Place <code>.dzi</code> and tile folder under <code>wwwroot</code>. In the project file, reference them as content:</p>
+<p>Place <code>.dzi</code> and tile folder under <code>wwwroot</code>. In the project file, mark them as content:</p>
 <pre><code class="lang-xml">&lt;ItemGroup&gt;
     &lt;Content Include=&quot;wwwroot\deepzoom\image.dzi&quot; /&gt;
     &lt;Content Include=&quot;wwwroot\deepzoom\image_files\**&quot; /&gt;
 &lt;/ItemGroup&gt;
 </code></pre>
-<p>The <code>SKDeepZoomHttpTileFetcher</code> fetches each tile URL via <code>HttpClient</code>; tile URLs are constructed automatically from the base URL you supply to <code>SKDeepZoomImageSource.Parse</code>.</p>
+<p>The <code>SKDeepZoomHttpTileFetcher</code> fetches each tile via <code>HttpClient</code>; tile URLs are constructed automatically from the base URL you pass to <code>SKDeepZoomImageSource.Parse</code>.</p>
+<h2 id="pan-and-zoom">Pan and Zoom</h2>
+<p>Wire mouse and touch events to the controller's navigation methods:</p>
+<pre><code class="lang-razor">&lt;SKCanvasView @ref=&quot;_canvas&quot;
+              OnPaintSurface=&quot;OnPaintSurface&quot;
+              @onmousedown=&quot;OnMouseDown&quot;
+              @onmousemove=&quot;OnMouseMove&quot;
+              @onmouseup=&quot;OnMouseUp&quot;
+              @onwheel=&quot;OnWheel&quot;
+              style=&quot;width: 100%; height: 600px; touch-action: none;&quot; /&gt;
+
+@code {
+    private bool _dragging;
+    private double _lastX, _lastY;
+
+    private void OnMouseDown(MouseEventArgs e)
+    {
+        _dragging = true;
+        _lastX = e.ClientX;
+        _lastY = e.ClientY;
+    }
+
+    private void OnMouseMove(MouseEventArgs e)
+    {
+        if (!_dragging || _controller == null) return;
+        _controller.Pan(e.ClientX - _lastX, e.ClientY - _lastY);
+        _lastX = e.ClientX;
+        _lastY = e.ClientY;
+        _canvas?.Invalidate();
+    }
+
+    private void OnMouseUp(MouseEventArgs e) =&gt; _dragging = false;
+
+    private void OnWheel(WheelEventArgs e)
+    {
+        if (_controller == null) return;
+        double factor = e.DeltaY &lt; 0 ? 1.15 : 1.0 / 1.15;
+        _controller.ZoomAboutScreenPoint(factor, e.OffsetX, e.OffsetY);
+        _canvas?.Invalidate();
+    }
+}
+</code></pre>
+<h2 id="loading-a-dzc-collection">Loading a DZC Collection</h2>
+<pre><code class="lang-csharp">var xml = await Http.GetStringAsync(&quot;collection.dzc&quot;);
+var collection = SKDeepZoomCollectionSource.Parse(xml);
+collection.TilesBaseUri = Http.BaseAddress!.ToString();
+_controller!.Load(collection, new SKDeepZoomHttpTileFetcher());
+</code></pre>
+<h2 id="custom-cache">Custom Cache</h2>
+<p>Pass a custom <code>ISKDeepZoomTileCache</code> to the controller for tiered caching or controlled experiments:</p>
+<pre><code class="lang-csharp">// Custom in-memory cache with explicit capacity
+var cache = new SKDeepZoomMemoryTileCache(maxEntries: 512);
+_controller = new SKDeepZoomController(cache: cache);
+</code></pre>
+<p>See the <a href="deep-zoom-caching.html">Caching docs</a> for implementing browser storage tiers, delay wrappers, and other custom strategies.</p>
+<h2 id="canvas-resize">Canvas Resize</h2>
+<p>When the Blazor page resizes, <code>SetControlSize</code> automatically picks up the new dimensions on the next paint. If you want to trigger a reset to fit the image after a resize:</p>
+<pre><code class="lang-csharp">// In a JS interop resize callback:
+[JSInvokable]
+public void OnCanvasResized()
+{
+    _controller?.ResetView();
+    InvokeAsync(() =&gt; _canvas?.Invalidate());
+}
+</code></pre>
 <h2 id="rendering-behaviour">Rendering Behaviour</h2>
 <ul>
-<li><strong>Fit and center</strong>: On load the controller calls <code>FitToView()</code> so the full image is visible and centered in the canvas. Neither cropping nor distortion occurs.</li>
-<li><strong>Tile resolution</strong>: <code>Update()</code> selects the pyramid level whose tile size best matches the physical pixel dimensions of the canvas. Only visible tiles are requested.</li>
-<li><strong>Tile blending</strong>: While high-resolution tiles are in-flight, parent-level tiles are upscaled and drawn as placeholders.</li>
+<li><strong>Fit and center</strong>: On load the controller calls <code>FitToView()</code> — the full image is visible, centered horizontally and vertically, with aspect ratio preserved. No cropping or distortion.</li>
+<li><strong>LOD blending</strong>: While high-resolution tiles are in-flight, lower-resolution parent tiles are upscaled and composited as placeholders.</li>
+<li><strong>Idle detection</strong>: <code>controller.IsIdle</code> is <code>true</code> when no tiles are loading. You can pause periodic repaints when the view is idle.</li>
 </ul>
 <h2 id="related">Related</h2>
 <ul>
-<li><a href="deep-zoom.html">Deep Zoom overview</a> — architecture, services, and API reference</li>
-<li><a href="deep-zoom-maui.html">Deep Zoom for MAUI</a> — .NET MAUI integration</li>
+<li><a href="deep-zoom.html">Deep Zoom overview</a></li>
+<li><a href="deep-zoom-controller.html">Controller &amp; Viewport</a></li>
+<li><a href="deep-zoom-fetching.html">Tile Fetching</a></li>
+<li><a href="deep-zoom-caching.html">Caching</a></li>
+<li><a href="deep-zoom-maui.html">Deep Zoom for MAUI</a></li>
 </ul>
 
 </article>
@@ -179,7 +243,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 83a96a7
+          source: PR #379 · b2eb0ee
         </div>
       </div>
     </footer>

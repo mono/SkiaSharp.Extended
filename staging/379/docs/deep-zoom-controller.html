@@ -1,0 +1,496 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Controller &amp; Viewport | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Controller &amp; Viewport | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-controller.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="controller--viewport">Controller &amp; Viewport</h1>
+
+<p><code>SKDeepZoomController</code> is the central orchestrator of the Deep Zoom system. It manages viewport math, tile scheduling, cache population, and rendering. All platform-specific code (canvas, touch, gestures) lives in the caller — the controller knows nothing about UI.</p>
+<h2 id="skdeepzoomcontroller">SKDeepZoomController</h2>
+<h3 id="construction">Construction</h3>
+<pre><code class="lang-csharp">// Default: in-memory LRU cache with 1024 tile capacity
+var controller = new SKDeepZoomController();
+
+// Custom capacity
+var controller = new SKDeepZoomController(defaultCacheCapacity: 512);
+
+// Custom pluggable cache (see Caching docs)
+ISKDeepZoomTileCache myCache = new MyCustomCache();
+var controller = new SKDeepZoomController(cache: myCache);
+</code></pre>
+<h3 id="loading-images">Loading Images</h3>
+<pre><code class="lang-csharp">// DZI — single image
+var source = SKDeepZoomImageSource.Parse(xmlString, &quot;https://example.com/image_files/&quot;);
+controller.Load(source, new SKDeepZoomHttpTileFetcher());
+
+// DZC — collection of images
+var collection = SKDeepZoomCollectionSource.Parse(xmlString);
+collection.TilesBaseUri = &quot;https://example.com/&quot;;
+controller.Load(collection, new SKDeepZoomHttpTileFetcher());
+</code></pre>
+<p><code>Load()</code> resets the viewport to show the full image and starts fetching tiles in the background.</p>
+<h3 id="render-loop">Render Loop</h3>
+<p>Call these three methods from your canvas paint handler:</p>
+<pre><code class="lang-csharp">void OnPaintSurface(SKPaintSurfaceEventArgs e)
+{
+    // 1. Update control dimensions (call on every paint; no-op when unchanged)
+    controller.SetControlSize(e.Info.Width, e.Info.Height);
+
+    // 2. Compute visible tiles and kick off background fetches
+    controller.Update();
+
+    // 3. Draw all cached tiles to the canvas
+    controller.Render(e.Surface.Canvas);
+}
+</code></pre>
+<blockquote>
+<p><strong>Performance tip:</strong> <code>controller.IsIdle</code> is <code>true</code> when no tiles are loading. If you have a continuous render loop, you can pause it when idle.</p>
+</blockquote>
+<h3 id="navigation">Navigation</h3>
+<pre><code class="lang-csharp">// Pan by screen pixel deltas (from mouse drag or touch gesture)
+controller.Pan(deltaScreenX, deltaScreenY);
+
+// Zoom about a screen point (anchor stays fixed on screen)
+controller.ZoomAboutScreenPoint(factor: 1.2, screenX, screenY);
+
+// Zoom about a logical image point (0-1 normalized)
+controller.ZoomAboutLogicalPoint(factor: 1.5, logicalX: 0.5, logicalY: 0.5);
+
+// Set zoom level directly (1.0 = image fills control width)
+controller.SetZoom(zoom: 2.0);
+
+// Set viewport state directly
+controller.SetViewport(viewportWidth, originX, originY);
+
+// Fit image to canvas (centered, aspect-ratio preserved)
+controller.ResetView();
+</code></pre>
+<h3 id="properties">Properties</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Viewport</code></td>
+<td style="text-align: left;"><code>SKDeepZoomViewport</code></td>
+<td style="text-align: left;">The current viewport (position and zoom).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Cache</code></td>
+<td style="text-align: left;"><code>ISKDeepZoomTileCache</code></td>
+<td style="text-align: left;">The tile cache.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Scheduler</code></td>
+<td style="text-align: left;"><code>SKDeepZoomTileScheduler</code></td>
+<td style="text-align: left;">The tile scheduler.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Renderer</code></td>
+<td style="text-align: left;"><code>SKDeepZoomRenderer</code></td>
+<td style="text-align: left;">The tile renderer.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TileSource</code></td>
+<td style="text-align: left;"><code>SKDeepZoomImageSource?</code></td>
+<td style="text-align: left;">The loaded source, or <code>null</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SubImages</code></td>
+<td style="text-align: left;"><code>IReadOnlyList&lt;SKDeepZoomSubImage&gt;</code></td>
+<td style="text-align: left;">Sub-images from a DZC; empty for DZI.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>AspectRatio</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">Width/height of the loaded image; 0 if not loaded.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>IsIdle</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;"><code>true</code> when no tiles are in-flight.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>PendingTileCount</code></td>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">Number of tile fetches currently in progress.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>NativeZoom</code></td>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">Zoom level where 1 image pixel = 1 screen pixel.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ShowTileBorders</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Debug: draw a border around each tile.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="events">Events</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Event</th>
+<th style="text-align: left;">Signature</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ImageOpenSucceeded</code></td>
+<td style="text-align: left;"><code>EventHandler</code></td>
+<td style="text-align: left;">Image parsed and ready to render.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ImageOpenFailed</code></td>
+<td style="text-align: left;"><code>EventHandler&lt;Exception&gt;</code></td>
+<td style="text-align: left;">Image failed to parse.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>InvalidateRequired</code></td>
+<td style="text-align: left;"><code>EventHandler</code></td>
+<td style="text-align: left;">A tile loaded — trigger a canvas repaint.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TileFailed</code></td>
+<td style="text-align: left;"><code>EventHandler&lt;SKDeepZoomTileFailedEventArgs&gt;</code></td>
+<td style="text-align: left;">A tile download failed.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ViewportChanged</code></td>
+<td style="text-align: left;"><code>EventHandler</code></td>
+<td style="text-align: left;">Viewport position or zoom changed.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="disposal">Disposal</h3>
+<pre><code class="lang-csharp">// Cancels all in-flight tile requests, clears the cache, and releases resources.
+controller.Dispose();
+</code></pre>
+<hr>
+<h2 id="skdeepzoomviewport">SKDeepZoomViewport</h2>
+<p><code>SKDeepZoomViewport</code> handles all coordinate math. You rarely need to access it directly — the controller exposes the most common operations — but it's available via <code>controller.Viewport</code> when you need raw position values.</p>
+<h3 id="coordinate-system">Coordinate System</h3>
+<p>The viewport uses a <strong>normalized logical coordinate system</strong> where the full image width = 1.0, regardless of actual pixel dimensions. This makes zoom and pan math resolution-independent.</p>
+<pre><code>ViewportWidth = 1.0   → full image fits the control width (zoom = 1.0)
+ViewportWidth = 0.5   → zoomed in 2x (zoom = 2.0)
+ViewportWidth = 0.25  → zoomed in 4x (zoom = 4.0)
+</code></pre>
+<p>The <code>ViewportOriginX</code> / <code>ViewportOriginY</code> are the logical coordinates of the top-left corner of the visible area.</p>
+<h3 id="key-properties">Key Properties</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ViewportWidth</code></td>
+<td style="text-align: left;">Logical width of visible area (1.0 = full image).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ViewportOriginX</code></td>
+<td style="text-align: left;">Logical X of the top-left corner.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ViewportOriginY</code></td>
+<td style="text-align: left;">Logical Y of the top-left corner.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Zoom</code></td>
+<td style="text-align: left;"><code>= 1.0 / ViewportWidth</code>. 1.0 = fit, 2.0 = 2× zoomed in.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ViewportHeight</code></td>
+<td style="text-align: left;">Derived: <code>ViewportWidth × (controlHeight / controlWidth)</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ControlWidth</code></td>
+<td style="text-align: left;">Screen width in pixels.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ControlHeight</code></td>
+<td style="text-align: left;">Screen height in pixels.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Scale</code></td>
+<td style="text-align: left;">Pixels per logical unit (<code>controlWidth / viewportWidth</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>MaxViewportWidth</code></td>
+<td style="text-align: left;">Maximum zoom-out level (default: unconstrained).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="coordinate-conversion">Coordinate Conversion</h3>
+<pre><code class="lang-csharp">var vp = controller.Viewport;
+
+// Screen → logical image coordinates (e.g., map a tap to the image)
+var (lx, ly) = vp.ElementToLogicalPoint(screenX, screenY);
+
+// Logical → screen (e.g., draw an overlay at a known image position)
+var (sx, sy) = vp.LogicalToElementPoint(logicalX, logicalY);
+
+// Visible logical rect at current zoom
+var (x, y, w, h) = controller.GetZoomRect();
+</code></pre>
+<h3 id="nativezoom">NativeZoom</h3>
+<p>The <strong>native zoom</strong> is the zoom level at which one image pixel maps to exactly one screen pixel. At this level you see maximum detail with no upscaling:</p>
+<pre><code class="lang-csharp">double native = controller.NativeZoom;
+
+// Navigate to native zoom, centred on current view
+var (cx, cy) = vp.ElementToLogicalPoint(vp.ControlWidth / 2, vp.ControlHeight / 2);
+controller.ZoomAboutLogicalPoint(native / vp.Zoom, cx, cy);
+</code></pre>
+<hr>
+<h2 id="skdeepzoomimagesource">SKDeepZoomImageSource</h2>
+<p><code>SKDeepZoomImageSource</code> describes a single DZI image and constructs tile URLs.</p>
+<h3 id="parsing">Parsing</h3>
+<pre><code class="lang-csharp">// From XML string + base URI for tile requests
+var source = SKDeepZoomImageSource.Parse(xmlString, &quot;https://example.com/image_files/&quot;);
+
+// From a stream
+var source = SKDeepZoomImageSource.Parse(stream, &quot;https://example.com/image_files/&quot;);
+</code></pre>
+<h3 id="properties-1">Properties</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ImageWidth</code></td>
+<td style="text-align: left;">Full image width in pixels.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ImageHeight</code></td>
+<td style="text-align: left;">Full image height in pixels.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TileSize</code></td>
+<td style="text-align: left;">Tile edge length in pixels (typically 256 or 512).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Overlap</code></td>
+<td style="text-align: left;">Pixel overlap between adjacent tiles (typically 1).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Format</code></td>
+<td style="text-align: left;">Tile image format string (<code>&quot;jpeg&quot;</code> or <code>&quot;png&quot;</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>MaxLevel</code></td>
+<td style="text-align: left;">Highest zoom level (log₂ of the larger dimension).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>AspectRatio</code></td>
+<td style="text-align: left;"><code>ImageWidth / ImageHeight</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TilesBaseUri</code></td>
+<td style="text-align: left;">Base URL for tile requests.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TilesQueryString</code></td>
+<td style="text-align: left;">Optional query string appended to every tile URL.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tile-url-construction">Tile URL Construction</h3>
+<pre><code class="lang-csharp">// Relative tile path (Level/Col_Row.format)
+string relUrl  = source.GetTileUrl(level: 12, col: 3, row: 5);
+
+// Full absolute tile URL (includes TilesBaseUri)
+string fullUrl = source.GetFullTileUrl(level: 12, col: 3, row: 5);
+
+// Grid dimensions at a given level
+int tilesX = source.GetTileCountX(level: 10);
+int tilesY = source.GetTileCountY(level: 10);
+
+// Optimal level to render at given viewport
+int level = source.GetOptimalLevel(viewportWidth: vp.ViewportWidth, controlWidth: vp.ControlWidth);
+</code></pre>
+<hr>
+<h2 id="skdeepzoomcollectionsource">SKDeepZoomCollectionSource</h2>
+<p><code>SKDeepZoomCollectionSource</code> describes a DZC collection — many DZI images composited into one tile pyramid using Morton (Z-order) indexing.</p>
+<h3 id="parsing-1">Parsing</h3>
+<pre><code class="lang-csharp">var collection = SKDeepZoomCollectionSource.Parse(xmlString);
+collection.TilesBaseUri = &quot;https://example.com/&quot;;
+controller.Load(collection, fetcher);
+</code></pre>
+<h3 id="properties-2">Properties</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>MaxLevel</code></td>
+<td style="text-align: left;">Pyramid level count.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TileSize</code></td>
+<td style="text-align: left;">Tile edge length (pixels).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Format</code></td>
+<td style="text-align: left;">Tile image format.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ItemCount</code></td>
+<td style="text-align: left;">Number of sub-images.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Items</code></td>
+<td style="text-align: left;">All sub-images as <code>SKDeepZoomCollectionSubImage</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TilesBaseUri</code></td>
+<td style="text-align: left;">Base URL for tile requests.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sub-images-after-load">Sub-Images After Load</h3>
+<pre><code class="lang-csharp">controller.Load(collection, fetcher);
+
+foreach (var sub in controller.SubImages)
+{
+    int id = sub.Id;
+    int morton = sub.MortonIndex;
+    double aspect = sub.AspectRatio;
+    string? source = sub.Source;
+}
+</code></pre>
+<hr>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="deep-zoom.html">Deep Zoom overview</a></li>
+<li><a href="deep-zoom-fetching.html">Tile Fetching</a></li>
+<li><a href="deep-zoom-caching.html">Caching</a></li>
+<li><a href="deep-zoom-blazor.html">Blazor Integration</a></li>
+<li><a href="deep-zoom-maui.html">MAUI Integration</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">API Reference — SKDeepZoomController</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.html">API Reference — SKDeepZoomViewport</a></li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-controller.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #379 · b2eb0ee
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

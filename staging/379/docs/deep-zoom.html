@@ -86,7 +86,7 @@
         <article data-uid="">
 <h1 id="deep-zoom">Deep Zoom</h1>
 
-<p>Explore gigapixel images in your .NET MAUI and Blazor apps using the Deep Zoom Image (DZI) format. The deep zoom system downloads only the tiles visible at the current zoom level, so even multi-gigapixel images load instantly without gestures or animation infrastructure.</p>
+<p>Explore gigapixel images in your .NET MAUI and Blazor apps using the Deep Zoom Image (DZI) format. The deep zoom system downloads only the tiles visible at the current zoom level, so even multi-gigapixel images load instantly.</p>
 <h2 id="what-is-deep-zoom">What is Deep Zoom?</h2>
 <p><a href="https://docs.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/cc645050(v=vs.95)">Deep Zoom</a> is a tile-based image format developed by Microsoft. An image is pre-sliced into a pyramid of tiles at multiple resolutions. At any zoom level, only the small set of tiles visible in the viewport is loaded — making it practical to explore images with billions of pixels.</p>
 <p><strong>When to use Deep Zoom:</strong></p>
@@ -97,12 +97,26 @@
 <li>📸 Any image too large to load in full at once</li>
 </ul>
 <h2 id="architecture">Architecture</h2>
-<p>The deep zoom system is intentionally minimal. There is <strong>no custom control</strong> and <strong>no gesture system</strong> — you wire the services directly to a plain <code>SKCanvasView</code>.</p>
-<pre><code>SKDeepZoomImageSource / SKDeepZoomCollectionSource
-           ↓  (parsed from .dzi / .dzc XML)
-    SKDeepZoomController
-           ↓  (SetControlSize → Update → Render)
-       SKCanvasView
+<p>The deep zoom system is intentionally minimal — there is <strong>no custom control</strong> and <strong>no gesture system</strong>. You wire the services directly to a plain <code>SKCanvasView</code>, giving you full control.</p>
+<pre><code class="lang-mermaid">graph TD
+    DZI[&quot;DZI / DZC file&lt;br/&gt;(XML descriptor)&quot;]
+    Source[&quot;SKDeepZoomImageSource&lt;br/&gt;SKDeepZoomCollectionSource&quot;]
+    Controller[&quot;SKDeepZoomController&lt;br/&gt;(the main orchestrator)&quot;]
+    Viewport[&quot;SKDeepZoomViewport&lt;br/&gt;(coordinate math)&quot;]
+    Scheduler[&quot;SKDeepZoomTileScheduler&lt;br/&gt;(which tiles to load)&quot;]
+    Cache[&quot;ISKDeepZoomTileCache&lt;br/&gt;(bitmap store)&quot;]
+    Fetcher[&quot;ISKDeepZoomTileFetcher&lt;br/&gt;(HTTP / file / custom)&quot;]
+    Renderer[&quot;SKDeepZoomRenderer&lt;br/&gt;(draws tiles to canvas)&quot;]
+    Canvas[&quot;SKCanvasView&quot;]
+
+    DZI --&gt; Source
+    Source --&gt; Controller
+    Controller --&gt; Viewport
+    Controller --&gt; Scheduler
+    Controller --&gt; Cache
+    Controller --&gt; Fetcher
+    Controller --&gt; Renderer
+    Renderer --&gt; Canvas
 </code></pre>
 <table>
 <thead>
@@ -114,35 +128,47 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><code>SKDeepZoomImageSource</code></td>
-<td style="text-align: left;">Parses a <code>.dzi</code> descriptor into image metadata (size, tile size, level count).</td>
+<td style="text-align: left;">Parses a <code>.dzi</code> descriptor: image size, tile size, level count, tile URL construction.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>SKDeepZoomCollectionSource</code></td>
-<td style="text-align: left;">Parses a <code>.dzc</code> collection descriptor into a list of sub-images.</td>
+<td style="text-align: left;">Parses a <code>.dzc</code> collection: a mosaic of many DZI sub-images.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>SKDeepZoomController</code></td>
-<td style="text-align: left;">Orchestrates tile scheduling, caching, and rendering. Accepts a canvas size; returns rendered output.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>SKDeepZoomRenderer</code></td>
-<td style="text-align: left;">Draws visible tiles onto an <code>SKCanvas</code>, with LOD fallback blending.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ISKDeepZoomTileFetcher</code></td>
-<td style="text-align: left;">Supplies tile bitmaps from any source (HTTP, file system, app package).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>SKDeepZoomTileCache</code></td>
-<td style="text-align: left;">LRU cache for decoded tile bitmaps.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>SKDeepZoomTileScheduler</code></td>
-<td style="text-align: left;">Determines which tiles are visible at the current viewport.</td>
+<td style="text-align: left;">The central orchestrator. Manages viewport, tile scheduling, caching, and rendering.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>SKDeepZoomViewport</code></td>
 <td style="text-align: left;">Coordinate math between screen pixels and logical (0–1) image space.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKDeepZoomTileScheduler</code></td>
+<td style="text-align: left;">Determines which tiles are visible and their fetch priority.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ISKDeepZoomTileCache</code></td>
+<td style="text-align: left;">Pluggable tile cache interface (in-memory, browser storage, disk, tiered).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKDeepZoomMemoryTileCache</code></td>
+<td style="text-align: left;">Default thread-safe LRU in-memory cache for decoded bitmaps.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ISKDeepZoomTileFetcher</code></td>
+<td style="text-align: left;">Pluggable fetcher interface (HTTP, file system, app package).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKDeepZoomHttpTileFetcher</code></td>
+<td style="text-align: left;">Built-in HTTP fetcher using <code>HttpClient</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKDeepZoomFileTileFetcher</code></td>
+<td style="text-align: left;">Built-in file system fetcher for local/bundled tiles.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKDeepZoomRenderer</code></td>
+<td style="text-align: left;">Draws visible tiles onto an <code>SKCanvas</code> with LOD fallback blending.</td>
 </tr>
 </tbody>
 </table>
@@ -150,25 +176,29 @@
 <h3 id="1-create-a-controller">1. Create a controller</h3>
 <pre><code class="lang-csharp">using SkiaSharp.Extended.DeepZoom;
 
-var controller = new SKDeepZoomController(cacheCapacity: 512);
+// Default: in-memory LRU cache with 1024 tile capacity
+var controller = new SKDeepZoomController();
+
+// Or specify cache capacity
+var controller = new SKDeepZoomController(defaultCacheCapacity: 512);
 </code></pre>
 <h3 id="2-load-an-image-source">2. Load an image source</h3>
-<pre><code class="lang-csharp">// DZI (single image)
+<pre><code class="lang-csharp">// DZI (single image) — load XML and provide the tile base URL
 var xml = await httpClient.GetStringAsync(&quot;https://example.com/image.dzi&quot;);
 var tileSource = SKDeepZoomImageSource.Parse(xml, &quot;https://example.com/image_files/&quot;);
-controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(httpClient));
+controller.Load(tileSource, new SKDeepZoomHttpTileFetcher());
 
 // DZC (collection of images)
 var collXml = await httpClient.GetStringAsync(&quot;https://example.com/collection.dzc&quot;);
-var collection = SKDeepZoomCollectionSource.Parse(collXml, &quot;https://example.com/&quot;);
-controller.Load(collection, new SKDeepZoomHttpTileFetcher(httpClient));
+var collection = SKDeepZoomCollectionSource.Parse(collXml);
+collection.TilesBaseUri = &quot;https://example.com/&quot;;
+controller.Load(collection, new SKDeepZoomHttpTileFetcher());
 </code></pre>
 <h3 id="3-wire-the-canvas">3. Wire the canvas</h3>
-<p>Call <code>SetControlSize</code>, <code>Update</code>, and <code>Render</code> from your paint handler. The controller fits the image to the canvas automatically (centered, scale-to-fit).</p>
 <pre><code class="lang-csharp">void OnPaintSurface(SKPaintSurfaceEventArgs e)
 {
     controller.SetControlSize(e.Info.Width, e.Info.Height);
-    controller.Update();   // schedules tile loads for the current viewport
+    controller.Update();           // schedules tile loads for the current viewport
     controller.Render(e.Surface.Canvas);
 }
 </code></pre>
@@ -176,148 +206,120 @@ controller.Load(collection, new SKDeepZoomHttpTileFetcher(httpClient));
 <pre><code class="lang-csharp">controller.InvalidateRequired += (_, _) =&gt; myCanvasView.InvalidateSurface();
 </code></pre>
 <h3 id="5-dispose-when-done">5. Dispose when done</h3>
-<pre><code class="lang-csharp">controller.Dispose();
+<pre><code class="lang-csharp">controller.Dispose();  // cancels in-flight requests and clears the cache
 </code></pre>
-<h2 id="skdeepzoomcontroller">SKDeepZoomController</h2>
-<p>The platform-agnostic rendering engine. It manages the viewport, tile scheduling, tile cache, and rendering.</p>
-<pre><code class="lang-csharp">var controller = new SKDeepZoomController(cacheCapacity: 1024);
-
-// Load
-controller.Load(tileSource, fetcher);
-
-// Per-frame (from paint handler)
-controller.SetControlSize(width, height);  // call when canvas size changes
-controller.Update();                       // returns true while tiles are loading
-controller.Render(canvas);
-
-// Optional: programmatic viewport control
-controller.ResetView();                                      // fit to canvas
-controller.SetViewport(viewportWidth, originX, originY);     // set directly
-controller.Pan(deltaScreenX, deltaScreenY);                  // pan by pixels
-controller.ZoomAboutScreenPoint(factor, screenX, screenY);  // zoom about screen point
-controller.ZoomAboutLogicalPoint(factor, logicalX, logicalY); // zoom about logical coords
+<h2 id="image-sources">Image Sources</h2>
+<h3 id="dzi--single-images">DZI — Single Images</h3>
+<p>A <code>.dzi</code> file describes a single image sliced into a tile pyramid:</p>
+<pre><code class="lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;Image xmlns=&quot;http://schemas.microsoft.com/deepzoom/2008&quot;
+       Format=&quot;jpeg&quot; Overlap=&quot;1&quot; TileSize=&quot;256&quot;&gt;
+  &lt;Size Width=&quot;32768&quot; Height=&quot;32768&quot;/&gt;
+&lt;/Image&gt;
 </code></pre>
-<h3 id="events">Events</h3>
+<p>Parse it with a base URL pointing to the tile directory:</p>
+<pre><code class="lang-csharp">var source = SKDeepZoomImageSource.Parse(xmlString, &quot;https://example.com/image_files/&quot;);
+
+// Key properties
+int width     = source.ImageWidth;
+int height    = source.ImageHeight;
+int tileSize  = source.TileSize;
+int overlap   = source.Overlap;
+int maxLevel  = source.MaxLevel;
+double aspect = source.AspectRatio;
+
+// Tile URL construction
+string url = source.GetFullTileUrl(level: 12, col: 3, row: 5);
+</code></pre>
+<p>The tile files are at <code>{baseUri}/{level}/{col}_{row}.{format}</code>.</p>
+<h3 id="dzc--collections">DZC — Collections</h3>
+<p>A <code>.dzc</code> file is a mosaic of many DZI images composited into a single tile pyramid:</p>
+<pre><code class="lang-csharp">var collection = SKDeepZoomCollectionSource.Parse(xmlString);
+collection.TilesBaseUri = &quot;https://example.com/&quot;;
+controller.Load(collection, fetcher);
+
+// Sub-images are available after loading
+foreach (var sub in controller.SubImages)
+{
+    Console.WriteLine($&quot;#{sub.Id} — aspect {sub.AspectRatio:F2}&quot;);
+}
+</code></pre>
+<h2 id="viewport-and-zoom">Viewport and Zoom</h2>
+<p>The viewport uses a <strong>normalized coordinate system</strong> where the full image width = 1.0:</p>
+<pre><code class="lang-csharp">var vp = controller.Viewport;
+
+// Zoom level: 1.0 = image fills the control width, &gt;1.0 = zoomed in
+double zoom = vp.Zoom;               // = 1.0 / ViewportWidth
+
+// Native zoom: where 1 image pixel = 1 screen pixel
+double native = controller.NativeZoom;
+
+// Convert a screen tap to logical image coordinates
+var (lx, ly) = vp.ElementToLogicalPoint(tapX, tapY);
+</code></pre>
+<h2 id="programmatic-navigation">Programmatic Navigation</h2>
+<pre><code class="lang-csharp">// Pan by screen pixels
+controller.Pan(deltaX, deltaY);
+
+// Zoom about a screen point (e.g., mouse position)
+controller.ZoomAboutScreenPoint(factor: 1.2, screenX, screenY);
+
+// Zoom about a logical image point
+controller.ZoomAboutLogicalPoint(factor: 1.5, logicalX: 0.5, logicalY: 0.5);
+
+// Set explicit zoom level (1.0 = fit to width)
+controller.SetZoom(zoom: 2.0);
+
+// Reset to fit-to-view
+controller.ResetView();
+</code></pre>
+<h2 id="events">Events</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Event</th>
-<th style="text-align: left;">Args</th>
 <th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;"><code>ImageOpenSucceeded</code></td>
-<td style="text-align: left;"><code>EventArgs</code></td>
-<td style="text-align: left;">Image source loaded and controller is ready to render.</td>
+<td style="text-align: left;">Image source loaded; controller is ready to render.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ImageOpenFailed</code></td>
-<td style="text-align: left;"><code>Exception</code></td>
-<td style="text-align: left;">Image source failed to load.</td>
+<td style="text-align: left;">Image source failed to parse.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>InvalidateRequired</code></td>
-<td style="text-align: left;"><code>EventArgs</code></td>
-<td style="text-align: left;">A tile finished loading; trigger a repaint.</td>
+<td style="text-align: left;">A tile finished loading — trigger a canvas repaint.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>TileFailed</code></td>
-<td style="text-align: left;"><code>SKDeepZoomTileFailedEventArgs</code></td>
 <td style="text-align: left;">A tile failed to download.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ViewportChanged</code></td>
-<td style="text-align: left;"><code>EventArgs</code></td>
-<td style="text-align: left;">Viewport was moved or zoomed programmatically.</td>
+<td style="text-align: left;">Viewport was moved or zoomed.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="skdeepzoomimagesource">SKDeepZoomImageSource</h2>
-<p>Parses <code>.dzi</code> (Deep Zoom Image) XML:</p>
-<pre><code class="lang-csharp">// From a string with a base URL for tile requests
-var tileSource = SKDeepZoomImageSource.Parse(xmlString, &quot;https://example.com/image_files/&quot;);
-
-// Key properties
-int width        = tileSource.ImageWidth;
-int height       = tileSource.ImageHeight;
-int tileSize     = tileSource.TileSize;
-int overlap      = tileSource.Overlap;
-int maxLevel     = tileSource.MaxLevel;
-double aspect    = tileSource.AspectRatio;
-</code></pre>
-<h2 id="skdeepzoomcollectionsource">SKDeepZoomCollectionSource</h2>
-<p>Parses <code>.dzc</code> (Deep Zoom Collection) XML — a mosaic of many DZI images:</p>
-<pre><code class="lang-csharp">var collection = SKDeepZoomCollectionSource.Parse(xmlString, baseUri);
-controller.Load(collection, fetcher);
-
-// After loading, sub-images are accessible via the controller
-foreach (var sub in controller.SubImages)
-{
-    Console.WriteLine($&quot;#{sub.Id} — aspect ratio {sub.AspectRatio:F2}&quot;);
-}
-</code></pre>
-<h2 id="tile-fetchers">Tile Fetchers</h2>
-<p>Two built-in fetchers are provided:</p>
-<pre><code class="lang-csharp">// HTTP — fetches tiles from a URL
-var fetcher = new SKDeepZoomHttpTileFetcher(httpClient);
-
-// File system — useful for testing or local files
-var fetcher = new SKDeepZoomFileTileFetcher(baseDirectory);
-</code></pre>
-<p>Implement <code>ISKDeepZoomTileFetcher</code> to fetch from any source:</p>
-<pre><code class="lang-csharp">public class AppPackageFetcher : ISKDeepZoomTileFetcher
-{
-    public async Task&lt;SKBitmap?&gt; FetchTileAsync(string url, CancellationToken ct = default)
-    {
-        try
-        {
-            using var stream = await FileSystem.OpenAppPackageFileAsync(url);
-            return SKBitmap.Decode(stream);
-        }
-        catch
-        {
-            return null;   // returning null skips the tile silently
-        }
-    }
-
-    public void Dispose() { }
-}
-</code></pre>
-<h2 id="viewport">Viewport</h2>
-<p>The <code>SKDeepZoomViewport</code> handles coordinate transforms between screen pixels and the logical (0–1) image space:</p>
-<pre><code class="lang-csharp">var vp = controller.Viewport;
-
-// Convert a tap to logical image coordinates
-var (lx, ly) = vp.ElementToLogicalPoint(tapX, tapY);
-
-// Current viewport state
-double viewportWidth = vp.ViewportWidth;   // 1.0 = full image visible; &lt; 1.0 = zoomed in
-double originX       = vp.ViewportOriginX;
-double originY       = vp.ViewportOriginY;
-double zoom          = vp.Zoom;            // 1.0 / ViewportWidth
-</code></pre>
-<h2 id="rendering--fit-and-center">Rendering — Fit and Center</h2>
-<p>The controller automatically fits the image to the canvas on load (<code>FitToView</code>). The image is scaled to fit the canvas while preserving the aspect ratio — the full image is always visible, centered both horizontally and vertically.</p>
-<p>If you resize the canvas, call <code>SetControlSize</code> again and the viewport will refit:</p>
-<pre><code class="lang-csharp">// In a resize handler:
-controller.SetControlSize(newWidth, newHeight);
-controller.ResetView();
-myCanvasView.InvalidateSurface();
-</code></pre>
-<h2 id="performance-tips">Performance Tips</h2>
-<ul>
-<li><strong>Cache capacity</strong>: Default 1 024 tiles. Reduce for memory-constrained devices: <code>new SKDeepZoomController(256)</code>.</li>
-<li><strong>Stop rendering when idle</strong>: <code>controller.IsIdle</code> is <code>true</code> when no tiles are pending. Avoid continuous repaints when nothing is loading.</li>
-<li><strong>Dispose promptly</strong>: <code>SKDeepZoomController.Dispose()</code> cancels all in-flight tile requests and clears the cache.</li>
-</ul>
 <h2 id="platform-integration">Platform Integration</h2>
 <ul>
-<li><a href="deep-zoom-maui.html">Deep Zoom for MAUI</a> — Using <code>SKDeepZoomController</code> with <code>SKCanvasView</code> in .NET MAUI</li>
-<li><a href="deep-zoom-blazor.html">Deep Zoom for Blazor</a> — Using <code>SKDeepZoomController</code> with <code>SKCanvasView</code> in Blazor WebAssembly</li>
+<li><a href="deep-zoom-blazor.html">Deep Zoom for Blazor</a> — Blazor WebAssembly integration guide</li>
+<li><a href="deep-zoom-maui.html">Deep Zoom for MAUI</a> — .NET MAUI integration guide</li>
+</ul>
+<h2 id="deeper-dives">Deeper Dives</h2>
+<ul>
+<li><a href="deep-zoom-controller.html">Controller &amp; Viewport</a> — Full controller API, viewport coordinate system, zoom semantics</li>
+<li><a href="deep-zoom-fetching.html">Tile Fetching</a> — Built-in fetchers and how to implement custom fetchers</li>
+<li><a href="deep-zoom-caching.html">Caching</a> — Cache interface, LRU memory cache, tiered caching, custom implementations</li>
+</ul>
+<h2 id="learn-more">Learn More</h2>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/cc645050(v=vs.95)">Deep Zoom specification</a> — Microsoft's original documentation</li>
+<li><a href="https://openseadragon.github.io/">OpenSeadragon</a> — Popular JavaScript Deep Zoom viewer</li>
 <li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">API Reference — SKDeepZoomController</a></li>
-<li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.html">API Reference — SKDeepZoomImageSource</a></li>
 </ul>
 
 </article>
@@ -340,7 +342,7 @@ myCanvasView.InvalidateSurface();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 83a96a7
+          source: PR #379 · b2eb0ee
         </div>
       </div>
     </footer>

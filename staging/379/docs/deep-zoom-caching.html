@@ -1,0 +1,374 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Deep Zoom — Caching | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Deep Zoom — Caching | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-caching.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="deep-zoom--caching">Deep Zoom — Caching</h1>
+
+<p>The tile cache stores decoded <code>SKBitmap</code> objects so tiles don't need to be re-fetched or re-decoded on every frame. The cache is <strong>pluggable</strong> — swap implementations to tune memory usage, add persistence, or chain multiple tiers.</p>
+<h2 id="iskdeepzoomtilecache">ISKDeepZoomTileCache</h2>
+<p>All caches implement this interface:</p>
+<pre><code class="lang-csharp">public interface ISKDeepZoomTileCache : IDisposable
+{
+    /// &lt;summary&gt;Number of tiles currently in the cache.&lt;/summary&gt;
+    int Count { get; }
+
+    /// &lt;summary&gt;Synchronous lookup — used by the renderer (no blocking I/O).&lt;/summary&gt;
+    bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap);
+
+    /// &lt;summary&gt;Async lookup — use for I/O-backed tiers (disk, browser storage).&lt;/summary&gt;
+    Task&lt;SKBitmap?&gt; TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default);
+
+    /// &lt;summary&gt;Returns true if the tile is cached.&lt;/summary&gt;
+    bool Contains(SKDeepZoomTileId id);
+
+    /// &lt;summary&gt;Synchronous write — for in-memory caches.&lt;/summary&gt;
+    void Put(SKDeepZoomTileId id, SKBitmap? bitmap);
+
+    /// &lt;summary&gt;Async write — for I/O-backed caches or cache decorators.&lt;/summary&gt;
+    Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default);
+
+    /// &lt;summary&gt;Removes a specific tile.&lt;/summary&gt;
+    bool Remove(SKDeepZoomTileId id);
+
+    /// &lt;summary&gt;Clears all cached tiles.&lt;/summary&gt;
+    void Clear();
+
+    /// &lt;summary&gt;
+    /// Disposes bitmaps evicted since the last call.
+    /// Call once per render frame before drawing to safely free GPU-bound bitmaps.
+    /// &lt;/summary&gt;
+    void FlushEvicted();
+}
+</code></pre>
+<h3 id="sync-vs-async">Sync vs Async</h3>
+<p>There are two read/write paths:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Called by</th>
+<th style="text-align: left;">When to use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>TryGet</code> / <code>Put</code></td>
+<td style="text-align: left;">Renderer (sync paint callback)</td>
+<td style="text-align: left;">Pure in-memory caches — must not block</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TryGetAsync</code> / <code>PutAsync</code></td>
+<td style="text-align: left;">Background tile loader</td>
+<td style="text-align: left;">I/O-backed caches — disk, browser storage, network</td>
+</tr>
+</tbody>
+</table>
+<p>The controller's background tile loader calls <code>TryGetAsync</code> first. If it returns <code>null</code> (cache miss), it fetches from the network and then calls <code>PutAsync</code>. The renderer always uses the synchronous <code>TryGet</code>.</p>
+<hr>
+<h2 id="skdeepzoommemorytilecache">SKDeepZoomMemoryTileCache</h2>
+<p>The built-in <strong>LRU (Least Recently Used)</strong> in-memory cache. When capacity is reached, the least-recently-accessed tile is evicted and scheduled for disposal.</p>
+<pre><code class="lang-csharp">// Default capacity: 256 tiles
+var cache = new SKDeepZoomMemoryTileCache();
+
+// Custom capacity
+var cache = new SKDeepZoomMemoryTileCache(maxEntries: 1024);
+
+// Pass to controller
+var controller = new SKDeepZoomController(cache: cache);
+</code></pre>
+<h3 id="properties">Properties</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Property</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Count</code></td>
+<td style="text-align: left;">Current number of cached tiles.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>MaxEntries</code></td>
+<td style="text-align: left;">Maximum tiles before eviction begins.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="eviction-and-disposal">Eviction and Disposal</h3>
+<p>Evicted bitmaps are held in a pending-dispose queue rather than immediately freed. Call <code>FlushEvicted()</code> once per frame (before <code>Render</code>) to safely free GPU-bound bitmaps:</p>
+<pre><code class="lang-csharp">void OnPaintSurface(SKPaintSurfaceEventArgs e)
+{
+    controller.Cache.FlushEvicted(); // safe to call even if nothing was evicted
+    controller.SetControlSize(e.Info.Width, e.Info.Height);
+    controller.Update();
+    controller.Render(e.Surface.Canvas);
+}
+</code></pre>
+<blockquote>
+<p>The controller calls <code>FlushEvicted()</code> automatically inside <code>Render()</code>, so you only need to call it manually if you access the cache directly.</p>
+</blockquote>
+<h3 id="capacity-guidelines">Capacity Guidelines</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Device</th>
+<th style="text-align: left;">Recommended Capacity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Desktop / laptop</td>
+<td style="text-align: left;">1024–4096</td>
+</tr>
+<tr>
+<td style="text-align: left;">Mid-range mobile</td>
+<td style="text-align: left;">256–512</td>
+</tr>
+<tr>
+<td style="text-align: left;">Low-memory devices</td>
+<td style="text-align: left;">64–128</td>
+</tr>
+</tbody>
+</table>
+<p>Each tile is typically a 256×256 JPEG/PNG decoded to an <code>SKBitmap</code> — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of bitmap RAM at maximum.</p>
+<hr>
+<h2 id="tiered-caching">Tiered Caching</h2>
+<p>For persistent tile storage (surviving app restarts or page reloads), add a second cache tier. The controller checks <code>TryGetAsync</code> before hitting the network:</p>
+<pre><code>Request tile
+    ↓
+TryGet (L1 memory cache)      — fast, synchronous
+    ↓ miss
+TryGetAsync (L2 disk/browser) — slower, async I/O
+    ↓ miss
+FetchTileAsync (network)      — slowest
+    ↓
+PutAsync (L2)
+    ↓
+Put (L1)
+</code></pre>
+<p>This is the <strong>cache-aside</strong> pattern — the controller actively manages both tiers. You don't need to chain fetchers; just implement <code>TryGetAsync</code> / <code>PutAsync</code> to read and write your L2 storage.</p>
+<h3 id="decorator-pattern">Decorator Pattern</h3>
+<p>A simple way to add L2 behaviour is to wrap an existing cache:</p>
+<pre><code class="lang-csharp">public sealed class TieredCache : ISKDeepZoomTileCache
+{
+    private readonly SKDeepZoomMemoryTileCache _l1;
+    private readonly IMyDiskCache _l2;
+
+    public TieredCache(int l1Capacity, IMyDiskCache l2)
+    {
+        _l1 = new SKDeepZoomMemoryTileCache(l1Capacity);
+        _l2 = l2;
+    }
+
+    public bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap)
+        =&gt; _l1.TryGet(id, out bitmap);
+
+    public async Task&lt;SKBitmap?&gt; TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
+    {
+        // Fast path: already in L1
+        if (_l1.TryGet(id, out var bmp)) return bmp;
+
+        // Slow path: check disk
+        bmp = await _l2.ReadAsync(id, ct);
+        if (bmp is not null)
+            _l1.Put(id, bmp);   // promote to L1
+        return bmp;
+    }
+
+    public void Put(SKDeepZoomTileId id, SKBitmap? bitmap)      =&gt; _l1.Put(id, bitmap);
+    public async Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default)
+    {
+        _l1.Put(id, bitmap);
+        await _l2.WriteAsync(id, bitmap, ct);
+    }
+
+    public bool Contains(SKDeepZoomTileId id)   =&gt; _l1.Contains(id);
+    public bool Remove(SKDeepZoomTileId id)     =&gt; _l1.Remove(id);
+    public void Clear()                         { _l1.Clear(); _l2.Clear(); }
+    public void FlushEvicted()                  =&gt; _l1.FlushEvicted();
+    public int Count                            =&gt; _l1.Count;
+    public void Dispose()                       =&gt; _l1.Dispose();
+}
+</code></pre>
+<hr>
+<h2 id="skdeepzoomtileid">SKDeepZoomTileId</h2>
+<p>Each tile is identified by a <code>readonly record struct</code> with value equality — important since tile IDs are used as dictionary keys:</p>
+<pre><code class="lang-csharp">// Level = pyramid level (0 = lowest resolution, MaxLevel = highest)
+// Col   = column index at that level
+// Row   = row index at that level
+var id = new SKDeepZoomTileId(Level: 12, Col: 3, Row: 5);
+
+Console.WriteLine(id);   // &quot;(12,3,5)&quot;
+
+// Value equality — safe to use in Dictionary / ConcurrentDictionary
+var same = new SKDeepZoomTileId(12, 3, 5);
+Assert.Equal(id, same);  // ✅
+</code></pre>
+<hr>
+<h2 id="writing-a-custom-cache">Writing a Custom Cache</h2>
+<p>Any class that implements <code>ISKDeepZoomTileCache</code> can be used. Minimal in-memory example:</p>
+<pre><code class="lang-csharp">public sealed class BoundedDictionaryCache : ISKDeepZoomTileCache
+{
+    private readonly Dictionary&lt;SKDeepZoomTileId, SKBitmap&gt; _store = new();
+    private readonly int _maxEntries;
+
+    public BoundedDictionaryCache(int maxEntries) =&gt; _maxEntries = maxEntries;
+
+    public int Count =&gt; _store.Count;
+
+    public bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap)
+        =&gt; _store.TryGetValue(id, out bitmap);
+
+    public Task&lt;SKBitmap?&gt; TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
+        =&gt; Task.FromResult(_store.TryGetValue(id, out var bmp) ? bmp : null);
+
+    public bool Contains(SKDeepZoomTileId id) =&gt; _store.ContainsKey(id);
+
+    public void Put(SKDeepZoomTileId id, SKBitmap? bitmap)
+    {
+        if (bitmap is null || _store.Count &gt;= _maxEntries) return;
+        _store[id] = bitmap;
+    }
+
+    public Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default)
+    {
+        Put(id, bitmap);
+        return Task.CompletedTask;
+    }
+
+    public bool Remove(SKDeepZoomTileId id)
+    {
+        if (_store.Remove(id, out var bmp)) { bmp?.Dispose(); return true; }
+        return false;
+    }
+
+    public void Clear()
+    {
+        foreach (var bmp in _store.Values) bmp?.Dispose();
+        _store.Clear();
+    }
+
+    public void FlushEvicted() { }
+
+    public void Dispose() =&gt; Clear();
+}
+</code></pre>
+<hr>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="deep-zoom.html">Deep Zoom overview</a></li>
+<li><a href="deep-zoom-controller.html">Controller &amp; Viewport</a></li>
+<li><a href="deep-zoom-fetching.html">Tile Fetching</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.html">API Reference — ISKDeepZoomTileCache</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html">API Reference — SKDeepZoomMemoryTileCache</a></li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-caching.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #379 · b2eb0ee
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Deep Zoom — Tile Fetching | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Deep Zoom — Tile Fetching | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-fetching.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="deep-zoom--tile-fetching">Deep Zoom — Tile Fetching</h1>
+
+<p>Tile fetchers implement <code>ISKDeepZoomTileFetcher</code> and supply decoded <code>SKBitmap</code> objects to the Deep Zoom controller on demand. Two built-in fetchers cover HTTP and local file sources; you can implement your own for app-package assets, databases, or any other storage.</p>
+<h2 id="iskdeepzoomtilefetcher">ISKDeepZoomTileFetcher</h2>
+<pre><code class="lang-csharp">public interface ISKDeepZoomTileFetcher : IDisposable
+{
+    /// &lt;summary&gt;
+    /// Fetches a tile as an SKBitmap. Returns null if the tile is not available (e.g. 404).
+    /// &lt;/summary&gt;
+    Task&lt;SKBitmap?&gt; FetchTileAsync(string url, CancellationToken cancellationToken = default);
+}
+</code></pre>
+<p><strong>Return convention:</strong> Return <code>null</code> if the tile is unavailable (HTTP 404, file not found). The controller treats <code>null</code> as &quot;tile missing — keep using fallback&quot; and doesn't retry indefinitely. Throw only for unexpected errors; the controller catches and fires <code>TileFailed</code>.</p>
+<hr>
+<h2 id="skdeepzoomhttptilefetcher">SKDeepZoomHttpTileFetcher</h2>
+<p>Fetches tiles over HTTP. Thread-safe and reusable across multiple controllers.</p>
+<pre><code class="lang-csharp">// Create with an internal HttpClient (controller manages its lifetime)
+var fetcher = new SKDeepZoomHttpTileFetcher();
+
+// Or pass your app's shared HttpClient (you manage its lifetime)
+var fetcher = new SKDeepZoomHttpTileFetcher(myHttpClient);
+</code></pre>
+<p>The fetcher returns <code>null</code> for non-2xx responses and swallows <code>HttpRequestException</code> and <code>TaskCanceledException</code>, making it robust against transient network errors without crashing the tile pipeline.</p>
+<p>When you supply your own <code>HttpClient</code>, the fetcher <strong>does not dispose it</strong> — the caller retains ownership.</p>
+<hr>
+<h2 id="skdeepzoomfiletilefetcher">SKDeepZoomFileTileFetcher</h2>
+<p>Fetches tiles from the local file system. Useful for offline datasets, tests, or locally-generated tile pyramids.</p>
+<pre><code class="lang-csharp">var fetcher = new SKDeepZoomFileTileFetcher();
+
+// Works with both plain paths and file:// URIs
+var source = SKDeepZoomImageSource.Parse(xml, &quot;/data/images/map_files/&quot;);
+controller.Load(source, fetcher);
+</code></pre>
+<p>Accepts both plain file paths and <code>file://</code> URIs. Returns <code>null</code> for missing files.</p>
+<hr>
+<h2 id="custom-fetchers">Custom Fetchers</h2>
+<p>Implement <code>ISKDeepZoomTileFetcher</code> to load tiles from any source.</p>
+<h3 id="app-package-assets-maui">App Package Assets (MAUI)</h3>
+<pre><code class="lang-csharp">public sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
+{
+    public async Task&lt;SKBitmap?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    {
+        try
+        {
+            using var stream = await FileSystem.OpenAppPackageFileAsync(url);
+            return SKBitmap.Decode(stream);
+        }
+        catch
+        {
+            return null; // missing tile — controller will use a fallback tile
+        }
+    }
+
+    public void Dispose() { }
+}
+</code></pre>
+<p>Include tile assets in your MAUI project:</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+    &lt;MauiAsset Include=&quot;Assets\image.dzi&quot; LogicalName=&quot;image.dzi&quot; /&gt;
+    &lt;MauiAsset Include=&quot;Assets\image_files\**&quot;
+               LogicalName=&quot;image_files/%(RecursiveDir)%(Filename)%(Extension)&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>Load the DZI from the package:</p>
+<pre><code class="lang-csharp">using var stream = await FileSystem.OpenAppPackageFileAsync(&quot;image.dzi&quot;);
+using var reader = new StreamReader(stream);
+var xml = await reader.ReadToEndAsync();
+
+// Use &quot;image_files/&quot; as base URI to match the MauiAsset LogicalName prefix
+var source = SKDeepZoomImageSource.Parse(xml, &quot;image_files/&quot;);
+controller.Load(source, new AppPackageFetcher());
+</code></pre>
+<h3 id="custom-authentication-or-headers">Custom Authentication or Headers</h3>
+<pre><code class="lang-csharp">public sealed class AuthenticatedFetcher : ISKDeepZoomTileFetcher
+{
+    private readonly HttpClient _http;
+    private readonly string _token;
+
+    public AuthenticatedFetcher(HttpClient http, string token)
+    {
+        _http = http;
+        _token = token;
+    }
+
+    public async Task&lt;SKBitmap?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Authorization = new(&quot;Bearer&quot;, _token);
+
+        try
+        {
+            using var response = await _http.SendAsync(request, ct);
+            if (!response.IsSuccessStatusCode) return null;
+            using var stream = await response.Content.ReadAsStreamAsync(ct);
+            return SKBitmap.Decode(stream);
+        }
+        catch { return null; }
+    }
+
+    public void Dispose() { }
+}
+</code></pre>
+<h3 id="in-memory-or-pre-loaded-tiles">In-Memory or Pre-Loaded Tiles</h3>
+<pre><code class="lang-csharp">public sealed class PreloadedFetcher : ISKDeepZoomTileFetcher
+{
+    private readonly Dictionary&lt;string, byte[]&gt; _tiles;
+
+    public PreloadedFetcher(Dictionary&lt;string, byte[]&gt; tiles) =&gt; _tiles = tiles;
+
+    public Task&lt;SKBitmap?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    {
+        ct.ThrowIfCancellationRequested();
+        if (_tiles.TryGetValue(url, out var bytes))
+            return Task.FromResult&lt;SKBitmap?&gt;(SKBitmap.Decode(bytes));
+        return Task.FromResult&lt;SKBitmap?&gt;(null);
+    }
+
+    public void Dispose() { }
+}
+</code></pre>
+<hr>
+<h2 id="passing-a-fetcher-to-the-controller">Passing a Fetcher to the Controller</h2>
+<pre><code class="lang-csharp">// Fetcher is passed at load time, not construction time
+controller.Load(tileSource, fetcher);
+
+// If you reload with a different source, you can pass a new fetcher too
+controller.Load(anotherSource, differentFetcher);
+</code></pre>
+<p>The controller takes ownership of the fetcher for the duration of the load. Call <code>controller.Dispose()</code> to cancel all in-flight fetches and release the fetcher.</p>
+<hr>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="deep-zoom.html">Deep Zoom overview</a></li>
+<li><a href="deep-zoom-controller.html">Controller &amp; Viewport</a></li>
+<li><a href="deep-zoom-caching.html">Caching</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.html">API Reference — ISKDeepZoomTileFetcher</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">API Reference — SKDeepZoomHttpTileFetcher</a></li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/deep-zoom-fetching.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #379 · b2eb0ee
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
