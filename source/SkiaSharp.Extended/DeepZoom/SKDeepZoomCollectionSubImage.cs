@@ -8,6 +8,7 @@ namespace SkiaSharp.Extended.DeepZoom
     /// </summary>
     public class SKDeepZoomCollectionSubImage
     {
+        /// <summary>Initializes a new <see cref="SKDeepZoomCollectionSubImage"/>.</summary>
         public SKDeepZoomCollectionSubImage(int id, int mortonIndex, int width, int height, string? source)
         {
             Id = id;
