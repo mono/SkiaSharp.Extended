@@ -176,6 +176,13 @@ Called from a background thread; the <code class="paramref">ct</code> should be 
     <dd><p>Tries to retrieve a cached tile bitmap.</p>
 </dd>
   </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_TryGetAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_System_Threading_CancellationToken_">TryGetAsync(SKDeepZoomTileId, CancellationToken)</a></dt>
+    <dd><p>Asynchronously tries to retrieve a cached tile bitmap.
+Use this for cache tiers that involve I/O (browser storage, disk, etc.).
+A null return means cache miss -- the caller should then fetch from network.</p>
+</dd>
+  </dl>
 
 
 
@@ -198,7 +205,7 @@ Called from a background thread; the <code class="paramref">ct</code> should be 
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 34570b0
+          source: PR #379 · 927b587
         </div>
       </div>
     </footer>

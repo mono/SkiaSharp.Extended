@@ -51,6 +51,35 @@
                 window._deepZoomResizeHandler = null;
             }
         };
+
+        // Browser tile cache: stores base64-encoded PNG tiles in sessionStorage.
+        // Uses sessionStorage (not localStorage) so tiles are cleared on tab close.
+        window.deepZoomCacheGet = function (key) {
+            try { return sessionStorage.getItem('dz:' + key); } catch { return null; }
+        };
+        window.deepZoomCacheSet = function (key, base64png) {
+            try { sessionStorage.setItem('dz:' + key, base64png); } catch { /* quota */ }
+        };
+        window.deepZoomCacheClear = function () {
+            try {
+                var toRemove = [];
+                for (var i = 0; i < sessionStorage.length; i++) {
+                    var k = sessionStorage.key(i);
+                    if (k && k.startsWith('dz:')) toRemove.push(k);
+                }
+                toRemove.forEach(function (k) { sessionStorage.removeItem(k); });
+            } catch { }
+        };
+        window.deepZoomCacheCount = function () {
+            try {
+                var n = 0;
+                for (var i = 0; i < sessionStorage.length; i++) {
+                    var k = sessionStorage.key(i);
+                    if (k && k.startsWith('dz:')) n++;
+                }
+                return n;
+            } catch { return 0; }
+        };
     </script>
 </body>
 

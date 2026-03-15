@@ -124,6 +124,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGet
   fullName: SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGet
   nameWithType: ISKDeepZoomTileCache.TryGet
+- uid: SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,System.Threading.CancellationToken)
+  name: TryGetAsync(SKDeepZoomTileId, CancellationToken)
+  href: api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_TryGetAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,System.Threading.CancellationToken)
+  fullName: SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, System.Threading.CancellationToken)
+  nameWithType: ISKDeepZoomTileCache.TryGetAsync(SKDeepZoomTileId, CancellationToken)
+- uid: SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync*
+  name: TryGetAsync
+  href: api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync
+  fullName: SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync
+  nameWithType: ISKDeepZoomTileCache.TryGetAsync
 - uid: SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher
   name: ISKDeepZoomTileFetcher
   href: api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.html
@@ -724,18 +736,6 @@ references:
   commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetZoom
   fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetZoom
   nameWithType: SKDeepZoomController.SetZoom
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowDebugStats
-  name: ShowDebugStats
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowDebugStats.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_ShowDebugStats
-  commentId: P:SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowDebugStats
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowDebugStats
-  nameWithType: SKDeepZoomController.ShowDebugStats
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowDebugStats*
-  name: ShowDebugStats
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowDebugStats.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowDebugStats
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowDebugStats
-  nameWithType: SKDeepZoomController.ShowDebugStats
 - uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowTileBorders
   name: ShowTileBorders
   href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ShowTileBorders.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_ShowTileBorders
@@ -1444,6 +1444,171 @@ references:
   commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.TilesQueryString
   fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.TilesQueryString
   nameWithType: SKDeepZoomImageSource.TilesQueryString
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache
+  name: SKDeepZoomMemoryTileCache
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html
+  commentId: T:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache
+  nameWithType: SKDeepZoomMemoryTileCache
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.#ctor(System.Int32)
+  name: SKDeepZoomMemoryTileCache(int)
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.-ctor.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache__ctor_System_Int32_
+  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.#ctor(System.Int32)
+  name.vb: New(Integer)
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.SKDeepZoomMemoryTileCache(int)
+  fullName.vb: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.New(Integer)
+  nameWithType: SKDeepZoomMemoryTileCache.SKDeepZoomMemoryTileCache(int)
+  nameWithType.vb: SKDeepZoomMemoryTileCache.New(Integer)
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.#ctor*
+  name: SKDeepZoomMemoryTileCache
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.SKDeepZoomMemoryTileCache
+  fullName.vb: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.New
+  nameWithType: SKDeepZoomMemoryTileCache.SKDeepZoomMemoryTileCache
+  nameWithType.vb: SKDeepZoomMemoryTileCache.New
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear
+  name: Clear()
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_Clear
+  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear()
+  nameWithType: SKDeepZoomMemoryTileCache.Clear()
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear*
+  name: Clear
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear
+  nameWithType: SKDeepZoomMemoryTileCache.Clear
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
+  name: Contains(SKDeepZoomTileId)
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_Contains_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_
+  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
+  nameWithType: SKDeepZoomMemoryTileCache.Contains(SKDeepZoomTileId)
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains*
+  name: Contains
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains
+  nameWithType: SKDeepZoomMemoryTileCache.Contains
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count
+  name: Count
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_Count
+  commentId: P:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count
+  nameWithType: SKDeepZoomMemoryTileCache.Count
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count*
+  name: Count
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count
+  nameWithType: SKDeepZoomMemoryTileCache.Count
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose
+  name: Dispose()
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_Dispose
+  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose()
+  nameWithType: SKDeepZoomMemoryTileCache.Dispose()
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose*
+  name: Dispose
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose
+  nameWithType: SKDeepZoomMemoryTileCache.Dispose
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted
+  name: FlushEvicted()
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_FlushEvicted
+  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted()
+  nameWithType: SKDeepZoomMemoryTileCache.FlushEvicted()
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted*
+  name: FlushEvicted
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted
+  nameWithType: SKDeepZoomMemoryTileCache.FlushEvicted
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries
+  name: MaxEntries
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_MaxEntries
+  commentId: P:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries
+  nameWithType: SKDeepZoomMemoryTileCache.MaxEntries
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries*
+  name: MaxEntries
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries
+  nameWithType: SKDeepZoomMemoryTileCache.MaxEntries
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap)
+  name: Put(SKDeepZoomTileId, SKBitmap?)
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_Put_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_
+  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap)
+  name.vb: Put(SKDeepZoomTileId, SKBitmap)
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, SkiaSharp.SKBitmap?)
+  fullName.vb: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, SkiaSharp.SKBitmap)
+  nameWithType: SKDeepZoomMemoryTileCache.Put(SKDeepZoomTileId, SKBitmap?)
+  nameWithType.vb: SKDeepZoomMemoryTileCache.Put(SKDeepZoomTileId, SKBitmap)
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put*
+  name: Put
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put
+  nameWithType: SKDeepZoomMemoryTileCache.Put
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap,System.Threading.CancellationToken)
+  name: PutAsync(SKDeepZoomTileId, SKBitmap?, CancellationToken)
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_PutAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap,System.Threading.CancellationToken)
+  name.vb: PutAsync(SKDeepZoomTileId, SKBitmap, CancellationToken)
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, SkiaSharp.SKBitmap?, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, SkiaSharp.SKBitmap, System.Threading.CancellationToken)
+  nameWithType: SKDeepZoomMemoryTileCache.PutAsync(SKDeepZoomTileId, SKBitmap?, CancellationToken)
+  nameWithType.vb: SKDeepZoomMemoryTileCache.PutAsync(SKDeepZoomTileId, SKBitmap, CancellationToken)
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync*
+  name: PutAsync
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync
+  nameWithType: SKDeepZoomMemoryTileCache.PutAsync
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Remove(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
+  name: Remove(SKDeepZoomTileId)
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Remove.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_Remove_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_
+  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Remove(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Remove(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
+  nameWithType: SKDeepZoomMemoryTileCache.Remove(SKDeepZoomTileId)
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Remove*
+  name: Remove
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Remove.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Remove
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Remove
+  nameWithType: SKDeepZoomMemoryTileCache.Remove
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap@)
+  name: TryGet(SKDeepZoomTileId, out SKBitmap?)
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_TryGet_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap__
+  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap@)
+  name.vb: TryGet(SKDeepZoomTileId, SKBitmap)
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, out SkiaSharp.SKBitmap?)
+  fullName.vb: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, SkiaSharp.SKBitmap)
+  nameWithType: SKDeepZoomMemoryTileCache.TryGet(SKDeepZoomTileId, out SKBitmap?)
+  nameWithType.vb: SKDeepZoomMemoryTileCache.TryGet(SKDeepZoomTileId, SKBitmap)
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet*
+  name: TryGet
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet
+  nameWithType: SKDeepZoomMemoryTileCache.TryGet
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,System.Threading.CancellationToken)
+  name: TryGetAsync(SKDeepZoomTileId, CancellationToken)
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_TryGetAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,System.Threading.CancellationToken)
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, System.Threading.CancellationToken)
+  nameWithType: SKDeepZoomMemoryTileCache.TryGetAsync(SKDeepZoomTileId, CancellationToken)
+- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync*
+  name: TryGetAsync
+  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync.html
+  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync
+  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync
+  nameWithType: SKDeepZoomMemoryTileCache.TryGetAsync
 - uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer
   name: SKDeepZoomRenderer
   href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html
@@ -1504,18 +1669,6 @@ references:
   commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Render
   fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Render
   nameWithType: SKDeepZoomRenderer.Render
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.ShowDebugStats
-  name: ShowDebugStats
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.ShowDebugStats.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_ShowDebugStats
-  commentId: P:SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.ShowDebugStats
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.ShowDebugStats
-  nameWithType: SKDeepZoomRenderer.ShowDebugStats
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.ShowDebugStats*
-  name: ShowDebugStats
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.ShowDebugStats.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.ShowDebugStats
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.ShowDebugStats
-  nameWithType: SKDeepZoomRenderer.ShowDebugStats
 - uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.ShowTileBorders
   name: ShowTileBorders
   href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.ShowTileBorders.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_ShowTileBorders
@@ -1702,159 +1855,6 @@ references:
   commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.ZIndex
   fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.ZIndex
   nameWithType: SKDeepZoomSubImage.ZIndex
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache
-  name: SKDeepZoomTileCache
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.html
-  commentId: T:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache
-  nameWithType: SKDeepZoomTileCache
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.#ctor(System.Int32)
-  name: SKDeepZoomTileCache(int)
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.-ctor.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache__ctor_System_Int32_
-  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.#ctor(System.Int32)
-  name.vb: New(Integer)
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.SKDeepZoomTileCache(int)
-  fullName.vb: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.New(Integer)
-  nameWithType: SKDeepZoomTileCache.SKDeepZoomTileCache(int)
-  nameWithType.vb: SKDeepZoomTileCache.New(Integer)
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.#ctor*
-  name: SKDeepZoomTileCache
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.#ctor
-  name.vb: New
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.SKDeepZoomTileCache
-  fullName.vb: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.New
-  nameWithType: SKDeepZoomTileCache.SKDeepZoomTileCache
-  nameWithType.vb: SKDeepZoomTileCache.New
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Clear
-  name: Clear()
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Clear.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_Clear
-  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Clear
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Clear()
-  nameWithType: SKDeepZoomTileCache.Clear()
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Clear*
-  name: Clear
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Clear.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Clear
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Clear
-  nameWithType: SKDeepZoomTileCache.Clear
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Contains(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
-  name: Contains(SKDeepZoomTileId)
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Contains.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_Contains_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_
-  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Contains(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Contains(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
-  nameWithType: SKDeepZoomTileCache.Contains(SKDeepZoomTileId)
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Contains*
-  name: Contains
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Contains.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Contains
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Contains
-  nameWithType: SKDeepZoomTileCache.Contains
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Count
-  name: Count
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Count.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_Count
-  commentId: P:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Count
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Count
-  nameWithType: SKDeepZoomTileCache.Count
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Count*
-  name: Count
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Count.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Count
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Count
-  nameWithType: SKDeepZoomTileCache.Count
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Dispose
-  name: Dispose()
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Dispose.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_Dispose
-  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Dispose
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Dispose()
-  nameWithType: SKDeepZoomTileCache.Dispose()
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Dispose*
-  name: Dispose
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Dispose.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Dispose
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Dispose
-  nameWithType: SKDeepZoomTileCache.Dispose
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.FlushEvicted
-  name: FlushEvicted()
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.FlushEvicted.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_FlushEvicted
-  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.FlushEvicted
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.FlushEvicted()
-  nameWithType: SKDeepZoomTileCache.FlushEvicted()
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.FlushEvicted*
-  name: FlushEvicted
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.FlushEvicted.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.FlushEvicted
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.FlushEvicted
-  nameWithType: SKDeepZoomTileCache.FlushEvicted
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.MaxEntries
-  name: MaxEntries
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.MaxEntries.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_MaxEntries
-  commentId: P:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.MaxEntries
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.MaxEntries
-  nameWithType: SKDeepZoomTileCache.MaxEntries
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.MaxEntries*
-  name: MaxEntries
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.MaxEntries.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.MaxEntries
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.MaxEntries
-  nameWithType: SKDeepZoomTileCache.MaxEntries
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Put(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap)
-  name: Put(SKDeepZoomTileId, SKBitmap?)
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Put.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_Put_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_
-  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Put(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap)
-  name.vb: Put(SKDeepZoomTileId, SKBitmap)
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Put(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, SkiaSharp.SKBitmap?)
-  fullName.vb: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Put(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, SkiaSharp.SKBitmap)
-  nameWithType: SKDeepZoomTileCache.Put(SKDeepZoomTileId, SKBitmap?)
-  nameWithType.vb: SKDeepZoomTileCache.Put(SKDeepZoomTileId, SKBitmap)
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Put*
-  name: Put
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Put.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Put
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Put
-  nameWithType: SKDeepZoomTileCache.Put
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.PutAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap,System.Threading.CancellationToken)
-  name: PutAsync(SKDeepZoomTileId, SKBitmap?, CancellationToken)
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.PutAsync.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_PutAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_System_Threading_CancellationToken_
-  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.PutAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap,System.Threading.CancellationToken)
-  name.vb: PutAsync(SKDeepZoomTileId, SKBitmap, CancellationToken)
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.PutAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, SkiaSharp.SKBitmap?, System.Threading.CancellationToken)
-  fullName.vb: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.PutAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, SkiaSharp.SKBitmap, System.Threading.CancellationToken)
-  nameWithType: SKDeepZoomTileCache.PutAsync(SKDeepZoomTileId, SKBitmap?, CancellationToken)
-  nameWithType.vb: SKDeepZoomTileCache.PutAsync(SKDeepZoomTileId, SKBitmap, CancellationToken)
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.PutAsync*
-  name: PutAsync
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.PutAsync.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.PutAsync
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.PutAsync
-  nameWithType: SKDeepZoomTileCache.PutAsync
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Remove(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
-  name: Remove(SKDeepZoomTileId)
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Remove.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_Remove_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_
-  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Remove(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Remove(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId)
-  nameWithType: SKDeepZoomTileCache.Remove(SKDeepZoomTileId)
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Remove*
-  name: Remove
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Remove.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Remove
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.Remove
-  nameWithType: SKDeepZoomTileCache.Remove
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap@)
-  name: TryGet(SKDeepZoomTileId, out SKBitmap?)
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.TryGet.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_TryGet_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap__
-  commentId: M:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap@)
-  name.vb: TryGet(SKDeepZoomTileId, SKBitmap)
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, out SkiaSharp.SKBitmap?)
-  fullName.vb: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId, SkiaSharp.SKBitmap)
-  nameWithType: SKDeepZoomTileCache.TryGet(SKDeepZoomTileId, out SKBitmap?)
-  nameWithType.vb: SKDeepZoomTileCache.TryGet(SKDeepZoomTileId, SKBitmap)
-- uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.TryGet*
-  name: TryGet
-  href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.TryGet.html
-  commentId: Overload:SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.TryGet
-  fullName: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.TryGet
-  nameWithType: SKDeepZoomTileCache.TryGet
 - uid: SkiaSharp.Extended.DeepZoom.SKDeepZoomTileFailedEventArgs
   name: SKDeepZoomTileFailedEventArgs
   href: api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileFailedEventArgs.html

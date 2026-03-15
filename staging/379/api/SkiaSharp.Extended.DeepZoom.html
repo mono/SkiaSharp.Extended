@@ -131,6 +131,14 @@ and provides tile pyramid math for computing tile URLs and dimensions.</p>
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html">SKDeepZoomMemoryTileCache</a></dt>
+      <dd><p>LRU cache for decoded tile bitmaps.
+Evicted bitmaps are deferred for disposal to avoid race conditions
+with the renderer (which may hold references to recently-returned bitmaps).
+Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_FlushEvicted">FlushEvicted()</a> at the start of each render frame.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a></dt>
       <dd><p>Renders Deep Zoom tiles onto an SKCanvas. Handles LOD blending and fallback rendering.</p>
 </dd>
@@ -139,14 +147,6 @@ and provides tile pyramid math for computing tile URLs and dimensions.</p>
       <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.html">SKDeepZoomSubImage</a></dt>
       <dd><p>Represents a single sub-image within a DZC collection, with its position in the mosaic.
 Mirrors Silverlight's MultiScaleSubImage with inverted viewport coordinates.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.html">SKDeepZoomTileCache</a></dt>
-      <dd><p>LRU cache for decoded tile bitmaps.
-Evicted bitmaps are deferred for disposal to avoid race conditions
-with the renderer (which may hold references to recently-returned bitmaps).
-Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache.FlushEvicted.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileCache_FlushEvicted">FlushEvicted()</a> at the start of each render frame.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -226,7 +226,7 @@ Implement this interface to provide custom caching strategies
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 34570b0
+          source: PR #379 · 927b587
         </div>
       </div>
     </footer>
