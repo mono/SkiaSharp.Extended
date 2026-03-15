@@ -82,7 +82,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// For a missing tile, finds the best available parent tile as a fallback.
         /// Walks up the pyramid from the requested level until a cached tile is found.
         /// </summary>
-        public SKDeepZoomTileId? FindBestFallback(SKDeepZoomTileId requested, SKDeepZoomTileCache cache, int minLevel = 0)
+        public SKDeepZoomTileId? FindBestFallback(SKDeepZoomTileId requested, ISKDeepZoomTileCache cache, int minLevel = 0)
         {
             int col = requested.Col;
             int row = requested.Row;

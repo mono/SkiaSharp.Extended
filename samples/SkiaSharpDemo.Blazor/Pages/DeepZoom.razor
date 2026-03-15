@@ -114,7 +114,7 @@
                 <section>
                     <h4>Tile Cache</h4>
                     <dl>
-                        <dt>Cached</dt><dd>@cache.Count / @cache.MaxEntries</dd>
+                        <dt>Cached</dt><dd>@cache.Count / 1024</dd>
                         <dt>Pending</dt><dd>@_controller.PendingTileCount</dd>
                         <dt>Status</dt><dd>@(_controller.IsIdle ? "✅ Idle" : "⏳ Loading…")</dd>
                     </dl>
@@ -162,6 +162,22 @@
                     <label class="dz-debug-label">
                         <input type="checkbox" @bind="_showDebugStats" @bind:after="OnDebugOptionsChanged" />
                         Show Stats Overlay
+                    </label>
+                </section>
+
+                <section>
+                    <h4>🐌 Cache Delay</h4>
+                    <label class="dz-debug-label">
+                        <input type="checkbox" @bind="_cacheDelayEnabled" @bind:after="OnCacheDelayChanged" />
+                        Simulate tile delay
+                    </label>
+                    <label class="dz-label-row">
+                        Min <strong class="dz-zoom-label">@_cacheDelayMin ms</strong>
+                        <input type="range" min="0" max="2500" step="10" @bind="_cacheDelayMin" @bind:after="OnCacheDelayChanged" />
+                    </label>
+                    <label class="dz-label-row">
+                        Max <strong class="dz-zoom-label">@_cacheDelayMax ms</strong>
+                        <input type="range" min="0" max="2500" step="10" @bind="_cacheDelayMax" @bind:after="OnCacheDelayChanged" />
                     </label>
                 </section>
             }
@@ -258,6 +274,20 @@
         user-select: none;
     }
 
+    .dz-label-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 4px 0;
+        font-size: 0.82rem;
+        user-select: none;
+    }
+
+    .dz-label-row input[type=range] {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
     .dz-toggle-btn {
         position: fixed;
         bottom: 1rem;
@@ -305,6 +335,10 @@
     // Debug overlay toggles
     private bool _showTileBorders;
     private bool _showDebugStats;
+    private bool _cacheDelayEnabled;
+    private int  _cacheDelayMin;
+    private int  _cacheDelayMax = 500;
+    private DelayTileCache? _delayCache;
 
     // URL input
     private string _urlInput = DefaultDziUrl;
@@ -339,7 +373,8 @@
         _thisRef = DotNetObjectReference.Create(this);
         await JS.InvokeVoidAsync("deepZoomRegisterResize", _thisRef);
 
-        _controller = new SKDeepZoomController();
+        _delayCache = new DelayTileCache(new SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache(1024));
+        _controller = new SKDeepZoomController(_delayCache);
         _controller.InvalidateRequired += OnInvalidateRequired;
 
         // Refresh inspector every 250ms while loading tiles
@@ -522,6 +557,18 @@
         if (_controller == null) return;
         _controller.ShowTileBorders = _showTileBorders;
         _controller.ShowDebugStats  = _showDebugStats;
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnCacheDelayChanged()
+    {
+        if (_delayCache == null) return;
+        _delayCache.IsEnabled  = _cacheDelayEnabled;
+        _delayCache.MinDelayMs = _cacheDelayMin;
+        _delayCache.MaxDelayMs = _cacheDelayMax;
+        // Clear cache so new tiles load with the updated delay settings
+        if (_cacheDelayEnabled)
+            _controller?.Cache.Clear();
         InvokeAsync(() => _canvas?.Invalidate());
     }
 

@@ -30,7 +30,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private SKDeepZoomImageSource? _tileSource;
         private readonly SKDeepZoomViewport _viewport;
         private readonly SKDeepZoomTileScheduler _scheduler;
-        private readonly SKDeepZoomTileCache _cache;
+        private readonly ISKDeepZoomTileCache _cache;
         private readonly SKDeepZoomRenderer _renderer;
         private List<SKDeepZoomSubImage> _subImages = new List<SKDeepZoomSubImage>();
         private ISKDeepZoomTileFetcher? _fetcher;
@@ -39,13 +39,17 @@ namespace SkiaSharp.Extended.DeepZoom
         private bool _disposed;
         private bool _userHasZoomed;
 
-        /// <summary>Initializes a new <see cref="SKDeepZoomController"/> with an optional tile cache capacity.</summary>
-        /// <param name="cacheCapacity">Maximum number of tiles to cache. Default is 1024.</param>
-        public SKDeepZoomController(int cacheCapacity = 1024)
+        /// <summary>Initializes a new <see cref="SKDeepZoomController"/> with an optional custom tile cache.</summary>
+        /// <param name="cache">
+        /// Custom tile cache implementation. When <see langword="null"/>, the default
+        /// <see cref="SKDeepZoomTileCache"/> is created with <paramref name="defaultCacheCapacity"/> entries.
+        /// </param>
+        /// <param name="defaultCacheCapacity">Maximum tiles for the default cache (ignored when <paramref name="cache"/> is provided).</param>
+        public SKDeepZoomController(ISKDeepZoomTileCache? cache = null, int defaultCacheCapacity = 1024)
         {
             _viewport = new SKDeepZoomViewport();
             _scheduler = new SKDeepZoomTileScheduler();
-            _cache = new SKDeepZoomTileCache(cacheCapacity);
+            _cache = cache ?? new SKDeepZoomTileCache(defaultCacheCapacity);
             _renderer = new SKDeepZoomRenderer();
         }
 
@@ -53,7 +57,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public SKDeepZoomViewport Viewport => _viewport;
 
         /// <summary>The tile cache.</summary>
-        public SKDeepZoomTileCache Cache => _cache;
+        public ISKDeepZoomTileCache Cache => _cache;
 
         /// <summary>The tile scheduler.</summary>
         public SKDeepZoomTileScheduler Scheduler => _scheduler;
@@ -360,7 +364,7 @@ namespace SkiaSharp.Extended.DeepZoom
 
                 if (bitmap != null && !ct.IsCancellationRequested && !_disposed)
                 {
-                    _cache.Put(tileId, bitmap);
+                    await _cache.PutAsync(tileId, bitmap, ct).ConfigureAwait(false);
                     bitmap = null;
                     InvalidateRequired?.Invoke(this, EventArgs.Empty);
                 }

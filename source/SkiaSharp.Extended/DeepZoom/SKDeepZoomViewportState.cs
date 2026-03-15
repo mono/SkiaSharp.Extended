@@ -3,23 +3,9 @@
 namespace SkiaSharp.Extended.DeepZoom
 {
     /// <summary>Immutable snapshot of viewport position and zoom.</summary>
-    public readonly struct SKDeepZoomViewportState : System.IEquatable<SKDeepZoomViewportState>
+    public readonly record struct SKDeepZoomViewportState(double ViewportWidth, double OriginX, double OriginY)
     {
-        public SKDeepZoomViewportState(double viewportWidth, double originX, double originY)
-        {
-            ViewportWidth = viewportWidth;
-            OriginX = originX;
-            OriginY = originY;
-        }
-
-        public double ViewportWidth { get; }
-        public double OriginX { get; }
-        public double OriginY { get; }
-
-        public bool Equals(SKDeepZoomViewportState other)
-            => ViewportWidth == other.ViewportWidth && OriginX == other.OriginX && OriginY == other.OriginY;
-
-        public override bool Equals(object? obj) => obj is SKDeepZoomViewportState s && Equals(s);
+        // Custom hash for netstandard2.0 compatibility.
         public override int GetHashCode()
         {
             unchecked
@@ -31,7 +17,5 @@ namespace SkiaSharp.Extended.DeepZoom
                 return hash;
             }
         }
-        public static bool operator ==(SKDeepZoomViewportState left, SKDeepZoomViewportState right) => left.Equals(right);
-        public static bool operator !=(SKDeepZoomViewportState left, SKDeepZoomViewportState right) => !left.Equals(right);
     }
 }

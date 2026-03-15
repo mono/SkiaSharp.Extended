@@ -2,6 +2,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SkiaSharp.Extended.DeepZoom
 {
@@ -11,7 +13,7 @@ namespace SkiaSharp.Extended.DeepZoom
     /// with the renderer (which may hold references to recently-returned bitmaps).
     /// Call <see cref="FlushEvicted"/> at the start of each render frame.
     /// </summary>
-    public class SKDeepZoomTileCache : IDisposable
+    public class SKDeepZoomTileCache : ISKDeepZoomTileCache
     {
         private readonly int _maxEntries;
         private readonly LinkedList<TileCacheEntry> _lruList;
@@ -56,6 +58,14 @@ namespace SkiaSharp.Extended.DeepZoom
                 bitmap = null;
                 return false;
             }
+        }
+
+        /// <summary>Adds a tile bitmap to the cache via the async interface. Calls <see cref="Put"/> synchronously.</summary>
+        public Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default)
+        {
+            if (!ct.IsCancellationRequested)
+                Put(id, bitmap);
+            return Task.CompletedTask;
         }
 
         /// <summary>Adds a tile bitmap to the cache, evicting LRU entries if needed.</summary>

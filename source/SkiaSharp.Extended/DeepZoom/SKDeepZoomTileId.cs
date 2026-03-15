@@ -5,21 +5,9 @@ namespace SkiaSharp.Extended.DeepZoom
     /// <summary>
     /// Identifies a single tile in the pyramid.
     /// </summary>
-    public readonly struct SKDeepZoomTileId : System.IEquatable<SKDeepZoomTileId>
+    public readonly record struct SKDeepZoomTileId(int Level, int Col, int Row)
     {
-        public SKDeepZoomTileId(int level, int col, int row)
-        {
-            Level = level;
-            Col = col;
-            Row = row;
-        }
-
-        public int Level { get; }
-        public int Col { get; }
-        public int Row { get; }
-
-        public bool Equals(SKDeepZoomTileId other) => Level == other.Level && Col == other.Col && Row == other.Row;
-        public override bool Equals(object? obj) => obj is SKDeepZoomTileId id && Equals(id);
+        // Custom hash keeps netstandard2.0 compatibility (HashCode.Combine not available there).
         public override int GetHashCode()
         {
             unchecked
@@ -31,9 +19,5 @@ namespace SkiaSharp.Extended.DeepZoom
                 return hash;
             }
         }
-        public override string ToString() => $"({Level},{Col},{Row})";
-
-        public static bool operator ==(SKDeepZoomTileId left, SKDeepZoomTileId right) => left.Equals(right);
-        public static bool operator !=(SKDeepZoomTileId left, SKDeepZoomTileId right) => !left.Equals(right);
     }
 }

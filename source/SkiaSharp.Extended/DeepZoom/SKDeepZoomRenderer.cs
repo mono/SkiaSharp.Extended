@@ -63,7 +63,7 @@ namespace SkiaSharp.Extended.DeepZoom
             SKCanvas canvas,
             SKDeepZoomImageSource tileSource,
             SKDeepZoomViewport viewport,
-            SKDeepZoomTileCache cache,
+            ISKDeepZoomTileCache cache,
             SKDeepZoomTileScheduler scheduler)
         {
             // Flush deferred bitmap disposals before rendering
@@ -228,7 +228,7 @@ namespace SkiaSharp.Extended.DeepZoom
             SKCanvas canvas,
             SKDeepZoomImageSource tileSource,
             SKDeepZoomViewport viewport,
-            SKDeepZoomTileCache cache)
+            ISKDeepZoomTileCache cache)
         {
             _statsBgPaint ??= new SKPaint { Color = new SKColor(0, 0, 0, 200) };
             _statsTextPaint ??= new SKPaint { Color = SKColors.White, IsAntialias = true };
