@@ -34,6 +34,9 @@ public sealed class DelayTileCache : ISKDeepZoomTileCache
 
     public bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap) => _inner.TryGet(id, out bitmap);
 
+    public Task<SKBitmap?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
+        => _inner.TryGetAsync(id, ct);
+
     public bool Contains(SKDeepZoomTileId id) => _inner.Contains(id);
 
     public void Put(SKDeepZoomTileId id, SKBitmap? bitmap) => _inner.Put(id, bitmap);

@@ -146,7 +146,7 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_ReturnsCachedParent()
     {
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Add parent tile to cache
@@ -168,7 +168,7 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_ReturnsNull_WhenNoParentCached()
     {
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         var childId = new SKDeepZoomTileId(5, 2, 3);
@@ -181,7 +181,7 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_ReturnsClosestParent()
     {
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Add tiles at levels 2 and 4
@@ -248,7 +248,7 @@ public class TileSchedulerTest
     public void FindBestFallback_ReturnsParentTileInCache()
     {
         var dzi = new SKDeepZoomImageSource(1024, 1024, 256, 0, "jpg");
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Put parent tile (level 8, col 1, row 1) in cache
@@ -270,7 +270,7 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_ReturnsNull_WhenNoParentInCache()
     {
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         var childId = new SKDeepZoomTileId(8, 3, 3);
@@ -306,7 +306,7 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_MinLevel_RespectsMinimum()
     {
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Add tile at level 1
@@ -328,7 +328,7 @@ public class TileSchedulerTest
     [Fact]
     public void FindBestFallback_Level0Requested_ReturnsNull()
     {
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // No parent exists below level 0

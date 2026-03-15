@@ -5,14 +5,14 @@ using Xunit;
 namespace SkiaSharp.Extended.DeepZoom.Tests;
 
 /// <summary>
-/// Thread safety tests for SKDeepZoomTileCache.
+/// Thread safety tests for SKDeepZoomMemoryTileCache.
 /// </summary>
 public class TileCacheThreadSafetyTest
 {
     [Fact]
     public async Task ConcurrentPut_DoesNotCorrupt()
     {
-        var cache = new SKDeepZoomTileCache(50);
+        var cache = new SKDeepZoomMemoryTileCache(50);
 
         // Concurrent puts from multiple tasks
         var tasks = Enumerable.Range(0, 100).Select(i =>
@@ -32,7 +32,7 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentGetAndPut_DoesNotCorrupt()
     {
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
 
         // Pre-populate
         for (int i = 0; i < 50; i++)
@@ -64,7 +64,7 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentPutWithEviction_DoesNotCorrupt()
     {
-        var cache = new SKDeepZoomTileCache(10);
+        var cache = new SKDeepZoomMemoryTileCache(10);
 
         // Many concurrent puts that will trigger eviction
         var tasks = Enumerable.Range(0, 100).Select(i =>
@@ -82,7 +82,7 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentRemove_DoesNotCorrupt()
     {
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
 
         for (int i = 0; i < 50; i++)
             cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
@@ -101,7 +101,7 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentClearAndPut_DoesNotCorrupt()
     {
-        var cache = new SKDeepZoomTileCache(50);
+        var cache = new SKDeepZoomMemoryTileCache(50);
 
         var tasks = new List<Task>();
         for (int i = 0; i < 20; i++)
@@ -135,7 +135,7 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentDisposeAndPut_NoExceptionsOrLeaks()
     {
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
         var lockObj = new object();
         var exceptions = new List<Exception>();
 
@@ -272,7 +272,7 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task PutDuringDispose_ItemsAreCleanedUp()
     {
-        var cache = new SKDeepZoomTileCache(50);
+        var cache = new SKDeepZoomMemoryTileCache(50);
         var disposeStartedEvent = new ManualResetEvent(false);
 
         // Pre-populate
@@ -332,7 +332,7 @@ public class TileCacheThreadSafetyTest
         // Run multiple rounds of rapid Dispose/Put cycles
         for (int round = 0; round < 10; round++)
         {
-            var cache = new SKDeepZoomTileCache(50);
+            var cache = new SKDeepZoomMemoryTileCache(50);
 
             // Pre-populate
             for (int i = 0; i < 20; i++)
@@ -391,7 +391,7 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public void FlushEvicted_AfterDispose_IsNoOp()
     {
-        var cache = new SKDeepZoomTileCache(50);
+        var cache = new SKDeepZoomMemoryTileCache(50);
 
         // Add some items that will be evicted
         for (int i = 0; i < 100; i++)
@@ -401,8 +401,7 @@ public class TileCacheThreadSafetyTest
         cache.Dispose();
 
         // FlushEvicted after dispose should not throw
-        var ex = Record.Exception(() => cache.FlushEvicted());
-        Assert.Null(ex);
+        cache.FlushEvicted();
     }
 
     /// <summary>
@@ -411,7 +410,7 @@ public class TileCacheThreadSafetyTest
     [Fact]
     public async Task ConcurrentDispose_DoesNotThrow()
     {
-        var cache = new SKDeepZoomTileCache(50);
+        var cache = new SKDeepZoomMemoryTileCache(50);
 
         // Add some items
         for (int i = 0; i < 30; i++)

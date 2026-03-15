@@ -28,7 +28,7 @@ public class DeepZoomRendererTest
             ControlHeight = 600,
             ViewportWidth = 1.0
         };
-        var cache = new SKDeepZoomTileCache(10);
+        var cache = new SKDeepZoomMemoryTileCache(10);
         var scheduler = new SKDeepZoomTileScheduler();
 
         renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler);
@@ -49,7 +49,7 @@ public class DeepZoomRendererTest
             ViewportOriginX = 0,
             ViewportOriginY = 0
         };
-        var cache = new SKDeepZoomTileCache(10);
+        var cache = new SKDeepZoomMemoryTileCache(10);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Get visible tiles
@@ -112,7 +112,7 @@ public class DeepZoomRendererTest
             ViewportOriginX = 0,
             ViewportOriginY = 0
         };
-        var cache = new SKDeepZoomTileCache(10);
+        var cache = new SKDeepZoomMemoryTileCache(10);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Add a tile
@@ -156,7 +156,7 @@ public class DeepZoomRendererTest
             ViewportOriginY = 0,
             AspectRatio = 1.0
         };
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Get the visible tiles
@@ -217,7 +217,7 @@ public class DeepZoomRendererTest
             ViewportOriginY = 0,
             AspectRatio = 1.0
         };
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Create a magenta tile and add to cache
@@ -254,7 +254,7 @@ public class DeepZoomRendererTest
             ControlHeight = 600,
             ViewportWidth = 1.0,
         };
-        var cache = new SKDeepZoomTileCache(10);
+        var cache = new SKDeepZoomMemoryTileCache(10);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Render with borders on but no tiles cached — should not throw
@@ -275,7 +275,7 @@ public class DeepZoomRendererTest
             ControlHeight = 400,
             ViewportWidth = 1.0,
         };
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Render multiple times should be safe
@@ -308,7 +308,7 @@ public class DeepZoomRendererTest
             ViewportOriginY = 0,
             AspectRatio = 1.0
         };
-        using var cache = new SKDeepZoomTileCache(100);
+        using var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Add only a low-level tile to trigger fallback path with borders
@@ -332,7 +332,7 @@ public class DeepZoomRendererTest
         using var surface = SKSurface.Create(new SKImageInfo(100, 100));
         var dzi = CreateSampleDzi();
         var viewport = new SKDeepZoomViewport { ControlWidth = 100, ControlHeight = 100, ViewportWidth = 1.0 };
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         var scheduler = new SKDeepZoomTileScheduler();
 
         var ex = Record.Exception(() => renderer2.Render(surface.Canvas, dzi, viewport, cache, scheduler));
@@ -357,7 +357,7 @@ public class DeepZoomRendererTest
             ViewportOriginY = 0,
             AspectRatio = 1.0
         };
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Put a cyan bitmap at level 0, tile (0,0)
@@ -412,7 +412,7 @@ public class DeepZoomRendererTest
             ViewportOriginY = 0,
             AspectRatio = 1.0
         };
-        using var cache = new SKDeepZoomTileCache(100);
+        using var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Only cache a level-0 (1x1 pixel) parent tile as yellow — do NOT cache the requested level tiles
@@ -445,7 +445,7 @@ public class DeepZoomRendererTest
             ControlHeight = 0, // gets clamped to 1
             ViewportWidth = 1.0,
         };
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         var scheduler = new SKDeepZoomTileScheduler();
 
         var ex = Record.Exception(() => renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler));
@@ -482,7 +482,7 @@ public class DeepZoomRendererTest
             ViewportOriginY = 0,
             AspectRatio = 1.0
         };
-        using var cache = new SKDeepZoomTileCache(100);
+        using var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Only cache a low-level parent tile to trigger single-pass fallback
@@ -525,7 +525,7 @@ public class DeepZoomRendererTest
             ViewportOriginY = 0,
             AspectRatio = 1.0
         };
-        using var cache = new SKDeepZoomTileCache(100);
+        using var cache = new SKDeepZoomMemoryTileCache(100);
         var scheduler = new SKDeepZoomTileScheduler();
 
         // Cache a blue parent tile at level 0 (fallback)

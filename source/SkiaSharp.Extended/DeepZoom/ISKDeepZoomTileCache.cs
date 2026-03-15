@@ -19,6 +19,13 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>Tries to retrieve a cached tile bitmap.</summary>
         bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap);
 
+        /// <summary>
+        /// Asynchronously tries to retrieve a cached tile bitmap.
+        /// Use this for cache tiers that involve I/O (browser storage, disk, etc.).
+        /// A null return means cache miss -- the caller should then fetch from network.
+        /// </summary>
+        Task<SKBitmap?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default);
+
         /// <summary>Returns <see langword="true"/> if the tile is cached.</summary>
         bool Contains(SKDeepZoomTileId id);
 

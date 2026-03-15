@@ -7,14 +7,14 @@ public class TileCacheTest
     [Fact]
     public void Empty_Cache_HasZeroCount()
     {
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         Assert.Equal(0, cache.Count);
     }
 
     [Fact]
     public void Put_Get_RoundTrips()
     {
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         var id = new SKDeepZoomTileId(5, 2, 3);
         // Use null bitmap for testing (real bitmaps would be SKBitmap)
         cache.Put(id, null);
@@ -27,7 +27,7 @@ public class TileCacheTest
     [Fact]
     public void Contains_ReturnsTrueForCachedTiles()
     {
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         var id = new SKDeepZoomTileId(5, 2, 3);
         cache.Put(id, null);
 
@@ -38,7 +38,7 @@ public class TileCacheTest
     [Fact]
     public void LRU_EvictsOldestEntry()
     {
-        using var cache = new SKDeepZoomTileCache(2);
+        using var cache = new SKDeepZoomMemoryTileCache(2);
         var id0 = new SKDeepZoomTileId(0, 0, 0);
         var id1 = new SKDeepZoomTileId(1, 0, 0);
         var id2 = new SKDeepZoomTileId(2, 0, 0);
@@ -58,7 +58,7 @@ public class TileCacheTest
     [Fact]
     public void LRU_AccessRefreshesEntry()
     {
-        using var cache = new SKDeepZoomTileCache(2);
+        using var cache = new SKDeepZoomMemoryTileCache(2);
         var id0 = new SKDeepZoomTileId(0, 0, 0);
         var id1 = new SKDeepZoomTileId(1, 0, 0);
         var id2 = new SKDeepZoomTileId(2, 0, 0);
@@ -79,7 +79,7 @@ public class TileCacheTest
     [Fact]
     public void Remove_RemovesEntry()
     {
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         var id = new SKDeepZoomTileId(5, 2, 3);
         cache.Put(id, null);
         Assert.True(cache.Remove(id));
@@ -90,14 +90,14 @@ public class TileCacheTest
     [Fact]
     public void Remove_NonExistent_ReturnsFalse()
     {
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         Assert.False(cache.Remove(new SKDeepZoomTileId(0, 0, 0)));
     }
 
     [Fact]
     public void Clear_RemovesAllEntries()
     {
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         for (int i = 0; i < 5; i++)
             cache.Put(new SKDeepZoomTileId(i, 0, 0), null);
 
@@ -109,7 +109,7 @@ public class TileCacheTest
     [Fact]
     public void Put_UpdatesExistingEntry()
     {
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         var id = new SKDeepZoomTileId(5, 2, 3);
         cache.Put(id, null);
         cache.Put(id, null); // update
@@ -139,21 +139,21 @@ public class TileCacheTest
     [Fact]
     public void MaxEntries_Property()
     {
-        using var cache = new SKDeepZoomTileCache(50);
+        using var cache = new SKDeepZoomMemoryTileCache(50);
         Assert.Equal(50, cache.MaxEntries);
     }
 
     [Fact]
     public void Constructor_InvalidMaxEntries_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new SKDeepZoomTileCache(0));
-        Assert.Throws<ArgumentOutOfRangeException>(() => new SKDeepZoomTileCache(-1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKDeepZoomMemoryTileCache(0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SKDeepZoomMemoryTileCache(-1));
     }
 
     [Fact]
     public void LRU_MaxEntries3_Put4_EvictsOldestAndCountIs3()
     {
-        using var cache = new SKDeepZoomTileCache(3);
+        using var cache = new SKDeepZoomMemoryTileCache(3);
         var id0 = new SKDeepZoomTileId(0, 0, 0);
         var id1 = new SKDeepZoomTileId(1, 0, 0);
         var id2 = new SKDeepZoomTileId(2, 0, 0);
@@ -174,7 +174,7 @@ public class TileCacheTest
     [Fact]
     public void Put_UpdateExisting_CountStays1_ReturnsNewBitmap()
     {
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         var id = new SKDeepZoomTileId(3, 1, 2);
 
         var bmp1 = new SkiaSharp.SKBitmap(64, 64);
@@ -194,7 +194,7 @@ public class TileCacheTest
     [Fact]
     public void FlushEvicted_DisposesEvictedBitmaps()
     {
-        using var cache = new SKDeepZoomTileCache(2);
+        using var cache = new SKDeepZoomMemoryTileCache(2);
         var bmp0 = new SKBitmap(1, 1);
         cache.Put(new SKDeepZoomTileId(0, 0, 0), bmp0);
         cache.Put(new SKDeepZoomTileId(1, 0, 0), new SKBitmap(1, 1));
@@ -211,7 +211,7 @@ public class TileCacheTest
     [Fact]
     public void Remove_DefersDisposal_FlushEvictedCleansThem()
     {
-        using var cache = new SKDeepZoomTileCache(10);
+        using var cache = new SKDeepZoomMemoryTileCache(10);
         var bmp = new SKBitmap(1, 1);
         var id = new SKDeepZoomTileId(0, 0, 0);
         cache.Put(id, bmp);
@@ -226,7 +226,7 @@ public class TileCacheTest
     [Fact]
     public void Clear_DisposesEverything_IncludingPendingEvictions()
     {
-        using var cache = new SKDeepZoomTileCache(2);
+        using var cache = new SKDeepZoomMemoryTileCache(2);
         cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKBitmap(1, 1));
         cache.Put(new SKDeepZoomTileId(1, 0, 0), new SKBitmap(1, 1));
         cache.Put(new SKDeepZoomTileId(2, 0, 0), new SKBitmap(1, 1)); // evicts id0
@@ -242,13 +242,11 @@ public class TileCacheTest
     [Fact]
     public void Put_AfterDispose_DoesNotThrow_AndDisposesBitmap()
     {
-        var cache = new SKDeepZoomTileCache(10);
+        var cache = new SKDeepZoomMemoryTileCache(10);
         cache.Dispose();
 
         var bmp = new SKBitmap(32, 32);
-        var ex = Record.Exception(() => cache.Put(new SKDeepZoomTileId(0, 0, 0), bmp));
-
-        Assert.Null(ex);
+        cache.Put(new SKDeepZoomTileId(0, 0, 0), bmp); // should not throw
         // The bitmap was disposed by Put — verify by checking the cache didn't retain it
         Assert.Equal(0, cache.Count);
         Assert.False(cache.Contains(new SKDeepZoomTileId(0, 0, 0)));
@@ -257,7 +255,7 @@ public class TileCacheTest
     [Fact]
     public void TryGet_AfterDispose_ReturnsFalse()
     {
-        var cache = new SKDeepZoomTileCache(10);
+        var cache = new SKDeepZoomMemoryTileCache(10);
         var tileId = new SKDeepZoomTileId(3, 1, 2);
         cache.Put(tileId, new SKBitmap(32, 32));
 

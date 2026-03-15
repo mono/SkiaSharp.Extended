@@ -42,14 +42,14 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>Initializes a new <see cref="SKDeepZoomController"/> with an optional custom tile cache.</summary>
         /// <param name="cache">
         /// Custom tile cache implementation. When <see langword="null"/>, the default
-        /// <see cref="SKDeepZoomTileCache"/> is created with <paramref name="defaultCacheCapacity"/> entries.
+        /// <see cref="SKDeepZoomMemoryTileCache"/> is created with <paramref name="defaultCacheCapacity"/> entries.
         /// </param>
         /// <param name="defaultCacheCapacity">Maximum tiles for the default cache (ignored when <paramref name="cache"/> is provided).</param>
         public SKDeepZoomController(ISKDeepZoomTileCache? cache = null, int defaultCacheCapacity = 1024)
         {
             _viewport = new SKDeepZoomViewport();
             _scheduler = new SKDeepZoomTileScheduler();
-            _cache = cache ?? new SKDeepZoomTileCache(defaultCacheCapacity);
+            _cache = cache ?? new SKDeepZoomMemoryTileCache(defaultCacheCapacity);
             _renderer = new SKDeepZoomRenderer();
         }
 
@@ -104,13 +104,6 @@ namespace SkiaSharp.Extended.DeepZoom
         {
             get => _renderer.ShowTileBorders;
             set => _renderer.ShowTileBorders = value;
-        }
-
-        /// <summary>Show a debug statistics overlay with viewport, level, cache, and tile info.</summary>
-        public bool ShowDebugStats
-        {
-            get => _renderer.ShowDebugStats;
-            set => _renderer.ShowDebugStats = value;
         }
 
         /// <summary>Fired when the image source is loaded successfully.</summary>
@@ -358,9 +351,17 @@ namespace SkiaSharp.Extended.DeepZoom
             {
                 if (_tileSource == null || _fetcher == null) return;
 
-                string url = _tileSource.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row)
-                    ?? _tileSource.GetTileUrl(tileId.Level, tileId.Col, tileId.Row);
-                bitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
+                // Check async cache tiers (e.g. browser storage) before hitting the network.
+                // TryGetAsync is a no-op for the default in-memory cache (returns immediately),
+                // but allows tiered caches to intercept without double-fetching.
+                bitmap = await _cache.TryGetAsync(tileId, ct).ConfigureAwait(false);
+
+                if (bitmap == null && !ct.IsCancellationRequested)
+                {
+                    string url = _tileSource.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row)
+                        ?? _tileSource.GetTileUrl(tileId.Level, tileId.Col, tileId.Row);
+                    bitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
+                }
 
                 if (bitmap != null && !ct.IsCancellationRequested && !_disposed)
                 {

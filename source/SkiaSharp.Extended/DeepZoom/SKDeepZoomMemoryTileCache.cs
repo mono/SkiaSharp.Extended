@@ -13,7 +13,7 @@ namespace SkiaSharp.Extended.DeepZoom
     /// with the renderer (which may hold references to recently-returned bitmaps).
     /// Call <see cref="FlushEvicted"/> at the start of each render frame.
     /// </summary>
-    public class SKDeepZoomTileCache : ISKDeepZoomTileCache
+    public class SKDeepZoomMemoryTileCache : ISKDeepZoomTileCache
     {
         private readonly int _maxEntries;
         private readonly LinkedList<TileCacheEntry> _lruList;
@@ -22,7 +22,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private readonly List<SKBitmap> _pendingDispose = new List<SKBitmap>();
         private bool _disposed;
 
-        public SKDeepZoomTileCache(int maxEntries = 256)
+        public SKDeepZoomMemoryTileCache(int maxEntries = 256)
         {
             if (maxEntries <= 0) throw new ArgumentOutOfRangeException(nameof(maxEntries));
             _maxEntries = maxEntries;
@@ -58,6 +58,13 @@ namespace SkiaSharp.Extended.DeepZoom
                 bitmap = null;
                 return false;
             }
+        }
+
+        /// <summary>Async variant of <see cref="TryGet"/>; returns the bitmap or null. Completes synchronously for in-memory cache.</summary>
+        public Task<SKBitmap?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
+        {
+            TryGet(id, out SKBitmap? bitmap);
+            return Task.FromResult(bitmap);
         }
 
         /// <summary>Adds a tile bitmap to the cache via the async interface. Calls <see cref="Put"/> synchronously.</summary>

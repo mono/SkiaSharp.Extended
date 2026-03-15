@@ -30,7 +30,7 @@ public class DeepZoomRenderPipelineTest
         Assert.True(tiles.Count > 0);
 
         // Create cache with some test tiles
-        var cache = new SKDeepZoomTileCache(100);
+        var cache = new SKDeepZoomMemoryTileCache(100);
         foreach (var request in tiles)
         {
             var bmp = new SKBitmap(dzi.TileSize, dzi.TileSize);

@@ -114,7 +114,7 @@
                 <section>
                     <h4>Tile Cache</h4>
                     <dl>
-                        <dt>Cached</dt><dd>@cache.Count / @CacheCapacity</dd>
+                        <dt>Cached</dt><dd>@cache.Count / @_cacheCapacity</dd>
                         <dt>Pending</dt><dd>@_controller.PendingTileCount</dd>
                         <dt>Status</dt><dd>@(_controller.IsIdle ? "✅ Idle" : "⏳ Loading…")</dd>
                     </dl>
@@ -159,26 +159,34 @@
                         <input type="checkbox" @bind="_showTileBorders" @bind:after="OnDebugOptionsChanged" />
                         Show Tile Borders
                     </label>
-                    <label class="dz-debug-label">
-                        <input type="checkbox" @bind="_showDebugStats" @bind:after="OnDebugOptionsChanged" />
-                        Show Stats Overlay
-                    </label>
                 </section>
 
                 <section>
-                    <h4>🐌 Cache Delay</h4>
+                    <h4>🗄️ Cache Settings</h4>
+                    <label class="dz-debug-label">
+                        <input type="checkbox" @bind="_useBrowserCache" @bind:after="OnCacheTypeChanged" />
+                        Use browser storage cache (L2)
+                    </label>
                     <label class="dz-debug-label">
                         <input type="checkbox" @bind="_cacheDelayEnabled" @bind:after="OnCacheDelayChanged" />
-                        Simulate tile delay
+                        Simulate tile delay (demo)
                     </label>
+                    @if (_cacheDelayEnabled)
+                    {
+                        <label class="dz-label-row">
+                            Min <strong class="dz-ms-label">@_cacheDelayMin ms</strong>
+                            <input type="range" min="0" max="2500" step="10" @bind="_cacheDelayMin" @bind:after="OnCacheDelayChanged" />
+                        </label>
+                        <label class="dz-label-row">
+                            Max <strong class="dz-ms-label">@_cacheDelayMax ms</strong>
+                            <input type="range" min="0" max="2500" step="10" @bind="_cacheDelayMax" @bind:after="OnCacheDelayChanged" />
+                        </label>
+                    }
                     <label class="dz-label-row">
-                        Min <strong class="dz-zoom-label">@_cacheDelayMin ms</strong>
-                        <input type="range" min="0" max="2500" step="10" @bind="_cacheDelayMin" @bind:after="OnCacheDelayChanged" />
+                        Size <strong class="dz-ms-label">@_cacheCapacity</strong>
+                        <input type="range" min="64" max="4096" step="64" @bind="_cacheCapacity" @bind:after="OnCacheSizeChanged" />
                     </label>
-                    <label class="dz-label-row">
-                        Max <strong class="dz-zoom-label">@_cacheDelayMax ms</strong>
-                        <input type="range" min="0" max="2500" step="10" @bind="_cacheDelayMax" @bind:after="OnCacheDelayChanged" />
-                    </label>
+                    <button class="dz-small-btn" @onclick="OnClearCache">Clear Cache</button>
                 </section>
             }
         </aside>
@@ -288,6 +296,25 @@
         min-width: 0;
     }
 
+    .dz-ms-label {
+        display: inline-block;
+        min-width: 4.5ch;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .dz-small-btn {
+        margin-top: 4px;
+        padding: 2px 8px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        border: 1px solid #555;
+        border-radius: 3px;
+        background: #333;
+        color: #ddd;
+    }
+    .dz-small-btn:hover { background: #444; }
+
     .dz-toggle-btn {
         position: fixed;
         bottom: 1rem;
@@ -334,12 +361,13 @@
 
     // Debug overlay toggles
     private bool _showTileBorders;
-    private bool _showDebugStats;
     private bool _cacheDelayEnabled;
     private int  _cacheDelayMin;
     private int  _cacheDelayMax = 500;
+    private bool _useBrowserCache;
+    private int  _cacheCapacity = 1024;
     private DelayTileCache? _delayCache;
-    private const int CacheCapacity = 1024;
+    private BrowserStorageTileCache? _browserCache;
 
     // URL input
     private string _urlInput = DefaultDziUrl;
@@ -374,7 +402,8 @@
         _thisRef = DotNetObjectReference.Create(this);
         await JS.InvokeVoidAsync("deepZoomRegisterResize", _thisRef);
 
-        _delayCache = new DelayTileCache(new SkiaSharp.Extended.DeepZoom.SKDeepZoomTileCache(CacheCapacity));
+        _browserCache = new BrowserStorageTileCache(JS);
+        _delayCache = new DelayTileCache(new SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache(_cacheCapacity));
         _controller = new SKDeepZoomController(_delayCache);
         _controller.InvalidateRequired += OnInvalidateRequired;
 
@@ -557,7 +586,6 @@
     {
         if (_controller == null) return;
         _controller.ShowTileBorders = _showTileBorders;
-        _controller.ShowDebugStats  = _showDebugStats;
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
@@ -567,10 +595,64 @@
         _delayCache.IsEnabled  = _cacheDelayEnabled;
         _delayCache.MinDelayMs = _cacheDelayMin;
         _delayCache.MaxDelayMs = _cacheDelayMax;
-        // Clear cache so new tiles load with the updated delay settings
         if (_cacheDelayEnabled)
             _controller?.Cache.Clear();
         InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnCacheTypeChanged()
+    {
+        if (_controller == null) return;
+        // Reload with new cache type
+        RebuildControllerCache();
+        var source = _controller.TileSource;
+        var fetcher = new SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher();
+        if (source != null)
+            _controller.Load(source, fetcher);
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnCacheSizeChanged()
+    {
+        RebuildControllerCache();
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnClearCache()
+    {
+        _controller?.Cache.Clear();
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void RebuildControllerCache()
+    {
+        if (_controller == null) return;
+        // Dispose old caches
+        _delayCache?.Dispose();
+        _browserCache?.Dispose();
+
+        _browserCache = new BrowserStorageTileCache(JS);
+
+        ISKDeepZoomTileCache inner = _useBrowserCache
+            ? _browserCache
+            : new SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache(_cacheCapacity);
+
+        _delayCache = new DelayTileCache(inner)
+        {
+            IsEnabled  = _cacheDelayEnabled,
+            MinDelayMs = _cacheDelayMin,
+            MaxDelayMs = _cacheDelayMax,
+        };
+
+        // Recreate the controller with the new cache
+        _controller.InvalidateRequired -= OnInvalidateRequired;
+        _controller.Dispose();
+
+        _controller = new SKDeepZoomController(_delayCache)
+        {
+            ShowTileBorders = _showTileBorders,
+        };
+        _controller.InvalidateRequired += OnInvalidateRequired;
     }
 
     public async ValueTask DisposeAsync()
@@ -583,6 +665,7 @@
             _controller.InvalidateRequired -= OnInvalidateRequired;
             _controller.Dispose();
         }
+        _browserCache?.Dispose();
     }
 }
 

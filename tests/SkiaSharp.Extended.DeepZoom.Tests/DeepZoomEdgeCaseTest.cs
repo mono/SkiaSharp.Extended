@@ -273,12 +273,12 @@ public class DeepZoomEdgeCaseTest
         Assert.Equal(4, dzc.GetMortonGridSize());
     }
 
-    // --- SKDeepZoomTileCache edge cases ---
+    // --- SKDeepZoomMemoryTileCache edge cases ---
 
     [Fact]
     public void TileCache_SingleCapacity()
     {
-        var cache = new SKDeepZoomTileCache(1);
+        var cache = new SKDeepZoomMemoryTileCache(1);
         var a = new SKDeepZoomTileId(0, 0, 0);
         var b = new SKDeepZoomTileId(1, 0, 0);
         var bmp1 = new SKBitmap(10, 10);
@@ -295,7 +295,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void TileCache_Clear_EmptiesCache()
     {
-        var cache = new SKDeepZoomTileCache(10);
+        var cache = new SKDeepZoomMemoryTileCache(10);
         for (int i = 0; i < 5; i++)
         {
             cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
@@ -309,7 +309,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void TileCache_Remove_Returns()
     {
-        var cache = new SKDeepZoomTileCache(10);
+        var cache = new SKDeepZoomMemoryTileCache(10);
         var id = new SKDeepZoomTileId(0, 0, 0);
         cache.Put(id, new SKBitmap(10, 10));
         Assert.True(cache.Remove(id));
@@ -319,7 +319,7 @@ public class DeepZoomEdgeCaseTest
     [Fact]
     public void TileCache_LRU_EvictsOldest()
     {
-        var cache = new SKDeepZoomTileCache(3);
+        var cache = new SKDeepZoomMemoryTileCache(3);
         var a = new SKDeepZoomTileId(0, 0, 0);
         var b = new SKDeepZoomTileId(0, 1, 0);
         var c = new SKDeepZoomTileId(0, 0, 1);
