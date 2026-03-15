@@ -163,6 +163,17 @@
                         <input type="checkbox" @bind="_enableLodBlending" @bind:after="OnDebugOptionsChanged" />
                         Enable LOD Blending
                     </label>
+                    <div class="dz-debug-info">
+                        <div>LOD active on renderer: <strong>@(_debugRenderer?.EnableLodBlending == true ? "ON" : "OFF")</strong></div>
+                        <div>Tiles cached: <strong>@(_controller?.Cache.Count ?? 0)</strong></div>
+                        <div>Pending fetches: <strong>@(_controller?.PendingTileCount ?? 0)</strong></div>
+                    </div>
+                    <button class="dz-small-btn" @onclick="OnLodDemo" title="Step 1: Let fit-view tiles load. Step 2: Enable tile delay. Step 3: Click this to zoom to max — you will see the LOD difference.">
+                        Zoom to Max (LOD demo)
+                    </button>
+                    <div style="font-size:0.75em;color:#888;margin-top:2px;">
+                        To see LOD: load image → enable tile delay → click above (do NOT clear cache first).
+                    </div>
                 </section>
 
                 <section>
@@ -284,6 +295,16 @@
         margin: 4px 0;
         cursor: pointer;
         user-select: none;
+    }
+
+    .dz-debug-info {
+        font-size: 0.75rem;
+        color: #90caf9;
+        background: #1a1a2e;
+        border-radius: 4px;
+        padding: 4px 8px;
+        margin: 4px 0;
+        line-height: 1.6;
     }
 
     .dz-label-row {
@@ -437,10 +458,22 @@
     }
 
     private void OnInvalidateRequired(object? sender, EventArgs e)
-        => InvokeAsync(() => _canvas?.Invalidate());
+        => InvokeAsync(async () => { _canvas?.Invalidate(); await InvokeAsync(StateHasChanged); });
 
     [JSInvokable]
     public void OnWindowResize() => InvokeAsync(() => _canvas?.Invalidate());
+
+    // --- LOD demo ---
+    private void OnLodDemo()
+    {
+        if (_controller == null) return;
+        // Zoom to native (1:1 pixel) so hi-res tiles are requested
+        var native = _controller.NativeZoom;
+        if (native > 0)
+            _controller.SetZoom(native);
+        SyncZoomFromViewport();
+        InvokeAsync(() => { _canvas?.Invalidate(); return InvokeAsync(StateHasChanged); });
+    }
 
     // --- Zoom slider ---
     private void OnZoomSlider(ChangeEventArgs e)
@@ -605,8 +638,8 @@
         _delayCache.IsEnabled  = _cacheDelayEnabled;
         _delayCache.MinDelayMs = _cacheDelayMin;
         _delayCache.MaxDelayMs = _cacheDelayMax;
-        if (_cacheDelayEnabled)
-            _controller?.Cache.Clear();
+        // Do NOT clear the cache here: existing lower-level tiles are needed as LOD fallbacks.
+        // Use the "Clear Cache" button to reset explicitly.
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
