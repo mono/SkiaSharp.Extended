@@ -131,7 +131,7 @@ var cache = new SKDeepZoomMemoryTileCache(maxEntries: 512);
 _controller = new SKDeepZoomController(cache: cache);
 ```
 
-See the [Caching docs](deep-zoom-caching.md) for implementing browser storage tiers, delay wrappers, and other custom strategies.
+See the [Caching docs](caching.md) for implementing browser storage tiers, delay wrappers, and other custom strategies.
 
 ## Canvas Resize
 
@@ -155,8 +155,8 @@ public void OnCanvasResized()
 
 ## Related
 
-- [Deep Zoom overview](deep-zoom.md)
-- [Controller & Viewport](deep-zoom-controller.md)
-- [Tile Fetching](deep-zoom-fetching.md)
-- [Caching](deep-zoom-caching.md)
-- [Deep Zoom for MAUI](deep-zoom-maui.md)
+- [Deep Zoom overview](index.md)
+- [Controller & Viewport](controller.md)
+- [Tile Fetching](fetching.md)
+- [Caching](caching.md)
+- [Deep Zoom for MAUI](maui.md)

@@ -50,7 +50,8 @@ graph TD
 | `ISKDeepZoomTileFetcher` | Pluggable fetcher interface (HTTP, file system, app package). |
 | `SKDeepZoomHttpTileFetcher` | Built-in HTTP fetcher using `HttpClient`. |
 | `SKDeepZoomFileTileFetcher` | Built-in file system fetcher for local/bundled tiles. |
-| `SKDeepZoomRenderer` | Draws visible tiles onto an `SKCanvas` with LOD fallback blending. |
+| `ISKDeepZoomRenderer` | Pluggable renderer interface. |
+| `SKDeepZoomRenderer` | Default renderer; LOD fallback blending, tile scheduling. |
 
 ## Quick Start
 
@@ -201,14 +202,14 @@ controller.ResetView();
 
 ## Platform Integration
 
-- [Deep Zoom for Blazor](deep-zoom-blazor.md) — Blazor WebAssembly integration guide
-- [Deep Zoom for MAUI](deep-zoom-maui.md) — .NET MAUI integration guide
+- [Deep Zoom for Blazor](blazor.md) — Blazor WebAssembly integration guide
+- [Deep Zoom for MAUI](maui.md) — .NET MAUI integration guide
 
 ## Deeper Dives
 
-- [Controller & Viewport](deep-zoom-controller.md) — Full controller API, viewport coordinate system, zoom semantics
-- [Tile Fetching](deep-zoom-fetching.md) — Built-in fetchers and how to implement custom fetchers
-- [Caching](deep-zoom-caching.md) — Cache interface, LRU memory cache, tiered caching, custom implementations
+- [Controller & Viewport](controller.md) — Full controller API, viewport coordinate system, zoom semantics
+- [Tile Fetching](fetching.md) — Built-in fetchers and how to implement custom fetchers
+- [Caching](caching.md) — Cache interface, LRU memory cache, tiered caching, custom implementations
 
 ## Learn More
 

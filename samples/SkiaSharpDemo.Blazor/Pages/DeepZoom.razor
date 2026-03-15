@@ -159,6 +159,10 @@
                         <input type="checkbox" @bind="_showTileBorders" @bind:after="OnDebugOptionsChanged" />
                         Show Tile Borders
                     </label>
+                    <label class="dz-debug-label">
+                        <input type="checkbox" @bind="_enableLodBlending" @bind:after="OnDebugOptionsChanged" />
+                        Enable LOD Blending
+                    </label>
                 </section>
 
                 <section>
@@ -361,6 +365,8 @@
 
     // Debug overlay toggles
     private bool _showTileBorders;
+    private bool _enableLodBlending = true;
+    private DebugBorderRenderer? _debugRenderer;
     private bool _cacheDelayEnabled;
     private int  _cacheDelayMin;
     private int  _cacheDelayMax = 500;
@@ -406,7 +412,8 @@
 
         _innerCache = new SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache(_cacheCapacity);
         _delayCache = new DelayTileCache(_innerCache);
-        _controller = new SKDeepZoomController(_delayCache);
+        _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer());
+        _controller = new SKDeepZoomController(_delayCache, _debugRenderer);
         _controller.InvalidateRequired += OnInvalidateRequired;
 
         // Refresh inspector every 250ms while loading tiles
@@ -586,8 +593,9 @@
 
     private void OnDebugOptionsChanged()
     {
-        if (_controller == null) return;
-        _controller.ShowTileBorders = _showTileBorders;
+        if (_debugRenderer == null) return;
+        _debugRenderer.ShowTileBorders = _showTileBorders;
+        _debugRenderer.EnableLodBlending = _enableLodBlending;
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
@@ -633,11 +641,10 @@
         if (_controller == null) return;
 
         // _delayCache.Dispose() cascades to _innerCache (and transitively _browserCache)
-        // so we must NOT dispose _innerCache or _browserCache separately.
         _delayCache?.Dispose();
         _delayCache = null;
-        _innerCache = null;    // already disposed via _delayCache
-        _browserCache = null;  // same object as _innerCache when useBrowserCache=true
+        _innerCache = null;
+        _browserCache = null;
 
         // Build new cache chain
         if (_useBrowserCache)
@@ -657,14 +664,18 @@
             MaxDelayMs = _cacheDelayMax,
         };
 
-        // Recreate the controller with the new cache
+        // Create new debug renderer with current settings
+        _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer())
+        {
+            ShowTileBorders  = _showTileBorders,
+            EnableLodBlending = _enableLodBlending,
+        };
+
+        // Recreate the controller with the new cache and renderer
         _controller.InvalidateRequired -= OnInvalidateRequired;
         _controller.Dispose();
 
-        _controller = new SKDeepZoomController(_delayCache)
-        {
-            ShowTileBorders = _showTileBorders,
-        };
+        _controller = new SKDeepZoomController(_delayCache, _debugRenderer);
         _controller.InvalidateRequired += OnInvalidateRequired;
     }
 

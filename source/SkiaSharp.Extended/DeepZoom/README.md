@@ -2,7 +2,7 @@
 
 A static rendering system for Deep Zoom images (DZI) and collections (DZC). Loads tiled pyramid images at the optimal resolution for the current canvas size, rendering them centered-fit onto any `SKCanvas`.
 
-**Full documentation:** [docs/docs/deep-zoom.md](../../../../docs/docs/deep-zoom.md)
+**Full documentation:** [docs/docs/deep-zoom/index.md](../../../../docs/docs/deep-zoom/index.md)
 
 ---
 
@@ -29,7 +29,8 @@ A static rendering system for Deep Zoom images (DZI) and collections (DZC). Load
 
 | Class | Purpose |
 | :---- | :------ |
-| `SKDeepZoomRenderer` | Draws visible tiles onto an `SKCanvas` with LOD fallback |
+| `ISKDeepZoomRenderer` | Pluggable renderer interface |
+| `SKDeepZoomRenderer` | Default renderer; LOD blending, tile fallback |
 | `SKDeepZoomTileScheduler` | Determines visible tiles and their fetch priority |
 | `SKDeepZoomTileId` | `readonly record struct` identifying a tile: `(Level, Col, Row)` |
 | `SKDeepZoomTileRequest` | A tile + priority for the scheduler queue |

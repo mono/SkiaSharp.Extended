@@ -31,7 +31,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private readonly SKDeepZoomViewport _viewport;
         private readonly SKDeepZoomTileScheduler _scheduler;
         private readonly ISKDeepZoomTileCache _cache;
-        private readonly SKDeepZoomRenderer _renderer;
+        private readonly ISKDeepZoomRenderer _renderer;
         private List<SKDeepZoomSubImage> _subImages = new List<SKDeepZoomSubImage>();
         private ISKDeepZoomTileFetcher? _fetcher;
         private readonly ConcurrentDictionary<SKDeepZoomTileId, byte> _pendingTiles = new ConcurrentDictionary<SKDeepZoomTileId, byte>();
@@ -39,18 +39,22 @@ namespace SkiaSharp.Extended.DeepZoom
         private bool _disposed;
         private bool _userHasZoomed;
 
-        /// <summary>Initializes a new <see cref="SKDeepZoomController"/> with an optional custom tile cache.</summary>
+        /// <summary>Initializes a new <see cref="SKDeepZoomController"/> with optional custom cache and renderer.</summary>
         /// <param name="cache">
-        /// Custom tile cache implementation. When <see langword="null"/>, the default
-        /// <see cref="SKDeepZoomMemoryTileCache"/> is created with <paramref name="defaultCacheCapacity"/> entries.
+        /// Custom tile cache. When <see langword="null"/>, a <see cref="SKDeepZoomMemoryTileCache"/>
+        /// with <paramref name="defaultCacheCapacity"/> entries is used.
+        /// </param>
+        /// <param name="renderer">
+        /// Custom renderer. When <see langword="null"/>, the default <see cref="SKDeepZoomRenderer"/> is used.
+        /// Use a decorator (e.g., a tile-border overlay) to extend rendering without modifying the core renderer.
         /// </param>
         /// <param name="defaultCacheCapacity">Maximum tiles for the default cache (ignored when <paramref name="cache"/> is provided).</param>
-        public SKDeepZoomController(ISKDeepZoomTileCache? cache = null, int defaultCacheCapacity = 1024)
+        public SKDeepZoomController(ISKDeepZoomTileCache? cache = null, ISKDeepZoomRenderer? renderer = null, int defaultCacheCapacity = 1024)
         {
             _viewport = new SKDeepZoomViewport();
             _scheduler = new SKDeepZoomTileScheduler();
             _cache = cache ?? new SKDeepZoomMemoryTileCache(defaultCacheCapacity);
-            _renderer = new SKDeepZoomRenderer();
+            _renderer = renderer ?? new SKDeepZoomRenderer();
         }
 
         /// <summary>The current viewport. Use this to read the current position and zoom level.</summary>
@@ -63,7 +67,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public SKDeepZoomTileScheduler Scheduler => _scheduler;
 
         /// <summary>The renderer.</summary>
-        public SKDeepZoomRenderer Renderer => _renderer;
+        public ISKDeepZoomRenderer Renderer => _renderer;
 
         /// <summary>The loaded tile source, or null if not loaded.</summary>
         public SKDeepZoomImageSource? TileSource => _tileSource;
@@ -98,13 +102,6 @@ namespace SkiaSharp.Extended.DeepZoom
             (_tileSource != null && _viewport.ControlWidth > 0)
                 ? (double)_tileSource.ImageWidth / _viewport.ControlWidth
                 : 0.0;
-
-        /// <summary>Show tile borders for debugging.</summary>
-        public bool ShowTileBorders
-        {
-            get => _renderer.ShowTileBorders;
-            set => _renderer.ShowTileBorders = value;
-        }
 
         /// <summary>Fired when the image source is loaded successfully.</summary>
         public event EventHandler? ImageOpenSucceeded;

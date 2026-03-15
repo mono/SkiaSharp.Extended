@@ -82,30 +82,74 @@ controller.ResetView();
 | `Viewport` | `SKDeepZoomViewport` | The current viewport (position and zoom). |
 | `Cache` | `ISKDeepZoomTileCache` | The tile cache. |
 | `Scheduler` | `SKDeepZoomTileScheduler` | The tile scheduler. |
-| `Renderer` | `SKDeepZoomRenderer` | The tile renderer. |
+| `Renderer` | `ISKDeepZoomRenderer` | The tile renderer (pluggable via `ISKDeepZoomRenderer`). |
 | `TileSource` | `SKDeepZoomImageSource?` | The loaded source, or `null`. |
 | `SubImages` | `IReadOnlyList<SKDeepZoomSubImage>` | Sub-images from a DZC; empty for DZI. |
 | `AspectRatio` | `double` | Width/height of the loaded image; 0 if not loaded. |
 | `IsIdle` | `bool` | `true` when no tiles are in-flight. |
 | `PendingTileCount` | `int` | Number of tile fetches currently in progress. |
 | `NativeZoom` | `double` | Zoom level where 1 image pixel = 1 screen pixel. |
-| `ShowTileBorders` | `bool` | Debug: draw a border around each tile. |
 
-### Renderer Options
+### Renderer and LOD Blending
 
-The `SKDeepZoomRenderer` (accessible via `controller.Renderer`) exposes additional display settings:
+The renderer is **pluggable** via `ISKDeepZoomRenderer`. The default implementation is `SKDeepZoomRenderer`.
 
-| Property | Default | Description |
-| :------- | :------ | :---------- |
-| `ShowTileBorders` | `false` | Draw a dark border around each rendered tile (also on `controller`). |
-| `EnableLodBlending` | `true` | When `true`, lower-resolution parent tiles are scaled up and drawn as placeholders while higher-resolution tiles are loading. When `false`, missing tiles show as blank. |
+Pass a custom renderer at construction time:
 
 ```csharp
-// Access via controller shortcut
-controller.ShowTileBorders = true;
+ISKDeepZoomRenderer myRenderer = new MyCustomRenderer();
+var controller = new SKDeepZoomController(renderer: myRenderer);
+```
 
-// Or directly on the renderer
-controller.Renderer.EnableLodBlending = false;  // show blank while loading
+**`EnableLodBlending`** (default `true`) controls whether lower-resolution fallback tiles are shown while high-resolution tiles are loading:
+
+| Value | Behaviour |
+| :---- | :-------- |
+| `true` (default) | Lower-res parent tiles scale up as placeholders. The view is never blank — tiles appear immediately at reduced quality, then sharpen. |
+| `false` | Missing tiles show as empty space. Tiles appear all-or-nothing when loaded. Useful for testing load performance. |
+
+```csharp
+// Cast to SKDeepZoomRenderer to access EnableLodBlending
+if (controller.Renderer is SKDeepZoomRenderer r)
+    r.EnableLodBlending = false;
+```
+
+**Decorator pattern for debug overlays:**
+
+Instead of building debug features into the core renderer, wrap it with a decorator:
+
+```csharp
+public sealed class TileBorderRenderer : ISKDeepZoomRenderer
+{
+    private readonly ISKDeepZoomRenderer _inner;
+    public bool ShowBorders { get; set; }
+
+    public TileBorderRenderer(ISKDeepZoomRenderer inner) => _inner = inner;
+
+    public void Render(SKCanvas canvas, SKDeepZoomImageSource source,
+                       SKDeepZoomViewport viewport, ISKDeepZoomTileCache cache,
+                       SKDeepZoomTileScheduler scheduler)
+    {
+        _inner.Render(canvas, source, viewport, cache, scheduler);
+        if (!ShowBorders) return;
+
+        // Draw borders over each visible tile
+        using var paint = new SKPaint { IsStroke = true, Color = SKColors.Red.WithAlpha(120) };
+        var tiles = scheduler.GetVisibleTiles(source, viewport);
+        foreach (var req in tiles)
+        {
+            var rect = SKDeepZoomRenderer.GetTileDestRect(source, viewport, req.TileId);
+            canvas.DrawRect(rect, paint);
+        }
+    }
+
+    public void Dispose() => _inner.Dispose();
+}
+
+// Wire it up:
+var coreRenderer = new SKDeepZoomRenderer();
+var debugRenderer = new TileBorderRenderer(coreRenderer) { ShowBorders = true };
+var controller = new SKDeepZoomController(renderer: debugRenderer);
 ```
 
 ### Events
@@ -364,10 +408,10 @@ foreach (var req in tiles)
 
 ## Related
 
-- [Deep Zoom overview](deep-zoom.md)
-- [Tile Fetching](deep-zoom-fetching.md)
-- [Caching](deep-zoom-caching.md)
-- [Blazor Integration](deep-zoom-blazor.md)
-- [MAUI Integration](deep-zoom-maui.md)
+- [Deep Zoom overview](index.md)
+- [Tile Fetching](fetching.md)
+- [Caching](caching.md)
+- [Blazor Integration](blazor.md)
+- [MAUI Integration](maui.md)
 - [API Reference — SKDeepZoomController](xref:SkiaSharp.Extended.DeepZoom.SKDeepZoomController)
 - [API Reference — SKDeepZoomViewport](xref:SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport)

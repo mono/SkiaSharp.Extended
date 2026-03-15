@@ -172,8 +172,8 @@ The controller takes ownership of the fetcher for the duration of the load. Call
 
 ## Related
 
-- [Deep Zoom overview](deep-zoom.md)
-- [Controller & Viewport](deep-zoom-controller.md)
-- [Caching](deep-zoom-caching.md)
+- [Deep Zoom overview](index.md)
+- [Controller & Viewport](controller.md)
+- [Caching](caching.md)
 - [API Reference — ISKDeepZoomTileFetcher](xref:SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher)
 - [API Reference — SKDeepZoomHttpTileFetcher](xref:SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher)

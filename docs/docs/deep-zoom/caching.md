@@ -248,8 +248,8 @@ public sealed class BoundedDictionaryCache : ISKDeepZoomTileCache
 
 ## Related
 
-- [Deep Zoom overview](deep-zoom.md)
-- [Controller & Viewport](deep-zoom-controller.md)
-- [Tile Fetching](deep-zoom-fetching.md)
+- [Deep Zoom overview](index.md)
+- [Controller & Viewport](controller.md)
+- [Tile Fetching](fetching.md)
 - [API Reference — ISKDeepZoomTileCache](xref:SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache)
 - [API Reference — SKDeepZoomMemoryTileCache](xref:SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache)

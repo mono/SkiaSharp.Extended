@@ -223,18 +223,18 @@ public class DeepZoomControllerTest
     }
 
     [Fact]
-    public void ShowTileBorders_DefaultsFalse()
+    public void EnableLodBlending_DefaultsTrue()
     {
-        using var controller = new SKDeepZoomController();
-        Assert.False(controller.ShowTileBorders);
+        var renderer = new SKDeepZoomRenderer();
+        Assert.True(renderer.EnableLodBlending);
     }
 
     [Fact]
-    public void ShowTileBorders_Settable()
+    public void EnableLodBlending_Settable()
     {
-        using var controller = new SKDeepZoomController();
-        controller.ShowTileBorders = true;
-        Assert.True(controller.ShowTileBorders);
+        var renderer = new SKDeepZoomRenderer();
+        renderer.EnableLodBlending = false;
+        Assert.False(renderer.EnableLodBlending);
     }
 
     [Fact]
