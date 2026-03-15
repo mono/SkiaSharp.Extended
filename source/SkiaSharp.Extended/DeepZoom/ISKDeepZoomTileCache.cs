@@ -23,6 +23,11 @@ namespace SkiaSharp.Extended.DeepZoom
         bool Contains(SKDeepZoomTileId id);
 
         /// <summary>
+        /// Stores a tile bitmap synchronously. Use this for simple in-memory caches.
+        /// </summary>
+        void Put(SKDeepZoomTileId id, SKBitmap? bitmap);
+
+        /// <summary>
         /// Stores a tile bitmap. Implementations may apply delays or tiered writes.
         /// Called from a background thread; the <paramref name="ct"/> should be respected.
         /// </summary>

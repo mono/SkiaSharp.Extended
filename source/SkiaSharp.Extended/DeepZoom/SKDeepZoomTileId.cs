@@ -19,5 +19,8 @@ namespace SkiaSharp.Extended.DeepZoom
                 return hash;
             }
         }
+
+        // Preserve compact format compatible with the original struct.
+        public override string ToString() => $"({Level},{Col},{Row})";
     }
 }
