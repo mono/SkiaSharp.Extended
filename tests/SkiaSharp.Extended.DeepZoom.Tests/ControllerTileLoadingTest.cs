@@ -151,10 +151,9 @@ public class ControllerTileLoadingTest
     }
 
     [Fact]
-    public void Render_WithTileBorders_DoesNotThrow()
+    public void Render_WithController_DoesNotThrow()
     {
         using var controller = new SKDeepZoomController();
-        controller.ShowTileBorders = true;
         controller.SetControlSize(400, 400);
 
         var dzi = CreateDzi(256, 256);

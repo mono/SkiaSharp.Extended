@@ -77,13 +77,6 @@ public class DeepZoomRendererTest
     }
 
     [Fact]
-    public void ShowTileBorders_DefaultIsFalse()
-    {
-        using var renderer = new SKDeepZoomRenderer();
-        Assert.False(renderer.ShowTileBorders);
-    }
-
-    [Fact]
     public void EnableLodBlending_CanBeToggled()
     {
         using var renderer = new SKDeepZoomRenderer();
@@ -97,10 +90,9 @@ public class DeepZoomRendererTest
     }
 
     [Fact]
-    public void ShowTileBorders_DrawsBorders()
+    public void Render_WithBordersEnabled_DrawsTiles()
     {
         using var renderer = new SKDeepZoomRenderer();
-        renderer.ShowTileBorders = true;
 
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
         var dzi = CreateSampleDzi();
@@ -241,29 +233,6 @@ public class DeepZoomRendererTest
     }
 
     [Fact]
-    public void ShowTileBorders_EmptyCache_DoesNotThrow()
-    {
-        using var renderer = new SKDeepZoomRenderer();
-        renderer.ShowTileBorders = true;
-
-        using var surface = SKSurface.Create(new SKImageInfo(800, 600));
-        var dzi = CreateSampleDzi();
-        var viewport = new SKDeepZoomViewport
-        {
-            ControlWidth = 800,
-            ControlHeight = 600,
-            ViewportWidth = 1.0,
-        };
-        var cache = new SKDeepZoomMemoryTileCache(10);
-        var scheduler = new SKDeepZoomTileScheduler();
-
-        // Render with borders on but no tiles cached — should not throw
-        var ex = Record.Exception(() => renderer.Render(surface.Canvas, dzi, viewport, cache, scheduler));
-        Assert.Null(ex);
-        cache.Dispose();
-    }
-
-    [Fact]
     public void Render_MultipleTimesInSequence_DoesNotThrow()
     {
         using var renderer = new SKDeepZoomRenderer();
@@ -287,10 +256,9 @@ public class DeepZoomRendererTest
     }
 
     [Fact]
-    public void ShowTileBorders_WithFallbackTile_DrawsBordersWithoutCrash()
+    public void Render_WithFallbackTile_DoesNotThrow()
     {
         using var renderer = new SKDeepZoomRenderer();
-        renderer.ShowTileBorders = true;
 
         string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <Image xmlns=""http://schemas.microsoft.com/deepzoom/2008""
