@@ -10,6 +10,8 @@ namespace SkiaSharp.Extended.DeepZoom
     /// <remarks>
     /// The default implementation is <see cref="SKDeepZoomRenderer"/>, which supports
     /// LOD fallback blending. Use the decorator pattern to wrap it with additional behaviour.
+    /// Tile geometry (dest rects, fallback source rects) is pre-calculated by
+    /// <see cref="SKDeepZoomTileLayout"/> and passed to Render.
     /// </remarks>
     public interface ISKDeepZoomRenderer : System.IDisposable
     {
@@ -22,6 +24,6 @@ namespace SkiaSharp.Extended.DeepZoom
             SKDeepZoomImageSource tileSource,
             SKDeepZoomViewport viewport,
             ISKDeepZoomTileCache cache,
-            SKDeepZoomTileScheduler scheduler);
+            SKDeepZoomTileLayout layout);
     }
 }

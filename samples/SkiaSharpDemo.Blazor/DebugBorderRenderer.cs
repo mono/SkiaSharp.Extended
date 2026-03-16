@@ -51,18 +51,18 @@ public sealed class DebugBorderRenderer : ISKDeepZoomRenderer
         SKDeepZoomImageSource tileSource,
         SKDeepZoomViewport viewport,
         ISKDeepZoomTileCache cache,
-        SKDeepZoomTileScheduler scheduler)
+        SKDeepZoomTileLayout layout)
     {
-        _inner.Render(canvas, tileSource, viewport, cache, scheduler);
+        _inner.Render(canvas, tileSource, viewport, cache, layout);
 
         if (!ShowTileBorders || tileSource == null) return;
 
-        // Overlay borders on every visible tile
-        var visibleTiles = scheduler.GetVisibleTiles(tileSource, viewport);
+        // Overlay borders on every visible tile using layout geometry
+        var visibleTiles = layout.GetVisibleTiles(tileSource, viewport);
         foreach (var req in visibleTiles)
         {
-            var dest = SKDeepZoomRenderer.GetTileDestRect(tileSource, viewport, req.TileId);
-            canvas.DrawRect(dest, _borderPaint);
+            var dest = layout.GetTileDestRect(tileSource, viewport, req.TileId);
+            canvas.DrawRect(new SKRect(dest.X, dest.Y, dest.Right, dest.Bottom), _borderPaint);
         }
     }
 

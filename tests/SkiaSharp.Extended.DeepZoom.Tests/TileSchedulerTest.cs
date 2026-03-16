@@ -204,18 +204,18 @@ public class TileSchedulerTest
     public void GetFallbackSourceRect_CalculatesCorrectSubRegion()
     {
         var dzi = CreateSampleDzi();
-        var scheduler = new SKDeepZoomTileScheduler();
+        var layout = new SKDeepZoomTileLayout();
 
         var parent = new SKDeepZoomTileId(5, 0, 0);
         var child = new SKDeepZoomTileId(6, 0, 0);
 
-        var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(child, parent, dzi);
+        var src = layout.GetFallbackSourceRect(child, parent, dzi);
 
         // For a 1-level difference, the child should be in the top-left quadrant
-        Assert.True(srcX >= 0);
-        Assert.True(srcY >= 0);
-        Assert.True(srcW > 0);
-        Assert.True(srcH > 0);
+        Assert.True(src.X >= 0);
+        Assert.True(src.Y >= 0);
+        Assert.True(src.Width > 0);
+        Assert.True(src.Height > 0);
     }
 
     [Fact]
@@ -284,21 +284,21 @@ public class TileSchedulerTest
     public void GetFallbackSourceRect_ReturnsCorrectSubrect()
     {
         var dzi = new SKDeepZoomImageSource(1024, 1024, 256, 0, "jpg");
-        var scheduler = new SKDeepZoomTileScheduler();
+        var layout = new SKDeepZoomTileLayout();
 
         var parent = new SKDeepZoomTileId(8, 0, 0);
         var child = new SKDeepZoomTileId(9, 1, 1);
 
-        var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(child, parent, dzi);
+        var src = layout.GetFallbackSourceRect(child, parent, dzi);
 
         // Source rect must be within parent tile bounds
         var parentBounds = dzi.GetTileBounds(parent.Level, parent.Col, parent.Row);
-        Assert.True(srcX >= 0, $"srcX {srcX} should be >= 0");
-        Assert.True(srcY >= 0, $"srcY {srcY} should be >= 0");
-        Assert.True(srcX + srcW <= parentBounds.Width, $"srcX+srcW ({srcX + srcW}) should be <= parent width ({parentBounds.Width})");
-        Assert.True(srcY + srcH <= parentBounds.Height, $"srcY+srcH ({srcY + srcH}) should be <= parent height ({parentBounds.Height})");
-        Assert.True(srcW > 0);
-        Assert.True(srcH > 0);
+        Assert.True(src.X >= 0, $"srcX {src.X} should be >= 0");
+        Assert.True(src.Y >= 0, $"srcY {src.Y} should be >= 0");
+        Assert.True(src.X + src.Width <= parentBounds.Width, $"srcX+srcW ({src.X + src.Width}) should be <= parent width ({parentBounds.Width})");
+        Assert.True(src.Y + src.Height <= parentBounds.Height, $"srcY+srcH ({src.Y + src.Height}) should be <= parent height ({parentBounds.Height})");
+        Assert.True(src.Width > 0);
+        Assert.True(src.Height > 0);
     }
 
     // --- Additional FindBestFallback tests ---
@@ -345,34 +345,34 @@ public class TileSchedulerTest
     {
         // 2 levels up means scale=4, so child should map to ~1/4 of parent
         var dzi = new SKDeepZoomImageSource(1024, 1024, 256, 0, "jpg");
-        var scheduler = new SKDeepZoomTileScheduler();
+        var layout = new SKDeepZoomTileLayout();
 
         var parent = new SKDeepZoomTileId(7, 0, 0);
         var child = new SKDeepZoomTileId(9, 0, 0); // 2 levels deeper, same position
 
-        var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(child, parent, dzi);
+        var src = layout.GetFallbackSourceRect(child, parent, dzi);
 
-        Assert.Equal(0, srcX, 1);
-        Assert.Equal(0, srcY, 1);
+        Assert.Equal(0, src.X, 1);
+        Assert.Equal(0, src.Y, 1);
         // At 2 levels difference, child size / 4 should fit within parent
-        Assert.True(srcW > 0);
-        Assert.True(srcH > 0);
-        Assert.True(srcW <= 256);
-        Assert.True(srcH <= 256);
+        Assert.True(src.Width > 0);
+        Assert.True(src.Height > 0);
+        Assert.True(src.Width <= 256);
+        Assert.True(src.Height <= 256);
     }
 
     [Fact]
     public void GetFallbackSourceRect_ChildInBottomRightQuadrant_HasPositiveOffset()
     {
         var dzi = new SKDeepZoomImageSource(1024, 1024, 256, 0, "jpg");
-        var scheduler = new SKDeepZoomTileScheduler();
+        var layout = new SKDeepZoomTileLayout();
 
         var parent = new SKDeepZoomTileId(8, 0, 0);
         var child = new SKDeepZoomTileId(9, 1, 1); // bottom-right quadrant of parent (0,0)
 
-        var (srcX, srcY, srcW, srcH) = scheduler.GetFallbackSourceRect(child, parent, dzi);
+        var src = layout.GetFallbackSourceRect(child, parent, dzi);
 
-        Assert.True(srcX > 0, "Child in bottom-right quadrant should have positive srcX");
-        Assert.True(srcY > 0, "Child in bottom-right quadrant should have positive srcY");
+        Assert.True(src.X > 0, "Child in bottom-right quadrant should have positive srcX");
+        Assert.True(src.Y > 0, "Child in bottom-right quadrant should have positive srcY");
     }
 }

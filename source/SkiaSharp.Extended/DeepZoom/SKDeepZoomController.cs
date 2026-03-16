@@ -29,7 +29,7 @@ namespace SkiaSharp.Extended.DeepZoom
     {
         private SKDeepZoomImageSource? _tileSource;
         private readonly SKDeepZoomViewport _viewport;
-        private readonly SKDeepZoomTileScheduler _scheduler;
+        private readonly SKDeepZoomTileLayout _tileLayout;
         private readonly ISKDeepZoomTileCache _cache;
         private readonly ISKDeepZoomRenderer _renderer;
         private List<SKDeepZoomSubImage> _subImages = new List<SKDeepZoomSubImage>();
@@ -52,7 +52,7 @@ namespace SkiaSharp.Extended.DeepZoom
         public SKDeepZoomController(ISKDeepZoomTileCache? cache = null, ISKDeepZoomRenderer? renderer = null, int defaultCacheCapacity = 1024)
         {
             _viewport = new SKDeepZoomViewport();
-            _scheduler = new SKDeepZoomTileScheduler();
+            _tileLayout = new SKDeepZoomTileLayout();
             _cache = cache ?? new SKDeepZoomMemoryTileCache(defaultCacheCapacity);
             _renderer = renderer ?? new SKDeepZoomRenderer();
         }
@@ -63,8 +63,12 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>The tile cache.</summary>
         public ISKDeepZoomTileCache Cache => _cache;
 
-        /// <summary>The tile scheduler.</summary>
-        public SKDeepZoomTileScheduler Scheduler => _scheduler;
+        /// <summary>The tile layout calculator.</summary>
+        public SKDeepZoomTileLayout TileLayout => _tileLayout;
+
+        /// <summary>The tile scheduler (alias for <see cref="TileLayout"/>).</summary>
+        [System.Obsolete("Use TileLayout. Scheduler will be removed in a future version.")]
+        public SKDeepZoomTileLayout Scheduler => _tileLayout;
 
         /// <summary>The renderer.</summary>
         public ISKDeepZoomRenderer Renderer => _renderer;
@@ -313,14 +317,14 @@ namespace SkiaSharp.Extended.DeepZoom
             if (_tileSource == null) return;
 
             canvas.Clear(SKColors.White);
-            _renderer.Render(canvas, _tileSource, _viewport, _cache, _scheduler);
+            _renderer.Render(canvas, _tileSource, _viewport, _cache, _tileLayout);
         }
 
         private void ScheduleTileLoads()
         {
             if (_tileSource == null || _fetcher == null) return;
 
-            var visibleTiles = _scheduler.GetVisibleTiles(_tileSource, _viewport);
+            var visibleTiles = _tileLayout.GetVisibleTiles(_tileSource, _viewport);
             var ct = _cts?.Token ?? CancellationToken.None;
 
             foreach (var request in visibleTiles)

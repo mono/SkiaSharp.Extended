@@ -99,9 +99,9 @@ namespace SkiaSharp.Extended.DeepZoom
 
         /// <summary>
         /// Gets the pixel bounds of a tile within its pyramid level, including overlap.
-        /// Returns (x, y, width, height) in level-pixel coordinates.
+        /// Returns an <see cref="SKDeepZoomRectI"/> in level-pixel coordinates.
         /// </summary>
-        public (int X, int Y, int Width, int Height) GetTileBounds(int level, int col, int row)
+        public SKDeepZoomRectI GetTileBounds(int level, int col, int row)
         {
             if (level < 0 || level > MaxLevel) throw new ArgumentOutOfRangeException(nameof(level));
 
@@ -119,7 +119,7 @@ namespace SkiaSharp.Extended.DeepZoom
             if (row > 0) bottom = Math.Min((row + 1) * TileSize + Overlap, levelHeight);
             else bottom = Math.Min(TileSize + Overlap, levelHeight);
 
-            return (x, y, right - x, bottom - y);
+            return new SKDeepZoomRectI(x, y, right - x, bottom - y);
         }
 
         /// <summary>
