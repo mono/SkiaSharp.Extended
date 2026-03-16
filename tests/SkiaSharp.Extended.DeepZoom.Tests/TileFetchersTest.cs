@@ -58,8 +58,9 @@ public class TileFetchersTest
             using var fetcher = new SKDeepZoomFileTileFetcher();
             var result = await fetcher.FetchTileAsync(tempPath);
             Assert.NotNull(result);
-            Assert.Equal(10, result!.Width);
-            Assert.Equal(10, result.Height);
+            var bmp = ((SKDeepZoomBitmapTile)result!).Bitmap;
+            Assert.Equal(10, bmp.Width);
+            Assert.Equal(10, bmp.Height);
             result.Dispose();
         }
         finally

@@ -1,6 +1,7 @@
 using SkiaSharp;
 using SkiaSharp.Extended.DeepZoom;
 using System;
+using System.Collections.Generic;
 
 namespace SkiaSharpDemo;
 
@@ -9,16 +10,15 @@ namespace SkiaSharpDemo;
 /// Used in the demo inspector to visually inspect tile boundaries without modifying
 /// the core <see cref="SKDeepZoomRenderer"/>.
 /// </summary>
-public sealed class DebugBorderRenderer : ISKDeepZoomRenderer
+public sealed class DebugBorderRenderer : ISKCanvasAwareRenderer
 {
-    private readonly ISKDeepZoomRenderer _inner;
-    private readonly SKDeepZoomRenderer _coreRenderer;
+    private readonly SKDeepZoomRenderer _inner;
     private readonly SKPaint _borderPaint;
+    private readonly List<SKDeepZoomRectF> _frameRects = new();
 
     public DebugBorderRenderer(SKDeepZoomRenderer inner)
     {
-        _coreRenderer = inner ?? throw new ArgumentNullException(nameof(inner));
-        _inner = inner;
+        _inner = inner ?? throw new ArgumentNullException(nameof(inner));
         _borderPaint = new SKPaint
         {
             Color = new SKColor(60, 60, 60, 160),
@@ -29,6 +29,15 @@ public sealed class DebugBorderRenderer : ISKDeepZoomRenderer
     }
 
     /// <summary>
+    /// Gets or sets the canvas. Delegates to the inner <see cref="SKDeepZoomRenderer.Canvas"/>.
+    /// </summary>
+    public SKCanvas? Canvas
+    {
+        get => _inner.Canvas;
+        set => _inner.Canvas = value;
+    }
+
+    /// <summary>
     /// When <see langword="true"/>, a border is drawn around each visible tile.
     /// When <see langword="false"/>, rendering is identical to the inner renderer.
     /// </summary>
@@ -36,34 +45,49 @@ public sealed class DebugBorderRenderer : ISKDeepZoomRenderer
 
     /// <summary>
     /// Forwarded to the inner <see cref="SKDeepZoomRenderer.EnableLodBlending"/>.
-    /// When <see langword="true"/>, lower-resolution fallback tiles fill the canvas
-    /// while high-resolution tiles are loading.
     /// </summary>
     public bool EnableLodBlending
     {
-        get => _coreRenderer.EnableLodBlending;
-        set => _coreRenderer.EnableLodBlending = value;
+        get => _inner.EnableLodBlending;
+        set => _inner.EnableLodBlending = value;
+    }
+
+    // ---- ISKDeepZoomRenderer ----
+
+    /// <inheritdoc />
+    public void BeginRender()
+    {
+        _frameRects.Clear();
+        _inner.BeginRender();
     }
 
     /// <inheritdoc />
-    public void Render(
-        SKCanvas canvas,
-        SKDeepZoomImageSource tileSource,
-        SKDeepZoomViewport viewport,
-        ISKDeepZoomTileCache cache,
-        SKDeepZoomTileLayout layout)
+    public void DrawTile(SKDeepZoomRectF destRect, ISKDeepZoomTile tile)
     {
-        _inner.Render(canvas, tileSource, viewport, cache, layout);
+        _inner.DrawTile(destRect, tile);
+        if (ShowTileBorders)
+            _frameRects.Add(destRect);
+    }
 
-        if (!ShowTileBorders || tileSource == null) return;
+    /// <inheritdoc />
+    public void DrawFallbackTile(SKDeepZoomRectF destRect, SKDeepZoomRectF sourceRect, ISKDeepZoomTile tile)
+    {
+        _inner.DrawFallbackTile(destRect, sourceRect, tile);
+        if (ShowTileBorders)
+            _frameRects.Add(destRect);
+    }
 
-        // Overlay borders on every visible tile using layout geometry
-        var visibleTiles = layout.GetVisibleTiles(tileSource, viewport);
-        foreach (var req in visibleTiles)
+    /// <inheritdoc />
+    public void EndRender()
+    {
+        // Draw borders on top of all tiles drawn this frame
+        if (ShowTileBorders && _inner.Canvas != null)
         {
-            var dest = layout.GetTileDestRect(tileSource, viewport, req.TileId);
-            canvas.DrawRect(new SKRect(dest.X, dest.Y, dest.Right, dest.Bottom), _borderPaint);
+            foreach (var r in _frameRects)
+                _inner.Canvas.DrawRect(new SKRect(r.X, r.Y, r.Right, r.Bottom), _borderPaint);
         }
+        _inner.EndRender();
+        _frameRects.Clear();
     }
 
     /// <inheritdoc />

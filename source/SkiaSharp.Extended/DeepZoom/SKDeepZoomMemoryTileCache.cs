@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 namespace SkiaSharp.Extended.DeepZoom
 {
     /// <summary>
-    /// LRU cache for decoded tile bitmaps.
-    /// Evicted bitmaps are deferred for disposal to avoid race conditions
-    /// with the renderer (which may hold references to recently-returned bitmaps).
+    /// LRU cache for decoded tile images.
+    /// Evicted tiles are deferred for disposal to avoid race conditions with the renderer.
     /// Call <see cref="FlushEvicted"/> at the start of each render frame.
     /// </summary>
     public class SKDeepZoomMemoryTileCache : ISKDeepZoomTileCache
@@ -19,7 +18,7 @@ namespace SkiaSharp.Extended.DeepZoom
         private readonly LinkedList<TileCacheEntry> _lruList;
         private readonly Dictionary<SKDeepZoomTileId, LinkedListNode<TileCacheEntry>> _map;
         private readonly object _lock = new object();
-        private readonly List<SKBitmap> _pendingDispose = new List<SKBitmap>();
+        private readonly List<ISKDeepZoomTile> _pendingDispose = new List<ISKDeepZoomTile>();
         private bool _disposed;
 
         public SKDeepZoomMemoryTileCache(int maxEntries = 256)
@@ -36,106 +35,71 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>Maximum number of cached tiles.</summary>
         public int MaxEntries => _maxEntries;
 
-        /// <summary>Tries to get a cached tile bitmap.</summary>
-        public bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap)
+        // ---- ISKDeepZoomTileCache implementation (primary) ----
+
+        /// <summary>Tries to get a cached tile.</summary>
+        public bool TryGet(SKDeepZoomTileId id, out ISKDeepZoomTile? tile)
         {
             lock (_lock)
             {
-                if (_disposed)
-                {
-                    bitmap = null;
-                    return false;
-                }
+                if (_disposed) { tile = null; return false; }
 
                 if (_map.TryGetValue(id, out var node))
                 {
-                    // Move to front (most recently used)
                     _lruList.Remove(node);
                     _lruList.AddFirst(node);
-                    bitmap = node.Value.Bitmap;
+                    tile = node.Value.Tile;
                     return true;
                 }
-                bitmap = null;
+                tile = null;
                 return false;
             }
         }
 
-        /// <summary>Async variant of <see cref="TryGet"/>; returns the bitmap or null. Completes synchronously for in-memory cache.</summary>
-        public Task<SKBitmap?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
+        /// <summary>Async variant — completes synchronously for in-memory cache.</summary>
+        public Task<ISKDeepZoomTile?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
         {
-            TryGet(id, out SKBitmap? bitmap);
-            return Task.FromResult(bitmap);
+            TryGet(id, out ISKDeepZoomTile? tile);
+            return Task.FromResult(tile);
         }
 
-        /// <summary>Adds a tile bitmap to the cache via the async interface. Calls <see cref="Put"/> synchronously.</summary>
-        public Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default)
+        /// <summary>Adds a tile to the cache via the async interface.</summary>
+        public Task PutAsync(SKDeepZoomTileId id, ISKDeepZoomTile? tile, CancellationToken ct = default)
         {
             if (!ct.IsCancellationRequested)
-                Put(id, bitmap);
+                Put(id, tile);
             return Task.CompletedTask;
         }
 
-        /// <summary>Adds a tile bitmap to the cache, evicting LRU entries if needed.</summary>
-        public void Put(SKDeepZoomTileId id, SKBitmap? bitmap)
+        /// <summary>Adds a tile to the cache, evicting the LRU entry if at capacity.</summary>
+        public void Put(SKDeepZoomTileId id, ISKDeepZoomTile? tile)
         {
             lock (_lock)
             {
-                if (_disposed)
-                {
-                    bitmap?.Dispose();
-                    return;
-                }
+                if (_disposed) { tile?.Dispose(); return; }
 
                 if (_map.TryGetValue(id, out var existing))
                 {
-                    // Update existing entry — defer old bitmap disposal
-                    if (existing.Value.Bitmap != null)
-                        _pendingDispose.Add(existing.Value.Bitmap);
-
-                    existing.Value.Bitmap = bitmap;
-
-                    // Move to front
+                    if (existing.Value.Tile != null)
+                        _pendingDispose.Add(existing.Value.Tile);
+                    existing.Value.Tile = tile;
                     _lruList.Remove(existing);
                     _lruList.AddFirst(existing);
                     return;
                 }
 
-                // Evict if at capacity — defer evicted bitmap disposal
                 while (_map.Count >= _maxEntries && _lruList.Last != null)
                 {
                     var lru = _lruList.Last;
                     _lruList.RemoveLast();
                     _map.Remove(lru.Value.Id);
-                    if (lru.Value.Bitmap != null)
-                        _pendingDispose.Add(lru.Value.Bitmap);
+                    if (lru.Value.Tile != null)
+                        _pendingDispose.Add(lru.Value.Tile);
                 }
 
-                var entry = new TileCacheEntry(id, bitmap);
+                var entry = new TileCacheEntry(id, tile);
                 var newNode = _lruList.AddFirst(entry);
                 _map[id] = newNode;
-            }
-        }
-
-        /// <summary>
-        /// Disposes all bitmaps that were evicted since the last call.
-        /// Call this at the start of each render frame (on the UI thread)
-        /// to safely dispose bitmaps that are no longer in use.
-        /// </summary>
-        public void FlushEvicted()
-        {
-            List<SKBitmap>? toDispose = null;
-            lock (_lock)
-            {
-                if (_pendingDispose.Count > 0)
-                {
-                    toDispose = new List<SKBitmap>(_pendingDispose);
-                    _pendingDispose.Clear();
-                }
-            }
-            if (toDispose != null)
-            {
-                foreach (var bmp in toDispose)
-                    bmp.Dispose();
             }
         }
 
@@ -151,8 +115,8 @@ namespace SkiaSharp.Extended.DeepZoom
                 {
                     _lruList.Remove(node);
                     _map.Remove(id);
-                    if (node.Value.Bitmap != null)
-                        _pendingDispose.Add(node.Value.Bitmap);
+                    if (node.Value.Tile != null)
+                        _pendingDispose.Add(node.Value.Tile);
                     return true;
                 }
                 return false;
@@ -165,14 +129,34 @@ namespace SkiaSharp.Extended.DeepZoom
             lock (_lock)
             {
                 foreach (var node in _lruList)
-                {
-                    node.Bitmap?.Dispose();
-                }
+                    node.Tile?.Dispose();
                 _lruList.Clear();
                 _map.Clear();
-                foreach (var bmp in _pendingDispose)
-                    bmp.Dispose();
+                foreach (var t in _pendingDispose)
+                    t.Dispose();
                 _pendingDispose.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Disposes tiles evicted since the last call.
+        /// Call this at the start of each render frame on the UI thread.
+        /// </summary>
+        public void FlushEvicted()
+        {
+            List<ISKDeepZoomTile>? toDispose = null;
+            lock (_lock)
+            {
+                if (_pendingDispose.Count > 0)
+                {
+                    toDispose = new List<ISKDeepZoomTile>(_pendingDispose);
+                    _pendingDispose.Clear();
+                }
+            }
+            if (toDispose != null)
+            {
+                foreach (var t in toDispose)
+                    t.Dispose();
             }
         }
 
@@ -180,25 +164,24 @@ namespace SkiaSharp.Extended.DeepZoom
         {
             lock (_lock)
             {
-                if (_disposed)
-                    return;
+                if (_disposed) return;
                 _disposed = true;
             }
-            // Safe to call Clear() outside the lock: _disposed=true prevents
-            // new Put() calls from inserting items (Put checks _disposed under lock).
             Clear();
         }
 
+        // ---- Private ----
+
         private class TileCacheEntry
         {
-            public TileCacheEntry(SKDeepZoomTileId id, SKBitmap? bitmap)
+            public TileCacheEntry(SKDeepZoomTileId id, ISKDeepZoomTile? tile)
             {
                 Id = id;
-                Bitmap = bitmap;
+                Tile = tile;
             }
 
             public SKDeepZoomTileId Id { get; }
-            public SKBitmap? Bitmap { get; set; }
+            public ISKDeepZoomTile? Tile { get; set; }
         }
     }
 }

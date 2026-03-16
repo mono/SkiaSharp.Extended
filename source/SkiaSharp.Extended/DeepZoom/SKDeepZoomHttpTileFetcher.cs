@@ -34,26 +34,28 @@ namespace SkiaSharp.Extended.DeepZoom
             _ownsClient = false;
         }
 
-        public async Task<SKBitmap?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
+        /// <inheritdoc />
+        public async Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
         {
             try
             {
                 using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
-                    return null; // 404 is expected for missing tiles
+                    return null;
 
 #if NETSTANDARD2_0
                 var bytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-                return SKBitmap.Decode(bytes);
+                var bitmap = SKBitmap.Decode(bytes);
 #else
                 using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-                return SKBitmap.Decode(stream);
+                var bitmap = SKBitmap.Decode(stream);
 #endif
+                return bitmap != null ? new SKDeepZoomBitmapTile(bitmap) : null;
             }
             catch (HttpRequestException)
             {
-                return null; // Network errors → null (tile not available)
+                return null;
             }
             catch (TaskCanceledException)
             {

@@ -22,11 +22,12 @@ public class TileFetcherTest
             using var data = image.Encode(SKEncodedImageFormat.Png, 100);
             File.WriteAllBytes(tmpPath, data.ToArray());
 
-            var bitmap = await fetcher.FetchTileAsync(tmpPath);
-            Assert.NotNull(bitmap);
-            Assert.Equal(64, bitmap!.Width);
+            var tile = await fetcher.FetchTileAsync(tmpPath);
+            Assert.NotNull(tile);
+            var bitmap = ((SKDeepZoomBitmapTile)tile!).Bitmap;
+            Assert.Equal(64, bitmap.Width);
             Assert.Equal(64, bitmap.Height);
-            bitmap.Dispose();
+            tile.Dispose();
         }
         finally
         {
@@ -56,9 +57,9 @@ public class TileFetcherTest
             File.WriteAllBytes(tmpPath, data.ToArray());
 
             var fileUri = new Uri(tmpPath).AbsoluteUri;
-            var bitmap = await fetcher.FetchTileAsync(fileUri);
-            Assert.NotNull(bitmap);
-            bitmap!.Dispose();
+            var tile = await fetcher.FetchTileAsync(fileUri);
+            Assert.NotNull(tile);
+            tile!.Dispose();
         }
         finally
         {
@@ -144,11 +145,12 @@ public class TileFetcherTest
             using var data = image.Encode(SKEncodedImageFormat.Png, 100);
             File.WriteAllBytes(tmpPath, data.ToArray());
 
-            var bitmap = await fetcher.FetchTileAsync(tmpPath);
-            Assert.NotNull(bitmap);
-            Assert.Equal(32, bitmap!.Width);
+            var tile = await fetcher.FetchTileAsync(tmpPath);
+            Assert.NotNull(tile);
+            var bitmap = ((SKDeepZoomBitmapTile)tile!).Bitmap;
+            Assert.Equal(32, bitmap.Width);
             Assert.Equal(32, bitmap.Height);
-            bitmap.Dispose();
+            tile.Dispose();
         }
         finally
         {

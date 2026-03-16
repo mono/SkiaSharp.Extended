@@ -18,4 +18,8 @@
     <PackageReference Include="SkiaSharp" Version="3.119.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SkiaSharp.Extended.Abstractions\SkiaSharp.Extended.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

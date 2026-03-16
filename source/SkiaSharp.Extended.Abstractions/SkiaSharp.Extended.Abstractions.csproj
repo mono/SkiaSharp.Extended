@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net9.0;net10.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>SkiaSharp.Extended.Abstractions</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended</RootNamespace>
+    <!-- No SkiaSharp reference — this library is rendering-agnostic -->
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.Abstractions</PackageId>
+    <Title>SkiaSharp.Extended.Abstractions</Title>
+    <Description>Rendering-agnostic abstractions for the SkiaSharp.Extended DeepZoom system. Other rendering backends can implement the interfaces here without taking a SkiaSharp dependency.</Description>
+  </PropertyGroup>
+
+</Project>

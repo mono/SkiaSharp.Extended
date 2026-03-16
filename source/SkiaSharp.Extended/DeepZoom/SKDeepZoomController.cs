@@ -13,15 +13,17 @@ namespace SkiaSharp.Extended.DeepZoom
     /// cache management, and rendering.
     /// </summary>
     /// <remarks>
-    /// This class handles only the <em>tile and rendering</em> concerns. Animation (spring physics,
-    /// easing) and gesture recognition belong in the consuming layer (e.g. a MAUI view).
+    /// <para>
+    /// This class handles only <em>tile and rendering</em> concerns. Animation (spring physics,
+    /// easing) and gesture recognition belong in the consuming layer.
+    /// </para>
     /// <para>
     /// Typical usage:
     /// <list type="number">
     ///   <item><description>Call <see cref="Load(SKDeepZoomImageSource, ISKDeepZoomTileFetcher)"/> to load an image.</description></item>
     ///   <item><description>Call <see cref="SetControlSize"/> when the canvas size changes.</description></item>
-    ///   <item><description>Call <see cref="SetViewport"/> / <see cref="Pan"/> / <see cref="ZoomAboutScreenPoint"/> to navigate.</description></item>
-    ///   <item><description>Call <see cref="Update"/> and <see cref="Render"/> from your render loop.</description></item>
+    ///   <item><description>Call <see cref="Update"/> to schedule tile loads each frame.</description></item>
+    ///   <item><description>Call <see cref="Render(SKCanvas)"/> from your canvas paint callback.</description></item>
     /// </list>
     /// </para>
     /// </remarks>
@@ -39,16 +41,11 @@ namespace SkiaSharp.Extended.DeepZoom
         private bool _disposed;
         private bool _userHasZoomed;
 
-        /// <summary>Initializes a new <see cref="SKDeepZoomController"/> with optional custom cache and renderer.</summary>
-        /// <param name="cache">
-        /// Custom tile cache. When <see langword="null"/>, a <see cref="SKDeepZoomMemoryTileCache"/>
-        /// with <paramref name="defaultCacheCapacity"/> entries is used.
-        /// </param>
-        /// <param name="renderer">
-        /// Custom renderer. When <see langword="null"/>, the default <see cref="SKDeepZoomRenderer"/> is used.
-        /// Use a decorator (e.g., a tile-border overlay) to extend rendering without modifying the core renderer.
-        /// </param>
-        /// <param name="defaultCacheCapacity">Maximum tiles for the default cache (ignored when <paramref name="cache"/> is provided).</param>
+        /// <summary>
+        /// Initializes a new <see cref="SKDeepZoomController"/> with optional custom cache and renderer.
+        /// When <paramref name="cache"/> is <see langword="null"/>, a default <see cref="SKDeepZoomMemoryTileCache"/> is used.
+        /// When <paramref name="renderer"/> is <see langword="null"/>, a default <see cref="SKDeepZoomRenderer"/> is used.
+        /// </summary>
         public SKDeepZoomController(ISKDeepZoomTileCache? cache = null, ISKDeepZoomRenderer? renderer = null, int defaultCacheCapacity = 1024)
         {
             _viewport = new SKDeepZoomViewport();
@@ -57,7 +54,9 @@ namespace SkiaSharp.Extended.DeepZoom
             _renderer = renderer ?? new SKDeepZoomRenderer();
         }
 
-        /// <summary>The current viewport. Use this to read the current position and zoom level.</summary>
+        // ---- Properties ----
+
+        /// <summary>The current viewport.</summary>
         public SKDeepZoomViewport Viewport => _viewport;
 
         /// <summary>The tile cache.</summary>
@@ -79,33 +78,32 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>The sub-images from the loaded DZC, or empty if not loaded from a DZC.</summary>
         public IReadOnlyList<SKDeepZoomSubImage> SubImages => _subImages;
 
-        /// <summary>
-        /// The aspect ratio of the loaded image (width/height). 0 if not loaded.
-        /// </summary>
+        /// <summary>The aspect ratio of the loaded image (width/height). 0 if not loaded.</summary>
         public double AspectRatio => _tileSource?.AspectRatio ?? 0;
 
-        /// <summary>
-        /// Whether the controller is idle (no pending tile loads).
-        /// </summary>
+        /// <summary>Whether the controller has no pending tile loads.</summary>
         public bool IsIdle => _pendingTiles.IsEmpty;
 
         /// <summary>Number of tile fetches currently in flight.</summary>
         public int PendingTileCount => _pendingTiles.Count;
 
         /// <summary>
-        /// Returns the logical rectangle visible at the current viewport state.
+        /// Whether to draw lower-resolution fallback tiles while hi-res tiles are loading
+        /// (LOD blending). Default is <see langword="true"/>.
         /// </summary>
-        public (double X, double Y, double Width, double Height) GetZoomRect()
-            => _viewport.GetZoomRect(_viewport.ViewportWidth);
+        /// <remarks>
+        /// <para><strong>Enabled (default):</strong> blurry ancestor tiles fill the screen
+        /// immediately as you zoom in; they sharpen progressively. Best for interactive use.</para>
+        /// <para><strong>Disabled:</strong> missing tiles show as blank until loaded.
+        /// Preferred for scientific/medical imaging where blurry placeholders could be misleading.</para>
+        /// </remarks>
+        public bool EnableLodBlending
+        {
+            get => _renderer is SKDeepZoomRenderer r ? r.EnableLodBlending : true;
+            set { if (_renderer is SKDeepZoomRenderer r) r.EnableLodBlending = value; }
+        }
 
-        /// <summary>
-        /// The zoom level at which one image pixel maps to exactly one screen pixel (native 1:1 resolution).
-        /// Returns 0 if no image is loaded.
-        /// </summary>
-        public double NativeZoom =>
-            (_tileSource != null && _viewport.ControlWidth > 0)
-                ? (double)_tileSource.ImageWidth / _viewport.ControlWidth
-                : 0.0;
+        // ---- Events ----
 
         /// <summary>Fired when the image source is loaded successfully.</summary>
         public event EventHandler? ImageOpenSucceeded;
@@ -122,10 +120,9 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>Fired when new tiles are loaded and the view needs repainting.</summary>
         public event EventHandler? InvalidateRequired;
 
-        /// <summary>
-        /// Loads a DZI tile source and sets up the tile fetcher.
-        /// Resets the viewport to show the full image.
-        /// </summary>
+        // ---- Load ----
+
+        /// <summary>Loads a DZI tile source. Resets the viewport to show the full image.</summary>
         public void Load(SKDeepZoomImageSource tileSource, ISKDeepZoomTileFetcher fetcher)
         {
             try
@@ -157,9 +154,7 @@ namespace SkiaSharp.Extended.DeepZoom
             }
         }
 
-        /// <summary>
-        /// Loads a DZC tile source, populates SubImages, and sets up the tile fetcher.
-        /// </summary>
+        /// <summary>Loads a DZC tile source and sets up sub-images.</summary>
         public void Load(SKDeepZoomCollectionSource dzcTileSource, ISKDeepZoomTileFetcher fetcher)
         {
             try
@@ -203,10 +198,10 @@ namespace SkiaSharp.Extended.DeepZoom
             }
         }
 
+        // ---- Viewport ----
+
         /// <summary>
-        /// Sets the control (canvas) size. Call whenever the canvas is resized.
-        /// When a source is loaded and the user has not manually zoomed, automatically
-        /// refits the viewport so the image remains fully visible in the new size.
+        /// Sets the control (canvas) size. Refits the viewport when the user has not manually zoomed.
         /// </summary>
         public void SetControlSize(double width, double height)
         {
@@ -216,14 +211,11 @@ namespace SkiaSharp.Extended.DeepZoom
             _viewport.ControlWidth = width;
             _viewport.ControlHeight = height;
 
-            // Only refit on resize when the user hasn't manually zoomed/panned.
             if (sizeChanged && _tileSource != null && !_userHasZoomed)
                 _viewport.FitToView();
         }
 
-        /// <summary>
-        /// Sets the viewport directly to the given state and constrains it.
-        /// </summary>
+        /// <summary>Sets the viewport directly and constrains it.</summary>
         public void SetViewport(double viewportWidth, double originX, double originY)
         {
             _viewport.ViewportWidth = viewportWidth;
@@ -233,9 +225,7 @@ namespace SkiaSharp.Extended.DeepZoom
             ViewportChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Zooms about a logical point. Factor &gt; 1 zooms in, &lt; 1 zooms out.
-        /// </summary>
+        /// <summary>Zooms about a logical point. Factor &gt; 1 zooms in, &lt; 1 zooms out.</summary>
         public void ZoomAboutLogicalPoint(double factor, double logicalX, double logicalY)
         {
             _userHasZoomed = true;
@@ -244,9 +234,7 @@ namespace SkiaSharp.Extended.DeepZoom
             ViewportChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Zooms about a screen-space point. Factor &gt; 1 zooms in, &lt; 1 zooms out.
-        /// </summary>
+        /// <summary>Zooms about a screen-space point.</summary>
         public void ZoomAboutScreenPoint(double factor, double screenX, double screenY)
         {
             _userHasZoomed = true;
@@ -256,9 +244,7 @@ namespace SkiaSharp.Extended.DeepZoom
             ViewportChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Pans by the given screen-space delta.
-        /// </summary>
+        /// <summary>Pans by the given screen-space delta.</summary>
         public void Pan(double deltaScreenX, double deltaScreenY)
         {
             _userHasZoomed = true;
@@ -267,9 +253,7 @@ namespace SkiaSharp.Extended.DeepZoom
             ViewportChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Resets the viewport to show the entire image and clears the manual-zoom flag.
-        /// </summary>
+        /// <summary>Resets the viewport to show the entire image.</summary>
         public void ResetView()
         {
             _userHasZoomed = false;
@@ -278,10 +262,7 @@ namespace SkiaSharp.Extended.DeepZoom
             ViewportChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Sets an absolute zoom level (1.0 = image fills the control width).
-        /// Zooms about the center of the control.
-        /// </summary>
+        /// <summary>Sets an absolute zoom level (1.0 = image fills the control width).</summary>
         public void SetZoom(double zoom)
         {
             if (zoom <= 0) throw new ArgumentOutOfRangeException(nameof(zoom));
@@ -296,11 +277,26 @@ namespace SkiaSharp.Extended.DeepZoom
             ViewportChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>Returns the logical rectangle visible at the current viewport state.</summary>
+        public (double X, double Y, double Width, double Height) GetZoomRect()
+            => _viewport.GetZoomRect(_viewport.ViewportWidth);
+
         /// <summary>
-        /// Schedules loading for visible tiles and returns whether any tiles are still pending.
+        /// The zoom level at which one image pixel maps to exactly one screen pixel.
+        /// Returns 0 if no image is loaded.
+        /// </summary>
+        public double NativeZoom =>
+            (_tileSource != null && _viewport.ControlWidth > 0)
+                ? (double)_tileSource.ImageWidth / _viewport.ControlWidth
+                : 0.0;
+
+        // ---- Tile loading ----
+
+        /// <summary>
+        /// Schedules loading for visible tiles.
         /// Call from your render loop on every frame.
         /// </summary>
-        /// <returns><see langword="true"/> if tile loads are still in progress; otherwise <see langword="false"/>.</returns>
+        /// <returns><see langword="true"/> if tile loads are still in progress.</returns>
         public bool Update()
         {
             if (_tileSource != null && _fetcher != null)
@@ -309,16 +305,77 @@ namespace SkiaSharp.Extended.DeepZoom
             return _pendingTiles.Count > 0;
         }
 
+        // ---- Rendering ----
+
         /// <summary>
-        /// Renders the current viewport state onto the given canvas.
+        /// Executes the two-pass LOD rendering pipeline using the configured renderer.
+        /// The renderer must be ready to accept draw calls before calling this method.
+        /// When using <see cref="SKDeepZoomRenderer"/>, set its <see cref="SKDeepZoomRenderer.Canvas"/>
+        /// property before calling this method (or use the <see cref="Render(SKCanvas)"/> overload).
+        /// </summary>
+        public void Render()
+        {
+            if (_tileSource == null) return;
+
+            _cache.FlushEvicted();
+
+            var visibleTiles = _tileLayout.GetVisibleTiles(_tileSource, _viewport);
+
+            _renderer.BeginRender();
+
+            // Pass 1: LOD fallback tiles (blurry placeholder while hi-res tiles load)
+            if (EnableLodBlending)
+            {
+                foreach (var request in visibleTiles)
+                {
+                    var tileId = request.TileId;
+                    if (!_cache.Contains(tileId))
+                    {
+                        var fallback = _tileLayout.FindBestFallback(tileId, _cache);
+                        if (fallback.HasValue)
+                        {
+                            _cache.TryGet(fallback.Value, out ISKDeepZoomTile? parentTile);
+                            if (parentTile != null)
+                            {
+                                var src  = _tileLayout.GetFallbackSourceRect(tileId, fallback.Value, _tileSource);
+                                var dest = _tileLayout.GetTileDestRect(_tileSource, _viewport, tileId);
+                                _renderer.DrawFallbackTile(dest, src, parentTile);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Pass 2: Hi-res tiles (blank spaces when LOD blending is off)
+            foreach (var request in visibleTiles)
+            {
+                var tileId = request.TileId;
+                _cache.TryGet(tileId, out ISKDeepZoomTile? tile);
+                if (tile != null)
+                {
+                    var dest = _tileLayout.GetTileDestRect(_tileSource, _viewport, tileId);
+                    _renderer.DrawTile(dest, tile);
+                }
+            }
+
+            _renderer.EndRender();
+        }
+
+        /// <summary>
+        /// Renders the current viewport state onto <paramref name="canvas"/>.
+        /// Clears the canvas to white, sets the canvas on the renderer, then calls <see cref="Render()"/>.
         /// </summary>
         public void Render(SKCanvas canvas)
         {
             if (_tileSource == null) return;
 
             canvas.Clear(SKColors.White);
-            _renderer.Render(canvas, _tileSource, _viewport, _cache, _tileLayout);
+            if (_renderer is ISKCanvasAwareRenderer car)
+                car.Canvas = canvas;
+            Render();
         }
+
+        // ---- Private ----
 
         private void ScheduleTileLoads()
         {
@@ -347,27 +404,24 @@ namespace SkiaSharp.Extended.DeepZoom
 
         private async Task LoadTileAsync(SKDeepZoomTileId tileId, CancellationToken ct)
         {
-            SKBitmap? bitmap = null;
+            ISKDeepZoomTile? tile = null;
             try
             {
                 if (_tileSource == null || _fetcher == null) return;
 
-                // Check async cache tiers (e.g. browser storage) before hitting the network.
-                // TryGetAsync is a no-op for the default in-memory cache (returns immediately),
-                // but allows tiered caches to intercept without double-fetching.
-                bitmap = await _cache.TryGetAsync(tileId, ct).ConfigureAwait(false);
+                tile = await _cache.TryGetAsync(tileId, ct).ConfigureAwait(false);
 
-                if (bitmap == null && !ct.IsCancellationRequested)
+                if (tile == null && !ct.IsCancellationRequested)
                 {
                     string url = _tileSource.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row)
                         ?? _tileSource.GetTileUrl(tileId.Level, tileId.Col, tileId.Row);
-                    bitmap = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
+                    tile = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
                 }
 
-                if (bitmap != null && !ct.IsCancellationRequested && !_disposed)
+                if (tile != null && !ct.IsCancellationRequested && !_disposed)
                 {
-                    await _cache.PutAsync(tileId, bitmap, ct).ConfigureAwait(false);
-                    bitmap = null;
+                    await _cache.PutAsync(tileId, tile, ct).ConfigureAwait(false);
+                    tile = null;
                     InvalidateRequired?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -378,12 +432,12 @@ namespace SkiaSharp.Extended.DeepZoom
             }
             finally
             {
-                bitmap?.Dispose();
+                tile?.Dispose();
                 _pendingTiles.TryRemove(tileId, out _);
             }
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public void Dispose()
         {
             if (_disposed) return;

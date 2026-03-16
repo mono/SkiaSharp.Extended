@@ -162,7 +162,7 @@ public class ControllerTileLoadingTest
 
         controller.Load(dzi, fetcher);
         controller.Cache.Put(new SKDeepZoomTileId(0, 0, 0),
-            CreateSolidBitmap(256, 256, SKColors.Blue));
+            new SKDeepZoomBitmapTile(CreateSolidBitmap(256, 256, SKColors.Blue)));
 
         using var surface = SKSurface.Create(new SKImageInfo(400, 400));
         controller.Render(surface.Canvas);
@@ -199,7 +199,7 @@ public class ControllerTileLoadingTest
 /// </summary>
 internal class ThrowingTileFetcher : ISKDeepZoomTileFetcher
 {
-    public Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
+    public Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         throw new InvalidOperationException("Simulated fetch failure");
     }
@@ -212,7 +212,7 @@ internal class ThrowingTileFetcher : ISKDeepZoomTileFetcher
 /// </summary>
 internal class SlowTileFetcher : ISKDeepZoomTileFetcher
 {
-    public async Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         await Task.Delay(TimeSpan.FromSeconds(60), ct);
         return null;

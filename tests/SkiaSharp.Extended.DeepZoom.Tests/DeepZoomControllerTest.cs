@@ -25,15 +25,15 @@ internal class MemoryTileFetcher : ISKDeepZoomTileFetcher
         _tiles[url] = bitmap;
     }
 
-    public Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
+    public Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         FetchCount++;
         FetchedUrls.Add(url);
 
         if (_tiles.TryGetValue(url, out var bmp))
-            return Task.FromResult<SKBitmap?>(bmp);
+            return Task.FromResult<ISKDeepZoomTile?>(new SKDeepZoomBitmapTile(bmp));
 
-        return Task.FromResult<SKBitmap?>(null);
+        return Task.FromResult<ISKDeepZoomTile?>(null);
     }
 
     public void Dispose()

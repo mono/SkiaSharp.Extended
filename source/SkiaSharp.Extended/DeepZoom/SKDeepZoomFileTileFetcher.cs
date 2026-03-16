@@ -14,33 +14,31 @@ namespace SkiaSharp.Extended.DeepZoom
     public class SKDeepZoomFileTileFetcher : ISKDeepZoomTileFetcher
     {
         /// <inheritdoc />
-        public Task<SKBitmap?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
+        public Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             try
             {
-                // Handle both file:// URIs and plain paths
                 string path = url;
                 if (url.StartsWith("file://", StringComparison.OrdinalIgnoreCase))
-                {
                     path = new Uri(url).LocalPath;
-                }
 
                 if (!File.Exists(path))
-                    return Task.FromResult<SKBitmap?>(null);
+                    return Task.FromResult<ISKDeepZoomTile?>(null);
 
                 cancellationToken.ThrowIfCancellationRequested();
                 var bitmap = SKBitmap.Decode(path);
-                return Task.FromResult<SKBitmap?>(bitmap);
+                ISKDeepZoomTile? tile = bitmap != null ? new SKDeepZoomBitmapTile(bitmap) : null;
+                return Task.FromResult(tile);
             }
             catch (OperationCanceledException)
             {
-                throw; // Propagate cancellation
+                throw;
             }
             catch
             {
-                return Task.FromResult<SKBitmap?>(null);
+                return Task.FromResult<ISKDeepZoomTile?>(null);
             }
         }
 

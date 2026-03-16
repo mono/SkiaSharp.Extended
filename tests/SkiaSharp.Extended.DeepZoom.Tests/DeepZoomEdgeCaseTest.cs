@@ -284,10 +284,10 @@ public class DeepZoomEdgeCaseTest
         var bmp1 = new SKBitmap(10, 10);
         var bmp2 = new SKBitmap(10, 10);
 
-        cache.Put(a, bmp1);
+        cache.Put(a, new SKDeepZoomBitmapTile(bmp1));
         Assert.True(cache.TryGet(a, out _));
 
-        cache.Put(b, bmp2);
+        cache.Put(b, new SKDeepZoomBitmapTile(bmp2));
         Assert.False(cache.TryGet(a, out _)); // Evicted
         Assert.True(cache.TryGet(b, out _));
     }
@@ -298,7 +298,7 @@ public class DeepZoomEdgeCaseTest
         var cache = new SKDeepZoomMemoryTileCache(10);
         for (int i = 0; i < 5; i++)
         {
-            cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKBitmap(10, 10));
+            cache.Put(new SKDeepZoomTileId(i, 0, 0), new SKDeepZoomBitmapTile(new SKBitmap(10, 10)));
         }
 
         Assert.Equal(5, cache.Count);
@@ -311,7 +311,7 @@ public class DeepZoomEdgeCaseTest
     {
         var cache = new SKDeepZoomMemoryTileCache(10);
         var id = new SKDeepZoomTileId(0, 0, 0);
-        cache.Put(id, new SKBitmap(10, 10));
+        cache.Put(id, new SKDeepZoomBitmapTile(new SKBitmap(10, 10)));
         Assert.True(cache.Remove(id));
         Assert.False(cache.Remove(id));
     }
@@ -325,13 +325,13 @@ public class DeepZoomEdgeCaseTest
         var c = new SKDeepZoomTileId(0, 0, 1);
         var d = new SKDeepZoomTileId(0, 1, 1);
 
-        cache.Put(a, new SKBitmap(10, 10));
-        cache.Put(b, new SKBitmap(10, 10));
-        cache.Put(c, new SKBitmap(10, 10));
+        cache.Put(a, new SKDeepZoomBitmapTile(new SKBitmap(10, 10)));
+        cache.Put(b, new SKDeepZoomBitmapTile(new SKBitmap(10, 10)));
+        cache.Put(c, new SKDeepZoomBitmapTile(new SKBitmap(10, 10)));
 
         cache.TryGet(a, out _); // Touch "a"
 
-        cache.Put(d, new SKBitmap(10, 10)); // Evicts "b"
+        cache.Put(d, new SKDeepZoomBitmapTile(new SKBitmap(10, 10))); // Evicts "b"
 
         Assert.True(cache.TryGet(a, out _));
         Assert.False(cache.TryGet(b, out _)); // evicted
