@@ -121,8 +121,8 @@
 
 <a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Render_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Render*"></a>
 
-<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Render_SkiaSharp_SKCanvas_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileScheduler_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Render(SkiaSharp.SKCanvas,SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource,SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport,SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache,SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler)">
-  Render(SKCanvas, SKDeepZoomImageSource, SKDeepZoomViewport, ISKDeepZoomTileCache, SKDeepZoomTileScheduler)
+<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Render_SkiaSharp_SKCanvas_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileLayout_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Render(SkiaSharp.SKCanvas,SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource,SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport,SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache,SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout)">
+  Render(SKCanvas, SKDeepZoomImageSource, SKDeepZoomViewport, ISKDeepZoomTileCache, SKDeepZoomTileLayout)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomRenderer.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
@@ -132,7 +132,7 @@ Called from the UI thread during the canvas paint callback.</p>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public void Render(SKCanvas canvas, SKDeepZoomImageSource tileSource, SKDeepZoomViewport viewport, ISKDeepZoomTileCache cache, SKDeepZoomTileScheduler scheduler)</code></pre>
+  <pre><code class="lang-csharp hljs">public void Render(SKCanvas canvas, SKDeepZoomImageSource tileSource, SKDeepZoomViewport viewport, ISKDeepZoomTileCache cache, SKDeepZoomTileLayout layout)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
@@ -145,7 +145,7 @@ Called from the UI thread during the canvas paint callback.</p>
   <dd></dd>
   <dt><code>cache</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.html">ISKDeepZoomTileCache</a></dt>
   <dd></dd>
-  <dt><code>scheduler</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.html">SKDeepZoomTileScheduler</a></dt>
+  <dt><code>layout</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.html">SKDeepZoomTileLayout</a></dt>
   <dd></dd>
 </dl>
 
@@ -179,7 +179,7 @@ Called from the UI thread during the canvas paint callback.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · b743a53
+          source: PR #379 · bcae03c
         </div>
       </div>
     </footer>

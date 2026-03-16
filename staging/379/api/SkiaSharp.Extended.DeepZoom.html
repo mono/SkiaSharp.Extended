@@ -141,7 +141,8 @@ Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a></dt>
-      <dd><p>Renders Deep Zoom tiles onto an SKCanvas. Handles LOD blending and fallback rendering.</p>
+      <dd><p>Renders Deep Zoom tiles onto an SKCanvas. Handles LOD blending and fallback rendering.
+Geometry calculations (tile rects, fallback rects) are delegated to <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.html">SKDeepZoomTileLayout</a>.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -156,9 +157,16 @@ Mirrors Silverlight's MultiScaleSubImage with inverted viewport coordinates.</p>
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.html">SKDeepZoomTileLayout</a></dt>
+      <dd><p>Computes tile geometry for the Deep Zoom pipeline: which tiles are visible, what
+fallback tiles exist, and where tiles should be drawn on screen.
+Previously named <code>SKDeepZoomTileScheduler</code>; renamed to reflect its true purpose
+as a tile layout/geometry calculator rather than an async work scheduler.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.html">SKDeepZoomTileScheduler</a></dt>
-      <dd><p>Determines which tiles are needed for the current viewport and prioritizes them.
-Handles parent tile fallback when tiles are loading or missing.</p>
+      <dd><p>Backwards-compatible alias for <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.html">SKDeepZoomTileLayout</a>.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -175,6 +183,19 @@ Structs
       <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.html">SKDeepZoomDisplayRect</a></dt>
       <dd><p>Represents a display rectangle in a sparse Deep Zoom Image.
 Defines a region of available pixels and the pyramid levels at which it is visible.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.html">SKDeepZoomRectF</a></dt>
+      <dd><p>A floating-point axis-aligned rectangle used for screen-space tile geometry.
+Replaces anonymous tuples like <code>(float SrcX, float SrcY, float SrcW, float SrcH)</code>
+and <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a> usages in the SkiaSharp-agnostic DeepZoom pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.html">SKDeepZoomRectI</a></dt>
+      <dd><p>An integer-precision axis-aligned rectangle used for tile pixel bounds within a pyramid level.
+Replaces anonymous tuples like <code>(int X, int Y, int Width, int Height)</code> throughout the DeepZoom pipeline.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -234,7 +255,7 @@ Implement this interface to provide custom caching strategies
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · b743a53
+          source: PR #379 · bcae03c
         </div>
       </div>
     </footer>

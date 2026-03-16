@@ -99,13 +99,13 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Determines which tiles are needed for the current viewport and prioritizes them.
-Handles parent tile fallback when tiles are loading or missing.</p>
+  <div class="markdown summary"><p>Backwards-compatible alias for <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.html">SKDeepZoomTileLayout</a>.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKDeepZoomTileScheduler</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use SKDeepZoomTileLayout. SKDeepZoomTileScheduler will be removed in a future version.&quot;)]
+public class SKDeepZoomTileScheduler : SKDeepZoomTileLayout</code></pre>
   </div>
 
 
@@ -115,6 +115,7 @@ Handles parent tile fallback when tiles are loading or missing.</p>
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.html">SKDeepZoomTileLayout</a></div>
       <div><span class="xref">SKDeepZoomTileScheduler</span></div>
     </dd>
   </dl>
@@ -124,6 +125,18 @@ Handles parent tile fallback when tiles are loading or missing.</p>
   <dl class="typelist derived">
     <dt>Inherited Members</dt>
     <dd>
+    <div>
+      <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.GetVisibleTiles.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileLayout_GetVisibleTiles_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_">SKDeepZoomTileLayout.GetVisibleTiles(SKDeepZoomImageSource, SKDeepZoomViewport)</a>
+    </div>
+    <div>
+      <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.FindBestFallback.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileLayout_FindBestFallback_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_System_Int32_">SKDeepZoomTileLayout.FindBestFallback(SKDeepZoomTileId, ISKDeepZoomTileCache, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.GetFallbackSourceRect.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileLayout_GetFallbackSourceRect_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_">SKDeepZoomTileLayout.GetFallbackSourceRect(SKDeepZoomTileId, SKDeepZoomTileId, SKDeepZoomImageSource)</a>
+    </div>
+    <div>
+      <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.GetTileDestRect.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileLayout_GetTileDestRect_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_">SKDeepZoomTileLayout.GetTileDestRect(SKDeepZoomImageSource, SKDeepZoomViewport, SKDeepZoomTileId)</a>
+    </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
     </div>
@@ -159,27 +172,6 @@ Handles parent tile fallback when tiles are loading or missing.</p>
     <dd></dd>
   </dl>
 
-  <h2 class="section" id="methods">Methods
-</h2>
-
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.FindBestFallback.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileScheduler_FindBestFallback_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_System_Int32_">FindBestFallback(SKDeepZoomTileId, ISKDeepZoomTileCache, int)</a></dt>
-    <dd><p>For a missing tile, finds the best available parent tile as a fallback.
-Walks up the pyramid from the requested level until a cached tile is found.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.GetFallbackSourceRect.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileScheduler_GetFallbackSourceRect_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_">GetFallbackSourceRect(SKDeepZoomTileId, SKDeepZoomTileId, SKDeepZoomImageSource)</a></dt>
-    <dd><p>Computes the source rect within a parent tile that corresponds to the child tile.
-Used for rendering a scaled portion of a lower-resolution tile as a fallback.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.GetVisibleTiles.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileScheduler_GetVisibleTiles_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_">GetVisibleTiles(SKDeepZoomImageSource, SKDeepZoomViewport)</a></dt>
-    <dd><p>Computes the set of tiles visible in the current viewport at the optimal level.</p>
-</dd>
-  </dl>
-
 
 
 </article>
@@ -201,7 +193,7 @@ Used for rendering a scaled portion of a lower-resolution tile as a fallback.</p
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · b743a53
+          source: PR #379 · bcae03c
         </div>
       </div>
     </footer>

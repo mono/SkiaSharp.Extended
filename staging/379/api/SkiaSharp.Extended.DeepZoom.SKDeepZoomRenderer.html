@@ -99,7 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Renders Deep Zoom tiles onto an SKCanvas. Handles LOD blending and fallback rendering.</p>
+  <div class="markdown summary"><p>Renders Deep Zoom tiles onto an SKCanvas. Handles LOD blending and fallback rendering.
+Geometry calculations (tile rects, fallback rects) are delegated to <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.html">SKDeepZoomTileLayout</a>.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -185,14 +186,7 @@ When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/built
     <dd></dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.GetTileDestRect.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_GetTileDestRect_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_">GetTileDestRect(SKDeepZoomImageSource, SKDeepZoomViewport, SKDeepZoomTileId)</a></dt>
-    <dd><p>Computes the screen-space destination rect for a tile.
-Exposed as <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/internal">internal</a> so decorator renderers in the same assembly
-can reuse the coordinate math without re-implementing it.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Render_SkiaSharp_SKCanvas_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileScheduler_">Render(SKCanvas, SKDeepZoomImageSource, SKDeepZoomViewport, ISKDeepZoomTileCache, SKDeepZoomTileScheduler)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Render_SkiaSharp_SKCanvas_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileLayout_">Render(SKCanvas, SKDeepZoomImageSource, SKDeepZoomViewport, ISKDeepZoomTileCache, SKDeepZoomTileLayout)</a></dt>
     <dd><p>Renders the visible Deep Zoom tiles onto <code class="paramref">canvas</code>.
 Called from the UI thread during the canvas paint callback.</p>
 </dd>
@@ -219,7 +213,7 @@ Called from the UI thread during the canvas paint callback.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · b743a53
+          source: PR #379 · bcae03c
         </div>
       </div>
     </footer>

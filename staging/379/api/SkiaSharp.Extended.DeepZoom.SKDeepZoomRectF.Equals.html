@@ -2,10 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Method GetFallbackSourceRect
+      <title>Method Equals
  | SkiaSharp.Extended </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Method GetFallbackSourceRect
+      <meta name="title" content="Method Equals
  | SkiaSharp.Extended ">
       
       <link rel="icon" href="../images/logo.ico">
@@ -85,15 +85,15 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.GetFallbackSourceRect*">
+        <article data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Equals*">
 
 
 
 
 
-<h1 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomTileScheduler_GetFallbackSourceRect_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.GetFallbackSourceRect*" class="text-break">
-  Method GetFallbackSourceRect
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomTileScheduler.cs"><i class="bi bi-code-slash"></i></a>
+<h1 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_Equals_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Equals*" class="text-break">
+  Method Equals
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomRectF.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
@@ -119,35 +119,65 @@
 
 
 
-<a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomTileScheduler_GetFallbackSourceRect_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.GetFallbackSourceRect*"></a>
+<a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_Equals_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Equals*"></a>
 
-<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomTileScheduler_GetFallbackSourceRect_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.GetFallbackSourceRect(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource)">
-  GetFallbackSourceRect(SKDeepZoomTileId, SKDeepZoomTileId, SKDeepZoomImageSource)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomTileScheduler.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_Equals_SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Equals(SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF)">
+  Equals(SKDeepZoomRectF)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomRectF.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Computes the source rect within a parent tile that corresponds to the child tile.
-Used for rendering a scaled portion of a lower-resolution tile as a fallback.</p>
-</div>
+<div class="markdown level1 summary"></div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public (float SrcX, float SrcY, float SrcW, float SrcH) GetFallbackSourceRect(SKDeepZoomTileId requested, SKDeepZoomTileId parent, SKDeepZoomImageSource tileSource)</code></pre>
+  <pre><code class="lang-csharp hljs">public bool Equals(SKDeepZoomRectF other)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
-  <dt><code>requested</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.html">SKDeepZoomTileId</a></dt>
-  <dd></dd>
-  <dt><code>parent</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.html">SKDeepZoomTileId</a></dt>
-  <dd></dd>
-  <dt><code>tileSource</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.html">SKDeepZoomImageSource</a></dt>
+  <dt><code>other</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.html">SKDeepZoomRectF</a></dt>
   <dd></dd>
 </dl>
 
 <h4 class="section">Returns</h4>
 <dl class="parameters">
-  <dt>(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.single,system.single,system.single,system.single-.srcx">SrcX</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.single,system.single,system.single,system.single-.srcy">SrcY</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.single,system.single,system.single,system.single-.srcw">SrcW</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.single,system.single,system.single,system.single-.srch">SrcH</a>)</dt>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+  <dd></dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_Equals_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Equals*"></a>
+
+<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_Equals_System_Object_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomRectF.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"></div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public override bool Equals(object? obj)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+  <dd></dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
   <dd></dd>
 </dl>
 
@@ -164,7 +194,7 @@ Used for rendering a scaled portion of a lower-resolution tile as a fallback.</p
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomTileScheduler.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomRectF.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -180,7 +210,7 @@ Used for rendering a scaled portion of a lower-resolution tile as a fallback.</p
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · b743a53
+          source: PR #379 · bcae03c
         </div>
       </div>
     </footer>
