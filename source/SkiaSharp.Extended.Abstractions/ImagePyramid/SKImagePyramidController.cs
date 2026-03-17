@@ -37,8 +37,9 @@ public class SKImagePyramidController : IDisposable
     private ISKImagePyramidTileFetcher? _fetcher;
     private readonly ConcurrentDictionary<SKImagePyramidTileId, byte> _pendingTiles = new ConcurrentDictionary<SKImagePyramidTileId, byte>();
     private CancellationTokenSource? _cts;
-    private bool _disposed;
+    private volatile bool _disposed;
     private bool _userHasZoomed;
+    private IReadOnlyList<SKImagePyramidTileRequest>? _visibleTilesCache;
 
     /// <summary>
     /// Initializes a new <see cref="SKImagePyramidController"/> with an optional custom cache.
@@ -107,6 +108,14 @@ public class SKImagePyramidController : IDisposable
     /// <summary>Fired when new tiles are loaded and the view needs repainting.</summary>
     public event EventHandler? InvalidateRequired;
 
+    /// <summary>
+    /// Fired when a DZC collection is successfully loaded and <see cref="SubImages"/> is populated.
+    /// Use this event to know when the collection is ready. To render a specific image from the
+    /// collection, call <see cref="Load(ISKImagePyramidSource,ISKImagePyramidTileFetcher)"/>
+    /// with one of the sub-image sources from <see cref="SubImages"/>.
+    /// </summary>
+    public event EventHandler? CollectionOpenSucceeded;
+
     // ---- Load ----
 
     /// <summary>Loads a DZI or IIIF tile source. Resets the viewport to show the full image.</summary>
@@ -120,6 +129,7 @@ public class SKImagePyramidController : IDisposable
             _pendingTiles.Clear();
             _cache.Clear();
             _subImages.Clear();
+            _visibleTilesCache = null;
 
             if (_fetcher != null && !ReferenceEquals(_fetcher, fetcher))
                 (_fetcher as IDisposable)?.Dispose();
@@ -141,7 +151,13 @@ public class SKImagePyramidController : IDisposable
         }
     }
 
-    /// <summary>Loads a DZC tile source and sets up sub-images.</summary>
+    /// <summary>
+    /// Loads a DZC collection source. Populates <see cref="SubImages"/> with the items in
+    /// the collection. Does NOT set a renderable tile source — listen for
+    /// <see cref="CollectionOpenSucceeded"/> and then call
+    /// <see cref="Load(ISKImagePyramidSource,ISKImagePyramidTileFetcher)"/> with a specific
+    /// sub-image source to actually render.
+    /// </summary>
     public void Load(SKImagePyramidDziCollectionSource dzcTileSource, ISKImagePyramidTileFetcher fetcher)
     {
         try
@@ -151,8 +167,11 @@ public class SKImagePyramidController : IDisposable
             _cts = new CancellationTokenSource();
             _pendingTiles.Clear();
             _cache.Clear();
+            _visibleTilesCache = null;
 
-            _tileSource = null!;
+            // _tileSource stays null — DZC is a collection, not a single renderable source.
+            // Callers should call Load(subImage.Source, fetcher) to render a specific sub-image.
+            _tileSource = null;
             _subImages = new List<SKImagePyramidSubImage>();
             foreach (var item in dzcTileSource.Items)
             {
@@ -177,7 +196,7 @@ public class SKImagePyramidController : IDisposable
             _viewport.ViewportOriginY = 0;
             _viewport.ViewportWidth = 1.0;
 
-            ImageOpenSucceeded?.Invoke(this, EventArgs.Empty);
+            CollectionOpenSucceeded?.Invoke(this, EventArgs.Empty);
         }
         catch (Exception ex)
         {
@@ -286,8 +305,12 @@ public class SKImagePyramidController : IDisposable
     /// <returns><see langword="true"/> if tile loads are still in progress.</returns>
     public bool Update()
     {
+        _visibleTilesCache = null;
         if (_tileSource != null && _fetcher != null)
-            ScheduleTileLoads();
+        {
+            _visibleTilesCache = _tileLayout.GetVisibleTiles(_tileSource, _viewport);
+            ScheduleTileLoads(_visibleTilesCache);
+        }
 
         return _pendingTiles.Count > 0;
     }
@@ -310,7 +333,8 @@ public class SKImagePyramidController : IDisposable
 
         _cache.FlushEvicted();
 
-        var visibleTiles = _tileLayout.GetVisibleTiles(_tileSource, _viewport);
+        // Reuse visible-tiles list computed by Update() in the same frame; compute fresh if stale.
+        var visibleTiles = _visibleTilesCache ?? _tileLayout.GetVisibleTiles(_tileSource, _viewport);
 
         renderer.BeginRender();
 
@@ -354,11 +378,10 @@ public class SKImagePyramidController : IDisposable
 
     // ---- Private ----
 
-    private void ScheduleTileLoads()
+    private void ScheduleTileLoads(IReadOnlyList<SKImagePyramidTileRequest> visibleTiles)
     {
         if (_tileSource == null || _fetcher == null) return;
 
-        var visibleTiles = _tileLayout.GetVisibleTiles(_tileSource, _viewport);
         var ct = _cts?.Token ?? CancellationToken.None;
 
         foreach (var request in visibleTiles)
@@ -399,7 +422,9 @@ public class SKImagePyramidController : IDisposable
             {
                 await _cache.PutAsync(tileId, tile, ct).ConfigureAwait(false);
                 tile = null;
-                InvalidateRequired?.Invoke(this, EventArgs.Empty);
+                // Re-check _disposed after async suspension — Dispose() may have run while awaiting
+                if (!_disposed && !ct.IsCancellationRequested)
+                    InvalidateRequired?.Invoke(this, EventArgs.Empty);
             }
         }
         catch (OperationCanceledException) { }

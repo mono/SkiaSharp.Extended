@@ -505,7 +505,23 @@ public class ImagePyramidControllerTest
     }
 
     [Fact]
-    public void ImageOpenSucceeded_FiresOnDzcLoad()
+    public void CollectionOpenSucceeded_FiresOnDzcLoad()
+    {
+        using var controller = new SKImagePyramidController();
+        bool fired = false;
+        controller.CollectionOpenSucceeded += (s, e) => fired = true;
+
+        var dzc = new SKImagePyramidDziCollectionSource(8, 256, "jpg", new[]
+        {
+            new SKImagePyramidDziCollectionSubImage(0, 0, 256, 256, null)
+        });
+        controller.Load(dzc, new MemoryTileFetcher());
+
+        Assert.True(fired, "CollectionOpenSucceeded should fire on DZC load");
+    }
+
+    [Fact]
+    public void ImageOpenSucceeded_DoesNotFireOnDzcLoad()
     {
         using var controller = new SKImagePyramidController();
         bool fired = false;
@@ -517,7 +533,7 @@ public class ImagePyramidControllerTest
         });
         controller.Load(dzc, new MemoryTileFetcher());
 
-        Assert.True(fired, "ImageOpenSucceeded should fire on DZC load");
+        Assert.False(fired, "ImageOpenSucceeded must NOT fire on DZC load (use CollectionOpenSucceeded)");
     }
 
     [Fact]

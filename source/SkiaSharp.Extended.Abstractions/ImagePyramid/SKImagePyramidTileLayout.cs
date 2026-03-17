@@ -46,13 +46,14 @@ public class SKImagePyramidTileLayout
         pixelRight = Math.Min(levelWidth, pixelRight);
         pixelBottom = Math.Min(levelHeight, pixelBottom);
 
-        // Convert to tile coordinates using tile counts to derive effective tile dimensions.
-        // For DZI: effective tile stride ≈ TileSize (without overlap)
-        // For IIIF: effective tile stride = TileWidth
+        // Convert to tile coordinates using actual tile stride from source bounds.
+        // GetTileBounds(level, 0, 0) gives the real pixel extent of the first tile,
+        // which is the correct stride (exact for IIIF, conservative-safe for DZI with overlap).
         int tileCountX = tileSource.GetTileCountX(optimalLevel);
         int tileCountY = tileSource.GetTileCountY(optimalLevel);
-        int effectiveTileW = tileCountX > 0 ? (int)Math.Ceiling((double)levelWidth / tileCountX) : levelWidth;
-        int effectiveTileH = tileCountY > 0 ? (int)Math.Ceiling((double)levelHeight / tileCountY) : levelHeight;
+        var firstTile = tileSource.GetTileBounds(optimalLevel, 0, 0);
+        int effectiveTileW = Math.Max(1, firstTile.Width);
+        int effectiveTileH = Math.Max(1, firstTile.Height);
 
         int startCol = Math.Max(0, pixelLeft / Math.Max(1, effectiveTileW));
         int startRow = Math.Max(0, pixelTop / Math.Max(1, effectiveTileH));
