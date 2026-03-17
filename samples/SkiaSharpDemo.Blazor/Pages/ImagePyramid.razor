@@ -1,0 +1,420 @@
+@page "/image-pyramid"
+@implements IAsyncDisposable
+@inject HttpClient Http
+@inject IJSRuntime JS
+@using SkiaSharp.Extended
+@using SkiaSharpDemo.Blazor.Components.ImagePyramid
+
+<PageTitle>Image Pyramid</PageTitle>
+
+<div class="dz-toolbar">
+    <label>Zoom: <strong class="dz-zoom-label">@_zoom.ToString("F2")×</strong></label>
+    <input type="range" min="0" max="1" step="0.001" value="@_sliderValue"
+           @oninput="OnZoomSlider" style="width:200px;vertical-align:middle;" />
+    <button @onclick="OnResetView" style="margin-left:8px;">Fit</button>
+    <div class="dz-url-row">
+        <input type="url" @bind="_urlInput" @bind:event="oninput" placeholder="Enter DZI or DZC URL…"
+               @onkeydown="OnUrlKeyDown" class="dz-url-input" />
+        <button @onclick="OnLoadUrl" disabled="@_urlLoading">@(_urlLoading ? "Loading…" : "Load")</button>
+    </div>
+</div>
+
+<div class="dz-layout @(_showInspector ? "dz-with-inspector" : "")">
+
+    <div class="dz-canvas-area"
+         @onmousedown="OnMouseDown"
+         @onmousemove="OnMouseMove"
+         @onmouseup="OnMouseUp"
+         @onmouseleave="OnMouseUp"
+         @ontouchstart="OnTouchStart"
+         @ontouchmove="OnTouchMove"
+         @ontouchend="OnTouchEnd"
+         @ontouchstart:preventDefault
+         @ontouchmove:preventDefault>
+        @if (_statusText != null)
+        {
+            <div class="dz-status">@_statusText</div>
+        }
+        @if (_errorMessage != null)
+        {
+            <div class="dz-error">@_errorMessage</div>
+        }
+        <SKGLView @ref="_canvas"
+                  OnPaintSurface="OnPaintSurface"
+                  class="dz-canvas" />
+    </div>
+
+    @if (_showInspector)
+    {
+        <ImagePyramidInspector
+            Controller="_controller"
+            @bind-ShowTileBorders="_showTileBorders"
+            @bind-ShowTileBorders:after="OnDebugOptionsChanged"
+            @bind-EnableLodBlending="_enableLodBlending"
+            @bind-EnableLodBlending:after="OnDebugOptionsChanged"
+            @bind-UseBrowserCache="_useBrowserCache"
+            @bind-UseBrowserCache:after="OnCacheTypeChanged"
+            @bind-CacheDelayEnabled="_cacheDelayEnabled"
+            @bind-CacheDelayEnabled:after="OnCacheDelayChanged"
+            @bind-CacheDelayMin="_cacheDelayMin"
+            @bind-CacheDelayMin:after="OnCacheDelayChanged"
+            @bind-CacheDelayMax="_cacheDelayMax"
+            @bind-CacheDelayMax:after="OnCacheDelayChanged"
+            @bind-CacheCapacity="_cacheCapacity"
+            @bind-CacheCapacity:after="OnCacheSizeChanged"
+            OnDebugOptionsChanged="OnDebugOptionsChanged"
+            OnCacheTypeChanged="OnCacheTypeChanged"
+            OnCacheDelayChanged="OnCacheDelayChanged"
+            OnCacheSizeChanged="OnCacheSizeChanged"
+            OnClearCache="OnClearCache" />
+    }
+</div>
+
+<button class="dz-toggle-btn" @onclick="ToggleInspector">
+    @(_showInspector ? "Hide Inspector" : "Show Inspector")
+</button>
+
+@code {
+    private const string DefaultDziUrl =
+        "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid.dzi";
+
+    private SKGLView? _canvas;
+    private SKImagePyramidController? _controller;
+    private string? _statusText;
+    private string? _errorMessage;
+    private bool _showInspector = true;
+
+    // Debug overlay toggles
+    private bool _showTileBorders;
+    private bool _enableLodBlending = true;
+    private DebugBorderRenderer? _debugRenderer;
+    private bool _cacheDelayEnabled;
+    private int  _cacheDelayMin;
+    private int  _cacheDelayMax = 500;
+    private bool _useBrowserCache;
+    private int  _cacheCapacity = 1024;
+    private DelayTileCache? _delayCache;
+    // _innerCache is the cache directly wrapped by _delayCache (owned; dispose via _delayCache)
+    private ISKImagePyramidTileCache? _innerCache;
+    private BrowserStorageTileCache? _browserCache; // same ref as _innerCache when _useBrowserCache=true
+
+    // URL input
+    private string _urlInput = DefaultDziUrl;
+    private bool _urlLoading = false;
+
+    // Pan state
+    private bool _isDragging;
+    private double _lastMouseX;
+    private double _lastMouseY;
+
+    // Zoom slider value (1.0 = image fills control width)
+    private double _zoom = 1.0;
+    // Logarithmic slider position (0-1)
+    private double _sliderValue = 0.0;
+
+    // Log zoom range for the slider
+    private const double MinZoom = 0.01;
+    private const double MaxZoom = 100.0;
+    private static double ZoomToSlider(double zoom)
+        => (Math.Log(zoom) - Math.Log(MinZoom)) / (Math.Log(MaxZoom) - Math.Log(MinZoom));
+    private static double SliderToZoom(double slider)
+        => MinZoom * Math.Pow(MaxZoom / MinZoom, slider);
+
+    private System.Threading.Timer? _inspectorTimer;
+    private DotNetObjectReference<ImagePyramid>? _thisRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        // Wire up window-resize → canvas invalidate via JS
+        _thisRef = DotNetObjectReference.Create(this);
+        await JS.InvokeVoidAsync("deepZoomRegisterResize", _thisRef);
+
+        _innerCache = new SkiaSharp.Extended.SKImagePyramidMemoryTileCache(_cacheCapacity);
+        _delayCache = new DelayTileCache(_innerCache);
+        _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.SKImagePyramidRenderer());
+        _controller = new SKImagePyramidController(_delayCache);
+        _controller.EnableLodBlending = _enableLodBlending;
+        _controller.InvalidateRequired += OnInvalidateRequired;
+
+        // Refresh inspector every 250ms while loading tiles
+        _inspectorTimer = new System.Threading.Timer(_ =>
+        {
+            // Keep slider in sync with viewport zoom
+            if (_controller != null)
+                SyncZoomFromViewport();
+            InvokeAsync(StateHasChanged);
+        }, null, 250, 250);
+
+        await LoadFromUrlAsync(DefaultDziUrl);
+    }
+
+    private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
+    {
+        if (_controller == null || _debugRenderer == null) return;
+        e.Surface.Canvas.Clear(SKColors.White);
+        _controller.SetControlSize(e.BackendRenderTarget.Width, e.BackendRenderTarget.Height);
+        _controller.Update();
+        _debugRenderer.Canvas = e.Surface.Canvas;
+        _controller.Render(_debugRenderer);
+    }
+
+    private void OnInvalidateRequired(object? sender, EventArgs e)
+        => InvokeAsync(() => _canvas?.Invalidate());
+
+    [JSInvokable]
+    public void OnWindowResize() => InvokeAsync(() => _canvas?.Invalidate());
+
+    // --- Zoom slider ---
+    private void OnZoomSlider(ChangeEventArgs e)
+    {
+        if (_controller == null) return;
+        if (!double.TryParse(e.Value?.ToString(), System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture, out var sliderPos)) return;
+        _sliderValue = sliderPos;
+        _zoom = SliderToZoom(sliderPos);
+        _controller.SetZoom(_zoom);
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnResetView()
+    {
+        if (_controller == null) return;
+        _controller.ResetView();
+        SyncZoomFromViewport();
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    // --- URL loading ---
+    private async Task OnUrlKeyDown(KeyboardEventArgs e)
+    {
+        if (_urlLoading) return;
+        if (e.Key == "Enter") await OnLoadUrl();
+    }
+
+    private async Task OnLoadUrl()
+    {
+        var url = _urlInput?.Trim();
+        if (string.IsNullOrEmpty(url)) return;
+        await LoadFromUrlAsync(url);
+    }
+
+    /// <summary>
+    /// Fetches a DZI or DZC URL, parses it, and loads it into the controller.
+    /// Derives the tiles base URL from the manifest URL automatically.
+    /// </summary>
+    private async Task LoadFromUrlAsync(string url)
+    {
+        if (_controller == null) return;
+        _urlLoading = true;
+        _errorMessage = null;
+        _statusText = "Loading…";
+        StateHasChanged();
+
+        try
+        {
+            var xml = await Http.GetStringAsync(url);
+
+            // Derive tiles base URL: strip the filename, append _files/ for DZI
+            bool isDzc = url.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase);
+            string baseDir = url[..url.LastIndexOf('/')] + "/";
+            string stem    = System.IO.Path.GetFileNameWithoutExtension(url);
+
+            if (isDzc)
+            {
+                var coll = SKImagePyramidDziCollectionSource.Parse(xml);
+                coll.TilesBaseUri = baseDir;
+                _controller.Load(coll, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+                SyncZoomFromViewport();
+                _statusText = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
+            }
+            else
+            {
+                string tilesBase = $"{baseDir}{stem}_files/";
+                var tileSource = SKImagePyramidDziSource.Parse(xml, tilesBase);
+                _controller.Load(tileSource, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+                SyncZoomFromViewport();
+                _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Failed to load: {ex.Message}";
+            _statusText = null;
+        }
+        finally
+        {
+            _urlLoading = false;
+        }
+
+        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    // --- Mouse pan ---
+    private void OnMouseDown(MouseEventArgs e)
+    {
+        _isDragging = true;
+        _lastMouseX = e.ClientX;
+        _lastMouseY = e.ClientY;
+    }
+
+    private void OnMouseMove(MouseEventArgs e)
+    {
+        if (!_isDragging || _controller == null) return;
+        var dx = e.ClientX - _lastMouseX;
+        var dy = e.ClientY - _lastMouseY;
+        _lastMouseX = e.ClientX;
+        _lastMouseY = e.ClientY;
+        _controller.Pan(dx, dy);
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnMouseUp(MouseEventArgs e)
+    {
+        _isDragging = false;
+    }
+
+    // --- Touch pan (mobile) ---
+    private void OnTouchStart(TouchEventArgs e)
+    {
+        if (e.Touches.Length > 0)
+        {
+            _isDragging = true;
+            _lastMouseX = e.Touches[0].ClientX;
+            _lastMouseY = e.Touches[0].ClientY;
+        }
+    }
+
+    private void OnTouchMove(TouchEventArgs e)
+    {
+        if (!_isDragging || _controller == null || e.Touches.Length == 0) return;
+        var dx = e.Touches[0].ClientX - _lastMouseX;
+        var dy = e.Touches[0].ClientY - _lastMouseY;
+        _lastMouseX = e.Touches[0].ClientX;
+        _lastMouseY = e.Touches[0].ClientY;
+        _controller.Pan(dx, dy);
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnTouchEnd(TouchEventArgs e)
+    {
+        _isDragging = false;
+    }
+
+    private void ToggleInspector()
+    {
+        _showInspector = !_showInspector;
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void SyncZoomFromViewport()
+    {
+        _zoom = _controller?.Viewport.Zoom ?? 1.0;
+        _sliderValue = ZoomToSlider(Math.Clamp(_zoom, MinZoom, MaxZoom));
+    }
+
+    private void OnDebugOptionsChanged()
+    {
+        if (_debugRenderer == null || _controller == null) return;
+        _debugRenderer.ShowTileBorders = _showTileBorders;
+        _controller.EnableLodBlending = _enableLodBlending;
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnCacheDelayChanged()
+    {
+        if (_delayCache == null) return;
+        _delayCache.IsEnabled  = _cacheDelayEnabled;
+        _delayCache.MinDelayMs = _cacheDelayMin;
+        _delayCache.MaxDelayMs = _cacheDelayMax;
+        // Do NOT clear the cache here: existing lower-level tiles are needed as LOD fallbacks.
+        // Use the "Clear Cache" button to reset explicitly.
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnCacheTypeChanged()
+    {
+        if (_controller == null) return;
+        var source = _controller.TileSource;  // save BEFORE dispose
+        RebuildControllerCache();
+        if (source != null)
+            _controller.Load(source, new SkiaSharp.Extended.SKImagePyramidHttpTileFetcher(new SkiaSharp.Extended.SKImagePyramidImageTileDecoder()));
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnCacheSizeChanged()
+    {
+        if (_controller == null) return;
+        var source = _controller.TileSource;  // save BEFORE dispose
+        RebuildControllerCache();
+        if (source != null)
+            _controller.Load(source, new SkiaSharp.Extended.SKImagePyramidHttpTileFetcher(new SkiaSharp.Extended.SKImagePyramidImageTileDecoder()));
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void OnClearCache()
+    {
+        _controller?.Cache.Clear();
+        InvokeAsync(() => _canvas?.Invalidate());
+    }
+
+    private void RebuildControllerCache()
+    {
+        if (_controller == null) return;
+
+        // _delayCache.Dispose() cascades to _innerCache (and transitively _browserCache)
+        _delayCache?.Dispose();
+        _delayCache = null;
+        _innerCache = null;
+        _browserCache = null;
+
+        // Build new cache chain
+        if (_useBrowserCache)
+        {
+            _browserCache = new BrowserStorageTileCache(JS);
+            _innerCache = _browserCache;
+        }
+        else
+        {
+            _innerCache = new SkiaSharp.Extended.SKImagePyramidMemoryTileCache(_cacheCapacity);
+        }
+
+        _delayCache = new DelayTileCache(_innerCache)
+        {
+            IsEnabled  = _cacheDelayEnabled,
+            MinDelayMs = _cacheDelayMin,
+            MaxDelayMs = _cacheDelayMax,
+        };
+
+        // Create new debug renderer with current settings
+        _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.SKImagePyramidRenderer())
+        {
+            ShowTileBorders  = _showTileBorders,
+        };
+
+        // Recreate the controller with the new cache
+        _controller.InvalidateRequired -= OnInvalidateRequired;
+        _controller.Dispose();
+
+        _controller = new SKImagePyramidController(_delayCache);
+        _controller.EnableLodBlending = _enableLodBlending;
+        _controller.InvalidateRequired += OnInvalidateRequired;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _inspectorTimer?.Dispose();
+        try { await JS.InvokeVoidAsync("deepZoomUnregisterResize"); } catch { }
+        _thisRef?.Dispose();
+        if (_controller != null)
+        {
+            _controller.InvalidateRequired -= OnInvalidateRequired;
+            _controller.Dispose();
+        }
+        // _delayCache owns _innerCache (and transitively _browserCache); dispose cascades.
+        _delayCache?.Dispose();
+    }
+}
+

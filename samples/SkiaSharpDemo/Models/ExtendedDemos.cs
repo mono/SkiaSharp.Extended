@@ -33,8 +33,8 @@ public static class ExtendedDemos
 				new Demo
 				{
 					Title = "Deep Zoom",
-					Description = "Render gigapixel images using the Deep Zoom protocol — tiles are loaded at the best resolution for the current view size.",
-					PageType = typeof(DeepZoomPage),
+					Description = "Render gigapixel images using the Image Pyramid protocol — tiles are loaded at the best resolution for the current view size.",
+					PageType = typeof(ImagePyramidPage),
 					Color = Colors.DarkTurquoise,
 				},
 			},
