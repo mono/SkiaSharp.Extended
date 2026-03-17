@@ -250,26 +250,55 @@ accepts any source type, making it easy to add support for other formats.</p>
 }
 </code></pre>
 <h2 id="sample-iiif-urls">Sample IIIF URLs</h2>
-<p>Try these public IIIF endpoints in the demo apps. Enter the base URL — <code>/info.json</code> is appended automatically:</p>
+<p>Try these public IIIF endpoints in the demo apps (all support CORS). Enter the base URL — <code>/info.json</code> is appended automatically:</p>
 <table>
 <thead>
 <tr>
 <th>Institution</th>
 <th>Base URL</th>
+<th>Dimensions</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Wellcome Collection</td>
 <td><code>https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2</code></td>
+<td>3543 × 2480</td>
 </tr>
 <tr>
-<td>Bodleian Libraries (Oxford)</td>
+<td>National Gallery of Art (US)</td>
+<td><code>https://media.nga.gov/iiif/public/objects/4/6/2/5/8/46258-primary-0-nativeres.ptif</code></td>
+<td>7993 × 8195</td>
+</tr>
+<tr>
+<td>Library of Congress</td>
+<td><code>https://tile.loc.gov/image-services/iiif/service:pnp:highsm:14000:14095</code></td>
+<td>4717 × 5951</td>
+</tr>
+<tr>
+<td>Stanford University</td>
+<td><code>https://stacks.stanford.edu/image/iiif/hg676jb4964%2F0380_796-44</code></td>
+<td>5426 × 3820</td>
+</tr>
+<tr>
+<td>Leipzig University Library</td>
+<td><code>https://iiif.ub.uni-leipzig.de/iiif/j2k/0000/0107/0000010732/00000072.jpx</code></td>
+<td>5284 × 2410</td>
+</tr>
+<tr>
+<td>Bodleian Libraries, Oxford</td>
 <td><code>https://iiif.bodleian.ox.ac.uk/iiif/image/af315e3d-5b49-4fac-98e6-0e134e3e2c44</code></td>
+<td>1000 × 1500</td>
 </tr>
 <tr>
-<td>IIIF.io reference image</td>
+<td>e-codices (Swiss manuscripts)</td>
+<td><code>https://www.e-codices.unifr.ch/loris/bge/bge-cl0015/bge-cl0015_e001.jp2</code></td>
+<td>3328 × 4992</td>
+</tr>
+<tr>
+<td>IIIF.io reference image (v3)</td>
 <td><code>https://iiif.io/api/image/3.0/example/reference/918ecd18c2592080851777620de9bcb5-fountain</code></td>
+<td>3024 × 4032</td>
 </tr>
 </tbody>
 </table>
@@ -294,7 +323,7 @@ accepts any source type, making it easy to add support for other formats.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 2991949
+          source: PR #379 · a6a0575
         </div>
       </div>
     </footer>
