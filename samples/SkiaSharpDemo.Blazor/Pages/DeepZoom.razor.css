@@ -1,0 +1,164 @@
+    .dz-toolbar {
+        padding: 6px 8px;
+        background: #222;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        color: #ddd;
+        cursor: default;
+        user-select: none;
+    }
+
+    .dz-zoom-label {
+        display: inline-block;
+        min-width: 7.5ch;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .dz-layout {
+        display: flex;
+        width: 100%;
+        height: calc(100vh - 155px);
+        min-height: 300px;
+    }
+
+    .dz-canvas-area {
+        position: relative;
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        cursor: grab;
+        touch-action: none; /* Prevent browser scroll/zoom on touch */
+    }
+
+    .dz-canvas-area.dragging {
+        cursor: grabbing;
+    }
+
+    .dz-canvas {
+        flex: 1 1 auto;
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .dz-inspector {
+        flex: 0 0 320px;
+        overflow-y: auto;
+        border-left: 1px solid #444;
+        padding: 0.75rem;
+        font-size: 0.8rem;
+        font-family: monospace;
+        background: #1a1a2e;
+        color: #e0e0e0;
+    }
+
+    .dz-inspector h3 { margin: 0 0 0.5rem; font-size: 1rem; }
+    .dz-inspector dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; margin: 0; }
+    .dz-inspector dt { color: #aaa; white-space: nowrap; }
+    .dz-inspector dd { margin: 0; word-break: break-all; }
+    .dz-inspector details { margin-bottom: 0.4rem; border: 1px solid #333; border-radius: 4px; }
+    .dz-inspector details > summary {
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #90caf9;
+        background: #1e2a38;
+        border-radius: 4px;
+        list-style: none;
+        user-select: none;
+    }
+    .dz-inspector details > summary::-webkit-details-marker { display: none; }
+    .dz-inspector details[open] > summary { border-radius: 4px 4px 0 0; border-bottom: 1px solid #333; }
+    .dz-inspector details > summary::after { content: " ▼"; font-size: 0.65rem; float: right; }
+    .dz-inspector details[open] > summary::after { content: " ▲"; }
+    .dz-section-body { padding: 6px 8px; }
+
+    .dz-tile-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+    .dz-tile-table th, .dz-tile-table td { padding: 1px 4px; text-align: center; }
+    .dz-tile-table th { color: #90caf9; }
+    .tile-ok td { color: #81c784; }
+    .tile-missing td { color: #ffb74d; }
+
+    .dz-status { padding: 4px 8px; background: #222; font-size: 0.8rem; color: #aaa; }
+    .dz-error { padding: 4px 8px; background: #5c1010; color: #ff8a80; font-size: 0.8rem; }
+    .dz-muted { color: #888; font-size: 0.75rem; margin: 2px 0; }
+
+    .dz-debug-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 4px 0;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .dz-label-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 4px 0;
+        font-size: 0.82rem;
+        user-select: none;
+    }
+
+    .dz-label-row input[type=range] {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .dz-ms-label {
+        display: inline-block;
+        min-width: 4.5ch;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .dz-small-btn {
+        margin-top: 4px;
+        padding: 2px 8px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        border: 1px solid #555;
+        border-radius: 3px;
+        background: #333;
+        color: #ddd;
+    }
+    .dz-small-btn:hover { background: #444; }
+
+    .dz-toggle-btn {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        z-index: 100;
+        padding: 0.4rem 0.8rem;
+        background: #1976d2;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+    .dz-toggle-btn:hover { background: #1565c0; }
+
+    .dz-url-row {
+        display: flex;
+        flex: 1 1 auto;
+        gap: 4px;
+        min-width: 0;
+    }
+
+    .dz-url-input {
+        flex: 1 1 auto;
+        min-width: 0;
+        background: #333;
+        color: #eee;
+        border: 1px solid #555;
+        border-radius: 3px;
+        padding: 2px 6px;
+        font-size: 0.8rem;
+    }
