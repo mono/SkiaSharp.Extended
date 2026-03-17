@@ -32,7 +32,7 @@ public class SKImagePyramidController : IDisposable
     private ISKImagePyramidSource? _tileSource;
     private readonly SKImagePyramidViewport _viewport;
     private readonly SKImagePyramidTileLayout _tileLayout;
-    private readonly ISKImagePyramidTileCache _cache;
+    private ISKImagePyramidTileCache _cache;
     private List<SKImagePyramidSubImage> _subImages = new List<SKImagePyramidSubImage>();
     private ISKImagePyramidTileFetcher? _fetcher;
     private readonly ConcurrentDictionary<SKImagePyramidTileId, byte> _pendingTiles = new ConcurrentDictionary<SKImagePyramidTileId, byte>();
@@ -115,6 +115,38 @@ public class SKImagePyramidController : IDisposable
     /// with one of the sub-image sources from <see cref="SubImages"/>.
     /// </summary>
     public event EventHandler? CollectionOpenSucceeded;
+
+    // ---- Cache replacement ----
+
+    /// <summary>
+    /// Replaces the active tile cache without disturbing the loaded image, viewport state,
+    /// or zoom level. All pending tile loads are cancelled and in-flight tiles are discarded;
+    /// the new cache starts empty and tiles are re-fetched as the view is repainted.
+    /// </summary>
+    /// <param name="newCache">
+    /// The new cache to adopt. The controller takes ownership — it will be disposed when
+    /// <see cref="Dispose"/> is called or <see cref="ReplaceCache"/> is called again.
+    /// The old cache is disposed by this method.
+    /// </param>
+    public void ReplaceCache(ISKImagePyramidTileCache newCache)
+    {
+        if (newCache == null) throw new ArgumentNullException(nameof(newCache));
+
+        // Cancel pending tile fetches so stale callbacks don't write to the old cache.
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = new CancellationTokenSource();
+        _pendingTiles.Clear();
+        _visibleTilesCache = null;
+
+        // Swap the cache; dispose the old one.
+        var oldCache = _cache;
+        _cache = newCache;
+        oldCache.Dispose();
+
+        // Ask the view to repaint so tiles are re-fetched from the new cache.
+        InvalidateRequired?.Invoke(this, EventArgs.Empty);
+    }
 
     // ---- Load ----
 

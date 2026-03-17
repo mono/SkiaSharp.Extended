@@ -393,44 +393,36 @@
     {
         if (_controller == null) return;
 
-        // _delayCache.Dispose() cascades to _innerCache (and transitively _browserCache)
-        _delayCache?.Dispose();
-        _delayCache = null;
-        _innerCache = null;
-        _browserCache = null;
-
         // Build new cache chain
+        ISKImagePyramidTileCache newInner;
         if (_useBrowserCache)
         {
             _browserCache = new BrowserStorageTileCache(JS);
-            _innerCache = _browserCache;
+            newInner = _browserCache;
+            _innerCache = newInner;
         }
         else
         {
-            _innerCache = new SkiaSharp.Extended.SKImagePyramidMemoryTileCache(_cacheCapacity);
+            _browserCache = null;
+            newInner = new SkiaSharp.Extended.SKImagePyramidMemoryTileCache(_cacheCapacity);
+            _innerCache = newInner;
         }
 
-        _delayCache = new DelayTileCache(_innerCache)
+        var newDelay = new DelayTileCache(newInner)
         {
             IsEnabled  = _cacheDelayEnabled,
             MinDelayMs = _cacheDelayMin,
             MaxDelayMs = _cacheDelayMax,
         };
 
-        // Create new debug renderer with current settings (dispose old one first)
-        _debugRenderer?.Dispose();
-        _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.SKImagePyramidRenderer())
-        {
-            ShowTileBorders  = _showTileBorders,
-        };
+        // Swap the cache on the existing controller -- viewport, zoom, and tile source are preserved.
+        // ReplaceCache disposes the old _delayCache (which cascades to the old _innerCache/_browserCache).
+        _controller.ReplaceCache(newDelay);
+        _delayCache = newDelay;
 
-        // Recreate the controller with the new cache
-        _controller.InvalidateRequired -= OnInvalidateRequired;
-        _controller.Dispose();
-
-        _controller = new SKImagePyramidController(_delayCache);
-        _controller.EnableLodBlending = _enableLodBlending;
-        _controller.InvalidateRequired += OnInvalidateRequired;
+        // Update debug renderer settings (no need to recreate)
+        if (_debugRenderer != null)
+            _debugRenderer.ShowTileBorders = _showTileBorders;
     }
 
     public async ValueTask DisposeAsync()
@@ -441,10 +433,13 @@
         if (_controller != null)
         {
             _controller.InvalidateRequired -= OnInvalidateRequired;
-            _controller.Dispose();
+            _controller.Dispose(); // also disposes _cache (= current _delayCache chain)
         }
-        // _delayCache owns _innerCache (and transitively _browserCache); dispose cascades.
-        _delayCache?.Dispose();
+        else
+        {
+            // Defensive: controller never set (OnAfterRenderAsync didn't run) — dispose cache directly.
+            _delayCache?.Dispose();
+        }
         _debugRenderer?.Dispose();
     }
 }
