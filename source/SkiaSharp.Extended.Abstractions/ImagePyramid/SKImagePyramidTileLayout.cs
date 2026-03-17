@@ -47,29 +47,28 @@ public class SKImagePyramidTileLayout
         pixelBottom = Math.Min(levelHeight, pixelBottom);
 
         // Convert to tile coordinates using actual tile stride from source bounds.
-        // GetTileBounds(level, 0, 0) gives the real pixel extent of the first tile
-        // (includes DZI overlap), used conservatively for startCol.
-        // For endCol we need the actual stride (left edge of tile 1), which for DZI is
-        // TileSize-Overlap (shorter than firstTile.Width). Using firstTile.Width for endCol
-        // would underestimate it and miss tiles at the right/bottom edges.
+        // GetTileBounds(level, 0, 0) gives the first tile's extent (includes DZI overlap).
+        // For startCol we use effectiveTileW conservatively (tile c is visible if its
+        // right edge > pixelLeft; tile 0's right = effectiveTileW, so startCol = pixelLeft/effectiveTileW).
+        // For endCol we need the actual stride (left edge of col 1) so we don't over-include:
+        // tile c is visible if c*stride <= pixelRight-1, i.e. endCol = (pixelRight-1)/stride.
         int tileCountX = tileSource.GetTileCountX(optimalLevel);
         int tileCountY = tileSource.GetTileCountY(optimalLevel);
         var firstTile = tileSource.GetTileBounds(optimalLevel, 0, 0);
         int effectiveTileW = Math.Max(1, firstTile.Width);
         int effectiveTileH = Math.Max(1, firstTile.Height);
 
-        // Use the left edge of tile (1,0) and (0,1) as the stride for endCol/endRow.
-        // This equals TileSize-Overlap for DZI (conservative, never misses a tile) and
-        // TileWidth for IIIF (exact). Falls back to effectiveTileW when only 1 tile.
+        // Stride = distance between left edges of consecutive tiles.
+        // For DZI: TileSize - Overlap. For IIIF: TileWidth. Falls back when only 1 tile.
         int strideW = tileCountX > 1 ? Math.Max(1, tileSource.GetTileBounds(optimalLevel, 1, 0).X) : effectiveTileW;
         int strideH = tileCountY > 1 ? Math.Max(1, tileSource.GetTileBounds(optimalLevel, 0, 1).Y) : effectiveTileH;
 
+        // startCol: first tile whose right edge exceeds pixelLeft (conservative: use tile width)
         int startCol = Math.Max(0, pixelLeft / effectiveTileW);
         int startRow = Math.Max(0, pixelTop / effectiveTileH);
-        // Use stride (not effectiveTileW) for endCol so tiles at the right/bottom boundary
-        // are never missed. +1 adds a one-tile safety buffer for sub-pixel rounding.
-        int endCol = Math.Min(tileCountX - 1, pixelRight > 0 ? pixelRight / strideW + 1 : 0);
-        int endRow = Math.Min(tileCountY - 1, pixelBottom > 0 ? pixelBottom / strideH + 1 : 0);
+        // endCol: last tile whose left edge is before pixelRight (exact: use stride, no +1 buffer)
+        int endCol = Math.Min(tileCountX - 1, pixelRight > 0 ? (pixelRight - 1) / strideW : 0);
+        int endRow = Math.Min(tileCountY - 1, pixelBottom > 0 ? (pixelBottom - 1) / strideH : 0);
 
         var tiles = new List<SKImagePyramidTileRequest>();
 
