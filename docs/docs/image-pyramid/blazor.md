@@ -17,6 +17,7 @@ Use `SKImagePyramidController` with a plain `SKCanvasView` in Blazor WebAssembly
 @code {
     private SKCanvasView? _canvas;
     private SKImagePyramidController? _controller;
+    private readonly SKImagePyramidRenderer _renderer = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -29,7 +30,7 @@ Use `SKImagePyramidController` with a plain `SKCanvasView` in Blazor WebAssembly
         var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/image_files/").ToString();
         var source  = SKImagePyramidDziSource.Parse(xml, baseUrl);
 
-        _controller.Load(source, new SKImagePyramidHttpTileFetcher());
+        _controller.Load(source, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
     }
 
     private void OnPaintSurface(SKPaintSurfaceEventArgs e)
@@ -37,7 +38,8 @@ Use `SKImagePyramidController` with a plain `SKCanvasView` in Blazor WebAssembly
         if (_controller == null) return;
         _controller.SetControlSize(e.Info.Width, e.Info.Height);
         _controller.Update();
-        _controller.Render(e.Surface.Canvas);
+        _renderer.Canvas = e.Surface.Canvas;
+        _controller.Render(_renderer);
     }
 
     private void OnInvalidateRequired(object? sender, EventArgs e)

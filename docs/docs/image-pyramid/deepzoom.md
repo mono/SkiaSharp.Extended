@@ -136,7 +136,7 @@ You can generate DZI tile pyramids with:
 | :--- | :------- | :---- |
 | [deepzoom.py](https://github.com/openzoom/deepzoom.py) | Python | Most widely used |
 | [VIPS](https://www.libvips.org/) | CLI | Fastest for huge images |
-| [Image Resizer](https://github.com/nicowillis/imageresizer) | .NET | ASP.NET middleware |
+| [Sharp](https://sharp.pixelplumbing.com/) | Node.js | High-performance image processing |
 | [Zoomify converter](https://www.zoomify.com/free.htm) | Windows GUI | Cross-format |
 
 ---

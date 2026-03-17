@@ -55,15 +55,25 @@ In the sample apps, the URL is inspected to select the right parser:
 ```csharp
 private async Task LoadFromUrlAsync(string url)
 {
+    bool isDzc  = url.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase);
+    bool isDzi  = url.EndsWith(".dzi", StringComparison.OrdinalIgnoreCase);
+    bool isIiif = url.Contains("/iiif/", StringComparison.OrdinalIgnoreCase)
+               || url.Contains("iiif.io", StringComparison.OrdinalIgnoreCase)
+               || url.EndsWith("/info.json", StringComparison.OrdinalIgnoreCase);
+
+    // Auto-append /info.json for bare IIIF base URLs
+    if (isIiif && !url.EndsWith("/info.json", StringComparison.OrdinalIgnoreCase))
+        url += "/info.json";
+
     var content = await http.GetStringAsync(url);
 
-    if (url.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase))
+    if (isDzc)
     {
         var coll = SKImagePyramidDziCollectionSource.Parse(content);
         coll.TilesBaseUri = url[..url.LastIndexOf('/')] + "/";
         controller.Load(coll, fetcher);
     }
-    else if (url.Contains("info.json") || url.Contains("/iiif/") || url.Contains("iiif.io"))
+    else if (isIiif || (!isDzi && content.TrimStart().StartsWith("{")))
     {
         var source = SKImagePyramidIiifSource.Parse(content);
         controller.Load(source, fetcher);
@@ -156,9 +166,10 @@ public class SKImagePyramidZoomifySource : ISKImagePyramidSource
 
 ## Sample IIIF URLs
 
-Try these public IIIF endpoints in the demo apps:
+Try these public IIIF endpoints in the demo apps. Enter the base URL — `/info.json` is appended automatically:
 
-| Institution | info.json URL |
+| Institution | Base URL |
 |---|---|
-| Wellcome Collection | `https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2/info.json` |
-| British Library | `https://api.bl.uk/image/iiif/ark:/81055/vdc_100022589218.0x000002/info.json` |
+| Wellcome Collection | `https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2` |
+| Bodleian Libraries (Oxford) | `https://iiif.bodleian.ox.ac.uk/iiif/image/af315e3d-5b49-4fac-98e6-0e134e3e2c44` |
+| IIIF.io reference image | `https://iiif.io/api/image/3.0/example/reference/918ecd18c2592080851777620de9bcb5-fountain` |

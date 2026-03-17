@@ -23,21 +23,23 @@ var controller = new SKImagePyramidController(cache: myCache);
 ```csharp
 // DZI — single image
 var source = SKImagePyramidDziSource.Parse(xmlString, "https://example.com/image_files/");
-controller.Load(source, new SKImagePyramidHttpTileFetcher());
+controller.Load(source, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
 
 // DZC — collection of images
 var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
 collection.TilesBaseUri = "https://example.com/";
-controller.Load(collection, new SKImagePyramidHttpTileFetcher());
+controller.Load(collection, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
 ```
 
 `Load()` resets the viewport to show the full image and starts fetching tiles in the background.
 
 ### Render Loop
 
-Call these three methods from your canvas paint handler:
+Call these methods from your canvas paint handler:
 
 ```csharp
+private readonly SKImagePyramidRenderer _renderer = new();
+
 void OnPaintSurface(SKPaintSurfaceEventArgs e)
 {
     // 1. Update control dimensions (call on every paint; no-op when unchanged)
@@ -47,7 +49,8 @@ void OnPaintSurface(SKPaintSurfaceEventArgs e)
     controller.Update();
 
     // 3. Draw all cached tiles to the canvas
-    controller.Render(e.Surface.Canvas);
+    _renderer.Canvas = e.Surface.Canvas;
+    controller.Render(_renderer);
 }
 ```
 
@@ -81,24 +84,21 @@ controller.ResetView();
 | :------- | :--- | :---------- |
 | `Viewport` | `SKImagePyramidViewport` | The current viewport (position and zoom). |
 | `Cache` | `ISKImagePyramidTileCache` | The tile cache. |
-| `Scheduler` | `SKImagePyramidTileScheduler` | The tile scheduler. |
-| `Renderer` | `ISKImagePyramidRenderer` | The tile renderer (pluggable via `ISKImagePyramidRenderer`). |
-| `TileSource` | `SKImagePyramidDziSource?` | The loaded source, or `null`. |
+| `TileLayout` | `SKImagePyramidTileLayout` | The tile geometry and visibility calculator. |
+| `TileSource` | `ISKImagePyramidSource?` | The loaded source, or `null`. |
 | `SubImages` | `IReadOnlyList<SKImagePyramidSubImage>` | Sub-images from a DZC; empty for DZI. |
 | `AspectRatio` | `double` | Width/height of the loaded image; 0 if not loaded. |
 | `IsIdle` | `bool` | `true` when no tiles are in-flight. |
 | `PendingTileCount` | `int` | Number of tile fetches currently in progress. |
 | `NativeZoom` | `double` | Zoom level where 1 image pixel = 1 screen pixel. |
+| `EnableLodBlending` | `bool` | Enable LOD blending (blurry placeholders while tiles load). Default `true`. |
 
-### Renderer and LOD Blending
+### LOD Blending
 
-The renderer is **pluggable** via `ISKImagePyramidRenderer`. The default implementation is `SKImagePyramidRenderer`.
-
-Pass a custom renderer at construction time:
+The controller has an `EnableLodBlending` property that controls whether lower-resolution tiles are used as blurry placeholders while high-resolution tiles stream in:
 
 ```csharp
-ISKImagePyramidRenderer myRenderer = new MyCustomRenderer();
-var controller = new SKImagePyramidController(renderer: myRenderer);
+controller.EnableLodBlending = false; // show blank areas instead of blurry placeholders
 ```
 
 #### How two-pass rendering works
@@ -128,12 +128,8 @@ var controller = new SKImagePyramidController(renderer: myRenderer);
 | `false` | Skipped | Draws loaded tiles only | Blank (white) |
 
 ```csharp
-// Access via SKImagePyramidRenderer (the default concrete type)
-if (controller.Renderer is SKImagePyramidRenderer r)
-    r.EnableLodBlending = false;
-
-// Or if using a DebugBorderRenderer decorator (as in the Blazor sample):
-debugRenderer.EnableLodBlending = false;
+// Disable LOD blending on the controller
+controller.EnableLodBlending = false;
 ```
 
 > **Tip:** To see the difference interactively, load an image, add a simulated tile delay (e.g. 1–2 seconds), zoom in so new tiles must load, then toggle `EnableLodBlending`. With blending on you get a smooth blurry → sharp transition; with blending off you see white rectangles pop in.
@@ -150,22 +146,21 @@ public sealed class TileBorderRenderer : ISKImagePyramidRenderer
 
     public TileBorderRenderer(ISKImagePyramidRenderer inner) => _inner = inner;
 
-    public void Render(SKCanvas canvas, SKImagePyramidDziSource source,
-                       SKImagePyramidViewport viewport, ISKImagePyramidTileCache cache,
-                       SKImagePyramidTileScheduler scheduler)
+    public void BeginRender() => _inner.BeginRender();
+    public void EndRender()   => _inner.EndRender();
+
+    public void DrawTile(SKImagePyramidRectF destRect, ISKImagePyramidTile tile)
     {
-        _inner.Render(canvas, source, viewport, cache, scheduler);
+        _inner.DrawTile(destRect, tile);
         if (!ShowBorders) return;
 
-        // Draw borders over each visible tile
+        // Draw a border over the tile
         using var paint = new SKPaint { IsStroke = true, Color = SKColors.Red.WithAlpha(120) };
-        var tiles = scheduler.GetVisibleTiles(source, viewport);
-        foreach (var req in tiles)
-        {
-            var rect = SKImagePyramidRenderer.GetTileDestRect(source, viewport, req.TileId);
-            canvas.DrawRect(rect, paint);
-        }
+        // (access canvas via casting to SKImagePyramidRenderer if needed)
     }
+
+    public void DrawFallbackTile(SKImagePyramidRectF destRect, SKImagePyramidRectF sourceRect, ISKImagePyramidTile tile)
+        => _inner.DrawFallbackTile(destRect, sourceRect, tile);
 
     public void Dispose() => _inner.Dispose();
 }
@@ -173,14 +168,18 @@ public sealed class TileBorderRenderer : ISKImagePyramidRenderer
 // Wire it up:
 var coreRenderer = new SKImagePyramidRenderer();
 var debugRenderer = new TileBorderRenderer(coreRenderer) { ShowBorders = true };
-var controller = new SKImagePyramidController(renderer: debugRenderer);
+
+// Pass to Render each frame:
+debugRenderer.Canvas = coreRenderer.Canvas = e.Surface.Canvas;
+controller.Render(debugRenderer);
 ```
 
 ### Events
 
 | Event | Signature | Description |
 | :---- | :-------- | :---------- |
-| `ImageOpenSucceeded` | `EventHandler` | Image parsed and ready to render. |
+| `ImageOpenSucceeded` | `EventHandler` | DZI parsed and ready to render. |
+| `CollectionOpenSucceeded` | `EventHandler` | DZC collection parsed; `SubImages` is populated. |
 | `ImageOpenFailed` | `EventHandler<Exception>` | Image failed to parse. |
 | `InvalidateRequired` | `EventHandler` | A tile loaded — trigger a canvas repaint. |
 | `TileFailed` | `EventHandler<SKImagePyramidTileFailedEventArgs>` | A tile download failed. |
@@ -422,8 +421,8 @@ Returned by `SKImagePyramidTileScheduler.GetVisibleTiles()` — represents a sin
 Equality is based on `TileId` only, so a `SKImagePyramidTileRequest` can be de-duplicated by tile regardless of priority:
 
 ```csharp
-// Inspect the scheduler's current view
-var tiles = controller.Scheduler.GetVisibleTiles(controller.TileSource, controller.Viewport);
+// Inspect the tile layout's current view
+var tiles = controller.TileLayout.GetVisibleTiles(controller.TileSource, controller.Viewport);
 foreach (var req in tiles)
     Console.WriteLine($"{req.TileId} priority={req.Priority:F2}");
 ```
