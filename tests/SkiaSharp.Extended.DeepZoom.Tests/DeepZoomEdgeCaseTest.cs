@@ -342,7 +342,7 @@ public class DeepZoomEdgeCaseTest
     // --- SKDeepZoomTileLayout edge cases ---
 
     [Fact]
-    public void TileScheduler_VeryHighZoom_FewTiles()
+    public void TileLayout_VeryHighZoom_FewTiles()
     {
         var dzi = CreateTestDzi(1024, 1024);
         var vp = new SKDeepZoomViewport
@@ -361,7 +361,7 @@ public class DeepZoomEdgeCaseTest
     }
 
     [Fact]
-    public void TileScheduler_MinZoom_ReturnsTiles()
+    public void TileLayout_MinZoom_ReturnsTiles()
     {
         var dzi = CreateTestDzi(4096, 4096);
         var vp = new SKDeepZoomViewport

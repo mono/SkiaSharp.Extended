@@ -24,7 +24,7 @@ public sealed class BrowserStorageTileCache : ISKDeepZoomTileCache
     // In-memory index so Contains/TryGet (sync) can return fast without JS interop round-trips.
     // Capped to prevent unbounded growth (tiles still persist in sessionStorage beyond this limit).
     private const int MaxMemoryEntries = 512;
-    private readonly ConcurrentDictionary<SKDeepZoomTileId, SKBitmap> _memIndex = new();
+    private readonly ConcurrentDictionary<SKDeepZoomTileId, SKDeepZoomBitmapTile> _memIndex = new();
     private int _storageCount;
 
     public BrowserStorageTileCache(IJSRuntime js) => _js = js;
@@ -33,20 +33,20 @@ public sealed class BrowserStorageTileCache : ISKDeepZoomTileCache
 
     // Sync TryGet only looks up the in-memory index (populated when we put tiles).
     // The renderer uses TryGet during drawing -- it must not block on JS interop.
-    public bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap)
+    public bool TryGet(SKDeepZoomTileId id, out ISKDeepZoomTile? tile)
     {
-        if (_memIndex.TryGetValue(id, out var bmp))
+        if (_memIndex.TryGetValue(id, out var bmpTile))
         {
-            bitmap = bmp;
+            tile = bmpTile;
             return true;
         }
-        bitmap = null;
+        tile = null;
         return false;
     }
 
     // TryGetAsync checks browser storage and decodes the bitmap.
     // Called by the controller before hitting the network -- no need to double-fetch.
-    public async Task<SKBitmap?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
+    public async Task<ISKDeepZoomTile?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
     {
         // Fast-path: already in memory index.
         if (_memIndex.TryGetValue(id, out var cached))
@@ -61,31 +61,34 @@ public sealed class BrowserStorageTileCache : ISKDeepZoomTileCache
 
             var bytes = Convert.FromBase64String(base64);
             var bitmap = SKBitmap.Decode(bytes);
-            if (bitmap is not null && _memIndex.Count < MaxMemoryEntries)
-                _memIndex.TryAdd(id, bitmap);
-            return bitmap;
+            if (bitmap is null) return null;
+
+            var tile = new SKDeepZoomBitmapTile(bitmap);
+            if (_memIndex.Count < MaxMemoryEntries)
+                _memIndex.TryAdd(id, tile);
+            return tile;
         }
         catch { return null; }
     }
 
     public bool Contains(SKDeepZoomTileId id) => _memIndex.ContainsKey(id);
 
-    public void Put(SKDeepZoomTileId id, SKBitmap? bitmap)
+    public void Put(SKDeepZoomTileId id, ISKDeepZoomTile? tile)
     {
-        if (bitmap is null) return;
+        if (tile is not SKDeepZoomBitmapTile bmpTile) return;
         if (_memIndex.Count < MaxMemoryEntries)
-            _memIndex[id] = bitmap;
+            _memIndex[id] = bmpTile;
         // Fire-and-forget write to storage (best-effort, no await)
-        _ = WriteToBrowserAsync(id, bitmap, CancellationToken.None);
+        _ = WriteToBrowserAsync(id, bmpTile.Bitmap, CancellationToken.None);
     }
 
-    public async Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default)
+    public async Task PutAsync(SKDeepZoomTileId id, ISKDeepZoomTile? tile, CancellationToken ct = default)
     {
-        if (bitmap is null) return;
-        bool stored = await WriteToBrowserAsync(id, bitmap, ct).ConfigureAwait(false);
+        if (tile is not SKDeepZoomBitmapTile bmpTile) return;
+        bool stored = await WriteToBrowserAsync(id, bmpTile.Bitmap, ct).ConfigureAwait(false);
         // Only cache in memory if the storage write succeeded and we have room.
         if (stored && _memIndex.Count < MaxMemoryEntries)
-            _memIndex.TryAdd(id, bitmap);
+            _memIndex.TryAdd(id, bmpTile);
     }
 
     private async Task<bool> WriteToBrowserAsync(SKDeepZoomTileId id, SKBitmap bitmap, CancellationToken ct)
@@ -105,14 +108,14 @@ public sealed class BrowserStorageTileCache : ISKDeepZoomTileCache
 
     public bool Remove(SKDeepZoomTileId id)
     {
-        _memIndex.TryRemove(id, out var bmp);
-        bmp?.Dispose();
-        return bmp is not null;
+        bool removed = _memIndex.TryRemove(id, out var tile);
+        tile?.Dispose();
+        return removed;
     }
 
     public void Clear()
     {
-        foreach (var bmp in _memIndex.Values) bmp?.Dispose();
+        foreach (var tile in _memIndex.Values) tile?.Dispose();
         _memIndex.Clear();
         _storageCount = 0;
         _ = _js.InvokeVoidAsync("deepZoomCacheClear");

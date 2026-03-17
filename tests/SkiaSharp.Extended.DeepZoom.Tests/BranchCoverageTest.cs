@@ -187,7 +187,7 @@ public class BranchCoverageTest
     // --- SKDeepZoomTileLayout edge cases ---
 
     [Fact]
-    public void TileScheduler_SmallViewport_FewTiles()
+    public void TileLayout_SmallViewport_FewTiles()
     {
         var layout = new SKDeepZoomTileLayout();
         var vp = new SKDeepZoomViewport();

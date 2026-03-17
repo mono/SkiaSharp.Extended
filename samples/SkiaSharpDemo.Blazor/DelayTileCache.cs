@@ -1,4 +1,3 @@
-using SkiaSharp;
 using SkiaSharp.Extended.DeepZoom;
 using System;
 using System.Threading;
@@ -32,16 +31,16 @@ public sealed class DelayTileCache : ISKDeepZoomTileCache
 
     public int Count => _inner.Count;
 
-    public bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap) => _inner.TryGet(id, out bitmap);
+    public bool TryGet(SKDeepZoomTileId id, out ISKDeepZoomTile? tile) => _inner.TryGet(id, out tile);
 
-    public Task<SKBitmap?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
+    public Task<ISKDeepZoomTile?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
         => _inner.TryGetAsync(id, ct);
 
     public bool Contains(SKDeepZoomTileId id) => _inner.Contains(id);
 
-    public void Put(SKDeepZoomTileId id, SKBitmap? bitmap) => _inner.Put(id, bitmap);
+    public void Put(SKDeepZoomTileId id, ISKDeepZoomTile? tile) => _inner.Put(id, tile);
 
-    public async Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default)
+    public async Task PutAsync(SKDeepZoomTileId id, ISKDeepZoomTile? tile, CancellationToken ct = default)
     {
         if (IsEnabled)
         {
@@ -51,7 +50,7 @@ public sealed class DelayTileCache : ISKDeepZoomTileCache
             if (delayMs > 0)
                 await Task.Delay(delayMs, ct).ConfigureAwait(false);
         }
-        await _inner.PutAsync(id, bitmap, ct).ConfigureAwait(false);
+        await _inner.PutAsync(id, tile, ct).ConfigureAwait(false);
     }
 
     public bool Remove(SKDeepZoomTileId id) => _inner.Remove(id);
