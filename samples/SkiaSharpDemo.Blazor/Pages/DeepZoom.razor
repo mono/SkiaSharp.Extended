@@ -48,38 +48,80 @@
         <aside class="dz-inspector">
             <h3>🔍 Inspector</h3>
 
-            @if (_controller?.TileSource is { } src)
-            {
-                <section>
-                    <h4>Image Source</h4>
-                    <dl>
-                        <dt>Dimensions</dt><dd>@src.ImageWidth × @src.ImageHeight px</dd>
-                        <dt>Tile size</dt><dd>@src.TileSize px (+@src.Overlap overlap)</dd>
-                        <dt>Format</dt><dd>@src.Format</dd>
-                        <dt>Levels</dt><dd>@(src.MaxLevel + 1)  (0–@src.MaxLevel)</dd>
-                        <dt>Aspect ratio</dt><dd>@src.AspectRatio.ToString("F4")</dd>
-                    </dl>
-                </section>
-            }
-            else
-            {
-                <p class="dz-muted">No source loaded.</p>
-            }
-
             @if (_controller != null)
             {
-                var vp = _controller.Viewport;
-                <section>
-                    <h4>Viewport</h4>
-                    <dl>
-                        <dt>Control size</dt><dd>@vp.ControlWidth.ToString("F0") × @vp.ControlHeight.ToString("F0")</dd>
-                        <dt>Viewport width</dt><dd>@vp.ViewportWidth.ToString("F6")</dd>
-                        <dt>Viewport height</dt><dd>@vp.ViewportHeight.ToString("F6")</dd>
-                        <dt>Origin</dt><dd>(@vp.ViewportOriginX.ToString("F6"), @vp.ViewportOriginY.ToString("F6"))</dd>
-                        <dt>Scale</dt><dd>@vp.Scale.ToString("F2") px/unit</dd>
-                        <dt>Zoom</dt><dd>@vp.Zoom.ToString("F2")×</dd>
-                    </dl>
-                </section>
+                <details open>
+                    <summary>🔧 Debug &amp; Cache</summary>
+                    <div class="dz-section-body">
+                        <label class="dz-debug-label">
+                            <input type="checkbox" @bind="_showTileBorders" @bind:after="OnDebugOptionsChanged" />
+                            Show Tile Borders
+                        </label>
+                        <label class="dz-debug-label">
+                            <input type="checkbox" @bind="_enableLodBlending" @bind:after="OnDebugOptionsChanged" />
+                            Enable LOD Blending
+                        </label>
+                        <label class="dz-debug-label">
+                            <input type="checkbox" @bind="_useBrowserCache" @bind:after="OnCacheTypeChanged" />
+                            Use browser storage cache (L2)
+                        </label>
+                        <label class="dz-debug-label">
+                            <input type="checkbox" @bind="_cacheDelayEnabled" @bind:after="OnCacheDelayChanged" />
+                            Simulate tile delay (demo)
+                        </label>
+                        @if (_cacheDelayEnabled)
+                        {
+                            <label class="dz-label-row">
+                                Min <strong class="dz-ms-label">@_cacheDelayMin ms</strong>
+                                <input type="range" min="0" max="2500" step="10" @bind="_cacheDelayMin" @bind:after="OnCacheDelayChanged" />
+                            </label>
+                            <label class="dz-label-row">
+                                Max <strong class="dz-ms-label">@_cacheDelayMax ms</strong>
+                                <input type="range" min="0" max="2500" step="10" @bind="_cacheDelayMax" @bind:after="OnCacheDelayChanged" />
+                            </label>
+                        }
+                        <label class="dz-label-row">
+                            Cache size <strong class="dz-ms-label">@_cacheCapacity</strong>
+                            <input type="range" min="64" max="4096" step="64" @bind="_cacheCapacity" @bind:after="OnCacheSizeChanged" />
+                        </label>
+                        <button class="dz-small-btn" @onclick="OnClearCache">Clear Cache</button>
+                    </div>
+                </details>
+
+                @if (_controller.TileSource is { } src)
+                {
+                    <details open>
+                        <summary>🖼 Image Source</summary>
+                        <div class="dz-section-body">
+                            <dl>
+                                <dt>Dimensions</dt><dd>@src.ImageWidth × @src.ImageHeight px</dd>
+                                <dt>Tile size</dt><dd>@src.TileSize px (+@src.Overlap overlap)</dd>
+                                <dt>Format</dt><dd>@src.Format</dd>
+                                <dt>Levels</dt><dd>@(src.MaxLevel + 1)  (0–@src.MaxLevel)</dd>
+                                <dt>Aspect ratio</dt><dd>@src.AspectRatio.ToString("F4")</dd>
+                            </dl>
+                        </div>
+                    </details>
+                }
+                else
+                {
+                    <p class="dz-muted">No source loaded.</p>
+                }
+
+                <details open>
+                    <summary>📐 Viewport</summary>
+                    <div class="dz-section-body">
+                        @{ var vp = _controller.Viewport; }
+                        <dl>
+                            <dt>Control size</dt><dd>@vp.ControlWidth.ToString("F0") × @vp.ControlHeight.ToString("F0")</dd>
+                            <dt>Viewport width</dt><dd>@vp.ViewportWidth.ToString("F6")</dd>
+                            <dt>Viewport height</dt><dd>@vp.ViewportHeight.ToString("F6")</dd>
+                            <dt>Origin</dt><dd>(@vp.ViewportOriginX.ToString("F6"), @vp.ViewportOriginY.ToString("F6"))</dd>
+                            <dt>Scale</dt><dd>@vp.Scale.ToString("F2") px/unit</dd>
+                            <dt>Zoom</dt><dd>@vp.Zoom.ToString("F2")×</dd>
+                        </dl>
+                    </div>
+                </details>
 
                 @if (_controller.TileSource is { } lvlSrc)
                 {
@@ -87,111 +129,79 @@
                     var optLevel = lvlSrc.GetOptimalLevel(vp2.ViewportWidth, vp2.ControlWidth);
                     var levelW = lvlSrc.GetLevelWidth(optLevel);
                     var levelH = lvlSrc.GetLevelHeight(optLevel);
-                    // Tile logical width = tileSize / levelWidth; screen pixels = logical * scale
                     double tilePxW = lvlSrc.TileSize * vp2.Scale / levelW;
                     double tilePxH = lvlSrc.TileSize * vp2.Scale / levelH / lvlSrc.AspectRatio;
                     double nativeZoom = (double)lvlSrc.ImageWidth / vp2.ControlWidth;
-                    // Show warning only when zoom exceeds native 1:1 — i.e. tiles are being upscaled
                     bool isUpscaling = optLevel >= lvlSrc.MaxLevel && vp2.Zoom > nativeZoom;
 
-                    <section>
-                        <h4>Level Selection</h4>
-                        <dl>
-                            <dt>Current level</dt><dd>@optLevel / @lvlSrc.MaxLevel @(isUpscaling ? "⚠️" : "")</dd>
-                            <dt>Level dims</dt><dd>@levelW × @levelH px</dd>
-                            <dt>Tile actual size</dt><dd>@lvlSrc.TileSize × @lvlSrc.TileSize px</dd>
-                            <dt>Tile on screen</dt><dd>@tilePxW.ToString("F1") × @tilePxH.ToString("F1") px</dd>
-                            <dt>Native 1:1 zoom</dt><dd>≈ @nativeZoom.ToString("F2")×</dd>
-                        </dl>
-                        @if (isUpscaling)
-                        {
-                            <p class="dz-muted">⚠️ Max detail — level @lvlSrc.MaxLevel (@levelW×@levelH) is native resolution. Zooming further upscales tiles.</p>
-                        }
-                    </section>
+                    <details open>
+                        <summary>🔢 Level Selection</summary>
+                        <div class="dz-section-body">
+                            <dl>
+                                <dt>Current level</dt><dd>@optLevel / @lvlSrc.MaxLevel @(isUpscaling ? "⚠️" : "")</dd>
+                                <dt>Level dims</dt><dd>@levelW × @levelH px</dd>
+                                <dt>Tile actual size</dt><dd>@lvlSrc.TileSize × @lvlSrc.TileSize px</dd>
+                                <dt>Tile on screen</dt><dd>@tilePxW.ToString("F1") × @tilePxH.ToString("F1") px</dd>
+                                <dt>Native 1:1 zoom</dt><dd>≈ @nativeZoom.ToString("F2")×</dd>
+                            </dl>
+                            @if (isUpscaling)
+                            {
+                                <p class="dz-muted">⚠️ Max detail — level @lvlSrc.MaxLevel (@levelW×@levelH) is native resolution. Zooming further upscales tiles.</p>
+                            }
+                        </div>
+                    </details>
                 }
 
-                var cache = _controller.Cache;
-                <section>
-                    <h4>Tile Cache</h4>
-                    <dl>
-                        <dt>Cached</dt><dd>@cache.Count / @_cacheCapacity</dd>
-                        <dt>Pending</dt><dd>@_controller.PendingTileCount</dd>
-                        <dt>Status</dt><dd>@(_controller.IsIdle ? "✅ Idle" : "⏳ Loading…")</dd>
-                    </dl>
-                </section>
+                <details open>
+                    <summary>🗄 Tile Cache</summary>
+                    <div class="dz-section-body">
+                        @{ var cache = _controller.Cache; }
+                        <dl>
+                            <dt>Cached</dt><dd>@cache.Count / @_cacheCapacity</dd>
+                            <dt>Pending</dt><dd>@_controller.PendingTileCount</dd>
+                            <dt>Status</dt><dd>@(_controller.IsIdle ? "✅ Idle" : "⏳ Loading…")</dd>
+                        </dl>
+                    </div>
+                </details>
 
-                <section>
-                    <h4>Visible Tiles</h4>
-                    @if (_controller.TileSource != null)
-                    {
-                        var tiles = _controller.TileLayout.GetVisibleTiles(_controller.TileSource, _controller.Viewport);
-                        <p class="dz-muted">@tiles.Count tile(s) at current viewport</p>
-                        <table class="dz-tile-table">
-                            <thead><tr><th>Lvl</th><th>Col</th><th>Row</th><th>Pri</th><th>Status</th></tr></thead>
-                            <tbody>
-                                @foreach (var t in tiles.Take(50))
-                                {
-                                    var cached = cache.Contains(t.TileId);
-                                    <tr class="@(cached ? "tile-ok" : "tile-missing")">
-                                        <td>@t.TileId.Level</td>
-                                        <td>@t.TileId.Col</td>
-                                        <td>@t.TileId.Row</td>
-                                        <td>@t.Priority.ToString("F2")</td>
-                                        <td>@(cached ? "✅" : "⏳")</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                        @if (tiles.Count > 50)
+                <details open>
+                    <summary>📋 Visible Tiles</summary>
+                    <div class="dz-section-body">
+                        @if (_controller.TileSource != null)
                         {
-                            <p class="dz-muted">… and @(tiles.Count - 50) more</p>
+                            var tiles = _controller.TileLayout.GetVisibleTiles(_controller.TileSource, _controller.Viewport);
+                            <p class="dz-muted">@tiles.Count tile(s) at current viewport</p>
+                            <table class="dz-tile-table">
+                                <thead><tr><th>Lvl</th><th>Col</th><th>Row</th><th>Pri</th><th>Status</th></tr></thead>
+                                <tbody>
+                                    @foreach (var t in tiles.Take(50))
+                                    {
+                                        var cached = _controller.Cache.Contains(t.TileId);
+                                        <tr class="@(cached ? "tile-ok" : "tile-missing")">
+                                            <td>@t.TileId.Level</td>
+                                            <td>@t.TileId.Col</td>
+                                            <td>@t.TileId.Row</td>
+                                            <td>@t.Priority.ToString("F2")</td>
+                                            <td>@(cached ? "✅" : "⏳")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            @if (tiles.Count > 50)
+                            {
+                                <p class="dz-muted">… and @(tiles.Count - 50) more</p>
+                            }
                         }
-                    }
-                    else
-                    {
-                        <p class="dz-muted">No source loaded.</p>
-                    }
-                </section>
-
-                <section>
-                    <h4>🔧 Debug</h4>
-                    <label class="dz-debug-label">
-                        <input type="checkbox" @bind="_showTileBorders" @bind:after="OnDebugOptionsChanged" />
-                        Show Tile Borders
-                    </label>
-                    <label class="dz-debug-label">
-                        <input type="checkbox" @bind="_enableLodBlending" @bind:after="OnDebugOptionsChanged" />
-                        Enable LOD Blending
-                    </label>
-                </section>
-
-                <section>
-                    <h4>🗄️ Cache Settings</h4>
-                    <label class="dz-debug-label">
-                        <input type="checkbox" @bind="_useBrowserCache" @bind:after="OnCacheTypeChanged" />
-                        Use browser storage cache (L2)
-                    </label>
-                    <label class="dz-debug-label">
-                        <input type="checkbox" @bind="_cacheDelayEnabled" @bind:after="OnCacheDelayChanged" />
-                        Simulate tile delay (demo)
-                    </label>
-                    @if (_cacheDelayEnabled)
-                    {
-                        <label class="dz-label-row">
-                            Min <strong class="dz-ms-label">@_cacheDelayMin ms</strong>
-                            <input type="range" min="0" max="2500" step="10" @bind="_cacheDelayMin" @bind:after="OnCacheDelayChanged" />
-                        </label>
-                        <label class="dz-label-row">
-                            Max <strong class="dz-ms-label">@_cacheDelayMax ms</strong>
-                            <input type="range" min="0" max="2500" step="10" @bind="_cacheDelayMax" @bind:after="OnCacheDelayChanged" />
-                        </label>
-                    }
-                    <label class="dz-label-row">
-                        Size <strong class="dz-ms-label">@_cacheCapacity</strong>
-                        <input type="range" min="64" max="4096" step="64" @bind="_cacheCapacity" @bind:after="OnCacheSizeChanged" />
-                    </label>
-                    <button class="dz-small-btn" @onclick="OnClearCache">Clear Cache</button>
-                </section>
+                        else
+                        {
+                            <p class="dz-muted">No source loaded.</p>
+                        }
+                    </div>
+                </details>
+            }
+            else
+            {
+                <p class="dz-muted">No source loaded.</p>
             }
         </aside>
     }
@@ -261,11 +271,26 @@
     }
 
     .dz-inspector h3 { margin: 0 0 0.5rem; font-size: 1rem; }
-    .dz-inspector h4 { margin: 0.75rem 0 0.25rem; color: #90caf9; border-bottom: 1px solid #333; padding-bottom: 2px; }
     .dz-inspector dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; margin: 0; }
     .dz-inspector dt { color: #aaa; white-space: nowrap; }
     .dz-inspector dd { margin: 0; word-break: break-all; }
-    .dz-inspector section { margin-bottom: 0.5rem; }
+    .dz-inspector details { margin-bottom: 0.4rem; border: 1px solid #333; border-radius: 4px; }
+    .dz-inspector details > summary {
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #90caf9;
+        background: #1e2a38;
+        border-radius: 4px;
+        list-style: none;
+        user-select: none;
+    }
+    .dz-inspector details > summary::-webkit-details-marker { display: none; }
+    .dz-inspector details[open] > summary { border-radius: 4px 4px 0 0; border-bottom: 1px solid #333; }
+    .dz-inspector details > summary::after { content: " ▼"; font-size: 0.65rem; float: right; }
+    .dz-inspector details[open] > summary::after { content: " ▲"; }
+    .dz-section-body { padding: 6px 8px; }
 
     .dz-tile-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
     .dz-tile-table th, .dz-tile-table td { padding: 1px 4px; text-align: center; }

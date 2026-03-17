@@ -2,18 +2,17 @@
 
 using System.IO;
 
-namespace SkiaSharp.Extended.DeepZoom
+namespace SkiaSharp.Extended.DeepZoom;
+
+/// <summary>
+/// Decodes image streams into <see cref="SKDeepZoomBitmapTile"/> using SkiaSharp.
+/// </summary>
+public class SKDeepZoomBitmapTileDecoder : ISKDeepZoomTileDecoder
 {
-    /// <summary>
-    /// Decodes image streams into <see cref="SKDeepZoomBitmapTile"/> using SkiaSharp.
-    /// </summary>
-    public class SKDeepZoomBitmapTileDecoder : ISKDeepZoomTileDecoder
+    /// <inheritdoc />
+    public ISKDeepZoomTile? Decode(Stream data)
     {
-        /// <inheritdoc />
-        public ISKDeepZoomTile? Decode(Stream data)
-        {
-            var bitmap = SKBitmap.Decode(data);
-            return bitmap != null ? new SKDeepZoomBitmapTile(bitmap) : null;
-        }
+        var bitmap = SKBitmap.Decode(data);
+        return bitmap != null ? new SKDeepZoomBitmapTile(bitmap) : null;
     }
 }

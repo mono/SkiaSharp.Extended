@@ -10,15 +10,10 @@ namespace SkiaSharpDemo;
 /// to simulate slow network or disk tile delivery. Use in sample pages to experiment
 /// with progressive loading behaviour.
 /// </summary>
-public sealed class DelayTileCache : ISKDeepZoomTileCache
+public sealed class DelayTileCache(ISKDeepZoomTileCache inner) : ISKDeepZoomTileCache
 {
-    private readonly ISKDeepZoomTileCache _inner;
+    private readonly ISKDeepZoomTileCache _inner = inner ?? throw new ArgumentNullException(nameof(inner));
     private readonly Random _random = new();
-
-    public DelayTileCache(ISKDeepZoomTileCache inner)
-    {
-        _inner = inner ?? throw new ArgumentNullException(nameof(inner));
-    }
 
     /// <summary>When true, a random delay between <see cref="MinDelayMs"/> and <see cref="MaxDelayMs"/> is applied before tiles are stored.</summary>
     public bool IsEnabled { get; set; }

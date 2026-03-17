@@ -18,16 +18,14 @@ namespace SkiaSharpDemo;
 /// leading to incorrect semantics. The cache-aside pattern (controller checks L1 → TryGetAsync L2
 /// → network fetch → populate both) is the standard approach used by Coil, SDWebImage, and Glide.
 /// </summary>
-public sealed class BrowserStorageTileCache : ISKDeepZoomTileCache
+public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKDeepZoomTileCache
 {
-    private readonly IJSRuntime _js;
+    private readonly IJSRuntime _js = js;
     // In-memory index so Contains/TryGet (sync) can return fast without JS interop round-trips.
     // Capped to prevent unbounded growth (tiles still persist in sessionStorage beyond this limit).
     private const int MaxMemoryEntries = 512;
     private readonly ConcurrentDictionary<SKDeepZoomTileId, SKDeepZoomBitmapTile> _memIndex = new();
     private int _storageCount;
-
-    public BrowserStorageTileCache(IJSRuntime js) => _js = js;
 
     public int Count => _memIndex.Count;
 
