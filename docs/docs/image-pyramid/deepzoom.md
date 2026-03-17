@@ -139,6 +139,16 @@ You can generate DZI tile pyramids with:
 | [Sharp](https://sharp.pixelplumbing.com/) | Node.js | High-performance image processing |
 | [Zoomify converter](https://www.zoomify.com/free.htm) | Windows GUI | Cross-format |
 
+### Sample DZI URLs
+
+Try these public DZI files in the demo apps (all support CORS):
+
+| Source | URL | Dimensions |
+| :--- | :--- | :--- |
+| SkiaSharp.Extended testgrid | `https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid.dzi` | Test grid |
+| OpenSeadragon highsmith | `https://openseadragon.github.io/example-images/highsmith/highsmith.dzi` | 7026 × 9221 |
+| OpenSeadragon duomo | `https://openseadragon.github.io/example-images/duomo/duomo.dzi` | 13920 × 10200 |
+
 ---
 
 ## Related
