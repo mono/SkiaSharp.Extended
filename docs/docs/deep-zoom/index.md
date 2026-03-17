@@ -16,6 +16,8 @@ Explore gigapixel images in your .NET MAUI and Blazor apps using the Deep Zoom I
 
 The deep zoom system is intentionally minimal — there is **no custom control** and **no gesture system**. You wire the services directly to a plain `SKCanvasView`, giving you full control.
 
+> **Library split:** The implementation is divided across two packages. `SkiaSharp.Extended.Abstractions` contains platform-agnostic types (controller, viewport, cache and fetcher interfaces). `SkiaSharp.Extended` contains the SkiaSharp-specific implementations (`SKDeepZoomRenderer`, `SKDeepZoomImageTile`, `SKDeepZoomImageTileDecoder`). In most cases you only need to reference `SkiaSharp.Extended`.
+
 ```mermaid
 graph TD
     DZI["DZI / DZC file<br/>(XML descriptor)"]
@@ -46,7 +48,7 @@ graph TD
 | `SKDeepZoomViewport` | Coordinate math between screen pixels and logical (0–1) image space. |
 | `SKDeepZoomTileScheduler` | Determines which tiles are visible and their fetch priority. |
 | `ISKDeepZoomTileCache` | Pluggable tile cache interface (in-memory, browser storage, disk, tiered). |
-| `SKDeepZoomMemoryTileCache` | Default thread-safe LRU in-memory cache for decoded bitmaps. |
+| `SKDeepZoomMemoryTileCache` | Default thread-safe LRU in-memory cache for decoded images. |
 | `ISKDeepZoomTileFetcher` | Pluggable fetcher interface (HTTP, file system, app package). |
 | `SKDeepZoomHttpTileFetcher` | Built-in HTTP fetcher using `HttpClient`. |
 | `SKDeepZoomFileTileFetcher` | Built-in file system fetcher for local/bundled tiles. |

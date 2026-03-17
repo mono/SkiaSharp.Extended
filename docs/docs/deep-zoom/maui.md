@@ -74,12 +74,12 @@ When tiles are bundled as MAUI assets, implement `ISKDeepZoomTileFetcher` to rea
 ```csharp
 public sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
 {
-    public async Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
-            return SKBitmap.Decode(stream);
+            return SKImage.FromEncodedData(stream);
         }
         catch
         {

@@ -1,6 +1,6 @@
 # Deep Zoom — Tile Fetching
 
-Tile fetchers implement `ISKDeepZoomTileFetcher` and supply decoded `SKBitmap` objects to the Deep Zoom controller on demand. Two built-in fetchers cover HTTP and local file sources; you can implement your own for app-package assets, databases, or any other storage.
+Tile fetchers implement `ISKDeepZoomTileFetcher` and supply decoded `SKImage` objects to the Deep Zoom controller on demand. Two built-in fetchers cover HTTP and local file sources; you can implement your own for app-package assets, databases, or any other storage.
 
 ## ISKDeepZoomTileFetcher
 
@@ -8,9 +8,9 @@ Tile fetchers implement `ISKDeepZoomTileFetcher` and supply decoded `SKBitmap` o
 public interface ISKDeepZoomTileFetcher : IDisposable
 {
     /// <summary>
-    /// Fetches a tile as an SKBitmap. Returns null if the tile is not available (e.g. 404).
+    /// Fetches a tile as an SKImage. Returns null if the tile is not available (e.g. 404).
     /// </summary>
-    Task<SKBitmap?> FetchTileAsync(string url, CancellationToken cancellationToken = default);
+    Task<SKImage?> FetchTileAsync(string url, CancellationToken cancellationToken = default);
 }
 ```
 
@@ -61,12 +61,12 @@ Implement `ISKDeepZoomTileFetcher` to load tiles from any source.
 ```csharp
 public sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
 {
-    public async Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
-            return SKBitmap.Decode(stream);
+            return SKImage.FromEncodedData(stream);
         }
         catch
         {
@@ -114,7 +114,7 @@ public sealed class AuthenticatedFetcher : ISKDeepZoomTileFetcher
         _token = token;
     }
 
-    public async Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Authorization = new("Bearer", _token);
@@ -124,7 +124,7 @@ public sealed class AuthenticatedFetcher : ISKDeepZoomTileFetcher
             using var response = await _http.SendAsync(request, ct);
             if (!response.IsSuccessStatusCode) return null;
             using var stream = await response.Content.ReadAsStreamAsync(ct);
-            return SKBitmap.Decode(stream);
+            return SKImage.FromEncodedData(stream);
         }
         catch { return null; }
     }
@@ -142,12 +142,12 @@ public sealed class PreloadedFetcher : ISKDeepZoomTileFetcher
 
     public PreloadedFetcher(Dictionary<string, byte[]> tiles) => _tiles = tiles;
 
-    public Task<SKBitmap?> FetchTileAsync(string url, CancellationToken ct = default)
+    public Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
         if (_tiles.TryGetValue(url, out var bytes))
-            return Task.FromResult<SKBitmap?>(SKBitmap.Decode(bytes));
-        return Task.FromResult<SKBitmap?>(null);
+            return Task.FromResult<SKImage?>(SKImage.FromEncodedData(bytes));
+        return Task.FromResult<SKImage?>(null);
     }
 
     public void Dispose() { }
