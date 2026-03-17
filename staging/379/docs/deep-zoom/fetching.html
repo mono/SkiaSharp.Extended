@@ -86,32 +86,35 @@
         <article data-uid="">
 <h1 id="deep-zoom--tile-fetching">Deep Zoom — Tile Fetching</h1>
 
-<p>Tile fetchers implement <code>ISKDeepZoomTileFetcher</code> and supply decoded <code>SKImage</code> objects to the Deep Zoom controller on demand. Two built-in fetchers cover HTTP and local file sources; you can implement your own for app-package assets, databases, or any other storage.</p>
+<p>Tile fetchers implement <code>ISKDeepZoomTileFetcher</code> and supply decoded <code>ISKDeepZoomTile</code> instances to the Deep Zoom controller on demand. Two built-in fetchers cover HTTP and local file sources; you can implement your own for app-package assets, databases, or any other storage.</p>
+<p>The pipeline is: <strong>fetch</strong> raw bytes → <strong>decode</strong> into a tile → <strong>cache</strong>. The fetcher only fetches; an <code>ISKDeepZoomTileDecoder</code> (injected at construction) handles decoding. This keeps the fetcher backend-agnostic and the decoder swappable.</p>
 <h2 id="iskdeepzoomtilefetcher">ISKDeepZoomTileFetcher</h2>
 <pre><code class="lang-csharp">public interface ISKDeepZoomTileFetcher : IDisposable
 {
     /// &lt;summary&gt;
-    /// Fetches a tile as an SKImage. Returns null if the tile is not available (e.g. 404).
+    /// Fetches and decodes a tile. Returns null if the tile is not available (e.g. 404).
     /// &lt;/summary&gt;
-    Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken cancellationToken = default);
+    Task&lt;ISKDeepZoomTile?&gt; FetchTileAsync(string url, CancellationToken cancellationToken = default);
 }
 </code></pre>
 <p><strong>Return convention:</strong> Return <code>null</code> if the tile is unavailable (HTTP 404, file not found). The controller treats <code>null</code> as &quot;tile missing — keep using fallback&quot; and doesn't retry indefinitely. Throw only for unexpected errors; the controller catches and fires <code>TileFailed</code>.</p>
 <hr>
 <h2 id="skdeepzoomhttptilefetcher">SKDeepZoomHttpTileFetcher</h2>
-<p>Fetches tiles over HTTP. Thread-safe and reusable across multiple controllers.</p>
-<pre><code class="lang-csharp">// Create with an internal HttpClient (controller manages its lifetime)
-var fetcher = new SKDeepZoomHttpTileFetcher();
+<p>Fetches tiles over HTTP and decodes them using an <code>ISKDeepZoomTileDecoder</code>. Thread-safe and reusable across multiple controllers.</p>
+<pre><code class="lang-csharp">// Create with a decoder and an internal HttpClient (fetcher manages its lifetime)
+var decoder = new SKDeepZoomImageTileDecoder();
+var fetcher = new SKDeepZoomHttpTileFetcher(decoder);
 
 // Or pass your app's shared HttpClient (you manage its lifetime)
-var fetcher = new SKDeepZoomHttpTileFetcher(myHttpClient);
+var fetcher = new SKDeepZoomHttpTileFetcher(decoder, myHttpClient);
 </code></pre>
 <p>The fetcher returns <code>null</code> for non-2xx responses and swallows <code>HttpRequestException</code> and <code>TaskCanceledException</code>, making it robust against transient network errors without crashing the tile pipeline.</p>
 <p>When you supply your own <code>HttpClient</code>, the fetcher <strong>does not dispose it</strong> — the caller retains ownership.</p>
 <hr>
 <h2 id="skdeepzoomfiletilefetcher">SKDeepZoomFileTileFetcher</h2>
-<p>Fetches tiles from the local file system. Useful for offline datasets, tests, or locally-generated tile pyramids.</p>
-<pre><code class="lang-csharp">var fetcher = new SKDeepZoomFileTileFetcher();
+<p>Fetches tiles from the local file system and decodes them. Useful for offline datasets, tests, or locally-generated tile pyramids.</p>
+<pre><code class="lang-csharp">var decoder = new SKDeepZoomImageTileDecoder();
+var fetcher = new SKDeepZoomFileTileFetcher(decoder);
 
 // Works with both plain paths and file:// URIs
 var source = SKDeepZoomImageSource.Parse(xml, &quot;/data/images/map_files/&quot;);
@@ -120,16 +123,20 @@ controller.Load(source, fetcher);
 <p>Accepts both plain file paths and <code>file://</code> URIs. Returns <code>null</code> for missing files.</p>
 <hr>
 <h2 id="custom-fetchers">Custom Fetchers</h2>
-<p>Implement <code>ISKDeepZoomTileFetcher</code> to load tiles from any source.</p>
+<p>Implement <code>ISKDeepZoomTileFetcher</code> to load tiles from any source. Inject an <code>ISKDeepZoomTileDecoder</code> to convert raw bytes into <code>ISKDeepZoomTile</code> — this keeps your fetcher rendering-backend-agnostic.</p>
 <h3 id="app-package-assets-maui">App Package Assets (MAUI)</h3>
-<pre><code class="lang-csharp">public sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
+<pre><code class="lang-csharp">public sealed class AppPackageFetcher(ISKDeepZoomTileDecoder decoder) : ISKDeepZoomTileFetcher
 {
-    public async Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task&lt;ISKDeepZoomTile?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
-            return SKImage.FromEncodedData(stream);
+            // Buffer into MemoryStream so the decoder gets a seekable stream
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms, ct);
+            ms.Position = 0;
+            return decoder.Decode(ms);
         }
         catch
         {
@@ -139,6 +146,10 @@ controller.Load(source, fetcher);
 
     public void Dispose() { }
 }
+</code></pre>
+<p>Use it with the SkiaSharp decoder:</p>
+<pre><code class="lang-csharp">var fetcher = new AppPackageFetcher(new SKDeepZoomImageTileDecoder());
+controller.Load(source, fetcher);
 </code></pre>
 <p>Include tile assets in your MAUI project:</p>
 <pre><code class="lang-xml">&lt;ItemGroup&gt;
@@ -154,31 +165,27 @@ var xml = await reader.ReadToEndAsync();
 
 // Use &quot;image_files/&quot; as base URI to match the MauiAsset LogicalName prefix
 var source = SKDeepZoomImageSource.Parse(xml, &quot;image_files/&quot;);
-controller.Load(source, new AppPackageFetcher());
+controller.Load(source, new AppPackageFetcher(new SKDeepZoomImageTileDecoder()));
 </code></pre>
 <h3 id="custom-authentication-or-headers">Custom Authentication or Headers</h3>
-<pre><code class="lang-csharp">public sealed class AuthenticatedFetcher : ISKDeepZoomTileFetcher
+<pre><code class="lang-csharp">public sealed class AuthenticatedFetcher(HttpClient http, string token, ISKDeepZoomTileDecoder decoder)
+    : ISKDeepZoomTileFetcher
 {
-    private readonly HttpClient _http;
-    private readonly string _token;
-
-    public AuthenticatedFetcher(HttpClient http, string token)
-    {
-        _http = http;
-        _token = token;
-    }
-
-    public async Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task&lt;ISKDeepZoomTile?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
-        request.Headers.Authorization = new(&quot;Bearer&quot;, _token);
+        request.Headers.Authorization = new(&quot;Bearer&quot;, token);
 
         try
         {
-            using var response = await _http.SendAsync(request, ct);
+            using var response = await http.SendAsync(request, ct);
             if (!response.IsSuccessStatusCode) return null;
+
+            using var ms = new MemoryStream();
             using var stream = await response.Content.ReadAsStreamAsync(ct);
-            return SKImage.FromEncodedData(stream);
+            await stream.CopyToAsync(ms, ct);
+            ms.Position = 0;
+            return decoder.Decode(ms);
         }
         catch { return null; }
     }
@@ -187,18 +194,18 @@ controller.Load(source, new AppPackageFetcher());
 }
 </code></pre>
 <h3 id="in-memory-or-pre-loaded-tiles">In-Memory or Pre-Loaded Tiles</h3>
-<pre><code class="lang-csharp">public sealed class PreloadedFetcher : ISKDeepZoomTileFetcher
+<pre><code class="lang-csharp">public sealed class PreloadedFetcher(Dictionary&lt;string, byte[]&gt; tiles, ISKDeepZoomTileDecoder decoder)
+    : ISKDeepZoomTileFetcher
 {
-    private readonly Dictionary&lt;string, byte[]&gt; _tiles;
-
-    public PreloadedFetcher(Dictionary&lt;string, byte[]&gt; tiles) =&gt; _tiles = tiles;
-
-    public Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public Task&lt;ISKDeepZoomTile?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
-        if (_tiles.TryGetValue(url, out var bytes))
-            return Task.FromResult&lt;SKImage?&gt;(SKImage.FromEncodedData(bytes));
-        return Task.FromResult&lt;SKImage?&gt;(null);
+        if (tiles.TryGetValue(url, out var bytes))
+        {
+            using var ms = new MemoryStream(bytes);
+            return Task.FromResult(decoder.Decode(ms));
+        }
+        return Task.FromResult&lt;ISKDeepZoomTile?&gt;(null);
     }
 
     public void Dispose() { }
@@ -243,7 +250,7 @@ controller.Load(anotherSource, differentFetcher);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · b2d5aed
+          source: PR #379 · eef3252
         </div>
       </div>
     </footer>
