@@ -204,6 +204,7 @@ public class SKImagePyramidIiifSource : ISKImagePyramidSource
         int tileHeight = 256;
         var scaleFactors = new List<int> { 1 };
 
+        bool tilesParsed = false;
         if (root.TryGetProperty("tiles", out var tilesProp) && tilesProp.ValueKind == JsonValueKind.Array)
         {
             foreach (var tile in tilesProp.EnumerateArray())
@@ -216,12 +217,14 @@ public class SKImagePyramidIiifSource : ISKImagePyramidSource
                 {
                     scaleFactors = sfProp.EnumerateArray().Select(e => e.GetInt32()).ToList();
                 }
+                tilesParsed = true;
                 break; // Use first tile definition only
             }
         }
-        else
+
+        if (!tilesParsed)
         {
-            // No tiles — use whole-image as a single tile
+            // No tiles or empty tiles array — treat whole image as a single tile
             tileWidth = width;
             tileHeight = height;
         }

@@ -417,7 +417,8 @@
             MaxDelayMs = _cacheDelayMax,
         };
 
-        // Create new debug renderer with current settings
+        // Create new debug renderer with current settings (dispose old one first)
+        _debugRenderer?.Dispose();
         _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.SKImagePyramidRenderer())
         {
             ShowTileBorders  = _showTileBorders,
@@ -444,6 +445,7 @@
         }
         // _delayCache owns _innerCache (and transitively _browserCache); dispose cascades.
         _delayCache?.Dispose();
+        _debugRenderer?.Dispose();
     }
 }
 

@@ -22,7 +22,7 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
 {
     private readonly IJSRuntime _js = js;
     // In-memory index so Contains/TryGet (sync) can return fast without JS interop round-trips.
-    // Capped to prevent unbounded growth (tiles still persist in sessionStorage beyond this limit).
+    // When full, oldest entry is evicted (it remains in sessionStorage and can be re-hydrated).
     private const int MaxMemoryEntries = 512;
     private readonly ConcurrentDictionary<SKImagePyramidTileId, SKImagePyramidImageTile> _memIndex = new();
     private int _storageCount;
@@ -62,8 +62,7 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
             if (image is null) return null;
 
             var tile = new SKImagePyramidImageTile(image);
-            if (_memIndex.Count < MaxMemoryEntries)
-                _memIndex.TryAdd(id, tile);
+            AddToMemIndex(id, tile);
             return tile;
         }
         catch { return null; }
@@ -74,8 +73,7 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
     public void Put(SKImagePyramidTileId id, ISKImagePyramidTile? tile)
     {
         if (tile is not SKImagePyramidImageTile imgTile) return;
-        if (_memIndex.Count < MaxMemoryEntries)
-            _memIndex[id] = imgTile;
+        AddToMemIndex(id, imgTile);
         // Fire-and-forget write to storage (best-effort, no await)
         _ = WriteToBrowserAsync(id, imgTile.Image, CancellationToken.None);
     }
@@ -84,9 +82,35 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
     {
         if (tile is not SKImagePyramidImageTile imgTile) return;
         bool stored = await WriteToBrowserAsync(id, imgTile.Image, ct).ConfigureAwait(false);
-        // Only cache in memory if the storage write succeeded and we have room.
-        if (stored && _memIndex.Count < MaxMemoryEntries)
-            _memIndex.TryAdd(id, imgTile);
+        if (stored)
+            AddToMemIndex(id, imgTile);
+    }
+
+    /// <summary>
+    /// Adds or updates an entry in the in-memory index, evicting an arbitrary entry if at capacity.
+    /// Evicted tiles remain in sessionStorage and can be re-hydrated on next TryGetAsync.
+    /// </summary>
+    private void AddToMemIndex(SKImagePyramidTileId id, SKImagePyramidImageTile tile)
+    {
+        // If already present, just update.
+        if (_memIndex.ContainsKey(id))
+        {
+            _memIndex[id] = tile;
+            return;
+        }
+        // Evict one entry if at capacity to make room.
+        if (_memIndex.Count >= MaxMemoryEntries)
+        {
+            foreach (var key in _memIndex.Keys)
+            {
+                if (_memIndex.TryRemove(key, out var evicted))
+                {
+                    evicted?.Dispose();
+                    break;
+                }
+            }
+        }
+        _memIndex.TryAdd(id, tile);
     }
 
     private async Task<bool> WriteToBrowserAsync(SKImagePyramidTileId id, SKImage image, CancellationToken ct)
