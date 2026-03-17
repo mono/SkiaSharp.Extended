@@ -29,7 +29,7 @@ namespace SkiaSharp.Extended;
 /// </remarks>
 public class SKImagePyramidController : IDisposable
 {
-    private SKImagePyramidDziSource? _tileSource;
+    private ISKImagePyramidSource? _tileSource;
     private readonly SKImagePyramidViewport _viewport;
     private readonly SKImagePyramidTileLayout _tileLayout;
     private readonly ISKImagePyramidTileCache _cache;
@@ -64,7 +64,7 @@ public class SKImagePyramidController : IDisposable
     public SKImagePyramidTileLayout TileLayout => _tileLayout;
 
     /// <summary>The loaded tile source, or null if not loaded.</summary>
-    public SKImagePyramidDziSource? TileSource => _tileSource;
+    public ISKImagePyramidSource? TileSource => _tileSource;
 
     /// <summary>The sub-images from the loaded DZC, or empty if not loaded from a DZC.</summary>
     public IReadOnlyList<SKImagePyramidSubImage> SubImages => _subImages;
@@ -109,8 +109,8 @@ public class SKImagePyramidController : IDisposable
 
     // ---- Load ----
 
-    /// <summary>Loads a DZI tile source. Resets the viewport to show the full image.</summary>
-    public void Load(SKImagePyramidDziSource tileSource, ISKImagePyramidTileFetcher fetcher)
+    /// <summary>Loads a DZI or IIIF tile source. Resets the viewport to show the full image.</summary>
+    public void Load(ISKImagePyramidSource tileSource, ISKImagePyramidTileFetcher fetcher)
     {
         try
         {
@@ -390,8 +390,8 @@ public class SKImagePyramidController : IDisposable
 
             if (tile == null && !ct.IsCancellationRequested)
             {
-                string url = _tileSource.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row)
-                    ?? _tileSource.GetTileUrl(tileId.Level, tileId.Col, tileId.Row);
+                string? url = _tileSource.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row);
+                if (url == null) return;
                 tile = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
             }
 

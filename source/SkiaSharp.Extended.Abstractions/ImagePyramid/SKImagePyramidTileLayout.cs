@@ -6,10 +6,9 @@ using System.Collections.Generic;
 namespace SkiaSharp.Extended;
 
 /// <summary>
-/// Computes tile geometry for the Deep Zoom pipeline: which tiles are visible, what
+/// Computes tile geometry for the ImagePyramid pipeline: which tiles are visible, what
 /// fallback tiles exist, and where tiles should be drawn on screen.
-/// Previously named <c>SKImagePyramidTileLayout</c>; renamed to reflect its true purpose
-/// as a tile layout/geometry calculator rather than an async work scheduler.
+/// Works with any <see cref="ISKImagePyramidSource"/> including DZI and IIIF sources.
 /// </summary>
 public class SKImagePyramidTileLayout
 {
@@ -17,7 +16,7 @@ public class SKImagePyramidTileLayout
     /// Computes the set of tiles visible in the current viewport at the optimal level.
     /// </summary>
     public IReadOnlyList<SKImagePyramidTileRequest> GetVisibleTiles(
-        SKImagePyramidDziSource tileSource, SKImagePyramidViewport viewport)
+        ISKImagePyramidSource tileSource, SKImagePyramidViewport viewport)
     {
         int optimalLevel = tileSource.GetOptimalLevel(viewport.ViewportWidth, viewport.ControlWidth);
 
@@ -47,12 +46,18 @@ public class SKImagePyramidTileLayout
         pixelRight = Math.Min(levelWidth, pixelRight);
         pixelBottom = Math.Min(levelHeight, pixelBottom);
 
-        // Convert to tile coordinates
-        int tileSize = tileSource.TileSize;
-        int startCol = Math.Max(0, pixelLeft / tileSize);
-        int startRow = Math.Max(0, pixelTop / tileSize);
-        int endCol = Math.Min(tileSource.GetTileCountX(optimalLevel) - 1, (pixelRight - 1) / tileSize);
-        int endRow = Math.Min(tileSource.GetTileCountY(optimalLevel) - 1, (pixelBottom - 1) / tileSize);
+        // Convert to tile coordinates using tile counts to derive effective tile dimensions.
+        // For DZI: effective tile stride ≈ TileSize (without overlap)
+        // For IIIF: effective tile stride = TileWidth
+        int tileCountX = tileSource.GetTileCountX(optimalLevel);
+        int tileCountY = tileSource.GetTileCountY(optimalLevel);
+        int effectiveTileW = tileCountX > 0 ? (int)Math.Ceiling((double)levelWidth / tileCountX) : levelWidth;
+        int effectiveTileH = tileCountY > 0 ? (int)Math.Ceiling((double)levelHeight / tileCountY) : levelHeight;
+
+        int startCol = Math.Max(0, pixelLeft / Math.Max(1, effectiveTileW));
+        int startRow = Math.Max(0, pixelTop / Math.Max(1, effectiveTileH));
+        int endCol = Math.Min(tileCountX - 1, pixelRight > 0 ? (pixelRight - 1) / Math.Max(1, effectiveTileW) : 0);
+        int endRow = Math.Min(tileCountY - 1, pixelBottom > 0 ? (pixelBottom - 1) / Math.Max(1, effectiveTileH) : 0);
 
         var tiles = new List<SKImagePyramidTileRequest>();
 
@@ -61,8 +66,8 @@ public class SKImagePyramidTileLayout
             for (int col = startCol; col <= endCol; col++)
             {
                 var id = new SKImagePyramidTileId(optimalLevel, col, row);
-                double centerX = (col + 0.5) * tileSize / scaleX;
-                double centerY = (row + 0.5) * tileSize / scaleY;
+                double centerX = (col + 0.5) * effectiveTileW / scaleX;
+                double centerY = (row + 0.5) * effectiveTileH / scaleY;
 
                 // Priority: distance from viewport center (closer = higher priority)
                 double vpCenterX = (left + right) / 2;
@@ -106,7 +111,7 @@ public class SKImagePyramidTileLayout
     /// Returns an <see cref="SKImagePyramidRectF"/> in parent-bitmap pixel coordinates.
     /// </summary>
     public SKImagePyramidRectF GetFallbackSourceRect(
-        SKImagePyramidTileId requested, SKImagePyramidTileId parent, SKImagePyramidDziSource tileSource)
+        SKImagePyramidTileId requested, SKImagePyramidTileId parent, ISKImagePyramidSource tileSource)
     {
         int levelDiff = requested.Level - parent.Level;
         int scale = 1 << levelDiff;
@@ -133,7 +138,7 @@ public class SKImagePyramidTileLayout
     /// independent of any rendering backend.
     /// </summary>
     public SKImagePyramidRectF GetTileDestRect(
-        SKImagePyramidDziSource tileSource,
+        ISKImagePyramidSource tileSource,
         SKImagePyramidViewport viewport,
         SKImagePyramidTileId tileId)
     {

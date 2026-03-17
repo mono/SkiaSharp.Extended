@@ -11,7 +11,7 @@ namespace SkiaSharp.Extended;
 /// Represents a Deep Zoom Image (DZI) tile source. Parses the DZI XML descriptor
 /// and provides tile pyramid math for computing tile URLs and dimensions.
 /// </summary>
-public class SKImagePyramidDziSource
+public class SKImagePyramidDziSource : ISKImagePyramidSource
 {
     private const string DeepZoomNamespace2008 = "http://schemas.microsoft.com/deepzoom/2008";
     private const string DeepZoomNamespace2009 = "http://schemas.microsoft.com/deepzoom/2009";

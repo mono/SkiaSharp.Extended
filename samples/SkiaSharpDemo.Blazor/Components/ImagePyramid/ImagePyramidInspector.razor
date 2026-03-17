@@ -57,8 +57,16 @@
                 <div class="dz-section-body">
                     <dl>
                         <dt>Dimensions</dt><dd>@src.ImageWidth × @src.ImageHeight px</dd>
-                        <dt>Tile size</dt><dd>@src.TileSize px (+@src.Overlap overlap)</dd>
-                        <dt>Format</dt><dd>@src.Format</dd>
+                        @if (src is SKImagePyramidDziSource dzi)
+                        {
+                            <dt>Tile size</dt><dd>@dzi.TileSize px (+@dzi.Overlap overlap)</dd>
+                            <dt>Format</dt><dd>@dzi.Format</dd>
+                        }
+                        else if (src is SKImagePyramidIiifSource iiif)
+                        {
+                            <dt>Tile size</dt><dd>@iiif.TileWidth × @iiif.TileHeight px</dd>
+                            <dt>Format</dt><dd>@iiif.Format (IIIF)</dd>
+                        }
                         <dt>Levels</dt><dd>@(src.MaxLevel + 1)  (0–@src.MaxLevel)</dd>
                         <dt>Aspect ratio</dt><dd>@src.AspectRatio.ToString("F4")</dd>
                     </dl>
@@ -91,8 +99,10 @@
             var optLevel = lvlSrc.GetOptimalLevel(vp2.ViewportWidth, vp2.ControlWidth);
             var levelW = lvlSrc.GetLevelWidth(optLevel);
             var levelH = lvlSrc.GetLevelHeight(optLevel);
-            double tilePxW = lvlSrc.TileSize * vp2.Scale / levelW;
-            double tilePxH = lvlSrc.TileSize * vp2.Scale / levelH / lvlSrc.AspectRatio;
+            int tileW = lvlSrc is SKImagePyramidDziSource dzi2 ? dzi2.TileSize : (lvlSrc is SKImagePyramidIiifSource iiif2 ? iiif2.TileWidth : 256);
+            int tileH = lvlSrc is SKImagePyramidDziSource dzi3 ? dzi3.TileSize : (lvlSrc is SKImagePyramidIiifSource iiif3 ? iiif3.TileHeight : 256);
+            double tilePxW = tileW * vp2.Scale / levelW;
+            double tilePxH = tileH * vp2.Scale / levelH / lvlSrc.AspectRatio;
             double nativeZoom = (double)lvlSrc.ImageWidth / vp2.ControlWidth;
             bool isUpscaling = optLevel >= lvlSrc.MaxLevel && vp2.Zoom > nativeZoom;
 
@@ -102,7 +112,7 @@
                     <dl>
                         <dt>Current level</dt><dd>@optLevel / @lvlSrc.MaxLevel @(isUpscaling ? "⚠️" : "")</dd>
                         <dt>Level dims</dt><dd>@levelW × @levelH px</dd>
-                        <dt>Tile actual size</dt><dd>@lvlSrc.TileSize × @lvlSrc.TileSize px</dd>
+                        <dt>Tile actual size</dt><dd>@tileW × @tileH px</dd>
                         <dt>Tile on screen</dt><dd>@tilePxW.ToString("F1") × @tilePxH.ToString("F1") px</dd>
                         <dt>Native 1:1 zoom</dt><dd>≈ @nativeZoom.ToString("F2")×</dd>
                     </dl>

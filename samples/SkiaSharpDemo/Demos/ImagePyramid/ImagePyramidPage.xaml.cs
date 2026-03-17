@@ -58,25 +58,36 @@ public partial class ImagePyramidPage : ContentPage
         try
         {
             using var client = new HttpClient();
-            var xml = await client.GetStringAsync(url);
+            var content = await client.GetStringAsync(url);
 
             // Derive tiles base URL from the manifest URL
             bool isDzc    = url.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase);
+            bool isDzi    = url.EndsWith(".dzi", StringComparison.OrdinalIgnoreCase);
+            bool isIiif   = url.EndsWith("/info.json", StringComparison.OrdinalIgnoreCase)
+                || url.Contains("/iiif/", StringComparison.OrdinalIgnoreCase)
+                || url.Contains("iiif.io", StringComparison.OrdinalIgnoreCase);
             string baseDir = url[..url.LastIndexOf('/')] + "/";
             string stem    = System.IO.Path.GetFileNameWithoutExtension(url);
 
             if (isDzc)
             {
-                var coll = SKImagePyramidDziCollectionSource.Parse(xml);
+                var coll = SKImagePyramidDziCollectionSource.Parse(content);
                 coll.TilesBaseUri = baseDir;
                 _controller.Load(coll, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
                 SyncSliderFromViewport();
                 statusLabel.Text = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
+            else if (isIiif || (!isDzi && content.TrimStart().StartsWith("{")))
+            {
+                var tileSource = SKImagePyramidIiifSource.Parse(content);
+                _controller.Load(tileSource, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+                SyncSliderFromViewport();
+                statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels, IIIF)";
+            }
             else
             {
                 string tilesBase = $"{baseDir}{stem}_files/";
-                var tileSource = SKImagePyramidDziSource.Parse(xml, tilesBase);
+                var tileSource = SKImagePyramidDziSource.Parse(content, tilesBase);
                 _controller.Load(tileSource, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
                 SyncSliderFromViewport();
                 statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
