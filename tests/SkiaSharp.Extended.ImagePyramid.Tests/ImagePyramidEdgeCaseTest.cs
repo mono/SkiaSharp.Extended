@@ -469,4 +469,68 @@ public class ImagePyramidEdgeCaseTest
         }
         return new SKImagePyramidDziCollectionSource(8, 256, "jpg", items);
     }
+
+    // ---- Regression: tiles at canvas/image edge must not be silently dropped ----
+
+    [Fact]
+    public void TileLayout_DziWithOverlap_EdgeTilesNotMissed()
+    {
+        // DZI with overlap=1: col 1 starts at pixel TileSize-Overlap=255 (not 257).
+        // When the viewport right edge is at pixel 256, col 1 IS visible and must be included.
+        var dzi = CreateTestDzi(1024, 1024); // 4 cols/rows, TileSize=256, Overlap=1
+        var optLevel = dzi.MaxLevel;
+
+        // Verify the test DZI has overlap=1 as expected
+        Assert.Equal(1, dzi.Overlap);
+        Assert.Equal(256, dzi.TileSize);
+
+        var layout = new SKImagePyramidTileLayout();
+        var vp = new SKImagePyramidViewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+        };
+
+        // Level has 4 cols; col 1 starts at x=255 (TileSize-Overlap).
+        // Set viewport so pixelRight lands at 256 (boundary that previously missed col 1).
+        int levelWidth = dzi.GetLevelWidth(optLevel); // should be 1024
+        // viewport right = 256/levelWidth in logical coords
+        double logRight = 256.0 / levelWidth;
+        vp.ViewportWidth = logRight; // viewport from 0 to logRight
+        vp.ViewportOriginX = 0;
+
+        var tiles = layout.GetVisibleTiles(dzi, vp);
+        var cols = new System.Collections.Generic.HashSet<int>(tiles.Select(t => t.TileId.Col));
+
+        // With viewport [0, 256) in pixel space, both col 0 (x=0) and col 1 (x=255) should be included.
+        Assert.Contains(0, cols);
+        Assert.Contains(1, cols);
+    }
+
+    [Fact]
+    public void TileLayout_IiifSource_EdgeTilesNotMissed()
+    {
+        // IIIF: tileWidth=256, imageWidth=1000 → 4 cols (0-3), exact strides.
+        // col 1 starts at x=256. When pixelRight=257, col 1 must be included.
+        var iiif = new SKImagePyramidIiifSource(
+            "http://example.com/img",
+            imageWidth: 1000, imageHeight: 1000,
+            tileWidth: 256, tileHeight: 256,
+            scaleFactorsDescending: new[] { 1 });
+
+        var layout = new SKImagePyramidTileLayout();
+        var vp = new SKImagePyramidViewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            ViewportWidth = 257.0 / 1000, // pixelRight = ceil(257/1000 * 1000) = 257
+            ViewportOriginX = 0,
+        };
+
+        var tiles = layout.GetVisibleTiles(iiif, vp);
+        var cols = new System.Collections.Generic.HashSet<int>(tiles.Select(t => t.TileId.Col));
+
+        // Col 1 starts at pixel 256 < 257 = pixelRight, so it IS visible.
+        Assert.Contains(1, cols);
+    }
 }

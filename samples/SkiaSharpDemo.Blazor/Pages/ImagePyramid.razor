@@ -62,6 +62,8 @@
             @bind-CacheDelayMax:after="OnCacheDelayChanged"
             @bind-CacheCapacity="_cacheCapacity"
             @bind-CacheCapacity:after="OnCacheSizeChanged"
+            @bind-DebugZoom="_debugZoom"
+            @bind-DebugZoom:after="OnDebugZoomChanged"
             OnDebugOptionsChanged="OnDebugOptionsChanged"
             OnCacheTypeChanged="OnCacheTypeChanged"
             OnCacheDelayChanged="OnCacheDelayChanged"
@@ -97,6 +99,8 @@
     // _innerCache is the cache directly wrapped by _delayCache (owned; dispose via _delayCache)
     private ISKImagePyramidTileCache? _innerCache;
     private BrowserStorageTileCache? _browserCache; // same ref as _innerCache when _useBrowserCache=true
+    // Debug zoom: scales the entire canvas to reveal what is off-screen (0.1–1.0)
+    private float _debugZoom = 1.0f;
 
     // URL input
     private string _urlInput = DefaultDziUrl;
@@ -159,7 +163,8 @@
     private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
     {
         if (_controller == null || _debugRenderer == null) return;
-        e.Surface.Canvas.Clear(SKColors.White);
+        var canvas = e.Surface.Canvas;
+        canvas.Clear(SKColors.White);
 
         var w = e.BackendRenderTarget.Width;
         var h = e.BackendRenderTarget.Height;
@@ -173,9 +178,36 @@
             _controller.SetControlSize(w, h);
         }
 
+        // Debug zoom: scale the entire canvas so we can see what's off-screen.
+        // The controller renders at full canvas size (correct logical coords), but
+        // the output is visually scaled down to fit in _debugZoom of the canvas.
+        bool hasDebugZoom = _debugZoom < 0.999f;
+        if (hasDebugZoom)
+        {
+            canvas.Save();
+            canvas.Scale(_debugZoom);
+        }
+
         _controller.Update();
-        _debugRenderer.Canvas = e.Surface.Canvas;
+        _debugRenderer.Canvas = canvas;
         _controller.Render(_debugRenderer);
+
+        // Draw canvas bounds rect to show where the screen edge is
+        if (hasDebugZoom)
+        {
+            using var borderPaint = new SKPaint
+            {
+                Color = SKColors.Red,
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 3f / _debugZoom, // keep visually ~3px regardless of zoom
+                PathEffect = SKPathEffect.CreateDash(
+                    new float[] { 12f / _debugZoom, 6f / _debugZoom }, 0),
+                IsAntialias = true,
+            };
+            canvas.DrawRect(0, 0, w, h, borderPaint);
+
+            canvas.Restore();
+        }
     }
 
     private void OnInvalidateRequired(object? sender, EventArgs e)
@@ -351,6 +383,9 @@
         _controller.EnableLodBlending = _enableLodBlending;
         InvokeAsync(() => _canvas?.Invalidate());
     }
+
+    private void OnDebugZoomChanged()
+        => InvokeAsync(() => _canvas?.Invalidate());
 
     private void OnCacheDelayChanged()
     {
