@@ -1,6 +1,6 @@
 using Microsoft.JSInterop;
 using SkiaSharp;
-using SkiaSharp.Extended.DeepZoom;
+using SkiaSharp.Extended;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;

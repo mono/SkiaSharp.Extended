@@ -2,7 +2,7 @@
 
 using System;
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// A floating-point axis-aligned rectangle used for screen-space tile geometry.

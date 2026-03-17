@@ -1,4 +1,4 @@
-using SkiaSharp.Extended.DeepZoom;
+using SkiaSharp.Extended;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

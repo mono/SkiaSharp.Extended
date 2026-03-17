@@ -2,7 +2,7 @@
 
 using System;
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Opaque handle representing a decoded tile image.

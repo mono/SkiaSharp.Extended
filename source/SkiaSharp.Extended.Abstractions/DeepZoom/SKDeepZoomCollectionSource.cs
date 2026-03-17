@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Xml.Linq;
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Represents a Deep Zoom Collection (DZC) — a composite tiled pyramid of multiple images.

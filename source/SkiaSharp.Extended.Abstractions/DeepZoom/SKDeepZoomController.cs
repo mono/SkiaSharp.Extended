@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling,

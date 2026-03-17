@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>Immutable snapshot of viewport position and zoom.</summary>
 public readonly record struct SKDeepZoomViewportState(double ViewportWidth, double OriginX, double OriginY)

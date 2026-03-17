@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Represents a single sub-image within a DZC collection.

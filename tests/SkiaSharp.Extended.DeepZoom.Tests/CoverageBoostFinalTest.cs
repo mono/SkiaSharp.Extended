@@ -1,5 +1,5 @@
 using SkiaSharp;
-using SkiaSharp.Extended.DeepZoom;
+using SkiaSharp.Extended;
 using System.Net;
 using System.Net.Http;
 using Xunit;

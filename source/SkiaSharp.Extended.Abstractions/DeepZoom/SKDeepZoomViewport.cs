@@ -2,7 +2,7 @@
 
 using System;
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Manages the Deep Zoom viewport — the logical window into the image.

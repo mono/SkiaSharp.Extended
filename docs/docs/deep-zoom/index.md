@@ -58,7 +58,7 @@ graph TD
 ### 1. Create a controller
 
 ```csharp
-using SkiaSharp.Extended.DeepZoom;
+using SkiaSharp.Extended;
 
 // Default: in-memory LRU cache with 1024 tile capacity
 var controller = new SKDeepZoomController();
@@ -215,6 +215,6 @@ controller.ResetView();
 
 - [Deep Zoom specification](https://docs.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/cc645050(v=vs.95)) — Microsoft's original documentation
 - [OpenSeadragon](https://openseadragon.github.io/) — Popular JavaScript Deep Zoom viewer
-- [API Reference — SKDeepZoomController](xref:SkiaSharp.Extended.DeepZoom.SKDeepZoomController)
+- [API Reference — SKDeepZoomController](xref:SkiaSharp.Extended.SKDeepZoomController)
 
 

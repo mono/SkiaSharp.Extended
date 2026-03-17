@@ -2,7 +2,7 @@
 
 using System.IO;
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Decodes raw image data from a stream into an <see cref="ISKDeepZoomTile"/>.

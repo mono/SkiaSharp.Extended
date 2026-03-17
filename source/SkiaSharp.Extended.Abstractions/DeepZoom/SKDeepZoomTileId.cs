@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Identifies a single tile in the pyramid.

@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// A <see cref="ISKDeepZoomTile"/> backed by an <see cref="SKBitmap"/>.

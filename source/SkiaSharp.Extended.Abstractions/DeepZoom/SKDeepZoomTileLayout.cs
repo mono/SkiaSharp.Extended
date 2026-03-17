@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Computes tile geometry for the Deep Zoom pipeline: which tiles are visible, what

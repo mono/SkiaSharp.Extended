@@ -8,7 +8,7 @@ Use `SKDeepZoomController` with a plain `SKCanvasView` in Blazor WebAssembly to 
 @page "/deepzoom"
 @implements IAsyncDisposable
 @inject HttpClient Http
-@using SkiaSharp.Extended.DeepZoom
+@using SkiaSharp.Extended
 
 <SKCanvasView @ref="_canvas"
               OnPaintSurface="OnPaintSurface"

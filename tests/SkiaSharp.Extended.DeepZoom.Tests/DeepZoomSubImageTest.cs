@@ -1,4 +1,4 @@
-using SkiaSharp.Extended.DeepZoom;
+using SkiaSharp.Extended;
 using Xunit;
 
 namespace SkiaSharp.Extended.DeepZoom.Tests;

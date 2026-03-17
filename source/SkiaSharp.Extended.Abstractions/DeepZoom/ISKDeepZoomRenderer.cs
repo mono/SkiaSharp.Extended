@@ -2,7 +2,7 @@
 
 using System;
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Renders individual Deep Zoom tiles onto a drawing surface.

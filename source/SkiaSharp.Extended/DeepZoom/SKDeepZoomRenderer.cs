@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// SkiaSharp implementation of <see cref="ISKDeepZoomRenderer"/>.

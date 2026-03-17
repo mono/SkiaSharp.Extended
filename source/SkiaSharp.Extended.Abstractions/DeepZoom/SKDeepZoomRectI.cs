@@ -2,7 +2,7 @@
 
 using System;
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// An integer-precision axis-aligned rectangle used for tile pixel bounds within a pyramid level.

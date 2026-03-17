@@ -22,7 +22,7 @@ Use `SKDeepZoomController` with a plain `SKCanvasView` in .NET MAUI to render De
 
 ```csharp
 using SkiaSharp;
-using SkiaSharp.Extended.DeepZoom;
+using SkiaSharp.Extended;
 using SkiaSharp.Views.Maui;
 
 public partial class DeepZoomPage : ContentPage

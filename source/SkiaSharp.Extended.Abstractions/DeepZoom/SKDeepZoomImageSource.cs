@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 
-namespace SkiaSharp.Extended.DeepZoom;
+namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Represents a Deep Zoom Image (DZI) tile source. Parses the DZI XML descriptor

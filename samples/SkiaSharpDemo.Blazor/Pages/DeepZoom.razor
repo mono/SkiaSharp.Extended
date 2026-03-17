@@ -2,7 +2,7 @@
 @implements IAsyncDisposable
 @inject HttpClient Http
 @inject IJSRuntime JS
-@using SkiaSharp.Extended.DeepZoom
+@using SkiaSharp.Extended
 
 <PageTitle>Deep Zoom</PageTitle>
 
@@ -435,9 +435,9 @@
         _thisRef = DotNetObjectReference.Create(this);
         await JS.InvokeVoidAsync("deepZoomRegisterResize", _thisRef);
 
-        _innerCache = new SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache(_cacheCapacity);
+        _innerCache = new SkiaSharp.Extended.SKDeepZoomMemoryTileCache(_cacheCapacity);
         _delayCache = new DelayTileCache(_innerCache);
-        _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer());
+        _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.SKDeepZoomRenderer());
         _controller = new SKDeepZoomController(_delayCache);
         _controller.EnableLodBlending = _enableLodBlending;
         _controller.InvalidateRequired += OnInvalidateRequired;
@@ -644,7 +644,7 @@
         var source = _controller.TileSource;  // save BEFORE dispose
         RebuildControllerCache();
         if (source != null)
-            _controller.Load(source, new SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher(new SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTileDecoder()));
+            _controller.Load(source, new SkiaSharp.Extended.SKDeepZoomHttpTileFetcher(new SkiaSharp.Extended.SKDeepZoomBitmapTileDecoder()));
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
@@ -654,7 +654,7 @@
         var source = _controller.TileSource;  // save BEFORE dispose
         RebuildControllerCache();
         if (source != null)
-            _controller.Load(source, new SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher(new SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTileDecoder()));
+            _controller.Load(source, new SkiaSharp.Extended.SKDeepZoomHttpTileFetcher(new SkiaSharp.Extended.SKDeepZoomBitmapTileDecoder()));
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
@@ -682,7 +682,7 @@
         }
         else
         {
-            _innerCache = new SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache(_cacheCapacity);
+            _innerCache = new SkiaSharp.Extended.SKDeepZoomMemoryTileCache(_cacheCapacity);
         }
 
         _delayCache = new DelayTileCache(_innerCache)
@@ -693,7 +693,7 @@
         };
 
         // Create new debug renderer with current settings
-        _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer())
+        _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.SKDeepZoomRenderer())
         {
             ShowTileBorders  = _showTileBorders,
         };
