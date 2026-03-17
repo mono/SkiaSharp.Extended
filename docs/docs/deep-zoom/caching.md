@@ -1,6 +1,8 @@
 # Deep Zoom — Caching
 
-The tile cache stores decoded `SKImage` objects so tiles don't need to be re-fetched or re-decoded on every frame. The cache is **pluggable** — swap implementations to tune memory usage, add persistence, or chain multiple tiers.
+The tile cache stores decoded `ISKDeepZoomTile` instances so tiles don't need to be re-fetched or re-decoded on every frame. The cache is **pluggable** — swap implementations to tune memory usage, add persistence, or chain multiple tiers.
+
+`ISKDeepZoomTile` is an opaque interface; the SkiaSharp implementation (`SKDeepZoomImageTile`) wraps an `SKImage`, but the cache itself is rendering-backend-agnostic.
 
 ## ISKDeepZoomTileCache
 
@@ -13,19 +15,19 @@ public interface ISKDeepZoomTileCache : IDisposable
     int Count { get; }
 
     /// <summary>Synchronous lookup — used by the renderer (no blocking I/O).</summary>
-    bool TryGet(SKDeepZoomTileId id, out SKImage? image);
+    bool TryGet(SKDeepZoomTileId id, out ISKDeepZoomTile? tile);
 
     /// <summary>Async lookup — use for I/O-backed tiers (disk, browser storage).</summary>
-    Task<SKImage?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default);
+    Task<ISKDeepZoomTile?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default);
 
     /// <summary>Returns true if the tile is cached.</summary>
     bool Contains(SKDeepZoomTileId id);
 
     /// <summary>Synchronous write — for in-memory caches.</summary>
-    void Put(SKDeepZoomTileId id, SKImage? image);
+    void Put(SKDeepZoomTileId id, ISKDeepZoomTile? tile);
 
     /// <summary>Async write — for I/O-backed caches or cache decorators.</summary>
-    Task PutAsync(SKDeepZoomTileId id, SKImage? image, CancellationToken ct = default);
+    Task PutAsync(SKDeepZoomTileId id, ISKDeepZoomTile? tile, CancellationToken ct = default);
 
     /// <summary>Removes a specific tile.</summary>
     bool Remove(SKDeepZoomTileId id);
@@ -34,8 +36,8 @@ public interface ISKDeepZoomTileCache : IDisposable
     void Clear();
 
     /// <summary>
-    /// Disposes images evicted since the last call.
-    /// Call once per render frame before drawing to safely free GPU-bound images.
+    /// Disposes tiles evicted since the last call.
+    /// Call once per render frame before drawing to safely free GPU-bound resources.
     /// </summary>
     void FlushEvicted();
 }
@@ -78,7 +80,7 @@ var controller = new SKDeepZoomController(cache: cache);
 
 ### Eviction and Disposal
 
-Evicted images are held in a pending-dispose queue rather than immediately freed. Call `FlushEvicted()` once per frame (before `Render`) to safely free GPU-bound images:
+Evicted tiles are held in a pending-dispose queue rather than immediately freed. Call `FlushEvicted()` once per frame (before `Render`) to safely free GPU-bound resources:
 
 ```csharp
 void OnPaintSurface(SKPaintSurfaceEventArgs e)
@@ -100,7 +102,7 @@ void OnPaintSurface(SKPaintSurfaceEventArgs e)
 | Mid-range mobile | 256–512 |
 | Low-memory devices | 64–128 |
 
-Each tile is typically a 256×256 JPEG/PNG decoded to an `SKImage` — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of image RAM at maximum.
+Each tile is typically a 256×256 JPEG/PNG decoded to an `SKDeepZoomImageTile` wrapping an `SKImage` — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of image RAM at maximum.
 
 ---
 
@@ -140,26 +142,26 @@ public sealed class TieredCache : ISKDeepZoomTileCache
         _l2 = l2;
     }
 
-    public bool TryGet(SKDeepZoomTileId id, out SKImage? image)
-        => _l1.TryGet(id, out image);
+    public bool TryGet(SKDeepZoomTileId id, out ISKDeepZoomTile? tile)
+        => _l1.TryGet(id, out tile);
 
-    public async Task<SKImage?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
+    public async Task<ISKDeepZoomTile?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
     {
         // Fast path: already in L1
-        if (_l1.TryGet(id, out var img)) return img;
+        if (_l1.TryGet(id, out var tile)) return tile;
 
         // Slow path: check disk
-        img = await _l2.ReadAsync(id, ct);
-        if (img is not null)
-            _l1.Put(id, img);   // promote to L1
-        return img;
+        tile = await _l2.ReadAsync(id, ct);
+        if (tile is not null)
+            _l1.Put(id, tile);   // promote to L1
+        return tile;
     }
 
-    public void Put(SKDeepZoomTileId id, SKImage? image)      => _l1.Put(id, image);
-    public async Task PutAsync(SKDeepZoomTileId id, SKImage? image, CancellationToken ct = default)
+    public void Put(SKDeepZoomTileId id, ISKDeepZoomTile? tile)      => _l1.Put(id, tile);
+    public async Task PutAsync(SKDeepZoomTileId id, ISKDeepZoomTile? tile, CancellationToken ct = default)
     {
-        _l1.Put(id, image);
-        await _l2.WriteAsync(id, image, ct);
+        _l1.Put(id, tile);
+        await _l2.WriteAsync(id, tile, ct);
     }
 
     public bool Contains(SKDeepZoomTileId id)   => _l1.Contains(id);
@@ -194,47 +196,47 @@ Assert.Equal(id, same);  // ✅
 
 ## Writing a Custom Cache
 
-Any class that implements `ISKDeepZoomTileCache` can be used. Minimal in-memory example:
+Any class that implements `ISKDeepZoomTileCache` can be used. Tiles are stored as `ISKDeepZoomTile` — the cache has no knowledge of the rendering backend. Minimal in-memory example:
 
 ```csharp
 public sealed class BoundedDictionaryCache : ISKDeepZoomTileCache
 {
-    private readonly Dictionary<SKDeepZoomTileId, SKImage> _store = new();
+    private readonly Dictionary<SKDeepZoomTileId, ISKDeepZoomTile> _store = new();
     private readonly int _maxEntries;
 
     public BoundedDictionaryCache(int maxEntries) => _maxEntries = maxEntries;
 
     public int Count => _store.Count;
 
-    public bool TryGet(SKDeepZoomTileId id, out SKImage? image)
-        => _store.TryGetValue(id, out image);
+    public bool TryGet(SKDeepZoomTileId id, out ISKDeepZoomTile? tile)
+        => _store.TryGetValue(id, out tile);
 
-    public Task<SKImage?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
-        => Task.FromResult(_store.TryGetValue(id, out var img) ? img : null);
+    public Task<ISKDeepZoomTile?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
+        => Task.FromResult(_store.TryGetValue(id, out var t) ? t : null);
 
     public bool Contains(SKDeepZoomTileId id) => _store.ContainsKey(id);
 
-    public void Put(SKDeepZoomTileId id, SKImage? image)
+    public void Put(SKDeepZoomTileId id, ISKDeepZoomTile? tile)
     {
-        if (image is null || _store.Count >= _maxEntries) return;
-        _store[id] = image;
+        if (tile is null || _store.Count >= _maxEntries) return;
+        _store[id] = tile;
     }
 
-    public Task PutAsync(SKDeepZoomTileId id, SKImage? image, CancellationToken ct = default)
+    public Task PutAsync(SKDeepZoomTileId id, ISKDeepZoomTile? tile, CancellationToken ct = default)
     {
-        Put(id, image);
+        Put(id, tile);
         return Task.CompletedTask;
     }
 
     public bool Remove(SKDeepZoomTileId id)
     {
-        if (_store.Remove(id, out var img)) { img?.Dispose(); return true; }
+        if (_store.Remove(id, out var t)) { t?.Dispose(); return true; }
         return false;
     }
 
     public void Clear()
     {
-        foreach (var img in _store.Values) img?.Dispose();
+        foreach (var t in _store.Values) t?.Dispose();
         _store.Clear();
     }
 

@@ -28,6 +28,7 @@ using SkiaSharp.Views.Maui;
 public partial class DeepZoomPage : ContentPage
 {
     private readonly SKDeepZoomController _controller = new();
+    private readonly SKDeepZoomRenderer _renderer = new();
 
     public DeepZoomPage()
     {
@@ -54,7 +55,7 @@ public partial class DeepZoomPage : ContentPage
         var xml = await reader.ReadToEndAsync();
 
         var source = SKDeepZoomImageSource.Parse(xml, "image_files/");
-        _controller.Load(source, new AppPackageFetcher());
+        _controller.Load(source, new AppPackageFetcher(new SKDeepZoomImageTileDecoder()));
         canvas.InvalidateSurface();
     }
 
@@ -62,24 +63,28 @@ public partial class DeepZoomPage : ContentPage
     {
         _controller.SetControlSize(e.Info.Width, e.Info.Height);
         _controller.Update();
-        _controller.Render(e.Surface.Canvas);
+        _renderer.Canvas = e.Surface.Canvas;
+        _controller.Render(_renderer);
     }
 }
 ```
 
 ## App-Package Tile Fetcher
 
-When tiles are bundled as MAUI assets, implement `ISKDeepZoomTileFetcher` to read them via `FileSystem.OpenAppPackageFileAsync`:
+When tiles are bundled as MAUI assets, implement `ISKDeepZoomTileFetcher` to read them via `FileSystem.OpenAppPackageFileAsync`. Inject `ISKDeepZoomTileDecoder` so the fetcher stays rendering-agnostic:
 
 ```csharp
-public sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
+public sealed class AppPackageFetcher(ISKDeepZoomTileDecoder decoder) : ISKDeepZoomTileFetcher
 {
-    public async Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
-            return SKImage.FromEncodedData(stream);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms, ct);
+            ms.Position = 0;
+            return decoder.Decode(ms);
         }
         catch
         {
@@ -89,6 +94,12 @@ public sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
 
     public void Dispose() { }
 }
+```
+
+Use it with the SkiaSharp decoder:
+
+```csharp
+_controller.Load(source, new AppPackageFetcher(new SKDeepZoomImageTileDecoder()));
 ```
 
 Include assets in the project file:
@@ -108,7 +119,7 @@ For remote images, use the built-in `SKDeepZoomHttpTileFetcher`:
 
 ```csharp
 using var httpClient = new HttpClient();
-var fetcher = new SKDeepZoomHttpTileFetcher(httpClient);
+var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder(), httpClient);
 
 var xml    = await httpClient.GetStringAsync("https://example.com/image.dzi");
 var source = SKDeepZoomImageSource.Parse(xml, "https://example.com/image_files/");
