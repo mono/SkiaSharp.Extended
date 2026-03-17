@@ -40,20 +40,20 @@ public class SKDeepZoomRenderer : ISKDeepZoomRenderer
     public void DrawTile(SKDeepZoomRectF destRect, ISKDeepZoomTile tile)
     {
         if (Canvas == null) return;
-        var bitmap = ((SKDeepZoomBitmapTile)tile).Bitmap;
-        var src = new SKRect(0, 0, bitmap.Width, bitmap.Height);
+        var image = ((SKDeepZoomImageTile)tile).Image;
+        var src = new SKRect(0, 0, image.Width, image.Height);
         var dest = new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom);
-        Canvas.DrawBitmap(bitmap, src, dest, _tilePaint);
+        Canvas.DrawImage(image, src, dest, _tilePaint);
     }
 
     /// <inheritdoc />
     public void DrawFallbackTile(SKDeepZoomRectF destRect, SKDeepZoomRectF sourceRect, ISKDeepZoomTile tile)
     {
         if (Canvas == null) return;
-        var bitmap = ((SKDeepZoomBitmapTile)tile).Bitmap;
+        var image = ((SKDeepZoomImageTile)tile).Image;
         var src  = new SKRect(sourceRect.X, sourceRect.Y, sourceRect.Right, sourceRect.Bottom);
         var dest = new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom);
-        Canvas.DrawBitmap(bitmap, src, dest, _tilePaint);
+        Canvas.DrawImage(image, src, dest, _tilePaint);
     }
 
     /// <inheritdoc />

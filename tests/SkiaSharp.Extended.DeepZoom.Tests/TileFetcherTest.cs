@@ -11,7 +11,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_ExistingFile_ReturnsBitmap()
     {
-        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         // Create a temporary image file
         var tmpPath = Path.Combine(Path.GetTempPath(), $"tile_test_{Guid.NewGuid()}.png");
         try
@@ -24,9 +24,9 @@ public class TileFetcherTest
 
             var tile = await fetcher.FetchTileAsync(tmpPath);
             Assert.NotNull(tile);
-            var bitmap = ((SKDeepZoomBitmapTile)tile!).Bitmap;
-            Assert.Equal(64, bitmap.Width);
-            Assert.Equal(64, bitmap.Height);
+            var img = ((SKDeepZoomImageTile)tile!).Image;
+            Assert.Equal(64, img.Width);
+            Assert.Equal(64, img.Height);
             tile.Dispose();
         }
         finally
@@ -38,7 +38,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_NonexistentFile_ReturnsNull()
     {
-        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         var result = await fetcher.FetchTileAsync("/nonexistent/path/tile.png");
         Assert.Null(result);
     }
@@ -46,7 +46,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_FileUri_Works()
     {
-        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         var tmpPath = Path.Combine(Path.GetTempPath(), $"tile_test_{Guid.NewGuid()}.png");
         try
         {
@@ -70,7 +70,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_InvalidImage_ReturnsNull()
     {
-        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         var tmpPath = Path.Combine(Path.GetTempPath(), $"tile_test_{Guid.NewGuid()}.png");
         try
         {
@@ -87,7 +87,7 @@ public class TileFetcherTest
     [Fact]
     public async Task HttpTileFetcher_InvalidUrl_ReturnsNull()
     {
-        var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder());
         // This will fail to connect, should return null
         var result = await fetcher.FetchTileAsync("http://localhost:0/nonexistent.png");
         Assert.Null(result);
@@ -97,7 +97,7 @@ public class TileFetcherTest
     [Fact]
     public async Task HttpTileFetcher_CancellationToken_ReturnsNull()
     {
-        var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder());
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
@@ -110,7 +110,7 @@ public class TileFetcherTest
     public void HttpTileFetcher_AcceptsExternalClient()
     {
         var client = new System.Net.Http.HttpClient();
-        var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder(), client);
+        var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder(), client);
         fetcher.Dispose();
         // External client should not be disposed
         Assert.NotNull(client);
@@ -120,14 +120,14 @@ public class TileFetcherTest
     [Fact]
     public void FileTileFetcher_Dispose_DoesNotThrow()
     {
-        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         fetcher.Dispose();
     }
 
     [Fact]
     public async Task FileTileFetcher_NonexistentPath_ReturnsNull()
     {
-        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         var result = await fetcher.FetchTileAsync(Path.Combine(Path.GetTempPath(), "does_not_exist_" + Guid.NewGuid() + ".png"));
         Assert.Null(result);
     }
@@ -135,7 +135,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_ValidImagePath_ReturnsNonNullBitmap()
     {
-        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         var tmpPath = Path.Combine(Path.GetTempPath(), $"fetcher_valid_{Guid.NewGuid()}.png");
         try
         {
@@ -147,9 +147,9 @@ public class TileFetcherTest
 
             var tile = await fetcher.FetchTileAsync(tmpPath);
             Assert.NotNull(tile);
-            var bitmap = ((SKDeepZoomBitmapTile)tile!).Bitmap;
-            Assert.Equal(32, bitmap.Width);
-            Assert.Equal(32, bitmap.Height);
+            var img = ((SKDeepZoomImageTile)tile!).Image;
+            Assert.Equal(32, img.Width);
+            Assert.Equal(32, img.Height);
             tile.Dispose();
         }
         finally
@@ -161,7 +161,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_CancelledToken_ThrowsOperationCanceledException()
     {
-        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 

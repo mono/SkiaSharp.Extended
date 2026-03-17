@@ -225,7 +225,7 @@
             {
                 var coll = SKDeepZoomCollectionSource.Parse(xml);
                 coll.TilesBaseUri = baseDir;
-                _controller.Load(coll, new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder()));
+                _controller.Load(coll, new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder()));
                 SyncZoomFromViewport();
                 _statusText = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
@@ -233,7 +233,7 @@
             {
                 string tilesBase = $"{baseDir}{stem}_files/";
                 var tileSource = SKDeepZoomImageSource.Parse(xml, tilesBase);
-                _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder()));
+                _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder()));
                 SyncZoomFromViewport();
                 _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             }
@@ -340,7 +340,7 @@
         var source = _controller.TileSource;  // save BEFORE dispose
         RebuildControllerCache();
         if (source != null)
-            _controller.Load(source, new SkiaSharp.Extended.SKDeepZoomHttpTileFetcher(new SkiaSharp.Extended.SKDeepZoomBitmapTileDecoder()));
+            _controller.Load(source, new SkiaSharp.Extended.SKDeepZoomHttpTileFetcher(new SkiaSharp.Extended.SKDeepZoomImageTileDecoder()));
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
@@ -350,7 +350,7 @@
         var source = _controller.TileSource;  // save BEFORE dispose
         RebuildControllerCache();
         if (source != null)
-            _controller.Load(source, new SkiaSharp.Extended.SKDeepZoomHttpTileFetcher(new SkiaSharp.Extended.SKDeepZoomBitmapTileDecoder()));
+            _controller.Load(source, new SkiaSharp.Extended.SKDeepZoomHttpTileFetcher(new SkiaSharp.Extended.SKDeepZoomImageTileDecoder()));
         InvokeAsync(() => _canvas?.Invalidate());
     }
 

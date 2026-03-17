@@ -69,7 +69,7 @@ public partial class DeepZoomPage : ContentPage
             {
                 var coll = SKDeepZoomCollectionSource.Parse(xml);
                 coll.TilesBaseUri = baseDir;
-                _controller.Load(coll, new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder()));
+                _controller.Load(coll, new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder()));
                 SyncSliderFromViewport();
                 statusLabel.Text = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
@@ -77,7 +77,7 @@ public partial class DeepZoomPage : ContentPage
             {
                 string tilesBase = $"{baseDir}{stem}_files/";
                 var tileSource = SKDeepZoomImageSource.Parse(xml, tilesBase);
-                _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder()));
+                _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder()));
                 SyncSliderFromViewport();
                 statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             }

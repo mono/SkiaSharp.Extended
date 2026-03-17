@@ -162,7 +162,7 @@ public class ControllerTileLoadingTest
 
         controller.Load(dzi, fetcher);
         controller.Cache.Put(new SKDeepZoomTileId(0, 0, 0),
-            new SKDeepZoomBitmapTile(CreateSolidBitmap(256, 256, SKColors.Blue)));
+            new SKDeepZoomImageTile(CreateSolidImage(256, 256, SKColors.Blue)));
 
         using var surface = SKSurface.Create(new SKImageInfo(400, 400));
         using var renderer = new SKDeepZoomRenderer();
@@ -187,12 +187,11 @@ public class ControllerTileLoadingTest
         Assert.Equal(300, screen.Y, 1);
     }
 
-    private static SKBitmap CreateSolidBitmap(int w, int h, SKColor color)
+    private static SKImage CreateSolidImage(int w, int h, SKColor color)
     {
-        var bmp = new SKBitmap(w, h);
-        using var canvas = new SKCanvas(bmp);
-        canvas.Clear(color);
-        return bmp;
+        using var surface = SKSurface.Create(new SKImageInfo(w, h));
+        surface.Canvas.Clear(color);
+        return surface.Snapshot();
     }
 }
 

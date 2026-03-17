@@ -9,7 +9,7 @@ public class TileFetchersTest
     [Fact]
     public async Task FileTileFetcher_NonExistentFile_ReturnsNull()
     {
-        using var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        using var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         var result = await fetcher.FetchTileAsync("/nonexistent/path/tile.jpg");
         Assert.Null(result);
     }
@@ -17,7 +17,7 @@ public class TileFetchersTest
     [Fact]
     public async Task FileTileFetcher_FileUriScheme_ReturnsNull_WhenMissing()
     {
-        using var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        using var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         var result = await fetcher.FetchTileAsync("file:///nonexistent/path/tile.jpg");
         Assert.Null(result);
     }
@@ -25,7 +25,7 @@ public class TileFetchersTest
     [Fact]
     public async Task FileTileFetcher_CancellationToken_Throws()
     {
-        using var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        using var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
@@ -36,7 +36,7 @@ public class TileFetchersTest
     [Fact]
     public void FileTileFetcher_Dispose_DoesNotThrow()
     {
-        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
         fetcher.Dispose(); // Should not throw
     }
 
@@ -47,20 +47,20 @@ public class TileFetchersTest
         var tempPath = Path.GetTempFileName() + ".png";
         try
         {
-            using (var bitmap = new SkiaSharp.SKBitmap(10, 10))
-            using (var image = SkiaSharp.SKImage.FromBitmap(bitmap))
+            using (var bmp = new SkiaSharp.SKBitmap(10, 10))
+            using (var image = SkiaSharp.SKImage.FromBitmap(bmp))
             using (var data = image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100))
             using (var stream = File.OpenWrite(tempPath))
             {
                 data.SaveTo(stream);
             }
 
-            using var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomBitmapTileDecoder());
+            using var fetcher = new SKDeepZoomFileTileFetcher(new SKDeepZoomImageTileDecoder());
             var result = await fetcher.FetchTileAsync(tempPath);
             Assert.NotNull(result);
-            var bmp = ((SKDeepZoomBitmapTile)result!).Bitmap;
-            Assert.Equal(10, bmp.Width);
-            Assert.Equal(10, bmp.Height);
+            var resultImage = ((SKDeepZoomImageTile)result!).Image;
+            Assert.Equal(10, resultImage.Width);
+            Assert.Equal(10, resultImage.Height);
             result.Dispose();
         }
         finally
@@ -75,21 +75,21 @@ public class TileFetchersTest
     [Fact]
     public void HttpTileFetcher_DefaultConstructor_CreatesClient()
     {
-        using var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        using var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder());
         // Should not throw
     }
 
     [Fact]
     public void HttpTileFetcher_NullClient_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder(), null!));
+        Assert.Throws<ArgumentNullException>(() => new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder(), null!));
     }
 
     [Fact]
     public void HttpTileFetcher_ExternalClient_NotDisposed()
     {
         var client = new System.Net.Http.HttpClient();
-        var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder(), client);
+        var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder(), client);
         fetcher.Dispose();
 
         // External client should still be usable (not disposed)
@@ -101,7 +101,7 @@ public class TileFetchersTest
     [Fact]
     public async Task HttpTileFetcher_CancelledToken_ReturnsNull()
     {
-        using var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder());
+        using var fetcher = new SKDeepZoomHttpTileFetcher(new SKDeepZoomImageTileDecoder());
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 

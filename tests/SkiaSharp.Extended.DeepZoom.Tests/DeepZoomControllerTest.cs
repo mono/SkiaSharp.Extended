@@ -10,19 +10,18 @@ namespace SkiaSharp.Extended.DeepZoom.Tests;
 /// </summary>
 internal class MemoryTileFetcher : ISKDeepZoomTileFetcher
 {
-    private readonly ConcurrentDictionary<string, SKBitmap> _tiles = new();
+    private readonly ConcurrentDictionary<string, SKImage> _tiles = new();
     public int FetchCount { get; private set; }
     public List<string> FetchedUrls { get; } = new();
     public bool IsDisposed { get; private set; }
 
-    public void AddTile(string url, SKBitmap bitmap) => _tiles[url] = bitmap;
+    public void AddTile(string url, SKImage image) => _tiles[url] = image;
 
     public void AddSolidTile(string url, int width, int height, SKColor color)
     {
-        var bitmap = new SKBitmap(width, height);
-        using var canvas = new SKCanvas(bitmap);
-        canvas.Clear(color);
-        _tiles[url] = bitmap;
+        using var surface = SKSurface.Create(new SKImageInfo(width, height));
+        surface.Canvas.Clear(color);
+        _tiles[url] = surface.Snapshot();
     }
 
     public Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken ct = default)
@@ -30,8 +29,8 @@ internal class MemoryTileFetcher : ISKDeepZoomTileFetcher
         FetchCount++;
         FetchedUrls.Add(url);
 
-        if (_tiles.TryGetValue(url, out var bmp))
-            return Task.FromResult<ISKDeepZoomTile?>(new SKDeepZoomBitmapTile(bmp));
+        if (_tiles.TryGetValue(url, out var image))
+            return Task.FromResult<ISKDeepZoomTile?>(new SKDeepZoomImageTile(image));
 
         return Task.FromResult<ISKDeepZoomTile?>(null);
     }
@@ -39,8 +38,8 @@ internal class MemoryTileFetcher : ISKDeepZoomTileFetcher
     public void Dispose()
     {
         IsDisposed = true;
-        foreach (var bmp in _tiles.Values)
-            bmp.Dispose();
+        foreach (var image in _tiles.Values)
+            image.Dispose();
         _tiles.Clear();
     }
 }

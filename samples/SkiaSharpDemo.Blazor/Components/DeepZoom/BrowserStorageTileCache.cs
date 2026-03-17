@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 namespace SkiaSharpDemo;
 
 /// <summary>
-/// A tile cache that persists decoded tile bitmaps in browser sessionStorage via JS interop.
-/// Bitmaps are encoded as PNG bytes and stored as base64 strings.
+/// A tile cache that persists decoded tile images in browser sessionStorage via JS interop.
+/// Images are encoded as PNG bytes and stored as base64 strings.
 /// This demonstrates L2 cache in a tiered memory → storage → network hierarchy.
 ///
 /// Architecture note: async TryGetAsync is the right approach for storage-backed caches.
@@ -24,7 +24,7 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKDeepZoomTileCach
     // In-memory index so Contains/TryGet (sync) can return fast without JS interop round-trips.
     // Capped to prevent unbounded growth (tiles still persist in sessionStorage beyond this limit).
     private const int MaxMemoryEntries = 512;
-    private readonly ConcurrentDictionary<SKDeepZoomTileId, SKDeepZoomBitmapTile> _memIndex = new();
+    private readonly ConcurrentDictionary<SKDeepZoomTileId, SKDeepZoomImageTile> _memIndex = new();
     private int _storageCount;
 
     public int Count => _memIndex.Count;
@@ -33,16 +33,16 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKDeepZoomTileCach
     // The renderer uses TryGet during drawing -- it must not block on JS interop.
     public bool TryGet(SKDeepZoomTileId id, out ISKDeepZoomTile? tile)
     {
-        if (_memIndex.TryGetValue(id, out var bmpTile))
+        if (_memIndex.TryGetValue(id, out var imgTile))
         {
-            tile = bmpTile;
+            tile = imgTile;
             return true;
         }
         tile = null;
         return false;
     }
 
-    // TryGetAsync checks browser storage and decodes the bitmap.
+    // TryGetAsync checks browser storage and decodes the image.
     // Called by the controller before hitting the network -- no need to double-fetch.
     public async Task<ISKDeepZoomTile?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
     {
@@ -58,10 +58,10 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKDeepZoomTileCach
             if (base64 is null) return null;
 
             var bytes = Convert.FromBase64String(base64);
-            var bitmap = SKBitmap.Decode(bytes);
-            if (bitmap is null) return null;
+            var image = SKImage.FromEncodedData(bytes);
+            if (image is null) return null;
 
-            var tile = new SKDeepZoomBitmapTile(bitmap);
+            var tile = new SKDeepZoomImageTile(image);
             if (_memIndex.Count < MaxMemoryEntries)
                 _memIndex.TryAdd(id, tile);
             return tile;
@@ -73,28 +73,27 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKDeepZoomTileCach
 
     public void Put(SKDeepZoomTileId id, ISKDeepZoomTile? tile)
     {
-        if (tile is not SKDeepZoomBitmapTile bmpTile) return;
+        if (tile is not SKDeepZoomImageTile imgTile) return;
         if (_memIndex.Count < MaxMemoryEntries)
-            _memIndex[id] = bmpTile;
+            _memIndex[id] = imgTile;
         // Fire-and-forget write to storage (best-effort, no await)
-        _ = WriteToBrowserAsync(id, bmpTile.Bitmap, CancellationToken.None);
+        _ = WriteToBrowserAsync(id, imgTile.Image, CancellationToken.None);
     }
 
     public async Task PutAsync(SKDeepZoomTileId id, ISKDeepZoomTile? tile, CancellationToken ct = default)
     {
-        if (tile is not SKDeepZoomBitmapTile bmpTile) return;
-        bool stored = await WriteToBrowserAsync(id, bmpTile.Bitmap, ct).ConfigureAwait(false);
+        if (tile is not SKDeepZoomImageTile imgTile) return;
+        bool stored = await WriteToBrowserAsync(id, imgTile.Image, ct).ConfigureAwait(false);
         // Only cache in memory if the storage write succeeded and we have room.
         if (stored && _memIndex.Count < MaxMemoryEntries)
-            _memIndex.TryAdd(id, bmpTile);
+            _memIndex.TryAdd(id, imgTile);
     }
 
-    private async Task<bool> WriteToBrowserAsync(SKDeepZoomTileId id, SKBitmap bitmap, CancellationToken ct)
+    private async Task<bool> WriteToBrowserAsync(SKDeepZoomTileId id, SKImage image, CancellationToken ct)
     {
         try
         {
-            using var image = SKImage.FromBitmap(bitmap);
-            using var data  = image.Encode(SKEncodedImageFormat.Png, 100);
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
             var base64 = Convert.ToBase64String(data.ToArray());
             await _js.InvokeVoidAsync("deepZoomCacheSet", ct, TileKey(id), base64)
                      .ConfigureAwait(false);

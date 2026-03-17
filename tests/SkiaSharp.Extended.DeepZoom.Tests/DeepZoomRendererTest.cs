@@ -58,7 +58,7 @@ public class DeepZoomRendererTest
         var bitmap = new SKBitmap(256, 256);
         using (var tileCanvas = new SKCanvas(bitmap))
             tileCanvas.Clear(SKColors.Red);
-        cache.Put(tileId, new SKDeepZoomBitmapTile(bitmap));
+        cache.Put(tileId, new SKDeepZoomImageTile(SKImage.FromBitmap(bitmap)));
 
         // Clear surface to white
         surface.Canvas.Clear(SKColors.White);
@@ -110,7 +110,7 @@ public class DeepZoomRendererTest
             var bitmap = new SKBitmap(256, 256);
             using (var tileCanvas = new SKCanvas(bitmap))
                 tileCanvas.Clear(SKColors.Blue);
-            cache.Put(tileId, new SKDeepZoomBitmapTile(bitmap));
+            cache.Put(tileId, new SKDeepZoomImageTile(SKImage.FromBitmap(bitmap)));
         }
 
         surface.Canvas.Clear(SKColors.White);
@@ -155,7 +155,7 @@ public class DeepZoomRendererTest
             var bmp = new SKBitmap(256, 256);
             using (var c = new SKCanvas(bmp))
                 c.Clear(SKColors.Green);
-            cache.Put(req.TileId, new SKDeepZoomBitmapTile(bmp));
+            cache.Put(req.TileId, new SKDeepZoomImageTile(SKImage.FromBitmap(bmp)));
         }
 
         surface.Canvas.Clear(SKColors.White);
@@ -213,7 +213,7 @@ public class DeepZoomRendererTest
         var bmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(bmp))
             c.Clear(SKColors.Magenta);
-        cache.Put(tileId, new SKDeepZoomBitmapTile(bmp));
+        cache.Put(tileId, new SKDeepZoomImageTile(SKImage.FromBitmap(bmp)));
 
         // Clear to white, then render
         surface.Canvas.Clear(SKColors.White);
@@ -266,7 +266,7 @@ public class DeepZoomRendererTest
         var bmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(bmp))
             c.Clear(SKColors.Green);
-        cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomBitmapTile(bmp));
+        cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomImageTile(SKImage.FromBitmap(bmp)));
 
         var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(512, 512);
@@ -333,7 +333,7 @@ public class DeepZoomRendererTest
         var bmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(bmp))
             c.Clear(SKColors.Cyan);
-        cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomBitmapTile(bmp));
+        cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomImageTile(SKImage.FromBitmap(bmp)));
 
         // Also put tiles for whichever level the layout picks
         var tiles = layout.GetVisibleTiles(dzi, controller.Viewport);
@@ -344,7 +344,7 @@ public class DeepZoomRendererTest
                 var tileBmp = new SKBitmap(256, 256);
                 using (var c = new SKCanvas(tileBmp))
                     c.Clear(SKColors.Cyan);
-                cache.Put(t.TileId, new SKDeepZoomBitmapTile(tileBmp));
+                cache.Put(t.TileId, new SKDeepZoomImageTile(SKImage.FromBitmap(tileBmp)));
             }
         }
 
@@ -378,7 +378,7 @@ public class DeepZoomRendererTest
         // Only cache a level-0 (1x1 pixel) parent tile as yellow — do NOT cache the requested level tiles
         var parentBmp = new SKBitmap(1, 1);
         parentBmp.SetPixel(0, 0, SKColors.Yellow);
-        cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomBitmapTile(parentBmp));
+        cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomImageTile(SKImage.FromBitmap(parentBmp)));
 
         var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(512, 512);
@@ -448,7 +448,7 @@ public class DeepZoomRendererTest
         // Only cache a low-level parent tile to trigger single-pass fallback
         var parentBmp = new SKBitmap(1, 1);
         parentBmp.SetPixel(0, 0, SKColors.Yellow);
-        cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomBitmapTile(parentBmp));
+        cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomImageTile(SKImage.FromBitmap(parentBmp)));
 
         var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(512, 512);
@@ -500,7 +500,7 @@ public class DeepZoomRendererTest
         // Cache a blue parent tile at level 0 (fallback)
         var parentBmp = new SKBitmap(1, 1);
         parentBmp.SetPixel(0, 0, SKColors.Blue);
-        cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomBitmapTile(parentBmp));
+        cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomImageTile(SKImage.FromBitmap(parentBmp)));
 
         // Cache a green high-res tile for only the first visible tile
         var visibleTiles = layout.GetVisibleTiles(dzi, controller.Viewport);
@@ -509,7 +509,7 @@ public class DeepZoomRendererTest
         var highResBmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(highResBmp))
             c.Clear(SKColors.Green);
-        cache.Put(firstTile, new SKDeepZoomBitmapTile(highResBmp));
+        cache.Put(firstTile, new SKDeepZoomImageTile(SKImage.FromBitmap(highResBmp)));
 
         surface.Canvas.Clear(SKColors.White);
         renderer.Canvas = surface.Canvas;

@@ -37,7 +37,7 @@ public class DeepZoomRenderPipelineTest
             var bmp = new SKBitmap(dzi.TileSize, dzi.TileSize);
             using var canvas2 = new SKCanvas(bmp);
             canvas2.Clear(SKColors.CornflowerBlue);
-            cache.Put(request.TileId, new SKDeepZoomBitmapTile(bmp));
+            cache.Put(request.TileId, new SKDeepZoomImageTile(SKImage.FromBitmap(bmp)));
         }
 
         // Render
