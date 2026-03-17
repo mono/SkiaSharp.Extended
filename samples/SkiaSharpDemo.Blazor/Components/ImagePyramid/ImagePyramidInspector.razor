@@ -1,52 +1,52 @@
 @using SkiaSharp.Extended
 
-<aside class="dz-inspector">
+<aside class="ip-inspector">
     <h3>🔍 Inspector</h3>
 
     @if (Controller != null)
     {
         <details open>
             <summary>🔧 Debug &amp; Cache</summary>
-            <div class="dz-section-body">
-                <label class="dz-debug-label">
+            <div class="ip-section-body">
+                <label class="ip-debug-label">
                     <input type="checkbox" checked="@ShowTileBorders"
                            @onchange="async e => { await ShowTileBordersChanged.InvokeAsync((bool)e.Value!); await OnDebugOptionsChanged.InvokeAsync(); }" />
                     Show Tile Borders
                 </label>
-                <label class="dz-debug-label">
+                <label class="ip-debug-label">
                     <input type="checkbox" checked="@EnableLodBlending"
                            @onchange="async e => { await EnableLodBlendingChanged.InvokeAsync((bool)e.Value!); await OnDebugOptionsChanged.InvokeAsync(); }" />
                     Enable LOD Blending
                 </label>
-                <label class="dz-debug-label">
+                <label class="ip-debug-label">
                     <input type="checkbox" checked="@UseBrowserCache"
                            @onchange="async e => { await UseBrowserCacheChanged.InvokeAsync((bool)e.Value!); await OnCacheTypeChanged.InvokeAsync(); }" />
                     Use browser storage cache (L2)
                 </label>
-                <label class="dz-debug-label">
+                <label class="ip-debug-label">
                     <input type="checkbox" checked="@CacheDelayEnabled"
                            @onchange="async e => { await CacheDelayEnabledChanged.InvokeAsync((bool)e.Value!); await OnCacheDelayChanged.InvokeAsync(); }" />
                     Simulate tile delay (demo)
                 </label>
                 @if (CacheDelayEnabled)
                 {
-                    <label class="dz-label-row">
-                        Min <strong class="dz-ms-label">@CacheDelayMin ms</strong>
+                    <label class="ip-label-row">
+                        Min <strong class="ip-ms-label">@CacheDelayMin ms</strong>
                         <input type="range" min="0" max="2500" step="10" value="@CacheDelayMin"
                                @onchange="async e => { await CacheDelayMinChanged.InvokeAsync(int.Parse(e.Value!.ToString()!)); await OnCacheDelayChanged.InvokeAsync(); }" />
                     </label>
-                    <label class="dz-label-row">
-                        Max <strong class="dz-ms-label">@CacheDelayMax ms</strong>
+                    <label class="ip-label-row">
+                        Max <strong class="ip-ms-label">@CacheDelayMax ms</strong>
                         <input type="range" min="0" max="2500" step="10" value="@CacheDelayMax"
                                @onchange="async e => { await CacheDelayMaxChanged.InvokeAsync(int.Parse(e.Value!.ToString()!)); await OnCacheDelayChanged.InvokeAsync(); }" />
                     </label>
                 }
-                <label class="dz-label-row">
-                    Cache size <strong class="dz-ms-label">@CacheCapacity</strong>
+                <label class="ip-label-row">
+                    Cache size <strong class="ip-ms-label">@CacheCapacity</strong>
                     <input type="range" min="64" max="4096" step="64" value="@CacheCapacity"
                            @onchange="async e => { await CacheCapacityChanged.InvokeAsync(int.Parse(e.Value!.ToString()!)); await OnCacheSizeChanged.InvokeAsync(); }" />
                 </label>
-                <button class="dz-small-btn" @onclick="OnClearCache">Clear Cache</button>
+                <button class="ip-small-btn" @onclick="OnClearCache">Clear Cache</button>
             </div>
         </details>
 
@@ -54,7 +54,7 @@
         {
             <details open>
                 <summary>🖼 Image Source</summary>
-                <div class="dz-section-body">
+                <div class="ip-section-body">
                     <dl>
                         <dt>Dimensions</dt><dd>@src.ImageWidth × @src.ImageHeight px</dd>
                         @if (src is SKImagePyramidDziSource dzi)
@@ -75,12 +75,12 @@
         }
         else
         {
-            <p class="dz-muted">No source loaded.</p>
+            <p class="ip-muted">No source loaded.</p>
         }
 
         <details open>
             <summary>📐 Viewport</summary>
-            <div class="dz-section-body">
+            <div class="ip-section-body">
                 @{ var vp = Controller.Viewport; }
                 <dl>
                     <dt>Control size</dt><dd>@vp.ControlWidth.ToString("F0") × @vp.ControlHeight.ToString("F0")</dd>
@@ -108,7 +108,7 @@
 
             <details open>
                 <summary>🔢 Level Selection</summary>
-                <div class="dz-section-body">
+                <div class="ip-section-body">
                     <dl>
                         <dt>Current level</dt><dd>@optLevel / @lvlSrc.MaxLevel @(isUpscaling ? "⚠️" : "")</dd>
                         <dt>Level dims</dt><dd>@levelW × @levelH px</dd>
@@ -118,7 +118,7 @@
                     </dl>
                     @if (isUpscaling)
                     {
-                        <p class="dz-muted">⚠️ Max detail — level @lvlSrc.MaxLevel (@levelW×@levelH) is native resolution. Zooming further upscales tiles.</p>
+                        <p class="ip-muted">⚠️ Max detail — level @lvlSrc.MaxLevel (@levelW×@levelH) is native resolution. Zooming further upscales tiles.</p>
                     }
                 </div>
             </details>
@@ -126,7 +126,7 @@
 
         <details open>
             <summary>🗄 Tile Cache</summary>
-            <div class="dz-section-body">
+            <div class="ip-section-body">
                 @{ var cache = Controller.Cache; }
                 <dl>
                     <dt>Cached</dt><dd>@cache.Count / @CacheCapacity</dd>
@@ -138,12 +138,12 @@
 
         <details open>
             <summary>📋 Visible Tiles</summary>
-            <div class="dz-section-body">
+            <div class="ip-section-body">
                 @if (Controller.TileSource != null)
                 {
                     var tiles = Controller.TileLayout.GetVisibleTiles(Controller.TileSource, Controller.Viewport);
-                    <p class="dz-muted">@tiles.Count tile(s) at current viewport</p>
-                    <table class="dz-tile-table">
+                    <p class="ip-muted">@tiles.Count tile(s) at current viewport</p>
+                    <table class="ip-tile-table">
                         <thead><tr><th>Lvl</th><th>Col</th><th>Row</th><th>Pri</th><th>Status</th></tr></thead>
                         <tbody>
                             @foreach (var t in tiles.Take(50))
@@ -161,19 +161,19 @@
                     </table>
                     @if (tiles.Count > 50)
                     {
-                        <p class="dz-muted">… and @(tiles.Count - 50) more</p>
+                        <p class="ip-muted">… and @(tiles.Count - 50) more</p>
                     }
                 }
                 else
                 {
-                    <p class="dz-muted">No source loaded.</p>
+                    <p class="ip-muted">No source loaded.</p>
                 }
             </div>
         </details>
     }
     else
     {
-        <p class="dz-muted">No source loaded.</p>
+        <p class="ip-muted">No source loaded.</p>
     }
 </aside>
 

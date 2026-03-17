@@ -7,21 +7,21 @@
 
 <PageTitle>Image Pyramid</PageTitle>
 
-<div class="dz-toolbar">
-    <label>Zoom: <strong class="dz-zoom-label">@_zoom.ToString("F2")×</strong></label>
+<div class="ip-toolbar">
+    <label>Zoom: <strong class="ip-zoom-label">@_zoom.ToString("F2")×</strong></label>
     <input type="range" min="0" max="1" step="0.001" value="@_sliderValue"
            @oninput="OnZoomSlider" style="width:200px;vertical-align:middle;" />
     <button @onclick="OnResetView" style="margin-left:8px;">Fit</button>
-    <div class="dz-url-row">
+    <div class="ip-url-row">
         <input type="url" @bind="_urlInput" @bind:event="oninput" placeholder="Enter DZI or DZC URL…"
-               @onkeydown="OnUrlKeyDown" class="dz-url-input" />
+               @onkeydown="OnUrlKeyDown" class="ip-url-input" />
         <button @onclick="OnLoadUrl" disabled="@_urlLoading">@(_urlLoading ? "Loading…" : "Load")</button>
     </div>
 </div>
 
-<div class="dz-layout @(_showInspector ? "dz-with-inspector" : "")">
+<div class="ip-layout @(_showInspector ? "ip-with-inspector" : "")">
 
-    <div class="dz-canvas-area"
+    <div class="ip-canvas-area"
          @onmousedown="OnMouseDown"
          @onmousemove="OnMouseMove"
          @onmouseup="OnMouseUp"
@@ -33,11 +33,11 @@
          @ontouchmove:preventDefault>
         @if (_statusText != null)
         {
-            <div class="dz-status">@_statusText</div>
+            <div class="ip-status">@_statusText</div>
         }
         @if (_errorMessage != null)
         {
-            <div class="dz-error">@_errorMessage</div>
+            <div class="ip-error">@_errorMessage</div>
         }
         <SKGLView @ref="_canvas"
                   OnPaintSurface="OnPaintSurface"
@@ -70,7 +70,7 @@
     }
 </div>
 
-<button class="dz-toggle-btn" @onclick="ToggleInspector">
+<button class="ip-toggle-btn" @onclick="ToggleInspector">
     @(_showInspector ? "Hide Inspector" : "Show Inspector")
 </button>
 
@@ -138,23 +138,41 @@
         _controller.EnableLodBlending = _enableLodBlending;
         _controller.InvalidateRequired += OnInvalidateRequired;
 
-        // Refresh inspector every 250ms while loading tiles
+        // Refresh inspector every 500ms while tiles are loading
         _inspectorTimer = new System.Threading.Timer(_ =>
         {
-            // Keep slider in sync with viewport zoom
-            if (_controller != null)
-                SyncZoomFromViewport();
-            InvokeAsync(StateHasChanged);
-        }, null, 250, 250);
+            if (_controller == null) return;
+            // Only refresh UI if something the inspector shows has changed
+            var prevZoom = _zoom;
+            SyncZoomFromViewport();
+            var changed = Math.Abs(_zoom - prevZoom) > 0.001 || !_controller.IsIdle;
+            if (changed)
+                InvokeAsync(StateHasChanged);
+        }, null, 500, 500);
 
         await LoadFromUrlAsync(DefaultDziUrl);
     }
+
+    private int _lastControlWidth;
+    private int _lastControlHeight;
 
     private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
     {
         if (_controller == null || _debugRenderer == null) return;
         e.Surface.Canvas.Clear(SKColors.White);
-        _controller.SetControlSize(e.BackendRenderTarget.Width, e.BackendRenderTarget.Height);
+
+        var w = e.BackendRenderTarget.Width;
+        var h = e.BackendRenderTarget.Height;
+
+        // Guard: only call SetControlSize when dimensions actually change to prevent
+        // triggering re-renders from tile InvalidateRequired → StateHasChanged → layout shift → repeat.
+        if (w != _lastControlWidth || h != _lastControlHeight)
+        {
+            _lastControlWidth  = w;
+            _lastControlHeight = h;
+            _controller.SetControlSize(w, h);
+        }
+
         _controller.Update();
         _debugRenderer.Canvas = e.Surface.Canvas;
         _controller.Render(_debugRenderer);
