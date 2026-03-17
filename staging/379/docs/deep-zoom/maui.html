@@ -101,7 +101,7 @@
 </code></pre>
 <h3 id="code-behind">Code-Behind</h3>
 <pre><code class="lang-csharp">using SkiaSharp;
-using SkiaSharp.Extended.DeepZoom;
+using SkiaSharp.Extended;
 using SkiaSharp.Views.Maui;
 
 public partial class DeepZoomPage : ContentPage
@@ -149,12 +149,12 @@ public partial class DeepZoomPage : ContentPage
 <p>When tiles are bundled as MAUI assets, implement <code>ISKDeepZoomTileFetcher</code> to read them via <code>FileSystem.OpenAppPackageFileAsync</code>:</p>
 <pre><code class="lang-csharp">public sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
 {
-    public async Task&lt;SKBitmap?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
-            return SKBitmap.Decode(stream);
+            return SKImage.FromEncodedData(stream);
         }
         catch
         {
@@ -282,7 +282,7 @@ var controller = new SKDeepZoomController(cache: cache);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · efe3ceb
+          source: PR #379 · b2d5aed
         </div>
       </div>
     </footer>

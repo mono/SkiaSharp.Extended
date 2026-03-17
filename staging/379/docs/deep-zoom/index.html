@@ -98,6 +98,9 @@
 </ul>
 <h2 id="architecture">Architecture</h2>
 <p>The deep zoom system is intentionally minimal — there is <strong>no custom control</strong> and <strong>no gesture system</strong>. You wire the services directly to a plain <code>SKCanvasView</code>, giving you full control.</p>
+<blockquote>
+<p><strong>Library split:</strong> The implementation is divided across two packages. <code>SkiaSharp.Extended.Abstractions</code> contains platform-agnostic types (controller, viewport, cache and fetcher interfaces). <code>SkiaSharp.Extended</code> contains the SkiaSharp-specific implementations (<code>SKDeepZoomRenderer</code>, <code>SKDeepZoomImageTile</code>, <code>SKDeepZoomImageTileDecoder</code>). In most cases you only need to reference <code>SkiaSharp.Extended</code>.</p>
+</blockquote>
 <pre><code class="lang-mermaid">graph TD
     DZI[&quot;DZI / DZC file&lt;br/&gt;(XML descriptor)&quot;]
     Source[&quot;SKDeepZoomImageSource&lt;br/&gt;SKDeepZoomCollectionSource&quot;]
@@ -152,7 +155,7 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>SKDeepZoomMemoryTileCache</code></td>
-<td style="text-align: left;">Default thread-safe LRU in-memory cache for decoded bitmaps.</td>
+<td style="text-align: left;">Default thread-safe LRU in-memory cache for decoded images.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ISKDeepZoomTileFetcher</code></td>
@@ -178,7 +181,7 @@
 </table>
 <h2 id="quick-start">Quick Start</h2>
 <h3 id="1-create-a-controller">1. Create a controller</h3>
-<pre><code class="lang-csharp">using SkiaSharp.Extended.DeepZoom;
+<pre><code class="lang-csharp">using SkiaSharp.Extended;
 
 // Default: in-memory LRU cache with 1024 tile capacity
 var controller = new SKDeepZoomController();
@@ -323,7 +326,7 @@ controller.ResetView();
 <ul>
 <li><a href="https://docs.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/cc645050(v=vs.95)">Deep Zoom specification</a> — Microsoft's original documentation</li>
 <li><a href="https://openseadragon.github.io/">OpenSeadragon</a> — Popular JavaScript Deep Zoom viewer</li>
-<li><a class="xref" href="../../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">API Reference — SKDeepZoomController</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.SKDeepZoomController.html">API Reference — SKDeepZoomController</a></li>
 </ul>
 
 </article>
@@ -346,7 +349,7 @@ controller.ResetView();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · efe3ceb
+          source: PR #379 · b2d5aed
         </div>
       </div>
     </footer>

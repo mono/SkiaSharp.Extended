@@ -86,14 +86,14 @@
         <article data-uid="">
 <h1 id="deep-zoom--tile-fetching">Deep Zoom — Tile Fetching</h1>
 
-<p>Tile fetchers implement <code>ISKDeepZoomTileFetcher</code> and supply decoded <code>SKBitmap</code> objects to the Deep Zoom controller on demand. Two built-in fetchers cover HTTP and local file sources; you can implement your own for app-package assets, databases, or any other storage.</p>
+<p>Tile fetchers implement <code>ISKDeepZoomTileFetcher</code> and supply decoded <code>SKImage</code> objects to the Deep Zoom controller on demand. Two built-in fetchers cover HTTP and local file sources; you can implement your own for app-package assets, databases, or any other storage.</p>
 <h2 id="iskdeepzoomtilefetcher">ISKDeepZoomTileFetcher</h2>
 <pre><code class="lang-csharp">public interface ISKDeepZoomTileFetcher : IDisposable
 {
     /// &lt;summary&gt;
-    /// Fetches a tile as an SKBitmap. Returns null if the tile is not available (e.g. 404).
+    /// Fetches a tile as an SKImage. Returns null if the tile is not available (e.g. 404).
     /// &lt;/summary&gt;
-    Task&lt;SKBitmap?&gt; FetchTileAsync(string url, CancellationToken cancellationToken = default);
+    Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken cancellationToken = default);
 }
 </code></pre>
 <p><strong>Return convention:</strong> Return <code>null</code> if the tile is unavailable (HTTP 404, file not found). The controller treats <code>null</code> as &quot;tile missing — keep using fallback&quot; and doesn't retry indefinitely. Throw only for unexpected errors; the controller catches and fires <code>TileFailed</code>.</p>
@@ -124,12 +124,12 @@ controller.Load(source, fetcher);
 <h3 id="app-package-assets-maui">App Package Assets (MAUI)</h3>
 <pre><code class="lang-csharp">public sealed class AppPackageFetcher : ISKDeepZoomTileFetcher
 {
-    public async Task&lt;SKBitmap?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
-            return SKBitmap.Decode(stream);
+            return SKImage.FromEncodedData(stream);
         }
         catch
         {
@@ -168,7 +168,7 @@ controller.Load(source, new AppPackageFetcher());
         _token = token;
     }
 
-    public async Task&lt;SKBitmap?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Authorization = new(&quot;Bearer&quot;, _token);
@@ -178,7 +178,7 @@ controller.Load(source, new AppPackageFetcher());
             using var response = await _http.SendAsync(request, ct);
             if (!response.IsSuccessStatusCode) return null;
             using var stream = await response.Content.ReadAsStreamAsync(ct);
-            return SKBitmap.Decode(stream);
+            return SKImage.FromEncodedData(stream);
         }
         catch { return null; }
     }
@@ -193,12 +193,12 @@ controller.Load(source, new AppPackageFetcher());
 
     public PreloadedFetcher(Dictionary&lt;string, byte[]&gt; tiles) =&gt; _tiles = tiles;
 
-    public Task&lt;SKBitmap?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
         if (_tiles.TryGetValue(url, out var bytes))
-            return Task.FromResult&lt;SKBitmap?&gt;(SKBitmap.Decode(bytes));
-        return Task.FromResult&lt;SKBitmap?&gt;(null);
+            return Task.FromResult&lt;SKImage?&gt;(SKImage.FromEncodedData(bytes));
+        return Task.FromResult&lt;SKImage?&gt;(null);
     }
 
     public void Dispose() { }
@@ -219,8 +219,8 @@ controller.Load(anotherSource, differentFetcher);
 <li><a href="index.html">Deep Zoom overview</a></li>
 <li><a href="controller.html">Controller &amp; Viewport</a></li>
 <li><a href="caching.html">Caching</a></li>
-<li><a class="xref" href="../../api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.html">API Reference — ISKDeepZoomTileFetcher</a></li>
-<li><a class="xref" href="../../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">API Reference — SKDeepZoomHttpTileFetcher</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.ISKDeepZoomTileFetcher.html">API Reference — ISKDeepZoomTileFetcher</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.SKDeepZoomHttpTileFetcher.html">API Reference — SKDeepZoomHttpTileFetcher</a></li>
 </ul>
 
 </article>
@@ -243,7 +243,7 @@ controller.Load(anotherSource, differentFetcher);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · efe3ceb
+          source: PR #379 · b2d5aed
         </div>
       </div>
     </footer>

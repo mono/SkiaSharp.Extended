@@ -102,6 +102,94 @@ Classes
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomCollectionSource.html">SKDeepZoomCollectionSource</a></dt>
+      <dd><p>Represents a Deep Zoom Collection (DZC) — a composite tiled pyramid of multiple images.
+Parses the DZC XML descriptor and provides access to sub-images and composite tile math.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomCollectionSubImage.html">SKDeepZoomCollectionSubImage</a></dt>
+      <dd><p>Represents a single sub-image within a DZC collection.
+Maps to Silverlight's MultiScaleSubImage.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomController.html">SKDeepZoomController</a></dt>
+      <dd><p>Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling,
+cache management, and rendering.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomFileTileFetcher.html">SKDeepZoomFileTileFetcher</a></dt>
+      <dd><p>Fetches tiles from the local file system and decodes them using a provided
+<a class="xref" href="SkiaSharp.Extended.ISKDeepZoomTileDecoder.html">ISKDeepZoomTileDecoder</a>.
+Accepts both plain file paths and <code>file://</code> URIs.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomHttpTileFetcher.html">SKDeepZoomHttpTileFetcher</a></dt>
+      <dd><p>Fetches tiles over HTTP and decodes them using a provided <a class="xref" href="SkiaSharp.Extended.ISKDeepZoomTileDecoder.html">ISKDeepZoomTileDecoder</a>.
+Thread-safe and reusable.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomImageSource.html">SKDeepZoomImageSource</a></dt>
+      <dd><p>Represents a Deep Zoom Image (DZI) tile source. Parses the DZI XML descriptor
+and provides tile pyramid math for computing tile URLs and dimensions.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomImageTile.html">SKDeepZoomImageTile</a></dt>
+      <dd><p>A <a class="xref" href="SkiaSharp.Extended.ISKDeepZoomTile.html">ISKDeepZoomTile</a> backed by an <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a>.
+This is the SkiaSharp-specific implementation of the opaque tile interface.
+Using <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a> instead of <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a> allows GPU-accelerated rendering.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomImageTileDecoder.html">SKDeepZoomImageTileDecoder</a></dt>
+      <dd><p>Decodes image streams into <a class="xref" href="SkiaSharp.Extended.SKDeepZoomImageTile.html">SKDeepZoomImageTile</a> using SkiaSharp.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomMemoryTileCache.html">SKDeepZoomMemoryTileCache</a></dt>
+      <dd><p>LRU cache for decoded tile images.
+Evicted tiles are deferred for disposal to avoid race conditions with the renderer.
+Call <a class="xref" href="SkiaSharp.Extended.SKDeepZoomMemoryTileCache.FlushEvicted.html#SkiaSharp_Extended_SKDeepZoomMemoryTileCache_FlushEvicted">FlushEvicted()</a> at the start of each render frame.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a></dt>
+      <dd><p>SkiaSharp implementation of <a class="xref" href="SkiaSharp.Extended.ISKDeepZoomRenderer.html">ISKDeepZoomRenderer</a>.
+Draws Deep Zoom tiles onto an <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skcanvas">SKCanvas</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomSubImage.html">SKDeepZoomSubImage</a></dt>
+      <dd><p>Represents a single sub-image within a DZC collection, with its position in the mosaic.
+Mirrors Silverlight's MultiScaleSubImage with inverted viewport coordinates.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomTileFailedEventArgs.html">SKDeepZoomTileFailedEventArgs</a></dt>
+      <dd><p>Event args for when a tile fails to load.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomTileLayout.html">SKDeepZoomTileLayout</a></dt>
+      <dd><p>Computes tile geometry for the Deep Zoom pipeline: which tiles are visible, what
+fallback tiles exist, and where tiles should be drawn on screen.
+Previously named <code>SKDeepZoomTileScheduler</code>; renamed to reflect its true purpose
+as a tile layout/geometry calculator rather than an async work scheduler.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomViewport.html">SKDeepZoomViewport</a></dt>
+      <dd><p>Manages the Deep Zoom viewport — the logical window into the image.
+Handles coordinate conversions between element (screen), logical (0-1 normalized),
+and image pixel spaces. Mirrors Silverlight's MultiScaleImage viewport behavior.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKGeometry.html">SKGeometry</a></dt>
       <dd><p>Provides geometry utility methods for creating paths, calculating polygon properties, and interpolating between paths.</p>
 </dd>
@@ -132,6 +220,79 @@ This class is thread-safe as all methods are stateless static operations.</p>
       <dd><p>Holds the results of a pixel-by-pixel image comparison.</p>
 </dd>
     </dl>
+    <h3 id="structs">
+Structs
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomDisplayRect.html">SKDeepZoomDisplayRect</a></dt>
+      <dd><p>Represents a display rectangle in a sparse Deep Zoom Image.
+Defines a region of available pixels and the pyramid levels at which it is visible.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomRectF.html">SKDeepZoomRectF</a></dt>
+      <dd><p>A floating-point axis-aligned rectangle used for screen-space tile geometry.
+Replaces anonymous tuples like <code>(float SrcX, float SrcY, float SrcW, float SrcH)</code>
+and SKRect usages in the SkiaSharp-agnostic DeepZoom pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomRectI.html">SKDeepZoomRectI</a></dt>
+      <dd><p>An integer-precision axis-aligned rectangle used for tile pixel bounds within a pyramid level.
+Replaces anonymous tuples like <code>(int X, int Y, int Width, int Height)</code> throughout the DeepZoom pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomTileId.html">SKDeepZoomTileId</a></dt>
+      <dd><p>Identifies a single tile in the pyramid.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomTileRequest.html">SKDeepZoomTileRequest</a></dt>
+      <dd><p>A tile to be fetched, with a priority value (lower = higher priority).</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDeepZoomViewportState.html">SKDeepZoomViewportState</a></dt>
+      <dd><p>Immutable snapshot of viewport position and zoom.</p>
+</dd>
+    </dl>
+    <h3 id="interfaces">
+Interfaces
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.ISKDeepZoomRenderer.html">ISKDeepZoomRenderer</a></dt>
+      <dd><p>Renders individual Deep Zoom tiles onto a drawing surface.
+Implement this interface to provide a custom rendering backend.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.ISKDeepZoomTile.html">ISKDeepZoomTile</a></dt>
+      <dd><p>Opaque handle representing a decoded tile image.
+Concrete implementations (e.g. <code>SKDeepZoomBitmapTile</code> in SkiaSharp.Extended) wrap
+the actual decoded image in a rendering-backend-specific type.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.ISKDeepZoomTileCache.html">ISKDeepZoomTileCache</a></dt>
+      <dd><p>Pluggable tile cache for the Deep Zoom rendering pipeline.
+Tiles are stored as <a class="xref" href="SkiaSharp.Extended.ISKDeepZoomTile.html">ISKDeepZoomTile</a> so that the cache is
+rendering-backend-agnostic.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.ISKDeepZoomTileDecoder.html">ISKDeepZoomTileDecoder</a></dt>
+      <dd><p>Decodes raw image data from a stream into an <a class="xref" href="SkiaSharp.Extended.ISKDeepZoomTile.html">ISKDeepZoomTile</a>.
+Implement this interface to plug in a custom image decoder (e.g. SkiaSharp, ImageSharp).</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.ISKDeepZoomTileFetcher.html">ISKDeepZoomTileFetcher</a></dt>
+      <dd><p>Fetches tile data from a source (HTTP, file system, memory, etc.)
+and returns it as an opaque <a class="xref" href="SkiaSharp.Extended.ISKDeepZoomTile.html">ISKDeepZoomTile</a>.
+Implement this interface to plug in a custom tile source.</p>
+</dd>
+    </dl>
 
 
 </article>
@@ -152,7 +313,7 @@ This class is thread-safe as all methods are stateless static operations.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · efe3ceb
+          source: PR #379 · b2d5aed
         </div>
       </div>
     </footer>

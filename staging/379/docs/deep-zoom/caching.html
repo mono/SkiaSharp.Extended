@@ -86,7 +86,7 @@
         <article data-uid="">
 <h1 id="deep-zoom--caching">Deep Zoom — Caching</h1>
 
-<p>The tile cache stores decoded <code>SKBitmap</code> objects so tiles don't need to be re-fetched or re-decoded on every frame. The cache is <strong>pluggable</strong> — swap implementations to tune memory usage, add persistence, or chain multiple tiers.</p>
+<p>The tile cache stores decoded <code>SKImage</code> objects so tiles don't need to be re-fetched or re-decoded on every frame. The cache is <strong>pluggable</strong> — swap implementations to tune memory usage, add persistence, or chain multiple tiers.</p>
 <h2 id="iskdeepzoomtilecache">ISKDeepZoomTileCache</h2>
 <p>All caches implement this interface:</p>
 <pre><code class="lang-csharp">public interface ISKDeepZoomTileCache : IDisposable
@@ -95,19 +95,19 @@
     int Count { get; }
 
     /// &lt;summary&gt;Synchronous lookup — used by the renderer (no blocking I/O).&lt;/summary&gt;
-    bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap);
+    bool TryGet(SKDeepZoomTileId id, out SKImage? image);
 
     /// &lt;summary&gt;Async lookup — use for I/O-backed tiers (disk, browser storage).&lt;/summary&gt;
-    Task&lt;SKBitmap?&gt; TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default);
+    Task&lt;SKImage?&gt; TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default);
 
     /// &lt;summary&gt;Returns true if the tile is cached.&lt;/summary&gt;
     bool Contains(SKDeepZoomTileId id);
 
     /// &lt;summary&gt;Synchronous write — for in-memory caches.&lt;/summary&gt;
-    void Put(SKDeepZoomTileId id, SKBitmap? bitmap);
+    void Put(SKDeepZoomTileId id, SKImage? image);
 
     /// &lt;summary&gt;Async write — for I/O-backed caches or cache decorators.&lt;/summary&gt;
-    Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default);
+    Task PutAsync(SKDeepZoomTileId id, SKImage? image, CancellationToken ct = default);
 
     /// &lt;summary&gt;Removes a specific tile.&lt;/summary&gt;
     bool Remove(SKDeepZoomTileId id);
@@ -116,8 +116,8 @@
     void Clear();
 
     /// &lt;summary&gt;
-    /// Disposes bitmaps evicted since the last call.
-    /// Call once per render frame before drawing to safely free GPU-bound bitmaps.
+    /// Disposes images evicted since the last call.
+    /// Call once per render frame before drawing to safely free GPU-bound images.
     /// &lt;/summary&gt;
     void FlushEvicted();
 }
@@ -178,7 +178,7 @@ var controller = new SKDeepZoomController(cache: cache);
 </tbody>
 </table>
 <h3 id="eviction-and-disposal">Eviction and Disposal</h3>
-<p>Evicted bitmaps are held in a pending-dispose queue rather than immediately freed. Call <code>FlushEvicted()</code> once per frame (before <code>Render</code>) to safely free GPU-bound bitmaps:</p>
+<p>Evicted images are held in a pending-dispose queue rather than immediately freed. Call <code>FlushEvicted()</code> once per frame (before <code>Render</code>) to safely free GPU-bound images:</p>
 <pre><code class="lang-csharp">void OnPaintSurface(SKPaintSurfaceEventArgs e)
 {
     controller.Cache.FlushEvicted(); // safe to call even if nothing was evicted
@@ -213,7 +213,7 @@ var controller = new SKDeepZoomController(cache: cache);
 </tr>
 </tbody>
 </table>
-<p>Each tile is typically a 256×256 JPEG/PNG decoded to an <code>SKBitmap</code> — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of bitmap RAM at maximum.</p>
+<p>Each tile is typically a 256×256 JPEG/PNG decoded to an <code>SKImage</code> — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of image RAM at maximum.</p>
 <hr>
 <h2 id="tiered-caching">Tiered Caching</h2>
 <p>For persistent tile storage (surviving app restarts or page reloads), add a second cache tier. The controller checks <code>TryGetAsync</code> before hitting the network:</p>
@@ -243,26 +243,26 @@ Put (L1)
         _l2 = l2;
     }
 
-    public bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap)
-        =&gt; _l1.TryGet(id, out bitmap);
+    public bool TryGet(SKDeepZoomTileId id, out SKImage? image)
+        =&gt; _l1.TryGet(id, out image);
 
-    public async Task&lt;SKBitmap?&gt; TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
+    public async Task&lt;SKImage?&gt; TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
     {
         // Fast path: already in L1
-        if (_l1.TryGet(id, out var bmp)) return bmp;
+        if (_l1.TryGet(id, out var img)) return img;
 
         // Slow path: check disk
-        bmp = await _l2.ReadAsync(id, ct);
-        if (bmp is not null)
-            _l1.Put(id, bmp);   // promote to L1
-        return bmp;
+        img = await _l2.ReadAsync(id, ct);
+        if (img is not null)
+            _l1.Put(id, img);   // promote to L1
+        return img;
     }
 
-    public void Put(SKDeepZoomTileId id, SKBitmap? bitmap)      =&gt; _l1.Put(id, bitmap);
-    public async Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default)
+    public void Put(SKDeepZoomTileId id, SKImage? image)      =&gt; _l1.Put(id, image);
+    public async Task PutAsync(SKDeepZoomTileId id, SKImage? image, CancellationToken ct = default)
     {
-        _l1.Put(id, bitmap);
-        await _l2.WriteAsync(id, bitmap, ct);
+        _l1.Put(id, image);
+        await _l2.WriteAsync(id, image, ct);
     }
 
     public bool Contains(SKDeepZoomTileId id)   =&gt; _l1.Contains(id);
@@ -292,42 +292,42 @@ Assert.Equal(id, same);  // ✅
 <p>Any class that implements <code>ISKDeepZoomTileCache</code> can be used. Minimal in-memory example:</p>
 <pre><code class="lang-csharp">public sealed class BoundedDictionaryCache : ISKDeepZoomTileCache
 {
-    private readonly Dictionary&lt;SKDeepZoomTileId, SKBitmap&gt; _store = new();
+    private readonly Dictionary&lt;SKDeepZoomTileId, SKImage&gt; _store = new();
     private readonly int _maxEntries;
 
     public BoundedDictionaryCache(int maxEntries) =&gt; _maxEntries = maxEntries;
 
     public int Count =&gt; _store.Count;
 
-    public bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap)
-        =&gt; _store.TryGetValue(id, out bitmap);
+    public bool TryGet(SKDeepZoomTileId id, out SKImage? image)
+        =&gt; _store.TryGetValue(id, out image);
 
-    public Task&lt;SKBitmap?&gt; TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
-        =&gt; Task.FromResult(_store.TryGetValue(id, out var bmp) ? bmp : null);
+    public Task&lt;SKImage?&gt; TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)
+        =&gt; Task.FromResult(_store.TryGetValue(id, out var img) ? img : null);
 
     public bool Contains(SKDeepZoomTileId id) =&gt; _store.ContainsKey(id);
 
-    public void Put(SKDeepZoomTileId id, SKBitmap? bitmap)
+    public void Put(SKDeepZoomTileId id, SKImage? image)
     {
-        if (bitmap is null || _store.Count &gt;= _maxEntries) return;
-        _store[id] = bitmap;
+        if (image is null || _store.Count &gt;= _maxEntries) return;
+        _store[id] = image;
     }
 
-    public Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default)
+    public Task PutAsync(SKDeepZoomTileId id, SKImage? image, CancellationToken ct = default)
     {
-        Put(id, bitmap);
+        Put(id, image);
         return Task.CompletedTask;
     }
 
     public bool Remove(SKDeepZoomTileId id)
     {
-        if (_store.Remove(id, out var bmp)) { bmp?.Dispose(); return true; }
+        if (_store.Remove(id, out var img)) { img?.Dispose(); return true; }
         return false;
     }
 
     public void Clear()
     {
-        foreach (var bmp in _store.Values) bmp?.Dispose();
+        foreach (var img in _store.Values) img?.Dispose();
         _store.Clear();
     }
 
@@ -342,8 +342,8 @@ Assert.Equal(id, same);  // ✅
 <li><a href="index.html">Deep Zoom overview</a></li>
 <li><a href="controller.html">Controller &amp; Viewport</a></li>
 <li><a href="fetching.html">Tile Fetching</a></li>
-<li><a class="xref" href="../../api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.html">API Reference — ISKDeepZoomTileCache</a></li>
-<li><a class="xref" href="../../api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html">API Reference — SKDeepZoomMemoryTileCache</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.ISKDeepZoomTileCache.html">API Reference — ISKDeepZoomTileCache</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.SKDeepZoomMemoryTileCache.html">API Reference — SKDeepZoomMemoryTileCache</a></li>
 </ul>
 
 </article>
@@ -366,7 +366,7 @@ Assert.Equal(id, same);  // ✅
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · efe3ceb
+          source: PR #379 · b2d5aed
         </div>
       </div>
     </footer>
