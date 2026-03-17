@@ -47,6 +47,13 @@ public static class ExtendedDemos
 					PageType = typeof(LottiePage),
 					Color = Colors.SteelBlue,
 				},
+				new Demo
+				{
+					Title = "Gestures",
+					Description = "Pan, pinch, rotate, tap, long press, fling - all the gestures you need for interactive SkiaSharp views!",
+					PageType = typeof(GesturePage),
+					Color = Colors.DarkOrange,
+				},
 				//new Demo
 				//{
 				//	Title = "ToImage",
