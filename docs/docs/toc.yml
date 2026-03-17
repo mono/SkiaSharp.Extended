@@ -19,12 +19,16 @@ items:
     href: image-pyramid/index.md
   - name: Controller & Viewport
     href: image-pyramid/controller.md
+  - name: Image Sources
+    items:
+    - name: Deep Zoom (DZI/DZC)
+      href: image-pyramid/deepzoom.md
+    - name: IIIF Image API
+      href: image-pyramid/iiif.md
   - name: Tile Fetching
     href: image-pyramid/fetching.md
   - name: Caching
     href: image-pyramid/caching.md
-  - name: IIIF Image API
-    href: image-pyramid/iiif.md
   - name: Blazor Integration
     href: image-pyramid/blazor.md
   - name: MAUI Integration

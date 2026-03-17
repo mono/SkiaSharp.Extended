@@ -1,10 +1,10 @@
 # Image Pyramid
 
-Explore gigapixel images in your .NET MAUI and Blazor apps using the Image Pyramid Image (DZI) format. The deep zoom system downloads only the tiles visible at the current zoom level, so even multi-gigapixel images load instantly.
+Explore gigapixel images in your .NET MAUI and Blazor apps. The Image Pyramid system downloads only the tiles visible at the current zoom level, so even multi-gigapixel images load instantly — regardless of whether they come from Deep Zoom (DZI), IIIF, or any custom tile source.
 
-## What is Image Pyramid?
+## What is an Image Pyramid?
 
-[Image Pyramid](https://docs.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/cc645050(v=vs.95)) is a tile-based image format developed by Microsoft. An image is pre-sliced into a pyramid of tiles at multiple resolutions. At any zoom level, only the small set of tiles visible in the viewport is loaded — making it practical to explore images with billions of pixels.
+A **tiled image pyramid** pre-slices a large image into tiles at multiple resolutions. At any zoom level, only the small set of tiles visible in the viewport is loaded — making it practical to explore images with billions of pixels.
 
 **When to use Image Pyramid:**
 - 🗺️ High-resolution maps, satellite imagery, or floor plans
@@ -14,46 +14,50 @@ Explore gigapixel images in your .NET MAUI and Blazor apps using the Image Pyram
 
 ## Architecture
 
-The deep zoom system is intentionally minimal — there is **no custom control** and **no gesture system**. You wire the services directly to a plain `SKCanvasView`, giving you full control.
+The system is intentionally minimal — there is **no custom control** and **no gesture system**. You wire the services directly to a plain `SKCanvasView`, giving you full control.
 
-> **Library split:** The implementation is divided across two packages. `SkiaSharp.Extended.Abstractions` contains platform-agnostic types (controller, viewport, cache and fetcher interfaces). `SkiaSharp.Extended` contains the SkiaSharp-specific implementations (`SKImagePyramidRenderer`, `SKImagePyramidImageTile`, `SKImagePyramidImageTileDecoder`). In most cases you only need to reference `SkiaSharp.Extended`.
+> **Library split:** `SkiaSharp.Extended.Abstractions` contains platform-agnostic types (controller, viewport, cache and fetcher interfaces). `SkiaSharp.Extended` contains the SkiaSharp-specific implementations (`SKImagePyramidRenderer`, `SKImagePyramidImageTile`, `SKImagePyramidImageTileDecoder`). In most cases you only need `SkiaSharp.Extended`.
 
 ```mermaid
 graph TD
-    DZI["DZI / DZC file<br/>(XML descriptor)"]
-    Source["SKImagePyramidDziSource<br/>SKImagePyramidDziCollectionSource"]
-    Controller["SKImagePyramidController<br/>(the main orchestrator)"]
-    Viewport["SKImagePyramidViewport<br/>(coordinate math)"]
-    Scheduler["SKImagePyramidTileScheduler<br/>(which tiles to load)"]
-    Cache["ISKImagePyramidTileCache<br/>(bitmap store)"]
-    Fetcher["ISKImagePyramidTileFetcher<br/>(HTTP / file / custom)"]
-    Renderer["SKImagePyramidRenderer<br/>(draws tiles to canvas)"]
-    Canvas["SKCanvasView"]
+    Src1["SKImagePyramidDziSource (DZI)"]
+    Src2["SKImagePyramidIiifSource (IIIF)"]
+    Src3["Your custom ISKImagePyramidSource"]
+    Source["ISKImagePyramidSource"]
+    Controller["SKImagePyramidController"]
+    Cache["ISKImagePyramidTileCache"]
+    Fetcher["ISKImagePyramidTileFetcher"]
+    Decoder["ISKImagePyramidTileDecoder"]
+    Renderer["ISKImagePyramidRenderer"]
+    Canvas["SKCanvasView / SKGLView"]
 
-    DZI --> Source
+    Src1 --> Source
+    Src2 --> Source
+    Src3 --> Source
     Source --> Controller
-    Controller --> Viewport
-    Controller --> Scheduler
     Controller --> Cache
     Controller --> Fetcher
+    Fetcher --> Decoder
     Controller --> Renderer
     Renderer --> Canvas
 ```
 
-| Class | Responsibility |
+| Type | Responsibility |
 | :---- | :------------- |
-| `SKImagePyramidDziSource` | Parses a `.dzi` descriptor: image size, tile size, level count, tile URL construction. |
-| `SKImagePyramidDziCollectionSource` | Parses a `.dzc` collection: a mosaic of many DZI sub-images. |
-| `SKImagePyramidController` | The central orchestrator. Manages viewport, tile scheduling, caching, and rendering. |
+| `ISKImagePyramidSource` | Describes a tile pyramid: dimensions, level count, tile URL generation. |
+| `SKImagePyramidDziSource` | Parses Microsoft Deep Zoom Image (`.dzi`) files. |
+| `SKImagePyramidDziCollectionSource` | Parses Deep Zoom Collection (`.dzc`) files. |
+| `SKImagePyramidIiifSource` | Parses IIIF Image API v2/v3 `info.json`. |
+| `SKImagePyramidController` | The central orchestrator: viewport, scheduling, caching, rendering. |
 | `SKImagePyramidViewport` | Coordinate math between screen pixels and logical (0–1) image space. |
-| `SKImagePyramidTileScheduler` | Determines which tiles are visible and their fetch priority. |
-| `ISKImagePyramidTileCache` | Pluggable tile cache interface (in-memory, browser storage, disk, tiered). |
-| `SKImagePyramidMemoryTileCache` | Default thread-safe LRU in-memory cache for decoded images. |
-| `ISKImagePyramidTileFetcher` | Pluggable fetcher interface (HTTP, file system, app package). |
+| `ISKImagePyramidTileCache` | Pluggable tile cache (in-memory, browser storage, disk, tiered). |
+| `SKImagePyramidMemoryTileCache` | Default thread-safe LRU in-memory cache. |
+| `ISKImagePyramidTileFetcher` | Pluggable fetcher (HTTP, file system, app package). |
 | `SKImagePyramidHttpTileFetcher` | Built-in HTTP fetcher using `HttpClient`. |
-| `SKImagePyramidFileTileFetcher` | Built-in file system fetcher for local/bundled tiles. |
+| `ISKImagePyramidTileDecoder` | Converts a raw stream into an `ISKImagePyramidTile`. |
+| `SKImagePyramidImageTileDecoder` | SkiaSharp decoder: stream → `SKImage` → `SKImagePyramidImageTile`. |
 | `ISKImagePyramidRenderer` | Pluggable renderer interface. |
-| `SKImagePyramidRenderer` | Default renderer; LOD fallback blending, tile scheduling. |
+| `SKImagePyramidRenderer` | Default SkiaSharp renderer; LOD blending, tile compositing. |
 
 ## Quick Start
 
@@ -62,36 +66,36 @@ graph TD
 ```csharp
 using SkiaSharp.Extended;
 
-// Default: in-memory LRU cache with 1024 tile capacity
 var controller = new SKImagePyramidController();
-
-// Or specify cache capacity
-var controller = new SKImagePyramidController(defaultCacheCapacity: 512);
 ```
 
 ### 2. Load an image source
 
 ```csharp
-// DZI (single image) — load XML and provide the tile base URL
-var xml = await httpClient.GetStringAsync("https://example.com/image.dzi");
-var tileSource = SKImagePyramidDziSource.Parse(xml, "https://example.com/image_files/");
-controller.Load(tileSource, new SKImagePyramidHttpTileFetcher());
+var decoder = new SKImagePyramidImageTileDecoder();
 
-// DZC (collection of images)
-var collXml = await httpClient.GetStringAsync("https://example.com/collection.dzc");
-var collection = SKImagePyramidDziCollectionSource.Parse(collXml);
-collection.TilesBaseUri = "https://example.com/";
-controller.Load(collection, new SKImagePyramidHttpTileFetcher());
+// Deep Zoom Image (DZI)
+var xml = await httpClient.GetStringAsync("https://example.com/image.dzi");
+var source = SKImagePyramidDziSource.Parse(xml, "https://example.com/image_files/");
+controller.Load(source, new SKImagePyramidHttpTileFetcher(decoder));
+
+// IIIF Image API
+var json = await httpClient.GetStringAsync("https://example.com/image/info.json");
+var iiifSource = SKImagePyramidIiifSource.Parse(json);
+controller.Load(iiifSource, new SKImagePyramidHttpTileFetcher(decoder));
 ```
 
 ### 3. Wire the canvas
 
 ```csharp
+private readonly SKImagePyramidRenderer _renderer = new();
+
 void OnPaintSurface(SKPaintSurfaceEventArgs e)
 {
     controller.SetControlSize(e.Info.Width, e.Info.Height);
-    controller.Update();           // schedules tile loads for the current viewport
-    controller.Render(e.Surface.Canvas);
+    controller.Update();
+    _renderer.Canvas = e.Surface.Canvas;
+    controller.Render(_renderer);
 }
 ```
 
@@ -104,119 +108,36 @@ controller.InvalidateRequired += (_, _) => myCanvasView.InvalidateSurface();
 ### 5. Dispose when done
 
 ```csharp
-controller.Dispose();  // cancels in-flight requests and clears the cache
+controller.Dispose();
 ```
 
 ## Image Sources
 
-### DZI — Single Images
+The `ISKImagePyramidSource` interface is the key abstraction. Swap sources to use different tile formats without changing any other code:
 
-A `.dzi` file describes a single image sliced into a tile pyramid:
+| Source | Format | Notes |
+| :----- | :----- | :---- |
+| `SKImagePyramidDziSource` | Deep Zoom Image (`.dzi`) | Microsoft DZI format |
+| `SKImagePyramidDziCollectionSource` | Deep Zoom Collection (`.dzc`) | Multi-image mosaics |
+| `SKImagePyramidIiifSource` | IIIF Image API v2/v3 | Museum/archive images |
+| Custom `ISKImagePyramidSource` | Any | Zoomify, custom tile servers, etc. |
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<Image xmlns="http://schemas.microsoft.com/deepzoom/2008"
-       Format="jpeg" Overlap="1" TileSize="256">
-  <Size Width="32768" Height="32768"/>
-</Image>
-```
-
-Parse it with a base URL pointing to the tile directory:
-
-```csharp
-var source = SKImagePyramidDziSource.Parse(xmlString, "https://example.com/image_files/");
-
-// Key properties
-int width     = source.ImageWidth;
-int height    = source.ImageHeight;
-int tileSize  = source.TileSize;
-int overlap   = source.Overlap;
-int maxLevel  = source.MaxLevel;
-double aspect = source.AspectRatio;
-
-// Tile URL construction
-string url = source.GetFullTileUrl(level: 12, col: 3, row: 5);
-```
-
-The tile files are at `{baseUri}/{level}/{col}_{row}.{format}`.
-
-### DZC — Collections
-
-A `.dzc` file is a mosaic of many DZI images composited into a single tile pyramid:
-
-```csharp
-var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
-collection.TilesBaseUri = "https://example.com/";
-controller.Load(collection, fetcher);
-
-// Sub-images are available after loading
-foreach (var sub in controller.SubImages)
-{
-    Console.WriteLine($"#{sub.Id} — aspect {sub.AspectRatio:F2}");
-}
-```
-
-## Viewport and Zoom
-
-The viewport uses a **normalized coordinate system** where the full image width = 1.0:
-
-```csharp
-var vp = controller.Viewport;
-
-// Zoom level: 1.0 = image fills the control width, >1.0 = zoomed in
-double zoom = vp.Zoom;               // = 1.0 / ViewportWidth
-
-// Native zoom: where 1 image pixel = 1 screen pixel
-double native = controller.NativeZoom;
-
-// Convert a screen tap to logical image coordinates
-var (lx, ly) = vp.ElementToLogicalPoint(tapX, tapY);
-```
-
-## Programmatic Navigation
-
-```csharp
-// Pan by screen pixels
-controller.Pan(deltaX, deltaY);
-
-// Zoom about a screen point (e.g., mouse position)
-controller.ZoomAboutScreenPoint(factor: 1.2, screenX, screenY);
-
-// Zoom about a logical image point
-controller.ZoomAboutLogicalPoint(factor: 1.5, logicalX: 0.5, logicalY: 0.5);
-
-// Set explicit zoom level (1.0 = fit to width)
-controller.SetZoom(zoom: 2.0);
-
-// Reset to fit-to-view
-controller.ResetView();
-```
-
-## Events
-
-| Event | Description |
-| :---- | :---------- |
-| `ImageOpenSucceeded` | Image source loaded; controller is ready to render. |
-| `ImageOpenFailed` | Image source failed to parse. |
-| `InvalidateRequired` | A tile finished loading — trigger a canvas repaint. |
-| `TileFailed` | A tile failed to download. |
-| `ViewportChanged` | Viewport was moved or zoomed. |
+See the [Image Sources](deepzoom.md) section for details on each format.
 
 ## Platform Integration
 
-- [Image Pyramid for Blazor](blazor.md) — Blazor WebAssembly integration guide
-- [Image Pyramid for MAUI](maui.md) — .NET MAUI integration guide
+- [Image Pyramid for Blazor](blazor.md)
+- [Image Pyramid for .NET MAUI](maui.md)
 
 ## Deeper Dives
 
-- [Controller & Viewport](controller.md) — Full controller API, viewport coordinate system, zoom semantics
-- [Tile Fetching](fetching.md) — Built-in fetchers and how to implement custom fetchers
-- [Caching](caching.md) — Cache interface, LRU memory cache, tiered caching, custom implementations
+- [Controller & Viewport](controller.md)
+- [Tile Fetching](fetching.md)
+- [Caching](caching.md)
 
 ## Learn More
 
-- [Image Pyramid specification](https://docs.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/cc645050(v=vs.95)) — Microsoft's original documentation
-- [OpenSeadragon](https://openseadragon.github.io/) — Popular JavaScript Image Pyramid viewer
 - [API Reference — SKImagePyramidController](xref:SkiaSharp.Extended.SKImagePyramidController)
-
+- [OpenSeadragon](https://openseadragon.github.io/) — Popular JS viewer (DZI/IIIF compatible)
+- [IIIF Image API 3.0 Spec](https://iiif.io/api/image/3.0/)
 
