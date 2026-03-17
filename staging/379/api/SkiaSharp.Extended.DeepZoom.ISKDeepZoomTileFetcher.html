@@ -91,15 +91,17 @@
 
   <h1 id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileFetcher" data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher" class="text-break">
     Interface ISKDeepZoomTileFetcher
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ISKDeepZoomTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
     <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a>.<a class="xref" href="SkiaSharp.Extended.DeepZoom.html">DeepZoom</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Interface for fetching tile image data from various sources (HTTP, file, memory).</p>
+  <div class="markdown summary"><p>Fetches tile data from a source (HTTP, file system, memory, etc.)
+and returns it as an opaque <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTile.html">ISKDeepZoomTile</a>.
+Implement this interface to plug in a custom tile source.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -130,7 +132,7 @@
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.FetchTileAsync.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileFetcher_FetchTileAsync_System_String_System_Threading_CancellationToken_">FetchTileAsync(string, CancellationToken)</a></dt>
-    <dd><p>Fetches a tile as an SKBitmap. Returns null if the tile is not available (404).</p>
+    <dd><p>Fetches a tile. Returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> when the tile is not available (e.g., 404).</p>
 </dd>
   </dl>
 
@@ -139,7 +141,7 @@
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomTileFetcher.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ISKDeepZoomTileFetcher.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -155,7 +157,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

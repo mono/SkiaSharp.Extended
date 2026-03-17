@@ -99,13 +99,13 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Renders Deep Zoom tiles onto an SKCanvas. Handles LOD blending and fallback rendering.
-Geometry calculations (tile rects, fallback rects) are delegated to <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.html">SKDeepZoomTileLayout</a>.</p>
+  <div class="markdown summary"><p>SkiaSharp implementation of <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.html">ISKDeepZoomRenderer</a>.
+Draws Deep Zoom tiles onto an <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skcanvas">SKCanvas</a>.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKDeepZoomRenderer : ISKDeepZoomRenderer, IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public class SKDeepZoomRenderer : ISKCanvasAwareRenderer, ISKDeepZoomRenderer, IDisposable</code></pre>
   </div>
 
 
@@ -122,6 +122,7 @@ Geometry calculations (tile rects, fallback rects) are delegated to <a class="xr
   <dl class="typelist implements">
     <dt>Implements</dt>
     <dd>
+      <div><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKCanvasAwareRenderer.html">ISKCanvasAwareRenderer</a></div>
       <div><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.html">ISKDeepZoomRenderer</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
     </dd>
@@ -157,6 +158,11 @@ Geometry calculations (tile rects, fallback rects) are delegated to <a class="xr
 
 
 
+  <h2 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Set <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Canvas">Canvas</a> before calling <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render">Render()</a>.
+The rendering pipeline (two-pass LOD blending) is orchestrated by
+<a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">SKDeepZoomController</a>; this class handles only the actual draw calls.</p>
+</div>
 
   <h2 class="section" id="constructors">Constructors
 </h2>
@@ -170,6 +176,11 @@ Geometry calculations (tile rects, fallback rects) are delegated to <a class="xr
 </h2>
 
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Canvas">Canvas</a></dt>
+    <dd><p>The canvas to draw onto. Must be set before each render frame.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.EnableLodBlending.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_EnableLodBlending">EnableLodBlending</a></dt>
     <dd><p>Whether to enable LOD (Level-of-Detail) fallback blending.
 When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> (default), lower-resolution parent tiles are drawn as
@@ -182,13 +193,30 @@ When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/built
 </h2>
 
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.BeginRender.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_BeginRender">BeginRender()</a></dt>
+    <dd><p>Called before any tile draw calls for a render frame.
+Use this to set up state (e.g., save canvas, clear background).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Dispose.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Dispose">Dispose()</a></dt>
     <dd></dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Render_SkiaSharp_SKCanvas_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileLayout_">Render(SKCanvas, SKDeepZoomImageSource, SKDeepZoomViewport, ISKDeepZoomTileCache, SKDeepZoomTileLayout)</a></dt>
-    <dd><p>Renders the visible Deep Zoom tiles onto <code class="paramref">canvas</code>.
-Called from the UI thread during the canvas paint callback.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.DrawFallbackTile.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_DrawFallbackTile_SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile_">DrawFallbackTile(SKDeepZoomRectF, SKDeepZoomRectF, ISKDeepZoomTile)</a></dt>
+    <dd><p>Draws a lower-resolution fallback tile stretched to fill the destination rect.
+Only called when LOD blending is enabled and the hi-res tile is still loading.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.DrawTile.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_DrawTile_SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile_">DrawTile(SKDeepZoomRectF, ISKDeepZoomTile)</a></dt>
+    <dd><p>Draws a hi-resolution tile at the exact detail level requested.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.EndRender.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_EndRender">EndRender()</a></dt>
+    <dd><p>Called after all tile draw calls for a render frame.
+Use this to flush state (e.g., restore canvas).</p>
 </dd>
   </dl>
 
@@ -213,7 +241,7 @@ Called from the UI thread during the canvas paint callback.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

@@ -121,24 +121,24 @@
 
 <a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_TryGet_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet*"></a>
 
-<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_TryGet_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap__" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap@)">
-  TryGet(SKDeepZoomTileId, out SKBitmap?)
+<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_TryGet_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile__" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.Extended.DeepZoom.ISKDeepZoomTile@)">
+  TryGet(SKDeepZoomTileId, out ISKDeepZoomTile?)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomMemoryTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Tries to get a cached tile bitmap.</p>
+<div class="markdown level1 summary"><p>Tries to get a cached tile.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap)</code></pre>
+  <pre><code class="lang-csharp hljs">public bool TryGet(SKDeepZoomTileId id, out ISKDeepZoomTile? tile)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>id</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.html">SKDeepZoomTileId</a></dt>
   <dd></dd>
-  <dt><code>bitmap</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dt><code>tile</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTile.html">ISKDeepZoomTile</a></dt>
   <dd></dd>
 </dl>
 
@@ -177,7 +177,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

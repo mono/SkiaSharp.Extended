@@ -121,24 +121,24 @@
 
 <a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_PutAsync_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync*"></a>
 
-<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_PutAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_System_Threading_CancellationToken_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap,System.Threading.CancellationToken)">
-  PutAsync(SKDeepZoomTileId, SKBitmap?, CancellationToken)
+<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_PutAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile_System_Threading_CancellationToken_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.Extended.DeepZoom.ISKDeepZoomTile,System.Threading.CancellationToken)">
+  PutAsync(SKDeepZoomTileId, ISKDeepZoomTile?, CancellationToken)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomMemoryTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Adds a tile bitmap to the cache via the async interface. Calls <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_Put_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_">Put(SKDeepZoomTileId, SKBitmap?)</a> synchronously.</p>
+<div class="markdown level1 summary"><p>Adds a tile to the cache via the async interface.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public Task PutAsync(SKDeepZoomTileId id, SKBitmap? bitmap, CancellationToken ct = default)</code></pre>
+  <pre><code class="lang-csharp hljs">public Task PutAsync(SKDeepZoomTileId id, ISKDeepZoomTile? tile, CancellationToken ct = default)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>id</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.html">SKDeepZoomTileId</a></dt>
   <dd></dd>
-  <dt><code>bitmap</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dt><code>tile</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTile.html">ISKDeepZoomTile</a></dt>
   <dd></dd>
   <dt><code>ct</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
   <dd></dd>
@@ -179,7 +179,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

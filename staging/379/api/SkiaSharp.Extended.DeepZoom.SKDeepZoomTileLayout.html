@@ -91,12 +91,12 @@
 
   <h1 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomTileLayout" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout" class="text-break">
     Class SKDeepZoomTileLayout
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomTileLayout.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomTileLayout.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
     <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a>.<a class="xref" href="SkiaSharp.Extended.DeepZoom.html">DeepZoom</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
   </div>
 
   <div class="markdown summary"><p>Computes tile geometry for the Deep Zoom pipeline: which tiles are visible, what
@@ -122,12 +122,6 @@ as a tile layout/geometry calculator rather than an async work scheduler.</p>
   </dl>
 
 
-  <dl class="typelist derived">
-    <dt>Derived</dt>
-    <dd>
-      <div><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileScheduler.html">SKDeepZoomTileScheduler</a></div>
-    </dd>
-  </dl>
 
   <dl class="typelist derived">
     <dt>Inherited Members</dt>
@@ -185,7 +179,7 @@ Returns an <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.htm
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.GetTileDestRect.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomTileLayout_GetTileDestRect_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_">GetTileDestRect(SKDeepZoomImageSource, SKDeepZoomViewport, SKDeepZoomTileId)</a></dt>
     <dd><p>Computes the screen-space destination rect for a tile given the current viewport.
-Previously on <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a>; moved here because it is pure geometry,
+Previously on SKDeepZoomRenderer; moved here because it is pure geometry,
 independent of any rendering backend.</p>
 </dd>
   </dl>
@@ -200,7 +194,7 @@ independent of any rendering backend.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomTileLayout.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomTileLayout.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -216,7 +210,7 @@ independent of any rendering backend.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

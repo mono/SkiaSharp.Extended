@@ -93,12 +93,12 @@
 
 <h1 id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_TryGetAsync_" data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync*" class="text-break">
   Method TryGetAsync
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomTileCache.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ISKDeepZoomTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
   <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a>.<a class="xref" href="SkiaSharp.Extended.DeepZoom.html">DeepZoom</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
 </div>
 
 <div class="markdown summary"></div>
@@ -123,17 +123,16 @@
 
 <h3 id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_TryGetAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_System_Threading_CancellationToken_" data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,System.Threading.CancellationToken)">
   TryGetAsync(SKDeepZoomTileId, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomTileCache.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ISKDeepZoomTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Asynchronously tries to retrieve a cached tile bitmap.
-Use this for cache tiers that involve I/O (browser storage, disk, etc.).
-A null return means cache miss -- the caller should then fetch from network.</p>
+<div class="markdown level1 summary"><p>Asynchronously tries to retrieve a cached tile.
+A null return means cache miss — the caller should then fetch from network.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">Task&lt;SKBitmap?&gt; TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)</code></pre>
+  <pre><code class="lang-csharp hljs">Task&lt;ISKDeepZoomTile?&gt; TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
@@ -146,7 +145,7 @@ A null return means cache miss -- the caller should then fetch from network.</p>
 
 <h4 class="section">Returns</h4>
 <dl class="parameters">
-  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a>&gt;</dt>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTile.html">ISKDeepZoomTile</a>&gt;</dt>
   <dd></dd>
 </dl>
 
@@ -163,7 +162,7 @@ A null return means cache miss -- the caller should then fetch from network.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomTileCache.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ISKDeepZoomTileCache.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -179,7 +178,7 @@ A null return means cache miss -- the caller should then fetch from network.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

@@ -91,17 +91,16 @@
 
   <h1 id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer" data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer" class="text-break">
     Interface ISKDeepZoomRenderer
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomRenderer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ISKDeepZoomRenderer.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
     <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a>.<a class="xref" href="SkiaSharp.Extended.DeepZoom.html">DeepZoom</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Pluggable renderer for Deep Zoom tiles.
-Implement this interface to customize how tiles are drawn onto the canvas
-(e.g., to add debug overlays, watermarks, or custom compositing).</p>
+  <div class="markdown summary"><p>Renders individual Deep Zoom tiles onto a drawing surface.
+Implement this interface to provide a custom rendering backend.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -127,19 +126,40 @@ Implement this interface to customize how tiles are drawn onto the canvas
 
 
   <h2 id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p>The default implementation is <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a>, which supports
-LOD fallback blending. Use the decorator pattern to wrap it with additional behaviour.
-Tile geometry (dest rects, fallback source rects) is pre-calculated by
-<a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.html">SKDeepZoomTileLayout</a> and passed to Render.</p>
+  <div class="markdown level0 remarks"><p>
+The rendering pipeline uses a two-pass approach:
+<ol><li>LOD fallback pass: <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.DrawFallbackTile.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_DrawFallbackTile_SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile_">DrawFallbackTile(SKDeepZoomRectF, SKDeepZoomRectF, ISKDeepZoomTile)</a> is called for tiles that are loading, using a lower-resolution ancestor.</li><li>Hi-res pass: <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.DrawTile.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_DrawTile_SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile_">DrawTile(SKDeepZoomRectF, ISKDeepZoomTile)</a> is called for each cached tile at the correct detail level.</li></ol>
+
+<p>
+Tile geometry (destination rects, fallback source rects) is pre-calculated by
+<a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.html">SKDeepZoomTileLayout</a> and passed into the draw methods.
+</p>
 </div>
 
   <h2 class="section" id="methods">Methods
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.Render.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_Render_SkiaSharp_SKCanvas_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_SKDeepZoomViewport_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileLayout_">Render(SKCanvas, SKDeepZoomImageSource, SKDeepZoomViewport, ISKDeepZoomTileCache, SKDeepZoomTileLayout)</a></dt>
-    <dd><p>Renders the visible Deep Zoom tiles onto <code class="paramref">canvas</code>.
-Called from the UI thread during the canvas paint callback.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.BeginRender.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_BeginRender">BeginRender()</a></dt>
+    <dd><p>Called before any tile draw calls for a render frame.
+Use this to set up state (e.g., save canvas, clear background).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.DrawFallbackTile.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_DrawFallbackTile_SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile_">DrawFallbackTile(SKDeepZoomRectF, SKDeepZoomRectF, ISKDeepZoomTile)</a></dt>
+    <dd><p>Draws a lower-resolution fallback tile stretched to fill the destination rect.
+Only called when LOD blending is enabled and the hi-res tile is still loading.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.DrawTile.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_DrawTile_SkiaSharp_Extended_DeepZoom_SKDeepZoomRectF_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile_">DrawTile(SKDeepZoomRectF, ISKDeepZoomTile)</a></dt>
+    <dd><p>Draws a hi-resolution tile at the exact detail level requested.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.EndRender.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_EndRender">EndRender()</a></dt>
+    <dd><p>Called after all tile draw calls for a render frame.
+Use this to flush state (e.g., restore canvas).</p>
 </dd>
   </dl>
 
@@ -148,7 +168,7 @@ Called from the UI thread during the canvas paint callback.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomRenderer.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ISKDeepZoomRenderer.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -164,7 +184,7 @@ Called from the UI thread during the canvas paint callback.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

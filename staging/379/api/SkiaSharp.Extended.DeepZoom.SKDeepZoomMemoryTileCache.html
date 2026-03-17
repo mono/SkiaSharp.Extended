@@ -99,9 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>LRU cache for decoded tile bitmaps.
-Evicted bitmaps are deferred for disposal to avoid race conditions
-with the renderer (which may hold references to recently-returned bitmaps).
+  <div class="markdown summary"><p>LRU cache for decoded tile images.
+Evicted tiles are deferred for disposal to avoid race conditions with the renderer.
 Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_FlushEvicted">FlushEvicted()</a> at the start of each render frame.</p>
 </div>
   <div class="markdown conceptual"></div>
@@ -201,19 +200,18 @@ Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_FlushEvicted">FlushEvicted()</a></dt>
-    <dd><p>Disposes all bitmaps that were evicted since the last call.
-Call this at the start of each render frame (on the UI thread)
-to safely dispose bitmaps that are no longer in use.</p>
+    <dd><p>Disposes tiles evicted since the last call.
+Call this at the start of each render frame on the UI thread.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_Put_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_">Put(SKDeepZoomTileId, SKBitmap?)</a></dt>
-    <dd><p>Adds a tile bitmap to the cache, evicting LRU entries if needed.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_Put_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile_">Put(SKDeepZoomTileId, ISKDeepZoomTile?)</a></dt>
+    <dd><p>Adds a tile to the cache, evicting the LRU entry if at capacity.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_PutAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_System_Threading_CancellationToken_">PutAsync(SKDeepZoomTileId, SKBitmap?, CancellationToken)</a></dt>
-    <dd><p>Adds a tile bitmap to the cache via the async interface. Calls <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_Put_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap_">Put(SKDeepZoomTileId, SKBitmap?)</a> synchronously.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_PutAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile_System_Threading_CancellationToken_">PutAsync(SKDeepZoomTileId, ISKDeepZoomTile?, CancellationToken)</a></dt>
+    <dd><p>Adds a tile to the cache via the async interface.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -222,13 +220,13 @@ to safely dispose bitmaps that are no longer in use.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_TryGet_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap__">TryGet(SKDeepZoomTileId, out SKBitmap?)</a></dt>
-    <dd><p>Tries to get a cached tile bitmap.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_TryGet_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile__">TryGet(SKDeepZoomTileId, out ISKDeepZoomTile?)</a></dt>
+    <dd><p>Tries to get a cached tile.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_TryGetAsync_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_System_Threading_CancellationToken_">TryGetAsync(SKDeepZoomTileId, CancellationToken)</a></dt>
-    <dd><p>Async variant of <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomMemoryTileCache_TryGet_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap__">TryGet(SKDeepZoomTileId, out SKBitmap?)</a>; returns the bitmap or null. Completes synchronously for in-memory cache.</p>
+    <dd><p>Async variant — completes synchronously for in-memory cache.</p>
 </dd>
   </dl>
 
@@ -253,7 +251,7 @@ to safely dispose bitmaps that are no longer in use.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

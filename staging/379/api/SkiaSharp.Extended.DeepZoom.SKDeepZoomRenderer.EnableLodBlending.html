@@ -150,6 +150,15 @@ When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/built
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_EnableLodBlending_remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p><strong>LOD blending ON (default):</strong> as you zoom in, blurry ancestor
+tiles fill the screen immediately; they sharpen as hi-res tiles arrive. Ideal for
+interactive exploration and smooth UX.</p>
+<p><strong>LOD blending OFF:</strong> only tiles that are already cached at the
+exact requested level are drawn; everything else is blank. Better for
+scientific/medical imaging where placeholder blur could be misleading, or when
+you need to see precisely what has and has not loaded.</p>
+</div>
 
 
 
@@ -173,7 +182,7 @@ When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/built
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

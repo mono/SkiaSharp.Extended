@@ -126,7 +126,9 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Initializes a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">SKDeepZoomController</a> with optional custom cache and renderer.</p>
+<div class="markdown level1 summary"><p>Initializes a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">SKDeepZoomController</a> with optional custom cache and renderer.
+When <code class="paramref">cache</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, a default <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html">SKDeepZoomMemoryTileCache</a> is used.
+When <code class="paramref">renderer</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, a default <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a> is used.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -137,16 +139,11 @@
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>cache</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.html">ISKDeepZoomTileCache</a></dt>
-  <dd><p>Custom tile cache. When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, a <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html">SKDeepZoomMemoryTileCache</a>
-with <code class="paramref">defaultCacheCapacity</code> entries is used.</p>
-</dd>
+  <dd></dd>
   <dt><code>renderer</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.html">ISKDeepZoomRenderer</a></dt>
-  <dd><p>Custom renderer. When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, the default <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a> is used.
-Use a decorator (e.g., a tile-border overlay) to extend rendering without modifying the core renderer.</p>
-</dd>
+  <dd></dd>
   <dt><code>defaultCacheCapacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-  <dd><p>Maximum tiles for the default cache (ignored when <code class="paramref">cache</code> is provided).</p>
-</dd>
+  <dd></dd>
 </dl>
 
 
@@ -179,7 +176,7 @@ Use a decorator (e.g., a tile-border overlay) to extend rendering without modify
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

@@ -121,12 +121,43 @@
 
 <a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render*"></a>
 
+<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render">
+  Render()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Executes the two-pass LOD rendering pipeline using the configured renderer.
+The renderer must be ready to accept draw calls before calling this method.
+When using <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a>, set its <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Canvas">Canvas</a>
+property before calling this method (or use the <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_SKCanvas_">Render(SKCanvas)</a> overload).</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public void Render()</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render*"></a>
+
 <h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_SKCanvas_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render(SkiaSharp.SKCanvas)">
   Render(SKCanvas)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Renders the current viewport state onto the given canvas.</p>
+<div class="markdown level1 summary"><p>Renders the current viewport state onto <code class="paramref">canvas</code>.
+Clears the canvas to white, sets the canvas on the renderer, then calls <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render">Render()</a>.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -170,7 +201,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

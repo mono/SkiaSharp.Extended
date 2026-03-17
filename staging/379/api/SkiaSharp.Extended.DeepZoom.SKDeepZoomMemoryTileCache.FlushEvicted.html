@@ -126,9 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomMemoryTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Disposes all bitmaps that were evicted since the last call.
-Call this at the start of each render frame (on the UI thread)
-to safely dispose bitmaps that are no longer in use.</p>
+<div class="markdown level1 summary"><p>Disposes tiles evicted since the last call.
+Call this at the start of each render frame on the UI thread.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -167,7 +166,7 @@ to safely dispose bitmaps that are no longer in use.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>

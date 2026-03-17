@@ -93,12 +93,12 @@
 
 <h1 id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_TryGet_" data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGet*" class="text-break">
   Method TryGet
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomTileCache.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ISKDeepZoomTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
   <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a>.<a class="xref" href="SkiaSharp.Extended.DeepZoom.html">DeepZoom</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
 </div>
 
 <div class="markdown summary"></div>
@@ -121,24 +121,24 @@
 
 <a id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_TryGet_" data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGet*"></a>
 
-<h3 id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_TryGet_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_SKBitmap__" data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.SKBitmap@)">
-  TryGet(SKDeepZoomTileId, out SKBitmap?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomTileCache.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_TryGet_SkiaSharp_Extended_DeepZoom_SKDeepZoomTileId_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTile__" data-uid="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGet(SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId,SkiaSharp.Extended.DeepZoom.ISKDeepZoomTile@)">
+  TryGet(SKDeepZoomTileId, out ISKDeepZoomTile?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ISKDeepZoomTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Tries to retrieve a cached tile bitmap.</p>
+<div class="markdown level1 summary"><p>Tries to retrieve a cached tile.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">bool TryGet(SKDeepZoomTileId id, out SKBitmap? bitmap)</code></pre>
+  <pre><code class="lang-csharp hljs">bool TryGet(SKDeepZoomTileId id, out ISKDeepZoomTile? tile)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>id</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.html">SKDeepZoomTileId</a></dt>
   <dd></dd>
-  <dt><code>bitmap</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a></dt>
+  <dt><code>tile</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTile.html">ISKDeepZoomTile</a></dt>
   <dd></dd>
 </dl>
 
@@ -161,7 +161,7 @@
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/ISKDeepZoomTileCache.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ISKDeepZoomTileCache.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -177,7 +177,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · bcae03c
+          source: PR #379 · 216986f
         </div>
       </div>
     </footer>
