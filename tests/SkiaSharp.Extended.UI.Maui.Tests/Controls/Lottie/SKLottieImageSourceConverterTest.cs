@@ -26,6 +26,9 @@ public class SKLottieImageSourceConverterTest
 	[InlineData("C:\\Projects\\lottie.json")]
 	[InlineData("lottie.json")]
 	[InlineData("file://lottie.json")]
+	[InlineData("/Projects/animation.lottie")]
+	[InlineData("animation.lottie")]
+	[InlineData("C:/Projects/animation.lottie")]
 	public void CanConvertFromFileString(string file)
 	{
 		var converter = new SKLottieImageSourceConverter();
@@ -34,5 +37,18 @@ public class SKLottieImageSourceConverterTest
 
 		var source = Assert.IsType<SKFileLottieImageSource>(result);
 		Assert.Equal(file, source.File);
+	}
+
+	[Theory]
+	[InlineData("http://example.org/animation.lottie")]
+	[InlineData("https://example.org/animation.lottie")]
+	public void CanConvertFromLottieUriString(string uri)
+	{
+		var converter = new SKLottieImageSourceConverter();
+
+		var result = converter.ConvertFromInvariantString(uri);
+
+		var source = Assert.IsType<SKUriLottieImageSource>(result);
+		Assert.Equal(new Uri(uri), source.Uri);
 	}
 }
