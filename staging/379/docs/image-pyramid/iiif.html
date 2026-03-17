@@ -126,15 +126,25 @@ controller.Load(source, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImag
 <p>In the sample apps, the URL is inspected to select the right parser:</p>
 <pre><code class="lang-csharp">private async Task LoadFromUrlAsync(string url)
 {
+    bool isDzc  = url.EndsWith(&quot;.dzc&quot;, StringComparison.OrdinalIgnoreCase);
+    bool isDzi  = url.EndsWith(&quot;.dzi&quot;, StringComparison.OrdinalIgnoreCase);
+    bool isIiif = url.Contains(&quot;/iiif/&quot;, StringComparison.OrdinalIgnoreCase)
+               || url.Contains(&quot;iiif.io&quot;, StringComparison.OrdinalIgnoreCase)
+               || url.EndsWith(&quot;/info.json&quot;, StringComparison.OrdinalIgnoreCase);
+
+    // Auto-append /info.json for bare IIIF base URLs
+    if (isIiif &amp;&amp; !url.EndsWith(&quot;/info.json&quot;, StringComparison.OrdinalIgnoreCase))
+        url += &quot;/info.json&quot;;
+
     var content = await http.GetStringAsync(url);
 
-    if (url.EndsWith(&quot;.dzc&quot;, StringComparison.OrdinalIgnoreCase))
+    if (isDzc)
     {
         var coll = SKImagePyramidDziCollectionSource.Parse(content);
         coll.TilesBaseUri = url[..url.LastIndexOf('/')] + &quot;/&quot;;
         controller.Load(coll, fetcher);
     }
-    else if (url.Contains(&quot;info.json&quot;) || url.Contains(&quot;/iiif/&quot;) || url.Contains(&quot;iiif.io&quot;))
+    else if (isIiif || (!isDzi &amp;&amp; content.TrimStart().StartsWith(&quot;{&quot;)))
     {
         var source = SKImagePyramidIiifSource.Parse(content);
         controller.Load(source, fetcher);
@@ -240,22 +250,26 @@ accepts any source type, making it easy to add support for other formats.</p>
 }
 </code></pre>
 <h2 id="sample-iiif-urls">Sample IIIF URLs</h2>
-<p>Try these public IIIF endpoints in the demo apps:</p>
+<p>Try these public IIIF endpoints in the demo apps. Enter the base URL — <code>/info.json</code> is appended automatically:</p>
 <table>
 <thead>
 <tr>
 <th>Institution</th>
-<th>info.json URL</th>
+<th>Base URL</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Wellcome Collection</td>
-<td><code>https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2/info.json</code></td>
+<td><code>https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2</code></td>
 </tr>
 <tr>
-<td>British Library</td>
-<td><code>https://api.bl.uk/image/iiif/ark:/81055/vdc_100022589218.0x000002/info.json</code></td>
+<td>Bodleian Libraries (Oxford)</td>
+<td><code>https://iiif.bodleian.ox.ac.uk/iiif/image/af315e3d-5b49-4fac-98e6-0e134e3e2c44</code></td>
+</tr>
+<tr>
+<td>IIIF.io reference image</td>
+<td><code>https://iiif.io/api/image/3.0/example/reference/918ecd18c2592080851777620de9bcb5-fountain</code></td>
 </tr>
 </tbody>
 </table>
@@ -280,7 +294,7 @@ accepts any source type, making it easy to add support for other formats.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · f3259f0
+          source: PR #379 · a29a7a5
         </div>
       </div>
     </footer>

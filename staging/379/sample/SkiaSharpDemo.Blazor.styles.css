@@ -378,6 +378,18 @@ main[b-u7t1t1ae9g] {
     font-size: 0.8rem;
 }
 
+.ip-example-select[b-l7pcepf0b4] {
+    background: #333;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 3px;
+    padding: 2px 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    max-width: 220px;
+}
+.ip-example-select:hover[b-l7pcepf0b4] { border-color: #888; }
+
 /* Separator between canvas area and inspector when inspector is open */
 .ip-layout.ip-with-inspector .ip-canvas-area[b-l7pcepf0b4] {
     border-right: 1px solid #333;
