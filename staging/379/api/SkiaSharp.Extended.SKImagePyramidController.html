@@ -253,7 +253,11 @@ Returns 0 if no image is loaded.</p>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_SKImagePyramidDziCollectionSource_SkiaSharp_Extended_ISKImagePyramidTileFetcher_">Load(SKImagePyramidDziCollectionSource, ISKImagePyramidTileFetcher)</a></dt>
-    <dd><p>Loads a DZC tile source and sets up sub-images.</p>
+    <dd><p>Loads a DZC collection source. Populates <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SubImages.html#SkiaSharp_Extended_SKImagePyramidController_SubImages">SubImages</a> with the items in
+the collection. Does NOT set a renderable tile source — listen for
+<a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.CollectionOpenSucceeded.html">CollectionOpenSucceeded</a> and then call
+<a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_SkiaSharp_Extended_ISKImagePyramidTileFetcher_">Load(ISKImagePyramidSource, ISKImagePyramidTileFetcher)</a> with a specific
+sub-image source to actually render.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -310,6 +314,14 @@ Call from your render loop on every frame.</p>
 </h2>
 
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.CollectionOpenSucceeded.html">CollectionOpenSucceeded</a></dt>
+    <dd><p>Fired when a DZC collection is successfully loaded and <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SubImages.html#SkiaSharp_Extended_SKImagePyramidController_SubImages">SubImages</a> is populated.
+Use this event to know when the collection is ready. To render a specific image from the
+collection, call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_SkiaSharp_Extended_ISKImagePyramidTileFetcher_">Load(ISKImagePyramidSource, ISKImagePyramidTileFetcher)</a>
+with one of the sub-image sources from <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SubImages.html#SkiaSharp_Extended_SKImagePyramidController_SubImages">SubImages</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.ImageOpenFailed.html">ImageOpenFailed</a></dt>
     <dd><p>Fired when the image source fails to load.</p>
 </dd>
@@ -356,7 +368,7 @@ Call from your render loop on every frame.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d89a189
+          source: PR #379 · 7c6c45b
         </div>
       </div>
     </footer>

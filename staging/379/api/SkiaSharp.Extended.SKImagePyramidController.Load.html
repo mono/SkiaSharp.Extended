@@ -160,7 +160,11 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidController.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Loads a DZC tile source and sets up sub-images.</p>
+<div class="markdown level1 summary"><p>Loads a DZC collection source. Populates <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SubImages.html#SkiaSharp_Extended_SKImagePyramidController_SubImages">SubImages</a> with the items in
+the collection. Does NOT set a renderable tile source — listen for
+<a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.CollectionOpenSucceeded.html">CollectionOpenSucceeded</a> and then call
+<a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_SkiaSharp_Extended_ISKImagePyramidTileFetcher_">Load(ISKImagePyramidSource, ISKImagePyramidTileFetcher)</a> with a specific
+sub-image source to actually render.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -206,7 +210,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d89a189
+          source: PR #379 · 7c6c45b
         </div>
       </div>
     </footer>
