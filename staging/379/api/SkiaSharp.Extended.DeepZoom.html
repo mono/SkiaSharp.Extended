@@ -103,6 +103,11 @@ This is the SkiaSharp-specific implementation of the opaque tile interface.</p>
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTileDecoder.html">SKDeepZoomBitmapTileDecoder</a></dt>
+      <dd><p>Decodes image streams into <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTile.html">SKDeepZoomBitmapTile</a> using SkiaSharp.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.html">SKDeepZoomCollectionSource</a></dt>
       <dd><p>Represents a Deep Zoom Collection (DZC) — a composite tiled pyramid of multiple images.
 Parses the DZC XML descriptor and provides access to sub-images and composite tile math.</p>
@@ -122,13 +127,15 @@ cache management, and rendering.</p>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.html">SKDeepZoomFileTileFetcher</a></dt>
-      <dd><p>Fetches tiles from the local file system.
+      <dd><p>Fetches tiles from the local file system and decodes them using a provided
+<a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.html">ISKDeepZoomTileDecoder</a>.
 Accepts both plain file paths and <code>file://</code> URIs.</p>
 </dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">SKDeepZoomHttpTileFetcher</a></dt>
-      <dd><p>Fetches tiles over HTTP. Thread-safe and reusable.</p>
+      <dd><p>Fetches tiles over HTTP and decodes them using a provided <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.html">ISKDeepZoomTileDecoder</a>.
+Thread-safe and reusable.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -217,14 +224,6 @@ Replaces anonymous tuples like <code>(int X, int Y, int Width, int Height)</code
 Interfaces
 </h3>
     <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKCanvasAwareRenderer.html">ISKCanvasAwareRenderer</a></dt>
-      <dd><p>Optional interface for <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.html">ISKDeepZoomRenderer</a> implementations that render
-onto an <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skcanvas">SKCanvas</a>. When a renderer implements this interface,
-<a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_SKCanvas_">Render(SKCanvas)</a> will automatically set the canvas
-before calling <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.BeginRender.html#SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_BeginRender">BeginRender()</a>.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.html">ISKDeepZoomRenderer</a></dt>
       <dd><p>Renders individual Deep Zoom tiles onto a drawing surface.
 Implement this interface to provide a custom rendering backend.</p>
@@ -242,6 +241,12 @@ the actual decoded image in a rendering-backend-specific type.</p>
       <dd><p>Pluggable tile cache for the Deep Zoom rendering pipeline.
 Tiles are stored as <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTile.html">ISKDeepZoomTile</a> so that the cache is
 rendering-backend-agnostic.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.html">ISKDeepZoomTileDecoder</a></dt>
+      <dd><p>Decodes raw image data from a stream into an <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTile.html">ISKDeepZoomTile</a>.
+Implement this interface to plug in a custom image decoder (e.g. SkiaSharp, ImageSharp).</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -271,7 +276,7 @@ Implement this interface to plug in a custom tile source.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 216986f
+          source: PR #379 · 04fb6f7
         </div>
       </div>
     </footer>

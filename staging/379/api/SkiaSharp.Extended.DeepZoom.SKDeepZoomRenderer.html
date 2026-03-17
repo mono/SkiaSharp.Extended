@@ -105,7 +105,7 @@ Draws Deep Zoom tiles onto an <a class="xref" href="https://learn.microsoft.com/
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKDeepZoomRenderer : ISKCanvasAwareRenderer, ISKDeepZoomRenderer, IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public class SKDeepZoomRenderer : ISKDeepZoomRenderer, IDisposable</code></pre>
   </div>
 
 
@@ -122,7 +122,6 @@ Draws Deep Zoom tiles onto an <a class="xref" href="https://learn.microsoft.com/
   <dl class="typelist implements">
     <dt>Implements</dt>
     <dd>
-      <div><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKCanvasAwareRenderer.html">ISKCanvasAwareRenderer</a></div>
       <div><a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.html">ISKDeepZoomRenderer</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
     </dd>
@@ -159,9 +158,11 @@ Draws Deep Zoom tiles onto an <a class="xref" href="https://learn.microsoft.com/
 
 
   <h2 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p>Set <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Canvas">Canvas</a> before calling <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render">Render()</a>.
-The rendering pipeline (two-pass LOD blending) is orchestrated by
-<a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">SKDeepZoomController</a>; this class handles only the actual draw calls.</p>
+  <div class="markdown level0 remarks"><p>Set <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Canvas">Canvas</a> before calling <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_">Render(ISKDeepZoomRenderer)</a>.
+The canvas reference is only used during the render call and should not be stored
+beyond the scope of the paint callback.
+The two-pass LOD blending logic is controlled by
+<a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.EnableLodBlending.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_EnableLodBlending">EnableLodBlending</a>.</p>
 </div>
 
   <h2 class="section" id="constructors">Constructors
@@ -177,15 +178,8 @@ The rendering pipeline (two-pass LOD blending) is orchestrated by
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Canvas">Canvas</a></dt>
-    <dd><p>The canvas to draw onto. Must be set before each render frame.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.EnableLodBlending.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_EnableLodBlending">EnableLodBlending</a></dt>
-    <dd><p>Whether to enable LOD (Level-of-Detail) fallback blending.
-When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> (default), lower-resolution parent tiles are drawn as
-placeholders while higher-resolution tiles are loading — the view is never blank.
-When <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>, missing tiles show as empty space until loaded.</p>
+    <dd><p>The canvas to draw onto. Set this before each frame by the caller,
+then pass this renderer to <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_">Render(ISKDeepZoomRenderer)</a>.</p>
 </dd>
   </dl>
 
@@ -241,7 +235,7 @@ Use this to flush state (e.g., restore canvas).</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 216986f
+          source: PR #379 · 04fb6f7
         </div>
       </div>
     </footer>

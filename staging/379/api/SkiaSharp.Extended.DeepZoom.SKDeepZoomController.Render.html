@@ -93,12 +93,12 @@
 
 <h1 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render*" class="text-break">
   Method Render
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
   <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a>.<a class="xref" href="SkiaSharp.Extended.DeepZoom.html">DeepZoom</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
 </div>
 
 <div class="markdown summary"></div>
@@ -121,54 +121,28 @@
 
 <a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render*"></a>
 
-<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render">
-  Render()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render(SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer)">
+  Render(ISKDeepZoomRenderer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Executes the two-pass LOD rendering pipeline using the configured renderer.
-The renderer must be ready to accept draw calls before calling this method.
-When using <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a>, set its <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Canvas">Canvas</a>
-property before calling this method (or use the <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_SKCanvas_">Render(SKCanvas)</a> overload).</p>
+<div class="markdown level1 summary"><p>Executes the two-pass LOD rendering pipeline using the provided renderer.
+The renderer is transient — it is only used during this call and should not be
+stored by the controller. This allows the renderer (and its canvas) to be created
+and discarded per frame, which is required by some graphics APIs.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public void Render()</code></pre>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render*"></a>
-
-<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_SKCanvas_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render(SkiaSharp.SKCanvas)">
-  Render(SKCanvas)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
-</h3>
-
-<div class="markdown level1 summary"><p>Renders the current viewport state onto <code class="paramref">canvas</code>.
-Clears the canvas to white, sets the canvas on the renderer, then calls <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render">Render()</a>.</p>
-</div>
-<div class="markdown level1 conceptual"></div>
-
-<div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public void Render(SKCanvas canvas)</code></pre>
+  <pre><code class="lang-csharp hljs">public void Render(ISKDeepZoomRenderer renderer)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
-  <dt><code>canvas</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skcanvas">SKCanvas</a></dt>
-  <dd></dd>
+  <dt><code>renderer</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.html">ISKDeepZoomRenderer</a></dt>
+  <dd><p>The renderer to draw with. Must be fully initialized (e.g. canvas set)
+before calling this method. The renderer is responsible for its own lifecycle.</p>
+</dd>
 </dl>
 
 
@@ -185,7 +159,7 @@ Clears the canvas to white, sets the canvas on the renderer, then calls <a class
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomController.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -201,7 +175,7 @@ Clears the canvas to white, sets the canvas on the renderer, then calls <a class
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 216986f
+          source: PR #379 · 04fb6f7
         </div>
       </div>
     </footer>

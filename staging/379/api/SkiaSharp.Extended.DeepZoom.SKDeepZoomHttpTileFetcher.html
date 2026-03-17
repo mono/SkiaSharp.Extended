@@ -91,15 +91,16 @@
 
   <h1 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher" class="text-break">
     Class SKDeepZoomHttpTileFetcher
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
     <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a>.<a class="xref" href="SkiaSharp.Extended.DeepZoom.html">DeepZoom</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Fetches tiles over HTTP. Thread-safe and reusable.</p>
+  <div class="markdown summary"><p>Fetches tiles over HTTP and decodes them using a provided <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.html">ISKDeepZoomTileDecoder</a>.
+Thread-safe and reusable.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -161,14 +162,15 @@
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.-ctor.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher__ctor">SKDeepZoomHttpTileFetcher()</a></dt>
-    <dd><p>Creates a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">SKDeepZoomHttpTileFetcher</a> with an internal HttpClient.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.-ctor.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher__ctor_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileDecoder_">SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder)</a></dt>
+    <dd><p>Creates a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">SKDeepZoomHttpTileFetcher</a> with the given decoder
+and an internally-managed <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a>.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.-ctor.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher__ctor_System_Net_Http_HttpClient_">SKDeepZoomHttpTileFetcher(HttpClient)</a></dt>
-    <dd><p>Creates a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">SKDeepZoomHttpTileFetcher</a> using an existing HttpClient.
-The caller retains ownership of the HttpClient.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.-ctor.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher__ctor_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileDecoder_System_Net_Http_HttpClient_">SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder, HttpClient)</a></dt>
+    <dd><p>Creates a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">SKDeepZoomHttpTileFetcher</a> using an existing
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a> (caller retains ownership).</p>
 </dd>
   </dl>
 
@@ -190,7 +192,7 @@ The caller retains ownership of the HttpClient.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomHttpTileFetcher.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomHttpTileFetcher.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -206,7 +208,7 @@ The caller retains ownership of the HttpClient.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 216986f
+          source: PR #379 · 04fb6f7
         </div>
       </div>
     </footer>

@@ -93,12 +93,12 @@
 
 <h1 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher__ctor_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.#ctor*" class="text-break">
   Constructor SKDeepZoomHttpTileFetcher
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
   <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a>.<a class="xref" href="SkiaSharp.Extended.DeepZoom.html">DeepZoom</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
 </div>
 
 <div class="markdown summary"></div>
@@ -121,19 +121,25 @@
 
 <a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher__ctor_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.#ctor*"></a>
 
-<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher__ctor" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.#ctor">
-  SKDeepZoomHttpTileFetcher()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher__ctor_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileDecoder_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.#ctor(SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder)">
+  SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Creates a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">SKDeepZoomHttpTileFetcher</a> with an internal HttpClient.</p>
+<div class="markdown level1 summary"><p>Creates a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">SKDeepZoomHttpTileFetcher</a> with the given decoder
+and an internally-managed <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a>.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKDeepZoomHttpTileFetcher()</code></pre>
+  <pre><code class="lang-csharp hljs">public SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder decoder)</code></pre>
 </div>
 
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>decoder</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.html">ISKDeepZoomTileDecoder</a></dt>
+  <dd></dd>
+</dl>
 
 
 
@@ -148,22 +154,24 @@
 
 <a id="SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher__ctor_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.#ctor*"></a>
 
-<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher__ctor_System_Net_Http_HttpClient_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.#ctor(System.Net.Http.HttpClient)">
-  SKDeepZoomHttpTileFetcher(HttpClient)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomHttpTileFetcher__ctor_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileDecoder_System_Net_Http_HttpClient_" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.#ctor(SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder,System.Net.Http.HttpClient)">
+  SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder, HttpClient)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Creates a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">SKDeepZoomHttpTileFetcher</a> using an existing HttpClient.
-The caller retains ownership of the HttpClient.</p>
+<div class="markdown level1 summary"><p>Creates a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html">SKDeepZoomHttpTileFetcher</a> using an existing
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a> (caller retains ownership).</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKDeepZoomHttpTileFetcher(HttpClient httpClient)</code></pre>
+  <pre><code class="lang-csharp hljs">public SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder decoder, HttpClient httpClient)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
+  <dt><code>decoder</code> <a class="xref" href="SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.html">ISKDeepZoomTileDecoder</a></dt>
+  <dd></dd>
   <dt><code>httpClient</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a></dt>
   <dd></dd>
 </dl>
@@ -182,7 +190,7 @@ The caller retains ownership of the HttpClient.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomHttpTileFetcher.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomHttpTileFetcher.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -198,7 +206,7 @@ The caller retains ownership of the HttpClient.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 216986f
+          source: PR #379 · 04fb6f7
         </div>
       </div>
     </footer>

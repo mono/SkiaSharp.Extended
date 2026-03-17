@@ -4,16 +4,6 @@
     "title": "| SkiaSharp.Extended",
     "keywords": "View the docs online at https://mono.github.io/SkiaSharp.Extended"
   },
-  "api/SkiaSharp.Extended.DeepZoom.ISKCanvasAwareRenderer.Canvas.html": {
-    "href": "api/SkiaSharp.Extended.DeepZoom.ISKCanvasAwareRenderer.Canvas.html",
-    "title": "Property Canvas | SkiaSharp.Extended",
-    "keywords": "Property Canvas Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Canvas The canvas to draw onto. Set before each render frame. SKCanvas? Canvas { get; set; } Property Value SKCanvas"
-  },
-  "api/SkiaSharp.Extended.DeepZoom.ISKCanvasAwareRenderer.html": {
-    "href": "api/SkiaSharp.Extended.DeepZoom.ISKCanvasAwareRenderer.html",
-    "title": "Interface ISKCanvasAwareRenderer | SkiaSharp.Extended",
-    "keywords": "Interface ISKCanvasAwareRenderer Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Optional interface for ISKDeepZoomRenderer implementations that render onto an SKCanvas. When a renderer implements this interface, Render(SKCanvas) will automatically set the canvas before calling BeginRender(). public interface ISKCanvasAwareRenderer : ISKDeepZoomRenderer, IDisposable Inherited Members ISKDeepZoomRenderer.BeginRender() ISKDeepZoomRenderer.DrawTile(SKDeepZoomRectF, ISKDeepZoomTile) ISKDeepZoomRenderer.DrawFallbackTile(SKDeepZoomRectF, SKDeepZoomRectF, ISKDeepZoomTile) ISKDeepZoomRenderer.EndRender() IDisposable.Dispose() Properties Canvas The canvas to draw onto. Set before each render frame."
-  },
   "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.BeginRender.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.BeginRender.html",
     "title": "Method BeginRender | SkiaSharp.Extended",
@@ -94,6 +84,16 @@
     "title": "Interface ISKDeepZoomTileCache | SkiaSharp.Extended",
     "keywords": "Interface ISKDeepZoomTileCache Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Pluggable tile cache for the Deep Zoom rendering pipeline. Tiles are stored as ISKDeepZoomTile so that the cache is rendering-backend-agnostic. public interface ISKDeepZoomTileCache : IDisposable Inherited Members IDisposable.Dispose() Properties Count Number of tiles currently in the cache. Methods Clear() Clears all cached tiles. Contains(SKDeepZoomTileId) Returns true if the tile is cached. FlushEvicted() Disposes tiles evicted since the last call. Call once per render frame on the UI thread before drawing to safely release resources. Put(SKDeepZoomTileId, ISKDeepZoomTile?) Stores a tile synchronously. PutAsync(SKDeepZoomTileId, ISKDeepZoomTile?, CancellationToken) Stores a tile. Implementations may apply delays or tiered writes. Remove(SKDeepZoomTileId) Removes a specific tile from the cache. TryGet(SKDeepZoomTileId, out ISKDeepZoomTile?) Tries to retrieve a cached tile. TryGetAsync(SKDeepZoomTileId, CancellationToken) Asynchronously tries to retrieve a cached tile. A null return means cache miss — the caller should then fetch from network."
   },
+  "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.Decode.html": {
+    "href": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.Decode.html",
+    "title": "Method Decode | SkiaSharp.Extended",
+    "keywords": "Method Decode Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Decode(Stream) Decodes the image data in data and returns the resulting tile, or null if decoding fails. ISKDeepZoomTile? Decode(Stream data) Parameters data Stream A fully-buffered stream containing the raw image bytes. Returns ISKDeepZoomTile"
+  },
+  "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.html": {
+    "href": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.html",
+    "title": "Interface ISKDeepZoomTileDecoder | SkiaSharp.Extended",
+    "keywords": "Interface ISKDeepZoomTileDecoder Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Decodes raw image data from a stream into an ISKDeepZoomTile. Implement this interface to plug in a custom image decoder (e.g. SkiaSharp, ImageSharp). public interface ISKDeepZoomTileDecoder Methods Decode(Stream) Decodes the image data in data and returns the resulting tile, or null if decoding fails."
+  },
   "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.FetchTileAsync.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.FetchTileAsync.html",
     "title": "Method FetchTileAsync | SkiaSharp.Extended",
@@ -123,6 +123,21 @@
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTile.html",
     "title": "Class SKDeepZoomBitmapTile | SkiaSharp.Extended",
     "keywords": "Class SKDeepZoomBitmapTile Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll A ISKDeepZoomTile backed by an SKBitmap. This is the SkiaSharp-specific implementation of the opaque tile interface. public sealed class SKDeepZoomBitmapTile : ISKDeepZoomTile, IDisposable Inheritance object SKDeepZoomBitmapTile Implements ISKDeepZoomTile IDisposable Inherited Members object.GetType() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKDeepZoomBitmapTile(SKBitmap) Wraps bitmap as an ISKDeepZoomTile. Properties Bitmap The underlying decoded bitmap. Methods Dispose()"
+  },
+  "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTileDecoder.-ctor.html": {
+    "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTileDecoder.-ctor.html",
+    "title": "Constructor SKDeepZoomBitmapTileDecoder | SkiaSharp.Extended",
+    "keywords": "Constructor SKDeepZoomBitmapTileDecoder Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll SKDeepZoomBitmapTileDecoder() public SKDeepZoomBitmapTileDecoder()"
+  },
+  "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTileDecoder.Decode.html": {
+    "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTileDecoder.Decode.html",
+    "title": "Method Decode | SkiaSharp.Extended",
+    "keywords": "Method Decode Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Decode(Stream) Decodes the image data in data and returns the resulting tile, or null if decoding fails. public ISKDeepZoomTile? Decode(Stream data) Parameters data Stream A fully-buffered stream containing the raw image bytes. Returns ISKDeepZoomTile"
+  },
+  "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTileDecoder.html": {
+    "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTileDecoder.html",
+    "title": "Class SKDeepZoomBitmapTileDecoder | SkiaSharp.Extended",
+    "keywords": "Class SKDeepZoomBitmapTileDecoder Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Decodes image streams into SKDeepZoomBitmapTile using SkiaSharp. public class SKDeepZoomBitmapTileDecoder : ISKDeepZoomTileDecoder Inheritance object SKDeepZoomBitmapTileDecoder Implements ISKDeepZoomTileDecoder Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKDeepZoomBitmapTileDecoder() Methods Decode(Stream) Decodes the image data in data and returns the resulting tile, or null if decoding fails."
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.-ctor.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.-ctor.html",
@@ -252,152 +267,147 @@
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.-ctor.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.-ctor.html",
     "title": "Constructor SKDeepZoomController | SkiaSharp.Extended",
-    "keywords": "Constructor SKDeepZoomController Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll SKDeepZoomController(ISKDeepZoomTileCache?, ISKDeepZoomRenderer?, int) Initializes a new SKDeepZoomController with optional custom cache and renderer. When cache is null, a default SKDeepZoomMemoryTileCache is used. When renderer is null, a default SKDeepZoomRenderer is used. public SKDeepZoomController(ISKDeepZoomTileCache? cache = null, ISKDeepZoomRenderer? renderer = null, int defaultCacheCapacity = 1024) Parameters cache ISKDeepZoomTileCache renderer ISKDeepZoomRenderer defaultCacheCapacity int"
+    "keywords": "Constructor SKDeepZoomController Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll SKDeepZoomController(ISKDeepZoomTileCache?, int) Initializes a new SKDeepZoomController with an optional custom cache. When cache is null, a default SKDeepZoomMemoryTileCache is used. public SKDeepZoomController(ISKDeepZoomTileCache? cache = null, int defaultCacheCapacity = 1024) Parameters cache ISKDeepZoomTileCache defaultCacheCapacity int"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.AspectRatio.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.AspectRatio.html",
     "title": "Property AspectRatio | SkiaSharp.Extended",
-    "keywords": "Property AspectRatio Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll AspectRatio The aspect ratio of the loaded image (width/height). 0 if not loaded. public double AspectRatio { get; } Property Value double"
+    "keywords": "Property AspectRatio Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll AspectRatio The aspect ratio of the loaded image (width/height). 0 if not loaded. public double AspectRatio { get; } Property Value double"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Cache.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Cache.html",
     "title": "Property Cache | SkiaSharp.Extended",
-    "keywords": "Property Cache Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Cache The tile cache. public ISKDeepZoomTileCache Cache { get; } Property Value ISKDeepZoomTileCache"
+    "keywords": "Property Cache Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Cache The tile cache. public ISKDeepZoomTileCache Cache { get; } Property Value ISKDeepZoomTileCache"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Dispose.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Dispose.html",
     "title": "Method Dispose | SkiaSharp.Extended",
-    "keywords": "Method Dispose Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Dispose() public void Dispose()"
+    "keywords": "Method Dispose Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Dispose() public void Dispose()"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.EnableLodBlending.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.EnableLodBlending.html",
     "title": "Property EnableLodBlending | SkiaSharp.Extended",
-    "keywords": "Property EnableLodBlending Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll EnableLodBlending Whether to draw lower-resolution fallback tiles while hi-res tiles are loading (LOD blending). Default is true. public bool EnableLodBlending { get; set; } Property Value bool Remarks Enabled (default): blurry ancestor tiles fill the screen immediately as you zoom in; they sharpen progressively. Best for interactive use. Disabled: missing tiles show as blank until loaded. Preferred for scientific/medical imaging where blurry placeholders could be misleading."
+    "keywords": "Property EnableLodBlending Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll EnableLodBlending Whether to draw lower-resolution fallback tiles while hi-res tiles are loading (LOD blending). Default is true. public bool EnableLodBlending { get; set; } Property Value bool Remarks Enabled (default): blurry ancestor tiles fill the screen immediately as you zoom in; they sharpen progressively. Best for interactive use. Disabled: missing tiles show as blank until loaded. Preferred for scientific/medical imaging where blurry placeholders could be misleading."
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.GetZoomRect.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.GetZoomRect.html",
     "title": "Method GetZoomRect | SkiaSharp.Extended",
-    "keywords": "Method GetZoomRect Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll GetZoomRect() Returns the logical rectangle visible at the current viewport state. public (double X, double Y, double Width, double Height) GetZoomRect() Returns (double X, double Y, double Width, double Height)"
+    "keywords": "Method GetZoomRect Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll GetZoomRect() Returns the logical rectangle visible at the current viewport state. public (double X, double Y, double Width, double Height) GetZoomRect() Returns (double X, double Y, double Width, double Height)"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ImageOpenFailed.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ImageOpenFailed.html",
     "title": "Event ImageOpenFailed | SkiaSharp.Extended",
-    "keywords": "Event ImageOpenFailed Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Fired when the image source fails to load. public event EventHandler<Exception>? ImageOpenFailed Returns EventHandler<Exception>"
+    "keywords": "Event ImageOpenFailed Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Fired when the image source fails to load. public event EventHandler<Exception>? ImageOpenFailed Returns EventHandler<Exception>"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ImageOpenSucceeded.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ImageOpenSucceeded.html",
     "title": "Event ImageOpenSucceeded | SkiaSharp.Extended",
-    "keywords": "Event ImageOpenSucceeded Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Fired when the image source is loaded successfully. public event EventHandler? ImageOpenSucceeded Returns EventHandler"
+    "keywords": "Event ImageOpenSucceeded Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Fired when the image source is loaded successfully. public event EventHandler? ImageOpenSucceeded Returns EventHandler"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.InvalidateRequired.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.InvalidateRequired.html",
     "title": "Event InvalidateRequired | SkiaSharp.Extended",
-    "keywords": "Event InvalidateRequired Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Fired when new tiles are loaded and the view needs repainting. public event EventHandler? InvalidateRequired Returns EventHandler"
+    "keywords": "Event InvalidateRequired Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Fired when new tiles are loaded and the view needs repainting. public event EventHandler? InvalidateRequired Returns EventHandler"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.IsIdle.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.IsIdle.html",
     "title": "Property IsIdle | SkiaSharp.Extended",
-    "keywords": "Property IsIdle Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll IsIdle Whether the controller has no pending tile loads. public bool IsIdle { get; } Property Value bool"
+    "keywords": "Property IsIdle Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll IsIdle Whether the controller has no pending tile loads. public bool IsIdle { get; } Property Value bool"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Load.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Load.html",
     "title": "Method Load | SkiaSharp.Extended",
-    "keywords": "Method Load Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Load(SKDeepZoomImageSource, ISKDeepZoomTileFetcher) Loads a DZI tile source. Resets the viewport to show the full image. public void Load(SKDeepZoomImageSource tileSource, ISKDeepZoomTileFetcher fetcher) Parameters tileSource SKDeepZoomImageSource fetcher ISKDeepZoomTileFetcher Load(SKDeepZoomCollectionSource, ISKDeepZoomTileFetcher) Loads a DZC tile source and sets up sub-images. public void Load(SKDeepZoomCollectionSource dzcTileSource, ISKDeepZoomTileFetcher fetcher) Parameters dzcTileSource SKDeepZoomCollectionSource fetcher ISKDeepZoomTileFetcher"
+    "keywords": "Method Load Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Load(SKDeepZoomImageSource, ISKDeepZoomTileFetcher) Loads a DZI tile source. Resets the viewport to show the full image. public void Load(SKDeepZoomImageSource tileSource, ISKDeepZoomTileFetcher fetcher) Parameters tileSource SKDeepZoomImageSource fetcher ISKDeepZoomTileFetcher Load(SKDeepZoomCollectionSource, ISKDeepZoomTileFetcher) Loads a DZC tile source and sets up sub-images. public void Load(SKDeepZoomCollectionSource dzcTileSource, ISKDeepZoomTileFetcher fetcher) Parameters dzcTileSource SKDeepZoomCollectionSource fetcher ISKDeepZoomTileFetcher"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.NativeZoom.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.NativeZoom.html",
     "title": "Property NativeZoom | SkiaSharp.Extended",
-    "keywords": "Property NativeZoom Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll NativeZoom The zoom level at which one image pixel maps to exactly one screen pixel. Returns 0 if no image is loaded. public double NativeZoom { get; } Property Value double"
+    "keywords": "Property NativeZoom Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll NativeZoom The zoom level at which one image pixel maps to exactly one screen pixel. Returns 0 if no image is loaded. public double NativeZoom { get; } Property Value double"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Pan.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Pan.html",
     "title": "Method Pan | SkiaSharp.Extended",
-    "keywords": "Method Pan Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Pan(double, double) Pans by the given screen-space delta. public void Pan(double deltaScreenX, double deltaScreenY) Parameters deltaScreenX double deltaScreenY double"
+    "keywords": "Method Pan Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Pan(double, double) Pans by the given screen-space delta. public void Pan(double deltaScreenX, double deltaScreenY) Parameters deltaScreenX double deltaScreenY double"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.PendingTileCount.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.PendingTileCount.html",
     "title": "Property PendingTileCount | SkiaSharp.Extended",
-    "keywords": "Property PendingTileCount Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll PendingTileCount Number of tile fetches currently in flight. public int PendingTileCount { get; } Property Value int"
+    "keywords": "Property PendingTileCount Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll PendingTileCount Number of tile fetches currently in flight. public int PendingTileCount { get; } Property Value int"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html",
     "title": "Method Render | SkiaSharp.Extended",
-    "keywords": "Method Render Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Render() Executes the two-pass LOD rendering pipeline using the configured renderer. The renderer must be ready to accept draw calls before calling this method. When using SKDeepZoomRenderer, set its Canvas property before calling this method (or use the Render(SKCanvas) overload). public void Render() Render(SKCanvas) Renders the current viewport state onto canvas. Clears the canvas to white, sets the canvas on the renderer, then calls Render(). public void Render(SKCanvas canvas) Parameters canvas SKCanvas"
-  },
-  "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Renderer.html": {
-    "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Renderer.html",
-    "title": "Property Renderer | SkiaSharp.Extended",
-    "keywords": "Property Renderer Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Renderer The renderer. public ISKDeepZoomRenderer Renderer { get; } Property Value ISKDeepZoomRenderer"
+    "keywords": "Method Render Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Render(ISKDeepZoomRenderer) Executes the two-pass LOD rendering pipeline using the provided renderer. The renderer is transient — it is only used during this call and should not be stored by the controller. This allows the renderer (and its canvas) to be created and discarded per frame, which is required by some graphics APIs. public void Render(ISKDeepZoomRenderer renderer) Parameters renderer ISKDeepZoomRenderer The renderer to draw with. Must be fully initialized (e.g. canvas set) before calling this method. The renderer is responsible for its own lifecycle."
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ResetView.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ResetView.html",
     "title": "Method ResetView | SkiaSharp.Extended",
-    "keywords": "Method ResetView Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll ResetView() Resets the viewport to show the entire image. public void ResetView()"
+    "keywords": "Method ResetView Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll ResetView() Resets the viewport to show the entire image. public void ResetView()"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetControlSize.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetControlSize.html",
     "title": "Method SetControlSize | SkiaSharp.Extended",
-    "keywords": "Method SetControlSize Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll SetControlSize(double, double) Sets the control (canvas) size. Refits the viewport when the user has not manually zoomed. public void SetControlSize(double width, double height) Parameters width double height double"
+    "keywords": "Method SetControlSize Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll SetControlSize(double, double) Sets the control (canvas) size. Refits the viewport when the user has not manually zoomed. public void SetControlSize(double width, double height) Parameters width double height double"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetViewport.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetViewport.html",
     "title": "Method SetViewport | SkiaSharp.Extended",
-    "keywords": "Method SetViewport Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll SetViewport(double, double, double) Sets the viewport directly and constrains it. public void SetViewport(double viewportWidth, double originX, double originY) Parameters viewportWidth double originX double originY double"
+    "keywords": "Method SetViewport Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll SetViewport(double, double, double) Sets the viewport directly and constrains it. public void SetViewport(double viewportWidth, double originX, double originY) Parameters viewportWidth double originX double originY double"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetZoom.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetZoom.html",
     "title": "Method SetZoom | SkiaSharp.Extended",
-    "keywords": "Method SetZoom Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll SetZoom(double) Sets an absolute zoom level (1.0 = image fills the control width). public void SetZoom(double zoom) Parameters zoom double"
+    "keywords": "Method SetZoom Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll SetZoom(double) Sets an absolute zoom level (1.0 = image fills the control width). public void SetZoom(double zoom) Parameters zoom double"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SubImages.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SubImages.html",
     "title": "Property SubImages | SkiaSharp.Extended",
-    "keywords": "Property SubImages Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll SubImages The sub-images from the loaded DZC, or empty if not loaded from a DZC. public IReadOnlyList<SKDeepZoomSubImage> SubImages { get; } Property Value IReadOnlyList<SKDeepZoomSubImage>"
+    "keywords": "Property SubImages Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll SubImages The sub-images from the loaded DZC, or empty if not loaded from a DZC. public IReadOnlyList<SKDeepZoomSubImage> SubImages { get; } Property Value IReadOnlyList<SKDeepZoomSubImage>"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileFailed.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileFailed.html",
     "title": "Event TileFailed | SkiaSharp.Extended",
-    "keywords": "Event TileFailed Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Fired when a tile fails to load. public event EventHandler<SKDeepZoomTileFailedEventArgs>? TileFailed Returns EventHandler<SKDeepZoomTileFailedEventArgs>"
+    "keywords": "Event TileFailed Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Fired when a tile fails to load. public event EventHandler<SKDeepZoomTileFailedEventArgs>? TileFailed Returns EventHandler<SKDeepZoomTileFailedEventArgs>"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileLayout.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileLayout.html",
     "title": "Property TileLayout | SkiaSharp.Extended",
-    "keywords": "Property TileLayout Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll TileLayout The tile layout calculator. public SKDeepZoomTileLayout TileLayout { get; } Property Value SKDeepZoomTileLayout"
+    "keywords": "Property TileLayout Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll TileLayout The tile layout calculator. public SKDeepZoomTileLayout TileLayout { get; } Property Value SKDeepZoomTileLayout"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileSource.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileSource.html",
     "title": "Property TileSource | SkiaSharp.Extended",
-    "keywords": "Property TileSource Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll TileSource The loaded tile source, or null if not loaded. public SKDeepZoomImageSource? TileSource { get; } Property Value SKDeepZoomImageSource"
+    "keywords": "Property TileSource Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll TileSource The loaded tile source, or null if not loaded. public SKDeepZoomImageSource? TileSource { get; } Property Value SKDeepZoomImageSource"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Update.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Update.html",
     "title": "Method Update | SkiaSharp.Extended",
-    "keywords": "Method Update Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Update() Schedules loading for visible tiles. Call from your render loop on every frame. public bool Update() Returns bool true if tile loads are still in progress."
+    "keywords": "Method Update Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Update() Schedules loading for visible tiles. Call from your render loop on every frame. public bool Update() Returns bool true if tile loads are still in progress."
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Viewport.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Viewport.html",
     "title": "Property Viewport | SkiaSharp.Extended",
-    "keywords": "Property Viewport Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Viewport The current viewport. public SKDeepZoomViewport Viewport { get; } Property Value SKDeepZoomViewport"
+    "keywords": "Property Viewport Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Viewport The current viewport. public SKDeepZoomViewport Viewport { get; } Property Value SKDeepZoomViewport"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ViewportChanged.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ViewportChanged.html",
     "title": "Event ViewportChanged | SkiaSharp.Extended",
-    "keywords": "Event ViewportChanged Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Fired when the viewport position or zoom level changes. public event EventHandler? ViewportChanged Returns EventHandler"
+    "keywords": "Event ViewportChanged Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Fired when the viewport position or zoom level changes. public event EventHandler? ViewportChanged Returns EventHandler"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ZoomAboutLogicalPoint.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ZoomAboutLogicalPoint.html",
     "title": "Method ZoomAboutLogicalPoint | SkiaSharp.Extended",
-    "keywords": "Method ZoomAboutLogicalPoint Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll ZoomAboutLogicalPoint(double, double, double) Zooms about a logical point. Factor > 1 zooms in, < 1 zooms out. public void ZoomAboutLogicalPoint(double factor, double logicalX, double logicalY) Parameters factor double logicalX double logicalY double"
+    "keywords": "Method ZoomAboutLogicalPoint Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll ZoomAboutLogicalPoint(double, double, double) Zooms about a logical point. Factor > 1 zooms in, < 1 zooms out. public void ZoomAboutLogicalPoint(double factor, double logicalX, double logicalY) Parameters factor double logicalX double logicalY double"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ZoomAboutScreenPoint.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ZoomAboutScreenPoint.html",
     "title": "Method ZoomAboutScreenPoint | SkiaSharp.Extended",
-    "keywords": "Method ZoomAboutScreenPoint Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll ZoomAboutScreenPoint(double, double, double) Zooms about a screen-space point. public void ZoomAboutScreenPoint(double factor, double screenX, double screenY) Parameters factor double screenX double screenY double"
+    "keywords": "Method ZoomAboutScreenPoint Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll ZoomAboutScreenPoint(double, double, double) Zooms about a screen-space point. public void ZoomAboutScreenPoint(double factor, double screenX, double screenY) Parameters factor double screenX double screenY double"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html",
     "title": "Class SKDeepZoomController | SkiaSharp.Extended",
-    "keywords": "Class SKDeepZoomController Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling, cache management, and rendering. public class SKDeepZoomController : IDisposable Inheritance object SKDeepZoomController Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks This class handles only tile and rendering concerns. Animation (spring physics, easing) and gesture recognition belong in the consuming layer. Typical usage: Call Load(SKDeepZoomImageSource, ISKDeepZoomTileFetcher) to load an image. Call SetControlSize(double, double) when the canvas size changes. Call Update() to schedule tile loads each frame. Call Render(SKCanvas) from your canvas paint callback. Constructors SKDeepZoomController(ISKDeepZoomTileCache?, ISKDeepZoomRenderer?, int) Initializes a new SKDeepZoomController with optional custom cache and renderer. When cache is null, a default SKDeepZoomMemoryTileCache is used. When renderer is null, a default SKDeepZoomRenderer is used. Properties AspectRatio The aspect ratio of the loaded image (width/height). 0 if not loaded. Cache The tile cache. EnableLodBlending Whether to draw lower-resolution fallback tiles while hi-res tiles are loading (LOD blending). Default is true. IsIdle Whether the controller has no pending tile loads. NativeZoom The zoom level at which one image pixel maps to exactly one screen pixel. Returns 0 if no image is loaded. PendingTileCount Number of tile fetches currently in flight. Renderer The renderer. SubImages The sub-images from the loaded DZC, or empty if not loaded from a DZC. TileLayout The tile layout calculator. TileSource The loaded tile source, or null if not loaded. Viewport The current viewport. Methods Dispose() GetZoomRect() Returns the logical rectangle visible at the current viewport state. Load(SKDeepZoomCollectionSource, ISKDeepZoomTileFetcher) Loads a DZC tile source and sets up sub-images. Load(SKDeepZoomImageSource, ISKDeepZoomTileFetcher) Loads a DZI tile source. Resets the viewport to show the full image. Pan(double, double) Pans by the given screen-space delta. Render() Executes the two-pass LOD rendering pipeline using the configured renderer. The renderer must be ready to accept draw calls before calling this method. When using SKDeepZoomRenderer, set its Canvas property before calling this method (or use the Render(SKCanvas) overload). Render(SKCanvas) Renders the current viewport state onto canvas. Clears the canvas to white, sets the canvas on the renderer, then calls Render(). ResetView() Resets the viewport to show the entire image. SetControlSize(double, double) Sets the control (canvas) size. Refits the viewport when the user has not manually zoomed. SetViewport(double, double, double) Sets the viewport directly and constrains it. SetZoom(double) Sets an absolute zoom level (1.0 = image fills the control width). Update() Schedules loading for visible tiles. Call from your render loop on every frame. ZoomAboutLogicalPoint(double, double, double) Zooms about a logical point. Factor > 1 zooms in, < 1 zooms out. ZoomAboutScreenPoint(double, double, double) Zooms about a screen-space point. Events ImageOpenFailed Fired when the image source fails to load. ImageOpenSucceeded Fired when the image source is loaded successfully. InvalidateRequired Fired when new tiles are loaded and the view needs repainting. TileFailed Fired when a tile fails to load. ViewportChanged Fired when the viewport position or zoom level changes."
+    "keywords": "Class SKDeepZoomController Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling, cache management, and rendering. public class SKDeepZoomController : IDisposable Inheritance object SKDeepZoomController Implements IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks This class handles only tile and rendering concerns. Animation, spring physics, and gesture recognition belong in the consuming layer. Typical usage: Call Load(SKDeepZoomImageSource, ISKDeepZoomTileFetcher) to load an image. Call SetControlSize(double, double) when the canvas size changes. Call Update() to schedule tile loads each frame. Call Render(ISKDeepZoomRenderer) from your canvas paint callback, passing the renderer for this frame. Constructors SKDeepZoomController(ISKDeepZoomTileCache?, int) Initializes a new SKDeepZoomController with an optional custom cache. When cache is null, a default SKDeepZoomMemoryTileCache is used. Properties AspectRatio The aspect ratio of the loaded image (width/height). 0 if not loaded. Cache The tile cache. EnableLodBlending Whether to draw lower-resolution fallback tiles while hi-res tiles are loading (LOD blending). Default is true. IsIdle Whether the controller has no pending tile loads. NativeZoom The zoom level at which one image pixel maps to exactly one screen pixel. Returns 0 if no image is loaded. PendingTileCount Number of tile fetches currently in flight. SubImages The sub-images from the loaded DZC, or empty if not loaded from a DZC. TileLayout The tile layout calculator. TileSource The loaded tile source, or null if not loaded. Viewport The current viewport. Methods Dispose() GetZoomRect() Returns the logical rectangle visible at the current viewport state. Load(SKDeepZoomCollectionSource, ISKDeepZoomTileFetcher) Loads a DZC tile source and sets up sub-images. Load(SKDeepZoomImageSource, ISKDeepZoomTileFetcher) Loads a DZI tile source. Resets the viewport to show the full image. Pan(double, double) Pans by the given screen-space delta. Render(ISKDeepZoomRenderer) Executes the two-pass LOD rendering pipeline using the provided renderer. The renderer is transient — it is only used during this call and should not be stored by the controller. This allows the renderer (and its canvas) to be created and discarded per frame, which is required by some graphics APIs. ResetView() Resets the viewport to show the entire image. SetControlSize(double, double) Sets the control (canvas) size. Refits the viewport when the user has not manually zoomed. SetViewport(double, double, double) Sets the viewport directly and constrains it. SetZoom(double) Sets an absolute zoom level (1.0 = image fills the control width). Update() Schedules loading for visible tiles. Call from your render loop on every frame. ZoomAboutLogicalPoint(double, double, double) Zooms about a logical point. Factor > 1 zooms in, < 1 zooms out. ZoomAboutScreenPoint(double, double, double) Zooms about a screen-space point. Events ImageOpenFailed Fired when the image source fails to load. ImageOpenSucceeded Fired when the image source is loaded successfully. InvalidateRequired Fired when new tiles are loaded and the view needs repainting. TileFailed Fired when a tile fails to load. ViewportChanged Fired when the viewport position or zoom level changes."
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.-ctor.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.-ctor.html",
@@ -472,42 +482,42 @@
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.-ctor.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.-ctor.html",
     "title": "Constructor SKDeepZoomFileTileFetcher | SkiaSharp.Extended",
-    "keywords": "Constructor SKDeepZoomFileTileFetcher Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll SKDeepZoomFileTileFetcher() public SKDeepZoomFileTileFetcher()"
+    "keywords": "Constructor SKDeepZoomFileTileFetcher Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll SKDeepZoomFileTileFetcher(ISKDeepZoomTileDecoder) Creates a new SKDeepZoomFileTileFetcher with the given decoder. public SKDeepZoomFileTileFetcher(ISKDeepZoomTileDecoder decoder) Parameters decoder ISKDeepZoomTileDecoder"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.Dispose.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.Dispose.html",
     "title": "Method Dispose | SkiaSharp.Extended",
-    "keywords": "Method Dispose Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Dispose() public void Dispose()"
+    "keywords": "Method Dispose Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Dispose() public void Dispose()"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.FetchTileAsync.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.FetchTileAsync.html",
     "title": "Method FetchTileAsync | SkiaSharp.Extended",
-    "keywords": "Method FetchTileAsync Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll FetchTileAsync(string, CancellationToken) Fetches a tile. Returns null when the tile is not available (e.g., 404). public Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default) Parameters url string cancellationToken CancellationToken Returns Task<ISKDeepZoomTile>"
+    "keywords": "Method FetchTileAsync Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll FetchTileAsync(string, CancellationToken) Fetches a tile. Returns null when the tile is not available (e.g., 404). public Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default) Parameters url string cancellationToken CancellationToken Returns Task<ISKDeepZoomTile>"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.html",
     "title": "Class SKDeepZoomFileTileFetcher | SkiaSharp.Extended",
-    "keywords": "Class SKDeepZoomFileTileFetcher Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Fetches tiles from the local file system. Accepts both plain file paths and file:// URIs. public class SKDeepZoomFileTileFetcher : ISKDeepZoomTileFetcher, IDisposable Inheritance object SKDeepZoomFileTileFetcher Implements ISKDeepZoomTileFetcher IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKDeepZoomFileTileFetcher() Methods Dispose() FetchTileAsync(string, CancellationToken) Fetches a tile. Returns null when the tile is not available (e.g., 404)."
+    "keywords": "Class SKDeepZoomFileTileFetcher Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Fetches tiles from the local file system and decodes them using a provided ISKDeepZoomTileDecoder. Accepts both plain file paths and file:// URIs. public class SKDeepZoomFileTileFetcher : ISKDeepZoomTileFetcher, IDisposable Inheritance object SKDeepZoomFileTileFetcher Implements ISKDeepZoomTileFetcher IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKDeepZoomFileTileFetcher(ISKDeepZoomTileDecoder) Creates a new SKDeepZoomFileTileFetcher with the given decoder. Methods Dispose() FetchTileAsync(string, CancellationToken) Fetches a tile. Returns null when the tile is not available (e.g., 404)."
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.-ctor.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.-ctor.html",
     "title": "Constructor SKDeepZoomHttpTileFetcher | SkiaSharp.Extended",
-    "keywords": "Constructor SKDeepZoomHttpTileFetcher Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll SKDeepZoomHttpTileFetcher() Creates a new SKDeepZoomHttpTileFetcher with an internal HttpClient. public SKDeepZoomHttpTileFetcher() SKDeepZoomHttpTileFetcher(HttpClient) Creates a new SKDeepZoomHttpTileFetcher using an existing HttpClient. The caller retains ownership of the HttpClient. public SKDeepZoomHttpTileFetcher(HttpClient httpClient) Parameters httpClient HttpClient"
+    "keywords": "Constructor SKDeepZoomHttpTileFetcher Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder) Creates a new SKDeepZoomHttpTileFetcher with the given decoder and an internally-managed HttpClient. public SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder decoder) Parameters decoder ISKDeepZoomTileDecoder SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder, HttpClient) Creates a new SKDeepZoomHttpTileFetcher using an existing HttpClient (caller retains ownership). public SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder decoder, HttpClient httpClient) Parameters decoder ISKDeepZoomTileDecoder httpClient HttpClient"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.Dispose.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.Dispose.html",
     "title": "Method Dispose | SkiaSharp.Extended",
-    "keywords": "Method Dispose Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Dispose() public void Dispose()"
+    "keywords": "Method Dispose Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Dispose() public void Dispose()"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.FetchTileAsync.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.FetchTileAsync.html",
     "title": "Method FetchTileAsync | SkiaSharp.Extended",
-    "keywords": "Method FetchTileAsync Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll FetchTileAsync(string, CancellationToken) Fetches a tile. Returns null when the tile is not available (e.g., 404). public Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default) Parameters url string cancellationToken CancellationToken Returns Task<ISKDeepZoomTile>"
+    "keywords": "Method FetchTileAsync Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll FetchTileAsync(string, CancellationToken) Fetches a tile. Returns null when the tile is not available (e.g., 404). public Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default) Parameters url string cancellationToken CancellationToken Returns Task<ISKDeepZoomTile>"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html",
     "title": "Class SKDeepZoomHttpTileFetcher | SkiaSharp.Extended",
-    "keywords": "Class SKDeepZoomHttpTileFetcher Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Fetches tiles over HTTP. Thread-safe and reusable. public class SKDeepZoomHttpTileFetcher : ISKDeepZoomTileFetcher, IDisposable Inheritance object SKDeepZoomHttpTileFetcher Implements ISKDeepZoomTileFetcher IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKDeepZoomHttpTileFetcher() Creates a new SKDeepZoomHttpTileFetcher with an internal HttpClient. SKDeepZoomHttpTileFetcher(HttpClient) Creates a new SKDeepZoomHttpTileFetcher using an existing HttpClient. The caller retains ownership of the HttpClient. Methods Dispose() FetchTileAsync(string, CancellationToken) Fetches a tile. Returns null when the tile is not available (e.g., 404)."
+    "keywords": "Class SKDeepZoomHttpTileFetcher Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Fetches tiles over HTTP and decodes them using a provided ISKDeepZoomTileDecoder. Thread-safe and reusable. public class SKDeepZoomHttpTileFetcher : ISKDeepZoomTileFetcher, IDisposable Inheritance object SKDeepZoomHttpTileFetcher Implements ISKDeepZoomTileFetcher IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder) Creates a new SKDeepZoomHttpTileFetcher with the given decoder and an internally-managed HttpClient. SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder, HttpClient) Creates a new SKDeepZoomHttpTileFetcher using an existing HttpClient (caller retains ownership). Methods Dispose() FetchTileAsync(string, CancellationToken) Fetches a tile. Returns null when the tile is not available (e.g., 404)."
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.-ctor.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.-ctor.html",
@@ -617,67 +627,67 @@
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.-ctor.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.-ctor.html",
     "title": "Constructor SKDeepZoomMemoryTileCache | SkiaSharp.Extended",
-    "keywords": "Constructor SKDeepZoomMemoryTileCache Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll SKDeepZoomMemoryTileCache(int) public SKDeepZoomMemoryTileCache(int maxEntries = 256) Parameters maxEntries int"
+    "keywords": "Constructor SKDeepZoomMemoryTileCache Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll SKDeepZoomMemoryTileCache(int) public SKDeepZoomMemoryTileCache(int maxEntries = 256) Parameters maxEntries int"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear.html",
     "title": "Method Clear | SkiaSharp.Extended",
-    "keywords": "Method Clear Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Clear() Clears all cached tiles. public void Clear()"
+    "keywords": "Method Clear Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Clear() Clears all cached tiles. public void Clear()"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains.html",
     "title": "Method Contains | SkiaSharp.Extended",
-    "keywords": "Method Contains Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Contains(SKDeepZoomTileId) Checks if a tile is in the cache. public bool Contains(SKDeepZoomTileId id) Parameters id SKDeepZoomTileId Returns bool"
+    "keywords": "Method Contains Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Contains(SKDeepZoomTileId) Checks if a tile is in the cache. public bool Contains(SKDeepZoomTileId id) Parameters id SKDeepZoomTileId Returns bool"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count.html",
     "title": "Property Count | SkiaSharp.Extended",
-    "keywords": "Property Count Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Count Current number of cached tiles. public int Count { get; } Property Value int"
+    "keywords": "Property Count Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Count Current number of cached tiles. public int Count { get; } Property Value int"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose.html",
     "title": "Method Dispose | SkiaSharp.Extended",
-    "keywords": "Method Dispose Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Dispose() public void Dispose()"
+    "keywords": "Method Dispose Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Dispose() public void Dispose()"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted.html",
     "title": "Method FlushEvicted | SkiaSharp.Extended",
-    "keywords": "Method FlushEvicted Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll FlushEvicted() Disposes tiles evicted since the last call. Call this at the start of each render frame on the UI thread. public void FlushEvicted()"
+    "keywords": "Method FlushEvicted Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll FlushEvicted() Disposes tiles evicted since the last call. Call this at the start of each render frame on the UI thread. public void FlushEvicted()"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries.html",
     "title": "Property MaxEntries | SkiaSharp.Extended",
-    "keywords": "Property MaxEntries Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll MaxEntries Maximum number of cached tiles. public int MaxEntries { get; } Property Value int"
+    "keywords": "Property MaxEntries Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll MaxEntries Maximum number of cached tiles. public int MaxEntries { get; } Property Value int"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put.html",
     "title": "Method Put | SkiaSharp.Extended",
-    "keywords": "Method Put Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Put(SKDeepZoomTileId, ISKDeepZoomTile?) Adds a tile to the cache, evicting the LRU entry if at capacity. public void Put(SKDeepZoomTileId id, ISKDeepZoomTile? tile) Parameters id SKDeepZoomTileId tile ISKDeepZoomTile"
+    "keywords": "Method Put Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Put(SKDeepZoomTileId, ISKDeepZoomTile?) Adds a tile to the cache, evicting the LRU entry if at capacity. public void Put(SKDeepZoomTileId id, ISKDeepZoomTile? tile) Parameters id SKDeepZoomTileId tile ISKDeepZoomTile"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.PutAsync.html",
     "title": "Method PutAsync | SkiaSharp.Extended",
-    "keywords": "Method PutAsync Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll PutAsync(SKDeepZoomTileId, ISKDeepZoomTile?, CancellationToken) Adds a tile to the cache via the async interface. public Task PutAsync(SKDeepZoomTileId id, ISKDeepZoomTile? tile, CancellationToken ct = default) Parameters id SKDeepZoomTileId tile ISKDeepZoomTile ct CancellationToken Returns Task"
+    "keywords": "Method PutAsync Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll PutAsync(SKDeepZoomTileId, ISKDeepZoomTile?, CancellationToken) Adds a tile to the cache via the async interface. public Task PutAsync(SKDeepZoomTileId id, ISKDeepZoomTile? tile, CancellationToken ct = default) Parameters id SKDeepZoomTileId tile ISKDeepZoomTile ct CancellationToken Returns Task"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Remove.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Remove.html",
     "title": "Method Remove | SkiaSharp.Extended",
-    "keywords": "Method Remove Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Remove(SKDeepZoomTileId) Removes a specific tile from the cache. public bool Remove(SKDeepZoomTileId id) Parameters id SKDeepZoomTileId Returns bool"
+    "keywords": "Method Remove Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll Remove(SKDeepZoomTileId) Removes a specific tile from the cache. public bool Remove(SKDeepZoomTileId id) Parameters id SKDeepZoomTileId Returns bool"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGet.html",
     "title": "Method TryGet | SkiaSharp.Extended",
-    "keywords": "Method TryGet Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll TryGet(SKDeepZoomTileId, out ISKDeepZoomTile?) Tries to get a cached tile. public bool TryGet(SKDeepZoomTileId id, out ISKDeepZoomTile? tile) Parameters id SKDeepZoomTileId tile ISKDeepZoomTile Returns bool"
+    "keywords": "Method TryGet Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll TryGet(SKDeepZoomTileId, out ISKDeepZoomTile?) Tries to get a cached tile. public bool TryGet(SKDeepZoomTileId id, out ISKDeepZoomTile? tile) Parameters id SKDeepZoomTileId tile ISKDeepZoomTile Returns bool"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync.html",
     "title": "Method TryGetAsync | SkiaSharp.Extended",
-    "keywords": "Method TryGetAsync Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll TryGetAsync(SKDeepZoomTileId, CancellationToken) Async variant — completes synchronously for in-memory cache. public Task<ISKDeepZoomTile?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default) Parameters id SKDeepZoomTileId ct CancellationToken Returns Task<ISKDeepZoomTile>"
+    "keywords": "Method TryGetAsync Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll TryGetAsync(SKDeepZoomTileId, CancellationToken) Async variant — completes synchronously for in-memory cache. public Task<ISKDeepZoomTile?> TryGetAsync(SKDeepZoomTileId id, CancellationToken ct = default) Parameters id SKDeepZoomTileId ct CancellationToken Returns Task<ISKDeepZoomTile>"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html",
     "title": "Class SKDeepZoomMemoryTileCache | SkiaSharp.Extended",
-    "keywords": "Class SKDeepZoomMemoryTileCache Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll LRU cache for decoded tile images. Evicted tiles are deferred for disposal to avoid race conditions with the renderer. Call FlushEvicted() at the start of each render frame. public class SKDeepZoomMemoryTileCache : ISKDeepZoomTileCache, IDisposable Inheritance object SKDeepZoomMemoryTileCache Implements ISKDeepZoomTileCache IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKDeepZoomMemoryTileCache(int) Properties Count Current number of cached tiles. MaxEntries Maximum number of cached tiles. Methods Clear() Clears all cached tiles. Contains(SKDeepZoomTileId) Checks if a tile is in the cache. Dispose() FlushEvicted() Disposes tiles evicted since the last call. Call this at the start of each render frame on the UI thread. Put(SKDeepZoomTileId, ISKDeepZoomTile?) Adds a tile to the cache, evicting the LRU entry if at capacity. PutAsync(SKDeepZoomTileId, ISKDeepZoomTile?, CancellationToken) Adds a tile to the cache via the async interface. Remove(SKDeepZoomTileId) Removes a specific tile from the cache. TryGet(SKDeepZoomTileId, out ISKDeepZoomTile?) Tries to get a cached tile. TryGetAsync(SKDeepZoomTileId, CancellationToken) Async variant — completes synchronously for in-memory cache."
+    "keywords": "Class SKDeepZoomMemoryTileCache Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.Abstractions.dll LRU cache for decoded tile images. Evicted tiles are deferred for disposal to avoid race conditions with the renderer. Call FlushEvicted() at the start of each render frame. public class SKDeepZoomMemoryTileCache : ISKDeepZoomTileCache, IDisposable Inheritance object SKDeepZoomMemoryTileCache Implements ISKDeepZoomTileCache IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Constructors SKDeepZoomMemoryTileCache(int) Properties Count Current number of cached tiles. MaxEntries Maximum number of cached tiles. Methods Clear() Clears all cached tiles. Contains(SKDeepZoomTileId) Checks if a tile is in the cache. Dispose() FlushEvicted() Disposes tiles evicted since the last call. Call this at the start of each render frame on the UI thread. Put(SKDeepZoomTileId, ISKDeepZoomTile?) Adds a tile to the cache, evicting the LRU entry if at capacity. PutAsync(SKDeepZoomTileId, ISKDeepZoomTile?, CancellationToken) Adds a tile to the cache via the async interface. Remove(SKDeepZoomTileId) Removes a specific tile from the cache. TryGet(SKDeepZoomTileId, out ISKDeepZoomTile?) Tries to get a cached tile. TryGetAsync(SKDeepZoomTileId, CancellationToken) Async variant — completes synchronously for in-memory cache."
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.-ctor.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.-ctor.html",
@@ -822,7 +832,7 @@
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html",
     "title": "Property Canvas | SkiaSharp.Extended",
-    "keywords": "Property Canvas Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Canvas The canvas to draw onto. Must be set before each render frame. public SKCanvas? Canvas { get; set; } Property Value SKCanvas"
+    "keywords": "Property Canvas Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll Canvas The canvas to draw onto. Set this before each frame by the caller, then pass this renderer to Render(ISKDeepZoomRenderer). public SKCanvas? Canvas { get; set; } Property Value SKCanvas"
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Dispose.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Dispose.html",
@@ -839,11 +849,6 @@
     "title": "Method DrawTile | SkiaSharp.Extended",
     "keywords": "Method DrawTile Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll DrawTile(SKDeepZoomRectF, ISKDeepZoomTile) Draws a hi-resolution tile at the exact detail level requested. public void DrawTile(SKDeepZoomRectF destRect, ISKDeepZoomTile tile) Parameters destRect SKDeepZoomRectF Where to draw the tile on screen (in screen pixels). tile ISKDeepZoomTile The decoded tile image."
   },
-  "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.EnableLodBlending.html": {
-    "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.EnableLodBlending.html",
-    "title": "Property EnableLodBlending | SkiaSharp.Extended",
-    "keywords": "Property EnableLodBlending Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll EnableLodBlending Whether to enable LOD (Level-of-Detail) fallback blending. When true (default), lower-resolution parent tiles are drawn as placeholders while higher-resolution tiles are loading — the view is never blank. When false, missing tiles show as empty space until loaded. public bool EnableLodBlending { get; set; } Property Value bool Remarks LOD blending ON (default): as you zoom in, blurry ancestor tiles fill the screen immediately; they sharpen as hi-res tiles arrive. Ideal for interactive exploration and smooth UX. LOD blending OFF: only tiles that are already cached at the exact requested level are drawn; everything else is blank. Better for scientific/medical imaging where placeholder blur could be misleading, or when you need to see precisely what has and has not loaded."
-  },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.EndRender.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.EndRender.html",
     "title": "Method EndRender | SkiaSharp.Extended",
@@ -852,7 +857,7 @@
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html",
     "title": "Class SKDeepZoomRenderer | SkiaSharp.Extended",
-    "keywords": "Class SKDeepZoomRenderer Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll SkiaSharp implementation of ISKDeepZoomRenderer. Draws Deep Zoom tiles onto an SKCanvas. public class SKDeepZoomRenderer : ISKCanvasAwareRenderer, ISKDeepZoomRenderer, IDisposable Inheritance object SKDeepZoomRenderer Implements ISKCanvasAwareRenderer ISKDeepZoomRenderer IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks Set Canvas before calling Render(). The rendering pipeline (two-pass LOD blending) is orchestrated by SKDeepZoomController; this class handles only the actual draw calls. Constructors SKDeepZoomRenderer() Properties Canvas The canvas to draw onto. Must be set before each render frame. EnableLodBlending Whether to enable LOD (Level-of-Detail) fallback blending. When true (default), lower-resolution parent tiles are drawn as placeholders while higher-resolution tiles are loading — the view is never blank. When false, missing tiles show as empty space until loaded. Methods BeginRender() Called before any tile draw calls for a render frame. Use this to set up state (e.g., save canvas, clear background). Dispose() DrawFallbackTile(SKDeepZoomRectF, SKDeepZoomRectF, ISKDeepZoomTile) Draws a lower-resolution fallback tile stretched to fill the destination rect. Only called when LOD blending is enabled and the hi-res tile is still loading. DrawTile(SKDeepZoomRectF, ISKDeepZoomTile) Draws a hi-resolution tile at the exact detail level requested. EndRender() Called after all tile draw calls for a render frame. Use this to flush state (e.g., restore canvas)."
+    "keywords": "Class SKDeepZoomRenderer Namespace SkiaSharp.Extended.DeepZoom Assembly SkiaSharp.Extended.dll SkiaSharp implementation of ISKDeepZoomRenderer. Draws Deep Zoom tiles onto an SKCanvas. public class SKDeepZoomRenderer : ISKDeepZoomRenderer, IDisposable Inheritance object SKDeepZoomRenderer Implements ISKDeepZoomRenderer IDisposable Inherited Members object.GetType() object.MemberwiseClone() object.ToString() object.Equals(object) object.Equals(object, object) object.ReferenceEquals(object, object) object.GetHashCode() Remarks Set Canvas before calling Render(ISKDeepZoomRenderer). The canvas reference is only used during the render call and should not be stored beyond the scope of the paint callback. The two-pass LOD blending logic is controlled by EnableLodBlending. Constructors SKDeepZoomRenderer() Properties Canvas The canvas to draw onto. Set this before each frame by the caller, then pass this renderer to Render(ISKDeepZoomRenderer). Methods BeginRender() Called before any tile draw calls for a render frame. Use this to set up state (e.g., save canvas, clear background). Dispose() DrawFallbackTile(SKDeepZoomRectF, SKDeepZoomRectF, ISKDeepZoomTile) Draws a lower-resolution fallback tile stretched to fill the destination rect. Only called when LOD blending is enabled and the hi-res tile is still loading. DrawTile(SKDeepZoomRectF, ISKDeepZoomTile) Draws a hi-resolution tile at the exact detail level requested. EndRender() Called after all tile draw calls for a render frame. Use this to flush state (e.g., restore canvas)."
   },
   "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.-ctor.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.-ctor.html",
@@ -1232,7 +1237,7 @@
   "api/SkiaSharp.Extended.DeepZoom.html": {
     "href": "api/SkiaSharp.Extended.DeepZoom.html",
     "title": "Namespace SkiaSharp.Extended.DeepZoom | SkiaSharp.Extended",
-    "keywords": "Namespace SkiaSharp.Extended.DeepZoom Classes SKDeepZoomBitmapTile A ISKDeepZoomTile backed by an SKBitmap. This is the SkiaSharp-specific implementation of the opaque tile interface. SKDeepZoomCollectionSource Represents a Deep Zoom Collection (DZC) — a composite tiled pyramid of multiple images. Parses the DZC XML descriptor and provides access to sub-images and composite tile math. SKDeepZoomCollectionSubImage Represents a single sub-image within a DZC collection. Maps to Silverlight's MultiScaleSubImage. SKDeepZoomController Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling, cache management, and rendering. SKDeepZoomFileTileFetcher Fetches tiles from the local file system. Accepts both plain file paths and file:// URIs. SKDeepZoomHttpTileFetcher Fetches tiles over HTTP. Thread-safe and reusable. SKDeepZoomImageSource Represents a Deep Zoom Image (DZI) tile source. Parses the DZI XML descriptor and provides tile pyramid math for computing tile URLs and dimensions. SKDeepZoomMemoryTileCache LRU cache for decoded tile images. Evicted tiles are deferred for disposal to avoid race conditions with the renderer. Call FlushEvicted() at the start of each render frame. SKDeepZoomRenderer SkiaSharp implementation of ISKDeepZoomRenderer. Draws Deep Zoom tiles onto an SKCanvas. SKDeepZoomSubImage Represents a single sub-image within a DZC collection, with its position in the mosaic. Mirrors Silverlight's MultiScaleSubImage with inverted viewport coordinates. SKDeepZoomTileFailedEventArgs Event args for when a tile fails to load. SKDeepZoomTileLayout Computes tile geometry for the Deep Zoom pipeline: which tiles are visible, what fallback tiles exist, and where tiles should be drawn on screen. Previously named SKDeepZoomTileScheduler; renamed to reflect its true purpose as a tile layout/geometry calculator rather than an async work scheduler. SKDeepZoomViewport Manages the Deep Zoom viewport — the logical window into the image. Handles coordinate conversions between element (screen), logical (0-1 normalized), and image pixel spaces. Mirrors Silverlight's MultiScaleImage viewport behavior. Structs SKDeepZoomDisplayRect Represents a display rectangle in a sparse Deep Zoom Image. Defines a region of available pixels and the pyramid levels at which it is visible. SKDeepZoomRectF A floating-point axis-aligned rectangle used for screen-space tile geometry. Replaces anonymous tuples like (float SrcX, float SrcY, float SrcW, float SrcH) and SKRect usages in the SkiaSharp-agnostic DeepZoom pipeline. SKDeepZoomRectI An integer-precision axis-aligned rectangle used for tile pixel bounds within a pyramid level. Replaces anonymous tuples like (int X, int Y, int Width, int Height) throughout the DeepZoom pipeline. SKDeepZoomTileId Identifies a single tile in the pyramid. SKDeepZoomTileRequest A tile to be fetched, with a priority value (lower = higher priority). SKDeepZoomViewportState Immutable snapshot of viewport position and zoom. Interfaces ISKCanvasAwareRenderer Optional interface for ISKDeepZoomRenderer implementations that render onto an SKCanvas. When a renderer implements this interface, Render(SKCanvas) will automatically set the canvas before calling BeginRender(). ISKDeepZoomRenderer Renders individual Deep Zoom tiles onto a drawing surface. Implement this interface to provide a custom rendering backend. ISKDeepZoomTile Opaque handle representing a decoded tile image. Concrete implementations (e.g. SKDeepZoomBitmapTile in SkiaSharp.Extended) wrap the actual decoded image in a rendering-backend-specific type. ISKDeepZoomTileCache Pluggable tile cache for the Deep Zoom rendering pipeline. Tiles are stored as ISKDeepZoomTile so that the cache is rendering-backend-agnostic. ISKDeepZoomTileFetcher Fetches tile data from a source (HTTP, file system, memory, etc.) and returns it as an opaque ISKDeepZoomTile. Implement this interface to plug in a custom tile source."
+    "keywords": "Namespace SkiaSharp.Extended.DeepZoom Classes SKDeepZoomBitmapTile A ISKDeepZoomTile backed by an SKBitmap. This is the SkiaSharp-specific implementation of the opaque tile interface. SKDeepZoomBitmapTileDecoder Decodes image streams into SKDeepZoomBitmapTile using SkiaSharp. SKDeepZoomCollectionSource Represents a Deep Zoom Collection (DZC) — a composite tiled pyramid of multiple images. Parses the DZC XML descriptor and provides access to sub-images and composite tile math. SKDeepZoomCollectionSubImage Represents a single sub-image within a DZC collection. Maps to Silverlight's MultiScaleSubImage. SKDeepZoomController Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling, cache management, and rendering. SKDeepZoomFileTileFetcher Fetches tiles from the local file system and decodes them using a provided ISKDeepZoomTileDecoder. Accepts both plain file paths and file:// URIs. SKDeepZoomHttpTileFetcher Fetches tiles over HTTP and decodes them using a provided ISKDeepZoomTileDecoder. Thread-safe and reusable. SKDeepZoomImageSource Represents a Deep Zoom Image (DZI) tile source. Parses the DZI XML descriptor and provides tile pyramid math for computing tile URLs and dimensions. SKDeepZoomMemoryTileCache LRU cache for decoded tile images. Evicted tiles are deferred for disposal to avoid race conditions with the renderer. Call FlushEvicted() at the start of each render frame. SKDeepZoomRenderer SkiaSharp implementation of ISKDeepZoomRenderer. Draws Deep Zoom tiles onto an SKCanvas. SKDeepZoomSubImage Represents a single sub-image within a DZC collection, with its position in the mosaic. Mirrors Silverlight's MultiScaleSubImage with inverted viewport coordinates. SKDeepZoomTileFailedEventArgs Event args for when a tile fails to load. SKDeepZoomTileLayout Computes tile geometry for the Deep Zoom pipeline: which tiles are visible, what fallback tiles exist, and where tiles should be drawn on screen. Previously named SKDeepZoomTileScheduler; renamed to reflect its true purpose as a tile layout/geometry calculator rather than an async work scheduler. SKDeepZoomViewport Manages the Deep Zoom viewport — the logical window into the image. Handles coordinate conversions between element (screen), logical (0-1 normalized), and image pixel spaces. Mirrors Silverlight's MultiScaleImage viewport behavior. Structs SKDeepZoomDisplayRect Represents a display rectangle in a sparse Deep Zoom Image. Defines a region of available pixels and the pyramid levels at which it is visible. SKDeepZoomRectF A floating-point axis-aligned rectangle used for screen-space tile geometry. Replaces anonymous tuples like (float SrcX, float SrcY, float SrcW, float SrcH) and SKRect usages in the SkiaSharp-agnostic DeepZoom pipeline. SKDeepZoomRectI An integer-precision axis-aligned rectangle used for tile pixel bounds within a pyramid level. Replaces anonymous tuples like (int X, int Y, int Width, int Height) throughout the DeepZoom pipeline. SKDeepZoomTileId Identifies a single tile in the pyramid. SKDeepZoomTileRequest A tile to be fetched, with a priority value (lower = higher priority). SKDeepZoomViewportState Immutable snapshot of viewport position and zoom. Interfaces ISKDeepZoomRenderer Renders individual Deep Zoom tiles onto a drawing surface. Implement this interface to provide a custom rendering backend. ISKDeepZoomTile Opaque handle representing a decoded tile image. Concrete implementations (e.g. SKDeepZoomBitmapTile in SkiaSharp.Extended) wrap the actual decoded image in a rendering-backend-specific type. ISKDeepZoomTileCache Pluggable tile cache for the Deep Zoom rendering pipeline. Tiles are stored as ISKDeepZoomTile so that the cache is rendering-backend-agnostic. ISKDeepZoomTileDecoder Decodes raw image data from a stream into an ISKDeepZoomTile. Implement this interface to plug in a custom image decoder (e.g. SkiaSharp, ImageSharp). ISKDeepZoomTileFetcher Fetches tile data from a source (HTTP, file system, memory, etc.) and returns it as an opaque ISKDeepZoomTile. Implement this interface to plug in a custom tile source."
   },
   "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html": {
     "href": "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html",

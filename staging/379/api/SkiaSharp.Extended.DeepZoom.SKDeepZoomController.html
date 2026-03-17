@@ -91,12 +91,12 @@
 
   <h1 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController" data-uid="SkiaSharp.Extended.DeepZoom.SKDeepZoomController" class="text-break">
     Class SKDeepZoomController
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomController.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
     <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a>.<a class="xref" href="SkiaSharp.Extended.DeepZoom.html">DeepZoom</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
   </div>
 
   <div class="markdown summary"><p>Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling,
@@ -158,12 +158,12 @@ cache management, and rendering.</p>
 
   <h2 id="SkiaSharp_Extended_DeepZoom_SKDeepZoomController_remarks">Remarks</h2>
   <div class="markdown level0 remarks"><p>
-This class handles only <em>tile and rendering</em> concerns. Animation (spring physics,
-easing) and gesture recognition belong in the consuming layer.
+This class handles only <em>tile and rendering</em> concerns. Animation, spring physics,
+and gesture recognition belong in the consuming layer.
 </p>
 <p>
 Typical usage:
-<ol><li>Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Load.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Load_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileFetcher_">Load(SKDeepZoomImageSource, ISKDeepZoomTileFetcher)</a> to load an image.</li><li>Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetControlSize.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_SetControlSize_System_Double_System_Double_">SetControlSize(double, double)</a> when the canvas size changes.</li><li>Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Update.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Update">Update()</a> to schedule tile loads each frame.</li><li>Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_SKCanvas_">Render(SKCanvas)</a> from your canvas paint callback.</li></ol>
+<ol><li>Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Load.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Load_SkiaSharp_Extended_DeepZoom_SKDeepZoomImageSource_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileFetcher_">Load(SKDeepZoomImageSource, ISKDeepZoomTileFetcher)</a> to load an image.</li><li>Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetControlSize.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_SetControlSize_System_Double_System_Double_">SetControlSize(double, double)</a> when the canvas size changes.</li><li>Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Update.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Update">Update()</a> to schedule tile loads each frame.</li><li>Call <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_">Render(ISKDeepZoomRenderer)</a> from your canvas paint callback, passing the renderer for this frame.</li></ol>
 
 </div>
 
@@ -171,10 +171,10 @@ Typical usage:
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.-ctor.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController__ctor_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_System_Int32_">SKDeepZoomController(ISKDeepZoomTileCache?, ISKDeepZoomRenderer?, int)</a></dt>
-    <dd><p>Initializes a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">SKDeepZoomController</a> with optional custom cache and renderer.
-When <code class="paramref">cache</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, a default <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html">SKDeepZoomMemoryTileCache</a> is used.
-When <code class="paramref">renderer</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, a default <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a> is used.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.-ctor.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController__ctor_SkiaSharp_Extended_DeepZoom_ISKDeepZoomTileCache_System_Int32_">SKDeepZoomController(ISKDeepZoomTileCache?, int)</a></dt>
+    <dd><p>Initializes a new <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html">SKDeepZoomController</a> with an optional custom cache.
+When <code class="paramref">cache</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, a default
+<a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html">SKDeepZoomMemoryTileCache</a> is used.</p>
 </dd>
   </dl>
 
@@ -211,11 +211,6 @@ Returns 0 if no image is loaded.</p>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.PendingTileCount.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_PendingTileCount">PendingTileCount</a></dt>
     <dd><p>Number of tile fetches currently in flight.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Renderer.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Renderer">Renderer</a></dt>
-    <dd><p>The renderer.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -267,17 +262,11 @@ Returns 0 if no image is loaded.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render">Render()</a></dt>
-    <dd><p>Executes the two-pass LOD rendering pipeline using the configured renderer.
-The renderer must be ready to accept draw calls before calling this method.
-When using <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html">SKDeepZoomRenderer</a>, set its <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomRenderer_Canvas">Canvas</a>
-property before calling this method (or use the <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_SKCanvas_">Render(SKCanvas)</a> overload).</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_SKCanvas_">Render(SKCanvas)</a></dt>
-    <dd><p>Renders the current viewport state onto <code class="paramref">canvas</code>.
-Clears the canvas to white, sets the canvas on the renderer, then calls <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render">Render()</a>.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_">Render(ISKDeepZoomRenderer)</a></dt>
+    <dd><p>Executes the two-pass LOD rendering pipeline using the provided renderer.
+The renderer is transient — it is only used during this call and should not be
+stored by the controller. This allows the renderer (and its canvas) to be created
+and discarded per frame, which is required by some graphics APIs.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -351,7 +340,7 @@ Call from your render loop on every frame.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomController.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/SKDeepZoomController.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -367,7 +356,7 @@ Call from your render loop on every frame.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 216986f
+          source: PR #379 · 04fb6f7
         </div>
       </div>
     </footer>

@@ -126,7 +126,8 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/DeepZoom/SKDeepZoomRenderer.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>The canvas to draw onto. Must be set before each render frame.</p>
+<div class="markdown level1 summary"><p>The canvas to draw onto. Set this before each frame by the caller,
+then pass this renderer to <a class="xref" href="SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Render.html#SkiaSharp_Extended_DeepZoom_SKDeepZoomController_Render_SkiaSharp_Extended_DeepZoom_ISKDeepZoomRenderer_">Render(ISKDeepZoomRenderer)</a>.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -170,7 +171,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 216986f
+          source: PR #379 · 04fb6f7
         </div>
       </div>
     </footer>
