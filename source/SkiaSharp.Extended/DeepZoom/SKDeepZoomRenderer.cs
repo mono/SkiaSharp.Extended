@@ -1,7 +1,5 @@
 #nullable enable
 
-using System;
-
 namespace SkiaSharp.Extended.DeepZoom
 {
     /// <summary>
@@ -9,11 +7,13 @@ namespace SkiaSharp.Extended.DeepZoom
     /// Draws Deep Zoom tiles onto an <see cref="SKCanvas"/>.
     /// </summary>
     /// <remarks>
-    /// Set <see cref="Canvas"/> before calling <see cref="SKDeepZoomController.Render()"/>.
-    /// The rendering pipeline (two-pass LOD blending) is orchestrated by
-    /// <see cref="SKDeepZoomController"/>; this class handles only the actual draw calls.
+    /// Set <see cref="Canvas"/> before calling <see cref="SKDeepZoomController.Render(ISKDeepZoomRenderer)"/>.
+    /// The canvas reference is only used during the render call and should not be stored
+    /// beyond the scope of the paint callback.
+    /// The two-pass LOD blending logic is controlled by
+    /// <see cref="SKDeepZoomController.EnableLodBlending"/>.
     /// </remarks>
-    public class SKDeepZoomRenderer : ISKCanvasAwareRenderer
+    public class SKDeepZoomRenderer : ISKDeepZoomRenderer
     {
         private readonly SKPaint _tilePaint;
 
@@ -23,26 +23,10 @@ namespace SkiaSharp.Extended.DeepZoom
         }
 
         /// <summary>
-        /// The canvas to draw onto. Must be set before each render frame.
+        /// The canvas to draw onto. Set this before each frame by the caller,
+        /// then pass this renderer to <see cref="SKDeepZoomController.Render(ISKDeepZoomRenderer)"/>.
         /// </summary>
         public SKCanvas? Canvas { get; set; }
-
-        /// <summary>
-        /// Whether to enable LOD (Level-of-Detail) fallback blending.
-        /// When <see langword="true"/> (default), lower-resolution parent tiles are drawn as
-        /// placeholders while higher-resolution tiles are loading — the view is never blank.
-        /// When <see langword="false"/>, missing tiles show as empty space until loaded.
-        /// </summary>
-        /// <remarks>
-        /// <para><strong>LOD blending ON (default):</strong> as you zoom in, blurry ancestor
-        /// tiles fill the screen immediately; they sharpen as hi-res tiles arrive. Ideal for
-        /// interactive exploration and smooth UX.</para>
-        /// <para><strong>LOD blending OFF:</strong> only tiles that are already cached at the
-        /// exact requested level are drawn; everything else is blank. Better for
-        /// scientific/medical imaging where placeholder blur could be misleading, or when
-        /// you need to see precisely what has and has not loaded.</para>
-        /// </remarks>
-        public bool EnableLodBlending { get; set; } = true;
 
         // ---- ISKDeepZoomRenderer ----
 

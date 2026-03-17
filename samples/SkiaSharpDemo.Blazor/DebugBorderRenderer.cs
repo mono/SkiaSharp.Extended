@@ -10,7 +10,7 @@ namespace SkiaSharpDemo;
 /// Used in the demo inspector to visually inspect tile boundaries without modifying
 /// the core <see cref="SKDeepZoomRenderer"/>.
 /// </summary>
-public sealed class DebugBorderRenderer : ISKCanvasAwareRenderer
+public sealed class DebugBorderRenderer : ISKDeepZoomRenderer
 {
     private readonly SKDeepZoomRenderer _inner;
     private readonly SKPaint _borderPaint;
@@ -30,6 +30,8 @@ public sealed class DebugBorderRenderer : ISKCanvasAwareRenderer
 
     /// <summary>
     /// Gets or sets the canvas. Delegates to the inner <see cref="SKDeepZoomRenderer.Canvas"/>.
+    /// The caller must set this before each frame, then pass this renderer to
+    /// <see cref="SKDeepZoomController.Render(ISKDeepZoomRenderer)"/>.
     /// </summary>
     public SKCanvas? Canvas
     {
@@ -42,15 +44,6 @@ public sealed class DebugBorderRenderer : ISKCanvasAwareRenderer
     /// When <see langword="false"/>, rendering is identical to the inner renderer.
     /// </summary>
     public bool ShowTileBorders { get; set; }
-
-    /// <summary>
-    /// Forwarded to the inner <see cref="SKDeepZoomRenderer.EnableLodBlending"/>.
-    /// </summary>
-    public bool EnableLodBlending
-    {
-        get => _inner.EnableLodBlending;
-        set => _inner.EnableLodBlending = value;
-    }
 
     // ---- ISKDeepZoomRenderer ----
 

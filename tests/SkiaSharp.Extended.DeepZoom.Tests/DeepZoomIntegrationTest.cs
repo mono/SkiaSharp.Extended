@@ -38,7 +38,9 @@ public class DeepZoomIntegrationTest
 
         // Render
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
-        controller.Render(surface.Canvas);
+        using var renderer = new SKDeepZoomRenderer();
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
 
         Assert.True(controller.Viewport.ViewportWidth < 1.0);
     }

@@ -10,6 +10,7 @@ public partial class DeepZoomPage : ContentPage
         "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid.dzi";
 
     private SKDeepZoomController? _controller;
+    private SKDeepZoomRenderer? _renderer;
 
     public DeepZoomPage()
     {
@@ -22,6 +23,7 @@ public partial class DeepZoomPage : ContentPage
         base.OnAppearing();
 
         _controller = new SKDeepZoomController();
+        _renderer = new SKDeepZoomRenderer();
         _controller.InvalidateRequired += (_, _) => canvas.InvalidateSurface();
 
         LoadFromUrlAsync(DefaultDziUrl);
@@ -31,7 +33,9 @@ public partial class DeepZoomPage : ContentPage
     {
         base.OnDisappearing();
         _controller?.Dispose();
+        _renderer?.Dispose();
         _controller = null;
+        _renderer = null;
     }
 
     // --- URL loading ---
@@ -65,7 +69,7 @@ public partial class DeepZoomPage : ContentPage
             {
                 var coll = SKDeepZoomCollectionSource.Parse(xml);
                 coll.TilesBaseUri = baseDir;
-                _controller.Load(coll, new SKDeepZoomHttpTileFetcher());
+                _controller.Load(coll, new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder()));
                 SyncSliderFromViewport();
                 statusLabel.Text = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
@@ -73,7 +77,7 @@ public partial class DeepZoomPage : ContentPage
             {
                 string tilesBase = $"{baseDir}{stem}_files/";
                 var tileSource = SKDeepZoomImageSource.Parse(xml, tilesBase);
-                _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher());
+                _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder()));
                 SyncSliderFromViewport();
                 statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             }
@@ -92,10 +96,12 @@ public partial class DeepZoomPage : ContentPage
 
     private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
     {
-        if (_controller == null) return;
+        if (_controller == null || _renderer == null) return;
+        e.Surface.Canvas.Clear(SKColors.White);
         _controller.SetControlSize(e.Info.Width, e.Info.Height);
         _controller.Update();
-        _controller.Render(e.Surface.Canvas);
+        _renderer.Canvas = e.Surface.Canvas;
+        _controller.Render(_renderer);
     }
 
     private const double MinZoom = 0.01;

@@ -8,11 +8,22 @@ using System.Threading.Tasks;
 namespace SkiaSharp.Extended.DeepZoom
 {
     /// <summary>
-    /// Fetches tiles from the local file system.
+    /// Fetches tiles from the local file system and decodes them using a provided
+    /// <see cref="ISKDeepZoomTileDecoder"/>.
     /// Accepts both plain file paths and <c>file://</c> URIs.
     /// </summary>
     public class SKDeepZoomFileTileFetcher : ISKDeepZoomTileFetcher
     {
+        private readonly ISKDeepZoomTileDecoder _decoder;
+
+        /// <summary>
+        /// Creates a new <see cref="SKDeepZoomFileTileFetcher"/> with the given decoder.
+        /// </summary>
+        public SKDeepZoomFileTileFetcher(ISKDeepZoomTileDecoder decoder)
+        {
+            _decoder = decoder ?? throw new ArgumentNullException(nameof(decoder));
+        }
+
         /// <inheritdoc />
         public Task<ISKDeepZoomTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
         {
@@ -28,9 +39,9 @@ namespace SkiaSharp.Extended.DeepZoom
                     return Task.FromResult<ISKDeepZoomTile?>(null);
 
                 cancellationToken.ThrowIfCancellationRequested();
-                var bitmap = SKBitmap.Decode(path);
-                ISKDeepZoomTile? tile = bitmap != null ? new SKDeepZoomBitmapTile(bitmap) : null;
-                return Task.FromResult(tile);
+
+                using var fs = File.OpenRead(path);
+                return Task.FromResult(_decoder.Decode(fs));
             }
             catch (OperationCanceledException)
             {
@@ -42,6 +53,7 @@ namespace SkiaSharp.Extended.DeepZoom
             }
         }
 
+        /// <inheritdoc />
         public void Dispose() { }
     }
 }

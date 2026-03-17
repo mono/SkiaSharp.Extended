@@ -65,7 +65,6 @@ public class DeepZoomControllerTest
         Assert.NotNull(controller.Viewport);
         Assert.NotNull(controller.Cache);
         Assert.NotNull(controller.TileLayout);
-        Assert.NotNull(controller.Renderer);
         Assert.Null(controller.TileSource);
         // Animation (spring, UseSprings) is NOT part of the controller; it lives in the view layer
     }
@@ -170,9 +169,11 @@ public class DeepZoomControllerTest
     {
         using var controller = new SKDeepZoomController();
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
+        using var renderer = new SKDeepZoomRenderer();
+        renderer.Canvas = surface.Canvas;
 
         // Should not throw
-        controller.Render(surface.Canvas);
+        controller.Render(renderer);
     }
 
     [Fact]
@@ -183,7 +184,9 @@ public class DeepZoomControllerTest
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
-        controller.Render(surface.Canvas);
+        using var renderer = new SKDeepZoomRenderer();
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
     }
 
     [Fact]
@@ -210,7 +213,9 @@ public class DeepZoomControllerTest
         Task.Delay(500).Wait();
 
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
-        controller.Render(surface.Canvas);
+        using var renderer = new SKDeepZoomRenderer();
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
 
         // Verify some tiles were drawn by checking pixels
         using var pixmap = surface.PeekPixels();
@@ -225,16 +230,16 @@ public class DeepZoomControllerTest
     [Fact]
     public void EnableLodBlending_DefaultsTrue()
     {
-        var renderer = new SKDeepZoomRenderer();
-        Assert.True(renderer.EnableLodBlending);
+        using var controller = new SKDeepZoomController();
+        Assert.True(controller.EnableLodBlending);
     }
 
     [Fact]
     public void EnableLodBlending_Settable()
     {
-        var renderer = new SKDeepZoomRenderer();
-        renderer.EnableLodBlending = false;
-        Assert.False(renderer.EnableLodBlending);
+        using var controller = new SKDeepZoomController();
+        controller.EnableLodBlending = false;
+        Assert.False(controller.EnableLodBlending);
     }
 
     [Fact]

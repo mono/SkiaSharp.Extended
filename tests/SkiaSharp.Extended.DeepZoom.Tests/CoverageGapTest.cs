@@ -176,7 +176,9 @@ public class CoverageGapTest
     {
         var controller = new SKDeepZoomController();
         using var surface = SKSurface.Create(new SKImageInfo(100, 100));
-        controller.Render(surface.Canvas);
+        using var renderer = new SKDeepZoomRenderer();
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
         controller.Dispose();
     }
 
@@ -188,7 +190,9 @@ public class CoverageGapTest
         controller.Load(dzi, new NullTileFetcher());
         controller.Update();
         using var surface = SKSurface.Create(new SKImageInfo(400, 300));
-        controller.Render(surface.Canvas);
+        using var renderer = new SKDeepZoomRenderer();
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
         controller.Dispose();
     }
 

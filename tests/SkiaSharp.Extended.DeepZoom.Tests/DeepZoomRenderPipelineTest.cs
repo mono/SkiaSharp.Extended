@@ -20,7 +20,7 @@ public class DeepZoomRenderPipelineTest
         // Set up controller and viewport
         var cache = new SKDeepZoomMemoryTileCache(100);
         var renderer = new SKDeepZoomRenderer();
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(800, 600);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.AspectRatio = dzi.AspectRatio;
@@ -45,7 +45,9 @@ public class DeepZoomRenderPipelineTest
         var canvas = surface.Canvas;
         canvas.Clear(SKColors.White);
 
-        controller.Render(canvas);
+        renderer.Canvas = canvas;
+
+        controller.Render(renderer);
 
         // Verify pixels were drawn
         using var pixmap = surface.PeekPixels();
@@ -85,7 +87,9 @@ public class DeepZoomRenderPipelineTest
 
         // Render
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
-        controller.Render(surface.Canvas);
+        using var renderer = new SKDeepZoomRenderer();
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
 
         // Reset
         controller.ResetView();

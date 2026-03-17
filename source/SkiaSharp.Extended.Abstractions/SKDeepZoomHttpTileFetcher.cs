@@ -1,6 +1,7 @@
 #nullable enable
 
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,28 +9,33 @@ using System.Threading.Tasks;
 namespace SkiaSharp.Extended.DeepZoom
 {
     /// <summary>
-    /// Fetches tiles over HTTP. Thread-safe and reusable.
+    /// Fetches tiles over HTTP and decodes them using a provided <see cref="ISKDeepZoomTileDecoder"/>.
+    /// Thread-safe and reusable.
     /// </summary>
     public class SKDeepZoomHttpTileFetcher : ISKDeepZoomTileFetcher
     {
+        private readonly ISKDeepZoomTileDecoder _decoder;
         private readonly HttpClient _httpClient;
         private readonly bool _ownsClient;
 
         /// <summary>
-        /// Creates a new <see cref="SKDeepZoomHttpTileFetcher"/> with an internal HttpClient.
+        /// Creates a new <see cref="SKDeepZoomHttpTileFetcher"/> with the given decoder
+        /// and an internally-managed <see cref="HttpClient"/>.
         /// </summary>
-        public SKDeepZoomHttpTileFetcher()
+        public SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder decoder)
         {
+            _decoder = decoder ?? throw new ArgumentNullException(nameof(decoder));
             _httpClient = new HttpClient();
             _ownsClient = true;
         }
 
         /// <summary>
-        /// Creates a new <see cref="SKDeepZoomHttpTileFetcher"/> using an existing HttpClient.
-        /// The caller retains ownership of the HttpClient.
+        /// Creates a new <see cref="SKDeepZoomHttpTileFetcher"/> using an existing
+        /// <see cref="HttpClient"/> (caller retains ownership).
         /// </summary>
-        public SKDeepZoomHttpTileFetcher(HttpClient httpClient)
+        public SKDeepZoomHttpTileFetcher(ISKDeepZoomTileDecoder decoder, HttpClient httpClient)
         {
+            _decoder = decoder ?? throw new ArgumentNullException(nameof(decoder));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _ownsClient = false;
         }
@@ -46,12 +52,14 @@ namespace SkiaSharp.Extended.DeepZoom
 
 #if NETSTANDARD2_0
                 var bytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-                var bitmap = SKBitmap.Decode(bytes);
+                using var ms = new MemoryStream(bytes);
 #else
-                using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-                var bitmap = SKBitmap.Decode(stream);
+                using var ms = new MemoryStream();
+                using (var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false))
+                    await stream.CopyToAsync(ms, cancellationToken).ConfigureAwait(false);
+                ms.Position = 0;
 #endif
-                return bitmap != null ? new SKDeepZoomBitmapTile(bitmap) : null;
+                return _decoder.Decode(ms);
             }
             catch (HttpRequestException)
             {
@@ -63,6 +71,7 @@ namespace SkiaSharp.Extended.DeepZoom
             }
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             if (_ownsClient)

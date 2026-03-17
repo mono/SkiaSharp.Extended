@@ -14,8 +14,8 @@ namespace SkiaSharp.Extended.DeepZoom
     /// </summary>
     /// <remarks>
     /// <para>
-    /// This class handles only <em>tile and rendering</em> concerns. Animation (spring physics,
-    /// easing) and gesture recognition belong in the consuming layer.
+    /// This class handles only <em>tile and rendering</em> concerns. Animation, spring physics,
+    /// and gesture recognition belong in the consuming layer.
     /// </para>
     /// <para>
     /// Typical usage:
@@ -23,7 +23,7 @@ namespace SkiaSharp.Extended.DeepZoom
     ///   <item><description>Call <see cref="Load(SKDeepZoomImageSource, ISKDeepZoomTileFetcher)"/> to load an image.</description></item>
     ///   <item><description>Call <see cref="SetControlSize"/> when the canvas size changes.</description></item>
     ///   <item><description>Call <see cref="Update"/> to schedule tile loads each frame.</description></item>
-    ///   <item><description>Call <see cref="Render(SKCanvas)"/> from your canvas paint callback.</description></item>
+    ///   <item><description>Call <see cref="Render(ISKDeepZoomRenderer)"/> from your canvas paint callback, passing the renderer for this frame.</description></item>
     /// </list>
     /// </para>
     /// </remarks>
@@ -33,7 +33,6 @@ namespace SkiaSharp.Extended.DeepZoom
         private readonly SKDeepZoomViewport _viewport;
         private readonly SKDeepZoomTileLayout _tileLayout;
         private readonly ISKDeepZoomTileCache _cache;
-        private readonly ISKDeepZoomRenderer _renderer;
         private List<SKDeepZoomSubImage> _subImages = new List<SKDeepZoomSubImage>();
         private ISKDeepZoomTileFetcher? _fetcher;
         private readonly ConcurrentDictionary<SKDeepZoomTileId, byte> _pendingTiles = new ConcurrentDictionary<SKDeepZoomTileId, byte>();
@@ -42,16 +41,15 @@ namespace SkiaSharp.Extended.DeepZoom
         private bool _userHasZoomed;
 
         /// <summary>
-        /// Initializes a new <see cref="SKDeepZoomController"/> with optional custom cache and renderer.
-        /// When <paramref name="cache"/> is <see langword="null"/>, a default <see cref="SKDeepZoomMemoryTileCache"/> is used.
-        /// When <paramref name="renderer"/> is <see langword="null"/>, a default <see cref="SKDeepZoomRenderer"/> is used.
+        /// Initializes a new <see cref="SKDeepZoomController"/> with an optional custom cache.
+        /// When <paramref name="cache"/> is <see langword="null"/>, a default
+        /// <see cref="SKDeepZoomMemoryTileCache"/> is used.
         /// </summary>
-        public SKDeepZoomController(ISKDeepZoomTileCache? cache = null, ISKDeepZoomRenderer? renderer = null, int defaultCacheCapacity = 1024)
+        public SKDeepZoomController(ISKDeepZoomTileCache? cache = null, int defaultCacheCapacity = 1024)
         {
             _viewport = new SKDeepZoomViewport();
             _tileLayout = new SKDeepZoomTileLayout();
             _cache = cache ?? new SKDeepZoomMemoryTileCache(defaultCacheCapacity);
-            _renderer = renderer ?? new SKDeepZoomRenderer();
         }
 
         // ---- Properties ----
@@ -64,9 +62,6 @@ namespace SkiaSharp.Extended.DeepZoom
 
         /// <summary>The tile layout calculator.</summary>
         public SKDeepZoomTileLayout TileLayout => _tileLayout;
-
-        /// <summary>The renderer.</summary>
-        public ISKDeepZoomRenderer Renderer => _renderer;
 
         /// <summary>The loaded tile source, or null if not loaded.</summary>
         public SKDeepZoomImageSource? TileSource => _tileSource;
@@ -93,11 +88,7 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <para><strong>Disabled:</strong> missing tiles show as blank until loaded.
         /// Preferred for scientific/medical imaging where blurry placeholders could be misleading.</para>
         /// </remarks>
-        public bool EnableLodBlending
-        {
-            get => _renderer is SKDeepZoomRenderer r ? r.EnableLodBlending : true;
-            set { if (_renderer is SKDeepZoomRenderer r) r.EnableLodBlending = value; }
-        }
+        public bool EnableLodBlending { get; set; } = true;
 
         // ---- Events ----
 
@@ -304,12 +295,16 @@ namespace SkiaSharp.Extended.DeepZoom
         // ---- Rendering ----
 
         /// <summary>
-        /// Executes the two-pass LOD rendering pipeline using the configured renderer.
-        /// The renderer must be ready to accept draw calls before calling this method.
-        /// When using <see cref="SKDeepZoomRenderer"/>, set its <see cref="SKDeepZoomRenderer.Canvas"/>
-        /// property before calling this method (or use the <see cref="Render(SKCanvas)"/> overload).
+        /// Executes the two-pass LOD rendering pipeline using the provided renderer.
+        /// The renderer is transient — it is only used during this call and should not be
+        /// stored by the controller. This allows the renderer (and its canvas) to be created
+        /// and discarded per frame, which is required by some graphics APIs.
         /// </summary>
-        public void Render()
+        /// <param name="renderer">
+        /// The renderer to draw with. Must be fully initialized (e.g. canvas set)
+        /// before calling this method. The renderer is responsible for its own lifecycle.
+        /// </param>
+        public void Render(ISKDeepZoomRenderer renderer)
         {
             if (_tileSource == null) return;
 
@@ -317,7 +312,7 @@ namespace SkiaSharp.Extended.DeepZoom
 
             var visibleTiles = _tileLayout.GetVisibleTiles(_tileSource, _viewport);
 
-            _renderer.BeginRender();
+            renderer.BeginRender();
 
             // Pass 1: LOD fallback tiles (blurry placeholder while hi-res tiles load)
             if (EnableLodBlending)
@@ -335,7 +330,7 @@ namespace SkiaSharp.Extended.DeepZoom
                             {
                                 var src  = _tileLayout.GetFallbackSourceRect(tileId, fallback.Value, _tileSource);
                                 var dest = _tileLayout.GetTileDestRect(_tileSource, _viewport, tileId);
-                                _renderer.DrawFallbackTile(dest, src, parentTile);
+                                renderer.DrawFallbackTile(dest, src, parentTile);
                             }
                         }
                     }
@@ -350,25 +345,11 @@ namespace SkiaSharp.Extended.DeepZoom
                 if (tile != null)
                 {
                     var dest = _tileLayout.GetTileDestRect(_tileSource, _viewport, tileId);
-                    _renderer.DrawTile(dest, tile);
+                    renderer.DrawTile(dest, tile);
                 }
             }
 
-            _renderer.EndRender();
-        }
-
-        /// <summary>
-        /// Renders the current viewport state onto <paramref name="canvas"/>.
-        /// Clears the canvas to white, sets the canvas on the renderer, then calls <see cref="Render()"/>.
-        /// </summary>
-        public void Render(SKCanvas canvas)
-        {
-            if (_tileSource == null) return;
-
-            canvas.Clear(SKColors.White);
-            if (_renderer is ISKCanvasAwareRenderer car)
-                car.Canvas = canvas;
-            Render();
+            renderer.EndRender();
         }
 
         // ---- Private ----
@@ -443,7 +424,6 @@ namespace SkiaSharp.Extended.DeepZoom
             _cts?.Dispose();
             (_fetcher as IDisposable)?.Dispose();
             _cache.Dispose();
-            _renderer.Dispose();
         }
     }
 }

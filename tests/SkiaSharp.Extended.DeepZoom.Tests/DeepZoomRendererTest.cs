@@ -23,12 +23,13 @@ public class DeepZoomRendererTest
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
         var dzi = CreateSampleDzi();
         var cache = new SKDeepZoomMemoryTileCache(10);
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(800, 600);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
 
-        controller.Render(surface.Canvas);
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
         cache.Dispose();
     }
 
@@ -39,7 +40,7 @@ public class DeepZoomRendererTest
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
         var dzi = CreateSampleDzi();
         var cache = new SKDeepZoomMemoryTileCache(10);
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(800, 600);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
@@ -61,7 +62,8 @@ public class DeepZoomRendererTest
 
         // Clear surface to white
         surface.Canvas.Clear(SKColors.White);
-        controller.Render(surface.Canvas);
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
 
         // Verify something was drawn
         using var snapshot = surface.Snapshot();
@@ -73,14 +75,14 @@ public class DeepZoomRendererTest
     [Fact]
     public void EnableLodBlending_CanBeToggled()
     {
-        using var renderer = new SKDeepZoomRenderer();
-        Assert.True(renderer.EnableLodBlending);
+        using var controller = new SKDeepZoomController();
+        Assert.True(controller.EnableLodBlending);
 
-        renderer.EnableLodBlending = false;
-        Assert.False(renderer.EnableLodBlending);
+        controller.EnableLodBlending = false;
+        Assert.False(controller.EnableLodBlending);
 
-        renderer.EnableLodBlending = true;
-        Assert.True(renderer.EnableLodBlending);
+        controller.EnableLodBlending = true;
+        Assert.True(controller.EnableLodBlending);
     }
 
     [Fact]
@@ -91,7 +93,7 @@ public class DeepZoomRendererTest
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
         var dzi = CreateSampleDzi();
         var cache = new SKDeepZoomMemoryTileCache(10);
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(800, 600);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
@@ -112,7 +114,8 @@ public class DeepZoomRendererTest
         }
 
         surface.Canvas.Clear(SKColors.White);
-        controller.Render(surface.Canvas);
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
 
         // Just verify it doesn't throw.
         cache.Dispose();
@@ -132,7 +135,7 @@ public class DeepZoomRendererTest
         var dzi = SKDeepZoomImageSource.Parse(xml, "http://example.com/large");
 
         var cache = new SKDeepZoomMemoryTileCache(100);
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(512, 512);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
@@ -156,7 +159,8 @@ public class DeepZoomRendererTest
         }
 
         surface.Canvas.Clear(SKColors.White);
-        controller.Render(surface.Canvas);
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
 
         // Verify by encoding the surface to check it's not all white
         using var snapshot = surface.Snapshot();
@@ -192,7 +196,7 @@ public class DeepZoomRendererTest
         dzi.TilesBaseUri = "http://test/";
 
         using var cache = new SKDeepZoomMemoryTileCache(10);
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(400, 400);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
@@ -213,7 +217,8 @@ public class DeepZoomRendererTest
 
         // Clear to white, then render
         surface.Canvas.Clear(SKColors.White);
-        controller.Render(surface.Canvas);
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
 
         // Verify center pixel is not white
         using var snap = surface.Snapshot();
@@ -229,7 +234,7 @@ public class DeepZoomRendererTest
         using var surface = SKSurface.Create(new SKImageInfo(400, 400));
         var dzi = CreateSampleDzi();
         using var cache = new SKDeepZoomMemoryTileCache(10);
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(400, 400);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
@@ -238,7 +243,8 @@ public class DeepZoomRendererTest
         for (int i = 0; i < 5; i++)
         {
             surface.Canvas.Clear(SKColors.White);
-            controller.Render(surface.Canvas);
+            renderer.Canvas = surface.Canvas;
+            controller.Render(renderer);
         }
     }
 
@@ -262,7 +268,7 @@ public class DeepZoomRendererTest
             c.Clear(SKColors.Green);
         cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomBitmapTile(bmp));
 
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(512, 512);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
@@ -270,7 +276,11 @@ public class DeepZoomRendererTest
         controller.Viewport.ViewportOriginY = 0;
         controller.Viewport.AspectRatio = 1.0;
 
-        var ex = Record.Exception(() => controller.Render(surface.Canvas));
+        var ex = Record.Exception(() =>
+        {
+            renderer.Canvas = surface.Canvas;
+            controller.Render(renderer);
+        });
         Assert.Null(ex);
     }
 
@@ -286,12 +296,16 @@ public class DeepZoomRendererTest
         var dzi = CreateSampleDzi();
         using var cache = new SKDeepZoomMemoryTileCache(10);
 
-        var controller = new SKDeepZoomController(cache, renderer2);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(100, 100);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
 
-        var ex = Record.Exception(() => controller.Render(surface.Canvas));
+        var ex = Record.Exception(() =>
+        {
+            renderer2.Canvas = surface.Canvas;
+            controller.Render(renderer2);
+        });
         Assert.Null(ex);
     }
 
@@ -307,7 +321,7 @@ public class DeepZoomRendererTest
         using var cache = new SKDeepZoomMemoryTileCache(10);
         var layout = new SKDeepZoomTileLayout();
 
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(256, 256);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
@@ -335,7 +349,8 @@ public class DeepZoomRendererTest
         }
 
         surface.Canvas.Clear(SKColors.White);
-        controller.Render(surface.Canvas);
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
 
         using var snap = surface.Snapshot();
         using var decoded = SKBitmap.Decode(snap.Encode(SKEncodedImageFormat.Png, 100));
@@ -365,7 +380,7 @@ public class DeepZoomRendererTest
         parentBmp.SetPixel(0, 0, SKColors.Yellow);
         cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomBitmapTile(parentBmp));
 
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(512, 512);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
@@ -374,7 +389,8 @@ public class DeepZoomRendererTest
         controller.Viewport.AspectRatio = 1.0;
 
         surface.Canvas.Clear(SKColors.White);
-        controller.Render(surface.Canvas);
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
 
         // The fallback should have drawn the yellow parent into the child tile area
         using var snap = surface.Snapshot();
@@ -394,20 +410,24 @@ public class DeepZoomRendererTest
         var dzi = CreateSampleDzi();
         using var cache = new SKDeepZoomMemoryTileCache(10);
 
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(0, 0); // gets clamped to 1
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
 
-        var ex = Record.Exception(() => controller.Render(surface.Canvas));
+        var ex = Record.Exception(() =>
+        {
+            renderer.Canvas = surface.Canvas;
+            controller.Render(renderer);
+        });
         Assert.Null(ex);
     }
 
     [Fact]
     public void EnableLodBlending_DefaultsToTrue()
     {
-        using var renderer = new SKDeepZoomRenderer();
-        Assert.True(renderer.EnableLodBlending);
+        using var controller = new SKDeepZoomController();
+        Assert.True(controller.EnableLodBlending);
     }
 
     [Fact]
@@ -430,7 +450,7 @@ public class DeepZoomRendererTest
         parentBmp.SetPixel(0, 0, SKColors.Yellow);
         cache.Put(new SKDeepZoomTileId(0, 0, 0), new SKDeepZoomBitmapTile(parentBmp));
 
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
         controller.SetControlSize(512, 512);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
@@ -440,7 +460,8 @@ public class DeepZoomRendererTest
         controller.EnableLodBlending = false;
 
         surface.Canvas.Clear(SKColors.White);
-        var ex = Record.Exception(() => controller.Render(surface.Canvas));
+        renderer.Canvas = surface.Canvas;
+        var ex = Record.Exception(() => controller.Render(renderer));
         Assert.Null(ex);
 
         using var snap = surface.Snapshot();
@@ -455,7 +476,6 @@ public class DeepZoomRendererTest
     public void Render_WithLodBlendingEnabled_DrawsFallbackBehindHighRes()
     {
         using var renderer = new SKDeepZoomRenderer();
-        Assert.True(renderer.EnableLodBlending);
 
         string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <Image xmlns=""http://schemas.microsoft.com/deepzoom/2008""
@@ -468,7 +488,8 @@ public class DeepZoomRendererTest
         using var cache = new SKDeepZoomMemoryTileCache(100);
         var layout = new SKDeepZoomTileLayout();
 
-        var controller = new SKDeepZoomController(cache, renderer);
+        var controller = new SKDeepZoomController(cache);
+        Assert.True(controller.EnableLodBlending);
         controller.SetControlSize(512, 512);
         controller.Load(dzi, new MemoryTileFetcher());
         controller.Viewport.ViewportWidth = 1.0;
@@ -491,7 +512,8 @@ public class DeepZoomRendererTest
         cache.Put(firstTile, new SKDeepZoomBitmapTile(highResBmp));
 
         surface.Canvas.Clear(SKColors.White);
-        controller.Render(surface.Canvas);
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
 
         // The surface should not be all white — fallback and high-res tiles were drawn
         using var snap = surface.Snapshot();

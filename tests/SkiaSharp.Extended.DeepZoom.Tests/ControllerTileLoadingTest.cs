@@ -165,7 +165,9 @@ public class ControllerTileLoadingTest
             new SKDeepZoomBitmapTile(CreateSolidBitmap(256, 256, SKColors.Blue)));
 
         using var surface = SKSurface.Create(new SKImageInfo(400, 400));
-        controller.Render(surface.Canvas);
+        using var renderer = new SKDeepZoomRenderer();
+        renderer.Canvas = surface.Canvas;
+        controller.Render(renderer);
     }
 
     [Fact]

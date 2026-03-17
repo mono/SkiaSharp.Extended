@@ -413,7 +413,8 @@
         _innerCache = new SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache(_cacheCapacity);
         _delayCache = new DelayTileCache(_innerCache);
         _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer());
-        _controller = new SKDeepZoomController(_delayCache, _debugRenderer);
+        _controller = new SKDeepZoomController(_delayCache);
+        _controller.EnableLodBlending = _enableLodBlending;
         _controller.InvalidateRequired += OnInvalidateRequired;
 
         // Refresh inspector every 250ms while loading tiles
@@ -430,10 +431,12 @@
 
     private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
     {
-        if (_controller == null) return;
+        if (_controller == null || _debugRenderer == null) return;
+        e.Surface.Canvas.Clear(SKColors.White);
         _controller.SetControlSize(e.BackendRenderTarget.Width, e.BackendRenderTarget.Height);
         _controller.Update();
-        _controller.Render(e.Surface.Canvas);
+        _debugRenderer.Canvas = e.Surface.Canvas;
+        _controller.Render(_debugRenderer);
     }
 
     private void OnInvalidateRequired(object? sender, EventArgs e)
@@ -501,7 +504,7 @@
             {
                 var coll = SKDeepZoomCollectionSource.Parse(xml);
                 coll.TilesBaseUri = baseDir;
-                _controller.Load(coll, new SKDeepZoomHttpTileFetcher());
+                _controller.Load(coll, new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder()));
                 SyncZoomFromViewport();
                 _statusText = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
@@ -509,7 +512,7 @@
             {
                 string tilesBase = $"{baseDir}{stem}_files/";
                 var tileSource = SKDeepZoomImageSource.Parse(xml, tilesBase);
-                _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher());
+                _controller.Load(tileSource, new SKDeepZoomHttpTileFetcher(new SKDeepZoomBitmapTileDecoder()));
                 SyncZoomFromViewport();
                 _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             }
@@ -593,9 +596,9 @@
 
     private void OnDebugOptionsChanged()
     {
-        if (_debugRenderer == null) return;
+        if (_debugRenderer == null || _controller == null) return;
         _debugRenderer.ShowTileBorders = _showTileBorders;
-        _debugRenderer.EnableLodBlending = _enableLodBlending;
+        _controller.EnableLodBlending = _enableLodBlending;
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
@@ -616,7 +619,7 @@
         var source = _controller.TileSource;  // save BEFORE dispose
         RebuildControllerCache();
         if (source != null)
-            _controller.Load(source, new SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher());
+            _controller.Load(source, new SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher(new SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTileDecoder()));
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
@@ -626,7 +629,7 @@
         var source = _controller.TileSource;  // save BEFORE dispose
         RebuildControllerCache();
         if (source != null)
-            _controller.Load(source, new SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher());
+            _controller.Load(source, new SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher(new SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTileDecoder()));
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
@@ -668,14 +671,14 @@
         _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer())
         {
             ShowTileBorders  = _showTileBorders,
-            EnableLodBlending = _enableLodBlending,
         };
 
-        // Recreate the controller with the new cache and renderer
+        // Recreate the controller with the new cache
         _controller.InvalidateRequired -= OnInvalidateRequired;
         _controller.Dispose();
 
-        _controller = new SKDeepZoomController(_delayCache, _debugRenderer);
+        _controller = new SKDeepZoomController(_delayCache);
+        _controller.EnableLodBlending = _enableLodBlending;
         _controller.InvalidateRequired += OnInvalidateRequired;
     }
 
