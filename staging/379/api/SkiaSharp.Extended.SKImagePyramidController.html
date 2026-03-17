@@ -274,6 +274,13 @@ and discarded per frame, which is required by some graphics APIs.</p>
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.ReplaceCache.html#SkiaSharp_Extended_SKImagePyramidController_ReplaceCache_SkiaSharp_Extended_ISKImagePyramidTileCache_">ReplaceCache(ISKImagePyramidTileCache)</a></dt>
+    <dd><p>Replaces the active tile cache without disturbing the loaded image, viewport state,
+or zoom level. All pending tile loads are cancelled and in-flight tiles are discarded;
+the new cache starts empty and tiles are re-fetched as the view is repainted.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.ResetView.html#SkiaSharp_Extended_SKImagePyramidController_ResetView">ResetView()</a></dt>
     <dd><p>Resets the viewport to show the entire image.</p>
 </dd>
@@ -368,7 +375,7 @@ with one of the sub-image sources from <a class="xref" href="SkiaSharp.Extended.
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 7c6c45b
+          source: PR #379 · fb81625
         </div>
       </div>
     </footer>
