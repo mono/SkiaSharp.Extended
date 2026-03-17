@@ -141,10 +141,18 @@ Instead of building debug features into the core renderer, wrap it with a decora
 ```csharp
 public sealed class TileBorderRenderer : ISKImagePyramidRenderer
 {
-    private readonly ISKImagePyramidRenderer _inner;
+    private readonly SKImagePyramidRenderer _inner;
+    private readonly SKPaint _borderPaint = new() { IsStroke = true, StrokeWidth = 1, Color = SKColors.Red.WithAlpha(180) };
     public bool ShowBorders { get; set; }
 
-    public TileBorderRenderer(ISKImagePyramidRenderer inner) => _inner = inner;
+    public TileBorderRenderer(SKImagePyramidRenderer inner) => _inner = inner;
+
+    // Expose Canvas so the caller sets it once and both renderers see it
+    public SKCanvas? Canvas
+    {
+        get => _inner.Canvas;
+        set => _inner.Canvas = value;
+    }
 
     public void BeginRender() => _inner.BeginRender();
     public void EndRender()   => _inner.EndRender();
@@ -152,25 +160,26 @@ public sealed class TileBorderRenderer : ISKImagePyramidRenderer
     public void DrawTile(SKImagePyramidRectF destRect, ISKImagePyramidTile tile)
     {
         _inner.DrawTile(destRect, tile);
-        if (!ShowBorders) return;
-
-        // Draw a border over the tile
-        using var paint = new SKPaint { IsStroke = true, Color = SKColors.Red.WithAlpha(120) };
-        // (access canvas via casting to SKImagePyramidRenderer if needed)
+        if (ShowBorders && _inner.Canvas != null)
+            _inner.Canvas.DrawRect(new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom), _borderPaint);
     }
 
     public void DrawFallbackTile(SKImagePyramidRectF destRect, SKImagePyramidRectF sourceRect, ISKImagePyramidTile tile)
         => _inner.DrawFallbackTile(destRect, sourceRect, tile);
 
-    public void Dispose() => _inner.Dispose();
+    public void Dispose()
+    {
+        _borderPaint.Dispose();
+        _inner.Dispose();
+    }
 }
 
-// Wire it up:
+// Wire it up — set Canvas once, the decorator forwards it to the inner renderer:
 var coreRenderer = new SKImagePyramidRenderer();
 var debugRenderer = new TileBorderRenderer(coreRenderer) { ShowBorders = true };
 
-// Pass to Render each frame:
-debugRenderer.Canvas = coreRenderer.Canvas = e.Surface.Canvas;
+// Each frame:
+debugRenderer.Canvas = e.Surface.Canvas;
 controller.Render(debugRenderer);
 ```
 

@@ -18,9 +18,13 @@
         <button @onclick="OnLoadUrl" disabled="@_urlLoading">@(_urlLoading ? "Loading…" : "Load")</button>
         <select @onchange="OnExampleSelected" class="ip-example-select" title="Load an example image">
             <option value="">— Examples —</option>
-            <optgroup label="Deep Zoom (DZI)">
+            <optgroup label="Deep Zoom (DZI) — public">
                 <option value="https://openseadragon.github.io/example-images/highsmith/highsmith.dzi">Highsmith (US Library of Congress)</option>
                 <option value="https://openseadragon.github.io/example-images/duomo/duomo.dzi">Duomo di Firenze</option>
+            </optgroup>
+            <optgroup label="Deep Zoom (DZI) — this repo">
+                <option value="https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/feature/deep-zoom-static-preview/resources/collections/testgrid/testgrid.dzi">Test Grid (32768×32768 — zoom in to see tiles)</option>
+                <option value="https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/feature/deep-zoom-static-preview/resources/collections/conceptcars/deepzoom/10489820633895493292390866.dzi">Concept Car (1024×682)</option>
             </optgroup>
             <optgroup label="IIIF Image API">
                 <option value="https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2">Wellcome Collection</option>
