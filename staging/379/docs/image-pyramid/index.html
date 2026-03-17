@@ -86,9 +86,9 @@
         <article data-uid="">
 <h1 id="image-pyramid">Image Pyramid</h1>
 
-<p>Explore gigapixel images in your .NET MAUI and Blazor apps using the Image Pyramid Image (DZI) format. The deep zoom system downloads only the tiles visible at the current zoom level, so even multi-gigapixel images load instantly.</p>
-<h2 id="what-is-image-pyramid">What is Image Pyramid?</h2>
-<p><a href="https://docs.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/cc645050(v=vs.95)">Image Pyramid</a> is a tile-based image format developed by Microsoft. An image is pre-sliced into a pyramid of tiles at multiple resolutions. At any zoom level, only the small set of tiles visible in the viewport is loaded — making it practical to explore images with billions of pixels.</p>
+<p>Explore gigapixel images in your .NET MAUI and Blazor apps. The Image Pyramid system downloads only the tiles visible at the current zoom level, so even multi-gigapixel images load instantly — regardless of whether they come from Deep Zoom (DZI), IIIF, or any custom tile source.</p>
+<h2 id="what-is-an-image-pyramid">What is an Image Pyramid?</h2>
+<p>A <strong>tiled image pyramid</strong> pre-slices a large image into tiles at multiple resolutions. At any zoom level, only the small set of tiles visible in the viewport is loaded — making it practical to explore images with billions of pixels.</p>
 <p><strong>When to use Image Pyramid:</strong></p>
 <ul>
 <li>🗺️ High-resolution maps, satellite imagery, or floor plans</li>
@@ -97,77 +97,87 @@
 <li>📸 Any image too large to load in full at once</li>
 </ul>
 <h2 id="architecture">Architecture</h2>
-<p>The deep zoom system is intentionally minimal — there is <strong>no custom control</strong> and <strong>no gesture system</strong>. You wire the services directly to a plain <code>SKCanvasView</code>, giving you full control.</p>
+<p>The system is intentionally minimal — there is <strong>no custom control</strong> and <strong>no gesture system</strong>. You wire the services directly to a plain <code>SKCanvasView</code>, giving you full control.</p>
 <blockquote>
-<p><strong>Library split:</strong> The implementation is divided across two packages. <code>SkiaSharp.Extended.Abstractions</code> contains platform-agnostic types (controller, viewport, cache and fetcher interfaces). <code>SkiaSharp.Extended</code> contains the SkiaSharp-specific implementations (<code>SKImagePyramidRenderer</code>, <code>SKImagePyramidImageTile</code>, <code>SKImagePyramidImageTileDecoder</code>). In most cases you only need to reference <code>SkiaSharp.Extended</code>.</p>
+<p><strong>Library split:</strong> <code>SkiaSharp.Extended.Abstractions</code> contains platform-agnostic types (controller, viewport, cache and fetcher interfaces). <code>SkiaSharp.Extended</code> contains the SkiaSharp-specific implementations (<code>SKImagePyramidRenderer</code>, <code>SKImagePyramidImageTile</code>, <code>SKImagePyramidImageTileDecoder</code>). In most cases you only need <code>SkiaSharp.Extended</code>.</p>
 </blockquote>
 <pre><code class="lang-mermaid">graph TD
-    DZI[&quot;DZI / DZC file&lt;br/&gt;(XML descriptor)&quot;]
-    Source[&quot;SKImagePyramidDziSource&lt;br/&gt;SKImagePyramidDziCollectionSource&quot;]
-    Controller[&quot;SKImagePyramidController&lt;br/&gt;(the main orchestrator)&quot;]
-    Viewport[&quot;SKImagePyramidViewport&lt;br/&gt;(coordinate math)&quot;]
-    Scheduler[&quot;SKImagePyramidTileScheduler&lt;br/&gt;(which tiles to load)&quot;]
-    Cache[&quot;ISKImagePyramidTileCache&lt;br/&gt;(bitmap store)&quot;]
-    Fetcher[&quot;ISKImagePyramidTileFetcher&lt;br/&gt;(HTTP / file / custom)&quot;]
-    Renderer[&quot;SKImagePyramidRenderer&lt;br/&gt;(draws tiles to canvas)&quot;]
-    Canvas[&quot;SKCanvasView&quot;]
+    Src1[&quot;SKImagePyramidDziSource (DZI)&quot;]
+    Src2[&quot;SKImagePyramidIiifSource (IIIF)&quot;]
+    Src3[&quot;Your custom ISKImagePyramidSource&quot;]
+    Source[&quot;ISKImagePyramidSource&quot;]
+    Controller[&quot;SKImagePyramidController&quot;]
+    Cache[&quot;ISKImagePyramidTileCache&quot;]
+    Fetcher[&quot;ISKImagePyramidTileFetcher&quot;]
+    Decoder[&quot;ISKImagePyramidTileDecoder&quot;]
+    Renderer[&quot;ISKImagePyramidRenderer&quot;]
+    Canvas[&quot;SKCanvasView / SKGLView&quot;]
 
-    DZI --&gt; Source
+    Src1 --&gt; Source
+    Src2 --&gt; Source
+    Src3 --&gt; Source
     Source --&gt; Controller
-    Controller --&gt; Viewport
-    Controller --&gt; Scheduler
     Controller --&gt; Cache
     Controller --&gt; Fetcher
+    Fetcher --&gt; Decoder
     Controller --&gt; Renderer
     Renderer --&gt; Canvas
 </code></pre>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Class</th>
+<th style="text-align: left;">Type</th>
 <th style="text-align: left;">Responsibility</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td style="text-align: left;"><code>ISKImagePyramidSource</code></td>
+<td style="text-align: left;">Describes a tile pyramid: dimensions, level count, tile URL generation.</td>
+</tr>
+<tr>
 <td style="text-align: left;"><code>SKImagePyramidDziSource</code></td>
-<td style="text-align: left;">Parses a <code>.dzi</code> descriptor: image size, tile size, level count, tile URL construction.</td>
+<td style="text-align: left;">Parses Microsoft Deep Zoom Image (<code>.dzi</code>) files.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>SKImagePyramidDziCollectionSource</code></td>
-<td style="text-align: left;">Parses a <code>.dzc</code> collection: a mosaic of many DZI sub-images.</td>
+<td style="text-align: left;">Parses Deep Zoom Collection (<code>.dzc</code>) files.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKImagePyramidIiifSource</code></td>
+<td style="text-align: left;">Parses IIIF Image API v2/v3 <code>info.json</code>.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>SKImagePyramidController</code></td>
-<td style="text-align: left;">The central orchestrator. Manages viewport, tile scheduling, caching, and rendering.</td>
+<td style="text-align: left;">The central orchestrator: viewport, scheduling, caching, rendering.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>SKImagePyramidViewport</code></td>
 <td style="text-align: left;">Coordinate math between screen pixels and logical (0–1) image space.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>SKImagePyramidTileScheduler</code></td>
-<td style="text-align: left;">Determines which tiles are visible and their fetch priority.</td>
-</tr>
-<tr>
 <td style="text-align: left;"><code>ISKImagePyramidTileCache</code></td>
-<td style="text-align: left;">Pluggable tile cache interface (in-memory, browser storage, disk, tiered).</td>
+<td style="text-align: left;">Pluggable tile cache (in-memory, browser storage, disk, tiered).</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>SKImagePyramidMemoryTileCache</code></td>
-<td style="text-align: left;">Default thread-safe LRU in-memory cache for decoded images.</td>
+<td style="text-align: left;">Default thread-safe LRU in-memory cache.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ISKImagePyramidTileFetcher</code></td>
-<td style="text-align: left;">Pluggable fetcher interface (HTTP, file system, app package).</td>
+<td style="text-align: left;">Pluggable fetcher (HTTP, file system, app package).</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>SKImagePyramidHttpTileFetcher</code></td>
 <td style="text-align: left;">Built-in HTTP fetcher using <code>HttpClient</code>.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>SKImagePyramidFileTileFetcher</code></td>
-<td style="text-align: left;">Built-in file system fetcher for local/bundled tiles.</td>
+<td style="text-align: left;"><code>ISKImagePyramidTileDecoder</code></td>
+<td style="text-align: left;">Converts a raw stream into an <code>ISKImagePyramidTile</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKImagePyramidImageTileDecoder</code></td>
+<td style="text-align: left;">SkiaSharp decoder: stream → <code>SKImage</code> → <code>SKImagePyramidImageTile</code>.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ISKImagePyramidRenderer</code></td>
@@ -175,7 +185,7 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>SKImagePyramidRenderer</code></td>
-<td style="text-align: left;">Default renderer; LOD fallback blending, tile scheduling.</td>
+<td style="text-align: left;">Default SkiaSharp renderer; LOD blending, tile compositing.</td>
 </tr>
 </tbody>
 </table>
@@ -183,150 +193,88 @@
 <h3 id="1-create-a-controller">1. Create a controller</h3>
 <pre><code class="lang-csharp">using SkiaSharp.Extended;
 
-// Default: in-memory LRU cache with 1024 tile capacity
 var controller = new SKImagePyramidController();
-
-// Or specify cache capacity
-var controller = new SKImagePyramidController(defaultCacheCapacity: 512);
 </code></pre>
 <h3 id="2-load-an-image-source">2. Load an image source</h3>
-<pre><code class="lang-csharp">// DZI (single image) — load XML and provide the tile base URL
-var xml = await httpClient.GetStringAsync(&quot;https://example.com/image.dzi&quot;);
-var tileSource = SKImagePyramidDziSource.Parse(xml, &quot;https://example.com/image_files/&quot;);
-controller.Load(tileSource, new SKImagePyramidHttpTileFetcher());
+<pre><code class="lang-csharp">var decoder = new SKImagePyramidImageTileDecoder();
 
-// DZC (collection of images)
-var collXml = await httpClient.GetStringAsync(&quot;https://example.com/collection.dzc&quot;);
-var collection = SKImagePyramidDziCollectionSource.Parse(collXml);
-collection.TilesBaseUri = &quot;https://example.com/&quot;;
-controller.Load(collection, new SKImagePyramidHttpTileFetcher());
+// Deep Zoom Image (DZI)
+var xml = await httpClient.GetStringAsync(&quot;https://example.com/image.dzi&quot;);
+var source = SKImagePyramidDziSource.Parse(xml, &quot;https://example.com/image_files/&quot;);
+controller.Load(source, new SKImagePyramidHttpTileFetcher(decoder));
+
+// IIIF Image API
+var json = await httpClient.GetStringAsync(&quot;https://example.com/image/info.json&quot;);
+var iiifSource = SKImagePyramidIiifSource.Parse(json);
+controller.Load(iiifSource, new SKImagePyramidHttpTileFetcher(decoder));
 </code></pre>
 <h3 id="3-wire-the-canvas">3. Wire the canvas</h3>
-<pre><code class="lang-csharp">void OnPaintSurface(SKPaintSurfaceEventArgs e)
+<pre><code class="lang-csharp">private readonly SKImagePyramidRenderer _renderer = new();
+
+void OnPaintSurface(SKPaintSurfaceEventArgs e)
 {
     controller.SetControlSize(e.Info.Width, e.Info.Height);
-    controller.Update();           // schedules tile loads for the current viewport
-    controller.Render(e.Surface.Canvas);
+    controller.Update();
+    _renderer.Canvas = e.Surface.Canvas;
+    controller.Render(_renderer);
 }
 </code></pre>
 <h3 id="4-trigger-repaints-when-tiles-arrive">4. Trigger repaints when tiles arrive</h3>
 <pre><code class="lang-csharp">controller.InvalidateRequired += (_, _) =&gt; myCanvasView.InvalidateSurface();
 </code></pre>
 <h3 id="5-dispose-when-done">5. Dispose when done</h3>
-<pre><code class="lang-csharp">controller.Dispose();  // cancels in-flight requests and clears the cache
+<pre><code class="lang-csharp">controller.Dispose();
 </code></pre>
 <h2 id="image-sources">Image Sources</h2>
-<h3 id="dzi--single-images">DZI — Single Images</h3>
-<p>A <code>.dzi</code> file describes a single image sliced into a tile pyramid:</p>
-<pre><code class="lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-&lt;Image xmlns=&quot;http://schemas.microsoft.com/deepzoom/2008&quot;
-       Format=&quot;jpeg&quot; Overlap=&quot;1&quot; TileSize=&quot;256&quot;&gt;
-  &lt;Size Width=&quot;32768&quot; Height=&quot;32768&quot;/&gt;
-&lt;/Image&gt;
-</code></pre>
-<p>Parse it with a base URL pointing to the tile directory:</p>
-<pre><code class="lang-csharp">var source = SKImagePyramidDziSource.Parse(xmlString, &quot;https://example.com/image_files/&quot;);
-
-// Key properties
-int width     = source.ImageWidth;
-int height    = source.ImageHeight;
-int tileSize  = source.TileSize;
-int overlap   = source.Overlap;
-int maxLevel  = source.MaxLevel;
-double aspect = source.AspectRatio;
-
-// Tile URL construction
-string url = source.GetFullTileUrl(level: 12, col: 3, row: 5);
-</code></pre>
-<p>The tile files are at <code>{baseUri}/{level}/{col}_{row}.{format}</code>.</p>
-<h3 id="dzc--collections">DZC — Collections</h3>
-<p>A <code>.dzc</code> file is a mosaic of many DZI images composited into a single tile pyramid:</p>
-<pre><code class="lang-csharp">var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
-collection.TilesBaseUri = &quot;https://example.com/&quot;;
-controller.Load(collection, fetcher);
-
-// Sub-images are available after loading
-foreach (var sub in controller.SubImages)
-{
-    Console.WriteLine($&quot;#{sub.Id} — aspect {sub.AspectRatio:F2}&quot;);
-}
-</code></pre>
-<h2 id="viewport-and-zoom">Viewport and Zoom</h2>
-<p>The viewport uses a <strong>normalized coordinate system</strong> where the full image width = 1.0:</p>
-<pre><code class="lang-csharp">var vp = controller.Viewport;
-
-// Zoom level: 1.0 = image fills the control width, &gt;1.0 = zoomed in
-double zoom = vp.Zoom;               // = 1.0 / ViewportWidth
-
-// Native zoom: where 1 image pixel = 1 screen pixel
-double native = controller.NativeZoom;
-
-// Convert a screen tap to logical image coordinates
-var (lx, ly) = vp.ElementToLogicalPoint(tapX, tapY);
-</code></pre>
-<h2 id="programmatic-navigation">Programmatic Navigation</h2>
-<pre><code class="lang-csharp">// Pan by screen pixels
-controller.Pan(deltaX, deltaY);
-
-// Zoom about a screen point (e.g., mouse position)
-controller.ZoomAboutScreenPoint(factor: 1.2, screenX, screenY);
-
-// Zoom about a logical image point
-controller.ZoomAboutLogicalPoint(factor: 1.5, logicalX: 0.5, logicalY: 0.5);
-
-// Set explicit zoom level (1.0 = fit to width)
-controller.SetZoom(zoom: 2.0);
-
-// Reset to fit-to-view
-controller.ResetView();
-</code></pre>
-<h2 id="events">Events</h2>
+<p>The <code>ISKImagePyramidSource</code> interface is the key abstraction. Swap sources to use different tile formats without changing any other code:</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Event</th>
-<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Source</th>
+<th style="text-align: left;">Format</th>
+<th style="text-align: left;">Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>ImageOpenSucceeded</code></td>
-<td style="text-align: left;">Image source loaded; controller is ready to render.</td>
+<td style="text-align: left;"><code>SKImagePyramidDziSource</code></td>
+<td style="text-align: left;">Deep Zoom Image (<code>.dzi</code>)</td>
+<td style="text-align: left;">Microsoft DZI format</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>ImageOpenFailed</code></td>
-<td style="text-align: left;">Image source failed to parse.</td>
+<td style="text-align: left;"><code>SKImagePyramidDziCollectionSource</code></td>
+<td style="text-align: left;">Deep Zoom Collection (<code>.dzc</code>)</td>
+<td style="text-align: left;">Multi-image mosaics</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>InvalidateRequired</code></td>
-<td style="text-align: left;">A tile finished loading — trigger a canvas repaint.</td>
+<td style="text-align: left;"><code>SKImagePyramidIiifSource</code></td>
+<td style="text-align: left;">IIIF Image API v2/v3</td>
+<td style="text-align: left;">Museum/archive images</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>TileFailed</code></td>
-<td style="text-align: left;">A tile failed to download.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ViewportChanged</code></td>
-<td style="text-align: left;">Viewport was moved or zoomed.</td>
+<td style="text-align: left;">Custom <code>ISKImagePyramidSource</code></td>
+<td style="text-align: left;">Any</td>
+<td style="text-align: left;">Zoomify, custom tile servers, etc.</td>
 </tr>
 </tbody>
 </table>
+<p>See the <a href="deepzoom.html">Image Sources</a> section for details on each format.</p>
 <h2 id="platform-integration">Platform Integration</h2>
 <ul>
-<li><a href="blazor.html">Image Pyramid for Blazor</a> — Blazor WebAssembly integration guide</li>
-<li><a href="maui.html">Image Pyramid for MAUI</a> — .NET MAUI integration guide</li>
+<li><a href="blazor.html">Image Pyramid for Blazor</a></li>
+<li><a href="maui.html">Image Pyramid for .NET MAUI</a></li>
 </ul>
 <h2 id="deeper-dives">Deeper Dives</h2>
 <ul>
-<li><a href="controller.html">Controller &amp; Viewport</a> — Full controller API, viewport coordinate system, zoom semantics</li>
-<li><a href="fetching.html">Tile Fetching</a> — Built-in fetchers and how to implement custom fetchers</li>
-<li><a href="caching.html">Caching</a> — Cache interface, LRU memory cache, tiered caching, custom implementations</li>
+<li><a href="controller.html">Controller &amp; Viewport</a></li>
+<li><a href="fetching.html">Tile Fetching</a></li>
+<li><a href="caching.html">Caching</a></li>
 </ul>
 <h2 id="learn-more">Learn More</h2>
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/previous-versions/windows/silverlight/dotnet-windows-silverlight/cc645050(v=vs.95)">Image Pyramid specification</a> — Microsoft's original documentation</li>
-<li><a href="https://openseadragon.github.io/">OpenSeadragon</a> — Popular JavaScript Image Pyramid viewer</li>
 <li><a class="xref" href="../../api/SkiaSharp.Extended.SKImagePyramidController.html">API Reference — SKImagePyramidController</a></li>
+<li><a href="https://openseadragon.github.io/">OpenSeadragon</a> — Popular JS viewer (DZI/IIIF compatible)</li>
+<li><a href="https://iiif.io/api/image/3.0/">IIIF Image API 3.0 Spec</a></li>
 </ul>
 
 </article>
@@ -349,7 +297,7 @@ controller.ResetView();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · b432088
+          source: PR #379 · 329efdc
         </div>
       </div>
     </footer>

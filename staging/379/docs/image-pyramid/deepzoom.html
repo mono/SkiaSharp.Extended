@@ -1,0 +1,287 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Deep Zoom (DZI / DZC) | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Deep Zoom (DZI / DZC) | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../../images/logo.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/image-pyramid/deepzoom.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="deep-zoom-dzi--dzc">Deep Zoom (DZI / DZC)</h1>
+
+<p>Deep Zoom is a tile-based image format developed by Microsoft for Silverlight/Seadragon. It remains widely used for gigapixel image viewing. The format comes in two flavours:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Format</th>
+<th style="text-align: left;">Extension</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Deep Zoom Image</td>
+<td style="text-align: left;"><code>.dzi</code></td>
+<td style="text-align: left;">A single image sliced into a tile pyramid</td>
+</tr>
+<tr>
+<td style="text-align: left;">Deep Zoom Collection</td>
+<td style="text-align: left;"><code>.dzc</code></td>
+<td style="text-align: left;">A mosaic of multiple DZI images in one pyramid</td>
+</tr>
+</tbody>
+</table>
+<p>Both formats plug into the <code>ISKImagePyramidSource</code> interface and are fully interchangeable in the controller.</p>
+<hr>
+<h2 id="dzi-format">DZI Format</h2>
+<p>A <code>.dzi</code> file is a small XML descriptor:</p>
+<pre><code class="lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;Image xmlns=&quot;http://schemas.microsoft.com/deepzoom/2008&quot;
+       Format=&quot;jpeg&quot;
+       Overlap=&quot;1&quot;
+       TileSize=&quot;256&quot;&gt;
+  &lt;Size Width=&quot;32768&quot; Height=&quot;32768&quot;/&gt;
+&lt;/Image&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Attribute</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Format</code></td>
+<td style="text-align: left;">Tile image format (<code>jpeg</code>, <code>png</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Overlap</code></td>
+<td style="text-align: left;">Pixel overlap between adjacent tiles (0–2 typical)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TileSize</code></td>
+<td style="text-align: left;">Tile size in pixels (256 or 512 common)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Width</code>, <code>Height</code></td>
+<td style="text-align: left;">Full image dimensions at maximum resolution</td>
+</tr>
+</tbody>
+</table>
+<p>Tiles are stored alongside the <code>.dzi</code> file in a directory named <code>{name}_files/</code>:</p>
+<pre><code>image.dzi
+image_files/
+  0/0_0.jpeg      ← level 0: 1×1 image
+  1/0_0.jpeg
+  ...
+  12/3_5.jpeg     ← level 12: full res, tile at col=3, row=5
+</code></pre>
+<h3 id="parsing">Parsing</h3>
+<pre><code class="lang-csharp">using SkiaSharp.Extended;
+
+// From a URL string
+string xml = await httpClient.GetStringAsync(&quot;https://example.com/image.dzi&quot;);
+string tilesBase = &quot;https://example.com/image_files/&quot;;
+var source = SKImagePyramidDziSource.Parse(xml, tilesBase);
+
+// From a stream
+using var stream = File.OpenRead(&quot;image.dzi&quot;);
+var source = SKImagePyramidDziSource.Parse(stream, &quot;/path/to/image_files/&quot;);
+</code></pre>
+<h3 id="tile-url-construction">Tile URL construction</h3>
+<pre><code class="lang-csharp">// Level 0 = lowest resolution (1×1 px), MaxLevel = full resolution
+string url = source.GetFullTileUrl(level: 12, col: 3, row: 5);
+// → &quot;https://example.com/image_files/12/3_5.jpeg&quot;
+
+// Pyramid geometry helpers
+int levelW = source.GetLevelWidth(12);    // image width at level 12
+int levelH = source.GetLevelHeight(12);   // image height at level 12
+int cols   = source.GetTileCountX(12);    // number of tile columns
+int rows   = source.GetTileCountY(12);    // number of tile rows
+
+// Pixel bounds of a specific tile (includes overlap)
+SKImagePyramidRectI bounds = source.GetTileBounds(level: 12, col: 3, row: 5);
+</code></pre>
+<h3 id="signed--authenticated-urls">Signed / authenticated URLs</h3>
+<p>Append a query string (e.g., SAS token) to every tile URL:</p>
+<pre><code class="lang-csharp">source.TilesQueryString = &quot;?sig=abc123&amp;se=2025-12-31&quot;;
+</code></pre>
+<hr>
+<h2 id="dzc-format-collections">DZC Format (Collections)</h2>
+<p>A <code>.dzc</code> file describes a mosaic of many images composited into a single tile pyramid using Morton (Z-order) indexing:</p>
+<pre><code class="lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;Collection xmlns=&quot;http://schemas.microsoft.com/deepzoom/2008&quot;
+            MaxLevel=&quot;7&quot; TileSize=&quot;256&quot; Format=&quot;jpg&quot; NextItemId=&quot;4&quot;&gt;
+  &lt;Items&gt;
+    &lt;I Id=&quot;0&quot; N=&quot;0&quot; Source=&quot;image0.dzi&quot;&gt;&lt;Size Width=&quot;800&quot; Height=&quot;600&quot;/&gt;&lt;/I&gt;
+    &lt;I Id=&quot;1&quot; N=&quot;1&quot; Source=&quot;image1.dzi&quot;&gt;&lt;Size Width=&quot;1024&quot; Height=&quot;768&quot;/&gt;&lt;/I&gt;
+  &lt;/Items&gt;
+&lt;/Collection&gt;
+</code></pre>
+<h3 id="loading-a-collection">Loading a collection</h3>
+<pre><code class="lang-csharp">string xml = await httpClient.GetStringAsync(&quot;https://example.com/collection.dzc&quot;);
+var collection = SKImagePyramidDziCollectionSource.Parse(xml);
+collection.TilesBaseUri = &quot;https://example.com/&quot;;
+
+controller.Load(collection, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+
+// Access sub-images
+foreach (var sub in collection.Items)
+{
+    Console.WriteLine($&quot;  Id={sub.Id}  {sub.Width}×{sub.Height}  source={sub.Source}&quot;);
+}
+</code></pre>
+<h3 id="morton-grid-layout">Morton grid layout</h3>
+<p>Items in a DZC collection are placed on a 2^N × 2^N Morton grid:</p>
+<pre><code class="lang-csharp">int gridSize = collection.GetMortonGridSize();  // e.g., 4 for a 4×4 grid
+var (col, row) = SKImagePyramidDziCollectionSource.MortonToGrid(morton: 3);
+int morton = SKImagePyramidDziCollectionSource.GridToMorton(col: 1, row: 1);
+</code></pre>
+<hr>
+<h2 id="serving-dzi-files">Serving DZI Files</h2>
+<p>You can generate DZI tile pyramids with:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tool</th>
+<th style="text-align: left;">Platform</th>
+<th style="text-align: left;">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a href="https://github.com/openzoom/deepzoom.py">deepzoom.py</a></td>
+<td style="text-align: left;">Python</td>
+<td style="text-align: left;">Most widely used</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://www.libvips.org/">VIPS</a></td>
+<td style="text-align: left;">CLI</td>
+<td style="text-align: left;">Fastest for huge images</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://github.com/nicowillis/imageresizer">Image Resizer</a></td>
+<td style="text-align: left;">.NET</td>
+<td style="text-align: left;">ASP.NET middleware</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://www.zoomify.com/free.htm">Zoomify converter</a></td>
+<td style="text-align: left;">Windows GUI</td>
+<td style="text-align: left;">Cross-format</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="index.html">Image Pyramid overview</a></li>
+<li><a href="iiif.html">IIIF Image API</a></li>
+<li><a href="fetching.html">Tile Fetching</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.SKImagePyramidDziSource.html">API Reference — SKImagePyramidDziSource</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.SKImagePyramidDziCollectionSource.html">API Reference — SKImagePyramidDziCollectionSource</a></li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/image-pyramid/deepzoom.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #379 · 329efdc
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
