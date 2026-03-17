@@ -1,0 +1,288 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>IIIF Image API Support | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="IIIF Image API Support | SkiaSharp.Extended ">
+      
+      <link rel="icon" href="../../images/logo.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/image-pyramid/iiif.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="iiif-image-api-support">IIIF Image API Support</h1>
+
+<p>The Image Pyramid system supports <a href="https://iiif.io/api/image/">IIIF Image API</a> v2 and v3 through
+<code>SKImagePyramidIiifSource</code>. IIIF (International Image Interoperability Framework) is widely used
+by libraries, museums, and archives to serve high-resolution images.</p>
+<h2 id="what-is-iiif">What is IIIF?</h2>
+<p>IIIF Image API provides a standard way to serve image tiles. Each image server exposes an
+<code>info.json</code> endpoint that describes the image dimensions and available tile sizes:</p>
+<pre><code class="lang-json">{
+  &quot;@context&quot;: &quot;http://iiif.io/api/image/2/context.json&quot;,
+  &quot;@id&quot;: &quot;https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2&quot;,
+  &quot;width&quot;: 3543,
+  &quot;height&quot;: 2480,
+  &quot;tiles&quot;: [
+    { &quot;width&quot;: 1024, &quot;height&quot;: 1024, &quot;scaleFactors&quot;: [1, 2, 4, 8, 16, 32] }
+  ]
+}
+</code></pre>
+<h2 id="using-skimagepyramidiiifsource">Using <code>SKImagePyramidIiifSource</code></h2>
+<h3 id="parse-from-infojson">Parse from info.json</h3>
+<pre><code class="lang-csharp">// Fetch and parse the IIIF info.json
+using var http = new HttpClient();
+var json = await http.GetStringAsync(&quot;https://example.org/iiif/image/my-image/info.json&quot;);
+var source = SKImagePyramidIiifSource.Parse(json);
+
+// Load into the controller (same as DZI)
+controller.Load(source, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+</code></pre>
+<h3 id="construct-manually">Construct manually</h3>
+<pre><code class="lang-csharp">var source = new SKImagePyramidIiifSource(
+    baseId: &quot;https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2&quot;,
+    imageWidth: 3543,
+    imageHeight: 2480,
+    tileWidth: 1024,
+    tileHeight: 1024,
+    scaleFactorsDescending: new[] { 32, 16, 8, 4, 2, 1 }
+);
+</code></pre>
+<h2 id="auto-detecting-source-type">Auto-detecting Source Type</h2>
+<p>In the sample apps, the URL is inspected to select the right parser:</p>
+<pre><code class="lang-csharp">private async Task LoadFromUrlAsync(string url)
+{
+    var content = await http.GetStringAsync(url);
+
+    if (url.EndsWith(&quot;.dzc&quot;, StringComparison.OrdinalIgnoreCase))
+    {
+        var coll = SKImagePyramidDziCollectionSource.Parse(content);
+        coll.TilesBaseUri = url[..url.LastIndexOf('/')] + &quot;/&quot;;
+        controller.Load(coll, fetcher);
+    }
+    else if (url.Contains(&quot;info.json&quot;) || url.Contains(&quot;/iiif/&quot;) || url.Contains(&quot;iiif.io&quot;))
+    {
+        var source = SKImagePyramidIiifSource.Parse(content);
+        controller.Load(source, fetcher);
+    }
+    else
+    {
+        // DZI
+        string baseDir = url[..url.LastIndexOf('/')] + &quot;/&quot;;
+        string stem = Path.GetFileNameWithoutExtension(url);
+        var source = SKImagePyramidDziSource.Parse(content, $&quot;{baseDir}{stem}_files/&quot;);
+        controller.Load(source, fetcher);
+    }
+}
+</code></pre>
+<h2 id="how-iiif-levels-map-to-the-pyramid">How IIIF Levels Map to the Pyramid</h2>
+<p>IIIF uses <strong>scale factors</strong> to describe resolution levels. A scale factor of <code>S</code> means the image
+is scaled down by <code>S</code> relative to full resolution. The <code>scaleFactors</code> array is sorted in descending
+order internally so that pyramid level 0 = lowest resolution (largest scale factor) and
+<code>MaxLevel</code> = full resolution (scale factor = 1):</p>
+<table>
+<thead>
+<tr>
+<th>IIIF scaleFactors</th>
+<th>Pyramid Level</th>
+<th>Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>32</td>
+<td>0</td>
+<td>Lowest (thumbnail)</td>
+</tr>
+<tr>
+<td>16</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>4</td>
+<td></td>
+</tr>
+<tr>
+<td>1</td>
+<td>5 (MaxLevel)</td>
+<td>Full resolution</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tile-url-format">Tile URL Format</h2>
+<p>IIIF tile URLs follow the pattern:</p>
+<pre><code>{baseId}/{region}/{size}/{rotation}/{quality}.{format}
+</code></pre>
+<p>For example, a full-resolution tile at column 0, row 0:</p>
+<pre><code>https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2/0,0,1024,1024/1024,1024/0/default.jpg
+</code></pre>
+<p>Where:</p>
+<ul>
+<li><code>0,0,1024,1024</code> — region in full-resolution pixel coordinates (x, y, w, h)</li>
+<li><code>1024,1024</code> — output size at the requested level</li>
+<li><code>0</code> — rotation (always 0)</li>
+<li><code>default.jpg</code> — quality and format</li>
+</ul>
+<h2 id="the-iskimagepyramidsource-interface">The <code>ISKImagePyramidSource</code> Interface</h2>
+<p>Both <code>SKImagePyramidDziSource</code> and <code>SKImagePyramidIiifSource</code> implement <code>ISKImagePyramidSource</code>,
+which abstracts the tile pyramid math:</p>
+<pre><code class="lang-csharp">public interface ISKImagePyramidSource
+{
+    int ImageWidth { get; }
+    int ImageHeight { get; }
+    int MaxLevel { get; }
+    double AspectRatio { get; }
+
+    int GetLevelWidth(int level);
+    int GetLevelHeight(int level);
+    int GetTileCountX(int level);
+    int GetTileCountY(int level);
+    SKImagePyramidRectI GetTileBounds(int level, int col, int row);
+    string? GetFullTileUrl(int level, int col, int row);
+    int GetOptimalLevel(double viewportWidth, double controlWidth);
+}
+</code></pre>
+<p>The <code>SKImagePyramidController.Load(ISKImagePyramidSource, ISKImagePyramidTileFetcher)</code> overload
+accepts any source type, making it easy to add support for other formats.</p>
+<h2 id="adding-your-own-format-eg-zoomify">Adding Your Own Format (e.g., Zoomify)</h2>
+<p>To support <a href="http://www.zoomify.com/">Zoomify</a>, implement <code>ISKImagePyramidSource</code>:</p>
+<pre><code class="lang-csharp">public class SKImagePyramidZoomifySource : ISKImagePyramidSource
+{
+    // Zoomify uses 256×256 tiles, stored as ZoomifyImage/TileGroup{N}/Level-Col-Row.jpg
+    // Implement GetFullTileUrl to return the correct URL for each tile.
+    // ...
+}
+</code></pre>
+<h2 id="sample-iiif-urls">Sample IIIF URLs</h2>
+<p>Try these public IIIF endpoints in the demo apps:</p>
+<table>
+<thead>
+<tr>
+<th>Institution</th>
+<th>info.json URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wellcome Collection</td>
+<td><code>https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2/info.json</code></td>
+</tr>
+<tr>
+<td>British Library</td>
+<td><code>https://api.bl.uk/image/iiif/ark:/81055/vdc_100022589218.0x000002/info.json</code></td>
+</tr>
+</tbody>
+</table>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/docs/docs/image-pyramid/iiif.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #379 · b432088
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
