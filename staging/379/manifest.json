@@ -45,7 +45,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.BeginRender.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.EndRender.html"
         }
       },
       "version": ""
@@ -55,7 +55,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.EndRender.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomRenderer.BeginRender.html"
         }
       },
       "version": ""
@@ -95,27 +95,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.Put.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGet.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.FlushEvicted.html"
         }
       },
       "version": ""
@@ -145,27 +125,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.Contains.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.Clear.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.FlushEvicted.html"
         }
       },
       "version": ""
@@ -192,10 +152,40 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.Decode.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.Put.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.Contains.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGetAsync.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileCache.TryGet.html"
         }
       },
       "version": ""
@@ -212,10 +202,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.FetchTileAsync.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileDecoder.Decode.html"
         }
       },
       "version": ""
@@ -232,20 +222,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTile.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTile.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTile.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTile.Dispose.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.ISKDeepZoomTileFetcher.FetchTileAsync.html"
         }
       },
       "version": ""
@@ -266,6 +246,26 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTile.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTile.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTile.Dispose.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTile.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomBitmapTile.-ctor.html"
         }
       },
       "version": ""
@@ -305,17 +305,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.Items.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.Format.html"
         }
       },
       "version": ""
@@ -326,46 +316,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.TilesBaseUri.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.NextItemId.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.ItemCount.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.MortonToGrid.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.TileSize.html"
         }
       },
       "version": ""
@@ -405,6 +355,16 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.MortonToGrid.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.GetMortonGridSize.html"
         }
       },
@@ -425,7 +385,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.Format.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.ItemCount.html"
         }
       },
       "version": ""
@@ -442,60 +402,40 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.ViewportX.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.TileSize.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.ViewportY.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.Items.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.ViewportWidth.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.Source.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.Id.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSource.NextItemId.html"
         }
       },
       "version": ""
@@ -515,7 +455,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.AspectRatio.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.Id.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.MortonIndex.html"
         }
       },
       "version": ""
@@ -545,227 +495,57 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.MortonIndex.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.Source.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.ViewportWidth.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.InvalidateRequired.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.ViewportX.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileFailed.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.ViewportY.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SubImages.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ImageOpenFailed.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ImageOpenSucceeded.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.NativeZoom.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.EnableLodBlending.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.PendingTileCount.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.IsIdle.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.AspectRatio.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ViewportChanged.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileSource.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Cache.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Load.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetControlSize.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetViewport.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileLayout.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ZoomAboutScreenPoint.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Pan.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ZoomAboutLogicalPoint.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomCollectionSubImage.AspectRatio.html"
         }
       },
       "version": ""
@@ -776,16 +556,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetZoom.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.GetZoomRect.html"
         }
       },
       "version": ""
@@ -835,127 +605,237 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Cache.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileLayout.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileSource.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SubImages.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.AspectRatio.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.IsIdle.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.PendingTileCount.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.EnableLodBlending.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.NativeZoom.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ImageOpenSucceeded.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ImageOpenFailed.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ViewportChanged.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.TileFailed.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.GetZoomRect.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.InvalidateRequired.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Pan.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ZoomAboutScreenPoint.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ZoomAboutLogicalPoint.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetViewport.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.SetControlSize.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.Load.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomController.ResetView.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.MaxLevel.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.MinLevel.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.Height.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.Width.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.X.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.ToString.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.IsVisibleAtLevel.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.Equals.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.Y.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.op_Equality.html"
         }
       },
       "version": ""
@@ -975,7 +855,127 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.op_Equality.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.op_Inequality.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.X.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.Y.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.MinLevel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.IsVisibleAtLevel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.Height.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.MaxLevel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.Width.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.Equals.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.ToString.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomDisplayRect.-ctor.html"
         }
       },
       "version": ""
@@ -985,7 +985,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.html"
         }
       },
       "version": ""
@@ -1015,7 +1015,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomFileTileFetcher.-ctor.html"
         }
       },
       "version": ""
@@ -1025,17 +1025,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.FetchTileAsync.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html"
         }
       },
       "version": ""
@@ -1055,7 +1045,47 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.FetchTileAsync.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomHttpTileFetcher.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetTileBounds.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetOptimalLevel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetTileUrl.html"
         }
       },
       "version": ""
@@ -1066,16 +1096,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.TilesQueryString.html"
         }
       },
       "version": ""
@@ -1135,6 +1155,16 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetFullTileUrl.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.Overlap.html"
         }
       },
@@ -1155,7 +1185,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.ImageWidth.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.ImageHeight.html"
         }
       },
       "version": ""
@@ -1175,27 +1205,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetFullTileUrl.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetOptimalLevel.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetTileBounds.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.TilesQueryString.html"
         }
       },
       "version": ""
@@ -1215,7 +1225,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetTileCountX.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.ImageWidth.html"
         }
       },
       "version": ""
@@ -1235,16 +1245,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetLevelWidth.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.-ctor.html"
         }
       },
@@ -1255,7 +1255,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.ImageHeight.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetTileCountX.html"
         }
       },
       "version": ""
@@ -1265,87 +1265,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetTileUrl.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomImageSource.GetLevelWidth.html"
         }
       },
       "version": ""
@@ -1375,7 +1295,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.TryGetAsync.html"
         }
       },
       "version": ""
@@ -1395,6 +1315,26 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Put.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Contains.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Remove.html"
         }
       },
@@ -1402,10 +1342,60 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Clear.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.FlushEvicted.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Dispose.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.Count.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.MaxEntries.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomMemoryTileCache.html"
         }
       },
       "version": ""
@@ -1416,6 +1406,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Equals.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.-ctor.html"
         }
       },
       "version": ""
@@ -1445,67 +1445,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.op_Equality.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.op_Inequality.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.X.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Y.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Width.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Height.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Bottom.html"
         }
       },
       "version": ""
@@ -1525,7 +1465,87 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Bottom.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Height.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Width.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.X.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.op_Inequality.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.op_Equality.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectF.Y.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.Right.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.-ctor.html"
         }
       },
       "version": ""
@@ -1555,77 +1575,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.Right.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.Height.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.Width.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.Bottom.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.X.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.op_Inequality.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.ToString.html"
         }
       },
       "version": ""
@@ -1645,7 +1595,37 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.ToString.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.Width.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.Height.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.op_Inequality.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.Bottom.html"
         }
       },
       "version": ""
@@ -1656,6 +1636,66 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.Y.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.X.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRectI.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Dispose.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.EndRender.html"
         }
       },
       "version": ""
@@ -1685,16 +1725,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.DrawTile.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.DrawFallbackTile.html"
         }
       },
@@ -1705,37 +1735,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Canvas.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.EndRender.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.Dispose.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomRenderer.DrawTile.html"
         }
       },
       "version": ""
@@ -1745,27 +1745,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.ParentToLocal.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.MortonIndex.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.Id.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.ZIndex.html"
         }
       },
       "version": ""
@@ -1785,7 +1765,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.AspectRatio.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.Opacity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.ViewportWidth.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.ViewportOriginY.html"
         }
       },
       "version": ""
@@ -1815,7 +1815,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.GetMosaicBounds.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.MortonIndex.html"
         }
       },
       "version": ""
@@ -1825,37 +1825,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.ViewportWidth.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.Opacity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.ZIndex.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.Id.html"
         }
       },
       "version": ""
@@ -1875,7 +1845,37 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.ViewportOriginY.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.ParentToLocal.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.GetMosaicBounds.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomSubImage.AspectRatio.html"
         }
       },
       "version": ""
@@ -1925,77 +1925,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.Row.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.Col.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.Level.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.Equals.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.op_Equality.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.op_Inequality.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.ToString.html"
         }
       },
       "version": ""
@@ -2015,6 +1945,56 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.GetHashCode.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.ToString.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.Level.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.op_Equality.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.Equals.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.Deconstruct.html"
         }
       },
@@ -2025,7 +2005,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.GetHashCode.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.Col.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.op_Inequality.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileId.html"
         }
       },
       "version": ""
@@ -2045,7 +2045,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.FindBestFallback.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.GetTileDestRect.html"
         }
       },
       "version": ""
@@ -2056,16 +2056,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.GetFallbackSourceRect.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.GetTileDestRect.html"
         }
       },
       "version": ""
@@ -2092,40 +2082,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.GetHashCode.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.TileId.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.Priority.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileLayout.FindBestFallback.html"
         }
       },
       "version": ""
@@ -2145,6 +2105,36 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.Priority.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.TileId.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.GetHashCode.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.Equals.html"
         }
       },
@@ -2152,120 +2142,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ViewportOriginX.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ViewportOriginY.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ControlWidth.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.SetState.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.Scale.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ViewportHeight.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.Zoom.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.MaxViewportWidth.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ControlHeight.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.GetState.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.AspectRatio.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomTileRequest.-ctor.html"
         }
       },
       "version": ""
@@ -2295,47 +2175,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.FitToView.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.Constrain.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.GetLogicalBounds.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.GetZoomRect.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.PanByScreenDelta.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ElementToLogicalPoint.html"
         }
       },
       "version": ""
@@ -2355,7 +2195,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.LogicalToElementPoint.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.html"
         }
       },
       "version": ""
@@ -2365,7 +2205,77 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ElementToLogicalPoint.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.PanByScreenDelta.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.Zoom.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.GetZoomRect.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.GetLogicalBounds.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.Constrain.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.FitToView.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.GetState.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.SetState.html"
         }
       },
       "version": ""
@@ -2376,6 +2286,96 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ViewportWidth.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.MaxViewportWidth.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ViewportOriginX.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.LogicalToElementPoint.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ViewportHeight.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.Scale.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ViewportOriginY.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.AspectRatio.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ControlHeight.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewport.ControlWidth.html"
         }
       },
       "version": ""
@@ -2395,7 +2395,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.OriginY.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.GetHashCode.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.Equals.html"
         }
       },
       "version": ""
@@ -2445,6 +2465,16 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.op_Inequality.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.ToString.html"
         }
       },
@@ -2455,37 +2485,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.GetHashCode.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.Equals.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.op_Inequality.html"
+          "relative_path": "api/SkiaSharp.Extended.DeepZoom.SKDeepZoomViewportState.OriginY.html"
         }
       },
       "version": ""
@@ -2505,7 +2505,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKBlurHash.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.DeserializeImage.html"
+          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.Serialize.html"
         }
       },
       "version": ""
@@ -2515,7 +2515,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKBlurHash.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.Serialize.html"
+          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html"
         }
       },
       "version": ""
@@ -2535,17 +2535,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKBlurHash.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.Perimeter.html"
+          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.DeserializeImage.html"
         }
       },
       "version": ""
@@ -2556,6 +2546,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.SKGeometry.PointAlong.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateInterpolation.html"
         }
       },
       "version": ""
@@ -2635,7 +2635,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateInterpolation.html"
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.Perimeter.html"
         }
       },
       "version": ""
@@ -2665,7 +2665,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.DrawSquare.html"
+          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.DrawStar.html"
         }
       },
       "version": ""
@@ -2685,7 +2685,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.DrawStar.html"
+          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.DrawTriangle.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.DrawSquare.html"
         }
       },
       "version": ""
@@ -2696,66 +2706,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.DrawTriangle.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.To.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.Prepare.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.Interpolate.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.From.html"
         }
       },
       "version": ""
@@ -2782,10 +2732,60 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.To.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.From.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.Interpolate.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.Prepare.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparer.Compare.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparer.html"
         }
       },
       "version": ""
@@ -2805,7 +2805,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceImage.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparer.Compare.html"
         }
       },
       "version": ""
@@ -2815,7 +2815,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparer.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceImage.html"
         }
       },
       "version": ""
@@ -2825,7 +2825,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.html"
         }
       },
       "version": ""
@@ -2845,7 +2845,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.CompareAlpha.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.-ctor.html"
         }
       },
       "version": ""
@@ -2855,7 +2855,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.CompareAlpha.html"
         }
       },
       "version": ""
@@ -2865,7 +2865,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.PeakSignalToNoiseRatio.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelCount.html"
         }
       },
       "version": ""
@@ -2876,6 +2886,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.PeakSignalToNoiseRatio.html"
         }
       },
       "version": ""
@@ -2945,27 +2965,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelPercentage.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelCount.html"
         }
       },
       "version": ""
@@ -2995,6 +2995,16 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.ConvertFromStringCore.html"
         }
       },
@@ -3006,16 +3016,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.html"
         }
       },
       "version": ""
@@ -3065,7 +3065,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.ConvertFromStringCore.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.-ctor.html"
         }
       },
       "version": ""
@@ -3075,7 +3075,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.ConvertFromStringCore.html"
         }
       },
       "version": ""
@@ -3085,17 +3085,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertFromStringCore.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertToStringCore.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.html"
         }
       },
       "version": ""
@@ -3115,37 +3105,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertToStringCore.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertToStringCore.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.CanConvertFrom.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.CanConvertTo.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertFromStringCore.html"
         }
       },
       "version": ""
@@ -3165,7 +3135,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertFromStringCore.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.CanConvertTo.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.CanConvertFrom.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertToStringCore.html"
         }
       },
       "version": ""
@@ -3176,6 +3166,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertFromStringCore.html"
         }
       },
       "version": ""
@@ -3196,6 +3196,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabled.html"
         }
       },
       "version": ""
@@ -3235,16 +3245,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabled.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.html"
         }
       },
@@ -3255,7 +3255,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.OnDraw.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.html"
         }
       },
       "version": ""
@@ -3275,17 +3275,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.OnDraw.html"
         }
       },
       "version": ""
@@ -3302,10 +3292,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Infinite.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.-ctor.html"
         }
       },
       "version": ""
@@ -3315,57 +3305,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Duration.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsComplete.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRate.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticlesProperty.html"
         }
       },
       "version": ""
@@ -3385,37 +3325,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Burst.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Update.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRateProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticlesProperty.html"
         }
       },
       "version": ""
@@ -3445,6 +3355,76 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsComplete.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Duration.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRate.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Infinite.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Stream.html"
         }
       },
@@ -3452,10 +3432,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Left.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Burst.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Update.html"
         }
       },
       "version": ""
@@ -3475,36 +3465,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bottom.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Right.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Top.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.html"
         }
       },
@@ -3515,7 +3475,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Rect.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Side.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bottom.html"
         }
       },
       "version": ""
@@ -3545,16 +3515,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Side.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bounds.html"
         }
       },
@@ -3566,6 +3526,46 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Point.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Rect.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Top.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Left.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Right.html"
         }
       },
       "version": ""
@@ -3585,27 +3585,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatioProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.OnDraw.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio.html"
         }
       },
       "version": ""
@@ -3625,6 +3605,16 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatioProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.-ctor.html"
         }
       },
@@ -3632,10 +3622,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.PathProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio.html"
         }
       },
       "version": ""
@@ -3665,7 +3655,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.OnDraw.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.-ctor.html"
         }
       },
       "version": ""
@@ -3675,17 +3665,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.PathProperty.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.OnDraw.html"
         }
       },
       "version": ""
@@ -3706,6 +3696,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.-ctor.html"
         }
       },
       "version": ""
@@ -3736,16 +3736,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.html"
         }
       },
       "version": ""
@@ -3792,20 +3782,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.OnDraw.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.Draw.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.html"
         }
       },
       "version": ""
@@ -3825,7 +3805,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.Draw.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShape.OnDraw.html"
         }
       },
       "version": ""
@@ -3865,7 +3865,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.html"
         }
       },
       "version": ""
@@ -3875,7 +3875,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.-ctor.html"
         }
       },
       "version": ""
@@ -3885,157 +3885,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.FadeOut.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumVelocity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsComplete.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumRotationVelocity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumRotationVelocity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Lifetime.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Gravity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumRotationVelocityProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngle.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocityProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.StartAngleProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.ShapesProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.PhysicsProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.ColorsProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBoundsProperty.html"
         }
       },
       "version": ""
@@ -4055,7 +3905,177 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBoundsProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.ColorsProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.PhysicsProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.ShapesProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.StartAngleProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngleProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocityProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumRotationVelocity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsComplete.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Lifetime.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumVelocity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumRotationVelocity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngle.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.StartAngle.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Shapes.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Physics.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Colors.html"
         }
       },
       "version": ""
@@ -4145,107 +4165,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.GravityProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocityProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumRotationVelocityProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngleProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.LifetimeProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Physics.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Colors.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Shapes.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Emitter.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumVelocityProperty.html"
         }
       },
       "version": ""
@@ -4265,7 +4185,87 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.StartAngle.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.LifetimeProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumVelocityProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumRotationVelocityProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumRotationVelocityProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocityProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.FadeOut.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Gravity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Emitter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.html"
         }
       },
       "version": ""
@@ -4286,16 +4286,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystemCollection.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.html"
         }
       },
       "version": ""
@@ -4372,20 +4362,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.FileProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiView.html"
         }
       },
       "version": ""
@@ -4396,6 +4376,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.LoadAnimationAsync.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.-ctor.html"
         }
       },
       "version": ""
@@ -4432,10 +4422,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.FileProperty.html"
         }
       },
       "version": ""
@@ -4445,7 +4435,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.Animation.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.html"
         }
       },
       "version": ""
@@ -4465,7 +4455,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.Animation.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimation.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.-ctor.html"
         }
       },
       "version": ""
@@ -4492,30 +4502,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Fps.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Size.html"
         }
       },
       "version": ""
@@ -4535,7 +4525,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Size.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Fps.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.html"
         }
       },
       "version": ""
@@ -4546,16 +4546,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromStream.html"
         }
       },
       "version": ""
@@ -4585,17 +4575,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.LoadAnimationAsync.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.IsEmpty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.html"
         }
       },
       "version": ""
@@ -4615,7 +4595,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.IsEmpty.html"
         }
       },
       "version": ""
@@ -4642,6 +4622,26 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromStream.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.LoadAnimationAsync.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode.yml",
       "output": {
         ".html": {
@@ -4655,17 +4655,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationSpeedProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.OnPaintSurface.html"
         }
       },
       "version": ""
@@ -4725,7 +4715,17 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.Duration.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.Update.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.DurationProperty.html"
         }
       },
       "version": ""
@@ -4745,17 +4745,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.OnPaintSurface.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.Update.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.Duration.html"
         }
       },
       "version": ""
@@ -4785,47 +4775,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.DurationProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.ProgressProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationCompleted.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCountProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatModeProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationLoaded.html"
         }
       },
       "version": ""
@@ -4845,6 +4795,36 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationCompleted.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatModeProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCountProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.IsCompleteProperty.html"
         }
       },
@@ -4855,7 +4835,37 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationLoaded.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.ProgressProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationSpeedProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.StreamProperty.html"
         }
       },
       "version": ""
@@ -4875,17 +4885,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.LoadAnimationAsync.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.IsEmpty.html"
         }
       },
       "version": ""
@@ -4905,7 +4905,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.IsEmpty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.-ctor.html"
         }
       },
       "version": ""
@@ -4915,37 +4915,7 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.StreamProperty.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.-ctor.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.OnApplyTemplate.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.OnPaintSurface.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.LoadAnimationAsync.html"
         }
       },
       "version": ""
@@ -4965,7 +4935,37 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.-ctor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.OnPaintSurface.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.OnApplyTemplate.html"
         }
       },
       "version": ""
@@ -4976,6 +4976,16 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.UriProperty.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.LoadAnimationAsync.html"
         }
       },
       "version": ""
@@ -5016,16 +5026,6 @@
       "output": {
         ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.LoadAnimationAsync.html"
         }
       },
       "version": ""
