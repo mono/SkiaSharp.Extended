@@ -179,12 +179,14 @@
         }
 
         // Debug zoom: scale the entire canvas so we can see what's off-screen.
-        // The controller renders at full canvas size (correct logical coords), but
-        // the output is visually scaled down to fit in _debugZoom of the canvas.
+        // Translate first to center the scaled-down content, then scale.
+        // This ensures all four edges are equally visible rather than pinning top-left.
         bool hasDebugZoom = _debugZoom < 0.999f;
         if (hasDebugZoom)
         {
             canvas.Save();
+            // Translate by half the "lost" margin so content is centered
+            canvas.Translate(w * (1f - _debugZoom) / 2f, h * (1f - _debugZoom) / 2f);
             canvas.Scale(_debugZoom);
         }
 
@@ -192,7 +194,9 @@
         _debugRenderer.Canvas = canvas;
         _controller.Render(_debugRenderer);
 
-        // Draw canvas bounds rect to show where the screen edge is
+        // Draw canvas bounds rect to show where the screen edge is.
+        // We're still in the scaled+translated coordinate space, so (0,0,w,h) maps
+        // to the true canvas origin and size — the red border shows the real screen edges.
         if (hasDebugZoom)
         {
             using var borderPaint = new SKPaint
