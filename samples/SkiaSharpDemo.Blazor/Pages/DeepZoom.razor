@@ -124,7 +124,7 @@
                     <h4>Visible Tiles</h4>
                     @if (_controller.TileSource != null)
                     {
-                        var tiles = _controller.Scheduler.GetVisibleTiles(_controller.TileSource, _controller.Viewport);
+                        var tiles = _controller.TileLayout.GetVisibleTiles(_controller.TileSource, _controller.Viewport);
                         <p class="dz-muted">@tiles.Count tile(s) at current viewport</p>
                         <table class="dz-tile-table">
                             <thead><tr><th>Lvl</th><th>Col</th><th>Row</th><th>Pri</th><th>Status</th></tr></thead>

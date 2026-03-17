@@ -17,20 +17,21 @@ public class DeepZoomRenderPipelineTest
         // Parse DZI
         var dzi = CreateTestDzi(2048, 1536);
 
-        // Set up viewport
-        var viewport = new SKDeepZoomViewport();
-        viewport.ControlWidth = 800;
-        viewport.ControlHeight = 600;
-        viewport.AspectRatio = dzi.AspectRatio;
+        // Set up controller and viewport
+        var cache = new SKDeepZoomMemoryTileCache(100);
+        var renderer = new SKDeepZoomRenderer();
+        var controller = new SKDeepZoomController(cache, renderer);
+        controller.SetControlSize(800, 600);
+        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Viewport.AspectRatio = dzi.AspectRatio;
 
-        // Get visible tiles
-        var scheduler = new SKDeepZoomTileScheduler();
-        var tiles = scheduler.GetVisibleTiles(dzi, viewport);
+        // Get visible tiles using the controller's configured viewport
+        var layout = new SKDeepZoomTileLayout();
+        var tiles = layout.GetVisibleTiles(dzi, controller.Viewport);
 
         Assert.True(tiles.Count > 0);
 
         // Create cache with some test tiles
-        var cache = new SKDeepZoomMemoryTileCache(100);
         foreach (var request in tiles)
         {
             var bmp = new SKBitmap(dzi.TileSize, dzi.TileSize);
@@ -40,12 +41,11 @@ public class DeepZoomRenderPipelineTest
         }
 
         // Render
-        var renderer = new SKDeepZoomRenderer();
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
         var canvas = surface.Canvas;
         canvas.Clear(SKColors.White);
 
-        renderer.Render(canvas, dzi, viewport, cache, scheduler);
+        controller.Render(canvas);
 
         // Verify pixels were drawn
         using var pixmap = surface.PeekPixels();

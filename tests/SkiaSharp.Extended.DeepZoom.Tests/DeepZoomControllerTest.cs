@@ -64,7 +64,7 @@ public class DeepZoomControllerTest
 
         Assert.NotNull(controller.Viewport);
         Assert.NotNull(controller.Cache);
-        Assert.NotNull(controller.Scheduler);
+        Assert.NotNull(controller.TileLayout);
         Assert.NotNull(controller.Renderer);
         Assert.Null(controller.TileSource);
         // Animation (spring, UseSprings) is NOT part of the controller; it lives in the view layer

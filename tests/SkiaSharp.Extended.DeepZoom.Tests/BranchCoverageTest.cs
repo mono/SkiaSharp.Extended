@@ -184,12 +184,12 @@ public class BranchCoverageTest
         Assert.NotEqual(origX, vp.ViewportOriginX);
     }
 
-    // --- SKDeepZoomTileScheduler edge cases ---
+    // --- SKDeepZoomTileLayout edge cases ---
 
     [Fact]
     public void TileScheduler_SmallViewport_FewTiles()
     {
-        var scheduler = new SKDeepZoomTileScheduler();
+        var layout = new SKDeepZoomTileLayout();
         var vp = new SKDeepZoomViewport();
         vp.ControlWidth = 100;
         vp.ControlHeight = 100;
@@ -201,7 +201,7 @@ public class BranchCoverageTest
 </Image>";
         var dzi = SKDeepZoomImageSource.Parse(dziXml);
 
-        var requests = scheduler.GetVisibleTiles(dzi, vp);
+        var requests = layout.GetVisibleTiles(dzi, vp);
         Assert.NotEmpty(requests);
     }
 

@@ -65,10 +65,6 @@ namespace SkiaSharp.Extended.DeepZoom
         /// <summary>The tile layout calculator.</summary>
         public SKDeepZoomTileLayout TileLayout => _tileLayout;
 
-        /// <summary>The tile scheduler (alias for <see cref="TileLayout"/>).</summary>
-        [System.Obsolete("Use TileLayout. Scheduler will be removed in a future version.")]
-        public SKDeepZoomTileLayout Scheduler => _tileLayout;
-
         /// <summary>The renderer.</summary>
         public ISKDeepZoomRenderer Renderer => _renderer;
 

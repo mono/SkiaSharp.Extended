@@ -78,69 +78,6 @@ namespace SkiaSharp.Extended.DeepZoom
             Canvas?.Restore();
         }
 
-        // ---- Backward-compat convenience method ----
-
-        /// <summary>
-        /// Renders the full visible tile set onto <paramref name="canvas"/> in a single call.
-        /// Handles both the LOD fallback pass and the hi-res pass.
-        /// </summary>
-        /// <remarks>
-        /// This method is provided for backward compatibility and direct-renderer test scenarios.
-        /// In production code, prefer using <see cref="SKDeepZoomController"/> which orchestrates
-        /// the same pipeline via the <see cref="ISKDeepZoomRenderer"/> interface.
-        /// </remarks>
-        public void Render(
-            SKCanvas canvas,
-            SKDeepZoomImageSource tileSource,
-            SKDeepZoomViewport viewport,
-            ISKDeepZoomTileCache cache,
-            SKDeepZoomTileLayout layout)
-        {
-            cache.FlushEvicted();
-            Canvas = canvas;
-
-            var visibleTiles = layout.GetVisibleTiles(tileSource, viewport);
-
-            BeginRender();
-
-            // Pass 1: LOD fallback tiles
-            if (EnableLodBlending)
-            {
-                foreach (var request in visibleTiles)
-                {
-                    var tileId = request.TileId;
-                    if (!cache.Contains(tileId))
-                    {
-                        var fallback = layout.FindBestFallback(tileId, cache);
-                        if (fallback.HasValue)
-                        {
-                            cache.TryGet(fallback.Value, out ISKDeepZoomTile? parentTile);
-                            if (parentTile != null)
-                            {
-                                var src  = layout.GetFallbackSourceRect(tileId, fallback.Value, tileSource);
-                                var dest = layout.GetTileDestRect(tileSource, viewport, tileId);
-                                DrawFallbackTile(dest, src, parentTile);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Pass 2: Hi-res tiles
-            foreach (var request in visibleTiles)
-            {
-                var tileId = request.TileId;
-                cache.TryGet(tileId, out ISKDeepZoomTile? tile);
-                if (tile != null)
-                {
-                    var dest = layout.GetTileDestRect(tileSource, viewport, tileId);
-                    DrawTile(dest, tile);
-                }
-            }
-
-            EndRender();
-        }
-
         /// <inheritdoc />
         public void Dispose()
         {

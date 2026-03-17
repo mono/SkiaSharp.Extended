@@ -339,7 +339,7 @@ public class DeepZoomEdgeCaseTest
         Assert.True(cache.TryGet(d, out _));
     }
 
-    // --- SKDeepZoomTileScheduler edge cases ---
+    // --- SKDeepZoomTileLayout edge cases ---
 
     [Fact]
     public void TileScheduler_VeryHighZoom_FewTiles()
@@ -354,8 +354,8 @@ public class DeepZoomEdgeCaseTest
             ViewportOriginY = 0.5
         };
 
-        var scheduler = new SKDeepZoomTileScheduler();
-        var tiles = scheduler.GetVisibleTiles(dzi, vp);
+        var layout = new SKDeepZoomTileLayout();
+        var tiles = layout.GetVisibleTiles(dzi, vp);
         Assert.True(tiles.Count > 0);
         Assert.True(tiles.Count < 20);
     }
@@ -371,8 +371,8 @@ public class DeepZoomEdgeCaseTest
             ViewportWidth = 1.0
         };
 
-        var scheduler = new SKDeepZoomTileScheduler();
-        var tiles = scheduler.GetVisibleTiles(dzi, vp);
+        var layout = new SKDeepZoomTileLayout();
+        var tiles = layout.GetVisibleTiles(dzi, vp);
         Assert.True(tiles.Count > 0);
     }
 
