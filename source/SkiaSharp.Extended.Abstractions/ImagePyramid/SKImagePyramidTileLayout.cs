@@ -46,6 +46,10 @@ public class SKImagePyramidTileLayout
         pixelRight = Math.Min(levelWidth, pixelRight);
         pixelBottom = Math.Min(levelHeight, pixelBottom);
 
+        // Early exit when the viewport is entirely outside the image
+        if (pixelRight <= pixelLeft || pixelBottom <= pixelTop)
+            return Array.Empty<SKImagePyramidTileRequest>();
+
         // Convert to tile coordinates using actual tile stride from source bounds.
         // GetTileBounds(level, 0, 0) gives the first tile's extent (includes DZI overlap).
         // For startCol we use effectiveTileW conservatively (tile c is visible if its

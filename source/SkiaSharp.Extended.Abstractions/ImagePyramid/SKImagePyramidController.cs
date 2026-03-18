@@ -36,6 +36,7 @@ public class SKImagePyramidController : IDisposable
     private List<SKImagePyramidSubImage> _subImages = new List<SKImagePyramidSubImage>();
     private ISKImagePyramidTileFetcher? _fetcher;
     private readonly ConcurrentDictionary<SKImagePyramidTileId, byte> _pendingTiles = new ConcurrentDictionary<SKImagePyramidTileId, byte>();
+    private readonly ConcurrentDictionary<SKImagePyramidTileId, byte> _failedTiles = new ConcurrentDictionary<SKImagePyramidTileId, byte>();
     private CancellationTokenSource? _cts;
     private volatile bool _disposed;
     private bool _userHasZoomed;
@@ -137,6 +138,7 @@ public class SKImagePyramidController : IDisposable
         _cts?.Dispose();
         _cts = new CancellationTokenSource();
         _pendingTiles.Clear();
+        _failedTiles.Clear();
         _visibleTilesCache = null;
 
         // Swap the cache; dispose the old one.
@@ -159,6 +161,7 @@ public class SKImagePyramidController : IDisposable
             _cts?.Dispose();
             _cts = new CancellationTokenSource();
             _pendingTiles.Clear();
+            _failedTiles.Clear();
             _cache.Clear();
             _subImages.Clear();
             _visibleTilesCache = null;
@@ -198,6 +201,7 @@ public class SKImagePyramidController : IDisposable
             _cts?.Dispose();
             _cts = new CancellationTokenSource();
             _pendingTiles.Clear();
+            _failedTiles.Clear();
             _cache.Clear();
             _visibleTilesCache = null;
 
@@ -419,7 +423,7 @@ public class SKImagePyramidController : IDisposable
         foreach (var request in visibleTiles)
         {
             var tileId = request.TileId;
-            if (_cache.Contains(tileId) || _pendingTiles.ContainsKey(tileId))
+            if (_cache.Contains(tileId) || _pendingTiles.ContainsKey(tileId) || _failedTiles.ContainsKey(tileId))
                 continue;
 
             _pendingTiles.TryAdd(tileId, 0);
@@ -439,20 +443,31 @@ public class SKImagePyramidController : IDisposable
         ISKImagePyramidTile? tile = null;
         try
         {
-            if (_tileSource == null || _fetcher == null) return;
+            // Capture source and fetcher locally — they may be replaced while this task is in flight
+            var source = _tileSource;
+            var fetcher = _fetcher;
+            if (source == null || fetcher == null) return;
 
             tile = await _cache.TryGetAsync(tileId, ct).ConfigureAwait(false);
 
             if (tile == null && !ct.IsCancellationRequested)
             {
-                string? url = _tileSource.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row);
+                string? url = source.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row);
                 if (url == null) return;
-                tile = await _fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
+                tile = await fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
+                // null means the fetch returned no data (e.g. HTTP 404) — record so we don't retry
+                if (tile == null)
+                {
+                    _failedTiles.TryAdd(tileId, 0);
+                    return;
+                }
             }
 
             if (tile != null && !ct.IsCancellationRequested && !_disposed)
             {
-                await _cache.PutAsync(tileId, tile, ct).ConfigureAwait(false);
+                // Use CancellationToken.None: the decision to store was made above after checking ct.
+                // Passing ct here creates a TOCTOU race that causes tile resource leaks.
+                await _cache.PutAsync(tileId, tile, CancellationToken.None).ConfigureAwait(false);
                 tile = null;
                 // Re-check _disposed after async suspension — Dispose() may have run while awaiting
                 if (!_disposed && !ct.IsCancellationRequested)

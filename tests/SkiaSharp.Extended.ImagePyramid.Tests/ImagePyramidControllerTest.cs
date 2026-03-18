@@ -442,7 +442,8 @@ public class ImagePyramidControllerTest
         Assert.Equal(fitOriginX, x, 6);
         Assert.Equal(0.0, y, 6);
         Assert.Equal(fitWidth, w, 6);
-        Assert.Equal(fitWidth / 1.0 /*aspectRatio*/, h, 6);
+        // height = fitWidth * controlHeight/controlWidth = (800/600) * (600/800) = 1.0
+        Assert.Equal(1.0, h, 6);
 
         // Zoom in and verify the rect changes (immediate — no spring)
         controller.ZoomAboutScreenPoint(4.0, 400, 300);

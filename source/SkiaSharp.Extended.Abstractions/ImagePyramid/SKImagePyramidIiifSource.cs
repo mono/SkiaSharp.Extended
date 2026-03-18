@@ -50,6 +50,8 @@ public class SKImagePyramidIiifSource : ISKImagePyramidSource
         _scaleFactorsDescending = scaleFactorsDescending?.Length > 0
             ? scaleFactorsDescending
             : throw new ArgumentException("Must have at least one scale factor.", nameof(scaleFactorsDescending));
+        if (Array.Exists(_scaleFactorsDescending, sf => sf <= 0))
+            throw new ArgumentException("All scale factors must be >= 1.", nameof(scaleFactorsDescending));
         _format = format;
         _quality = quality;
         MaxLevel = _scaleFactorsDescending.Length - 1;
@@ -215,7 +217,10 @@ public class SKImagePyramidIiifSource : ISKImagePyramidSource
 
                 if (tile.TryGetProperty("scaleFactors", out var sfProp) && sfProp.ValueKind == JsonValueKind.Array)
                 {
-                    scaleFactors = sfProp.EnumerateArray().Select(e => e.GetInt32()).ToList();
+                    scaleFactors = sfProp.EnumerateArray()
+                        .Select(e => e.GetInt32())
+                        .Where(sf => sf >= 1)   // discard malformed non-positive values
+                        .ToList();
                 }
                 tilesParsed = true;
                 break; // Use first tile definition only

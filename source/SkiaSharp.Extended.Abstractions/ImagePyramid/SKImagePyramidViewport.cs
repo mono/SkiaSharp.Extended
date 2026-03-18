@@ -137,12 +137,14 @@ public class SKImagePyramidViewport
     }
 
     /// <summary>
-    /// Returns the logical rectangle visible at a given ViewportWidth.
-    /// Mirrors Silverlight's MultiScaleImage.GetZoomRect().
+    /// Returns the logical rectangle that is currently visible in the control at the given viewport width.
+    /// Height is derived from the control's pixel dimensions, not the image aspect ratio, so that the
+    /// returned rect always matches the visible area regardless of control shape.
     /// </summary>
     public Rect<double> GetZoomRect(double viewportWidth)
     {
-        double height = viewportWidth / AspectRatio;
+        // Use ViewportHeight logic: visible logical height = viewportWidth × controlHeight / controlWidth
+        double height = viewportWidth * _controlHeight / _controlWidth;
         return new Rect<double>(ViewportOriginX, ViewportOriginY, viewportWidth, height);
     }
 

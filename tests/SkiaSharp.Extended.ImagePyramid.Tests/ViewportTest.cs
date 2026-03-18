@@ -341,7 +341,7 @@ public class ViewportTest
         Assert.Equal(0.0, x);
         Assert.Equal(0.0, y);
         Assert.Equal(1.0, w);
-        Assert.Equal(0.5, h, 6); // 1.0 / 2.0
+        Assert.Equal(0.75, h, 6); // 1.0 * 600/800 = actual visible logical height
     }
 
     [Fact]
@@ -362,7 +362,7 @@ public class ViewportTest
 
         var (x, y, w, h) = vp.GetZoomRect(vp.ViewportWidth);
         Assert.Equal(0.5, w, 6); // 1.0 / 2.0
-        Assert.Equal(0.5, h, 6); // 0.5 / 1.0
+        Assert.Equal(0.375, h, 6); // 0.5 * 600/800 = actual visible logical height
         Assert.True(w < 1.0);
     }
 
@@ -645,7 +645,7 @@ public class ViewportTest
         Assert.Equal(0.1, x, 6);
         Assert.Equal(0.05, y, 6);
         Assert.Equal(0.5, w, 6);
-        Assert.Equal(0.25, h, 6); // 0.5 / 2.0
+        Assert.Equal(0.375, h, 6); // 0.5 * 600/800 = actual visible logical height
     }
 
     [Fact]
@@ -663,6 +663,6 @@ public class ViewportTest
         // Pass a different viewportWidth than what the viewport currently has
         var (x, y, w, h) = vp.GetZoomRect(0.25);
         Assert.Equal(0.25, w, 6);
-        Assert.Equal(0.25, h, 6);
+        Assert.Equal(0.1875, h, 6); // 0.25 * 600/800 = actual visible logical height
     }
 }

@@ -613,4 +613,70 @@ public class ImagePyramidEdgeCaseTest
                 $"Gap between DZI tiles [{col},{col+1}]: right={rect0.X + rect0.Width} vs left={rect1.X}");
         }
     }
+
+    [Fact]
+    public void GetVisibleTiles_ViewportEntirelyLeftOfImage_ReturnsEmpty()
+    {
+        // Regression: viewport to the left of the image (logicalRight < 0)
+        // Previously returned tile (0,0,0) spuriously; now returns empty.
+        const string xml = @"<?xml version='1.0'?>
+<Image xmlns='http://schemas.microsoft.com/deepzoom/2008'
+       Format='jpg' Overlap='1' TileSize='256'>
+  <Size Width='512' Height='512'/>
+</Image>";
+        var dzi = SKImagePyramidDziSource.Parse(xml, "https://example.com/image_files/");
+        var layout = new SKImagePyramidTileLayout();
+        var vp = new SKImagePyramidViewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            AspectRatio = dzi.AspectRatio,
+            ViewportWidth = 0.5,
+            // Panned far to the right so image is fully off left side of screen
+            ViewportOriginX = 2.0,
+            ViewportOriginY = 0.0,
+        };
+        var tiles = layout.GetVisibleTiles(dzi, vp);
+        Assert.Empty(tiles);
+    }
+
+    [Fact]
+    public void GetVisibleTiles_ViewportEntirelyAboveImage_ReturnsEmpty()
+    {
+        // Regression: viewport entirely above the image (logicalBottom < 0)
+        const string xml = @"<?xml version='1.0'?>
+<Image xmlns='http://schemas.microsoft.com/deepzoom/2008'
+       Format='jpg' Overlap='1' TileSize='256'>
+  <Size Width='512' Height='512'/>
+</Image>";
+        var dzi = SKImagePyramidDziSource.Parse(xml, "https://example.com/image_files/");
+        var layout = new SKImagePyramidTileLayout();
+        var vp = new SKImagePyramidViewport
+        {
+            ControlWidth = 800,
+            ControlHeight = 600,
+            AspectRatio = dzi.AspectRatio,
+            ViewportWidth = 0.5,
+            ViewportOriginX = 0.0,
+            // Panned far down so image is fully above the top of the screen
+            ViewportOriginY = 2.0,
+        };
+        var tiles = layout.GetVisibleTiles(dzi, vp);
+        Assert.Empty(tiles);
+    }
+
+    [Fact]
+    public void IiifSource_ZeroScaleFactor_ThrowsArgumentException()
+    {
+        // Regression: scale factor of 0 would corrupt all geometry via (int)(+inf) = int.MinValue.
+        // Constructor must reject it.
+        Assert.Throws<ArgumentException>(() =>
+            new SKImagePyramidIiifSource(
+                baseId: "https://example.com/image",
+                imageWidth: 1000,
+                imageHeight: 500,
+                tileWidth: 256,
+                tileHeight: 256,
+                scaleFactorsDescending: new[] { 0, 1 }));
+    }
 }
