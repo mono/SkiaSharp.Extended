@@ -72,7 +72,7 @@ int cols   = source.GetTileCountX(12);    // number of tile columns
 int rows   = source.GetTileCountY(12);    // number of tile rows
 
 // Pixel bounds of a specific tile (includes overlap)
-SKImagePyramidRectI bounds = source.GetTileBounds(level: 12, col: 3, row: 5);
+Rect<int> bounds = source.GetTileBounds(level: 12, col: 3, row: 5);
 ```
 
 ### Signed / authenticated URLs

@@ -142,7 +142,7 @@ public interface ISKImagePyramidSource
     int GetLevelHeight(int level);
     int GetTileCountX(int level);
     int GetTileCountY(int level);
-    SKImagePyramidRectI GetTileBounds(int level, int col, int row);
+    Rect<int> GetTileBounds(int level, int col, int row);
     string? GetFullTileUrl(int level, int col, int row);
     int GetOptimalLevel(double viewportWidth, double controlWidth);
 }

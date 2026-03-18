@@ -157,14 +157,14 @@ public sealed class TileBorderRenderer : ISKImagePyramidRenderer
     public void BeginRender() => _inner.BeginRender();
     public void EndRender()   => _inner.EndRender();
 
-    public void DrawTile(SKImagePyramidRectF destRect, ISKImagePyramidTile tile)
+    public void DrawTile(Rect<float> destRect, ISKImagePyramidTile tile)
     {
         _inner.DrawTile(destRect, tile);
         if (ShowBorders && _inner.Canvas != null)
             _inner.Canvas.DrawRect(new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom), _borderPaint);
     }
 
-    public void DrawFallbackTile(SKImagePyramidRectF destRect, SKImagePyramidRectF sourceRect, ISKImagePyramidTile tile)
+    public void DrawFallbackTile(Rect<float> destRect, Rect<float> sourceRect, ISKImagePyramidTile tile)
         => _inner.DrawFallbackTile(destRect, sourceRect, tile);
 
     public void Dispose()
