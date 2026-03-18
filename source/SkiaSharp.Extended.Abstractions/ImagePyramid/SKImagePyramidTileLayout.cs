@@ -148,6 +148,10 @@ public class SKImagePyramidTileLayout
     /// Previously on <see cref="SKImagePyramidRenderer"/>; moved here because it is pure geometry,
     /// independent of any rendering backend.
     /// </summary>
+    /// <remarks>
+    /// Corners are pixel-snapped using floor/ceiling so that adjacent tiles share the same
+    /// integer pixel boundary, eliminating sub-pixel gaps that cause flickering seams.
+    /// </remarks>
     public SKImagePyramidRectF GetTileDestRect(
         ISKImagePyramidSource tileSource,
         SKImagePyramidViewport viewport,
@@ -167,10 +171,16 @@ public class SKImagePyramidTileLayout
         var topLeft     = viewport.LogicalToElementPoint(logicalLeft, logicalTop);
         var bottomRight = viewport.LogicalToElementPoint(logicalRight, logicalBottom);
 
-        return new SKImagePyramidRectF(
-            (float)topLeft.X,
-            (float)topLeft.Y,
-            (float)(bottomRight.X - topLeft.X),
-            (float)(bottomRight.Y - topLeft.Y));
+        // Pixel-snap: floor top-left, ceiling bottom-right.
+        // This ensures adjacent tiles always share the same integer boundary, eliminating
+        // sub-pixel floating-point gaps that cause flickering seams between tiles.
+        // Adjacent tiles may overlap by at most 1px (drawn in row/column order so later
+        // tiles are painted on top), which is always preferable to a transparent gap.
+        float x      = (float)Math.Floor(topLeft.X);
+        float y      = (float)Math.Floor(topLeft.Y);
+        float right  = (float)Math.Ceiling(bottomRight.X);
+        float bottom = (float)Math.Ceiling(bottomRight.Y);
+
+        return new SKImagePyramidRectF(x, y, right - x, bottom - y);
     }
 }

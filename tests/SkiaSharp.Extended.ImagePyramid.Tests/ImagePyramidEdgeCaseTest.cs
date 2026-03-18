@@ -533,4 +533,84 @@ public class ImagePyramidEdgeCaseTest
         // Col 1 starts at pixel 256 < 257 = pixelRight, so it IS visible.
         Assert.Contains(1, cols);
     }
+
+    // --- Pixel-snapping / seam-free dest rect tests ---
+
+    [Fact]
+    public void TileLayout_GetTileDestRect_AdjacentIiifTiles_NoGap()
+    {
+        // Regression test: sub-pixel floating-point gaps between adjacent IIIF tiles caused
+        // flickering seams. GetTileDestRect must use floor/ceiling pixel-snapping so that the
+        // right edge of tile N equals the left edge of tile N+1.
+        var iiif = new SKImagePyramidIiifSource(
+            baseId: "https://example.com",
+            imageWidth: 3543, imageHeight: 2480,
+            tileWidth: 1024, tileHeight: 1024,
+            scaleFactorsDescending: new[] { 4, 2, 1 });
+
+        var layout = new SKImagePyramidTileLayout();
+        // Use a viewport with non-zero origin and non-integer scale to expose float precision issues.
+        var vp = new SKImagePyramidViewport
+        {
+            ControlWidth = 1200,
+            ControlHeight = 800,
+            ViewportWidth = 0.5,
+            ViewportOriginX = 0.1,
+        };
+        vp.AspectRatio = iiif.AspectRatio;
+
+        int maxLevel = iiif.MaxLevel;
+        int cols = iiif.GetTileCountX(maxLevel);
+
+        for (int col = 0; col < cols - 1; col++)
+        {
+            var rect0 = layout.GetTileDestRect(iiif, vp, new SKImagePyramidTileId(maxLevel, col, 0));
+            var rect1 = layout.GetTileDestRect(iiif, vp, new SKImagePyramidTileId(maxLevel, col + 1, 0));
+
+            // With floor/ceil pixel-snapping, adjacent tiles overlap by at most 1px (no gap).
+            // right=ceil(shared_boundary) >= left=floor(shared_boundary) always holds.
+            Assert.True(rect0.Right >= rect1.X,
+                $"Gap between IIIF tiles [{col},{col+1}]: right={rect0.Right} vs left={rect1.X}");
+            // Overlap is at most 1px
+            Assert.True(rect0.Right - rect1.X <= 1,
+                $"IIIF tiles [{col},{col+1}] overlap more than 1px: {rect0.Right - rect1.X}px");
+        }
+    }
+
+    [Fact]
+    public void TileLayout_GetTileDestRect_AdjacentDziTiles_NoGap()
+    {
+        // Same pixel-snapping test for DZI (which has overlap — seams were previously masked
+        // but the fix should not break DZI either).
+        const string xml = @"<?xml version='1.0'?>
+<Image xmlns='http://schemas.microsoft.com/deepzoom/2008'
+       Format='jpg' Overlap='1' TileSize='256'>
+  <Size Width='7026' Height='9221'/>
+</Image>";
+        var dzi = SKImagePyramidDziSource.Parse(xml, "https://example.com/image_files/");
+
+        var layout = new SKImagePyramidTileLayout();
+        var vp = new SKImagePyramidViewport
+        {
+            ControlWidth = 1200,
+            ControlHeight = 800,
+            ViewportWidth = 0.5,
+            ViewportOriginX = 0.1,
+        };
+        vp.AspectRatio = dzi.AspectRatio;
+
+        int maxLevel = dzi.MaxLevel;
+        int cols = dzi.GetTileCountX(maxLevel);
+
+        for (int col = 0; col < Math.Min(cols - 1, 5); col++)
+        {
+            var rect0 = layout.GetTileDestRect(dzi, vp, new SKImagePyramidTileId(maxLevel, col, 0));
+            var rect1 = layout.GetTileDestRect(dzi, vp, new SKImagePyramidTileId(maxLevel, col + 1, 0));
+
+            // For DZI with overlap, tiles overlap in source space so dest rects also overlap.
+            // The key property is: right edge of tile[col] is >= left edge of tile[col+1] (no gap).
+            Assert.True(rect0.Right >= rect1.X,
+                $"Gap between DZI tiles [{col},{col+1}]: right={rect0.Right} vs left={rect1.X}");
+        }
+    }
 }
