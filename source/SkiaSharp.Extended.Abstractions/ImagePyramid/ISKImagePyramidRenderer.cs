@@ -32,18 +32,18 @@ public interface ISKImagePyramidRenderer : IDisposable
     /// <summary>
     /// Draws a hi-resolution tile at the exact detail level requested.
     /// </summary>
-    /// <param name="destRect">Where to draw the tile on screen (in screen pixels).</param>
+    /// <param name="destRect">Where to draw the tile on screen (in screen pixels, XYWH).</param>
     /// <param name="tile">The decoded tile image.</param>
-    void DrawTile(SKImagePyramidRectF destRect, ISKImagePyramidTile tile);
+    void DrawTile(Rect<float> destRect, ISKImagePyramidTile tile);
 
     /// <summary>
     /// Draws a lower-resolution fallback tile stretched to fill the destination rect.
     /// Only called when LOD blending is enabled and the hi-res tile is still loading.
     /// </summary>
-    /// <param name="destRect">Where to draw the fallback on screen (in screen pixels).</param>
-    /// <param name="sourceRect">The sub-region of the fallback tile bitmap to use (in tile pixels).</param>
+    /// <param name="destRect">Where to draw the fallback on screen (in screen pixels, XYWH).</param>
+    /// <param name="sourceRect">The sub-region of the fallback tile bitmap to use (in tile pixels, XYWH).</param>
     /// <param name="tile">The decoded fallback tile image.</param>
-    void DrawFallbackTile(SKImagePyramidRectF destRect, SKImagePyramidRectF sourceRect, ISKImagePyramidTile tile);
+    void DrawFallbackTile(Rect<float> destRect, Rect<float> sourceRect, ISKImagePyramidTile tile);
 
     /// <summary>
     /// Called after all tile draw calls for a render frame.

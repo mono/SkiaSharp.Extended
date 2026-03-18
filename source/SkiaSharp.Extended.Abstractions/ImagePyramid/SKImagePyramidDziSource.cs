@@ -99,9 +99,9 @@ public class SKImagePyramidDziSource : ISKImagePyramidSource
 
     /// <summary>
     /// Gets the pixel bounds of a tile within its pyramid level, including overlap.
-    /// Returns an <see cref="SKImagePyramidRectI"/> in level-pixel coordinates.
+    /// Returns a <see cref="Rect{T}"/> of <see cref="int"/> in level-pixel coordinates (XYWH).
     /// </summary>
-    public SKImagePyramidRectI GetTileBounds(int level, int col, int row)
+    public Rect<int> GetTileBounds(int level, int col, int row)
     {
         if (level < 0 || level > MaxLevel) throw new ArgumentOutOfRangeException(nameof(level));
 
@@ -119,7 +119,7 @@ public class SKImagePyramidDziSource : ISKImagePyramidSource
         if (row > 0) bottom = Math.Min((row + 1) * TileSize + Overlap, levelHeight);
         else bottom = Math.Min(TileSize + Overlap, levelHeight);
 
-        return new SKImagePyramidRectI(x, y, right - x, bottom - y);
+        return new Rect<int>(x, y, right - x, bottom - y);
     }
 
     /// <summary>

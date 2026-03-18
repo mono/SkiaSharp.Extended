@@ -119,9 +119,9 @@ public class SKImagePyramidTileLayout
 
     /// <summary>
     /// Computes the source rect within a parent tile that corresponds to the child tile.
-    /// Returns an <see cref="SKImagePyramidRectF"/> in parent-bitmap pixel coordinates.
+    /// Returns a <see cref="Rect{T}"/> of <see cref="float"/> in parent-bitmap pixel coordinates (XYWH).
     /// </summary>
-    public SKImagePyramidRectF GetFallbackSourceRect(
+    public Rect<float> GetFallbackSourceRect(
         SKImagePyramidTileId requested, SKImagePyramidTileId parent, ISKImagePyramidSource tileSource)
     {
         int levelDiff = requested.Level - parent.Level;
@@ -140,7 +140,7 @@ public class SKImagePyramidTileLayout
         float srcX = reqLeftInParent - parentBounds.X;
         float srcY = reqTopInParent - parentBounds.Y;
 
-        return new SKImagePyramidRectF(srcX, srcY, reqWidthInParent, reqHeightInParent);
+        return new Rect<float>(srcX, srcY, reqWidthInParent, reqHeightInParent);
     }
 
     /// <summary>
@@ -151,8 +151,9 @@ public class SKImagePyramidTileLayout
     /// <remarks>
     /// Corners are pixel-snapped using floor/ceiling so that adjacent tiles share the same
     /// integer pixel boundary, eliminating sub-pixel gaps that cause flickering seams.
+    /// Returns a <see cref="Rect{T}"/> of <see cref="float"/> in screen-pixel coordinates (XYWH).
     /// </remarks>
-    public SKImagePyramidRectF GetTileDestRect(
+    public Rect<float> GetTileDestRect(
         ISKImagePyramidSource tileSource,
         SKImagePyramidViewport viewport,
         SKImagePyramidTileId tileId)
@@ -165,8 +166,8 @@ public class SKImagePyramidTileLayout
 
         double logicalLeft   = (double)tileBounds.X / levelWidth;
         double logicalTop    = (double)tileBounds.Y / levelHeight * imageLogicalHeight;
-        double logicalRight  = (double)tileBounds.Right / levelWidth;
-        double logicalBottom = (double)tileBounds.Bottom / levelHeight * imageLogicalHeight;
+        double logicalRight  = (double)(tileBounds.X + tileBounds.Width) / levelWidth;
+        double logicalBottom = (double)(tileBounds.Y + tileBounds.Height) / levelHeight * imageLogicalHeight;
 
         var topLeft     = viewport.LogicalToElementPoint(logicalLeft, logicalTop);
         var bottomRight = viewport.LogicalToElementPoint(logicalRight, logicalBottom);
@@ -181,6 +182,6 @@ public class SKImagePyramidTileLayout
         float right  = (float)Math.Ceiling(bottomRight.X);
         float bottom = (float)Math.Ceiling(bottomRight.Y);
 
-        return new SKImagePyramidRectF(x, y, right - x, bottom - y);
+        return new Rect<float>(x, y, right - x, bottom - y);
     }
 }

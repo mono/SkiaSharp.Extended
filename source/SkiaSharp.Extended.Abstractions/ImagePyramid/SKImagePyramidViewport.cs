@@ -87,20 +87,20 @@ public class SKImagePyramidViewport
     public double Zoom => 1.0 / _viewportWidth;
 
     /// <summary>Converts a screen-space point to logical coordinates.</summary>
-    public (double X, double Y) ElementToLogicalPoint(double screenX, double screenY)
+    public Point<double> ElementToLogicalPoint(double screenX, double screenY)
     {
         double scale = Scale;
-        return (
+        return new Point<double>(
             _viewportOriginX + screenX / scale,
             _viewportOriginY + screenY / scale
         );
     }
 
     /// <summary>Converts a logical point to screen-space coordinates.</summary>
-    public (double X, double Y) LogicalToElementPoint(double logicalX, double logicalY)
+    public Point<double> LogicalToElementPoint(double logicalX, double logicalY)
     {
         double scale = Scale;
-        return (
+        return new Point<double>(
             (logicalX - _viewportOriginX) * scale,
             (logicalY - _viewportOriginY) * scale
         );
@@ -140,13 +140,13 @@ public class SKImagePyramidViewport
     /// Returns the logical rectangle visible at a given ViewportWidth.
     /// Mirrors Silverlight's MultiScaleImage.GetZoomRect().
     /// </summary>
-    public (double X, double Y, double Width, double Height) GetZoomRect(double viewportWidth)
+    public Rect<double> GetZoomRect(double viewportWidth)
     {
         double height = viewportWidth / AspectRatio;
-        return (ViewportOriginX, ViewportOriginY, viewportWidth, height);
+        return new Rect<double>(ViewportOriginX, ViewportOriginY, viewportWidth, height);
     }
 
-    /// <summary>Gets the logical bounds of the current viewport.</summary>
+    /// <summary>Gets the logical bounds of the current viewport (Left, Top, Right, Bottom).</summary>
     public (double Left, double Top, double Right, double Bottom) GetLogicalBounds()
     {
         double height = ViewportHeight;

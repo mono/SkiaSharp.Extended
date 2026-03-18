@@ -111,7 +111,7 @@ public class SKImagePyramidIiifSource : ISKImagePyramidSource
     }
 
     /// <inheritdoc/>
-    public SKImagePyramidRectI GetTileBounds(int level, int col, int row)
+    public Rect<int> GetTileBounds(int level, int col, int row)
     {
         ValidateLevel(level);
         int levelWidth = GetLevelWidth(level);
@@ -122,7 +122,7 @@ public class SKImagePyramidIiifSource : ISKImagePyramidSource
         int w = Math.Min(_tileWidth, levelWidth - x);
         int h = Math.Min(_tileHeight, levelHeight - y);
 
-        return new SKImagePyramidRectI(x, y, w, h);
+        return new Rect<int>(x, y, w, h);
     }
 
     /// <inheritdoc/>

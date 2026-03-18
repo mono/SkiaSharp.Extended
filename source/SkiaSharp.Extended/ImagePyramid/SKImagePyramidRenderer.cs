@@ -37,22 +37,22 @@ public class SKImagePyramidRenderer : ISKImagePyramidRenderer
     }
 
     /// <inheritdoc />
-    public void DrawTile(SKImagePyramidRectF destRect, ISKImagePyramidTile tile)
+    public void DrawTile(Rect<float> destRect, ISKImagePyramidTile tile)
     {
         if (Canvas == null) return;
         var image = ((SKImagePyramidImageTile)tile).Image;
         var src = new SKRect(0, 0, image.Width, image.Height);
-        var dest = new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom);
+        var dest = new SKRect(destRect.X, destRect.Y, destRect.X + destRect.Width, destRect.Y + destRect.Height);
         Canvas.DrawImage(image, src, dest, _tilePaint);
     }
 
     /// <inheritdoc />
-    public void DrawFallbackTile(SKImagePyramidRectF destRect, SKImagePyramidRectF sourceRect, ISKImagePyramidTile tile)
+    public void DrawFallbackTile(Rect<float> destRect, Rect<float> sourceRect, ISKImagePyramidTile tile)
     {
         if (Canvas == null) return;
         var image = ((SKImagePyramidImageTile)tile).Image;
-        var src  = new SKRect(sourceRect.X, sourceRect.Y, sourceRect.Right, sourceRect.Bottom);
-        var dest = new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom);
+        var src  = new SKRect(sourceRect.X, sourceRect.Y, sourceRect.X + sourceRect.Width, sourceRect.Y + sourceRect.Height);
+        var dest = new SKRect(destRect.X, destRect.Y, destRect.X + destRect.Width, destRect.Y + destRect.Height);
         Canvas.DrawImage(image, src, dest, _tilePaint);
     }
 

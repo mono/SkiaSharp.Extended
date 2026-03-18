@@ -34,11 +34,11 @@ public interface ISKImagePyramidSource
 
     /// <summary>
     /// Gets the pixel bounds of a tile within its pyramid level.
-    /// Returns an <see cref="SKImagePyramidRectI"/> in level-pixel coordinates.
+    /// Returns a <see cref="Rect{T}"/> of <see cref="int"/> in level-pixel coordinates (XYWH).
     /// For formats without tile overlap (e.g., IIIF), the bounds are the exact tile dimensions.
     /// For DZI, the bounds include the configured overlap pixels.
     /// </summary>
-    SKImagePyramidRectI GetTileBounds(int level, int col, int row);
+    Rect<int> GetTileBounds(int level, int col, int row);
 
     /// <summary>
     /// Gets the full URL for a specific tile. Returns null if the source

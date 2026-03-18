@@ -569,11 +569,11 @@ public class ImagePyramidEdgeCaseTest
 
             // With floor/ceil pixel-snapping, adjacent tiles overlap by at most 1px (no gap).
             // right=ceil(shared_boundary) >= left=floor(shared_boundary) always holds.
-            Assert.True(rect0.Right >= rect1.X,
-                $"Gap between IIIF tiles [{col},{col+1}]: right={rect0.Right} vs left={rect1.X}");
+            Assert.True(rect0.X + rect0.Width >= rect1.X,
+                $"Gap between IIIF tiles [{col},{col+1}]: right={rect0.X + rect0.Width} vs left={rect1.X}");
             // Overlap is at most 1px
-            Assert.True(rect0.Right - rect1.X <= 1,
-                $"IIIF tiles [{col},{col+1}] overlap more than 1px: {rect0.Right - rect1.X}px");
+            Assert.True(rect0.X + rect0.Width - rect1.X <= 1,
+                $"IIIF tiles [{col},{col+1}] overlap more than 1px: {rect0.X + rect0.Width - rect1.X}px");
         }
     }
 
@@ -609,8 +609,8 @@ public class ImagePyramidEdgeCaseTest
 
             // For DZI with overlap, tiles overlap in source space so dest rects also overlap.
             // The key property is: right edge of tile[col] is >= left edge of tile[col+1] (no gap).
-            Assert.True(rect0.Right >= rect1.X,
-                $"Gap between DZI tiles [{col},{col+1}]: right={rect0.Right} vs left={rect1.X}");
+            Assert.True(rect0.X + rect0.Width >= rect1.X,
+                $"Gap between DZI tiles [{col},{col+1}]: right={rect0.X + rect0.Width} vs left={rect1.X}");
         }
     }
 }

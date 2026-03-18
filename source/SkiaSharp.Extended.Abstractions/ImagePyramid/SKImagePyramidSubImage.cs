@@ -75,10 +75,10 @@ public class SKImagePyramidSubImage(int id, int mortonIndex, double aspectRatio,
     /// Converts the Silverlight inverted viewport coordinates to the actual mosaic position.
     /// Returns the top-left corner and size in the parent's logical space.
     /// </summary>
-    public (double X, double Y, double Width, double Height) GetMosaicBounds()
+    public Rect<double> GetMosaicBounds()
     {
         if (_viewportWidth == 0)
-            return (0, 0, 0, 0);
+            return new Rect<double>(0, 0, 0, 0);
 
         // Silverlight uses inverted coordinates:
         // The sub-image's ViewportWidth is the inverse of how much of the parent it occupies
@@ -88,26 +88,26 @@ public class SKImagePyramidSubImage(int id, int mortonIndex, double aspectRatio,
         double actualX = -_viewportOriginX / _viewportWidth;
         double actualY = -_viewportOriginY / _viewportWidth;
 
-        return (actualX, actualY, actualWidth, actualHeight);
+        return new Rect<double>(actualX, actualY, actualWidth, actualHeight);
     }
 
     /// <summary>
     /// Converts a point in the parent's logical space to this sub-image's local logical space.
     /// </summary>
-    public (double X, double Y) ParentToLocal(double parentX, double parentY)
+    public Point<double> ParentToLocal(double parentX, double parentY)
     {
-        var (mx, my, mw, mh) = GetMosaicBounds();
-        if (mw == 0 || mh == 0)
-            return (0, 0);
-        return ((parentX - mx) / mw, (parentY - my) / mh);
+        var b = GetMosaicBounds();
+        if (b.Width == 0 || b.Height == 0)
+            return new Point<double>(0, 0);
+        return new Point<double>((parentX - b.X) / b.Width, (parentY - b.Y) / b.Height);
     }
 
     /// <summary>
     /// Converts a point in this sub-image's local logical space to the parent's logical space.
     /// </summary>
-    public (double X, double Y) LocalToParent(double localX, double localY)
+    public Point<double> LocalToParent(double localX, double localY)
     {
-        var (mx, my, mw, mh) = GetMosaicBounds();
-        return (localX * mw + mx, localY * mh + my);
+        var b = GetMosaicBounds();
+        return new Point<double>(localX * b.Width + b.X, localY * b.Height + b.Y);
     }
 }

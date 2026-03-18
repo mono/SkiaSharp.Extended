@@ -316,7 +316,7 @@ public class SKImagePyramidController : IDisposable
     }
 
     /// <summary>Returns the logical rectangle visible at the current viewport state.</summary>
-    public (double X, double Y, double Width, double Height) GetZoomRect()
+    public Rect<double> GetZoomRect()
         => _viewport.GetZoomRect(_viewport.ViewportWidth);
 
     /// <summary>
