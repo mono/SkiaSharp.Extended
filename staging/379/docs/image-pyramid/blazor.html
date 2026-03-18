@@ -191,7 +191,7 @@
 <pre><code class="lang-csharp">var xml = await Http.GetStringAsync(&quot;collection.dzc&quot;);
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = Http.BaseAddress!.ToString();
-_controller!.Load(collection, new SKImagePyramidHttpTileFetcher());
+_controller!.Load(collection, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
 </code></pre>
 <h2 id="custom-cache">Custom Cache</h2>
 <p>Pass a custom <code>ISKImagePyramidTileCache</code> to the controller for tiered caching or controlled experiments:</p>
@@ -212,7 +212,7 @@ public void OnCanvasResized()
 </code></pre>
 <h2 id="rendering-behaviour">Rendering Behaviour</h2>
 <ul>
-<li><strong>Fit and center</strong>: On load the controller calls <code>FitToView()</code> — the full image is visible, centered horizontally and vertically, with aspect ratio preserved. No cropping or distortion.</li>
+<li><strong>Fit and center</strong>: On load the controller calls <code>ResetView()</code> — the full image is visible, centered horizontally and vertically, with aspect ratio preserved. No cropping or distortion.</li>
 <li><strong>LOD blending</strong>: While high-resolution tiles are in-flight, lower-resolution parent tiles are upscaled and composited as placeholders.</li>
 <li><strong>Idle detection</strong>: <code>controller.IsIdle</code> is <code>true</code> when no tiles are loading. You can pause periodic repaints when the view is idle.</li>
 </ul>
@@ -245,7 +245,7 @@ public void OnCanvasResized()
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d0ad40b
+          source: PR #379 · e9585ed
         </div>
       </div>
     </footer>

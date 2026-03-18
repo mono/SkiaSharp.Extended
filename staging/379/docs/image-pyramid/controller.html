@@ -290,7 +290,7 @@ controller.EnableLodBlending = false;
     {
         _inner.DrawTile(destRect, tile);
         if (ShowBorders &amp;&amp; _inner.Canvas != null)
-            _inner.Canvas.DrawRect(new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom), _borderPaint);
+            _inner.Canvas.DrawRect(new SKRect(destRect.X, destRect.Y, destRect.X + destRect.Width, destRect.Y + destRect.Height), _borderPaint);
     }
 
     public void DrawFallbackTile(Rect&lt;float&gt; destRect, Rect&lt;float&gt; sourceRect, ISKImagePyramidTile tile)
@@ -711,7 +711,7 @@ foreach (var sub in controller.SubImages)
 </code></pre>
 <hr>
 <h2 id="skimagepyramidtilerequest">SKImagePyramidTileRequest</h2>
-<p>Returned by <code>SKImagePyramidTileScheduler.GetVisibleTiles()</code> — represents a single tile that should be fetched, with a priority that controls fetch order.</p>
+<p>Returned by <code>SKImagePyramidTileLayout.GetVisibleTiles()</code> — represents a single tile that should be fetched, with a priority that controls fetch order.</p>
 <table>
 <thead>
 <tr>
@@ -771,7 +771,7 @@ foreach (var req in tiles)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d0ad40b
+          source: PR #379 · e9585ed
         </div>
       </div>
     </footer>

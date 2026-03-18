@@ -185,7 +185,7 @@ var controller = new SKImagePyramidController(cache: cache);
     controller.Cache.FlushEvicted(); // safe to call even if nothing was evicted
     controller.SetControlSize(e.Info.Width, e.Info.Height);
     controller.Update();
-    controller.Render(e.Surface.Canvas);
+    controller.Render(renderer);
 }
 </code></pre>
 <blockquote>
@@ -367,7 +367,7 @@ Assert.Equal(id, same);  // ✅
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d0ad40b
+          source: PR #379 · e9585ed
         </div>
       </div>
     </footer>

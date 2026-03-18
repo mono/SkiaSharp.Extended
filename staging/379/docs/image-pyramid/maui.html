@@ -257,7 +257,7 @@ var controller = new SKImagePyramidController(cache: cache);
 <p>See the <a href="caching.html">Caching docs</a> for custom disk-backed caches.</p>
 <h2 id="rendering-behaviour">Rendering Behaviour</h2>
 <ul>
-<li><strong>Fit and center</strong>: On load the controller fits the full image into the canvas with <code>FitToView()</code>. The image is centered; neither cropping nor distortion occurs.</li>
+<li><strong>Fit and center</strong>: On load the controller fits the full image into the canvas with <code>ResetView()</code>. The image is centered; neither cropping nor distortion occurs.</li>
 <li><strong>LOD blending</strong>: While high-resolution tiles load, lower-resolution tiles from parent levels are upscaled and composited as placeholders.</li>
 <li><strong>Idle detection</strong>: <code>controller.IsIdle</code> is <code>true</code> when no tiles are loading.</li>
 </ul>
@@ -290,7 +290,7 @@ var controller = new SKImagePyramidController(cache: cache);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · d0ad40b
+          source: PR #379 · e9585ed
         </div>
       </div>
     </footer>
