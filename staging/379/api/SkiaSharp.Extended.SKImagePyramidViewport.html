@@ -258,8 +258,9 @@ Does not alter <a class="xref" href="SkiaSharp.Extended.SKImagePyramidViewport.M
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidViewport.GetZoomRect.html#SkiaSharp_Extended_SKImagePyramidViewport_GetZoomRect_System_Double_">GetZoomRect(double)</a></dt>
-    <dd><p>Returns the logical rectangle visible at a given ViewportWidth.
-Mirrors Silverlight's MultiScaleImage.GetZoomRect().</p>
+    <dd><p>Returns the logical rectangle that is currently visible in the control at the given viewport width.
+Height is derived from the control's pixel dimensions, not the image aspect ratio, so that the
+returned rect always matches the visible area regardless of control shape.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -305,7 +306,7 @@ This is the core zoom algorithm from Silverlight's MultiScaleImage.ZoomAboutLogi
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · e42a547
+          source: PR #379 · d0ad40b
         </div>
       </div>
     </footer>

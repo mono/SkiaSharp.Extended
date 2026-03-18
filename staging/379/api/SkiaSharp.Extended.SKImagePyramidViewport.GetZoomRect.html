@@ -126,8 +126,9 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidViewport.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Returns the logical rectangle visible at a given ViewportWidth.
-Mirrors Silverlight's MultiScaleImage.GetZoomRect().</p>
+<div class="markdown level1 summary"><p>Returns the logical rectangle that is currently visible in the control at the given viewport width.
+Height is derived from the control's pixel dimensions, not the image aspect ratio, so that the
+returned rect always matches the visible area regardless of control shape.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -176,7 +177,7 @@ Mirrors Silverlight's MultiScaleImage.GetZoomRect().</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · e42a547
+          source: PR #379 · d0ad40b
         </div>
       </div>
     </footer>
