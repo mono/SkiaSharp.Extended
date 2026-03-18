@@ -120,7 +120,7 @@ Wire mouse and touch events to the controller's navigation methods:
 var xml = await Http.GetStringAsync("collection.dzc");
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = Http.BaseAddress!.ToString();
-_controller!.Load(collection, new SKImagePyramidHttpTileFetcher());
+_controller!.Load(collection, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
 ```
 
 ## Custom Cache
@@ -151,7 +151,7 @@ public void OnCanvasResized()
 
 ## Rendering Behaviour
 
-- **Fit and center**: On load the controller calls `FitToView()` — the full image is visible, centered horizontally and vertically, with aspect ratio preserved. No cropping or distortion.
+- **Fit and center**: On load the controller calls `ResetView()` — the full image is visible, centered horizontally and vertically, with aspect ratio preserved. No cropping or distortion.
 - **LOD blending**: While high-resolution tiles are in-flight, lower-resolution parent tiles are upscaled and composited as placeholders.
 - **Idle detection**: `controller.IsIdle` is `true` when no tiles are loading. You can pause periodic repaints when the view is idle.
 

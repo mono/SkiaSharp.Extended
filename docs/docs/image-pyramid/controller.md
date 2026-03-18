@@ -161,7 +161,7 @@ public sealed class TileBorderRenderer : ISKImagePyramidRenderer
     {
         _inner.DrawTile(destRect, tile);
         if (ShowBorders && _inner.Canvas != null)
-            _inner.Canvas.DrawRect(new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom), _borderPaint);
+            _inner.Canvas.DrawRect(new SKRect(destRect.X, destRect.Y, destRect.X + destRect.Width, destRect.Y + destRect.Height), _borderPaint);
     }
 
     public void DrawFallbackTile(Rect<float> destRect, Rect<float> sourceRect, ISKImagePyramidTile tile)
@@ -420,7 +420,7 @@ bool visible = rect.IsVisibleAtLevel(level: 12);  // true if MinLevel ≤ 12 ≤
 
 ## SKImagePyramidTileRequest
 
-Returned by `SKImagePyramidTileScheduler.GetVisibleTiles()` — represents a single tile that should be fetched, with a priority that controls fetch order.
+Returned by `SKImagePyramidTileLayout.GetVisibleTiles()` — represents a single tile that should be fetched, with a priority that controls fetch order.
 
 | Property | Type | Description |
 | :------- | :--- | :---------- |

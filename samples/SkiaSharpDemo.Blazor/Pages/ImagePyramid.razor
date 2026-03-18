@@ -220,13 +220,14 @@
         // to the true canvas origin and size — the red border shows the real screen edges.
         if (hasDebugZoom)
         {
+            using var dashEffect = SKPathEffect.CreateDash(
+                new float[] { 12f / _debugZoom, 6f / _debugZoom }, 0);
             using var borderPaint = new SKPaint
             {
                 Color = SKColors.Red,
                 Style = SKPaintStyle.Stroke,
                 StrokeWidth = 3f / _debugZoom, // keep visually ~3px regardless of zoom
-                PathEffect = SKPathEffect.CreateDash(
-                    new float[] { 12f / _debugZoom, 6f / _debugZoom }, 0),
+                PathEffect = dashEffect,
                 IsAntialias = true,
             };
             canvas.DrawRect(0, 0, w, h, borderPaint);
@@ -270,6 +271,7 @@
 
     private async Task OnExampleSelected(ChangeEventArgs e)
     {
+        if (_urlLoading) return;
         var url = e.Value?.ToString();
         if (string.IsNullOrEmpty(url)) return;
         _urlInput = url;

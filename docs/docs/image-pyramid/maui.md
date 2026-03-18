@@ -204,7 +204,7 @@ See the [Caching docs](caching.md) for custom disk-backed caches.
 
 ## Rendering Behaviour
 
-- **Fit and center**: On load the controller fits the full image into the canvas with `FitToView()`. The image is centered; neither cropping nor distortion occurs.
+- **Fit and center**: On load the controller fits the full image into the canvas with `ResetView()`. The image is centered; neither cropping nor distortion occurs.
 - **LOD blending**: While high-resolution tiles load, lower-resolution tiles from parent levels are upscaled and composited as placeholders.
 - **Idle detection**: `controller.IsIdle` is `true` when no tiles are loading.
 

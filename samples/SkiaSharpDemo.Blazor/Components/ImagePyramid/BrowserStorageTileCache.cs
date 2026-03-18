@@ -92,10 +92,12 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
     /// </summary>
     private void AddToMemIndex(SKImagePyramidTileId id, SKImagePyramidImageTile tile)
     {
-        // If already present, just update.
-        if (_memIndex.ContainsKey(id))
+        // If already present, replace and dispose the old tile.
+        if (_memIndex.TryGetValue(id, out var existing))
         {
             _memIndex[id] = tile;
+            if (!ReferenceEquals(existing, tile))
+                existing?.Dispose();
             return;
         }
         // Evict one entry if at capacity to make room.

@@ -88,7 +88,7 @@ void OnPaintSurface(SKPaintSurfaceEventArgs e)
     controller.Cache.FlushEvicted(); // safe to call even if nothing was evicted
     controller.SetControlSize(e.Info.Width, e.Info.Height);
     controller.Update();
-    controller.Render(e.Surface.Canvas);
+    controller.Render(renderer);
 }
 ```
 
