@@ -233,7 +233,7 @@ which abstracts the tile pyramid math:</p>
     int GetLevelHeight(int level);
     int GetTileCountX(int level);
     int GetTileCountY(int level);
-    SKImagePyramidRectI GetTileBounds(int level, int col, int row);
+    Rect&lt;int&gt; GetTileBounds(int level, int col, int row);
     string? GetFullTileUrl(int level, int col, int row);
     int GetOptimalLevel(double viewportWidth, double controlWidth);
 }
@@ -336,7 +336,7 @@ accepts any source type, making it easy to add support for other formats.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 233fc20
+          source: PR #379 · e42a547
         </div>
       </div>
     </footer>

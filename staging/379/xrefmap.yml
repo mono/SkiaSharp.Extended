@@ -25,24 +25,30 @@ references:
   commentId: Overload:SkiaSharp.Extended.ISKImagePyramidRenderer.BeginRender
   fullName: SkiaSharp.Extended.ISKImagePyramidRenderer.BeginRender
   nameWithType: ISKImagePyramidRenderer.BeginRender
-- uid: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.ISKImagePyramidTile)
-  name: DrawFallbackTile(SKImagePyramidRectF, SKImagePyramidRectF, ISKImagePyramidTile)
-  href: api/SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawFallbackTile_SkiaSharp_Extended_SKImagePyramidRectF_SkiaSharp_Extended_SKImagePyramidRectF_SkiaSharp_Extended_ISKImagePyramidTile_
-  commentId: M:SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.ISKImagePyramidTile)
-  fullName: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.SKImagePyramidRectF, SkiaSharp.Extended.SKImagePyramidRectF, SkiaSharp.Extended.ISKImagePyramidTile)
-  nameWithType: ISKImagePyramidRenderer.DrawFallbackTile(SKImagePyramidRectF, SKImagePyramidRectF, ISKImagePyramidTile)
+- uid: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.ISKImagePyramidTile)
+  name: DrawFallbackTile(Rect<float>, Rect<float>, ISKImagePyramidTile)
+  href: api/SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawFallbackTile_SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_ISKImagePyramidTile_
+  commentId: M:SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.ISKImagePyramidTile)
+  name.vb: DrawFallbackTile(Rect(Of Single), Rect(Of Single), ISKImagePyramidTile)
+  fullName: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.Rect<float>, SkiaSharp.Extended.Rect<float>, SkiaSharp.Extended.ISKImagePyramidTile)
+  fullName.vb: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.Rect(Of Single), SkiaSharp.Extended.Rect(Of Single), SkiaSharp.Extended.ISKImagePyramidTile)
+  nameWithType: ISKImagePyramidRenderer.DrawFallbackTile(Rect<float>, Rect<float>, ISKImagePyramidTile)
+  nameWithType.vb: ISKImagePyramidRenderer.DrawFallbackTile(Rect(Of Single), Rect(Of Single), ISKImagePyramidTile)
 - uid: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile*
   name: DrawFallbackTile
   href: api/SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile.html
   commentId: Overload:SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile
   fullName: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile
   nameWithType: ISKImagePyramidRenderer.DrawFallbackTile
-- uid: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.ISKImagePyramidTile)
-  name: DrawTile(SKImagePyramidRectF, ISKImagePyramidTile)
-  href: api/SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawTile_SkiaSharp_Extended_SKImagePyramidRectF_SkiaSharp_Extended_ISKImagePyramidTile_
-  commentId: M:SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.ISKImagePyramidTile)
-  fullName: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.SKImagePyramidRectF, SkiaSharp.Extended.ISKImagePyramidTile)
-  nameWithType: ISKImagePyramidRenderer.DrawTile(SKImagePyramidRectF, ISKImagePyramidTile)
+- uid: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.ISKImagePyramidTile)
+  name: DrawTile(Rect<float>, ISKImagePyramidTile)
+  href: api/SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawTile_SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_ISKImagePyramidTile_
+  commentId: M:SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.ISKImagePyramidTile)
+  name.vb: DrawTile(Rect(Of Single), ISKImagePyramidTile)
+  fullName: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.Rect<float>, SkiaSharp.Extended.ISKImagePyramidTile)
+  fullName.vb: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.Rect(Of Single), SkiaSharp.Extended.ISKImagePyramidTile)
+  nameWithType: ISKImagePyramidRenderer.DrawTile(Rect<float>, ISKImagePyramidTile)
+  nameWithType.vb: ISKImagePyramidRenderer.DrawTile(Rect(Of Single), ISKImagePyramidTile)
 - uid: SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile*
   name: DrawTile
   href: api/SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile.html
@@ -388,6 +394,378 @@ references:
   commentId: Overload:SkiaSharp.Extended.ISKImagePyramidTileFetcher.FetchTileAsync
   fullName: SkiaSharp.Extended.ISKImagePyramidTileFetcher.FetchTileAsync
   nameWithType: ISKImagePyramidTileFetcher.FetchTileAsync
+- uid: SkiaSharp.Extended.Point`1
+  name: Point<T>
+  href: api/SkiaSharp.Extended.Point-1.html
+  commentId: T:SkiaSharp.Extended.Point`1
+  name.vb: Point(Of T)
+  fullName: SkiaSharp.Extended.Point<T>
+  fullName.vb: SkiaSharp.Extended.Point(Of T)
+  nameWithType: Point<T>
+  nameWithType.vb: Point(Of T)
+- uid: SkiaSharp.Extended.Point`1.#ctor(`0,`0)
+  name: Point(T, T)
+  href: api/SkiaSharp.Extended.Point-1.-ctor.html#SkiaSharp_Extended_Point_1__ctor__0__0_
+  commentId: M:SkiaSharp.Extended.Point`1.#ctor(`0,`0)
+  name.vb: New(T, T)
+  fullName: SkiaSharp.Extended.Point<T>.Point(T, T)
+  fullName.vb: SkiaSharp.Extended.Point(Of T).New(T, T)
+  nameWithType: Point<T>.Point(T, T)
+  nameWithType.vb: Point(Of T).New(T, T)
+- uid: SkiaSharp.Extended.Point`1.#ctor*
+  name: Point
+  href: api/SkiaSharp.Extended.Point-1.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Point`1.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.Point<T>.Point
+  fullName.vb: SkiaSharp.Extended.Point(Of T).New
+  nameWithType: Point<T>.Point
+  nameWithType.vb: Point(Of T).New
+- uid: SkiaSharp.Extended.Point`1.Deconstruct(`0@,`0@)
+  name: Deconstruct(out T, out T)
+  href: api/SkiaSharp.Extended.Point-1.Deconstruct.html#SkiaSharp_Extended_Point_1_Deconstruct__0___0__
+  commentId: M:SkiaSharp.Extended.Point`1.Deconstruct(`0@,`0@)
+  name.vb: Deconstruct(T, T)
+  fullName: SkiaSharp.Extended.Point<T>.Deconstruct(out T, out T)
+  fullName.vb: SkiaSharp.Extended.Point(Of T).Deconstruct(T, T)
+  nameWithType: Point<T>.Deconstruct(out T, out T)
+  nameWithType.vb: Point(Of T).Deconstruct(T, T)
+- uid: SkiaSharp.Extended.Point`1.Deconstruct*
+  name: Deconstruct
+  href: api/SkiaSharp.Extended.Point-1.Deconstruct.html
+  commentId: Overload:SkiaSharp.Extended.Point`1.Deconstruct
+  fullName: SkiaSharp.Extended.Point<T>.Deconstruct
+  fullName.vb: SkiaSharp.Extended.Point(Of T).Deconstruct
+  nameWithType: Point<T>.Deconstruct
+  nameWithType.vb: Point(Of T).Deconstruct
+- uid: SkiaSharp.Extended.Point`1.Equals(SkiaSharp.Extended.Point{`0})
+  name: Equals(Point<T>)
+  href: api/SkiaSharp.Extended.Point-1.Equals.html#SkiaSharp_Extended_Point_1_Equals_SkiaSharp_Extended_Point__0__
+  commentId: M:SkiaSharp.Extended.Point`1.Equals(SkiaSharp.Extended.Point{`0})
+  name.vb: Equals(Point(Of T))
+  fullName: SkiaSharp.Extended.Point<T>.Equals(SkiaSharp.Extended.Point<T>)
+  fullName.vb: SkiaSharp.Extended.Point(Of T).Equals(SkiaSharp.Extended.Point(Of T))
+  nameWithType: Point<T>.Equals(Point<T>)
+  nameWithType.vb: Point(Of T).Equals(Point(Of T))
+- uid: SkiaSharp.Extended.Point`1.Equals(System.Object)
+  name: Equals(object)
+  href: api/SkiaSharp.Extended.Point-1.Equals.html#SkiaSharp_Extended_Point_1_Equals_System_Object_
+  commentId: M:SkiaSharp.Extended.Point`1.Equals(System.Object)
+  name.vb: Equals(Object)
+  fullName: SkiaSharp.Extended.Point<T>.Equals(object)
+  fullName.vb: SkiaSharp.Extended.Point(Of T).Equals(Object)
+  nameWithType: Point<T>.Equals(object)
+  nameWithType.vb: Point(Of T).Equals(Object)
+- uid: SkiaSharp.Extended.Point`1.Equals*
+  name: Equals
+  href: api/SkiaSharp.Extended.Point-1.Equals.html
+  commentId: Overload:SkiaSharp.Extended.Point`1.Equals
+  fullName: SkiaSharp.Extended.Point<T>.Equals
+  fullName.vb: SkiaSharp.Extended.Point(Of T).Equals
+  nameWithType: Point<T>.Equals
+  nameWithType.vb: Point(Of T).Equals
+- uid: SkiaSharp.Extended.Point`1.GetHashCode
+  name: GetHashCode()
+  href: api/SkiaSharp.Extended.Point-1.GetHashCode.html#SkiaSharp_Extended_Point_1_GetHashCode
+  commentId: M:SkiaSharp.Extended.Point`1.GetHashCode
+  fullName: SkiaSharp.Extended.Point<T>.GetHashCode()
+  fullName.vb: SkiaSharp.Extended.Point(Of T).GetHashCode()
+  nameWithType: Point<T>.GetHashCode()
+  nameWithType.vb: Point(Of T).GetHashCode()
+- uid: SkiaSharp.Extended.Point`1.GetHashCode*
+  name: GetHashCode
+  href: api/SkiaSharp.Extended.Point-1.GetHashCode.html
+  commentId: Overload:SkiaSharp.Extended.Point`1.GetHashCode
+  fullName: SkiaSharp.Extended.Point<T>.GetHashCode
+  fullName.vb: SkiaSharp.Extended.Point(Of T).GetHashCode
+  nameWithType: Point<T>.GetHashCode
+  nameWithType.vb: Point(Of T).GetHashCode
+- uid: SkiaSharp.Extended.Point`1.ToString
+  name: ToString()
+  href: api/SkiaSharp.Extended.Point-1.ToString.html#SkiaSharp_Extended_Point_1_ToString
+  commentId: M:SkiaSharp.Extended.Point`1.ToString
+  fullName: SkiaSharp.Extended.Point<T>.ToString()
+  fullName.vb: SkiaSharp.Extended.Point(Of T).ToString()
+  nameWithType: Point<T>.ToString()
+  nameWithType.vb: Point(Of T).ToString()
+- uid: SkiaSharp.Extended.Point`1.ToString*
+  name: ToString
+  href: api/SkiaSharp.Extended.Point-1.ToString.html
+  commentId: Overload:SkiaSharp.Extended.Point`1.ToString
+  fullName: SkiaSharp.Extended.Point<T>.ToString
+  fullName.vb: SkiaSharp.Extended.Point(Of T).ToString
+  nameWithType: Point<T>.ToString
+  nameWithType.vb: Point(Of T).ToString
+- uid: SkiaSharp.Extended.Point`1.X
+  name: X
+  href: api/SkiaSharp.Extended.Point-1.X.html#SkiaSharp_Extended_Point_1_X
+  commentId: P:SkiaSharp.Extended.Point`1.X
+  fullName: SkiaSharp.Extended.Point<T>.X
+  fullName.vb: SkiaSharp.Extended.Point(Of T).X
+  nameWithType: Point<T>.X
+  nameWithType.vb: Point(Of T).X
+- uid: SkiaSharp.Extended.Point`1.X*
+  name: X
+  href: api/SkiaSharp.Extended.Point-1.X.html
+  commentId: Overload:SkiaSharp.Extended.Point`1.X
+  fullName: SkiaSharp.Extended.Point<T>.X
+  fullName.vb: SkiaSharp.Extended.Point(Of T).X
+  nameWithType: Point<T>.X
+  nameWithType.vb: Point(Of T).X
+- uid: SkiaSharp.Extended.Point`1.Y
+  name: Y
+  href: api/SkiaSharp.Extended.Point-1.Y.html#SkiaSharp_Extended_Point_1_Y
+  commentId: P:SkiaSharp.Extended.Point`1.Y
+  fullName: SkiaSharp.Extended.Point<T>.Y
+  fullName.vb: SkiaSharp.Extended.Point(Of T).Y
+  nameWithType: Point<T>.Y
+  nameWithType.vb: Point(Of T).Y
+- uid: SkiaSharp.Extended.Point`1.Y*
+  name: Y
+  href: api/SkiaSharp.Extended.Point-1.Y.html
+  commentId: Overload:SkiaSharp.Extended.Point`1.Y
+  fullName: SkiaSharp.Extended.Point<T>.Y
+  fullName.vb: SkiaSharp.Extended.Point(Of T).Y
+  nameWithType: Point<T>.Y
+  nameWithType.vb: Point(Of T).Y
+- uid: SkiaSharp.Extended.Point`1.op_Equality(SkiaSharp.Extended.Point{`0},SkiaSharp.Extended.Point{`0})
+  name: operator ==(Point<T>, Point<T>)
+  href: api/SkiaSharp.Extended.Point-1.op_Equality.html#SkiaSharp_Extended_Point_1_op_Equality_SkiaSharp_Extended_Point__0__SkiaSharp_Extended_Point__0__
+  commentId: M:SkiaSharp.Extended.Point`1.op_Equality(SkiaSharp.Extended.Point{`0},SkiaSharp.Extended.Point{`0})
+  name.vb: =(Point(Of T), Point(Of T))
+  fullName: SkiaSharp.Extended.Point<T>.operator ==(SkiaSharp.Extended.Point<T>, SkiaSharp.Extended.Point<T>)
+  fullName.vb: SkiaSharp.Extended.Point(Of T).=(SkiaSharp.Extended.Point(Of T), SkiaSharp.Extended.Point(Of T))
+  nameWithType: Point<T>.operator ==(Point<T>, Point<T>)
+  nameWithType.vb: Point(Of T).=(Point(Of T), Point(Of T))
+- uid: SkiaSharp.Extended.Point`1.op_Equality*
+  name: operator ==
+  href: api/SkiaSharp.Extended.Point-1.op_Equality.html
+  commentId: Overload:SkiaSharp.Extended.Point`1.op_Equality
+  name.vb: =
+  fullName: SkiaSharp.Extended.Point<T>.operator ==
+  fullName.vb: SkiaSharp.Extended.Point(Of T).=
+  nameWithType: Point<T>.operator ==
+  nameWithType.vb: Point(Of T).=
+- uid: SkiaSharp.Extended.Point`1.op_Inequality(SkiaSharp.Extended.Point{`0},SkiaSharp.Extended.Point{`0})
+  name: operator !=(Point<T>, Point<T>)
+  href: api/SkiaSharp.Extended.Point-1.op_Inequality.html#SkiaSharp_Extended_Point_1_op_Inequality_SkiaSharp_Extended_Point__0__SkiaSharp_Extended_Point__0__
+  commentId: M:SkiaSharp.Extended.Point`1.op_Inequality(SkiaSharp.Extended.Point{`0},SkiaSharp.Extended.Point{`0})
+  name.vb: <>(Point(Of T), Point(Of T))
+  fullName: SkiaSharp.Extended.Point<T>.operator !=(SkiaSharp.Extended.Point<T>, SkiaSharp.Extended.Point<T>)
+  fullName.vb: SkiaSharp.Extended.Point(Of T).<>(SkiaSharp.Extended.Point(Of T), SkiaSharp.Extended.Point(Of T))
+  nameWithType: Point<T>.operator !=(Point<T>, Point<T>)
+  nameWithType.vb: Point(Of T).<>(Point(Of T), Point(Of T))
+- uid: SkiaSharp.Extended.Point`1.op_Inequality*
+  name: operator !=
+  href: api/SkiaSharp.Extended.Point-1.op_Inequality.html
+  commentId: Overload:SkiaSharp.Extended.Point`1.op_Inequality
+  name.vb: <>
+  fullName: SkiaSharp.Extended.Point<T>.operator !=
+  fullName.vb: SkiaSharp.Extended.Point(Of T).<>
+  nameWithType: Point<T>.operator !=
+  nameWithType.vb: Point(Of T).<>
+- uid: SkiaSharp.Extended.Rect`1
+  name: Rect<T>
+  href: api/SkiaSharp.Extended.Rect-1.html
+  commentId: T:SkiaSharp.Extended.Rect`1
+  name.vb: Rect(Of T)
+  fullName: SkiaSharp.Extended.Rect<T>
+  fullName.vb: SkiaSharp.Extended.Rect(Of T)
+  nameWithType: Rect<T>
+  nameWithType.vb: Rect(Of T)
+- uid: SkiaSharp.Extended.Rect`1.#ctor(`0,`0,`0,`0)
+  name: Rect(T, T, T, T)
+  href: api/SkiaSharp.Extended.Rect-1.-ctor.html#SkiaSharp_Extended_Rect_1__ctor__0__0__0__0_
+  commentId: M:SkiaSharp.Extended.Rect`1.#ctor(`0,`0,`0,`0)
+  name.vb: New(T, T, T, T)
+  fullName: SkiaSharp.Extended.Rect<T>.Rect(T, T, T, T)
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).New(T, T, T, T)
+  nameWithType: Rect<T>.Rect(T, T, T, T)
+  nameWithType.vb: Rect(Of T).New(T, T, T, T)
+- uid: SkiaSharp.Extended.Rect`1.#ctor*
+  name: Rect
+  href: api/SkiaSharp.Extended.Rect-1.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.Rect`1.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.Rect<T>.Rect
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).New
+  nameWithType: Rect<T>.Rect
+  nameWithType.vb: Rect(Of T).New
+- uid: SkiaSharp.Extended.Rect`1.Deconstruct(`0@,`0@,`0@,`0@)
+  name: Deconstruct(out T, out T, out T, out T)
+  href: api/SkiaSharp.Extended.Rect-1.Deconstruct.html#SkiaSharp_Extended_Rect_1_Deconstruct__0___0___0___0__
+  commentId: M:SkiaSharp.Extended.Rect`1.Deconstruct(`0@,`0@,`0@,`0@)
+  name.vb: Deconstruct(T, T, T, T)
+  fullName: SkiaSharp.Extended.Rect<T>.Deconstruct(out T, out T, out T, out T)
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).Deconstruct(T, T, T, T)
+  nameWithType: Rect<T>.Deconstruct(out T, out T, out T, out T)
+  nameWithType.vb: Rect(Of T).Deconstruct(T, T, T, T)
+- uid: SkiaSharp.Extended.Rect`1.Deconstruct*
+  name: Deconstruct
+  href: api/SkiaSharp.Extended.Rect-1.Deconstruct.html
+  commentId: Overload:SkiaSharp.Extended.Rect`1.Deconstruct
+  fullName: SkiaSharp.Extended.Rect<T>.Deconstruct
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).Deconstruct
+  nameWithType: Rect<T>.Deconstruct
+  nameWithType.vb: Rect(Of T).Deconstruct
+- uid: SkiaSharp.Extended.Rect`1.Equals(SkiaSharp.Extended.Rect{`0})
+  name: Equals(Rect<T>)
+  href: api/SkiaSharp.Extended.Rect-1.Equals.html#SkiaSharp_Extended_Rect_1_Equals_SkiaSharp_Extended_Rect__0__
+  commentId: M:SkiaSharp.Extended.Rect`1.Equals(SkiaSharp.Extended.Rect{`0})
+  name.vb: Equals(Rect(Of T))
+  fullName: SkiaSharp.Extended.Rect<T>.Equals(SkiaSharp.Extended.Rect<T>)
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).Equals(SkiaSharp.Extended.Rect(Of T))
+  nameWithType: Rect<T>.Equals(Rect<T>)
+  nameWithType.vb: Rect(Of T).Equals(Rect(Of T))
+- uid: SkiaSharp.Extended.Rect`1.Equals(System.Object)
+  name: Equals(object)
+  href: api/SkiaSharp.Extended.Rect-1.Equals.html#SkiaSharp_Extended_Rect_1_Equals_System_Object_
+  commentId: M:SkiaSharp.Extended.Rect`1.Equals(System.Object)
+  name.vb: Equals(Object)
+  fullName: SkiaSharp.Extended.Rect<T>.Equals(object)
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).Equals(Object)
+  nameWithType: Rect<T>.Equals(object)
+  nameWithType.vb: Rect(Of T).Equals(Object)
+- uid: SkiaSharp.Extended.Rect`1.Equals*
+  name: Equals
+  href: api/SkiaSharp.Extended.Rect-1.Equals.html
+  commentId: Overload:SkiaSharp.Extended.Rect`1.Equals
+  fullName: SkiaSharp.Extended.Rect<T>.Equals
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).Equals
+  nameWithType: Rect<T>.Equals
+  nameWithType.vb: Rect(Of T).Equals
+- uid: SkiaSharp.Extended.Rect`1.GetHashCode
+  name: GetHashCode()
+  href: api/SkiaSharp.Extended.Rect-1.GetHashCode.html#SkiaSharp_Extended_Rect_1_GetHashCode
+  commentId: M:SkiaSharp.Extended.Rect`1.GetHashCode
+  fullName: SkiaSharp.Extended.Rect<T>.GetHashCode()
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).GetHashCode()
+  nameWithType: Rect<T>.GetHashCode()
+  nameWithType.vb: Rect(Of T).GetHashCode()
+- uid: SkiaSharp.Extended.Rect`1.GetHashCode*
+  name: GetHashCode
+  href: api/SkiaSharp.Extended.Rect-1.GetHashCode.html
+  commentId: Overload:SkiaSharp.Extended.Rect`1.GetHashCode
+  fullName: SkiaSharp.Extended.Rect<T>.GetHashCode
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).GetHashCode
+  nameWithType: Rect<T>.GetHashCode
+  nameWithType.vb: Rect(Of T).GetHashCode
+- uid: SkiaSharp.Extended.Rect`1.Height
+  name: Height
+  href: api/SkiaSharp.Extended.Rect-1.Height.html#SkiaSharp_Extended_Rect_1_Height
+  commentId: P:SkiaSharp.Extended.Rect`1.Height
+  fullName: SkiaSharp.Extended.Rect<T>.Height
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).Height
+  nameWithType: Rect<T>.Height
+  nameWithType.vb: Rect(Of T).Height
+- uid: SkiaSharp.Extended.Rect`1.Height*
+  name: Height
+  href: api/SkiaSharp.Extended.Rect-1.Height.html
+  commentId: Overload:SkiaSharp.Extended.Rect`1.Height
+  fullName: SkiaSharp.Extended.Rect<T>.Height
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).Height
+  nameWithType: Rect<T>.Height
+  nameWithType.vb: Rect(Of T).Height
+- uid: SkiaSharp.Extended.Rect`1.ToString
+  name: ToString()
+  href: api/SkiaSharp.Extended.Rect-1.ToString.html#SkiaSharp_Extended_Rect_1_ToString
+  commentId: M:SkiaSharp.Extended.Rect`1.ToString
+  fullName: SkiaSharp.Extended.Rect<T>.ToString()
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).ToString()
+  nameWithType: Rect<T>.ToString()
+  nameWithType.vb: Rect(Of T).ToString()
+- uid: SkiaSharp.Extended.Rect`1.ToString*
+  name: ToString
+  href: api/SkiaSharp.Extended.Rect-1.ToString.html
+  commentId: Overload:SkiaSharp.Extended.Rect`1.ToString
+  fullName: SkiaSharp.Extended.Rect<T>.ToString
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).ToString
+  nameWithType: Rect<T>.ToString
+  nameWithType.vb: Rect(Of T).ToString
+- uid: SkiaSharp.Extended.Rect`1.Width
+  name: Width
+  href: api/SkiaSharp.Extended.Rect-1.Width.html#SkiaSharp_Extended_Rect_1_Width
+  commentId: P:SkiaSharp.Extended.Rect`1.Width
+  fullName: SkiaSharp.Extended.Rect<T>.Width
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).Width
+  nameWithType: Rect<T>.Width
+  nameWithType.vb: Rect(Of T).Width
+- uid: SkiaSharp.Extended.Rect`1.Width*
+  name: Width
+  href: api/SkiaSharp.Extended.Rect-1.Width.html
+  commentId: Overload:SkiaSharp.Extended.Rect`1.Width
+  fullName: SkiaSharp.Extended.Rect<T>.Width
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).Width
+  nameWithType: Rect<T>.Width
+  nameWithType.vb: Rect(Of T).Width
+- uid: SkiaSharp.Extended.Rect`1.X
+  name: X
+  href: api/SkiaSharp.Extended.Rect-1.X.html#SkiaSharp_Extended_Rect_1_X
+  commentId: P:SkiaSharp.Extended.Rect`1.X
+  fullName: SkiaSharp.Extended.Rect<T>.X
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).X
+  nameWithType: Rect<T>.X
+  nameWithType.vb: Rect(Of T).X
+- uid: SkiaSharp.Extended.Rect`1.X*
+  name: X
+  href: api/SkiaSharp.Extended.Rect-1.X.html
+  commentId: Overload:SkiaSharp.Extended.Rect`1.X
+  fullName: SkiaSharp.Extended.Rect<T>.X
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).X
+  nameWithType: Rect<T>.X
+  nameWithType.vb: Rect(Of T).X
+- uid: SkiaSharp.Extended.Rect`1.Y
+  name: Y
+  href: api/SkiaSharp.Extended.Rect-1.Y.html#SkiaSharp_Extended_Rect_1_Y
+  commentId: P:SkiaSharp.Extended.Rect`1.Y
+  fullName: SkiaSharp.Extended.Rect<T>.Y
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).Y
+  nameWithType: Rect<T>.Y
+  nameWithType.vb: Rect(Of T).Y
+- uid: SkiaSharp.Extended.Rect`1.Y*
+  name: Y
+  href: api/SkiaSharp.Extended.Rect-1.Y.html
+  commentId: Overload:SkiaSharp.Extended.Rect`1.Y
+  fullName: SkiaSharp.Extended.Rect<T>.Y
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).Y
+  nameWithType: Rect<T>.Y
+  nameWithType.vb: Rect(Of T).Y
+- uid: SkiaSharp.Extended.Rect`1.op_Equality(SkiaSharp.Extended.Rect{`0},SkiaSharp.Extended.Rect{`0})
+  name: operator ==(Rect<T>, Rect<T>)
+  href: api/SkiaSharp.Extended.Rect-1.op_Equality.html#SkiaSharp_Extended_Rect_1_op_Equality_SkiaSharp_Extended_Rect__0__SkiaSharp_Extended_Rect__0__
+  commentId: M:SkiaSharp.Extended.Rect`1.op_Equality(SkiaSharp.Extended.Rect{`0},SkiaSharp.Extended.Rect{`0})
+  name.vb: =(Rect(Of T), Rect(Of T))
+  fullName: SkiaSharp.Extended.Rect<T>.operator ==(SkiaSharp.Extended.Rect<T>, SkiaSharp.Extended.Rect<T>)
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).=(SkiaSharp.Extended.Rect(Of T), SkiaSharp.Extended.Rect(Of T))
+  nameWithType: Rect<T>.operator ==(Rect<T>, Rect<T>)
+  nameWithType.vb: Rect(Of T).=(Rect(Of T), Rect(Of T))
+- uid: SkiaSharp.Extended.Rect`1.op_Equality*
+  name: operator ==
+  href: api/SkiaSharp.Extended.Rect-1.op_Equality.html
+  commentId: Overload:SkiaSharp.Extended.Rect`1.op_Equality
+  name.vb: =
+  fullName: SkiaSharp.Extended.Rect<T>.operator ==
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).=
+  nameWithType: Rect<T>.operator ==
+  nameWithType.vb: Rect(Of T).=
+- uid: SkiaSharp.Extended.Rect`1.op_Inequality(SkiaSharp.Extended.Rect{`0},SkiaSharp.Extended.Rect{`0})
+  name: operator !=(Rect<T>, Rect<T>)
+  href: api/SkiaSharp.Extended.Rect-1.op_Inequality.html#SkiaSharp_Extended_Rect_1_op_Inequality_SkiaSharp_Extended_Rect__0__SkiaSharp_Extended_Rect__0__
+  commentId: M:SkiaSharp.Extended.Rect`1.op_Inequality(SkiaSharp.Extended.Rect{`0},SkiaSharp.Extended.Rect{`0})
+  name.vb: <>(Rect(Of T), Rect(Of T))
+  fullName: SkiaSharp.Extended.Rect<T>.operator !=(SkiaSharp.Extended.Rect<T>, SkiaSharp.Extended.Rect<T>)
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).<>(SkiaSharp.Extended.Rect(Of T), SkiaSharp.Extended.Rect(Of T))
+  nameWithType: Rect<T>.operator !=(Rect<T>, Rect<T>)
+  nameWithType.vb: Rect(Of T).<>(Rect(Of T), Rect(Of T))
+- uid: SkiaSharp.Extended.Rect`1.op_Inequality*
+  name: operator !=
+  href: api/SkiaSharp.Extended.Rect-1.op_Inequality.html
+  commentId: Overload:SkiaSharp.Extended.Rect`1.op_Inequality
+  name.vb: <>
+  fullName: SkiaSharp.Extended.Rect<T>.operator !=
+  fullName.vb: SkiaSharp.Extended.Rect(Of T).<>
+  nameWithType: Rect<T>.operator !=
+  nameWithType.vb: Rect(Of T).<>
 - uid: SkiaSharp.Extended.SKBlurHash
   name: SKBlurHash
   href: api/SkiaSharp.Extended.SKBlurHash.html
@@ -2563,360 +2941,6 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync
   fullName: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync
   nameWithType: SKImagePyramidMemoryTileCache.TryGetAsync
-- uid: SkiaSharp.Extended.SKImagePyramidRectF
-  name: SKImagePyramidRectF
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.html
-  commentId: T:SkiaSharp.Extended.SKImagePyramidRectF
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF
-  nameWithType: SKImagePyramidRectF
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.#ctor(System.Single,System.Single,System.Single,System.Single)
-  name: SKImagePyramidRectF(float, float, float, float)
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.-ctor.html#SkiaSharp_Extended_SKImagePyramidRectF__ctor_System_Single_System_Single_System_Single_System_Single_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectF.#ctor(System.Single,System.Single,System.Single,System.Single)
-  name.vb: New(Single, Single, Single, Single)
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.SKImagePyramidRectF(float, float, float, float)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectF.New(Single, Single, Single, Single)
-  nameWithType: SKImagePyramidRectF.SKImagePyramidRectF(float, float, float, float)
-  nameWithType.vb: SKImagePyramidRectF.New(Single, Single, Single, Single)
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.#ctor*
-  name: SKImagePyramidRectF
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.#ctor
-  name.vb: New
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.SKImagePyramidRectF
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectF.New
-  nameWithType: SKImagePyramidRectF.SKImagePyramidRectF
-  nameWithType.vb: SKImagePyramidRectF.New
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Bottom
-  name: Bottom
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Bottom.html#SkiaSharp_Extended_SKImagePyramidRectF_Bottom
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectF.Bottom
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Bottom
-  nameWithType: SKImagePyramidRectF.Bottom
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Bottom*
-  name: Bottom
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Bottom.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.Bottom
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Bottom
-  nameWithType: SKImagePyramidRectF.Bottom
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Equals(SkiaSharp.Extended.SKImagePyramidRectF)
-  name: Equals(SKImagePyramidRectF)
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Equals.html#SkiaSharp_Extended_SKImagePyramidRectF_Equals_SkiaSharp_Extended_SKImagePyramidRectF_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectF.Equals(SkiaSharp.Extended.SKImagePyramidRectF)
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Equals(SkiaSharp.Extended.SKImagePyramidRectF)
-  nameWithType: SKImagePyramidRectF.Equals(SKImagePyramidRectF)
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Equals(System.Object)
-  name: Equals(object?)
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Equals.html#SkiaSharp_Extended_SKImagePyramidRectF_Equals_System_Object_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectF.Equals(System.Object)
-  name.vb: Equals(Object)
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Equals(object?)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectF.Equals(Object)
-  nameWithType: SKImagePyramidRectF.Equals(object?)
-  nameWithType.vb: SKImagePyramidRectF.Equals(Object)
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Equals*
-  name: Equals
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Equals.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.Equals
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Equals
-  nameWithType: SKImagePyramidRectF.Equals
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.GetHashCode
-  name: GetHashCode()
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.GetHashCode.html#SkiaSharp_Extended_SKImagePyramidRectF_GetHashCode
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectF.GetHashCode
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.GetHashCode()
-  nameWithType: SKImagePyramidRectF.GetHashCode()
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.GetHashCode*
-  name: GetHashCode
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.GetHashCode.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.GetHashCode
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.GetHashCode
-  nameWithType: SKImagePyramidRectF.GetHashCode
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Height
-  name: Height
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Height.html#SkiaSharp_Extended_SKImagePyramidRectF_Height
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectF.Height
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Height
-  nameWithType: SKImagePyramidRectF.Height
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Height*
-  name: Height
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Height.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.Height
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Height
-  nameWithType: SKImagePyramidRectF.Height
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Right
-  name: Right
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Right.html#SkiaSharp_Extended_SKImagePyramidRectF_Right
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectF.Right
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Right
-  nameWithType: SKImagePyramidRectF.Right
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Right*
-  name: Right
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Right.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.Right
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Right
-  nameWithType: SKImagePyramidRectF.Right
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.ToString
-  name: ToString()
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.ToString.html#SkiaSharp_Extended_SKImagePyramidRectF_ToString
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectF.ToString
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.ToString()
-  nameWithType: SKImagePyramidRectF.ToString()
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.ToString*
-  name: ToString
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.ToString.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.ToString
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.ToString
-  nameWithType: SKImagePyramidRectF.ToString
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Width
-  name: Width
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Width.html#SkiaSharp_Extended_SKImagePyramidRectF_Width
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectF.Width
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Width
-  nameWithType: SKImagePyramidRectF.Width
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Width*
-  name: Width
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Width.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.Width
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Width
-  nameWithType: SKImagePyramidRectF.Width
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.X
-  name: X
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.X.html#SkiaSharp_Extended_SKImagePyramidRectF_X
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectF.X
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.X
-  nameWithType: SKImagePyramidRectF.X
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.X*
-  name: X
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.X.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.X
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.X
-  nameWithType: SKImagePyramidRectF.X
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Y
-  name: Y
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Y.html#SkiaSharp_Extended_SKImagePyramidRectF_Y
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectF.Y
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Y
-  nameWithType: SKImagePyramidRectF.Y
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.Y*
-  name: Y
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.Y.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.Y
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.Y
-  nameWithType: SKImagePyramidRectF.Y
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.op_Equality(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.SKImagePyramidRectF)
-  name: operator ==(SKImagePyramidRectF, SKImagePyramidRectF)
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.op_Equality.html#SkiaSharp_Extended_SKImagePyramidRectF_op_Equality_SkiaSharp_Extended_SKImagePyramidRectF_SkiaSharp_Extended_SKImagePyramidRectF_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectF.op_Equality(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.SKImagePyramidRectF)
-  name.vb: =(SKImagePyramidRectF, SKImagePyramidRectF)
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.operator ==(SkiaSharp.Extended.SKImagePyramidRectF, SkiaSharp.Extended.SKImagePyramidRectF)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectF.=(SkiaSharp.Extended.SKImagePyramidRectF, SkiaSharp.Extended.SKImagePyramidRectF)
-  nameWithType: SKImagePyramidRectF.operator ==(SKImagePyramidRectF, SKImagePyramidRectF)
-  nameWithType.vb: SKImagePyramidRectF.=(SKImagePyramidRectF, SKImagePyramidRectF)
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.op_Equality*
-  name: operator ==
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.op_Equality.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.op_Equality
-  name.vb: =
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.operator ==
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectF.=
-  nameWithType: SKImagePyramidRectF.operator ==
-  nameWithType.vb: SKImagePyramidRectF.=
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.op_Inequality(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.SKImagePyramidRectF)
-  name: operator !=(SKImagePyramidRectF, SKImagePyramidRectF)
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.op_Inequality.html#SkiaSharp_Extended_SKImagePyramidRectF_op_Inequality_SkiaSharp_Extended_SKImagePyramidRectF_SkiaSharp_Extended_SKImagePyramidRectF_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectF.op_Inequality(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.SKImagePyramidRectF)
-  name.vb: <>(SKImagePyramidRectF, SKImagePyramidRectF)
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.operator !=(SkiaSharp.Extended.SKImagePyramidRectF, SkiaSharp.Extended.SKImagePyramidRectF)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectF.<>(SkiaSharp.Extended.SKImagePyramidRectF, SkiaSharp.Extended.SKImagePyramidRectF)
-  nameWithType: SKImagePyramidRectF.operator !=(SKImagePyramidRectF, SKImagePyramidRectF)
-  nameWithType.vb: SKImagePyramidRectF.<>(SKImagePyramidRectF, SKImagePyramidRectF)
-- uid: SkiaSharp.Extended.SKImagePyramidRectF.op_Inequality*
-  name: operator !=
-  href: api/SkiaSharp.Extended.SKImagePyramidRectF.op_Inequality.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectF.op_Inequality
-  name.vb: <>
-  fullName: SkiaSharp.Extended.SKImagePyramidRectF.operator !=
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectF.<>
-  nameWithType: SKImagePyramidRectF.operator !=
-  nameWithType.vb: SKImagePyramidRectF.<>
-- uid: SkiaSharp.Extended.SKImagePyramidRectI
-  name: SKImagePyramidRectI
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.html
-  commentId: T:SkiaSharp.Extended.SKImagePyramidRectI
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI
-  nameWithType: SKImagePyramidRectI
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.#ctor(System.Int32,System.Int32,System.Int32,System.Int32)
-  name: SKImagePyramidRectI(int, int, int, int)
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.-ctor.html#SkiaSharp_Extended_SKImagePyramidRectI__ctor_System_Int32_System_Int32_System_Int32_System_Int32_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectI.#ctor(System.Int32,System.Int32,System.Int32,System.Int32)
-  name.vb: New(Integer, Integer, Integer, Integer)
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.SKImagePyramidRectI(int, int, int, int)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectI.New(Integer, Integer, Integer, Integer)
-  nameWithType: SKImagePyramidRectI.SKImagePyramidRectI(int, int, int, int)
-  nameWithType.vb: SKImagePyramidRectI.New(Integer, Integer, Integer, Integer)
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.#ctor*
-  name: SKImagePyramidRectI
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.#ctor
-  name.vb: New
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.SKImagePyramidRectI
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectI.New
-  nameWithType: SKImagePyramidRectI.SKImagePyramidRectI
-  nameWithType.vb: SKImagePyramidRectI.New
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Bottom
-  name: Bottom
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Bottom.html#SkiaSharp_Extended_SKImagePyramidRectI_Bottom
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectI.Bottom
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Bottom
-  nameWithType: SKImagePyramidRectI.Bottom
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Bottom*
-  name: Bottom
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Bottom.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.Bottom
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Bottom
-  nameWithType: SKImagePyramidRectI.Bottom
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Equals(SkiaSharp.Extended.SKImagePyramidRectI)
-  name: Equals(SKImagePyramidRectI)
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Equals.html#SkiaSharp_Extended_SKImagePyramidRectI_Equals_SkiaSharp_Extended_SKImagePyramidRectI_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectI.Equals(SkiaSharp.Extended.SKImagePyramidRectI)
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Equals(SkiaSharp.Extended.SKImagePyramidRectI)
-  nameWithType: SKImagePyramidRectI.Equals(SKImagePyramidRectI)
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Equals(System.Object)
-  name: Equals(object?)
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Equals.html#SkiaSharp_Extended_SKImagePyramidRectI_Equals_System_Object_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectI.Equals(System.Object)
-  name.vb: Equals(Object)
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Equals(object?)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectI.Equals(Object)
-  nameWithType: SKImagePyramidRectI.Equals(object?)
-  nameWithType.vb: SKImagePyramidRectI.Equals(Object)
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Equals*
-  name: Equals
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Equals.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.Equals
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Equals
-  nameWithType: SKImagePyramidRectI.Equals
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.GetHashCode
-  name: GetHashCode()
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.GetHashCode.html#SkiaSharp_Extended_SKImagePyramidRectI_GetHashCode
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectI.GetHashCode
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.GetHashCode()
-  nameWithType: SKImagePyramidRectI.GetHashCode()
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.GetHashCode*
-  name: GetHashCode
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.GetHashCode.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.GetHashCode
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.GetHashCode
-  nameWithType: SKImagePyramidRectI.GetHashCode
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Height
-  name: Height
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Height.html#SkiaSharp_Extended_SKImagePyramidRectI_Height
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectI.Height
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Height
-  nameWithType: SKImagePyramidRectI.Height
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Height*
-  name: Height
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Height.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.Height
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Height
-  nameWithType: SKImagePyramidRectI.Height
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Right
-  name: Right
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Right.html#SkiaSharp_Extended_SKImagePyramidRectI_Right
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectI.Right
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Right
-  nameWithType: SKImagePyramidRectI.Right
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Right*
-  name: Right
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Right.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.Right
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Right
-  nameWithType: SKImagePyramidRectI.Right
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.ToString
-  name: ToString()
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.ToString.html#SkiaSharp_Extended_SKImagePyramidRectI_ToString
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectI.ToString
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.ToString()
-  nameWithType: SKImagePyramidRectI.ToString()
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.ToString*
-  name: ToString
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.ToString.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.ToString
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.ToString
-  nameWithType: SKImagePyramidRectI.ToString
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Width
-  name: Width
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Width.html#SkiaSharp_Extended_SKImagePyramidRectI_Width
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectI.Width
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Width
-  nameWithType: SKImagePyramidRectI.Width
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Width*
-  name: Width
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Width.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.Width
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Width
-  nameWithType: SKImagePyramidRectI.Width
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.X
-  name: X
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.X.html#SkiaSharp_Extended_SKImagePyramidRectI_X
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectI.X
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.X
-  nameWithType: SKImagePyramidRectI.X
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.X*
-  name: X
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.X.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.X
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.X
-  nameWithType: SKImagePyramidRectI.X
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Y
-  name: Y
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Y.html#SkiaSharp_Extended_SKImagePyramidRectI_Y
-  commentId: P:SkiaSharp.Extended.SKImagePyramidRectI.Y
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Y
-  nameWithType: SKImagePyramidRectI.Y
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.Y*
-  name: Y
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.Y.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.Y
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.Y
-  nameWithType: SKImagePyramidRectI.Y
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.op_Equality(SkiaSharp.Extended.SKImagePyramidRectI,SkiaSharp.Extended.SKImagePyramidRectI)
-  name: operator ==(SKImagePyramidRectI, SKImagePyramidRectI)
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.op_Equality.html#SkiaSharp_Extended_SKImagePyramidRectI_op_Equality_SkiaSharp_Extended_SKImagePyramidRectI_SkiaSharp_Extended_SKImagePyramidRectI_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectI.op_Equality(SkiaSharp.Extended.SKImagePyramidRectI,SkiaSharp.Extended.SKImagePyramidRectI)
-  name.vb: =(SKImagePyramidRectI, SKImagePyramidRectI)
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.operator ==(SkiaSharp.Extended.SKImagePyramidRectI, SkiaSharp.Extended.SKImagePyramidRectI)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectI.=(SkiaSharp.Extended.SKImagePyramidRectI, SkiaSharp.Extended.SKImagePyramidRectI)
-  nameWithType: SKImagePyramidRectI.operator ==(SKImagePyramidRectI, SKImagePyramidRectI)
-  nameWithType.vb: SKImagePyramidRectI.=(SKImagePyramidRectI, SKImagePyramidRectI)
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.op_Equality*
-  name: operator ==
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.op_Equality.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.op_Equality
-  name.vb: =
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.operator ==
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectI.=
-  nameWithType: SKImagePyramidRectI.operator ==
-  nameWithType.vb: SKImagePyramidRectI.=
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.op_Inequality(SkiaSharp.Extended.SKImagePyramidRectI,SkiaSharp.Extended.SKImagePyramidRectI)
-  name: operator !=(SKImagePyramidRectI, SKImagePyramidRectI)
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.op_Inequality.html#SkiaSharp_Extended_SKImagePyramidRectI_op_Inequality_SkiaSharp_Extended_SKImagePyramidRectI_SkiaSharp_Extended_SKImagePyramidRectI_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRectI.op_Inequality(SkiaSharp.Extended.SKImagePyramidRectI,SkiaSharp.Extended.SKImagePyramidRectI)
-  name.vb: <>(SKImagePyramidRectI, SKImagePyramidRectI)
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.operator !=(SkiaSharp.Extended.SKImagePyramidRectI, SkiaSharp.Extended.SKImagePyramidRectI)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectI.<>(SkiaSharp.Extended.SKImagePyramidRectI, SkiaSharp.Extended.SKImagePyramidRectI)
-  nameWithType: SKImagePyramidRectI.operator !=(SKImagePyramidRectI, SKImagePyramidRectI)
-  nameWithType.vb: SKImagePyramidRectI.<>(SKImagePyramidRectI, SKImagePyramidRectI)
-- uid: SkiaSharp.Extended.SKImagePyramidRectI.op_Inequality*
-  name: operator !=
-  href: api/SkiaSharp.Extended.SKImagePyramidRectI.op_Inequality.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidRectI.op_Inequality
-  name.vb: <>
-  fullName: SkiaSharp.Extended.SKImagePyramidRectI.operator !=
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidRectI.<>
-  nameWithType: SKImagePyramidRectI.operator !=
-  nameWithType.vb: SKImagePyramidRectI.<>
 - uid: SkiaSharp.Extended.SKImagePyramidRenderer
   name: SKImagePyramidRenderer
   href: api/SkiaSharp.Extended.SKImagePyramidRenderer.html
@@ -2977,24 +3001,30 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidRenderer.Dispose
   fullName: SkiaSharp.Extended.SKImagePyramidRenderer.Dispose
   nameWithType: SKImagePyramidRenderer.Dispose
-- uid: SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.ISKImagePyramidTile)
-  name: DrawFallbackTile(SKImagePyramidRectF, SKImagePyramidRectF, ISKImagePyramidTile)
-  href: api/SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile.html#SkiaSharp_Extended_SKImagePyramidRenderer_DrawFallbackTile_SkiaSharp_Extended_SKImagePyramidRectF_SkiaSharp_Extended_SKImagePyramidRectF_SkiaSharp_Extended_ISKImagePyramidTile_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.ISKImagePyramidTile)
-  fullName: SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.SKImagePyramidRectF, SkiaSharp.Extended.SKImagePyramidRectF, SkiaSharp.Extended.ISKImagePyramidTile)
-  nameWithType: SKImagePyramidRenderer.DrawFallbackTile(SKImagePyramidRectF, SKImagePyramidRectF, ISKImagePyramidTile)
+- uid: SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.ISKImagePyramidTile)
+  name: DrawFallbackTile(Rect<float>, Rect<float>, ISKImagePyramidTile)
+  href: api/SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile.html#SkiaSharp_Extended_SKImagePyramidRenderer_DrawFallbackTile_SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_ISKImagePyramidTile_
+  commentId: M:SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.ISKImagePyramidTile)
+  name.vb: DrawFallbackTile(Rect(Of Single), Rect(Of Single), ISKImagePyramidTile)
+  fullName: SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.Rect<float>, SkiaSharp.Extended.Rect<float>, SkiaSharp.Extended.ISKImagePyramidTile)
+  fullName.vb: SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.Rect(Of Single), SkiaSharp.Extended.Rect(Of Single), SkiaSharp.Extended.ISKImagePyramidTile)
+  nameWithType: SKImagePyramidRenderer.DrawFallbackTile(Rect<float>, Rect<float>, ISKImagePyramidTile)
+  nameWithType.vb: SKImagePyramidRenderer.DrawFallbackTile(Rect(Of Single), Rect(Of Single), ISKImagePyramidTile)
 - uid: SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile*
   name: DrawFallbackTile
   href: api/SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile.html
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile
   fullName: SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile
   nameWithType: SKImagePyramidRenderer.DrawFallbackTile
-- uid: SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.ISKImagePyramidTile)
-  name: DrawTile(SKImagePyramidRectF, ISKImagePyramidTile)
-  href: api/SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile.html#SkiaSharp_Extended_SKImagePyramidRenderer_DrawTile_SkiaSharp_Extended_SKImagePyramidRectF_SkiaSharp_Extended_ISKImagePyramidTile_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.ISKImagePyramidTile)
-  fullName: SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.SKImagePyramidRectF, SkiaSharp.Extended.ISKImagePyramidTile)
-  nameWithType: SKImagePyramidRenderer.DrawTile(SKImagePyramidRectF, ISKImagePyramidTile)
+- uid: SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.ISKImagePyramidTile)
+  name: DrawTile(Rect<float>, ISKImagePyramidTile)
+  href: api/SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile.html#SkiaSharp_Extended_SKImagePyramidRenderer_DrawTile_SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_ISKImagePyramidTile_
+  commentId: M:SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.ISKImagePyramidTile)
+  name.vb: DrawTile(Rect(Of Single), ISKImagePyramidTile)
+  fullName: SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.Rect<float>, SkiaSharp.Extended.ISKImagePyramidTile)
+  fullName.vb: SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.Rect(Of Single), SkiaSharp.Extended.ISKImagePyramidTile)
+  nameWithType: SKImagePyramidRenderer.DrawTile(Rect<float>, ISKImagePyramidTile)
+  nameWithType.vb: SKImagePyramidRenderer.DrawTile(Rect(Of Single), ISKImagePyramidTile)
 - uid: SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile*
   name: DrawTile
   href: api/SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile.html

@@ -230,22 +230,24 @@ This class is thread-safe as all methods are stateless static operations.</p>
 Structs
 </h3>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.Point-1.html">Point&lt;T&gt;</a></dt>
+      <dd><p>A lightweight 2-D point.
+Replaces the <code>(double X, double Y)</code> tuples that previously appeared in viewport
+and sub-image coordinate-conversion methods of the ImagePyramid pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect&lt;T&gt;</a></dt>
+      <dd><p>A lightweight, axis-aligned rectangle defined by position and size.
+Replaces the former <code>SKImagePyramidRectI</code> (int) and <code>SKImagePyramidRectF</code> (float)
+domain-specific types and the <code>(double X, double Y, double Width, double Height)</code> tuples
+that previously appeared throughout the ImagePyramid pipeline.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidDisplayRect.html">SKImagePyramidDisplayRect</a></dt>
       <dd><p>Represents a display rectangle in a sparse Deep Zoom Image.
 Defines a region of available pixels and the pyramid levels at which it is visible.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidRectF.html">SKImagePyramidRectF</a></dt>
-      <dd><p>A floating-point axis-aligned rectangle used for screen-space tile geometry.
-Replaces anonymous tuples like <code>(float SrcX, float SrcY, float SrcW, float SrcH)</code>
-and SKRect usages in the SkiaSharp-agnostic ImagePyramid pipeline.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidRectI.html">SKImagePyramidRectI</a></dt>
-      <dd><p>An integer-precision axis-aligned rectangle used for tile pixel bounds within a pyramid level.
-Replaces anonymous tuples like <code>(int X, int Y, int Width, int Height)</code> throughout the ImagePyramid pipeline.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -325,7 +327,7 @@ Implement this interface to plug in a custom tile source.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 233fc20
+          source: PR #379 · e42a547
         </div>
       </div>
     </footer>

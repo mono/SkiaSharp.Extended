@@ -286,14 +286,14 @@ controller.EnableLodBlending = false;
     public void BeginRender() =&gt; _inner.BeginRender();
     public void EndRender()   =&gt; _inner.EndRender();
 
-    public void DrawTile(SKImagePyramidRectF destRect, ISKImagePyramidTile tile)
+    public void DrawTile(Rect&lt;float&gt; destRect, ISKImagePyramidTile tile)
     {
         _inner.DrawTile(destRect, tile);
         if (ShowBorders &amp;&amp; _inner.Canvas != null)
             _inner.Canvas.DrawRect(new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom), _borderPaint);
     }
 
-    public void DrawFallbackTile(SKImagePyramidRectF destRect, SKImagePyramidRectF sourceRect, ISKImagePyramidTile tile)
+    public void DrawFallbackTile(Rect&lt;float&gt; destRect, Rect&lt;float&gt; sourceRect, ISKImagePyramidTile tile)
         =&gt; _inner.DrawFallbackTile(destRect, sourceRect, tile);
 
     public void Dispose()
@@ -771,7 +771,7 @@ foreach (var req in tiles)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 233fc20
+          source: PR #379 · e42a547
         </div>
       </div>
     </footer>

@@ -127,14 +127,14 @@
 </h3>
 
 <div class="markdown level1 summary"><p>Gets the pixel bounds of a tile within its pyramid level.
-Returns an <a class="xref" href="SkiaSharp.Extended.SKImagePyramidRectI.html">SKImagePyramidRectI</a> in level-pixel coordinates.
+Returns a <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect&lt;T&gt;</a> of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> in level-pixel coordinates (XYWH).
 For formats without tile overlap (e.g., IIIF), the bounds are the exact tile dimensions.
 For DZI, the bounds include the configured overlap pixels.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKImagePyramidRectI GetTileBounds(int level, int col, int row)</code></pre>
+  <pre><code class="lang-csharp hljs">public Rect&lt;int&gt; GetTileBounds(int level, int col, int row)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
@@ -149,7 +149,7 @@ For DZI, the bounds include the configured overlap pixels.</p>
 
 <h4 class="section">Returns</h4>
 <dl class="parameters">
-  <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidRectI.html">SKImagePyramidRectI</a></dt>
+  <dt><a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
   <dd></dd>
 </dl>
 
@@ -182,7 +182,7 @@ For DZI, the bounds include the configured overlap pixels.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 233fc20
+          source: PR #379 · e42a547
         </div>
       </div>
     </footer>

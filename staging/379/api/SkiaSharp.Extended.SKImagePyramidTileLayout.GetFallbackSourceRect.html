@@ -127,12 +127,12 @@
 </h3>
 
 <div class="markdown level1 summary"><p>Computes the source rect within a parent tile that corresponds to the child tile.
-Returns an <a class="xref" href="SkiaSharp.Extended.SKImagePyramidRectF.html">SKImagePyramidRectF</a> in parent-bitmap pixel coordinates.</p>
+Returns a <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect&lt;T&gt;</a> of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a> in parent-bitmap pixel coordinates (XYWH).</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKImagePyramidRectF GetFallbackSourceRect(SKImagePyramidTileId requested, SKImagePyramidTileId parent, ISKImagePyramidSource tileSource)</code></pre>
+  <pre><code class="lang-csharp hljs">public Rect&lt;float&gt; GetFallbackSourceRect(SKImagePyramidTileId requested, SKImagePyramidTileId parent, ISKImagePyramidSource tileSource)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
@@ -147,7 +147,7 @@ Returns an <a class="xref" href="SkiaSharp.Extended.SKImagePyramidRectF.html">SK
 
 <h4 class="section">Returns</h4>
 <dl class="parameters">
-  <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidRectF.html">SKImagePyramidRectF</a></dt>
+  <dt><a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
   <dd></dd>
 </dl>
 
@@ -180,7 +180,7 @@ Returns an <a class="xref" href="SkiaSharp.Extended.SKImagePyramidRectF.html">SK
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 233fc20
+          source: PR #379 · e42a547
         </div>
       </div>
     </footer>

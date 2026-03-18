@@ -121,8 +121,8 @@
 
 <a id="SkiaSharp_Extended_SKImagePyramidRenderer_DrawTile_" data-uid="SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile*"></a>
 
-<h3 id="SkiaSharp_Extended_SKImagePyramidRenderer_DrawTile_SkiaSharp_Extended_SKImagePyramidRectF_SkiaSharp_Extended_ISKImagePyramidTile_" data-uid="SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.SKImagePyramidRectF,SkiaSharp.Extended.ISKImagePyramidTile)">
-  DrawTile(SKImagePyramidRectF, ISKImagePyramidTile)
+<h3 id="SkiaSharp_Extended_SKImagePyramidRenderer_DrawTile_SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_ISKImagePyramidTile_" data-uid="SkiaSharp.Extended.SKImagePyramidRenderer.DrawTile(SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.ISKImagePyramidTile)">
+  DrawTile(Rect&lt;float&gt;, ISKImagePyramidTile)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidRenderer.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
@@ -131,13 +131,13 @@
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public void DrawTile(SKImagePyramidRectF destRect, ISKImagePyramidTile tile)</code></pre>
+  <pre><code class="lang-csharp hljs">public void DrawTile(Rect&lt;float&gt; destRect, ISKImagePyramidTile tile)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
-  <dt><code>destRect</code> <a class="xref" href="SkiaSharp.Extended.SKImagePyramidRectF.html">SKImagePyramidRectF</a></dt>
-  <dd><p>Where to draw the tile on screen (in screen pixels).</p>
+  <dt><code>destRect</code> <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+  <dd><p>Where to draw the tile on screen (in screen pixels, XYWH).</p>
 </dd>
   <dt><code>tile</code> <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTile.html">ISKImagePyramidTile</a></dt>
   <dd><p>The decoded tile image.</p>
@@ -174,7 +174,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 233fc20
+          source: PR #379 · e42a547
         </div>
       </div>
     </footer>
