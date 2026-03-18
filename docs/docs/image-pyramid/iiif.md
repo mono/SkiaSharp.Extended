@@ -168,6 +168,8 @@ public class SKImagePyramidZoomifySource : ISKImagePyramidSource
 
 Try these public IIIF endpoints in the demo apps (all support CORS). Enter the base URL — `/info.json` is appended automatically:
 
+### IIIF v2
+
 | Institution | Base URL | Dimensions |
 |---|---|---|
 | Wellcome Collection | `https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2` | 3543 × 2480 |
@@ -175,6 +177,11 @@ Try these public IIIF endpoints in the demo apps (all support CORS). Enter the b
 | Library of Congress | `https://tile.loc.gov/image-services/iiif/service:pnp:highsm:14000:14095` | 4717 × 5951 |
 | Stanford University | `https://stacks.stanford.edu/image/iiif/hg676jb4964%2F0380_796-44` | 5426 × 3820 |
 | Leipzig University Library | `https://iiif.ub.uni-leipzig.de/iiif/j2k/0000/0107/0000010732/00000072.jpx` | 5284 × 2410 |
-| Bodleian Libraries, Oxford | `https://iiif.bodleian.ox.ac.uk/iiif/image/af315e3d-5b49-4fac-98e6-0e134e3e2c44` | 1000 × 1500 |
+| Bodleian Libraries, Oxford | `https://iiif.bodleian.ox.ac.uk/iiif/image/9cca8fdd-4a61-4429-8ac1-f648764b4d6d` | 5776 × 9125 |
 | e-codices (Swiss manuscripts) | `https://www.e-codices.unifr.ch/loris/bge/bge-cl0015/bge-cl0015_e001.jp2` | 3328 × 4992 |
-| IIIF.io reference image (v3) | `https://iiif.io/api/image/3.0/example/reference/918ecd18c2592080851777620de9bcb5-fountain` | 3024 × 4032 |
+
+### IIIF v3
+
+| Institution | Base URL | Dimensions |
+|---|---|---|
+| IIIF.io reference image | `https://iiif.io/api/image/3.0/example/reference/918ecd18c2592080851777620de9bcb5-fountain` | 3024 × 4032 |

@@ -18,18 +18,23 @@
         <button @onclick="OnLoadUrl" disabled="@_urlLoading">@(_urlLoading ? "Loading…" : "Load")</button>
         <select @onchange="OnExampleSelected" class="ip-example-select" title="Load an example image">
             <option value="">— Examples —</option>
-            <optgroup label="Deep Zoom (DZI) — public">
-                <option value="https://openseadragon.github.io/example-images/highsmith/highsmith.dzi">Highsmith (US Library of Congress)</option>
-                <option value="https://openseadragon.github.io/example-images/duomo/duomo.dzi">Duomo di Firenze</option>
-            </optgroup>
-            <optgroup label="Deep Zoom (DZI) — this repo">
+            <optgroup label="Deep Zoom (DZI)">
+                <option value="https://openseadragon.github.io/example-images/highsmith/highsmith.dzi">Highsmith photos (7026×9221)</option>
+                <option value="https://openseadragon.github.io/example-images/duomo/duomo.dzi">Duomo di Firenze (13920×10200)</option>
                 <option value="https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/feature/deep-zoom-static-preview/resources/collections/testgrid/testgrid.dzi">Test Grid (32768×32768 — zoom in to see tiles)</option>
                 <option value="https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/feature/deep-zoom-static-preview/resources/collections/conceptcars/deepzoom/10489820633895493292390866.dzi">Concept Car (1024×682)</option>
             </optgroup>
-            <optgroup label="IIIF Image API">
-                <option value="https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2">Wellcome Collection</option>
-                <option value="https://iiif.bodleian.ox.ac.uk/iiif/image/af315e3d-5b49-4fac-98e6-0e134e3e2c44">Bodleian Libraries (Oxford)</option>
-                <option value="https://iiif.io/api/image/3.0/example/reference/918ecd18c2592080851777620de9bcb5-fountain">IIIF.io Reference Image</option>
+            <optgroup label="IIIF v2">
+                <option value="https://iiif.wellcomecollection.org/image/b20432033_B0008608.JP2">Wellcome Collection (3543×2480)</option>
+                <option value="https://media.nga.gov/iiif/public/objects/4/6/2/5/8/46258-primary-0-nativeres.ptif">National Gallery of Art (7993×8195)</option>
+                <option value="https://tile.loc.gov/image-services/iiif/service:pnp:highsm:14000:14095">Library of Congress (4717×5951)</option>
+                <option value="https://stacks.stanford.edu/image/iiif/hg676jb4964%2F0380_796-44">Stanford University (5426×3820)</option>
+                <option value="https://iiif.ub.uni-leipzig.de/iiif/j2k/0000/0107/0000010732/00000072.jpx">Leipzig University Library (5284×2410)</option>
+                <option value="https://iiif.bodleian.ox.ac.uk/iiif/image/9cca8fdd-4a61-4429-8ac1-f648764b4d6d">Bodleian Libraries, Oxford (5776×9125)</option>
+                <option value="https://www.e-codices.unifr.ch/loris/bge/bge-cl0015/bge-cl0015_e001.jp2">e-codices Swiss manuscript (3328×4992)</option>
+            </optgroup>
+            <optgroup label="IIIF v3">
+                <option value="https://iiif.io/api/image/3.0/example/reference/918ecd18c2592080851777620de9bcb5-fountain">IIIF.io fountain (3024×4032)</option>
             </optgroup>
         </select>
     </div>
