@@ -158,6 +158,10 @@ independent of any rendering backend.</p>
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_SKImagePyramidTileLayout_GetTileDestRect_SkiaSharp_Extended_ISKImagePyramidSource_SkiaSharp_Extended_SKImagePyramidViewport_SkiaSharp_Extended_SKImagePyramidTileId__remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>Corners are pixel-snapped using floor/ceiling so that adjacent tiles share the same
+integer pixel boundary, eliminating sub-pixel gaps that cause flickering seams.</p>
+</div>
 
 
 
@@ -181,7 +185,7 @@ independent of any rendering backend.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 814b28f
+          source: PR #379 · 241f2fc
         </div>
       </div>
     </footer>
