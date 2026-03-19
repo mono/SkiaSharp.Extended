@@ -91,17 +91,16 @@
 
   <h1 id="SkiaSharp_Extended_ISKImagePyramidTileCache" data-uid="SkiaSharp.Extended.ISKImagePyramidTileCache" class="text-break">
     Interface ISKImagePyramidTileCache
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/ISKImagePyramidTileCache.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/ISKImagePyramidTileCache.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
     <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
   <div class="markdown summary"><p>Pluggable tile cache for the Deep Zoom rendering pipeline.
-Tiles are stored as <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTile.html">ISKImagePyramidTile</a> so that the cache is
-rendering-backend-agnostic.</p>
+Tiles are stored as <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a> instances.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -156,12 +155,12 @@ on the UI thread before drawing to safely release resources.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.Put.html#SkiaSharp_Extended_ISKImagePyramidTileCache_Put_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_ISKImagePyramidTile_">Put(SKImagePyramidTileId, ISKImagePyramidTile?)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.Put.html#SkiaSharp_Extended_ISKImagePyramidTileCache_Put_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_SKImage_">Put(SKImagePyramidTileId, SKImage?)</a></dt>
     <dd><p>Stores a tile synchronously.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync.html#SkiaSharp_Extended_ISKImagePyramidTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_ISKImagePyramidTile_System_Threading_CancellationToken_">PutAsync(SKImagePyramidTileId, ISKImagePyramidTile?, CancellationToken)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync.html#SkiaSharp_Extended_ISKImagePyramidTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_SKImage_System_Threading_CancellationToken_">PutAsync(SKImagePyramidTileId, SKImage?, CancellationToken)</a></dt>
     <dd><p>Stores a tile. Implementations may apply delays or tiered writes.</p>
 </dd>
   </dl>
@@ -171,7 +170,7 @@ on the UI thread before drawing to safely release resources.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.TryGet.html#SkiaSharp_Extended_ISKImagePyramidTileCache_TryGet_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_ISKImagePyramidTile__">TryGet(SKImagePyramidTileId, out ISKImagePyramidTile?)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.TryGet.html#SkiaSharp_Extended_ISKImagePyramidTileCache_TryGet_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_SKImage__">TryGet(SKImagePyramidTileId, out SKImage?)</a></dt>
     <dd><p>Tries to retrieve a cached tile.</p>
 </dd>
   </dl>
@@ -187,7 +186,7 @@ A null return means cache miss — the caller should then fetch from network.</p
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/ISKImagePyramidTileCache.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/ISKImagePyramidTileCache.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -203,7 +202,7 @@ A null return means cache miss — the caller should then fetch from network.</p
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · e9585ed
+          source: PR #379 · 6f26325
         </div>
       </div>
     </footer>

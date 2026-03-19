@@ -93,12 +93,12 @@
 
 <h1 id="SkiaSharp_Extended_SKImagePyramidMemoryTileCache_PutAsync_" data-uid="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync*" class="text-break">
   Method PutAsync
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidMemoryTileCache.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidMemoryTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
   <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
 </div>
 
 <div class="markdown summary"></div>
@@ -121,9 +121,9 @@
 
 <a id="SkiaSharp_Extended_SKImagePyramidMemoryTileCache_PutAsync_" data-uid="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync*"></a>
 
-<h3 id="SkiaSharp_Extended_SKImagePyramidMemoryTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_ISKImagePyramidTile_System_Threading_CancellationToken_" data-uid="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.ISKImagePyramidTile,System.Threading.CancellationToken)">
-  PutAsync(SKImagePyramidTileId, ISKImagePyramidTile?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidMemoryTileCache.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_SKImagePyramidMemoryTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_SKImage_System_Threading_CancellationToken_" data-uid="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.SKImage,System.Threading.CancellationToken)">
+  PutAsync(SKImagePyramidTileId, SKImage?, CancellationToken)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidMemoryTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
 <div class="markdown level1 summary"><p>Adds a tile to the cache via the async interface.</p>
@@ -131,14 +131,14 @@
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public Task PutAsync(SKImagePyramidTileId id, ISKImagePyramidTile? tile, CancellationToken ct = default)</code></pre>
+  <pre><code class="lang-csharp hljs">public Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>id</code> <a class="xref" href="SkiaSharp.Extended.SKImagePyramidTileId.html">SKImagePyramidTileId</a></dt>
   <dd></dd>
-  <dt><code>tile</code> <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTile.html">ISKImagePyramidTile</a></dt>
+  <dt><code>tile</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a></dt>
   <dd></dd>
   <dt><code>ct</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
   <dd></dd>
@@ -163,7 +163,7 @@
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidMemoryTileCache.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidMemoryTileCache.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -179,7 +179,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · e9585ed
+          source: PR #379 · 6f26325
         </div>
       </div>
     </footer>

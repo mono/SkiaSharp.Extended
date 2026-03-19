@@ -93,12 +93,12 @@
 
 <h1 id="SkiaSharp_Extended_SKImagePyramidMemoryTileCache_TryGetAsync_" data-uid="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync*" class="text-break">
   Method TryGetAsync
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidMemoryTileCache.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidMemoryTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
   <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
 </div>
 
 <div class="markdown summary"></div>
@@ -123,7 +123,7 @@
 
 <h3 id="SkiaSharp_Extended_SKImagePyramidMemoryTileCache_TryGetAsync_SkiaSharp_Extended_SKImagePyramidTileId_System_Threading_CancellationToken_" data-uid="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync(SkiaSharp.Extended.SKImagePyramidTileId,System.Threading.CancellationToken)">
   TryGetAsync(SKImagePyramidTileId, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidMemoryTileCache.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidMemoryTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
 <div class="markdown level1 summary"><p>Async variant — completes synchronously for in-memory cache.</p>
@@ -131,7 +131,7 @@
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public Task&lt;ISKImagePyramidTile?&gt; TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)</code></pre>
+  <pre><code class="lang-csharp hljs">public Task&lt;SKImage?&gt; TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
@@ -144,7 +144,7 @@
 
 <h4 class="section">Returns</h4>
 <dl class="parameters">
-  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTile.html">ISKImagePyramidTile</a>&gt;</dt>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a>&gt;</dt>
   <dd></dd>
 </dl>
 
@@ -161,7 +161,7 @@
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidMemoryTileCache.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidMemoryTileCache.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -177,7 +177,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · e9585ed
+          source: PR #379 · 6f26325
         </div>
       </div>
     </footer>

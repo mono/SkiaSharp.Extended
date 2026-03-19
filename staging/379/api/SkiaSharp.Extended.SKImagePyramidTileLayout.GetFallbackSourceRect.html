@@ -93,12 +93,12 @@
 
 <h1 id="SkiaSharp_Extended_SKImagePyramidTileLayout_GetFallbackSourceRect_" data-uid="SkiaSharp.Extended.SKImagePyramidTileLayout.GetFallbackSourceRect*" class="text-break">
   Method GetFallbackSourceRect
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidTileLayout.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidTileLayout.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
   <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
 </div>
 
 <div class="markdown summary"></div>
@@ -123,16 +123,16 @@
 
 <h3 id="SkiaSharp_Extended_SKImagePyramidTileLayout_GetFallbackSourceRect_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_ISKImagePyramidSource_" data-uid="SkiaSharp.Extended.SKImagePyramidTileLayout.GetFallbackSourceRect(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.ISKImagePyramidSource)">
   GetFallbackSourceRect(SKImagePyramidTileId, SKImagePyramidTileId, ISKImagePyramidSource)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidTileLayout.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidTileLayout.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
 <div class="markdown level1 summary"><p>Computes the source rect within a parent tile that corresponds to the child tile.
-Returns a <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect&lt;T&gt;</a> of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a> in parent-bitmap pixel coordinates (XYWH).</p>
+Returns an <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a> in parent-bitmap pixel coordinates.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public Rect&lt;float&gt; GetFallbackSourceRect(SKImagePyramidTileId requested, SKImagePyramidTileId parent, ISKImagePyramidSource tileSource)</code></pre>
+  <pre><code class="lang-csharp hljs">public SKRect GetFallbackSourceRect(SKImagePyramidTileId requested, SKImagePyramidTileId parent, ISKImagePyramidSource tileSource)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
@@ -147,7 +147,7 @@ Returns a <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect&lt;T&gt;</a
 
 <h4 class="section">Returns</h4>
 <dl class="parameters">
-  <dt><a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></dt>
   <dd></dd>
 </dl>
 
@@ -164,7 +164,7 @@ Returns a <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect&lt;T&gt;</a
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidTileLayout.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidTileLayout.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -180,7 +180,7 @@ Returns a <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect&lt;T&gt;</a
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · e9585ed
+          source: PR #379 · 6f26325
         </div>
       </div>
     </footer>

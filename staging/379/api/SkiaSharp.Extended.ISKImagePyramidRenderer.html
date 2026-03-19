@@ -91,12 +91,12 @@
 
   <h1 id="SkiaSharp_Extended_ISKImagePyramidRenderer" data-uid="SkiaSharp.Extended.ISKImagePyramidRenderer" class="text-break">
     Interface ISKImagePyramidRenderer
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/ISKImagePyramidRenderer.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/ISKImagePyramidRenderer.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
     <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
   <div class="markdown summary"><p>Renders individual Deep Zoom tiles onto a drawing surface.
@@ -128,7 +128,7 @@ Implement this interface to provide a custom rendering backend.</p>
   <h2 id="SkiaSharp_Extended_ISKImagePyramidRenderer_remarks">Remarks</h2>
   <div class="markdown level0 remarks"><p>
 The rendering pipeline uses a two-pass approach:
-<ol><li>LOD fallback pass: <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawFallbackTile_SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_ISKImagePyramidTile_">DrawFallbackTile(Rect&lt;float&gt;, Rect&lt;float&gt;, ISKImagePyramidTile)</a> is called for tiles that are loading, using a lower-resolution ancestor.</li><li>Hi-res pass: <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawTile_SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_ISKImagePyramidTile_">DrawTile(Rect&lt;float&gt;, ISKImagePyramidTile)</a> is called for each cached tile at the correct detail level.</li></ol>
+<ol><li>LOD fallback pass: <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawFallbackTile_SkiaSharp_SKRect_SkiaSharp_SKRect_SkiaSharp_SKImage_">DrawFallbackTile(SKRect, SKRect, SKImage)</a> is called for tiles that are loading, using a lower-resolution ancestor.</li><li>Hi-res pass: <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawTile_SkiaSharp_SKRect_SkiaSharp_SKImage_">DrawTile(SKRect, SKImage)</a> is called for each cached tile at the correct detail level.</li></ol>
 
 <p>
 Tile geometry (destination rects, fallback source rects) is pre-calculated by
@@ -146,13 +146,13 @@ Use this to set up state (e.g., save canvas, clear background).</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawFallbackTile_SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_ISKImagePyramidTile_">DrawFallbackTile(Rect&lt;float&gt;, Rect&lt;float&gt;, ISKImagePyramidTile)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidRenderer.DrawFallbackTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawFallbackTile_SkiaSharp_SKRect_SkiaSharp_SKRect_SkiaSharp_SKImage_">DrawFallbackTile(SKRect, SKRect, SKImage)</a></dt>
     <dd><p>Draws a lower-resolution fallback tile stretched to fill the destination rect.
 Only called when LOD blending is enabled and the hi-res tile is still loading.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawTile_SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_ISKImagePyramidTile_">DrawTile(Rect&lt;float&gt;, ISKImagePyramidTile)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidRenderer.DrawTile.html#SkiaSharp_Extended_ISKImagePyramidRenderer_DrawTile_SkiaSharp_SKRect_SkiaSharp_SKImage_">DrawTile(SKRect, SKImage)</a></dt>
     <dd><p>Draws a hi-resolution tile at the exact detail level requested.</p>
 </dd>
   </dl>
@@ -168,7 +168,7 @@ Use this to flush state (e.g., restore canvas).</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/ISKImagePyramidRenderer.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/ISKImagePyramidRenderer.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -184,7 +184,7 @@ Use this to flush state (e.g., restore canvas).</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · e9585ed
+          source: PR #379 · 6f26325
         </div>
       </div>
     </footer>

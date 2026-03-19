@@ -93,12 +93,12 @@
 
 <h1 id="SkiaSharp_Extended_SKImagePyramidHttpTileFetcher__ctor_" data-uid="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.#ctor*" class="text-break">
   Constructor SKImagePyramidHttpTileFetcher
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
   <dl><dt>Namespace</dt><dd><a class="xref" href="SkiaSharp.html">SkiaSharp</a>.<a class="xref" href="SkiaSharp.Extended.html">Extended</a></dd></dl>
-  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.Abstractions.dll</dd></dl>
+  <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
 </div>
 
 <div class="markdown summary"></div>
@@ -121,25 +121,19 @@
 
 <a id="SkiaSharp_Extended_SKImagePyramidHttpTileFetcher__ctor_" data-uid="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.#ctor*"></a>
 
-<h3 id="SkiaSharp_Extended_SKImagePyramidHttpTileFetcher__ctor_SkiaSharp_Extended_ISKImagePyramidTileDecoder_" data-uid="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.#ctor(SkiaSharp.Extended.ISKImagePyramidTileDecoder)">
-  SKImagePyramidHttpTileFetcher(ISKImagePyramidTileDecoder)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_SKImagePyramidHttpTileFetcher__ctor" data-uid="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.#ctor">
+  SKImagePyramidHttpTileFetcher()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Creates a new <a class="xref" href="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.html">SKImagePyramidHttpTileFetcher</a> with the given decoder
-and an internally-managed <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a>.</p>
+<div class="markdown level1 summary"><p>Creates a new <a class="xref" href="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.html">SKImagePyramidHttpTileFetcher</a> with an internally-managed <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a>.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKImagePyramidHttpTileFetcher(ISKImagePyramidTileDecoder decoder)</code></pre>
+  <pre><code class="lang-csharp hljs">public SKImagePyramidHttpTileFetcher()</code></pre>
 </div>
 
-<h4 class="section">Parameters</h4>
-<dl class="parameters">
-  <dt><code>decoder</code> <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileDecoder.html">ISKImagePyramidTileDecoder</a></dt>
-  <dd></dd>
-</dl>
 
 
 
@@ -154,9 +148,9 @@ and an internally-managed <a class="xref" href="https://learn.microsoft.com/dotn
 
 <a id="SkiaSharp_Extended_SKImagePyramidHttpTileFetcher__ctor_" data-uid="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.#ctor*"></a>
 
-<h3 id="SkiaSharp_Extended_SKImagePyramidHttpTileFetcher__ctor_SkiaSharp_Extended_ISKImagePyramidTileDecoder_System_Net_Http_HttpClient_" data-uid="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.#ctor(SkiaSharp.Extended.ISKImagePyramidTileDecoder,System.Net.Http.HttpClient)">
-  SKImagePyramidHttpTileFetcher(ISKImagePyramidTileDecoder, HttpClient)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_SKImagePyramidHttpTileFetcher__ctor_System_Net_Http_HttpClient_" data-uid="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.#ctor(System.Net.Http.HttpClient)">
+  SKImagePyramidHttpTileFetcher(HttpClient)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidHttpTileFetcher.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
 <div class="markdown level1 summary"><p>Creates a new <a class="xref" href="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.html">SKImagePyramidHttpTileFetcher</a> using an existing
@@ -165,13 +159,11 @@ and an internally-managed <a class="xref" href="https://learn.microsoft.com/dotn
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKImagePyramidHttpTileFetcher(ISKImagePyramidTileDecoder decoder, HttpClient httpClient)</code></pre>
+  <pre><code class="lang-csharp hljs">public SKImagePyramidHttpTileFetcher(HttpClient httpClient)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
-  <dt><code>decoder</code> <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileDecoder.html">ISKImagePyramidTileDecoder</a></dt>
-  <dd></dd>
   <dt><code>httpClient</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpclient">HttpClient</a></dt>
   <dd></dd>
 </dl>
@@ -190,7 +182,7 @@ and an internally-managed <a class="xref" href="https://learn.microsoft.com/dotn
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended.Abstractions/ImagePyramid/SKImagePyramidHttpTileFetcher.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidHttpTileFetcher.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -206,7 +198,7 @@ and an internally-managed <a class="xref" href="https://learn.microsoft.com/dotn
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · e9585ed
+          source: PR #379 · 6f26325
         </div>
       </div>
     </footer>

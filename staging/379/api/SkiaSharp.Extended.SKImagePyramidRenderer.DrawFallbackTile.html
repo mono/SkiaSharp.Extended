@@ -121,8 +121,8 @@
 
 <a id="SkiaSharp_Extended_SKImagePyramidRenderer_DrawFallbackTile_" data-uid="SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile*"></a>
 
-<h3 id="SkiaSharp_Extended_SKImagePyramidRenderer_DrawFallbackTile_SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_Rect_System_Single__SkiaSharp_Extended_ISKImagePyramidTile_" data-uid="SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.Rect{System.Single},SkiaSharp.Extended.ISKImagePyramidTile)">
-  DrawFallbackTile(Rect&lt;float&gt;, Rect&lt;float&gt;, ISKImagePyramidTile)
+<h3 id="SkiaSharp_Extended_SKImagePyramidRenderer_DrawFallbackTile_SkiaSharp_SKRect_SkiaSharp_SKRect_SkiaSharp_SKImage_" data-uid="SkiaSharp.Extended.SKImagePyramidRenderer.DrawFallbackTile(SkiaSharp.SKRect,SkiaSharp.SKRect,SkiaSharp.SKImage)">
+  DrawFallbackTile(SKRect, SKRect, SKImage)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidRenderer.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
@@ -132,18 +132,18 @@ Only called when LOD blending is enabled and the hi-res tile is still loading.</
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public void DrawFallbackTile(Rect&lt;float&gt; destRect, Rect&lt;float&gt; sourceRect, ISKImagePyramidTile tile)</code></pre>
+  <pre><code class="lang-csharp hljs">public void DrawFallbackTile(SKRect destRect, SKRect sourceRect, SKImage tile)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
-  <dt><code>destRect</code> <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
-  <dd><p>Where to draw the fallback on screen (in screen pixels, XYWH).</p>
+  <dt><code>destRect</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></dt>
+  <dd><p>Where to draw the fallback on screen (in screen pixels).</p>
 </dd>
-  <dt><code>sourceRect</code> <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>&gt;</dt>
-  <dd><p>The sub-region of the fallback tile bitmap to use (in tile pixels, XYWH).</p>
+  <dt><code>sourceRect</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></dt>
+  <dd><p>The sub-region of the fallback tile bitmap to use (in tile pixels).</p>
 </dd>
-  <dt><code>tile</code> <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTile.html">ISKImagePyramidTile</a></dt>
+  <dt><code>tile</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a></dt>
   <dd><p>The decoded fallback tile image.</p>
 </dd>
 </dl>
@@ -178,7 +178,7 @@ Only called when LOD blending is enabled and the hi-res tile is still loading.</
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · e9585ed
+          source: PR #379 · 6f26325
         </div>
       </div>
     </footer>

@@ -137,14 +137,13 @@ and provides tile pyramid math for computing tile URLs and dimensions.</p>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileTileFetcher.html">SKImagePyramidFileTileFetcher</a></dt>
-      <dd><p>Fetches tiles from the local file system and decodes them using a provided
-<a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileDecoder.html">ISKImagePyramidTileDecoder</a>.
+      <dd><p>Fetches tiles from the local file system and decodes them using SkiaSharp.
 Accepts both plain file paths and <code>file://</code> URIs.</p>
 </dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.html">SKImagePyramidHttpTileFetcher</a></dt>
-      <dd><p>Fetches tiles over HTTP and decodes them using a provided <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileDecoder.html">ISKImagePyramidTileDecoder</a>.
+      <dd><p>Fetches tiles over HTTP and decodes them using SkiaSharp.
 Thread-safe and reusable.</p>
 </dd>
     </dl>
@@ -153,18 +152,6 @@ Thread-safe and reusable.</p>
       <dd><p>An <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidSource.html">ISKImagePyramidSource</a> backed by an IIIF Image API v2/v3 info.json.
 Parses the IIIF descriptor and maps IIIF scale factors to pyramid levels,
 where level 0 = lowest resolution (largest scale factor) and level MaxLevel = full resolution.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidImageTile.html">SKImagePyramidImageTile</a></dt>
-      <dd><p>A <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTile.html">ISKImagePyramidTile</a> backed by an <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a>.
-This is the SkiaSharp-specific implementation of the opaque tile interface.
-Using <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a> instead of <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skbitmap">SKBitmap</a> allows GPU-accelerated rendering.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidImageTileDecoder.html">SKImagePyramidImageTileDecoder</a></dt>
-      <dd><p>Decodes image streams into <a class="xref" href="SkiaSharp.Extended.SKImagePyramidImageTile.html">SKImagePyramidImageTile</a> using SkiaSharp.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -281,29 +268,15 @@ tile URLs and dimensions. Implement this to support new image formats (DZI, IIIF
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTile.html">ISKImagePyramidTile</a></dt>
-      <dd><p>Opaque handle representing a decoded tile image.
-Concrete implementations (e.g. <code>SKImagePyramidBitmapTile</code> in SkiaSharp.Extended) wrap
-the actual decoded image in a rendering-backend-specific type.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.html">ISKImagePyramidTileCache</a></dt>
       <dd><p>Pluggable tile cache for the Deep Zoom rendering pipeline.
-Tiles are stored as <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTile.html">ISKImagePyramidTile</a> so that the cache is
-rendering-backend-agnostic.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileDecoder.html">ISKImagePyramidTileDecoder</a></dt>
-      <dd><p>Decodes raw image data from a stream into an <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTile.html">ISKImagePyramidTile</a>.
-Implement this interface to plug in a custom image decoder (e.g. SkiaSharp, ImageSharp).</p>
+Tiles are stored as <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a> instances.</p>
 </dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileFetcher.html">ISKImagePyramidTileFetcher</a></dt>
       <dd><p>Fetches tile data from a source (HTTP, file system, memory, etc.)
-and returns it as an opaque <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTile.html">ISKImagePyramidTile</a>.
+and returns it as a decoded <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a>.
 Implement this interface to plug in a custom tile source.</p>
 </dd>
     </dl>
@@ -327,7 +300,7 @@ Implement this interface to plug in a custom tile source.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · e9585ed
+          source: PR #379 · 6f26325
         </div>
       </div>
     </footer>
