@@ -30,7 +30,7 @@ Use `SKImagePyramidController` with a plain `SKCanvasView` in Blazor WebAssembly
         var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/image_files/").ToString();
         var source  = SKImagePyramidDziSource.Parse(xml, baseUrl);
 
-        _controller.Load(source, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+        _controller.Load(source, new SKImagePyramidHttpTileFetcher());
     }
 
     private void OnPaintSurface(SKPaintSurfaceEventArgs e)
@@ -120,7 +120,7 @@ Wire mouse and touch events to the controller's navigation methods:
 var xml = await Http.GetStringAsync("collection.dzc");
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = Http.BaseAddress!.ToString();
-_controller!.Load(collection, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+_controller!.Load(collection, new SKImagePyramidHttpTileFetcher());
 ```
 
 ## Custom Cache

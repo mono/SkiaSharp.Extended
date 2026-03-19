@@ -107,7 +107,7 @@ string xml = await httpClient.GetStringAsync("https://example.com/collection.dzc
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = "https://example.com/";
 
-controller.Load(collection, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+controller.Load(collection, new SKImagePyramidHttpTileFetcher());
 
 // Access sub-images
 foreach (var sub in collection.Items)

@@ -23,12 +23,12 @@ var controller = new SKImagePyramidController(cache: myCache);
 ```csharp
 // DZI — single image
 var source = SKImagePyramidDziSource.Parse(xmlString, "https://example.com/image_files/");
-controller.Load(source, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+controller.Load(source, new SKImagePyramidHttpTileFetcher());
 
 // DZC — collection of images
 var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
 collection.TilesBaseUri = "https://example.com/";
-controller.Load(collection, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+controller.Load(collection, new SKImagePyramidHttpTileFetcher());
 ```
 
 `Load()` resets the viewport to show the full image and starts fetching tiles in the background.
@@ -157,14 +157,14 @@ public sealed class TileBorderRenderer : ISKImagePyramidRenderer
     public void BeginRender() => _inner.BeginRender();
     public void EndRender()   => _inner.EndRender();
 
-    public void DrawTile(Rect<float> destRect, ISKImagePyramidTile tile)
+    public void DrawTile(SKRect destRect, SKImage tile)
     {
         _inner.DrawTile(destRect, tile);
         if (ShowBorders && _inner.Canvas != null)
-            _inner.Canvas.DrawRect(new SKRect(destRect.X, destRect.Y, destRect.X + destRect.Width, destRect.Y + destRect.Height), _borderPaint);
+            _inner.Canvas.DrawRect(destRect, _borderPaint);
     }
 
-    public void DrawFallbackTile(Rect<float> destRect, Rect<float> sourceRect, ISKImagePyramidTile tile)
+    public void DrawFallbackTile(SKRect destRect, SKRect sourceRect, SKImage tile)
         => _inner.DrawFallbackTile(destRect, sourceRect, tile);
 
     public void Dispose()

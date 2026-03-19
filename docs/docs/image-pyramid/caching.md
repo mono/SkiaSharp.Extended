@@ -1,8 +1,6 @@
 # Image Pyramid — Caching
 
-The tile cache stores decoded `ISKImagePyramidTile` instances so tiles don't need to be re-fetched or re-decoded on every frame. The cache is **pluggable** — swap implementations to tune memory usage, add persistence, or chain multiple tiers.
-
-`ISKImagePyramidTile` is an opaque interface; the SkiaSharp implementation (`SKImagePyramidImageTile`) wraps an `SKImage`, but the cache itself is rendering-backend-agnostic.
+The tile cache stores decoded `SKImage` instances so tiles don't need to be re-fetched or re-decoded on every frame. The cache is **pluggable** — swap implementations to tune memory usage, add persistence, or chain multiple tiers.
 
 ## ISKImagePyramidTileCache
 
@@ -15,19 +13,19 @@ public interface ISKImagePyramidTileCache : IDisposable
     int Count { get; }
 
     /// <summary>Synchronous lookup — used by the renderer (no blocking I/O).</summary>
-    bool TryGet(SKImagePyramidTileId id, out ISKImagePyramidTile? tile);
+    bool TryGet(SKImagePyramidTileId id, out SKImage? tile);
 
     /// <summary>Async lookup — use for I/O-backed tiers (disk, browser storage).</summary>
-    Task<ISKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default);
+    Task<SKImage?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default);
 
     /// <summary>Returns true if the tile is cached.</summary>
     bool Contains(SKImagePyramidTileId id);
 
     /// <summary>Synchronous write — for in-memory caches.</summary>
-    void Put(SKImagePyramidTileId id, ISKImagePyramidTile? tile);
+    void Put(SKImagePyramidTileId id, SKImage? tile);
 
     /// <summary>Async write — for I/O-backed caches or cache decorators.</summary>
-    Task PutAsync(SKImagePyramidTileId id, ISKImagePyramidTile? tile, CancellationToken ct = default);
+    Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default);
 
     /// <summary>Removes a specific tile.</summary>
     bool Remove(SKImagePyramidTileId id);
@@ -102,7 +100,7 @@ void OnPaintSurface(SKPaintSurfaceEventArgs e)
 | Mid-range mobile | 256–512 |
 | Low-memory devices | 64–128 |
 
-Each tile is typically a 256×256 JPEG/PNG decoded to an `SKImagePyramidImageTile` wrapping an `SKImage` — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of image RAM at maximum.
+Each tile is typically a 256×256 JPEG/PNG decoded to an `SKImage` — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of image RAM at maximum.
 
 ---
 
@@ -142,10 +140,10 @@ public sealed class TieredCache : ISKImagePyramidTileCache
         _l2 = l2;
     }
 
-    public bool TryGet(SKImagePyramidTileId id, out ISKImagePyramidTile? tile)
+    public bool TryGet(SKImagePyramidTileId id, out SKImage? tile)
         => _l1.TryGet(id, out tile);
 
-    public async Task<ISKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
+    public async Task<SKImage?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
     {
         // Fast path: already in L1
         if (_l1.TryGet(id, out var tile)) return tile;
@@ -157,8 +155,8 @@ public sealed class TieredCache : ISKImagePyramidTileCache
         return tile;
     }
 
-    public void Put(SKImagePyramidTileId id, ISKImagePyramidTile? tile)      => _l1.Put(id, tile);
-    public async Task PutAsync(SKImagePyramidTileId id, ISKImagePyramidTile? tile, CancellationToken ct = default)
+    public void Put(SKImagePyramidTileId id, SKImage? tile)      => _l1.Put(id, tile);
+    public async Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default)
     {
         _l1.Put(id, tile);
         await _l2.WriteAsync(id, tile, ct);
@@ -196,33 +194,33 @@ Assert.Equal(id, same);  // ✅
 
 ## Writing a Custom Cache
 
-Any class that implements `ISKImagePyramidTileCache` can be used. Tiles are stored as `ISKImagePyramidTile` — the cache has no knowledge of the rendering backend. Minimal in-memory example:
+Any class that implements `ISKImagePyramidTileCache` can be used. Tiles are stored as `SKImage` instances. Minimal in-memory example:
 
 ```csharp
 public sealed class BoundedDictionaryCache : ISKImagePyramidTileCache
 {
-    private readonly Dictionary<SKImagePyramidTileId, ISKImagePyramidTile> _store = new();
+    private readonly Dictionary<SKImagePyramidTileId, SKImage> _store = new();
     private readonly int _maxEntries;
 
     public BoundedDictionaryCache(int maxEntries) => _maxEntries = maxEntries;
 
     public int Count => _store.Count;
 
-    public bool TryGet(SKImagePyramidTileId id, out ISKImagePyramidTile? tile)
+    public bool TryGet(SKImagePyramidTileId id, out SKImage? tile)
         => _store.TryGetValue(id, out tile);
 
-    public Task<ISKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
+    public Task<SKImage?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
         => Task.FromResult(_store.TryGetValue(id, out var t) ? t : null);
 
     public bool Contains(SKImagePyramidTileId id) => _store.ContainsKey(id);
 
-    public void Put(SKImagePyramidTileId id, ISKImagePyramidTile? tile)
+    public void Put(SKImagePyramidTileId id, SKImage? tile)
     {
         if (tile is null || _store.Count >= _maxEntries) return;
         _store[id] = tile;
     }
 
-    public Task PutAsync(SKImagePyramidTileId id, ISKImagePyramidTile? tile, CancellationToken ct = default)
+    public Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default)
     {
         Put(id, tile);
         return Task.CompletedTask;

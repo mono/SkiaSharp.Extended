@@ -1,8 +1,8 @@
 # Image Pyramid — Tile Fetching
 
-Tile fetchers implement `ISKImagePyramidTileFetcher` and supply decoded `ISKImagePyramidTile` instances to the Image Pyramid controller on demand. Two built-in fetchers cover HTTP and local file sources; you can implement your own for app-package assets, databases, or any other storage.
+Tile fetchers implement `ISKImagePyramidTileFetcher` and supply decoded `SKImage` instances to the Image Pyramid controller on demand. Two built-in fetchers cover HTTP and local file sources; you can implement your own for app-package assets, databases, or any other storage.
 
-The pipeline is: **fetch** raw bytes → **decode** into a tile → **cache**. The fetcher only fetches; an `ISKImagePyramidTileDecoder` (injected at construction) handles decoding. This keeps the fetcher backend-agnostic and the decoder swappable.
+The pipeline is: **fetch** raw bytes → **decode** into an `SKImage` → **cache**. The built-in fetchers inline `SKImage.FromEncodedData()` directly — there is no separate decoder object to inject.
 
 ## ISKImagePyramidTileFetcher
 
@@ -12,7 +12,7 @@ public interface ISKImagePyramidTileFetcher : IDisposable
     /// <summary>
     /// Fetches and decodes a tile. Returns null if the tile is not available (e.g. 404).
     /// </summary>
-    Task<ISKImagePyramidTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default);
+    Task<SKImage?> FetchTileAsync(string url, CancellationToken cancellationToken = default);
 }
 ```
 
@@ -22,15 +22,14 @@ public interface ISKImagePyramidTileFetcher : IDisposable
 
 ## SKImagePyramidHttpTileFetcher
 
-Fetches tiles over HTTP and decodes them using an `ISKImagePyramidTileDecoder`. Thread-safe and reusable across multiple controllers.
+Fetches tiles over HTTP and decodes them using `SKImage.FromEncodedData`. Thread-safe and reusable across multiple controllers.
 
 ```csharp
-// Create with a decoder and an internal HttpClient (fetcher manages its lifetime)
-var decoder = new SKImagePyramidImageTileDecoder();
-var fetcher = new SKImagePyramidHttpTileFetcher(decoder);
+// Create with an internal HttpClient (fetcher manages its lifetime)
+var fetcher = new SKImagePyramidHttpTileFetcher();
 
 // Or pass your app's shared HttpClient (you manage its lifetime)
-var fetcher = new SKImagePyramidHttpTileFetcher(decoder, myHttpClient);
+var fetcher = new SKImagePyramidHttpTileFetcher(myHttpClient);
 ```
 
 The fetcher returns `null` for non-2xx responses and swallows `HttpRequestException` and `TaskCanceledException`, making it robust against transient network errors without crashing the tile pipeline.
@@ -44,8 +43,7 @@ When you supply your own `HttpClient`, the fetcher **does not dispose it** — t
 Fetches tiles from the local file system and decodes them. Useful for offline datasets, tests, or locally-generated tile pyramids.
 
 ```csharp
-var decoder = new SKImagePyramidImageTileDecoder();
-var fetcher = new SKImagePyramidFileTileFetcher(decoder);
+var fetcher = new SKImagePyramidFileTileFetcher();
 
 // Works with both plain paths and file:// URIs
 var source = SKImagePyramidDziSource.Parse(xml, "/data/images/map_files/");
@@ -58,23 +56,22 @@ Accepts both plain file paths and `file://` URIs. Returns `null` for missing fil
 
 ## Custom Fetchers
 
-Implement `ISKImagePyramidTileFetcher` to load tiles from any source. Inject an `ISKImagePyramidTileDecoder` to convert raw bytes into `ISKImagePyramidTile` — this keeps your fetcher rendering-backend-agnostic.
+Implement `ISKImagePyramidTileFetcher` to load tiles from any source. Call `SKImage.FromEncodedData()` to decode the raw bytes.
 
 ### App Package Assets (MAUI)
 
 ```csharp
-public sealed class AppPackageFetcher(ISKImagePyramidTileDecoder decoder) : ISKImagePyramidTileFetcher
+public sealed class AppPackageFetcher : ISKImagePyramidTileFetcher
 {
-    public async Task<ISKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
-            // Buffer into MemoryStream so the decoder gets a seekable stream
+            // Buffer into MemoryStream so SKImage.FromEncodedData gets a seekable stream
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms, ct);
-            ms.Position = 0;
-            return decoder.Decode(ms);
+            return SKImage.FromEncodedData(ms.ToArray());
         }
         catch
         {
@@ -86,10 +83,10 @@ public sealed class AppPackageFetcher(ISKImagePyramidTileDecoder decoder) : ISKI
 }
 ```
 
-Use it with the SkiaSharp decoder:
+Use it directly (no decoder needed):
 
 ```csharp
-var fetcher = new AppPackageFetcher(new SKImagePyramidImageTileDecoder());
+var fetcher = new AppPackageFetcher();
 controller.Load(source, fetcher);
 ```
 
@@ -112,16 +109,16 @@ var xml = await reader.ReadToEndAsync();
 
 // Use "image_files/" as base URI to match the MauiAsset LogicalName prefix
 var source = SKImagePyramidDziSource.Parse(xml, "image_files/");
-controller.Load(source, new AppPackageFetcher(new SKImagePyramidImageTileDecoder()));
+controller.Load(source, new AppPackageFetcher());
 ```
 
 ### Custom Authentication or Headers
 
 ```csharp
-public sealed class AuthenticatedFetcher(HttpClient http, string token, ISKImagePyramidTileDecoder decoder)
+public sealed class AuthenticatedFetcher(HttpClient http, string token)
     : ISKImagePyramidTileFetcher
 {
-    public async Task<ISKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Authorization = new("Bearer", token);
@@ -131,11 +128,8 @@ public sealed class AuthenticatedFetcher(HttpClient http, string token, ISKImage
             using var response = await http.SendAsync(request, ct);
             if (!response.IsSuccessStatusCode) return null;
 
-            using var ms = new MemoryStream();
-            using var stream = await response.Content.ReadAsStreamAsync(ct);
-            await stream.CopyToAsync(ms, ct);
-            ms.Position = 0;
-            return decoder.Decode(ms);
+            var bytes = await response.Content.ReadAsByteArrayAsync(ct);
+            return SKImage.FromEncodedData(bytes);
         }
         catch { return null; }
     }
@@ -147,18 +141,15 @@ public sealed class AuthenticatedFetcher(HttpClient http, string token, ISKImage
 ### In-Memory or Pre-Loaded Tiles
 
 ```csharp
-public sealed class PreloadedFetcher(Dictionary<string, byte[]> tiles, ISKImagePyramidTileDecoder decoder)
+public sealed class PreloadedFetcher(Dictionary<string, byte[]> tiles)
     : ISKImagePyramidTileFetcher
 {
-    public Task<ISKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
+    public Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
         if (tiles.TryGetValue(url, out var bytes))
-        {
-            using var ms = new MemoryStream(bytes);
-            return Task.FromResult(decoder.Decode(ms));
-        }
-        return Task.FromResult<ISKImagePyramidTile?>(null);
+            return Task.FromResult(SKImage.FromEncodedData(bytes));
+        return Task.FromResult<SKImage?>(null);
     }
 
     public void Dispose() { }

@@ -16,7 +16,7 @@ A **tiled image pyramid** pre-slices a large image into tiles at multiple resolu
 
 The system is intentionally minimal — there is **no custom control** and **no gesture system**. You wire the services directly to a plain `SKCanvasView`, giving you full control.
 
-> **Library split:** `SkiaSharp.Extended.Abstractions` contains platform-agnostic types (controller, viewport, cache and fetcher interfaces). `SkiaSharp.Extended` contains the SkiaSharp-specific implementations (`SKImagePyramidRenderer`, `SKImagePyramidImageTile`, `SKImagePyramidImageTileDecoder`). In most cases you only need `SkiaSharp.Extended`.
+> All types — controller, viewport, interfaces and SkiaSharp implementations — live in a single `SkiaSharp.Extended` library. There is no separate Abstractions package.
 
 ```mermaid
 graph TD
@@ -27,7 +27,6 @@ graph TD
     Controller["SKImagePyramidController"]
     Cache["ISKImagePyramidTileCache"]
     Fetcher["ISKImagePyramidTileFetcher"]
-    Decoder["ISKImagePyramidTileDecoder"]
     Renderer["ISKImagePyramidRenderer"]
     Canvas["SKCanvasView / SKGLView"]
 
@@ -37,7 +36,6 @@ graph TD
     Source --> Controller
     Controller --> Cache
     Controller --> Fetcher
-    Fetcher --> Decoder
     Controller --> Renderer
     Renderer --> Canvas
 ```
@@ -53,9 +51,7 @@ graph TD
 | `ISKImagePyramidTileCache` | Pluggable tile cache (in-memory, browser storage, disk, tiered). |
 | `SKImagePyramidMemoryTileCache` | Default thread-safe LRU in-memory cache. |
 | `ISKImagePyramidTileFetcher` | Pluggable fetcher (HTTP, file system, app package). |
-| `SKImagePyramidHttpTileFetcher` | Built-in HTTP fetcher using `HttpClient`. |
-| `ISKImagePyramidTileDecoder` | Converts a raw stream into an `ISKImagePyramidTile`. |
-| `SKImagePyramidImageTileDecoder` | SkiaSharp decoder: stream → `SKImage` → `SKImagePyramidImageTile`. |
+| `SKImagePyramidHttpTileFetcher` | Built-in HTTP fetcher using `HttpClient`; decodes with `SKImage.FromEncodedData`. |
 | `ISKImagePyramidRenderer` | Pluggable renderer interface. |
 | `SKImagePyramidRenderer` | Default SkiaSharp renderer; LOD blending, tile compositing. |
 
@@ -72,17 +68,15 @@ var controller = new SKImagePyramidController();
 ### 2. Load an image source
 
 ```csharp
-var decoder = new SKImagePyramidImageTileDecoder();
-
 // Deep Zoom Image (DZI)
 var xml = await httpClient.GetStringAsync("https://example.com/image.dzi");
 var source = SKImagePyramidDziSource.Parse(xml, "https://example.com/image_files/");
-controller.Load(source, new SKImagePyramidHttpTileFetcher(decoder));
+controller.Load(source, new SKImagePyramidHttpTileFetcher());
 
 // IIIF Image API
 var json = await httpClient.GetStringAsync("https://example.com/image/info.json");
 var iiifSource = SKImagePyramidIiifSource.Parse(json);
-controller.Load(iiifSource, new SKImagePyramidHttpTileFetcher(decoder));
+controller.Load(iiifSource, new SKImagePyramidHttpTileFetcher());
 ```
 
 ### 3. Wire the canvas
