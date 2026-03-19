@@ -37,7 +37,7 @@ public class ImagePyramidRenderPipelineTest
             var bmp = new SKBitmap(dzi.TileSize, dzi.TileSize);
             using var canvas2 = new SKCanvas(bmp);
             canvas2.Clear(SKColors.CornflowerBlue);
-            cache.Put(request.TileId, new SKImagePyramidImageTile(SKImage.FromBitmap(bmp)));
+            cache.Put(request.TileId, SKImage.FromBitmap(bmp));
         }
 
         // Render

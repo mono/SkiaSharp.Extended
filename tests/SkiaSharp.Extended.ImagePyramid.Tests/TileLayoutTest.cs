@@ -152,7 +152,7 @@ public class TileLayoutTest
         // Add parent tile to cache
         var parentId = new SKImagePyramidTileId(5, 1, 1);
         var bitmap = new SKBitmap(256, 256);
-        cache.Put(parentId, new SKImagePyramidImageTile(SKImage.FromBitmap(bitmap)));
+        cache.Put(parentId, SKImage.FromBitmap(bitmap));
 
         // Request child tile at level 7
         var childId = new SKImagePyramidTileId(7, 4, 4); // (4/2=2, 4/2=2) -> (2/2=1, 2/2=1) at level 5
@@ -187,8 +187,8 @@ public class TileLayoutTest
         // Add tiles at levels 2 and 4
         var level2 = new SKImagePyramidTileId(2, 0, 0);
         var level4 = new SKImagePyramidTileId(4, 2, 2);
-        cache.Put(level2, new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(256, 256))));
-        cache.Put(level4, new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(256, 256))));
+        cache.Put(level2, SKImage.Create(new SKImageInfo(256, 256)));
+        cache.Put(level4, SKImage.Create(new SKImageInfo(256, 256)));
 
         // Request level 6, col=8, row=8 → parent at level 5 = (4,4), level 4 = (2,2)
         var childId = new SKImagePyramidTileId(6, 8, 8);
@@ -212,8 +212,8 @@ public class TileLayoutTest
         var src = layout.GetFallbackSourceRect(child, parent, dzi);
 
         // For a 1-level difference, the child should be in the top-left quadrant
-        Assert.True(src.X >= 0);
-        Assert.True(src.Y >= 0);
+        Assert.True(src.Left >= 0);
+        Assert.True(src.Top >= 0);
         Assert.True(src.Width > 0);
         Assert.True(src.Height > 0);
     }
@@ -254,7 +254,7 @@ public class TileLayoutTest
         // Put parent tile (level 8, col 1, row 1) in cache
         var parentId = new SKImagePyramidTileId(8, 1, 1);
         var bitmap = new SKBitmap(256, 256);
-        cache.Put(parentId, new SKImagePyramidImageTile(SKImage.FromBitmap(bitmap)));
+        cache.Put(parentId, SKImage.FromBitmap(bitmap));
 
         // Request child at level 9 (col 2, row 2 → parent col=1, row=1 at level 8)
         var childId = new SKImagePyramidTileId(9, 2, 2);
@@ -293,10 +293,10 @@ public class TileLayoutTest
 
         // Source rect must be within parent tile bounds
         var parentBounds = dzi.GetTileBounds(parent.Level, parent.Col, parent.Row);
-        Assert.True(src.X >= 0, $"srcX {src.X} should be >= 0");
-        Assert.True(src.Y >= 0, $"srcY {src.Y} should be >= 0");
-        Assert.True(src.X + src.Width <= parentBounds.Width, $"srcX+srcW ({src.X + src.Width}) should be <= parent width ({parentBounds.Width})");
-        Assert.True(src.Y + src.Height <= parentBounds.Height, $"srcY+srcH ({src.Y + src.Height}) should be <= parent height ({parentBounds.Height})");
+        Assert.True(src.Left >= 0, $"srcX {src.Left} should be >= 0");
+        Assert.True(src.Top >= 0, $"srcY {src.Top} should be >= 0");
+        Assert.True(src.Left + src.Width <= parentBounds.Width, $"srcX+srcW ({src.Left + src.Width}) should be <= parent width ({parentBounds.Width})");
+        Assert.True(src.Top + src.Height <= parentBounds.Height, $"srcY+srcH ({src.Top + src.Height}) should be <= parent height ({parentBounds.Height})");
         Assert.True(src.Width > 0);
         Assert.True(src.Height > 0);
     }
@@ -311,7 +311,7 @@ public class TileLayoutTest
 
         // Add tile at level 1
         var level1 = new SKImagePyramidTileId(1, 0, 0);
-        cache.Put(level1, new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(256, 256))));
+        cache.Put(level1, SKImage.Create(new SKImageInfo(256, 256)));
 
         // Request level 5, but set minLevel=3 — should not find level 1
         var childId = new SKImagePyramidTileId(5, 0, 0);
@@ -352,8 +352,8 @@ public class TileLayoutTest
 
         var src = layout.GetFallbackSourceRect(child, parent, dzi);
 
-        Assert.Equal(0, src.X, 1);
-        Assert.Equal(0, src.Y, 1);
+        Assert.Equal(0, src.Left, 1);
+        Assert.Equal(0, src.Top, 1);
         // At 2 levels difference, child size / 4 should fit within parent
         Assert.True(src.Width > 0);
         Assert.True(src.Height > 0);
@@ -372,7 +372,7 @@ public class TileLayoutTest
 
         var src = layout.GetFallbackSourceRect(child, parent, dzi);
 
-        Assert.True(src.X > 0, "Child in bottom-right quadrant should have positive srcX");
-        Assert.True(src.Y > 0, "Child in bottom-right quadrant should have positive srcY");
+        Assert.True(src.Left > 0, "Child in bottom-right quadrant should have positive srcX");
+        Assert.True(src.Top > 0, "Child in bottom-right quadrant should have positive srcY");
     }
 }

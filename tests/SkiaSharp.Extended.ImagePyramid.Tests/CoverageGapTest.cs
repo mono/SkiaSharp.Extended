@@ -199,8 +199,8 @@ public class CoverageGapTest
     /// <summary>A tile fetcher that always returns null (simulates 404s).</summary>
     private class NullTileFetcher : ISKImagePyramidTileFetcher
     {
-        public Task<ISKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
-            => Task.FromResult<ISKImagePyramidTile?>(null);
+        public Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
+            => Task.FromResult<SKImage?>(null);
         public void Dispose() { }
     }
 }

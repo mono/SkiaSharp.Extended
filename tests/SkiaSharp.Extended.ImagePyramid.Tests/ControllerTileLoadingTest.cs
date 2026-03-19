@@ -162,7 +162,7 @@ public class ControllerTileLoadingTest
 
         controller.Load(dzi, fetcher);
         controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0),
-            new SKImagePyramidImageTile(CreateSolidImage(256, 256, SKColors.Blue)));
+            CreateSolidImage(256, 256, SKColors.Blue));
 
         using var surface = SKSurface.Create(new SKImageInfo(400, 400));
         using var renderer = new SKImagePyramidRenderer();
@@ -200,7 +200,7 @@ public class ControllerTileLoadingTest
 /// </summary>
 internal class ThrowingTileFetcher : ISKImagePyramidTileFetcher
 {
-    public Task<ISKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
+    public Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         throw new InvalidOperationException("Simulated fetch failure");
     }
@@ -213,7 +213,7 @@ internal class ThrowingTileFetcher : ISKImagePyramidTileFetcher
 /// </summary>
 internal class SlowTileFetcher : ISKImagePyramidTileFetcher
 {
-    public async Task<ISKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         await Task.Delay(TimeSpan.FromSeconds(60), ct);
         return null;

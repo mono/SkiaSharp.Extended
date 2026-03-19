@@ -19,7 +19,7 @@ public class TileCacheThreadSafetyTest
             Task.Run(() =>
             {
                 var id = new SKImagePyramidTileId(i % 10, i / 10, 0);
-                cache.Put(id, new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+                cache.Put(id, SKImage.Create(new SKImageInfo(10, 10)));
             }));
 
         await Task.WhenAll(tasks);
@@ -37,7 +37,7 @@ public class TileCacheThreadSafetyTest
         // Pre-populate
         for (int i = 0; i < 50; i++)
         {
-            cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+            cache.Put(new SKImagePyramidTileId(i, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
         }
 
         // Concurrent reads and writes
@@ -51,7 +51,7 @@ public class TileCacheThreadSafetyTest
             }));
             tasks.Add(Task.Run(() =>
             {
-                cache.Put(new SKImagePyramidTileId(50 + localI, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+                cache.Put(new SKImagePyramidTileId(50 + localI, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
             }));
         }
 
@@ -70,7 +70,7 @@ public class TileCacheThreadSafetyTest
         var tasks = Enumerable.Range(0, 100).Select(i =>
             Task.Run(() =>
             {
-                cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+                cache.Put(new SKImagePyramidTileId(i, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
             }));
 
         await Task.WhenAll(tasks);
@@ -85,7 +85,7 @@ public class TileCacheThreadSafetyTest
         var cache = new SKImagePyramidMemoryTileCache(100);
 
         for (int i = 0; i < 50; i++)
-            cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+            cache.Put(new SKImagePyramidTileId(i, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
 
         var tasks = Enumerable.Range(0, 50).Select(i =>
             Task.Run(() =>
@@ -110,7 +110,7 @@ public class TileCacheThreadSafetyTest
             tasks.Add(Task.Run(() =>
             {
                 for (int j = 0; j < 10; j++)
-                    cache.Put(new SKImagePyramidTileId(localI * 10 + j, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+                    cache.Put(new SKImagePyramidTileId(localI * 10 + j, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
             }));
         }
 
@@ -142,7 +142,7 @@ public class TileCacheThreadSafetyTest
         // Pre-populate the cache to give it some initial state
         for (int i = 0; i < 50; i++)
         {
-            cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+            cache.Put(new SKImagePyramidTileId(i, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
         }
 
         var tasks = new List<Task>();
@@ -159,7 +159,7 @@ public class TileCacheThreadSafetyTest
                     {
                         var tileId = new SKImagePyramidTileId(localThreadId * 1000 + i, i % 10, i % 5);
                         var bmp = new SKBitmap(10, 10);
-                        cache.Put(tileId, new SKImagePyramidImageTile(SKImage.FromBitmap(bmp)));
+                        cache.Put(tileId, SKImage.FromBitmap(bmp));
                     }
                 }
                 catch (Exception ex)
@@ -234,7 +234,7 @@ public class TileCacheThreadSafetyTest
                 {
                     var tileId = new SKImagePyramidTileId(5000 + i, 0, 0);
                     var bmp = new SKBitmap(10, 10);
-                    cache.Put(tileId, new SKImagePyramidImageTile(SKImage.FromBitmap(bmp)));
+                    cache.Put(tileId, SKImage.FromBitmap(bmp));
                 }
             }
             catch (Exception ex)
@@ -258,7 +258,7 @@ public class TileCacheThreadSafetyTest
 
         // Verify that the cache state is valid (no corruption)
         // Attempting to access or modify after dispose should be safe
-        cache.Put(new SKImagePyramidTileId(9999, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+        cache.Put(new SKImagePyramidTileId(9999, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
         Assert.Equal(0, cache.Count); // Should still be empty since disposed
 
         // Final flush should not throw
@@ -278,7 +278,7 @@ public class TileCacheThreadSafetyTest
         // Pre-populate
         for (int i = 0; i < 20; i++)
         {
-            cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+            cache.Put(new SKImagePyramidTileId(i, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
         }
 
         // Start Dispose in one thread
@@ -300,7 +300,7 @@ public class TileCacheThreadSafetyTest
                 try
                 {
                     var bmp = new SKBitmap(10, 10);
-                    cache.Put(new SKImagePyramidTileId(100 + i, 0, 0), new SKImagePyramidImageTile(SKImage.FromBitmap(bmp)));
+                    cache.Put(new SKImagePyramidTileId(100 + i, 0, 0), SKImage.FromBitmap(bmp));
                 }
                 catch (ObjectDisposedException)
                 {
@@ -336,7 +336,7 @@ public class TileCacheThreadSafetyTest
 
             // Pre-populate
             for (int i = 0; i < 20; i++)
-                cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+                cache.Put(new SKImagePyramidTileId(i, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
 
             var tasks = new List<Task>();
 
@@ -351,7 +351,7 @@ public class TileCacheThreadSafetyTest
                         for (int i = 0; i < 200; i++)
                         {
                             var bmp = new SKBitmap(10, 10);
-                            cache.Put(new SKImagePyramidTileId(localThreadId * 200 + i, 0, 0), new SKImagePyramidImageTile(SKImage.FromBitmap(bmp)));
+                            cache.Put(new SKImagePyramidTileId(localThreadId * 200 + i, 0, 0), SKImage.FromBitmap(bmp));
                         }
                     }
                     catch (Exception ex)
@@ -395,7 +395,7 @@ public class TileCacheThreadSafetyTest
 
         // Add some items that will be evicted
         for (int i = 0; i < 100; i++)
-            cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+            cache.Put(new SKImagePyramidTileId(i, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
 
         // Dispose the cache (should clear everything and pending disposals)
         cache.Dispose();
@@ -414,7 +414,7 @@ public class TileCacheThreadSafetyTest
 
         // Add some items
         for (int i = 0; i < 30; i++)
-            cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+            cache.Put(new SKImagePyramidTileId(i, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
 
         var tasks = Enumerable.Range(0, 10).Select(i =>
             Task.Run(() =>

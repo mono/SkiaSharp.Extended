@@ -24,15 +24,15 @@ internal class MemoryTileFetcher : ISKImagePyramidTileFetcher
         _tiles[url] = surface.Snapshot();
     }
 
-    public Task<ISKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
+    public Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         FetchCount++;
         FetchedUrls.Add(url);
 
         if (_tiles.TryGetValue(url, out var image))
-            return Task.FromResult<ISKImagePyramidTile?>(new SKImagePyramidImageTile(image));
+            return Task.FromResult<SKImage?>(image);
 
-        return Task.FromResult<ISKImagePyramidTile?>(null);
+        return Task.FromResult<SKImage?>(null);
     }
 
     public void Dispose()

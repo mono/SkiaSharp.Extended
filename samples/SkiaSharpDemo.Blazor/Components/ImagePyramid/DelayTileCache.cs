@@ -1,3 +1,4 @@
+using SkiaSharp;
 using SkiaSharp.Extended;
 using System;
 using System.Threading;
@@ -26,16 +27,16 @@ public sealed class DelayTileCache(ISKImagePyramidTileCache inner) : ISKImagePyr
 
     public int Count => _inner.Count;
 
-    public bool TryGet(SKImagePyramidTileId id, out ISKImagePyramidTile? tile) => _inner.TryGet(id, out tile);
+    public bool TryGet(SKImagePyramidTileId id, out SKImage? tile) => _inner.TryGet(id, out tile);
 
-    public Task<ISKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
+    public Task<SKImage?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
         => _inner.TryGetAsync(id, ct);
 
     public bool Contains(SKImagePyramidTileId id) => _inner.Contains(id);
 
-    public void Put(SKImagePyramidTileId id, ISKImagePyramidTile? tile) => _inner.Put(id, tile);
+    public void Put(SKImagePyramidTileId id, SKImage? tile) => _inner.Put(id, tile);
 
-    public async Task PutAsync(SKImagePyramidTileId id, ISKImagePyramidTile? tile, CancellationToken ct = default)
+    public async Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default)
     {
         if (IsEnabled)
         {

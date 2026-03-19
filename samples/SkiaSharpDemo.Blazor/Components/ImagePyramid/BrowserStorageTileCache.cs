@@ -24,14 +24,14 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
     // In-memory index so Contains/TryGet (sync) can return fast without JS interop round-trips.
     // When full, oldest entry is evicted (it remains in sessionStorage and can be re-hydrated).
     private const int MaxMemoryEntries = 512;
-    private readonly ConcurrentDictionary<SKImagePyramidTileId, SKImagePyramidImageTile> _memIndex = new();
+    private readonly ConcurrentDictionary<SKImagePyramidTileId, SKImage> _memIndex = new();
     private int _storageCount;
 
     public int Count => _memIndex.Count;
 
     // Sync TryGet only looks up the in-memory index (populated when we put tiles).
     // The renderer uses TryGet during drawing -- it must not block on JS interop.
-    public bool TryGet(SKImagePyramidTileId id, out ISKImagePyramidTile? tile)
+    public bool TryGet(SKImagePyramidTileId id, out SKImage? tile)
     {
         if (_memIndex.TryGetValue(id, out var imgTile))
         {
@@ -44,7 +44,7 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
 
     // TryGetAsync checks browser storage and decodes the image.
     // Called by the controller before hitting the network -- no need to double-fetch.
-    public async Task<ISKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
+    public async Task<SKImage?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
     {
         // Fast-path: already in memory index.
         if (_memIndex.TryGetValue(id, out var cached))
@@ -61,36 +61,35 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
             var image = SKImage.FromEncodedData(bytes);
             if (image is null) return null;
 
-            var tile = new SKImagePyramidImageTile(image);
-            AddToMemIndex(id, tile);
-            return tile;
+            AddToMemIndex(id, image);
+            return image;
         }
         catch { return null; }
     }
 
     public bool Contains(SKImagePyramidTileId id) => _memIndex.ContainsKey(id);
 
-    public void Put(SKImagePyramidTileId id, ISKImagePyramidTile? tile)
+    public void Put(SKImagePyramidTileId id, SKImage? tile)
     {
-        if (tile is not SKImagePyramidImageTile imgTile) return;
-        AddToMemIndex(id, imgTile);
+        if (tile is null) return;
+        AddToMemIndex(id, tile);
         // Fire-and-forget write to storage (best-effort, no await)
-        _ = WriteToBrowserAsync(id, imgTile.Image, CancellationToken.None);
+        _ = WriteToBrowserAsync(id, tile, CancellationToken.None);
     }
 
-    public async Task PutAsync(SKImagePyramidTileId id, ISKImagePyramidTile? tile, CancellationToken ct = default)
+    public async Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default)
     {
-        if (tile is not SKImagePyramidImageTile imgTile) return;
-        bool stored = await WriteToBrowserAsync(id, imgTile.Image, ct).ConfigureAwait(false);
+        if (tile is null) return;
+        bool stored = await WriteToBrowserAsync(id, tile, ct).ConfigureAwait(false);
         if (stored)
-            AddToMemIndex(id, imgTile);
+            AddToMemIndex(id, tile);
     }
 
     /// <summary>
     /// Adds or updates an entry in the in-memory index, evicting an arbitrary entry if at capacity.
     /// Evicted tiles remain in sessionStorage and can be re-hydrated on next TryGetAsync.
     /// </summary>
-    private void AddToMemIndex(SKImagePyramidTileId id, SKImagePyramidImageTile tile)
+    private void AddToMemIndex(SKImagePyramidTileId id, SKImage tile)
     {
         // If already present, replace and dispose the old tile.
         if (_memIndex.TryGetValue(id, out var existing))

@@ -284,10 +284,10 @@ public class ImagePyramidEdgeCaseTest
         var bmp1 = new SKBitmap(10, 10);
         var bmp2 = new SKBitmap(10, 10);
 
-        cache.Put(a, new SKImagePyramidImageTile(SKImage.FromBitmap(bmp1)));
+        cache.Put(a, SKImage.FromBitmap(bmp1));
         Assert.True(cache.TryGet(a, out _));
 
-        cache.Put(b, new SKImagePyramidImageTile(SKImage.FromBitmap(bmp2)));
+        cache.Put(b, SKImage.FromBitmap(bmp2));
         Assert.False(cache.TryGet(a, out _)); // Evicted
         Assert.True(cache.TryGet(b, out _));
     }
@@ -298,7 +298,7 @@ public class ImagePyramidEdgeCaseTest
         var cache = new SKImagePyramidMemoryTileCache(10);
         for (int i = 0; i < 5; i++)
         {
-            cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+            cache.Put(new SKImagePyramidTileId(i, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
         }
 
         Assert.Equal(5, cache.Count);
@@ -311,7 +311,7 @@ public class ImagePyramidEdgeCaseTest
     {
         var cache = new SKImagePyramidMemoryTileCache(10);
         var id = new SKImagePyramidTileId(0, 0, 0);
-        cache.Put(id, new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+        cache.Put(id, SKImage.Create(new SKImageInfo(10, 10)));
         Assert.True(cache.Remove(id));
         Assert.False(cache.Remove(id));
     }
@@ -325,13 +325,13 @@ public class ImagePyramidEdgeCaseTest
         var c = new SKImagePyramidTileId(0, 0, 1);
         var d = new SKImagePyramidTileId(0, 1, 1);
 
-        cache.Put(a, new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
-        cache.Put(b, new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
-        cache.Put(c, new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10))));
+        cache.Put(a, SKImage.Create(new SKImageInfo(10, 10)));
+        cache.Put(b, SKImage.Create(new SKImageInfo(10, 10)));
+        cache.Put(c, SKImage.Create(new SKImageInfo(10, 10)));
 
         cache.TryGet(a, out _); // Touch "a"
 
-        cache.Put(d, new SKImagePyramidImageTile(SKImage.Create(new SKImageInfo(10, 10)))); // Evicts "b"
+        cache.Put(d, SKImage.Create(new SKImageInfo(10, 10))); // Evicts "b"
 
         Assert.True(cache.TryGet(a, out _));
         Assert.False(cache.TryGet(b, out _)); // evicted
@@ -569,11 +569,11 @@ public class ImagePyramidEdgeCaseTest
 
             // With floor/ceil pixel-snapping, adjacent tiles overlap by at most 1px (no gap).
             // right=ceil(shared_boundary) >= left=floor(shared_boundary) always holds.
-            Assert.True(rect0.X + rect0.Width >= rect1.X,
-                $"Gap between IIIF tiles [{col},{col+1}]: right={rect0.X + rect0.Width} vs left={rect1.X}");
+            Assert.True(rect0.Left + rect0.Width >= rect1.Left,
+                $"Gap between IIIF tiles [{col},{col+1}]: right={rect0.Left + rect0.Width} vs left={rect1.Left}");
             // Overlap is at most 1px
-            Assert.True(rect0.X + rect0.Width - rect1.X <= 1,
-                $"IIIF tiles [{col},{col+1}] overlap more than 1px: {rect0.X + rect0.Width - rect1.X}px");
+            Assert.True(rect0.Left + rect0.Width - rect1.Left <= 1,
+                $"IIIF tiles [{col},{col+1}] overlap more than 1px: {rect0.Left + rect0.Width - rect1.Left}px");
         }
     }
 
@@ -609,8 +609,8 @@ public class ImagePyramidEdgeCaseTest
 
             // For DZI with overlap, tiles overlap in source space so dest rects also overlap.
             // The key property is: right edge of tile[col] is >= left edge of tile[col+1] (no gap).
-            Assert.True(rect0.X + rect0.Width >= rect1.X,
-                $"Gap between DZI tiles [{col},{col+1}]: right={rect0.X + rect0.Width} vs left={rect1.X}");
+            Assert.True(rect0.Left + rect0.Width >= rect1.Left,
+                $"Gap between DZI tiles [{col},{col+1}]: right={rect0.Left + rect0.Width} vs left={rect1.Left}");
         }
     }
 

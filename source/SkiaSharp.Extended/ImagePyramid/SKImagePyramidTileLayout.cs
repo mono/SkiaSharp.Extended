@@ -123,9 +123,9 @@ public class SKImagePyramidTileLayout
 
     /// <summary>
     /// Computes the source rect within a parent tile that corresponds to the child tile.
-    /// Returns a <see cref="Rect{T}"/> of <see cref="float"/> in parent-bitmap pixel coordinates (XYWH).
+    /// Returns an <see cref="SKRect"/> in parent-bitmap pixel coordinates.
     /// </summary>
-    public Rect<float> GetFallbackSourceRect(
+    public SKRect GetFallbackSourceRect(
         SKImagePyramidTileId requested, SKImagePyramidTileId parent, ISKImagePyramidSource tileSource)
     {
         int levelDiff = requested.Level - parent.Level;
@@ -144,7 +144,7 @@ public class SKImagePyramidTileLayout
         float srcX = reqLeftInParent - parentBounds.X;
         float srcY = reqTopInParent - parentBounds.Y;
 
-        return new Rect<float>(srcX, srcY, reqWidthInParent, reqHeightInParent);
+        return SKRect.Create(srcX, srcY, reqWidthInParent, reqHeightInParent);
     }
 
     /// <summary>
@@ -155,9 +155,9 @@ public class SKImagePyramidTileLayout
     /// <remarks>
     /// Corners are pixel-snapped using floor/ceiling so that adjacent tiles share the same
     /// integer pixel boundary, eliminating sub-pixel gaps that cause flickering seams.
-    /// Returns a <see cref="Rect{T}"/> of <see cref="float"/> in screen-pixel coordinates (XYWH).
+    /// Returns an <see cref="SKRect"/> in screen-pixel coordinates.
     /// </remarks>
-    public Rect<float> GetTileDestRect(
+    public SKRect GetTileDestRect(
         ISKImagePyramidSource tileSource,
         SKImagePyramidViewport viewport,
         SKImagePyramidTileId tileId)
@@ -186,6 +186,6 @@ public class SKImagePyramidTileLayout
         float right  = (float)Math.Ceiling(bottomRight.X);
         float bottom = (float)Math.Ceiling(bottomRight.Y);
 
-        return new Rect<float>(x, y, right - x, bottom - y);
+        return new SKRect(x, y, right, bottom);
     }
 }

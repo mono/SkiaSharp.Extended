@@ -14,7 +14,7 @@ public sealed class DebugBorderRenderer : ISKImagePyramidRenderer
 {
     private readonly SKImagePyramidRenderer _inner;
     private readonly SKPaint _borderPaint;
-    private readonly List<Rect<float>> _frameRects = new();
+    private readonly List<SKRect> _frameRects = new();
 
     public DebugBorderRenderer(SKImagePyramidRenderer inner)
     {
@@ -55,7 +55,7 @@ public sealed class DebugBorderRenderer : ISKImagePyramidRenderer
     }
 
     /// <inheritdoc />
-    public void DrawTile(Rect<float> destRect, ISKImagePyramidTile tile)
+    public void DrawTile(SKRect destRect, SKImage tile)
     {
         _inner.DrawTile(destRect, tile);
         if (ShowTileBorders)
@@ -63,7 +63,7 @@ public sealed class DebugBorderRenderer : ISKImagePyramidRenderer
     }
 
     /// <inheritdoc />
-    public void DrawFallbackTile(Rect<float> destRect, Rect<float> sourceRect, ISKImagePyramidTile tile)
+    public void DrawFallbackTile(SKRect destRect, SKRect sourceRect, SKImage tile)
     {
         _inner.DrawFallbackTile(destRect, sourceRect, tile);
         if (ShowTileBorders)
@@ -77,7 +77,7 @@ public sealed class DebugBorderRenderer : ISKImagePyramidRenderer
         if (ShowTileBorders && _inner.Canvas != null)
         {
             foreach (var r in _frameRects)
-                _inner.Canvas.DrawRect(new SKRect(r.X, r.Y, r.X + r.Width, r.Y + r.Height), _borderPaint);
+                _inner.Canvas.DrawRect(r, _borderPaint);
         }
         _inner.EndRender();
         _frameRects.Clear();

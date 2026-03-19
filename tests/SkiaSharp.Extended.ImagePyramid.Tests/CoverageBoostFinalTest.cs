@@ -13,7 +13,7 @@ public class CoverageBoostFinalTest
     [Fact]
     public async Task FileTileFetcher_CancelledTokenDuringFetch_ThrowsOperationCanceledException()
     {
-        var fetcher = new SKImagePyramidFileTileFetcher(new SKImagePyramidImageTileDecoder());
+        var fetcher = new SKImagePyramidFileTileFetcher();
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
@@ -27,7 +27,7 @@ public class CoverageBoostFinalTest
     [Fact]
     public async Task FileTileFetcher_CorruptedFilePath_ReturnsNull()
     {
-        var fetcher = new SKImagePyramidFileTileFetcher(new SKImagePyramidImageTileDecoder());
+        var fetcher = new SKImagePyramidFileTileFetcher();
 
         // A file URI with invalid characters causes an exception in Uri parsing
         // that should be caught by the generic catch and return null.
@@ -43,7 +43,7 @@ public class CoverageBoostFinalTest
     {
         var handler = new MockHttpMessageHandler(HttpStatusCode.NotFound, "");
         var client = new HttpClient(handler);
-        var fetcher = new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder(), client);
+        var fetcher = new SKImagePyramidHttpTileFetcher(client);
 
         var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
         Assert.Null(result);
@@ -57,7 +57,7 @@ public class CoverageBoostFinalTest
     {
         var handler = new MockHttpMessageHandler(HttpStatusCode.InternalServerError, "error");
         var client = new HttpClient(handler);
-        var fetcher = new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder(), client);
+        var fetcher = new SKImagePyramidHttpTileFetcher(client);
 
         var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
         Assert.Null(result);
@@ -73,7 +73,7 @@ public class CoverageBoostFinalTest
     {
         var handler = new ThrowingHttpMessageHandler(new HttpRequestException("Network error"));
         var client = new HttpClient(handler);
-        var fetcher = new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder(), client);
+        var fetcher = new SKImagePyramidHttpTileFetcher(client);
 
         var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
         Assert.Null(result);
@@ -89,7 +89,7 @@ public class CoverageBoostFinalTest
     {
         var handler = new ThrowingHttpMessageHandler(new TaskCanceledException("Timeout"));
         var client = new HttpClient(handler);
-        var fetcher = new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder(), client);
+        var fetcher = new SKImagePyramidHttpTileFetcher(client);
 
         var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
         Assert.Null(result);

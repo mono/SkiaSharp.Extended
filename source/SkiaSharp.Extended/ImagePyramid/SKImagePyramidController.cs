@@ -385,7 +385,7 @@ public class SKImagePyramidController : IDisposable
                     var fallback = _tileLayout.FindBestFallback(tileId, _cache);
                     if (fallback.HasValue)
                     {
-                        _cache.TryGet(fallback.Value, out ISKImagePyramidTile? parentTile);
+                        _cache.TryGet(fallback.Value, out SKImage? parentTile);
                         if (parentTile != null)
                         {
                             var src  = _tileLayout.GetFallbackSourceRect(tileId, fallback.Value, _tileSource);
@@ -401,7 +401,7 @@ public class SKImagePyramidController : IDisposable
         foreach (var request in visibleTiles)
         {
             var tileId = request.TileId;
-            _cache.TryGet(tileId, out ISKImagePyramidTile? tile);
+            _cache.TryGet(tileId, out SKImage? tile);
             if (tile != null)
             {
                 var dest = _tileLayout.GetTileDestRect(_tileSource, _viewport, tileId);
@@ -440,7 +440,7 @@ public class SKImagePyramidController : IDisposable
 
     private async Task LoadTileAsync(SKImagePyramidTileId tileId, CancellationToken ct)
     {
-        ISKImagePyramidTile? tile = null;
+        SKImage? tile = null;
         try
         {
             // Capture source and fetcher locally — they may be replaced while this task is in flight

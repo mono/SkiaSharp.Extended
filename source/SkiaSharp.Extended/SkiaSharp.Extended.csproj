@@ -18,8 +18,8 @@
     <PackageReference Include="SkiaSharp" Version="3.119.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SkiaSharp.Extended.Abstractions\SkiaSharp.Extended.Abstractions.csproj" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

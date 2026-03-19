@@ -9,22 +9,19 @@ using System.Threading.Tasks;
 namespace SkiaSharp.Extended;
 
 /// <summary>
-/// Fetches tiles over HTTP and decodes them using a provided <see cref="ISKImagePyramidTileDecoder"/>.
+/// Fetches tiles over HTTP and decodes them using SkiaSharp.
 /// Thread-safe and reusable.
 /// </summary>
 public class SKImagePyramidHttpTileFetcher : ISKImagePyramidTileFetcher
 {
-    private readonly ISKImagePyramidTileDecoder _decoder;
     private readonly HttpClient _httpClient;
     private readonly bool _ownsClient;
 
     /// <summary>
-    /// Creates a new <see cref="SKImagePyramidHttpTileFetcher"/> with the given decoder
-    /// and an internally-managed <see cref="HttpClient"/>.
+    /// Creates a new <see cref="SKImagePyramidHttpTileFetcher"/> with an internally-managed <see cref="HttpClient"/>.
     /// </summary>
-    public SKImagePyramidHttpTileFetcher(ISKImagePyramidTileDecoder decoder)
+    public SKImagePyramidHttpTileFetcher()
     {
-        _decoder = decoder ?? throw new ArgumentNullException(nameof(decoder));
         _httpClient = new HttpClient();
         _ownsClient = true;
     }
@@ -33,15 +30,14 @@ public class SKImagePyramidHttpTileFetcher : ISKImagePyramidTileFetcher
     /// Creates a new <see cref="SKImagePyramidHttpTileFetcher"/> using an existing
     /// <see cref="HttpClient"/> (caller retains ownership).
     /// </summary>
-    public SKImagePyramidHttpTileFetcher(ISKImagePyramidTileDecoder decoder, HttpClient httpClient)
+    public SKImagePyramidHttpTileFetcher(HttpClient httpClient)
     {
-        _decoder = decoder ?? throw new ArgumentNullException(nameof(decoder));
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _ownsClient = false;
     }
 
     /// <inheritdoc />
-    public async Task<ISKImagePyramidTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
+    public async Task<SKImage?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -59,7 +55,7 @@ public class SKImagePyramidHttpTileFetcher : ISKImagePyramidTileFetcher
                 await stream.CopyToAsync(ms, cancellationToken).ConfigureAwait(false);
             ms.Position = 0;
 #endif
-            return _decoder.Decode(ms);
+            return SKImage.FromEncodedData(ms);
         }
         catch (HttpRequestException)
         {

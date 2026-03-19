@@ -318,7 +318,7 @@
             {
                 var coll = SKImagePyramidDziCollectionSource.Parse(content);
                 coll.TilesBaseUri = baseDir;
-                _controller.Load(coll, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+                _controller.Load(coll, new SKImagePyramidHttpTileFetcher());
                 SyncZoomFromViewport();
                 _statusText = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
@@ -326,7 +326,7 @@
             {
                 // Auto-detect IIIF if URL hints at it, or if content looks like JSON
                 var tileSource = SKImagePyramidIiifSource.Parse(content);
-                _controller.Load(tileSource, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+                _controller.Load(tileSource, new SKImagePyramidHttpTileFetcher());
                 SyncZoomFromViewport();
                 _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels, IIIF)";
             }
@@ -334,7 +334,7 @@
             {
                 string tilesBase = $"{baseDir}{stem}_files/";
                 var tileSource = SKImagePyramidDziSource.Parse(content, tilesBase);
-                _controller.Load(tileSource, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+                _controller.Load(tileSource, new SKImagePyramidHttpTileFetcher());
                 SyncZoomFromViewport();
                 _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             }
@@ -444,7 +444,7 @@
         var source = _controller.TileSource;  // save BEFORE dispose
         RebuildControllerCache();
         if (source != null)
-            _controller.Load(source, new SkiaSharp.Extended.SKImagePyramidHttpTileFetcher(new SkiaSharp.Extended.SKImagePyramidImageTileDecoder()));
+            _controller.Load(source, new SkiaSharp.Extended.SKImagePyramidHttpTileFetcher());
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
@@ -454,7 +454,7 @@
         var source = _controller.TileSource;  // save BEFORE dispose
         RebuildControllerCache();
         if (source != null)
-            _controller.Load(source, new SkiaSharp.Extended.SKImagePyramidHttpTileFetcher(new SkiaSharp.Extended.SKImagePyramidImageTileDecoder()));
+            _controller.Load(source, new SkiaSharp.Extended.SKImagePyramidHttpTileFetcher());
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
