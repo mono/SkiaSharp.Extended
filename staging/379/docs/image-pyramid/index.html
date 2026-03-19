@@ -99,7 +99,7 @@
 <h2 id="architecture">Architecture</h2>
 <p>The system is intentionally minimal — there is <strong>no custom control</strong> and <strong>no gesture system</strong>. You wire the services directly to a plain <code>SKCanvasView</code>, giving you full control.</p>
 <blockquote>
-<p><strong>Library split:</strong> <code>SkiaSharp.Extended.Abstractions</code> contains platform-agnostic types (controller, viewport, cache and fetcher interfaces). <code>SkiaSharp.Extended</code> contains the SkiaSharp-specific implementations (<code>SKImagePyramidRenderer</code>, <code>SKImagePyramidImageTile</code>, <code>SKImagePyramidImageTileDecoder</code>). In most cases you only need <code>SkiaSharp.Extended</code>.</p>
+<p>All types — controller, viewport, interfaces and SkiaSharp implementations — live in a single <code>SkiaSharp.Extended</code> library. There is no separate Abstractions package.</p>
 </blockquote>
 <pre><code class="lang-mermaid">graph TD
     Src1[&quot;SKImagePyramidDziSource (DZI)&quot;]
@@ -109,7 +109,6 @@
     Controller[&quot;SKImagePyramidController&quot;]
     Cache[&quot;ISKImagePyramidTileCache&quot;]
     Fetcher[&quot;ISKImagePyramidTileFetcher&quot;]
-    Decoder[&quot;ISKImagePyramidTileDecoder&quot;]
     Renderer[&quot;ISKImagePyramidRenderer&quot;]
     Canvas[&quot;SKCanvasView / SKGLView&quot;]
 
@@ -119,7 +118,6 @@
     Source --&gt; Controller
     Controller --&gt; Cache
     Controller --&gt; Fetcher
-    Fetcher --&gt; Decoder
     Controller --&gt; Renderer
     Renderer --&gt; Canvas
 </code></pre>
@@ -169,15 +167,7 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>SKImagePyramidHttpTileFetcher</code></td>
-<td style="text-align: left;">Built-in HTTP fetcher using <code>HttpClient</code>.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ISKImagePyramidTileDecoder</code></td>
-<td style="text-align: left;">Converts a raw stream into an <code>ISKImagePyramidTile</code>.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>SKImagePyramidImageTileDecoder</code></td>
-<td style="text-align: left;">SkiaSharp decoder: stream → <code>SKImage</code> → <code>SKImagePyramidImageTile</code>.</td>
+<td style="text-align: left;">Built-in HTTP fetcher using <code>HttpClient</code>; decodes with <code>SKImage.FromEncodedData</code>.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ISKImagePyramidRenderer</code></td>
@@ -196,17 +186,15 @@
 var controller = new SKImagePyramidController();
 </code></pre>
 <h3 id="2-load-an-image-source">2. Load an image source</h3>
-<pre><code class="lang-csharp">var decoder = new SKImagePyramidImageTileDecoder();
-
-// Deep Zoom Image (DZI)
+<pre><code class="lang-csharp">// Deep Zoom Image (DZI)
 var xml = await httpClient.GetStringAsync(&quot;https://example.com/image.dzi&quot;);
 var source = SKImagePyramidDziSource.Parse(xml, &quot;https://example.com/image_files/&quot;);
-controller.Load(source, new SKImagePyramidHttpTileFetcher(decoder));
+controller.Load(source, new SKImagePyramidHttpTileFetcher());
 
 // IIIF Image API
 var json = await httpClient.GetStringAsync(&quot;https://example.com/image/info.json&quot;);
 var iiifSource = SKImagePyramidIiifSource.Parse(json);
-controller.Load(iiifSource, new SKImagePyramidHttpTileFetcher(decoder));
+controller.Load(iiifSource, new SKImagePyramidHttpTileFetcher());
 </code></pre>
 <h3 id="3-wire-the-canvas">3. Wire the canvas</h3>
 <pre><code class="lang-csharp">private readonly SKImagePyramidRenderer _renderer = new();
@@ -297,7 +285,7 @@ void OnPaintSurface(SKPaintSurfaceEventArgs e)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6f26325
+          source: PR #379 · 05923e1
         </div>
       </div>
     </footer>

@@ -110,7 +110,7 @@ var json = await http.GetStringAsync(&quot;https://example.org/iiif/image/my-ima
 var source = SKImagePyramidIiifSource.Parse(json);
 
 // Load into the controller (same as DZI)
-controller.Load(source, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+controller.Load(source, new SKImagePyramidHttpTileFetcher());
 </code></pre>
 <h3 id="construct-manually">Construct manually</h3>
 <pre><code class="lang-csharp">var source = new SKImagePyramidIiifSource(
@@ -336,7 +336,7 @@ accepts any source type, making it easy to add support for other formats.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6f26325
+          source: PR #379 · 05923e1
         </div>
       </div>
     </footer>

@@ -113,7 +113,7 @@
         var baseUrl = new Uri(Http.BaseAddress!, &quot;deepzoom/image_files/&quot;).ToString();
         var source  = SKImagePyramidDziSource.Parse(xml, baseUrl);
 
-        _controller.Load(source, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+        _controller.Load(source, new SKImagePyramidHttpTileFetcher());
     }
 
     private void OnPaintSurface(SKPaintSurfaceEventArgs e)
@@ -191,7 +191,7 @@
 <pre><code class="lang-csharp">var xml = await Http.GetStringAsync(&quot;collection.dzc&quot;);
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = Http.BaseAddress!.ToString();
-_controller!.Load(collection, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+_controller!.Load(collection, new SKImagePyramidHttpTileFetcher());
 </code></pre>
 <h2 id="custom-cache">Custom Cache</h2>
 <p>Pass a custom <code>ISKImagePyramidTileCache</code> to the controller for tiered caching or controlled experiments:</p>
@@ -245,7 +245,7 @@ public void OnCanvasResized()
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6f26325
+          source: PR #379 · 05923e1
         </div>
       </div>
     </footer>

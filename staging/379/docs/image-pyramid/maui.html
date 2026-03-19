@@ -134,7 +134,7 @@ public partial class ImagePyramidPage : ContentPage
         var xml = await reader.ReadToEndAsync();
 
         var source = SKImagePyramidDziSource.Parse(xml, &quot;image_files/&quot;);
-        _controller.Load(source, new AppPackageFetcher(new SKImagePyramidImageTileDecoder()));
+        _controller.Load(source, new AppPackageFetcher());
         canvas.InvalidateSurface();
     }
 
@@ -148,18 +148,17 @@ public partial class ImagePyramidPage : ContentPage
 }
 </code></pre>
 <h2 id="app-package-tile-fetcher">App-Package Tile Fetcher</h2>
-<p>When tiles are bundled as MAUI assets, implement <code>ISKImagePyramidTileFetcher</code> to read them via <code>FileSystem.OpenAppPackageFileAsync</code>. Inject <code>ISKImagePyramidTileDecoder</code> so the fetcher stays rendering-agnostic:</p>
-<pre><code class="lang-csharp">public sealed class AppPackageFetcher(ISKImagePyramidTileDecoder decoder) : ISKImagePyramidTileFetcher
+<p>When tiles are bundled as MAUI assets, implement <code>ISKImagePyramidTileFetcher</code> to read them via <code>FileSystem.OpenAppPackageFileAsync</code> and decode with <code>SKImage.FromEncodedData</code>:</p>
+<pre><code class="lang-csharp">public sealed class AppPackageFetcher : ISKImagePyramidTileFetcher
 {
-    public async Task&lt;ISKImagePyramidTile?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms, ct);
-            ms.Position = 0;
-            return decoder.Decode(ms);
+            return SKImage.FromEncodedData(ms.ToArray());
         }
         catch
         {
@@ -170,8 +169,8 @@ public partial class ImagePyramidPage : ContentPage
     public void Dispose() { }
 }
 </code></pre>
-<p>Use it with the SkiaSharp decoder:</p>
-<pre><code class="lang-csharp">_controller.Load(source, new AppPackageFetcher(new SKImagePyramidImageTileDecoder()));
+<p>Use it directly:</p>
+<pre><code class="lang-csharp">_controller.Load(source, new AppPackageFetcher());
 </code></pre>
 <p>Include assets in the project file:</p>
 <pre><code class="lang-xml">&lt;ItemGroup&gt;
@@ -184,7 +183,7 @@ public partial class ImagePyramidPage : ContentPage
 <h2 id="http-tile-fetcher">HTTP Tile Fetcher</h2>
 <p>For remote images, use the built-in <code>SKImagePyramidHttpTileFetcher</code>:</p>
 <pre><code class="lang-csharp">using var httpClient = new HttpClient();
-var fetcher = new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder(), httpClient);
+var fetcher = new SKImagePyramidHttpTileFetcher(httpClient);
 
 var xml    = await httpClient.GetStringAsync(&quot;https://example.com/image.dzi&quot;);
 var source = SKImagePyramidDziSource.Parse(xml, &quot;https://example.com/image_files/&quot;);
@@ -290,7 +289,7 @@ var controller = new SKImagePyramidController(cache: cache);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6f26325
+          source: PR #379 · 05923e1
         </div>
       </div>
     </footer>

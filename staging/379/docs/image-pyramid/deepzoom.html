@@ -201,7 +201,7 @@ Rect&lt;int&gt; bounds = source.GetTileBounds(level: 12, col: 3, row: 5);
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = &quot;https://example.com/&quot;;
 
-controller.Load(collection, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+controller.Load(collection, new SKImagePyramidHttpTileFetcher());
 
 // Access sub-images
 foreach (var sub in collection.Items)
@@ -307,7 +307,7 @@ int morton = SKImagePyramidDziCollectionSource.GridToMorton(col: 1, row: 1);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6f26325
+          source: PR #379 · 05923e1
         </div>
       </div>
     </footer>

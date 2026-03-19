@@ -102,12 +102,12 @@ var controller = new SKImagePyramidController(cache: myCache);
 <h3 id="loading-images">Loading Images</h3>
 <pre><code class="lang-csharp">// DZI — single image
 var source = SKImagePyramidDziSource.Parse(xmlString, &quot;https://example.com/image_files/&quot;);
-controller.Load(source, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+controller.Load(source, new SKImagePyramidHttpTileFetcher());
 
 // DZC — collection of images
 var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
 collection.TilesBaseUri = &quot;https://example.com/&quot;;
-controller.Load(collection, new SKImagePyramidHttpTileFetcher(new SKImagePyramidImageTileDecoder()));
+controller.Load(collection, new SKImagePyramidHttpTileFetcher());
 </code></pre>
 <p><code>Load()</code> resets the viewport to show the full image and starts fetching tiles in the background.</p>
 <h3 id="render-loop">Render Loop</h3>
@@ -286,14 +286,14 @@ controller.EnableLodBlending = false;
     public void BeginRender() =&gt; _inner.BeginRender();
     public void EndRender()   =&gt; _inner.EndRender();
 
-    public void DrawTile(Rect&lt;float&gt; destRect, ISKImagePyramidTile tile)
+    public void DrawTile(SKRect destRect, SKImage tile)
     {
         _inner.DrawTile(destRect, tile);
         if (ShowBorders &amp;&amp; _inner.Canvas != null)
-            _inner.Canvas.DrawRect(new SKRect(destRect.X, destRect.Y, destRect.X + destRect.Width, destRect.Y + destRect.Height), _borderPaint);
+            _inner.Canvas.DrawRect(destRect, _borderPaint);
     }
 
-    public void DrawFallbackTile(Rect&lt;float&gt; destRect, Rect&lt;float&gt; sourceRect, ISKImagePyramidTile tile)
+    public void DrawFallbackTile(SKRect destRect, SKRect sourceRect, SKImage tile)
         =&gt; _inner.DrawFallbackTile(destRect, sourceRect, tile);
 
     public void Dispose()
@@ -771,7 +771,7 @@ foreach (var req in tiles)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6f26325
+          source: PR #379 · 05923e1
         </div>
       </div>
     </footer>
