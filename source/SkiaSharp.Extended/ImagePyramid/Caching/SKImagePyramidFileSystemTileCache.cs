@@ -33,13 +33,12 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
     private readonly SKImagePyramidMemoryTileCache _l1;
     private readonly string _basePath;
     private readonly int _maxDiskTiles;
-    private readonly TimeSpan _expiry;
     private volatile string? _activeSourceId;
     private int _diskTileCount;
     private int _cleanupRunning;
 
     /// <summary>Default tile expiry when none is specified.</summary>
-    public static readonly TimeSpan DefaultExpiry = TimeSpan.FromDays(30);
+    public static readonly TimeSpan DefaultMaxExpiry = TimeSpan.FromDays(30);
 
     /// <summary>
     /// Creates a two-tier cache using the given base directory.
@@ -49,7 +48,7 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
     /// <param name="maxDiskTiles">Soft maximum tiles on disk before old tiles are cleaned up.</param>
     /// <param name="expiry">
     /// Maximum age for cached tiles. Files older than this are treated as a cache miss and deleted.
-    /// Pass <see langword="null"/> to use <see cref="DefaultExpiry"/> (30 days).
+    /// Pass <see langword="null"/> to use <see cref="DefaultMaxExpiry"/> (30 days).
     /// The controller may override this with <see cref="ISKImagePyramidSource.CacheExpiry"/> when loading a source.
     /// </param>
     public SKImagePyramidFileSystemTileCache(
@@ -65,8 +64,12 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
         _l1 = new SKImagePyramidMemoryTileCache(memoryCapacity);
         _basePath = basePath;
         _maxDiskTiles = maxDiskTiles;
-        _expiry = expiry ?? DefaultExpiry;
+        DefaultExpiry = expiry ?? DefaultMaxExpiry;
+        Expiry = DefaultExpiry;
     }
+
+    /// <summary>The default expiry used when no per-source expiry is set.</summary>
+    public TimeSpan DefaultExpiry { get; }
 
     /// <inheritdoc />
     public int Count => _l1.Count;
@@ -83,10 +86,10 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
     }
 
     /// <summary>
-    /// Maximum age for cached tiles. Files older than this are treated as a miss and deleted on next access.
+    /// Maximum age for cached tiles. Initialized to <see cref="DefaultExpiry"/>.
     /// Can be updated at runtime (e.g. by the controller when loading a source with a shorter <see cref="ISKImagePyramidSource.CacheExpiry"/>).
     /// </summary>
-    public TimeSpan Expiry { get; set; } // mutable so controller can narrow it per source
+    public TimeSpan Expiry { get; set; }
 
     /// <inheritdoc />
     /// <remarks>Only checks the in-memory L1 cache. Never touches the disk.</remarks>
@@ -106,8 +109,7 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
             return null;
 
         // Expiry check — delete stale tile and treat as a miss
-        var effectiveExpiry = Expiry > TimeSpan.Zero ? Expiry : _expiry;
-        if (DateTime.UtcNow - File.GetLastWriteTimeUtc(path) > effectiveExpiry)
+        if (DateTime.UtcNow - File.GetLastWriteTimeUtc(path) > Expiry)
         {
             try { File.Delete(path); } catch { }
             return null;
@@ -159,15 +161,14 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
     }
 
     /// <inheritdoc />
-    /// <remarks>Clears L1 and deletes all tiles in the active source directory from disk.</remarks>
+    /// <remarks>Clears L1 and deletes all cached tiles across all sources from disk.</remarks>
     public void Clear()
     {
         _l1.Clear();
-        string sourceDir = GetSourceDir(_activeSourceId);
         try
         {
-            if (Directory.Exists(sourceDir))
-                Directory.Delete(sourceDir, recursive: true);
+            if (Directory.Exists(_basePath))
+                Directory.Delete(_basePath, recursive: true);
         }
         catch { }
         Interlocked.Exchange(ref _diskTileCount, 0);

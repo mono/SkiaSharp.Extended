@@ -175,8 +175,8 @@ public class SKImagePyramidController : IDisposable
             _cache.ActiveSourceId = tileSource.SourceId;
 
             // Apply the source's recommended cache expiry to filesystem caches.
-            if (tileSource.CacheExpiry.HasValue && _cache is SKImagePyramidFileSystemTileCache fsCache)
-                fsCache.Expiry = tileSource.CacheExpiry.Value;
+            if (_cache is SKImagePyramidFileSystemTileCache fsCache)
+                fsCache.Expiry = tileSource.CacheExpiry ?? fsCache.DefaultExpiry;
 
             _viewport.AspectRatio = tileSource.AspectRatio;
             _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
@@ -468,7 +468,7 @@ public class SKImagePyramidController : IDisposable
                     return;
                 }
                 // Stamp the source identity so the cache can namespace tiles per source
-                tile = new SKImagePyramidTile(tile.Image, tile.RawData, source.SourceId);
+                tile.SourceId = source.SourceId;
             }
 
             if (tile != null && !ct.IsCancellationRequested && !_disposed)

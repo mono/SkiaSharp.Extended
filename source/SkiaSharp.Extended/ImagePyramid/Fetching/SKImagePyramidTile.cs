@@ -43,7 +43,7 @@ public sealed class SKImagePyramidTile : IDisposable
     /// The identifier of the source that produced this tile.
     /// Set by the controller after fetching; empty string if not yet stamped.
     /// </summary>
-    public string SourceId { get; }
+    public string SourceId { get; internal set; }
 
     /// <inheritdoc />
     public void Dispose()
