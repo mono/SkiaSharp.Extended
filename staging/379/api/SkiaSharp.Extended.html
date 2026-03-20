@@ -136,14 +136,25 @@ and provides tile pyramid math for computing tile URLs and dimensions.</p>
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.html">SKImagePyramidFileSystemTileCache</a></dt>
+      <dd><p>A two-tier tile cache: LRU memory (L1) + local filesystem (L2).
+Tiles are stored as raw encoded bytes on disk — no re-encoding needed.
+The filesystem tier survives app restarts and reduces network usage.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileTileFetcher.html">SKImagePyramidFileTileFetcher</a></dt>
       <dd><p>Fetches tiles from the local file system and decodes them using SkiaSharp.
-Accepts both plain file paths and <code>file://</code> URIs.</p>
+Accepts both plain file paths and <code>file://</code> URIs.
+Raw bytes are buffered before decoding, which allows the bytes to be stored
+in L2 caches without re-encoding.</p>
 </dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.html">SKImagePyramidHttpTileFetcher</a></dt>
       <dd><p>Fetches tiles over HTTP and decodes them using SkiaSharp.
+Raw bytes are buffered before decoding, which handles forward-only streams
+and allows the bytes to be stored in L2 caches without re-encoding.
 Thread-safe and reusable.</p>
 </dd>
     </dl>
@@ -171,6 +182,13 @@ Draws Deep Zoom tiles onto an <a class="xref" href="https://learn.microsoft.com/
       <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidSubImage.html">SKImagePyramidSubImage</a></dt>
       <dd><p>Represents a single sub-image within a DZC collection, with its position in the mosaic.
 Mirrors Silverlight's MultiScaleSubImage with inverted viewport coordinates.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.html">SKImagePyramidTile</a></dt>
+      <dd><p>An opaque tile that holds both the decoded image for rendering and the original
+encoded bytes for storage. This allows disk and browser caches to persist tiles
+without re-encoding, and handles forward-only streams by buffering at fetch time.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -270,7 +288,7 @@ tile URLs and dimensions. Implement this to support new image formats (DZI, IIIF
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.html">ISKImagePyramidTileCache</a></dt>
       <dd><p>Pluggable tile cache for the Deep Zoom rendering pipeline.
-Tiles are stored as <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a> instances.</p>
+Tiles are stored as <a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.html">SKImagePyramidTile</a> instances (image + raw bytes).</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -300,7 +318,7 @@ Implement this interface to plug in a custom tile source.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 05923e1
+          source: PR #379 · ee5b9c7
         </div>
       </div>
     </footer>

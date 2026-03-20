@@ -86,7 +86,7 @@
         <article data-uid="">
 <h1 id="image-pyramid--caching">Image Pyramid — Caching</h1>
 
-<p>The tile cache stores decoded <code>SKImage</code> instances so tiles don't need to be re-fetched or re-decoded on every frame. The cache is <strong>pluggable</strong> — swap implementations to tune memory usage, add persistence, or chain multiple tiers.</p>
+<p>The tile cache stores <code>SKImagePyramidTile</code> instances (decoded <code>SKImage</code> + original raw bytes) so tiles don't need to be re-fetched or re-decoded on every frame. The cache is <strong>pluggable</strong> — swap implementations to tune memory usage, add persistence, or chain multiple tiers.</p>
 <h2 id="iskimagepyramidtilecache">ISKImagePyramidTileCache</h2>
 <p>All caches implement this interface:</p>
 <pre><code class="lang-csharp">public interface ISKImagePyramidTileCache : IDisposable
@@ -213,7 +213,7 @@ var controller = new SKImagePyramidController(cache: cache);
 </tr>
 </tbody>
 </table>
-<p>Each tile is typically a 256×256 JPEG/PNG decoded to an <code>SKImage</code> — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of image RAM at maximum.</p>
+<p>Each tile is typically a 256×256 JPEG/PNG decoded to an <code>SKImagePyramidTile</code> — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of image RAM at maximum.</p>
 <hr>
 <h2 id="tiered-caching">Tiered Caching</h2>
 <p>For persistent tile storage (surviving app restarts or page reloads), add a second cache tier. The controller checks <code>TryGetAsync</code> before hitting the network:</p>
@@ -366,7 +366,7 @@ Assert.Equal(id, same);  // ✅
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 05923e1
+          source: PR #379 · ee5b9c7
         </div>
       </div>
     </footer>

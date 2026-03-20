@@ -126,13 +126,13 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/ISKImagePyramidTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Asynchronously tries to retrieve a cached tile.
+<div class="markdown level1 summary"><p>Asynchronously tries to retrieve a cached tile, including any L2 storage (disk, browser).
 A null return means cache miss — the caller should then fetch from network.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">Task&lt;SKImage?&gt; TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)</code></pre>
+  <pre><code class="lang-csharp hljs">Task&lt;SKImagePyramidTile?&gt; TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
@@ -145,7 +145,7 @@ A null return means cache miss — the caller should then fetch from network.</p
 
 <h4 class="section">Returns</h4>
 <dl class="parameters">
-  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a>&gt;</dt>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.html">SKImagePyramidTile</a>&gt;</dt>
   <dd></dd>
 </dl>
 
@@ -178,7 +178,7 @@ A null return means cache miss — the caller should then fetch from network.</p
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 05923e1
+          source: PR #379 · ee5b9c7
         </div>
       </div>
     </footer>

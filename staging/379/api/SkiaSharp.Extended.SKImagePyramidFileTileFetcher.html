@@ -100,7 +100,9 @@
   </div>
 
   <div class="markdown summary"><p>Fetches tiles from the local file system and decodes them using SkiaSharp.
-Accepts both plain file paths and <code>file://</code> URIs.</p>
+Accepts both plain file paths and <code>file://</code> URIs.
+Raw bytes are buffered before decoding, which allows the bytes to be stored
+in L2 caches without re-encoding.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -200,7 +202,7 @@ Accepts both plain file paths and <code>file://</code> URIs.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 05923e1
+          source: PR #379 · ee5b9c7
         </div>
       </div>
     </footer>

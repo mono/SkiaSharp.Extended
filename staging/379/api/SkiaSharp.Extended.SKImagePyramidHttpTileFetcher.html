@@ -100,6 +100,8 @@
   </div>
 
   <div class="markdown summary"><p>Fetches tiles over HTTP and decodes them using SkiaSharp.
+Raw bytes are buffered before decoding, which handles forward-only streams
+and allows the bytes to be stored in L2 caches without re-encoding.
 Thread-safe and reusable.</p>
 </div>
   <div class="markdown conceptual"></div>
@@ -207,7 +209,7 @@ Thread-safe and reusable.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 05923e1
+          source: PR #379 · ee5b9c7
         </div>
       </div>
     </footer>

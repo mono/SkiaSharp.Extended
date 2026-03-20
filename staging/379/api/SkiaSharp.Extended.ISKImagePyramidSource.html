@@ -142,6 +142,12 @@ tile URLs and dimensions. Implement this to support new image formats (DZI, IIIF
     <dd><p>Maximum pyramid level index. Level 0 is lowest resolution.</p>
 </dd>
   </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidSource.SourceId.html#SkiaSharp_Extended_ISKImagePyramidSource_SourceId">SourceId</a></dt>
+    <dd><p>A stable, short identifier for this source derived from its content and base URI.
+Used as a directory name in disk-based tile caches to namespace tiles per image source.</p>
+</dd>
+  </dl>
 
   <h2 class="section" id="methods">Methods
 </h2>
@@ -207,7 +213,7 @@ For DZI, the bounds include the configured overlap pixels.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 05923e1
+          source: PR #379 · ee5b9c7
         </div>
       </div>
     </footer>

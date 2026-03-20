@@ -121,27 +121,24 @@
 
 <a id="SkiaSharp_Extended_SKImagePyramidController__ctor_" data-uid="SkiaSharp.Extended.SKImagePyramidController.#ctor*"></a>
 
-<h3 id="SkiaSharp_Extended_SKImagePyramidController__ctor_SkiaSharp_Extended_ISKImagePyramidTileCache_System_Int32_" data-uid="SkiaSharp.Extended.SKImagePyramidController.#ctor(SkiaSharp.Extended.ISKImagePyramidTileCache,System.Int32)">
-  SKImagePyramidController(ISKImagePyramidTileCache?, int)
+<h3 id="SkiaSharp_Extended_SKImagePyramidController__ctor_SkiaSharp_Extended_ISKImagePyramidTileCache_" data-uid="SkiaSharp.Extended.SKImagePyramidController.#ctor(SkiaSharp.Extended.ISKImagePyramidTileCache)">
+  SKImagePyramidController(ISKImagePyramidTileCache)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidController.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Initializes a new <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.html">SKImagePyramidController</a> with an optional custom cache.
-When <code class="paramref">cache</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>, a default
-<a class="xref" href="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.html">SKImagePyramidMemoryTileCache</a> is used.</p>
+<div class="markdown level1 summary"><p>Initializes a new <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.html">SKImagePyramidController</a> with the required tile cache.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKImagePyramidController(ISKImagePyramidTileCache? cache = null, int defaultCacheCapacity = 1024)</code></pre>
+  <pre><code class="lang-csharp hljs">public SKImagePyramidController(ISKImagePyramidTileCache cache)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>cache</code> <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.html">ISKImagePyramidTileCache</a></dt>
-  <dd></dd>
-  <dt><code>defaultCacheCapacity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-  <dd></dd>
+  <dd><p>The tile cache to use. Use <a class="xref" href="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.html">SKImagePyramidMemoryTileCache</a> for a simple in-memory LRU cache.</p>
+</dd>
 </dl>
 
 
@@ -174,7 +171,7 @@ When <code class="paramref">cache</code> is <a href="https://learn.microsoft.com
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 05923e1
+          source: PR #379 · ee5b9c7
         </div>
       </div>
     </footer>

@@ -86,21 +86,21 @@
         <article data-uid="">
 <h1 id="image-pyramid--tile-fetching">Image Pyramid — Tile Fetching</h1>
 
-<p>Tile fetchers implement <code>ISKImagePyramidTileFetcher</code> and supply decoded <code>SKImage</code> instances to the Image Pyramid controller on demand. Two built-in fetchers cover HTTP and local file sources; you can implement your own for app-package assets, databases, or any other storage.</p>
-<p>The pipeline is: <strong>fetch</strong> raw bytes → <strong>decode</strong> into an <code>SKImage</code> → <strong>cache</strong>. The built-in fetchers inline <code>SKImage.FromEncodedData()</code> directly — there is no separate decoder object to inject.</p>
+<p>Tile fetchers implement <code>ISKImagePyramidTileFetcher</code> and supply <code>SKImagePyramidTile</code> instances (decoded image + original raw bytes) to the Image Pyramid controller on demand. Two built-in fetchers cover HTTP and local file sources; you can implement your own for app-package assets, databases, or any other storage.</p>
+<p>The pipeline is: <strong>fetch</strong> raw bytes → buffer into <code>byte[]</code> (handles forward-only streams) → <strong>decode</strong> into an <code>SKImage</code> → wrap as <code>SKImagePyramidTile</code> → <strong>cache</strong>. The raw bytes are stored alongside the decoded image so L2 caches can persist without re-encoding.</p>
 <h2 id="iskimagepyramidtilefetcher">ISKImagePyramidTileFetcher</h2>
 <pre><code class="lang-csharp">public interface ISKImagePyramidTileFetcher : IDisposable
 {
     /// &lt;summary&gt;
     /// Fetches and decodes a tile. Returns null if the tile is not available (e.g. 404).
     /// &lt;/summary&gt;
-    Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken cancellationToken = default);
+    Task&lt;SKImagePyramidTile?&gt; FetchTileAsync(string url, CancellationToken cancellationToken = default);
 }
 </code></pre>
 <p><strong>Return convention:</strong> Return <code>null</code> if the tile is unavailable (HTTP 404, file not found). The controller treats <code>null</code> as &quot;tile missing — keep using fallback&quot; and doesn't retry indefinitely. Throw only for unexpected errors; the controller catches and fires <code>TileFailed</code>.</p>
 <hr>
 <h2 id="skimagepyramidhttptilefetcher">SKImagePyramidHttpTileFetcher</h2>
-<p>Fetches tiles over HTTP and decodes them using <code>SKImage.FromEncodedData</code>. Thread-safe and reusable across multiple controllers.</p>
+<p>Fetches tiles over HTTP, buffers the response into a <code>byte[]</code>, then decodes with <code>SKImage.FromEncodedData</code>. Thread-safe and reusable across multiple controllers.</p>
 <pre><code class="lang-csharp">// Create with an internal HttpClient (fetcher manages its lifetime)
 var fetcher = new SKImagePyramidHttpTileFetcher();
 
@@ -121,19 +121,20 @@ controller.Load(source, fetcher);
 <p>Accepts both plain file paths and <code>file://</code> URIs. Returns <code>null</code> for missing files.</p>
 <hr>
 <h2 id="custom-fetchers">Custom Fetchers</h2>
-<p>Implement <code>ISKImagePyramidTileFetcher</code> to load tiles from any source. Call <code>SKImage.FromEncodedData()</code> to decode the raw bytes.</p>
+<p>Implement <code>ISKImagePyramidTileFetcher</code> to load tiles from any source. Buffer bytes into a <code>byte[]</code> first (handles forward-only streams), then call <code>SKImage.FromEncodedData()</code> to decode, and return <code>new SKImagePyramidTile(image, bytes)</code>.</p>
 <h3 id="app-package-assets-maui">App Package Assets (MAUI)</h3>
 <pre><code class="lang-csharp">public sealed class AppPackageFetcher : ISKImagePyramidTileFetcher
 {
-    public async Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task&lt;SKImagePyramidTile?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
-            // Buffer into MemoryStream so SKImage.FromEncodedData gets a seekable stream
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms, ct);
-            return SKImage.FromEncodedData(ms.ToArray());
+            var bytes = ms.ToArray();
+            var image = SKImage.FromEncodedData(bytes);
+            return image != null ? new SKImagePyramidTile(image, bytes) : null;
         }
         catch
         {
@@ -168,7 +169,7 @@ controller.Load(source, new AppPackageFetcher());
 <pre><code class="lang-csharp">public sealed class AuthenticatedFetcher(HttpClient http, string token)
     : ISKImagePyramidTileFetcher
 {
-    public async Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task&lt;SKImagePyramidTile?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Authorization = new(&quot;Bearer&quot;, token);
@@ -179,7 +180,8 @@ controller.Load(source, new AppPackageFetcher());
             if (!response.IsSuccessStatusCode) return null;
 
             var bytes = await response.Content.ReadAsByteArrayAsync(ct);
-            return SKImage.FromEncodedData(bytes);
+            var image = SKImage.FromEncodedData(bytes);
+            return image != null ? new SKImagePyramidTile(image, bytes) : null;
         }
         catch { return null; }
     }
@@ -191,12 +193,15 @@ controller.Load(source, new AppPackageFetcher());
 <pre><code class="lang-csharp">public sealed class PreloadedFetcher(Dictionary&lt;string, byte[]&gt; tiles)
     : ISKImagePyramidTileFetcher
 {
-    public Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public Task&lt;SKImagePyramidTile?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
         if (tiles.TryGetValue(url, out var bytes))
-            return Task.FromResult(SKImage.FromEncodedData(bytes));
-        return Task.FromResult&lt;SKImage?&gt;(null);
+        {
+            var image = SKImage.FromEncodedData(bytes);
+            return Task.FromResult(image != null ? new SKImagePyramidTile(image, bytes) : null);
+        }
+        return Task.FromResult&lt;SKImagePyramidTile?&gt;(null);
     }
 
     public void Dispose() { }
@@ -241,7 +246,7 @@ controller.Load(anotherSource, differentFetcher);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 05923e1
+          source: PR #379 · ee5b9c7
         </div>
       </div>
     </footer>

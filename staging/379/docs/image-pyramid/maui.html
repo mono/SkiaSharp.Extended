@@ -148,17 +148,19 @@ public partial class ImagePyramidPage : ContentPage
 }
 </code></pre>
 <h2 id="app-package-tile-fetcher">App-Package Tile Fetcher</h2>
-<p>When tiles are bundled as MAUI assets, implement <code>ISKImagePyramidTileFetcher</code> to read them via <code>FileSystem.OpenAppPackageFileAsync</code> and decode with <code>SKImage.FromEncodedData</code>:</p>
+<p>When tiles are bundled as MAUI assets, implement <code>ISKImagePyramidTileFetcher</code> to read them via <code>FileSystem.OpenAppPackageFileAsync</code>, buffer the bytes, and decode with <code>SKImage.FromEncodedData</code>:</p>
 <pre><code class="lang-csharp">public sealed class AppPackageFetcher : ISKImagePyramidTileFetcher
 {
-    public async Task&lt;SKImage?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task&lt;SKImagePyramidTile?&gt; FetchTileAsync(string url, CancellationToken ct = default)
     {
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms, ct);
-            return SKImage.FromEncodedData(ms.ToArray());
+            var bytes = ms.ToArray();
+            var image = SKImage.FromEncodedData(bytes);
+            return image != null ? new SKImagePyramidTile(image, bytes) : null;
         }
         catch
         {
@@ -289,7 +291,7 @@ var controller = new SKImagePyramidController(cache: cache);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 05923e1
+          source: PR #379 · ee5b9c7
         </div>
       </div>
     </footer>
