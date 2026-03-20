@@ -147,7 +147,7 @@
 </dd>
   <dt><code>expiry</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a>?</dt>
   <dd><p>Maximum age for cached tiles. Files older than this are treated as a cache miss and deleted.
-Pass <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to use <a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultExpiry.html">DefaultExpiry</a> (30 days).
+Pass <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to use <a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultMaxExpiry.html">DefaultMaxExpiry</a> (30 days).
 The controller may override this with <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidSource.CacheExpiry.html#SkiaSharp_Extended_ISKImagePyramidSource_CacheExpiry">CacheExpiry</a> when loading a source.</p>
 </dd>
 </dl>
@@ -182,7 +182,7 @@ The controller may override this with <a class="xref" href="SkiaSharp.Extended.I
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · e9334e3
+          source: PR #379 · efd633c
         </div>
       </div>
     </footer>
