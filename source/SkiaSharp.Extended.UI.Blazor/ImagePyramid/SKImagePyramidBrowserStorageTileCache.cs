@@ -41,6 +41,10 @@ public sealed class SKImagePyramidBrowserStorageTileCache : ISKImagePyramidTileC
     public int Count => _memIndex.Count;
 
     /// <inheritdoc />
+    /// <remarks>Browser storage cache does not use source namespacing; this property is ignored.</remarks>
+    public string? ActiveSourceId { get; set; }
+
+    /// <inheritdoc />
     public bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile)
     {
         if (_memIndex.TryGetValue(id, out var t))

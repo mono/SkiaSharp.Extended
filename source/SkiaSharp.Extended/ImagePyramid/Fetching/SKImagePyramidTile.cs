@@ -18,10 +18,16 @@ public sealed class SKImagePyramidTile : IDisposable
     /// </summary>
     /// <param name="image">The decoded SkiaSharp image for rendering.</param>
     /// <param name="rawData">The original encoded bytes (JPEG, PNG, etc.) for storage.</param>
-    public SKImagePyramidTile(SKImage image, byte[] rawData)
+    /// <param name="sourceId">
+    /// The identifier of the source that produced this tile.
+    /// The controller stamps this from <see cref="ISKImagePyramidSource.SourceId"/> after fetching.
+    /// Used by <see cref="SKImagePyramidFileSystemTileCache"/> to namespace tiles per image source.
+    /// </param>
+    public SKImagePyramidTile(SKImage image, byte[] rawData, string sourceId = "")
     {
         Image = image ?? throw new ArgumentNullException(nameof(image));
         RawData = rawData ?? throw new ArgumentNullException(nameof(rawData));
+        SourceId = sourceId ?? string.Empty;
     }
 
     /// <summary>The decoded image for rendering.</summary>
@@ -32,6 +38,12 @@ public sealed class SKImagePyramidTile : IDisposable
     /// Using these avoids re-encoding and preserves the original format and quality.
     /// </summary>
     public byte[] RawData { get; }
+
+    /// <summary>
+    /// The identifier of the source that produced this tile.
+    /// Set by the controller after fetching; empty string if not yet stamped.
+    /// </summary>
+    public string SourceId { get; }
 
     /// <inheritdoc />
     public void Dispose()

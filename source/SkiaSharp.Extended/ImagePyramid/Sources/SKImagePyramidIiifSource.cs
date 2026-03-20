@@ -73,6 +73,10 @@ public class SKImagePyramidIiifSource : ISKImagePyramidSource
     private string? _sourceId;
     public string SourceId => _sourceId ??= FnvHash($"{_baseId}|{_tileWidth}|{ImageWidth}x{ImageHeight}");
 
+    /// <inheritdoc/>
+    /// <remarks>IIIF server content may be updated. Defaults to 7 days.</remarks>
+    public TimeSpan? CacheExpiry => TimeSpan.FromDays(7);
+
     private static string FnvHash(string value)
     {
         uint hash = 2166136261u;

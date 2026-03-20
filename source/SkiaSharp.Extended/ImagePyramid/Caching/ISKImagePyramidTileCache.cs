@@ -15,6 +15,14 @@ public interface ISKImagePyramidTileCache : IDisposable
     /// <summary>Number of tiles currently in the cache.</summary>
     int Count { get; }
 
+    /// <summary>
+    /// The identifier of the currently active image source.
+    /// Set by the controller when a new source is loaded via <c>Load()</c>.
+    /// I/O-backed caches (e.g. filesystem, browser storage) use this to namespace tiles per source.
+    /// In-memory caches may ignore this value.
+    /// </summary>
+    string? ActiveSourceId { get; set; }
+
     /// <summary>Tries to retrieve a cached tile synchronously. Only checks in-memory storage.</summary>
     bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile);
 

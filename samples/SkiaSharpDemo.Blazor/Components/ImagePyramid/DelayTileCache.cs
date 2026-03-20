@@ -27,6 +27,13 @@ public sealed class DelayTileCache(ISKImagePyramidTileCache inner) : ISKImagePyr
 
     public int Count => _inner.Count;
 
+    /// <inheritdoc/>
+    public string? ActiveSourceId
+    {
+        get => _inner.ActiveSourceId;
+        set => _inner.ActiveSourceId = value;
+    }
+
     public bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile) => _inner.TryGet(id, out tile);
 
     public Task<SKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)

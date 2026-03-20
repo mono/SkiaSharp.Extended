@@ -1,5 +1,7 @@
 #nullable enable
 
+using System;
+
 namespace SkiaSharp.Extended;
 
 /// <summary>
@@ -54,4 +56,11 @@ public interface ISKImagePyramidSource
     /// Used as a directory name in disk-based tile caches to namespace tiles per image source.
     /// </summary>
     string SourceId { get; }
+
+    /// <summary>
+    /// The recommended maximum age for cached tiles from this source.
+    /// <see langword="null"/> means tiles are considered immutable (cache indefinitely).
+    /// The controller passes this to the cache as a hint when loading a new source.
+    /// </summary>
+    TimeSpan? CacheExpiry { get; }
 }

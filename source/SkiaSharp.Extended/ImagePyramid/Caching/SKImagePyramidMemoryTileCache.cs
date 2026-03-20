@@ -35,6 +35,10 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
     /// <summary>Maximum number of cached tiles.</summary>
     public int MaxEntries => _maxEntries;
 
+    /// <inheritdoc/>
+    /// <remarks>The memory cache does not use source namespacing; this property is ignored.</remarks>
+    public string? ActiveSourceId { get; set; }
+
     // ---- ISKImagePyramidTileCache implementation (primary) ----
 
     /// <summary>Tries to get a cached tile.</summary>

@@ -55,6 +55,10 @@ public class SKImagePyramidDziCollectionSource
     private string? _sourceId;
     public string SourceId => _sourceId ??= FnvHash($"{TilesBaseUri}|{MaxLevel}c{ItemCount}");
 
+    /// <inheritdoc/>
+    /// <remarks>DZC collection tiles are typically static (immutable URIs). Returns <see langword="null"/> to cache indefinitely.</remarks>
+    public TimeSpan? CacheExpiry => null;
+
     private static string FnvHash(string value)
     {
         uint hash = 2166136261u;

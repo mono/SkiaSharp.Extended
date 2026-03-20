@@ -23,40 +23,70 @@ namespace SkiaSharp.Extended;
 /// Blazor WebAssembly has no real filesystem; use <c>SKImagePyramidBrowserStorageTileCache</c> from
 /// <c>SkiaSharp.Extended.UI.Blazor</c> instead.
 /// </para>
+/// <para>
+/// Set <see cref="ISKImagePyramidTileCache.ActiveSourceId"/> (the controller does this automatically on
+/// <c>Load()</c>) so tiles from different image sources are stored in separate subdirectories.
+/// </para>
 /// </remarks>
 public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
 {
     private readonly SKImagePyramidMemoryTileCache _l1;
-    private readonly string _sourceDir;
+    private readonly string _basePath;
     private readonly int _maxDiskTiles;
+    private readonly TimeSpan _expiry;
+    private volatile string? _activeSourceId;
     private int _diskTileCount;
     private int _cleanupRunning;
+
+    /// <summary>Default tile expiry when none is specified.</summary>
+    public static readonly TimeSpan DefaultExpiry = TimeSpan.FromDays(30);
 
     /// <summary>
     /// Creates a two-tier cache using the given base directory.
     /// </summary>
     /// <param name="basePath">Root directory for tile storage (e.g. <c>FileSystem.CacheDirectory</c> on MAUI).</param>
-    /// <param name="sourceId">Per-source subdirectory name. Use <see cref="ISKImagePyramidSource.SourceId"/>.</param>
     /// <param name="memoryCapacity">Maximum tiles in the L1 memory cache.</param>
     /// <param name="maxDiskTiles">Soft maximum tiles on disk before old tiles are cleaned up.</param>
+    /// <param name="expiry">
+    /// Maximum age for cached tiles. Files older than this are treated as a cache miss and deleted.
+    /// Pass <see langword="null"/> to use <see cref="DefaultExpiry"/> (30 days).
+    /// The controller may override this with <see cref="ISKImagePyramidSource.CacheExpiry"/> when loading a source.
+    /// </param>
     public SKImagePyramidFileSystemTileCache(
         string basePath,
-        string sourceId,
         int memoryCapacity = 256,
-        int maxDiskTiles = 8192)
+        int maxDiskTiles = 8192,
+        TimeSpan? expiry = null)
     {
         if (string.IsNullOrEmpty(basePath)) throw new ArgumentException("basePath is required.", nameof(basePath));
-        if (string.IsNullOrEmpty(sourceId)) throw new ArgumentException("sourceId is required.", nameof(sourceId));
         if (memoryCapacity <= 0) throw new ArgumentOutOfRangeException(nameof(memoryCapacity));
         if (maxDiskTiles <= 0) throw new ArgumentOutOfRangeException(nameof(maxDiskTiles));
 
         _l1 = new SKImagePyramidMemoryTileCache(memoryCapacity);
-        _sourceDir = Path.Combine(basePath, "skimgpyramid", sourceId);
+        _basePath = basePath;
         _maxDiskTiles = maxDiskTiles;
+        _expiry = expiry ?? DefaultExpiry;
     }
 
     /// <inheritdoc />
     public int Count => _l1.Count;
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Used to namespace tiles by source. Set by the controller on <c>Load()</c>.
+    /// Tiles stored under a different source ID will not be found.
+    /// </remarks>
+    public string? ActiveSourceId
+    {
+        get => _activeSourceId;
+        set => _activeSourceId = value;
+    }
+
+    /// <summary>
+    /// Maximum age for cached tiles. Files older than this are treated as a miss and deleted on next access.
+    /// Can be updated at runtime (e.g. by the controller when loading a source with a shorter <see cref="ISKImagePyramidSource.CacheExpiry"/>).
+    /// </summary>
+    public TimeSpan Expiry { get; set; } // mutable so controller can narrow it per source
 
     /// <inheritdoc />
     /// <remarks>Only checks the in-memory L1 cache. Never touches the disk.</remarks>
@@ -64,7 +94,8 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
         => _l1.TryGet(id, out tile);
 
     /// <inheritdoc />
-    /// <remarks>Checks L1 first; on miss, checks the filesystem and promotes to L1 on hit.</remarks>
+    /// <remarks>Checks L1 first; on miss, checks the filesystem and promotes to L1 on hit.
+    /// If the on-disk tile is older than <see cref="Expiry"/>, it is deleted and treated as a miss.</remarks>
     public async Task<SKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
     {
         if (_l1.TryGet(id, out var cached))
@@ -73,6 +104,14 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
         string path = GetTilePath(id);
         if (!File.Exists(path))
             return null;
+
+        // Expiry check — delete stale tile and treat as a miss
+        var effectiveExpiry = Expiry > TimeSpan.Zero ? Expiry : _expiry;
+        if (DateTime.UtcNow - File.GetLastWriteTimeUtc(path) > effectiveExpiry)
+        {
+            try { File.Delete(path); } catch { }
+            return null;
+        }
 
         try
         {
@@ -84,7 +123,7 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
             var image = SKImage.FromEncodedData(bytes);
             if (image == null) return null;
 
-            var tile = new SKImagePyramidTile(image, bytes);
+            var tile = new SKImagePyramidTile(image, bytes, _activeSourceId ?? string.Empty);
             _l1.Put(id, tile);
             return tile;
         }
@@ -103,12 +142,12 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
     public void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile) => _l1.Put(id, tile);
 
     /// <inheritdoc />
-    /// <remarks>Stores to L1 and asynchronously writes raw bytes to disk.</remarks>
+    /// <remarks>Stores to L1 and asynchronously writes raw bytes to disk under the tile's <see cref="SKImagePyramidTile.SourceId"/> directory.</remarks>
     public async Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default)
     {
         if (tile == null) return;
         _l1.Put(id, tile);
-        await WriteToDiskAsync(id, tile.RawData, ct).ConfigureAwait(false);
+        await WriteToDiskAsync(id, tile.RawData, tile.SourceId, ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -120,14 +159,15 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
     }
 
     /// <inheritdoc />
-    /// <remarks>Clears L1 and deletes all tiles in the source directory from disk.</remarks>
+    /// <remarks>Clears L1 and deletes all tiles in the active source directory from disk.</remarks>
     public void Clear()
     {
         _l1.Clear();
+        string sourceDir = GetSourceDir(_activeSourceId);
         try
         {
-            if (Directory.Exists(_sourceDir))
-                Directory.Delete(_sourceDir, recursive: true);
+            if (Directory.Exists(sourceDir))
+                Directory.Delete(sourceDir, recursive: true);
         }
         catch { }
         Interlocked.Exchange(ref _diskTileCount, 0);
@@ -141,14 +181,18 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
 
     // ---- Private ----
 
-    private string GetTilePath(SKImagePyramidTileId id)
-        => Path.Combine(_sourceDir, id.Level.ToString(), $"{id.Col}_{id.Row}.tile");
+    private string GetSourceDir(string? sourceId)
+        => Path.Combine(_basePath, "skimgpyramid", string.IsNullOrEmpty(sourceId) ? "unknown" : sourceId);
 
-    private async Task WriteToDiskAsync(SKImagePyramidTileId id, byte[] bytes, CancellationToken ct)
+    private string GetTilePath(SKImagePyramidTileId id)
+        => Path.Combine(GetSourceDir(_activeSourceId), id.Level.ToString(), $"{id.Col}_{id.Row}.tile");
+
+    private async Task WriteToDiskAsync(SKImagePyramidTileId id, byte[] bytes, string sourceId, CancellationToken ct)
     {
         try
         {
-            string tilePath = GetTilePath(id);
+            string sourceDir = GetSourceDir(string.IsNullOrEmpty(sourceId) ? _activeSourceId : sourceId);
+            string tilePath = Path.Combine(sourceDir, id.Level.ToString(), $"{id.Col}_{id.Row}.tile");
             string dir = Path.GetDirectoryName(tilePath)!;
             Directory.CreateDirectory(dir);
 
@@ -173,8 +217,9 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
     {
         try
         {
-            if (!Directory.Exists(_sourceDir)) return;
-            var files = Directory.GetFiles(_sourceDir, "*.tile", SearchOption.AllDirectories);
+            string sourceDir = GetSourceDir(_activeSourceId);
+            if (!Directory.Exists(sourceDir)) return;
+            var files = Directory.GetFiles(sourceDir, "*.tile", SearchOption.AllDirectories);
             if (files.Length <= _maxDiskTiles) return;
             Array.Sort(files, (a, b) => File.GetLastWriteTimeUtc(a).CompareTo(File.GetLastWriteTimeUtc(b)));
             int toDelete = files.Length - (int)(_maxDiskTiles * 0.9);
