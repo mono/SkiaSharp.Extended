@@ -93,7 +93,7 @@
 
 <h1 id="SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_PutAsync_" data-uid="SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync*" class="text-break">
   Method PutAsync
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidFileSystemTileCache.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Caching/SKImagePyramidFileSystemTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
@@ -123,7 +123,7 @@
 
 <h3 id="SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_System_Threading_CancellationToken_" data-uid="SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile,System.Threading.CancellationToken)">
   PutAsync(SKImagePyramidTileId, SKImagePyramidTile?, CancellationToken)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidFileSystemTileCache.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Caching/SKImagePyramidFileSystemTileCache.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
 <div class="markdown level1 summary"><p>Stores a tile, including any L2 storage (disk, browser). Implementations may apply async I/O.</p>
@@ -157,7 +157,7 @@
 
 
 <h4 class="section" id="SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_System_Threading_CancellationToken__remarks">Remarks</h4>
-<div class="markdown level1 remarks"><p>Stores to L1 and asynchronously writes raw bytes to disk.</p>
+<div class="markdown level1 remarks"><p>Stores to L1 and asynchronously writes raw bytes to disk under the tile's <a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.SourceId.html#SkiaSharp_Extended_SKImagePyramidTile_SourceId">SourceId</a> directory.</p>
 </div>
 
 
@@ -166,7 +166,7 @@
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidFileSystemTileCache.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Caching/SKImagePyramidFileSystemTileCache.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -182,7 +182,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · c7a11b4
+          source: PR #379 · e9334e3
         </div>
       </div>
     </footer>

@@ -91,7 +91,7 @@
 
   <h1 id="SkiaSharp_Extended_ISKImagePyramidSource" data-uid="SkiaSharp.Extended.ISKImagePyramidSource" class="text-break">
     Interface ISKImagePyramidSource
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/ISKImagePyramidSource.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Sources/ISKImagePyramidSource.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -125,6 +125,13 @@ tile URLs and dimensions. Implement this to support new image formats (DZI, IIIF
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidSource.AspectRatio.html#SkiaSharp_Extended_ISKImagePyramidSource_AspectRatio">AspectRatio</a></dt>
     <dd><p>Image aspect ratio (width / height).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidSource.CacheExpiry.html#SkiaSharp_Extended_ISKImagePyramidSource_CacheExpiry">CacheExpiry</a></dt>
+    <dd><p>The recommended maximum age for cached tiles from this source.
+<a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> means tiles are considered immutable (cache indefinitely).
+The controller passes this to the cache as a hint when loading a new source.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -197,7 +204,7 @@ For DZI, the bounds include the configured overlap pixels.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/ISKImagePyramidSource.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Sources/ISKImagePyramidSource.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -213,7 +220,7 @@ For DZI, the bounds include the configured overlap pixels.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · c7a11b4
+          source: PR #379 · e9334e3
         </div>
       </div>
     </footer>

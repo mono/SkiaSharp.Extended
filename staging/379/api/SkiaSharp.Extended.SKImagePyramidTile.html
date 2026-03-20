@@ -91,7 +91,7 @@
 
   <h1 id="SkiaSharp_Extended_SKImagePyramidTile" data-uid="SkiaSharp.Extended.SKImagePyramidTile" class="text-break">
     Class SKImagePyramidTile
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidTile.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Fetching/SKImagePyramidTile.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -159,7 +159,7 @@ without re-encoding, and handles forward-only streams by buffering at fetch time
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.-ctor.html#SkiaSharp_Extended_SKImagePyramidTile__ctor_SkiaSharp_SKImage_System_Byte___">SKImagePyramidTile(SKImage, byte[])</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.-ctor.html#SkiaSharp_Extended_SKImagePyramidTile__ctor_SkiaSharp_SKImage_System_Byte___System_String_">SKImagePyramidTile(SKImage, byte[], string)</a></dt>
     <dd><p>Creates a new tile from a decoded image and the original encoded bytes.</p>
 </dd>
   </dl>
@@ -178,6 +178,12 @@ without re-encoding, and handles forward-only streams by buffering at fetch time
 Using these avoids re-encoding and preserves the original format and quality.</p>
 </dd>
   </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.SourceId.html#SkiaSharp_Extended_SKImagePyramidTile_SourceId">SourceId</a></dt>
+    <dd><p>The identifier of the source that produced this tile.
+Set by the controller after fetching; empty string if not yet stamped.</p>
+</dd>
+  </dl>
 
   <h2 class="section" id="methods">Methods
 </h2>
@@ -192,7 +198,7 @@ Using these avoids re-encoding and preserves the original format and quality.</p
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidTile.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Fetching/SKImagePyramidTile.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -208,7 +214,7 @@ Using these avoids re-encoding and preserves the original format and quality.</p
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · c7a11b4
+          source: PR #379 · e9334e3
         </div>
       </div>
     </footer>

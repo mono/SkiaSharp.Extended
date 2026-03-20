@@ -91,7 +91,7 @@
 
   <h1 id="SkiaSharp_Extended_ISKImagePyramidTileCache" data-uid="SkiaSharp.Extended.ISKImagePyramidTileCache" class="text-break">
     Interface ISKImagePyramidTileCache
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/ISKImagePyramidTileCache.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Caching/ISKImagePyramidTileCache.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -129,6 +129,14 @@ Tiles are stored as <a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.
   <h2 class="section" id="properties">Properties
 </h2>
 
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.ActiveSourceId.html#SkiaSharp_Extended_ISKImagePyramidTileCache_ActiveSourceId">ActiveSourceId</a></dt>
+    <dd><p>The identifier of the currently active image source.
+Set by the controller when a new source is loaded via <code>Load()</code>.
+I/O-backed caches (e.g. filesystem, browser storage) use this to namespace tiles per source.
+In-memory caches may ignore this value.</p>
+</dd>
+  </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.Count.html#SkiaSharp_Extended_ISKImagePyramidTileCache_Count">Count</a></dt>
     <dd><p>Number of tiles currently in the cache.</p>
@@ -186,7 +194,7 @@ A null return means cache miss — the caller should then fetch from network.</p
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/ISKImagePyramidTileCache.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Caching/ISKImagePyramidTileCache.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -202,7 +210,7 @@ A null return means cache miss — the caller should then fetch from network.</p
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · c7a11b4
+          source: PR #379 · e9334e3
         </div>
       </div>
     </footer>

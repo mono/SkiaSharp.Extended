@@ -93,7 +93,7 @@
 
 <h1 id="SkiaSharp_Extended_SKImagePyramidTile__ctor_" data-uid="SkiaSharp.Extended.SKImagePyramidTile.#ctor*" class="text-break">
   Constructor SKImagePyramidTile
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidTile.cs"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Fetching/SKImagePyramidTile.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
@@ -121,9 +121,9 @@
 
 <a id="SkiaSharp_Extended_SKImagePyramidTile__ctor_" data-uid="SkiaSharp.Extended.SKImagePyramidTile.#ctor*"></a>
 
-<h3 id="SkiaSharp_Extended_SKImagePyramidTile__ctor_SkiaSharp_SKImage_System_Byte___" data-uid="SkiaSharp.Extended.SKImagePyramidTile.#ctor(SkiaSharp.SKImage,System.Byte[])">
-  SKImagePyramidTile(SKImage, byte[])
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidTile.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_SKImagePyramidTile__ctor_SkiaSharp_SKImage_System_Byte___System_String_" data-uid="SkiaSharp.Extended.SKImagePyramidTile.#ctor(SkiaSharp.SKImage,System.Byte[],System.String)">
+  SKImagePyramidTile(SKImage, byte[], string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Fetching/SKImagePyramidTile.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
 <div class="markdown level1 summary"><p>Creates a new tile from a decoded image and the original encoded bytes.</p>
@@ -131,7 +131,7 @@
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKImagePyramidTile(SKImage image, byte[] rawData)</code></pre>
+  <pre><code class="lang-csharp hljs">public SKImagePyramidTile(SKImage image, byte[] rawData, string sourceId = &quot;&quot;)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
@@ -141,6 +141,11 @@
 </dd>
   <dt><code>rawData</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
   <dd><p>The original encoded bytes (JPEG, PNG, etc.) for storage.</p>
+</dd>
+  <dt><code>sourceId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd><p>The identifier of the source that produced this tile.
+The controller stamps this from <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidSource.SourceId.html#SkiaSharp_Extended_ISKImagePyramidSource_SourceId">SourceId</a> after fetching.
+Used by <a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.html">SKImagePyramidFileSystemTileCache</a> to namespace tiles per image source.</p>
 </dd>
 </dl>
 
@@ -158,7 +163,7 @@
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidTile.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Fetching/SKImagePyramidTile.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -174,7 +179,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · c7a11b4
+          source: PR #379 · e9334e3
         </div>
       </div>
     </footer>
