@@ -54,7 +54,8 @@ public class SKImagePyramidDziSource : ISKImagePyramidSource
     public double AspectRatio => (double)ImageWidth / ImageHeight;
 
     /// <inheritdoc />
-    public string SourceId => FnvHash($"{TilesBaseUri}|{TileSize}|{ImageWidth}x{ImageHeight}");
+    private string? _sourceId;
+    public string SourceId => _sourceId ??= FnvHash($"{TilesBaseUri}|{TileSize}|{ImageWidth}x{ImageHeight}");
 
     private static string FnvHash(string value)
     {

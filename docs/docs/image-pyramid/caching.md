@@ -13,19 +13,19 @@ public interface ISKImagePyramidTileCache : IDisposable
     int Count { get; }
 
     /// <summary>Synchronous lookup — used by the renderer (no blocking I/O).</summary>
-    bool TryGet(SKImagePyramidTileId id, out SKImage? tile);
+    bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile);
 
     /// <summary>Async lookup — use for I/O-backed tiers (disk, browser storage).</summary>
-    Task<SKImage?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default);
+    Task<SKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default);
 
     /// <summary>Returns true if the tile is cached.</summary>
     bool Contains(SKImagePyramidTileId id);
 
     /// <summary>Synchronous write — for in-memory caches.</summary>
-    void Put(SKImagePyramidTileId id, SKImage? tile);
+    void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile);
 
     /// <summary>Async write — for I/O-backed caches or cache decorators.</summary>
-    Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default);
+    Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default);
 
     /// <summary>Removes a specific tile.</summary>
     bool Remove(SKImagePyramidTileId id);
@@ -140,10 +140,10 @@ public sealed class TieredCache : ISKImagePyramidTileCache
         _l2 = l2;
     }
 
-    public bool TryGet(SKImagePyramidTileId id, out SKImage? tile)
+    public bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile)
         => _l1.TryGet(id, out tile);
 
-    public async Task<SKImage?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
+    public async Task<SKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
     {
         // Fast path: already in L1
         if (_l1.TryGet(id, out var tile)) return tile;
@@ -155,8 +155,8 @@ public sealed class TieredCache : ISKImagePyramidTileCache
         return tile;
     }
 
-    public void Put(SKImagePyramidTileId id, SKImage? tile)      => _l1.Put(id, tile);
-    public async Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default)
+    public void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile)      => _l1.Put(id, tile);
+    public async Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default)
     {
         _l1.Put(id, tile);
         await _l2.WriteAsync(id, tile, ct);
@@ -194,33 +194,33 @@ Assert.Equal(id, same);  // ✅
 
 ## Writing a Custom Cache
 
-Any class that implements `ISKImagePyramidTileCache` can be used. Tiles are stored as `SKImage` instances. Minimal in-memory example:
+Any class that implements `ISKImagePyramidTileCache` can be used. Tiles are stored as `SKImagePyramidTile` instances (decoded image + raw bytes). Minimal in-memory example:
 
 ```csharp
 public sealed class BoundedDictionaryCache : ISKImagePyramidTileCache
 {
-    private readonly Dictionary<SKImagePyramidTileId, SKImage> _store = new();
+    private readonly Dictionary<SKImagePyramidTileId, SKImagePyramidTile> _store = new();
     private readonly int _maxEntries;
 
     public BoundedDictionaryCache(int maxEntries) => _maxEntries = maxEntries;
 
     public int Count => _store.Count;
 
-    public bool TryGet(SKImagePyramidTileId id, out SKImage? tile)
+    public bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile)
         => _store.TryGetValue(id, out tile);
 
-    public Task<SKImage?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
+    public Task<SKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
         => Task.FromResult(_store.TryGetValue(id, out var t) ? t : null);
 
     public bool Contains(SKImagePyramidTileId id) => _store.ContainsKey(id);
 
-    public void Put(SKImagePyramidTileId id, SKImage? tile)
+    public void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile)
     {
         if (tile is null || _store.Count >= _maxEntries) return;
         _store[id] = tile;
     }
 
-    public Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default)
+    public Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default)
     {
         Put(id, tile);
         return Task.CompletedTask;

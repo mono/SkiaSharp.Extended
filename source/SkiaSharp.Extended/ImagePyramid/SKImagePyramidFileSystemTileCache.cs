@@ -30,7 +30,7 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
     private readonly string _sourceDir;
     private readonly int _maxDiskTiles;
     private int _diskTileCount;
-    private bool _cleanupRunning;
+    private int _cleanupRunning;
 
     /// <summary>
     /// Creates a two-tier cache using the given base directory.
@@ -163,7 +163,7 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
             File.Move(tmp, tilePath, overwrite: true);
 #endif
             int count = Interlocked.Increment(ref _diskTileCount);
-            if (count > _maxDiskTiles * 1.1 && !_cleanupRunning)
+            if (count > _maxDiskTiles * 1.1 && Interlocked.CompareExchange(ref _cleanupRunning, 1, 0) == 0)
                 _ = Task.Run(CleanupOldTiles, CancellationToken.None);
         }
         catch { }
@@ -171,8 +171,6 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
 
     private void CleanupOldTiles()
     {
-        if (_cleanupRunning) return;
-        _cleanupRunning = true;
         try
         {
             if (!Directory.Exists(_sourceDir)) return;
@@ -185,6 +183,6 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
             Interlocked.Exchange(ref _diskTileCount, files.Length - toDelete);
         }
         catch { }
-        finally { _cleanupRunning = false; }
+        finally { Interlocked.Exchange(ref _cleanupRunning, 0); }
     }
 }

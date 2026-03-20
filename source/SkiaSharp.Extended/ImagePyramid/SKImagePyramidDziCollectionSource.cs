@@ -52,7 +52,8 @@ public class SKImagePyramidDziCollectionSource
     public string? TilesBaseUri { get; set; }
 
     /// <inheritdoc />
-    public string SourceId => FnvHash($"{TilesBaseUri}|{MaxLevel}c{ItemCount}");
+    private string? _sourceId;
+    public string SourceId => _sourceId ??= FnvHash($"{TilesBaseUri}|{MaxLevel}c{ItemCount}");
 
     private static string FnvHash(string value)
     {

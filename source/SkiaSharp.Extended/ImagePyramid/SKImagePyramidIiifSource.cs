@@ -70,7 +70,8 @@ public class SKImagePyramidIiifSource : ISKImagePyramidSource
     public double AspectRatio => (double)ImageWidth / ImageHeight;
 
     /// <inheritdoc />
-    public string SourceId => FnvHash($"{_baseId}|{_tileWidth}|{ImageWidth}x{ImageHeight}");
+    private string? _sourceId;
+    public string SourceId => _sourceId ??= FnvHash($"{_baseId}|{_tileWidth}|{ImageWidth}x{ImageHeight}");
 
     private static string FnvHash(string value)
     {
