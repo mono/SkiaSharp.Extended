@@ -43,15 +43,14 @@ public class SKImagePyramidController : IDisposable
     private IReadOnlyList<SKImagePyramidTileRequest>? _visibleTilesCache;
 
     /// <summary>
-    /// Initializes a new <see cref="SKImagePyramidController"/> with an optional custom cache.
-    /// When <paramref name="cache"/> is <see langword="null"/>, a default
-    /// <see cref="SKImagePyramidMemoryTileCache"/> is used.
+    /// Initializes a new <see cref="SKImagePyramidController"/> with the required tile cache.
     /// </summary>
-    public SKImagePyramidController(ISKImagePyramidTileCache? cache = null, int defaultCacheCapacity = 1024)
+    /// <param name="cache">The tile cache to use. Use <see cref="SKImagePyramidMemoryTileCache"/> for a simple in-memory LRU cache.</param>
+    public SKImagePyramidController(ISKImagePyramidTileCache cache)
     {
+        _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _viewport = new SKImagePyramidViewport();
         _tileLayout = new SKImagePyramidTileLayout();
-        _cache = cache ?? new SKImagePyramidMemoryTileCache(defaultCacheCapacity);
     }
 
     // ---- Properties ----
@@ -385,7 +384,7 @@ public class SKImagePyramidController : IDisposable
                     var fallback = _tileLayout.FindBestFallback(tileId, _cache);
                     if (fallback.HasValue)
                     {
-                        _cache.TryGet(fallback.Value, out SKImage? parentTile);
+                        _cache.TryGet(fallback.Value, out SKImagePyramidTile? parentTile);
                         if (parentTile != null)
                         {
                             var src  = _tileLayout.GetFallbackSourceRect(tileId, fallback.Value, _tileSource);
@@ -401,7 +400,7 @@ public class SKImagePyramidController : IDisposable
         foreach (var request in visibleTiles)
         {
             var tileId = request.TileId;
-            _cache.TryGet(tileId, out SKImage? tile);
+            _cache.TryGet(tileId, out SKImagePyramidTile? tile);
             if (tile != null)
             {
                 var dest = _tileLayout.GetTileDestRect(_tileSource, _viewport, tileId);
@@ -440,7 +439,7 @@ public class SKImagePyramidController : IDisposable
 
     private async Task LoadTileAsync(SKImagePyramidTileId tileId, CancellationToken ct)
     {
-        SKImage? tile = null;
+        SKImagePyramidTile? tile = null;
         try
         {
             // Capture source and fetcher locally — they may be replaced while this task is in flight

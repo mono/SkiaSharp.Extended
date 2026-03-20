@@ -37,7 +37,7 @@ public class ImagePyramidRenderPipelineTest
             var bmp = new SKBitmap(dzi.TileSize, dzi.TileSize);
             using var canvas2 = new SKCanvas(bmp);
             canvas2.Clear(SKColors.CornflowerBlue);
-            cache.Put(request.TileId, SKImage.FromBitmap(bmp));
+            cache.Put(request.TileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
         }
 
         // Render
@@ -66,7 +66,7 @@ public class ImagePyramidRenderPipelineTest
     [Fact]
     public void Controller_FullLifecycle()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
 
         var dzi = CreateTestDzi(2048, 1536);
@@ -99,7 +99,7 @@ public class ImagePyramidRenderPipelineTest
     [Fact]
     public void Controller_SetViewport_AppliesImmediately()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(1024, 768), new MemoryTileFetcher());
 
@@ -112,7 +112,7 @@ public class ImagePyramidRenderPipelineTest
     [Fact]
     public void Controller_EventsFire()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
 
         bool openSucceeded = false;
@@ -125,7 +125,7 @@ public class ImagePyramidRenderPipelineTest
     [Fact]
     public void Controller_ViewportChanged_FiresOnNavigation()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
 
@@ -142,7 +142,7 @@ public class ImagePyramidRenderPipelineTest
     [Fact]
     public void Controller_IsIdle_WhenNoPendingTiles()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(512, 512), new MemoryTileFetcher());
 

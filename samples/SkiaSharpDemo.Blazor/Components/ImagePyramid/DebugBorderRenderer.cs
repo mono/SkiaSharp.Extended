@@ -55,7 +55,7 @@ public sealed class DebugBorderRenderer : ISKImagePyramidRenderer
     }
 
     /// <inheritdoc />
-    public void DrawTile(SKRect destRect, SKImage tile)
+    public void DrawTile(SKRect destRect, SKImagePyramidTile tile)
     {
         _inner.DrawTile(destRect, tile);
         if (ShowTileBorders)
@@ -63,7 +63,7 @@ public sealed class DebugBorderRenderer : ISKImagePyramidRenderer
     }
 
     /// <inheritdoc />
-    public void DrawFallbackTile(SKRect destRect, SKRect sourceRect, SKImage tile)
+    public void DrawFallbackTile(SKRect destRect, SKRect sourceRect, SKImagePyramidTile tile)
     {
         _inner.DrawFallbackTile(destRect, sourceRect, tile);
         if (ShowTileBorders)

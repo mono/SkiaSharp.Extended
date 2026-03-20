@@ -10,29 +10,29 @@ namespace SkiaSharp.Extended.ImagePyramid.Tests;
 /// </summary>
 internal class MemoryTileFetcher : ISKImagePyramidTileFetcher
 {
-    private readonly ConcurrentDictionary<string, SKImage> _tiles = new();
+    private readonly ConcurrentDictionary<string, SKImagePyramidTile> _tiles = new();
     public int FetchCount { get; private set; }
     public List<string> FetchedUrls { get; } = new();
     public bool IsDisposed { get; private set; }
 
-    public void AddTile(string url, SKImage image) => _tiles[url] = image;
+    public void AddTile(string url, SKImagePyramidTile tile) => _tiles[url] = tile;
 
     public void AddSolidTile(string url, int width, int height, SKColor color)
     {
         using var surface = SKSurface.Create(new SKImageInfo(width, height));
         surface.Canvas.Clear(color);
-        _tiles[url] = surface.Snapshot();
+        _tiles[url] = new SKImagePyramidTile(surface.Snapshot(), new byte[] { 0xFF });
     }
 
-    public Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
+    public Task<SKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         FetchCount++;
         FetchedUrls.Add(url);
 
         if (_tiles.TryGetValue(url, out var image))
-            return Task.FromResult<SKImage?>(image);
+            return Task.FromResult<SKImagePyramidTile?>(image);
 
-        return Task.FromResult<SKImage?>(null);
+        return Task.FromResult<SKImagePyramidTile?>(null);
     }
 
     public void Dispose()
@@ -59,7 +59,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void Constructor_CreatesAllComponents()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
 
         Assert.NotNull(controller.Viewport);
         Assert.NotNull(controller.Cache);
@@ -71,7 +71,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void Load_SetsUpTileSourceAndResetsViewport()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
 
@@ -91,7 +91,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void ZoomAboutScreenPoint_ChangesViewportWidth()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
@@ -109,7 +109,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void Pan_MovesViewportOrigin()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
@@ -129,7 +129,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void ResetView_RestoresToInitialState()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
@@ -146,7 +146,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void Update_ReturnsFalse_WhenIdleAndNoPendingTiles()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi();
         using var fetcher = new MemoryTileFetcher();
@@ -166,7 +166,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void Render_DoesNotThrow_WhenNoTileSource()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
         using var renderer = new SKImagePyramidRenderer();
         renderer.Canvas = surface.Canvas;
@@ -178,7 +178,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void Render_DoesNotThrow_WhenLoaded()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -191,7 +191,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void Render_DrawsCachedTiles()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
 
         var dzi = CreateSampleDzi();
@@ -229,14 +229,14 @@ public class ImagePyramidControllerTest
     [Fact]
     public void EnableLodBlending_DefaultsTrue()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         Assert.True(controller.EnableLodBlending);
     }
 
     [Fact]
     public void EnableLodBlending_Settable()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.EnableLodBlending = false;
         Assert.False(controller.EnableLodBlending);
     }
@@ -244,14 +244,14 @@ public class ImagePyramidControllerTest
     [Fact]
     public void AspectRatio_ReturnsZero_WhenNoSource()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         Assert.Equal(0.0, controller.AspectRatio);
     }
 
     [Fact]
     public void AspectRatio_ReturnsCorrectValue_WhenLoaded()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         var dzi = CreateSampleDzi(); // 512x512 → 1.0
         controller.Load(dzi, new MemoryTileFetcher());
 
@@ -261,7 +261,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void Dispose_CanBeCalledMultipleTimes()
     {
-        var controller = new SKImagePyramidController();
+        var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.Dispose();
         controller.Dispose(); // Should not throw
     }
@@ -269,14 +269,14 @@ public class ImagePyramidControllerTest
     [Fact]
     public void SubImages_EmptyByDefault()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         Assert.Empty(controller.SubImages);
     }
 
     [Fact]
     public void Load_DzcTileSource_PopulatesSubImages()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         var dzc = new SKImagePyramidDziCollectionSource(8, 256, "jpg", new[]
         {
             new SKImagePyramidDziCollectionSubImage(0, 0, 512, 256, "img0.dzi"),
@@ -294,7 +294,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public async Task TileScheduling_FetchesTiles()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(512, 512);
         var dzi = CreateSampleDzi();
 
@@ -313,7 +313,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void ZoomAboutLogicalPoint_FiresViewportChanged()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
         int count = 0;
         controller.ViewportChanged += (s, e) => count++;
@@ -325,7 +325,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void Pan_FiresViewportChanged()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
         int count = 0;
         controller.ViewportChanged += (s, e) => count++;
@@ -338,7 +338,7 @@ public class ImagePyramidControllerTest
     public void Dispose_DisposesFetcher()
     {
         var fetcher = new MemoryTileFetcher();
-        var controller = new SKImagePyramidController();
+        var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.Load(CreateSampleDzi(), fetcher);
 
         controller.Dispose();
@@ -351,7 +351,7 @@ public class ImagePyramidControllerTest
     public void Load_Reload_DisposesPreviousFetcher()
     {
         var fetcher1 = new MemoryTileFetcher();
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.Load(CreateSampleDzi(), fetcher1);
 
         var fetcher2 = new MemoryTileFetcher();
@@ -365,7 +365,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void Load_ClearsCacheFromPreviousImage()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         var fetcher = new MemoryTileFetcher();
         fetcher.AddSolidTile("http://example.com/image_files/0/0_0.jpg", 256, 256, SkiaSharp.SKColors.Red);
         controller.Load(CreateSampleDzi(), fetcher);
@@ -390,7 +390,7 @@ public class ImagePyramidControllerTest
     {
         using var stream = TestDataHelper.GetStream("conceptcars.dzc");
         var dzc = SKImagePyramidDziCollectionSource.Parse(stream);
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         using var fetcher = new MemoryTileFetcher();
 
         controller.Load(dzc, fetcher);
@@ -402,7 +402,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public async Task LoadTileAsync_WithTilesBaseUri_FetcherReceivesFullUrl()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(512, 512);
 
         var dzi = CreateSampleDzi(); // TilesBaseUri = "http://example.com/test"
@@ -428,7 +428,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void GetZoomRect_ReturnsCurrentViewportBounds()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         var dzi = CreateSampleDzi(); // 512x512, aspect ratio 1.0
         using var fetcher = new MemoryTileFetcher();
@@ -456,7 +456,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void ViewportChanged_FiresOnZoom()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -470,7 +470,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void ViewportChanged_FiresOnPan()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -487,7 +487,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void IsIdle_TrueWhenNoPendingTiles()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
 
         // Before any Update, no tiles are pending
@@ -497,7 +497,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void ImageOpenSucceeded_FiresOnDziLoad()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         bool fired = false;
         controller.ImageOpenSucceeded += (s, e) => fired = true;
 
@@ -508,7 +508,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void CollectionOpenSucceeded_FiresOnDzcLoad()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         bool fired = false;
         controller.CollectionOpenSucceeded += (s, e) => fired = true;
 
@@ -524,7 +524,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void ImageOpenSucceeded_DoesNotFireOnDzcLoad()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         bool fired = false;
         controller.ImageOpenSucceeded += (s, e) => fired = true;
 
@@ -540,7 +540,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void ResetView_FiresViewportChanged()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -556,7 +556,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public async Task InvalidateRequired_FiresWhenTileLoads()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(512, 512);
         var dzi = CreateSampleDzi();
 
@@ -582,7 +582,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void ZoomAboutLogicalPoint_ChangesViewport()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -596,7 +596,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void SetControlSize_UpdatesViewportDimensions()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(1024, 768);
 
         Assert.Equal(1024, controller.Viewport.ControlWidth);
@@ -606,7 +606,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void SetViewport_UpdatesViewport()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
         controller.SetControlSize(800, 600);
 
@@ -621,7 +621,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void SetViewport_FiresViewportChanged()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
         controller.SetControlSize(800, 600);
 
@@ -647,7 +647,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void ReplaceCache_PreservesViewportAndTileSource()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateSampleDzi(), new MemoryTileFetcher());
 
@@ -669,7 +669,7 @@ public class ImagePyramidControllerTest
     [Fact]
     public void ReplaceCache_NullThrows()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         Assert.Throws<ArgumentNullException>(() => controller.ReplaceCache(null!));
     }
 

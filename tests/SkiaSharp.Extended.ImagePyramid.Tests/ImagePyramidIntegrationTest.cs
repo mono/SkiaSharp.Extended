@@ -23,7 +23,7 @@ public class ImagePyramidIntegrationTest
     [Fact]
     public void FullPipeline_LoadZoomPanRender()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         using var fetcher = new MemoryTileFetcher();
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
@@ -48,7 +48,7 @@ public class ImagePyramidIntegrationTest
     [Fact]
     public void ZoomSequence_ZoomInAndOut()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         using var fetcher = new MemoryTileFetcher();
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
@@ -78,7 +78,7 @@ public class ImagePyramidIntegrationTest
     {
         // Spring animation is owned by the view layer (SKImagePyramidView), not the controller.
         // The controller applies viewport changes directly/immediately.
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         using var fetcher = new MemoryTileFetcher();
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
@@ -93,7 +93,7 @@ public class ImagePyramidIntegrationTest
     [Fact]
     public void PanWhileZoomed_StaysInBounds()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         using var fetcher = new MemoryTileFetcher();
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
@@ -117,7 +117,7 @@ public class ImagePyramidIntegrationTest
     [Fact]
     public void Resize_UpdatesLayout()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         using var fetcher = new MemoryTileFetcher();
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
@@ -135,7 +135,7 @@ public class ImagePyramidIntegrationTest
     [Fact]
     public void NonSquareImage_RespectAspectRatio()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         using var fetcher = new MemoryTileFetcher();
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(1600, 900), fetcher);
@@ -146,7 +146,7 @@ public class ImagePyramidIntegrationTest
     [Fact]
     public void MultipleSources_CanReload()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         using var fetcher = new MemoryTileFetcher();
         controller.SetControlSize(800, 600);
 
@@ -162,7 +162,7 @@ public class ImagePyramidIntegrationTest
     [Fact]
     public async Task TileLoading_FetchesVisibleTiles()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         using var fetcher = new MemoryTileFetcher();
         controller.SetControlSize(512, 512);
         controller.Load(CreateDzi(512, 512), fetcher);
@@ -178,7 +178,7 @@ public class ImagePyramidIntegrationTest
     [Fact]
     public void ControllerDispose_StopsTileLoading()
     {
-        var controller = new SKImagePyramidController();
+        var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         var fetcher = new MemoryTileFetcher();
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);
@@ -192,7 +192,7 @@ public class ImagePyramidIntegrationTest
     [Fact]
     public void ZoomAboutLogicalPoint_PointStaysFixed()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         using var fetcher = new MemoryTileFetcher();
         controller.SetControlSize(800, 600);
         controller.Load(CreateDzi(), fetcher);

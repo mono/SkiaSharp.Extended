@@ -71,19 +71,21 @@ public partial class ImagePyramidPage : ContentPage
 
 ## App-Package Tile Fetcher
 
-When tiles are bundled as MAUI assets, implement `ISKImagePyramidTileFetcher` to read them via `FileSystem.OpenAppPackageFileAsync` and decode with `SKImage.FromEncodedData`:
+When tiles are bundled as MAUI assets, implement `ISKImagePyramidTileFetcher` to read them via `FileSystem.OpenAppPackageFileAsync`, buffer the bytes, and decode with `SKImage.FromEncodedData`:
 
 ```csharp
 public sealed class AppPackageFetcher : ISKImagePyramidTileFetcher
 {
-    public async Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms, ct);
-            return SKImage.FromEncodedData(ms.ToArray());
+            var bytes = ms.ToArray();
+            var image = SKImage.FromEncodedData(bytes);
+            return image != null ? new SKImagePyramidTile(image, bytes) : null;
         }
         catch
         {

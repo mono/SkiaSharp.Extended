@@ -22,7 +22,7 @@ public partial class ImagePyramidPage : ContentPage
     {
         base.OnAppearing();
 
-        _controller = new SKImagePyramidController();
+        _controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         _renderer = new SKImagePyramidRenderer();
         _controller.InvalidateRequired += (_, _) => canvas.InvalidateSurface();
 

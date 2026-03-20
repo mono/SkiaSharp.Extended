@@ -284,10 +284,10 @@ public class ImagePyramidEdgeCaseTest
         var bmp1 = new SKBitmap(10, 10);
         var bmp2 = new SKBitmap(10, 10);
 
-        cache.Put(a, SKImage.FromBitmap(bmp1));
+        cache.Put(a, new SKImagePyramidTile(SKImage.FromBitmap(bmp1), new byte[] { 0xFF, 0xD8 }));
         Assert.True(cache.TryGet(a, out _));
 
-        cache.Put(b, SKImage.FromBitmap(bmp2));
+        cache.Put(b, new SKImagePyramidTile(SKImage.FromBitmap(bmp2), new byte[] { 0xFF, 0xD8 }));
         Assert.False(cache.TryGet(a, out _)); // Evicted
         Assert.True(cache.TryGet(b, out _));
     }
@@ -298,7 +298,7 @@ public class ImagePyramidEdgeCaseTest
         var cache = new SKImagePyramidMemoryTileCache(10);
         for (int i = 0; i < 5; i++)
         {
-            cache.Put(new SKImagePyramidTileId(i, 0, 0), SKImage.Create(new SKImageInfo(10, 10)));
+            cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF }));
         }
 
         Assert.Equal(5, cache.Count);
@@ -311,7 +311,7 @@ public class ImagePyramidEdgeCaseTest
     {
         var cache = new SKImagePyramidMemoryTileCache(10);
         var id = new SKImagePyramidTileId(0, 0, 0);
-        cache.Put(id, SKImage.Create(new SKImageInfo(10, 10)));
+        cache.Put(id, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF }));
         Assert.True(cache.Remove(id));
         Assert.False(cache.Remove(id));
     }
@@ -325,13 +325,13 @@ public class ImagePyramidEdgeCaseTest
         var c = new SKImagePyramidTileId(0, 0, 1);
         var d = new SKImagePyramidTileId(0, 1, 1);
 
-        cache.Put(a, SKImage.Create(new SKImageInfo(10, 10)));
-        cache.Put(b, SKImage.Create(new SKImageInfo(10, 10)));
-        cache.Put(c, SKImage.Create(new SKImageInfo(10, 10)));
+        cache.Put(a, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF }));
+        cache.Put(b, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF }));
+        cache.Put(c, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF }));
 
         cache.TryGet(a, out _); // Touch "a"
 
-        cache.Put(d, SKImage.Create(new SKImageInfo(10, 10))); // Evicts "b"
+        cache.Put(d, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF })); // Evicts "b"
 
         Assert.True(cache.TryGet(a, out _));
         Assert.False(cache.TryGet(b, out _)); // evicted
@@ -381,7 +381,7 @@ public class ImagePyramidEdgeCaseTest
     [Fact]
     public void Controller_Load_SetsUpState()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         var dzi = CreateTestDzi(2048, 1536);
         controller.SetControlSize(800, 600);
         controller.Load(dzi, new MemoryTileFetcher());
@@ -393,7 +393,7 @@ public class ImagePyramidEdgeCaseTest
     [Fact]
     public void Controller_ResetView_GoesToFitAll()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
 
@@ -407,7 +407,7 @@ public class ImagePyramidEdgeCaseTest
     [Fact]
     public void Controller_DoubleDispose_Safe()
     {
-        var controller = new SKImagePyramidController();
+        var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.Dispose();
         controller.Dispose();
     }
@@ -415,7 +415,7 @@ public class ImagePyramidEdgeCaseTest
     [Fact]
     public void Controller_Pan_MovesOrigin()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
 
@@ -430,7 +430,7 @@ public class ImagePyramidEdgeCaseTest
     [Fact]
     public void Controller_IsIdle_WhenNoActivity()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(512, 512), new MemoryTileFetcher());
 
@@ -443,7 +443,7 @@ public class ImagePyramidEdgeCaseTest
     {
         // Spring belongs to the view (SKImagePyramidView), not the controller.
         // SKImagePyramidViewport changes via ZoomAboutScreenPoint are immediate.
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
         controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
 

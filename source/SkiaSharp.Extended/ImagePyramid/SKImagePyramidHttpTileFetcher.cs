@@ -1,7 +1,6 @@
 #nullable enable
 
 using System;
-using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +9,8 @@ namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Fetches tiles over HTTP and decodes them using SkiaSharp.
+/// Raw bytes are buffered before decoding, which handles forward-only streams
+/// and allows the bytes to be stored in L2 caches without re-encoding.
 /// Thread-safe and reusable.
 /// </summary>
 public class SKImagePyramidHttpTileFetcher : ISKImagePyramidTileFetcher
@@ -37,7 +38,7 @@ public class SKImagePyramidHttpTileFetcher : ISKImagePyramidTileFetcher
     }
 
     /// <inheritdoc />
-    public async Task<SKImage?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
+    public async Task<SKImagePyramidTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -46,16 +47,15 @@ public class SKImagePyramidHttpTileFetcher : ISKImagePyramidTileFetcher
             if (!response.IsSuccessStatusCode)
                 return null;
 
+            // ReadAsByteArrayAsync buffers into memory — handles forward-only streams
+            // and gives us the raw bytes for L2 cache storage without re-encoding.
 #if NETSTANDARD2_0
             var bytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-            using var ms = new MemoryStream(bytes);
 #else
-            using var ms = new MemoryStream();
-            using (var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false))
-                await stream.CopyToAsync(ms, cancellationToken).ConfigureAwait(false);
-            ms.Position = 0;
+            var bytes = await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
 #endif
-            return SKImage.FromEncodedData(ms);
+            var image = SKImage.FromEncodedData(bytes);
+            return image != null ? new SKImagePyramidTile(image, bytes) : null;
         }
         catch (HttpRequestException)
         {

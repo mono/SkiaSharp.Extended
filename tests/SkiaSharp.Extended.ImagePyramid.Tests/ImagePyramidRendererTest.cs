@@ -58,7 +58,7 @@ public class ImagePyramidRendererTest
         var bitmap = new SKBitmap(256, 256);
         using (var tileCanvas = new SKCanvas(bitmap))
             tileCanvas.Clear(SKColors.Red);
-        cache.Put(tileId, SKImage.FromBitmap(bitmap));
+        cache.Put(tileId, new SKImagePyramidTile(SKImage.FromBitmap(bitmap), new byte[] { 0xFF, 0xD8 }));
 
         // Clear surface to white
         surface.Canvas.Clear(SKColors.White);
@@ -75,7 +75,7 @@ public class ImagePyramidRendererTest
     [Fact]
     public void EnableLodBlending_CanBeToggled()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         Assert.True(controller.EnableLodBlending);
 
         controller.EnableLodBlending = false;
@@ -110,7 +110,7 @@ public class ImagePyramidRendererTest
             var bitmap = new SKBitmap(256, 256);
             using (var tileCanvas = new SKCanvas(bitmap))
                 tileCanvas.Clear(SKColors.Blue);
-            cache.Put(tileId, SKImage.FromBitmap(bitmap));
+            cache.Put(tileId, new SKImagePyramidTile(SKImage.FromBitmap(bitmap), new byte[] { 0xFF, 0xD8 }));
         }
 
         surface.Canvas.Clear(SKColors.White);
@@ -155,7 +155,7 @@ public class ImagePyramidRendererTest
             var bmp = new SKBitmap(256, 256);
             using (var c = new SKCanvas(bmp))
                 c.Clear(SKColors.Green);
-            cache.Put(req.TileId, SKImage.FromBitmap(bmp));
+            cache.Put(req.TileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
         }
 
         surface.Canvas.Clear(SKColors.White);
@@ -213,7 +213,7 @@ public class ImagePyramidRendererTest
         var bmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(bmp))
             c.Clear(SKColors.Magenta);
-        cache.Put(tileId, SKImage.FromBitmap(bmp));
+        cache.Put(tileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
 
         // Clear to white, then render
         surface.Canvas.Clear(SKColors.White);
@@ -266,7 +266,7 @@ public class ImagePyramidRendererTest
         var bmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(bmp))
             c.Clear(SKColors.Green);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), SKImage.FromBitmap(bmp));
+        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
 
         var controller = new SKImagePyramidController(cache);
         controller.SetControlSize(512, 512);
@@ -333,7 +333,7 @@ public class ImagePyramidRendererTest
         var bmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(bmp))
             c.Clear(SKColors.Cyan);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), SKImage.FromBitmap(bmp));
+        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
 
         // Also put tiles for whichever level the layout picks
         var tiles = layout.GetVisibleTiles(dzi, controller.Viewport);
@@ -344,7 +344,7 @@ public class ImagePyramidRendererTest
                 var tileBmp = new SKBitmap(256, 256);
                 using (var c = new SKCanvas(tileBmp))
                     c.Clear(SKColors.Cyan);
-                cache.Put(t.TileId, SKImage.FromBitmap(tileBmp));
+                cache.Put(t.TileId, new SKImagePyramidTile(SKImage.FromBitmap(tileBmp), new byte[] { 0xFF, 0xD8 }));
             }
         }
 
@@ -378,7 +378,7 @@ public class ImagePyramidRendererTest
         // Only cache a level-0 (1x1 pixel) parent tile as yellow — do NOT cache the requested level tiles
         var parentBmp = new SKBitmap(1, 1);
         parentBmp.SetPixel(0, 0, SKColors.Yellow);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), SKImage.FromBitmap(parentBmp));
+        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
 
         var controller = new SKImagePyramidController(cache);
         controller.SetControlSize(512, 512);
@@ -426,7 +426,7 @@ public class ImagePyramidRendererTest
     [Fact]
     public void EnableLodBlending_DefaultsToTrue()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         Assert.True(controller.EnableLodBlending);
     }
 
@@ -448,7 +448,7 @@ public class ImagePyramidRendererTest
         // Only cache a low-level parent tile to trigger single-pass fallback
         var parentBmp = new SKBitmap(1, 1);
         parentBmp.SetPixel(0, 0, SKColors.Yellow);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), SKImage.FromBitmap(parentBmp));
+        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
 
         var controller = new SKImagePyramidController(cache);
         controller.SetControlSize(512, 512);
@@ -500,7 +500,7 @@ public class ImagePyramidRendererTest
         // Cache a blue parent tile at level 0 (fallback)
         var parentBmp = new SKBitmap(1, 1);
         parentBmp.SetPixel(0, 0, SKColors.Blue);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), SKImage.FromBitmap(parentBmp));
+        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
 
         // Cache a green high-res tile for only the first visible tile
         var visibleTiles = layout.GetVisibleTiles(dzi, controller.Viewport);
@@ -509,7 +509,7 @@ public class ImagePyramidRendererTest
         var highResBmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(highResBmp))
             c.Clear(SKColors.Green);
-        cache.Put(firstTile, SKImage.FromBitmap(highResBmp));
+        cache.Put(firstTile, new SKImagePyramidTile(SKImage.FromBitmap(highResBmp), new byte[] { 0xFF, 0xD8 }));
 
         surface.Canvas.Clear(SKColors.White);
         renderer.Canvas = surface.Canvas;

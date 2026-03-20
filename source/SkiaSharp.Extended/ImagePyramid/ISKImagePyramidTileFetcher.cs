@@ -16,5 +16,5 @@ public interface ISKImagePyramidTileFetcher : IDisposable
     /// <summary>
     /// Fetches a tile. Returns <see langword="null"/> when the tile is not available (e.g., 404).
     /// </summary>
-    Task<SKImage?> FetchTileAsync(string url, CancellationToken cancellationToken = default);
+    Task<SKImagePyramidTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default);
 }

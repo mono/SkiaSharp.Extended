@@ -37,18 +37,18 @@ public class SKImagePyramidRenderer : ISKImagePyramidRenderer
     }
 
     /// <inheritdoc />
-    public void DrawTile(SKRect destRect, SKImage tile)
+    public void DrawTile(SKRect destRect, SKImagePyramidTile tile)
     {
         if (Canvas == null) return;
-        var src = SKRect.Create(tile.Width, tile.Height);
-        Canvas.DrawImage(tile, src, destRect, _tilePaint);
+        var src = SKRect.Create(tile.Image.Width, tile.Image.Height);
+        Canvas.DrawImage(tile.Image, src, destRect, _tilePaint);
     }
 
     /// <inheritdoc />
-    public void DrawFallbackTile(SKRect destRect, SKRect sourceRect, SKImage tile)
+    public void DrawFallbackTile(SKRect destRect, SKRect sourceRect, SKImagePyramidTile tile)
     {
         if (Canvas == null) return;
-        Canvas.DrawImage(tile, sourceRect, destRect, _tilePaint);
+        Canvas.DrawImage(tile.Image, sourceRect, destRect, _tilePaint);
     }
 
     /// <inheritdoc />

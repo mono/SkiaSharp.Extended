@@ -58,9 +58,8 @@ public class TileFetchersTest
             using var fetcher = new SKImagePyramidFileTileFetcher();
             var result = await fetcher.FetchTileAsync(tempPath);
             Assert.NotNull(result);
-            var resultImage = result;
-            Assert.Equal(10, resultImage.Width);
-            Assert.Equal(10, resultImage.Height);
+            Assert.Equal(10, result.Image.Width);
+            Assert.Equal(10, result.Image.Height);
             result.Dispose();
         }
         finally

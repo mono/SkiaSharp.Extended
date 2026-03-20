@@ -48,4 +48,10 @@ public interface ISKImagePyramidSource
 
     /// <summary>Gets the optimal pyramid level for the given viewport and control dimensions.</summary>
     int GetOptimalLevel(double viewportWidth, double controlWidth);
+
+    /// <summary>
+    /// A stable, short identifier for this source derived from its content and base URI.
+    /// Used as a directory name in disk-based tile caches to namespace tiles per image source.
+    /// </summary>
+    string SourceId { get; }
 }

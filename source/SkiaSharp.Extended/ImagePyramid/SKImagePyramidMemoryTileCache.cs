@@ -18,7 +18,7 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
     private readonly LinkedList<TileCacheEntry> _lruList;
     private readonly Dictionary<SKImagePyramidTileId, LinkedListNode<TileCacheEntry>> _map;
     private readonly object _lock = new object();
-    private readonly List<SKImage> _pendingDispose = new List<SKImage>();
+    private readonly List<SKImagePyramidTile> _pendingDispose = new List<SKImagePyramidTile>();
     private bool _disposed;
 
     public SKImagePyramidMemoryTileCache(int maxEntries = 256)
@@ -38,7 +38,7 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
     // ---- ISKImagePyramidTileCache implementation (primary) ----
 
     /// <summary>Tries to get a cached tile.</summary>
-    public bool TryGet(SKImagePyramidTileId id, out SKImage? tile)
+    public bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile)
     {
         lock (_lock)
         {
@@ -57,14 +57,14 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
     }
 
     /// <summary>Async variant — completes synchronously for in-memory cache.</summary>
-    public Task<SKImage?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
+    public Task<SKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
     {
-        TryGet(id, out SKImage? tile);
+        TryGet(id, out SKImagePyramidTile? tile);
         return Task.FromResult(tile);
     }
 
     /// <summary>Adds a tile to the cache via the async interface.</summary>
-    public Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default)
+    public Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default)
     {
         if (!ct.IsCancellationRequested)
             Put(id, tile);
@@ -72,7 +72,7 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
     }
 
     /// <summary>Adds a tile to the cache, evicting the LRU entry if at capacity.</summary>
-    public void Put(SKImagePyramidTileId id, SKImage? tile)
+    public void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile)
     {
         lock (_lock)
         {
@@ -144,12 +144,12 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
     /// </summary>
     public void FlushEvicted()
     {
-        List<SKImage>? toDispose = null;
+        List<SKImagePyramidTile>? toDispose = null;
         lock (_lock)
         {
             if (_pendingDispose.Count > 0)
             {
-                toDispose = new List<SKImage>(_pendingDispose);
+                toDispose = new List<SKImagePyramidTile>(_pendingDispose);
                 _pendingDispose.Clear();
             }
         }
@@ -172,9 +172,9 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
 
     // ---- Private ----
 
-    private class TileCacheEntry(SKImagePyramidTileId id, SKImage? tile)
+    private class TileCacheEntry(SKImagePyramidTileId id, SKImagePyramidTile? tile)
     {
         public SKImagePyramidTileId Id { get; } = id;
-        public SKImage? Tile { get; set; } = tile;
+        public SKImagePyramidTile? Tile { get; set; } = tile;
     }
 }

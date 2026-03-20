@@ -9,44 +9,32 @@ using System.Threading.Tasks;
 namespace SkiaSharpDemo;
 
 /// <summary>
-/// A tile cache that persists decoded tile images in browser sessionStorage via JS interop.
-/// Images are encoded as PNG bytes and stored as base64 strings.
+/// A tile cache that persists tile raw bytes in browser sessionStorage via JS interop.
+/// Raw bytes are stored as base64 strings, so no re-encoding is needed on cache hit.
 /// This demonstrates L2 cache in a tiered memory → storage → network hierarchy.
-///
-/// Architecture note: async TryGetAsync is the right approach for storage-backed caches.
-/// Chaining fetchers instead would conflate "retrieve from source" with "check if already stored",
-/// leading to incorrect semantics. The cache-aside pattern (controller checks L1 → TryGetAsync L2
-/// → network fetch → populate both) is the standard approach used by Coil, SDWebImage, and Glide.
 /// </summary>
 public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTileCache
 {
     private readonly IJSRuntime _js = js;
-    // In-memory index so Contains/TryGet (sync) can return fast without JS interop round-trips.
-    // When full, oldest entry is evicted (it remains in sessionStorage and can be re-hydrated).
     private const int MaxMemoryEntries = 512;
-    private readonly ConcurrentDictionary<SKImagePyramidTileId, SKImage> _memIndex = new();
+    private readonly ConcurrentDictionary<SKImagePyramidTileId, SKImagePyramidTile> _memIndex = new();
     private int _storageCount;
 
     public int Count => _memIndex.Count;
 
-    // Sync TryGet only looks up the in-memory index (populated when we put tiles).
-    // The renderer uses TryGet during drawing -- it must not block on JS interop.
-    public bool TryGet(SKImagePyramidTileId id, out SKImage? tile)
+    public bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile)
     {
-        if (_memIndex.TryGetValue(id, out var imgTile))
+        if (_memIndex.TryGetValue(id, out var cached))
         {
-            tile = imgTile;
+            tile = cached;
             return true;
         }
         tile = null;
         return false;
     }
 
-    // TryGetAsync checks browser storage and decodes the image.
-    // Called by the controller before hitting the network -- no need to double-fetch.
-    public async Task<SKImage?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
+    public async Task<SKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
     {
-        // Fast-path: already in memory index.
         if (_memIndex.TryGetValue(id, out var cached))
             return cached;
 
@@ -61,23 +49,23 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
             var image = SKImage.FromEncodedData(bytes);
             if (image is null) return null;
 
-            AddToMemIndex(id, image);
-            return image;
+            var tile = new SKImagePyramidTile(image, bytes);
+            AddToMemIndex(id, tile);
+            return tile;
         }
         catch { return null; }
     }
 
     public bool Contains(SKImagePyramidTileId id) => _memIndex.ContainsKey(id);
 
-    public void Put(SKImagePyramidTileId id, SKImage? tile)
+    public void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile)
     {
         if (tile is null) return;
         AddToMemIndex(id, tile);
-        // Fire-and-forget write to storage (best-effort, no await)
         _ = WriteToBrowserAsync(id, tile, CancellationToken.None);
     }
 
-    public async Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default)
+    public async Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default)
     {
         if (tile is null) return;
         bool stored = await WriteToBrowserAsync(id, tile, ct).ConfigureAwait(false);
@@ -85,13 +73,8 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
             AddToMemIndex(id, tile);
     }
 
-    /// <summary>
-    /// Adds or updates an entry in the in-memory index, evicting an arbitrary entry if at capacity.
-    /// Evicted tiles remain in sessionStorage and can be re-hydrated on next TryGetAsync.
-    /// </summary>
-    private void AddToMemIndex(SKImagePyramidTileId id, SKImage tile)
+    private void AddToMemIndex(SKImagePyramidTileId id, SKImagePyramidTile tile)
     {
-        // If already present, replace and dispose the old tile.
         if (_memIndex.TryGetValue(id, out var existing))
         {
             _memIndex[id] = tile;
@@ -99,7 +82,6 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
                 existing?.Dispose();
             return;
         }
-        // Evict one entry if at capacity to make room.
         if (_memIndex.Count >= MaxMemoryEntries)
         {
             foreach (var key in _memIndex.Keys)
@@ -114,18 +96,18 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
         _memIndex.TryAdd(id, tile);
     }
 
-    private async Task<bool> WriteToBrowserAsync(SKImagePyramidTileId id, SKImage image, CancellationToken ct)
+    private async Task<bool> WriteToBrowserAsync(SKImagePyramidTileId id, SKImagePyramidTile tile, CancellationToken ct)
     {
         try
         {
-            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-            var base64 = Convert.ToBase64String(data.ToArray());
+            // Use raw bytes directly — no re-encoding needed!
+            var base64 = Convert.ToBase64String(tile.RawData);
             await _js.InvokeVoidAsync("deepZoomCacheSet", ct, TileKey(id), base64)
                      .ConfigureAwait(false);
             Interlocked.Increment(ref _storageCount);
             return true;
         }
-        catch { return false; /* quota exceeded or interop unavailable */ }
+        catch { return false; }
     }
 
     public bool Remove(SKImagePyramidTileId id)
@@ -143,7 +125,6 @@ public sealed class BrowserStorageTileCache(IJSRuntime js) : ISKImagePyramidTile
         _ = _js.InvokeVoidAsync("deepZoomCacheClear");
     }
 
-    // Browser sessionStorage tiles don't need deferred disposal — no GPU resources involved.
     public void FlushEvicted() { }
 
     public void Dispose() => Clear();

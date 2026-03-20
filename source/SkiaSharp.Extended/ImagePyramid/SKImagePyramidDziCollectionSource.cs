@@ -51,6 +51,16 @@ public class SKImagePyramidDziCollectionSource
     /// <summary>Base URI for composite mosaic tiles.</summary>
     public string? TilesBaseUri { get; set; }
 
+    /// <inheritdoc />
+    public string SourceId => FnvHash($"{TilesBaseUri}|{MaxLevel}c{ItemCount}");
+
+    private static string FnvHash(string value)
+    {
+        uint hash = 2166136261u;
+        foreach (char c in value) { hash ^= (byte)c; hash *= 16777619u; }
+        return hash.ToString("x8");
+    }
+
     /// <summary>Gets the relative composite tile URL.</summary>
     public string GetCompositeTileUrl(int level, int col, int row)
     {

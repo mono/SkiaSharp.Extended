@@ -1,6 +1,6 @@
 # Image Pyramid — Caching
 
-The tile cache stores decoded `SKImage` instances so tiles don't need to be re-fetched or re-decoded on every frame. The cache is **pluggable** — swap implementations to tune memory usage, add persistence, or chain multiple tiers.
+The tile cache stores `SKImagePyramidTile` instances (decoded `SKImage` + original raw bytes) so tiles don't need to be re-fetched or re-decoded on every frame. The cache is **pluggable** — swap implementations to tune memory usage, add persistence, or chain multiple tiers.
 
 ## ISKImagePyramidTileCache
 
@@ -100,7 +100,7 @@ void OnPaintSurface(SKPaintSurfaceEventArgs e)
 | Mid-range mobile | 256–512 |
 | Low-memory devices | 64–128 |
 
-Each tile is typically a 256×256 JPEG/PNG decoded to an `SKImage` — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of image RAM at maximum.
+Each tile is typically a 256×256 JPEG/PNG decoded to an `SKImagePyramidTile` — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of image RAM at maximum.
 
 ---
 

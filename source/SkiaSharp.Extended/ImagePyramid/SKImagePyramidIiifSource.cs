@@ -69,6 +69,16 @@ public class SKImagePyramidIiifSource : ISKImagePyramidSource
     /// <inheritdoc/>
     public double AspectRatio => (double)ImageWidth / ImageHeight;
 
+    /// <inheritdoc />
+    public string SourceId => FnvHash($"{_baseId}|{_tileWidth}|{ImageWidth}x{ImageHeight}");
+
+    private static string FnvHash(string value)
+    {
+        uint hash = 2166136261u;
+        foreach (char c in value) { hash ^= (byte)c; hash *= 16777619u; }
+        return hash.ToString("x8");
+    }
+
     /// <summary>The IIIF base ID (@id) used to construct tile URLs.</summary>
     public string BaseId => _baseId;
 

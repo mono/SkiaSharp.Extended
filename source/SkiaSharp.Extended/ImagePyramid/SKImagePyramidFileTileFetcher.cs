@@ -10,11 +10,13 @@ namespace SkiaSharp.Extended;
 /// <summary>
 /// Fetches tiles from the local file system and decodes them using SkiaSharp.
 /// Accepts both plain file paths and <c>file://</c> URIs.
+/// Raw bytes are buffered before decoding, which allows the bytes to be stored
+/// in L2 caches without re-encoding.
 /// </summary>
 public class SKImagePyramidFileTileFetcher : ISKImagePyramidTileFetcher
 {
     /// <inheritdoc />
-    public Task<SKImage?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
+    public Task<SKImagePyramidTile?> FetchTileAsync(string url, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -25,12 +27,13 @@ public class SKImagePyramidFileTileFetcher : ISKImagePyramidTileFetcher
                 path = new Uri(url).LocalPath;
 
             if (!File.Exists(path))
-                return Task.FromResult<SKImage?>(null);
+                return Task.FromResult<SKImagePyramidTile?>(null);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            using var fs = File.OpenRead(path);
-            return Task.FromResult(SKImage.FromEncodedData(fs));
+            var bytes = File.ReadAllBytes(path);
+            var image = SKImage.FromEncodedData(bytes);
+            return Task.FromResult(image != null ? new SKImagePyramidTile(image, bytes) : null);
         }
         catch (OperationCanceledException)
         {
@@ -38,7 +41,7 @@ public class SKImagePyramidFileTileFetcher : ISKImagePyramidTileFetcher
         }
         catch
         {
-            return Task.FromResult<SKImage?>(null);
+            return Task.FromResult<SKImagePyramidTile?>(null);
         }
     }
 

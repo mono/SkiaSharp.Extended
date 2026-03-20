@@ -53,6 +53,16 @@ public class SKImagePyramidDziSource : ISKImagePyramidSource
     /// <summary>Image aspect ratio (width / height).</summary>
     public double AspectRatio => (double)ImageWidth / ImageHeight;
 
+    /// <inheritdoc />
+    public string SourceId => FnvHash($"{TilesBaseUri}|{TileSize}|{ImageWidth}x{ImageHeight}");
+
+    private static string FnvHash(string value)
+    {
+        uint hash = 2166136261u;
+        foreach (char c in value) { hash ^= (byte)c; hash *= 16777619u; }
+        return hash.ToString("x8");
+    }
+
     /// <summary>
     /// Display rectangles for sparse images. If empty, the image is not sparse
     /// and all pixels are available at all levels.

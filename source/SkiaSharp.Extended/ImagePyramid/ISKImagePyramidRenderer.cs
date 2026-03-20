@@ -34,7 +34,7 @@ public interface ISKImagePyramidRenderer : IDisposable
     /// </summary>
     /// <param name="destRect">Where to draw the tile on screen (in screen pixels).</param>
     /// <param name="tile">The decoded tile image.</param>
-    void DrawTile(SKRect destRect, SKImage tile);
+    void DrawTile(SKRect destRect, SKImagePyramidTile tile);
 
     /// <summary>
     /// Draws a lower-resolution fallback tile stretched to fill the destination rect.
@@ -42,8 +42,8 @@ public interface ISKImagePyramidRenderer : IDisposable
     /// </summary>
     /// <param name="destRect">Where to draw the fallback on screen (in screen pixels).</param>
     /// <param name="sourceRect">The sub-region of the fallback tile bitmap to use (in tile pixels).</param>
-    /// <param name="tile">The decoded fallback tile image.</param>
-    void DrawFallbackTile(SKRect destRect, SKRect sourceRect, SKImage tile);
+    /// <param name="tile">The decoded fallback tile.</param>
+    void DrawFallbackTile(SKRect destRect, SKRect sourceRect, SKImagePyramidTile tile);
 
     /// <summary>
     /// Called after all tile draw calls for a render frame.

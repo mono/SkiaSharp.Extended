@@ -24,9 +24,8 @@ public class TileFetcherTest
 
             var tile = await fetcher.FetchTileAsync(tmpPath);
             Assert.NotNull(tile);
-            var img = tile;
-            Assert.Equal(64, img.Width);
-            Assert.Equal(64, img.Height);
+            Assert.Equal(64, tile.Image.Width);
+            Assert.Equal(64, tile.Image.Height);
             tile.Dispose();
         }
         finally
@@ -147,9 +146,8 @@ public class TileFetcherTest
 
             var tile = await fetcher.FetchTileAsync(tmpPath);
             Assert.NotNull(tile);
-            var img = tile;
-            Assert.Equal(32, img.Width);
-            Assert.Equal(32, img.Height);
+            Assert.Equal(32, tile.Image.Width);
+            Assert.Equal(32, tile.Image.Height);
             tile.Dispose();
         }
         finally

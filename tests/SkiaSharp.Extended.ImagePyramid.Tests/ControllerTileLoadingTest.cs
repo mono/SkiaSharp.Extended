@@ -25,7 +25,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public async Task TileLoad_Success_CachesTileAndFiresInvalidate()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(256, 256);
 
         var dzi = CreateDzi(256, 256);
@@ -49,7 +49,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public async Task TileLoad_NullBitmap_RemovesFromPending()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(256, 256);
 
         var dzi = CreateDzi(256, 256);
@@ -68,7 +68,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public async Task TileLoad_FetcherThrows_FiresTileFailed()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(256, 256);
 
         var dzi = CreateDzi(256, 256);
@@ -88,7 +88,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public void Dispose_CancelsPendingLoads()
     {
-        var controller = new SKImagePyramidController();
+        var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(512, 512);
 
         var dzi = CreateDzi(512, 512);
@@ -104,7 +104,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public void Controller_WithNoSource_UpdateDoesNotThrow()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
 
         // Should not throw when no tile source is loaded
@@ -114,7 +114,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public void Controller_SetControlSize_AffectsViewport()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
 
         controller.SetControlSize(1920, 1080);
         // SKImagePyramidViewport should be initialized
@@ -124,7 +124,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public async Task TileScheduling_RequestsTilesForVisibleArea()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
 
         var dzi = CreateDzi(2048, 2048);
@@ -153,7 +153,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public void Render_WithController_DoesNotThrow()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(400, 400);
 
         var dzi = CreateDzi(256, 256);
@@ -162,7 +162,7 @@ public class ControllerTileLoadingTest
 
         controller.Load(dzi, fetcher);
         controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0),
-            CreateSolidImage(256, 256, SKColors.Blue));
+            new SKImagePyramidTile(CreateSolidImage(256, 256, SKColors.Blue), new byte[] { 0xFF }));
 
         using var surface = SKSurface.Create(new SKImageInfo(400, 400));
         using var renderer = new SKImagePyramidRenderer();
@@ -173,7 +173,7 @@ public class ControllerTileLoadingTest
     [Fact]
     public void CoordinateConversion_ElementToLogical_Roundtrips()
     {
-        using var controller = new SKImagePyramidController();
+        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
         controller.SetControlSize(800, 600);
 
         var dzi = CreateDzi(1000, 750);
@@ -200,7 +200,7 @@ public class ControllerTileLoadingTest
 /// </summary>
 internal class ThrowingTileFetcher : ISKImagePyramidTileFetcher
 {
-    public Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
+    public Task<SKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         throw new InvalidOperationException("Simulated fetch failure");
     }
@@ -213,7 +213,7 @@ internal class ThrowingTileFetcher : ISKImagePyramidTileFetcher
 /// </summary>
 internal class SlowTileFetcher : ISKImagePyramidTileFetcher
 {
-    public async Task<SKImage?> FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
     {
         await Task.Delay(TimeSpan.FromSeconds(60), ct);
         return null;

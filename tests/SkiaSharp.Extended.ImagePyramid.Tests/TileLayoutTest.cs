@@ -152,7 +152,7 @@ public class TileLayoutTest
         // Add parent tile to cache
         var parentId = new SKImagePyramidTileId(5, 1, 1);
         var bitmap = new SKBitmap(256, 256);
-        cache.Put(parentId, SKImage.FromBitmap(bitmap));
+        cache.Put(parentId, new SKImagePyramidTile(SKImage.FromBitmap(bitmap), new byte[] { 0xFF, 0xD8 }));
 
         // Request child tile at level 7
         var childId = new SKImagePyramidTileId(7, 4, 4); // (4/2=2, 4/2=2) -> (2/2=1, 2/2=1) at level 5
@@ -187,8 +187,8 @@ public class TileLayoutTest
         // Add tiles at levels 2 and 4
         var level2 = new SKImagePyramidTileId(2, 0, 0);
         var level4 = new SKImagePyramidTileId(4, 2, 2);
-        cache.Put(level2, SKImage.Create(new SKImageInfo(256, 256)));
-        cache.Put(level4, SKImage.Create(new SKImageInfo(256, 256)));
+        cache.Put(level2, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(256, 256)), new byte[] { 0xFF }));
+        cache.Put(level4, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(256, 256)), new byte[] { 0xFF }));
 
         // Request level 6, col=8, row=8 → parent at level 5 = (4,4), level 4 = (2,2)
         var childId = new SKImagePyramidTileId(6, 8, 8);
@@ -254,7 +254,7 @@ public class TileLayoutTest
         // Put parent tile (level 8, col 1, row 1) in cache
         var parentId = new SKImagePyramidTileId(8, 1, 1);
         var bitmap = new SKBitmap(256, 256);
-        cache.Put(parentId, SKImage.FromBitmap(bitmap));
+        cache.Put(parentId, new SKImagePyramidTile(SKImage.FromBitmap(bitmap), new byte[] { 0xFF, 0xD8 }));
 
         // Request child at level 9 (col 2, row 2 → parent col=1, row=1 at level 8)
         var childId = new SKImagePyramidTileId(9, 2, 2);
@@ -311,7 +311,7 @@ public class TileLayoutTest
 
         // Add tile at level 1
         var level1 = new SKImagePyramidTileId(1, 0, 0);
-        cache.Put(level1, SKImage.Create(new SKImageInfo(256, 256)));
+        cache.Put(level1, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(256, 256)), new byte[] { 0xFF }));
 
         // Request level 5, but set minLevel=3 — should not find level 1
         var childId = new SKImagePyramidTileId(5, 0, 0);

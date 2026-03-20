@@ -8,32 +8,32 @@ namespace SkiaSharp.Extended;
 
 /// <summary>
 /// Pluggable tile cache for the Deep Zoom rendering pipeline.
-/// Tiles are stored as <see cref="SKImage"/> instances.
+/// Tiles are stored as <see cref="SKImagePyramidTile"/> instances (image + raw bytes).
 /// </summary>
 public interface ISKImagePyramidTileCache : IDisposable
 {
     /// <summary>Number of tiles currently in the cache.</summary>
     int Count { get; }
 
-    /// <summary>Tries to retrieve a cached tile.</summary>
-    bool TryGet(SKImagePyramidTileId id, out SKImage? tile);
+    /// <summary>Tries to retrieve a cached tile synchronously. Only checks in-memory storage.</summary>
+    bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile);
 
     /// <summary>
-    /// Asynchronously tries to retrieve a cached tile.
+    /// Asynchronously tries to retrieve a cached tile, including any L2 storage (disk, browser).
     /// A null return means cache miss — the caller should then fetch from network.
     /// </summary>
-    Task<SKImage?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default);
+    Task<SKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default);
 
-    /// <summary>Returns <see langword="true"/> if the tile is cached.</summary>
+    /// <summary>Returns <see langword="true"/> if the tile is in the in-memory cache.</summary>
     bool Contains(SKImagePyramidTileId id);
 
-    /// <summary>Stores a tile synchronously.</summary>
-    void Put(SKImagePyramidTileId id, SKImage? tile);
+    /// <summary>Stores a tile synchronously (in-memory only).</summary>
+    void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile);
 
     /// <summary>
-    /// Stores a tile. Implementations may apply delays or tiered writes.
+    /// Stores a tile, including any L2 storage (disk, browser). Implementations may apply async I/O.
     /// </summary>
-    Task PutAsync(SKImagePyramidTileId id, SKImage? tile, CancellationToken ct = default);
+    Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default);
 
     /// <summary>Removes a specific tile from the cache.</summary>
     bool Remove(SKImagePyramidTileId id);
