@@ -335,7 +335,7 @@ public class ImagePyramidControllerTest
     }
 
     [Fact]
-    public void Dispose_DisposesFetcher()
+    public void Dispose_DoesNotDisposeProvider()
     {
         var provider = new MemoryTileProvider();
         var controller = new SKImagePyramidController();
@@ -343,12 +343,14 @@ public class ImagePyramidControllerTest
 
         controller.Dispose();
 
-        // Fetcher should be disposed (MemoryTileFetcher.Dispose clears tiles)
+        // Controller does NOT own provider lifecycle — caller manages disposal
+        Assert.False(provider.IsDisposed);
+        provider.Dispose();
         Assert.True(provider.IsDisposed);
     }
 
     [Fact]
-    public void Load_Reload_DisposesPreviousFetcher()
+    public void Load_Reload_ProviderNotDisposedByCaller()
     {
         var provider1 = new MemoryTileProvider();
         using var controller = new SKImagePyramidController();
@@ -357,9 +359,13 @@ public class ImagePyramidControllerTest
         var provider2 = new MemoryTileProvider();
         controller.Load(CreateSampleDzi(), provider2);
 
-        // First provider should be disposed on reload
-        Assert.True(provider1.IsDisposed);
+        // Controller does NOT own provider lifecycle — caller manages disposal
+        Assert.False(provider1.IsDisposed);
         Assert.False(provider2.IsDisposed);
+
+        // Caller disposes providers when done
+        provider1.Dispose();
+        Assert.True(provider1.IsDisposed);
     }
 
     [Fact]
@@ -673,14 +679,18 @@ public class ImagePyramidControllerTest
     }
 
     [Fact]
-    public void ReplaceProvider_OldProviderIsDisposed()
+    public void SetProvider_OldProviderNotDisposed()
     {
-        // Load with first provider, then replace — old provider should be disposed
+        // Controller does NOT own provider lifecycle — caller manages disposal
         using var controller = new SKImagePyramidController();
         var firstProvider = new MemoryTileProvider();
         controller.Load(CreateSampleDzi(), firstProvider);
-        // Replace — the old provider (firstProvider) should be disposed
+        // Replace — the old provider should NOT be disposed by the controller
         controller.SetProvider(new MemoryTileProvider());
+        Assert.False(firstProvider.IsDisposed);
+
+        // Caller disposes when done
+        firstProvider.Dispose();
         Assert.True(firstProvider.IsDisposed);
     }
 }

@@ -7,22 +7,18 @@ using System.Threading.Tasks;
 namespace SkiaSharp.Extended;
 
 /// <summary>
-/// Owns the complete fetch-and-persist pipeline for a single tile URL.
-/// The controller asks for a tile by URL and receives a decoded tile (or null).
-/// How the tile is obtained — from an HTTP server, a local file, a disk cache,
-/// or browser storage — is an implementation detail invisible to the controller.
+/// Returns decoded tiles to the controller. How the tile is obtained
+/// (cache, network, filesystem) is an implementation detail.
 /// </summary>
 /// <remarks>
 /// <para>
 /// Built-in implementations:
 /// <list type="bullet">
-///   <item><see cref="SKImagePyramidHttpTileProvider"/> — HTTP fetch with optional disk caching.</item>
-///   <item><see cref="SKImagePyramidFileTileProvider"/> — reads from the local filesystem; no disk cache needed.</item>
+///   <item><see cref="SKTieredTileProvider"/> — composes a fetcher and optional persistent cache.</item>
 /// </list>
 /// </para>
 /// <para>
-/// Custom implementations (e.g. browser storage for Blazor WebAssembly) are supported by implementing
-/// this interface directly.
+/// Custom implementations are supported by implementing this interface directly.
 /// </para>
 /// </remarks>
 public interface ISKImagePyramidTileProvider : IDisposable

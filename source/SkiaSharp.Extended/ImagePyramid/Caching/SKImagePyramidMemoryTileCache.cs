@@ -10,7 +10,7 @@ namespace SkiaSharp.Extended;
 /// Evicted tiles are deferred for disposal to avoid race conditions with the renderer.
 /// Call <see cref="FlushEvicted"/> at the start of each render frame.
 /// </summary>
-internal sealed class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
+public sealed class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
 {
     private readonly int _maxEntries;
     private readonly LinkedList<TileCacheEntry> _lruList;

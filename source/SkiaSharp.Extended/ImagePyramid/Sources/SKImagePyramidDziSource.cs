@@ -194,18 +194,56 @@ public class SKImagePyramidDziSource : ISKImagePyramidSource
         return ParseDocument(doc, null);
     }
 
-    /// <summary>Parses a DZI XML from a stream with a base URI for computing tile URLs.</summary>
-    public static SKImagePyramidDziSource Parse(Stream stream, string? baseUri)
+    /// <summary>Parses a DZI XML from a stream with a tiles base URI.</summary>
+    public static SKImagePyramidDziSource Parse(Stream stream, string? tilesBaseUri)
     {
         var doc = XDocument.Load(stream);
-        return ParseDocument(doc, baseUri);
+        return ParseDocument(doc, tilesBaseUri);
     }
 
-    /// <summary>Parses a DZI XML string with a base URI.</summary>
-    public static SKImagePyramidDziSource Parse(string xml, string? baseUri)
+    /// <summary>Parses a DZI XML string with a tiles base URI.</summary>
+    public static SKImagePyramidDziSource Parse(string xml, string? tilesBaseUri)
     {
         var doc = XDocument.Parse(xml);
-        return ParseDocument(doc, baseUri);
+        return ParseDocument(doc, tilesBaseUri);
+    }
+
+    /// <summary>
+    /// Parses a DZI XML string, deriving the tiles base URI from the DZI file URI
+    /// using the Deep Zoom convention: <c>{name}_files/</c> relative to the DZI location.
+    /// </summary>
+    /// <param name="xml">The DZI XML content.</param>
+    /// <param name="dziUri">
+    /// The URI of the DZI file (e.g. <c>"https://server.com/image.dzi"</c> or <c>"tiles/image.dzi"</c>).
+    /// The tiles base URI is derived as <c>{uri_without_extension}_files/</c>.
+    /// </param>
+    public static SKImagePyramidDziSource Parse(string xml, Uri dziUri)
+    {
+        var doc = XDocument.Parse(xml);
+        string tilesBase = DeriveTilesBaseUri(dziUri.OriginalString);
+        return ParseDocument(doc, tilesBase);
+    }
+
+    /// <summary>
+    /// Parses a DZI XML from a stream, deriving the tiles base URI from the DZI file URI.
+    /// </summary>
+    public static SKImagePyramidDziSource Parse(Stream stream, Uri dziUri)
+    {
+        var doc = XDocument.Load(stream);
+        string tilesBase = DeriveTilesBaseUri(dziUri.OriginalString);
+        return ParseDocument(doc, tilesBase);
+    }
+
+    /// <summary>
+    /// Derives the tiles base URI from a DZI file path/URL using Deep Zoom convention.
+    /// E.g. <c>"https://server.com/image.dzi"</c> → <c>"https://server.com/image_files/"</c>.
+    /// </summary>
+    internal static string DeriveTilesBaseUri(string dziPath)
+    {
+        // Remove .dzi extension (case-insensitive) and append _files/
+        int lastDot = dziPath.LastIndexOf('.');
+        string stem = lastDot >= 0 ? dziPath.Substring(0, lastDot) : dziPath;
+        return stem + "_files/";
     }
 
     private static SKImagePyramidDziSource ParseDocument(XDocument doc, string? baseUri)

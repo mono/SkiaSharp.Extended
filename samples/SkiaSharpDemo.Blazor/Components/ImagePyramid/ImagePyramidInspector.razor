@@ -66,7 +66,7 @@
             </div>
         </details>
 
-        @if (Controller.TileSource is { } src)
+        @if (Controller.Source is { } src)
         {
             <details open>
                 <summary>🖼 Image Source</summary>
@@ -109,7 +109,7 @@
             </div>
         </details>
 
-        @if (Controller.TileSource is { } lvlSrc)
+        @if (Controller.Source is { } lvlSrc)
         {
             var vp2 = Controller.Viewport;
             var optLevel = lvlSrc.GetOptimalLevel(vp2.ViewportWidth, vp2.ControlWidth);
@@ -155,9 +155,9 @@
         <details open>
             <summary>📋 Visible Tiles</summary>
             <div class="ip-section-body">
-                @if (Controller.TileSource != null)
+                @if (Controller.Source != null)
                 {
-                    var tiles = Controller.TileLayout.GetVisibleTiles(Controller.TileSource, Controller.Viewport);
+                    var tiles = Controller.TileLayout.GetVisibleTiles(Controller.Source, Controller.Viewport);
                     <p class="ip-muted">@tiles.Count tile(s) at current viewport</p>
                     <table class="ip-tile-table">
                         <thead><tr><th>Lvl</th><th>Col</th><th>Row</th><th>Pri</th><th>Status</th></tr></thead>

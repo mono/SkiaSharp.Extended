@@ -5,29 +5,22 @@ using System;
 namespace SkiaSharp.Extended;
 
 /// <summary>
-/// An opaque tile that holds both the decoded image for rendering and the original
-/// encoded bytes for storage. This allows disk and browser caches to persist tiles
-/// without re-encoding, and handles forward-only streams by buffering at fetch time.
+/// An opaque tile that holds the decoded image for rendering and optionally
+/// the original encoded bytes for storage.
 /// </summary>
 public sealed class SKImagePyramidTile : IDisposable
 {
     private bool _disposed;
 
     /// <summary>
-    /// Creates a new tile from a decoded image and the original encoded bytes.
+    /// Creates a new tile from a decoded image and optional raw bytes.
     /// </summary>
     /// <param name="image">The decoded SkiaSharp image for rendering.</param>
-    /// <param name="rawData">The original encoded bytes (JPEG, PNG, etc.) for storage.</param>
-    /// <param name="sourceId">
-    /// The identifier of the source that produced this tile.
-    /// The controller stamps this from <see cref="ISKImagePyramidSource.SourceId"/> after fetching.
-    /// Used by <see cref="SKImagePyramidFileSystemTileCache"/> to namespace tiles per image source.
-    /// </param>
-    public SKImagePyramidTile(SKImage image, byte[] rawData, string sourceId = "")
+    /// <param name="rawData">The original encoded bytes (JPEG, PNG, etc.) for storage. Null if not needed.</param>
+    public SKImagePyramidTile(SKImage image, byte[]? rawData = null)
     {
         Image = image ?? throw new ArgumentNullException(nameof(image));
-        RawData = rawData ?? throw new ArgumentNullException(nameof(rawData));
-        SourceId = sourceId ?? string.Empty;
+        RawData = rawData;
     }
 
     /// <summary>The decoded image for rendering.</summary>
@@ -35,15 +28,9 @@ public sealed class SKImagePyramidTile : IDisposable
 
     /// <summary>
     /// The original encoded bytes (JPEG, PNG, etc.) for disk or browser storage.
-    /// Using these avoids re-encoding and preserves the original format and quality.
+    /// Null when the tile was created for render-only use without persistence.
     /// </summary>
-    public byte[] RawData { get; }
-
-    /// <summary>
-    /// The identifier of the source that produced this tile.
-    /// Set by the controller after fetching; empty string if not yet stamped.
-    /// </summary>
-    public string SourceId { get; internal set; }
+    public byte[]? RawData { get; }
 
     /// <inheritdoc />
     public void Dispose()

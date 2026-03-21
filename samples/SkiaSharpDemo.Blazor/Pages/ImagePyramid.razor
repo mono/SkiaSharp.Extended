@@ -437,7 +437,7 @@
     private void OnCacheTypeChanged()
     {
         if (_controller == null) return;
-        var source = _controller.TileSource;
+        var source = _controller.Source;
         RebuildProvider();
         if (source != null)
             _controller.Load(source, _delayProvider!);
@@ -447,7 +447,7 @@
     private void OnCacheSizeChanged()
     {
         if (_controller == null) return;
-        var source = _controller.TileSource;
+        var source = _controller.Source;
         RebuildProvider();
         if (source != null)
             _controller.Load(source, _delayProvider!);
@@ -462,7 +462,7 @@
 
     private ISKImagePyramidTileProvider BuildInnerProvider()
     {
-        var http = new SkiaSharp.Extended.SKImagePyramidHttpTileProvider();
+        var http = new SkiaSharp.Extended.SKTieredTileProvider(new SkiaSharp.Extended.SKHttpTileFetcher());
         if (_useBrowserCache)
             return new BrowserStorageTileProvider(http, JS);
         return http;
@@ -481,8 +481,8 @@
 
         var newProvider = BuildDelayProvider();
 
-        // ReplaceProvider disposes the old _delayProvider (which cascades to the inner provider).
-        _controller.ReplaceProvider(newProvider);
+        // SetProvider disposes the old _delayProvider (which cascades to the inner provider).
+        _controller.SetProvider(newProvider);
         _delayProvider = newProvider;
 
         if (_debugRenderer != null)
