@@ -74,11 +74,11 @@ public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache
     /// <inheritdoc />
     public int Count => _l1.Count;
 
-    /// <inheritdoc />
-    /// <remarks>
-    /// Used to namespace tiles by source. Set by the controller on <c>Load()</c>.
-    /// Tiles stored under a different source ID will not be found.
-    /// </remarks>
+    /// <summary>
+    /// The identifier of the currently active image source.
+    /// Tiles are stored in subdirectories named by this value, so each source's tiles are isolated.
+    /// Set this before calling <see cref="TryGetAsync"/> or <see cref="PutAsync"/>.
+    /// </summary>
     public string? ActiveSourceId
     {
         get => _activeSourceId;

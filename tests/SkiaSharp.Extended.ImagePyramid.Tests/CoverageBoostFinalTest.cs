@@ -1,3 +1,5 @@
+using System.Threading;
+
 using SkiaSharp;
 using SkiaSharp.Extended;
 using System.Net;
@@ -13,13 +15,13 @@ public class CoverageBoostFinalTest
     [Fact]
     public async Task FileTileFetcher_CancelledTokenDuringFetch_ThrowsOperationCanceledException()
     {
-        var fetcher = new SKImagePyramidFileTileFetcher();
+        var provider = new SKImagePyramidFileTileProvider();
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
         // Cancellation at the start should throw OperationCanceledException
         await Assert.ThrowsAsync<OperationCanceledException>(
-            () => fetcher.FetchTileAsync("/some/path.png", cts.Token));
+            () => provider.GetTileAsync("/some/path.png", cts.Token));
     }
 
     // --- SKImagePyramidFileTileFetcher: Generic exception returns null (lines 100-102) ---
@@ -27,12 +29,12 @@ public class CoverageBoostFinalTest
     [Fact]
     public async Task FileTileFetcher_CorruptedFilePath_ReturnsNull()
     {
-        var fetcher = new SKImagePyramidFileTileFetcher();
+        var provider = new SKImagePyramidFileTileProvider();
 
         // A file URI with invalid characters causes an exception in Uri parsing
         // that should be caught by the generic catch and return null.
         // Use a path with embedded null bytes or illegal URI chars.
-        var result = await fetcher.FetchTileAsync("file://\0invalid\0path");
+        var result = await provider.GetTileAsync("file://\0invalid\0path", CancellationToken.None);
         Assert.Null(result);
     }
 
@@ -43,12 +45,12 @@ public class CoverageBoostFinalTest
     {
         var handler = new MockHttpMessageHandler(HttpStatusCode.NotFound, "");
         var client = new HttpClient(handler);
-        var fetcher = new SKImagePyramidHttpTileFetcher(client);
+        var provider = new SKImagePyramidHttpTileProvider(httpClient: client);
 
-        var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
+        var result = await provider.GetTileAsync("http://example.com/tile.png", CancellationToken.None);
         Assert.Null(result);
 
-        fetcher.Dispose();
+        provider.Dispose();
         client.Dispose();
     }
 
@@ -57,12 +59,12 @@ public class CoverageBoostFinalTest
     {
         var handler = new MockHttpMessageHandler(HttpStatusCode.InternalServerError, "error");
         var client = new HttpClient(handler);
-        var fetcher = new SKImagePyramidHttpTileFetcher(client);
+        var provider = new SKImagePyramidHttpTileProvider(httpClient: client);
 
-        var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
+        var result = await provider.GetTileAsync("http://example.com/tile.png", CancellationToken.None);
         Assert.Null(result);
 
-        fetcher.Dispose();
+        provider.Dispose();
         client.Dispose();
     }
 
@@ -73,12 +75,12 @@ public class CoverageBoostFinalTest
     {
         var handler = new ThrowingHttpMessageHandler(new HttpRequestException("Network error"));
         var client = new HttpClient(handler);
-        var fetcher = new SKImagePyramidHttpTileFetcher(client);
+        var provider = new SKImagePyramidHttpTileProvider(httpClient: client);
 
-        var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
+        var result = await provider.GetTileAsync("http://example.com/tile.png", CancellationToken.None);
         Assert.Null(result);
 
-        fetcher.Dispose();
+        provider.Dispose();
         client.Dispose();
     }
 
@@ -89,12 +91,12 @@ public class CoverageBoostFinalTest
     {
         var handler = new ThrowingHttpMessageHandler(new TaskCanceledException("Timeout"));
         var client = new HttpClient(handler);
-        var fetcher = new SKImagePyramidHttpTileFetcher(client);
+        var provider = new SKImagePyramidHttpTileProvider(httpClient: client);
 
-        var result = await fetcher.FetchTileAsync("http://example.com/tile.png");
+        var result = await provider.GetTileAsync("http://example.com/tile.png", CancellationToken.None);
         Assert.Null(result);
 
-        fetcher.Dispose();
+        provider.Dispose();
         client.Dispose();
     }
 

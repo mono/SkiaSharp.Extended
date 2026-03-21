@@ -381,10 +381,10 @@ public class ImagePyramidEdgeCaseTest
     [Fact]
     public void Controller_Load_SetsUpState()
     {
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         var dzi = CreateTestDzi(2048, 1536);
         controller.SetControlSize(800, 600);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
 
         Assert.NotNull(controller.TileSource);
         Assert.Equal(2048.0 / 1536.0, controller.AspectRatio, 2);
@@ -393,9 +393,9 @@ public class ImagePyramidEdgeCaseTest
     [Fact]
     public void Controller_ResetView_GoesToFitAll()
     {
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
-        controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
+        controller.Load(CreateTestDzi(2048, 1536), new MemoryTileProvider());
 
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
         controller.ResetView();
@@ -407,7 +407,7 @@ public class ImagePyramidEdgeCaseTest
     [Fact]
     public void Controller_DoubleDispose_Safe()
     {
-        var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        var controller = new SKImagePyramidController();
         controller.Dispose();
         controller.Dispose();
     }
@@ -415,9 +415,9 @@ public class ImagePyramidEdgeCaseTest
     [Fact]
     public void Controller_Pan_MovesOrigin()
     {
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
-        controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
+        controller.Load(CreateTestDzi(2048, 1536), new MemoryTileProvider());
 
         // Zoom in first so pan has room
         controller.ZoomAboutScreenPoint(4.0, 400, 300);
@@ -430,9 +430,9 @@ public class ImagePyramidEdgeCaseTest
     [Fact]
     public void Controller_IsIdle_WhenNoActivity()
     {
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
-        controller.Load(CreateTestDzi(512, 512), new MemoryTileFetcher());
+        controller.Load(CreateTestDzi(512, 512), new MemoryTileProvider());
 
         // IsIdle = no pending tiles (spring is view-layer concern)
         Assert.True(controller.IsIdle);
@@ -443,9 +443,9 @@ public class ImagePyramidEdgeCaseTest
     {
         // Spring belongs to the view (SKImagePyramidView), not the controller.
         // SKImagePyramidViewport changes via ZoomAboutScreenPoint are immediate.
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
-        controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
+        controller.Load(CreateTestDzi(2048, 1536), new MemoryTileProvider());
 
         double before = controller.Viewport.ViewportWidth;
         controller.ZoomAboutScreenPoint(2.0, 400, 300);

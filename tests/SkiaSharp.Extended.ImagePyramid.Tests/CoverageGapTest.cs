@@ -147,8 +147,8 @@ public class CoverageGapTest
     {
         var xml = TestDataHelper.GetString("sample.dzi");
         var dzi = SKImagePyramidDziSource.Parse(xml);
-        var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
-        controller.Load(dzi, new MemoryTileFetcher());
+        var controller = new SKImagePyramidController();
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Dispose();
     }
 
@@ -157,8 +157,8 @@ public class CoverageGapTest
     {
         var xml = TestDataHelper.GetString("sample.dzi");
         var dzi = SKImagePyramidDziSource.Parse(xml);
-        var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
-        controller.Load(dzi, new MemoryTileFetcher());
+        var controller = new SKImagePyramidController();
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Dispose();
         controller.Dispose(); // Should not throw
     }
@@ -166,7 +166,7 @@ public class CoverageGapTest
     [Fact]
     public void ImagePyramidController_Update_BeforeLoad()
     {
-        var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        var controller = new SKImagePyramidController();
         controller.Update();
         controller.Dispose();
     }
@@ -174,7 +174,7 @@ public class CoverageGapTest
     [Fact]
     public void ImagePyramidController_Render_BeforeLoad()
     {
-        var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        var controller = new SKImagePyramidController();
         using var surface = SKSurface.Create(new SKImageInfo(100, 100));
         using var renderer = new SKImagePyramidRenderer();
         renderer.Canvas = surface.Canvas;
@@ -186,8 +186,8 @@ public class CoverageGapTest
     public void ImagePyramidController_NullFetcher_GracefulDegradation()
     {
         var xml = TestDataHelper.GetString("sample.dzi");        var dzi = SKImagePyramidDziSource.Parse(xml);
-        var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
-        controller.Load(dzi, new NullTileFetcher());
+        var controller = new SKImagePyramidController();
+        controller.Load(dzi, new NullTileProvider());
         controller.Update();
         using var surface = SKSurface.Create(new SKImageInfo(400, 300));
         using var renderer = new SKImagePyramidRenderer();
@@ -196,10 +196,10 @@ public class CoverageGapTest
         controller.Dispose();
     }
 
-    /// <summary>A tile fetcher that always returns null (simulates 404s).</summary>
-    private class NullTileFetcher : ISKImagePyramidTileFetcher
+    /// <summary>A tile provider that always returns null (simulates 404s).</summary>
+    private class NullTileProvider : ISKImagePyramidTileProvider
     {
-        public Task<SKImagePyramidTile?> FetchTileAsync(string url, CancellationToken ct = default)
+        public Task<SKImagePyramidTile?> GetTileAsync(string url, CancellationToken ct = default)
             => Task.FromResult<SKImagePyramidTile?>(null);
         public void Dispose() { }
     }

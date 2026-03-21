@@ -9,34 +9,34 @@ public class TileFetchersTest
     [Fact]
     public async Task FileTileFetcher_NonExistentFile_ReturnsNull()
     {
-        using var fetcher = new SKImagePyramidFileTileFetcher();
-        var result = await fetcher.FetchTileAsync("/nonexistent/path/tile.jpg");
+        using var fetcher = new SKImagePyramidFileTileProvider();
+        var result = await fetcher.GetTileAsync("/nonexistent/path/tile.jpg", CancellationToken.None);
         Assert.Null(result);
     }
 
     [Fact]
     public async Task FileTileFetcher_FileUriScheme_ReturnsNull_WhenMissing()
     {
-        using var fetcher = new SKImagePyramidFileTileFetcher();
-        var result = await fetcher.FetchTileAsync("file:///nonexistent/path/tile.jpg");
+        using var fetcher = new SKImagePyramidFileTileProvider();
+        var result = await fetcher.GetTileAsync("file:///nonexistent/path/tile.jpg", CancellationToken.None);
         Assert.Null(result);
     }
 
     [Fact]
     public async Task FileTileFetcher_CancellationToken_Throws()
     {
-        using var fetcher = new SKImagePyramidFileTileFetcher();
+        using var fetcher = new SKImagePyramidFileTileProvider();
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
         await Assert.ThrowsAsync<OperationCanceledException>(
-            () => fetcher.FetchTileAsync("/any/path.jpg", cts.Token));
+            () => fetcher.GetTileAsync("/any/path.jpg", cts.Token));
     }
 
     [Fact]
     public void FileTileFetcher_Dispose_DoesNotThrow()
     {
-        var fetcher = new SKImagePyramidFileTileFetcher();
+        var fetcher = new SKImagePyramidFileTileProvider();
         fetcher.Dispose(); // Should not throw
     }
 
@@ -55,8 +55,8 @@ public class TileFetchersTest
                 data.SaveTo(stream);
             }
 
-            using var fetcher = new SKImagePyramidFileTileFetcher();
-            var result = await fetcher.FetchTileAsync(tempPath);
+            using var fetcher = new SKImagePyramidFileTileProvider();
+            var result = await fetcher.GetTileAsync(tempPath);
             Assert.NotNull(result);
             Assert.Equal(10, result.Image.Width);
             Assert.Equal(10, result.Image.Height);
@@ -74,21 +74,24 @@ public class TileFetchersTest
     [Fact]
     public void HttpTileFetcher_DefaultConstructor_CreatesClient()
     {
-        using var fetcher = new SKImagePyramidHttpTileFetcher();
+        using var fetcher = new SKImagePyramidHttpTileProvider();
         // Should not throw
     }
 
     [Fact]
-    public void HttpTileFetcher_NullClient_Throws()
+    public void HttpTileFetcher_NullClient_UsesInternalClient()
     {
-        Assert.Throws<ArgumentNullException>(() => new SKImagePyramidHttpTileFetcher(null!));
+        // null means "create an owned internal HttpClient" -- not an error
+        var provider = new SKImagePyramidHttpTileProvider(httpClient: null);
+        Assert.NotNull(provider);
+        provider.Dispose();
     }
 
     [Fact]
     public void HttpTileFetcher_ExternalClient_NotDisposed()
     {
         var client = new System.Net.Http.HttpClient();
-        var fetcher = new SKImagePyramidHttpTileFetcher(client);
+        var fetcher = new SKImagePyramidHttpTileProvider(httpClient: client);
         fetcher.Dispose();
 
         // External client should still be usable (not disposed)
@@ -100,12 +103,12 @@ public class TileFetchersTest
     [Fact]
     public async Task HttpTileFetcher_CancelledToken_ReturnsNull()
     {
-        using var fetcher = new SKImagePyramidHttpTileFetcher();
+        using var fetcher = new SKImagePyramidHttpTileProvider();
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
         // Cancelled token should return null (not throw)
-        var result = await fetcher.FetchTileAsync("http://localhost:1/tile.jpg", cts.Token);
+        var result = await fetcher.GetTileAsync("http://localhost:1/tile.jpg", cts.Token);
         Assert.Null(result);
     }
 }

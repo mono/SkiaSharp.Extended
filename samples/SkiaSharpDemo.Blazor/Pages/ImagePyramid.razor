@@ -116,10 +116,7 @@
     private int  _cacheDelayMax = 500;
     private bool _useBrowserCache;
     private int  _cacheCapacity = 1024;
-    private DelayTileCache? _delayCache;
-    // _innerCache is the cache directly wrapped by _delayCache (owned; dispose via _delayCache)
-    private ISKImagePyramidTileCache? _innerCache;
-    private BrowserStorageTileCache? _browserCache; // same ref as _innerCache when _useBrowserCache=true
+    private DelayTileProvider? _delayProvider;
     // Debug zoom: scales the entire canvas to reveal what is off-screen (0.1–1.0)
     private float _debugZoom = 1.0f;
 
@@ -156,10 +153,9 @@
         _thisRef = DotNetObjectReference.Create(this);
         await JS.InvokeVoidAsync("deepZoomRegisterResize", _thisRef);
 
-        _innerCache = new SkiaSharp.Extended.SKImagePyramidMemoryTileCache(_cacheCapacity);
-        _delayCache = new DelayTileCache(_innerCache);
+        _delayProvider = new DelayTileProvider(BuildInnerProvider());
         _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.SKImagePyramidRenderer());
-        _controller = new SKImagePyramidController(_delayCache);
+        _controller = new SKImagePyramidController();
         _controller.EnableLodBlending = _enableLodBlending;
         _controller.InvalidateRequired += OnInvalidateRequired;
 
@@ -318,7 +314,7 @@
             {
                 var coll = SKImagePyramidDziCollectionSource.Parse(content);
                 coll.TilesBaseUri = baseDir;
-                _controller.Load(coll, new SKImagePyramidHttpTileFetcher());
+                _controller.Load(coll, _delayProvider!);
                 SyncZoomFromViewport();
                 _statusText = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
@@ -326,7 +322,7 @@
             {
                 // Auto-detect IIIF if URL hints at it, or if content looks like JSON
                 var tileSource = SKImagePyramidIiifSource.Parse(content);
-                _controller.Load(tileSource, new SKImagePyramidHttpTileFetcher());
+                _controller.Load(tileSource, _delayProvider!);
                 SyncZoomFromViewport();
                 _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels, IIIF)";
             }
@@ -334,7 +330,7 @@
             {
                 string tilesBase = $"{baseDir}{stem}_files/";
                 var tileSource = SKImagePyramidDziSource.Parse(content, tilesBase);
-                _controller.Load(tileSource, new SKImagePyramidHttpTileFetcher());
+                _controller.Load(tileSource, _delayProvider!);
                 SyncZoomFromViewport();
                 _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             }
@@ -429,11 +425,11 @@
 
     private void OnCacheDelayChanged()
     {
-        if (_delayCache == null) return;
-        _delayCache.IsEnabled  = _cacheDelayEnabled;
-        _delayCache.MinDelayMs = _cacheDelayMin;
-        _delayCache.MaxDelayMs = _cacheDelayMax;
-        // Do NOT clear the cache here: existing lower-level tiles are needed as LOD fallbacks.
+        if (_delayProvider == null) return;
+        _delayProvider.IsEnabled  = _cacheDelayEnabled;
+        _delayProvider.MinDelayMs = _cacheDelayMin;
+        _delayProvider.MaxDelayMs = _cacheDelayMax;
+        // Do NOT clear the render buffer here: existing lower-level tiles are needed as LOD fallbacks.
         // Use the "Clear Cache" button to reset explicitly.
         InvokeAsync(() => _canvas?.Invalidate());
     }
@@ -441,20 +437,20 @@
     private void OnCacheTypeChanged()
     {
         if (_controller == null) return;
-        var source = _controller.TileSource;  // save BEFORE dispose
-        RebuildControllerCache();
+        var source = _controller.TileSource;
+        RebuildProvider();
         if (source != null)
-            _controller.Load(source, new SkiaSharp.Extended.SKImagePyramidHttpTileFetcher());
+            _controller.Load(source, _delayProvider!);
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
     private void OnCacheSizeChanged()
     {
         if (_controller == null) return;
-        var source = _controller.TileSource;  // save BEFORE dispose
-        RebuildControllerCache();
+        var source = _controller.TileSource;
+        RebuildProvider();
         if (source != null)
-            _controller.Load(source, new SkiaSharp.Extended.SKImagePyramidHttpTileFetcher());
+            _controller.Load(source, _delayProvider!);
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
@@ -464,38 +460,31 @@
         InvokeAsync(() => _canvas?.Invalidate());
     }
 
-    private void RebuildControllerCache()
+    private ISKImagePyramidTileProvider BuildInnerProvider()
+    {
+        var http = new SkiaSharp.Extended.SKImagePyramidHttpTileProvider();
+        if (_useBrowserCache)
+            return new BrowserStorageTileProvider(http, JS);
+        return http;
+    }
+
+    private DelayTileProvider BuildDelayProvider() => new(BuildInnerProvider())
+    {
+        IsEnabled  = _cacheDelayEnabled,
+        MinDelayMs = _cacheDelayMin,
+        MaxDelayMs = _cacheDelayMax,
+    };
+
+    private void RebuildProvider()
     {
         if (_controller == null) return;
 
-        // Build new cache chain
-        ISKImagePyramidTileCache newInner;
-        if (_useBrowserCache)
-        {
-            _browserCache = new BrowserStorageTileCache(JS);
-            newInner = _browserCache;
-            _innerCache = newInner;
-        }
-        else
-        {
-            _browserCache = null;
-            newInner = new SkiaSharp.Extended.SKImagePyramidMemoryTileCache(_cacheCapacity);
-            _innerCache = newInner;
-        }
+        var newProvider = BuildDelayProvider();
 
-        var newDelay = new DelayTileCache(newInner)
-        {
-            IsEnabled  = _cacheDelayEnabled,
-            MinDelayMs = _cacheDelayMin,
-            MaxDelayMs = _cacheDelayMax,
-        };
+        // ReplaceProvider disposes the old _delayProvider (which cascades to the inner provider).
+        _controller.ReplaceProvider(newProvider);
+        _delayProvider = newProvider;
 
-        // Swap the cache on the existing controller -- viewport, zoom, and tile source are preserved.
-        // ReplaceCache disposes the old _delayCache (which cascades to the old _innerCache/_browserCache).
-        _controller.ReplaceCache(newDelay);
-        _delayCache = newDelay;
-
-        // Update debug renderer settings (no need to recreate)
         if (_debugRenderer != null)
             _debugRenderer.ShowTileBorders = _showTileBorders;
     }
@@ -508,14 +497,15 @@
         if (_controller != null)
         {
             _controller.InvalidateRequired -= OnInvalidateRequired;
-            _controller.Dispose(); // also disposes _cache (= current _delayCache chain)
+            _controller.Dispose(); // also disposes the current _delayProvider chain
         }
         else
         {
-            // Defensive: controller never set (OnAfterRenderAsync didn't run) — dispose cache directly.
-            _delayCache?.Dispose();
+            // Defensive: controller never set (OnAfterRenderAsync didn't run) — dispose provider directly.
+            _delayProvider?.Dispose();
         }
         _debugRenderer?.Dispose();
     }
 }
+
 

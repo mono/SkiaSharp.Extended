@@ -357,11 +357,11 @@ public class FileSystemTileCacheTest
     }
 
     [Fact]
-    public void MemoryCache_ActiveSourceId_IsIgnoredButSettable()
+    public void MemoryCache_ActiveSourceId_IsIgnoredByMemoryCache()
     {
+        // SKImagePyramidMemoryTileCache doesn't use source namespacing — verify no crash
         using var cache = new SKImagePyramidMemoryTileCache(10);
-        cache.ActiveSourceId = "anything";
-        Assert.Equal("anything", cache.ActiveSourceId);
+        Assert.Equal(0, cache.Count);
     }
 
     [Fact]

@@ -23,9 +23,9 @@ public class ImagePyramidRendererTest
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
         var dzi = CreateSampleDzi();
         var cache = new SKImagePyramidMemoryTileCache(10);
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
 
         renderer.Canvas = surface.Canvas;
@@ -40,9 +40,9 @@ public class ImagePyramidRendererTest
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
         var dzi = CreateSampleDzi();
         var cache = new SKImagePyramidMemoryTileCache(10);
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
         controller.Viewport.ViewportOriginX = 0;
         controller.Viewport.ViewportOriginY = 0;
@@ -75,7 +75,7 @@ public class ImagePyramidRendererTest
     [Fact]
     public void EnableLodBlending_CanBeToggled()
     {
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         Assert.True(controller.EnableLodBlending);
 
         controller.EnableLodBlending = false;
@@ -93,9 +93,9 @@ public class ImagePyramidRendererTest
         using var surface = SKSurface.Create(new SKImageInfo(800, 600));
         var dzi = CreateSampleDzi();
         var cache = new SKImagePyramidMemoryTileCache(10);
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
         controller.Viewport.ViewportOriginX = 0;
         controller.Viewport.ViewportOriginY = 0;
@@ -134,10 +134,9 @@ public class ImagePyramidRendererTest
 </Image>";
         var dzi = SKImagePyramidDziSource.Parse(xml, "http://example.com/large");
 
-        var cache = new SKImagePyramidMemoryTileCache(100);
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(512, 512);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
         controller.Viewport.ViewportOriginX = 0;
         controller.Viewport.ViewportOriginY = 0;
@@ -155,7 +154,7 @@ public class ImagePyramidRendererTest
             var bmp = new SKBitmap(256, 256);
             using (var c = new SKCanvas(bmp))
                 c.Clear(SKColors.Green);
-            cache.Put(req.TileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
+            controller.Cache.Put(req.TileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
         }
 
         surface.Canvas.Clear(SKColors.White);
@@ -173,7 +172,6 @@ public class ImagePyramidRendererTest
 
         Assert.True(centerColor.Green > 100 && centerColor.Red < 50,
             $"Expected green at center but got R={centerColor.Red} G={centerColor.Green} B={centerColor.Blue}");
-        cache.Dispose();
     }
 
     [Fact]
@@ -196,9 +194,9 @@ public class ImagePyramidRendererTest
         dzi.TilesBaseUri = "http://test/";
 
         using var cache = new SKImagePyramidMemoryTileCache(10);
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(400, 400);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
         controller.Viewport.ViewportOriginX = 0;
         controller.Viewport.ViewportOriginY = 0;
@@ -206,14 +204,14 @@ public class ImagePyramidRendererTest
 
         var layout = new SKImagePyramidTileLayout();
 
-        // Create a magenta tile and add to cache
+        // Create a magenta tile and add to render buffer
         var tiles = layout.GetVisibleTiles(dzi, controller.Viewport);
         Assert.NotEmpty(tiles);
         var tileId = tiles[0].TileId;
         var bmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(bmp))
             c.Clear(SKColors.Magenta);
-        cache.Put(tileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
+        controller.Cache.Put(tileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
 
         // Clear to white, then render
         surface.Canvas.Clear(SKColors.White);
@@ -234,9 +232,9 @@ public class ImagePyramidRendererTest
         using var surface = SKSurface.Create(new SKImageInfo(400, 400));
         var dzi = CreateSampleDzi();
         using var cache = new SKImagePyramidMemoryTileCache(10);
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(400, 400);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
 
         // Render multiple times should be safe
@@ -260,21 +258,20 @@ public class ImagePyramidRendererTest
 </Image>";
         var dzi = SKImagePyramidDziSource.Parse(xml, "http://example.com/large");
         using var surface = SKSurface.Create(new SKImageInfo(512, 512));
-        using var cache = new SKImagePyramidMemoryTileCache(100);
 
         // Add only a low-level tile to trigger fallback path with borders
         var bmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(bmp))
             c.Clear(SKColors.Green);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
 
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(512, 512);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
         controller.Viewport.ViewportOriginX = 0;
         controller.Viewport.ViewportOriginY = 0;
         controller.Viewport.AspectRatio = 1.0;
+        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
 
         var ex = Record.Exception(() =>
         {
@@ -296,9 +293,9 @@ public class ImagePyramidRendererTest
         var dzi = CreateSampleDzi();
         using var cache = new SKImagePyramidMemoryTileCache(10);
 
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(100, 100);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
 
         var ex = Record.Exception(() =>
@@ -318,12 +315,11 @@ public class ImagePyramidRendererTest
         dzi.TilesBaseUri = "http://test/";
 
         using var surface = SKSurface.Create(new SKImageInfo(256, 256));
-        using var cache = new SKImagePyramidMemoryTileCache(10);
         var layout = new SKImagePyramidTileLayout();
 
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(256, 256);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
         controller.Viewport.ViewportOriginX = 0;
         controller.Viewport.ViewportOriginY = 0;
@@ -333,18 +329,18 @@ public class ImagePyramidRendererTest
         var bmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(bmp))
             c.Clear(SKColors.Cyan);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
+        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
 
         // Also put tiles for whichever level the layout picks
         var tiles = layout.GetVisibleTiles(dzi, controller.Viewport);
         foreach (var t in tiles)
         {
-            if (!cache.Contains(t.TileId))
+            if (!controller.Cache.Contains(t.TileId))
             {
                 var tileBmp = new SKBitmap(256, 256);
                 using (var c = new SKCanvas(tileBmp))
                     c.Clear(SKColors.Cyan);
-                cache.Put(t.TileId, new SKImagePyramidTile(SKImage.FromBitmap(tileBmp), new byte[] { 0xFF, 0xD8 }));
+                controller.Cache.Put(t.TileId, new SKImagePyramidTile(SKImage.FromBitmap(tileBmp), new byte[] { 0xFF, 0xD8 }));
             }
         }
 
@@ -373,20 +369,19 @@ public class ImagePyramidRendererTest
         var dzi = SKImagePyramidDziSource.Parse(xml, "http://example.com/fallback");
 
         using var surface = SKSurface.Create(new SKImageInfo(512, 512));
-        using var cache = new SKImagePyramidMemoryTileCache(100);
 
-        // Only cache a level-0 (1x1 pixel) parent tile as yellow — do NOT cache the requested level tiles
-        var parentBmp = new SKBitmap(1, 1);
-        parentBmp.SetPixel(0, 0, SKColors.Yellow);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
-
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(512, 512);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
         controller.Viewport.ViewportOriginX = 0;
         controller.Viewport.ViewportOriginY = 0;
         controller.Viewport.AspectRatio = 1.0;
+
+        // Only cache a level-0 (1x1 pixel) parent tile as yellow — do NOT cache the requested level tiles
+        var parentBmp = new SKBitmap(1, 1);
+        parentBmp.SetPixel(0, 0, SKColors.Yellow);
+        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
 
         surface.Canvas.Clear(SKColors.White);
         renderer.Canvas = surface.Canvas;
@@ -410,9 +405,9 @@ public class ImagePyramidRendererTest
         var dzi = CreateSampleDzi();
         using var cache = new SKImagePyramidMemoryTileCache(10);
 
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(0, 0); // gets clamped to 1
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
 
         var ex = Record.Exception(() =>
@@ -426,7 +421,7 @@ public class ImagePyramidRendererTest
     [Fact]
     public void EnableLodBlending_DefaultsToTrue()
     {
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         Assert.True(controller.EnableLodBlending);
     }
 
@@ -443,21 +438,20 @@ public class ImagePyramidRendererTest
         var dzi = SKImagePyramidDziSource.Parse(xml, "http://example.com/noblend");
 
         using var surface = SKSurface.Create(new SKImageInfo(512, 512));
-        using var cache = new SKImagePyramidMemoryTileCache(100);
 
         // Only cache a low-level parent tile to trigger single-pass fallback
-        var parentBmp = new SKBitmap(1, 1);
-        parentBmp.SetPixel(0, 0, SKColors.Yellow);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
-
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(512, 512);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
         controller.Viewport.ViewportOriginX = 0;
         controller.Viewport.ViewportOriginY = 0;
         controller.Viewport.AspectRatio = 1.0;
         controller.EnableLodBlending = false;
+
+        var parentBmp = new SKBitmap(1, 1);
+        parentBmp.SetPixel(0, 0, SKColors.Yellow);
+        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
 
         surface.Canvas.Clear(SKColors.White);
         renderer.Canvas = surface.Canvas;
@@ -485,13 +479,12 @@ public class ImagePyramidRendererTest
         var dzi = SKImagePyramidDziSource.Parse(xml, "http://example.com/blend");
 
         using var surface = SKSurface.Create(new SKImageInfo(512, 512));
-        using var cache = new SKImagePyramidMemoryTileCache(100);
         var layout = new SKImagePyramidTileLayout();
 
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         Assert.True(controller.EnableLodBlending);
         controller.SetControlSize(512, 512);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.ViewportWidth = 1.0;
         controller.Viewport.ViewportOriginX = 0;
         controller.Viewport.ViewportOriginY = 0;
@@ -500,7 +493,7 @@ public class ImagePyramidRendererTest
         // Cache a blue parent tile at level 0 (fallback)
         var parentBmp = new SKBitmap(1, 1);
         parentBmp.SetPixel(0, 0, SKColors.Blue);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
+        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
 
         // Cache a green high-res tile for only the first visible tile
         var visibleTiles = layout.GetVisibleTiles(dzi, controller.Viewport);
@@ -509,7 +502,7 @@ public class ImagePyramidRendererTest
         var highResBmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(highResBmp))
             c.Clear(SKColors.Green);
-        cache.Put(firstTile, new SKImagePyramidTile(SKImage.FromBitmap(highResBmp), new byte[] { 0xFF, 0xD8 }));
+        controller.Cache.Put(firstTile, new SKImagePyramidTile(SKImage.FromBitmap(highResBmp), new byte[] { 0xFF, 0xD8 }));
 
         surface.Canvas.Clear(SKColors.White);
         renderer.Canvas = surface.Canvas;

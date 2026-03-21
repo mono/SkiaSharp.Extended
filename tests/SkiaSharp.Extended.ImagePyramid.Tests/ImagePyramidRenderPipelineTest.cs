@@ -18,11 +18,10 @@ public class ImagePyramidRenderPipelineTest
         var dzi = CreateTestDzi(2048, 1536);
 
         // Set up controller and viewport
-        var cache = new SKImagePyramidMemoryTileCache(100);
         var renderer = new SKImagePyramidRenderer();
-        var controller = new SKImagePyramidController(cache);
+        var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
-        controller.Load(dzi, new MemoryTileFetcher());
+        controller.Load(dzi, new MemoryTileProvider());
         controller.Viewport.AspectRatio = dzi.AspectRatio;
 
         // Get visible tiles using the controller's configured viewport
@@ -31,13 +30,13 @@ public class ImagePyramidRenderPipelineTest
 
         Assert.True(tiles.Count > 0);
 
-        // Create cache with some test tiles
+        // Populate render buffer with test tiles
         foreach (var request in tiles)
         {
             var bmp = new SKBitmap(dzi.TileSize, dzi.TileSize);
             using var canvas2 = new SKCanvas(bmp);
             canvas2.Clear(SKColors.CornflowerBlue);
-            cache.Put(request.TileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
+            controller.Cache.Put(request.TileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
         }
 
         // Render
@@ -66,12 +65,12 @@ public class ImagePyramidRenderPipelineTest
     [Fact]
     public void Controller_FullLifecycle()
     {
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
 
         var dzi = CreateTestDzi(2048, 1536);
-        var fetcher = new MemoryTileFetcher();
-        controller.Load(dzi, fetcher);
+        var provider = new MemoryTileProvider();
+        controller.Load(dzi, provider);
 
         Assert.Equal(dzi, controller.TileSource);
 
@@ -99,9 +98,9 @@ public class ImagePyramidRenderPipelineTest
     [Fact]
     public void Controller_SetViewport_AppliesImmediately()
     {
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
-        controller.Load(CreateTestDzi(1024, 768), new MemoryTileFetcher());
+        controller.Load(CreateTestDzi(1024, 768), new MemoryTileProvider());
 
         controller.SetViewport(0.5, 0.1, 0.05);
 
@@ -112,22 +111,22 @@ public class ImagePyramidRenderPipelineTest
     [Fact]
     public void Controller_EventsFire()
     {
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
 
         bool openSucceeded = false;
         controller.ImageOpenSucceeded += (s, e) => openSucceeded = true;
 
-        controller.Load(CreateTestDzi(512, 512), new MemoryTileFetcher());
+        controller.Load(CreateTestDzi(512, 512), new MemoryTileProvider());
         Assert.True(openSucceeded);
     }
 
     [Fact]
     public void Controller_ViewportChanged_FiresOnNavigation()
     {
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
-        controller.Load(CreateTestDzi(2048, 1536), new MemoryTileFetcher());
+        controller.Load(CreateTestDzi(2048, 1536), new MemoryTileProvider());
 
         int changeCount = 0;
         controller.ViewportChanged += (s, e) => changeCount++;
@@ -142,9 +141,9 @@ public class ImagePyramidRenderPipelineTest
     [Fact]
     public void Controller_IsIdle_WhenNoPendingTiles()
     {
-        using var controller = new SKImagePyramidController(new SKImagePyramidMemoryTileCache());
+        using var controller = new SKImagePyramidController();
         controller.SetControlSize(800, 600);
-        controller.Load(CreateTestDzi(512, 512), new MemoryTileFetcher());
+        controller.Load(CreateTestDzi(512, 512), new MemoryTileProvider());
 
         // IsIdle is based only on pending tiles (no spring)
         // Right after load, no tiles are fetching yet (fetching starts on Update())

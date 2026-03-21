@@ -32,9 +32,9 @@ public class SKImagePyramidController : IDisposable
     private ISKImagePyramidSource? _tileSource;
     private readonly SKImagePyramidViewport _viewport;
     private readonly SKImagePyramidTileLayout _tileLayout;
-    private ISKImagePyramidTileCache _cache;
+    private readonly SKImagePyramidMemoryTileCache _renderBuffer;
     private List<SKImagePyramidSubImage> _subImages = new List<SKImagePyramidSubImage>();
-    private ISKImagePyramidTileFetcher? _fetcher;
+    private ISKImagePyramidTileProvider? _provider;
     private readonly ConcurrentDictionary<SKImagePyramidTileId, byte> _pendingTiles = new ConcurrentDictionary<SKImagePyramidTileId, byte>();
     private readonly ConcurrentDictionary<SKImagePyramidTileId, byte> _failedTiles = new ConcurrentDictionary<SKImagePyramidTileId, byte>();
     private CancellationTokenSource? _cts;
@@ -43,12 +43,11 @@ public class SKImagePyramidController : IDisposable
     private IReadOnlyList<SKImagePyramidTileRequest>? _visibleTilesCache;
 
     /// <summary>
-    /// Initializes a new <see cref="SKImagePyramidController"/> with the required tile cache.
+    /// Initializes a new <see cref="SKImagePyramidController"/>.
     /// </summary>
-    /// <param name="cache">The tile cache to use. Use <see cref="SKImagePyramidMemoryTileCache"/> for a simple in-memory LRU cache.</param>
-    public SKImagePyramidController(ISKImagePyramidTileCache cache)
+    public SKImagePyramidController()
     {
-        _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+        _renderBuffer = new SKImagePyramidMemoryTileCache(256);
         _viewport = new SKImagePyramidViewport();
         _tileLayout = new SKImagePyramidTileLayout();
     }
@@ -58,8 +57,11 @@ public class SKImagePyramidController : IDisposable
     /// <summary>The current viewport.</summary>
     public SKImagePyramidViewport Viewport => _viewport;
 
-    /// <summary>The tile cache.</summary>
-    public ISKImagePyramidTileCache Cache => _cache;
+    /// <summary>
+    /// The internal render buffer holding decoded tiles for the current frame.
+    /// This is the controller's in-memory hot cache for the rendering loop.
+    /// </summary>
+    public SKImagePyramidMemoryTileCache Cache => _renderBuffer;
 
     /// <summary>The tile layout calculator.</summary>
     public SKImagePyramidTileLayout TileLayout => _tileLayout;
@@ -111,28 +113,27 @@ public class SKImagePyramidController : IDisposable
     /// <summary>
     /// Fired when a DZC collection is successfully loaded and <see cref="SubImages"/> is populated.
     /// Use this event to know when the collection is ready. To render a specific image from the
-    /// collection, call <see cref="Load(ISKImagePyramidSource,ISKImagePyramidTileFetcher)"/>
+    /// collection, call <see cref="Load(ISKImagePyramidSource,ISKImagePyramidTileProvider)"/>
     /// with one of the sub-image sources from <see cref="SubImages"/>.
     /// </summary>
     public event EventHandler? CollectionOpenSucceeded;
 
-    // ---- Cache replacement ----
+    // ---- Provider replacement ----
 
     /// <summary>
-    /// Replaces the active tile cache without disturbing the loaded image, viewport state,
+    /// Replaces the active tile provider without disturbing the loaded image, viewport state,
     /// or zoom level. All pending tile loads are cancelled and in-flight tiles are discarded;
-    /// the new cache starts empty and tiles are re-fetched as the view is repainted.
+    /// the render buffer is cleared and tiles are re-fetched as the view is repainted.
+    /// The old provider is disposed by this method.
     /// </summary>
-    /// <param name="newCache">
-    /// The new cache to adopt. The controller takes ownership — it will be disposed when
-    /// <see cref="Dispose"/> is called or <see cref="ReplaceCache"/> is called again.
-    /// The old cache is disposed by this method.
+    /// <param name="newProvider">
+    /// The new provider to adopt. The controller takes ownership — it will be disposed when
+    /// <see cref="Dispose"/> is called or <see cref="ReplaceProvider"/> is called again.
     /// </param>
-    public void ReplaceCache(ISKImagePyramidTileCache newCache)
+    public void ReplaceProvider(ISKImagePyramidTileProvider newProvider)
     {
-        if (newCache == null) throw new ArgumentNullException(nameof(newCache));
+        if (newProvider == null) throw new ArgumentNullException(nameof(newProvider));
 
-        // Cancel pending tile fetches so stale callbacks don't write to the old cache.
         _cts?.Cancel();
         _cts?.Dispose();
         _cts = new CancellationTokenSource();
@@ -140,19 +141,19 @@ public class SKImagePyramidController : IDisposable
         _failedTiles.Clear();
         _visibleTilesCache = null;
 
-        // Swap the cache; dispose the old one.
-        var oldCache = _cache;
-        _cache = newCache;
-        oldCache.Dispose();
+        var oldProvider = _provider;
+        _provider = newProvider;
+        oldProvider?.Dispose();
 
-        // Ask the view to repaint so tiles are re-fetched from the new cache.
+        _renderBuffer.Clear();
+
         InvalidateRequired?.Invoke(this, EventArgs.Empty);
     }
 
     // ---- Load ----
 
     /// <summary>Loads a DZI or IIIF tile source. Resets the viewport to show the full image.</summary>
-    public void Load(ISKImagePyramidSource tileSource, ISKImagePyramidTileFetcher fetcher)
+    public void Load(ISKImagePyramidSource tileSource, ISKImagePyramidTileProvider provider)
     {
         try
         {
@@ -161,22 +162,15 @@ public class SKImagePyramidController : IDisposable
             _cts = new CancellationTokenSource();
             _pendingTiles.Clear();
             _failedTiles.Clear();
-            _cache.Clear();
+            _renderBuffer.Clear();
             _subImages.Clear();
             _visibleTilesCache = null;
 
-            if (_fetcher != null && !ReferenceEquals(_fetcher, fetcher))
-                (_fetcher as IDisposable)?.Dispose();
+            if (_provider != null && !ReferenceEquals(_provider, provider))
+                _provider.Dispose();
 
             _tileSource = tileSource;
-            _fetcher = fetcher;
-
-            // Inform the cache which source is active so I/O caches can namespace tiles per source.
-            _cache.ActiveSourceId = tileSource.SourceId;
-
-            // Apply the source's recommended cache expiry to filesystem caches.
-            if (_cache is SKImagePyramidFileSystemTileCache fsCache)
-                fsCache.Expiry = tileSource.CacheExpiry ?? fsCache.DefaultExpiry;
+            _provider = provider;
 
             _viewport.AspectRatio = tileSource.AspectRatio;
             _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
@@ -196,10 +190,10 @@ public class SKImagePyramidController : IDisposable
     /// Loads a DZC collection source. Populates <see cref="SubImages"/> with the items in
     /// the collection. Does NOT set a renderable tile source — listen for
     /// <see cref="CollectionOpenSucceeded"/> and then call
-    /// <see cref="Load(ISKImagePyramidSource,ISKImagePyramidTileFetcher)"/> with a specific
+    /// <see cref="Load(ISKImagePyramidSource,ISKImagePyramidTileProvider)"/> with a specific
     /// sub-image source to actually render.
     /// </summary>
-    public void Load(SKImagePyramidDziCollectionSource dzcTileSource, ISKImagePyramidTileFetcher fetcher)
+    public void Load(SKImagePyramidDziCollectionSource dzcTileSource, ISKImagePyramidTileProvider provider)
     {
         try
         {
@@ -208,11 +202,11 @@ public class SKImagePyramidController : IDisposable
             _cts = new CancellationTokenSource();
             _pendingTiles.Clear();
             _failedTiles.Clear();
-            _cache.Clear();
+            _renderBuffer.Clear();
             _visibleTilesCache = null;
 
             // _tileSource stays null — DZC is a collection, not a single renderable source.
-            // Callers should call Load(subImage.Source, fetcher) to render a specific sub-image.
+            // Callers should call Load(subImage.Source, provider) to render a specific sub-image.
             _tileSource = null;
             _subImages = new List<SKImagePyramidSubImage>();
             foreach (var item in dzcTileSource.Items)
@@ -226,10 +220,10 @@ public class SKImagePyramidController : IDisposable
                 _subImages.Add(sub);
             }
 
-            if (_fetcher != null && !ReferenceEquals(_fetcher, fetcher))
-                (_fetcher as IDisposable)?.Dispose();
+            if (_provider != null && !ReferenceEquals(_provider, provider))
+                _provider.Dispose();
 
-            _fetcher = fetcher;
+            _provider = provider;
 
             _viewport.ControlWidth = _viewport.ControlWidth > 0 ? _viewport.ControlWidth : 800;
             _viewport.ControlHeight = _viewport.ControlHeight > 0 ? _viewport.ControlHeight : 600;
@@ -348,7 +342,7 @@ public class SKImagePyramidController : IDisposable
     public bool Update()
     {
         _visibleTilesCache = null;
-        if (_tileSource != null && _fetcher != null)
+        if (_tileSource != null && _provider != null)
         {
             _visibleTilesCache = _tileLayout.GetVisibleTiles(_tileSource, _viewport);
             ScheduleTileLoads(_visibleTilesCache);
@@ -373,7 +367,7 @@ public class SKImagePyramidController : IDisposable
     {
         if (_tileSource == null) return;
 
-        _cache.FlushEvicted();
+        _renderBuffer.FlushEvicted();
 
         // Reuse visible-tiles list computed by Update() in the same frame; compute fresh if stale.
         var visibleTiles = _visibleTilesCache ?? _tileLayout.GetVisibleTiles(_tileSource, _viewport);
@@ -386,12 +380,12 @@ public class SKImagePyramidController : IDisposable
             foreach (var request in visibleTiles)
             {
                 var tileId = request.TileId;
-                if (!_cache.Contains(tileId))
+                if (!_renderBuffer.Contains(tileId))
                 {
-                    var fallback = _tileLayout.FindBestFallback(tileId, _cache);
+                    var fallback = _tileLayout.FindBestFallback(tileId, _renderBuffer);
                     if (fallback.HasValue)
                     {
-                        _cache.TryGet(fallback.Value, out SKImagePyramidTile? parentTile);
+                        _renderBuffer.TryGet(fallback.Value, out SKImagePyramidTile? parentTile);
                         if (parentTile != null)
                         {
                             var src  = _tileLayout.GetFallbackSourceRect(tileId, fallback.Value, _tileSource);
@@ -407,7 +401,7 @@ public class SKImagePyramidController : IDisposable
         foreach (var request in visibleTiles)
         {
             var tileId = request.TileId;
-            _cache.TryGet(tileId, out SKImagePyramidTile? tile);
+            _renderBuffer.TryGet(tileId, out SKImagePyramidTile? tile);
             if (tile != null)
             {
                 var dest = _tileLayout.GetTileDestRect(_tileSource, _viewport, tileId);
@@ -422,14 +416,14 @@ public class SKImagePyramidController : IDisposable
 
     private void ScheduleTileLoads(IReadOnlyList<SKImagePyramidTileRequest> visibleTiles)
     {
-        if (_tileSource == null || _fetcher == null) return;
+        if (_tileSource == null || _provider == null) return;
 
         var ct = _cts?.Token ?? CancellationToken.None;
 
         foreach (var request in visibleTiles)
         {
             var tileId = request.TileId;
-            if (_cache.Contains(tileId) || _pendingTiles.ContainsKey(tileId) || _failedTiles.ContainsKey(tileId))
+            if (_renderBuffer.Contains(tileId) || _pendingTiles.ContainsKey(tileId) || _failedTiles.ContainsKey(tileId))
                 continue;
 
             _pendingTiles.TryAdd(tileId, 0);
@@ -449,35 +443,43 @@ public class SKImagePyramidController : IDisposable
         SKImagePyramidTile? tile = null;
         try
         {
-            // Capture source and fetcher locally — they may be replaced while this task is in flight
+            // Capture source and provider locally — they may be replaced while this task is in flight
             var source = _tileSource;
-            var fetcher = _fetcher;
-            if (source == null || fetcher == null) return;
+            var provider = _provider;
+            if (source == null || provider == null) return;
 
-            tile = await _cache.TryGetAsync(tileId, ct).ConfigureAwait(false);
-
-            if (tile == null && !ct.IsCancellationRequested)
+            // Skip if another concurrent task already loaded this tile
+            if (_renderBuffer.TryGet(tileId, out tile) && tile != null)
             {
-                string? url = source.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row);
-                if (url == null) return;
-                tile = await fetcher.FetchTileAsync(url, ct).ConfigureAwait(false);
-                // null means the fetch returned no data (e.g. HTTP 404) — record so we don't retry
-                if (tile == null)
-                {
-                    _failedTiles.TryAdd(tileId, 0);
-                    return;
-                }
-                // Stamp the source identity so the cache can namespace tiles per source
-                tile.SourceId = source.SourceId;
+                if (!_disposed && !ct.IsCancellationRequested)
+                    InvalidateRequired?.Invoke(this, EventArgs.Empty);
+                tile = null; // already owned by render buffer — don't dispose in finally
+                return;
+            }
+            tile = null;
+
+            if (ct.IsCancellationRequested) return;
+
+            string? url = source.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row);
+            if (url == null) return;
+
+            // Provider owns the full fetch+persist pipeline (HTTP fetch, disk cache, browser storage, etc.)
+            tile = await provider.GetTileAsync(url, ct).ConfigureAwait(false);
+
+            // null means the provider could not obtain the tile (e.g. HTTP 404) — don't retry
+            if (tile == null)
+            {
+                _failedTiles.TryAdd(tileId, 0);
+                return;
             }
 
-            if (tile != null && !ct.IsCancellationRequested && !_disposed)
+            // Stamp the source identity for introspection/debugging
+            tile.SourceId = source.SourceId;
+
+            if (!ct.IsCancellationRequested && !_disposed)
             {
-                // Use CancellationToken.None: the decision to store was made above after checking ct.
-                // Passing ct here creates a TOCTOU race that causes tile resource leaks.
-                await _cache.PutAsync(tileId, tile, CancellationToken.None).ConfigureAwait(false);
-                tile = null;
-                // Re-check _disposed after async suspension — Dispose() may have run while awaiting
+                _renderBuffer.Put(tileId, tile);
+                tile = null; // ownership transferred to render buffer
                 if (!_disposed && !ct.IsCancellationRequested)
                     InvalidateRequired?.Invoke(this, EventArgs.Empty);
             }
@@ -502,7 +504,7 @@ public class SKImagePyramidController : IDisposable
 
         _cts?.Cancel();
         _cts?.Dispose();
-        (_fetcher as IDisposable)?.Dispose();
-        _cache.Dispose();
+        _provider?.Dispose();
+        _renderBuffer.Dispose();
     }
 }
