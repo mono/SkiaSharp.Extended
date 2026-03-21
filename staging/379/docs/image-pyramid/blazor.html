@@ -113,7 +113,7 @@
         var baseUrl = new Uri(Http.BaseAddress!, &quot;deepzoom/image_files/&quot;).ToString();
         var source  = SKImagePyramidDziSource.Parse(xml, baseUrl);
 
-        _controller.Load(source, new SKImagePyramidHttpTileProvider());
+        _controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
     }
 
     private void OnPaintSurface(SKPaintSurfaceEventArgs e)
@@ -145,7 +145,7 @@
     &lt;Content Include=&quot;wwwroot\deepzoom\image_files\**&quot; /&gt;
 &lt;/ItemGroup&gt;
 </code></pre>
-<p>The <code>SKImagePyramidHttpTileProvider</code> fetches each tile via <code>HttpClient</code>; tile URLs are constructed automatically from the base URL you pass to <code>SKImagePyramidDziSource.Parse</code>.</p>
+<p>The <code>SKTieredTileProvider</code> with <code>SKHttpTileFetcher</code> fetches each tile via <code>HttpClient</code>; tile URLs are constructed automatically from the base URL you pass to <code>SKImagePyramidDziSource.Parse</code>.</p>
 <h2 id="pan-and-zoom">Pan and Zoom</h2>
 <p>Wire mouse and touch events to the controller's navigation methods:</p>
 <pre><code class="lang-razor">&lt;SKCanvasView @ref=&quot;_canvas&quot;
@@ -191,14 +191,14 @@
 <pre><code class="lang-csharp">var xml = await Http.GetStringAsync(&quot;collection.dzc&quot;);
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = Http.BaseAddress!.ToString();
-_controller!.Load(collection, new SKImagePyramidHttpTileProvider());
+_controller!.Load(collection, new SKTieredTileProvider(new SKHttpTileFetcher()));
 </code></pre>
 <h2 id="custom-provider">Custom Provider</h2>
 <p>Pass a custom <code>ISKImagePyramidTileProvider</code> to the controller's <code>Load()</code> method for advanced scenarios:</p>
 <pre><code class="lang-csharp">// With disk cache (persists across Blazor restarts via OPFS or service worker)
-controller.Load(source, new SKImagePyramidHttpTileProvider(
-    diskCachePath: &quot;/cache/tiles&quot;,
-    expiry: TimeSpan.FromDays(7)));
+controller.Load(source, new SKTieredTileProvider(
+    new SKHttpTileFetcher(),
+    new SKDiskTileCacheStore(&quot;/cache/tiles&quot;, expiry: TimeSpan.FromDays(7))));
 </code></pre>
 <p>See the <a href="fetching.html">Tile Providers</a> docs for implementing browser storage tiers, delay wrappers, and other custom strategies.</p>
 <h2 id="canvas-resize">Canvas Resize</h2>
@@ -246,7 +246,7 @@ public void OnCanvasResized()
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · a6b19c7
+          source: PR #379 · 0d347ee
         </div>
       </div>
     </footer>

@@ -156,12 +156,16 @@
 <td style="text-align: left;">Owns the full fetch+cache pipeline for a tile URL.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>SKImagePyramidHttpTileProvider</code></td>
-<td style="text-align: left;">Built-in HTTP provider with optional disk cache; decodes with <code>SKImage.FromEncodedData</code>.</td>
+<td style="text-align: left;"><code>SKTieredTileProvider</code></td>
+<td style="text-align: left;">Composes a fetcher + optional persistent cache into a tile provider.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>SKImagePyramidFileTileProvider</code></td>
-<td style="text-align: left;">Built-in local file provider (no disk cache — the file IS the source).</td>
+<td style="text-align: left;"><code>SKHttpTileFetcher</code></td>
+<td style="text-align: left;">HTTP origin fetch (no caching).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKFileTileFetcher</code></td>
+<td style="text-align: left;">Local file origin fetch (no caching).</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ISKImagePyramidRenderer</code></td>
@@ -183,12 +187,12 @@ var controller = new SKImagePyramidController();
 <pre><code class="lang-csharp">// Deep Zoom Image (DZI)
 var xml = await httpClient.GetStringAsync(&quot;https://example.com/image.dzi&quot;);
 var source = SKImagePyramidDziSource.Parse(xml, &quot;https://example.com/image_files/&quot;);
-controller.Load(source, new SKImagePyramidHttpTileProvider());
+controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
 
 // IIIF Image API
 var json = await httpClient.GetStringAsync(&quot;https://example.com/image/info.json&quot;);
 var iiifSource = SKImagePyramidIiifSource.Parse(json);
-controller.Load(iiifSource, new SKImagePyramidHttpTileProvider());
+controller.Load(iiifSource, new SKTieredTileProvider(new SKHttpTileFetcher()));
 </code></pre>
 <h3 id="3-wire-the-canvas">3. Wire the canvas</h3>
 <pre><code class="lang-csharp">private readonly SKImagePyramidRenderer _renderer = new();
@@ -279,7 +283,7 @@ void OnPaintSurface(SKPaintSurfaceEventArgs e)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · a6b19c7
+          source: PR #379 · 0d347ee
         </div>
       </div>
     </footer>

@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Image Pyramid — Tile Providers | SkiaSharp.Extended </title>
+      <title>Image Pyramid — Tile Fetching | SkiaSharp.Extended </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Image Pyramid — Tile Providers | SkiaSharp.Extended ">
+      <meta name="title" content="Image Pyramid — Tile Fetching | SkiaSharp.Extended ">
       
       <link rel="icon" href="../../images/logo.ico">
       <link rel="stylesheet" href="../../public/docfx.min.css">
@@ -84,97 +84,138 @@
         </div>
 
         <article data-uid="">
-<h1 id="image-pyramid--tile-providers">Image Pyramid — Tile Providers</h1>
+<h1 id="image-pyramid--tile-fetching">Image Pyramid — Tile Fetching</h1>
 
-<p>Tile providers implement <code>ISKImagePyramidTileProvider</code> and own the complete fetch-plus-cache pipeline. The controller asks for a tile by URL; the provider decides whether to serve it from disk, browser storage, or the network — the controller knows nothing about how or where the tile was obtained.</p>
-<p>The pipeline in a provider is: <strong>check cache</strong> (disk or storage) → if miss, <strong>fetch</strong> raw bytes → buffer into <code>byte[]</code> → <strong>decode</strong> into an <code>SKImage</code> → <strong>persist</strong> (optional, CancellationToken.None) → wrap as <code>SKImagePyramidTile</code> → return. Raw bytes are stored alongside the decoded image so caches can persist without re-encoding.</p>
-<h2 id="iskimagepyramidtileprovider">ISKImagePyramidTileProvider</h2>
-<pre><code class="lang-csharp">public interface ISKImagePyramidTileProvider : IDisposable
+<p>The fetching system is split into three layers with clear separation of concerns:</p>
+<pre><code>Controller
+    │  GetTileAsync(url)
+    ▼
+SKTieredTileProvider : ISKImagePyramidTileProvider
+    │
+    ├── ISKTileCacheStore  (persistent cache: disk, browser, etc.)
+    │
+    └── ISKTileFetcher     (origin fetch: HTTP, file, composite)
+</code></pre>
+<p>The controller only asks for a decoded tile by URL. Everything below — caching and fetching — is the provider's responsibility.</p>
+<hr>
+<h2 id="isktilefetcher">ISKTileFetcher</h2>
+<p>Pure origin fetch — no caching logic. Returns raw encoded bytes, or <code>null</code> for a permanent miss (404, file not found). Throws on retriable failures (network errors) so the caller can decide the retry policy.</p>
+<pre><code class="lang-csharp">public interface ISKTileFetcher : IDisposable
 {
-    /// &lt;summary&gt;
-    /// Fetches and decodes a tile. Returns null if the tile is unavailable (e.g. 404).
-    /// Throws OperationCanceledException if ct is cancelled.
-    /// &lt;/summary&gt;
-    Task&lt;SKImagePyramidTile?&gt; GetTileAsync(string url, CancellationToken ct = default);
+    Task&lt;SKImagePyramidTileData?&gt; FetchAsync(string url, CancellationToken ct = default);
 }
 </code></pre>
-<p><strong>Return convention:</strong> Return <code>null</code> if the tile is unavailable (HTTP 404, file not found). The controller treats <code>null</code> as a permanent miss and uses a fallback tile. Throw <code>OperationCanceledException</code> when <code>ct</code> is cancelled (not swallowed) — the controller handles this without blacklisting the tile, so it will be retried on the next render cycle.</p>
-<hr>
-<h2 id="skimagepyramidhttptileprovider">SKImagePyramidHttpTileProvider</h2>
-<p>Fetches tiles over HTTP, buffers the response into a <code>byte[]</code>, then decodes with <code>SKImage.FromEncodedData</code>. Optionally caches fetched tiles to a local disk directory (URL-keyed, expiry-aware).</p>
-<pre><code class="lang-csharp">// HTTP only — no disk cache
-var provider = new SKImagePyramidHttpTileProvider();
+<h3 id="built-in-fetchers">Built-in fetchers</h3>
+<p><strong><code>SKHttpTileFetcher</code></strong> — HTTP GET. Pass your own <code>HttpClient</code> or let the fetcher manage one internally.</p>
+<pre><code class="lang-csharp">// Internal HttpClient (manages its own lifetime)
+var fetcher = new SKHttpTileFetcher();
 
-// With disk cache (persists across app restarts)
-var provider = new SKImagePyramidHttpTileProvider(
-    diskCachePath: Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;),
-    expiry: TimeSpan.FromDays(30));
-
-// Pass your app's shared HttpClient (you manage its lifetime)
-var provider = new SKImagePyramidHttpTileProvider(httpClient: myHttpClient);
+// Shared HttpClient (you manage its lifetime)
+var fetcher = new SKHttpTileFetcher(httpClient: myHttpClient);
 </code></pre>
-<p>When you supply your own <code>HttpClient</code>, the provider <strong>does not dispose it</strong> — the caller retains ownership.</p>
-<p>HTTP timeouts (<code>TaskCanceledException</code>) return <code>null</code> — treated as a transient miss, not a crash. Cancellation via <code>ct</code> propagates as <code>OperationCanceledException</code> so the controller can retry the tile.</p>
-<hr>
-<h2 id="skimagepyramidfiletileprovider">SKImagePyramidFileTileProvider</h2>
-<p>Reads tiles from the local filesystem. No disk caching is performed — the file IS the source, so caching would be redundant.</p>
-<pre><code class="lang-csharp">var provider = new SKImagePyramidFileTileProvider();
-
-// Works with both plain paths and file:// URIs
-var source = SKImagePyramidDziSource.Parse(xml, &quot;/data/images/map_files/&quot;);
-controller.Load(source, provider);
+<p><strong><code>SKFileTileFetcher</code></strong> — Reads from the local filesystem. Accepts plain paths and <code>file://</code> URIs.</p>
+<pre><code class="lang-csharp">var fetcher = new SKFileTileFetcher();
 </code></pre>
-<p>Accepts both plain file paths and <code>file://</code> URIs. Returns <code>null</code> for missing files.</p>
+<p><strong><code>SKCompositeTileFetcher</code></strong> — Tries multiple fetchers in order; first non-null result wins.</p>
+<pre><code class="lang-csharp">// Try app-package assets first, fall back to HTTP
+var fetcher = new SKCompositeTileFetcher(
+    new MauiAssetFetcher(),
+    new SKHttpTileFetcher());
+</code></pre>
 <hr>
-<h2 id="custom-providers">Custom Providers</h2>
-<p>Implement <code>ISKImagePyramidTileProvider</code> to load tiles from any source — app-package assets, browser storage, databases, or any combination.</p>
-<p>The pattern: check your cache first → if miss, fetch → persist → return. Buffer bytes into a <code>byte[]</code> (handles forward-only streams), then <code>SKImage.FromEncodedData()</code> to decode, and return <code>new SKImagePyramidTile(image, bytes)</code>.</p>
-<h3 id="app-package-assets-maui">App Package Assets (MAUI)</h3>
-<pre><code class="lang-csharp">public sealed class AppPackageProvider : ISKImagePyramidTileProvider
+<h2 id="isktilecachestore">ISKTileCacheStore</h2>
+<p>Persistent tile storage keyed by URL hash. Platform-specific implementations provide disk, browser storage, or database backends.</p>
+<pre><code class="lang-csharp">public interface ISKTileCacheStore : IDisposable
 {
-    public async Task&lt;SKImagePyramidTile?&gt; GetTileAsync(string url, CancellationToken ct = default)
-    {
-        ct.ThrowIfCancellationRequested();
-        try
-        {
-            using var stream = await FileSystem.OpenAppPackageFileAsync(url);
-            using var ms = new MemoryStream();
-            await stream.CopyToAsync(ms, ct);
-            var bytes = ms.ToArray();
-            var image = SKImage.FromEncodedData(bytes);
-            return image != null ? new SKImagePyramidTile(image, bytes) : null;
-        }
-        catch (OperationCanceledException) { throw; }
-        catch
-        {
-            return null; // missing tile — controller will use a fallback tile
-        }
-    }
-
-    public void Dispose() { }
+    Task&lt;SKImagePyramidTileData?&gt; TryGetAsync(string key, CancellationToken ct = default);
+    Task SetAsync(string key, SKImagePyramidTileData data, CancellationToken ct = default);
+    Task RemoveAsync(string key, CancellationToken ct = default);
+    Task ClearAsync(CancellationToken ct = default);
 }
 </code></pre>
-<p>Use it directly:</p>
-<pre><code class="lang-csharp">var provider = new AppPackageProvider();
+<h3 id="built-in-stores">Built-in stores</h3>
+<p><strong><code>SKDiskTileCacheStore</code></strong> — Filesystem-backed. Uses FNV-1a URL hashing, bucketed directories, and configurable expiry.</p>
+<pre><code class="lang-csharp">var store = new SKDiskTileCacheStore(
+    basePath: Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;),
+    expiry: TimeSpan.FromDays(30)); // default: 30 days
+</code></pre>
+<p><strong><code>SKNullTileCacheStore</code></strong> — No-op. Useful for testing or when persistence is unwanted.</p>
+<pre><code class="lang-csharp">var store = new SKNullTileCacheStore();
+</code></pre>
+<p><strong><code>SKChainedTileCacheStore</code></strong> — Tries stores in order for reads; writes go to all stores.</p>
+<pre><code class="lang-csharp">// Read from an app-bundle read-only store, write to disk
+var store = new SKChainedTileCacheStore(
+    new AppBundleReadOnlyStore(),
+    new SKDiskTileCacheStore(cachePath));
+</code></pre>
+<hr>
+<h2 id="sktieredtileprovider">SKTieredTileProvider</h2>
+<p>Composes a fetcher and optional persistent cache into an <code>ISKImagePyramidTileProvider</code>. This is the standard implementation for most use cases.</p>
+<pre><code class="lang-csharp">public sealed class SKTieredTileProvider : ISKImagePyramidTileProvider
+{
+    public SKTieredTileProvider(
+        ISKTileFetcher fetcher,
+        ISKTileCacheStore? persistentCache = null) { ... }
+}
+</code></pre>
+<p><strong>Flow:</strong> persistent cache hit → return decoded tile. Cache miss → fetch from origin → persist (fire-and-forget, <code>CancellationToken.None</code>) → decode → return.</p>
+<hr>
+<h2 id="common-compositions">Common Compositions</h2>
+<h3 id="http-only-no-persistence">HTTP only (no persistence)</h3>
+<pre><code class="lang-csharp">var provider = new SKTieredTileProvider(
+    new SKHttpTileFetcher());
+
 controller.Load(source, provider);
 </code></pre>
-<p>Include tile assets in your MAUI project:</p>
-<pre><code class="lang-xml">&lt;ItemGroup&gt;
-    &lt;MauiAsset Include=&quot;Assets\image.dzi&quot; LogicalName=&quot;image.dzi&quot; /&gt;
-    &lt;MauiAsset Include=&quot;Assets\image_files\**&quot;
-               LogicalName=&quot;image_files/%(RecursiveDir)%(Filename)%(Extension)&quot; /&gt;
-&lt;/ItemGroup&gt;
-</code></pre>
-<p>Load the DZI from the package:</p>
-<pre><code class="lang-csharp">using var stream = await FileSystem.OpenAppPackageFileAsync(&quot;image.dzi&quot;);
-using var reader = new StreamReader(stream);
-var xml = await reader.ReadToEndAsync();
+<h3 id="http--disk-cache">HTTP + disk cache</h3>
+<pre><code class="lang-csharp">var provider = new SKTieredTileProvider(
+    fetcher: new SKHttpTileFetcher(),
+    persistentCache: new SKDiskTileCacheStore(cachePath));
 
-// Use &quot;image_files/&quot; as base URI to match the MauiAsset LogicalName prefix
-var source = SKImagePyramidDziSource.Parse(xml, &quot;image_files/&quot;);
-controller.Load(source, new AppPackageProvider());
+controller.SetProvider(provider);
+controller.Load(source);
 </code></pre>
-<h3 id="custom-authentication-or-headers">Custom Authentication or Headers</h3>
+<h3 id="local-file-no-cache-needed">Local file (no cache needed)</h3>
+<pre><code class="lang-csharp">var provider = new SKTieredTileProvider(new SKFileTileFetcher());
+controller.Load(source, provider);
+</code></pre>
+<h3 id="maui-app-bundled-tiles">MAUI app-bundled tiles</h3>
+<pre><code class="lang-csharp">var provider = new SKTieredTileProvider(
+    fetcher: new MauiAssetFetcher()); // reads from app package
+
+controller.Load(localDziSource, provider);
+</code></pre>
+<h3 id="blazor-wasm-browser-storage">Blazor WASM (browser storage)</h3>
+<pre><code class="lang-csharp">// Browser sessionStorage L2 cache via JS interop
+var provider = new BrowserStorageTileProvider(
+    new SKTieredTileProvider(new SKHttpTileFetcher()), js);
+
+controller.Load(source, provider);
+</code></pre>
+<hr>
+<h2 id="provider-lifecycle">Provider Lifecycle</h2>
+<p>The controller does <strong>NOT</strong> own the provider lifecycle — the caller manages disposal. Always dispose the old provider before replacing it:</p>
+<pre><code class="lang-csharp">// Correct — dispose old before assigning new
+private ISKImagePyramidTileProvider? _provider;
+
+private void SwitchProvider(ISKImagePyramidTileProvider newProvider)
+{
+    var old = _provider;
+    _provider = newProvider;
+    _controller.SetProvider(newProvider);
+    old?.Dispose();
+}
+
+// Correct — dispose on page/component teardown
+public override void Dispose()
+{
+    _controller.Dispose();
+    _provider?.Dispose();
+}
+</code></pre>
+<hr>
+<h2 id="custom-provider">Custom Provider</h2>
+<p>Implement <code>ISKImagePyramidTileProvider</code> directly for full control (authentication, custom headers, etc.):</p>
 <pre><code class="lang-csharp">public sealed class AuthenticatedProvider(HttpClient http, string token)
     : ISKImagePyramidTileProvider
 {
@@ -183,12 +224,10 @@ controller.Load(source, new AppPackageProvider());
         ct.ThrowIfCancellationRequested();
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Authorization = new(&quot;Bearer&quot;, token);
-
         try
         {
             using var response = await http.SendAsync(request, ct);
             if (!response.IsSuccessStatusCode) return null;
-
             var bytes = await response.Content.ReadAsByteArrayAsync(ct);
             var image = SKImage.FromEncodedData(bytes);
             return image != null ? new SKImagePyramidTile(image, bytes) : null;
@@ -200,7 +239,11 @@ controller.Load(source, new AppPackageProvider());
     public void Dispose() { }
 }
 </code></pre>
-<h3 id="provider-decorator-eg-artificial-delay-for-testing">Provider Decorator (e.g., artificial delay for testing)</h3>
+<p><strong>Return <code>null</code></strong> for permanent misses (404, file not found) — the controller records a temporary failure with exponential backoff via <code>TileFailureTracker</code>.</p>
+<p><strong>Throw <code>OperationCanceledException</code></strong> when <code>ct</code> is cancelled — the controller handles this without recording a failure, so the tile will be retried.</p>
+<hr>
+<h2 id="provider-decorator">Provider Decorator</h2>
+<p>Wrap any provider to add behaviour (logging, delay simulation, browser storage):</p>
 <pre><code class="lang-csharp">public sealed class DelayTileProvider(ISKImagePyramidTileProvider inner, int delayMs)
     : ISKImagePyramidTileProvider
 {
@@ -214,25 +257,15 @@ controller.Load(source, new AppPackageProvider());
 }
 </code></pre>
 <hr>
-<h2 id="passing-a-provider-to-the-controller">Passing a Provider to the Controller</h2>
-<pre><code class="lang-csharp">// Provider is passed at load time
-controller.Load(tileSource, new SKImagePyramidHttpTileProvider());
-
-// Swap source and provider together
-controller.Load(anotherSource, new SKImagePyramidHttpTileProvider(diskCachePath: cachePath));
-
-// Replace just the provider (preserves viewport and source)
-controller.ReplaceProvider(new SKImagePyramidHttpTileProvider());
-</code></pre>
-<p>The controller takes ownership of the provider on <code>Load()</code>. Calling <code>Load()</code> or <code>Dispose()</code> also disposes the previous provider.</p>
-<hr>
 <h2 id="related">Related</h2>
 <ul>
 <li><a href="index.html">Image Pyramid overview</a></li>
 <li><a href="controller.html">Controller &amp; Viewport</a></li>
 <li><a href="caching.html">Caching</a></li>
 <li><a class="xref" href="../../api/SkiaSharp.Extended.ISKImagePyramidTileProvider.html">API Reference — ISKImagePyramidTileProvider</a></li>
-<li><a href="xref:SkiaSharp.Extended.SKImagePyramidHttpTileProvider">API Reference — SKImagePyramidHttpTileProvider</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.ISKTileFetcher.html">API Reference — ISKTileFetcher</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.ISKTileCacheStore.html">API Reference — ISKTileCacheStore</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.SKTieredTileProvider.html">API Reference — SKTieredTileProvider</a></li>
 </ul>
 
 </article>
@@ -255,7 +288,7 @@ controller.ReplaceProvider(new SKImagePyramidHttpTileProvider());
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · a6b19c7
+          source: PR #379 · 0d347ee
         </div>
       </div>
     </footer>

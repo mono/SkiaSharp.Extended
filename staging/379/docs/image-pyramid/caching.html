@@ -136,13 +136,15 @@ int cachedTileCount = controller.Cache.Count;
 <p>Persistent tile storage is the <strong>provider's</strong> responsibility, not the controller's. The controller simply calls <code>provider.GetTileAsync(url)</code> and the provider decides how to fulfil that request — from a disk cache, browser storage, or directly from the network.</p>
 <p>See <a href="fetching.html">Tile Fetching</a> for the full provider design and built-in implementations.</p>
 <h3 id="remote-tiles-http--disk-cache">Remote tiles (HTTP + disk cache)</h3>
-<pre><code class="lang-csharp">// HttpTileProvider fetches tiles over HTTP and caches them to disk automatically
-var provider = new SKImagePyramidHttpTileProvider(cachePath: &quot;/tmp/mycache&quot;);
+<pre><code class="lang-csharp">// SKTieredTileProvider with disk cache persists fetched tiles across app restarts
+var provider = new SKTieredTileProvider(
+    new SKHttpTileFetcher(),
+    new SKDiskTileCacheStore(&quot;/tmp/mycache&quot;));
 controller.Load(source, provider);
 </code></pre>
 <h3 id="local-tiles-no-disk-cache-needed">Local tiles (no disk cache needed)</h3>
-<pre><code class="lang-csharp">// FileTileProvider reads tiles directly from the filesystem — no extra caching
-var provider = new SKImagePyramidFileTileProvider();
+<pre><code class="lang-csharp">// SKFileTileFetcher reads tiles directly from the filesystem — no extra caching
+var provider = new SKTieredTileProvider(new SKFileTileFetcher());
 controller.Load(source, provider);
 </code></pre>
 <h3 id="custom-persistent-cache">Custom persistent cache</h3>
@@ -164,7 +166,7 @@ controller.Load(source, provider);
         var cached = await _storage.TryReadAsync(url, ct);
         if (cached is not null) return cached;
 
-        // 2. Delegate to the inner provider (e.g. HttpTileProvider)
+        // 2. Delegate to the inner provider (e.g. SKTieredTileProvider)
         var tile = await _inner.GetTileAsync(url, ct);
         if (tile is null) return null;
 
@@ -249,7 +251,7 @@ Assert.Equal(id, same);  // ✅
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · a6b19c7
+          source: PR #379 · 0d347ee
         </div>
       </div>
     </footer>

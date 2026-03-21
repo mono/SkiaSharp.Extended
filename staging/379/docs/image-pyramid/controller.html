@@ -95,20 +95,20 @@ var controller = new SKImagePyramidController();
 <h3 id="loading-images">Loading Images</h3>
 <pre><code class="lang-csharp">// DZI — single image (HTTP)
 var source = SKImagePyramidDziSource.Parse(xmlString, &quot;https://example.com/image_files/&quot;);
-controller.Load(source, new SKImagePyramidHttpTileProvider());
+controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
 
 // DZC — collection of images
 var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
 collection.TilesBaseUri = &quot;https://example.com/&quot;;
-controller.Load(collection, new SKImagePyramidHttpTileProvider());
+controller.Load(collection, new SKTieredTileProvider(new SKHttpTileFetcher()));
 
 // DZI with disk cache (persists across app restarts)
-controller.Load(source, new SKImagePyramidHttpTileProvider(
-    diskCachePath: Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;),
-    expiry: TimeSpan.FromDays(30)));
+controller.Load(source, new SKTieredTileProvider(
+    new SKHttpTileFetcher(),
+    new SKDiskTileCacheStore(Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;), expiry: TimeSpan.FromDays(30))));
 
 // Local files
-controller.Load(source, new SKImagePyramidFileTileProvider());
+controller.Load(source, new SKTieredTileProvider(new SKFileTileFetcher()));
 </code></pre>
 <p><code>Load()</code> resets the viewport to show the full image and starts fetching tiles in the background.</p>
 <h3 id="render-loop">Render Loop</h3>
@@ -736,7 +736,7 @@ foreach (var sub in controller.SubImages)
 </table>
 <p>Equality is based on <code>TileId</code> only, so a <code>SKImagePyramidTileRequest</code> can be de-duplicated by tile regardless of priority:</p>
 <pre><code class="lang-csharp">// Inspect the tile layout's current view
-var tiles = controller.TileLayout.GetVisibleTiles(controller.TileSource, controller.Viewport);
+var tiles = controller.TileLayout.GetVisibleTiles(controller.Source, controller.Viewport);
 foreach (var req in tiles)
     Console.WriteLine($&quot;{req.TileId} priority={req.Priority:F2}&quot;);
 </code></pre>
@@ -772,7 +772,7 @@ foreach (var req in tiles)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · a6b19c7
+          source: PR #379 · 0d347ee
         </div>
       </div>
     </footer>

@@ -185,19 +185,16 @@ public partial class ImagePyramidPage : ContentPage
 &lt;/ItemGroup&gt;
 </code></pre>
 <h2 id="http-tile-provider">HTTP Tile Provider</h2>
-<p>For remote images, use the built-in <code>SKImagePyramidHttpTileProvider</code>:</p>
-<pre><code class="lang-csharp">using var httpClient = new HttpClient();
-var xml    = await httpClient.GetStringAsync(&quot;https://example.com/image.dzi&quot;);
-var source = SKImagePyramidDziSource.Parse(xml, &quot;https://example.com/image_files/&quot;);
-
-// HTTP only, no disk cache
-_controller.Load(source, new SKImagePyramidHttpTileProvider(httpClient));
+<p>For remote images, use <code>SKTieredTileProvider</code> with <code>SKHttpTileFetcher</code>:</p>
+<pre><code class="lang-csharp">// HTTP only, no disk cache
+_controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
 
 // With disk cache (persists across sessions)
-_controller.Load(source, new SKImagePyramidHttpTileProvider(
-    httpClient: httpClient,
-    diskCachePath: Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;),
-    expiry: TimeSpan.FromDays(30)));
+_controller.Load(source, new SKTieredTileProvider(
+    fetcher: new SKHttpTileFetcher(),
+    persistentCache: new SKDiskTileCacheStore(
+        Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;),
+        expiry: TimeSpan.FromDays(30))));
 </code></pre>
 <h2 id="pan-and-zoom">Pan and Zoom</h2>
 <p>Add gesture recognizers or pointer events to enable interactive navigation:</p>
@@ -261,8 +258,9 @@ _controller.Load(collection, new AppPackageProvider());
 <h2 id="provider-configuration">Provider Configuration</h2>
 <p>The controller's internal render buffer has a fixed 256-entry capacity — this is sufficient for most tile pyramid use cases. If you need disk persistence, pass a configured provider:</p>
 <pre><code class="lang-csharp">// With disk cache for memory-constrained devices that benefit from persistence
-_controller.Load(source, new SKImagePyramidHttpTileProvider(
-    diskCachePath: Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;)));
+_controller.Load(source, new SKTieredTileProvider(
+    new SKHttpTileFetcher(),
+    new SKDiskTileCacheStore(Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;))));
 </code></pre>
 <p>See the <a href="fetching.html">Tile Providers docs</a> for custom providers.</p>
 <h2 id="rendering-behaviour">Rendering Behaviour</h2>
@@ -300,7 +298,7 @@ _controller.Load(source, new SKImagePyramidHttpTileProvider(
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · a6b19c7
+          source: PR #379 · 0d347ee
         </div>
       </div>
     </footer>
