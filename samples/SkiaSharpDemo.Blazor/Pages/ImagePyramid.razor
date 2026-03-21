@@ -479,11 +479,12 @@
     {
         if (_controller == null) return;
 
+        var oldProvider = _delayProvider;
         var newProvider = BuildDelayProvider();
 
-        // SetProvider disposes the old _delayProvider (which cascades to the inner provider).
         _controller.SetProvider(newProvider);
         _delayProvider = newProvider;
+        oldProvider?.Dispose(); // controller does NOT own provider lifecycle -- dispose explicitly
 
         if (_debugRenderer != null)
             _debugRenderer.ShowTileBorders = _showTileBorders;
@@ -497,13 +498,10 @@
         if (_controller != null)
         {
             _controller.InvalidateRequired -= OnInvalidateRequired;
-            _controller.Dispose(); // also disposes the current _delayProvider chain
+            _controller.Dispose();
         }
-        else
-        {
-            // Defensive: controller never set (OnAfterRenderAsync didn't run) — dispose provider directly.
-            _delayProvider?.Dispose();
-        }
+        // Controller does NOT own provider lifecycle -- always dispose explicitly.
+        _delayProvider?.Dispose();
         _debugRenderer?.Dispose();
     }
 }

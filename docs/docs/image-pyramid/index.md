@@ -47,8 +47,9 @@ graph TD
 | `SKImagePyramidController` | The central orchestrator: viewport, scheduling, render buffer, rendering. |
 | `SKImagePyramidViewport` | Coordinate math between screen pixels and logical (0–1) image space. |
 | `ISKImagePyramidTileProvider` | Owns the full fetch+cache pipeline for a tile URL. |
-| `SKImagePyramidHttpTileProvider` | Built-in HTTP provider with optional disk cache; decodes with `SKImage.FromEncodedData`. |
-| `SKImagePyramidFileTileProvider` | Built-in local file provider (no disk cache — the file IS the source). |
+| `SKTieredTileProvider` | Composes a fetcher + optional persistent cache into a tile provider. |
+| `SKHttpTileFetcher` | HTTP origin fetch (no caching). |
+| `SKFileTileFetcher` | Local file origin fetch (no caching). |
 | `ISKImagePyramidRenderer` | Pluggable renderer interface. |
 | `SKImagePyramidRenderer` | Default SkiaSharp renderer; LOD blending, tile compositing. |
 
@@ -68,12 +69,12 @@ var controller = new SKImagePyramidController();
 // Deep Zoom Image (DZI)
 var xml = await httpClient.GetStringAsync("https://example.com/image.dzi");
 var source = SKImagePyramidDziSource.Parse(xml, "https://example.com/image_files/");
-controller.Load(source, new SKImagePyramidHttpTileProvider());
+controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
 
 // IIIF Image API
 var json = await httpClient.GetStringAsync("https://example.com/image/info.json");
 var iiifSource = SKImagePyramidIiifSource.Parse(json);
-controller.Load(iiifSource, new SKImagePyramidHttpTileProvider());
+controller.Load(iiifSource, new SKTieredTileProvider(new SKHttpTileFetcher()));
 ```
 
 ### 3. Wire the canvas

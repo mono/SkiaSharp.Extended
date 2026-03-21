@@ -21,7 +21,7 @@ public sealed class BrowserStorageTileProvider(ISKImagePyramidTileProvider inner
     /// <inheritdoc/>
     public async Task<SKImagePyramidTile?> GetTileAsync(string url, CancellationToken ct = default)
     {
-        if (ct.IsCancellationRequested) return null;
+        ct.ThrowIfCancellationRequested();
 
         // 1. Browser sessionStorage hit?
         var cached = await TryReadFromStorageAsync(url, ct).ConfigureAwait(false);
@@ -33,7 +33,9 @@ public sealed class BrowserStorageTileProvider(ISKImagePyramidTileProvider inner
 
         // 3. Persist to browser storage — fire-and-forget with CancellationToken.None.
         //    Once the tile is in hand, don't let a cancellation skip storage.
-        _ = WriteToBrowserAsync(url, tile.RawData);
+        //    RawData is nullable; only write if bytes are available.
+        if (tile.RawData != null)
+            _ = WriteToBrowserAsync(url, tile.RawData);
 
         return tile;
     }

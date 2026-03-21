@@ -11,6 +11,7 @@ public partial class ImagePyramidPage : ContentPage
 
     private SKImagePyramidController? _controller;
     private SKImagePyramidRenderer? _renderer;
+    private ISKImagePyramidTileProvider? _provider;
 
     public ImagePyramidPage()
     {
@@ -34,8 +35,10 @@ public partial class ImagePyramidPage : ContentPage
         base.OnDisappearing();
         _controller?.Dispose();
         _renderer?.Dispose();
+        _provider?.Dispose();
         _controller = null;
         _renderer = null;
+        _provider = null;
     }
 
     // --- URL loading ---
@@ -73,14 +76,16 @@ public partial class ImagePyramidPage : ContentPage
             {
                 var coll = SKImagePyramidDziCollectionSource.Parse(content);
                 coll.TilesBaseUri = baseDir;
-                _controller.Load(coll, new SKTieredTileProvider(new SKHttpTileFetcher()));
+                ReplaceProvider(new SKTieredTileProvider(new SKHttpTileFetcher()));
+                _controller.Load(coll, _provider!);
                 SyncSliderFromViewport();
                 statusLabel.Text = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
             else if (isIiif || (!isDzi && content.TrimStart().StartsWith("{")))
             {
                 var tileSource = SKImagePyramidIiifSource.Parse(content);
-                _controller.Load(tileSource, new SKTieredTileProvider(new SKHttpTileFetcher()));
+                ReplaceProvider(new SKTieredTileProvider(new SKHttpTileFetcher()));
+                _controller.Load(tileSource, _provider!);
                 SyncSliderFromViewport();
                 statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels, IIIF)";
             }
@@ -88,7 +93,8 @@ public partial class ImagePyramidPage : ContentPage
             {
                 string tilesBase = $"{baseDir}{stem}_files/";
                 var tileSource = SKImagePyramidDziSource.Parse(content, tilesBase);
-                _controller.Load(tileSource, new SKTieredTileProvider(new SKHttpTileFetcher()));
+                ReplaceProvider(new SKTieredTileProvider(new SKHttpTileFetcher()));
+                _controller.Load(tileSource, _provider!);
                 SyncSliderFromViewport();
                 statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             }
@@ -103,6 +109,13 @@ public partial class ImagePyramidPage : ContentPage
         {
             loadButton.IsEnabled = true;
         }
+    }
+
+    private void ReplaceProvider(ISKImagePyramidTileProvider newProvider)
+    {
+        var old = _provider;
+        _provider = newProvider;
+        old?.Dispose();
     }
 
     private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)

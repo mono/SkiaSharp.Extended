@@ -16,20 +16,20 @@ var controller = new SKImagePyramidController();
 ```csharp
 // DZI — single image (HTTP)
 var source = SKImagePyramidDziSource.Parse(xmlString, "https://example.com/image_files/");
-controller.Load(source, new SKImagePyramidHttpTileProvider());
+controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
 
 // DZC — collection of images
 var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
 collection.TilesBaseUri = "https://example.com/";
-controller.Load(collection, new SKImagePyramidHttpTileProvider());
+controller.Load(collection, new SKTieredTileProvider(new SKHttpTileFetcher()));
 
 // DZI with disk cache (persists across app restarts)
-controller.Load(source, new SKImagePyramidHttpTileProvider(
-    diskCachePath: Path.Combine(FileSystem.CacheDirectory, "tiles"),
-    expiry: TimeSpan.FromDays(30)));
+controller.Load(source, new SKTieredTileProvider(
+    new SKHttpTileFetcher(),
+    new SKDiskTileCacheStore(Path.Combine(FileSystem.CacheDirectory, "tiles"), expiry: TimeSpan.FromDays(30))));
 
 // Local files
-controller.Load(source, new SKImagePyramidFileTileProvider());
+controller.Load(source, new SKTieredTileProvider(new SKFileTileFetcher()));
 ```
 
 `Load()` resets the viewport to show the full image and starts fetching tiles in the background.
@@ -432,7 +432,7 @@ Equality is based on `TileId` only, so a `SKImagePyramidTileRequest` can be de-d
 
 ```csharp
 // Inspect the tile layout's current view
-var tiles = controller.TileLayout.GetVisibleTiles(controller.TileSource, controller.Viewport);
+var tiles = controller.TileLayout.GetVisibleTiles(controller.Source, controller.Viewport);
 foreach (var req in tiles)
     Console.WriteLine($"{req.TileId} priority={req.Priority:F2}");
 ```

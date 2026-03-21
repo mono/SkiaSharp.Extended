@@ -32,7 +32,7 @@ var json = await http.GetStringAsync("https://example.org/iiif/image/my-image/in
 var source = SKImagePyramidIiifSource.Parse(json);
 
 // Load into the controller (same as DZI)
-controller.Load(source, new SKImagePyramidHttpTileProvider());
+controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
 ```
 
 ### Construct manually

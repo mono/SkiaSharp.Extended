@@ -48,16 +48,18 @@ See [Tile Fetching](fetching.md) for the full provider design and built-in imple
 ### Remote tiles (HTTP + disk cache)
 
 ```csharp
-// HttpTileProvider fetches tiles over HTTP and caches them to disk automatically
-var provider = new SKImagePyramidHttpTileProvider(cachePath: "/tmp/mycache");
+// SKTieredTileProvider with disk cache persists fetched tiles across app restarts
+var provider = new SKTieredTileProvider(
+    new SKHttpTileFetcher(),
+    new SKDiskTileCacheStore("/tmp/mycache"));
 controller.Load(source, provider);
 ```
 
 ### Local tiles (no disk cache needed)
 
 ```csharp
-// FileTileProvider reads tiles directly from the filesystem — no extra caching
-var provider = new SKImagePyramidFileTileProvider();
+// SKFileTileFetcher reads tiles directly from the filesystem — no extra caching
+var provider = new SKTieredTileProvider(new SKFileTileFetcher());
 controller.Load(source, provider);
 ```
 
@@ -83,7 +85,7 @@ public sealed class MyPersistentProvider : ISKImagePyramidTileProvider
         var cached = await _storage.TryReadAsync(url, ct);
         if (cached is not null) return cached;
 
-        // 2. Delegate to the inner provider (e.g. HttpTileProvider)
+        // 2. Delegate to the inner provider (e.g. SKTieredTileProvider)
         var tile = await _inner.GetTileAsync(url, ct);
         if (tile is null) return null;
 

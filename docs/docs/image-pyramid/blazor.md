@@ -30,7 +30,7 @@ Use `SKImagePyramidController` with a plain `SKCanvasView` in Blazor WebAssembly
         var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/image_files/").ToString();
         var source  = SKImagePyramidDziSource.Parse(xml, baseUrl);
 
-        _controller.Load(source, new SKImagePyramidHttpTileProvider());
+        _controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
     }
 
     private void OnPaintSurface(SKPaintSurfaceEventArgs e)
@@ -67,7 +67,7 @@ Place `.dzi` and tile folder under `wwwroot`. In the project file, mark them as 
 </ItemGroup>
 ```
 
-The `SKImagePyramidHttpTileProvider` fetches each tile via `HttpClient`; tile URLs are constructed automatically from the base URL you pass to `SKImagePyramidDziSource.Parse`.
+The `SKTieredTileProvider` with `SKHttpTileFetcher` fetches each tile via `HttpClient`; tile URLs are constructed automatically from the base URL you pass to `SKImagePyramidDziSource.Parse`.
 
 ## Pan and Zoom
 
@@ -120,7 +120,7 @@ Wire mouse and touch events to the controller's navigation methods:
 var xml = await Http.GetStringAsync("collection.dzc");
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = Http.BaseAddress!.ToString();
-_controller!.Load(collection, new SKImagePyramidHttpTileProvider());
+_controller!.Load(collection, new SKTieredTileProvider(new SKHttpTileFetcher()));
 ```
 
 ## Custom Provider
@@ -129,9 +129,9 @@ Pass a custom `ISKImagePyramidTileProvider` to the controller's `Load()` method 
 
 ```csharp
 // With disk cache (persists across Blazor restarts via OPFS or service worker)
-controller.Load(source, new SKImagePyramidHttpTileProvider(
-    diskCachePath: "/cache/tiles",
-    expiry: TimeSpan.FromDays(7)));
+controller.Load(source, new SKTieredTileProvider(
+    new SKHttpTileFetcher(),
+    new SKDiskTileCacheStore("/cache/tiles", expiry: TimeSpan.FromDays(7))));
 ```
 
 See the [Tile Providers](fetching.md) docs for implementing browser storage tiers, delay wrappers, and other custom strategies.

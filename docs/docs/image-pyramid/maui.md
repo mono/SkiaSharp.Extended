@@ -118,21 +118,18 @@ Include assets in the project file:
 
 ## HTTP Tile Provider
 
-For remote images, use the built-in `SKImagePyramidHttpTileProvider`:
+For remote images, use `SKTieredTileProvider` with `SKHttpTileFetcher`:
 
 ```csharp
-using var httpClient = new HttpClient();
-var xml    = await httpClient.GetStringAsync("https://example.com/image.dzi");
-var source = SKImagePyramidDziSource.Parse(xml, "https://example.com/image_files/");
-
 // HTTP only, no disk cache
-_controller.Load(source, new SKImagePyramidHttpTileProvider(httpClient));
+_controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
 
 // With disk cache (persists across sessions)
-_controller.Load(source, new SKImagePyramidHttpTileProvider(
-    httpClient: httpClient,
-    diskCachePath: Path.Combine(FileSystem.CacheDirectory, "tiles"),
-    expiry: TimeSpan.FromDays(30)));
+_controller.Load(source, new SKTieredTileProvider(
+    fetcher: new SKHttpTileFetcher(),
+    persistentCache: new SKDiskTileCacheStore(
+        Path.Combine(FileSystem.CacheDirectory, "tiles"),
+        expiry: TimeSpan.FromDays(30))));
 ```
 
 ## Pan and Zoom
@@ -207,8 +204,9 @@ The controller's internal render buffer has a fixed 256-entry capacity — this 
 
 ```csharp
 // With disk cache for memory-constrained devices that benefit from persistence
-_controller.Load(source, new SKImagePyramidHttpTileProvider(
-    diskCachePath: Path.Combine(FileSystem.CacheDirectory, "tiles")));
+_controller.Load(source, new SKTieredTileProvider(
+    new SKHttpTileFetcher(),
+    new SKDiskTileCacheStore(Path.Combine(FileSystem.CacheDirectory, "tiles"))));
 ```
 
 See the [Tile Providers docs](fetching.md) for custom providers.
