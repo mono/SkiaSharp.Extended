@@ -143,24 +143,8 @@ The filesystem tier survives app restarts and reduces network usage.</p>
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileTileFetcher.html">SKImagePyramidFileTileFetcher</a></dt>
-      <dd><p>Fetches tiles from the local file system and decodes them using SkiaSharp.
-Accepts both plain file paths and <code>file://</code> URIs.
-Raw bytes are buffered before decoding, which allows the bytes to be stored
-in L2 caches without re-encoding.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileTileProvider.html">SKImagePyramidFileTileProvider</a></dt>
       <dd><p>Reads tiles from the local filesystem. No disk caching is performed — the file IS the source.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidHttpTileFetcher.html">SKImagePyramidHttpTileFetcher</a></dt>
-      <dd><p>Fetches tiles over HTTP and decodes them using SkiaSharp.
-Raw bytes are buffered before decoding, which handles forward-only streams
-and allows the bytes to be stored in L2 caches without re-encoding.
-Thread-safe and reusable.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -302,13 +286,6 @@ Tiles are stored as <a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileFetcher.html">ISKImagePyramidTileFetcher</a></dt>
-      <dd><p>Fetches tile data from a source (HTTP, file system, memory, etc.)
-and returns it as a decoded <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skimage">SKImage</a>.
-Implement this interface to plug in a custom tile source.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileProvider.html">ISKImagePyramidTileProvider</a></dt>
       <dd><p>Owns the complete fetch-and-persist pipeline for a single tile URL.
 The controller asks for a tile by URL and receives a decoded tile (or null).
@@ -336,7 +313,7 @@ or browser storage — is an implementation detail invisible to the controller.<
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6614fd7
+          source: PR #379 · 73d9cc1
         </div>
       </div>
     </footer>

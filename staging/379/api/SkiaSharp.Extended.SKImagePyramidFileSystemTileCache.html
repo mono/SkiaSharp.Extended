@@ -162,12 +162,11 @@ The filesystem tier survives app restarts and reduces network usage.</p>
   <div class="markdown level0 remarks"><p>
 Recommended base paths by platform:
 <ul><li>MAUI: <code>FileSystem.CacheDirectory</code></li><li>Desktop .NET: <code>Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SkiaSharpCache")</code></li><li>Fallback: <code>Path.GetTempPath()</code></li></ul>
-Blazor WebAssembly has no real filesystem; use <code>SKImagePyramidBrowserStorageTileCache</code> from
-<code>SkiaSharp.Extended.UI.Blazor</code> instead.
+Blazor WebAssembly has no real filesystem; use browser storage via JS interop instead.
 
 <p>
-Set ISKImagePyramidTileCache.ActiveSourceId (the controller does this automatically on
-<code>Load()</code>) so tiles from different image sources are stored in separate subdirectories.
+Set <a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.ActiveSourceId.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_ActiveSourceId">ActiveSourceId</a> to namespace tiles from different image sources into
+separate subdirectories and avoid cross-source key collisions.
 </p>
 </div>
 
@@ -287,7 +286,7 @@ A null return means cache miss — the caller should then fetch from network.</p
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6614fd7
+          source: PR #379 · 73d9cc1
         </div>
       </div>
     </footer>

@@ -163,7 +163,7 @@ and gesture recognition belong in the consuming layer.
 </p>
 <p>
 Typical usage:
-<ol><li>Call Load(SKImagePyramidDziSource, ISKImagePyramidTileFetcher) to load an image.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SetControlSize.html#SkiaSharp_Extended_SKImagePyramidController_SetControlSize_System_Double_System_Double_">SetControlSize(double, double)</a> when the canvas size changes.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Update.html#SkiaSharp_Extended_SKImagePyramidController_Update">Update()</a> to schedule tile loads each frame.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Render.html#SkiaSharp_Extended_SKImagePyramidController_Render_SkiaSharp_Extended_ISKImagePyramidRenderer_">Render(ISKImagePyramidRenderer)</a> from your canvas paint callback, passing the renderer for this frame.</li></ol>
+<ol><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_SkiaSharp_Extended_ISKImagePyramidTileProvider_">Load(ISKImagePyramidSource, ISKImagePyramidTileProvider)</a> to load an image.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SetControlSize.html#SkiaSharp_Extended_SKImagePyramidController_SetControlSize_System_Double_System_Double_">SetControlSize(double, double)</a> when the canvas size changes.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Update.html#SkiaSharp_Extended_SKImagePyramidController_Update">Update()</a> to schedule tile loads each frame.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Render.html#SkiaSharp_Extended_SKImagePyramidController_Render_SkiaSharp_Extended_ISKImagePyramidRenderer_">Render(ISKImagePyramidRenderer)</a> from your canvas paint callback, passing the renderer for this frame.</li></ol>
 
 </div>
 
@@ -375,7 +375,7 @@ with one of the sub-image sources from <a class="xref" href="SkiaSharp.Extended.
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6614fd7
+          source: PR #379 · 73d9cc1
         </div>
       </div>
     </footer>

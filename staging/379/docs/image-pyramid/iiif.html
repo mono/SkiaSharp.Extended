@@ -110,7 +110,7 @@ var json = await http.GetStringAsync(&quot;https://example.org/iiif/image/my-ima
 var source = SKImagePyramidIiifSource.Parse(json);
 
 // Load into the controller (same as DZI)
-controller.Load(source, new SKImagePyramidHttpTileFetcher());
+controller.Load(source, new SKImagePyramidHttpTileProvider());
 </code></pre>
 <h3 id="construct-manually">Construct manually</h3>
 <pre><code class="lang-csharp">var source = new SKImagePyramidIiifSource(
@@ -238,7 +238,7 @@ which abstracts the tile pyramid math:</p>
     int GetOptimalLevel(double viewportWidth, double controlWidth);
 }
 </code></pre>
-<p>The <code>SKImagePyramidController.Load(ISKImagePyramidSource, ISKImagePyramidTileFetcher)</code> overload
+<p>The <code>SKImagePyramidController.Load(ISKImagePyramidSource, ISKImagePyramidTileProvider)</code> overload
 accepts any source type, making it easy to add support for other formats.</p>
 <h2 id="adding-your-own-format-eg-zoomify">Adding Your Own Format (e.g., Zoomify)</h2>
 <p>To support <a href="http://www.zoomify.com/">Zoomify</a>, implement <code>ISKImagePyramidSource</code>:</p>
@@ -336,7 +336,7 @@ accepts any source type, making it easy to add support for other formats.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6614fd7
+          source: PR #379 · 73d9cc1
         </div>
       </div>
     </footer>

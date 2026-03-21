@@ -89,25 +89,26 @@
 <p><code>SKImagePyramidController</code> is the central orchestrator of the Image Pyramid system. It manages viewport math, tile scheduling, cache population, and rendering. All platform-specific code (canvas, touch, gestures) lives in the caller — the controller knows nothing about UI.</p>
 <h2 id="skimagepyramidcontroller">SKImagePyramidController</h2>
 <h3 id="construction">Construction</h3>
-<pre><code class="lang-csharp">// Default: in-memory LRU cache with 1024 tile capacity
+<pre><code class="lang-csharp">// Parameterless constructor — internal render buffer is managed automatically
 var controller = new SKImagePyramidController();
-
-// Custom capacity
-var controller = new SKImagePyramidController(defaultCacheCapacity: 512);
-
-// Custom pluggable cache (see Caching docs)
-ISKImagePyramidTileCache myCache = new MyCustomCache();
-var controller = new SKImagePyramidController(cache: myCache);
 </code></pre>
 <h3 id="loading-images">Loading Images</h3>
-<pre><code class="lang-csharp">// DZI — single image
+<pre><code class="lang-csharp">// DZI — single image (HTTP)
 var source = SKImagePyramidDziSource.Parse(xmlString, &quot;https://example.com/image_files/&quot;);
-controller.Load(source, new SKImagePyramidHttpTileFetcher());
+controller.Load(source, new SKImagePyramidHttpTileProvider());
 
 // DZC — collection of images
 var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
 collection.TilesBaseUri = &quot;https://example.com/&quot;;
-controller.Load(collection, new SKImagePyramidHttpTileFetcher());
+controller.Load(collection, new SKImagePyramidHttpTileProvider());
+
+// DZI with disk cache (persists across app restarts)
+controller.Load(source, new SKImagePyramidHttpTileProvider(
+    diskCachePath: Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;),
+    expiry: TimeSpan.FromDays(30)));
+
+// Local files
+controller.Load(source, new SKImagePyramidFileTileProvider());
 </code></pre>
 <p><code>Load()</code> resets the viewport to show the full image and starts fetching tiles in the background.</p>
 <h3 id="render-loop">Render Loop</h3>
@@ -166,8 +167,8 @@ controller.ResetView();
 </tr>
 <tr>
 <td style="text-align: left;"><code>Cache</code></td>
-<td style="text-align: left;"><code>ISKImagePyramidTileCache</code></td>
-<td style="text-align: left;">The tile cache.</td>
+<td style="text-align: left;"><code>SKImagePyramidMemoryTileCache</code></td>
+<td style="text-align: left;">The internal render buffer (in-memory LRU).</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>TileLayout</code></td>
@@ -556,7 +557,7 @@ int level = source.GetOptimalLevel(viewportWidth: vp.ViewportWidth, controlWidth
 <h3 id="parsing-1">Parsing</h3>
 <pre><code class="lang-csharp">var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
 collection.TilesBaseUri = &quot;https://example.com/&quot;;
-controller.Load(collection, fetcher);
+controller.Load(collection, provider);
 </code></pre>
 <h3 id="properties-2">Properties</h3>
 <table>
@@ -594,7 +595,7 @@ controller.Load(collection, fetcher);
 </tbody>
 </table>
 <h3 id="sub-images-after-load">Sub-Images After Load</h3>
-<pre><code class="lang-csharp">controller.Load(collection, fetcher);
+<pre><code class="lang-csharp">controller.Load(collection, provider);
 
 foreach (var sub in controller.SubImages)
 {
@@ -771,7 +772,7 @@ foreach (var req in tiles)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6614fd7
+          source: PR #379 · 73d9cc1
         </div>
       </div>
     </footer>

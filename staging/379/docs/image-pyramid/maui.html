@@ -134,7 +134,7 @@ public partial class ImagePyramidPage : ContentPage
         var xml = await reader.ReadToEndAsync();
 
         var source = SKImagePyramidDziSource.Parse(xml, &quot;image_files/&quot;);
-        _controller.Load(source, new AppPackageFetcher());
+        _controller.Load(source, new AppPackageProvider());
         canvas.InvalidateSurface();
     }
 
@@ -147,12 +147,13 @@ public partial class ImagePyramidPage : ContentPage
     }
 }
 </code></pre>
-<h2 id="app-package-tile-fetcher">App-Package Tile Fetcher</h2>
-<p>When tiles are bundled as MAUI assets, implement <code>ISKImagePyramidTileFetcher</code> to read them via <code>FileSystem.OpenAppPackageFileAsync</code>, buffer the bytes, and decode with <code>SKImage.FromEncodedData</code>:</p>
-<pre><code class="lang-csharp">public sealed class AppPackageFetcher : ISKImagePyramidTileFetcher
+<h2 id="app-package-tile-provider">App-Package Tile Provider</h2>
+<p>When tiles are bundled as MAUI assets, implement <code>ISKImagePyramidTileProvider</code> to read them via <code>FileSystem.OpenAppPackageFileAsync</code>, buffer the bytes, and decode with <code>SKImage.FromEncodedData</code>:</p>
+<pre><code class="lang-csharp">public sealed class AppPackageProvider : ISKImagePyramidTileProvider
 {
-    public async Task&lt;SKImagePyramidTile?&gt; FetchTileAsync(string url, CancellationToken ct = default)
+    public async Task&lt;SKImagePyramidTile?&gt; GetTileAsync(string url, CancellationToken ct = default)
     {
+        ct.ThrowIfCancellationRequested();
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
@@ -162,6 +163,7 @@ public partial class ImagePyramidPage : ContentPage
             var image = SKImage.FromEncodedData(bytes);
             return image != null ? new SKImagePyramidTile(image, bytes) : null;
         }
+        catch (OperationCanceledException) { throw; }
         catch
         {
             return null;
@@ -172,7 +174,7 @@ public partial class ImagePyramidPage : ContentPage
 }
 </code></pre>
 <p>Use it directly:</p>
-<pre><code class="lang-csharp">_controller.Load(source, new AppPackageFetcher());
+<pre><code class="lang-csharp">_controller.Load(source, new AppPackageProvider());
 </code></pre>
 <p>Include assets in the project file:</p>
 <pre><code class="lang-xml">&lt;ItemGroup&gt;
@@ -182,14 +184,20 @@ public partial class ImagePyramidPage : ContentPage
                LogicalName=&quot;image_files/%(RecursiveDir)%(Filename)%(Extension)&quot; /&gt;
 &lt;/ItemGroup&gt;
 </code></pre>
-<h2 id="http-tile-fetcher">HTTP Tile Fetcher</h2>
-<p>For remote images, use the built-in <code>SKImagePyramidHttpTileFetcher</code>:</p>
+<h2 id="http-tile-provider">HTTP Tile Provider</h2>
+<p>For remote images, use the built-in <code>SKImagePyramidHttpTileProvider</code>:</p>
 <pre><code class="lang-csharp">using var httpClient = new HttpClient();
-var fetcher = new SKImagePyramidHttpTileFetcher(httpClient);
-
 var xml    = await httpClient.GetStringAsync(&quot;https://example.com/image.dzi&quot;);
 var source = SKImagePyramidDziSource.Parse(xml, &quot;https://example.com/image_files/&quot;);
-_controller.Load(source, fetcher);
+
+// HTTP only, no disk cache
+_controller.Load(source, new SKImagePyramidHttpTileProvider(httpClient));
+
+// With disk cache (persists across sessions)
+_controller.Load(source, new SKImagePyramidHttpTileProvider(
+    httpClient: httpClient,
+    diskCachePath: Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;),
+    expiry: TimeSpan.FromDays(30)));
 </code></pre>
 <h2 id="pan-and-zoom">Pan and Zoom</h2>
 <p>Add gesture recognizers or pointer events to enable interactive navigation:</p>
@@ -248,14 +256,15 @@ var xml = await reader.ReadToEndAsync();
 
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = &quot;collection_files/&quot;;
-_controller.Load(collection, new AppPackageFetcher());
+_controller.Load(collection, new AppPackageProvider());
 </code></pre>
-<h2 id="custom-cache">Custom Cache</h2>
-<pre><code class="lang-csharp">// Smaller cache for memory-constrained devices
-var cache = new SKImagePyramidMemoryTileCache(maxEntries: 256);
-var controller = new SKImagePyramidController(cache: cache);
+<h2 id="provider-configuration">Provider Configuration</h2>
+<p>The controller's internal render buffer has a fixed 256-entry capacity — this is sufficient for most tile pyramid use cases. If you need disk persistence, pass a configured provider:</p>
+<pre><code class="lang-csharp">// With disk cache for memory-constrained devices that benefit from persistence
+_controller.Load(source, new SKImagePyramidHttpTileProvider(
+    diskCachePath: Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;)));
 </code></pre>
-<p>See the <a href="caching.html">Caching docs</a> for custom disk-backed caches.</p>
+<p>See the <a href="fetching.html">Tile Providers docs</a> for custom providers.</p>
 <h2 id="rendering-behaviour">Rendering Behaviour</h2>
 <ul>
 <li><strong>Fit and center</strong>: On load the controller fits the full image into the canvas with <code>ResetView()</code>. The image is centered; neither cropping nor distortion occurs.</li>
@@ -291,7 +300,7 @@ var controller = new SKImagePyramidController(cache: cache);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 6614fd7
+          source: PR #379 · 73d9cc1
         </div>
       </div>
     </footer>
