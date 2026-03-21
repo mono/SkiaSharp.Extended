@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SkiaSharp.Extended;
 
@@ -12,7 +10,7 @@ namespace SkiaSharp.Extended;
 /// Evicted tiles are deferred for disposal to avoid race conditions with the renderer.
 /// Call <see cref="FlushEvicted"/> at the start of each render frame.
 /// </summary>
-public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
+internal sealed class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
 {
     private readonly int _maxEntries;
     private readonly LinkedList<TileCacheEntry> _lruList;
@@ -35,8 +33,6 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
     /// <summary>Maximum number of cached tiles.</summary>
     public int MaxEntries => _maxEntries;
 
-    // ---- ISKImagePyramidTileCache implementation (primary) ----
-
     /// <summary>Tries to get a cached tile.</summary>
     public bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile)
     {
@@ -56,32 +52,16 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
         }
     }
 
-    /// <summary>Async variant — completes synchronously for in-memory cache.</summary>
-    public Task<SKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
-    {
-        TryGet(id, out SKImagePyramidTile? tile);
-        return Task.FromResult(tile);
-    }
-
-    /// <summary>Adds a tile to the cache via the async interface.</summary>
-    public Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default)
-    {
-        if (!ct.IsCancellationRequested)
-            Put(id, tile);
-        return Task.CompletedTask;
-    }
-
     /// <summary>Adds a tile to the cache, evicting the LRU entry if at capacity.</summary>
-    public void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile)
+    public void Put(SKImagePyramidTileId id, SKImagePyramidTile tile)
     {
         lock (_lock)
         {
-            if (_disposed) { tile?.Dispose(); return; }
+            if (_disposed) { tile.Dispose(); return; }
 
             if (_map.TryGetValue(id, out var existing))
             {
-                if (existing.Value.Tile != null)
-                    _pendingDispose.Add(existing.Value.Tile);
+                _pendingDispose.Add(existing.Value.Tile);
                 existing.Value.Tile = tile;
                 _lruList.Remove(existing);
                 _lruList.AddFirst(existing);
@@ -93,8 +73,7 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
                 var lru = _lruList.Last;
                 _lruList.RemoveLast();
                 _map.Remove(lru.Value.Id);
-                if (lru.Value.Tile != null)
-                    _pendingDispose.Add(lru.Value.Tile);
+                _pendingDispose.Add(lru.Value.Tile);
             }
 
             var entry = new TileCacheEntry(id, tile);
@@ -115,8 +94,7 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
             {
                 _lruList.Remove(node);
                 _map.Remove(id);
-                if (node.Value.Tile != null)
-                    _pendingDispose.Add(node.Value.Tile);
+                _pendingDispose.Add(node.Value.Tile);
                 return true;
             }
             return false;
@@ -129,7 +107,7 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
         lock (_lock)
         {
             foreach (var node in _lruList)
-                node.Tile?.Dispose();
+                node.Tile.Dispose();
             _lruList.Clear();
             _map.Clear();
             foreach (var t in _pendingDispose)
@@ -172,9 +150,9 @@ public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache
 
     // ---- Private ----
 
-    private class TileCacheEntry(SKImagePyramidTileId id, SKImagePyramidTile? tile)
+    private class TileCacheEntry(SKImagePyramidTileId id, SKImagePyramidTile tile)
     {
         public SKImagePyramidTileId Id { get; } = id;
-        public SKImagePyramidTile? Tile { get; set; } = tile;
+        public SKImagePyramidTile Tile { get; set; } = tile;
     }
 }

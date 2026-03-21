@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Threading.Tasks;
 using SkiaSharp;
 using SkiaSharp.Extended;
 using Xunit;
@@ -9,6 +7,9 @@ namespace SkiaSharp.Extended.ImagePyramid.Tests;
 
 public class TileCacheTest
 {
+    private static SKImagePyramidTile MakeTile() =>
+        new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1, SKColorType.Rgba8888)), new byte[] { 0xFF });
+
     [Fact]
     public void Empty_Cache_HasZeroCount()
     {
@@ -21,11 +22,11 @@ public class TileCacheTest
     {
         using var cache = new SKImagePyramidMemoryTileCache(10);
         var id = new SKImagePyramidTileId(5, 2, 3);
-        // Use null bitmap for testing (real bitmaps would be SKBitmap)
-        cache.Put(id, null);
+        var tile = MakeTile();
+        cache.Put(id, tile);
 
-        Assert.True(cache.TryGet(id, out var bitmap));
-        Assert.Null(bitmap); // we stored null
+        Assert.True(cache.TryGet(id, out var result));
+        Assert.Same(tile, result);
         Assert.Equal(1, cache.Count);
     }
 
@@ -34,7 +35,7 @@ public class TileCacheTest
     {
         using var cache = new SKImagePyramidMemoryTileCache(10);
         var id = new SKImagePyramidTileId(5, 2, 3);
-        cache.Put(id, null);
+        cache.Put(id, MakeTile());
 
         Assert.True(cache.Contains(id));
         Assert.False(cache.Contains(new SKImagePyramidTileId(5, 2, 4)));
@@ -48,12 +49,12 @@ public class TileCacheTest
         var id1 = new SKImagePyramidTileId(1, 0, 0);
         var id2 = new SKImagePyramidTileId(2, 0, 0);
 
-        cache.Put(id0, null);
-        cache.Put(id1, null);
+        cache.Put(id0, MakeTile());
+        cache.Put(id1, MakeTile());
         Assert.Equal(2, cache.Count);
 
         // Adding id2 should evict id0 (oldest)
-        cache.Put(id2, null);
+        cache.Put(id2, MakeTile());
         Assert.Equal(2, cache.Count);
         Assert.False(cache.Contains(id0));
         Assert.True(cache.Contains(id1));
@@ -68,14 +69,14 @@ public class TileCacheTest
         var id1 = new SKImagePyramidTileId(1, 0, 0);
         var id2 = new SKImagePyramidTileId(2, 0, 0);
 
-        cache.Put(id0, null);
-        cache.Put(id1, null);
+        cache.Put(id0, MakeTile());
+        cache.Put(id1, MakeTile());
 
         // Access id0 to make it most recently used
         cache.TryGet(id0, out _);
 
         // Add id2 — should evict id1 (now the least recently used)
-        cache.Put(id2, null);
+        cache.Put(id2, MakeTile());
         Assert.True(cache.Contains(id0));
         Assert.False(cache.Contains(id1));
         Assert.True(cache.Contains(id2));
@@ -86,7 +87,7 @@ public class TileCacheTest
     {
         using var cache = new SKImagePyramidMemoryTileCache(10);
         var id = new SKImagePyramidTileId(5, 2, 3);
-        cache.Put(id, null);
+        cache.Put(id, MakeTile());
         Assert.True(cache.Remove(id));
         Assert.Equal(0, cache.Count);
         Assert.False(cache.Contains(id));
@@ -104,7 +105,7 @@ public class TileCacheTest
     {
         using var cache = new SKImagePyramidMemoryTileCache(10);
         for (int i = 0; i < 5; i++)
-            cache.Put(new SKImagePyramidTileId(i, 0, 0), null);
+            cache.Put(new SKImagePyramidTileId(i, 0, 0), MakeTile());
 
         Assert.Equal(5, cache.Count);
         cache.Clear();
@@ -116,8 +117,8 @@ public class TileCacheTest
     {
         using var cache = new SKImagePyramidMemoryTileCache(10);
         var id = new SKImagePyramidTileId(5, 2, 3);
-        cache.Put(id, null);
-        cache.Put(id, null); // update
+        cache.Put(id, MakeTile());
+        cache.Put(id, MakeTile()); // update
 
         Assert.Equal(1, cache.Count);
     }
@@ -164,10 +165,10 @@ public class TileCacheTest
         var id2 = new SKImagePyramidTileId(2, 0, 0);
         var id3 = new SKImagePyramidTileId(3, 0, 0);
 
-        cache.Put(id0, null);
-        cache.Put(id1, null);
-        cache.Put(id2, null);
-        cache.Put(id3, null);
+        cache.Put(id0, MakeTile());
+        cache.Put(id1, MakeTile());
+        cache.Put(id2, MakeTile());
+        cache.Put(id3, MakeTile());
 
         Assert.Equal(3, cache.Count);
         Assert.False(cache.Contains(id0));
@@ -268,100 +269,6 @@ public class TileCacheTest
 
         Assert.False(cache.TryGet(tileId, out var bitmap));
         Assert.Null(bitmap);
-    }
-}
-
-public class FileSystemTileCacheTest
-{
-    [Fact]
-    public async Task TryGetAsync_ExpiredTile_ReturnsMiss()
-    {
-        var tmp = Path.Combine(Path.GetTempPath(), "sk_test_" + Guid.NewGuid());
-        try
-        {
-            using var cache = new SKImagePyramidFileSystemTileCache(tmp, expiry: TimeSpan.FromMilliseconds(1));
-            cache.ActiveSourceId = "src1";
-
-            // Write a tiny PNG to disk manually to simulate a cached tile
-            var id = new SKImagePyramidTileId(0, 0, 0);
-            string dir = Path.Combine(tmp, "skimgpyramid", "src1", "0");
-            Directory.CreateDirectory(dir);
-            string tilePath = Path.Combine(dir, "0_0.tile");
-
-            // Create a valid minimal PNG
-            using var bmp = new SkiaSharp.SKBitmap(4, 4);
-            using var img = SkiaSharp.SKImage.FromBitmap(bmp);
-            using var data = img.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100);
-            File.WriteAllBytes(tilePath, data.ToArray());
-
-            // Set the file time to be clearly in the past
-            File.SetLastWriteTimeUtc(tilePath, DateTime.UtcNow.AddSeconds(-5));
-
-            // Should treat as expired (miss)
-            var result = await cache.TryGetAsync(id);
-            Assert.Null(result);
-            Assert.False(File.Exists(tilePath)); // expired file deleted
-        }
-        finally { try { Directory.Delete(tmp, true); } catch { } }
-    }
-
-    [Fact]
-    public async Task TryGetAsync_FreshTile_ReturnsHit()
-    {
-        var tmp = Path.Combine(Path.GetTempPath(), "sk_test_" + Guid.NewGuid());
-        try
-        {
-            using var cache = new SKImagePyramidFileSystemTileCache(tmp, expiry: TimeSpan.FromDays(1));
-            cache.ActiveSourceId = "src1";
-
-            var id = new SKImagePyramidTileId(0, 0, 0);
-            string dir = Path.Combine(tmp, "skimgpyramid", "src1", "0");
-            Directory.CreateDirectory(dir);
-            string tilePath = Path.Combine(dir, "0_0.tile");
-
-            using var bmp = new SkiaSharp.SKBitmap(4, 4);
-            using var img = SkiaSharp.SKImage.FromBitmap(bmp);
-            using var data = img.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100);
-            File.WriteAllBytes(tilePath, data.ToArray());
-
-            var result = await cache.TryGetAsync(id);
-            Assert.NotNull(result);
-            result!.Dispose();
-        }
-        finally { try { Directory.Delete(tmp, true); } catch { } }
-    }
-
-    [Fact]
-    public async Task PutAsync_StoresTileUnderSourceId()
-    {
-        var tmp = Path.Combine(Path.GetTempPath(), "sk_test_" + Guid.NewGuid());
-        try
-        {
-            using var cache = new SKImagePyramidFileSystemTileCache(tmp, expiry: TimeSpan.FromDays(1));
-            cache.ActiveSourceId = "mysource";
-
-            var id = new SKImagePyramidTileId(3, 1, 2);
-            using var bmp = new SkiaSharp.SKBitmap(8, 8);
-            using var img = SkiaSharp.SKImage.FromBitmap(bmp);
-            using var data = img.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100);
-            var bytes = data.ToArray();
-            var tile = new SKImagePyramidTile(img, bytes, "mysource");
-
-            await cache.PutAsync(id, tile);
-            await Task.Delay(50); // let async write complete
-
-            string tilePath = Path.Combine(tmp, "skimgpyramid", "mysource", "3", "1_2.tile");
-            Assert.True(File.Exists(tilePath));
-        }
-        finally { try { Directory.Delete(tmp, true); } catch { } }
-    }
-
-    [Fact]
-    public void MemoryCache_ActiveSourceId_IsIgnoredByMemoryCache()
-    {
-        // SKImagePyramidMemoryTileCache doesn't use source namespacing — verify no crash
-        using var cache = new SKImagePyramidMemoryTileCache(10);
-        Assert.Equal(0, cache.Count);
     }
 
     [Fact]

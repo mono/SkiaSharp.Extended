@@ -1,49 +1,41 @@
 #nullable enable
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SkiaSharp.Extended;
 
 /// <summary>
-/// Pluggable tile cache for the Deep Zoom rendering pipeline.
-/// Tiles are stored as <see cref="SKImagePyramidTile"/> instances (image + raw bytes).
+/// The internal sync render buffer used by <see cref="SKImagePyramidController"/>.
+/// Stores hot decoded tiles for the render loop.
 /// </summary>
+/// <remarks>
+/// This is a pure in-memory LRU cache — no persistence, no async. Disk caching and
+/// other persistent strategies are the responsibility of <see cref="ISKImagePyramidTileProvider"/>
+/// implementations, not this interface.
+/// </remarks>
 public interface ISKImagePyramidTileCache : IDisposable
 {
     /// <summary>Number of tiles currently in the cache.</summary>
     int Count { get; }
 
-    /// <summary>Tries to retrieve a cached tile synchronously. Only checks in-memory storage.</summary>
-    bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile);
-
-    /// <summary>
-    /// Asynchronously tries to retrieve a cached tile, including any L2 storage (disk, browser).
-    /// A null return means cache miss — the caller should then fetch from network.
-    /// </summary>
-    Task<SKImagePyramidTile?> TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default);
-
-    /// <summary>Returns <see langword="true"/> if the tile is in the in-memory cache.</summary>
+    /// <summary>Returns <see langword="true"/> if the tile is present in the cache.</summary>
     bool Contains(SKImagePyramidTileId id);
 
-    /// <summary>Stores a tile synchronously (in-memory only).</summary>
-    void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile);
+    /// <summary>Tries to retrieve a cached tile. Returns <see langword="false"/> on a miss.</summary>
+    bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile);
 
-    /// <summary>
-    /// Stores a tile, including any L2 storage (disk, browser). Implementations may apply async I/O.
-    /// </summary>
-    Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default);
+    /// <summary>Stores a tile in the cache.</summary>
+    void Put(SKImagePyramidTileId id, SKImagePyramidTile tile);
 
-    /// <summary>Removes a specific tile from the cache.</summary>
+    /// <summary>Removes a specific tile from the cache. Returns <see langword="false"/> if not found.</summary>
     bool Remove(SKImagePyramidTileId id);
 
-    /// <summary>Clears all cached tiles.</summary>
+    /// <summary>Clears all cached tiles, disposing their resources.</summary>
     void Clear();
 
     /// <summary>
-    /// Disposes tiles evicted since the last call. Call once per render frame
-    /// on the UI thread before drawing to safely release resources.
+    /// Disposes tiles evicted since the last call.
+    /// Call once per render frame on the UI thread before drawing.
     /// </summary>
     void FlushEvicted();
 }
