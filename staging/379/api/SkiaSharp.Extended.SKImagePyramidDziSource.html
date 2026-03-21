@@ -286,7 +286,12 @@ Returns a <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect&lt;T&gt;</a
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidDziSource.Parse.html#SkiaSharp_Extended_SKImagePyramidDziSource_Parse_System_IO_Stream_System_String_">Parse(Stream, string?)</a></dt>
-    <dd><p>Parses a DZI XML from a stream with a base URI for computing tile URLs.</p>
+    <dd><p>Parses a DZI XML from a stream with a tiles base URI.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidDziSource.Parse.html#SkiaSharp_Extended_SKImagePyramidDziSource_Parse_System_IO_Stream_System_Uri_">Parse(Stream, Uri)</a></dt>
+    <dd><p>Parses a DZI XML from a stream, deriving the tiles base URI from the DZI file URI.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -296,7 +301,13 @@ Returns a <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect&lt;T&gt;</a
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidDziSource.Parse.html#SkiaSharp_Extended_SKImagePyramidDziSource_Parse_System_String_System_String_">Parse(string, string?)</a></dt>
-    <dd><p>Parses a DZI XML string with a base URI.</p>
+    <dd><p>Parses a DZI XML string with a tiles base URI.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidDziSource.Parse.html#SkiaSharp_Extended_SKImagePyramidDziSource_Parse_System_String_System_Uri_">Parse(string, Uri)</a></dt>
+    <dd><p>Parses a DZI XML string, deriving the tiles base URI from the DZI file URI
+using the Deep Zoom convention: <code>{name}_files/</code> relative to the DZI location.</p>
 </dd>
   </dl>
 
@@ -321,7 +332,7 @@ Returns a <a class="xref" href="SkiaSharp.Extended.Rect-1.html">Rect&lt;T&gt;</a
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 73d9cc1
+          source: PR #379 · a6b19c7
         </div>
       </div>
     </footer>

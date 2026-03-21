@@ -106,7 +106,7 @@ Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Flus
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache, IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class SKImagePyramidMemoryTileCache : ISKImagePyramidTileCache, IDisposable</code></pre>
   </div>
 
 
@@ -134,9 +134,6 @@ Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Flus
     <dd>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
@@ -205,13 +202,8 @@ Call this at the start of each render frame on the UI thread.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put.html#SkiaSharp_Extended_SKImagePyramidMemoryTileCache_Put_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_">Put(SKImagePyramidTileId, SKImagePyramidTile?)</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put.html#SkiaSharp_Extended_SKImagePyramidMemoryTileCache_Put_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_">Put(SKImagePyramidTileId, SKImagePyramidTile)</a></dt>
     <dd><p>Adds a tile to the cache, evicting the LRU entry if at capacity.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync.html#SkiaSharp_Extended_SKImagePyramidMemoryTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_System_Threading_CancellationToken_">PutAsync(SKImagePyramidTileId, SKImagePyramidTile?, CancellationToken)</a></dt>
-    <dd><p>Adds a tile to the cache via the async interface.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -222,11 +214,6 @@ Call this at the start of each render frame on the UI thread.</p>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGet.html#SkiaSharp_Extended_SKImagePyramidMemoryTileCache_TryGet_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile__">TryGet(SKImagePyramidTileId, out SKImagePyramidTile?)</a></dt>
     <dd><p>Tries to get a cached tile.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync.html#SkiaSharp_Extended_SKImagePyramidMemoryTileCache_TryGetAsync_SkiaSharp_Extended_SKImagePyramidTileId_System_Threading_CancellationToken_">TryGetAsync(SKImagePyramidTileId, CancellationToken)</a></dt>
-    <dd><p>Async variant — completes synchronously for in-memory cache.</p>
 </dd>
   </dl>
 
@@ -251,7 +238,7 @@ Call this at the start of each render frame on the UI thread.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 73d9cc1
+          source: PR #379 · a6b19c7
         </div>
       </div>
     </footer>

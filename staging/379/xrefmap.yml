@@ -299,35 +299,17 @@ references:
   fullName: SkiaSharp.Extended.ISKImagePyramidTileCache.FlushEvicted
   nameWithType: ISKImagePyramidTileCache.FlushEvicted
 - uid: SkiaSharp.Extended.ISKImagePyramidTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile)
-  name: Put(SKImagePyramidTileId, SKImagePyramidTile?)
+  name: Put(SKImagePyramidTileId, SKImagePyramidTile)
   href: api/SkiaSharp.Extended.ISKImagePyramidTileCache.Put.html#SkiaSharp_Extended_ISKImagePyramidTileCache_Put_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_
   commentId: M:SkiaSharp.Extended.ISKImagePyramidTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile)
-  name.vb: Put(SKImagePyramidTileId, SKImagePyramidTile)
-  fullName: SkiaSharp.Extended.ISKImagePyramidTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile?)
-  fullName.vb: SkiaSharp.Extended.ISKImagePyramidTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile)
-  nameWithType: ISKImagePyramidTileCache.Put(SKImagePyramidTileId, SKImagePyramidTile?)
-  nameWithType.vb: ISKImagePyramidTileCache.Put(SKImagePyramidTileId, SKImagePyramidTile)
+  fullName: SkiaSharp.Extended.ISKImagePyramidTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile)
+  nameWithType: ISKImagePyramidTileCache.Put(SKImagePyramidTileId, SKImagePyramidTile)
 - uid: SkiaSharp.Extended.ISKImagePyramidTileCache.Put*
   name: Put
   href: api/SkiaSharp.Extended.ISKImagePyramidTileCache.Put.html
   commentId: Overload:SkiaSharp.Extended.ISKImagePyramidTileCache.Put
   fullName: SkiaSharp.Extended.ISKImagePyramidTileCache.Put
   nameWithType: ISKImagePyramidTileCache.Put
-- uid: SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile,System.Threading.CancellationToken)
-  name: PutAsync(SKImagePyramidTileId, SKImagePyramidTile?, CancellationToken)
-  href: api/SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync.html#SkiaSharp_Extended_ISKImagePyramidTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_System_Threading_CancellationToken_
-  commentId: M:SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile,System.Threading.CancellationToken)
-  name.vb: PutAsync(SKImagePyramidTileId, SKImagePyramidTile, CancellationToken)
-  fullName: SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile?, System.Threading.CancellationToken)
-  fullName.vb: SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile, System.Threading.CancellationToken)
-  nameWithType: ISKImagePyramidTileCache.PutAsync(SKImagePyramidTileId, SKImagePyramidTile?, CancellationToken)
-  nameWithType.vb: ISKImagePyramidTileCache.PutAsync(SKImagePyramidTileId, SKImagePyramidTile, CancellationToken)
-- uid: SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync*
-  name: PutAsync
-  href: api/SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync.html
-  commentId: Overload:SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync
-  fullName: SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync
-  nameWithType: ISKImagePyramidTileCache.PutAsync
 - uid: SkiaSharp.Extended.ISKImagePyramidTileCache.Remove(SkiaSharp.Extended.SKImagePyramidTileId)
   name: Remove(SKImagePyramidTileId)
   href: api/SkiaSharp.Extended.ISKImagePyramidTileCache.Remove.html#SkiaSharp_Extended_ISKImagePyramidTileCache_Remove_SkiaSharp_Extended_SKImagePyramidTileId_
@@ -355,18 +337,6 @@ references:
   commentId: Overload:SkiaSharp.Extended.ISKImagePyramidTileCache.TryGet
   fullName: SkiaSharp.Extended.ISKImagePyramidTileCache.TryGet
   nameWithType: ISKImagePyramidTileCache.TryGet
-- uid: SkiaSharp.Extended.ISKImagePyramidTileCache.TryGetAsync(SkiaSharp.Extended.SKImagePyramidTileId,System.Threading.CancellationToken)
-  name: TryGetAsync(SKImagePyramidTileId, CancellationToken)
-  href: api/SkiaSharp.Extended.ISKImagePyramidTileCache.TryGetAsync.html#SkiaSharp_Extended_ISKImagePyramidTileCache_TryGetAsync_SkiaSharp_Extended_SKImagePyramidTileId_System_Threading_CancellationToken_
-  commentId: M:SkiaSharp.Extended.ISKImagePyramidTileCache.TryGetAsync(SkiaSharp.Extended.SKImagePyramidTileId,System.Threading.CancellationToken)
-  fullName: SkiaSharp.Extended.ISKImagePyramidTileCache.TryGetAsync(SkiaSharp.Extended.SKImagePyramidTileId, System.Threading.CancellationToken)
-  nameWithType: ISKImagePyramidTileCache.TryGetAsync(SKImagePyramidTileId, CancellationToken)
-- uid: SkiaSharp.Extended.ISKImagePyramidTileCache.TryGetAsync*
-  name: TryGetAsync
-  href: api/SkiaSharp.Extended.ISKImagePyramidTileCache.TryGetAsync.html
-  commentId: Overload:SkiaSharp.Extended.ISKImagePyramidTileCache.TryGetAsync
-  fullName: SkiaSharp.Extended.ISKImagePyramidTileCache.TryGetAsync
-  nameWithType: ISKImagePyramidTileCache.TryGetAsync
 - uid: SkiaSharp.Extended.ISKImagePyramidTileProvider
   name: ISKImagePyramidTileProvider
   href: api/SkiaSharp.Extended.ISKImagePyramidTileProvider.html
@@ -388,6 +358,90 @@ references:
   commentId: Overload:SkiaSharp.Extended.ISKImagePyramidTileProvider.GetTileAsync
   fullName: SkiaSharp.Extended.ISKImagePyramidTileProvider.GetTileAsync
   nameWithType: ISKImagePyramidTileProvider.GetTileAsync
+- uid: SkiaSharp.Extended.ISKTileCacheStore
+  name: ISKTileCacheStore
+  href: api/SkiaSharp.Extended.ISKTileCacheStore.html
+  commentId: T:SkiaSharp.Extended.ISKTileCacheStore
+  fullName: SkiaSharp.Extended.ISKTileCacheStore
+  nameWithType: ISKTileCacheStore
+- uid: SkiaSharp.Extended.ISKTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  name: ClearAsync(CancellationToken)
+  href: api/SkiaSharp.Extended.ISKTileCacheStore.ClearAsync.html#SkiaSharp_Extended_ISKTileCacheStore_ClearAsync_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.ISKTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  fullName: SkiaSharp.Extended.ISKTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  nameWithType: ISKTileCacheStore.ClearAsync(CancellationToken)
+- uid: SkiaSharp.Extended.ISKTileCacheStore.ClearAsync*
+  name: ClearAsync
+  href: api/SkiaSharp.Extended.ISKTileCacheStore.ClearAsync.html
+  commentId: Overload:SkiaSharp.Extended.ISKTileCacheStore.ClearAsync
+  fullName: SkiaSharp.Extended.ISKTileCacheStore.ClearAsync
+  nameWithType: ISKTileCacheStore.ClearAsync
+- uid: SkiaSharp.Extended.ISKTileCacheStore.RemoveAsync(System.String,System.Threading.CancellationToken)
+  name: RemoveAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.ISKTileCacheStore.RemoveAsync.html#SkiaSharp_Extended_ISKTileCacheStore_RemoveAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.ISKTileCacheStore.RemoveAsync(System.String,System.Threading.CancellationToken)
+  name.vb: RemoveAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.ISKTileCacheStore.RemoveAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.ISKTileCacheStore.RemoveAsync(String, System.Threading.CancellationToken)
+  nameWithType: ISKTileCacheStore.RemoveAsync(string, CancellationToken)
+  nameWithType.vb: ISKTileCacheStore.RemoveAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.ISKTileCacheStore.RemoveAsync*
+  name: RemoveAsync
+  href: api/SkiaSharp.Extended.ISKTileCacheStore.RemoveAsync.html
+  commentId: Overload:SkiaSharp.Extended.ISKTileCacheStore.RemoveAsync
+  fullName: SkiaSharp.Extended.ISKTileCacheStore.RemoveAsync
+  nameWithType: ISKTileCacheStore.RemoveAsync
+- uid: SkiaSharp.Extended.ISKTileCacheStore.SetAsync(System.String,SkiaSharp.Extended.SKImagePyramidTileData,System.Threading.CancellationToken)
+  name: SetAsync(string, SKImagePyramidTileData, CancellationToken)
+  href: api/SkiaSharp.Extended.ISKTileCacheStore.SetAsync.html#SkiaSharp_Extended_ISKTileCacheStore_SetAsync_System_String_SkiaSharp_Extended_SKImagePyramidTileData_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.ISKTileCacheStore.SetAsync(System.String,SkiaSharp.Extended.SKImagePyramidTileData,System.Threading.CancellationToken)
+  name.vb: SetAsync(String, SKImagePyramidTileData, CancellationToken)
+  fullName: SkiaSharp.Extended.ISKTileCacheStore.SetAsync(string, SkiaSharp.Extended.SKImagePyramidTileData, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.ISKTileCacheStore.SetAsync(String, SkiaSharp.Extended.SKImagePyramidTileData, System.Threading.CancellationToken)
+  nameWithType: ISKTileCacheStore.SetAsync(string, SKImagePyramidTileData, CancellationToken)
+  nameWithType.vb: ISKTileCacheStore.SetAsync(String, SKImagePyramidTileData, CancellationToken)
+- uid: SkiaSharp.Extended.ISKTileCacheStore.SetAsync*
+  name: SetAsync
+  href: api/SkiaSharp.Extended.ISKTileCacheStore.SetAsync.html
+  commentId: Overload:SkiaSharp.Extended.ISKTileCacheStore.SetAsync
+  fullName: SkiaSharp.Extended.ISKTileCacheStore.SetAsync
+  nameWithType: ISKTileCacheStore.SetAsync
+- uid: SkiaSharp.Extended.ISKTileCacheStore.TryGetAsync(System.String,System.Threading.CancellationToken)
+  name: TryGetAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.ISKTileCacheStore.TryGetAsync.html#SkiaSharp_Extended_ISKTileCacheStore_TryGetAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.ISKTileCacheStore.TryGetAsync(System.String,System.Threading.CancellationToken)
+  name.vb: TryGetAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.ISKTileCacheStore.TryGetAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.ISKTileCacheStore.TryGetAsync(String, System.Threading.CancellationToken)
+  nameWithType: ISKTileCacheStore.TryGetAsync(string, CancellationToken)
+  nameWithType.vb: ISKTileCacheStore.TryGetAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.ISKTileCacheStore.TryGetAsync*
+  name: TryGetAsync
+  href: api/SkiaSharp.Extended.ISKTileCacheStore.TryGetAsync.html
+  commentId: Overload:SkiaSharp.Extended.ISKTileCacheStore.TryGetAsync
+  fullName: SkiaSharp.Extended.ISKTileCacheStore.TryGetAsync
+  nameWithType: ISKTileCacheStore.TryGetAsync
+- uid: SkiaSharp.Extended.ISKTileFetcher
+  name: ISKTileFetcher
+  href: api/SkiaSharp.Extended.ISKTileFetcher.html
+  commentId: T:SkiaSharp.Extended.ISKTileFetcher
+  fullName: SkiaSharp.Extended.ISKTileFetcher
+  nameWithType: ISKTileFetcher
+- uid: SkiaSharp.Extended.ISKTileFetcher.FetchAsync(System.String,System.Threading.CancellationToken)
+  name: FetchAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.ISKTileFetcher.FetchAsync.html#SkiaSharp_Extended_ISKTileFetcher_FetchAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.ISKTileFetcher.FetchAsync(System.String,System.Threading.CancellationToken)
+  name.vb: FetchAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.ISKTileFetcher.FetchAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.ISKTileFetcher.FetchAsync(String, System.Threading.CancellationToken)
+  nameWithType: ISKTileFetcher.FetchAsync(string, CancellationToken)
+  nameWithType.vb: ISKTileFetcher.FetchAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.ISKTileFetcher.FetchAsync*
+  name: FetchAsync
+  href: api/SkiaSharp.Extended.ISKTileFetcher.FetchAsync.html
+  commentId: Overload:SkiaSharp.Extended.ISKTileFetcher.FetchAsync
+  fullName: SkiaSharp.Extended.ISKTileFetcher.FetchAsync
+  nameWithType: ISKTileFetcher.FetchAsync
 - uid: SkiaSharp.Extended.Point`1
   name: Point<T>
   href: api/SkiaSharp.Extended.Point-1.html
@@ -847,6 +901,300 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKBlurHash.Serialize
   fullName: SkiaSharp.Extended.SKBlurHash.Serialize
   nameWithType: SKBlurHash.Serialize
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore
+  name: SKChainedTileCacheStore
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.html
+  commentId: T:SkiaSharp.Extended.SKChainedTileCacheStore
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore
+  nameWithType: SKChainedTileCacheStore
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.#ctor(SkiaSharp.Extended.ISKTileCacheStore[])
+  name: SKChainedTileCacheStore(params ISKTileCacheStore[])
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.-ctor.html#SkiaSharp_Extended_SKChainedTileCacheStore__ctor_SkiaSharp_Extended_ISKTileCacheStore___
+  commentId: M:SkiaSharp.Extended.SKChainedTileCacheStore.#ctor(SkiaSharp.Extended.ISKTileCacheStore[])
+  name.vb: New(ParamArray ISKTileCacheStore())
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.SKChainedTileCacheStore(params SkiaSharp.Extended.ISKTileCacheStore[])
+  fullName.vb: SkiaSharp.Extended.SKChainedTileCacheStore.New(ParamArray SkiaSharp.Extended.ISKTileCacheStore())
+  nameWithType: SKChainedTileCacheStore.SKChainedTileCacheStore(params ISKTileCacheStore[])
+  nameWithType.vb: SKChainedTileCacheStore.New(ParamArray ISKTileCacheStore())
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.#ctor*
+  name: SKChainedTileCacheStore
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.SKChainedTileCacheStore.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.SKChainedTileCacheStore
+  fullName.vb: SkiaSharp.Extended.SKChainedTileCacheStore.New
+  nameWithType: SKChainedTileCacheStore.SKChainedTileCacheStore
+  nameWithType.vb: SKChainedTileCacheStore.New
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  name: ClearAsync(CancellationToken)
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.ClearAsync.html#SkiaSharp_Extended_SKChainedTileCacheStore_ClearAsync_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKChainedTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  nameWithType: SKChainedTileCacheStore.ClearAsync(CancellationToken)
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.ClearAsync*
+  name: ClearAsync
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.ClearAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKChainedTileCacheStore.ClearAsync
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.ClearAsync
+  nameWithType: SKChainedTileCacheStore.ClearAsync
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.Dispose
+  name: Dispose()
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.Dispose.html#SkiaSharp_Extended_SKChainedTileCacheStore_Dispose
+  commentId: M:SkiaSharp.Extended.SKChainedTileCacheStore.Dispose
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.Dispose()
+  nameWithType: SKChainedTileCacheStore.Dispose()
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.Dispose*
+  name: Dispose
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.Dispose.html
+  commentId: Overload:SkiaSharp.Extended.SKChainedTileCacheStore.Dispose
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.Dispose
+  nameWithType: SKChainedTileCacheStore.Dispose
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.RemoveAsync(System.String,System.Threading.CancellationToken)
+  name: RemoveAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.RemoveAsync.html#SkiaSharp_Extended_SKChainedTileCacheStore_RemoveAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKChainedTileCacheStore.RemoveAsync(System.String,System.Threading.CancellationToken)
+  name.vb: RemoveAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.RemoveAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKChainedTileCacheStore.RemoveAsync(String, System.Threading.CancellationToken)
+  nameWithType: SKChainedTileCacheStore.RemoveAsync(string, CancellationToken)
+  nameWithType.vb: SKChainedTileCacheStore.RemoveAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.RemoveAsync*
+  name: RemoveAsync
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.RemoveAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKChainedTileCacheStore.RemoveAsync
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.RemoveAsync
+  nameWithType: SKChainedTileCacheStore.RemoveAsync
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.SetAsync(System.String,SkiaSharp.Extended.SKImagePyramidTileData,System.Threading.CancellationToken)
+  name: SetAsync(string, SKImagePyramidTileData, CancellationToken)
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.SetAsync.html#SkiaSharp_Extended_SKChainedTileCacheStore_SetAsync_System_String_SkiaSharp_Extended_SKImagePyramidTileData_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKChainedTileCacheStore.SetAsync(System.String,SkiaSharp.Extended.SKImagePyramidTileData,System.Threading.CancellationToken)
+  name.vb: SetAsync(String, SKImagePyramidTileData, CancellationToken)
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.SetAsync(string, SkiaSharp.Extended.SKImagePyramidTileData, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKChainedTileCacheStore.SetAsync(String, SkiaSharp.Extended.SKImagePyramidTileData, System.Threading.CancellationToken)
+  nameWithType: SKChainedTileCacheStore.SetAsync(string, SKImagePyramidTileData, CancellationToken)
+  nameWithType.vb: SKChainedTileCacheStore.SetAsync(String, SKImagePyramidTileData, CancellationToken)
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.SetAsync*
+  name: SetAsync
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.SetAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKChainedTileCacheStore.SetAsync
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.SetAsync
+  nameWithType: SKChainedTileCacheStore.SetAsync
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.TryGetAsync(System.String,System.Threading.CancellationToken)
+  name: TryGetAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.TryGetAsync.html#SkiaSharp_Extended_SKChainedTileCacheStore_TryGetAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKChainedTileCacheStore.TryGetAsync(System.String,System.Threading.CancellationToken)
+  name.vb: TryGetAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.TryGetAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKChainedTileCacheStore.TryGetAsync(String, System.Threading.CancellationToken)
+  nameWithType: SKChainedTileCacheStore.TryGetAsync(string, CancellationToken)
+  nameWithType.vb: SKChainedTileCacheStore.TryGetAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.SKChainedTileCacheStore.TryGetAsync*
+  name: TryGetAsync
+  href: api/SkiaSharp.Extended.SKChainedTileCacheStore.TryGetAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKChainedTileCacheStore.TryGetAsync
+  fullName: SkiaSharp.Extended.SKChainedTileCacheStore.TryGetAsync
+  nameWithType: SKChainedTileCacheStore.TryGetAsync
+- uid: SkiaSharp.Extended.SKCompositeTileFetcher
+  name: SKCompositeTileFetcher
+  href: api/SkiaSharp.Extended.SKCompositeTileFetcher.html
+  commentId: T:SkiaSharp.Extended.SKCompositeTileFetcher
+  fullName: SkiaSharp.Extended.SKCompositeTileFetcher
+  nameWithType: SKCompositeTileFetcher
+- uid: SkiaSharp.Extended.SKCompositeTileFetcher.#ctor(SkiaSharp.Extended.ISKTileFetcher[])
+  name: SKCompositeTileFetcher(params ISKTileFetcher[])
+  href: api/SkiaSharp.Extended.SKCompositeTileFetcher.-ctor.html#SkiaSharp_Extended_SKCompositeTileFetcher__ctor_SkiaSharp_Extended_ISKTileFetcher___
+  commentId: M:SkiaSharp.Extended.SKCompositeTileFetcher.#ctor(SkiaSharp.Extended.ISKTileFetcher[])
+  name.vb: New(ParamArray ISKTileFetcher())
+  fullName: SkiaSharp.Extended.SKCompositeTileFetcher.SKCompositeTileFetcher(params SkiaSharp.Extended.ISKTileFetcher[])
+  fullName.vb: SkiaSharp.Extended.SKCompositeTileFetcher.New(ParamArray SkiaSharp.Extended.ISKTileFetcher())
+  nameWithType: SKCompositeTileFetcher.SKCompositeTileFetcher(params ISKTileFetcher[])
+  nameWithType.vb: SKCompositeTileFetcher.New(ParamArray ISKTileFetcher())
+- uid: SkiaSharp.Extended.SKCompositeTileFetcher.#ctor*
+  name: SKCompositeTileFetcher
+  href: api/SkiaSharp.Extended.SKCompositeTileFetcher.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.SKCompositeTileFetcher.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.SKCompositeTileFetcher.SKCompositeTileFetcher
+  fullName.vb: SkiaSharp.Extended.SKCompositeTileFetcher.New
+  nameWithType: SKCompositeTileFetcher.SKCompositeTileFetcher
+  nameWithType.vb: SKCompositeTileFetcher.New
+- uid: SkiaSharp.Extended.SKCompositeTileFetcher.Dispose
+  name: Dispose()
+  href: api/SkiaSharp.Extended.SKCompositeTileFetcher.Dispose.html#SkiaSharp_Extended_SKCompositeTileFetcher_Dispose
+  commentId: M:SkiaSharp.Extended.SKCompositeTileFetcher.Dispose
+  fullName: SkiaSharp.Extended.SKCompositeTileFetcher.Dispose()
+  nameWithType: SKCompositeTileFetcher.Dispose()
+- uid: SkiaSharp.Extended.SKCompositeTileFetcher.Dispose*
+  name: Dispose
+  href: api/SkiaSharp.Extended.SKCompositeTileFetcher.Dispose.html
+  commentId: Overload:SkiaSharp.Extended.SKCompositeTileFetcher.Dispose
+  fullName: SkiaSharp.Extended.SKCompositeTileFetcher.Dispose
+  nameWithType: SKCompositeTileFetcher.Dispose
+- uid: SkiaSharp.Extended.SKCompositeTileFetcher.FetchAsync(System.String,System.Threading.CancellationToken)
+  name: FetchAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.SKCompositeTileFetcher.FetchAsync.html#SkiaSharp_Extended_SKCompositeTileFetcher_FetchAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKCompositeTileFetcher.FetchAsync(System.String,System.Threading.CancellationToken)
+  name.vb: FetchAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.SKCompositeTileFetcher.FetchAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKCompositeTileFetcher.FetchAsync(String, System.Threading.CancellationToken)
+  nameWithType: SKCompositeTileFetcher.FetchAsync(string, CancellationToken)
+  nameWithType.vb: SKCompositeTileFetcher.FetchAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.SKCompositeTileFetcher.FetchAsync*
+  name: FetchAsync
+  href: api/SkiaSharp.Extended.SKCompositeTileFetcher.FetchAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKCompositeTileFetcher.FetchAsync
+  fullName: SkiaSharp.Extended.SKCompositeTileFetcher.FetchAsync
+  nameWithType: SKCompositeTileFetcher.FetchAsync
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore
+  name: SKDiskTileCacheStore
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.html
+  commentId: T:SkiaSharp.Extended.SKDiskTileCacheStore
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore
+  nameWithType: SKDiskTileCacheStore
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.#ctor(System.String,System.Nullable{System.TimeSpan})
+  name: SKDiskTileCacheStore(string, TimeSpan?)
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.-ctor.html#SkiaSharp_Extended_SKDiskTileCacheStore__ctor_System_String_System_Nullable_System_TimeSpan__
+  commentId: M:SkiaSharp.Extended.SKDiskTileCacheStore.#ctor(System.String,System.Nullable{System.TimeSpan})
+  name.vb: New(String, TimeSpan?)
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.SKDiskTileCacheStore(string, System.TimeSpan?)
+  fullName.vb: SkiaSharp.Extended.SKDiskTileCacheStore.New(String, System.TimeSpan?)
+  nameWithType: SKDiskTileCacheStore.SKDiskTileCacheStore(string, TimeSpan?)
+  nameWithType.vb: SKDiskTileCacheStore.New(String, TimeSpan?)
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.#ctor*
+  name: SKDiskTileCacheStore
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.SKDiskTileCacheStore.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.SKDiskTileCacheStore
+  fullName.vb: SkiaSharp.Extended.SKDiskTileCacheStore.New
+  nameWithType: SKDiskTileCacheStore.SKDiskTileCacheStore
+  nameWithType.vb: SKDiskTileCacheStore.New
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  name: ClearAsync(CancellationToken)
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.ClearAsync.html#SkiaSharp_Extended_SKDiskTileCacheStore_ClearAsync_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKDiskTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  nameWithType: SKDiskTileCacheStore.ClearAsync(CancellationToken)
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.ClearAsync*
+  name: ClearAsync
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.ClearAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKDiskTileCacheStore.ClearAsync
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.ClearAsync
+  nameWithType: SKDiskTileCacheStore.ClearAsync
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.DefaultExpiry
+  name: DefaultExpiry
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.DefaultExpiry.html
+  commentId: F:SkiaSharp.Extended.SKDiskTileCacheStore.DefaultExpiry
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.DefaultExpiry
+  nameWithType: SKDiskTileCacheStore.DefaultExpiry
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.Dispose
+  name: Dispose()
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.Dispose.html#SkiaSharp_Extended_SKDiskTileCacheStore_Dispose
+  commentId: M:SkiaSharp.Extended.SKDiskTileCacheStore.Dispose
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.Dispose()
+  nameWithType: SKDiskTileCacheStore.Dispose()
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.Dispose*
+  name: Dispose
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.Dispose.html
+  commentId: Overload:SkiaSharp.Extended.SKDiskTileCacheStore.Dispose
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.Dispose
+  nameWithType: SKDiskTileCacheStore.Dispose
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.RemoveAsync(System.String,System.Threading.CancellationToken)
+  name: RemoveAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.RemoveAsync.html#SkiaSharp_Extended_SKDiskTileCacheStore_RemoveAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKDiskTileCacheStore.RemoveAsync(System.String,System.Threading.CancellationToken)
+  name.vb: RemoveAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.RemoveAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKDiskTileCacheStore.RemoveAsync(String, System.Threading.CancellationToken)
+  nameWithType: SKDiskTileCacheStore.RemoveAsync(string, CancellationToken)
+  nameWithType.vb: SKDiskTileCacheStore.RemoveAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.RemoveAsync*
+  name: RemoveAsync
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.RemoveAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKDiskTileCacheStore.RemoveAsync
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.RemoveAsync
+  nameWithType: SKDiskTileCacheStore.RemoveAsync
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.SetAsync(System.String,SkiaSharp.Extended.SKImagePyramidTileData,System.Threading.CancellationToken)
+  name: SetAsync(string, SKImagePyramidTileData, CancellationToken)
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.SetAsync.html#SkiaSharp_Extended_SKDiskTileCacheStore_SetAsync_System_String_SkiaSharp_Extended_SKImagePyramidTileData_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKDiskTileCacheStore.SetAsync(System.String,SkiaSharp.Extended.SKImagePyramidTileData,System.Threading.CancellationToken)
+  name.vb: SetAsync(String, SKImagePyramidTileData, CancellationToken)
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.SetAsync(string, SkiaSharp.Extended.SKImagePyramidTileData, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKDiskTileCacheStore.SetAsync(String, SkiaSharp.Extended.SKImagePyramidTileData, System.Threading.CancellationToken)
+  nameWithType: SKDiskTileCacheStore.SetAsync(string, SKImagePyramidTileData, CancellationToken)
+  nameWithType.vb: SKDiskTileCacheStore.SetAsync(String, SKImagePyramidTileData, CancellationToken)
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.SetAsync*
+  name: SetAsync
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.SetAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKDiskTileCacheStore.SetAsync
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.SetAsync
+  nameWithType: SKDiskTileCacheStore.SetAsync
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.TryGetAsync(System.String,System.Threading.CancellationToken)
+  name: TryGetAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.TryGetAsync.html#SkiaSharp_Extended_SKDiskTileCacheStore_TryGetAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKDiskTileCacheStore.TryGetAsync(System.String,System.Threading.CancellationToken)
+  name.vb: TryGetAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.TryGetAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKDiskTileCacheStore.TryGetAsync(String, System.Threading.CancellationToken)
+  nameWithType: SKDiskTileCacheStore.TryGetAsync(string, CancellationToken)
+  nameWithType.vb: SKDiskTileCacheStore.TryGetAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.SKDiskTileCacheStore.TryGetAsync*
+  name: TryGetAsync
+  href: api/SkiaSharp.Extended.SKDiskTileCacheStore.TryGetAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKDiskTileCacheStore.TryGetAsync
+  fullName: SkiaSharp.Extended.SKDiskTileCacheStore.TryGetAsync
+  nameWithType: SKDiskTileCacheStore.TryGetAsync
+- uid: SkiaSharp.Extended.SKFileTileFetcher
+  name: SKFileTileFetcher
+  href: api/SkiaSharp.Extended.SKFileTileFetcher.html
+  commentId: T:SkiaSharp.Extended.SKFileTileFetcher
+  fullName: SkiaSharp.Extended.SKFileTileFetcher
+  nameWithType: SKFileTileFetcher
+- uid: SkiaSharp.Extended.SKFileTileFetcher.#ctor
+  name: SKFileTileFetcher()
+  href: api/SkiaSharp.Extended.SKFileTileFetcher.-ctor.html#SkiaSharp_Extended_SKFileTileFetcher__ctor
+  commentId: M:SkiaSharp.Extended.SKFileTileFetcher.#ctor
+  name.vb: New()
+  fullName: SkiaSharp.Extended.SKFileTileFetcher.SKFileTileFetcher()
+  fullName.vb: SkiaSharp.Extended.SKFileTileFetcher.New()
+  nameWithType: SKFileTileFetcher.SKFileTileFetcher()
+  nameWithType.vb: SKFileTileFetcher.New()
+- uid: SkiaSharp.Extended.SKFileTileFetcher.#ctor*
+  name: SKFileTileFetcher
+  href: api/SkiaSharp.Extended.SKFileTileFetcher.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.SKFileTileFetcher.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.SKFileTileFetcher.SKFileTileFetcher
+  fullName.vb: SkiaSharp.Extended.SKFileTileFetcher.New
+  nameWithType: SKFileTileFetcher.SKFileTileFetcher
+  nameWithType.vb: SKFileTileFetcher.New
+- uid: SkiaSharp.Extended.SKFileTileFetcher.Dispose
+  name: Dispose()
+  href: api/SkiaSharp.Extended.SKFileTileFetcher.Dispose.html#SkiaSharp_Extended_SKFileTileFetcher_Dispose
+  commentId: M:SkiaSharp.Extended.SKFileTileFetcher.Dispose
+  fullName: SkiaSharp.Extended.SKFileTileFetcher.Dispose()
+  nameWithType: SKFileTileFetcher.Dispose()
+- uid: SkiaSharp.Extended.SKFileTileFetcher.Dispose*
+  name: Dispose
+  href: api/SkiaSharp.Extended.SKFileTileFetcher.Dispose.html
+  commentId: Overload:SkiaSharp.Extended.SKFileTileFetcher.Dispose
+  fullName: SkiaSharp.Extended.SKFileTileFetcher.Dispose
+  nameWithType: SKFileTileFetcher.Dispose
+- uid: SkiaSharp.Extended.SKFileTileFetcher.FetchAsync(System.String,System.Threading.CancellationToken)
+  name: FetchAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.SKFileTileFetcher.FetchAsync.html#SkiaSharp_Extended_SKFileTileFetcher_FetchAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKFileTileFetcher.FetchAsync(System.String,System.Threading.CancellationToken)
+  name.vb: FetchAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.SKFileTileFetcher.FetchAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKFileTileFetcher.FetchAsync(String, System.Threading.CancellationToken)
+  nameWithType: SKFileTileFetcher.FetchAsync(string, CancellationToken)
+  nameWithType.vb: SKFileTileFetcher.FetchAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.SKFileTileFetcher.FetchAsync*
+  name: FetchAsync
+  href: api/SkiaSharp.Extended.SKFileTileFetcher.FetchAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKFileTileFetcher.FetchAsync
+  fullName: SkiaSharp.Extended.SKFileTileFetcher.FetchAsync
+  nameWithType: SKFileTileFetcher.FetchAsync
 - uid: SkiaSharp.Extended.SKGeometry
   name: SKGeometry
   href: api/SkiaSharp.Extended.SKGeometry.html
@@ -1141,21 +1489,72 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKGeometryExtensions.DrawTriangle
   fullName: SkiaSharp.Extended.SKGeometryExtensions.DrawTriangle
   nameWithType: SKGeometryExtensions.DrawTriangle
+- uid: SkiaSharp.Extended.SKHttpTileFetcher
+  name: SKHttpTileFetcher
+  href: api/SkiaSharp.Extended.SKHttpTileFetcher.html
+  commentId: T:SkiaSharp.Extended.SKHttpTileFetcher
+  fullName: SkiaSharp.Extended.SKHttpTileFetcher
+  nameWithType: SKHttpTileFetcher
+- uid: SkiaSharp.Extended.SKHttpTileFetcher.#ctor(System.Net.Http.HttpClient)
+  name: SKHttpTileFetcher(HttpClient?)
+  href: api/SkiaSharp.Extended.SKHttpTileFetcher.-ctor.html#SkiaSharp_Extended_SKHttpTileFetcher__ctor_System_Net_Http_HttpClient_
+  commentId: M:SkiaSharp.Extended.SKHttpTileFetcher.#ctor(System.Net.Http.HttpClient)
+  name.vb: New(HttpClient)
+  fullName: SkiaSharp.Extended.SKHttpTileFetcher.SKHttpTileFetcher(System.Net.Http.HttpClient?)
+  fullName.vb: SkiaSharp.Extended.SKHttpTileFetcher.New(System.Net.Http.HttpClient)
+  nameWithType: SKHttpTileFetcher.SKHttpTileFetcher(HttpClient?)
+  nameWithType.vb: SKHttpTileFetcher.New(HttpClient)
+- uid: SkiaSharp.Extended.SKHttpTileFetcher.#ctor*
+  name: SKHttpTileFetcher
+  href: api/SkiaSharp.Extended.SKHttpTileFetcher.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.SKHttpTileFetcher.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.SKHttpTileFetcher.SKHttpTileFetcher
+  fullName.vb: SkiaSharp.Extended.SKHttpTileFetcher.New
+  nameWithType: SKHttpTileFetcher.SKHttpTileFetcher
+  nameWithType.vb: SKHttpTileFetcher.New
+- uid: SkiaSharp.Extended.SKHttpTileFetcher.Dispose
+  name: Dispose()
+  href: api/SkiaSharp.Extended.SKHttpTileFetcher.Dispose.html#SkiaSharp_Extended_SKHttpTileFetcher_Dispose
+  commentId: M:SkiaSharp.Extended.SKHttpTileFetcher.Dispose
+  fullName: SkiaSharp.Extended.SKHttpTileFetcher.Dispose()
+  nameWithType: SKHttpTileFetcher.Dispose()
+- uid: SkiaSharp.Extended.SKHttpTileFetcher.Dispose*
+  name: Dispose
+  href: api/SkiaSharp.Extended.SKHttpTileFetcher.Dispose.html
+  commentId: Overload:SkiaSharp.Extended.SKHttpTileFetcher.Dispose
+  fullName: SkiaSharp.Extended.SKHttpTileFetcher.Dispose
+  nameWithType: SKHttpTileFetcher.Dispose
+- uid: SkiaSharp.Extended.SKHttpTileFetcher.FetchAsync(System.String,System.Threading.CancellationToken)
+  name: FetchAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.SKHttpTileFetcher.FetchAsync.html#SkiaSharp_Extended_SKHttpTileFetcher_FetchAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKHttpTileFetcher.FetchAsync(System.String,System.Threading.CancellationToken)
+  name.vb: FetchAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.SKHttpTileFetcher.FetchAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKHttpTileFetcher.FetchAsync(String, System.Threading.CancellationToken)
+  nameWithType: SKHttpTileFetcher.FetchAsync(string, CancellationToken)
+  nameWithType.vb: SKHttpTileFetcher.FetchAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.SKHttpTileFetcher.FetchAsync*
+  name: FetchAsync
+  href: api/SkiaSharp.Extended.SKHttpTileFetcher.FetchAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKHttpTileFetcher.FetchAsync
+  fullName: SkiaSharp.Extended.SKHttpTileFetcher.FetchAsync
+  nameWithType: SKHttpTileFetcher.FetchAsync
 - uid: SkiaSharp.Extended.SKImagePyramidController
   name: SKImagePyramidController
   href: api/SkiaSharp.Extended.SKImagePyramidController.html
   commentId: T:SkiaSharp.Extended.SKImagePyramidController
   fullName: SkiaSharp.Extended.SKImagePyramidController
   nameWithType: SKImagePyramidController
-- uid: SkiaSharp.Extended.SKImagePyramidController.#ctor
-  name: SKImagePyramidController()
-  href: api/SkiaSharp.Extended.SKImagePyramidController.-ctor.html#SkiaSharp_Extended_SKImagePyramidController__ctor
-  commentId: M:SkiaSharp.Extended.SKImagePyramidController.#ctor
-  name.vb: New()
-  fullName: SkiaSharp.Extended.SKImagePyramidController.SKImagePyramidController()
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidController.New()
-  nameWithType: SKImagePyramidController.SKImagePyramidController()
-  nameWithType.vb: SKImagePyramidController.New()
+- uid: SkiaSharp.Extended.SKImagePyramidController.#ctor(SkiaSharp.Extended.ISKImagePyramidTileCache)
+  name: SKImagePyramidController(ISKImagePyramidTileCache?)
+  href: api/SkiaSharp.Extended.SKImagePyramidController.-ctor.html#SkiaSharp_Extended_SKImagePyramidController__ctor_SkiaSharp_Extended_ISKImagePyramidTileCache_
+  commentId: M:SkiaSharp.Extended.SKImagePyramidController.#ctor(SkiaSharp.Extended.ISKImagePyramidTileCache)
+  name.vb: New(ISKImagePyramidTileCache)
+  fullName: SkiaSharp.Extended.SKImagePyramidController.SKImagePyramidController(SkiaSharp.Extended.ISKImagePyramidTileCache?)
+  fullName.vb: SkiaSharp.Extended.SKImagePyramidController.New(SkiaSharp.Extended.ISKImagePyramidTileCache)
+  nameWithType: SKImagePyramidController.SKImagePyramidController(ISKImagePyramidTileCache?)
+  nameWithType.vb: SKImagePyramidController.New(ISKImagePyramidTileCache)
 - uid: SkiaSharp.Extended.SKImagePyramidController.#ctor*
   name: SKImagePyramidController
   href: api/SkiaSharp.Extended.SKImagePyramidController.-ctor.html
@@ -1261,6 +1660,12 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.IsIdle
   fullName: SkiaSharp.Extended.SKImagePyramidController.IsIdle
   nameWithType: SKImagePyramidController.IsIdle
+- uid: SkiaSharp.Extended.SKImagePyramidController.Load(SkiaSharp.Extended.ISKImagePyramidSource)
+  name: Load(ISKImagePyramidSource)
+  href: api/SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_
+  commentId: M:SkiaSharp.Extended.SKImagePyramidController.Load(SkiaSharp.Extended.ISKImagePyramidSource)
+  fullName: SkiaSharp.Extended.SKImagePyramidController.Load(SkiaSharp.Extended.ISKImagePyramidSource)
+  nameWithType: SKImagePyramidController.Load(ISKImagePyramidSource)
 - uid: SkiaSharp.Extended.SKImagePyramidController.Load(SkiaSharp.Extended.ISKImagePyramidSource,SkiaSharp.Extended.ISKImagePyramidTileProvider)
   name: Load(ISKImagePyramidSource, ISKImagePyramidTileProvider)
   href: api/SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_SkiaSharp_Extended_ISKImagePyramidTileProvider_
@@ -1318,6 +1723,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.PendingTileCount
   fullName: SkiaSharp.Extended.SKImagePyramidController.PendingTileCount
   nameWithType: SKImagePyramidController.PendingTileCount
+- uid: SkiaSharp.Extended.SKImagePyramidController.Provider
+  name: Provider
+  href: api/SkiaSharp.Extended.SKImagePyramidController.Provider.html#SkiaSharp_Extended_SKImagePyramidController_Provider
+  commentId: P:SkiaSharp.Extended.SKImagePyramidController.Provider
+  fullName: SkiaSharp.Extended.SKImagePyramidController.Provider
+  nameWithType: SKImagePyramidController.Provider
+- uid: SkiaSharp.Extended.SKImagePyramidController.Provider*
+  name: Provider
+  href: api/SkiaSharp.Extended.SKImagePyramidController.Provider.html
+  commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.Provider
+  fullName: SkiaSharp.Extended.SKImagePyramidController.Provider
+  nameWithType: SKImagePyramidController.Provider
 - uid: SkiaSharp.Extended.SKImagePyramidController.Render(SkiaSharp.Extended.ISKImagePyramidRenderer)
   name: Render(ISKImagePyramidRenderer)
   href: api/SkiaSharp.Extended.SKImagePyramidController.Render.html#SkiaSharp_Extended_SKImagePyramidController_Render_SkiaSharp_Extended_ISKImagePyramidRenderer_
@@ -1330,18 +1747,6 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.Render
   fullName: SkiaSharp.Extended.SKImagePyramidController.Render
   nameWithType: SKImagePyramidController.Render
-- uid: SkiaSharp.Extended.SKImagePyramidController.ReplaceProvider(SkiaSharp.Extended.ISKImagePyramidTileProvider)
-  name: ReplaceProvider(ISKImagePyramidTileProvider)
-  href: api/SkiaSharp.Extended.SKImagePyramidController.ReplaceProvider.html#SkiaSharp_Extended_SKImagePyramidController_ReplaceProvider_SkiaSharp_Extended_ISKImagePyramidTileProvider_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidController.ReplaceProvider(SkiaSharp.Extended.ISKImagePyramidTileProvider)
-  fullName: SkiaSharp.Extended.SKImagePyramidController.ReplaceProvider(SkiaSharp.Extended.ISKImagePyramidTileProvider)
-  nameWithType: SKImagePyramidController.ReplaceProvider(ISKImagePyramidTileProvider)
-- uid: SkiaSharp.Extended.SKImagePyramidController.ReplaceProvider*
-  name: ReplaceProvider
-  href: api/SkiaSharp.Extended.SKImagePyramidController.ReplaceProvider.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.ReplaceProvider
-  fullName: SkiaSharp.Extended.SKImagePyramidController.ReplaceProvider
-  nameWithType: SKImagePyramidController.ReplaceProvider
 - uid: SkiaSharp.Extended.SKImagePyramidController.ResetView
   name: ResetView()
   href: api/SkiaSharp.Extended.SKImagePyramidController.ResetView.html#SkiaSharp_Extended_SKImagePyramidController_ResetView
@@ -1354,6 +1759,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.ResetView
   fullName: SkiaSharp.Extended.SKImagePyramidController.ResetView
   nameWithType: SKImagePyramidController.ResetView
+- uid: SkiaSharp.Extended.SKImagePyramidController.RetryFailedTiles
+  name: RetryFailedTiles()
+  href: api/SkiaSharp.Extended.SKImagePyramidController.RetryFailedTiles.html#SkiaSharp_Extended_SKImagePyramidController_RetryFailedTiles
+  commentId: M:SkiaSharp.Extended.SKImagePyramidController.RetryFailedTiles
+  fullName: SkiaSharp.Extended.SKImagePyramidController.RetryFailedTiles()
+  nameWithType: SKImagePyramidController.RetryFailedTiles()
+- uid: SkiaSharp.Extended.SKImagePyramidController.RetryFailedTiles*
+  name: RetryFailedTiles
+  href: api/SkiaSharp.Extended.SKImagePyramidController.RetryFailedTiles.html
+  commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.RetryFailedTiles
+  fullName: SkiaSharp.Extended.SKImagePyramidController.RetryFailedTiles
+  nameWithType: SKImagePyramidController.RetryFailedTiles
 - uid: SkiaSharp.Extended.SKImagePyramidController.SetControlSize(System.Double,System.Double)
   name: SetControlSize(double, double)
   href: api/SkiaSharp.Extended.SKImagePyramidController.SetControlSize.html#SkiaSharp_Extended_SKImagePyramidController_SetControlSize_System_Double_System_Double_
@@ -1369,6 +1786,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.SetControlSize
   fullName: SkiaSharp.Extended.SKImagePyramidController.SetControlSize
   nameWithType: SKImagePyramidController.SetControlSize
+- uid: SkiaSharp.Extended.SKImagePyramidController.SetProvider(SkiaSharp.Extended.ISKImagePyramidTileProvider)
+  name: SetProvider(ISKImagePyramidTileProvider)
+  href: api/SkiaSharp.Extended.SKImagePyramidController.SetProvider.html#SkiaSharp_Extended_SKImagePyramidController_SetProvider_SkiaSharp_Extended_ISKImagePyramidTileProvider_
+  commentId: M:SkiaSharp.Extended.SKImagePyramidController.SetProvider(SkiaSharp.Extended.ISKImagePyramidTileProvider)
+  fullName: SkiaSharp.Extended.SKImagePyramidController.SetProvider(SkiaSharp.Extended.ISKImagePyramidTileProvider)
+  nameWithType: SKImagePyramidController.SetProvider(ISKImagePyramidTileProvider)
+- uid: SkiaSharp.Extended.SKImagePyramidController.SetProvider*
+  name: SetProvider
+  href: api/SkiaSharp.Extended.SKImagePyramidController.SetProvider.html
+  commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.SetProvider
+  fullName: SkiaSharp.Extended.SKImagePyramidController.SetProvider
+  nameWithType: SKImagePyramidController.SetProvider
 - uid: SkiaSharp.Extended.SKImagePyramidController.SetViewport(System.Double,System.Double,System.Double)
   name: SetViewport(double, double, double)
   href: api/SkiaSharp.Extended.SKImagePyramidController.SetViewport.html#SkiaSharp_Extended_SKImagePyramidController_SetViewport_System_Double_System_Double_System_Double_
@@ -1399,6 +1828,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.SetZoom
   fullName: SkiaSharp.Extended.SKImagePyramidController.SetZoom
   nameWithType: SKImagePyramidController.SetZoom
+- uid: SkiaSharp.Extended.SKImagePyramidController.Source
+  name: Source
+  href: api/SkiaSharp.Extended.SKImagePyramidController.Source.html#SkiaSharp_Extended_SKImagePyramidController_Source
+  commentId: P:SkiaSharp.Extended.SKImagePyramidController.Source
+  fullName: SkiaSharp.Extended.SKImagePyramidController.Source
+  nameWithType: SKImagePyramidController.Source
+- uid: SkiaSharp.Extended.SKImagePyramidController.Source*
+  name: Source
+  href: api/SkiaSharp.Extended.SKImagePyramidController.Source.html
+  commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.Source
+  fullName: SkiaSharp.Extended.SKImagePyramidController.Source
+  nameWithType: SKImagePyramidController.Source
 - uid: SkiaSharp.Extended.SKImagePyramidController.SubImages
   name: SubImages
   href: api/SkiaSharp.Extended.SKImagePyramidController.SubImages.html#SkiaSharp_Extended_SKImagePyramidController_SubImages
@@ -1429,18 +1870,6 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.TileLayout
   fullName: SkiaSharp.Extended.SKImagePyramidController.TileLayout
   nameWithType: SKImagePyramidController.TileLayout
-- uid: SkiaSharp.Extended.SKImagePyramidController.TileSource
-  name: TileSource
-  href: api/SkiaSharp.Extended.SKImagePyramidController.TileSource.html#SkiaSharp_Extended_SKImagePyramidController_TileSource
-  commentId: P:SkiaSharp.Extended.SKImagePyramidController.TileSource
-  fullName: SkiaSharp.Extended.SKImagePyramidController.TileSource
-  nameWithType: SKImagePyramidController.TileSource
-- uid: SkiaSharp.Extended.SKImagePyramidController.TileSource*
-  name: TileSource
-  href: api/SkiaSharp.Extended.SKImagePyramidController.TileSource.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidController.TileSource
-  fullName: SkiaSharp.Extended.SKImagePyramidController.TileSource
-  nameWithType: SKImagePyramidController.TileSource
 - uid: SkiaSharp.Extended.SKImagePyramidController.Update
   name: Update()
   href: api/SkiaSharp.Extended.SKImagePyramidController.Update.html#SkiaSharp_Extended_SKImagePyramidController_Update
@@ -2299,6 +2728,12 @@ references:
   fullName.vb: SkiaSharp.Extended.SKImagePyramidDziSource.Parse(System.IO.Stream, String)
   nameWithType: SKImagePyramidDziSource.Parse(Stream, string?)
   nameWithType.vb: SKImagePyramidDziSource.Parse(Stream, String)
+- uid: SkiaSharp.Extended.SKImagePyramidDziSource.Parse(System.IO.Stream,System.Uri)
+  name: Parse(Stream, Uri)
+  href: api/SkiaSharp.Extended.SKImagePyramidDziSource.Parse.html#SkiaSharp_Extended_SKImagePyramidDziSource_Parse_System_IO_Stream_System_Uri_
+  commentId: M:SkiaSharp.Extended.SKImagePyramidDziSource.Parse(System.IO.Stream,System.Uri)
+  fullName: SkiaSharp.Extended.SKImagePyramidDziSource.Parse(System.IO.Stream, System.Uri)
+  nameWithType: SKImagePyramidDziSource.Parse(Stream, Uri)
 - uid: SkiaSharp.Extended.SKImagePyramidDziSource.Parse(System.String)
   name: Parse(string)
   href: api/SkiaSharp.Extended.SKImagePyramidDziSource.Parse.html#SkiaSharp_Extended_SKImagePyramidDziSource_Parse_System_String_
@@ -2317,6 +2752,15 @@ references:
   fullName.vb: SkiaSharp.Extended.SKImagePyramidDziSource.Parse(String, String)
   nameWithType: SKImagePyramidDziSource.Parse(string, string?)
   nameWithType.vb: SKImagePyramidDziSource.Parse(String, String)
+- uid: SkiaSharp.Extended.SKImagePyramidDziSource.Parse(System.String,System.Uri)
+  name: Parse(string, Uri)
+  href: api/SkiaSharp.Extended.SKImagePyramidDziSource.Parse.html#SkiaSharp_Extended_SKImagePyramidDziSource_Parse_System_String_System_Uri_
+  commentId: M:SkiaSharp.Extended.SKImagePyramidDziSource.Parse(System.String,System.Uri)
+  name.vb: Parse(String, Uri)
+  fullName: SkiaSharp.Extended.SKImagePyramidDziSource.Parse(string, System.Uri)
+  fullName.vb: SkiaSharp.Extended.SKImagePyramidDziSource.Parse(String, System.Uri)
+  nameWithType: SKImagePyramidDziSource.Parse(string, Uri)
+  nameWithType.vb: SKImagePyramidDziSource.Parse(String, Uri)
 - uid: SkiaSharp.Extended.SKImagePyramidDziSource.Parse*
   name: Parse
   href: api/SkiaSharp.Extended.SKImagePyramidDziSource.Parse.html
@@ -2371,321 +2815,6 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidDziSource.TilesQueryString
   fullName: SkiaSharp.Extended.SKImagePyramidDziSource.TilesQueryString
   nameWithType: SKImagePyramidDziSource.TilesQueryString
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache
-  name: SKImagePyramidFileSystemTileCache
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.html
-  commentId: T:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache
-  nameWithType: SKImagePyramidFileSystemTileCache
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.#ctor(System.String,System.Int32,System.Int32,System.Nullable{System.TimeSpan})
-  name: SKImagePyramidFileSystemTileCache(string, int, int, TimeSpan?)
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.-ctor.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache__ctor_System_String_System_Int32_System_Int32_System_Nullable_System_TimeSpan__
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.#ctor(System.String,System.Int32,System.Int32,System.Nullable{System.TimeSpan})
-  name.vb: New(String, Integer, Integer, TimeSpan?)
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.SKImagePyramidFileSystemTileCache(string, int, int, System.TimeSpan?)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.New(String, Integer, Integer, System.TimeSpan?)
-  nameWithType: SKImagePyramidFileSystemTileCache.SKImagePyramidFileSystemTileCache(string, int, int, TimeSpan?)
-  nameWithType.vb: SKImagePyramidFileSystemTileCache.New(String, Integer, Integer, TimeSpan?)
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.#ctor*
-  name: SKImagePyramidFileSystemTileCache
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.#ctor
-  name.vb: New
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.SKImagePyramidFileSystemTileCache
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.New
-  nameWithType: SKImagePyramidFileSystemTileCache.SKImagePyramidFileSystemTileCache
-  nameWithType.vb: SKImagePyramidFileSystemTileCache.New
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.ActiveSourceId
-  name: ActiveSourceId
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.ActiveSourceId.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_ActiveSourceId
-  commentId: P:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.ActiveSourceId
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.ActiveSourceId
-  nameWithType: SKImagePyramidFileSystemTileCache.ActiveSourceId
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.ActiveSourceId*
-  name: ActiveSourceId
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.ActiveSourceId.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.ActiveSourceId
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.ActiveSourceId
-  nameWithType: SKImagePyramidFileSystemTileCache.ActiveSourceId
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Clear
-  name: Clear()
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Clear.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_Clear
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Clear
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Clear()
-  nameWithType: SKImagePyramidFileSystemTileCache.Clear()
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Clear*
-  name: Clear
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Clear.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Clear
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Clear
-  nameWithType: SKImagePyramidFileSystemTileCache.Clear
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Contains(SkiaSharp.Extended.SKImagePyramidTileId)
-  name: Contains(SKImagePyramidTileId)
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Contains.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_Contains_SkiaSharp_Extended_SKImagePyramidTileId_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Contains(SkiaSharp.Extended.SKImagePyramidTileId)
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Contains(SkiaSharp.Extended.SKImagePyramidTileId)
-  nameWithType: SKImagePyramidFileSystemTileCache.Contains(SKImagePyramidTileId)
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Contains*
-  name: Contains
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Contains.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Contains
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Contains
-  nameWithType: SKImagePyramidFileSystemTileCache.Contains
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Count
-  name: Count
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Count.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_Count
-  commentId: P:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Count
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Count
-  nameWithType: SKImagePyramidFileSystemTileCache.Count
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Count*
-  name: Count
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Count.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Count
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Count
-  nameWithType: SKImagePyramidFileSystemTileCache.Count
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultExpiry
-  name: DefaultExpiry
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultExpiry.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_DefaultExpiry
-  commentId: P:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultExpiry
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultExpiry
-  nameWithType: SKImagePyramidFileSystemTileCache.DefaultExpiry
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultExpiry*
-  name: DefaultExpiry
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultExpiry.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultExpiry
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultExpiry
-  nameWithType: SKImagePyramidFileSystemTileCache.DefaultExpiry
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultMaxExpiry
-  name: DefaultMaxExpiry
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultMaxExpiry.html
-  commentId: F:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultMaxExpiry
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.DefaultMaxExpiry
-  nameWithType: SKImagePyramidFileSystemTileCache.DefaultMaxExpiry
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Dispose
-  name: Dispose()
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Dispose.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_Dispose
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Dispose
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Dispose()
-  nameWithType: SKImagePyramidFileSystemTileCache.Dispose()
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Dispose*
-  name: Dispose
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Dispose.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Dispose
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Dispose
-  nameWithType: SKImagePyramidFileSystemTileCache.Dispose
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Expiry
-  name: Expiry
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Expiry.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_Expiry
-  commentId: P:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Expiry
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Expiry
-  nameWithType: SKImagePyramidFileSystemTileCache.Expiry
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Expiry*
-  name: Expiry
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Expiry.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Expiry
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Expiry
-  nameWithType: SKImagePyramidFileSystemTileCache.Expiry
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.FlushEvicted
-  name: FlushEvicted()
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.FlushEvicted.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_FlushEvicted
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.FlushEvicted
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.FlushEvicted()
-  nameWithType: SKImagePyramidFileSystemTileCache.FlushEvicted()
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.FlushEvicted*
-  name: FlushEvicted
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.FlushEvicted.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.FlushEvicted
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.FlushEvicted
-  nameWithType: SKImagePyramidFileSystemTileCache.FlushEvicted
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile)
-  name: Put(SKImagePyramidTileId, SKImagePyramidTile?)
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Put.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_Put_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile)
-  name.vb: Put(SKImagePyramidTileId, SKImagePyramidTile)
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile?)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile)
-  nameWithType: SKImagePyramidFileSystemTileCache.Put(SKImagePyramidTileId, SKImagePyramidTile?)
-  nameWithType.vb: SKImagePyramidFileSystemTileCache.Put(SKImagePyramidTileId, SKImagePyramidTile)
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Put*
-  name: Put
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Put.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Put
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Put
-  nameWithType: SKImagePyramidFileSystemTileCache.Put
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile,System.Threading.CancellationToken)
-  name: PutAsync(SKImagePyramidTileId, SKImagePyramidTile?, CancellationToken)
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_System_Threading_CancellationToken_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile,System.Threading.CancellationToken)
-  name.vb: PutAsync(SKImagePyramidTileId, SKImagePyramidTile, CancellationToken)
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile?, System.Threading.CancellationToken)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile, System.Threading.CancellationToken)
-  nameWithType: SKImagePyramidFileSystemTileCache.PutAsync(SKImagePyramidTileId, SKImagePyramidTile?, CancellationToken)
-  nameWithType.vb: SKImagePyramidFileSystemTileCache.PutAsync(SKImagePyramidTileId, SKImagePyramidTile, CancellationToken)
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync*
-  name: PutAsync
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync
-  nameWithType: SKImagePyramidFileSystemTileCache.PutAsync
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Remove(SkiaSharp.Extended.SKImagePyramidTileId)
-  name: Remove(SKImagePyramidTileId)
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Remove.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_Remove_SkiaSharp_Extended_SKImagePyramidTileId_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Remove(SkiaSharp.Extended.SKImagePyramidTileId)
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Remove(SkiaSharp.Extended.SKImagePyramidTileId)
-  nameWithType: SKImagePyramidFileSystemTileCache.Remove(SKImagePyramidTileId)
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Remove*
-  name: Remove
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Remove.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Remove
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.Remove
-  nameWithType: SKImagePyramidFileSystemTileCache.Remove
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGet(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile@)
-  name: TryGet(SKImagePyramidTileId, out SKImagePyramidTile?)
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGet.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_TryGet_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile__
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGet(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile@)
-  name.vb: TryGet(SKImagePyramidTileId, SKImagePyramidTile)
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGet(SkiaSharp.Extended.SKImagePyramidTileId, out SkiaSharp.Extended.SKImagePyramidTile?)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGet(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile)
-  nameWithType: SKImagePyramidFileSystemTileCache.TryGet(SKImagePyramidTileId, out SKImagePyramidTile?)
-  nameWithType.vb: SKImagePyramidFileSystemTileCache.TryGet(SKImagePyramidTileId, SKImagePyramidTile)
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGet*
-  name: TryGet
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGet.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGet
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGet
-  nameWithType: SKImagePyramidFileSystemTileCache.TryGet
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGetAsync(SkiaSharp.Extended.SKImagePyramidTileId,System.Threading.CancellationToken)
-  name: TryGetAsync(SKImagePyramidTileId, CancellationToken)
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGetAsync.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_TryGetAsync_SkiaSharp_Extended_SKImagePyramidTileId_System_Threading_CancellationToken_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGetAsync(SkiaSharp.Extended.SKImagePyramidTileId,System.Threading.CancellationToken)
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGetAsync(SkiaSharp.Extended.SKImagePyramidTileId, System.Threading.CancellationToken)
-  nameWithType: SKImagePyramidFileSystemTileCache.TryGetAsync(SKImagePyramidTileId, CancellationToken)
-- uid: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGetAsync*
-  name: TryGetAsync
-  href: api/SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGetAsync.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGetAsync
-  fullName: SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGetAsync
-  nameWithType: SKImagePyramidFileSystemTileCache.TryGetAsync
-- uid: SkiaSharp.Extended.SKImagePyramidFileTileProvider
-  name: SKImagePyramidFileTileProvider
-  href: api/SkiaSharp.Extended.SKImagePyramidFileTileProvider.html
-  commentId: T:SkiaSharp.Extended.SKImagePyramidFileTileProvider
-  fullName: SkiaSharp.Extended.SKImagePyramidFileTileProvider
-  nameWithType: SKImagePyramidFileTileProvider
-- uid: SkiaSharp.Extended.SKImagePyramidFileTileProvider.#ctor
-  name: SKImagePyramidFileTileProvider()
-  href: api/SkiaSharp.Extended.SKImagePyramidFileTileProvider.-ctor.html#SkiaSharp_Extended_SKImagePyramidFileTileProvider__ctor
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileTileProvider.#ctor
-  name.vb: New()
-  fullName: SkiaSharp.Extended.SKImagePyramidFileTileProvider.SKImagePyramidFileTileProvider()
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidFileTileProvider.New()
-  nameWithType: SKImagePyramidFileTileProvider.SKImagePyramidFileTileProvider()
-  nameWithType.vb: SKImagePyramidFileTileProvider.New()
-- uid: SkiaSharp.Extended.SKImagePyramidFileTileProvider.#ctor*
-  name: SKImagePyramidFileTileProvider
-  href: api/SkiaSharp.Extended.SKImagePyramidFileTileProvider.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileTileProvider.#ctor
-  name.vb: New
-  fullName: SkiaSharp.Extended.SKImagePyramidFileTileProvider.SKImagePyramidFileTileProvider
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidFileTileProvider.New
-  nameWithType: SKImagePyramidFileTileProvider.SKImagePyramidFileTileProvider
-  nameWithType.vb: SKImagePyramidFileTileProvider.New
-- uid: SkiaSharp.Extended.SKImagePyramidFileTileProvider.Dispose
-  name: Dispose()
-  href: api/SkiaSharp.Extended.SKImagePyramidFileTileProvider.Dispose.html#SkiaSharp_Extended_SKImagePyramidFileTileProvider_Dispose
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileTileProvider.Dispose
-  fullName: SkiaSharp.Extended.SKImagePyramidFileTileProvider.Dispose()
-  nameWithType: SKImagePyramidFileTileProvider.Dispose()
-- uid: SkiaSharp.Extended.SKImagePyramidFileTileProvider.Dispose*
-  name: Dispose
-  href: api/SkiaSharp.Extended.SKImagePyramidFileTileProvider.Dispose.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileTileProvider.Dispose
-  fullName: SkiaSharp.Extended.SKImagePyramidFileTileProvider.Dispose
-  nameWithType: SKImagePyramidFileTileProvider.Dispose
-- uid: SkiaSharp.Extended.SKImagePyramidFileTileProvider.GetTileAsync(System.String,System.Threading.CancellationToken)
-  name: GetTileAsync(string, CancellationToken)
-  href: api/SkiaSharp.Extended.SKImagePyramidFileTileProvider.GetTileAsync.html#SkiaSharp_Extended_SKImagePyramidFileTileProvider_GetTileAsync_System_String_System_Threading_CancellationToken_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidFileTileProvider.GetTileAsync(System.String,System.Threading.CancellationToken)
-  name.vb: GetTileAsync(String, CancellationToken)
-  fullName: SkiaSharp.Extended.SKImagePyramidFileTileProvider.GetTileAsync(string, System.Threading.CancellationToken)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidFileTileProvider.GetTileAsync(String, System.Threading.CancellationToken)
-  nameWithType: SKImagePyramidFileTileProvider.GetTileAsync(string, CancellationToken)
-  nameWithType.vb: SKImagePyramidFileTileProvider.GetTileAsync(String, CancellationToken)
-- uid: SkiaSharp.Extended.SKImagePyramidFileTileProvider.GetTileAsync*
-  name: GetTileAsync
-  href: api/SkiaSharp.Extended.SKImagePyramidFileTileProvider.GetTileAsync.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidFileTileProvider.GetTileAsync
-  fullName: SkiaSharp.Extended.SKImagePyramidFileTileProvider.GetTileAsync
-  nameWithType: SKImagePyramidFileTileProvider.GetTileAsync
-- uid: SkiaSharp.Extended.SKImagePyramidHttpTileProvider
-  name: SKImagePyramidHttpTileProvider
-  href: api/SkiaSharp.Extended.SKImagePyramidHttpTileProvider.html
-  commentId: T:SkiaSharp.Extended.SKImagePyramidHttpTileProvider
-  fullName: SkiaSharp.Extended.SKImagePyramidHttpTileProvider
-  nameWithType: SKImagePyramidHttpTileProvider
-- uid: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.#ctor(System.Net.Http.HttpClient,System.String,System.Nullable{System.TimeSpan})
-  name: SKImagePyramidHttpTileProvider(HttpClient?, string?, TimeSpan?)
-  href: api/SkiaSharp.Extended.SKImagePyramidHttpTileProvider.-ctor.html#SkiaSharp_Extended_SKImagePyramidHttpTileProvider__ctor_System_Net_Http_HttpClient_System_String_System_Nullable_System_TimeSpan__
-  commentId: M:SkiaSharp.Extended.SKImagePyramidHttpTileProvider.#ctor(System.Net.Http.HttpClient,System.String,System.Nullable{System.TimeSpan})
-  name.vb: New(HttpClient, String, TimeSpan?)
-  fullName: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.SKImagePyramidHttpTileProvider(System.Net.Http.HttpClient?, string?, System.TimeSpan?)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.New(System.Net.Http.HttpClient, String, System.TimeSpan?)
-  nameWithType: SKImagePyramidHttpTileProvider.SKImagePyramidHttpTileProvider(HttpClient?, string?, TimeSpan?)
-  nameWithType.vb: SKImagePyramidHttpTileProvider.New(HttpClient, String, TimeSpan?)
-- uid: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.#ctor*
-  name: SKImagePyramidHttpTileProvider
-  href: api/SkiaSharp.Extended.SKImagePyramidHttpTileProvider.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidHttpTileProvider.#ctor
-  name.vb: New
-  fullName: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.SKImagePyramidHttpTileProvider
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.New
-  nameWithType: SKImagePyramidHttpTileProvider.SKImagePyramidHttpTileProvider
-  nameWithType.vb: SKImagePyramidHttpTileProvider.New
-- uid: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.DefaultExpiry
-  name: DefaultExpiry
-  href: api/SkiaSharp.Extended.SKImagePyramidHttpTileProvider.DefaultExpiry.html
-  commentId: F:SkiaSharp.Extended.SKImagePyramidHttpTileProvider.DefaultExpiry
-  fullName: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.DefaultExpiry
-  nameWithType: SKImagePyramidHttpTileProvider.DefaultExpiry
-- uid: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Dispose
-  name: Dispose()
-  href: api/SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Dispose.html#SkiaSharp_Extended_SKImagePyramidHttpTileProvider_Dispose
-  commentId: M:SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Dispose
-  fullName: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Dispose()
-  nameWithType: SKImagePyramidHttpTileProvider.Dispose()
-- uid: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Dispose*
-  name: Dispose
-  href: api/SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Dispose.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Dispose
-  fullName: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Dispose
-  nameWithType: SKImagePyramidHttpTileProvider.Dispose
-- uid: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Expiry
-  name: Expiry
-  href: api/SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Expiry.html#SkiaSharp_Extended_SKImagePyramidHttpTileProvider_Expiry
-  commentId: P:SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Expiry
-  fullName: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Expiry
-  nameWithType: SKImagePyramidHttpTileProvider.Expiry
-- uid: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Expiry*
-  name: Expiry
-  href: api/SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Expiry.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Expiry
-  fullName: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.Expiry
-  nameWithType: SKImagePyramidHttpTileProvider.Expiry
-- uid: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.GetTileAsync(System.String,System.Threading.CancellationToken)
-  name: GetTileAsync(string, CancellationToken)
-  href: api/SkiaSharp.Extended.SKImagePyramidHttpTileProvider.GetTileAsync.html#SkiaSharp_Extended_SKImagePyramidHttpTileProvider_GetTileAsync_System_String_System_Threading_CancellationToken_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidHttpTileProvider.GetTileAsync(System.String,System.Threading.CancellationToken)
-  name.vb: GetTileAsync(String, CancellationToken)
-  fullName: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.GetTileAsync(string, System.Threading.CancellationToken)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.GetTileAsync(String, System.Threading.CancellationToken)
-  nameWithType: SKImagePyramidHttpTileProvider.GetTileAsync(string, CancellationToken)
-  nameWithType.vb: SKImagePyramidHttpTileProvider.GetTileAsync(String, CancellationToken)
-- uid: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.GetTileAsync*
-  name: GetTileAsync
-  href: api/SkiaSharp.Extended.SKImagePyramidHttpTileProvider.GetTileAsync.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidHttpTileProvider.GetTileAsync
-  fullName: SkiaSharp.Extended.SKImagePyramidHttpTileProvider.GetTileAsync
-  nameWithType: SKImagePyramidHttpTileProvider.GetTileAsync
 - uid: SkiaSharp.Extended.SKImagePyramidIiifSource
   name: SKImagePyramidIiifSource
   href: api/SkiaSharp.Extended.SKImagePyramidIiifSource.html
@@ -3059,35 +3188,17 @@ references:
   fullName: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.MaxEntries
   nameWithType: SKImagePyramidMemoryTileCache.MaxEntries
 - uid: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile)
-  name: Put(SKImagePyramidTileId, SKImagePyramidTile?)
+  name: Put(SKImagePyramidTileId, SKImagePyramidTile)
   href: api/SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put.html#SkiaSharp_Extended_SKImagePyramidMemoryTileCache_Put_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_
   commentId: M:SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile)
-  name.vb: Put(SKImagePyramidTileId, SKImagePyramidTile)
-  fullName: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile?)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile)
-  nameWithType: SKImagePyramidMemoryTileCache.Put(SKImagePyramidTileId, SKImagePyramidTile?)
-  nameWithType.vb: SKImagePyramidMemoryTileCache.Put(SKImagePyramidTileId, SKImagePyramidTile)
+  fullName: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile)
+  nameWithType: SKImagePyramidMemoryTileCache.Put(SKImagePyramidTileId, SKImagePyramidTile)
 - uid: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put*
   name: Put
   href: api/SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put.html
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put
   fullName: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Put
   nameWithType: SKImagePyramidMemoryTileCache.Put
-- uid: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile,System.Threading.CancellationToken)
-  name: PutAsync(SKImagePyramidTileId, SKImagePyramidTile?, CancellationToken)
-  href: api/SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync.html#SkiaSharp_Extended_SKImagePyramidMemoryTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_System_Threading_CancellationToken_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId,SkiaSharp.Extended.SKImagePyramidTile,System.Threading.CancellationToken)
-  name.vb: PutAsync(SKImagePyramidTileId, SKImagePyramidTile, CancellationToken)
-  fullName: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile?, System.Threading.CancellationToken)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync(SkiaSharp.Extended.SKImagePyramidTileId, SkiaSharp.Extended.SKImagePyramidTile, System.Threading.CancellationToken)
-  nameWithType: SKImagePyramidMemoryTileCache.PutAsync(SKImagePyramidTileId, SKImagePyramidTile?, CancellationToken)
-  nameWithType.vb: SKImagePyramidMemoryTileCache.PutAsync(SKImagePyramidTileId, SKImagePyramidTile, CancellationToken)
-- uid: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync*
-  name: PutAsync
-  href: api/SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync
-  fullName: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.PutAsync
-  nameWithType: SKImagePyramidMemoryTileCache.PutAsync
 - uid: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Remove(SkiaSharp.Extended.SKImagePyramidTileId)
   name: Remove(SKImagePyramidTileId)
   href: api/SkiaSharp.Extended.SKImagePyramidMemoryTileCache.Remove.html#SkiaSharp_Extended_SKImagePyramidMemoryTileCache_Remove_SkiaSharp_Extended_SKImagePyramidTileId_
@@ -3115,18 +3226,6 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGet
   fullName: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGet
   nameWithType: SKImagePyramidMemoryTileCache.TryGet
-- uid: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync(SkiaSharp.Extended.SKImagePyramidTileId,System.Threading.CancellationToken)
-  name: TryGetAsync(SKImagePyramidTileId, CancellationToken)
-  href: api/SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync.html#SkiaSharp_Extended_SKImagePyramidMemoryTileCache_TryGetAsync_SkiaSharp_Extended_SKImagePyramidTileId_System_Threading_CancellationToken_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync(SkiaSharp.Extended.SKImagePyramidTileId,System.Threading.CancellationToken)
-  fullName: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync(SkiaSharp.Extended.SKImagePyramidTileId, System.Threading.CancellationToken)
-  nameWithType: SKImagePyramidMemoryTileCache.TryGetAsync(SKImagePyramidTileId, CancellationToken)
-- uid: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync*
-  name: TryGetAsync
-  href: api/SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync
-  fullName: SkiaSharp.Extended.SKImagePyramidMemoryTileCache.TryGetAsync
-  nameWithType: SKImagePyramidMemoryTileCache.TryGetAsync
 - uid: SkiaSharp.Extended.SKImagePyramidRenderer
   name: SKImagePyramidRenderer
   href: api/SkiaSharp.Extended.SKImagePyramidRenderer.html
@@ -3403,15 +3502,15 @@ references:
   commentId: T:SkiaSharp.Extended.SKImagePyramidTile
   fullName: SkiaSharp.Extended.SKImagePyramidTile
   nameWithType: SKImagePyramidTile
-- uid: SkiaSharp.Extended.SKImagePyramidTile.#ctor(SkiaSharp.SKImage,System.Byte[],System.String)
-  name: SKImagePyramidTile(SKImage, byte[], string)
-  href: api/SkiaSharp.Extended.SKImagePyramidTile.-ctor.html#SkiaSharp_Extended_SKImagePyramidTile__ctor_SkiaSharp_SKImage_System_Byte___System_String_
-  commentId: M:SkiaSharp.Extended.SKImagePyramidTile.#ctor(SkiaSharp.SKImage,System.Byte[],System.String)
-  name.vb: New(SKImage, Byte(), String)
-  fullName: SkiaSharp.Extended.SKImagePyramidTile.SKImagePyramidTile(SkiaSharp.SKImage, byte[], string)
-  fullName.vb: SkiaSharp.Extended.SKImagePyramidTile.New(SkiaSharp.SKImage, Byte(), String)
-  nameWithType: SKImagePyramidTile.SKImagePyramidTile(SKImage, byte[], string)
-  nameWithType.vb: SKImagePyramidTile.New(SKImage, Byte(), String)
+- uid: SkiaSharp.Extended.SKImagePyramidTile.#ctor(SkiaSharp.SKImage,System.Byte[])
+  name: SKImagePyramidTile(SKImage, byte[]?)
+  href: api/SkiaSharp.Extended.SKImagePyramidTile.-ctor.html#SkiaSharp_Extended_SKImagePyramidTile__ctor_SkiaSharp_SKImage_System_Byte___
+  commentId: M:SkiaSharp.Extended.SKImagePyramidTile.#ctor(SkiaSharp.SKImage,System.Byte[])
+  name.vb: New(SKImage, Byte())
+  fullName: SkiaSharp.Extended.SKImagePyramidTile.SKImagePyramidTile(SkiaSharp.SKImage, byte[]?)
+  fullName.vb: SkiaSharp.Extended.SKImagePyramidTile.New(SkiaSharp.SKImage, Byte())
+  nameWithType: SKImagePyramidTile.SKImagePyramidTile(SKImage, byte[]?)
+  nameWithType.vb: SKImagePyramidTile.New(SKImage, Byte())
 - uid: SkiaSharp.Extended.SKImagePyramidTile.#ctor*
   name: SKImagePyramidTile
   href: api/SkiaSharp.Extended.SKImagePyramidTile.-ctor.html
@@ -3457,18 +3556,42 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKImagePyramidTile.RawData
   fullName: SkiaSharp.Extended.SKImagePyramidTile.RawData
   nameWithType: SKImagePyramidTile.RawData
-- uid: SkiaSharp.Extended.SKImagePyramidTile.SourceId
-  name: SourceId
-  href: api/SkiaSharp.Extended.SKImagePyramidTile.SourceId.html#SkiaSharp_Extended_SKImagePyramidTile_SourceId
-  commentId: P:SkiaSharp.Extended.SKImagePyramidTile.SourceId
-  fullName: SkiaSharp.Extended.SKImagePyramidTile.SourceId
-  nameWithType: SKImagePyramidTile.SourceId
-- uid: SkiaSharp.Extended.SKImagePyramidTile.SourceId*
-  name: SourceId
-  href: api/SkiaSharp.Extended.SKImagePyramidTile.SourceId.html
-  commentId: Overload:SkiaSharp.Extended.SKImagePyramidTile.SourceId
-  fullName: SkiaSharp.Extended.SKImagePyramidTile.SourceId
-  nameWithType: SKImagePyramidTile.SourceId
+- uid: SkiaSharp.Extended.SKImagePyramidTileData
+  name: SKImagePyramidTileData
+  href: api/SkiaSharp.Extended.SKImagePyramidTileData.html
+  commentId: T:SkiaSharp.Extended.SKImagePyramidTileData
+  fullName: SkiaSharp.Extended.SKImagePyramidTileData
+  nameWithType: SKImagePyramidTileData
+- uid: SkiaSharp.Extended.SKImagePyramidTileData.#ctor(System.Byte[])
+  name: SKImagePyramidTileData(byte[])
+  href: api/SkiaSharp.Extended.SKImagePyramidTileData.-ctor.html#SkiaSharp_Extended_SKImagePyramidTileData__ctor_System_Byte___
+  commentId: M:SkiaSharp.Extended.SKImagePyramidTileData.#ctor(System.Byte[])
+  name.vb: New(Byte())
+  fullName: SkiaSharp.Extended.SKImagePyramidTileData.SKImagePyramidTileData(byte[])
+  fullName.vb: SkiaSharp.Extended.SKImagePyramidTileData.New(Byte())
+  nameWithType: SKImagePyramidTileData.SKImagePyramidTileData(byte[])
+  nameWithType.vb: SKImagePyramidTileData.New(Byte())
+- uid: SkiaSharp.Extended.SKImagePyramidTileData.#ctor*
+  name: SKImagePyramidTileData
+  href: api/SkiaSharp.Extended.SKImagePyramidTileData.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.SKImagePyramidTileData.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.SKImagePyramidTileData.SKImagePyramidTileData
+  fullName.vb: SkiaSharp.Extended.SKImagePyramidTileData.New
+  nameWithType: SKImagePyramidTileData.SKImagePyramidTileData
+  nameWithType.vb: SKImagePyramidTileData.New
+- uid: SkiaSharp.Extended.SKImagePyramidTileData.Data
+  name: Data
+  href: api/SkiaSharp.Extended.SKImagePyramidTileData.Data.html#SkiaSharp_Extended_SKImagePyramidTileData_Data
+  commentId: P:SkiaSharp.Extended.SKImagePyramidTileData.Data
+  fullName: SkiaSharp.Extended.SKImagePyramidTileData.Data
+  nameWithType: SKImagePyramidTileData.Data
+- uid: SkiaSharp.Extended.SKImagePyramidTileData.Data*
+  name: Data
+  href: api/SkiaSharp.Extended.SKImagePyramidTileData.Data.html
+  commentId: Overload:SkiaSharp.Extended.SKImagePyramidTileData.Data
+  fullName: SkiaSharp.Extended.SKImagePyramidTileData.Data
+  nameWithType: SKImagePyramidTileData.Data
 - uid: SkiaSharp.Extended.SKImagePyramidTileFailedEventArgs
   name: SKImagePyramidTileFailedEventArgs
   href: api/SkiaSharp.Extended.SKImagePyramidTileFailedEventArgs.html
@@ -4270,6 +4393,99 @@ references:
   fullName.vb: SkiaSharp.Extended.SKImagePyramidViewportState.<>
   nameWithType: SKImagePyramidViewportState.operator !=
   nameWithType.vb: SKImagePyramidViewportState.<>
+- uid: SkiaSharp.Extended.SKNullTileCacheStore
+  name: SKNullTileCacheStore
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.html
+  commentId: T:SkiaSharp.Extended.SKNullTileCacheStore
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore
+  nameWithType: SKNullTileCacheStore
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.#ctor
+  name: SKNullTileCacheStore()
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.-ctor.html#SkiaSharp_Extended_SKNullTileCacheStore__ctor
+  commentId: M:SkiaSharp.Extended.SKNullTileCacheStore.#ctor
+  name.vb: New()
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.SKNullTileCacheStore()
+  fullName.vb: SkiaSharp.Extended.SKNullTileCacheStore.New()
+  nameWithType: SKNullTileCacheStore.SKNullTileCacheStore()
+  nameWithType.vb: SKNullTileCacheStore.New()
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.#ctor*
+  name: SKNullTileCacheStore
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.SKNullTileCacheStore.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.SKNullTileCacheStore
+  fullName.vb: SkiaSharp.Extended.SKNullTileCacheStore.New
+  nameWithType: SKNullTileCacheStore.SKNullTileCacheStore
+  nameWithType.vb: SKNullTileCacheStore.New
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  name: ClearAsync(CancellationToken)
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.ClearAsync.html#SkiaSharp_Extended_SKNullTileCacheStore_ClearAsync_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKNullTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.ClearAsync(System.Threading.CancellationToken)
+  nameWithType: SKNullTileCacheStore.ClearAsync(CancellationToken)
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.ClearAsync*
+  name: ClearAsync
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.ClearAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKNullTileCacheStore.ClearAsync
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.ClearAsync
+  nameWithType: SKNullTileCacheStore.ClearAsync
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.Dispose
+  name: Dispose()
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.Dispose.html#SkiaSharp_Extended_SKNullTileCacheStore_Dispose
+  commentId: M:SkiaSharp.Extended.SKNullTileCacheStore.Dispose
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.Dispose()
+  nameWithType: SKNullTileCacheStore.Dispose()
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.Dispose*
+  name: Dispose
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.Dispose.html
+  commentId: Overload:SkiaSharp.Extended.SKNullTileCacheStore.Dispose
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.Dispose
+  nameWithType: SKNullTileCacheStore.Dispose
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.RemoveAsync(System.String,System.Threading.CancellationToken)
+  name: RemoveAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.RemoveAsync.html#SkiaSharp_Extended_SKNullTileCacheStore_RemoveAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKNullTileCacheStore.RemoveAsync(System.String,System.Threading.CancellationToken)
+  name.vb: RemoveAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.RemoveAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKNullTileCacheStore.RemoveAsync(String, System.Threading.CancellationToken)
+  nameWithType: SKNullTileCacheStore.RemoveAsync(string, CancellationToken)
+  nameWithType.vb: SKNullTileCacheStore.RemoveAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.RemoveAsync*
+  name: RemoveAsync
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.RemoveAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKNullTileCacheStore.RemoveAsync
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.RemoveAsync
+  nameWithType: SKNullTileCacheStore.RemoveAsync
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.SetAsync(System.String,SkiaSharp.Extended.SKImagePyramidTileData,System.Threading.CancellationToken)
+  name: SetAsync(string, SKImagePyramidTileData, CancellationToken)
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.SetAsync.html#SkiaSharp_Extended_SKNullTileCacheStore_SetAsync_System_String_SkiaSharp_Extended_SKImagePyramidTileData_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKNullTileCacheStore.SetAsync(System.String,SkiaSharp.Extended.SKImagePyramidTileData,System.Threading.CancellationToken)
+  name.vb: SetAsync(String, SKImagePyramidTileData, CancellationToken)
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.SetAsync(string, SkiaSharp.Extended.SKImagePyramidTileData, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKNullTileCacheStore.SetAsync(String, SkiaSharp.Extended.SKImagePyramidTileData, System.Threading.CancellationToken)
+  nameWithType: SKNullTileCacheStore.SetAsync(string, SKImagePyramidTileData, CancellationToken)
+  nameWithType.vb: SKNullTileCacheStore.SetAsync(String, SKImagePyramidTileData, CancellationToken)
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.SetAsync*
+  name: SetAsync
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.SetAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKNullTileCacheStore.SetAsync
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.SetAsync
+  nameWithType: SKNullTileCacheStore.SetAsync
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.TryGetAsync(System.String,System.Threading.CancellationToken)
+  name: TryGetAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.TryGetAsync.html#SkiaSharp_Extended_SKNullTileCacheStore_TryGetAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKNullTileCacheStore.TryGetAsync(System.String,System.Threading.CancellationToken)
+  name.vb: TryGetAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.TryGetAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKNullTileCacheStore.TryGetAsync(String, System.Threading.CancellationToken)
+  nameWithType: SKNullTileCacheStore.TryGetAsync(string, CancellationToken)
+  nameWithType.vb: SKNullTileCacheStore.TryGetAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.SKNullTileCacheStore.TryGetAsync*
+  name: TryGetAsync
+  href: api/SkiaSharp.Extended.SKNullTileCacheStore.TryGetAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKNullTileCacheStore.TryGetAsync
+  fullName: SkiaSharp.Extended.SKNullTileCacheStore.TryGetAsync
+  nameWithType: SKNullTileCacheStore.TryGetAsync
 - uid: SkiaSharp.Extended.SKPathInterpolation
   name: SKPathInterpolation
   href: api/SkiaSharp.Extended.SKPathInterpolation.html
@@ -4855,6 +5071,141 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels
   fullName: SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels
   nameWithType: SKPixelComparisonResult.TotalPixels
+- uid: SkiaSharp.Extended.SKTieredTileProvider
+  name: SKTieredTileProvider
+  href: api/SkiaSharp.Extended.SKTieredTileProvider.html
+  commentId: T:SkiaSharp.Extended.SKTieredTileProvider
+  fullName: SkiaSharp.Extended.SKTieredTileProvider
+  nameWithType: SKTieredTileProvider
+- uid: SkiaSharp.Extended.SKTieredTileProvider.#ctor(SkiaSharp.Extended.ISKTileFetcher,SkiaSharp.Extended.ISKTileCacheStore)
+  name: SKTieredTileProvider(ISKTileFetcher, ISKTileCacheStore?)
+  href: api/SkiaSharp.Extended.SKTieredTileProvider.-ctor.html#SkiaSharp_Extended_SKTieredTileProvider__ctor_SkiaSharp_Extended_ISKTileFetcher_SkiaSharp_Extended_ISKTileCacheStore_
+  commentId: M:SkiaSharp.Extended.SKTieredTileProvider.#ctor(SkiaSharp.Extended.ISKTileFetcher,SkiaSharp.Extended.ISKTileCacheStore)
+  name.vb: New(ISKTileFetcher, ISKTileCacheStore)
+  fullName: SkiaSharp.Extended.SKTieredTileProvider.SKTieredTileProvider(SkiaSharp.Extended.ISKTileFetcher, SkiaSharp.Extended.ISKTileCacheStore?)
+  fullName.vb: SkiaSharp.Extended.SKTieredTileProvider.New(SkiaSharp.Extended.ISKTileFetcher, SkiaSharp.Extended.ISKTileCacheStore)
+  nameWithType: SKTieredTileProvider.SKTieredTileProvider(ISKTileFetcher, ISKTileCacheStore?)
+  nameWithType.vb: SKTieredTileProvider.New(ISKTileFetcher, ISKTileCacheStore)
+- uid: SkiaSharp.Extended.SKTieredTileProvider.#ctor*
+  name: SKTieredTileProvider
+  href: api/SkiaSharp.Extended.SKTieredTileProvider.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.SKTieredTileProvider.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.SKTieredTileProvider.SKTieredTileProvider
+  fullName.vb: SkiaSharp.Extended.SKTieredTileProvider.New
+  nameWithType: SKTieredTileProvider.SKTieredTileProvider
+  nameWithType.vb: SKTieredTileProvider.New
+- uid: SkiaSharp.Extended.SKTieredTileProvider.Dispose
+  name: Dispose()
+  href: api/SkiaSharp.Extended.SKTieredTileProvider.Dispose.html#SkiaSharp_Extended_SKTieredTileProvider_Dispose
+  commentId: M:SkiaSharp.Extended.SKTieredTileProvider.Dispose
+  fullName: SkiaSharp.Extended.SKTieredTileProvider.Dispose()
+  nameWithType: SKTieredTileProvider.Dispose()
+- uid: SkiaSharp.Extended.SKTieredTileProvider.Dispose*
+  name: Dispose
+  href: api/SkiaSharp.Extended.SKTieredTileProvider.Dispose.html
+  commentId: Overload:SkiaSharp.Extended.SKTieredTileProvider.Dispose
+  fullName: SkiaSharp.Extended.SKTieredTileProvider.Dispose
+  nameWithType: SKTieredTileProvider.Dispose
+- uid: SkiaSharp.Extended.SKTieredTileProvider.GetTileAsync(System.String,System.Threading.CancellationToken)
+  name: GetTileAsync(string, CancellationToken)
+  href: api/SkiaSharp.Extended.SKTieredTileProvider.GetTileAsync.html#SkiaSharp_Extended_SKTieredTileProvider_GetTileAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:SkiaSharp.Extended.SKTieredTileProvider.GetTileAsync(System.String,System.Threading.CancellationToken)
+  name.vb: GetTileAsync(String, CancellationToken)
+  fullName: SkiaSharp.Extended.SKTieredTileProvider.GetTileAsync(string, System.Threading.CancellationToken)
+  fullName.vb: SkiaSharp.Extended.SKTieredTileProvider.GetTileAsync(String, System.Threading.CancellationToken)
+  nameWithType: SKTieredTileProvider.GetTileAsync(string, CancellationToken)
+  nameWithType.vb: SKTieredTileProvider.GetTileAsync(String, CancellationToken)
+- uid: SkiaSharp.Extended.SKTieredTileProvider.GetTileAsync*
+  name: GetTileAsync
+  href: api/SkiaSharp.Extended.SKTieredTileProvider.GetTileAsync.html
+  commentId: Overload:SkiaSharp.Extended.SKTieredTileProvider.GetTileAsync
+  fullName: SkiaSharp.Extended.SKTieredTileProvider.GetTileAsync
+  nameWithType: SKTieredTileProvider.GetTileAsync
+- uid: SkiaSharp.Extended.TileFailureTracker
+  name: TileFailureTracker
+  href: api/SkiaSharp.Extended.TileFailureTracker.html
+  commentId: T:SkiaSharp.Extended.TileFailureTracker
+  fullName: SkiaSharp.Extended.TileFailureTracker
+  nameWithType: TileFailureTracker
+- uid: SkiaSharp.Extended.TileFailureTracker.#ctor(System.Nullable{System.TimeSpan},System.Int32)
+  name: TileFailureTracker(TimeSpan?, int)
+  href: api/SkiaSharp.Extended.TileFailureTracker.-ctor.html#SkiaSharp_Extended_TileFailureTracker__ctor_System_Nullable_System_TimeSpan__System_Int32_
+  commentId: M:SkiaSharp.Extended.TileFailureTracker.#ctor(System.Nullable{System.TimeSpan},System.Int32)
+  name.vb: New(TimeSpan?, Integer)
+  fullName: SkiaSharp.Extended.TileFailureTracker.TileFailureTracker(System.TimeSpan?, int)
+  fullName.vb: SkiaSharp.Extended.TileFailureTracker.New(System.TimeSpan?, Integer)
+  nameWithType: TileFailureTracker.TileFailureTracker(TimeSpan?, int)
+  nameWithType.vb: TileFailureTracker.New(TimeSpan?, Integer)
+- uid: SkiaSharp.Extended.TileFailureTracker.#ctor*
+  name: TileFailureTracker
+  href: api/SkiaSharp.Extended.TileFailureTracker.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.TileFailureTracker.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.TileFailureTracker.TileFailureTracker
+  fullName.vb: SkiaSharp.Extended.TileFailureTracker.New
+  nameWithType: TileFailureTracker.TileFailureTracker
+  nameWithType.vb: TileFailureTracker.New
+- uid: SkiaSharp.Extended.TileFailureTracker.Count
+  name: Count
+  href: api/SkiaSharp.Extended.TileFailureTracker.Count.html#SkiaSharp_Extended_TileFailureTracker_Count
+  commentId: P:SkiaSharp.Extended.TileFailureTracker.Count
+  fullName: SkiaSharp.Extended.TileFailureTracker.Count
+  nameWithType: TileFailureTracker.Count
+- uid: SkiaSharp.Extended.TileFailureTracker.Count*
+  name: Count
+  href: api/SkiaSharp.Extended.TileFailureTracker.Count.html
+  commentId: Overload:SkiaSharp.Extended.TileFailureTracker.Count
+  fullName: SkiaSharp.Extended.TileFailureTracker.Count
+  nameWithType: TileFailureTracker.Count
+- uid: SkiaSharp.Extended.TileFailureTracker.RecordFailure(SkiaSharp.Extended.SKImagePyramidTileId)
+  name: RecordFailure(SKImagePyramidTileId)
+  href: api/SkiaSharp.Extended.TileFailureTracker.RecordFailure.html#SkiaSharp_Extended_TileFailureTracker_RecordFailure_SkiaSharp_Extended_SKImagePyramidTileId_
+  commentId: M:SkiaSharp.Extended.TileFailureTracker.RecordFailure(SkiaSharp.Extended.SKImagePyramidTileId)
+  fullName: SkiaSharp.Extended.TileFailureTracker.RecordFailure(SkiaSharp.Extended.SKImagePyramidTileId)
+  nameWithType: TileFailureTracker.RecordFailure(SKImagePyramidTileId)
+- uid: SkiaSharp.Extended.TileFailureTracker.RecordFailure*
+  name: RecordFailure
+  href: api/SkiaSharp.Extended.TileFailureTracker.RecordFailure.html
+  commentId: Overload:SkiaSharp.Extended.TileFailureTracker.RecordFailure
+  fullName: SkiaSharp.Extended.TileFailureTracker.RecordFailure
+  nameWithType: TileFailureTracker.RecordFailure
+- uid: SkiaSharp.Extended.TileFailureTracker.Reset(SkiaSharp.Extended.SKImagePyramidTileId)
+  name: Reset(SKImagePyramidTileId)
+  href: api/SkiaSharp.Extended.TileFailureTracker.Reset.html#SkiaSharp_Extended_TileFailureTracker_Reset_SkiaSharp_Extended_SKImagePyramidTileId_
+  commentId: M:SkiaSharp.Extended.TileFailureTracker.Reset(SkiaSharp.Extended.SKImagePyramidTileId)
+  fullName: SkiaSharp.Extended.TileFailureTracker.Reset(SkiaSharp.Extended.SKImagePyramidTileId)
+  nameWithType: TileFailureTracker.Reset(SKImagePyramidTileId)
+- uid: SkiaSharp.Extended.TileFailureTracker.Reset*
+  name: Reset
+  href: api/SkiaSharp.Extended.TileFailureTracker.Reset.html
+  commentId: Overload:SkiaSharp.Extended.TileFailureTracker.Reset
+  fullName: SkiaSharp.Extended.TileFailureTracker.Reset
+  nameWithType: TileFailureTracker.Reset
+- uid: SkiaSharp.Extended.TileFailureTracker.ResetAll
+  name: ResetAll()
+  href: api/SkiaSharp.Extended.TileFailureTracker.ResetAll.html#SkiaSharp_Extended_TileFailureTracker_ResetAll
+  commentId: M:SkiaSharp.Extended.TileFailureTracker.ResetAll
+  fullName: SkiaSharp.Extended.TileFailureTracker.ResetAll()
+  nameWithType: TileFailureTracker.ResetAll()
+- uid: SkiaSharp.Extended.TileFailureTracker.ResetAll*
+  name: ResetAll
+  href: api/SkiaSharp.Extended.TileFailureTracker.ResetAll.html
+  commentId: Overload:SkiaSharp.Extended.TileFailureTracker.ResetAll
+  fullName: SkiaSharp.Extended.TileFailureTracker.ResetAll
+  nameWithType: TileFailureTracker.ResetAll
+- uid: SkiaSharp.Extended.TileFailureTracker.ShouldSkip(SkiaSharp.Extended.SKImagePyramidTileId)
+  name: ShouldSkip(SKImagePyramidTileId)
+  href: api/SkiaSharp.Extended.TileFailureTracker.ShouldSkip.html#SkiaSharp_Extended_TileFailureTracker_ShouldSkip_SkiaSharp_Extended_SKImagePyramidTileId_
+  commentId: M:SkiaSharp.Extended.TileFailureTracker.ShouldSkip(SkiaSharp.Extended.SKImagePyramidTileId)
+  fullName: SkiaSharp.Extended.TileFailureTracker.ShouldSkip(SkiaSharp.Extended.SKImagePyramidTileId)
+  nameWithType: TileFailureTracker.ShouldSkip(SKImagePyramidTileId)
+- uid: SkiaSharp.Extended.TileFailureTracker.ShouldSkip*
+  name: ShouldSkip
+  href: api/SkiaSharp.Extended.TileFailureTracker.ShouldSkip.html
+  commentId: Overload:SkiaSharp.Extended.TileFailureTracker.ShouldSkip
+  fullName: SkiaSharp.Extended.TileFailureTracker.ShouldSkip
+  nameWithType: TileFailureTracker.ShouldSkip
 - uid: SkiaSharp.Extended.UI.Controls
   name: SkiaSharp.Extended.UI.Controls
   href: api/SkiaSharp.Extended.UI.Controls.html

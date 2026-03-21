@@ -99,7 +99,7 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling,
+  <div class="markdown summary"><p>Orchestrates the image pyramid rendering pipeline: viewport management, tile scheduling,
 cache management, and rendering.</p>
 </div>
   <div class="markdown conceptual"></div>
@@ -163,7 +163,7 @@ and gesture recognition belong in the consuming layer.
 </p>
 <p>
 Typical usage:
-<ol><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_SkiaSharp_Extended_ISKImagePyramidTileProvider_">Load(ISKImagePyramidSource, ISKImagePyramidTileProvider)</a> to load an image.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SetControlSize.html#SkiaSharp_Extended_SKImagePyramidController_SetControlSize_System_Double_System_Double_">SetControlSize(double, double)</a> when the canvas size changes.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Update.html#SkiaSharp_Extended_SKImagePyramidController_Update">Update()</a> to schedule tile loads each frame.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Render.html#SkiaSharp_Extended_SKImagePyramidController_Render_SkiaSharp_Extended_ISKImagePyramidRenderer_">Render(ISKImagePyramidRenderer)</a> from your canvas paint callback, passing the renderer for this frame.</li></ol>
+<ol><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SetProvider.html#SkiaSharp_Extended_SKImagePyramidController_SetProvider_SkiaSharp_Extended_ISKImagePyramidTileProvider_">SetProvider(ISKImagePyramidTileProvider)</a> to configure the tile fetch/cache pipeline.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_">Load(ISKImagePyramidSource)</a> to load an image.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SetControlSize.html#SkiaSharp_Extended_SKImagePyramidController_SetControlSize_System_Double_System_Double_">SetControlSize(double, double)</a> when the canvas size changes.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Update.html#SkiaSharp_Extended_SKImagePyramidController_Update">Update()</a> to schedule tile loads each frame.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Render.html#SkiaSharp_Extended_SKImagePyramidController_Render_SkiaSharp_Extended_ISKImagePyramidRenderer_">Render(ISKImagePyramidRenderer)</a> from your canvas paint callback.</li></ol>
 
 </div>
 
@@ -171,7 +171,7 @@ Typical usage:
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.-ctor.html#SkiaSharp_Extended_SKImagePyramidController__ctor">SKImagePyramidController()</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.-ctor.html#SkiaSharp_Extended_SKImagePyramidController__ctor_SkiaSharp_Extended_ISKImagePyramidTileCache_">SKImagePyramidController(ISKImagePyramidTileCache?)</a></dt>
     <dd><p>Initializes a new <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.html">SKImagePyramidController</a>.</p>
 </dd>
   </dl>
@@ -186,8 +186,7 @@ Typical usage:
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Cache.html#SkiaSharp_Extended_SKImagePyramidController_Cache">Cache</a></dt>
-    <dd><p>The internal render buffer holding decoded tiles for the current frame.
-This is the controller's in-memory hot cache for the rendering loop.</p>
+    <dd><p>The in-memory render cache. Exposed for observability (count, diagnostics).</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -213,6 +212,16 @@ Returns 0 if no image is loaded.</p>
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Provider.html#SkiaSharp_Extended_SKImagePyramidController_Provider">Provider</a></dt>
+    <dd><p>The active tile provider, or null if not set.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Source.html#SkiaSharp_Extended_SKImagePyramidController_Source">Source</a></dt>
+    <dd><p>The active tile source, or null if not loaded.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SubImages.html#SkiaSharp_Extended_SKImagePyramidController_SubImages">SubImages</a></dt>
     <dd><p>The sub-images from the loaded DZC, or empty if not loaded from a DZC.</p>
 </dd>
@@ -220,11 +229,6 @@ Returns 0 if no image is loaded.</p>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.TileLayout.html#SkiaSharp_Extended_SKImagePyramidController_TileLayout">TileLayout</a></dt>
     <dd><p>The tile layout calculator.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.TileSource.html#SkiaSharp_Extended_SKImagePyramidController_TileSource">TileSource</a></dt>
-    <dd><p>The loaded tile source, or null if not loaded.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -246,8 +250,14 @@ Returns 0 if no image is loaded.</p>
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_">Load(ISKImagePyramidSource)</a></dt>
+    <dd><p>Loads a tile source. Resets the viewport to show the full image.
+<a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Provider.html#SkiaSharp_Extended_SKImagePyramidController_Provider">Provider</a> must be set first via <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SetProvider.html#SkiaSharp_Extended_SKImagePyramidController_SetProvider_SkiaSharp_Extended_ISKImagePyramidTileProvider_">SetProvider(ISKImagePyramidTileProvider)</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_SkiaSharp_Extended_ISKImagePyramidTileProvider_">Load(ISKImagePyramidSource, ISKImagePyramidTileProvider)</a></dt>
-    <dd><p>Loads a DZI or IIIF tile source. Resets the viewport to show the full image.</p>
+    <dd><p>Convenience: sets the provider and loads a source in one call.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -255,8 +265,7 @@ Returns 0 if no image is loaded.</p>
     <dd><p>Loads a DZC collection source. Populates <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SubImages.html#SkiaSharp_Extended_SKImagePyramidController_SubImages">SubImages</a> with the items in
 the collection. Does NOT set a renderable tile source — listen for
 <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.CollectionOpenSucceeded.html">CollectionOpenSucceeded</a> and then call
-<a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_SkiaSharp_Extended_ISKImagePyramidTileProvider_">Load(ISKImagePyramidSource, ISKImagePyramidTileProvider)</a> with a specific
-sub-image source to actually render.</p>
+<a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_">Load(ISKImagePyramidSource)</a> with a specific sub-image source to render.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -266,18 +275,7 @@ sub-image source to actually render.</p>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Render.html#SkiaSharp_Extended_SKImagePyramidController_Render_SkiaSharp_Extended_ISKImagePyramidRenderer_">Render(ISKImagePyramidRenderer)</a></dt>
-    <dd><p>Executes the two-pass LOD rendering pipeline using the provided renderer.
-The renderer is transient — it is only used during this call and should not be
-stored by the controller. This allows the renderer (and its canvas) to be created
-and discarded per frame, which is required by some graphics APIs.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.ReplaceProvider.html#SkiaSharp_Extended_SKImagePyramidController_ReplaceProvider_SkiaSharp_Extended_ISKImagePyramidTileProvider_">ReplaceProvider(ISKImagePyramidTileProvider)</a></dt>
-    <dd><p>Replaces the active tile provider without disturbing the loaded image, viewport state,
-or zoom level. All pending tile loads are cancelled and in-flight tiles are discarded;
-the render buffer is cleared and tiles are re-fetched as the view is repainted.
-The old provider is disposed by this method.</p>
+    <dd><p>Executes the two-pass LOD rendering pipeline using the provided renderer.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -286,8 +284,21 @@ The old provider is disposed by this method.</p>
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.RetryFailedTiles.html#SkiaSharp_Extended_SKImagePyramidController_RetryFailedTiles">RetryFailedTiles()</a></dt>
+    <dd><p>Clears all failure state, allowing failed tiles to be re-fetched.
+Call after network recovery or when retrying is appropriate.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SetControlSize.html#SkiaSharp_Extended_SKImagePyramidController_SetControlSize_System_Double_System_Double_">SetControlSize(double, double)</a></dt>
     <dd><p>Sets the control (canvas) size. Refits the viewport when the user has not manually zoomed.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SetProvider.html#SkiaSharp_Extended_SKImagePyramidController_SetProvider_SkiaSharp_Extended_ISKImagePyramidTileProvider_">SetProvider(ISKImagePyramidTileProvider)</a></dt>
+    <dd><p>Sets the tile provider (fetch + cache pipeline). Cancels pending loads, clears
+failed tiles and render buffer, and fires <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.InvalidateRequired.html">InvalidateRequired</a>.
+The controller does NOT own the provider lifecycle — the caller manages disposal.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -322,10 +333,7 @@ Call from your render loop on every frame.</p>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.CollectionOpenSucceeded.html">CollectionOpenSucceeded</a></dt>
-    <dd><p>Fired when a DZC collection is successfully loaded and <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SubImages.html#SkiaSharp_Extended_SKImagePyramidController_SubImages">SubImages</a> is populated.
-Use this event to know when the collection is ready. To render a specific image from the
-collection, call <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Load.html#SkiaSharp_Extended_SKImagePyramidController_Load_SkiaSharp_Extended_ISKImagePyramidSource_SkiaSharp_Extended_ISKImagePyramidTileProvider_">Load(ISKImagePyramidSource, ISKImagePyramidTileProvider)</a>
-with one of the sub-image sources from <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SubImages.html#SkiaSharp_Extended_SKImagePyramidController_SubImages">SubImages</a>.</p>
+    <dd><p>Fired when a DZC collection is successfully loaded and <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.SubImages.html#SkiaSharp_Extended_SKImagePyramidController_SubImages">SubImages</a> is populated.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -375,7 +383,7 @@ with one of the sub-image sources from <a class="xref" href="SkiaSharp.Extended.
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 73d9cc1
+          source: PR #379 · a6b19c7
         </div>
       </div>
     </footer>

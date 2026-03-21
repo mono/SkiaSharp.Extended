@@ -102,6 +102,29 @@ Classes
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKChainedTileCacheStore.html">SKChainedTileCacheStore</a></dt>
+      <dd><p>Tries multiple cache stores in order for reads. Writes go to all writable stores.
+Use for layered caching (e.g. app-package read-only store + disk cache).</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKCompositeTileFetcher.html">SKCompositeTileFetcher</a></dt>
+      <dd><p>Tries multiple fetchers in order, returning the first non-null result.
+Use for hybrid scenarios (e.g. app package first, HTTP fallback).</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDiskTileCacheStore.html">SKDiskTileCacheStore</a></dt>
+      <dd><p>Persistent tile cache backed by the local filesystem.
+Uses URL-derived hash keys, bucketed directories, and configurable expiry.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKFileTileFetcher.html">SKFileTileFetcher</a></dt>
+      <dd><p>Reads tiles from the local filesystem. No caching — the file IS the source.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKGeometry.html">SKGeometry</a></dt>
       <dd><p>Provides geometry utility methods for creating paths, calculating polygon properties, and interpolating between paths.</p>
 </dd>
@@ -112,8 +135,13 @@ Classes
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKHttpTileFetcher.html">SKHttpTileFetcher</a></dt>
+      <dd><p>Fetches tiles over HTTP. Pure network access — no caching.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.html">SKImagePyramidController</a></dt>
-      <dd><p>Orchestrates the Deep Zoom rendering pipeline: viewport management, tile scheduling,
+      <dd><p>Orchestrates the image pyramid rendering pipeline: viewport management, tile scheduling,
 cache management, and rendering.</p>
 </dd>
     </dl>
@@ -133,23 +161,6 @@ Maps to Silverlight's MultiScaleSubImage.</p>
       <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidDziSource.html">SKImagePyramidDziSource</a></dt>
       <dd><p>Represents a Deep Zoom Image (DZI) tile source. Parses the DZI XML descriptor
 and provides tile pyramid math for computing tile URLs and dimensions.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.html">SKImagePyramidFileSystemTileCache</a></dt>
-      <dd><p>A two-tier tile cache: LRU memory (L1) + local filesystem (L2).
-Tiles are stored as raw encoded bytes on disk — no re-encoding needed.
-The filesystem tier survives app restarts and reduces network usage.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileTileProvider.html">SKImagePyramidFileTileProvider</a></dt>
-      <dd><p>Reads tiles from the local filesystem. No disk caching is performed — the file IS the source.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidHttpTileProvider.html">SKImagePyramidHttpTileProvider</a></dt>
-      <dd><p>Fetches tiles over HTTP with an optional URL-keyed disk cache.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -180,9 +191,14 @@ Mirrors Silverlight's MultiScaleSubImage with inverted viewport coordinates.</p>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.html">SKImagePyramidTile</a></dt>
-      <dd><p>An opaque tile that holds both the decoded image for rendering and the original
-encoded bytes for storage. This allows disk and browser caches to persist tiles
-without re-encoding, and handles forward-only streams by buffering at fetch time.</p>
+      <dd><p>An opaque tile that holds the decoded image for rendering and optionally
+the original encoded bytes for storage.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTileData.html">SKImagePyramidTileData</a></dt>
+      <dd><p>Encoded tile data that flows through the fetch/cache pipeline.
+Wraps the raw encoded bytes (JPEG, PNG, etc.) with optional metadata.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -205,6 +221,12 @@ and image pixel spaces. Mirrors Silverlight's MultiScaleImage viewport behavior.
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKNullTileCacheStore.html">SKNullTileCacheStore</a></dt>
+      <dd><p>A no-op cache store that never stores or returns anything.
+Use for testing or when persistent caching is disabled.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.html">SKPathInterpolation</a></dt>
       <dd><p>Interpolates between two <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpath">SKPath</a> objects by converting them to normalized point arrays and morphing between them.</p>
 </dd>
@@ -223,6 +245,20 @@ This class is thread-safe as all methods are stateless static operations.</p>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
       <dd><p>Holds the results of a pixel-by-pixel image comparison.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.SKTieredTileProvider.html">SKTieredTileProvider</a></dt>
+      <dd><p>Composes a fetcher and optional persistent cache into a tile provider.
+Flow: persistent cache → origin fetch → persist → decode → return.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.TileFailureTracker.html">TileFailureTracker</a></dt>
+      <dd><p>Tracks tile fetch failures with exponential backoff.
+Replaces permanent blacklisting — transient failures are retried
+after increasing delays, while tiles that exceed the retry limit
+are treated as permanent failures until manually reset.</p>
 </dd>
     </dl>
     <h3 id="structs">
@@ -281,16 +317,26 @@ tile URLs and dimensions. Implement this to support new image formats (DZI, IIIF
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.html">ISKImagePyramidTileCache</a></dt>
-      <dd><p>Pluggable tile cache for the Deep Zoom rendering pipeline.
-Tiles are stored as <a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.html">SKImagePyramidTile</a> instances (image + raw bytes).</p>
+      <dd><p>The internal sync render buffer used by <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.html">SKImagePyramidController</a>.
+Stores hot decoded tiles for the render loop.</p>
 </dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileProvider.html">ISKImagePyramidTileProvider</a></dt>
-      <dd><p>Owns the complete fetch-and-persist pipeline for a single tile URL.
-The controller asks for a tile by URL and receives a decoded tile (or null).
-How the tile is obtained — from an HTTP server, a local file, a disk cache,
-or browser storage — is an implementation detail invisible to the controller.</p>
+      <dd><p>Returns decoded tiles to the controller. How the tile is obtained
+(cache, network, filesystem) is an implementation detail.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.ISKTileCacheStore.html">ISKTileCacheStore</a></dt>
+      <dd><p>Platform-agnostic persistent tile storage keyed by string.
+Implementations provide disk, browser, or database-backed stores.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="SkiaSharp.Extended.ISKTileFetcher.html">ISKTileFetcher</a></dt>
+      <dd><p>Fetches raw encoded tile data from an origin source.
+No caching logic — pure network, filesystem, or resource access.</p>
 </dd>
     </dl>
 
@@ -313,7 +359,7 @@ or browser storage — is an implementation detail invisible to the controller.<
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 73d9cc1
+          source: PR #379 · a6b19c7
         </div>
       </div>
     </footer>

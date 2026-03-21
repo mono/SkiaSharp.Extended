@@ -200,19 +200,19 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Sources/SKImagePyramidDziSource.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Parses a DZI XML from a stream with a base URI for computing tile URLs.</p>
+<div class="markdown level1 summary"><p>Parses a DZI XML from a stream with a tiles base URI.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public static SKImagePyramidDziSource Parse(Stream stream, string? baseUri)</code></pre>
+  <pre><code class="lang-csharp hljs">public static SKImagePyramidDziSource Parse(Stream stream, string? tilesBaseUri)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
   <dd></dd>
-  <dt><code>baseUri</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dt><code>tilesBaseUri</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
   <dd></dd>
 </dl>
 
@@ -239,19 +239,101 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Sources/SKImagePyramidDziSource.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Parses a DZI XML string with a base URI.</p>
+<div class="markdown level1 summary"><p>Parses a DZI XML string with a tiles base URI.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public static SKImagePyramidDziSource Parse(string xml, string? baseUri)</code></pre>
+  <pre><code class="lang-csharp hljs">public static SKImagePyramidDziSource Parse(string xml, string? tilesBaseUri)</code></pre>
 </div>
 
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>xml</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
   <dd></dd>
-  <dt><code>baseUri</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dt><code>tilesBaseUri</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd></dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidDziSource.html">SKImagePyramidDziSource</a></dt>
+  <dd></dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKImagePyramidDziSource_Parse_" data-uid="SkiaSharp.Extended.SKImagePyramidDziSource.Parse*"></a>
+
+<h3 id="SkiaSharp_Extended_SKImagePyramidDziSource_Parse_System_String_System_Uri_" data-uid="SkiaSharp.Extended.SKImagePyramidDziSource.Parse(System.String,System.Uri)">
+  Parse(string, Uri)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Sources/SKImagePyramidDziSource.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Parses a DZI XML string, deriving the tiles base URI from the DZI file URI
+using the Deep Zoom convention: <code>{name}_files/</code> relative to the DZI location.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKImagePyramidDziSource Parse(string xml, Uri dziUri)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>xml</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+  <dd><p>The DZI XML content.</p>
+</dd>
+  <dt><code>dziUri</code> <span class="xref">Uri</span></dt>
+  <dd><p>The URI of the DZI file (e.g. <code>&quot;https://server.com/image.dzi&quot;</code> or <code>&quot;tiles/image.dzi&quot;</code>).
+The tiles base URI is derived as <code>{uri_without_extension}_files/</code>.</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidDziSource.html">SKImagePyramidDziSource</a></dt>
+  <dd></dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="SkiaSharp_Extended_SKImagePyramidDziSource_Parse_" data-uid="SkiaSharp.Extended.SKImagePyramidDziSource.Parse*"></a>
+
+<h3 id="SkiaSharp_Extended_SKImagePyramidDziSource_Parse_System_IO_Stream_System_Uri_" data-uid="SkiaSharp.Extended.SKImagePyramidDziSource.Parse(System.IO.Stream,System.Uri)">
+  Parse(Stream, Uri)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/Sources/SKImagePyramidDziSource.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Parses a DZI XML from a stream, deriving the tiles base URI from the DZI file URI.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static SKImagePyramidDziSource Parse(Stream stream, Uri dziUri)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+  <dd></dd>
+  <dt><code>dziUri</code> <span class="xref">Uri</span></dt>
   <dd></dd>
 </dl>
 
@@ -290,7 +372,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 73d9cc1
+          source: PR #379 · a6b19c7
         </div>
       </div>
     </footer>

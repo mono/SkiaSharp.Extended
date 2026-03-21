@@ -121,8 +121,8 @@
 
 <a id="SkiaSharp_Extended_SKImagePyramidController__ctor_" data-uid="SkiaSharp.Extended.SKImagePyramidController.#ctor*"></a>
 
-<h3 id="SkiaSharp_Extended_SKImagePyramidController__ctor" data-uid="SkiaSharp.Extended.SKImagePyramidController.#ctor">
-  SKImagePyramidController()
+<h3 id="SkiaSharp_Extended_SKImagePyramidController__ctor_SkiaSharp_Extended_ISKImagePyramidTileCache_" data-uid="SkiaSharp.Extended.SKImagePyramidController.#ctor(SkiaSharp.Extended.ISKImagePyramidTileCache)">
+  SKImagePyramidController(ISKImagePyramidTileCache?)
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidController.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
@@ -131,9 +131,17 @@
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKImagePyramidController()</code></pre>
+  <pre><code class="lang-csharp hljs">public SKImagePyramidController(ISKImagePyramidTileCache? memoryCache = null)</code></pre>
 </div>
 
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>memoryCache</code> <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.html">ISKImagePyramidTileCache</a></dt>
+  <dd><p>Optional in-memory tile cache for the render loop. If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>,
+a default <a class="xref" href="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.html">SKImagePyramidMemoryTileCache</a> with 256 entries is created.
+The controller owns the cache lifecycle and disposes it on <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.Dispose.html#SkiaSharp_Extended_SKImagePyramidController_Dispose">Dispose()</a>.</p>
+</dd>
+</dl>
 
 
 
@@ -165,7 +173,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 73d9cc1
+          source: PR #379 · a6b19c7
         </div>
       </div>
     </footer>

@@ -127,12 +127,12 @@
 </h3>
 
 <div class="markdown level1 summary"><p>The original encoded bytes (JPEG, PNG, etc.) for disk or browser storage.
-Using these avoids re-encoding and preserves the original format and quality.</p>
+Null when the tile was created for render-only use without persistence.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public byte[] RawData { get; }</code></pre>
+  <pre><code class="lang-csharp hljs">public byte[]? RawData { get; }</code></pre>
 </div>
 
 
@@ -171,7 +171,7 @@ Using these avoids re-encoding and preserves the original format and quality.</p
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 73d9cc1
+          source: PR #379 · a6b19c7
         </div>
       </div>
     </footer>

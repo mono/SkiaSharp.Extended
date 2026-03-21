@@ -99,8 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Pluggable tile cache for the Deep Zoom rendering pipeline.
-Tiles are stored as <a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.html">SKImagePyramidTile</a> instances (image + raw bytes).</p>
+  <div class="markdown summary"><p>The internal sync render buffer used by <a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.html">SKImagePyramidController</a>.
+Stores hot decoded tiles for the render loop.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -125,6 +125,11 @@ Tiles are stored as <a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.
 
 
 
+  <h2 id="SkiaSharp_Extended_ISKImagePyramidTileCache_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>This is a pure in-memory LRU cache — no persistence, no async. Disk caching and
+other persistent strategies are the responsibility of <a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileProvider.html">ISKImagePyramidTileProvider</a>
+implementations, not this interface.</p>
+</div>
 
   <h2 class="section" id="properties">Properties
 </h2>
@@ -140,44 +145,33 @@ Tiles are stored as <a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.Clear.html#SkiaSharp_Extended_ISKImagePyramidTileCache_Clear">Clear()</a></dt>
-    <dd><p>Clears all cached tiles.</p>
+    <dd><p>Clears all cached tiles, disposing their resources.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.Contains.html#SkiaSharp_Extended_ISKImagePyramidTileCache_Contains_SkiaSharp_Extended_SKImagePyramidTileId_">Contains(SKImagePyramidTileId)</a></dt>
-    <dd><p>Returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the tile is in the in-memory cache.</p>
+    <dd><p>Returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the tile is present in the cache.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.FlushEvicted.html#SkiaSharp_Extended_ISKImagePyramidTileCache_FlushEvicted">FlushEvicted()</a></dt>
-    <dd><p>Disposes tiles evicted since the last call. Call once per render frame
-on the UI thread before drawing to safely release resources.</p>
+    <dd><p>Disposes tiles evicted since the last call.
+Call once per render frame on the UI thread before drawing.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.Put.html#SkiaSharp_Extended_ISKImagePyramidTileCache_Put_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_">Put(SKImagePyramidTileId, SKImagePyramidTile?)</a></dt>
-    <dd><p>Stores a tile synchronously (in-memory only).</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.PutAsync.html#SkiaSharp_Extended_ISKImagePyramidTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_System_Threading_CancellationToken_">PutAsync(SKImagePyramidTileId, SKImagePyramidTile?, CancellationToken)</a></dt>
-    <dd><p>Stores a tile, including any L2 storage (disk, browser). Implementations may apply async I/O.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.Put.html#SkiaSharp_Extended_ISKImagePyramidTileCache_Put_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_">Put(SKImagePyramidTileId, SKImagePyramidTile)</a></dt>
+    <dd><p>Stores a tile in the cache.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.Remove.html#SkiaSharp_Extended_ISKImagePyramidTileCache_Remove_SkiaSharp_Extended_SKImagePyramidTileId_">Remove(SKImagePyramidTileId)</a></dt>
-    <dd><p>Removes a specific tile from the cache.</p>
+    <dd><p>Removes a specific tile from the cache. Returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> if not found.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.TryGet.html#SkiaSharp_Extended_ISKImagePyramidTileCache_TryGet_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile__">TryGet(SKImagePyramidTileId, out SKImagePyramidTile?)</a></dt>
-    <dd><p>Tries to retrieve a cached tile synchronously. Only checks in-memory storage.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.TryGetAsync.html#SkiaSharp_Extended_ISKImagePyramidTileCache_TryGetAsync_SkiaSharp_Extended_SKImagePyramidTileId_System_Threading_CancellationToken_">TryGetAsync(SKImagePyramidTileId, CancellationToken)</a></dt>
-    <dd><p>Asynchronously tries to retrieve a cached tile, including any L2 storage (disk, browser).
-A null return means cache miss — the caller should then fetch from network.</p>
+    <dd><p>Tries to retrieve a cached tile. Returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> on a miss.</p>
 </dd>
   </dl>
 
@@ -202,7 +196,7 @@ A null return means cache miss — the caller should then fetch from network.</p
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 73d9cc1
+          source: PR #379 · a6b19c7
         </div>
       </div>
     </footer>

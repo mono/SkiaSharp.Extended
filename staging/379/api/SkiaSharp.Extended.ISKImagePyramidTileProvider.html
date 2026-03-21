@@ -99,10 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Owns the complete fetch-and-persist pipeline for a single tile URL.
-The controller asks for a tile by URL and receives a decoded tile (or null).
-How the tile is obtained — from an HTTP server, a local file, a disk cache,
-or browser storage — is an implementation detail invisible to the controller.</p>
+  <div class="markdown summary"><p>Returns decoded tiles to the controller. How the tile is obtained
+(cache, network, filesystem) is an implementation detail.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -130,11 +128,10 @@ or browser storage — is an implementation detail invisible to the controller.<
   <h2 id="SkiaSharp_Extended_ISKImagePyramidTileProvider_remarks">Remarks</h2>
   <div class="markdown level0 remarks"><p>
 Built-in implementations:
-<ul><li><a class="xref" href="SkiaSharp.Extended.SKImagePyramidHttpTileProvider.html">SKImagePyramidHttpTileProvider</a> — HTTP fetch with optional disk caching.</li><li><a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileTileProvider.html">SKImagePyramidFileTileProvider</a> — reads from the local filesystem; no disk cache needed.</li></ul>
+<ul><li><a class="xref" href="SkiaSharp.Extended.SKTieredTileProvider.html">SKTieredTileProvider</a> — composes a fetcher and optional persistent cache.</li></ul>
 
 <p>
-Custom implementations (e.g. browser storage for Blazor WebAssembly) are supported by implementing
-this interface directly.
+Custom implementations are supported by implementing this interface directly.
 </p>
 </div>
 
@@ -168,7 +165,7 @@ this interface directly.
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 73d9cc1
+          source: PR #379 · a6b19c7
         </div>
       </div>
     </footer>

@@ -99,9 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>An opaque tile that holds both the decoded image for rendering and the original
-encoded bytes for storage. This allows disk and browser caches to persist tiles
-without re-encoding, and handles forward-only streams by buffering at fetch time.</p>
+  <div class="markdown summary"><p>An opaque tile that holds the decoded image for rendering and optionally
+the original encoded bytes for storage.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -159,8 +158,8 @@ without re-encoding, and handles forward-only streams by buffering at fetch time
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.-ctor.html#SkiaSharp_Extended_SKImagePyramidTile__ctor_SkiaSharp_SKImage_System_Byte___System_String_">SKImagePyramidTile(SKImage, byte[], string)</a></dt>
-    <dd><p>Creates a new tile from a decoded image and the original encoded bytes.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.-ctor.html#SkiaSharp_Extended_SKImagePyramidTile__ctor_SkiaSharp_SKImage_System_Byte___">SKImagePyramidTile(SKImage, byte[]?)</a></dt>
+    <dd><p>Creates a new tile from a decoded image and optional raw bytes.</p>
 </dd>
   </dl>
 
@@ -175,13 +174,7 @@ without re-encoding, and handles forward-only streams by buffering at fetch time
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.RawData.html#SkiaSharp_Extended_SKImagePyramidTile_RawData">RawData</a></dt>
     <dd><p>The original encoded bytes (JPEG, PNG, etc.) for disk or browser storage.
-Using these avoids re-encoding and preserves the original format and quality.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.SourceId.html#SkiaSharp_Extended_SKImagePyramidTile_SourceId">SourceId</a></dt>
-    <dd><p>The identifier of the source that produced this tile.
-Set by the controller after fetching; empty string if not yet stamped.</p>
+Null when the tile was created for render-only use without persistence.</p>
 </dd>
   </dl>
 
@@ -214,7 +207,7 @@ Set by the controller after fetching; empty string if not yet stamped.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 73d9cc1
+          source: PR #379 · a6b19c7
         </div>
       </div>
     </footer>

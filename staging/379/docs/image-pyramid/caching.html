@@ -86,116 +86,119 @@
         <article data-uid="">
 <h1 id="image-pyramid--caching">Image Pyramid — Caching</h1>
 
-<p>The tile cache stores <code>SKImagePyramidTile</code> instances (decoded <code>SKImage</code> + original raw bytes) so tiles don't need to be re-fetched or re-decoded on every frame. The cache is <strong>pluggable</strong> — swap implementations to tune memory usage, add persistence, or chain multiple tiers.</p>
-<h2 id="iskimagepyramidtilecache">ISKImagePyramidTileCache</h2>
-<p>All caches implement this interface:</p>
+<p>The tile caching system is split into two separate concerns with distinct owners:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Concern</th>
+<th style="text-align: left;">Owner</th>
+<th style="text-align: left;">Interface</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Hot render buffer</td>
+<td style="text-align: left;">Controller (internal)</td>
+<td style="text-align: left;"><code>ISKImagePyramidTileCache</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Persistent storage (disk, browser)</td>
+<td style="text-align: left;">Provider</td>
+<td style="text-align: left;"><code>ISKImagePyramidTileProvider</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="the-render-buffer-iskimagepyramidtilecache">The Render Buffer (ISKImagePyramidTileCache)</h2>
+<p>The render buffer is a <strong>sync-only, in-memory LRU cache</strong> owned entirely by the controller. Its job is to hold decoded tiles so the renderer can draw the current viewport without any I/O.</p>
 <pre><code class="lang-csharp">public interface ISKImagePyramidTileCache : IDisposable
 {
-    /// &lt;summary&gt;Number of tiles currently in the cache.&lt;/summary&gt;
     int Count { get; }
-
-    /// &lt;summary&gt;Synchronous lookup — used by the renderer (no blocking I/O).&lt;/summary&gt;
-    bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile);
-
-    /// &lt;summary&gt;Async lookup — use for I/O-backed tiers (disk, browser storage).&lt;/summary&gt;
-    Task&lt;SKImagePyramidTile?&gt; TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default);
-
-    /// &lt;summary&gt;Returns true if the tile is cached.&lt;/summary&gt;
     bool Contains(SKImagePyramidTileId id);
-
-    /// &lt;summary&gt;Synchronous write — for in-memory caches.&lt;/summary&gt;
-    void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile);
-
-    /// &lt;summary&gt;Async write — for I/O-backed caches or cache decorators.&lt;/summary&gt;
-    Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default);
-
-    /// &lt;summary&gt;Removes a specific tile.&lt;/summary&gt;
+    bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile);
+    void Put(SKImagePyramidTileId id, SKImagePyramidTile tile);
     bool Remove(SKImagePyramidTileId id);
-
-    /// &lt;summary&gt;Clears all cached tiles.&lt;/summary&gt;
     void Clear();
 
-    /// &lt;summary&gt;
-    /// Disposes tiles evicted since the last call.
-    /// Call once per render frame before drawing to safely free GPU-bound resources.
-    /// &lt;/summary&gt;
+    // Call once per frame before drawing to safely dispose evicted tiles
     void FlushEvicted();
 }
 </code></pre>
-<h3 id="sync-vs-async">Sync vs Async</h3>
-<p>There are two read/write paths:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Method</th>
-<th style="text-align: left;">Called by</th>
-<th style="text-align: left;">When to use</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>TryGet</code> / <code>Put</code></td>
-<td style="text-align: left;">Renderer (sync paint callback)</td>
-<td style="text-align: left;">Pure in-memory caches — must not block</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>TryGetAsync</code> / <code>PutAsync</code></td>
-<td style="text-align: left;">Background tile loader</td>
-<td style="text-align: left;">I/O-backed caches — disk, browser storage, network</td>
-</tr>
-</tbody>
-</table>
-<p>The controller's background tile loader calls <code>TryGetAsync</code> first. If it returns <code>null</code> (cache miss), it fetches from the network and then calls <code>PutAsync</code>. The renderer always uses the synchronous <code>TryGet</code>.</p>
-<hr>
-<h2 id="skimagepyramidmemorytilecache">SKImagePyramidMemoryTileCache</h2>
-<p>The built-in <strong>LRU (Least Recently Used)</strong> in-memory cache. When capacity is reached, the least-recently-accessed tile is evicted and scheduled for disposal.</p>
-<pre><code class="lang-csharp">// Default capacity: 256 tiles
-var cache = new SKImagePyramidMemoryTileCache();
-
-// Custom capacity
-var cache = new SKImagePyramidMemoryTileCache(maxEntries: 1024);
-
-// Pass to controller
-var controller = new SKImagePyramidController(cache: cache);
-</code></pre>
-<h3 id="properties">Properties</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Property</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>Count</code></td>
-<td style="text-align: left;">Current number of cached tiles.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>MaxEntries</code></td>
-<td style="text-align: left;">Maximum tiles before eviction begins.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="eviction-and-disposal">Eviction and Disposal</h3>
-<p>Evicted tiles are held in a pending-dispose queue rather than immediately freed. Call <code>FlushEvicted()</code> once per frame (before <code>Render</code>) to safely free GPU-bound resources:</p>
-<pre><code class="lang-csharp">void OnPaintSurface(SKPaintSurfaceEventArgs e)
-{
-    controller.Cache.FlushEvicted(); // safe to call even if nothing was evicted
-    controller.SetControlSize(e.Info.Width, e.Info.Height);
-    controller.Update();
-    controller.Render(renderer);
-}
+<p>The controller creates and manages this cache internally — you don't create or configure it. The <code>Cache</code> property on the controller exposes it for read-only monitoring (e.g. showing a tile count in a debug overlay):</p>
+<pre><code class="lang-csharp">// Read-only monitoring — do not call Put/Remove directly
+int cachedTileCount = controller.Cache.Count;
 </code></pre>
 <blockquote>
-<p>The controller calls <code>FlushEvicted()</code> automatically inside <code>Render()</code>, so you only need to call it manually if you access the cache directly.</p>
+<p><strong>Note:</strong> The cache's <code>FlushEvicted()</code> is called automatically inside <code>Render()</code> — you do not need to call it yourself.</p>
 </blockquote>
-<h3 id="capacity-guidelines">Capacity Guidelines</h3>
+<hr>
+<h2 id="persistent-storage-iskimagepyramidtileprovider">Persistent Storage (ISKImagePyramidTileProvider)</h2>
+<p>Persistent tile storage is the <strong>provider's</strong> responsibility, not the controller's. The controller simply calls <code>provider.GetTileAsync(url)</code> and the provider decides how to fulfil that request — from a disk cache, browser storage, or directly from the network.</p>
+<p>See <a href="fetching.html">Tile Fetching</a> for the full provider design and built-in implementations.</p>
+<h3 id="remote-tiles-http--disk-cache">Remote tiles (HTTP + disk cache)</h3>
+<pre><code class="lang-csharp">// HttpTileProvider fetches tiles over HTTP and caches them to disk automatically
+var provider = new SKImagePyramidHttpTileProvider(cachePath: &quot;/tmp/mycache&quot;);
+controller.Load(source, provider);
+</code></pre>
+<h3 id="local-tiles-no-disk-cache-needed">Local tiles (no disk cache needed)</h3>
+<pre><code class="lang-csharp">// FileTileProvider reads tiles directly from the filesystem — no extra caching
+var provider = new SKImagePyramidFileTileProvider();
+controller.Load(source, provider);
+</code></pre>
+<h3 id="custom-persistent-cache">Custom persistent cache</h3>
+<p>To add your own persistent storage, wrap a provider in a decorator:</p>
+<pre><code class="lang-csharp">public sealed class MyPersistentProvider : ISKImagePyramidTileProvider
+{
+    private readonly ISKImagePyramidTileProvider _inner;
+    private readonly IMyStorage _storage;
+
+    public MyPersistentProvider(ISKImagePyramidTileProvider inner, IMyStorage storage)
+    {
+        _inner = inner;
+        _storage = storage;
+    }
+
+    public async Task&lt;SKImagePyramidTile?&gt; GetTileAsync(string url, CancellationToken ct = default)
+    {
+        // 1. Check your persistent store first
+        var cached = await _storage.TryReadAsync(url, ct);
+        if (cached is not null) return cached;
+
+        // 2. Delegate to the inner provider (e.g. HttpTileProvider)
+        var tile = await _inner.GetTileAsync(url, ct);
+        if (tile is null) return null;
+
+        // 3. Persist for next time — use CancellationToken.None so a cancellation
+        //    after fetch doesn't leave the tile un-stored
+        await _storage.WriteAsync(url, tile, CancellationToken.None);
+        return tile;
+    }
+
+    public void Dispose() =&gt; _inner.Dispose();
+}
+</code></pre>
+<hr>
+<h2 id="skimagepyramidtileid">SKImagePyramidTileId</h2>
+<p>Each tile is identified by a <code>readonly record struct</code> with value equality:</p>
+<pre><code class="lang-csharp">// Level = pyramid level (0 = lowest resolution, MaxLevel = highest)
+// Col   = column index at that level
+// Row   = row index at that level
+var id = new SKImagePyramidTileId(Level: 12, Col: 3, Row: 5);
+
+Console.WriteLine(id);   // &quot;(12,3,5)&quot;
+
+// Value equality — safe to use as a dictionary key
+var same = new SKImagePyramidTileId(12, 3, 5);
+Assert.Equal(id, same);  // ✅
+</code></pre>
+<hr>
+<h2 id="render-buffer-capacity">Render Buffer Capacity</h2>
+<p>The controller creates its render buffer with a default capacity of 256 tiles. Each tile is typically a 256×256 decoded image — roughly 256 KB at full colour.</p>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Device</th>
-<th style="text-align: left;">Recommended Capacity</th>
+<th style="text-align: left;">Approximate capacity</th>
 </tr>
 </thead>
 <tbody>
@@ -213,129 +216,9 @@ var controller = new SKImagePyramidController(cache: cache);
 </tr>
 </tbody>
 </table>
-<p>Each tile is typically a 256×256 JPEG/PNG decoded to an <code>SKImagePyramidTile</code> — roughly 256 KB at full colour. 1024 tiles ≈ 256 MB of image RAM at maximum.</p>
-<hr>
-<h2 id="tiered-caching">Tiered Caching</h2>
-<p>For persistent tile storage (surviving app restarts or page reloads), add a second cache tier. The controller checks <code>TryGetAsync</code> before hitting the network:</p>
-<pre><code>Request tile
-    ↓
-TryGet (L1 memory cache)      — fast, synchronous
-    ↓ miss
-TryGetAsync (L2 disk/browser) — slower, async I/O
-    ↓ miss
-FetchTileAsync (network)      — slowest
-    ↓
-PutAsync (L2)
-    ↓
-Put (L1)
-</code></pre>
-<p>This is the <strong>cache-aside</strong> pattern — the controller actively manages both tiers. You don't need to chain fetchers; just implement <code>TryGetAsync</code> / <code>PutAsync</code> to read and write your L2 storage.</p>
-<h3 id="decorator-pattern">Decorator Pattern</h3>
-<p>A simple way to add L2 behaviour is to wrap an existing cache:</p>
-<pre><code class="lang-csharp">public sealed class TieredCache : ISKImagePyramidTileCache
-{
-    private readonly SKImagePyramidMemoryTileCache _l1;
-    private readonly IMyDiskCache _l2;
-
-    public TieredCache(int l1Capacity, IMyDiskCache l2)
-    {
-        _l1 = new SKImagePyramidMemoryTileCache(l1Capacity);
-        _l2 = l2;
-    }
-
-    public bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile)
-        =&gt; _l1.TryGet(id, out tile);
-
-    public async Task&lt;SKImagePyramidTile?&gt; TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
-    {
-        // Fast path: already in L1
-        if (_l1.TryGet(id, out var tile)) return tile;
-
-        // Slow path: check disk
-        tile = await _l2.ReadAsync(id, ct);
-        if (tile is not null)
-            _l1.Put(id, tile);   // promote to L1
-        return tile;
-    }
-
-    public void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile)      =&gt; _l1.Put(id, tile);
-    public async Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default)
-    {
-        _l1.Put(id, tile);
-        await _l2.WriteAsync(id, tile, ct);
-    }
-
-    public bool Contains(SKImagePyramidTileId id)   =&gt; _l1.Contains(id);
-    public bool Remove(SKImagePyramidTileId id)     =&gt; _l1.Remove(id);
-    public void Clear()                         { _l1.Clear(); _l2.Clear(); }
-    public void FlushEvicted()                  =&gt; _l1.FlushEvicted();
-    public int Count                            =&gt; _l1.Count;
-    public void Dispose()                       =&gt; _l1.Dispose();
-}
-</code></pre>
-<hr>
-<h2 id="skimagepyramidtileid">SKImagePyramidTileId</h2>
-<p>Each tile is identified by a <code>readonly record struct</code> with value equality — important since tile IDs are used as dictionary keys:</p>
-<pre><code class="lang-csharp">// Level = pyramid level (0 = lowest resolution, MaxLevel = highest)
-// Col   = column index at that level
-// Row   = row index at that level
-var id = new SKImagePyramidTileId(Level: 12, Col: 3, Row: 5);
-
-Console.WriteLine(id);   // &quot;(12,3,5)&quot;
-
-// Value equality — safe to use in Dictionary / ConcurrentDictionary
-var same = new SKImagePyramidTileId(12, 3, 5);
-Assert.Equal(id, same);  // ✅
-</code></pre>
-<hr>
-<h2 id="writing-a-custom-cache">Writing a Custom Cache</h2>
-<p>Any class that implements <code>ISKImagePyramidTileCache</code> can be used. Tiles are stored as <code>SKImagePyramidTile</code> instances (decoded image + raw bytes). Minimal in-memory example:</p>
-<pre><code class="lang-csharp">public sealed class BoundedDictionaryCache : ISKImagePyramidTileCache
-{
-    private readonly Dictionary&lt;SKImagePyramidTileId, SKImagePyramidTile&gt; _store = new();
-    private readonly int _maxEntries;
-
-    public BoundedDictionaryCache(int maxEntries) =&gt; _maxEntries = maxEntries;
-
-    public int Count =&gt; _store.Count;
-
-    public bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile)
-        =&gt; _store.TryGetValue(id, out tile);
-
-    public Task&lt;SKImagePyramidTile?&gt; TryGetAsync(SKImagePyramidTileId id, CancellationToken ct = default)
-        =&gt; Task.FromResult(_store.TryGetValue(id, out var t) ? t : null);
-
-    public bool Contains(SKImagePyramidTileId id) =&gt; _store.ContainsKey(id);
-
-    public void Put(SKImagePyramidTileId id, SKImagePyramidTile? tile)
-    {
-        if (tile is null || _store.Count &gt;= _maxEntries) return;
-        _store[id] = tile;
-    }
-
-    public Task PutAsync(SKImagePyramidTileId id, SKImagePyramidTile? tile, CancellationToken ct = default)
-    {
-        Put(id, tile);
-        return Task.CompletedTask;
-    }
-
-    public bool Remove(SKImagePyramidTileId id)
-    {
-        if (_store.Remove(id, out var t)) { t?.Dispose(); return true; }
-        return false;
-    }
-
-    public void Clear()
-    {
-        foreach (var t in _store.Values) t?.Dispose();
-        _store.Clear();
-    }
-
-    public void FlushEvicted() { }
-
-    public void Dispose() =&gt; Clear();
-}
-</code></pre>
+<blockquote>
+<p><strong>Custom capacity</strong> is not currently exposed via the public API. The 256-tile default suits most use cases.</p>
+</blockquote>
 <hr>
 <h2 id="related">Related</h2>
 <ul>
@@ -343,7 +226,7 @@ Assert.Equal(id, same);  // ✅
 <li><a href="controller.html">Controller &amp; Viewport</a></li>
 <li><a href="fetching.html">Tile Fetching</a></li>
 <li><a class="xref" href="../../api/SkiaSharp.Extended.ISKImagePyramidTileCache.html">API Reference — ISKImagePyramidTileCache</a></li>
-<li><a class="xref" href="../../api/SkiaSharp.Extended.SKImagePyramidMemoryTileCache.html">API Reference — SKImagePyramidMemoryTileCache</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.ISKImagePyramidTileProvider.html">API Reference — ISKImagePyramidTileProvider</a></li>
 </ul>
 
 </article>
@@ -366,7 +249,7 @@ Assert.Equal(id, same);  // ✅
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 73d9cc1
+          source: PR #379 · a6b19c7
         </div>
       </div>
     </footer>
