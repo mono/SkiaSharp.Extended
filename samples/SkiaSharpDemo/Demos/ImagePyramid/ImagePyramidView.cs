@@ -48,6 +48,7 @@ public class ImagePyramidView : ContentView
     private readonly SKCanvasView _canvas;
     private SKImagePyramidController? _controller;
     private SKImagePyramidRenderer? _renderer;
+    private EventHandler? _invalidateHandler;
     private ISKImagePyramidSource? _appliedSource;
     private ISKImagePyramidTileProvider? _appliedProvider;
     private double _lastPanX, _lastPanY;
@@ -73,7 +74,8 @@ public class ImagePyramidView : ContentView
 
         _controller = new SKImagePyramidController();
         _renderer = new SKImagePyramidRenderer();
-        _controller.InvalidateRequired += (_, _) => _canvas.InvalidateSurface();
+        _invalidateHandler = (_, _) => _canvas.InvalidateSurface();
+        _controller.InvalidateRequired += _invalidateHandler;
 
         // Apply any property values already set on the view
         _appliedSource   = null;
@@ -88,7 +90,8 @@ public class ImagePyramidView : ContentView
     {
         if (_controller != null)
         {
-            _controller.InvalidateRequired -= (_, _) => _canvas.InvalidateSurface();
+            _controller.InvalidateRequired -= _invalidateHandler;
+            _invalidateHandler = null;
             _controller.Dispose();
             _controller = null;
         }

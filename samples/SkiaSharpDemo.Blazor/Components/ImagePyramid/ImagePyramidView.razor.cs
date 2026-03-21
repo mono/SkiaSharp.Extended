@@ -56,6 +56,10 @@ public partial class ImagePyramidView : IAsyncDisposable
     /// <summary>Raised when the canvas requests a repaint (tile arrived, etc.).</summary>
     [Parameter] public EventCallback OnInvalidate { get; set; }
 
+    /// <summary>Captures any additional HTML attributes (e.g. style, class) to splat on the root element.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
     // ---- Exposed state (for inspector/host pages) ----
 
     /// <summary>

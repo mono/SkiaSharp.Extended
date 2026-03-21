@@ -4,7 +4,7 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JS
 
-<div class="ip-canvas-area"
+<div @attributes="AdditionalAttributes"
      @onmousedown="OnMouseDown"
      @onmousemove="OnMouseMove"
      @onmouseup="OnMouseUp"

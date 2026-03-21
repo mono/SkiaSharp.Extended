@@ -54,15 +54,20 @@ public partial class ImagePyramidPage : ContentPage
         try
         {
             using var client = new HttpClient();
-            var content = await client.GetStringAsync(url);
 
             bool isDzc  = url.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase);
             bool isDzi  = url.EndsWith(".dzi", StringComparison.OrdinalIgnoreCase);
             bool isIiif = url.EndsWith("/info.json", StringComparison.OrdinalIgnoreCase)
                 || url.Contains("/iiif/", StringComparison.OrdinalIgnoreCase)
                 || url.Contains("iiif.io", StringComparison.OrdinalIgnoreCase);
-            string baseDir = url[..url.LastIndexOf('/')] + "/";
-            string stem    = System.IO.Path.GetFileNameWithoutExtension(url);
+
+            string fetchUrl = url;
+            if (isIiif && !url.EndsWith("/info.json", StringComparison.OrdinalIgnoreCase))
+                fetchUrl = url.TrimEnd('/') + "/info.json";
+
+            var content = await client.GetStringAsync(fetchUrl);
+            string baseDir = fetchUrl[..fetchUrl.LastIndexOf('/')] + "/";
+            string stem    = System.IO.Path.GetFileNameWithoutExtension(fetchUrl);
 
             ReplaceProvider(new SKTieredTileProvider(new SKHttpTileFetcher()));
 
