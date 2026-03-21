@@ -37,7 +37,7 @@ public interface ISKTileFetcher : IDisposable
 var fetcher = new SKHttpTileFetcher();
 
 // Shared HttpClient (you manage its lifetime)
-var fetcher = new SKHttpTileFetcher(httpClient: myHttpClient);
+var fetcher = new SKHttpTileFetcher(myHttpClient);
 ```
 
 **`SKFileTileFetcher`** — Reads from the local filesystem. Accepts plain paths and `file://` URIs.

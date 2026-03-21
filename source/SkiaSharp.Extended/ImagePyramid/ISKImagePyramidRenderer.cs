@@ -24,6 +24,12 @@ namespace SkiaSharp.Extended;
 public interface ISKImagePyramidRenderer : IDisposable
 {
     /// <summary>
+    /// Gets or sets the canvas to render onto.
+    /// Must be set before calling <see cref="SKImagePyramidController.Render(ISKImagePyramidRenderer)"/>.
+    /// </summary>
+    SKCanvas? Canvas { get; set; }
+
+    /// <summary>
     /// Called before any tile draw calls for a render frame.
     /// Use this to set up state (e.g., save canvas, clear background).
     /// </summary>

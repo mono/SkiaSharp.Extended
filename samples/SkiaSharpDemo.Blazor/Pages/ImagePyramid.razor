@@ -42,16 +42,7 @@
 
 <div class="ip-layout @(_showInspector ? "ip-with-inspector" : "")">
 
-    <div class="ip-canvas-area"
-         @onmousedown="OnMouseDown"
-         @onmousemove="OnMouseMove"
-         @onmouseup="OnMouseUp"
-         @onmouseleave="OnMouseUp"
-         @ontouchstart="OnTouchStart"
-         @ontouchmove="OnTouchMove"
-         @ontouchend="OnTouchEnd"
-         @ontouchstart:preventDefault
-         @ontouchmove:preventDefault>
+    <div class="ip-canvas-wrapper">
         @if (_statusText != null)
         {
             <div class="ip-status">@_statusText</div>
@@ -60,15 +51,19 @@
         {
             <div class="ip-error">@_errorMessage</div>
         }
-        <SKGLView @ref="_canvas"
-                  OnPaintSurface="OnPaintSurface"
-                  style="display:block; width:100%; height:100%;" />
+        <ImagePyramidView @ref="_view"
+                          Source="_currentSource"
+                          Provider="_delayProvider"
+                          Renderer="_debugRenderer"
+                          DebugZoom="_debugZoom"
+                          OnInvalidate="OnViewInvalidate"
+                          style="display:block; width:100%; height:100%;" />
     </div>
 
     @if (_showInspector)
     {
         <ImagePyramidInspector
-            Controller="_controller"
+            Controller="_view?.Controller"
             @bind-ShowTileBorders="_showTileBorders"
             @bind-ShowTileBorders:after="OnDebugOptionsChanged"
             @bind-EnableLodBlending="_enableLodBlending"
@@ -101,40 +96,39 @@
     private const string DefaultDziUrl =
         "https://openseadragon.github.io/example-images/highsmith/highsmith.dzi";
 
-    private SKGLView? _canvas;
-    private SKImagePyramidController? _controller;
+    // ---- Component references ----
+    private ImagePyramidView? _view;
+
+    // ---- Current source (passed to view as parameter) ----
+    private ISKImagePyramidSource? _currentSource;
+
+    // ---- Status display ----
     private string? _statusText;
     private string? _errorMessage;
     private bool _showInspector = true;
 
-    // Debug overlay toggles
+    // ---- Debug overlay toggles (passed to view via Renderer parameter) ----
     private bool _showTileBorders;
     private bool _enableLodBlending = true;
     private DebugBorderRenderer? _debugRenderer;
+    private float _debugZoom = 1.0f;
+
+    // ---- Provider/cache settings (page manages these; view gets the provider as a param) ----
     private bool _cacheDelayEnabled;
     private int  _cacheDelayMin;
     private int  _cacheDelayMax = 500;
     private bool _useBrowserCache;
     private int  _cacheCapacity = 1024;
     private DelayTileProvider? _delayProvider;
-    // Debug zoom: scales the entire canvas to reveal what is off-screen (0.1–1.0)
-    private float _debugZoom = 1.0f;
 
-    // URL input
+    // ---- URL input ----
     private string _urlInput = DefaultDziUrl;
     private bool _urlLoading = false;
 
-    // Pan state
-    private bool _isDragging;
-    private double _lastMouseX;
-    private double _lastMouseY;
-
-    // Zoom slider value (1.0 = image fills control width)
+    // ---- Zoom (tracked for the toolbar slider) ----
     private double _zoom = 1.0;
-    // Logarithmic slider position (0-1)
     private double _sliderValue = 0.0;
 
-    // Log zoom range for the slider
     private const double MinZoom = 0.01;
     private const double MaxZoom = 100.0;
     private static double ZoomToSlider(double zoom)
@@ -143,122 +137,60 @@
         => MinZoom * Math.Pow(MaxZoom / MinZoom, slider);
 
     private System.Threading.Timer? _inspectorTimer;
-    private DotNetObjectReference<ImagePyramid>? _thisRef;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
 
-        // Wire up window-resize → canvas invalidate via JS
-        _thisRef = DotNetObjectReference.Create(this);
-        await JS.InvokeVoidAsync("deepZoomRegisterResize", _thisRef);
+        _debugRenderer = new DebugBorderRenderer(new SKImagePyramidRenderer());
+        _delayProvider = BuildDelayProvider();
 
-        _delayProvider = new DelayTileProvider(BuildInnerProvider());
-        _debugRenderer = new DebugBorderRenderer(new SkiaSharp.Extended.SKImagePyramidRenderer());
-        _controller = new SKImagePyramidController();
-        _controller.EnableLodBlending = _enableLodBlending;
-        _controller.InvalidateRequired += OnInvalidateRequired;
-
-        // Refresh inspector every 500ms while tiles are loading
+        // Refresh inspector every 500ms while tiles load
         _inspectorTimer = new System.Threading.Timer(_ =>
         {
-            if (_controller == null) return;
-            // Only refresh UI if something the inspector shows has changed
             var prevZoom = _zoom;
-            SyncZoomFromViewport();
-            var changed = Math.Abs(_zoom - prevZoom) > 0.001 || !_controller.IsIdle;
-            if (changed)
-                InvokeAsync(StateHasChanged);
+            SyncZoomFromView();
+            var changed = Math.Abs(_zoom - prevZoom) > 0.001 || _view?.Controller?.IsIdle == false;
+            if (changed) InvokeAsync(StateHasChanged);
         }, null, 500, 500);
 
         await LoadFromUrlAsync(DefaultDziUrl);
     }
 
-    private int _lastControlWidth;
-    private int _lastControlHeight;
+    // ---- View callbacks ----
 
-    private void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
+    private void OnViewInvalidate()
     {
-        if (_controller == null || _debugRenderer == null) return;
-        var canvas = e.Surface.Canvas;
-        canvas.Clear(SKColors.White);
-
-        var w = e.BackendRenderTarget.Width;
-        var h = e.BackendRenderTarget.Height;
-
-        // Guard: only call SetControlSize when dimensions actually change to prevent
-        // triggering re-renders from tile InvalidateRequired → StateHasChanged → layout shift → repeat.
-        if (w != _lastControlWidth || h != _lastControlHeight)
-        {
-            _lastControlWidth  = w;
-            _lastControlHeight = h;
-            _controller.SetControlSize(w, h);
-        }
-
-        // Debug zoom: scale the entire canvas so we can see what's off-screen.
-        // Translate first to center the scaled-down content, then scale.
-        // This ensures all four edges are equally visible rather than pinning top-left.
-        bool hasDebugZoom = _debugZoom < 0.999f;
-        if (hasDebugZoom)
-        {
-            canvas.Save();
-            // Translate by half the "lost" margin so content is centered
-            canvas.Translate(w * (1f - _debugZoom) / 2f, h * (1f - _debugZoom) / 2f);
-            canvas.Scale(_debugZoom);
-        }
-
-        _controller.Update();
-        _debugRenderer.Canvas = canvas;
-        _controller.Render(_debugRenderer);
-
-        // Draw canvas bounds rect to show where the screen edge is.
-        // We're still in the scaled+translated coordinate space, so (0,0,w,h) maps
-        // to the true canvas origin and size — the red border shows the real screen edges.
-        if (hasDebugZoom)
-        {
-            using var dashEffect = SKPathEffect.CreateDash(
-                new float[] { 12f / _debugZoom, 6f / _debugZoom }, 0);
-            using var borderPaint = new SKPaint
-            {
-                Color = SKColors.Red,
-                Style = SKPaintStyle.Stroke,
-                StrokeWidth = 3f / _debugZoom, // keep visually ~3px regardless of zoom
-                PathEffect = dashEffect,
-                IsAntialias = true,
-            };
-            canvas.DrawRect(0, 0, w, h, borderPaint);
-
-            canvas.Restore();
-        }
+        SyncZoomFromView();
+        InvokeAsync(StateHasChanged);
     }
 
-    private void OnInvalidateRequired(object? sender, EventArgs e)
-        => InvokeAsync(() => _canvas?.Invalidate());
+    // ---- Zoom slider ----
 
-    [JSInvokable]
-    public void OnWindowResize() => InvokeAsync(() => _canvas?.Invalidate());
-
-    // --- Zoom slider ---
     private void OnZoomSlider(ChangeEventArgs e)
     {
-        if (_controller == null) return;
         if (!double.TryParse(e.Value?.ToString(), System.Globalization.NumberStyles.Float,
                 System.Globalization.CultureInfo.InvariantCulture, out var sliderPos)) return;
         _sliderValue = sliderPos;
         _zoom = SliderToZoom(sliderPos);
-        _controller.SetZoom(_zoom);
-        InvokeAsync(() => _canvas?.Invalidate());
+        _view?.SetZoom(_zoom);
     }
 
     private void OnResetView()
     {
-        if (_controller == null) return;
-        _controller.ResetView();
-        SyncZoomFromViewport();
-        InvokeAsync(() => _canvas?.Invalidate());
+        _view?.ResetView();
+        SyncZoomFromView();
     }
 
-    // --- URL loading ---
+    private void SyncZoomFromView()
+    {
+        if (_view == null) return;
+        _zoom = _view.Zoom;
+        _sliderValue = ZoomToSlider(Math.Clamp(_zoom, MinZoom, MaxZoom));
+    }
+
+    // ---- URL loading ----
+
     private async Task OnUrlKeyDown(KeyboardEventArgs e)
     {
         if (_urlLoading) return;
@@ -281,13 +213,8 @@
         await LoadFromUrlAsync(url);
     }
 
-    /// <summary>
-    /// Fetches a DZI, DZC, or IIIF URL, parses it, and loads it into the controller.
-    /// For IIIF URLs, /info.json is appended automatically if not present.
-    /// </summary>
     private async Task LoadFromUrlAsync(string url)
     {
-        if (_controller == null) return;
         _urlLoading = true;
         _errorMessage = null;
         _statusText = "Loading…";
@@ -301,7 +228,6 @@
                 || url.Contains("/iiif/", StringComparison.OrdinalIgnoreCase)
                 || url.Contains("iiif.io", StringComparison.OrdinalIgnoreCase);
 
-            // Auto-append /info.json for bare IIIF base URLs
             string fetchUrl = url;
             if (isIiif && !url.EndsWith("/info.json", StringComparison.OrdinalIgnoreCase))
                 fetchUrl = url.TrimEnd('/') + "/info.json";
@@ -314,26 +240,27 @@
             {
                 var coll = SKImagePyramidDziCollectionSource.Parse(content);
                 coll.TilesBaseUri = baseDir;
-                _controller.Load(coll, _delayProvider!);
-                SyncZoomFromViewport();
+                // DZC collections use a separate Load overload — not ISKImagePyramidSource
+                _currentSource = null;
+                if (_view?.Controller is { } ctrl && _delayProvider != null)
+                    ctrl.Load(coll, _delayProvider);
                 _statusText = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
             }
             else if (isIiif || (!isDzi && content.TrimStart().StartsWith("{")))
             {
-                // Auto-detect IIIF if URL hints at it, or if content looks like JSON
                 var tileSource = SKImagePyramidIiifSource.Parse(content);
-                _controller.Load(tileSource, _delayProvider!);
-                SyncZoomFromViewport();
+                _currentSource = tileSource;
                 _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels, IIIF)";
             }
             else
             {
                 string tilesBase = $"{baseDir}{stem}_files/";
                 var tileSource = SKImagePyramidDziSource.Parse(content, tilesBase);
-                _controller.Load(tileSource, _delayProvider!);
-                SyncZoomFromViewport();
+                _currentSource = tileSource;
                 _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             }
+
+            // The view's Source parameter setter calls controller.Load() automatically
         }
         catch (Exception ex)
         {
@@ -346,82 +273,25 @@
         }
 
         await InvokeAsync(StateHasChanged);
-        await InvokeAsync(() => _canvas?.Invalidate());
     }
 
-    // --- Mouse pan ---
-    private void OnMouseDown(MouseEventArgs e)
-    {
-        _isDragging = true;
-        _lastMouseX = e.ClientX;
-        _lastMouseY = e.ClientY;
-    }
+    // ---- Inspector toggle ----
 
-    private void OnMouseMove(MouseEventArgs e)
-    {
-        if (!_isDragging || _controller == null) return;
-        var dx = e.ClientX - _lastMouseX;
-        var dy = e.ClientY - _lastMouseY;
-        _lastMouseX = e.ClientX;
-        _lastMouseY = e.ClientY;
-        _controller.Pan(dx, dy);
-        InvokeAsync(() => _canvas?.Invalidate());
-    }
+    private void ToggleInspector() => _showInspector = !_showInspector;
 
-    private void OnMouseUp(MouseEventArgs e)
-    {
-        _isDragging = false;
-    }
-
-    // --- Touch pan (mobile) ---
-    private void OnTouchStart(TouchEventArgs e)
-    {
-        if (e.Touches.Length > 0)
-        {
-            _isDragging = true;
-            _lastMouseX = e.Touches[0].ClientX;
-            _lastMouseY = e.Touches[0].ClientY;
-        }
-    }
-
-    private void OnTouchMove(TouchEventArgs e)
-    {
-        if (!_isDragging || _controller == null || e.Touches.Length == 0) return;
-        var dx = e.Touches[0].ClientX - _lastMouseX;
-        var dy = e.Touches[0].ClientY - _lastMouseY;
-        _lastMouseX = e.Touches[0].ClientX;
-        _lastMouseY = e.Touches[0].ClientY;
-        _controller.Pan(dx, dy);
-        InvokeAsync(() => _canvas?.Invalidate());
-    }
-
-    private void OnTouchEnd(TouchEventArgs e)
-    {
-        _isDragging = false;
-    }
-
-    private void ToggleInspector()
-    {
-        _showInspector = !_showInspector;
-        InvokeAsync(() => _canvas?.Invalidate());
-    }
-
-    private void SyncZoomFromViewport()
-    {
-        _zoom = _controller?.Viewport.Zoom ?? 1.0;
-        _sliderValue = ZoomToSlider(Math.Clamp(_zoom, MinZoom, MaxZoom));
-    }
+    // ---- Debug options ----
 
     private void OnDebugOptionsChanged()
     {
-        if (_debugRenderer == null || _controller == null) return;
-        _debugRenderer.ShowTileBorders = _showTileBorders;
-        _controller.EnableLodBlending = _enableLodBlending;
-        InvokeAsync(() => _canvas?.Invalidate());
+        if (_debugRenderer != null)
+            _debugRenderer.ShowTileBorders = _showTileBorders;
+        if (_view?.Controller != null)
+            _view.Controller.EnableLodBlending = _enableLodBlending;
     }
 
-    private void OnDebugZoomChanged()
-        => InvokeAsync(() => _canvas?.Invalidate());
+    private void OnDebugZoomChanged() { /* DebugZoom param update triggers re-render */ }
+
+    // ---- Provider management (cache/delay options) ----
 
     private void OnCacheDelayChanged()
     {
@@ -429,40 +299,23 @@
         _delayProvider.IsEnabled  = _cacheDelayEnabled;
         _delayProvider.MinDelayMs = _cacheDelayMin;
         _delayProvider.MaxDelayMs = _cacheDelayMax;
-        // Do NOT clear the render buffer here: existing lower-level tiles are needed as LOD fallbacks.
-        // Use the "Clear Cache" button to reset explicitly.
-        InvokeAsync(() => _canvas?.Invalidate());
     }
 
     private void OnCacheTypeChanged()
     {
-        if (_controller == null) return;
-        var source = _controller.Source;
         RebuildProvider();
-        if (source != null)
-            _controller.Load(source, _delayProvider!);
-        InvokeAsync(() => _canvas?.Invalidate());
     }
 
     private void OnCacheSizeChanged()
     {
-        if (_controller == null) return;
-        var source = _controller.Source;
         RebuildProvider();
-        if (source != null)
-            _controller.Load(source, _delayProvider!);
-        InvokeAsync(() => _canvas?.Invalidate());
     }
 
-    private void OnClearCache()
-    {
-        _controller?.Cache.Clear();
-        InvokeAsync(() => _canvas?.Invalidate());
-    }
+    private void OnClearCache() => _view?.Controller?.Cache.Clear();
 
     private ISKImagePyramidTileProvider BuildInnerProvider()
     {
-        var http = new SkiaSharp.Extended.SKTieredTileProvider(new SkiaSharp.Extended.SKHttpTileFetcher());
+        var http = new SKTieredTileProvider(new SKHttpTileFetcher());
         if (_useBrowserCache)
             return new BrowserStorageTileProvider(http, JS);
         return http;
@@ -477,33 +330,21 @@
 
     private void RebuildProvider()
     {
-        if (_controller == null) return;
-
-        var oldProvider = _delayProvider;
-        var newProvider = BuildDelayProvider();
-
-        _controller.SetProvider(newProvider);
-        _delayProvider = newProvider;
-        oldProvider?.Dispose(); // controller does NOT own provider lifecycle -- dispose explicitly
-
-        if (_debugRenderer != null)
-            _debugRenderer.ShowTileBorders = _showTileBorders;
+        var old = _delayProvider;
+        _delayProvider = BuildDelayProvider();
+        old?.Dispose();
+        // Force the view to pick up the new provider by re-setting _currentSource via StateHasChanged
+        // The view's Provider parameter will be re-evaluated on next render
     }
+
+    // ---- Disposal ----
 
     public async ValueTask DisposeAsync()
     {
         _inspectorTimer?.Dispose();
-        try { await JS.InvokeVoidAsync("deepZoomUnregisterResize"); } catch { }
-        _thisRef?.Dispose();
-        if (_controller != null)
-        {
-            _controller.InvalidateRequired -= OnInvalidateRequired;
-            _controller.Dispose();
-        }
-        // Controller does NOT own provider lifecycle -- always dispose explicitly.
+        // _view is disposed by Blazor's component tree teardown automatically
         _delayProvider?.Dispose();
         _debugRenderer?.Dispose();
+        await Task.CompletedTask;
     }
 }
-
-

@@ -1,6 +1,5 @@
 using SkiaSharp;
 using SkiaSharp.Extended;
-using SkiaSharp.Views.Maui;
 
 namespace SkiaSharpDemo.Demos;
 
@@ -9,8 +8,7 @@ public partial class ImagePyramidPage : ContentPage
     private const string DefaultDziUrl =
         "https://raw.githubusercontent.com/mono/SkiaSharp.Extended/refs/heads/main/resources/collections/testgrid/testgrid.dzi";
 
-    private SKImagePyramidController? _controller;
-    private SKImagePyramidRenderer? _renderer;
+    // The page manages provider lifecycle; the view receives it as a property
     private ISKImagePyramidTileProvider? _provider;
 
     public ImagePyramidPage()
@@ -22,26 +20,21 @@ public partial class ImagePyramidPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-
-        _controller = new SKImagePyramidController();
-        _renderer = new SKImagePyramidRenderer();
-        _controller.InvalidateRequired += (_, _) => canvas.InvalidateSurface();
-
+        pyramidView.Initialize();
         LoadFromUrlAsync(DefaultDziUrl);
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        _controller?.Dispose();
-        _renderer?.Dispose();
-        _provider?.Dispose();
-        _controller = null;
-        _renderer = null;
+        pyramidView.Cleanup();
+        var old = _provider;
         _provider = null;
+        old?.Dispose();
     }
 
     // --- URL loading ---
+
     private void OnUrlEntryCompleted(object? sender, EventArgs e)
     {
         if (!loadButton.IsEnabled) return;
@@ -53,7 +46,7 @@ public partial class ImagePyramidPage : ContentPage
 
     private async void LoadFromUrlAsync(string url)
     {
-        if (string.IsNullOrWhiteSpace(url) || _controller == null) return;
+        if (string.IsNullOrWhiteSpace(url)) return;
 
         loadButton.IsEnabled = false;
         statusLabel.Text = "Loading…";
@@ -63,29 +56,30 @@ public partial class ImagePyramidPage : ContentPage
             using var client = new HttpClient();
             var content = await client.GetStringAsync(url);
 
-            // Derive tiles base URL from the manifest URL
-            bool isDzc    = url.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase);
-            bool isDzi    = url.EndsWith(".dzi", StringComparison.OrdinalIgnoreCase);
-            bool isIiif   = url.EndsWith("/info.json", StringComparison.OrdinalIgnoreCase)
+            bool isDzc  = url.EndsWith(".dzc", StringComparison.OrdinalIgnoreCase);
+            bool isDzi  = url.EndsWith(".dzi", StringComparison.OrdinalIgnoreCase);
+            bool isIiif = url.EndsWith("/info.json", StringComparison.OrdinalIgnoreCase)
                 || url.Contains("/iiif/", StringComparison.OrdinalIgnoreCase)
                 || url.Contains("iiif.io", StringComparison.OrdinalIgnoreCase);
             string baseDir = url[..url.LastIndexOf('/')] + "/";
             string stem    = System.IO.Path.GetFileNameWithoutExtension(url);
 
+            ReplaceProvider(new SKTieredTileProvider(new SKHttpTileFetcher()));
+
             if (isDzc)
             {
                 var coll = SKImagePyramidDziCollectionSource.Parse(content);
                 coll.TilesBaseUri = baseDir;
-                ReplaceProvider(new SKTieredTileProvider(new SKHttpTileFetcher()));
-                _controller.Load(coll, _provider!);
+                // DZC collections use a dedicated Load overload — not ISKImagePyramidSource
+                pyramidView.Controller?.Load(coll, _provider!);
                 SyncSliderFromViewport();
-                statusLabel.Text = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC collection rendering not yet supported. Use a .dzi URL instead.";
+                statusLabel.Text = $"⚠️ Collection loaded ({coll.ItemCount} images) — DZC rendering not yet supported.";
             }
             else if (isIiif || (!isDzi && content.TrimStart().StartsWith("{")))
             {
                 var tileSource = SKImagePyramidIiifSource.Parse(content);
-                ReplaceProvider(new SKTieredTileProvider(new SKHttpTileFetcher()));
-                _controller.Load(tileSource, _provider!);
+                pyramidView.Source   = tileSource;
+                pyramidView.Provider = _provider;
                 SyncSliderFromViewport();
                 statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels, IIIF)";
             }
@@ -93,13 +87,11 @@ public partial class ImagePyramidPage : ContentPage
             {
                 string tilesBase = $"{baseDir}{stem}_files/";
                 var tileSource = SKImagePyramidDziSource.Parse(content, tilesBase);
-                ReplaceProvider(new SKTieredTileProvider(new SKHttpTileFetcher()));
-                _controller.Load(tileSource, _provider!);
+                pyramidView.Source   = tileSource;
+                pyramidView.Provider = _provider;
                 SyncSliderFromViewport();
                 statusLabel.Text = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
             }
-
-            canvas.InvalidateSurface();
         }
         catch (Exception ex)
         {
@@ -118,15 +110,7 @@ public partial class ImagePyramidPage : ContentPage
         old?.Dispose();
     }
 
-    private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
-    {
-        if (_controller == null || _renderer == null) return;
-        e.Surface.Canvas.Clear(SKColors.White);
-        _controller.SetControlSize(e.Info.Width, e.Info.Height);
-        _controller.Update();
-        _renderer.Canvas = e.Surface.Canvas;
-        _controller.Render(_renderer);
-    }
+    // --- Zoom ---
 
     private const double MinZoom = 0.01;
     private const double MaxZoom = 100.0;
@@ -136,40 +120,16 @@ public partial class ImagePyramidPage : ContentPage
 
     private void SyncSliderFromViewport()
     {
-        if (_controller == null) return;
-        var zoom = _controller.Viewport.Zoom;
+        var zoom = pyramidView.Zoom;
         zoomSlider.Value = Math.Clamp(ZoomToSlider(zoom), 0, 1);
         zoomLabel.Text = $"{zoom:F2}×";
     }
 
     private void OnZoomChanged(object? sender, ValueChangedEventArgs e)
     {
-        if (_controller == null) return;
         var zoom = SliderToZoom(e.NewValue);
-        _controller.SetZoom(zoom);
+        pyramidView.SetZoom(zoom);
         zoomLabel.Text = $"{zoom:F2}×";
-        canvas.InvalidateSurface();
-    }
-
-    private double _lastPanX, _lastPanY;
-
-    private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
-    {
-        if (_controller == null) return;
-        switch (e.StatusType)
-        {
-            case GestureStatus.Started:
-                _lastPanX = 0;
-                _lastPanY = 0;
-                break;
-            case GestureStatus.Running:
-                var dx = e.TotalX - _lastPanX;
-                var dy = e.TotalY - _lastPanY;
-                _lastPanX = e.TotalX;
-                _lastPanY = e.TotalY;
-                _controller.Pan(dx, dy);
-                canvas.InvalidateSurface();
-                break;
-        }
     }
 }
+
