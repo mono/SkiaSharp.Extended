@@ -1,0 +1,114 @@
+.ip-toolbar {
+    padding: 6px 8px;
+    background: #222;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #ddd;
+    cursor: default;
+    user-select: none;
+}
+
+.ip-zoom-label {
+    display: inline-block;
+    min-width: 7.5ch;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.ip-layout {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 155px);
+    min-height: 300px;
+    overflow: hidden;
+}
+
+.ip-canvas-area {
+    position: relative;
+    flex: 1 1 0px;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+}
+
+.ip-canvas-area.dragging {
+    cursor: grabbing;
+}
+
+.ip-status {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 4px 8px;
+    background: rgba(0,0,0,0.65);
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.ip-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 4px 8px;
+    background: #5c1010;
+    color: #ff8a80;
+    font-size: 0.8rem;
+}
+
+.ip-toggle-btn {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 100;
+    padding: 0.4rem 0.8rem;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+.ip-toggle-btn:hover { background: #1565c0; }
+
+.ip-url-row {
+    display: flex;
+    flex: 1 1 auto;
+    gap: 4px;
+    min-width: 0;
+}
+
+.ip-url-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    background: #333;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 0.8rem;
+}
+
+.ip-example-select {
+    background: #333;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 3px;
+    padding: 2px 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    max-width: 220px;
+}
+.ip-example-select:hover { border-color: #888; }
+
+/* Separator between canvas area and inspector when inspector is open */
+.ip-layout.ip-with-inspector .ip-canvas-area {
+    border-right: 1px solid #333;
+}

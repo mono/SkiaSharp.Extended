@@ -1,0 +1,25 @@
+#nullable enable
+
+namespace SkiaSharp.Extended;
+
+/// <summary>
+/// Identifies a single tile in the pyramid.
+/// </summary>
+public readonly record struct SKImagePyramidTileId(int Level, int Col, int Row)
+{
+    // Custom hash keeps netstandard2.0 compatibility (HashCode.Combine not available there).
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 17;
+            hash = hash * 31 + Level;
+            hash = hash * 31 + Col;
+            hash = hash * 31 + Row;
+            return hash;
+        }
+    }
+
+    // Preserve compact format compatible with the original struct.
+    public override string ToString() => $"({Level},{Col},{Row})";
+}

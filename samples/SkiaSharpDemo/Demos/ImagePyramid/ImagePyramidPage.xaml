@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:demos="clr-namespace:SkiaSharpDemo.Demos"
+             x:Class="SkiaSharpDemo.Demos.ImagePyramidPage"
+             Title="Image Pyramid">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
+
+        <!-- Status bar -->
+        <Label x:Name="statusLabel"
+               Grid.Row="0"
+               Text="Loading..."
+               Padding="12,6"
+               BackgroundColor="#333"
+               TextColor="White"
+               FontSize="13" />
+
+        <!-- URL input row -->
+        <Grid Grid.Row="1"
+              Padding="12,4"
+              BackgroundColor="#1a1a2e"
+              ColumnDefinitions="*,Auto">
+            <Entry x:Name="urlEntry"
+                   Grid.Column="0"
+                   Placeholder="Enter DZI or DZC URL…"
+                   PlaceholderColor="#888"
+                   TextColor="#eee"
+                   BackgroundColor="#333"
+                   FontSize="12"
+                   Margin="0,0,8,0"
+                   Completed="OnUrlEntryCompleted" />
+            <Button x:Name="loadButton"
+                    Grid.Column="1"
+                    Text="Load"
+                    FontSize="12"
+                    Padding="10,4"
+                    BackgroundColor="#1976d2"
+                    TextColor="White"
+                    Clicked="OnLoadButtonClicked" />
+        </Grid>
+
+        <!-- Zoom toolbar -->
+        <Grid Grid.Row="2"
+              Padding="12,6"
+              BackgroundColor="#222"
+              ColumnDefinitions="Auto,*,Auto">
+            <Label Grid.Column="0" Text="Zoom:" TextColor="#ccc" FontSize="13" VerticalOptions="Center" />
+            <Slider x:Name="zoomSlider"
+                    Grid.Column="1"
+                    Minimum="0" Maximum="1" Value="0.5"
+                    Margin="8,0"
+                    ValueChanged="OnZoomChanged" />
+            <Label x:Name="zoomLabel"
+                   Grid.Column="2"
+                   Text="1.00×"
+                   TextColor="#ccc"
+                   FontSize="13"
+                   WidthRequest="68"
+                   HorizontalTextAlignment="End"
+                   VerticalOptions="Center" />
+        </Grid>
+
+        <!-- Image pyramid view (owns canvas, controller, and pan gesture) -->
+        <demos:ImagePyramidView x:Name="pyramidView"
+                                Grid.Row="3" />
+
+    </Grid>
+
+</ContentPage>
+

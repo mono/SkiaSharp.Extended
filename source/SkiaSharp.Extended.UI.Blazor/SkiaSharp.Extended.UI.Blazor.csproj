@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>SkiaSharp.Extended.UI.Blazor</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended</RootNamespace>
+    <Description>Blazor WebAssembly UI controls and tile cache for SkiaSharp.Extended Image Pyramid.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.3" />
+    <PackageReference Include="SkiaSharp.Views.Blazor" Version="3.119.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SkiaSharp.Extended\SkiaSharp.Extended.csproj" />
+  </ItemGroup>
+
+</Project>

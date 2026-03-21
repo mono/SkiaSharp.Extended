@@ -1,0 +1,87 @@
+/* Root element of this component — styled directly (no ::deep needed) */
+.ip-inspector {
+    flex: 0 0 320px;
+    min-width: 320px;
+    max-width: 320px;
+    overflow-y: auto;
+    border-left: 1px solid #444;
+    padding: 0.75rem;
+    font-size: 0.8rem;
+    font-family: monospace;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    box-sizing: border-box;
+}
+
+.ip-inspector h3 { margin: 0 0 0.5rem; font-size: 1rem; }
+.ip-inspector dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; margin: 0; }
+.ip-inspector dt { color: #aaa; white-space: nowrap; }
+.ip-inspector dd { margin: 0; word-break: break-all; }
+.ip-inspector details { margin-bottom: 0.4rem; border: 1px solid #333; border-radius: 4px; }
+.ip-inspector details > summary {
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #90caf9;
+    background: #1e2a38;
+    border-radius: 4px;
+    list-style: none;
+    user-select: none;
+}
+.ip-inspector details > summary::-webkit-details-marker { display: none; }
+.ip-inspector details[open] > summary { border-radius: 4px 4px 0 0; border-bottom: 1px solid #333; }
+.ip-inspector details > summary::after { content: " ▼"; font-size: 0.65rem; float: right; }
+.ip-inspector details[open] > summary::after { content: " ▲"; }
+
+.ip-section-body { padding: 6px 8px; }
+
+.ip-tile-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+.ip-tile-table th, .ip-tile-table td { padding: 1px 4px; text-align: center; }
+.ip-tile-table th { color: #90caf9; }
+.tile-ok td { color: #81c784; }
+.tile-missing td { color: #ffb74d; }
+
+.ip-muted { color: #888; font-size: 0.75rem; margin: 2px 0; }
+
+.ip-debug-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.ip-label-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+    font-size: 0.82rem;
+    user-select: none;
+}
+
+.ip-label-row input[type=range] {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.ip-ms-label {
+    display: inline-block;
+    min-width: 4.5ch;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.ip-small-btn {
+    margin-top: 4px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: 1px solid #555;
+    border-radius: 3px;
+    background: #333;
+    color: #ddd;
+}
+.ip-small-btn:hover { background: #444; }
