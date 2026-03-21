@@ -20,12 +20,11 @@ namespace SkiaSharp.Extended;
 ///   <item>Desktop .NET: <c>Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SkiaSharpCache")</c></item>
 ///   <item>Fallback: <c>Path.GetTempPath()</c></item>
 /// </list>
-/// Blazor WebAssembly has no real filesystem; use <c>SKImagePyramidBrowserStorageTileCache</c> from
-/// <c>SkiaSharp.Extended.UI.Blazor</c> instead.
+/// Blazor WebAssembly has no real filesystem; use browser storage via JS interop instead.
 /// </para>
 /// <para>
-/// Set <see cref="ISKImagePyramidTileCache.ActiveSourceId"/> (the controller does this automatically on
-/// <c>Load()</c>) so tiles from different image sources are stored in separate subdirectories.
+/// Set <see cref="ActiveSourceId"/> to namespace tiles from different image sources into
+/// separate subdirectories and avoid cross-source key collisions.
 /// </para>
 /// </remarks>
 public class SKImagePyramidFileSystemTileCache : ISKImagePyramidTileCache

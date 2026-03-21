@@ -70,7 +70,7 @@ public sealed class SKImagePyramidHttpTileProvider : ISKImagePyramidTileProvider
     /// <inheritdoc />
     public async Task<SKImagePyramidTile?> GetTileAsync(string url, CancellationToken ct = default)
     {
-        if (ct.IsCancellationRequested) return null;
+        ct.ThrowIfCancellationRequested();
 
         // 1. Disk cache hit
         if (_cachePath != null)
@@ -106,7 +106,8 @@ public sealed class SKImagePyramidHttpTileProvider : ISKImagePyramidTileProvider
             return new SKImagePyramidTile(image, bytes);
         }
         catch (HttpRequestException) { return null; }
-        catch (OperationCanceledException) { return null; }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+        catch (OperationCanceledException) { return null; } // HTTP timeout — not our cancellation
         catch { return null; }
     }
 

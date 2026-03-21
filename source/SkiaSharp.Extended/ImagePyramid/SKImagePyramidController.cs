@@ -20,7 +20,7 @@ namespace SkiaSharp.Extended;
 /// <para>
 /// Typical usage:
 /// <list type="number">
-///   <item><description>Call <see cref="Load(SKImagePyramidDziSource, ISKImagePyramidTileFetcher)"/> to load an image.</description></item>
+///   <item><description>Call <see cref="Load(ISKImagePyramidSource, ISKImagePyramidTileProvider)"/> to load an image.</description></item>
 ///   <item><description>Call <see cref="SetControlSize"/> when the canvas size changes.</description></item>
 ///   <item><description>Call <see cref="Update"/> to schedule tile loads each frame.</description></item>
 ///   <item><description>Call <see cref="Render(ISKImagePyramidRenderer)"/> from your canvas paint callback, passing the renderer for this frame.</description></item>

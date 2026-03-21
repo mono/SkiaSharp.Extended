@@ -94,23 +94,23 @@ public class TileFetcherTest
     }
 
     [Fact]
-    public async Task HttpTileFetcher_CancellationToken_ReturnsNull()
+    public async Task HttpTileFetcher_CancellationToken_Throws()
     {
         var fetcher = new SKImagePyramidHttpTileProvider();
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
-        var result = await fetcher.GetTileAsync("http://example.com/tile.png", cts.Token);
-        Assert.Null(result);
+        await Assert.ThrowsAsync<OperationCanceledException>(
+            () => fetcher.GetTileAsync("http://example.com/tile.png", cts.Token));
         fetcher.Dispose();
     }
 
     [Fact]
-    public void HttpTileFetcher_AcceptsExternalClient()
+    public void HttpTileProvider_AcceptsExternalClient()
     {
         var client = new System.Net.Http.HttpClient();
-        var fetcher = new SKImagePyramidHttpTileFetcher(client);
-        fetcher.Dispose();
+        var provider = new SKImagePyramidHttpTileProvider(client);
+        provider.Dispose();
         // External client should not be disposed
         Assert.NotNull(client);
         client.Dispose();

@@ -7,28 +7,29 @@
 ### Construction
 
 ```csharp
-// Default: in-memory LRU cache with 1024 tile capacity
+// Parameterless constructor — internal render buffer is managed automatically
 var controller = new SKImagePyramidController();
-
-// Custom capacity
-var controller = new SKImagePyramidController(defaultCacheCapacity: 512);
-
-// Custom pluggable cache (see Caching docs)
-ISKImagePyramidTileCache myCache = new MyCustomCache();
-var controller = new SKImagePyramidController(cache: myCache);
 ```
 
 ### Loading Images
 
 ```csharp
-// DZI — single image
+// DZI — single image (HTTP)
 var source = SKImagePyramidDziSource.Parse(xmlString, "https://example.com/image_files/");
-controller.Load(source, new SKImagePyramidHttpTileFetcher());
+controller.Load(source, new SKImagePyramidHttpTileProvider());
 
 // DZC — collection of images
 var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
 collection.TilesBaseUri = "https://example.com/";
-controller.Load(collection, new SKImagePyramidHttpTileFetcher());
+controller.Load(collection, new SKImagePyramidHttpTileProvider());
+
+// DZI with disk cache (persists across app restarts)
+controller.Load(source, new SKImagePyramidHttpTileProvider(
+    diskCachePath: Path.Combine(FileSystem.CacheDirectory, "tiles"),
+    expiry: TimeSpan.FromDays(30)));
+
+// Local files
+controller.Load(source, new SKImagePyramidFileTileProvider());
 ```
 
 `Load()` resets the viewport to show the full image and starts fetching tiles in the background.
@@ -83,7 +84,7 @@ controller.ResetView();
 | Property | Type | Description |
 | :------- | :--- | :---------- |
 | `Viewport` | `SKImagePyramidViewport` | The current viewport (position and zoom). |
-| `Cache` | `ISKImagePyramidTileCache` | The tile cache. |
+| `Cache` | `SKImagePyramidMemoryTileCache` | The internal render buffer (in-memory LRU). |
 | `TileLayout` | `SKImagePyramidTileLayout` | The tile geometry and visibility calculator. |
 | `TileSource` | `ISKImagePyramidSource?` | The loaded source, or `null`. |
 | `SubImages` | `IReadOnlyList<SKImagePyramidSubImage>` | Sub-images from a DZC; empty for DZI. |
@@ -351,7 +352,7 @@ int level = source.GetOptimalLevel(viewportWidth: vp.ViewportWidth, controlWidth
 ```csharp
 var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
 collection.TilesBaseUri = "https://example.com/";
-controller.Load(collection, fetcher);
+controller.Load(collection, provider);
 ```
 
 ### Properties
@@ -368,7 +369,7 @@ controller.Load(collection, fetcher);
 ### Sub-Images After Load
 
 ```csharp
-controller.Load(collection, fetcher);
+controller.Load(collection, provider);
 
 foreach (var sub in controller.SubImages)
 {

@@ -32,7 +32,7 @@ var json = await http.GetStringAsync("https://example.org/iiif/image/my-image/in
 var source = SKImagePyramidIiifSource.Parse(json);
 
 // Load into the controller (same as DZI)
-controller.Load(source, new SKImagePyramidHttpTileFetcher());
+controller.Load(source, new SKImagePyramidHttpTileProvider());
 ```
 
 ### Construct manually
@@ -148,7 +148,7 @@ public interface ISKImagePyramidSource
 }
 ```
 
-The `SKImagePyramidController.Load(ISKImagePyramidSource, ISKImagePyramidTileFetcher)` overload
+The `SKImagePyramidController.Load(ISKImagePyramidSource, ISKImagePyramidTileProvider)` overload
 accepts any source type, making it easy to add support for other formats.
 
 ## Adding Your Own Format (e.g., Zoomify)

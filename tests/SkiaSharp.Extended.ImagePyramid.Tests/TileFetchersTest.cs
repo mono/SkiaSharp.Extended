@@ -101,14 +101,14 @@ public class TileFetchersTest
     }
 
     [Fact]
-    public async Task HttpTileFetcher_CancelledToken_ReturnsNull()
+    public async Task HttpTileFetcher_CancelledToken_Throws()
     {
         using var fetcher = new SKImagePyramidHttpTileProvider();
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
-        // Cancelled token should return null (not throw)
-        var result = await fetcher.GetTileAsync("http://localhost:1/tile.jpg", cts.Token);
-        Assert.Null(result);
+        // Cancelled token should throw OperationCanceledException (not blacklist as failed)
+        await Assert.ThrowsAsync<OperationCanceledException>(
+            () => fetcher.GetTileAsync("http://localhost:1/tile.jpg", cts.Token));
     }
 }

@@ -30,7 +30,7 @@ Use `SKImagePyramidController` with a plain `SKCanvasView` in Blazor WebAssembly
         var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/image_files/").ToString();
         var source  = SKImagePyramidDziSource.Parse(xml, baseUrl);
 
-        _controller.Load(source, new SKImagePyramidHttpTileFetcher());
+        _controller.Load(source, new SKImagePyramidHttpTileProvider());
     }
 
     private void OnPaintSurface(SKPaintSurfaceEventArgs e)
@@ -67,7 +67,7 @@ Place `.dzi` and tile folder under `wwwroot`. In the project file, mark them as 
 </ItemGroup>
 ```
 
-The `SKImagePyramidHttpTileFetcher` fetches each tile via `HttpClient`; tile URLs are constructed automatically from the base URL you pass to `SKImagePyramidDziSource.Parse`.
+The `SKImagePyramidHttpTileProvider` fetches each tile via `HttpClient`; tile URLs are constructed automatically from the base URL you pass to `SKImagePyramidDziSource.Parse`.
 
 ## Pan and Zoom
 
@@ -120,20 +120,21 @@ Wire mouse and touch events to the controller's navigation methods:
 var xml = await Http.GetStringAsync("collection.dzc");
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = Http.BaseAddress!.ToString();
-_controller!.Load(collection, new SKImagePyramidHttpTileFetcher());
+_controller!.Load(collection, new SKImagePyramidHttpTileProvider());
 ```
 
-## Custom Cache
+## Custom Provider
 
-Pass a custom `ISKImagePyramidTileCache` to the controller for tiered caching or controlled experiments:
+Pass a custom `ISKImagePyramidTileProvider` to the controller's `Load()` method for advanced scenarios:
 
 ```csharp
-// Custom in-memory cache with explicit capacity
-var cache = new SKImagePyramidMemoryTileCache(maxEntries: 512);
-_controller = new SKImagePyramidController(cache: cache);
+// With disk cache (persists across Blazor restarts via OPFS or service worker)
+controller.Load(source, new SKImagePyramidHttpTileProvider(
+    diskCachePath: "/cache/tiles",
+    expiry: TimeSpan.FromDays(7)));
 ```
 
-See the [Caching docs](caching.md) for implementing browser storage tiers, delay wrappers, and other custom strategies.
+See the [Tile Providers](fetching.md) docs for implementing browser storage tiers, delay wrappers, and other custom strategies.
 
 ## Canvas Resize
 
