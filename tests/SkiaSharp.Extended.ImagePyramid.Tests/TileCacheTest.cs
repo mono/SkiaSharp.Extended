@@ -272,20 +272,21 @@ public class TileCacheTest
     }
 
     [Fact]
-    public void SKImagePyramidTile_SourceId_IsSetFromConstructor()
+    public void SKImagePyramidTile_NoSourceId_InNewApi()
     {
         using var bmp = new SkiaSharp.SKBitmap(2, 2);
         using var img = SkiaSharp.SKImage.FromBitmap(bmp);
-        var tile = new SKImagePyramidTile(img, new byte[] { 0xFF }, "my-source");
-        Assert.Equal("my-source", tile.SourceId);
+        // SourceId parameter was removed; constructor now takes (image, rawData?)
+        var tile = new SKImagePyramidTile(img, new byte[] { 0xFF });
+        Assert.NotNull(tile.Image);
     }
 
     [Fact]
-    public void SKImagePyramidTile_SourceId_DefaultsToEmpty()
+    public void SKImagePyramidTile_NullRawData_Works()
     {
         using var bmp = new SkiaSharp.SKBitmap(2, 2);
         using var img = SkiaSharp.SKImage.FromBitmap(bmp);
-        var tile = new SKImagePyramidTile(img, new byte[] { 0xFF });
-        Assert.Equal(string.Empty, tile.SourceId);
+        var tile = new SKImagePyramidTile(img);
+        Assert.NotNull(tile.Image);
     }
 }

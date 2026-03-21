@@ -386,7 +386,7 @@ public class ImagePyramidEdgeCaseTest
         controller.SetControlSize(800, 600);
         controller.Load(dzi, new MemoryTileProvider());
 
-        Assert.NotNull(controller.TileSource);
+        Assert.NotNull(controller.Source);
         Assert.Equal(2048.0 / 1536.0, controller.AspectRatio, 2);
     }
 

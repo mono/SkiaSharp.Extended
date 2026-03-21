@@ -10,12 +10,12 @@ namespace SkiaSharp.Extended.ImagePyramid.Tests;
 
 public class CoverageBoostFinalTest
 {
-    // --- SKImagePyramidFileTileFetcher: OperationCanceledException rethrown (lines 96-98) ---
+    // --- SKFileTileFetcher: OperationCanceledException rethrown ---
 
     [Fact]
     public async Task FileTileFetcher_CancelledTokenDuringFetch_ThrowsOperationCanceledException()
     {
-        var provider = new SKImagePyramidFileTileProvider();
+        var provider = new SKTieredTileProvider(new SKFileTileFetcher());
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
@@ -24,12 +24,12 @@ public class CoverageBoostFinalTest
             () => provider.GetTileAsync("/some/path.png", cts.Token));
     }
 
-    // --- SKImagePyramidFileTileFetcher: Generic exception returns null (lines 100-102) ---
+    // --- SKFileTileFetcher: Generic exception returns null ---
 
     [Fact]
     public async Task FileTileFetcher_CorruptedFilePath_ReturnsNull()
     {
-        var provider = new SKImagePyramidFileTileProvider();
+        var provider = new SKTieredTileProvider(new SKFileTileFetcher());
 
         // A file URI with invalid characters causes an exception in Uri parsing
         // that should be caught by the generic catch and return null.
@@ -38,14 +38,14 @@ public class CoverageBoostFinalTest
         Assert.Null(result);
     }
 
-    // --- SKImagePyramidHttpTileFetcher: non-success status code (lines 43-44) ---
+    // --- SKHttpTileFetcher via SKTieredTileProvider: non-success status code ---
 
     [Fact]
     public async Task HttpTileFetcher_NonSuccessStatusCode_ReturnsNull()
     {
         var handler = new MockHttpMessageHandler(HttpStatusCode.NotFound, "");
         var client = new HttpClient(handler);
-        var provider = new SKImagePyramidHttpTileProvider(httpClient: client);
+        var provider = new SKTieredTileProvider(new SKHttpTileFetcher(httpClient: client));
 
         var result = await provider.GetTileAsync("http://example.com/tile.png", CancellationToken.None);
         Assert.Null(result);
@@ -59,7 +59,7 @@ public class CoverageBoostFinalTest
     {
         var handler = new MockHttpMessageHandler(HttpStatusCode.InternalServerError, "error");
         var client = new HttpClient(handler);
-        var provider = new SKImagePyramidHttpTileProvider(httpClient: client);
+        var provider = new SKTieredTileProvider(new SKHttpTileFetcher(httpClient: client));
 
         var result = await provider.GetTileAsync("http://example.com/tile.png", CancellationToken.None);
         Assert.Null(result);
@@ -68,14 +68,14 @@ public class CoverageBoostFinalTest
         client.Dispose();
     }
 
-    // --- SKImagePyramidHttpTileFetcher: exception path (HttpRequestException) ---
+    // --- SKHttpTileFetcher: exception path (HttpRequestException) ---
 
     [Fact]
     public async Task HttpTileFetcher_HttpRequestException_ReturnsNull()
     {
         var handler = new ThrowingHttpMessageHandler(new HttpRequestException("Network error"));
         var client = new HttpClient(handler);
-        var provider = new SKImagePyramidHttpTileProvider(httpClient: client);
+        var provider = new SKTieredTileProvider(new SKHttpTileFetcher(httpClient: client));
 
         var result = await provider.GetTileAsync("http://example.com/tile.png", CancellationToken.None);
         Assert.Null(result);
@@ -84,14 +84,14 @@ public class CoverageBoostFinalTest
         client.Dispose();
     }
 
-    // --- SKImagePyramidHttpTileFetcher: TaskCanceledException path ---
+    // --- SKHttpTileFetcher: TaskCanceledException path ---
 
     [Fact]
     public async Task HttpTileFetcher_TaskCanceledException_ReturnsNull()
     {
         var handler = new ThrowingHttpMessageHandler(new TaskCanceledException("Timeout"));
         var client = new HttpClient(handler);
-        var provider = new SKImagePyramidHttpTileProvider(httpClient: client);
+        var provider = new SKTieredTileProvider(new SKHttpTileFetcher(httpClient: client));
 
         var result = await provider.GetTileAsync("http://example.com/tile.png", CancellationToken.None);
         Assert.Null(result);
@@ -100,7 +100,7 @@ public class CoverageBoostFinalTest
         client.Dispose();
     }
 
-    // --- Mock handlers for SKImagePyramidHttpTileFetcher testing ---
+    // --- Mock handlers for SKHttpTileFetcher testing ---
 
     private class MockHttpMessageHandler : HttpMessageHandler
     {

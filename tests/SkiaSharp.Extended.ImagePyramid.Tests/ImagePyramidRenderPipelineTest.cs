@@ -72,7 +72,7 @@ public class ImagePyramidRenderPipelineTest
         var provider = new MemoryTileProvider();
         controller.Load(dzi, provider);
 
-        Assert.Equal(dzi, controller.TileSource);
+        Assert.Equal(dzi, controller.Source);
 
         // Zoom in — directly mutates viewport (no spring)
         controller.ZoomAboutScreenPoint(2.0, 400, 300);

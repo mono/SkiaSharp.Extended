@@ -11,7 +11,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_ExistingFile_ReturnsBitmap()
     {
-        var fetcher = new SKImagePyramidFileTileProvider();
+        var fetcher = new SKTieredTileProvider(new SKFileTileFetcher());
         // Create a temporary image file
         var tmpPath = Path.Combine(Path.GetTempPath(), $"tile_test_{Guid.NewGuid()}.png");
         try
@@ -37,7 +37,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_NonexistentFile_ReturnsNull()
     {
-        var fetcher = new SKImagePyramidFileTileProvider();
+        var fetcher = new SKTieredTileProvider(new SKFileTileFetcher());
         var result = await fetcher.GetTileAsync("/nonexistent/path/tile.png", CancellationToken.None);
         Assert.Null(result);
     }
@@ -45,7 +45,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_FileUri_Works()
     {
-        var fetcher = new SKImagePyramidFileTileProvider();
+        var fetcher = new SKTieredTileProvider(new SKFileTileFetcher());
         var tmpPath = Path.Combine(Path.GetTempPath(), $"tile_test_{Guid.NewGuid()}.png");
         try
         {
@@ -69,7 +69,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_InvalidImage_ReturnsNull()
     {
-        var fetcher = new SKImagePyramidFileTileProvider();
+        var fetcher = new SKTieredTileProvider(new SKFileTileFetcher());
         var tmpPath = Path.Combine(Path.GetTempPath(), $"tile_test_{Guid.NewGuid()}.png");
         try
         {
@@ -86,7 +86,7 @@ public class TileFetcherTest
     [Fact]
     public async Task HttpTileFetcher_InvalidUrl_ReturnsNull()
     {
-        var fetcher = new SKImagePyramidHttpTileProvider();
+        var fetcher = new SKTieredTileProvider(new SKHttpTileFetcher());
         // This will fail to connect, should return null
         var result = await fetcher.GetTileAsync("http://localhost:0/nonexistent.png", CancellationToken.None);
         Assert.Null(result);
@@ -96,7 +96,7 @@ public class TileFetcherTest
     [Fact]
     public async Task HttpTileFetcher_CancellationToken_Throws()
     {
-        var fetcher = new SKImagePyramidHttpTileProvider();
+        var fetcher = new SKTieredTileProvider(new SKHttpTileFetcher());
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 
@@ -109,7 +109,7 @@ public class TileFetcherTest
     public void HttpTileProvider_AcceptsExternalClient()
     {
         var client = new System.Net.Http.HttpClient();
-        var provider = new SKImagePyramidHttpTileProvider(client);
+        var provider = new SKTieredTileProvider(new SKHttpTileFetcher(client));
         provider.Dispose();
         // External client should not be disposed
         Assert.NotNull(client);
@@ -119,14 +119,14 @@ public class TileFetcherTest
     [Fact]
     public void FileTileFetcher_Dispose_DoesNotThrow()
     {
-        var fetcher = new SKImagePyramidFileTileProvider();
+        var fetcher = new SKTieredTileProvider(new SKFileTileFetcher());
         fetcher.Dispose();
     }
 
     [Fact]
     public async Task FileTileFetcher_NonexistentPath_ReturnsNull()
     {
-        var fetcher = new SKImagePyramidFileTileProvider();
+        var fetcher = new SKTieredTileProvider(new SKFileTileFetcher());
         var result = await fetcher.GetTileAsync(Path.Combine(Path.GetTempPath(), "does_not_exist_" + Guid.NewGuid() + ".png"));
         Assert.Null(result);
     }
@@ -134,7 +134,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_ValidImagePath_ReturnsNonNullBitmap()
     {
-        var fetcher = new SKImagePyramidFileTileProvider();
+        var fetcher = new SKTieredTileProvider(new SKFileTileFetcher());
         var tmpPath = Path.Combine(Path.GetTempPath(), $"fetcher_valid_{Guid.NewGuid()}.png");
         try
         {
@@ -159,7 +159,7 @@ public class TileFetcherTest
     [Fact]
     public async Task FileTileFetcher_CancelledToken_ThrowsOperationCanceledException()
     {
-        var fetcher = new SKImagePyramidFileTileProvider();
+        var fetcher = new SKTieredTileProvider(new SKFileTileFetcher());
         using var cts = new CancellationTokenSource();
         cts.Cancel();
 

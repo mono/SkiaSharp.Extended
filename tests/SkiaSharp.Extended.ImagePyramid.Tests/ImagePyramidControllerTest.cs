@@ -64,7 +64,7 @@ public class ImagePyramidControllerTest
         Assert.NotNull(controller.Viewport);
         Assert.NotNull(controller.Cache);
         Assert.NotNull(controller.TileLayout);
-        Assert.Null(controller.TileSource);
+        Assert.Null(controller.Source);
         // Animation (spring, UseSprings) is NOT part of the controller; it lives in the view layer
     }
 
@@ -81,7 +81,7 @@ public class ImagePyramidControllerTest
         controller.SetControlSize(800, 600);
         controller.Load(dzi, provider);
 
-        Assert.Equal(dzi, controller.TileSource);
+        Assert.Equal(dzi, controller.Source);
         Assert.True(openFired);
         // 512x512 image in 800x600 control: fitWidth = 800/600 ≈ 1.333333, originX = (1-fitWidth)/2 ≈ -0.166667
         Assert.Equal(800.0 / 600.0, controller.Viewport.ViewportWidth, 6);
@@ -654,13 +654,13 @@ public class ImagePyramidControllerTest
         // Change zoom so viewport state is non-default
         controller.SetZoom(2.0);
         var vpBefore = controller.Viewport.GetState();
-        var sourceBefore = controller.TileSource;
+        var sourceBefore = controller.Source;
 
         // Replace provider (simulates user changing cache settings in inspector)
-        controller.ReplaceProvider(new MemoryTileProvider());
+        controller.SetProvider(new MemoryTileProvider());
 
         // Tile source and viewport must be unchanged
-        Assert.Same(sourceBefore, controller.TileSource);
+        Assert.Same(sourceBefore, controller.Source);
         Assert.Equal(vpBefore.ViewportWidth, controller.Viewport.GetState().ViewportWidth, 6);
         Assert.Equal(vpBefore.OriginX, controller.Viewport.GetState().OriginX, 6);
     }
@@ -669,7 +669,7 @@ public class ImagePyramidControllerTest
     public void ReplaceProvider_NullThrows()
     {
         using var controller = new SKImagePyramidController();
-        Assert.Throws<ArgumentNullException>(() => controller.ReplaceProvider(null!));
+        Assert.Throws<ArgumentNullException>(() => controller.SetProvider(null!));
     }
 
     [Fact]
@@ -680,7 +680,7 @@ public class ImagePyramidControllerTest
         var firstProvider = new MemoryTileProvider();
         controller.Load(CreateSampleDzi(), firstProvider);
         // Replace — the old provider (firstProvider) should be disposed
-        controller.ReplaceProvider(new MemoryTileProvider());
+        controller.SetProvider(new MemoryTileProvider());
         Assert.True(firstProvider.IsDisposed);
     }
 }
