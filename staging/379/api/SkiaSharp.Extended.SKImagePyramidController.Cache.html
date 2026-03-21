@@ -126,12 +126,13 @@
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/379/merge/source/SkiaSharp.Extended/ImagePyramid/SKImagePyramidController.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>The tile cache.</p>
+<div class="markdown level1 summary"><p>The internal render buffer holding decoded tiles for the current frame.
+This is the controller's in-memory hot cache for the rendering loop.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public ISKImagePyramidTileCache Cache { get; }</code></pre>
+  <pre><code class="lang-csharp hljs">public SKImagePyramidMemoryTileCache Cache { get; }</code></pre>
 </div>
 
 
@@ -140,7 +141,7 @@
 
 <h4 class="section">Property Value</h4>
 <dl class="parameters">
-  <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.html">ISKImagePyramidTileCache</a></dt>
+  <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidMemoryTileCache.html">SKImagePyramidMemoryTileCache</a></dt>
   <dd></dd>
 </dl>
 
@@ -170,7 +171,7 @@
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · efd633c
+          source: PR #379 · 6614fd7
         </div>
       </div>
     </footer>

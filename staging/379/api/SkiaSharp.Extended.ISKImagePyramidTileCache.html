@@ -130,14 +130,6 @@ Tiles are stored as <a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.ActiveSourceId.html#SkiaSharp_Extended_ISKImagePyramidTileCache_ActiveSourceId">ActiveSourceId</a></dt>
-    <dd><p>The identifier of the currently active image source.
-Set by the controller when a new source is loaded via <code>Load()</code>.
-I/O-backed caches (e.g. filesystem, browser storage) use this to namespace tiles per source.
-In-memory caches may ignore this value.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileCache.Count.html#SkiaSharp_Extended_ISKImagePyramidTileCache_Count">Count</a></dt>
     <dd><p>Number of tiles currently in the cache.</p>
 </dd>
@@ -210,7 +202,7 @@ A null return means cache miss — the caller should then fetch from network.</p
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · efd633c
+          source: PR #379 · 6614fd7
         </div>
       </div>
     </footer>

@@ -127,9 +127,8 @@
 </h3>
 
 <div class="markdown level1 summary"><p>The identifier of the currently active image source.
-Set by the controller when a new source is loaded via <code>Load()</code>.
-I/O-backed caches (e.g. filesystem, browser storage) use this to namespace tiles per source.
-In-memory caches may ignore this value.</p>
+Tiles are stored in subdirectories named by this value, so each source's tiles are isolated.
+Set this before calling <a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.TryGetAsync.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_TryGetAsync_SkiaSharp_Extended_SKImagePyramidTileId_System_Threading_CancellationToken_">TryGetAsync(SKImagePyramidTileId, CancellationToken)</a> or <a class="xref" href="SkiaSharp.Extended.SKImagePyramidFileSystemTileCache.PutAsync.html#SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_PutAsync_SkiaSharp_Extended_SKImagePyramidTileId_SkiaSharp_Extended_SKImagePyramidTile_System_Threading_CancellationToken_">PutAsync(SKImagePyramidTileId, SKImagePyramidTile?, CancellationToken)</a>.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -150,10 +149,6 @@ In-memory caches may ignore this value.</p>
 
 
 
-<h4 class="section" id="SkiaSharp_Extended_SKImagePyramidFileSystemTileCache_ActiveSourceId_remarks">Remarks</h4>
-<div class="markdown level1 remarks"><p>Used to namespace tiles by source. Set by the controller on <code>Load()</code>.
-Tiles stored under a different source ID will not be found.</p>
-</div>
 
 
 
@@ -177,7 +172,7 @@ Tiles stored under a different source ID will not be found.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · efd633c
+          source: PR #379 · 6614fd7
         </div>
       </div>
     </footer>
