@@ -43,13 +43,22 @@ public class ApiSurfaceTests
     }
 
     /// <summary>
-    /// Verify unimplemented methods throw PlatformNotSupportedException.
+    /// Verify that implemented types work and unimplemented platform-specific methods throw.
     /// </summary>
     [Fact]
-    public void UnimplementedMethod_ThrowsPlatformNotSupportedException()
+    public void ImplementedType_CanBeConstructed()
     {
-        // Graphics has no public constructor — FromImage requires a Bitmap
-        // Test a simple type that we know is not yet implemented
-        Assert.Throws<PlatformNotSupportedException>(() => new System.Drawing.SolidBrush(System.Drawing.Color.Red));
+        // SolidBrush is now implemented — verify it works
+        using var brush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
+        Assert.Equal(System.Drawing.Color.Red.ToArgb(), brush.Color.ToArgb());
+    }
+
+    /// <summary>
+    /// Verify platform-specific methods throw PlatformNotSupportedException.
+    /// </summary>
+    [Fact]
+    public void PlatformSpecificMethod_ThrowsPlatformNotSupportedException()
+    {
+        Assert.Throws<PlatformNotSupportedException>(() => System.Drawing.Bitmap.FromHicon(IntPtr.Zero));
     }
 }

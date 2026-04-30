@@ -176,5 +176,54 @@ namespace System.Drawing.Internal
 				default: return 0;
 			}
 		}
+		/// <summary>
+		///  Converts a <see cref="System.Drawing.Drawing2D.LineCap"/> to an <see cref="SKStrokeCap"/>.
+		/// </summary>
+		public static SKStrokeCap ToSKStrokeCap(Drawing2D.LineCap lineCap) => lineCap switch
+		{
+			Drawing2D.LineCap.Flat => SKStrokeCap.Butt,
+			Drawing2D.LineCap.Round => SKStrokeCap.Round,
+			Drawing2D.LineCap.Square => SKStrokeCap.Square,
+			_ => SKStrokeCap.Butt,
+		};
+
+		/// <summary>
+		///  Converts a <see cref="System.Drawing.Drawing2D.LineJoin"/> to an <see cref="SKStrokeJoin"/>.
+		/// </summary>
+		public static SKStrokeJoin ToSKStrokeJoin(Drawing2D.LineJoin lineJoin) => lineJoin switch
+		{
+			Drawing2D.LineJoin.Miter => SKStrokeJoin.Miter,
+			Drawing2D.LineJoin.Bevel => SKStrokeJoin.Bevel,
+			Drawing2D.LineJoin.Round => SKStrokeJoin.Round,
+			Drawing2D.LineJoin.MiterClipped => SKStrokeJoin.Miter,
+			_ => SKStrokeJoin.Miter,
+		};
+
+		/// <summary>
+		///  Converts a <see cref="System.Drawing.Drawing2D.WrapMode"/> to an <see cref="SKShaderTileMode"/>.
+		/// </summary>
+		public static SKShaderTileMode ToSKShaderTileMode(Drawing2D.WrapMode wrapMode) => wrapMode switch
+		{
+			Drawing2D.WrapMode.Tile => SKShaderTileMode.Repeat,
+			Drawing2D.WrapMode.TileFlipX => SKShaderTileMode.Mirror,
+			Drawing2D.WrapMode.TileFlipY => SKShaderTileMode.Mirror,
+			Drawing2D.WrapMode.TileFlipXY => SKShaderTileMode.Mirror,
+			Drawing2D.WrapMode.Clamp => SKShaderTileMode.Clamp,
+			_ => SKShaderTileMode.Repeat,
+		};
+
+		/// <summary>
+		///  Gets the dash pattern array for a given <see cref="System.Drawing.Drawing2D.DashStyle"/>.
+		///  Returns <see langword="null"/> for <see cref="System.Drawing.Drawing2D.DashStyle.Solid"/>.
+		/// </summary>
+		public static float[]? GetDashPattern(Drawing2D.DashStyle dashStyle) => dashStyle switch
+		{
+			Drawing2D.DashStyle.Solid => null,
+			Drawing2D.DashStyle.Dash => new float[] { 4f, 2f },
+			Drawing2D.DashStyle.Dot => new float[] { 1f, 1f },
+			Drawing2D.DashStyle.DashDot => new float[] { 4f, 2f, 1f, 2f },
+			Drawing2D.DashStyle.DashDotDot => new float[] { 4f, 2f, 1f, 2f, 1f, 2f },
+			_ => null,
+		};
 	}
 }
