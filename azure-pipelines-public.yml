@@ -67,3 +67,22 @@ jobs:
         artifact: test
         condition: always()
         displayName: Upload Logs
+
+  - job: api_compat
+    displayName: API Compatibility Check
+    dependsOn: test
+    pool:
+      vmImage: windows-latest
+    steps:
+      - checkout: self
+      - pwsh: dotnet tool restore
+        displayName: Restore .NET tools
+      - pwsh: dotnet build source/SkiaSharp.Drawing/SkiaSharp.Drawing.csproj -c Release
+        displayName: Build SkiaSharp.Drawing
+      - pwsh: >-
+          dotnet apicompat
+          --left tools/api-baseline/netstandard2.0/System.Drawing.Common.dll
+          --right source/SkiaSharp.Drawing/bin/Release/netstandard2.0/System.Drawing.Common.dll
+          --strict-mode
+          --suppression-file tools/api-baseline/api-compat-suppressions.xml
+        displayName: Run API compatibility check
