@@ -86,3 +86,23 @@ jobs:
           --strict-mode
           --suppression-file tools/api-baseline/api-compat-suppressions.xml
         displayName: Run API compatibility check
+
+  - job: pixel_compat
+    displayName: Pixel Compatibility Tests
+    dependsOn: test
+    pool:
+      vmImage: windows-latest
+    steps:
+      - template: /scripts/azure-pipelines-steps-prepare.yml@self
+      - pwsh: dotnet test tests/SkiaSharp.Drawing.Tests --logger trx --results-directory $(Build.ArtifactStagingDirectory)/test-results
+        displayName: Run pixel compatibility tests
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testResultsFormat: VSTest
+          testResultsFiles: $(Build.ArtifactStagingDirectory)/test-results/*.trx
+          testRunTitle: Pixel Compatibility
+      - publish: $(Build.ArtifactStagingDirectory)/test-results
+        artifact: pixel-compat
+        condition: always()
+        displayName: Upload test artifacts
