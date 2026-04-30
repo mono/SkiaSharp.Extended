@@ -1,4 +1,4 @@
-namespace System.Drawing.Printing
+﻿namespace System.Drawing.Printing
 {
-    public delegate void QueryPageSettingsEventHandler();
+	public delegate void QueryPageSettingsEventHandler(object sender, System.Drawing.Printing.QueryPageSettingsEventArgs e);
 }

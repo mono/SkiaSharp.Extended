@@ -1,9 +1,9 @@
-namespace System.Drawing.Printing
+﻿namespace System.Drawing.Printing
 {
-    public enum PrintAction
-    {
-        PrintToFile = 0,
-        PrintToPreview = 1,
-        PrintToPrinter = 2,
-    }
+	public enum PrintAction
+	{
+		PrintToFile = 0,
+		PrintToPreview = 1,
+		PrintToPrinter = 2,
+	}
 }

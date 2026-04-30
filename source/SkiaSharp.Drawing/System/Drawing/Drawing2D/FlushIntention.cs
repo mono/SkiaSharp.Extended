@@ -1,8 +1,8 @@
-namespace System.Drawing.Drawing2D
+﻿namespace System.Drawing.Drawing2D
 {
-    public enum FlushIntention
-    {
-        Flush = 0,
-        Sync = 1,
-    }
+	public enum FlushIntention
+	{
+		Flush = 0,
+		Sync = 1,
+	}
 }

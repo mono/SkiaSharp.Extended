@@ -1,6 +1,7 @@
-namespace System.Drawing.Drawing2D
+﻿namespace System.Drawing.Drawing2D
 {
-    public sealed partial class GraphicsContainer : System.MarshalByRefObject
-    {
-    }
+	public sealed partial class GraphicsContainer : System.MarshalByRefObject
+	{
+		internal GraphicsContainer() {}
+	}
 }

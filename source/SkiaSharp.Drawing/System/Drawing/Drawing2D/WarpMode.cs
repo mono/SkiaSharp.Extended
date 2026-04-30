@@ -1,8 +1,8 @@
-namespace System.Drawing.Drawing2D
+﻿namespace System.Drawing.Drawing2D
 {
-    public enum WarpMode
-    {
-        Perspective = 0,
-        Bilinear = 1,
-    }
+	public enum WarpMode
+	{
+		Perspective = 0,
+		Bilinear = 1,
+	}
 }

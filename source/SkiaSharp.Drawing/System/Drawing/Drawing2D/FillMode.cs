@@ -1,8 +1,8 @@
-namespace System.Drawing.Drawing2D
+﻿namespace System.Drawing.Drawing2D
 {
-    public enum FillMode
-    {
-        Alternate = 0,
-        Winding = 1,
-    }
+	public enum FillMode
+	{
+		Alternate = 0,
+		Winding = 1,
+	}
 }
