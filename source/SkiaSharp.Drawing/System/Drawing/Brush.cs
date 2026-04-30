@@ -8,5 +8,9 @@
 		protected virtual void Dispose(bool disposing) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
 		~Brush() { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
 		protected internal void SetNativeBrush(nint brush) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <summary>
+		///  Creates an <see cref="SkiaSharp.SKPaint"/> configured for fill operations from this brush.
+		/// </summary>
+		internal virtual SkiaSharp.SKPaint CreatePaint() { throw new System.NotImplementedException("Brush.CreatePaint is not yet implemented. The Brush-implementing agent will provide this."); }
 	}
 }

@@ -36,5 +36,9 @@
 		public void TranslateTransform(float dx, float dy) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
 		public void TranslateTransform(float dx, float dy, System.Drawing.Drawing2D.MatrixOrder order) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
 		~Pen() { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <summary>
+		///  Creates an <see cref="SkiaSharp.SKPaint"/> configured for stroke operations from this pen.
+		/// </summary>
+		internal SkiaSharp.SKPaint CreatePaint() { throw new System.NotImplementedException("Pen.CreatePaint is not yet implemented. The Pen-implementing agent will provide this."); }
 	}
 }
