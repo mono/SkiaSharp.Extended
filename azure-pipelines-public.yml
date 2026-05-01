@@ -87,14 +87,31 @@ jobs:
           --suppression-file tools/api-baseline/api-compat-suppressions.xml
         displayName: Run API compatibility check
 
-  - job: pixel_compat
-    displayName: Pixel Compatibility Tests
-    dependsOn: test
+  - job: generate_references
+    displayName: Generate Reference Images
     pool:
       vmImage: windows-latest
     steps:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
-      - pwsh: dotnet test tests/SkiaSharp.Drawing.Tests --logger trx --results-directory $(Build.ArtifactStagingDirectory)/test-results
+      - pwsh: |
+          dotnet run --project tools/SkiaSharp.Drawing.ReferenceGenerator -- "$(Build.ArtifactStagingDirectory)/reference-images"
+        displayName: Generate reference images with real System.Drawing
+      - publish: $(Build.ArtifactStagingDirectory)/reference-images
+        artifact: reference-images
+        displayName: Upload reference images
+
+  - job: pixel_compat
+    displayName: Pixel Compatibility Tests
+    dependsOn: generate_references
+    pool:
+      vmImage: windows-latest
+    steps:
+      - template: /scripts/azure-pipelines-steps-prepare.yml@self
+      - download: current
+        artifact: reference-images
+      - pwsh: |
+          $env:REFERENCE_IMAGES_PATH = "$(Pipeline.Workspace)/reference-images"
+          dotnet test tests/SkiaSharp.Drawing.Tests --filter "FullyQualifiedName~PixelCompat" --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
         displayName: Run pixel compatibility tests
       - task: PublishTestResults@2
         condition: always()
