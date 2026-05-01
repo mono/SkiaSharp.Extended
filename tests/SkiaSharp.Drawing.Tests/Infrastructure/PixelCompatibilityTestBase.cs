@@ -42,7 +42,7 @@ public abstract class PixelCompatibilityTestBase
 
     /// <summary>
     /// Asserts that the actual bitmap matches the reference image within the specified tolerance.
-    /// On failure, saves the actual image and a diff visualization as test artifacts.
+    /// Always saves actual + reference + diff images as test artifacts for inspection.
     /// </summary>
     protected void AssertPixelCompatible(
         SKBitmap actual,
@@ -54,7 +54,6 @@ public abstract class PixelCompatibilityTestBase
         
         if (!File.Exists(referencePath))
         {
-            // Save actual as the reference for bootstrapping
             SaveBitmap(actual, Path.Combine(TestArtifactsPath, $"actual_{Path.GetFileName(referenceImageName)}"));
             Assert.Fail($"Reference image not found: {referencePath}. Actual image saved to TestArtifacts/.");
             return;
@@ -65,20 +64,26 @@ public abstract class PixelCompatibilityTestBase
         
         var result = SKPixelComparer.Compare(actual, reference);
 
+        // Always save artifacts for every comparison (pass or fail)
+        var baseName = Path.GetFileNameWithoutExtension(referenceImageName);
+        var categoryDir = Path.GetDirectoryName(referenceImageName) ?? "";
+        var artifactDir = Path.Combine(TestArtifactsPath, categoryDir);
+        Directory.CreateDirectory(artifactDir);
+
+        SaveBitmap(actual, Path.Combine(artifactDir, $"{baseName}_actual.png"));
+        SaveBitmap(reference, Path.Combine(artifactDir, $"{baseName}_reference.png"));
+        SaveDiffImage(actual, reference, Path.Combine(artifactDir, $"{baseName}_diff.png"));
+
         if (result.ErrorPixelPercentage > maxErrorPixelPercentage)
         {
-            // Save artifacts for debugging
-            var baseName = Path.GetFileNameWithoutExtension(referenceImageName);
-            SaveBitmap(actual, Path.Combine(TestArtifactsPath, $"{baseName}_actual.png"));
-            SaveDiffImage(actual, reference, Path.Combine(TestArtifactsPath, $"{baseName}_diff.png"));
-
             Assert.Fail(
                 $"Pixel compatibility failed for '{referenceImageName}'" +
                 (category != null ? $" [{category}]" : "") +
                 $": ErrorPixelPercentage={result.ErrorPixelPercentage:P4}" +
                 $" (max={maxErrorPixelPercentage:P4})," +
                 $" MAE={result.MeanAbsoluteError:F4}," +
-                $" PSNR={result.PeakSignalToNoiseRatio:F2}dB");
+                $" PSNR={result.PeakSignalToNoiseRatio:F2}dB" +
+                $" — artifacts in TestArtifacts/{categoryDir}");
         }
     }
 

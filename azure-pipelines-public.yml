@@ -111,15 +111,21 @@ jobs:
         artifact: reference-images
       - pwsh: |
           $env:REFERENCE_IMAGES_PATH = "$(Pipeline.Workspace)/reference-images"
+          $env:TEST_ARTIFACTS_PATH = "$(Build.ArtifactStagingDirectory)/diff-images"
           dotnet test tests/SkiaSharp.Drawing.Tests --filter "FullyQualifiedName~PixelCompat" --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
         displayName: Run pixel compatibility tests
+        continueOnError: true
       - task: PublishTestResults@2
         condition: always()
         inputs:
           testResultsFormat: VSTest
           testResultsFiles: $(Build.ArtifactStagingDirectory)/test-results/*.trx
           testRunTitle: Pixel Compatibility
-      - publish: $(Build.ArtifactStagingDirectory)/test-results
-        artifact: pixel-compat
+      - publish: $(Build.ArtifactStagingDirectory)/diff-images
+        artifact: diff-images
         condition: always()
-        displayName: Upload test artifacts
+        displayName: Upload diff images (actual + reference + diff mask)
+      - publish: $(Build.ArtifactStagingDirectory)/test-results
+        artifact: pixel-compat-results
+        condition: always()
+        displayName: Upload test results
