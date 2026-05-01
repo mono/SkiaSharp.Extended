@@ -30,6 +30,15 @@ namespace System.Drawing
 		internal Graphics() {}
 
 		/// <summary>
+		/// Creates an SKRect with GDI+-compatible half-pixel offset for curve rasterization.
+		/// GDI+ integer coordinate methods treat pixel coordinates with a +0.5 offset for curves.
+		/// </summary>
+		private static SKRect GdiCurveRect(float x, float y, float width, float height)
+		{
+			return new SKRect(x + 0.5f, y + 0.5f, x + width + 0.5f, y + height + 0.5f);
+		}
+
+		/// <summary>
 		///  Represents a method to be called when the DrawImage method has processed a portion of the image.
 		/// </summary>
 		/// <param name="callbackdata">Internal pointer specifying the data for the callback method.</param>
@@ -357,7 +366,7 @@ namespace System.Drawing
 			if (pen is null) throw new ArgumentNullException(nameof(pen));
 			using var paint = pen.CreatePaint();
 			ApplyState(paint);
-			var rect = new SKRect(x, y, x + width, y + height);
+			var rect = GdiCurveRect(x, y, width, height);
 			using var path = new SKPath();
 			path.AddArc(rect, startAngle, sweepAngle);
 			_canvas.DrawPath(path, paint);
@@ -469,7 +478,7 @@ namespace System.Drawing
 			if (pen is null) throw new ArgumentNullException(nameof(pen));
 			using var paint = pen.CreatePaint();
 			ApplyState(paint);
-			_canvas.DrawOval(new SKRect(x, y, x + width, y + height), paint);
+			_canvas.DrawOval(GdiCurveRect(x, y, width, height), paint);
 		}
 
 		/// <summary>
@@ -816,7 +825,7 @@ namespace System.Drawing
 			if (pen is null) throw new ArgumentNullException(nameof(pen));
 			using var paint = pen.CreatePaint();
 			ApplyState(paint);
-			var oval = new SKRect(x, y, x + width, y + height);
+			var oval = GdiCurveRect(x, y, width, height);
 			using var path = new SKPath();
 			path.MoveTo(oval.MidX, oval.MidY);
 			path.ArcTo(oval, startAngle, sweepAngle, false);
@@ -1152,7 +1161,7 @@ namespace System.Drawing
 			if (brush is null) throw new ArgumentNullException(nameof(brush));
 			using var paint = brush.CreatePaint();
 			ApplyState(paint);
-			_canvas.DrawOval(new SKRect(x, y, x + width, y + height), paint);
+			_canvas.DrawOval(GdiCurveRect(x, y, width, height), paint);
 		}
 
 		/// <summary>
@@ -1188,7 +1197,7 @@ namespace System.Drawing
 			if (brush is null) throw new ArgumentNullException(nameof(brush));
 			using var paint = brush.CreatePaint();
 			ApplyState(paint);
-			var oval = new SKRect(x, y, x + width, y + height);
+			var oval = GdiCurveRect(x, y, width, height);
 			using var path = new SKPath();
 			path.MoveTo(oval.MidX, oval.MidY);
 			path.ArcTo(oval, startAngle, sweepAngle, false);

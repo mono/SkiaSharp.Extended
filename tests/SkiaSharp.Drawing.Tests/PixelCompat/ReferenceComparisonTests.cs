@@ -51,6 +51,7 @@ public class ReferenceComparisonTests : PixelCompatibilityTestBase
             "Lines" or "Rectangles" => Tolerance_Stroke,
             "LinesAA" or "EllipsesAA" => Tolerance_AntiAliased,
             "Ellipses" or "Arcs" or "Pies" => Tolerance_Stroke,
+            "Boundaries" => Tolerance_Stroke,
             "Polygons" => Tolerance_Stroke,
             "Composites" => Tolerance_AntiAliased,
             _ => Tolerance_AntiAliased,

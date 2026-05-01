@@ -345,5 +345,115 @@ public static class DrawingScenarios
                 g.FillRectangle(brush, i * 20, 0, 20, 100);
             }
         }),
+
+        // === BOUNDARY PRECISION (odd and even sizes) ===
+        ("Ellipse_Even_40x40", "Boundaries", 60, 60, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Blue);
+            g.FillEllipse(brush, 10, 10, 40, 40);
+        }),
+        ("Ellipse_Odd_41x41", "Boundaries", 62, 62, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Blue);
+            g.FillEllipse(brush, 10, 10, 41, 41);
+        }),
+        ("Ellipse_Even_80x80", "Boundaries", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Blue);
+            g.FillEllipse(brush, 10, 10, 80, 80);
+        }),
+        ("Ellipse_Odd_79x79", "Boundaries", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Blue);
+            g.FillEllipse(brush, 10, 10, 79, 79);
+        }),
+        ("Ellipse_Small_10x10", "Boundaries", 30, 30, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Red);
+            g.FillEllipse(brush, 10, 10, 10, 10);
+        }),
+        ("Ellipse_Small_11x11", "Boundaries", 32, 32, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Red);
+            g.FillEllipse(brush, 10, 10, 11, 11);
+        }),
+        ("Ellipse_Tiny_4x4", "Boundaries", 20, 20, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Green);
+            g.FillEllipse(brush, 8, 8, 4, 4);
+        }),
+        ("Ellipse_Tiny_5x5", "Boundaries", 20, 20, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Green);
+            g.FillEllipse(brush, 8, 8, 5, 5);
+        }),
+        // Stroked ellipses with different pen widths
+        ("Ellipse_Stroke_1px_Even", "Boundaries", 60, 60, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Black, 1);
+            g.DrawEllipse(pen, 10, 10, 40, 40);
+        }),
+        ("Ellipse_Stroke_1px_Odd", "Boundaries", 62, 62, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Black, 1);
+            g.DrawEllipse(pen, 10, 10, 41, 41);
+        }),
+        ("Ellipse_Stroke_2px", "Boundaries", 60, 60, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Black, 2);
+            g.DrawEllipse(pen, 10, 10, 40, 40);
+        }),
+        ("Ellipse_Stroke_3px", "Boundaries", 60, 60, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Black, 3);
+            g.DrawEllipse(pen, 10, 10, 40, 40);
+        }),
+        // Arcs at various angles
+        ("Arc_90_Even", "Boundaries", 60, 60, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Black, 2);
+            g.DrawArc(pen, 10, 10, 40, 40, 0, 90);
+        }),
+        ("Arc_180_Odd", "Boundaries", 62, 62, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Black, 2);
+            g.DrawArc(pen, 10, 10, 41, 41, 0, 180);
+        }),
+        // Pies
+        ("Pie_Fill_Even", "Boundaries", 60, 60, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Red);
+            g.FillPie(brush, 10, 10, 40, 40, 0, 90);
+        }),
+        ("Pie_Fill_Odd", "Boundaries", 62, 62, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Red);
+            g.FillPie(brush, 10, 10, 41, 41, 0, 90);
+        }),
+        // Rect vs Ellipse same bounds (should both be correct now)
+        ("Compare_Rect_Ellipse", "Boundaries", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Black, 1);
+            g.DrawRectangle(pen, 10, 10, 80, 80);
+            using var redPen = new Pen(Color.Red, 1);
+            g.DrawEllipse(redPen, 10, 10, 80, 80);
+        }),
     };
 }
