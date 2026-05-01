@@ -92,15 +92,17 @@ public abstract class PixelCompatibilityTestBase
         using var graphics = System.Drawing.Graphics.FromImage(bitmap);
         drawAction(graphics);
         
-        // Convert System.Drawing.Bitmap to SKBitmap
-        // This will work once Bitmap is implemented; for now it throws PNSE
+        // Copy the SKBitmap before the System.Drawing.Bitmap is disposed
         return ConvertToSKBitmap(bitmap);
     }
 
     private static SKBitmap ConvertToSKBitmap(System.Drawing.Bitmap bitmap)
     {
-        // Placeholder — will be implemented when Bitmap has real backing
-        throw new NotImplementedException("ConvertToSKBitmap will be implemented with Bitmap backing store");
+        // Access the internal SKBitmapBacking field directly (InternalsVisibleTo is set)
+        var backing = ((System.Drawing.Image)bitmap).SKBitmapBacking;
+        if (backing == null)
+            throw new InvalidOperationException("The bitmap's SKBitmapBacking is null.");
+        return backing.Copy();
     }
 
     private static void SaveBitmap(SKBitmap bitmap, string path)
