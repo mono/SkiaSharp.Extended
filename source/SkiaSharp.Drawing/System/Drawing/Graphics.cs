@@ -39,6 +39,20 @@ namespace System.Drawing
 		}
 
 		/// <summary>
+		/// Builds an SKPath for a polygon with GDI+-compatible half-pixel offset on vertices.
+		/// GDI+ rasterizes polygon edges with a +0.5 pixel center offset.
+		/// </summary>
+		private static SKPath GdiPolygonPath(PointF[] points)
+		{
+			var path = new SKPath();
+			path.MoveTo(points[0].X + 0.5f, points[0].Y + 0.5f);
+			for (int i = 1; i < points.Length; i++)
+				path.LineTo(points[i].X + 0.5f, points[i].Y + 0.5f);
+			path.Close();
+			return path;
+		}
+
+		/// <summary>
 		///  Represents a method to be called when the DrawImage method has processed a portion of the image.
 		/// </summary>
 		/// <param name="callbackdata">Internal pointer specifying the data for the callback method.</param>
@@ -846,11 +860,7 @@ namespace System.Drawing
 			if (points.Length < 2) return;
 			using var paint = pen.CreatePaint();
 			ApplyState(paint);
-			using var path = new SKPath();
-			path.MoveTo(points[0].X, points[0].Y);
-			for (int i = 1; i < points.Length; i++)
-				path.LineTo(points[i].X, points[i].Y);
-			path.Close();
+			using var path = GdiPolygonPath(points);
 			_canvas.DrawPath(path, paint);
 		}
 
@@ -1218,11 +1228,7 @@ namespace System.Drawing
 			if (points.Length < 2) return;
 			using var paint = brush.CreatePaint();
 			ApplyState(paint);
-			using var path = new SKPath();
-			path.MoveTo(points[0].X, points[0].Y);
-			for (int i = 1; i < points.Length; i++)
-				path.LineTo(points[i].X, points[i].Y);
-			path.Close();
+			using var path = GdiPolygonPath(points);
 			_canvas.DrawPath(path, paint);
 		}
 
@@ -1240,12 +1246,8 @@ namespace System.Drawing
 			if (points.Length < 2) return;
 			using var paint = brush.CreatePaint();
 			ApplyState(paint);
-			using var path = new SKPath();
+			using var path = GdiPolygonPath(points);
 			path.FillType = fillMode == FillMode.Winding ? SKPathFillType.Winding : SKPathFillType.EvenOdd;
-			path.MoveTo(points[0].X, points[0].Y);
-			for (int i = 1; i < points.Length; i++)
-				path.LineTo(points[i].X, points[i].Y);
-			path.Close();
 			_canvas.DrawPath(path, paint);
 		}
 
