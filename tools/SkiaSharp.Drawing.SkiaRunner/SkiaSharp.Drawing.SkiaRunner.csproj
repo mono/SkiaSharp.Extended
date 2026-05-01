@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <!-- Real System.Drawing.Common from Microsoft -->
-    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+    <!-- Our SkiaSharp.Drawing wrapper (NOT real System.Drawing) -->
+    <ProjectReference Include="..\..\source\SkiaSharp.Drawing\SkiaSharp.Drawing.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <!-- Shared scenario files — compiled against real System.Drawing -->
+    <!-- Same shared scenario files — compiled against SkiaSharp.Drawing -->
     <Compile Include="..\SkiaSharp.Drawing.Scenarios\**\*.cs" Link="Scenarios\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

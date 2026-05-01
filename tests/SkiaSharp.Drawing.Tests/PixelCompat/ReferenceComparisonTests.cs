@@ -1,5 +1,7 @@
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using SkiaSharp;
-using SkiaSharp.Drawing.Scenarios;
 using SkiaSharp.Drawing.Tests.Infrastructure;
 
 namespace SkiaSharp.Drawing.Tests.PixelCompat;
@@ -12,8 +14,9 @@ public class ReferenceComparisonTests : PixelCompatibilityTestBase
 {
     public static IEnumerable<object[]> AllScenarioData()
     {
-        foreach (var scenario in AllScenarios.GetAll())
-            yield return new object[] { scenario.Name, scenario.Category };
+        // Use the shared DrawingScenarios — same file compiled here via project reference
+        foreach (var (name, category, _, _, _) in SkiaSharp.Drawing.Scenarios.DrawingScenarios.GetAll())
+            yield return new object[] { name, category };
     }
 
     [Theory]
@@ -23,21 +26,25 @@ public class ReferenceComparisonTests : PixelCompatibilityTestBase
         var referenceFile = Path.Combine(category, $"{name}.png");
         var referencePath = Path.Combine(ReferenceImagesPath, referenceFile);
 
-        // Skip gracefully when reference images aren't present (normal for local dev)
         if (!File.Exists(referencePath))
-            Assert.Skip($"Reference image not found: {referencePath}. Run the ReferenceGenerator on Windows to create reference images.");
+            Assert.Skip($"Reference image not found: {referencePath}. Run ReferenceGenerator on Windows first.");
 
-        var scenario = AllScenarios.GetAll().First(s => s.Name == name);
+        var scenario = SkiaSharp.Drawing.Scenarios.DrawingScenarios.GetAll()
+            .First(s => s.Name == name);
 
-        // Render with our SkiaSharp.Drawing wrapper
-        using var surface = new SkiaDrawingSurface(scenario.Width, scenario.Height);
-        scenario.Draw(surface);
-        var pngBytes = surface.SaveAsPng();
+        // Render with our SkiaSharp.Drawing — same code that the SkiaRunner uses
+        using var bitmap = new Bitmap(scenario.Width, scenario.Height, PixelFormat.Format32bppArgb);
+        using var graphics = Graphics.FromImage(bitmap);
+        scenario.Draw(graphics);
 
-        using var actualBitmap = SKBitmap.Decode(pngBytes);
+        // Save to PNG bytes
+        using var ms = new MemoryStream();
+        bitmap.Save(ms, ImageFormat.Png);
+        ms.Position = 0;
+
+        using var actualBitmap = SKBitmap.Decode(ms);
         Assert.NotNull(actualBitmap);
 
-        // Determine tolerance based on category
         double tolerance = category switch
         {
             "Clear" or "Colors" => Tolerance_SolidFill,
