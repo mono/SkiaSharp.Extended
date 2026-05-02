@@ -37,6 +37,7 @@ namespace System.Drawing
 			set
 			{
 				ThrowIfDisposed();
+				if (_immutable) throw new ArgumentException("Cannot modify an immutable Brush.");
 				_color = value;
 			}
 		}

@@ -41,8 +41,8 @@ namespace System.Drawing
 		{
 			if (original == null) throw new ArgumentNullException(nameof(original));
 			if (original.SKBitmapBacking == null) throw new ArgumentException("The source image has been disposed.", nameof(original));
-			if (width <= 0) throw new ArgumentOutOfRangeException(nameof(width));
-			if (height <= 0) throw new ArgumentOutOfRangeException(nameof(height));
+			if (width <= 0) throw new ArgumentException(null, nameof(width));
+			if (height <= 0) throw new ArgumentException(null, nameof(height));
 
 			var info = new SKImageInfo(width, height, original.SKBitmapBacking.ColorType, original.SKBitmapBacking.AlphaType);
 			SKBitmapBacking = original.SKBitmapBacking.Resize(info, SKSamplingOptions.Default);
@@ -58,8 +58,8 @@ namespace System.Drawing
 		/// </summary>
 		public Bitmap(int width, int height)
 		{
-			if (width <= 0) throw new ArgumentOutOfRangeException(nameof(width));
-			if (height <= 0) throw new ArgumentOutOfRangeException(nameof(height));
+			if (width <= 0) throw new ArgumentException(null, nameof(width));
+			if (height <= 0) throw new ArgumentException(null, nameof(height));
 			SKBitmapBacking = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
 			SKBitmapBacking.Erase(SKColors.Transparent);
 		}
@@ -69,8 +69,9 @@ namespace System.Drawing
 		/// </summary>
 		public Bitmap(int width, int height, System.Drawing.Graphics g)
 		{
-			if (width <= 0) throw new ArgumentOutOfRangeException(nameof(width));
-			if (height <= 0) throw new ArgumentOutOfRangeException(nameof(height));
+			if (g is null) throw new ArgumentNullException(nameof(g));
+			if (width <= 0) throw new ArgumentException(null, nameof(width));
+			if (height <= 0) throw new ArgumentException(null, nameof(height));
 			// Graphics DPI is not available; use default 96 DPI.
 			SKBitmapBacking = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
 			SKBitmapBacking.Erase(SKColors.Transparent);
@@ -81,8 +82,8 @@ namespace System.Drawing
 		/// </summary>
 		public Bitmap(int width, int height, System.Drawing.Imaging.PixelFormat format)
 		{
-			if (width <= 0) throw new ArgumentOutOfRangeException(nameof(width));
-			if (height <= 0) throw new ArgumentOutOfRangeException(nameof(height));
+			if (width <= 0) throw new ArgumentException(null, nameof(width));
+			if (height <= 0) throw new ArgumentException(null, nameof(height));
 			var colorType = SkiaConversions.ToSKColorType(format);
 			var alphaType = SkiaConversions.ToSKAlphaType(format);
 			SKBitmapBacking = new SKBitmap(width, height, colorType, alphaType);
@@ -95,8 +96,8 @@ namespace System.Drawing
 		/// </summary>
 		public Bitmap(int width, int height, int stride, System.Drawing.Imaging.PixelFormat format, nint scan0)
 		{
-			if (width <= 0) throw new ArgumentOutOfRangeException(nameof(width));
-			if (height <= 0) throw new ArgumentOutOfRangeException(nameof(height));
+			if (width <= 0) throw new ArgumentException(null, nameof(width));
+			if (height <= 0) throw new ArgumentException(null, nameof(height));
 			var colorType = SkiaConversions.ToSKColorType(format);
 			var alphaType = SkiaConversions.ToSKAlphaType(format);
 			var info = new SKImageInfo(width, height, colorType, alphaType);
@@ -116,7 +117,7 @@ namespace System.Drawing
 			if (stream == null) throw new ArgumentNullException(nameof(stream));
 			SKBitmapBacking = SKBitmap.Decode(stream);
 			if (SKBitmapBacking == null)
-				throw new ArgumentException("The stream does not contain a valid image.", nameof(stream));
+				throw new OutOfMemoryException("The stream does not contain a valid image.");
 			_rawFormat = ImageFormat.Png;
 		}
 
@@ -136,7 +137,7 @@ namespace System.Drawing
 			if (filename == null) throw new ArgumentNullException(nameof(filename));
 			SKBitmapBacking = SKBitmap.Decode(filename);
 			if (SKBitmapBacking == null)
-				throw new ArgumentException("Cannot create image from the specified file: " + filename, nameof(filename));
+				throw new OutOfMemoryException("Cannot create image from the specified file: " + filename);
 			_rawFormat = SkiaConversions.ImageFormatFromExtension(Path.GetExtension(filename));
 		}
 
@@ -161,7 +162,7 @@ namespace System.Drawing
 			SKBitmapBacking = SKBitmap.Decode(stream);
 			stream.Dispose();
 			if (SKBitmapBacking == null)
-				throw new ArgumentException("The resource does not contain a valid image.");
+				throw new OutOfMemoryException("The resource does not contain a valid image.");
 			_rawFormat = ImageFormat.Png;
 		}
 
@@ -263,9 +264,9 @@ namespace System.Drawing
 		{
 			ThrowIfDisposed();
 			if (x < 0 || x >= SKBitmapBacking!.Width)
-				throw new ArgumentOutOfRangeException(nameof(x));
+				throw new ArgumentException(null, nameof(x));
 			if (y < 0 || y >= SKBitmapBacking.Height)
-				throw new ArgumentOutOfRangeException(nameof(y));
+				throw new ArgumentException(null, nameof(y));
 			return SkiaConversions.ToDrawingColor(SKBitmapBacking.GetPixel(x, y));
 		}
 
@@ -351,9 +352,9 @@ namespace System.Drawing
 		{
 			ThrowIfDisposed();
 			if (x < 0 || x >= SKBitmapBacking!.Width)
-				throw new ArgumentOutOfRangeException(nameof(x));
+				throw new ArgumentException(null, nameof(x));
 			if (y < 0 || y >= SKBitmapBacking.Height)
-				throw new ArgumentOutOfRangeException(nameof(y));
+				throw new ArgumentException(null, nameof(y));
 			SKBitmapBacking.SetPixel(x, y, SkiaConversions.ToSKColor(color));
 		}
 

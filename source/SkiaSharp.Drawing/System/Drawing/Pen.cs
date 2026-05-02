@@ -26,6 +26,7 @@ namespace System.Drawing
 		private CustomLineCap? _customStartCap;
 		private CustomLineCap? _customEndCap;
 		private bool _disposed;
+		internal bool _immutable;
 
 		/// <summary>
 		///  Initializes a new instance of the <see cref="Pen"/> class with the specified <see cref="Brush"/>.
@@ -44,6 +45,7 @@ namespace System.Drawing
 		public Pen(System.Drawing.Brush brush, float width)
 		{
 			_brush = brush ?? throw new ArgumentNullException(nameof(brush));
+			if (width < 0) throw new ArgumentException("Width cannot be negative.", nameof(width));
 			_width = width;
 			_color = brush is SolidBrush sb ? sb.Color : Color.Black;
 		}
@@ -62,6 +64,7 @@ namespace System.Drawing
 		/// <param name="width">A value indicating the width of this <see cref="Pen"/>.</param>
 		public Pen(System.Drawing.Color color, float width)
 		{
+			if (width < 0) throw new ArgumentException("Width cannot be negative.", nameof(width));
 			_color = color;
 			_width = width;
 			_brush = new SolidBrush(color);
@@ -76,7 +79,7 @@ namespace System.Drawing
 		public System.Drawing.Drawing2D.PenAlignment Alignment
 		{
 			get { ThrowIfDisposed(); return _alignment; }
-			set { ThrowIfDisposed(); _alignment = value; }
+			set { ThrowIfDisposed(); ThrowIfImmutable(); _alignment = value; }
 		}
 
 		/// <summary>
@@ -89,6 +92,7 @@ namespace System.Drawing
 			set
 			{
 				ThrowIfDisposed();
+				ThrowIfImmutable();
 				_brush = value ?? throw new ArgumentNullException(nameof(value));
 				if (value is SolidBrush sb)
 					_color = sb.Color;
@@ -105,6 +109,7 @@ namespace System.Drawing
 			set
 			{
 				ThrowIfDisposed();
+				ThrowIfImmutable();
 				_color = value;
 				_brush = new SolidBrush(value);
 			}
@@ -118,7 +123,7 @@ namespace System.Drawing
 		public float[] CompoundArray
 		{
 			get { ThrowIfDisposed(); return _compoundArray ?? Array.Empty<float>(); }
-			set { ThrowIfDisposed(); _compoundArray = value; }
+			set { ThrowIfDisposed(); ThrowIfImmutable(); _compoundArray = value; }
 		}
 
 		/// <summary>
@@ -130,7 +135,7 @@ namespace System.Drawing
 		public System.Drawing.Drawing2D.CustomLineCap CustomEndCap
 		{
 			get { ThrowIfDisposed(); return _customEndCap!; }
-			set { ThrowIfDisposed(); _customEndCap = value; }
+			set { ThrowIfDisposed(); ThrowIfImmutable(); _customEndCap = value; }
 		}
 
 		/// <summary>
@@ -142,7 +147,7 @@ namespace System.Drawing
 		public System.Drawing.Drawing2D.CustomLineCap CustomStartCap
 		{
 			get { ThrowIfDisposed(); return _customStartCap!; }
-			set { ThrowIfDisposed(); _customStartCap = value; }
+			set { ThrowIfDisposed(); ThrowIfImmutable(); _customStartCap = value; }
 		}
 
 		/// <summary>
@@ -156,7 +161,7 @@ namespace System.Drawing
 		public System.Drawing.Drawing2D.DashCap DashCap
 		{
 			get { ThrowIfDisposed(); return _dashCap; }
-			set { ThrowIfDisposed(); _dashCap = value; }
+			set { ThrowIfDisposed(); ThrowIfImmutable(); _dashCap = value; }
 		}
 
 		/// <summary>
@@ -166,7 +171,7 @@ namespace System.Drawing
 		public float DashOffset
 		{
 			get { ThrowIfDisposed(); return _dashOffset; }
-			set { ThrowIfDisposed(); _dashOffset = value; }
+			set { ThrowIfDisposed(); ThrowIfImmutable(); _dashOffset = value; }
 		}
 
 		/// <summary>
@@ -179,6 +184,7 @@ namespace System.Drawing
 			set
 			{
 				ThrowIfDisposed();
+				ThrowIfImmutable();
 				_dashPattern = value;
 				_dashStyle = DashStyle.Custom;
 			}
@@ -197,6 +203,7 @@ namespace System.Drawing
 			set
 			{
 				ThrowIfDisposed();
+				ThrowIfImmutable();
 				_dashStyle = value;
 				if (value != DashStyle.Custom)
 					_dashPattern = SkiaConversions.GetDashPattern(value);
@@ -213,7 +220,7 @@ namespace System.Drawing
 		public System.Drawing.Drawing2D.LineCap EndCap
 		{
 			get { ThrowIfDisposed(); return _endCap; }
-			set { ThrowIfDisposed(); _endCap = value; }
+			set { ThrowIfDisposed(); ThrowIfImmutable(); _endCap = value; }
 		}
 
 		/// <summary>
@@ -226,7 +233,7 @@ namespace System.Drawing
 		public System.Drawing.Drawing2D.LineJoin LineJoin
 		{
 			get { ThrowIfDisposed(); return _lineJoin; }
-			set { ThrowIfDisposed(); _lineJoin = value; }
+			set { ThrowIfDisposed(); ThrowIfImmutable(); _lineJoin = value; }
 		}
 
 		/// <summary>
@@ -238,7 +245,7 @@ namespace System.Drawing
 		public float MiterLimit
 		{
 			get { ThrowIfDisposed(); return _miterLimit; }
-			set { ThrowIfDisposed(); _miterLimit = value; }
+			set { ThrowIfDisposed(); ThrowIfImmutable(); _miterLimit = value; }
 		}
 
 		/// <summary>
@@ -276,7 +283,7 @@ namespace System.Drawing
 		public System.Drawing.Drawing2D.LineCap StartCap
 		{
 			get { ThrowIfDisposed(); return _startCap; }
-			set { ThrowIfDisposed(); _startCap = value; }
+			set { ThrowIfDisposed(); ThrowIfImmutable(); _startCap = value; }
 		}
 
 		/// <summary>
@@ -286,7 +293,7 @@ namespace System.Drawing
 		public System.Drawing.Drawing2D.Matrix Transform
 		{
 			get { ThrowIfDisposed(); return _transform ?? new Matrix(); }
-			set { ThrowIfDisposed(); _transform = value ?? throw new ArgumentNullException(nameof(value)); }
+			set { ThrowIfDisposed(); ThrowIfImmutable(); _transform = value ?? throw new ArgumentNullException(nameof(value)); }
 		}
 
 		/// <summary>
@@ -297,7 +304,13 @@ namespace System.Drawing
 		public float Width
 		{
 			get { ThrowIfDisposed(); return _width; }
-			set { ThrowIfDisposed(); _width = value; }
+			set
+			{
+				ThrowIfDisposed();
+				ThrowIfImmutable();
+				if (value < 0) throw new ArgumentException("Width cannot be negative.", nameof(value));
+				_width = value;
+			}
 		}
 
 		/// <summary>
@@ -513,6 +526,12 @@ namespace System.Drawing
 		{
 			if (_disposed)
 				throw new ObjectDisposedException(nameof(Pen));
+		}
+
+		private void ThrowIfImmutable()
+		{
+			if (_immutable)
+				throw new ArgumentException("Cannot modify an immutable Pen.");
 		}
 	}
 }

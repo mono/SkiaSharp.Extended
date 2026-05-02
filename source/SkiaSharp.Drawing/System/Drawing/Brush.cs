@@ -10,6 +10,7 @@ namespace System.Drawing
 	public abstract partial class Brush : System.MarshalByRefObject, System.ICloneable, System.IDisposable
 	{
 		private bool _disposed;
+		internal bool _immutable;
 
 		/// <summary>
 		///  Initializes a new instance of the <see cref="Brush"/> class.

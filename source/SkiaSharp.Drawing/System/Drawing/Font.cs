@@ -192,6 +192,7 @@ namespace System.Drawing
 		{
 			get
 			{
+				ThrowIfDisposed();
 				var m = SKFont.Metrics;
 				return (int)Math.Ceiling(Math.Abs(m.Ascent) + Math.Abs(m.Descent) + Math.Abs(m.Leading));
 			}
@@ -215,7 +216,14 @@ namespace System.Drawing
 		[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 		[System.ComponentModel.EditorAttribute("System.Drawing.Design.FontNameEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		[System.ComponentModel.TypeConverterAttribute(typeof(System.Drawing.FontConverter.FontNameConverter))]
-		public string Name => SKTypeface.FamilyName;
+		public string Name
+		{
+			get
+			{
+				ThrowIfDisposed();
+				return SKTypeface.FamilyName;
+			}
+		}
 
 		/// <summary>
 		///  Gets the font family name originally specified when this <see cref="Font"/> was created.
@@ -288,7 +296,10 @@ namespace System.Drawing
 		///  Creates an exact copy of this <see cref="Font"/>.
 		/// </summary>
 		public object Clone()
-			=> new Font(_originalFontName, _emSize, _style, _unit, _gdiCharSet, _gdiVerticalFont);
+		{
+			ThrowIfDisposed();
+			return new Font(_originalFontName, _emSize, _style, _unit, _gdiCharSet, _gdiVerticalFont);
+		}
 
 		/// <summary>
 		///  Releases all resources used by this <see cref="Font"/>.
@@ -346,13 +357,17 @@ namespace System.Drawing
 		/// </summary>
 		/// <returns>The line spacing, in pixels, of this font.</returns>
 		public float GetHeight()
-			=> GetHeight(DefaultDpi);
+		{
+			ThrowIfDisposed();
+			return GetHeight(DefaultDpi);
+		}
 
 		/// <summary>
 		///  Returns the line spacing, in the current unit of a specified <see cref="Graphics"/>, of this font.
 		/// </summary>
 		public float GetHeight(System.Drawing.Graphics graphics)
 		{
+			ThrowIfDisposed();
 			if (graphics is null) throw new ArgumentNullException(nameof(graphics));
 			return GetHeight(graphics.DpiY);
 		}
@@ -364,6 +379,7 @@ namespace System.Drawing
 		/// <returns>The height, in pixels, of this <see cref="Font"/>.</returns>
 		public float GetHeight(float dpi)
 		{
+			ThrowIfDisposed();
 			// Compute line spacing in pixels at the target DPI
 			float sizeInPoints = SizeInPoints;
 			float sizeInPixelsAtDpi = sizeInPoints * dpi / 72f;
@@ -393,7 +409,10 @@ namespace System.Drawing
 		///  Returns a human-readable string representation of this <see cref="Font"/>.
 		/// </summary>
 		public override string ToString()
-			=> $"[Font: Name={Name}, Size={_emSize}, Units={_unit}, GdiCharSet={_gdiCharSet}, GdiVerticalFont={_gdiVerticalFont}]";
+		{
+			ThrowIfDisposed();
+			return $"[Font: Name={Name}, Size={_emSize}, Units={_unit}, GdiCharSet={_gdiCharSet}, GdiVerticalFont={_gdiVerticalFont}]";
+		}
 
 		/// <summary>
 		///  Allows a <see cref="Font"/> to attempt to free resources before it is reclaimed by garbage collection.
@@ -401,6 +420,12 @@ namespace System.Drawing
 		~Font()
 		{
 			Dispose(false);
+		}
+
+		private void ThrowIfDisposed()
+		{
+			if (_disposed)
+				throw new ObjectDisposedException(nameof(Font));
 		}
 
 		void System.Runtime.Serialization.ISerializable.GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)

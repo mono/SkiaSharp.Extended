@@ -26,13 +26,13 @@ public class BitmapTests
     [Fact]
     public void Constructor_ZeroWidth_ThrowsArgumentOutOfRange()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Bitmap(0, 10));
+        Assert.Throws<ArgumentException>(() => new Bitmap(0, 10));
     }
 
     [Fact]
     public void Constructor_NegativeHeight_ThrowsArgumentOutOfRange()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Bitmap(10, -1));
+        Assert.Throws<ArgumentException>(() => new Bitmap(10, -1));
     }
 
     [Fact]
@@ -137,7 +137,7 @@ public class BitmapTests
     public void Constructor_ResizeImage_ZeroWidth_ThrowsArgumentOutOfRange()
     {
         using var original = new Bitmap(10, 10);
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Bitmap(original, 0, 5));
+        Assert.Throws<ArgumentException>(() => new Bitmap(original, 0, 5));
     }
 
     [Fact]
@@ -198,21 +198,21 @@ public class BitmapTests
     public void GetPixel_OutOfBoundsX_ThrowsArgumentOutOfRange()
     {
         using var bmp = new Bitmap(10, 10);
-        Assert.Throws<ArgumentOutOfRangeException>(() => bmp.GetPixel(10, 0));
+        Assert.Throws<ArgumentException>(() => bmp.GetPixel(10, 0));
     }
 
     [Fact]
     public void GetPixel_NegativeY_ThrowsArgumentOutOfRange()
     {
         using var bmp = new Bitmap(10, 10);
-        Assert.Throws<ArgumentOutOfRangeException>(() => bmp.GetPixel(0, -1));
+        Assert.Throws<ArgumentException>(() => bmp.GetPixel(0, -1));
     }
 
     [Fact]
     public void SetPixel_OutOfBoundsX_ThrowsArgumentOutOfRange()
     {
         using var bmp = new Bitmap(10, 10);
-        Assert.Throws<ArgumentOutOfRangeException>(() => bmp.SetPixel(10, 0, Color.Red));
+        Assert.Throws<ArgumentException>(() => bmp.SetPixel(10, 0, Color.Red));
     }
 
     // --- MakeTransparent ---

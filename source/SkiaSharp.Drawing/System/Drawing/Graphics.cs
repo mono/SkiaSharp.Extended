@@ -1146,7 +1146,7 @@ namespace System.Drawing
 			ThrowIfDisposed();
 			if (pen is null) throw new ArgumentNullException(nameof(pen));
 			if (points is null) throw new ArgumentNullException(nameof(points));
-			if (points.Length < 2) return;
+			if (points.Length < 2) throw new ArgumentException(null, nameof(points));
 			using var paint = pen.CreatePaint();
 			ApplyState(paint);
 			using var path = new SKPath();
@@ -1235,7 +1235,7 @@ namespace System.Drawing
 			ThrowIfDisposed();
 			if (pen is null) throw new ArgumentNullException(nameof(pen));
 			if (points is null) throw new ArgumentNullException(nameof(points));
-			if (points.Length < 2) return;
+			if (points.Length < 2) throw new ArgumentException(null, nameof(points));
 			using var paint = pen.CreatePaint();
 			ApplyState(paint);
 			using var path = GdiPolygonPath(points);
@@ -1351,9 +1351,10 @@ namespace System.Drawing
 		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.RectangleF layoutRectangle, System.Drawing.StringFormat? format)
 		{
 			ThrowIfDisposed();
-			if (s is null || s.Length == 0) return;
+			if (s is null) throw new ArgumentNullException(nameof(s));
 			if (font is null) throw new ArgumentNullException(nameof(font));
 			if (brush is null) throw new ArgumentNullException(nameof(brush));
+			if (s.Length == 0) return;
 
 			using var paint = brush.CreatePaint();
 			ApplyState(paint);
@@ -1461,9 +1462,10 @@ namespace System.Drawing
 		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, float x, float y, System.Drawing.StringFormat? format)
 		{
 			ThrowIfDisposed();
-			if (s is null || s.Length == 0) return;
+			if (s is null) throw new ArgumentNullException(nameof(s));
 			if (font is null) throw new ArgumentNullException(nameof(font));
 			if (brush is null) throw new ArgumentNullException(nameof(brush));
+			if (s.Length == 0) return;
 
 			using var paint = brush.CreatePaint();
 			ApplyState(paint);
@@ -1808,7 +1810,7 @@ namespace System.Drawing
 			ThrowIfDisposed();
 			if (brush is null) throw new ArgumentNullException(nameof(brush));
 			if (points is null) throw new ArgumentNullException(nameof(points));
-			if (points.Length < 2) return;
+			if (points.Length < 2) throw new ArgumentException(null, nameof(points));
 			using var paint = brush.CreatePaint();
 			ApplyState(paint);
 			using var path = GdiPolygonPath(points);
@@ -1826,7 +1828,7 @@ namespace System.Drawing
 			ThrowIfDisposed();
 			if (brush is null) throw new ArgumentNullException(nameof(brush));
 			if (points is null) throw new ArgumentNullException(nameof(points));
-			if (points.Length < 2) return;
+			if (points.Length < 2) throw new ArgumentException(null, nameof(points));
 			using var paint = brush.CreatePaint();
 			ApplyState(paint);
 			using var path = GdiPolygonPath(points);
