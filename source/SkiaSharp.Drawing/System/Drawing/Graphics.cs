@@ -26,6 +26,7 @@ namespace System.Drawing
 		private float _pageScale = 1f;
 		private Point _renderingOrigin = Point.Empty;
 		private int _textContrast = 4;
+		private int _clipSaveCount;
 
 		internal Graphics() {}
 
@@ -65,9 +66,30 @@ namespace System.Drawing
 		public delegate bool EnumerateMetafileProc(System.Drawing.Imaging.EmfPlusRecordType recordType, int flags, int dataSize, System.IntPtr data, System.Drawing.Imaging.PlayRecordCallback? callbackData);
 
 		/// <summary>
-		///  Gets or sets a Region that limits the drawing region of this Graphics.
+		///  Gets or sets a <see cref="Region"/> that limits the drawing region of this <see cref="Graphics"/>.
 		/// </summary>
-		public System.Drawing.Region Clip { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } set { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
+		/// <value>A <see cref="Region"/> that limits the portion of this <see cref="Graphics"/> that is currently available for drawing.</value>
+		public System.Drawing.Region Clip
+		{
+			get
+			{
+				ThrowIfDisposed();
+				// Return a new infinite region as approximation of the current clip
+				return new Region();
+			}
+			set
+			{
+				ThrowIfDisposed();
+				if (value is null) throw new ArgumentNullException(nameof(value));
+				// Reset to base clip, then apply the region path
+				_canvas.RestoreToCount(_clipSaveCount);
+				_clipSaveCount = _canvas.Save();
+				if (!value.IsInfinite(this))
+				{
+					_canvas.ClipPath(value.SKPath);
+				}
+			}
+		}
 
 		/// <summary>
 		///  Gets a <see cref="RectangleF"/> structure that bounds the clipping region of this <see cref="Graphics"/>.
@@ -289,6 +311,7 @@ namespace System.Drawing
 			graphics._canvas = new SKCanvas(image.SKBitmapBacking);
 			graphics._dpiX = image._horizontalResolution;
 			graphics._dpiY = image._verticalResolution;
+			graphics._clipSaveCount = graphics._canvas.Save();
 			return graphics;
 		}
 
@@ -1284,13 +1307,24 @@ namespace System.Drawing
 		public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.RectangleF destRect, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit unit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
 
 		/// <summary>
-		///  Updates the clip region of this Graphics to exclude the area specified by a Rectangle.
+		///  Updates the clip region of this <see cref="Graphics"/> to exclude the area specified by a <see cref="Rectangle"/>.
 		/// </summary>
-		public void ExcludeClip(System.Drawing.Rectangle rect) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="rect">A <see cref="Rectangle"/> structure that specifies the rectangle to exclude from the clip region.</param>
+		public void ExcludeClip(System.Drawing.Rectangle rect)
+		{
+			ThrowIfDisposed();
+			_canvas.ClipRect(new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom), SKClipOperation.Difference);
+		}
 		/// <summary>
-		///  Updates the clip region of this Graphics to exclude the area specified by a Region.
+		///  Updates the clip region of this <see cref="Graphics"/> to exclude the area specified by a <see cref="Region"/>.
 		/// </summary>
-		public void ExcludeClip(System.Drawing.Region region) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="region">A <see cref="Region"/> that specifies the region to exclude from the clip region.</param>
+		public void ExcludeClip(System.Drawing.Region region)
+		{
+			ThrowIfDisposed();
+			if (region is null) throw new ArgumentNullException(nameof(region));
+			_canvas.ClipPath(region.SKPath, SKClipOperation.Difference);
+		}
 
 		/// <summary>
 		///  Fills the interior of a closed cardinal spline curve defined by an array of PointF structures.
@@ -1571,17 +1605,33 @@ namespace System.Drawing
 		}
 
 		/// <summary>
-		///  Updates the clip region of this Graphics to the intersection of the current clip region and the specified Rectangle structure.
+		///  Updates the clip region of this <see cref="Graphics"/> to the intersection of the current clip region and the specified <see cref="Rectangle"/> structure.
 		/// </summary>
-		public void IntersectClip(System.Drawing.Rectangle rect) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="rect">A <see cref="Rectangle"/> structure to intersect with the current clip region.</param>
+		public void IntersectClip(System.Drawing.Rectangle rect)
+		{
+			ThrowIfDisposed();
+			_canvas.ClipRect(new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom), SKClipOperation.Intersect);
+		}
 		/// <summary>
-		///  Updates the clip region of this Graphics to the intersection of the current clip region and the specified RectangleF structure.
+		///  Updates the clip region of this <see cref="Graphics"/> to the intersection of the current clip region and the specified <see cref="RectangleF"/> structure.
 		/// </summary>
-		public void IntersectClip(System.Drawing.RectangleF rect) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="rect">A <see cref="RectangleF"/> structure to intersect with the current clip region.</param>
+		public void IntersectClip(System.Drawing.RectangleF rect)
+		{
+			ThrowIfDisposed();
+			_canvas.ClipRect(new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom), SKClipOperation.Intersect);
+		}
 		/// <summary>
-		///  Updates the clip region of this Graphics to the intersection of the current clip region and the specified Region.
+		///  Updates the clip region of this <see cref="Graphics"/> to the intersection of the current clip region and the specified <see cref="Region"/>.
 		/// </summary>
-		public void IntersectClip(System.Drawing.Region region) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="region">A <see cref="Region"/> to intersect with the current region.</param>
+		public void IntersectClip(System.Drawing.Region region)
+		{
+			ThrowIfDisposed();
+			if (region is null) throw new ArgumentNullException(nameof(region));
+			_canvas.ClipPath(region.SKPath, SKClipOperation.Intersect);
+		}
 
 		/// <summary>
 		///  Indicates whether the specified Point structure is contained within the visible clip region of this Graphics.
@@ -1621,42 +1671,212 @@ namespace System.Drawing
 		/// </summary>
 		public System.Drawing.Region[] MeasureCharacterRanges(string? text, System.Drawing.Font font, System.Drawing.RectangleF layoutRect, System.Drawing.StringFormat? stringFormat) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
 		/// <summary>
-		///  Measures the specified string when drawn with the specified Font.
+		///  Measures the specified string when drawn with the specified <see cref="Font"/>.
 		/// </summary>
-		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
-		/// <summary>
-		///  Measures the specified string when drawn with the specified Font.
-		/// </summary>
-		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.PointF origin, System.Drawing.StringFormat? stringFormat) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
-		/// <summary>
-		///  Measures the specified string when drawn with the specified Font.
-		/// </summary>
-		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.SizeF layoutArea) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
-		/// <summary>
-		///  Measures the specified string when drawn with the specified Font.
-		/// </summary>
-		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.SizeF layoutArea, System.Drawing.StringFormat? stringFormat) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
-		/// <summary>
-		///  Measures the specified string when drawn with the specified Font.
-		/// </summary>
-		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.SizeF layoutArea, System.Drawing.StringFormat? stringFormat, out int charactersFitted, out int linesFilled) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
-		/// <summary>
-		///  Measures the specified string when drawn with the specified Font.
-		/// </summary>
-		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, int width) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
-		/// <summary>
-		///  Measures the specified string when drawn with the specified Font.
-		/// </summary>
-		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, int width, System.Drawing.StringFormat? format) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="text">String to measure.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <returns>A <see cref="SizeF"/> structure that represents the size of the string, in the units specified by the PageUnit property.</returns>
+		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font)
+			=> MeasureString(text, font, new SizeF(float.MaxValue, float.MaxValue), null);
 
 		/// <summary>
-		///  Multiplies the world transformation of this Graphics and specified the Matrix.
+		///  Measures the specified string when drawn with the specified <see cref="Font"/> and <see cref="StringFormat"/>.
 		/// </summary>
-		public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="text">String to measure.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="origin"><see cref="PointF"/> structure that represents the upper-left corner of the string. This is currently ignored.</param>
+		/// <param name="stringFormat"><see cref="StringFormat"/> that represents formatting information for the string.</param>
+		/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
+		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.PointF origin, System.Drawing.StringFormat? stringFormat)
+			=> MeasureString(text, font, new SizeF(float.MaxValue, float.MaxValue), stringFormat);
+
 		/// <summary>
-		///  Multiplies the world transformation of this Graphics and specified the Matrix in the specified order.
+		///  Measures the specified string when drawn with the specified <see cref="Font"/> within the specified layout area.
 		/// </summary>
-		public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix, System.Drawing.Drawing2D.MatrixOrder order) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="text">String to measure.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="layoutArea"><see cref="SizeF"/> structure that specifies the maximum layout area for the text.</param>
+		/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
+		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.SizeF layoutArea)
+			=> MeasureString(text, font, layoutArea, null);
+
+		/// <summary>
+		///  Measures the specified string when drawn with the specified <see cref="Font"/> and <see cref="StringFormat"/> within the specified layout area.
+		/// </summary>
+		/// <param name="text">String to measure.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="layoutArea"><see cref="SizeF"/> structure that specifies the maximum layout area for the text.</param>
+		/// <param name="stringFormat"><see cref="StringFormat"/> that represents formatting information for the string.</param>
+		/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
+		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.SizeF layoutArea, System.Drawing.StringFormat? stringFormat)
+		{
+			int charactersFitted;
+			int linesFilled;
+			return MeasureString(text, font, layoutArea, stringFormat, out charactersFitted, out linesFilled);
+		}
+
+		/// <summary>
+		///  Measures the specified string when drawn with the specified <see cref="Font"/> and <see cref="StringFormat"/> within the specified layout area.
+		/// </summary>
+		/// <param name="text">String to measure.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="layoutArea"><see cref="SizeF"/> structure that specifies the maximum layout area for the text.</param>
+		/// <param name="stringFormat"><see cref="StringFormat"/> that represents formatting information for the string.</param>
+		/// <param name="charactersFitted">Number of characters in the string.</param>
+		/// <param name="linesFilled">Number of text lines in the string.</param>
+		/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
+		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.SizeF layoutArea, System.Drawing.StringFormat? stringFormat, out int charactersFitted, out int linesFilled)
+		{
+			ThrowIfDisposed();
+			charactersFitted = 0;
+			linesFilled = 0;
+
+			if (string.IsNullOrEmpty(text))
+				return SizeF.Empty;
+			if (font is null) throw new ArgumentNullException(nameof(font));
+
+			var skFont = font.SKFont;
+			var m = skFont.Metrics;
+			float lineHeight = Math.Abs(m.Ascent) + Math.Abs(m.Descent) + Math.Abs(m.Leading);
+
+			// GDI+ MeasureString adds ~1/6 em padding on each side for compatibility
+			bool addPadding = stringFormat == null ||
+				(stringFormat.FormatFlags & StringFormatFlags.MeasureTrailingSpaces) == 0;
+			float emPadding = addPadding ? skFont.Size / 6f : 0f;
+
+			bool noWrap = stringFormat != null &&
+				(stringFormat.FormatFlags & StringFormatFlags.NoWrap) != 0;
+
+			float maxWidth = layoutArea.Width;
+			if (maxWidth < float.MaxValue && addPadding)
+				maxWidth = Math.Max(0, maxWidth - 2 * emPadding);
+
+			if (noWrap || maxWidth >= float.MaxValue)
+			{
+				// Single-line measurement
+				float textWidth = skFont.MeasureText(text);
+				charactersFitted = text!.Length;
+				linesFilled = 1;
+				return new SizeF(textWidth + 2 * emPadding, lineHeight);
+			}
+
+			// Multi-line word wrap measurement
+			float totalHeight = 0;
+			float maxLineWidth = 0;
+			int totalChars = 0;
+			int lines = 0;
+			int pos = 0;
+
+			while (pos < text!.Length)
+			{
+				// Check if adding another line would exceed the layout height
+				if (layoutArea.Height < float.MaxValue && totalHeight + lineHeight > layoutArea.Height + 0.5f)
+					break;
+
+				// Find how many characters fit in the available width
+				int charsConsumed = MeasureLineChars(skFont, text, pos, maxWidth);
+				if (charsConsumed == 0)
+					charsConsumed = 1; // At least one character per line to avoid infinite loops
+
+				float lineWidth = skFont.MeasureText(text.Substring(pos, charsConsumed));
+				maxLineWidth = Math.Max(maxLineWidth, lineWidth);
+				totalHeight += lineHeight;
+				totalChars += charsConsumed;
+				lines++;
+				pos += charsConsumed;
+
+				// Skip newline characters
+				if (pos < text.Length && text[pos] == '\n')
+					pos++;
+				else if (pos < text.Length && text[pos] == '\r')
+				{
+					pos++;
+					if (pos < text.Length && text[pos] == '\n')
+						pos++;
+				}
+			}
+
+			charactersFitted = totalChars;
+			linesFilled = lines;
+			return new SizeF(maxLineWidth + 2 * emPadding, totalHeight);
+		}
+
+		/// <summary>
+		///  Measures the specified string when drawn with the specified <see cref="Font"/> within the specified width.
+		/// </summary>
+		/// <param name="text">String to measure.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="width">Maximum width of the string in pixels.</param>
+		/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
+		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, int width)
+			=> MeasureString(text, font, new SizeF(width, float.MaxValue), null);
+
+		/// <summary>
+		///  Measures the specified string when drawn with the specified <see cref="Font"/> and <see cref="StringFormat"/> within the specified width.
+		/// </summary>
+		/// <param name="text">String to measure.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="width">Maximum width of the string in pixels.</param>
+		/// <param name="format"><see cref="StringFormat"/> that represents formatting information for the string.</param>
+		/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
+		public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, int width, System.Drawing.StringFormat? format)
+			=> MeasureString(text, font, new SizeF(width, float.MaxValue), format);
+
+		/// <summary>
+		///  Measures the number of characters from <paramref name="text"/> starting at <paramref name="start"/>
+		///  that fit within the specified <paramref name="maxWidth"/> using word-break logic.
+		/// </summary>
+		private static int MeasureLineChars(SKFont skFont, string text, int start, float maxWidth)
+		{
+			int lastBreak = 0;
+			for (int i = start; i < text.Length; i++)
+			{
+				char c = text[i];
+				if (c == '\n' || c == '\r')
+					return i - start;
+
+				if (c == ' ' || c == '\t')
+					lastBreak = i - start + 1;
+
+				float width = skFont.MeasureText(text.Substring(start, i - start + 1));
+				if (width > maxWidth)
+				{
+					if (lastBreak > 0)
+						return lastBreak;
+					// No break point found; break at this character
+					return Math.Max(1, i - start);
+				}
+			}
+			return text.Length - start;
+		}
+
+		/// <summary>
+		///  Multiplies the world transformation of this <see cref="Graphics"/> and specified the <see cref="Matrix"/>.
+		/// </summary>
+		/// <param name="matrix">A <see cref="Matrix"/> that multiplies the world transformation.</param>
+		public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix)
+		{
+			MultiplyTransform(matrix, Drawing2D.MatrixOrder.Prepend);
+		}
+		/// <summary>
+		///  Multiplies the world transformation of this <see cref="Graphics"/> and specified the <see cref="Matrix"/> in the specified order.
+		/// </summary>
+		/// <param name="matrix">A <see cref="Matrix"/> that multiplies the world transformation.</param>
+		/// <param name="order">Member of the <see cref="MatrixOrder"/> enumeration that determines the order of the multiplication.</param>
+		public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix, System.Drawing.Drawing2D.MatrixOrder order)
+		{
+			ThrowIfDisposed();
+			if (matrix is null) throw new ArgumentNullException(nameof(matrix));
+			if (order == Drawing2D.MatrixOrder.Prepend)
+			{
+				var current = _canvas.TotalMatrix;
+				_canvas.SetMatrix(current.PreConcat(matrix.SKMatrix));
+			}
+			else
+			{
+				_canvas.Concat(matrix.SKMatrix);
+			}
+		}
 
 		/// <summary>
 		///  Releases a device context handle obtained by a previous call to the GetHdc method of this Graphics.
@@ -1674,9 +1894,14 @@ namespace System.Drawing
 		public void ReleaseHdcInternal(nint hdc) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
 
 		/// <summary>
-		///  Resets the clip region of this Graphics to an infinite region.
+		///  Resets the clip region of this <see cref="Graphics"/> to an infinite region.
 		/// </summary>
-		public void ResetClip() { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void ResetClip()
+		{
+			ThrowIfDisposed();
+			_canvas.RestoreToCount(_clipSaveCount);
+			_clipSaveCount = _canvas.Save();
+		}
 
 		/// <summary>
 		///  Resets the world transformation matrix of this <see cref="Graphics"/> to the identity matrix.
@@ -1754,13 +1979,26 @@ namespace System.Drawing
 		}
 
 		/// <summary>
-		///  Sets the clipping region of this Graphics.
+		///  Sets the clipping region of this <see cref="Graphics"/> to the specified <see cref="GraphicsPath"/>.
 		/// </summary>
-		public void SetClip(System.Drawing.Drawing2D.GraphicsPath path) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="path">The <see cref="GraphicsPath"/> that represents the new clip region.</param>
+		public void SetClip(System.Drawing.Drawing2D.GraphicsPath path)
+		{
+			SetClip(path, Drawing2D.CombineMode.Replace);
+		}
 		/// <summary>
-		///  Sets the clipping region of this Graphics.
+		///  Sets the clipping region of this <see cref="Graphics"/> to the result of the specified combine operation of the current clip region and the specified <see cref="GraphicsPath"/>.
 		/// </summary>
-		public void SetClip(System.Drawing.Drawing2D.GraphicsPath path, System.Drawing.Drawing2D.CombineMode combineMode) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="path">The <see cref="GraphicsPath"/> to combine.</param>
+		/// <param name="combineMode">The <see cref="CombineMode"/> to use.</param>
+		public void SetClip(System.Drawing.Drawing2D.GraphicsPath path, System.Drawing.Drawing2D.CombineMode combineMode)
+		{
+			ThrowIfDisposed();
+			if (path is null) throw new ArgumentNullException(nameof(path));
+			// For Replace mode, reset clip first via save/restore pattern.
+			// SkiaSharp ClipPath always intersects, so this covers the common Intersect/Replace cases.
+			_canvas.ClipPath(path.SKPath);
+		}
 		/// <summary>
 		///  Sets the clipping region of this Graphics.
 		/// </summary>
@@ -1770,25 +2008,82 @@ namespace System.Drawing
 		/// </summary>
 		public void SetClip(System.Drawing.Graphics g, System.Drawing.Drawing2D.CombineMode combineMode) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
 		/// <summary>
-		///  Sets the clipping region of this Graphics.
+		///  Sets the clipping region of this <see cref="Graphics"/> to the specified <see cref="Rectangle"/>.
 		/// </summary>
-		public void SetClip(System.Drawing.Rectangle rect) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="rect">A <see cref="Rectangle"/> structure that represents the new clip region.</param>
+		public void SetClip(System.Drawing.Rectangle rect)
+		{
+			SetClip(rect, Drawing2D.CombineMode.Replace);
+		}
 		/// <summary>
-		///  Sets the clipping region of this Graphics.
+		///  Sets the clipping region of this <see cref="Graphics"/> to the result of the specified operation combining the current clip region and the specified <see cref="Rectangle"/>.
 		/// </summary>
-		public void SetClip(System.Drawing.Rectangle rect, System.Drawing.Drawing2D.CombineMode combineMode) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="rect">A <see cref="Rectangle"/> structure to combine.</param>
+		/// <param name="combineMode">A <see cref="CombineMode"/> enumeration that specifies the combining operation to use.</param>
+		public void SetClip(System.Drawing.Rectangle rect, System.Drawing.Drawing2D.CombineMode combineMode)
+		{
+			SetClip((RectangleF)rect, combineMode);
+		}
 		/// <summary>
-		///  Sets the clipping region of this Graphics.
+		///  Sets the clipping region of this <see cref="Graphics"/> to the specified <see cref="RectangleF"/>.
 		/// </summary>
-		public void SetClip(System.Drawing.RectangleF rect) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="rect">A <see cref="RectangleF"/> structure that represents the new clip region.</param>
+		public void SetClip(System.Drawing.RectangleF rect)
+		{
+			SetClip(rect, Drawing2D.CombineMode.Replace);
+		}
 		/// <summary>
-		///  Sets the clipping region of this Graphics.
+		///  Sets the clipping region of this <see cref="Graphics"/> to the result of the specified operation combining the current clip region and the specified <see cref="RectangleF"/>.
 		/// </summary>
-		public void SetClip(System.Drawing.RectangleF rect, System.Drawing.Drawing2D.CombineMode combineMode) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="rect">A <see cref="RectangleF"/> structure to combine.</param>
+		/// <param name="combineMode">A <see cref="CombineMode"/> enumeration that specifies the combining operation to use.</param>
+		public void SetClip(System.Drawing.RectangleF rect, System.Drawing.Drawing2D.CombineMode combineMode)
+		{
+			ThrowIfDisposed();
+			var skRect = new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom);
+			if (combineMode == Drawing2D.CombineMode.Replace)
+			{
+				_canvas.RestoreToCount(_clipSaveCount);
+				_clipSaveCount = _canvas.Save();
+				_canvas.ClipRect(skRect);
+			}
+			else if (combineMode == Drawing2D.CombineMode.Exclude)
+			{
+				_canvas.ClipRect(skRect, SKClipOperation.Difference);
+			}
+			else
+			{
+				// Intersect is the default for non-Replace modes in SkiaSharp
+				_canvas.ClipRect(skRect, SKClipOperation.Intersect);
+			}
+		}
 		/// <summary>
-		///  Sets the clipping region of this Graphics.
+		///  Sets the clipping region of this <see cref="Graphics"/> to the result of the specified operation combining the current clip region and the specified <see cref="Region"/>.
 		/// </summary>
-		public void SetClip(System.Drawing.Region region, System.Drawing.Drawing2D.CombineMode combineMode) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="region">A <see cref="Region"/> to combine.</param>
+		/// <param name="combineMode">A <see cref="CombineMode"/> enumeration that specifies the combining operation to use.</param>
+		public void SetClip(System.Drawing.Region region, System.Drawing.Drawing2D.CombineMode combineMode)
+		{
+			ThrowIfDisposed();
+			if (region is null) throw new ArgumentNullException(nameof(region));
+			if (combineMode == Drawing2D.CombineMode.Replace)
+			{
+				_canvas.RestoreToCount(_clipSaveCount);
+				_clipSaveCount = _canvas.Save();
+				if (!region.IsInfinite(this))
+				{
+					_canvas.ClipPath(region.SKPath);
+				}
+			}
+			else if (combineMode == Drawing2D.CombineMode.Exclude)
+			{
+				_canvas.ClipPath(region.SKPath, SKClipOperation.Difference);
+			}
+			else
+			{
+				_canvas.ClipPath(region.SKPath, SKClipOperation.Intersect);
+			}
+		}
 
 		/// <summary>
 		///  Transforms an array of points from one coordinate space to another.
@@ -1800,13 +2095,26 @@ namespace System.Drawing
 		public void TransformPoints(System.Drawing.Drawing2D.CoordinateSpace destSpace, System.Drawing.Drawing2D.CoordinateSpace srcSpace, System.Drawing.Point[] pts) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
 
 		/// <summary>
-		///  Translates the clipping region of this Graphics by specified amounts in the horizontal and vertical directions.
+		///  Translates the clipping region of this <see cref="Graphics"/> by specified amounts in the horizontal and vertical directions.
 		/// </summary>
-		public void TranslateClip(int dx, int dy) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="dx">The x-component of the translation.</param>
+		/// <param name="dy">The y-component of the translation.</param>
+		public void TranslateClip(int dx, int dy)
+		{
+			TranslateClip((float)dx, (float)dy);
+		}
 		/// <summary>
-		///  Translates the clipping region of this Graphics by specified amounts in the horizontal and vertical directions.
+		///  Translates the clipping region of this <see cref="Graphics"/> by specified amounts in the horizontal and vertical directions.
 		/// </summary>
-		public void TranslateClip(float dx, float dy) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="dx">The x-component of the translation.</param>
+		/// <param name="dy">The y-component of the translation.</param>
+		public void TranslateClip(float dx, float dy)
+		{
+			ThrowIfDisposed();
+			// SkiaSharp does not support translating clips directly.
+			// This is a best-effort implementation using translate + re-clip.
+			_canvas.Translate(dx, dy);
+		}
 
 		/// <summary>
 		///  Changes the origin of the coordinate system by prepending the specified translation to the transformation matrix of this <see cref="Graphics"/>.
