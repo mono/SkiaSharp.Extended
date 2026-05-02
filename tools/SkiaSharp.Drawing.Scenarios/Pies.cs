@@ -1,34 +1,33 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Xunit;
 
 namespace SkiaSharp.Drawing.Scenarios;
 
 public class Pies : ScenarioBase
 {
-    public Pies(string outputDir) : base(outputDir) { }
-
-    public void Pie_Fill_Quarter() => Render(100, 100, g => {
+    [Fact] public void Pie_Fill_Quarter() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var brush = new SolidBrush(Color.Red);
         g.FillPie(brush, 10, 10, 80, 80, 0, 90);
     });
 
-    public void Pie_Fill_Half() => Render(100, 100, g => {
+    [Fact] public void Pie_Fill_Half() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var brush = new SolidBrush(Color.Green);
         g.FillPie(brush, 10, 10, 80, 80, -90, 180);
     });
 
-    public void Pie_Fill_ThreeQuarter() => Render(100, 100, g => {
+    [Fact] public void Pie_Fill_ThreeQuarter() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var brush = new SolidBrush(Color.Blue);
         g.FillPie(brush, 10, 10, 80, 80, 0, 270);
     });
 
-    public void Pie_Multiple() => Render(100, 100, g => {
+    [Fact] public void Pie_Multiple() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var r = new SolidBrush(Color.Red);

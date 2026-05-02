@@ -15,8 +15,19 @@ public class ReferenceComparisonTests : PixelCompatibilityTestBase
 {
     public static IEnumerable<object[]> AllScenarioData()
     {
-        foreach (var (category, name) in AllScenarios.Enumerate())
-            yield return new object[] { name, category };
+        var refDir = ReferenceImagesPath;
+        if (!Directory.Exists(refDir))
+            yield break;
+
+        foreach (var categoryDir in Directory.GetDirectories(refDir))
+        {
+            var category = Path.GetFileName(categoryDir);
+            foreach (var pngFile in Directory.GetFiles(categoryDir, "*.png"))
+            {
+                var name = Path.GetFileNameWithoutExtension(pngFile);
+                yield return new object[] { name, category };
+            }
+        }
     }
 
     [Theory]
@@ -29,18 +40,22 @@ public class ReferenceComparisonTests : PixelCompatibilityTestBase
         if (!File.Exists(referencePath))
             Assert.Skip($"Reference image not found: {referencePath}");
 
-        // Render with our SkiaSharp.Drawing
+        // Render with our SkiaSharp.Drawing by invoking the scenario
         var tmpDir = Path.Combine(TestArtifactsPath, "_render");
-        Directory.CreateDirectory(tmpDir);
+        Environment.SetEnvironmentVariable("SCENARIO_OUTPUT_PATH", tmpDir);
 
-        var scenarios = AllScenarios.Create(tmpDir);
-        var scenarioInstance = scenarios.First(s => s.GetType().Name == category);
-        var method = scenarioInstance.GetType().GetMethod(name);
+        // Find the scenario class and method
+        var scenarioType = typeof(ScenarioBase).Assembly.GetTypes()
+            .FirstOrDefault(t => t.Name == category && t.IsSubclassOf(typeof(ScenarioBase)));
+        Assert.NotNull(scenarioType);
+
+        var instance = (ScenarioBase)Activator.CreateInstance(scenarioType!)!;
+        var method = scenarioType!.GetMethod(name);
         Assert.NotNull(method);
-        method!.Invoke(scenarioInstance, null);
+        method!.Invoke(instance, null);
 
         var actualPath = Path.Combine(tmpDir, category, $"{name}.png");
-        Assert.True(File.Exists(actualPath), $"Rendered image not found: {actualPath}");
+        Assert.True(File.Exists(actualPath), $"Scenario did not produce output: {actualPath}");
 
         using var actualBitmap = SKBitmap.Decode(actualPath);
         Assert.NotNull(actualBitmap);

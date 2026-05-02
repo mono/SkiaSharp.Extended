@@ -1,12 +1,11 @@
 using System.Drawing;
+using Xunit;
 
 namespace SkiaSharp.Drawing.Scenarios;
 
 public class Colors : ScenarioBase
 {
-    public Colors(string outputDir) : base(outputDir) { }
-
-    public void Color_AllChannels() => Render(100, 100, g => {
+    [Fact] public void Color_AllChannels() => Render(100, 100, g => {
         g.Clear(Color.Transparent);
         using var r = new SolidBrush(Color.Red);
         using var gr = new SolidBrush(Color.Lime);
@@ -18,7 +17,7 @@ public class Colors : ScenarioBase
         g.FillRectangle(bl, 75, 0, 25, 100);
     });
 
-    public void Color_GrayLevels() => Render(100, 100, g => {
+    [Fact] public void Color_GrayLevels() => Render(100, 100, g => {
         g.Clear(Color.Transparent);
         for (int i = 0; i < 10; i++) {
             int gray = Math.Min(255, i * 28);
@@ -27,7 +26,7 @@ public class Colors : ScenarioBase
         }
     });
 
-    public void Color_AlphaBlending() => Render(100, 100, g => {
+    [Fact] public void Color_AlphaBlending() => Render(100, 100, g => {
         g.Clear(Color.White);
         for (int i = 0; i < 5; i++) {
             int alpha = 50 + i * 50;

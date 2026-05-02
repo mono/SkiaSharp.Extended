@@ -1,13 +1,12 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Xunit;
 
 namespace SkiaSharp.Drawing.Scenarios;
 
 public class Composites : ScenarioBase
 {
-    public Composites(string outputDir) : base(outputDir) { }
-
-    public void Composite_RectOverEllipse() => Render(100, 100, g => {
+    [Fact] public void Composite_RectOverEllipse() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var blueBrush = new SolidBrush(Color.Blue);
@@ -16,7 +15,7 @@ public class Composites : ScenarioBase
         g.FillRectangle(redBrush, 25, 25, 50, 50);
     });
 
-    public void Composite_MultipleShapes() => Render(200, 200, g => {
+    [Fact] public void Composite_MultipleShapes() => Render(200, 200, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var redBrush = new SolidBrush(Color.Red);
@@ -30,7 +29,7 @@ public class Composites : ScenarioBase
         g.DrawLine(pen, 199, 0, 0, 199);
     });
 
-    public void Composite_ConcentricCircles() => Render(100, 100, g => {
+    [Fact] public void Composite_ConcentricCircles() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var r = new SolidBrush(Color.Red);
@@ -43,7 +42,7 @@ public class Composites : ScenarioBase
         g.FillEllipse(y, 35, 35, 30, 30);
     });
 
-    public void Composite_Grid() => Render(100, 100, g => {
+    [Fact] public void Composite_Grid() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var pen = new Pen(Color.Gray, 1);

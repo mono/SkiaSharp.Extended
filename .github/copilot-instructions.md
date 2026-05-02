@@ -130,29 +130,32 @@ A drop-in replacement for `System.Drawing.Common` backed by SkiaSharp.
 - Polygon vertex coordinates also use +0.5 offset via `GdiPolygonPath()`
 
 ### Test Rules
-- **Every new drawing feature must have pixel comparison scenarios** — add methods to the appropriate class in `tools/SkiaSharp.Drawing.Scenarios/`
+- **Every new drawing feature must have pixel comparison scenarios** — add `[Fact]` methods to the appropriate class in `tools/SkiaSharp.Drawing.Scenarios/`
 - Each scenario class name = folder name for reference images (e.g., `Ellipses` class → `ReferenceImages/Ellipses/`)
 - Each scenario method name = PNG filename (e.g., `Ellipse_Fill_Circle` → `Ellipse_Fill_Circle.png`)
 - **Non-AA scenarios** must achieve <0.5% pixel error vs GDI+ reference
 - **AA scenarios** must achieve <5% pixel error vs GDI+ (different AA algorithms)
 - **Solid fills and colors** must achieve <0.1% pixel error
-- Run `dotnet run --project tools/SkiaSharp.Drawing.SkiaRunner/ -- tests/SkiaSharp.Drawing.Tests/ReferenceImages` to regenerate baselines after changes
+- Run `dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~Scenarios"` to generate scenario images after changes
 - CI generates GDI+ reference images on Windows and compares — test failures fail the build
 
 ### Adding a New Drawing Scenario
-1. Find the appropriate category class in `tools/SkiaSharp.Drawing.Scenarios/` (e.g., `Ellipses.cs`)
-2. Add a public void method with a descriptive name:
+1. Find the appropriate category file in `tools/SkiaSharp.Drawing.Scenarios/` (e.g., `Ellipses.cs`)
+2. Add a `[Fact]` method:
    ```csharp
-   public void Ellipse_Fill_Large() => Render(200, 200, g => {
+   [Fact] public void Ellipse_Fill_Large() => Render(200, 200, g => {
        g.SmoothingMode = SmoothingMode.None;
        g.Clear(Color.White);
        using var brush = new SolidBrush(Color.Blue);
        g.FillEllipse(brush, 10, 10, 180, 180);
    });
    ```
-3. Regenerate baselines: `dotnet run --project tools/SkiaSharp.Drawing.SkiaRunner/ -- tests/SkiaSharp.Drawing.Tests/ReferenceImages`
-4. Run tests: `dotnet test tests/SkiaSharp.Drawing.Tests/`
-5. CI will validate against real GDI+ output
+3. Run the scenarios to generate baselines:
+   `dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~Scenarios"`
+4. Copy the generated image to reference images:
+   The output goes to `ScenarioOutput/` in the test output directory
+5. Run comparison tests: `dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~ReferenceComparison"`
+6. CI generates GDI+ reference images automatically and compares
 
 ### Build & Test Commands
 ```bash
@@ -162,11 +165,11 @@ dotnet build source/SkiaSharp.Drawing/SkiaSharp.Drawing.csproj -c Release
 # Run all SkiaSharp.Drawing tests
 dotnet test tests/SkiaSharp.Drawing.Tests/
 
+# Run only scenario tests (generates images)
+dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~Scenarios"
+
 # Run only pixel comparison tests
 dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~ReferenceComparison"
-
-# Regenerate baseline images (after implementation changes)
-dotnet run --project tools/SkiaSharp.Drawing.SkiaRunner/ -- tests/SkiaSharp.Drawing.Tests/ReferenceImages
 
 # Validate API compatibility
 dotnet tool restore

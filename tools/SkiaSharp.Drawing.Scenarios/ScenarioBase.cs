@@ -7,27 +7,25 @@ using System.Runtime.CompilerServices;
 namespace SkiaSharp.Drawing.Scenarios;
 
 /// <summary>
-/// Base class for drawing scenarios. Each subclass is a category (folder name).
-/// Each public method is a scenario (file name). Call Render() with a drawing action
-/// and it saves to the output directory.
+/// Base class for drawing scenario tests. Each subclass is a test class and a category.
+/// Each [Fact] method renders a scenario and saves the PNG.
+/// The output directory is controlled by the SCENARIO_OUTPUT_PATH environment variable.
 /// </summary>
 public abstract class ScenarioBase
 {
-    private readonly string _outputDir;
-    private readonly string _category;
+    private static string OutputDir =>
+        Environment.GetEnvironmentVariable("SCENARIO_OUTPUT_PATH")
+        ?? Path.Combine(Path.GetDirectoryName(typeof(ScenarioBase).Assembly.Location)!, "ScenarioOutput");
 
-    protected ScenarioBase(string outputDir)
-    {
-        _outputDir = outputDir;
-        _category = GetType().Name;
-    }
+    private string Category => GetType().Name;
 
     /// <summary>
-    /// Renders a scenario. The caller name becomes the PNG filename.
+    /// Renders a drawing scenario and saves the result as a PNG.
+    /// The filename is derived from the calling method name.
     /// </summary>
     protected void Render(int width, int height, Action<Graphics> draw, [CallerMemberName] string? name = null)
     {
-        var categoryDir = Path.Combine(_outputDir, _category);
+        var categoryDir = Path.Combine(OutputDir, Category);
         Directory.CreateDirectory(categoryDir);
 
         using var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
@@ -36,70 +34,5 @@ public abstract class ScenarioBase
 
         var path = Path.Combine(categoryDir, $"{name}.png");
         bitmap.Save(path, ImageFormat.Png);
-    }
-
-    /// <summary>
-    /// Runs all public void methods on this instance as scenarios.
-    /// </summary>
-    public void RunAll()
-    {
-        var methods = GetType().GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.DeclaredOnly);
-        foreach (var method in methods)
-        {
-            if (method.ReturnType == typeof(void) && method.GetParameters().Length == 0 && method.Name != "RunAll")
-            {
-                method.Invoke(this, null);
-            }
-        }
-    }
-}
-
-/// <summary>
-/// Registry of all scenario classes for runners.
-/// </summary>
-public static class AllScenarios
-{
-    public static ScenarioBase[] Create(string outputDir) => new ScenarioBase[]
-    {
-        new Clear(outputDir),
-        new Lines(outputDir),
-        new LinesAA(outputDir),
-        new Rectangles(outputDir),
-        new Ellipses(outputDir),
-        new EllipsesAA(outputDir),
-        new Arcs(outputDir),
-        new ArcsAA(outputDir),
-        new Pies(outputDir),
-        new PiesAA(outputDir),
-        new Polygons(outputDir),
-        new PolygonsAA(outputDir),
-        new Composites(outputDir),
-        new CompositesAA(outputDir),
-        new Colors(outputDir),
-        new Boundaries(outputDir),
-    };
-
-    public static void RunAll(string outputDir)
-    {
-        foreach (var scenario in Create(outputDir))
-            scenario.RunAll();
-    }
-
-    /// <summary>
-    /// Returns all (Category, Name) pairs for test discovery.
-    /// </summary>
-    public static IEnumerable<(string Category, string Name)> Enumerate()
-    {
-        // Use a temp dir to discover scenario names via reflection
-        foreach (var scenario in Create(Path.GetTempPath()))
-        {
-            var category = scenario.GetType().Name;
-            var methods = scenario.GetType().GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.DeclaredOnly);
-            foreach (var method in methods)
-            {
-                if (method.ReturnType == typeof(void) && method.GetParameters().Length == 0 && method.Name != "RunAll")
-                    yield return (category, method.Name);
-            }
-        }
     }
 }

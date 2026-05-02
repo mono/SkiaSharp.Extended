@@ -1,41 +1,40 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Xunit;
 
 namespace SkiaSharp.Drawing.Scenarios;
 
 public class Ellipses : ScenarioBase
 {
-    public Ellipses(string outputDir) : base(outputDir) { }
-
-    public void Ellipse_Stroke_Circle() => Render(100, 100, g => {
+    [Fact] public void Ellipse_Stroke_Circle() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var pen = new Pen(Color.Black, 1);
         g.DrawEllipse(pen, 10, 10, 80, 80);
     });
 
-    public void Ellipse_Fill_Circle() => Render(100, 100, g => {
+    [Fact] public void Ellipse_Fill_Circle() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var brush = new SolidBrush(Color.Blue);
         g.FillEllipse(brush, 10, 10, 80, 80);
     });
 
-    public void Ellipse_Wide() => Render(100, 100, g => {
+    [Fact] public void Ellipse_Wide() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var brush = new SolidBrush(Color.Magenta);
         g.FillEllipse(brush, 5, 25, 90, 50);
     });
 
-    public void Ellipse_Tall() => Render(100, 100, g => {
+    [Fact] public void Ellipse_Tall() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var brush = new SolidBrush(Color.Cyan);
         g.FillEllipse(brush, 25, 5, 50, 90);
     });
 
-    public void Ellipse_StrokeAndFill() => Render(100, 100, g => {
+    [Fact] public void Ellipse_StrokeAndFill() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None;
         g.Clear(Color.White);
         using var brush = new SolidBrush(Color.Yellow);

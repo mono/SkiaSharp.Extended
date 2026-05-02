@@ -94,7 +94,8 @@ jobs:
     steps:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: |
-          dotnet run --project tools/SkiaSharp.Drawing.ReferenceGenerator -- "$(Build.ArtifactStagingDirectory)/reference-images"
+          $env:SCENARIO_OUTPUT_PATH = "$(Build.ArtifactStagingDirectory)/reference-images"
+          dotnet test tools/SkiaSharp.Drawing.ReferenceGenerator --nologo
         displayName: Generate reference images with real System.Drawing
       - publish: $(Build.ArtifactStagingDirectory)/reference-images
         artifact: reference-images
