@@ -3,6 +3,7 @@
 	[System.AttributeUsageAttribute(System.AttributeTargets.Assembly)]
 	public partial class BitmapSuffixInSatelliteAssemblyAttribute : System.Attribute
 	{
-		public BitmapSuffixInSatelliteAssemblyAttribute() { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <summary>Initializes a new instance of the <see cref="BitmapSuffixInSatelliteAssemblyAttribute"/> class.</summary>
+		public BitmapSuffixInSatelliteAssemblyAttribute() { }
 	}
 }

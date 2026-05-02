@@ -3,6 +3,7 @@
 	[System.AttributeUsageAttribute(System.AttributeTargets.Assembly)]
 	public partial class BitmapSuffixInSameAssemblyAttribute : System.Attribute
 	{
-		public BitmapSuffixInSameAssemblyAttribute() { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <summary>Initializes a new instance of the <see cref="BitmapSuffixInSameAssemblyAttribute"/> class.</summary>
+		public BitmapSuffixInSameAssemblyAttribute() { }
 	}
 }
