@@ -139,6 +139,34 @@ namespace System.Drawing.Imaging
 		/// <summary>Sets the wrap mode and color used to decide how to tile a texture.</summary>
 		public void SetWrapMode(System.Drawing.Drawing2D.WrapMode mode, System.Drawing.Color color, bool clamp) { _wrapMode = mode; _wrapColor = color; _wrapClamp = clamp; }
 
+		/// <summary>
+		///  Creates an <see cref="SkiaSharp.SKColorFilter"/> from the stored color matrix, if any.
+		/// </summary>
+		/// <returns>An <see cref="SkiaSharp.SKColorFilter"/>, or null if no color matrix is set.</returns>
+		internal SkiaSharp.SKColorFilter? CreateColorFilter()
+		{
+			if (_colorMatrix == null)
+				return null;
+
+			// Convert the 5x5 GDI+ ColorMatrix to SKColorFilter's 20-element float array (4x5 row-major).
+			// SKColorFilter.CreateColorMatrix takes a float[20] in row-major order:
+			// [R_r, R_g, R_b, R_a, R_w,
+			//  G_r, G_g, G_b, G_a, G_w,
+			//  B_r, B_g, B_b, B_a, B_w,
+			//  A_r, A_g, A_b, A_a, A_w]
+			// where row 4 (translation) is folded into the 5th column of each row.
+			var cm = _colorMatrix;
+			var matrix = new float[20]
+			{
+				cm[0, 0], cm[0, 1], cm[0, 2], cm[0, 3], cm[4, 0], // R row + R translation
+				cm[1, 0], cm[1, 1], cm[1, 2], cm[1, 3], cm[4, 1], // G row + G translation
+				cm[2, 0], cm[2, 1], cm[2, 2], cm[2, 3], cm[4, 2], // B row + B translation
+				cm[3, 0], cm[3, 1], cm[3, 2], cm[3, 3], cm[4, 3], // A row + A translation
+			};
+
+			return SkiaSharp.SKColorFilter.CreateColorMatrix(matrix);
+		}
+
 		/// <summary>Allows an object to try to free resources before being reclaimed by garbage collection.</summary>
 		~ImageAttributes() { Dispose(); }
 	}

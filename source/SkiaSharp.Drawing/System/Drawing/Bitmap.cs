@@ -87,6 +87,7 @@ namespace System.Drawing
 			var alphaType = SkiaConversions.ToSKAlphaType(format);
 			SKBitmapBacking = new SKBitmap(width, height, colorType, alphaType);
 			SKBitmapBacking.Erase(SKColors.Transparent);
+			_requestedPixelFormat = format;
 		}
 
 		/// <summary>
@@ -104,6 +105,7 @@ namespace System.Drawing
 			{
 				SKBitmapBacking.InstallPixels(info, scan0, stride);
 			}
+			_requestedPixelFormat = format;
 		}
 
 		/// <summary>

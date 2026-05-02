@@ -28,6 +28,27 @@ namespace System.Drawing
 		private Point _renderingOrigin = Point.Empty;
 		private int _textContrast = 4;
 		private int _clipSaveCount;
+		private Region? _clipRegion;
+		private System.Collections.Generic.Stack<GraphicsModeState>? _savedStates;
+
+		/// <summary>
+		///  Captures all mode fields for Save/Restore.
+		/// </summary>
+		private sealed class GraphicsModeState
+		{
+			public SmoothingMode SmoothingMode;
+			public InterpolationMode InterpolationMode;
+			public CompositingMode CompositingMode;
+			public CompositingQuality CompositingQuality;
+			public TextRenderingHint TextRenderingHint;
+			public PixelOffsetMode PixelOffsetMode;
+			public GraphicsUnit PageUnit;
+			public float PageScale;
+			public Point RenderingOrigin;
+			public int TextContrast;
+			public int ClipSaveCount;
+			public Region? ClipRegion;
+		}
 
 		internal Graphics() {}
 
@@ -75,7 +96,8 @@ namespace System.Drawing
 			get
 			{
 				ThrowIfDisposed();
-				// Return a new infinite region as approximation of the current clip
+				if (_clipRegion != null)
+					return (Region)_clipRegion.Clone();
 				return new Region();
 			}
 			set
@@ -89,6 +111,7 @@ namespace System.Drawing
 				{
 					_canvas.ClipPath(value.SKPath);
 				}
+				_clipRegion = (Region)value.Clone();
 			}
 		}
 
@@ -322,12 +345,28 @@ namespace System.Drawing
 		/// </summary>
 		internal static Graphics FromCanvas(SKCanvas canvas)
 		{
+			return FromCanvas(canvas, ownsClipSave: true);
+		}
+
+		/// <summary>
+		///  Creates a new <see cref="Graphics"/> from the specified <see cref="SKCanvas"/>.
+		///  When <paramref name="ownsClipSave"/> is false, no canvas save is performed for clip management.
+		/// </summary>
+		internal static Graphics FromCanvas(SKCanvas canvas, bool ownsClipSave)
+		{
 			if (canvas is null) throw new ArgumentNullException(nameof(canvas));
 
 			var graphics = new Graphics();
 			graphics._canvas = canvas;
 			graphics._ownsCanvas = false;
-			graphics._clipSaveCount = graphics._canvas.Save();
+			if (ownsClipSave)
+			{
+				graphics._clipSaveCount = graphics._canvas.Save();
+			}
+			else
+			{
+				graphics._clipSaveCount = -1;
+			}
 			return graphics;
 		}
 
@@ -780,6 +819,7 @@ namespace System.Drawing
 		/// </summary>
 		public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr)
 			=> DrawImage(image, destPoints, srcRect, srcUnit);
+		// TODO: Apply imageAttr to parallelogram-based DrawImage when imageAttr is non-null
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
@@ -876,17 +916,17 @@ namespace System.Drawing
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
 		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr)
-			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttr);
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
 		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback)
-			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttr);
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
 		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback, nint callbackData)
-			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttrs);
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
@@ -896,17 +936,17 @@ namespace System.Drawing
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
 		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs)
-			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttrs);
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
 		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback)
-			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttrs);
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
 		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback, nint callbackData)
-			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttrs);
 
 		/// <summary>
 		///  Draws the specified <see cref="Image"/> at the specified location and with the specified size.
@@ -1320,29 +1360,49 @@ namespace System.Drawing
 
 			var skFont = font.SKFont;
 			var m = skFont.Metrics;
+			float lineHeight = Math.Abs(m.Ascent) + Math.Abs(m.Descent) + Math.Abs(m.Leading);
 
-			// Compute the text draw position (baseline Y) inside the layout rect
-			float x = layoutRectangle.X;
-			float y = layoutRectangle.Y - m.Ascent; // baseline offset (ascent is negative)
+			bool noWrap = format != null && (format.FormatFlags & StringFormatFlags.NoWrap) != 0;
 
-			// Apply horizontal alignment
-			if (format != null && format.Alignment != StringAlignment.Near)
+			// Split text into visual lines (respecting newlines and word wrap)
+			var lines = new System.Collections.Generic.List<string>();
+			var textLines = s.Split('\n');
+			foreach (var textLine in textLines)
 			{
-				float textWidth = skFont.MeasureText(s, paint);
-				if (format.Alignment == StringAlignment.Center)
-					x += (layoutRectangle.Width - textWidth) / 2f;
-				else if (format.Alignment == StringAlignment.Far)
-					x += layoutRectangle.Width - textWidth;
+				var line = textLine.TrimEnd('\r');
+				if (noWrap || layoutRectangle.Width <= 0)
+				{
+					lines.Add(line);
+				}
+				else
+				{
+					// Word-wrap this line
+					int pos = 0;
+					while (pos < line.Length)
+					{
+						int charsConsumed = MeasureLineChars(skFont, line, pos, layoutRectangle.Width);
+						if (charsConsumed == 0)
+							charsConsumed = 1;
+						lines.Add(line.Substring(pos, charsConsumed));
+						pos += charsConsumed;
+						// Skip trailing spaces at break point
+						while (pos < line.Length && line[pos] == ' ')
+							pos++;
+					}
+					if (line.Length == 0)
+						lines.Add(string.Empty);
+				}
 			}
 
-			// Apply vertical alignment
+			// Compute vertical start position
+			float totalTextHeight = lines.Count * lineHeight;
+			float y = layoutRectangle.Y;
 			if (format != null && format.LineAlignment != StringAlignment.Near)
 			{
-				float lineHeight = Math.Abs(m.Ascent) + Math.Abs(m.Descent) + Math.Abs(m.Leading);
 				if (format.LineAlignment == StringAlignment.Center)
-					y = layoutRectangle.Y + (layoutRectangle.Height - lineHeight) / 2f - m.Ascent;
+					y += (layoutRectangle.Height - totalTextHeight) / 2f;
 				else if (format.LineAlignment == StringAlignment.Far)
-					y = layoutRectangle.Y + layoutRectangle.Height - lineHeight - m.Ascent;
+					y += layoutRectangle.Height - totalTextHeight;
 			}
 
 			// Clip to the layout rectangle unless NoClip is set
@@ -1354,7 +1414,25 @@ namespace System.Drawing
 					layoutRectangle.X + layoutRectangle.Width, layoutRectangle.Y + layoutRectangle.Height));
 			}
 
-			_canvas.DrawText(s, x, y, skFont, paint);
+			// Draw each line
+			foreach (var line in lines)
+			{
+				float x = layoutRectangle.X;
+
+				// Apply horizontal alignment
+				if (format != null && format.Alignment != StringAlignment.Near && line.Length > 0)
+				{
+					float textWidth = skFont.MeasureText(line, paint);
+					if (format.Alignment == StringAlignment.Center)
+						x += (layoutRectangle.Width - textWidth) / 2f;
+					else if (format.Alignment == StringAlignment.Far)
+						x += layoutRectangle.Width - textWidth;
+				}
+
+				float baselineY = y - m.Ascent; // ascent is negative
+				_canvas.DrawText(line, x, baselineY, skFont, paint);
+				y += lineHeight;
+			}
 
 			if (clip && layoutRectangle.Width > 0 && layoutRectangle.Height > 0)
 				_canvas.Restore();
@@ -1558,6 +1636,7 @@ namespace System.Drawing
 		{
 			ThrowIfDisposed();
 			_canvas.ClipRect(new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom), SKClipOperation.Difference);
+			_clipRegion?.Exclude(rect);
 		}
 		/// <summary>
 		///  Updates the clip region of this <see cref="Graphics"/> to exclude the area specified by a <see cref="Region"/>.
@@ -1568,6 +1647,7 @@ namespace System.Drawing
 			ThrowIfDisposed();
 			if (region is null) throw new ArgumentNullException(nameof(region));
 			_canvas.ClipPath(region.SKPath, SKClipOperation.Difference);
+			_clipRegion?.Exclude(region);
 		}
 
 		/// <summary>
@@ -1905,6 +1985,7 @@ namespace System.Drawing
 		{
 			ThrowIfDisposed();
 			_canvas.ClipRect(new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom), SKClipOperation.Intersect);
+			_clipRegion?.Intersect(rect);
 		}
 		/// <summary>
 		///  Updates the clip region of this <see cref="Graphics"/> to the intersection of the current clip region and the specified <see cref="RectangleF"/> structure.
@@ -1914,6 +1995,7 @@ namespace System.Drawing
 		{
 			ThrowIfDisposed();
 			_canvas.ClipRect(new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom), SKClipOperation.Intersect);
+			_clipRegion?.Intersect(rect);
 		}
 		/// <summary>
 		///  Updates the clip region of this <see cref="Graphics"/> to the intersection of the current clip region and the specified <see cref="Region"/>.
@@ -1924,6 +2006,7 @@ namespace System.Drawing
 			ThrowIfDisposed();
 			if (region is null) throw new ArgumentNullException(nameof(region));
 			_canvas.ClipPath(region.SKPath, SKClipOperation.Intersect);
+			_clipRegion?.Intersect(region);
 		}
 
 		/// <summary>
@@ -2217,12 +2300,12 @@ namespace System.Drawing
 			if (matrix is null) throw new ArgumentNullException(nameof(matrix));
 			if (order == Drawing2D.MatrixOrder.Prepend)
 			{
-				var current = _canvas.TotalMatrix;
-				_canvas.SetMatrix(current.PreConcat(matrix.SKMatrix));
+				_canvas.Concat(matrix.SKMatrix);
 			}
 			else
 			{
-				_canvas.Concat(matrix.SKMatrix);
+				var current = _canvas.TotalMatrix;
+				_canvas.SetMatrix(current.PreConcat(matrix.SKMatrix));
 			}
 		}
 
@@ -2249,6 +2332,7 @@ namespace System.Drawing
 			ThrowIfDisposed();
 			_canvas.RestoreToCount(_clipSaveCount);
 			_clipSaveCount = _canvas.Save();
+			_clipRegion = null;
 		}
 
 		/// <summary>
@@ -2269,6 +2353,24 @@ namespace System.Drawing
 			ThrowIfDisposed();
 			if (gstate is null) throw new ArgumentNullException(nameof(gstate));
 			_canvas.RestoreToCount(gstate.SaveCount);
+
+			// Restore mode state from saved stack
+			if (_savedStates != null && _savedStates.Count > 0)
+			{
+				var state = _savedStates.Pop();
+				_smoothingMode = state.SmoothingMode;
+				_interpolationMode = state.InterpolationMode;
+				_compositingMode = state.CompositingMode;
+				_compositingQuality = state.CompositingQuality;
+				_textRenderingHint = state.TextRenderingHint;
+				_pixelOffsetMode = state.PixelOffsetMode;
+				_pageUnit = state.PageUnit;
+				_pageScale = state.PageScale;
+				_renderingOrigin = state.RenderingOrigin;
+				_textContrast = state.TextContrast;
+				_clipSaveCount = state.ClipSaveCount;
+				_clipRegion = state.ClipRegion;
+			}
 		}
 
 		/// <summary>
@@ -2289,7 +2391,15 @@ namespace System.Drawing
 		public void RotateTransform(float angle, System.Drawing.Drawing2D.MatrixOrder order)
 		{
 			ThrowIfDisposed();
-			_canvas.RotateDegrees(angle);
+			if (order == Drawing2D.MatrixOrder.Prepend)
+			{
+				_canvas.RotateDegrees(angle);
+			}
+			else
+			{
+				var cur = _canvas.TotalMatrix;
+				_canvas.SetMatrix(cur.PreConcat(SKMatrix.CreateRotationDegrees(angle)));
+			}
 		}
 
 		/// <summary>
@@ -2299,6 +2409,25 @@ namespace System.Drawing
 		public System.Drawing.Drawing2D.GraphicsState Save()
 		{
 			ThrowIfDisposed();
+
+			// Save mode state
+			_savedStates ??= new System.Collections.Generic.Stack<GraphicsModeState>();
+			_savedStates.Push(new GraphicsModeState
+			{
+				SmoothingMode = _smoothingMode,
+				InterpolationMode = _interpolationMode,
+				CompositingMode = _compositingMode,
+				CompositingQuality = _compositingQuality,
+				TextRenderingHint = _textRenderingHint,
+				PixelOffsetMode = _pixelOffsetMode,
+				PageUnit = _pageUnit,
+				PageScale = _pageScale,
+				RenderingOrigin = _renderingOrigin,
+				TextContrast = _textContrast,
+				ClipSaveCount = _clipSaveCount,
+				ClipRegion = _clipRegion != null ? (Region)_clipRegion.Clone() : null,
+			});
+
 			int count = _canvas.Save();
 			return new GraphicsState(count);
 		}
@@ -2323,7 +2452,15 @@ namespace System.Drawing
 		public void ScaleTransform(float sx, float sy, System.Drawing.Drawing2D.MatrixOrder order)
 		{
 			ThrowIfDisposed();
-			_canvas.Scale(sx, sy);
+			if (order == Drawing2D.MatrixOrder.Prepend)
+			{
+				_canvas.Scale(sx, sy);
+			}
+			else
+			{
+				var cur = _canvas.TotalMatrix;
+				_canvas.SetMatrix(cur.PreConcat(SKMatrix.CreateScale(sx, sy)));
+			}
 		}
 
 		/// <summary>
@@ -2343,9 +2480,25 @@ namespace System.Drawing
 		{
 			ThrowIfDisposed();
 			if (path is null) throw new ArgumentNullException(nameof(path));
-			// For Replace mode, reset clip first via save/restore pattern.
-			// SkiaSharp ClipPath always intersects, so this covers the common Intersect/Replace cases.
-			_canvas.ClipPath(path.SKPath);
+			switch (combineMode)
+			{
+				case Drawing2D.CombineMode.Replace:
+					_canvas.RestoreToCount(_clipSaveCount);
+					_clipSaveCount = _canvas.Save();
+					_canvas.ClipPath(path.SKPath);
+					_clipRegion = new Region(path);
+					break;
+				case Drawing2D.CombineMode.Intersect:
+					_canvas.ClipPath(path.SKPath, SKClipOperation.Intersect);
+					_clipRegion?.Intersect(path);
+					break;
+				case Drawing2D.CombineMode.Exclude:
+					_canvas.ClipPath(path.SKPath, SKClipOperation.Difference);
+					_clipRegion?.Exclude(path);
+					break;
+				default:
+					throw new NotSupportedException($"CombineMode.{combineMode} is not supported for clip operations in SkiaSharp.Drawing. Only Replace, Intersect, and Exclude are supported.");
+			}
 		}
 		/// <summary>
 		///  Sets the clipping region of this Graphics.
@@ -2399,20 +2552,24 @@ namespace System.Drawing
 		{
 			ThrowIfDisposed();
 			var skRect = new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom);
-			if (combineMode == Drawing2D.CombineMode.Replace)
+			switch (combineMode)
 			{
-				_canvas.RestoreToCount(_clipSaveCount);
-				_clipSaveCount = _canvas.Save();
-				_canvas.ClipRect(skRect);
-			}
-			else if (combineMode == Drawing2D.CombineMode.Exclude)
-			{
-				_canvas.ClipRect(skRect, SKClipOperation.Difference);
-			}
-			else
-			{
-				// Intersect is the default for non-Replace modes in SkiaSharp
-				_canvas.ClipRect(skRect, SKClipOperation.Intersect);
+				case Drawing2D.CombineMode.Replace:
+					_canvas.RestoreToCount(_clipSaveCount);
+					_clipSaveCount = _canvas.Save();
+					_canvas.ClipRect(skRect);
+					_clipRegion = new Region(rect);
+					break;
+				case Drawing2D.CombineMode.Intersect:
+					_canvas.ClipRect(skRect, SKClipOperation.Intersect);
+					_clipRegion?.Intersect(rect);
+					break;
+				case Drawing2D.CombineMode.Exclude:
+					_canvas.ClipRect(skRect, SKClipOperation.Difference);
+					_clipRegion?.Exclude(rect);
+					break;
+				default:
+					throw new NotSupportedException($"CombineMode.{combineMode} is not supported for clip operations in SkiaSharp.Drawing. Only Replace, Intersect, and Exclude are supported.");
 			}
 		}
 		/// <summary>
@@ -2424,22 +2581,27 @@ namespace System.Drawing
 		{
 			ThrowIfDisposed();
 			if (region is null) throw new ArgumentNullException(nameof(region));
-			if (combineMode == Drawing2D.CombineMode.Replace)
+			switch (combineMode)
 			{
-				_canvas.RestoreToCount(_clipSaveCount);
-				_clipSaveCount = _canvas.Save();
-				if (!region.IsInfinite(this))
-				{
-					_canvas.ClipPath(region.SKPath);
-				}
-			}
-			else if (combineMode == Drawing2D.CombineMode.Exclude)
-			{
-				_canvas.ClipPath(region.SKPath, SKClipOperation.Difference);
-			}
-			else
-			{
-				_canvas.ClipPath(region.SKPath, SKClipOperation.Intersect);
+				case Drawing2D.CombineMode.Replace:
+					_canvas.RestoreToCount(_clipSaveCount);
+					_clipSaveCount = _canvas.Save();
+					if (!region.IsInfinite(this))
+					{
+						_canvas.ClipPath(region.SKPath);
+					}
+					_clipRegion = (Region)region.Clone();
+					break;
+				case Drawing2D.CombineMode.Intersect:
+					_canvas.ClipPath(region.SKPath, SKClipOperation.Intersect);
+					_clipRegion?.Intersect(region);
+					break;
+				case Drawing2D.CombineMode.Exclude:
+					_canvas.ClipPath(region.SKPath, SKClipOperation.Difference);
+					_clipRegion?.Exclude(region);
+					break;
+				default:
+					throw new NotSupportedException($"CombineMode.{combineMode} is not supported for clip operations in SkiaSharp.Drawing. Only Replace, Intersect, and Exclude are supported.");
 			}
 		}
 
@@ -2540,7 +2702,15 @@ namespace System.Drawing
 		public void TranslateTransform(float dx, float dy, System.Drawing.Drawing2D.MatrixOrder order)
 		{
 			ThrowIfDisposed();
-			_canvas.Translate(dx, dy);
+			if (order == Drawing2D.MatrixOrder.Prepend)
+			{
+				_canvas.Translate(dx, dy);
+			}
+			else
+			{
+				var cur = _canvas.TotalMatrix;
+				_canvas.SetMatrix(cur.PreConcat(SKMatrix.CreateTranslation(dx, dy)));
+			}
 		}
 
 		/// <summary>
@@ -2566,9 +2736,18 @@ namespace System.Drawing
 		{
 			if (!_disposed)
 			{
-				if (disposing && _ownsCanvas)
+				if (disposing)
 				{
-					_canvas?.Dispose();
+					// Always restore the clip save count if we created one
+					if (_clipSaveCount >= 0 && _canvas != null)
+					{
+						_canvas.RestoreToCount(_clipSaveCount);
+					}
+
+					if (_ownsCanvas)
+					{
+						_canvas?.Dispose();
+					}
 				}
 				_disposed = true;
 			}
@@ -2661,13 +2840,53 @@ namespace System.Drawing
 		/// </summary>
 		private void DrawImageCore(Image image, RectangleF destRect, RectangleF srcRect)
 		{
+			DrawImageCore(image, destRect, srcRect, null);
+		}
+
+		/// <summary>
+		///  Core helper to draw a portion of an image into a destination rectangle, with optional ImageAttributes.
+		/// </summary>
+		private void DrawImageCore(Image image, RectangleF destRect, RectangleF srcRect, System.Drawing.Imaging.ImageAttributes? imageAttr)
+		{
 			ThrowIfDisposed();
 			if (image is null) throw new ArgumentNullException(nameof(image));
 			if (image.SKBitmapBacking is null)
 				throw new ArgumentException("The image does not have a valid bitmap backing.", nameof(image));
 			var src = new SKRect(srcRect.X, srcRect.Y, srcRect.Right, srcRect.Bottom);
 			var dest = new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom);
-			_canvas.DrawBitmap(image.SKBitmapBacking, src, dest);
+
+			using var paint = new SKPaint();
+
+			// Apply InterpolationMode as sampling options
+			switch (_interpolationMode)
+			{
+				case InterpolationMode.NearestNeighbor:
+					// Nearest-neighbor filtering — set on paint is not directly supported,
+					// but we can use the FilterQuality approach via sampling options
+					paint.FilterQuality = SKFilterQuality.None;
+					break;
+				case InterpolationMode.HighQualityBilinear:
+				case InterpolationMode.HighQualityBicubic:
+				case InterpolationMode.Bicubic:
+				case InterpolationMode.High:
+					paint.FilterQuality = SKFilterQuality.High;
+					break;
+				case InterpolationMode.Bilinear:
+				case InterpolationMode.Low:
+				default:
+					paint.FilterQuality = SKFilterQuality.Medium;
+					break;
+			}
+
+			// Apply color matrix from ImageAttributes if present
+			if (imageAttr != null)
+			{
+				var colorFilter = imageAttr.CreateColorFilter();
+				if (colorFilter != null)
+					paint.ColorFilter = colorFilter;
+			}
+
+			_canvas.DrawBitmap(image.SKBitmapBacking, src, dest, paint);
 		}
 
 		/// <summary>

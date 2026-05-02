@@ -58,7 +58,7 @@ namespace System.Drawing.Printing
 			// Scale canvas so drawing in hundredths-of-an-inch maps to points
 			canvas.Scale(72f / 100f, 72f / 100f);
 
-			return Graphics.FromCanvas(canvas);
+			return Graphics.FromCanvas(canvas, ownsClipSave: false);
 		}
 
 		/// <summary>Begins the control sequence that determines when and how to print a document.</summary>

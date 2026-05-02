@@ -136,7 +136,7 @@ match GDI+'s path gradient algorithm for non-circular paths.
 **Font:**
 - ✅ All constructors, style mapping, size conversion
 - ✅ `Name`, `Size`, `Style`, `Bold`, `Italic`, `Height`
-- ❌ `GetHeight(Graphics)` — DPI-aware height calculation
+- ✅ `GetHeight(Graphics)` — DPI-aware height calculation
 - ❌ `ToLogFont()` — Windows LOGFONT structure
 - ❌ `GdiCharSet`, `GdiVerticalFont` — GDI-specific properties
 
@@ -148,13 +148,19 @@ These are primarily used by the Windows Forms designer and property grid.
 ### Image Processing
 
 **ImageAttributes:**
-Properties are stored but most are **not applied during rendering**.
-`SetColorMatrix()`, `SetGamma()`, `SetThreshold()`, `SetColorKey()` store
-values but `Graphics.DrawImage()` does not yet read them to transform
-pixel data during drawing.
+Properties are stored and `SetColorMatrix()` is applied during rendering
+via `SKColorFilter.CreateColorMatrix()`. `SetGamma()`, `SetThreshold()`,
+`SetColorKey()` store values but are **not yet applied** during drawing.
 
 **ColorMatrix:**
-Stored as a 5×5 float matrix but not applied to image rendering.
+Stored as a 5×5 float matrix and applied to image rendering when set via
+`ImageAttributes.SetColorMatrix()`.
+
+### Clip Region CombineModes
+
+`SetClip()` supports `Replace`, `Intersect`, and `Exclude` combine modes.
+`Union`, `Xor`, and `Complement` modes throw `NotSupportedException` because
+SKCanvas does not natively support these clip operations.
 
 ## API Compatibility
 

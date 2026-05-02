@@ -355,10 +355,10 @@ namespace System.Drawing.Drawing2D
 			}
 			else
 			{
-				// If the last point is not at (x1,y1), move to it to start a connected segment.
+				// If the last point is not at (x1,y1), draw a connecting line instead of breaking the figure.
 				var last = SKPath.LastPoint;
 				if (last.X != x1 || last.Y != y1)
-					SKPath.MoveTo(x1, y1);
+					SKPath.LineTo(x1, y1);
 			}
 			SKPath.LineTo(x2, y2);
 		}
@@ -382,7 +382,7 @@ namespace System.Drawing.Drawing2D
 			{
 				var last = SKPath.LastPoint;
 				if (last.X != points[0].X || last.Y != points[0].Y)
-					SKPath.MoveTo(points[0].X, points[0].Y);
+					SKPath.LineTo(points[0].X, points[0].Y);
 			}
 			for (int i = 1; i < points.Length; i++)
 				SKPath.LineTo(points[i].X, points[i].Y);
@@ -410,8 +410,8 @@ namespace System.Drawing.Drawing2D
 			if (addingPath is null) throw new ArgumentNullException(nameof(addingPath));
 			if (connect && SKPath.PointCount > 0 && addingPath.SKPath.PointCount > 0)
 			{
-				// Connect the paths by continuing from the last point.
-				SKPath.AddPath(addingPath.SKPath, SKPathAddMode.Append);
+				// Connect the paths by extending from the last point.
+				SKPath.AddPath(addingPath.SKPath, SKPathAddMode.Extend);
 			}
 			else
 			{
@@ -776,6 +776,7 @@ namespace System.Drawing.Drawing2D
 		{
 			ThrowIfDisposed();
 			SKPath.Reset();
+			SKPath.FillType = SKPathFillType.EvenOdd;
 			_needsNewFigure = false;
 		}
 

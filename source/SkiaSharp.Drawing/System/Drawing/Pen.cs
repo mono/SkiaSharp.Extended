@@ -321,6 +321,8 @@ namespace System.Drawing
 				_compoundArray = (float[]?)_compoundArray?.Clone(),
 				_customStartCap = _customStartCap,
 				_customEndCap = _customEndCap,
+				_brush = (Brush)_brush.Clone(),
+				_transform = _transform != null ? (Matrix?)_transform.Clone() : null,
 			};
 			return pen;
 		}
@@ -352,9 +354,9 @@ namespace System.Drawing
 		public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix, System.Drawing.Drawing2D.MatrixOrder order)
 		{
 			ThrowIfDisposed();
-			// Store the matrix for later use; full Matrix implementation is out of scope.
-			_ = matrix;
-			_ = order;
+			if (matrix is null) throw new ArgumentNullException(nameof(matrix));
+			_transform ??= new Matrix();
+			_transform.Multiply(matrix, order);
 		}
 
 		/// <summary>
@@ -383,8 +385,8 @@ namespace System.Drawing
 		public void RotateTransform(float angle, System.Drawing.Drawing2D.MatrixOrder order)
 		{
 			ThrowIfDisposed();
-			_ = angle;
-			_ = order;
+			_transform ??= new Matrix();
+			_transform.Rotate(angle, order);
 		}
 
 		/// <summary>
@@ -406,9 +408,8 @@ namespace System.Drawing
 		public void ScaleTransform(float sx, float sy, System.Drawing.Drawing2D.MatrixOrder order)
 		{
 			ThrowIfDisposed();
-			_ = sx;
-			_ = sy;
-			_ = order;
+			_transform ??= new Matrix();
+			_transform.Scale(sx, sy, order);
 		}
 
 		/// <summary>
@@ -444,9 +445,8 @@ namespace System.Drawing
 		public void TranslateTransform(float dx, float dy, System.Drawing.Drawing2D.MatrixOrder order)
 		{
 			ThrowIfDisposed();
-			_ = dx;
-			_ = dy;
-			_ = order;
+			_transform ??= new Matrix();
+			_transform.Translate(dx, dy, order);
 		}
 
 		/// <summary>
@@ -466,16 +466,27 @@ namespace System.Drawing
 		{
 			ThrowIfDisposed();
 
-			var paint = new SKPaint
+			SKPaint paint;
+			if (_brush != null && _brush is not SolidBrush)
 			{
-				Style = SKPaintStyle.Stroke,
-				Color = SkiaConversions.ToSKColor(_color),
-				StrokeWidth = _width,
-				StrokeCap = SkiaConversions.ToSKStrokeCap(_endCap),
-				StrokeJoin = SkiaConversions.ToSKStrokeJoin(_lineJoin),
-				StrokeMiter = _miterLimit,
-				IsAntialias = true,
-			};
+				// Get paint from the brush (includes shader for gradients, textures, etc.)
+				paint = _brush.CreatePaint();
+			}
+			else
+			{
+				paint = new SKPaint
+				{
+					Color = SkiaConversions.ToSKColor(_color),
+					IsAntialias = true,
+				};
+			}
+
+			// Overlay stroke properties
+			paint.Style = SKPaintStyle.Stroke;
+			paint.StrokeWidth = _width;
+			paint.StrokeCap = SkiaConversions.ToSKStrokeCap(_endCap);
+			paint.StrokeJoin = SkiaConversions.ToSKStrokeJoin(_lineJoin);
+			paint.StrokeMiter = _miterLimit;
 
 			// Apply dash pattern
 			var pattern = _dashStyle == DashStyle.Custom ? _dashPattern : SkiaConversions.GetDashPattern(_dashStyle);

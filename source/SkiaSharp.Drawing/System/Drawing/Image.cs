@@ -17,6 +17,7 @@ namespace System.Drawing
 		internal ImageFormat _rawFormat = ImageFormat.MemoryBmp;
 		internal float _horizontalResolution = 96f;
 		internal float _verticalResolution = 96f;
+		internal Imaging.PixelFormat _requestedPixelFormat;
 		private object? _tag;
 
 		/// <summary>
@@ -123,6 +124,8 @@ namespace System.Drawing
 			get
 			{
 				ThrowIfDisposed();
+				if (_requestedPixelFormat != 0)
+					return _requestedPixelFormat;
 				return SkiaConversions.ToPixelFormat(SKBitmapBacking!.ColorType);
 			}
 		}
@@ -595,7 +598,7 @@ namespace System.Drawing
 		{
 			using (var image = SKImage.FromBitmap(SKBitmapBacking!))
 			{
-				var data = image.Encode(format, 100);
+				using var data = image.Encode(format, 100);
 				if (data == null)
 					throw new ArgumentException("Failed to encode the image to the specified format.");
 				data.SaveTo(stream);

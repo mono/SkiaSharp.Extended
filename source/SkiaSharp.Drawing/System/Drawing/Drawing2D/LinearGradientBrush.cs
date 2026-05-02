@@ -149,9 +149,9 @@ namespace System.Drawing.Drawing2D
 			float cx = rect.X + rect.Width / 2f;
 			float cy = rect.Y + rect.Height / 2f;
 			double rad = angle * Math.PI / 180.0;
-			float halfDiag = (float)Math.Sqrt(rect.Width * rect.Width + rect.Height * rect.Height) / 2f;
-			float dx = (float)Math.Cos(rad) * halfDiag;
-			float dy = (float)Math.Sin(rad) * halfDiag;
+			float halfExtent = (float)(Math.Abs(Math.Cos(rad)) * rect.Width + Math.Abs(Math.Sin(rad)) * rect.Height) / 2f;
+			float dx = (float)Math.Cos(rad) * halfExtent;
+			float dy = (float)Math.Sin(rad) * halfExtent;
 
 			_point1 = new PointF(cx - dx, cy - dy);
 			_point2 = new PointF(cx + dx, cy + dy);
