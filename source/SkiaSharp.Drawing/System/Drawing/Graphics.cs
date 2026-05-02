@@ -14,6 +14,7 @@ namespace System.Drawing
 		private SKCanvas _canvas = null!;
 		private SKBitmap? _bitmap;
 		private bool _disposed;
+		private bool _ownsCanvas = true;
 		private float _dpiX = 96f;
 		private float _dpiY = 96f;
 		private SmoothingMode _smoothingMode = SmoothingMode.Default;
@@ -311,6 +312,21 @@ namespace System.Drawing
 			graphics._canvas = new SKCanvas(image.SKBitmapBacking);
 			graphics._dpiX = image._horizontalResolution;
 			graphics._dpiY = image._verticalResolution;
+			graphics._clipSaveCount = graphics._canvas.Save();
+			return graphics;
+		}
+
+		/// <summary>
+		///  Creates a new <see cref="Graphics"/> from the specified <see cref="SKCanvas"/>.
+		///  The caller retains ownership of the canvas; it will not be disposed when this Graphics is disposed.
+		/// </summary>
+		internal static Graphics FromCanvas(SKCanvas canvas)
+		{
+			if (canvas is null) throw new ArgumentNullException(nameof(canvas));
+
+			var graphics = new Graphics();
+			graphics._canvas = canvas;
+			graphics._ownsCanvas = false;
 			graphics._clipSaveCount = graphics._canvas.Save();
 			return graphics;
 		}
@@ -2421,7 +2437,7 @@ namespace System.Drawing
 		{
 			if (!_disposed)
 			{
-				if (disposing)
+				if (disposing && _ownsCanvas)
 				{
 					_canvas?.Dispose();
 				}

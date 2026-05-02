@@ -21,7 +21,7 @@ namespace System.Drawing.Printing
 		/// <summary>Gets or sets a value indicating whether the print job should be canceled.</summary>
 		public bool Cancel { get; set; }
 		/// <summary>Gets the <see cref="System.Drawing.Graphics"/> used to paint the page.</summary>
-		public System.Drawing.Graphics? Graphics { get; }
+		public System.Drawing.Graphics? Graphics { get; internal set; }
 		/// <summary>Gets or sets a value indicating whether an additional page should be printed.</summary>
 		public bool HasMorePages { get; set; }
 		/// <summary>Gets the page area between the margins.</summary>
