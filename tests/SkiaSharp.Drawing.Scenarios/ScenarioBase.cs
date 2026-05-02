@@ -3,43 +3,59 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Xunit;
 
 namespace SkiaSharp.Drawing.Scenarios;
 
 /// <summary>
-/// Base class for drawing scenario tests. Each subclass is a test class and a category.
-/// Each [Fact] method renders a scenario and saves the PNG.
-/// The output directory is controlled by the SCENARIO_OUTPUT_PATH environment variable.
+/// Base class for drawing scenario tests. Each subclass is a category.
+/// Each [Fact] method renders and saves a PNG, and compares against the checked-in baseline.
+/// The suffix (.gdi or .skia) and output path are set by the partial class in each test project.
 /// </summary>
-public abstract class ScenarioBase
+public abstract partial class ScenarioBase
 {
-    private static string OutputDir =>
-        Environment.GetEnvironmentVariable("SCENARIO_OUTPUT_PATH")
-        ?? Path.Combine(Path.GetDirectoryName(typeof(ScenarioBase).Assembly.Location)!, "ScenarioOutput");
+    /// <summary>Image suffix — "gdi" or "skia". Set by partial class in each consuming project.</summary>
+    private static partial string GetSuffix();
 
-    /// <summary>
-    /// Suffix for generated images. Set SCENARIO_SUFFIX env var to "gdi" or "skia".
-    /// Defaults to "skia".
-    /// </summary>
-    private static string Suffix =>
-        Environment.GetEnvironmentVariable("SCENARIO_SUFFIX") ?? "skia";
+    /// <summary>Output directory for generated images. Set by partial class in each consuming project.</summary>
+    private static partial string GetOutputDir();
+
+    /// <summary>Path to checked-in reference images for regression comparison. Null to skip.</summary>
+    private static partial string? GetReferenceDir();
 
     private string Category => GetType().Name;
 
     /// <summary>
-    /// Renders a drawing scenario and saves the result as a PNG.
-    /// The filename is derived from the calling method name.
+    /// Renders a scenario, saves the PNG, and optionally compares against checked-in baseline.
     /// </summary>
     protected void Render(int width, int height, Action<Graphics> draw, [CallerMemberName] string? name = null)
     {
-        var categoryDir = Path.Combine(OutputDir, Category);
+        var suffix = GetSuffix();
+        var outputDir = GetOutputDir();
+        var categoryDir = Path.Combine(outputDir, Category);
         Directory.CreateDirectory(categoryDir);
 
         using var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
         using var graphics = Graphics.FromImage(bitmap);
         draw(graphics);
 
-        var path = Path.Combine(categoryDir, $"{name}.{Suffix}.png");
-        bitmap.Save(path, ImageFormat.Png);
+        var filename = $"{name}.{suffix}.png";
+        var outputPath = Path.Combine(categoryDir, filename);
+        bitmap.Save(outputPath, ImageFormat.Png);
+
+        // Compare against checked-in baseline if available
+        var refDir = GetReferenceDir();
+        if (refDir != null)
+        {
+            var baselinePath = Path.Combine(refDir, Category, filename);
+            if (File.Exists(baselinePath))
+            {
+                var actualBytes = File.ReadAllBytes(outputPath);
+                var baselineBytes = File.ReadAllBytes(baselinePath);
+                Assert.True(actualBytes.SequenceEqual(baselineBytes),
+                    $"Rendering changed for {Category}/{filename}. " +
+                    $"Download fresh images from CI artifacts and check in to update baselines.");
+            }
+        }
     }
 }

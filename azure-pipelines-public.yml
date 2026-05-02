@@ -87,57 +87,89 @@ jobs:
           --suppression-file tools/api-baseline/api-compat-suppressions.xml
         displayName: Run API compatibility check
 
-  - job: generate_references
-    displayName: Generate Reference Images
+  - job: gdi_generate
+    displayName: Generate GDI+ Images
     pool:
       vmImage: windows-latest
     steps:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: |
-          $env:SCENARIO_OUTPUT_PATH = "$(Build.ArtifactStagingDirectory)/reference-images"
-          $env:SCENARIO_SUFFIX = "gdi"
-          dotnet test tests/SkiaSharp.Drawing.ReferenceGenerator --nologo
+          $env:SCENARIO_OUTPUT_PATH = "$(Build.ArtifactStagingDirectory)/gdi-images"
+          $env:REFERENCE_IMAGES_PATH = "$(Build.SourcesDirectory)/tests/SkiaSharp.Drawing.Scenarios.ReferenceImages"
+          dotnet test tests/SkiaSharp.Drawing.ReferenceGenerator --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
         displayName: Generate GDI+ reference images
-      - publish: $(Build.ArtifactStagingDirectory)/reference-images
-        artifact: reference-images
-        displayName: Upload GDI+ reference images
-
-  - job: pixel_validation
-    displayName: Pixel Validation (3-step)
-    dependsOn: generate_references
-    pool:
-      vmImage: windows-latest
-    steps:
-      - template: /scripts/azure-pipelines-steps-prepare.yml@self
-      - download: current
-        artifact: reference-images
-      - pwsh: |
-          # Step 1: GDI reference stability (fresh GDI vs checked-in .gdi.png)
-          $env:FRESH_GDI_IMAGES_PATH = "$(Pipeline.Workspace)/reference-images"
-          $env:TEST_ARTIFACTS_PATH = "$(Build.ArtifactStagingDirectory)/diff-images"
-          dotnet test tests/SkiaSharp.Drawing.Tests --filter "FullyQualifiedName~GdiReferenceStability" --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
-        displayName: "Step 1: GDI reference stability"
-      - pwsh: |
-          # Step 2: Skia regression (fresh Skia vs checked-in .skia.png)
-          $env:TEST_ARTIFACTS_PATH = "$(Build.ArtifactStagingDirectory)/diff-images"
-          dotnet test tests/SkiaSharp.Drawing.Tests --filter "FullyQualifiedName~SkiaRegression" --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
-        displayName: "Step 2: Skia regression"
-      - pwsh: |
-          # Step 3: Skia == GDI comparison (pixel compatibility)
-          $env:TEST_ARTIFACTS_PATH = "$(Build.ArtifactStagingDirectory)/diff-images"
-          dotnet test tests/SkiaSharp.Drawing.Tests --filter "FullyQualifiedName~PixelCompatibilityComparison" --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
-        displayName: "Step 3: Skia == GDI pixel compatibility"
       - task: PublishTestResults@2
         condition: always()
         inputs:
           testResultsFormat: VSTest
           testResultsFiles: $(Build.ArtifactStagingDirectory)/test-results/*.trx
-          testRunTitle: Pixel Validation
+          testRunTitle: GDI+ Generation
+      - publish: $(Build.ArtifactStagingDirectory)/gdi-images
+        artifact: gdi-images
+        displayName: Upload GDI+ images
+
+  - job: skia_generate
+    displayName: Generate Skia Images
+    pool:
+      vmImage: windows-latest
+    steps:
+      - template: /scripts/azure-pipelines-steps-prepare.yml@self
+      - pwsh: |
+          $env:SCENARIO_OUTPUT_PATH = "$(Build.ArtifactStagingDirectory)/skia-images"
+          $env:REFERENCE_IMAGES_PATH = "$(Build.SourcesDirectory)/tests/SkiaSharp.Drawing.Scenarios.ReferenceImages"
+          dotnet test tests/SkiaSharp.Drawing.SkiaGenerator --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
+        displayName: Generate Skia reference images
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testResultsFormat: VSTest
+          testResultsFiles: $(Build.ArtifactStagingDirectory)/test-results/*.trx
+          testRunTitle: Skia Generation
+      - publish: $(Build.ArtifactStagingDirectory)/skia-images
+        artifact: skia-images
+        displayName: Upload Skia images
+
+  - job: pixel_diff
+    displayName: Pixel Diff (Skia vs GDI)
+    dependsOn:
+      - gdi_generate
+      - skia_generate
+    pool:
+      vmImage: windows-latest
+    steps:
+      - template: /scripts/azure-pipelines-steps-prepare.yml@self
+      - download: current
+        artifact: gdi-images
+      - download: current
+        artifact: skia-images
+      - pwsh: |
+          # Merge both artifacts into one reference directory
+          $refDir = "$(Build.ArtifactStagingDirectory)/merged-refs"
+          New-Item -ItemType Directory -Path $refDir -Force | Out-Null
+
+          foreach ($src in @("$(Pipeline.Workspace)/gdi-images", "$(Pipeline.Workspace)/skia-images")) {
+              Get-ChildItem $src -Recurse -Filter "*.png" | ForEach-Object {
+                  $rel = $_.FullName.Substring($src.Length + 1)
+                  $dest = Join-Path $refDir $rel
+                  New-Item -ItemType Directory -Path (Split-Path $dest -Parent) -Force | Out-Null
+                  Copy-Item $_.FullName $dest
+              }
+          }
+
+          $count = (Get-ChildItem $refDir -Recurse -Filter "*.png").Count
+          Write-Host "$count images merged for comparison"
+
+          $env:REFERENCE_IMAGES_PATH = $refDir
+          $env:TEST_ARTIFACTS_PATH = "$(Build.ArtifactStagingDirectory)/diff-images"
+          dotnet test tests/SkiaSharp.Drawing.PixelDiff --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
+        displayName: Compare Skia vs GDI images
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testResultsFormat: VSTest
+          testResultsFiles: $(Build.ArtifactStagingDirectory)/test-results/*.trx
+          testRunTitle: Pixel Diff
       - publish: $(Build.ArtifactStagingDirectory)/diff-images
         artifact: diff-images
         condition: always()
         displayName: Upload diff images
-      - publish: $(Build.ArtifactStagingDirectory)/test-results
-        artifact: pixel-validation-results
-        condition: always()
-        displayName: Upload test results
