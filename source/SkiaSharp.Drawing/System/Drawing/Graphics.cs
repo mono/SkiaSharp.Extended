@@ -331,17 +331,43 @@ namespace System.Drawing
 		///  Saves a graphics container with the current state of this Graphics and opens and uses a new graphics container.
 		/// </summary>
 		/// <returns>A <see cref="GraphicsContainer"/> that represents the state of this Graphics.</returns>
-		public System.Drawing.Drawing2D.GraphicsContainer BeginContainer() { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public System.Drawing.Drawing2D.GraphicsContainer BeginContainer()
+		{
+			ThrowIfDisposed();
+			int count = _canvas.Save();
+			return new GraphicsContainer(count);
+		}
 
 		/// <summary>
 		///  Saves a graphics container with the current state of this Graphics and opens and uses a new graphics container with the specified scale transformation.
 		/// </summary>
-		public System.Drawing.Drawing2D.GraphicsContainer BeginContainer(System.Drawing.Rectangle dstrect, System.Drawing.Rectangle srcrect, System.Drawing.GraphicsUnit unit) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="dstrect">A <see cref="Rectangle"/> structure that, together with the <paramref name="srcrect"/> parameter, specifies a scale transformation for the new graphics container.</param>
+		/// <param name="srcrect">A <see cref="Rectangle"/> structure that, together with the <paramref name="dstrect"/> parameter, specifies a scale transformation for the new graphics container.</param>
+		/// <param name="unit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the unit of measure for the container.</param>
+		/// <returns>A <see cref="GraphicsContainer"/> that represents the state of this Graphics.</returns>
+		public System.Drawing.Drawing2D.GraphicsContainer BeginContainer(System.Drawing.Rectangle dstrect, System.Drawing.Rectangle srcrect, System.Drawing.GraphicsUnit unit)
+			=> BeginContainer((RectangleF)dstrect, (RectangleF)srcrect, unit);
 
 		/// <summary>
 		///  Saves a graphics container with the current state of this Graphics and opens and uses a new graphics container with the specified scale transformation.
 		/// </summary>
-		public System.Drawing.Drawing2D.GraphicsContainer BeginContainer(System.Drawing.RectangleF dstrect, System.Drawing.RectangleF srcrect, System.Drawing.GraphicsUnit unit) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="dstrect">A <see cref="RectangleF"/> structure that, together with the <paramref name="srcrect"/> parameter, specifies a scale transformation for the new graphics container.</param>
+		/// <param name="srcrect">A <see cref="RectangleF"/> structure that, together with the <paramref name="dstrect"/> parameter, specifies a scale transformation for the new graphics container.</param>
+		/// <param name="unit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the unit of measure for the container.</param>
+		/// <returns>A <see cref="GraphicsContainer"/> that represents the state of this Graphics.</returns>
+		public System.Drawing.Drawing2D.GraphicsContainer BeginContainer(System.Drawing.RectangleF dstrect, System.Drawing.RectangleF srcrect, System.Drawing.GraphicsUnit unit)
+		{
+			ThrowIfDisposed();
+			int count = _canvas.Save();
+			// Apply scaling from source to destination rectangle
+			if (srcrect.Width != 0 && srcrect.Height != 0)
+			{
+				_canvas.Translate(dstrect.X, dstrect.Y);
+				_canvas.Scale(dstrect.Width / srcrect.Width, dstrect.Height / srcrect.Height);
+				_canvas.Translate(-srcrect.X, -srcrect.Y);
+			}
+			return new GraphicsContainer(count);
+		}
 
 		/// <summary>
 		///  Clears the entire drawing surface and fills it with the specified background color.
@@ -506,51 +532,122 @@ namespace System.Drawing
 		/// <summary>
 		///  Draws a closed cardinal spline defined by an array of PointF structures.
 		/// </summary>
-		public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
+		public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points)
+			=> DrawClosedCurve(pen, points, 0.5f, Drawing2D.FillMode.Alternate);
 
 		/// <summary>
 		///  Draws a closed cardinal spline defined by an array of PointF structures using the specified tension.
 		/// </summary>
-		public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, float tension, System.Drawing.Drawing2D.FillMode fillmode) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
+		/// <param name="tension">Value that specifies the amount that the curve bends through the points.</param>
+		/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
+		public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, float tension, System.Drawing.Drawing2D.FillMode fillmode)
+		{
+			ThrowIfDisposed();
+			if (pen is null) throw new ArgumentNullException(nameof(pen));
+			if (points is null) throw new ArgumentNullException(nameof(points));
+			if (points.Length < 3) throw new ArgumentException("Array must contain at least 3 points.", nameof(points));
+			using var paint = pen.CreatePaint();
+			ApplyState(paint);
+			using var path = BuildClosedCardinalSplinePath(points, tension);
+			_canvas.DrawPath(path, paint);
+		}
 
 		/// <summary>
 		///  Draws a closed cardinal spline defined by an array of Point structures.
 		/// </summary>
-		public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.Point[] points) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
+		public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.Point[] points)
+			=> DrawClosedCurve(pen, ToPointFArray(points));
 
 		/// <summary>
 		///  Draws a closed cardinal spline defined by an array of Point structures using the specified tension.
 		/// </summary>
-		public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.Point[] points, float tension, System.Drawing.Drawing2D.FillMode fillmode) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
+		/// <param name="tension">Value that specifies the amount that the curve bends through the points.</param>
+		/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
+		public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.Point[] points, float tension, System.Drawing.Drawing2D.FillMode fillmode)
+			=> DrawClosedCurve(pen, ToPointFArray(points), tension, fillmode);
 
 		/// <summary>
 		///  Draws a cardinal spline through a specified array of PointF structures.
 		/// </summary>
-		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
+		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points)
+			=> DrawCurve(pen, points, 0, points?.Length - 1 ?? 0, 0.5f);
+
 		/// <summary>
 		///  Draws a cardinal spline through a specified array of PointF structures using a specified offset and tension.
 		/// </summary>
-		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, int offset, int numberOfSegments) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
+		/// <param name="offset">Offset from the first element in the array to the starting point of the curve.</param>
+		/// <param name="numberOfSegments">Number of segments after the starting point to include in the curve.</param>
+		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, int offset, int numberOfSegments)
+			=> DrawCurve(pen, points, offset, numberOfSegments, 0.5f);
+
 		/// <summary>
 		///  Draws a cardinal spline through a specified array of PointF structures using a specified offset, number of segments, and tension.
 		/// </summary>
-		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, int offset, int numberOfSegments, float tension) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
+		/// <param name="offset">Offset from the first element in the array to the starting point of the curve.</param>
+		/// <param name="numberOfSegments">Number of segments after the starting point to include in the curve.</param>
+		/// <param name="tension">Value that specifies the amount that the curve bends through the control points.</param>
+		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, int offset, int numberOfSegments, float tension)
+		{
+			ThrowIfDisposed();
+			if (pen is null) throw new ArgumentNullException(nameof(pen));
+			if (points is null) throw new ArgumentNullException(nameof(points));
+			if (points.Length < 2) throw new ArgumentException("Array must contain at least 2 points.", nameof(points));
+			using var paint = pen.CreatePaint();
+			ApplyState(paint);
+			using var path = BuildCardinalSplinePath(points, offset, numberOfSegments, tension);
+			_canvas.DrawPath(path, paint);
+		}
+
 		/// <summary>
 		///  Draws a cardinal spline through a specified array of PointF structures using a specified tension.
 		/// </summary>
-		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, float tension) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
+		/// <param name="tension">Value that specifies the amount that the curve bends through the control points.</param>
+		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, float tension)
+			=> DrawCurve(pen, points, 0, points?.Length - 1 ?? 0, tension);
+
 		/// <summary>
 		///  Draws a cardinal spline through a specified array of Point structures.
 		/// </summary>
-		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.Point[] points) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
+		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.Point[] points)
+			=> DrawCurve(pen, ToPointFArray(points));
+
 		/// <summary>
 		///  Draws a cardinal spline through a specified array of Point structures using a specified offset, number of segments, and tension.
 		/// </summary>
-		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.Point[] points, int offset, int numberOfSegments, float tension) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
+		/// <param name="offset">Offset from the first element in the array to the starting point of the curve.</param>
+		/// <param name="numberOfSegments">Number of segments after the starting point to include in the curve.</param>
+		/// <param name="tension">Value that specifies the amount that the curve bends through the control points.</param>
+		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.Point[] points, int offset, int numberOfSegments, float tension)
+			=> DrawCurve(pen, ToPointFArray(points), offset, numberOfSegments, tension);
+
 		/// <summary>
 		///  Draws a cardinal spline through a specified array of Point structures using a specified tension.
 		/// </summary>
-		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.Point[] points, float tension) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
+		/// <param name="tension">Value that specifies the amount that the curve bends through the control points.</param>
+		public void DrawCurve(System.Drawing.Pen pen, System.Drawing.Point[] points, float tension)
+			=> DrawCurve(pen, ToPointFArray(points), tension);
 
 		/// <summary>
 		///  Draws an ellipse specified by a bounding <see cref="Rectangle"/> structure.
@@ -619,44 +716,104 @@ namespace System.Drawing
 		/// <summary>
 		///  Draws the specified Image at the specified location and with the specified shape and size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="image"><see cref="Image"/> to draw.</param>
+		/// <param name="destPoints">Array of three <see cref="PointF"/> structures that define a parallelogram.</param>
+		public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints)
+		{
+			ThrowIfDisposed();
+			if (image is null) throw new ArgumentNullException(nameof(image));
+			if (destPoints is null) throw new ArgumentNullException(nameof(destPoints));
+			if (destPoints.Length != 3) throw new ArgumentException("Destination points must contain exactly 3 points.", nameof(destPoints));
+			if (image.SKBitmapBacking is null)
+				throw new ArgumentException("The image does not have a valid bitmap backing.", nameof(image));
+			DrawImageWithParallelogram(image.SKBitmapBacking, null, destPoints);
+		}
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit)
+		{
+			ThrowIfDisposed();
+			if (image is null) throw new ArgumentNullException(nameof(image));
+			if (destPoints is null || destPoints.Length != 3) throw new ArgumentException("Destination points must contain exactly 3 points.", nameof(destPoints));
+			if (image.SKBitmapBacking is null)
+				throw new ArgumentException("The image does not have a valid bitmap backing.", nameof(image));
+			var src = new SKRect(srcRect.X, srcRect.Y, srcRect.Right, srcRect.Bottom);
+			DrawImageWithParallelogram(image.SKBitmapBacking, src, destPoints);
+		}
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr)
+			=> DrawImage(image, destPoints, srcRect, srcUnit);
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback)
+			=> DrawImage(image, destPoints, srcRect, srcUnit);
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback, int callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback, int callbackData)
+			=> DrawImage(image, destPoints, srcRect, srcUnit);
 
 		/// <summary>
 		///  Draws the specified Image at the specified location and with the specified shape and size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="image"><see cref="Image"/> to draw.</param>
+		/// <param name="destPoints">Array of three <see cref="Point"/> structures that define a parallelogram.</param>
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints)
+		{
+			if (destPoints is null) throw new ArgumentNullException(nameof(destPoints));
+			var ptsF = new PointF[destPoints.Length];
+			for (int i = 0; i < destPoints.Length; i++)
+				ptsF[i] = new PointF(destPoints[i].X, destPoints[i].Y);
+			DrawImage(image, ptsF);
+		}
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit)
+		{
+			if (destPoints is null) throw new ArgumentNullException(nameof(destPoints));
+			var ptsF = new PointF[destPoints.Length];
+			for (int i = 0; i < destPoints.Length; i++)
+				ptsF[i] = new PointF(destPoints[i].X, destPoints[i].Y);
+			DrawImage(image, ptsF, (RectangleF)srcRect, srcUnit);
+		}
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr)
+		{
+			if (destPoints is null) throw new ArgumentNullException(nameof(destPoints));
+			var ptsF = new PointF[destPoints.Length];
+			for (int i = 0; i < destPoints.Length; i++)
+				ptsF[i] = new PointF(destPoints[i].X, destPoints[i].Y);
+			DrawImage(image, ptsF, (RectangleF)srcRect, srcUnit, imageAttr);
+		}
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback)
+		{
+			if (destPoints is null) throw new ArgumentNullException(nameof(destPoints));
+			var ptsF = new PointF[destPoints.Length];
+			for (int i = 0; i < destPoints.Length; i++)
+				ptsF[i] = new PointF(destPoints[i].X, destPoints[i].Y);
+			DrawImage(image, ptsF, (RectangleF)srcRect, srcUnit);
+		}
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback, int callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback, int callbackData)
+		{
+			if (destPoints is null) throw new ArgumentNullException(nameof(destPoints));
+			var ptsF = new PointF[destPoints.Length];
+			for (int i = 0; i < destPoints.Length; i++)
+				ptsF[i] = new PointF(destPoints[i].X, destPoints[i].Y);
+			DrawImage(image, ptsF, (RectangleF)srcRect, srcUnit);
+		}
 
 		/// <summary>
 		///  Draws the specified <see cref="Image"/> at the specified location and with the specified size.
@@ -669,39 +826,53 @@ namespace System.Drawing
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="image"><see cref="Image"/> to draw.</param>
+		/// <param name="destRect">A <see cref="Rectangle"/> structure that specifies the location and size of the drawn image.</param>
+		/// <param name="srcRect">A <see cref="Rectangle"/> structure that specifies the portion of the image to draw.</param>
+		/// <param name="srcUnit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the units of measure used by the <paramref name="srcRect"/> parameter.</param>
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit)
+			=> DrawImageCore(image, (RectangleF)destRect, (RectangleF)srcRect);
+
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit)
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr)
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback)
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback, nint callbackData)
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit)
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs)
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback)
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback, nint callbackData)
+			=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
 
 		/// <summary>
 		///  Draws the specified <see cref="Image"/> at the specified location and with the specified size.
@@ -714,7 +885,12 @@ namespace System.Drawing
 		/// <summary>
 		///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, System.Drawing.RectangleF destRect, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="image"><see cref="Image"/> to draw.</param>
+		/// <param name="destRect">A <see cref="RectangleF"/> structure that specifies the location and size of the drawn image.</param>
+		/// <param name="srcRect">A <see cref="RectangleF"/> structure that specifies the portion of the image to draw.</param>
+		/// <param name="srcUnit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the units of measure used by the <paramref name="srcRect"/> parameter.</param>
+		public void DrawImage(System.Drawing.Image image, System.Drawing.RectangleF destRect, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit)
+			=> DrawImageCore(image, destRect, srcRect);
 
 		/// <summary>
 		///  Draws the specified image, using its original physical size, at the location specified by a coordinate pair.
@@ -728,7 +904,21 @@ namespace System.Drawing
 		/// <summary>
 		///  Draws a portion of an image at a specified location.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, int x, int y, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="image"><see cref="Image"/> to draw.</param>
+		/// <param name="x">The x-coordinate of the upper-left corner of the drawn image.</param>
+		/// <param name="y">The y-coordinate of the upper-left corner of the drawn image.</param>
+		/// <param name="srcRect">A <see cref="Rectangle"/> structure that specifies the portion of the image to draw.</param>
+		/// <param name="srcUnit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the units of measure used by the <paramref name="srcRect"/> parameter.</param>
+		public void DrawImage(System.Drawing.Image image, int x, int y, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit)
+		{
+			ThrowIfDisposed();
+			if (image is null) throw new ArgumentNullException(nameof(image));
+			if (image.SKBitmapBacking is null)
+				throw new ArgumentException("The image does not have a valid bitmap backing.", nameof(image));
+			var src = new SKRect(srcRect.X, srcRect.Y, srcRect.Right, srcRect.Bottom);
+			var dest = new SKRect(x, y, x + srcRect.Width, y + srcRect.Height);
+			_canvas.DrawBitmap(image.SKBitmapBacking, src, dest);
+		}
 
 		/// <summary>
 		///  Draws the specified <see cref="Image"/> at the specified location and with the specified size.
@@ -759,7 +949,21 @@ namespace System.Drawing
 		/// <summary>
 		///  Draws a portion of an image at a specified location.
 		/// </summary>
-		public void DrawImage(System.Drawing.Image image, float x, float y, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="image"><see cref="Image"/> to draw.</param>
+		/// <param name="x">The x-coordinate of the upper-left corner of the drawn image.</param>
+		/// <param name="y">The y-coordinate of the upper-left corner of the drawn image.</param>
+		/// <param name="srcRect">A <see cref="RectangleF"/> structure that specifies the portion of the image to draw.</param>
+		/// <param name="srcUnit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the units of measure used by the <paramref name="srcRect"/> parameter.</param>
+		public void DrawImage(System.Drawing.Image image, float x, float y, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit)
+		{
+			ThrowIfDisposed();
+			if (image is null) throw new ArgumentNullException(nameof(image));
+			if (image.SKBitmapBacking is null)
+				throw new ArgumentException("The image does not have a valid bitmap backing.", nameof(image));
+			var src = new SKRect(srcRect.X, srcRect.Y, srcRect.Right, srcRect.Bottom);
+			var dest = new SKRect(x, y, x + srcRect.Width, y + srcRect.Height);
+			_canvas.DrawBitmap(image.SKBitmapBacking, src, dest);
+		}
 
 		/// <summary>
 		///  Draws the specified <see cref="Image"/> at the specified location and with the specified size.
@@ -1160,7 +1364,13 @@ namespace System.Drawing
 		/// <summary>
 		///  Closes the current graphics container and restores the state of this Graphics to the state saved by a call to BeginContainer.
 		/// </summary>
-		public void EndContainer(System.Drawing.Drawing2D.GraphicsContainer container) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="container">A <see cref="GraphicsContainer"/> that represents the container this method restores.</param>
+		public void EndContainer(System.Drawing.Drawing2D.GraphicsContainer container)
+		{
+			ThrowIfDisposed();
+			if (container is null) throw new ArgumentNullException(nameof(container));
+			_canvas.RestoreToCount(container.SaveCount);
+		}
 		/// <summary>
 		///  Sends the records in the specified Metafile to a callback method for display.
 		/// </summary>
@@ -1329,27 +1539,66 @@ namespace System.Drawing
 		/// <summary>
 		///  Fills the interior of a closed cardinal spline curve defined by an array of PointF structures.
 		/// </summary>
-		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.PointF[] points) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
+		/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
+		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.PointF[] points)
+			=> FillClosedCurve(brush, points, Drawing2D.FillMode.Alternate, 0.5f);
+
 		/// <summary>
 		///  Fills the interior of a closed cardinal spline curve defined by an array of PointF structures using the specified fill mode.
 		/// </summary>
-		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.PointF[] points, System.Drawing.Drawing2D.FillMode fillmode) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
+		/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
+		/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
+		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.PointF[] points, System.Drawing.Drawing2D.FillMode fillmode)
+			=> FillClosedCurve(brush, points, fillmode, 0.5f);
+
 		/// <summary>
 		///  Fills the interior of a closed cardinal spline curve defined by an array of PointF structures using the specified fill mode and tension.
 		/// </summary>
-		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.PointF[] points, System.Drawing.Drawing2D.FillMode fillmode, float tension) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
+		/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
+		/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
+		/// <param name="tension">Value that specifies the amount that the curve bends through the points.</param>
+		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.PointF[] points, System.Drawing.Drawing2D.FillMode fillmode, float tension)
+		{
+			ThrowIfDisposed();
+			if (brush is null) throw new ArgumentNullException(nameof(brush));
+			if (points is null) throw new ArgumentNullException(nameof(points));
+			if (points.Length < 3) throw new ArgumentException("Array must contain at least 3 points.", nameof(points));
+			using var paint = brush.CreatePaint();
+			ApplyState(paint);
+			using var path = BuildClosedCardinalSplinePath(points, tension);
+			path.FillType = fillmode == Drawing2D.FillMode.Winding ? SKPathFillType.Winding : SKPathFillType.EvenOdd;
+			_canvas.DrawPath(path, paint);
+		}
+
 		/// <summary>
 		///  Fills the interior of a closed cardinal spline curve defined by an array of Point structures.
 		/// </summary>
-		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.Point[] points) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
+		/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
+		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.Point[] points)
+			=> FillClosedCurve(brush, ToPointFArray(points));
+
 		/// <summary>
 		///  Fills the interior of a closed cardinal spline curve defined by an array of Point structures using the specified fill mode.
 		/// </summary>
-		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.Point[] points, System.Drawing.Drawing2D.FillMode fillmode) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
+		/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
+		/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
+		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.Point[] points, System.Drawing.Drawing2D.FillMode fillmode)
+			=> FillClosedCurve(brush, ToPointFArray(points), fillmode);
+
 		/// <summary>
 		///  Fills the interior of a closed cardinal spline curve defined by an array of Point structures using the specified fill mode and tension.
 		/// </summary>
-		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.Point[] points, System.Drawing.Drawing2D.FillMode fillmode, float tension) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
+		/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
+		/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
+		/// <param name="tension">Value that specifies the amount that the curve bends through the points.</param>
+		public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.Point[] points, System.Drawing.Drawing2D.FillMode fillmode, float tension)
+			=> FillClosedCurve(brush, ToPointFArray(points), fillmode, tension);
 
 		/// <summary>
 		///  Fills the interior of an ellipse defined by a bounding rectangle specified by a <see cref="Rectangle"/> structure.
@@ -1560,9 +1809,19 @@ namespace System.Drawing
 		}
 
 		/// <summary>
-		///  Fills the interior of a Region.
+		///  Fills the interior of a <see cref="Region"/>.
 		/// </summary>
-		public void FillRegion(System.Drawing.Brush brush, System.Drawing.Region region) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
+		/// <param name="region"><see cref="Region"/> that represents the area to fill.</param>
+		public void FillRegion(System.Drawing.Brush brush, System.Drawing.Region region)
+		{
+			ThrowIfDisposed();
+			if (brush is null) throw new ArgumentNullException(nameof(brush));
+			if (region is null) throw new ArgumentNullException(nameof(region));
+			using var paint = brush.CreatePaint();
+			ApplyState(paint);
+			_canvas.DrawPath(region.SKPath, paint);
+		}
 
 		/// <summary>
 		///  Forces execution of all pending graphics operations and returns immediately without waiting for the operations to finish.
@@ -2168,6 +2427,143 @@ namespace System.Drawing
 				}
 				_disposed = true;
 			}
+		}
+
+		/// <summary>
+		///  Converts a Point array to a PointF array.
+		/// </summary>
+		private static PointF[] ToPointFArray(Point[] points)
+		{
+			if (points is null) throw new ArgumentNullException(nameof(points));
+			var ptsF = new PointF[points.Length];
+			for (int i = 0; i < points.Length; i++)
+				ptsF[i] = new PointF(points[i].X, points[i].Y);
+			return ptsF;
+		}
+
+		/// <summary>
+		///  Builds an open cardinal spline SKPath from a subset of points.
+		///  Uses the formula: control points cp[i] = p[i] ± tension * (p[i+1] - p[i-1]) / 2
+		/// </summary>
+		private static SKPath BuildCardinalSplinePath(PointF[] points, int offset, int numberOfSegments, float tension)
+		{
+			if (offset < 0 || offset >= points.Length) throw new ArgumentOutOfRangeException(nameof(offset));
+			if (numberOfSegments < 1) throw new ArgumentOutOfRangeException(nameof(numberOfSegments));
+			int endIndex = offset + numberOfSegments;
+			if (endIndex >= points.Length) throw new ArgumentException("offset + numberOfSegments exceeds array length.");
+
+			var path = new SKPath();
+			path.MoveTo(points[offset].X, points[offset].Y);
+
+			for (int i = offset; i < endIndex; i++)
+			{
+				// Current segment goes from points[i] to points[i+1]
+				var p0 = points[i];
+				var p1 = points[i + 1];
+
+				// Tangent at p0: use predecessor if available, else p0 itself
+				var pPrev = (i > 0) ? points[i - 1] : p0;
+				var pNext = p1;
+
+				float cp1x = p0.X + tension * (pNext.X - pPrev.X) / 3f;
+				float cp1y = p0.Y + tension * (pNext.Y - pPrev.Y) / 3f;
+
+				// Tangent at p1: use successor if available, else p1 itself
+				var p1Prev = p0;
+				var p1Next = (i + 2 < points.Length) ? points[i + 2] : p1;
+
+				float cp2x = p1.X - tension * (p1Next.X - p1Prev.X) / 3f;
+				float cp2y = p1.Y - tension * (p1Next.Y - p1Prev.Y) / 3f;
+
+				path.CubicTo(cp1x, cp1y, cp2x, cp2y, p1.X, p1.Y);
+			}
+
+			return path;
+		}
+
+		/// <summary>
+		///  Builds a closed cardinal spline SKPath (the last point connects back to the first).
+		///  Uses the formula: control points cp[i] = p[i] ± tension * (p[i+1] - p[i-1]) / 2
+		/// </summary>
+		private static SKPath BuildClosedCardinalSplinePath(PointF[] points, float tension)
+		{
+			int n = points.Length;
+			var path = new SKPath();
+			path.MoveTo(points[0].X, points[0].Y);
+
+			for (int i = 0; i < n; i++)
+			{
+				var p0 = points[i];
+				var p1 = points[(i + 1) % n];
+				var pPrev = points[(i - 1 + n) % n];
+				var pNext = points[(i + 2) % n];
+
+				float cp1x = p0.X + tension * (p1.X - pPrev.X) / 3f;
+				float cp1y = p0.Y + tension * (p1.Y - pPrev.Y) / 3f;
+
+				float cp2x = p1.X - tension * (pNext.X - p0.X) / 3f;
+				float cp2y = p1.Y - tension * (pNext.Y - p0.Y) / 3f;
+
+				path.CubicTo(cp1x, cp1y, cp2x, cp2y, p1.X, p1.Y);
+			}
+
+			path.Close();
+			return path;
+		}
+
+		/// <summary>
+		///  Core helper to draw a portion of an image into a destination rectangle.
+		/// </summary>
+		private void DrawImageCore(Image image, RectangleF destRect, RectangleF srcRect)
+		{
+			ThrowIfDisposed();
+			if (image is null) throw new ArgumentNullException(nameof(image));
+			if (image.SKBitmapBacking is null)
+				throw new ArgumentException("The image does not have a valid bitmap backing.", nameof(image));
+			var src = new SKRect(srcRect.X, srcRect.Y, srcRect.Right, srcRect.Bottom);
+			var dest = new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom);
+			_canvas.DrawBitmap(image.SKBitmapBacking, src, dest);
+		}
+
+		/// <summary>
+		///  Draws a bitmap into a parallelogram defined by 3 destination points (top-left, top-right, bottom-left).
+		///  Uses an SKMatrix to map the source rectangle to the destination parallelogram.
+		/// </summary>
+		private void DrawImageWithParallelogram(SKBitmap bitmap, SKRect? srcRect, PointF[] destPoints)
+		{
+			// destPoints[0] = top-left, destPoints[1] = top-right, destPoints[2] = bottom-left
+			var src = srcRect ?? new SKRect(0, 0, bitmap.Width, bitmap.Height);
+
+			// Build a matrix that maps the source rectangle to the parallelogram
+			var srcPts = new SKPoint[] { new(src.Left, src.Top), new(src.Right, src.Top), new(src.Left, src.Bottom) };
+			var dstPts = new SKPoint[] { new(destPoints[0].X, destPoints[0].Y), new(destPoints[1].X, destPoints[1].Y), new(destPoints[2].X, destPoints[2].Y) };
+
+			var matrix = new SKMatrix();
+			// Use the 3-point mapping via Poly2Poly if available, else manual calculation
+			// Manual affine matrix:
+			// [a b c]   [src.Left   src.Right  src.Left ]   [dst0.X dst1.X dst2.X]
+			// [d e f] * [src.Top    src.Top    src.Bottom] = [dst0.Y dst1.Y dst2.Y]
+			// We need M such that M * srcPt = dstPt
+			float sx = src.Width;
+			float sy = src.Height;
+			if (sx == 0 || sy == 0) return;
+
+			float a = (dstPts[1].X - dstPts[0].X) / sx;
+			float b = (dstPts[2].X - dstPts[0].X) / sy;
+			float c = dstPts[0].X - a * src.Left - b * src.Top;
+			float d = (dstPts[1].Y - dstPts[0].Y) / sx;
+			float e = (dstPts[2].Y - dstPts[0].Y) / sy;
+			float f = dstPts[0].Y - d * src.Left - e * src.Top;
+
+			matrix = new SKMatrix(a, b, c, d, e, f, 0, 0, 1);
+
+			int count = _canvas.Save();
+			_canvas.Concat(matrix);
+			if (srcRect.HasValue)
+				_canvas.DrawBitmap(bitmap, src, src);
+			else
+				_canvas.DrawBitmap(bitmap, src.Left, src.Top);
+			_canvas.RestoreToCount(count);
 		}
 	}
 }

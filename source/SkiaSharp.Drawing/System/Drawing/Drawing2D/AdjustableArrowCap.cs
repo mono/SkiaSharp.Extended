@@ -1,12 +1,38 @@
-﻿namespace System.Drawing.Drawing2D
+namespace System.Drawing.Drawing2D
 {
+	/// <summary>
+	///  Represents an adjustable arrow-shaped line cap.
+	/// </summary>
 	public sealed partial class AdjustableArrowCap : System.Drawing.Drawing2D.CustomLineCap
 	{
-		public AdjustableArrowCap(float width, float height) : base(null, null) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
-		public AdjustableArrowCap(float width, float height, bool isFilled) : base(null, null) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
-		public bool Filled { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } set { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public float Height { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } set { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public float MiddleInset { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } set { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public float Width { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } set { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
+		private float _width;
+		private float _height;
+		private bool _filled;
+		private float _middleInset;
+
+		/// <summary>Initializes a new instance of the <see cref="AdjustableArrowCap"/> class with the specified width and height.</summary>
+		/// <param name="width">The width of the arrow.</param>
+		/// <param name="height">The height of the arrow.</param>
+		public AdjustableArrowCap(float width, float height) : this(width, height, true) { }
+
+		/// <summary>Initializes a new instance of the <see cref="AdjustableArrowCap"/> class with the specified width, height, and fill property.</summary>
+		/// <param name="width">The width of the arrow.</param>
+		/// <param name="height">The height of the arrow.</param>
+		/// <param name="isFilled"><see langword="true"/> to fill the arrow cap; otherwise, <see langword="false"/>.</param>
+		public AdjustableArrowCap(float width, float height, bool isFilled) : base(null, null)
+		{
+			_width = width;
+			_height = height;
+			_filled = isFilled;
+		}
+
+		/// <summary>Gets or sets whether the arrow cap is filled.</summary>
+		public bool Filled { get => _filled; set => _filled = value; }
+		/// <summary>Gets or sets the height of the arrow cap.</summary>
+		public new float Height { get => _height; set => _height = value; }
+		/// <summary>Gets or sets the number of units between the outline of the arrow cap and the fill.</summary>
+		public float MiddleInset { get => _middleInset; set => _middleInset = value; }
+		/// <summary>Gets or sets the width of the arrow cap.</summary>
+		public new float Width { get => _width; set => _width = value; }
 	}
 }

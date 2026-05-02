@@ -1,7 +1,13 @@
-﻿namespace System.Drawing
+namespace System.Drawing
 {
+	/// <summary>
+	///  Provides access to the main buffered graphics context object for the application domain.
+	/// </summary>
 	public static partial class BufferedGraphicsManager
 	{
-		public static System.Drawing.BufferedGraphicsContext Current { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
+		private static readonly BufferedGraphicsContext _current = new BufferedGraphicsContext();
+
+		/// <summary>Gets the <see cref="BufferedGraphicsContext"/> for the current application domain.</summary>
+		public static System.Drawing.BufferedGraphicsContext Current => _current;
 	}
 }
