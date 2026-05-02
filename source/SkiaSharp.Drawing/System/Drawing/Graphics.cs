@@ -703,15 +703,33 @@ namespace System.Drawing
 		/// <summary>
 		///  Draws the image represented by the specified Icon within the area specified by a Rectangle structure.
 		/// </summary>
-		public void DrawIcon(System.Drawing.Icon icon, System.Drawing.Rectangle targetRect) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawIcon(System.Drawing.Icon icon, System.Drawing.Rectangle targetRect)
+		{
+			ThrowIfDisposed();
+			if (icon is null) throw new ArgumentNullException(nameof(icon));
+			using var bmp = icon.ToBitmap();
+			DrawImage(bmp, targetRect);
+		}
 		/// <summary>
 		///  Draws the image represented by the specified Icon at the specified coordinates.
 		/// </summary>
-		public void DrawIcon(System.Drawing.Icon icon, int x, int y) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawIcon(System.Drawing.Icon icon, int x, int y)
+		{
+			ThrowIfDisposed();
+			if (icon is null) throw new ArgumentNullException(nameof(icon));
+			using var bmp = icon.ToBitmap();
+			DrawImage(bmp, x, y);
+		}
 		/// <summary>
 		///  Draws the image represented by the specified Icon without scaling the image.
 		/// </summary>
-		public void DrawIconUnstretched(System.Drawing.Icon icon, System.Drawing.Rectangle targetRect) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawIconUnstretched(System.Drawing.Icon icon, System.Drawing.Rectangle targetRect)
+		{
+			ThrowIfDisposed();
+			if (icon is null) throw new ArgumentNullException(nameof(icon));
+			using var bmp = icon.ToBitmap();
+			DrawImage(bmp, targetRect.X, targetRect.Y);
+		}
 
 		/// <summary>
 		///  Draws the specified <see cref="Image"/> at the specified location.
@@ -1911,40 +1929,95 @@ namespace System.Drawing
 		/// <summary>
 		///  Indicates whether the specified Point structure is contained within the visible clip region of this Graphics.
 		/// </summary>
-		public bool IsVisible(System.Drawing.Point point) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsVisible(System.Drawing.Point point) => IsVisible((float)point.X, (float)point.Y);
 		/// <summary>
 		///  Indicates whether the specified PointF structure is contained within the visible clip region of this Graphics.
 		/// </summary>
-		public bool IsVisible(System.Drawing.PointF point) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsVisible(System.Drawing.PointF point) => IsVisible(point.X, point.Y);
 		/// <summary>
 		///  Indicates whether the rectangle specified by a Rectangle structure is contained within the visible clip region of this Graphics.
 		/// </summary>
-		public bool IsVisible(System.Drawing.Rectangle rect) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsVisible(System.Drawing.Rectangle rect) => IsVisible((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 		/// <summary>
 		///  Indicates whether the rectangle specified by a RectangleF structure is contained within the visible clip region of this Graphics.
 		/// </summary>
-		public bool IsVisible(System.Drawing.RectangleF rect) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsVisible(System.Drawing.RectangleF rect) => IsVisible(rect.X, rect.Y, rect.Width, rect.Height);
 		/// <summary>
 		///  Indicates whether the point specified by a pair of coordinates is contained within the visible clip region of this Graphics.
 		/// </summary>
-		public bool IsVisible(int x, int y) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsVisible(int x, int y) => IsVisible((float)x, (float)y);
 		/// <summary>
 		///  Indicates whether the rectangle specified by a pair of coordinates, a width, and a height is contained within the visible clip region of this Graphics.
 		/// </summary>
-		public bool IsVisible(int x, int y, int width, int height) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsVisible(int x, int y, int width, int height) => IsVisible((float)x, (float)y, (float)width, (float)height);
 		/// <summary>
 		///  Indicates whether the point specified by a pair of coordinates is contained within the visible clip region of this Graphics.
 		/// </summary>
-		public bool IsVisible(float x, float y) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsVisible(float x, float y)
+		{
+			ThrowIfDisposed();
+			var clipBounds = _canvas.DeviceClipBounds;
+			return x >= clipBounds.Left && x < clipBounds.Right && y >= clipBounds.Top && y < clipBounds.Bottom;
+		}
 		/// <summary>
 		///  Indicates whether the rectangle specified by a pair of coordinates, a width, and a height is contained within the visible clip region of this Graphics.
 		/// </summary>
-		public bool IsVisible(float x, float y, float width, float height) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsVisible(float x, float y, float width, float height)
+		{
+			ThrowIfDisposed();
+			var clipBounds = _canvas.DeviceClipBounds;
+			var testRect = new SkiaSharp.SKRect(x, y, x + width, y + height);
+			var clipRect = new SkiaSharp.SKRect(clipBounds.Left, clipBounds.Top, clipBounds.Right, clipBounds.Bottom);
+			return testRect.IntersectsWith(clipRect);
+		}
 
 		/// <summary>
 		///  Gets an array of Region objects, each of which bounds a range of character positions within the specified string.
 		/// </summary>
-		public System.Drawing.Region[] MeasureCharacterRanges(string? text, System.Drawing.Font font, System.Drawing.RectangleF layoutRect, System.Drawing.StringFormat? stringFormat) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public System.Drawing.Region[] MeasureCharacterRanges(string? text, System.Drawing.Font font, System.Drawing.RectangleF layoutRect, System.Drawing.StringFormat? stringFormat)
+		{
+			ThrowIfDisposed();
+			if (font is null) throw new ArgumentNullException(nameof(font));
+
+			var ranges = stringFormat != null ? GetMeasurableRanges(stringFormat) : Array.Empty<CharacterRange>();
+			if (ranges.Length == 0 || string.IsNullOrEmpty(text))
+				return new Region[] { new Region(new Drawing2D.GraphicsPath()) };
+
+			var regions = new Region[ranges.Length];
+			using var paint = new SkiaSharp.SKPaint();
+			paint.TextSize = font.SKFont.Size;
+			paint.Typeface = font.SKTypeface;
+
+			for (int i = 0; i < ranges.Length; i++)
+			{
+				var range = ranges[i];
+				int start = Math.Max(0, range.First);
+				int len = Math.Min(range.Length, text.Length - start);
+				if (len <= 0)
+				{
+					regions[i] = new Region(new RectangleF(layoutRect.X, layoutRect.Y, 0, 0));
+					continue;
+				}
+				// Measure prefix up to start
+				float xOffset = 0;
+				if (start > 0)
+				{
+					xOffset = font.SKFont.MeasureText(text.AsSpan(0, start), paint);
+				}
+				float rangeWidth = font.SKFont.MeasureText(text.AsSpan(start, len), paint);
+				var m = font.SKFont.Metrics;
+				float rangeHeight = Math.Abs(m.Ascent) + Math.Abs(m.Descent);
+				regions[i] = new Region(new RectangleF(layoutRect.X + xOffset, layoutRect.Y, rangeWidth, rangeHeight));
+			}
+			return regions;
+		}
+
+		private static CharacterRange[] GetMeasurableRanges(StringFormat sf)
+		{
+			// Access the ranges via reflection of the internal field since it's stored privately
+			var field = typeof(StringFormat).GetField("_measurableRanges", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+			return field?.GetValue(sf) as CharacterRange[] ?? Array.Empty<CharacterRange>();
+		}
 		/// <summary>
 		///  Measures the specified string when drawn with the specified <see cref="Font"/>.
 		/// </summary>
@@ -2277,11 +2350,21 @@ namespace System.Drawing
 		/// <summary>
 		///  Sets the clipping region of this Graphics.
 		/// </summary>
-		public void SetClip(System.Drawing.Graphics g) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void SetClip(System.Drawing.Graphics g)
+		{
+			SetClip(g, Drawing2D.CombineMode.Replace);
+		}
 		/// <summary>
-		///  Sets the clipping region of this Graphics.
+		///  Sets the clipping region of this Graphics to the Clip property of the specified Graphics.
 		/// </summary>
-		public void SetClip(System.Drawing.Graphics g, System.Drawing.Drawing2D.CombineMode combineMode) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void SetClip(System.Drawing.Graphics g, System.Drawing.Drawing2D.CombineMode combineMode)
+		{
+			ThrowIfDisposed();
+			if (g is null) throw new ArgumentNullException(nameof(g));
+			// Use the clip bounds of the source graphics as a rectangle clip
+			var bounds = g.ClipBounds;
+			SetClip(bounds, combineMode);
+		}
 		/// <summary>
 		///  Sets the clipping region of this <see cref="Graphics"/> to the specified <see cref="Rectangle"/>.
 		/// </summary>
@@ -2363,11 +2446,57 @@ namespace System.Drawing
 		/// <summary>
 		///  Transforms an array of points from one coordinate space to another.
 		/// </summary>
-		public void TransformPoints(System.Drawing.Drawing2D.CoordinateSpace destSpace, System.Drawing.Drawing2D.CoordinateSpace srcSpace, System.Drawing.PointF[] pts) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void TransformPoints(System.Drawing.Drawing2D.CoordinateSpace destSpace, System.Drawing.Drawing2D.CoordinateSpace srcSpace, System.Drawing.PointF[] pts)
+		{
+			ThrowIfDisposed();
+			if (pts is null) throw new ArgumentNullException(nameof(pts));
+			if (srcSpace == destSpace) return;
+
+			// Apply or invert the current transform matrix
+			var matrix = _canvas.TotalMatrix;
+			if (srcSpace == Drawing2D.CoordinateSpace.World && destSpace == Drawing2D.CoordinateSpace.Device)
+			{
+				for (int i = 0; i < pts.Length; i++)
+				{
+					var mapped = matrix.MapPoint(pts[i].X, pts[i].Y);
+					pts[i] = new PointF(mapped.X, mapped.Y);
+				}
+			}
+			else if (srcSpace == Drawing2D.CoordinateSpace.Device && destSpace == Drawing2D.CoordinateSpace.World)
+			{
+				if (matrix.TryInvert(out var inverse))
+				{
+					for (int i = 0; i < pts.Length; i++)
+					{
+						var mapped = inverse.MapPoint(pts[i].X, pts[i].Y);
+						pts[i] = new PointF(mapped.X, mapped.Y);
+					}
+				}
+			}
+			// Page space is treated the same as World in this implementation
+			else
+			{
+				for (int i = 0; i < pts.Length; i++)
+				{
+					var mapped = matrix.MapPoint(pts[i].X, pts[i].Y);
+					pts[i] = new PointF(mapped.X, mapped.Y);
+				}
+			}
+		}
 		/// <summary>
 		///  Transforms an array of points from one coordinate space to another.
 		/// </summary>
-		public void TransformPoints(System.Drawing.Drawing2D.CoordinateSpace destSpace, System.Drawing.Drawing2D.CoordinateSpace srcSpace, System.Drawing.Point[] pts) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void TransformPoints(System.Drawing.Drawing2D.CoordinateSpace destSpace, System.Drawing.Drawing2D.CoordinateSpace srcSpace, System.Drawing.Point[] pts)
+		{
+			ThrowIfDisposed();
+			if (pts is null) throw new ArgumentNullException(nameof(pts));
+			var ptf = new PointF[pts.Length];
+			for (int i = 0; i < pts.Length; i++)
+				ptf[i] = new PointF(pts[i].X, pts[i].Y);
+			TransformPoints(destSpace, srcSpace, ptf);
+			for (int i = 0; i < pts.Length; i++)
+				pts[i] = Point.Round(ptf[i]);
+		}
 
 		/// <summary>
 		///  Translates the clipping region of this <see cref="Graphics"/> by specified amounts in the horizontal and vertical directions.

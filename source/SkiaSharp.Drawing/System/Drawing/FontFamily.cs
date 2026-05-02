@@ -63,7 +63,20 @@ namespace System.Drawing
 		/// <summary>
 		///  Returns an array that contains all the <see cref="FontFamily"/> objects currently available in the system.
 		/// </summary>
-		public static System.Drawing.FontFamily[] Families { get { throw new System.PlatformNotSupportedException("Enumerating all system font families is not yet implemented in SkiaSharp.Drawing."); } }
+		public static System.Drawing.FontFamily[] Families
+		{
+			get
+			{
+				var manager = SKFontManager.Default;
+				var count = manager.FontFamilyCount;
+				var families = new FontFamily[count];
+				for (int i = 0; i < count; i++)
+				{
+					families[i] = new FontFamily(manager.GetFamilyName(i));
+				}
+				return families;
+			}
+		}
 
 		/// <summary>
 		///  Gets a generic monospace <see cref="FontFamily"/>.
