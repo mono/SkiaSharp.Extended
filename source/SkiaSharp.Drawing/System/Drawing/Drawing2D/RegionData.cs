@@ -1,8 +1,12 @@
-﻿namespace System.Drawing.Drawing2D
+namespace System.Drawing.Drawing2D
 {
+	/// <summary>
+	///  Encapsulates the data that makes up a <see cref="System.Drawing.Region"/> object.
+	/// </summary>
 	public sealed partial class RegionData
 	{
 		internal RegionData() {}
-		public byte[] Data { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } set { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
+		/// <summary>Gets or sets an array of bytes that specify the <see cref="System.Drawing.Region"/> object.</summary>
+		public byte[] Data { get; set; } = Array.Empty<byte>();
 	}
 }
