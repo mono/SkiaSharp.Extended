@@ -103,7 +103,7 @@ cross-platform:
 - ❌ EMF/WMF — not supported (see Metafile section)
 - ❌ ICO — can load via Icon class but limited format support
 - ❌ EXIF metadata — `PropertyItems` returns empty array
-- ❌ Multi-frame images (animated GIF) — `ImageAnimator` not implemented
+- ❌ Multi-frame images (animated GIF) — `SelectActiveFrame` decodes individual frames; `ImageAnimator` basic stub only
 - ❌ Indexed pixel formats (8bpp, 4bpp, 1bpp) — converted to 32bpp on load
 
 ### Partial Implementations
@@ -111,8 +111,10 @@ cross-platform:
 These features have basic implementations with known gaps:
 
 **HatchBrush:**
-Currently renders as a solid fill using the foreground color.
-The 53 standard hatch patterns are not yet rendered as tiled bitmaps.
+Renders all 53 standard hatch patterns as tiled 8×8 pixel bitmaps using
+`SKShader.CreateImage()` with `SKShaderTileMode.Repeat`. Patterns include
+lines, diagonals, cross-hatches, percent fills, checkerboards, bricks,
+and more. Unrecognized styles fall back to a cross pattern.
 
 **PathGradientBrush:**
 Approximated using `SKShader.CreateRadialGradient()`. Does not perfectly
@@ -120,12 +122,13 @@ match GDI+'s path gradient algorithm for non-circular paths.
 
 **GraphicsPath:**
 - ✅ AddLine, AddRectangle, AddEllipse, AddArc, AddBezier, AddPolygon, AddPath, AddPie
-- ❌ `AddCurve` / `AddClosedCurve` — cardinal splines on path (use `Graphics.DrawCurve` instead)
-- ❌ `AddString` — text outlines (needs font-to-path conversion)
-- ❌ `Flatten()` — convert curves to line segments
-- ❌ `Widen(Pen)` — stroke to fill conversion
-- ❌ `Warp()` — perspective/bilinear warp
-- ❌ `IsOutlineVisible()` — hit testing on stroke
+- ✅ `AddCurve` / `AddClosedCurve` — cardinal spline curves on path
+- ✅ `AddString` — text outlines via `SKFont.GetTextPath()`
+- ✅ `Flatten()` — De Casteljau subdivision of curves to line segments
+- ✅ `Widen(Pen)` — stroke to fill conversion via `SKPaint.GetFillPath()`
+- ✅ `IsOutlineVisible()` — hit testing on widened stroke path
+- ✅ `PathData` — returns points and types arrays
+- ❌ `Warp()` — perspective/bilinear warp (complex, no SkiaSharp equivalent)
 
 **Region:**
 - ✅ Boolean operations (Union, Intersect, Exclude, Complement, Xor)
@@ -158,9 +161,9 @@ Stored as a 5×5 float matrix and applied to image rendering when set via
 
 ### Clip Region CombineModes
 
-`SetClip()` supports `Replace`, `Intersect`, and `Exclude` combine modes.
-`Union`, `Xor`, and `Complement` modes throw `NotSupportedException` because
-SKCanvas does not natively support these clip operations.
+`SetClip()` supports all six combine modes:
+- ✅ `Replace`, `Intersect`, `Exclude` — direct SKCanvas clip operations
+- ✅ `Union`, `Xor`, `Complement` — computed via `SKPath.Op()`, then re-applied as a clip path
 
 ## API Compatibility
 

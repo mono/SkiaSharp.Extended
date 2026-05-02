@@ -2498,8 +2498,11 @@ namespace System.Drawing
 					_canvas.ClipPath(path.SKPath, SKClipOperation.Difference);
 					_clipRegion?.Exclude(path);
 					break;
-				default:
-					throw new NotSupportedException($"CombineMode.{combineMode} is not supported for clip operations in SkiaSharp.Drawing. Only Replace, Intersect, and Exclude are supported.");
+				case Drawing2D.CombineMode.Union:
+				case Drawing2D.CombineMode.Xor:
+				case Drawing2D.CombineMode.Complement:
+					ApplyPathCombineMode(path.SKPath, combineMode);
+					break;
 			}
 		}
 		/// <summary>
@@ -2570,8 +2573,14 @@ namespace System.Drawing
 					_canvas.ClipRect(skRect, SKClipOperation.Difference);
 					_clipRegion?.Exclude(rect);
 					break;
-				default:
-					throw new NotSupportedException($"CombineMode.{combineMode} is not supported for clip operations in SkiaSharp.Drawing. Only Replace, Intersect, and Exclude are supported.");
+				case Drawing2D.CombineMode.Union:
+				case Drawing2D.CombineMode.Xor:
+				case Drawing2D.CombineMode.Complement:
+					var rectPath = new SKPath();
+					rectPath.AddRect(skRect);
+					ApplyPathCombineMode(rectPath, combineMode);
+					rectPath.Dispose();
+					break;
 			}
 		}
 		/// <summary>
@@ -2602,8 +2611,11 @@ namespace System.Drawing
 					_canvas.ClipPath(region.SKPath, SKClipOperation.Difference);
 					_clipRegion?.Exclude(region);
 					break;
-				default:
-					throw new NotSupportedException($"CombineMode.{combineMode} is not supported for clip operations in SkiaSharp.Drawing. Only Replace, Intersect, and Exclude are supported.");
+				case Drawing2D.CombineMode.Union:
+				case Drawing2D.CombineMode.Xor:
+				case Drawing2D.CombineMode.Complement:
+					ApplyPathCombineMode(region.SKPath, combineMode);
+					break;
 			}
 		}
 
@@ -2765,6 +2777,53 @@ namespace System.Drawing
 			for (int i = 0; i < points.Length; i++)
 				ptsF[i] = new PointF(points[i].X, points[i].Y);
 			return ptsF;
+		}
+
+		/// <summary>
+		///  Applies a Union, Xor, or Complement clip combine mode by computing the combined path
+		///  with SKPath.Op and re-applying as a clip.
+		/// </summary>
+		private void ApplyPathCombineMode(SKPath newPath, Drawing2D.CombineMode combineMode)
+		{
+			SKPathOp op;
+			switch (combineMode)
+			{
+				case Drawing2D.CombineMode.Union: op = SKPathOp.Union; break;
+				case Drawing2D.CombineMode.Xor: op = SKPathOp.Xor; break;
+				case Drawing2D.CombineMode.Complement: op = SKPathOp.ReverseDifference; break;
+				default: return;
+			}
+
+			// Get the current clip as a path
+			var currentClipPath = _clipRegion?.SKPath;
+			if (currentClipPath == null || currentClipPath.PointCount == 0)
+			{
+				// No existing clip — for Union, just use the new path; for others, use canvas bounds
+				var bounds = _canvas.DeviceClipBounds;
+				currentClipPath = new SKPath();
+				currentClipPath.AddRect(new SKRect(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom));
+			}
+			else
+			{
+				currentClipPath = new SKPath(currentClipPath);
+			}
+
+			var combined = new SKPath();
+			if (currentClipPath.Op(newPath, op, combined))
+			{
+				_canvas.RestoreToCount(_clipSaveCount);
+				_clipSaveCount = _canvas.Save();
+				_canvas.ClipPath(combined);
+
+				// Update clip region
+				using var regionPath = new Drawing2D.GraphicsPath();
+				regionPath.SKPath.Dispose();
+				regionPath.SKPath = new SKPath(combined);
+				_clipRegion = new Region(regionPath);
+			}
+
+			currentClipPath.Dispose();
+			combined.Dispose();
 		}
 
 		/// <summary>

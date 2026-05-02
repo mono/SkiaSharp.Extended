@@ -19,6 +19,7 @@ namespace System.Drawing
 		internal float _verticalResolution = 96f;
 		internal Imaging.PixelFormat _requestedPixelFormat;
 		private object? _tag;
+		private byte[]? _codecData;
 
 		/// <summary>
 		///  Initializes a new instance of the <see cref="Image"/> class.
@@ -225,6 +226,8 @@ namespace System.Drawing
 			var ext = Path.GetExtension(filename);
 			var result = new Bitmap(bitmap);
 			result._rawFormat = SkiaConversions.ImageFormatFromExtension(ext);
+			// Store raw data for multi-frame support (e.g. animated GIF)
+			try { result._codecData = File.ReadAllBytes(filename); } catch { }
 			return result;
 		}
 
@@ -253,10 +256,18 @@ namespace System.Drawing
 		public static System.Drawing.Image FromStream(System.IO.Stream stream)
 		{
 			if (stream == null) throw new ArgumentNullException(nameof(stream));
-			var bitmap = SKBitmap.Decode(stream);
+			// Copy stream to byte array for codec support
+			byte[] data;
+			using (var ms = new MemoryStream())
+			{
+				stream.CopyTo(ms);
+				data = ms.ToArray();
+			}
+			var bitmap = SKBitmap.Decode(data);
 			if (bitmap == null) throw new ArgumentException("The stream does not contain a valid image.", nameof(stream));
 			var result = new Bitmap(bitmap);
 			result._rawFormat = ImageFormat.Png; // default when format cannot be determined from a stream
+			result._codecData = data;
 			return result;
 		}
 
@@ -357,6 +368,12 @@ namespace System.Drawing
 		public int GetFrameCount(System.Drawing.Imaging.FrameDimension dimension)
 		{
 			ThrowIfDisposed();
+			if (_codecData != null)
+			{
+				using var codec = SKCodec.Create(new MemoryStream(_codecData));
+				if (codec != null)
+					return Math.Max(1, codec.FrameCount);
+			}
 			return 1;
 		}
 
@@ -552,8 +569,22 @@ namespace System.Drawing
 		public int SelectActiveFrame(System.Drawing.Imaging.FrameDimension dimension, int frameIndex)
 		{
 			ThrowIfDisposed();
+			if (_codecData != null)
+			{
+				using var codec = SKCodec.Create(new MemoryStream(_codecData));
+				if (codec != null && codec.FrameCount > 1 && frameIndex >= 0 && frameIndex < codec.FrameCount)
+				{
+					var info = codec.Info;
+					var decoded = new SKBitmap(info);
+					var opts = new SKCodecOptions(frameIndex);
+					codec.GetPixels(info, decoded.GetPixels(), opts);
+					SKBitmapBacking?.Dispose();
+					SKBitmapBacking = decoded;
+					return frameIndex;
+				}
+			}
 			if (frameIndex != 0)
-				throw new ArgumentException("Only single-frame images are supported. Frame index must be 0.", nameof(frameIndex));
+				throw new ArgumentException("Frame index is out of range for this image.", nameof(frameIndex));
 			return 0;
 		}
 

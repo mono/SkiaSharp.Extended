@@ -96,8 +96,11 @@ namespace System.Drawing.Drawing2D
 			get
 			{
 				ThrowIfDisposed();
-				// PathData stub is not yet implemented; return basic structure.
-				throw new PlatformNotSupportedException("PathData is not yet implemented in SkiaSharp.Drawing");
+				return new PathData
+				{
+					Points = PathPoints,
+					Types = PathTypes,
+				};
 			}
 		}
 
@@ -241,52 +244,68 @@ namespace System.Drawing.Drawing2D
 		/// <summary>
 		///  Adds a closed curve to this path. A cardinal spline curve is used because the curve travels through each of the points in the array.
 		/// </summary>
-		public void AddClosedCurve(PointF[] points) { throw new PlatformNotSupportedException("AddClosedCurve is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddClosedCurve(PointF[] points) => AddClosedCurve(points, 0.5f);
 
 		/// <summary>
 		///  Adds a closed curve to this path with the specified tension.
 		/// </summary>
-		public void AddClosedCurve(PointF[] points, float tension) { throw new PlatformNotSupportedException("AddClosedCurve is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddClosedCurve(PointF[] points, float tension)
+		{
+			ThrowIfDisposed();
+			if (points is null) throw new ArgumentNullException(nameof(points));
+			if (points.Length < 3) throw new ArgumentException("Array must contain at least 3 points.", nameof(points));
+
+			using var splinePath = BuildClosedCardinalSplinePath(points, tension);
+			SKPath.AddPath(splinePath, SKPathAddMode.Append);
+		}
 
 		/// <summary>
 		///  Adds a closed curve to this path. A cardinal spline curve is used because the curve travels through each of the points in the array.
 		/// </summary>
-		public void AddClosedCurve(Point[] points) { throw new PlatformNotSupportedException("AddClosedCurve is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddClosedCurve(Point[] points) => AddClosedCurve(ToPointFArray(points), 0.5f);
 
 		/// <summary>
 		///  Adds a closed curve to this path with the specified tension.
 		/// </summary>
-		public void AddClosedCurve(Point[] points, float tension) { throw new PlatformNotSupportedException("AddClosedCurve is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddClosedCurve(Point[] points, float tension) => AddClosedCurve(ToPointFArray(points), tension);
 
 		/// <summary>
 		///  Adds a spline curve to the current figure.
 		/// </summary>
-		public void AddCurve(PointF[] points) { throw new PlatformNotSupportedException("AddCurve is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddCurve(PointF[] points) => AddCurve(points, 0, points?.Length - 1 ?? 0, 0.5f);
 
 		/// <summary>
 		///  Adds a spline curve to the current figure.
 		/// </summary>
-		public void AddCurve(PointF[] points, int offset, int numberOfSegments, float tension) { throw new PlatformNotSupportedException("AddCurve is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddCurve(PointF[] points, int offset, int numberOfSegments, float tension)
+		{
+			ThrowIfDisposed();
+			if (points is null) throw new ArgumentNullException(nameof(points));
+			if (points.Length < 2) throw new ArgumentException("Array must contain at least 2 points.", nameof(points));
+
+			using var splinePath = BuildCardinalSplinePath(points, offset, numberOfSegments, tension);
+			SKPath.AddPath(splinePath, SKPathAddMode.Append);
+		}
 
 		/// <summary>
 		///  Adds a spline curve to the current figure.
 		/// </summary>
-		public void AddCurve(PointF[] points, float tension) { throw new PlatformNotSupportedException("AddCurve is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddCurve(PointF[] points, float tension) => AddCurve(points, 0, points?.Length - 1 ?? 0, tension);
 
 		/// <summary>
 		///  Adds a spline curve to the current figure.
 		/// </summary>
-		public void AddCurve(Point[] points) { throw new PlatformNotSupportedException("AddCurve is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddCurve(Point[] points) => AddCurve(ToPointFArray(points));
 
 		/// <summary>
 		///  Adds a spline curve to the current figure.
 		/// </summary>
-		public void AddCurve(Point[] points, int offset, int numberOfSegments, float tension) { throw new PlatformNotSupportedException("AddCurve is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddCurve(Point[] points, int offset, int numberOfSegments, float tension) => AddCurve(ToPointFArray(points), offset, numberOfSegments, tension);
 
 		/// <summary>
 		///  Adds a spline curve to the current figure.
 		/// </summary>
-		public void AddCurve(Point[] points, float tension) { throw new PlatformNotSupportedException("AddCurve is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddCurve(Point[] points, float tension) => AddCurve(ToPointFArray(points), tension);
 
 		/// <summary>
 		///  Adds an ellipse to the current path.
@@ -519,24 +538,38 @@ namespace System.Drawing.Drawing2D
 		}
 
 		/// <summary>
-		///  Adds a text string to this path. Not yet implemented; requires Font support.
+		///  Adds a text string to this path.
 		/// </summary>
-		public void AddString(string s, FontFamily family, int style, float emSize, Point origin, StringFormat? format) { throw new PlatformNotSupportedException("AddString is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddString(string s, FontFamily family, int style, float emSize, Point origin, StringFormat? format)
+			=> AddString(s, family, style, emSize, new PointF(origin.X, origin.Y), format);
 
 		/// <summary>
-		///  Adds a text string to this path. Not yet implemented; requires Font support.
+		///  Adds a text string to this path.
 		/// </summary>
-		public void AddString(string s, FontFamily family, int style, float emSize, PointF origin, StringFormat? format) { throw new PlatformNotSupportedException("AddString is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddString(string s, FontFamily family, int style, float emSize, PointF origin, StringFormat? format)
+		{
+			ThrowIfDisposed();
+			if (s is null) throw new ArgumentNullException(nameof(s));
+			if (family is null) throw new ArgumentNullException(nameof(family));
+			AddStringCore(s, family, style, emSize, origin.X, origin.Y);
+		}
 
 		/// <summary>
-		///  Adds a text string to this path. Not yet implemented; requires Font support.
+		///  Adds a text string to this path.
 		/// </summary>
-		public void AddString(string s, FontFamily family, int style, float emSize, Rectangle layoutRect, StringFormat? format) { throw new PlatformNotSupportedException("AddString is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddString(string s, FontFamily family, int style, float emSize, Rectangle layoutRect, StringFormat? format)
+			=> AddString(s, family, style, emSize, (RectangleF)layoutRect, format);
 
 		/// <summary>
-		///  Adds a text string to this path. Not yet implemented; requires Font support.
+		///  Adds a text string to this path.
 		/// </summary>
-		public void AddString(string s, FontFamily family, int style, float emSize, RectangleF layoutRect, StringFormat? format) { throw new PlatformNotSupportedException("AddString is not yet implemented in SkiaSharp.Drawing"); }
+		public void AddString(string s, FontFamily family, int style, float emSize, RectangleF layoutRect, StringFormat? format)
+		{
+			ThrowIfDisposed();
+			if (s is null) throw new ArgumentNullException(nameof(s));
+			if (family is null) throw new ArgumentNullException(nameof(family));
+			AddStringCore(s, family, style, emSize, layoutRect.X, layoutRect.Y);
+		}
 
 		/// <summary>
 		///  Clears all markers from this path.
@@ -614,19 +647,57 @@ namespace System.Drawing.Drawing2D
 		}
 
 		/// <summary>
-		///  Converts each curve in this path into a sequence of connected line segments. Not yet implemented.
+		///  Converts each curve in this path into a sequence of connected line segments.
 		/// </summary>
-		public void Flatten() { throw new PlatformNotSupportedException("Flatten is not yet implemented in SkiaSharp.Drawing"); }
+		public void Flatten() => Flatten(null, 0.25f);
 
 		/// <summary>
-		///  Converts each curve in this path into a sequence of connected line segments. Not yet implemented.
+		///  Converts each curve in this path into a sequence of connected line segments.
 		/// </summary>
-		public void Flatten(Matrix? matrix) { throw new PlatformNotSupportedException("Flatten is not yet implemented in SkiaSharp.Drawing"); }
+		public void Flatten(Matrix? matrix) => Flatten(matrix, 0.25f);
 
 		/// <summary>
-		///  Converts each curve in this path into a sequence of connected line segments. Not yet implemented.
+		///  Converts each curve in this path into a sequence of connected line segments.
 		/// </summary>
-		public void Flatten(Matrix? matrix, float flatness) { throw new PlatformNotSupportedException("Flatten is not yet implemented in SkiaSharp.Drawing"); }
+		public void Flatten(Matrix? matrix, float flatness)
+		{
+			ThrowIfDisposed();
+			if (matrix != null && !matrix.IsIdentity)
+				SKPath.Transform(matrix.SKMatrix);
+
+			var newPath = new SKPath { FillType = SKPath.FillType };
+			using var iter = SKPath.CreateIterator(false);
+			var pts = new SKPoint[4];
+			while (true)
+			{
+				var verb = iter.Next(pts);
+				if (verb == SKPathVerb.Done) break;
+				switch (verb)
+				{
+					case SKPathVerb.Move:
+						newPath.MoveTo(pts[0]);
+						break;
+					case SKPathVerb.Line:
+						newPath.LineTo(pts[1]);
+						break;
+					case SKPathVerb.Quad:
+						FlattenQuad(newPath, pts[0], pts[1], pts[2], flatness);
+						break;
+					case SKPathVerb.Conic:
+						FlattenConic(newPath, pts[0], pts[1], pts[2], iter.ConicWeight(), flatness);
+						break;
+					case SKPathVerb.Cubic:
+						FlattenCubic(newPath, pts[0], pts[1], pts[2], pts[3], flatness);
+						break;
+					case SKPathVerb.Close:
+						newPath.Close();
+						break;
+				}
+			}
+			var old = SKPath;
+			SKPath = newPath;
+			old.Dispose();
+		}
 
 		/// <summary>
 		///  Returns a rectangle that bounds this <see cref="GraphicsPath"/>.
@@ -682,42 +753,51 @@ namespace System.Drawing.Drawing2D
 		/// <summary>
 		///  Indicates whether the specified point is contained within the outline of this <see cref="GraphicsPath"/> when drawn with the specified <see cref="Pen"/>.
 		/// </summary>
-		public bool IsOutlineVisible(Point point, Pen pen) { throw new PlatformNotSupportedException("IsOutlineVisible is not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsOutlineVisible(Point point, Pen pen) => IsOutlineVisible(point.X, point.Y, pen, null);
 
 		/// <summary>
 		///  Indicates whether the specified point is contained within the outline of this <see cref="GraphicsPath"/> when drawn with the specified <see cref="Pen"/>.
 		/// </summary>
-		public bool IsOutlineVisible(Point pt, Pen pen, Graphics? graphics) { throw new PlatformNotSupportedException("IsOutlineVisible is not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsOutlineVisible(Point pt, Pen pen, Graphics? graphics) => IsOutlineVisible(pt.X, pt.Y, pen, graphics);
 
 		/// <summary>
 		///  Indicates whether the specified point is contained within the outline of this <see cref="GraphicsPath"/> when drawn with the specified <see cref="Pen"/>.
 		/// </summary>
-		public bool IsOutlineVisible(PointF point, Pen pen) { throw new PlatformNotSupportedException("IsOutlineVisible is not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsOutlineVisible(PointF point, Pen pen) => IsOutlineVisible(point.X, point.Y, pen, null);
 
 		/// <summary>
 		///  Indicates whether the specified point is contained within the outline of this <see cref="GraphicsPath"/> when drawn with the specified <see cref="Pen"/>.
 		/// </summary>
-		public bool IsOutlineVisible(PointF pt, Pen pen, Graphics? graphics) { throw new PlatformNotSupportedException("IsOutlineVisible is not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsOutlineVisible(PointF pt, Pen pen, Graphics? graphics) => IsOutlineVisible(pt.X, pt.Y, pen, graphics);
 
 		/// <summary>
 		///  Indicates whether the specified point is contained within the outline of this <see cref="GraphicsPath"/> when drawn with the specified <see cref="Pen"/>.
 		/// </summary>
-		public bool IsOutlineVisible(int x, int y, Pen pen) { throw new PlatformNotSupportedException("IsOutlineVisible is not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsOutlineVisible(int x, int y, Pen pen) => IsOutlineVisible((float)x, (float)y, pen, null);
 
 		/// <summary>
 		///  Indicates whether the specified point is contained within the outline of this <see cref="GraphicsPath"/> when drawn with the specified <see cref="Pen"/>.
 		/// </summary>
-		public bool IsOutlineVisible(int x, int y, Pen pen, Graphics? graphics) { throw new PlatformNotSupportedException("IsOutlineVisible is not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsOutlineVisible(int x, int y, Pen pen, Graphics? graphics) => IsOutlineVisible((float)x, (float)y, pen, graphics);
 
 		/// <summary>
 		///  Indicates whether the specified point is contained within the outline of this <see cref="GraphicsPath"/> when drawn with the specified <see cref="Pen"/>.
 		/// </summary>
-		public bool IsOutlineVisible(float x, float y, Pen pen) { throw new PlatformNotSupportedException("IsOutlineVisible is not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsOutlineVisible(float x, float y, Pen pen) => IsOutlineVisible(x, y, pen, null);
 
 		/// <summary>
 		///  Indicates whether the specified point is contained within the outline of this <see cref="GraphicsPath"/> when drawn with the specified <see cref="Pen"/>.
 		/// </summary>
-		public bool IsOutlineVisible(float x, float y, Pen pen, Graphics? graphics) { throw new PlatformNotSupportedException("IsOutlineVisible is not yet implemented in SkiaSharp.Drawing"); }
+		public bool IsOutlineVisible(float x, float y, Pen pen, Graphics? graphics)
+		{
+			ThrowIfDisposed();
+			if (pen is null) throw new ArgumentNullException(nameof(pen));
+			using var strokePaint = pen.CreatePaint();
+			using var widened = new SKPath();
+			if (strokePaint.GetFillPath(SKPath, widened))
+				return widened.Contains(x, y);
+			return false;
+		}
 
 		/// <summary>
 		///  Indicates whether the specified point is contained within this <see cref="GraphicsPath"/>.
@@ -883,19 +963,39 @@ namespace System.Drawing.Drawing2D
 		public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix? matrix, WarpMode warpMode, float flatness) { throw new PlatformNotSupportedException("Warp is not yet implemented in SkiaSharp.Drawing"); }
 
 		/// <summary>
-		///  Replaces this path with curves that enclose the area filled when this path is drawn by the specified pen. Not yet implemented.
+		///  Replaces this path with curves that enclose the area filled when this path is drawn by the specified pen.
 		/// </summary>
-		public void Widen(Pen pen) { throw new PlatformNotSupportedException("Widen is not yet implemented in SkiaSharp.Drawing"); }
+		public void Widen(Pen pen) => Widen(pen, null, 0.25f);
 
 		/// <summary>
-		///  Replaces this path with curves that enclose the area filled when this path is drawn by the specified pen. Not yet implemented.
+		///  Replaces this path with curves that enclose the area filled when this path is drawn by the specified pen.
 		/// </summary>
-		public void Widen(Pen pen, Matrix? matrix) { throw new PlatformNotSupportedException("Widen is not yet implemented in SkiaSharp.Drawing"); }
+		public void Widen(Pen pen, Matrix? matrix) => Widen(pen, matrix, 0.25f);
 
 		/// <summary>
-		///  Replaces this path with curves that enclose the area filled when this path is drawn by the specified pen. Not yet implemented.
+		///  Replaces this path with curves that enclose the area filled when this path is drawn by the specified pen.
 		/// </summary>
-		public void Widen(Pen pen, Matrix? matrix, float flatness) { throw new PlatformNotSupportedException("Widen is not yet implemented in SkiaSharp.Drawing"); }
+		public void Widen(Pen pen, Matrix? matrix, float flatness)
+		{
+			ThrowIfDisposed();
+			if (pen is null) throw new ArgumentNullException(nameof(pen));
+
+			if (matrix != null && !matrix.IsIdentity)
+				SKPath.Transform(matrix.SKMatrix);
+
+			using var strokePaint = pen.CreatePaint();
+			var widened = new SKPath();
+			if (strokePaint.GetFillPath(SKPath, widened))
+			{
+				var old = SKPath;
+				SKPath = widened;
+				old.Dispose();
+			}
+			else
+			{
+				widened.Dispose();
+			}
+		}
 
 		/// <summary>
 		///  Allows a <see cref="GraphicsPath"/> to attempt to free resources before being reclaimed by garbage collection.
@@ -1007,5 +1107,139 @@ namespace System.Drawing.Drawing2D
 			if (_disposed)
 				throw new ObjectDisposedException(nameof(GraphicsPath));
 		}
+
+		private void AddStringCore(string s, FontFamily family, int style, float emSize, float x, float y)
+		{
+			var typeface = family.CreateTypefaceForStyle((FontStyle)style);
+			// GDI+ AddString uses World units; emSize is in the unit of the Graphics, default points.
+			// Convert points to pixels (96 dpi): pixels = points * 96/72 = points * 4/3
+			float sizeInPixels = emSize * 96f / 72f;
+			using var font = new SkiaSharp.SKFont(typeface, sizeInPixels);
+			using var textPath = font.GetTextPath(s, new SkiaSharp.SKPoint(x, y));
+			if (textPath != null && textPath.PointCount > 0)
+				SKPath.AddPath(textPath, SKPathAddMode.Append);
+		}
+
+		private static SKPath BuildCardinalSplinePath(PointF[] points, int offset, int numberOfSegments, float tension)
+		{
+			if (offset < 0 || offset >= points.Length) throw new ArgumentOutOfRangeException(nameof(offset));
+			if (numberOfSegments < 1) throw new ArgumentOutOfRangeException(nameof(numberOfSegments));
+			int endIndex = offset + numberOfSegments;
+			if (endIndex >= points.Length) throw new ArgumentException("offset + numberOfSegments exceeds array length.");
+
+			var path = new SKPath();
+			path.MoveTo(points[offset].X, points[offset].Y);
+
+			for (int i = offset; i < endIndex; i++)
+			{
+				var p0 = points[i];
+				var p1 = points[i + 1];
+				var pPrev = (i > 0) ? points[i - 1] : p0;
+				var pNext = p1;
+
+				float cp1x = p0.X + tension * (pNext.X - pPrev.X) / 3f;
+				float cp1y = p0.Y + tension * (pNext.Y - pPrev.Y) / 3f;
+
+				var p1Prev = p0;
+				var p1Next = (i + 2 < points.Length) ? points[i + 2] : p1;
+
+				float cp2x = p1.X - tension * (p1Next.X - p1Prev.X) / 3f;
+				float cp2y = p1.Y - tension * (p1Next.Y - p1Prev.Y) / 3f;
+
+				path.CubicTo(cp1x, cp1y, cp2x, cp2y, p1.X, p1.Y);
+			}
+
+			return path;
+		}
+
+		private static SKPath BuildClosedCardinalSplinePath(PointF[] points, float tension)
+		{
+			int n = points.Length;
+			var path = new SKPath();
+			path.MoveTo(points[0].X, points[0].Y);
+
+			for (int i = 0; i < n; i++)
+			{
+				var p0 = points[i];
+				var p1 = points[(i + 1) % n];
+				var pPrev = points[(i - 1 + n) % n];
+				var pNext = points[(i + 2) % n];
+
+				float cp1x = p0.X + tension * (p1.X - pPrev.X) / 3f;
+				float cp1y = p0.Y + tension * (p1.Y - pPrev.Y) / 3f;
+
+				float cp2x = p1.X - tension * (pNext.X - p0.X) / 3f;
+				float cp2y = p1.Y - tension * (pNext.Y - p0.Y) / 3f;
+
+				path.CubicTo(cp1x, cp1y, cp2x, cp2y, p1.X, p1.Y);
+			}
+
+			path.Close();
+			return path;
+		}
+
+		private static void FlattenCubic(SKPath dest, SKPoint p0, SKPoint p1, SKPoint p2, SKPoint p3, float flatness)
+		{
+			// Use De Casteljau subdivision
+			float dx = p3.X - p0.X;
+			float dy = p3.Y - p0.Y;
+			float d1 = Math.Abs((p1.X - p3.X) * dy - (p1.Y - p3.Y) * dx);
+			float d2 = Math.Abs((p2.X - p3.X) * dy - (p2.Y - p3.Y) * dx);
+			float dSq = dx * dx + dy * dy;
+			if (dSq == 0 || (d1 + d2) * (d1 + d2) <= flatness * flatness * dSq)
+			{
+				dest.LineTo(p3);
+				return;
+			}
+			// Subdivide at t=0.5
+			var p01 = Mid(p0, p1);
+			var p12 = Mid(p1, p2);
+			var p23 = Mid(p2, p3);
+			var p012 = Mid(p01, p12);
+			var p123 = Mid(p12, p23);
+			var p0123 = Mid(p012, p123);
+			FlattenCubic(dest, p0, p01, p012, p0123, flatness);
+			FlattenCubic(dest, p0123, p123, p23, p3, flatness);
+		}
+
+		private static void FlattenQuad(SKPath dest, SKPoint p0, SKPoint p1, SKPoint p2, float flatness)
+		{
+			float dx = p2.X - p0.X;
+			float dy = p2.Y - p0.Y;
+			float d = Math.Abs((p1.X - p2.X) * dy - (p1.Y - p2.Y) * dx);
+			float dSq = dx * dx + dy * dy;
+			if (dSq == 0 || d * d <= flatness * flatness * dSq)
+			{
+				dest.LineTo(p2);
+				return;
+			}
+			var p01 = Mid(p0, p1);
+			var p12 = Mid(p1, p2);
+			var p012 = Mid(p01, p12);
+			FlattenQuad(dest, p0, p01, p012, flatness);
+			FlattenQuad(dest, p012, p12, p2, flatness);
+		}
+
+		private static void FlattenConic(SKPath dest, SKPoint p0, SKPoint p1, SKPoint p2, float w, float flatness)
+		{
+			// Convert conic to quadratic segments via SkiaSharp by adding to a temp path and iterating
+			using var temp = new SKPath();
+			temp.MoveTo(p0);
+			temp.ConicTo(p1, p2, w);
+			using var iter = temp.CreateIterator(false);
+			var pts = new SKPoint[4];
+			while (true)
+			{
+				var verb = iter.Next(pts);
+				if (verb == SKPathVerb.Done) break;
+				if (verb == SKPathVerb.Quad)
+					FlattenQuad(dest, pts[0], pts[1], pts[2], flatness);
+				else if (verb == SKPathVerb.Line)
+					dest.LineTo(pts[1]);
+			}
+		}
+
+		private static SKPoint Mid(SKPoint a, SKPoint b)
+			=> new SKPoint((a.X + b.X) * 0.5f, (a.Y + b.Y) * 0.5f);
 	}
 }
