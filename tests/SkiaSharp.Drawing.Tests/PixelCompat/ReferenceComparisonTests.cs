@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using SkiaSharp;
+using SkiaSharp.Drawing.Scenarios;
 using SkiaSharp.Drawing.Tests.Infrastructure;
 
 namespace SkiaSharp.Drawing.Tests.PixelCompat;
@@ -14,8 +15,7 @@ public class ReferenceComparisonTests : PixelCompatibilityTestBase
 {
     public static IEnumerable<object[]> AllScenarioData()
     {
-        // Use the shared DrawingScenarios — same file compiled here via project reference
-        foreach (var (name, category, _, _, _) in SkiaSharp.Drawing.Scenarios.DrawingScenarios.GetAll())
+        foreach (var (category, name) in AllScenarios.Enumerate())
             yield return new object[] { name, category };
     }
 
@@ -27,31 +27,29 @@ public class ReferenceComparisonTests : PixelCompatibilityTestBase
         var referencePath = Path.Combine(ReferenceImagesPath, referenceFile);
 
         if (!File.Exists(referencePath))
-            Assert.Skip($"Reference image not found: {referencePath}. Run ReferenceGenerator on Windows first.");
+            Assert.Skip($"Reference image not found: {referencePath}");
 
-        var scenario = SkiaSharp.Drawing.Scenarios.DrawingScenarios.GetAll()
-            .First(s => s.Name == name);
+        // Render with our SkiaSharp.Drawing
+        var tmpDir = Path.Combine(TestArtifactsPath, "_render");
+        Directory.CreateDirectory(tmpDir);
 
-        // Render with our SkiaSharp.Drawing — same code that the SkiaRunner uses
-        using var bitmap = new Bitmap(scenario.Width, scenario.Height, PixelFormat.Format32bppArgb);
-        using var graphics = Graphics.FromImage(bitmap);
-        scenario.Draw(graphics);
+        var scenarios = AllScenarios.Create(tmpDir);
+        var scenarioInstance = scenarios.First(s => s.GetType().Name == category);
+        var method = scenarioInstance.GetType().GetMethod(name);
+        Assert.NotNull(method);
+        method!.Invoke(scenarioInstance, null);
 
-        // Save to PNG bytes
-        using var ms = new MemoryStream();
-        bitmap.Save(ms, ImageFormat.Png);
-        ms.Position = 0;
+        var actualPath = Path.Combine(tmpDir, category, $"{name}.png");
+        Assert.True(File.Exists(actualPath), $"Rendered image not found: {actualPath}");
 
-        using var actualBitmap = SKBitmap.Decode(ms);
+        using var actualBitmap = SKBitmap.Decode(actualPath);
         Assert.NotNull(actualBitmap);
 
         double tolerance = category switch
         {
             "Clear" or "Colors" => Tolerance_SolidFill,
             "Lines" or "Rectangles" or "Boundaries" => Tolerance_Stroke,
-            "Ellipses" or "Arcs" or "Pies" or "Polygons" => Tolerance_Stroke,
-            "Composites" => Tolerance_Stroke,
-            // AA categories get higher tolerance — different AA algorithms between GDI+ and Skia
+            "Ellipses" or "Arcs" or "Pies" or "Polygons" or "Composites" => Tolerance_Stroke,
             "LinesAA" or "EllipsesAA" or "ArcsAA" or "PiesAA" or "PolygonsAA" or "CompositesAA" => Tolerance_AntiAliased,
             _ => Tolerance_Stroke,
         };

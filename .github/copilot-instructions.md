@@ -108,3 +108,67 @@ To capture screenshots:
 - `SkiaSharp.Views.Maui.Controls` (3.119.1+)
 - `SkiaSharp.Views.Blazor` (3.119.1+) - For Blazor WebAssembly
 - `Microsoft.Maui.Controls` (9.x)
+
+## SkiaSharp.Drawing
+
+A drop-in replacement for `System.Drawing.Common` backed by SkiaSharp.
+
+### Architecture
+- **`source/SkiaSharp.Drawing/`** — Main library. `AssemblyName=System.Drawing.Common`, `RootNamespace=System.Drawing`
+- **`tests/SkiaSharp.Drawing.Tests/`** — 346+ tests: unit tests + pixel comparison against GDI+ reference images
+- **`tools/SkiaSharp.Drawing.Scenarios/`** — Shared drawing scenario source files (compiled by both backends)
+- **`tools/SkiaSharp.Drawing.ReferenceGenerator/`** — Windows-only, generates golden PNGs using real System.Drawing/GDI+
+- **`tools/SkiaSharp.Drawing.SkiaRunner/`** — Cross-platform, generates PNGs using our SkiaSharp.Drawing wrapper
+- **`tools/api-baseline/`** — Official System.Drawing.Common reference assembly for API compatibility validation
+
+### Implementation Rules
+- The API surface is **100% ABI-compatible** with `System.Drawing.Common` (validated by `dotnet apicompat --strict-mode` in CI)
+- Methods are implemented incrementally. Unimplemented methods throw `PlatformNotSupportedException`
+- When implementing a method, search for `throw new System.PlatformNotSupportedException` in the source to find stubs
+- Every public member MUST have XML doc comments matching the official Microsoft documentation
+- All coordinate-based curve rendering (ellipses, arcs, pies) uses a +0.5 pixel offset via `GdiCurveRect()` for GDI+ compatibility
+- Polygon vertex coordinates also use +0.5 offset via `GdiPolygonPath()`
+
+### Test Rules
+- **Every new drawing feature must have pixel comparison scenarios** — add methods to the appropriate class in `tools/SkiaSharp.Drawing.Scenarios/`
+- Each scenario class name = folder name for reference images (e.g., `Ellipses` class → `ReferenceImages/Ellipses/`)
+- Each scenario method name = PNG filename (e.g., `Ellipse_Fill_Circle` → `Ellipse_Fill_Circle.png`)
+- **Non-AA scenarios** must achieve <0.5% pixel error vs GDI+ reference
+- **AA scenarios** must achieve <5% pixel error vs GDI+ (different AA algorithms)
+- **Solid fills and colors** must achieve <0.1% pixel error
+- Run `dotnet run --project tools/SkiaSharp.Drawing.SkiaRunner/ -- tests/SkiaSharp.Drawing.Tests/ReferenceImages` to regenerate baselines after changes
+- CI generates GDI+ reference images on Windows and compares — test failures fail the build
+
+### Adding a New Drawing Scenario
+1. Find the appropriate category class in `tools/SkiaSharp.Drawing.Scenarios/` (e.g., `Ellipses.cs`)
+2. Add a public void method with a descriptive name:
+   ```csharp
+   public void Ellipse_Fill_Large() => Render(200, 200, g => {
+       g.SmoothingMode = SmoothingMode.None;
+       g.Clear(Color.White);
+       using var brush = new SolidBrush(Color.Blue);
+       g.FillEllipse(brush, 10, 10, 180, 180);
+   });
+   ```
+3. Regenerate baselines: `dotnet run --project tools/SkiaSharp.Drawing.SkiaRunner/ -- tests/SkiaSharp.Drawing.Tests/ReferenceImages`
+4. Run tests: `dotnet test tests/SkiaSharp.Drawing.Tests/`
+5. CI will validate against real GDI+ output
+
+### Build & Test Commands
+```bash
+# Build SkiaSharp.Drawing
+dotnet build source/SkiaSharp.Drawing/SkiaSharp.Drawing.csproj -c Release
+
+# Run all SkiaSharp.Drawing tests
+dotnet test tests/SkiaSharp.Drawing.Tests/
+
+# Run only pixel comparison tests
+dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~ReferenceComparison"
+
+# Regenerate baseline images (after implementation changes)
+dotnet run --project tools/SkiaSharp.Drawing.SkiaRunner/ -- tests/SkiaSharp.Drawing.Tests/ReferenceImages
+
+# Validate API compatibility
+dotnet tool restore
+dotnet apicompat --left tools/api-baseline/netstandard2.0/System.Drawing.Common.dll --right source/SkiaSharp.Drawing/bin/Release/netstandard2.0/System.Drawing.Common.dll --strict-mode --suppression-file tools/api-baseline/api-compat-suppressions.xml
+```
