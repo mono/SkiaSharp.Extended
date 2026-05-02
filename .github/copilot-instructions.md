@@ -132,12 +132,28 @@ A drop-in replacement for `System.Drawing.Common` backed by SkiaSharp.
 ### Test Rules
 - **Every new drawing feature must have pixel comparison scenarios** — add `[Fact]` methods to the appropriate class in `tests/SkiaSharp.Drawing.Scenarios/`
 - Each scenario class name = folder name for reference images (e.g., `Ellipses` class → `ReferenceImages/Ellipses/`)
-- Each scenario method name = PNG filename (e.g., `Ellipse_Fill_Circle` → `Ellipse_Fill_Circle.png`)
+- Each scenario method name = PNG filename (e.g., `Ellipse_Fill_Circle` → `Ellipse_Fill_Circle.skia.png`)
 - **Non-AA scenarios** must achieve <0.5% pixel error vs GDI+ reference
 - **AA scenarios** must achieve <5% pixel error vs GDI+ (different AA algorithms)
 - **Solid fills and colors** must achieve <0.1% pixel error
 - Run `dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~Scenarios"` to generate scenario images after changes
 - CI generates GDI+ reference images on Windows and compares — test failures fail the build
+
+### Pixel Validation (3 steps)
+
+Reference images are checked in with two variants per scenario:
+- `{name}.gdi.png` — rendered by real System.Drawing/GDI+ on Windows CI
+- `{name}.skia.png` — rendered by our SkiaSharp.Drawing wrapper
+
+CI runs three validation steps:
+1. **GDI stability** — fresh GDI+ output must match checked-in `.gdi.png` (ensures scenarios unchanged)
+2. **Skia regression** — fresh Skia output must match checked-in `.skia.png` (ensures no rendering regression)
+3. **Skia == GDI** — fresh Skia output compared to fresh GDI+ output (pixel compatibility with tolerance)
+
+When a step fails:
+- Step 1 fails: scenario changed — download new `.gdi.png` from CI artifacts, review, check in
+- Step 2 fails: rendering changed — download new `.skia.png` from CI artifacts, review, check in
+- Step 3 fails: Skia doesn't match GDI+ — fix the rendering implementation
 
 ### Adding a New Drawing Scenario
 1. Find the appropriate category file in `tests/SkiaSharp.Drawing.Scenarios/` (e.g., `Ellipses.cs`)
@@ -152,9 +168,9 @@ A drop-in replacement for `System.Drawing.Common` backed by SkiaSharp.
    ```
 3. Run the scenarios to generate baselines:
    `dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~Scenarios"`
-4. Copy the generated image to reference images:
+4. Copy the generated `.skia.png` image to reference images:
    The output goes to `ScenarioOutput/` in the test output directory
-5. Run comparison tests: `dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~ReferenceComparison"`
+5. Run comparison tests: `dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~SkiaRegression"`
 6. CI generates GDI+ reference images automatically and compares
 
 ### Build & Test Commands
@@ -168,8 +184,8 @@ dotnet test tests/SkiaSharp.Drawing.Tests/
 # Run only scenario tests (generates images)
 dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~Scenarios"
 
-# Run only pixel comparison tests
-dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~ReferenceComparison"
+# Run only pixel comparison tests (Skia regression)
+dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~SkiaRegression"
 
 # Validate API compatibility
 dotnet tool restore

@@ -17,6 +17,13 @@ public abstract class ScenarioBase
         Environment.GetEnvironmentVariable("SCENARIO_OUTPUT_PATH")
         ?? Path.Combine(Path.GetDirectoryName(typeof(ScenarioBase).Assembly.Location)!, "ScenarioOutput");
 
+    /// <summary>
+    /// Suffix for generated images. Set SCENARIO_SUFFIX env var to "gdi" or "skia".
+    /// Defaults to "skia".
+    /// </summary>
+    private static string Suffix =>
+        Environment.GetEnvironmentVariable("SCENARIO_SUFFIX") ?? "skia";
+
     private string Category => GetType().Name;
 
     /// <summary>
@@ -32,7 +39,7 @@ public abstract class ScenarioBase
         using var graphics = Graphics.FromImage(bitmap);
         draw(graphics);
 
-        var path = Path.Combine(categoryDir, $"{name}.png");
+        var path = Path.Combine(categoryDir, $"{name}.{Suffix}.png");
         bitmap.Save(path, ImageFormat.Png);
     }
 }

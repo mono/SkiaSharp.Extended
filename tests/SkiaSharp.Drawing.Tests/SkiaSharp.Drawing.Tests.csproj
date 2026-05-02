@@ -27,7 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ReferenceImages\**\*.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="ReferenceImages\**\*.skia.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="ReferenceImages\**\*.gdi.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
