@@ -197,6 +197,38 @@ public static class DrawingScenarios
             g.DrawArc(pen, 10, 10, 80, 80, 30, 120);
         }),
 
+        // === ARCS (AA) ===
+        ("Arc_Quarter_AA", "ArcsAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Black, 2);
+            g.DrawArc(pen, 10, 10, 80, 80, 0, 90);
+        }),
+        ("Arc_Half_AA", "ArcsAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Red, 2);
+            g.DrawArc(pen, 10, 10, 80, 80, 0, 180);
+        }),
+        ("Arc_ThreeQuarter_AA", "ArcsAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Blue, 2);
+            g.DrawArc(pen, 10, 10, 80, 80, 45, 270);
+        }),
+        ("Arc_NegativeStart_AA", "ArcsAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Green, 2);
+            g.DrawArc(pen, 10, 10, 80, 80, -45, 180);
+        }),
+        ("Arc_Thick_AA", "ArcsAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.DarkRed, 5);
+            g.DrawArc(pen, 10, 10, 80, 80, 30, 120);
+        }),
+
         // === PIES ===
         ("Pie_Fill_Quarter", "Pies", 100, 100, g => {
             g.SmoothingMode = SmoothingMode.None;
@@ -218,6 +250,38 @@ public static class DrawingScenarios
         }),
         ("Pie_Multiple", "Pies", 100, 100, g => {
             g.SmoothingMode = SmoothingMode.None;
+            g.Clear(Color.White);
+            using var r = new SolidBrush(Color.Red);
+            using var gr = new SolidBrush(Color.Green);
+            using var b = new SolidBrush(Color.Blue);
+            using var y = new SolidBrush(Color.Yellow);
+            g.FillPie(r, 10, 10, 80, 80, 0, 90);
+            g.FillPie(gr, 10, 10, 80, 80, 90, 90);
+            g.FillPie(b, 10, 10, 80, 80, 180, 90);
+            g.FillPie(y, 10, 10, 80, 80, 270, 90);
+        }),
+
+        // === PIES (AA) ===
+        ("Pie_Fill_Quarter_AA", "PiesAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Red);
+            g.FillPie(brush, 10, 10, 80, 80, 0, 90);
+        }),
+        ("Pie_Fill_Half_AA", "PiesAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Green);
+            g.FillPie(brush, 10, 10, 80, 80, -90, 180);
+        }),
+        ("Pie_Fill_ThreeQuarter_AA", "PiesAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Blue);
+            g.FillPie(brush, 10, 10, 80, 80, 0, 270);
+        }),
+        ("Pie_Multiple_AA", "PiesAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
             g.Clear(Color.White);
             using var r = new SolidBrush(Color.Red);
             using var gr = new SolidBrush(Color.Green);
@@ -273,6 +337,50 @@ public static class DrawingScenarios
             g.DrawPolygon(pen, points);
         }),
 
+        // === POLYGONS (AA) ===
+        ("Polygon_Triangle_Stroke_AA", "PolygonsAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Black, 1);
+            g.DrawPolygon(pen, new PointF[] { new(50, 10), new(10, 90), new(90, 90) });
+        }),
+        ("Polygon_Triangle_Fill_AA", "PolygonsAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Red);
+            g.FillPolygon(brush, new PointF[] { new(50, 10), new(10, 90), new(90, 90) });
+        }),
+        ("Polygon_Square_Fill_AA", "PolygonsAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Blue);
+            g.FillPolygon(brush, new PointF[] { new(20, 20), new(80, 20), new(80, 80), new(20, 80) });
+        }),
+        ("Polygon_Pentagon_Fill_AA", "PolygonsAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Purple);
+            g.FillPolygon(brush, new PointF[] { new(50,5), new(95,37), new(77,90), new(23,90), new(5,37) });
+        }),
+        ("Polygon_Star_Stroke_AA", "PolygonsAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var pen = new Pen(Color.Red, 2);
+            g.DrawPolygon(pen, new PointF[] {
+                new(50,5), new(61,40), new(98,40), new(68,62), new(79,97),
+                new(50,75), new(21,97), new(32,62), new(2,40), new(39,40)
+            });
+        }),
+        ("Polygon_Diamond_StrokeAndFill_AA", "PolygonsAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var brush = new SolidBrush(Color.Orange);
+            using var pen = new Pen(Color.Black, 2);
+            var points = new PointF[] { new(50, 10), new(90, 50), new(50, 90), new(10, 50) };
+            g.FillPolygon(brush, points);
+            g.DrawPolygon(pen, points);
+        }),
+
         // === COMPOSITES ===
         ("Composite_RectOverEllipse", "Composites", 100, 100, g => {
             g.SmoothingMode = SmoothingMode.None;
@@ -315,6 +423,41 @@ public static class DrawingScenarios
                 g.DrawLine(pen, i, 0, i, 100);
                 g.DrawLine(pen, 0, i, 100, i);
             }
+        }),
+
+        // === COMPOSITES (AA) ===
+        ("Composite_RectOverEllipse_AA", "CompositesAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var blueBrush = new SolidBrush(Color.Blue);
+            g.FillEllipse(blueBrush, 10, 10, 80, 80);
+            using var redBrush = new SolidBrush(Color.FromArgb(128, 255, 0, 0));
+            g.FillRectangle(redBrush, 25, 25, 50, 50);
+        }),
+        ("Composite_MultipleShapes_AA", "CompositesAA", 200, 200, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var redBrush = new SolidBrush(Color.Red);
+            using var greenBrush = new SolidBrush(Color.Green);
+            using var blueBrush = new SolidBrush(Color.Blue);
+            using var pen = new Pen(Color.Black, 3);
+            g.FillRectangle(redBrush, 10, 10, 80, 80);
+            g.FillRectangle(greenBrush, 60, 60, 80, 80);
+            g.FillEllipse(blueBrush, 110, 10, 80, 80);
+            g.DrawLine(pen, 0, 0, 199, 199);
+            g.DrawLine(pen, 199, 0, 0, 199);
+        }),
+        ("Composite_ConcentricCircles_AA", "CompositesAA", 100, 100, g => {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+            using var r = new SolidBrush(Color.Red);
+            using var gr = new SolidBrush(Color.Green);
+            using var b = new SolidBrush(Color.Blue);
+            using var y = new SolidBrush(Color.Yellow);
+            g.FillEllipse(r, 5, 5, 90, 90);
+            g.FillEllipse(gr, 15, 15, 70, 70);
+            g.FillEllipse(b, 25, 25, 50, 50);
+            g.FillEllipse(y, 35, 35, 30, 30);
         }),
 
         // === COLORS (exact color precision) ===

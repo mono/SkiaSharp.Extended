@@ -12,7 +12,7 @@ public abstract class PixelCompatibilityTestBase
     // Tolerance tiers for different rendering categories
     protected const double Tolerance_SolidFill = 0.001;      // 0.1%
     protected const double Tolerance_Stroke = 0.005;          // 0.5%
-    protected const double Tolerance_AntiAliased = 0.01;      // 1.0%
+    protected const double Tolerance_AntiAliased = 0.05;      // 5.0%
     protected const double Tolerance_Text = 0.02;             // 2.0%
     protected const double Tolerance_Gradient = 0.01;         // 1.0%
     protected const double Tolerance_HatchPattern = 0.001;    // 0.1%

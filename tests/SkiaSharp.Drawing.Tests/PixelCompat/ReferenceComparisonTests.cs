@@ -48,13 +48,12 @@ public class ReferenceComparisonTests : PixelCompatibilityTestBase
         double tolerance = category switch
         {
             "Clear" or "Colors" => Tolerance_SolidFill,
-            "Lines" or "Rectangles" => Tolerance_Stroke,
-            "LinesAA" or "EllipsesAA" => Tolerance_AntiAliased,
-            "Ellipses" or "Arcs" or "Pies" => Tolerance_Stroke,
-            "Boundaries" => Tolerance_Stroke,
-            "Polygons" => Tolerance_Stroke,
-            "Composites" => Tolerance_AntiAliased,
-            _ => Tolerance_AntiAliased,
+            "Lines" or "Rectangles" or "Boundaries" => Tolerance_Stroke,
+            "Ellipses" or "Arcs" or "Pies" or "Polygons" => Tolerance_Stroke,
+            "Composites" => Tolerance_Stroke,
+            // AA categories get higher tolerance — different AA algorithms between GDI+ and Skia
+            "LinesAA" or "EllipsesAA" or "ArcsAA" or "PiesAA" or "PolygonsAA" or "CompositesAA" => Tolerance_AntiAliased,
+            _ => Tolerance_Stroke,
         };
 
         AssertPixelCompatible(actualBitmap, referenceFile, tolerance, category);

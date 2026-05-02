@@ -114,7 +114,6 @@ jobs:
           $env:TEST_ARTIFACTS_PATH = "$(Build.ArtifactStagingDirectory)/diff-images"
           dotnet test tests/SkiaSharp.Drawing.Tests --filter "FullyQualifiedName~PixelCompat" --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
         displayName: Run pixel compatibility tests
-        continueOnError: true
       - task: PublishTestResults@2
         condition: always()
         inputs:
