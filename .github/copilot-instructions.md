@@ -116,9 +116,9 @@ A drop-in replacement for `System.Drawing.Common` backed by SkiaSharp.
 ### Architecture
 - **`source/SkiaSharp.Drawing/`** — Main library. `AssemblyName=System.Drawing.Common`, `RootNamespace=System.Drawing`
 - **`tests/SkiaSharp.Drawing.Tests/`** — 346+ tests: unit tests + pixel comparison against GDI+ reference images
-- **`tools/SkiaSharp.Drawing.Scenarios/`** — Shared drawing scenario source files (compiled by both backends)
-- **`tools/SkiaSharp.Drawing.ReferenceGenerator/`** — Windows-only, generates golden PNGs using real System.Drawing/GDI+
-- **`tools/SkiaSharp.Drawing.SkiaRunner/`** — Cross-platform, generates PNGs using our SkiaSharp.Drawing wrapper
+- **`tests/SkiaSharp.Drawing.Scenarios/`** — Shared drawing scenario source files (compiled by both backends)
+- **`tests/SkiaSharp.Drawing.ReferenceGenerator/`** — Windows-only, generates golden PNGs using real System.Drawing/GDI+
+- **`tests/SkiaSharp.Drawing.Tests/`** — Cross-platform, generates PNGs using our SkiaSharp.Drawing wrapper
 - **`tools/api-baseline/`** — Official System.Drawing.Common reference assembly for API compatibility validation
 
 ### Implementation Rules
@@ -130,7 +130,7 @@ A drop-in replacement for `System.Drawing.Common` backed by SkiaSharp.
 - Polygon vertex coordinates also use +0.5 offset via `GdiPolygonPath()`
 
 ### Test Rules
-- **Every new drawing feature must have pixel comparison scenarios** — add `[Fact]` methods to the appropriate class in `tools/SkiaSharp.Drawing.Scenarios/`
+- **Every new drawing feature must have pixel comparison scenarios** — add `[Fact]` methods to the appropriate class in `tests/SkiaSharp.Drawing.Scenarios/`
 - Each scenario class name = folder name for reference images (e.g., `Ellipses` class → `ReferenceImages/Ellipses/`)
 - Each scenario method name = PNG filename (e.g., `Ellipse_Fill_Circle` → `Ellipse_Fill_Circle.png`)
 - **Non-AA scenarios** must achieve <0.5% pixel error vs GDI+ reference
@@ -140,7 +140,7 @@ A drop-in replacement for `System.Drawing.Common` backed by SkiaSharp.
 - CI generates GDI+ reference images on Windows and compares — test failures fail the build
 
 ### Adding a New Drawing Scenario
-1. Find the appropriate category file in `tools/SkiaSharp.Drawing.Scenarios/` (e.g., `Ellipses.cs`)
+1. Find the appropriate category file in `tests/SkiaSharp.Drawing.Scenarios/` (e.g., `Ellipses.cs`)
 2. Add a `[Fact]` method:
    ```csharp
    [Fact] public void Ellipse_Fill_Large() => Render(200, 200, g => {

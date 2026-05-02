@@ -19,7 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <!-- Shared scenario files — compiled against SkiaSharp.Drawing -->
-    <Compile Include="..\..\tools\SkiaSharp.Drawing.Scenarios\**\*.cs" Link="Scenarios\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\SkiaSharp.Drawing.Scenarios\**\*.cs" Link="Scenarios\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
