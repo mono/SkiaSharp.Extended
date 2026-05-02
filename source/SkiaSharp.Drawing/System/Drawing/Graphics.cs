@@ -217,7 +217,20 @@ namespace System.Drawing
 		/// <summary>
 		///  Gets or sets a copy of the geometric world transformation for this Graphics.
 		/// </summary>
-		public System.Drawing.Drawing2D.Matrix Transform { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } set { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
+		public System.Drawing.Drawing2D.Matrix Transform
+		{
+			get
+			{
+				ThrowIfDisposed();
+				return new Drawing2D.Matrix { SKMatrix = _canvas.TotalMatrix };
+			}
+			set
+			{
+				ThrowIfDisposed();
+				if (value is null) throw new ArgumentNullException(nameof(value));
+				_canvas.SetMatrix(value.SKMatrix);
+			}
+		}
 
 		/// <summary>
 		///  Gets the bounding rectangle of the visible clipping region of this <see cref="Graphics"/>.
@@ -389,27 +402,83 @@ namespace System.Drawing
 		/// <summary>
 		///  Draws a Bezier spline defined by four Point structures.
 		/// </summary>
-		public void DrawBezier(System.Drawing.Pen pen, System.Drawing.Point pt1, System.Drawing.Point pt2, System.Drawing.Point pt3, System.Drawing.Point pt4) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen">The <see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="pt1">A <see cref="Point"/> structure that represents the starting point of the curve.</param>
+		/// <param name="pt2">A <see cref="Point"/> structure that represents the first control point of the curve.</param>
+		/// <param name="pt3">A <see cref="Point"/> structure that represents the second control point of the curve.</param>
+		/// <param name="pt4">A <see cref="Point"/> structure that represents the ending point of the curve.</param>
+		public void DrawBezier(System.Drawing.Pen pen, System.Drawing.Point pt1, System.Drawing.Point pt2, System.Drawing.Point pt3, System.Drawing.Point pt4)
+			=> DrawBezier(pen, (float)pt1.X, (float)pt1.Y, (float)pt2.X, (float)pt2.Y, (float)pt3.X, (float)pt3.Y, (float)pt4.X, (float)pt4.Y);
 
 		/// <summary>
 		///  Draws a Bezier spline defined by four PointF structures.
 		/// </summary>
-		public void DrawBezier(System.Drawing.Pen pen, System.Drawing.PointF pt1, System.Drawing.PointF pt2, System.Drawing.PointF pt3, System.Drawing.PointF pt4) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen">The <see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="pt1">A <see cref="PointF"/> structure that represents the starting point of the curve.</param>
+		/// <param name="pt2">A <see cref="PointF"/> structure that represents the first control point of the curve.</param>
+		/// <param name="pt3">A <see cref="PointF"/> structure that represents the second control point of the curve.</param>
+		/// <param name="pt4">A <see cref="PointF"/> structure that represents the ending point of the curve.</param>
+		public void DrawBezier(System.Drawing.Pen pen, System.Drawing.PointF pt1, System.Drawing.PointF pt2, System.Drawing.PointF pt3, System.Drawing.PointF pt4)
+			=> DrawBezier(pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 
 		/// <summary>
 		///  Draws a Bezier spline defined by four ordered pairs of coordinates.
 		/// </summary>
-		public void DrawBezier(System.Drawing.Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen">The <see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="x1">The x-coordinate of the starting point of the curve.</param>
+		/// <param name="y1">The y-coordinate of the starting point of the curve.</param>
+		/// <param name="x2">The x-coordinate of the first control point of the curve.</param>
+		/// <param name="y2">The y-coordinate of the first control point of the curve.</param>
+		/// <param name="x3">The x-coordinate of the second control point of the curve.</param>
+		/// <param name="y3">The y-coordinate of the second control point of the curve.</param>
+		/// <param name="x4">The x-coordinate of the ending point of the curve.</param>
+		/// <param name="y4">The y-coordinate of the ending point of the curve.</param>
+		public void DrawBezier(System.Drawing.Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+		{
+			ThrowIfDisposed();
+			if (pen is null) throw new ArgumentNullException(nameof(pen));
+			using var paint = pen.CreatePaint();
+			ApplyState(paint);
+			using var path = new SKPath();
+			path.MoveTo(x1, y1);
+			path.CubicTo(x2, y2, x3, y3, x4, y4);
+			_canvas.DrawPath(path, paint);
+		}
 
 		/// <summary>
-		///  Draws a series of Bezier splines from an array of PointF structures.
+		///  Draws a series of Bézier splines from an array of <see cref="PointF"/> structures.
 		/// </summary>
-		public void DrawBeziers(System.Drawing.Pen pen, System.Drawing.PointF[] points) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen">The <see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">An array of <see cref="PointF"/> structures that represent the points that determine the curve. The number of points in the array should be a multiple of 3 plus 1, such as 4, 7, or 10.</param>
+		public void DrawBeziers(System.Drawing.Pen pen, System.Drawing.PointF[] points)
+		{
+			ThrowIfDisposed();
+			if (pen is null) throw new ArgumentNullException(nameof(pen));
+			if (points is null) throw new ArgumentNullException(nameof(points));
+			if (points.Length < 4) throw new ArgumentException("Array must contain at least 4 points.", nameof(points));
+			using var paint = pen.CreatePaint();
+			ApplyState(paint);
+			using var path = new SKPath();
+			path.MoveTo(points[0].X, points[0].Y);
+			for (int i = 1; i + 2 < points.Length; i += 3)
+				path.CubicTo(points[i].X, points[i].Y, points[i + 1].X, points[i + 1].Y, points[i + 2].X, points[i + 2].Y);
+			_canvas.DrawPath(path, paint);
+		}
 
 		/// <summary>
-		///  Draws a series of Bezier splines from an array of Point structures.
+		///  Draws a series of Bézier splines from an array of <see cref="Point"/> structures.
 		/// </summary>
-		public void DrawBeziers(System.Drawing.Pen pen, System.Drawing.Point[] points) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="pen">The <see cref="Pen"/> that determines the color, width, and style of the curve.</param>
+		/// <param name="points">An array of <see cref="Point"/> structures that represent the points that determine the curve.</param>
+		public void DrawBeziers(System.Drawing.Pen pen, System.Drawing.Point[] points)
+		{
+			ThrowIfDisposed();
+			if (points is null) throw new ArgumentNullException(nameof(points));
+			var ptsF = new PointF[points.Length];
+			for (int i = 0; i < points.Length; i++)
+				ptsF[i] = new PointF(points[i].X, points[i].Y);
+			DrawBeziers(pen, ptsF);
+		}
 
 		/// <summary>
 		///  Draws a closed cardinal spline defined by an array of PointF structures.
@@ -803,7 +872,15 @@ namespace System.Drawing
 		/// <summary>
 		///  Draws a GraphicsPath.
 		/// </summary>
-		public void DrawPath(System.Drawing.Pen pen, System.Drawing.Drawing2D.GraphicsPath path) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void DrawPath(System.Drawing.Pen pen, System.Drawing.Drawing2D.GraphicsPath path)
+		{
+			ThrowIfDisposed();
+			if (pen is null) throw new ArgumentNullException(nameof(pen));
+			if (path is null) throw new ArgumentNullException(nameof(path));
+			using var paint = pen.CreatePaint();
+			ApplyState(paint);
+			_canvas.DrawPath(path.SKPath, paint);
+		}
 
 		/// <summary>
 		///  Draws a pie shape defined by an ellipse specified by a Rectangle structure and two radial lines.
@@ -932,29 +1009,130 @@ namespace System.Drawing
 		}
 
 		/// <summary>
-		///  Draws the specified text string at the specified location with the specified Brush and Font objects.
+		///  Draws the specified text string at the specified location with the specified <see cref="Brush"/> and <see cref="Font"/> objects.
 		/// </summary>
-		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.PointF point) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="s">String to draw.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="brush"><see cref="Brush"/> that determines the color and texture of the drawn text.</param>
+		/// <param name="point"><see cref="PointF"/> structure that specifies the upper-left corner of the drawn text.</param>
+		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.PointF point)
+			=> DrawString(s, font, brush, point.X, point.Y, null);
+
 		/// <summary>
-		///  Draws the specified text string at the specified location with the specified Brush, Font, and StringFormat objects.
+		///  Draws the specified text string at the specified location with the specified <see cref="Brush"/>, <see cref="Font"/>, and <see cref="StringFormat"/> objects.
 		/// </summary>
-		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.PointF point, System.Drawing.StringFormat? format) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="s">String to draw.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="brush"><see cref="Brush"/> that determines the color and texture of the drawn text.</param>
+		/// <param name="point"><see cref="PointF"/> structure that specifies the upper-left corner of the drawn text.</param>
+		/// <param name="format"><see cref="StringFormat"/> that specifies formatting attributes applied to the drawn text.</param>
+		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.PointF point, System.Drawing.StringFormat? format)
+			=> DrawString(s, font, brush, point.X, point.Y, format);
+
 		/// <summary>
-		///  Draws the specified text string in the specified rectangle with the specified Brush and Font objects.
+		///  Draws the specified text string in the specified rectangle with the specified <see cref="Brush"/> and <see cref="Font"/> objects.
 		/// </summary>
-		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.RectangleF layoutRectangle) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="s">String to draw.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="brush"><see cref="Brush"/> that determines the color and texture of the drawn text.</param>
+		/// <param name="layoutRectangle"><see cref="RectangleF"/> structure that specifies the location of the drawn text.</param>
+		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.RectangleF layoutRectangle)
+			=> DrawString(s, font, brush, layoutRectangle, null);
+
 		/// <summary>
-		///  Draws the specified text string in the specified rectangle with the specified Brush, Font, and StringFormat objects.
+		///  Draws the specified text string in the specified rectangle with the specified <see cref="Brush"/>, <see cref="Font"/>, and <see cref="StringFormat"/> objects.
 		/// </summary>
-		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.RectangleF layoutRectangle, System.Drawing.StringFormat? format) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="s">String to draw.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="brush"><see cref="Brush"/> that determines the color and texture of the drawn text.</param>
+		/// <param name="layoutRectangle"><see cref="RectangleF"/> structure that specifies the location of the drawn text.</param>
+		/// <param name="format"><see cref="StringFormat"/> that specifies formatting attributes applied to the drawn text.</param>
+		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.RectangleF layoutRectangle, System.Drawing.StringFormat? format)
+		{
+			ThrowIfDisposed();
+			if (s is null || s.Length == 0) return;
+			if (font is null) throw new ArgumentNullException(nameof(font));
+			if (brush is null) throw new ArgumentNullException(nameof(brush));
+
+			using var paint = brush.CreatePaint();
+			ApplyState(paint);
+
+			var skFont = font.SKFont;
+			var m = skFont.Metrics;
+
+			// Compute the text draw position (baseline Y) inside the layout rect
+			float x = layoutRectangle.X;
+			float y = layoutRectangle.Y - m.Ascent; // baseline offset (ascent is negative)
+
+			// Apply horizontal alignment
+			if (format != null && format.Alignment != StringAlignment.Near)
+			{
+				float textWidth = skFont.MeasureText(s, paint);
+				if (format.Alignment == StringAlignment.Center)
+					x += (layoutRectangle.Width - textWidth) / 2f;
+				else if (format.Alignment == StringAlignment.Far)
+					x += layoutRectangle.Width - textWidth;
+			}
+
+			// Apply vertical alignment
+			if (format != null && format.LineAlignment != StringAlignment.Near)
+			{
+				float lineHeight = Math.Abs(m.Ascent) + Math.Abs(m.Descent) + Math.Abs(m.Leading);
+				if (format.LineAlignment == StringAlignment.Center)
+					y = layoutRectangle.Y + (layoutRectangle.Height - lineHeight) / 2f - m.Ascent;
+				else if (format.LineAlignment == StringAlignment.Far)
+					y = layoutRectangle.Y + layoutRectangle.Height - lineHeight - m.Ascent;
+			}
+
+			// Clip to the layout rectangle unless NoClip is set
+			bool clip = format == null || (format.FormatFlags & StringFormatFlags.NoClip) == 0;
+			if (clip && layoutRectangle.Width > 0 && layoutRectangle.Height > 0)
+			{
+				_canvas.Save();
+				_canvas.ClipRect(new SKRect(layoutRectangle.X, layoutRectangle.Y,
+					layoutRectangle.X + layoutRectangle.Width, layoutRectangle.Y + layoutRectangle.Height));
+			}
+
+			_canvas.DrawText(s, x, y, skFont, paint);
+
+			if (clip && layoutRectangle.Width > 0 && layoutRectangle.Height > 0)
+				_canvas.Restore();
+		}
+
 		/// <summary>
-		///  Draws the specified text string at the specified location with the specified Brush and Font objects.
+		///  Draws the specified text string at the specified location with the specified <see cref="Brush"/> and <see cref="Font"/> objects.
 		/// </summary>
-		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, float x, float y) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="s">String to draw.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="brush"><see cref="Brush"/> that determines the color and texture of the drawn text.</param>
+		/// <param name="x">The x-coordinate of the upper-left corner of the drawn text.</param>
+		/// <param name="y">The y-coordinate of the upper-left corner of the drawn text.</param>
+		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, float x, float y)
+			=> DrawString(s, font, brush, x, y, null);
+
 		/// <summary>
-		///  Draws the specified text string at the specified location with the specified Brush, Font, and StringFormat objects.
+		///  Draws the specified text string at the specified location with the specified <see cref="Brush"/>, <see cref="Font"/>, and <see cref="StringFormat"/> objects.
 		/// </summary>
-		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, float x, float y, System.Drawing.StringFormat? format) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		/// <param name="s">String to draw.</param>
+		/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
+		/// <param name="brush"><see cref="Brush"/> that determines the color and texture of the drawn text.</param>
+		/// <param name="x">The x-coordinate of the upper-left corner of the drawn text.</param>
+		/// <param name="y">The y-coordinate of the upper-left corner of the drawn text.</param>
+		/// <param name="format"><see cref="StringFormat"/> that specifies formatting attributes applied to the drawn text.</param>
+		public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, float x, float y, System.Drawing.StringFormat? format)
+		{
+			ThrowIfDisposed();
+			if (s is null || s.Length == 0) return;
+			if (font is null) throw new ArgumentNullException(nameof(font));
+			if (brush is null) throw new ArgumentNullException(nameof(brush));
+
+			using var paint = brush.CreatePaint();
+			ApplyState(paint);
+
+			// GDI+ DrawString takes the top-left of the text bounding box; SkiaSharp DrawText takes baseline.
+			float baselineY = y - font.SKFont.Metrics.Ascent; // ascent is negative
+			_canvas.DrawText(s, x, baselineY, font.SKFont, paint);
+		}
 
 		/// <summary>
 		///  Closes the current graphics container and restores the state of this Graphics to the state saved by a call to BeginContainer.
@@ -1177,7 +1355,15 @@ namespace System.Drawing
 		/// <summary>
 		///  Fills the interior of a GraphicsPath.
 		/// </summary>
-		public void FillPath(System.Drawing.Brush brush, System.Drawing.Drawing2D.GraphicsPath path) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		public void FillPath(System.Drawing.Brush brush, System.Drawing.Drawing2D.GraphicsPath path)
+		{
+			ThrowIfDisposed();
+			if (brush is null) throw new ArgumentNullException(nameof(brush));
+			if (path is null) throw new ArgumentNullException(nameof(path));
+			using var paint = brush.CreatePaint();
+			ApplyState(paint);
+			_canvas.DrawPath(path.SKPath, paint);
+		}
 
 		/// <summary>
 		///  Fills the interior of a pie section defined by an ellipse specified by a Rectangle structure and two radial lines.

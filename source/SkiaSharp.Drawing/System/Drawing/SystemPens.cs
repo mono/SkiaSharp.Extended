@@ -1,40 +1,148 @@
 ﻿namespace System.Drawing
 {
+	/// <summary>
+	///  Each property of the <see cref="SystemPens"/> class is a <see cref="Pen"/>
+	///  that is the color of a Windows display element and a width of 1 pixel.
+	/// </summary>
 	public static partial class SystemPens
 	{
-		public static System.Drawing.Pen ActiveBorder { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen ActiveCaption { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen ActiveCaptionText { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen AppWorkspace { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen ButtonFace { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen ButtonHighlight { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen ButtonShadow { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen Control { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen ControlDark { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen ControlDarkDark { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen ControlLight { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen ControlLightLight { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen ControlText { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen Desktop { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen GradientActiveCaption { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen GradientInactiveCaption { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen GrayText { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen Highlight { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen HighlightText { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen HotTrack { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen InactiveBorder { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen InactiveCaption { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen InactiveCaptionText { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen Info { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen InfoText { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen Menu { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen MenuBar { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen MenuHighlight { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen MenuText { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen ScrollBar { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen Window { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen WindowFrame { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen WindowText { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Pen FromSystemColor(System.Drawing.Color c) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); }
+		private static Pen? _activeBorder;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ActiveBorder display element.</summary>
+		public static Pen ActiveBorder => _activeBorder ??= new Pen(SystemColors.ActiveBorder);
+
+		private static Pen? _activeCaption;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ActiveCaption display element.</summary>
+		public static Pen ActiveCaption => _activeCaption ??= new Pen(SystemColors.ActiveCaption);
+
+		private static Pen? _activeCaptionText;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ActiveCaptionText display element.</summary>
+		public static Pen ActiveCaptionText => _activeCaptionText ??= new Pen(SystemColors.ActiveCaptionText);
+
+		private static Pen? _appWorkspace;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the AppWorkspace display element.</summary>
+		public static Pen AppWorkspace => _appWorkspace ??= new Pen(SystemColors.AppWorkspace);
+
+		private static Pen? _buttonFace;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ButtonFace display element.</summary>
+		public static Pen ButtonFace => _buttonFace ??= new Pen(SystemColors.ButtonFace);
+
+		private static Pen? _buttonHighlight;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ButtonHighlight display element.</summary>
+		public static Pen ButtonHighlight => _buttonHighlight ??= new Pen(SystemColors.ButtonHighlight);
+
+		private static Pen? _buttonShadow;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ButtonShadow display element.</summary>
+		public static Pen ButtonShadow => _buttonShadow ??= new Pen(SystemColors.ButtonShadow);
+
+		private static Pen? _control;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the Control display element.</summary>
+		public static Pen Control => _control ??= new Pen(SystemColors.Control);
+
+		private static Pen? _controlDark;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ControlDark display element.</summary>
+		public static Pen ControlDark => _controlDark ??= new Pen(SystemColors.ControlDark);
+
+		private static Pen? _controlDarkDark;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ControlDarkDark display element.</summary>
+		public static Pen ControlDarkDark => _controlDarkDark ??= new Pen(SystemColors.ControlDarkDark);
+
+		private static Pen? _controlLight;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ControlLight display element.</summary>
+		public static Pen ControlLight => _controlLight ??= new Pen(SystemColors.ControlLight);
+
+		private static Pen? _controlLightLight;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ControlLightLight display element.</summary>
+		public static Pen ControlLightLight => _controlLightLight ??= new Pen(SystemColors.ControlLightLight);
+
+		private static Pen? _controlText;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ControlText display element.</summary>
+		public static Pen ControlText => _controlText ??= new Pen(SystemColors.ControlText);
+
+		private static Pen? _desktop;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the Desktop display element.</summary>
+		public static Pen Desktop => _desktop ??= new Pen(SystemColors.Desktop);
+
+		private static Pen? _gradientActiveCaption;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the GradientActiveCaption display element.</summary>
+		public static Pen GradientActiveCaption => _gradientActiveCaption ??= new Pen(SystemColors.GradientActiveCaption);
+
+		private static Pen? _gradientInactiveCaption;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the GradientInactiveCaption display element.</summary>
+		public static Pen GradientInactiveCaption => _gradientInactiveCaption ??= new Pen(SystemColors.GradientInactiveCaption);
+
+		private static Pen? _grayText;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the GrayText display element.</summary>
+		public static Pen GrayText => _grayText ??= new Pen(SystemColors.GrayText);
+
+		private static Pen? _highlight;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the Highlight display element.</summary>
+		public static Pen Highlight => _highlight ??= new Pen(SystemColors.Highlight);
+
+		private static Pen? _highlightText;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the HighlightText display element.</summary>
+		public static Pen HighlightText => _highlightText ??= new Pen(SystemColors.HighlightText);
+
+		private static Pen? _hotTrack;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the HotTrack display element.</summary>
+		public static Pen HotTrack => _hotTrack ??= new Pen(SystemColors.HotTrack);
+
+		private static Pen? _inactiveBorder;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the InactiveBorder display element.</summary>
+		public static Pen InactiveBorder => _inactiveBorder ??= new Pen(SystemColors.InactiveBorder);
+
+		private static Pen? _inactiveCaption;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the InactiveCaption display element.</summary>
+		public static Pen InactiveCaption => _inactiveCaption ??= new Pen(SystemColors.InactiveCaption);
+
+		private static Pen? _inactiveCaptionText;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the InactiveCaptionText display element.</summary>
+		public static Pen InactiveCaptionText => _inactiveCaptionText ??= new Pen(SystemColors.InactiveCaptionText);
+
+		private static Pen? _info;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the Info display element.</summary>
+		public static Pen Info => _info ??= new Pen(SystemColors.Info);
+
+		private static Pen? _infoText;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the InfoText display element.</summary>
+		public static Pen InfoText => _infoText ??= new Pen(SystemColors.InfoText);
+
+		private static Pen? _menu;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the Menu display element.</summary>
+		public static Pen Menu => _menu ??= new Pen(SystemColors.Menu);
+
+		private static Pen? _menuBar;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the MenuBar display element.</summary>
+		public static Pen MenuBar => _menuBar ??= new Pen(SystemColors.MenuBar);
+
+		private static Pen? _menuHighlight;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the MenuHighlight display element.</summary>
+		public static Pen MenuHighlight => _menuHighlight ??= new Pen(SystemColors.MenuHighlight);
+
+		private static Pen? _menuText;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the MenuText display element.</summary>
+		public static Pen MenuText => _menuText ??= new Pen(SystemColors.MenuText);
+
+		private static Pen? _scrollBar;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the ScrollBar display element.</summary>
+		public static Pen ScrollBar => _scrollBar ??= new Pen(SystemColors.ScrollBar);
+
+		private static Pen? _window;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the Window display element.</summary>
+		public static Pen Window => _window ??= new Pen(SystemColors.Window);
+
+		private static Pen? _windowFrame;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the WindowFrame display element.</summary>
+		public static Pen WindowFrame => _windowFrame ??= new Pen(SystemColors.WindowFrame);
+
+		private static Pen? _windowText;
+		/// <summary>Gets a <see cref="Pen"/> that is the color of the WindowText display element.</summary>
+		public static Pen WindowText => _windowText ??= new Pen(SystemColors.WindowText);
+
+		/// <summary>
+		///  Creates a <see cref="Pen"/> from the specified <see cref="Color"/>.
+		/// </summary>
+		/// <param name="c">The <see cref="Color"/> from which to create the <see cref="Pen"/>.</param>
+		/// <returns>A <see cref="Pen"/> that represents the specified color.</returns>
+		public static Pen FromSystemColor(Color c) => new Pen(c);
 	}
 }

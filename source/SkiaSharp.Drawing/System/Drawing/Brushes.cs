@@ -1,147 +1,573 @@
 ﻿namespace System.Drawing
 {
+	/// <summary>
+	///  Each property of the <see cref="Brushes"/> class is a <see cref="SolidBrush"/>
+	///  object constructed with a specific pre-defined color.
+	/// </summary>
 	public static partial class Brushes
 	{
-		public static System.Drawing.Brush AliceBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush AntiqueWhite { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Aqua { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Aquamarine { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Azure { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Beige { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Bisque { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Black { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush BlanchedAlmond { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Blue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush BlueViolet { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Brown { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush BurlyWood { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush CadetBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Chartreuse { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Chocolate { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Coral { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush CornflowerBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Cornsilk { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Crimson { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Cyan { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkCyan { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkGoldenrod { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkGray { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkKhaki { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkMagenta { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkOliveGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkOrange { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkOrchid { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkRed { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkSalmon { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkSeaGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkSlateBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkSlateGray { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkTurquoise { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DarkViolet { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DeepPink { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DeepSkyBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DimGray { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush DodgerBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Firebrick { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush FloralWhite { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush ForestGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Fuchsia { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Gainsboro { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush GhostWhite { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Gold { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Goldenrod { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Gray { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Green { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush GreenYellow { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Honeydew { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush HotPink { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush IndianRed { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Indigo { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Ivory { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Khaki { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Lavender { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LavenderBlush { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LawnGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LemonChiffon { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightCoral { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightCyan { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightGoldenrodYellow { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightGray { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightPink { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightSalmon { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightSeaGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightSkyBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightSlateGray { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightSteelBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LightYellow { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Lime { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush LimeGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Linen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Magenta { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Maroon { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MediumAquamarine { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MediumBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MediumOrchid { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MediumPurple { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MediumSeaGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MediumSlateBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MediumSpringGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MediumTurquoise { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MediumVioletRed { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MidnightBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MintCream { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush MistyRose { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Moccasin { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush NavajoWhite { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Navy { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush OldLace { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Olive { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush OliveDrab { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Orange { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush OrangeRed { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Orchid { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush PaleGoldenrod { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush PaleGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush PaleTurquoise { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush PaleVioletRed { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush PapayaWhip { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush PeachPuff { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Peru { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Pink { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Plum { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush PowderBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Purple { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Red { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush RosyBrown { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush RoyalBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush SaddleBrown { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Salmon { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush SandyBrown { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush SeaGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush SeaShell { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Sienna { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Silver { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush SkyBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush SlateBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush SlateGray { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Snow { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush SpringGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush SteelBlue { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Tan { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Teal { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Thistle { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Tomato { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Transparent { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Turquoise { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Violet { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Wheat { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush White { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush WhiteSmoke { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush Yellow { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
-		public static System.Drawing.Brush YellowGreen { get { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Drawing"); } }
+		private static Brush? _aliceBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color AliceBlue.</summary>
+		public static Brush AliceBlue => _aliceBlue ??= new SolidBrush(Color.AliceBlue);
+
+		private static Brush? _antiqueWhite;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color AntiqueWhite.</summary>
+		public static Brush AntiqueWhite => _antiqueWhite ??= new SolidBrush(Color.AntiqueWhite);
+
+		private static Brush? _aqua;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Aqua.</summary>
+		public static Brush Aqua => _aqua ??= new SolidBrush(Color.Aqua);
+
+		private static Brush? _aquamarine;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Aquamarine.</summary>
+		public static Brush Aquamarine => _aquamarine ??= new SolidBrush(Color.Aquamarine);
+
+		private static Brush? _azure;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Azure.</summary>
+		public static Brush Azure => _azure ??= new SolidBrush(Color.Azure);
+
+		private static Brush? _beige;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Beige.</summary>
+		public static Brush Beige => _beige ??= new SolidBrush(Color.Beige);
+
+		private static Brush? _bisque;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Bisque.</summary>
+		public static Brush Bisque => _bisque ??= new SolidBrush(Color.Bisque);
+
+		private static Brush? _black;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Black.</summary>
+		public static Brush Black => _black ??= new SolidBrush(Color.Black);
+
+		private static Brush? _blanchedAlmond;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color BlanchedAlmond.</summary>
+		public static Brush BlanchedAlmond => _blanchedAlmond ??= new SolidBrush(Color.BlanchedAlmond);
+
+		private static Brush? _blue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Blue.</summary>
+		public static Brush Blue => _blue ??= new SolidBrush(Color.Blue);
+
+		private static Brush? _blueViolet;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color BlueViolet.</summary>
+		public static Brush BlueViolet => _blueViolet ??= new SolidBrush(Color.BlueViolet);
+
+		private static Brush? _brown;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Brown.</summary>
+		public static Brush Brown => _brown ??= new SolidBrush(Color.Brown);
+
+		private static Brush? _burlyWood;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color BurlyWood.</summary>
+		public static Brush BurlyWood => _burlyWood ??= new SolidBrush(Color.BurlyWood);
+
+		private static Brush? _cadetBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color CadetBlue.</summary>
+		public static Brush CadetBlue => _cadetBlue ??= new SolidBrush(Color.CadetBlue);
+
+		private static Brush? _chartreuse;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Chartreuse.</summary>
+		public static Brush Chartreuse => _chartreuse ??= new SolidBrush(Color.Chartreuse);
+
+		private static Brush? _chocolate;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Chocolate.</summary>
+		public static Brush Chocolate => _chocolate ??= new SolidBrush(Color.Chocolate);
+
+		private static Brush? _coral;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Coral.</summary>
+		public static Brush Coral => _coral ??= new SolidBrush(Color.Coral);
+
+		private static Brush? _cornflowerBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color CornflowerBlue.</summary>
+		public static Brush CornflowerBlue => _cornflowerBlue ??= new SolidBrush(Color.CornflowerBlue);
+
+		private static Brush? _cornsilk;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Cornsilk.</summary>
+		public static Brush Cornsilk => _cornsilk ??= new SolidBrush(Color.Cornsilk);
+
+		private static Brush? _crimson;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Crimson.</summary>
+		public static Brush Crimson => _crimson ??= new SolidBrush(Color.Crimson);
+
+		private static Brush? _cyan;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Cyan.</summary>
+		public static Brush Cyan => _cyan ??= new SolidBrush(Color.Cyan);
+
+		private static Brush? _darkBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkBlue.</summary>
+		public static Brush DarkBlue => _darkBlue ??= new SolidBrush(Color.DarkBlue);
+
+		private static Brush? _darkCyan;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkCyan.</summary>
+		public static Brush DarkCyan => _darkCyan ??= new SolidBrush(Color.DarkCyan);
+
+		private static Brush? _darkGoldenrod;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkGoldenrod.</summary>
+		public static Brush DarkGoldenrod => _darkGoldenrod ??= new SolidBrush(Color.DarkGoldenrod);
+
+		private static Brush? _darkGray;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkGray.</summary>
+		public static Brush DarkGray => _darkGray ??= new SolidBrush(Color.DarkGray);
+
+		private static Brush? _darkGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkGreen.</summary>
+		public static Brush DarkGreen => _darkGreen ??= new SolidBrush(Color.DarkGreen);
+
+		private static Brush? _darkKhaki;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkKhaki.</summary>
+		public static Brush DarkKhaki => _darkKhaki ??= new SolidBrush(Color.DarkKhaki);
+
+		private static Brush? _darkMagenta;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkMagenta.</summary>
+		public static Brush DarkMagenta => _darkMagenta ??= new SolidBrush(Color.DarkMagenta);
+
+		private static Brush? _darkOliveGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkOliveGreen.</summary>
+		public static Brush DarkOliveGreen => _darkOliveGreen ??= new SolidBrush(Color.DarkOliveGreen);
+
+		private static Brush? _darkOrange;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkOrange.</summary>
+		public static Brush DarkOrange => _darkOrange ??= new SolidBrush(Color.DarkOrange);
+
+		private static Brush? _darkOrchid;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkOrchid.</summary>
+		public static Brush DarkOrchid => _darkOrchid ??= new SolidBrush(Color.DarkOrchid);
+
+		private static Brush? _darkRed;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkRed.</summary>
+		public static Brush DarkRed => _darkRed ??= new SolidBrush(Color.DarkRed);
+
+		private static Brush? _darkSalmon;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkSalmon.</summary>
+		public static Brush DarkSalmon => _darkSalmon ??= new SolidBrush(Color.DarkSalmon);
+
+		private static Brush? _darkSeaGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkSeaGreen.</summary>
+		public static Brush DarkSeaGreen => _darkSeaGreen ??= new SolidBrush(Color.DarkSeaGreen);
+
+		private static Brush? _darkSlateBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkSlateBlue.</summary>
+		public static Brush DarkSlateBlue => _darkSlateBlue ??= new SolidBrush(Color.DarkSlateBlue);
+
+		private static Brush? _darkSlateGray;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkSlateGray.</summary>
+		public static Brush DarkSlateGray => _darkSlateGray ??= new SolidBrush(Color.DarkSlateGray);
+
+		private static Brush? _darkTurquoise;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkTurquoise.</summary>
+		public static Brush DarkTurquoise => _darkTurquoise ??= new SolidBrush(Color.DarkTurquoise);
+
+		private static Brush? _darkViolet;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DarkViolet.</summary>
+		public static Brush DarkViolet => _darkViolet ??= new SolidBrush(Color.DarkViolet);
+
+		private static Brush? _deepPink;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DeepPink.</summary>
+		public static Brush DeepPink => _deepPink ??= new SolidBrush(Color.DeepPink);
+
+		private static Brush? _deepSkyBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DeepSkyBlue.</summary>
+		public static Brush DeepSkyBlue => _deepSkyBlue ??= new SolidBrush(Color.DeepSkyBlue);
+
+		private static Brush? _dimGray;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DimGray.</summary>
+		public static Brush DimGray => _dimGray ??= new SolidBrush(Color.DimGray);
+
+		private static Brush? _dodgerBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color DodgerBlue.</summary>
+		public static Brush DodgerBlue => _dodgerBlue ??= new SolidBrush(Color.DodgerBlue);
+
+		private static Brush? _firebrick;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Firebrick.</summary>
+		public static Brush Firebrick => _firebrick ??= new SolidBrush(Color.Firebrick);
+
+		private static Brush? _floralWhite;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color FloralWhite.</summary>
+		public static Brush FloralWhite => _floralWhite ??= new SolidBrush(Color.FloralWhite);
+
+		private static Brush? _forestGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color ForestGreen.</summary>
+		public static Brush ForestGreen => _forestGreen ??= new SolidBrush(Color.ForestGreen);
+
+		private static Brush? _fuchsia;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Fuchsia.</summary>
+		public static Brush Fuchsia => _fuchsia ??= new SolidBrush(Color.Fuchsia);
+
+		private static Brush? _gainsboro;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Gainsboro.</summary>
+		public static Brush Gainsboro => _gainsboro ??= new SolidBrush(Color.Gainsboro);
+
+		private static Brush? _ghostWhite;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color GhostWhite.</summary>
+		public static Brush GhostWhite => _ghostWhite ??= new SolidBrush(Color.GhostWhite);
+
+		private static Brush? _gold;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Gold.</summary>
+		public static Brush Gold => _gold ??= new SolidBrush(Color.Gold);
+
+		private static Brush? _goldenrod;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Goldenrod.</summary>
+		public static Brush Goldenrod => _goldenrod ??= new SolidBrush(Color.Goldenrod);
+
+		private static Brush? _gray;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Gray.</summary>
+		public static Brush Gray => _gray ??= new SolidBrush(Color.Gray);
+
+		private static Brush? _green;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Green.</summary>
+		public static Brush Green => _green ??= new SolidBrush(Color.Green);
+
+		private static Brush? _greenYellow;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color GreenYellow.</summary>
+		public static Brush GreenYellow => _greenYellow ??= new SolidBrush(Color.GreenYellow);
+
+		private static Brush? _honeydew;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Honeydew.</summary>
+		public static Brush Honeydew => _honeydew ??= new SolidBrush(Color.Honeydew);
+
+		private static Brush? _hotPink;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color HotPink.</summary>
+		public static Brush HotPink => _hotPink ??= new SolidBrush(Color.HotPink);
+
+		private static Brush? _indianRed;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color IndianRed.</summary>
+		public static Brush IndianRed => _indianRed ??= new SolidBrush(Color.IndianRed);
+
+		private static Brush? _indigo;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Indigo.</summary>
+		public static Brush Indigo => _indigo ??= new SolidBrush(Color.Indigo);
+
+		private static Brush? _ivory;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Ivory.</summary>
+		public static Brush Ivory => _ivory ??= new SolidBrush(Color.Ivory);
+
+		private static Brush? _khaki;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Khaki.</summary>
+		public static Brush Khaki => _khaki ??= new SolidBrush(Color.Khaki);
+
+		private static Brush? _lavender;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Lavender.</summary>
+		public static Brush Lavender => _lavender ??= new SolidBrush(Color.Lavender);
+
+		private static Brush? _lavenderBlush;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LavenderBlush.</summary>
+		public static Brush LavenderBlush => _lavenderBlush ??= new SolidBrush(Color.LavenderBlush);
+
+		private static Brush? _lawnGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LawnGreen.</summary>
+		public static Brush LawnGreen => _lawnGreen ??= new SolidBrush(Color.LawnGreen);
+
+		private static Brush? _lemonChiffon;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LemonChiffon.</summary>
+		public static Brush LemonChiffon => _lemonChiffon ??= new SolidBrush(Color.LemonChiffon);
+
+		private static Brush? _lightBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightBlue.</summary>
+		public static Brush LightBlue => _lightBlue ??= new SolidBrush(Color.LightBlue);
+
+		private static Brush? _lightCoral;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightCoral.</summary>
+		public static Brush LightCoral => _lightCoral ??= new SolidBrush(Color.LightCoral);
+
+		private static Brush? _lightCyan;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightCyan.</summary>
+		public static Brush LightCyan => _lightCyan ??= new SolidBrush(Color.LightCyan);
+
+		private static Brush? _lightGoldenrodYellow;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightGoldenrodYellow.</summary>
+		public static Brush LightGoldenrodYellow => _lightGoldenrodYellow ??= new SolidBrush(Color.LightGoldenrodYellow);
+
+		private static Brush? _lightGray;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightGray.</summary>
+		public static Brush LightGray => _lightGray ??= new SolidBrush(Color.LightGray);
+
+		private static Brush? _lightGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightGreen.</summary>
+		public static Brush LightGreen => _lightGreen ??= new SolidBrush(Color.LightGreen);
+
+		private static Brush? _lightPink;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightPink.</summary>
+		public static Brush LightPink => _lightPink ??= new SolidBrush(Color.LightPink);
+
+		private static Brush? _lightSalmon;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightSalmon.</summary>
+		public static Brush LightSalmon => _lightSalmon ??= new SolidBrush(Color.LightSalmon);
+
+		private static Brush? _lightSeaGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightSeaGreen.</summary>
+		public static Brush LightSeaGreen => _lightSeaGreen ??= new SolidBrush(Color.LightSeaGreen);
+
+		private static Brush? _lightSkyBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightSkyBlue.</summary>
+		public static Brush LightSkyBlue => _lightSkyBlue ??= new SolidBrush(Color.LightSkyBlue);
+
+		private static Brush? _lightSlateGray;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightSlateGray.</summary>
+		public static Brush LightSlateGray => _lightSlateGray ??= new SolidBrush(Color.LightSlateGray);
+
+		private static Brush? _lightSteelBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightSteelBlue.</summary>
+		public static Brush LightSteelBlue => _lightSteelBlue ??= new SolidBrush(Color.LightSteelBlue);
+
+		private static Brush? _lightYellow;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LightYellow.</summary>
+		public static Brush LightYellow => _lightYellow ??= new SolidBrush(Color.LightYellow);
+
+		private static Brush? _lime;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Lime.</summary>
+		public static Brush Lime => _lime ??= new SolidBrush(Color.Lime);
+
+		private static Brush? _limeGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color LimeGreen.</summary>
+		public static Brush LimeGreen => _limeGreen ??= new SolidBrush(Color.LimeGreen);
+
+		private static Brush? _linen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Linen.</summary>
+		public static Brush Linen => _linen ??= new SolidBrush(Color.Linen);
+
+		private static Brush? _magenta;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Magenta.</summary>
+		public static Brush Magenta => _magenta ??= new SolidBrush(Color.Magenta);
+
+		private static Brush? _maroon;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Maroon.</summary>
+		public static Brush Maroon => _maroon ??= new SolidBrush(Color.Maroon);
+
+		private static Brush? _mediumAquamarine;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MediumAquamarine.</summary>
+		public static Brush MediumAquamarine => _mediumAquamarine ??= new SolidBrush(Color.MediumAquamarine);
+
+		private static Brush? _mediumBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MediumBlue.</summary>
+		public static Brush MediumBlue => _mediumBlue ??= new SolidBrush(Color.MediumBlue);
+
+		private static Brush? _mediumOrchid;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MediumOrchid.</summary>
+		public static Brush MediumOrchid => _mediumOrchid ??= new SolidBrush(Color.MediumOrchid);
+
+		private static Brush? _mediumPurple;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MediumPurple.</summary>
+		public static Brush MediumPurple => _mediumPurple ??= new SolidBrush(Color.MediumPurple);
+
+		private static Brush? _mediumSeaGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MediumSeaGreen.</summary>
+		public static Brush MediumSeaGreen => _mediumSeaGreen ??= new SolidBrush(Color.MediumSeaGreen);
+
+		private static Brush? _mediumSlateBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MediumSlateBlue.</summary>
+		public static Brush MediumSlateBlue => _mediumSlateBlue ??= new SolidBrush(Color.MediumSlateBlue);
+
+		private static Brush? _mediumSpringGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MediumSpringGreen.</summary>
+		public static Brush MediumSpringGreen => _mediumSpringGreen ??= new SolidBrush(Color.MediumSpringGreen);
+
+		private static Brush? _mediumTurquoise;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MediumTurquoise.</summary>
+		public static Brush MediumTurquoise => _mediumTurquoise ??= new SolidBrush(Color.MediumTurquoise);
+
+		private static Brush? _mediumVioletRed;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MediumVioletRed.</summary>
+		public static Brush MediumVioletRed => _mediumVioletRed ??= new SolidBrush(Color.MediumVioletRed);
+
+		private static Brush? _midnightBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MidnightBlue.</summary>
+		public static Brush MidnightBlue => _midnightBlue ??= new SolidBrush(Color.MidnightBlue);
+
+		private static Brush? _mintCream;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MintCream.</summary>
+		public static Brush MintCream => _mintCream ??= new SolidBrush(Color.MintCream);
+
+		private static Brush? _mistyRose;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color MistyRose.</summary>
+		public static Brush MistyRose => _mistyRose ??= new SolidBrush(Color.MistyRose);
+
+		private static Brush? _moccasin;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Moccasin.</summary>
+		public static Brush Moccasin => _moccasin ??= new SolidBrush(Color.Moccasin);
+
+		private static Brush? _navajoWhite;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color NavajoWhite.</summary>
+		public static Brush NavajoWhite => _navajoWhite ??= new SolidBrush(Color.NavajoWhite);
+
+		private static Brush? _navy;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Navy.</summary>
+		public static Brush Navy => _navy ??= new SolidBrush(Color.Navy);
+
+		private static Brush? _oldLace;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color OldLace.</summary>
+		public static Brush OldLace => _oldLace ??= new SolidBrush(Color.OldLace);
+
+		private static Brush? _olive;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Olive.</summary>
+		public static Brush Olive => _olive ??= new SolidBrush(Color.Olive);
+
+		private static Brush? _oliveDrab;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color OliveDrab.</summary>
+		public static Brush OliveDrab => _oliveDrab ??= new SolidBrush(Color.OliveDrab);
+
+		private static Brush? _orange;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Orange.</summary>
+		public static Brush Orange => _orange ??= new SolidBrush(Color.Orange);
+
+		private static Brush? _orangeRed;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color OrangeRed.</summary>
+		public static Brush OrangeRed => _orangeRed ??= new SolidBrush(Color.OrangeRed);
+
+		private static Brush? _orchid;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Orchid.</summary>
+		public static Brush Orchid => _orchid ??= new SolidBrush(Color.Orchid);
+
+		private static Brush? _paleGoldenrod;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color PaleGoldenrod.</summary>
+		public static Brush PaleGoldenrod => _paleGoldenrod ??= new SolidBrush(Color.PaleGoldenrod);
+
+		private static Brush? _paleGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color PaleGreen.</summary>
+		public static Brush PaleGreen => _paleGreen ??= new SolidBrush(Color.PaleGreen);
+
+		private static Brush? _paleTurquoise;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color PaleTurquoise.</summary>
+		public static Brush PaleTurquoise => _paleTurquoise ??= new SolidBrush(Color.PaleTurquoise);
+
+		private static Brush? _paleVioletRed;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color PaleVioletRed.</summary>
+		public static Brush PaleVioletRed => _paleVioletRed ??= new SolidBrush(Color.PaleVioletRed);
+
+		private static Brush? _papayaWhip;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color PapayaWhip.</summary>
+		public static Brush PapayaWhip => _papayaWhip ??= new SolidBrush(Color.PapayaWhip);
+
+		private static Brush? _peachPuff;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color PeachPuff.</summary>
+		public static Brush PeachPuff => _peachPuff ??= new SolidBrush(Color.PeachPuff);
+
+		private static Brush? _peru;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Peru.</summary>
+		public static Brush Peru => _peru ??= new SolidBrush(Color.Peru);
+
+		private static Brush? _pink;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Pink.</summary>
+		public static Brush Pink => _pink ??= new SolidBrush(Color.Pink);
+
+		private static Brush? _plum;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Plum.</summary>
+		public static Brush Plum => _plum ??= new SolidBrush(Color.Plum);
+
+		private static Brush? _powderBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color PowderBlue.</summary>
+		public static Brush PowderBlue => _powderBlue ??= new SolidBrush(Color.PowderBlue);
+
+		private static Brush? _purple;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Purple.</summary>
+		public static Brush Purple => _purple ??= new SolidBrush(Color.Purple);
+
+		private static Brush? _red;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Red.</summary>
+		public static Brush Red => _red ??= new SolidBrush(Color.Red);
+
+		private static Brush? _rosyBrown;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color RosyBrown.</summary>
+		public static Brush RosyBrown => _rosyBrown ??= new SolidBrush(Color.RosyBrown);
+
+		private static Brush? _royalBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color RoyalBlue.</summary>
+		public static Brush RoyalBlue => _royalBlue ??= new SolidBrush(Color.RoyalBlue);
+
+		private static Brush? _saddleBrown;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color SaddleBrown.</summary>
+		public static Brush SaddleBrown => _saddleBrown ??= new SolidBrush(Color.SaddleBrown);
+
+		private static Brush? _salmon;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Salmon.</summary>
+		public static Brush Salmon => _salmon ??= new SolidBrush(Color.Salmon);
+
+		private static Brush? _sandyBrown;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color SandyBrown.</summary>
+		public static Brush SandyBrown => _sandyBrown ??= new SolidBrush(Color.SandyBrown);
+
+		private static Brush? _seaGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color SeaGreen.</summary>
+		public static Brush SeaGreen => _seaGreen ??= new SolidBrush(Color.SeaGreen);
+
+		private static Brush? _seaShell;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color SeaShell.</summary>
+		public static Brush SeaShell => _seaShell ??= new SolidBrush(Color.SeaShell);
+
+		private static Brush? _sienna;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Sienna.</summary>
+		public static Brush Sienna => _sienna ??= new SolidBrush(Color.Sienna);
+
+		private static Brush? _silver;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Silver.</summary>
+		public static Brush Silver => _silver ??= new SolidBrush(Color.Silver);
+
+		private static Brush? _skyBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color SkyBlue.</summary>
+		public static Brush SkyBlue => _skyBlue ??= new SolidBrush(Color.SkyBlue);
+
+		private static Brush? _slateBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color SlateBlue.</summary>
+		public static Brush SlateBlue => _slateBlue ??= new SolidBrush(Color.SlateBlue);
+
+		private static Brush? _slateGray;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color SlateGray.</summary>
+		public static Brush SlateGray => _slateGray ??= new SolidBrush(Color.SlateGray);
+
+		private static Brush? _snow;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Snow.</summary>
+		public static Brush Snow => _snow ??= new SolidBrush(Color.Snow);
+
+		private static Brush? _springGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color SpringGreen.</summary>
+		public static Brush SpringGreen => _springGreen ??= new SolidBrush(Color.SpringGreen);
+
+		private static Brush? _steelBlue;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color SteelBlue.</summary>
+		public static Brush SteelBlue => _steelBlue ??= new SolidBrush(Color.SteelBlue);
+
+		private static Brush? _tan;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Tan.</summary>
+		public static Brush Tan => _tan ??= new SolidBrush(Color.Tan);
+
+		private static Brush? _teal;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Teal.</summary>
+		public static Brush Teal => _teal ??= new SolidBrush(Color.Teal);
+
+		private static Brush? _thistle;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Thistle.</summary>
+		public static Brush Thistle => _thistle ??= new SolidBrush(Color.Thistle);
+
+		private static Brush? _tomato;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Tomato.</summary>
+		public static Brush Tomato => _tomato ??= new SolidBrush(Color.Tomato);
+
+		private static Brush? _transparent;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Transparent.</summary>
+		public static Brush Transparent => _transparent ??= new SolidBrush(Color.Transparent);
+
+		private static Brush? _turquoise;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Turquoise.</summary>
+		public static Brush Turquoise => _turquoise ??= new SolidBrush(Color.Turquoise);
+
+		private static Brush? _violet;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Violet.</summary>
+		public static Brush Violet => _violet ??= new SolidBrush(Color.Violet);
+
+		private static Brush? _wheat;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Wheat.</summary>
+		public static Brush Wheat => _wheat ??= new SolidBrush(Color.Wheat);
+
+		private static Brush? _white;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color White.</summary>
+		public static Brush White => _white ??= new SolidBrush(Color.White);
+
+		private static Brush? _whiteSmoke;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color WhiteSmoke.</summary>
+		public static Brush WhiteSmoke => _whiteSmoke ??= new SolidBrush(Color.WhiteSmoke);
+
+		private static Brush? _yellow;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color Yellow.</summary>
+		public static Brush Yellow => _yellow ??= new SolidBrush(Color.Yellow);
+
+		private static Brush? _yellowGreen;
+		/// <summary>Gets a system-defined <see cref="Brush"/> object of the color YellowGreen.</summary>
+		public static Brush YellowGreen => _yellowGreen ??= new SolidBrush(Color.YellowGreen);
 	}
 }
