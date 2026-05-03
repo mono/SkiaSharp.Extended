@@ -173,3 +173,31 @@ jobs:
         artifact: diff-images
         condition: always()
         displayName: Upload diff images
+
+  - job: benchmark_skia
+    displayName: Benchmark (Skia)
+    pool:
+      vmImage: windows-latest
+    steps:
+      - template: /scripts/azure-pipelines-steps-prepare.yml@self
+      - pwsh: |
+          dotnet run -c Release --project benchmarks/SkiaSharp.Drawing.Benchmarks.Skia -- --filter "*" --exporters json csv markdown --job short
+        displayName: Run Skia benchmarks
+      - publish: BenchmarkDotNet.Artifacts
+        artifact: benchmarks-skia
+        condition: always()
+        displayName: Upload Skia benchmark results
+
+  - job: benchmark_gdi
+    displayName: Benchmark (GDI+)
+    pool:
+      vmImage: windows-latest
+    steps:
+      - template: /scripts/azure-pipelines-steps-prepare.yml@self
+      - pwsh: |
+          dotnet run -c Release --project benchmarks/SkiaSharp.Drawing.Benchmarks.Gdi -- --filter "*" --exporters json csv markdown --job short
+        displayName: Run GDI+ benchmarks
+      - publish: BenchmarkDotNet.Artifacts
+        artifact: benchmarks-gdi
+        condition: always()
+        displayName: Upload GDI+ benchmark results
