@@ -106,21 +106,76 @@ cross-platform:
 - ❌ Multi-frame images (animated GIF) — `SelectActiveFrame` decodes individual frames; `ImageAnimator` basic stub only
 - ❌ Indexed pixel formats (8bpp, 4bpp, 1bpp) — converted to 32bpp on load
 
-### Partial Implementations
+### Clip Region CombineModes
 
-These features have basic implementations with known gaps:
+`SetClip()` supports all six combine modes:
+- ✅ `Replace`, `Intersect`, `Exclude` — direct SKCanvas clip operations
+- ✅ `Union`, `Xor`, `Complement` — computed via `SKPath.Op()`, then re-applied as a clip path
 
-**HatchBrush:**
-Renders all 53 standard hatch patterns as tiled 8×8 pixel bitmaps using
-`SKShader.CreateImage()` with `SKShaderTileMode.Repeat`. Patterns include
-lines, diagonals, cross-hatches, percent fills, checkerboards, bricks,
-and more. Unrecognized styles fall back to a cross pattern.
+## Partial Implementations
 
-**PathGradientBrush:**
+These features are implemented but have known gaps or approximations.
+
+### ImageAttributes
+
+`SetColorMatrix()` is applied during rendering via `SKColorFilter.CreateColorMatrix()`.
+The following methods store values but are **not yet applied** during drawing:
+- `SetGamma()` — gamma value stored, not applied
+- `SetThreshold()` — threshold value stored, not applied
+- `SetColorKey()` — color key range stored, not applied
+
+### HatchBrush
+
+All 53 standard hatch patterns are rendered as tiled 8×8 pixel bitmaps using
+`SKShader.CreateImage()` with `SKShaderTileMode.Repeat`. Patterns may not
+match GDI+ pixel-for-pixel due to different rasterization approaches.
+Unrecognized styles fall back to a cross pattern.
+
+### PathGradientBrush
+
 Approximated using `SKShader.CreateRadialGradient()`. Does not perfectly
 match GDI+'s path gradient algorithm for non-circular paths.
 
-**GraphicsPath:**
+### LinearGradientBrush
+
+Basic two-color blends work correctly. Complex multi-stop
+`InterpolationColors` blends may produce slightly different results than
+GDI+ due to color space interpolation differences.
+
+### DrawString
+
+Word wrapping is implemented for `StringFormat` layout rectangles.
+Character-level trimming modes (`EllipsisCharacter`, `EllipsisWord`,
+`EllipsisPath`) are not fully implemented — text may be clipped rather
+than truncated with an ellipsis.
+
+### MeasureString
+
+Padding matches the GDI+ convention of ~1/6 em on each side, but exact
+width and height metrics may differ slightly due to different font
+rasterizers (FreeType/HarfBuzz vs Windows ClearType).
+
+### LockBits
+
+Works correctly for `Format32bppArgb` and `Format32bppPArgb`. Sub-byte
+pixel formats (`Format1bppIndexed`, `Format4bppIndexed`) are not supported
+and will throw.
+
+### Printing (PDF-only)
+
+PDF output via `SKDocument` is fully functional. No physical printer
+spooler integration — `InstalledPrinters` returns only "PDF", and duplex
+printing / collation properties have no effect on PDF output.
+
+### Font
+
+All constructors and style properties work. Font metrics (`Height`,
+`GetHeight()`, `Size`) may differ slightly from GDI+ due to different font
+rasterizers. `GdiCharSet` and `GdiVerticalFont` are stored but have no
+rendering effect.
+
+### GraphicsPath
+
 - ✅ AddLine, AddRectangle, AddEllipse, AddArc, AddBezier, AddPolygon, AddPath, AddPie
 - ✅ `AddCurve` / `AddClosedCurve` — cardinal spline curves on path
 - ✅ `AddString` — text outlines via `SKFont.GetTextPath()`
@@ -130,40 +185,18 @@ match GDI+'s path gradient algorithm for non-circular paths.
 - ✅ `PathData` — returns points and types arrays
 - ❌ `Warp()` — perspective/bilinear warp (complex, no SkiaSharp equivalent)
 
-**Region:**
+### Region
+
 - ✅ Boolean operations (Union, Intersect, Exclude, Complement, Xor)
 - ✅ Visibility testing, bounds, transform
 - ❌ `GetRegionData()` — serialization to byte array
 - ❌ `GetRegionScans(Matrix)` — decomposition to rectangles
 
-**Font:**
-- ✅ All constructors, style mapping, size conversion
-- ✅ `Name`, `Size`, `Style`, `Bold`, `Italic`, `Height`
-- ✅ `GetHeight(Graphics)` — DPI-aware height calculation
-- ❌ `ToLogFont()` — Windows LOGFONT structure
-- ❌ `GdiCharSet`, `GdiVerticalFont` — GDI-specific properties
+### TypeConverters
 
-**TypeConverters:**
 `FontConverter`, `ImageConverter`, `ImageFormatConverter`, `ColorConverter`,
 `MarginsConverter`, `IconConverter` — most conversion methods throw PNSE.
 These are primarily used by the Windows Forms designer and property grid.
-
-### Image Processing
-
-**ImageAttributes:**
-Properties are stored and `SetColorMatrix()` is applied during rendering
-via `SKColorFilter.CreateColorMatrix()`. `SetGamma()`, `SetThreshold()`,
-`SetColorKey()` store values but are **not yet applied** during drawing.
-
-**ColorMatrix:**
-Stored as a 5×5 float matrix and applied to image rendering when set via
-`ImageAttributes.SetColorMatrix()`.
-
-### Clip Region CombineModes
-
-`SetClip()` supports all six combine modes:
-- ✅ `Replace`, `Intersect`, `Exclude` — direct SKCanvas clip operations
-- ✅ `Union`, `Xor`, `Complement` — computed via `SKPath.Op()`, then re-applied as a clip path
 
 ## API Compatibility
 
@@ -185,23 +218,274 @@ runtime only when unimplemented features are actually called.
 - `Brushes.*` and `Pens.*` factories use lazy initialization with caching.
   They are thread-safe for read access.
 
-## Remaining Unimplemented APIs (130 stubs)
+## All Unimplemented APIs — Complete Reference (130 stubs)
 
-All remaining `PlatformNotSupportedException` stubs fall into these categories:
+Every method below throws `PlatformNotSupportedException`. Use Ctrl+F to
+search for any specific method name.
 
 | Category | Count | Reason |
 |----------|-------|--------|
-| EnumerateMetafile | 36 | EMF/WMF record playback |
-| Metafile class | 46 | EMF/WMF format construction |
-| HDC/HWND (Graphics) | 10 | Windows device context handles |
-| CopyFromScreen | 4 | Platform-specific screen capture |
-| Font GDI handles | 8 | FromHfont/ToHfont/ToLogFont/FromHdc |
-| Bitmap GDI handles | 5 | GetHbitmap/GetHicon/FromHicon |
-| Printing GDI handles | 7 | GetHdevmode/SetHdevmode |
+| Metafile class | 46 | EMF/WMF format construction and playback |
+| EnumerateMetafile | 36 | EMF/WMF record enumeration |
+| HDC/HWND (Graphics) | 9 | Windows device context handles |
+| Font GDI handles | 8 | HFONT / LOGFONT / HDC interop |
+| Printing GDI handles | 7 | DEVMODE printer handles |
 | Image | 6 | FromHbitmap, serialization, encoder params |
-| Icon handles | 4 | Handle, FromHandle, ExtractAssociatedIcon |
+| Bitmap GDI handles | 5 | HBITMAP / HICON handles |
+| CopyFromScreen | 4 | Platform-specific screen capture |
+| Icon handles | 4 | HICON handle interop |
 | BufferedGraphics | 2 | HDC-based device context rendering |
-| Other | 2 | GetHalftonePalette, GetContextInfo |
+| Other (Graphics) | 3 | AddMetafileComment, GetHalftonePalette, GetContextInfo |
+
+---
+
+### Metafile (46 methods)
+
+The entire `System.Drawing.Imaging.Metafile` class is unimplemented.
+EMF/WMF is a Windows-specific vector format with no cross-platform equivalent.
+
+**Constructors (39):**
+
+```
+Metafile(nint henhmetafile, bool deleteEmf)
+Metafile(nint referenceHdc, EmfType emfType)
+Metafile(nint referenceHdc, EmfType emfType, string? description)
+Metafile(nint hmetafile, WmfPlaceableFileHeader wmfHeader)
+Metafile(nint hmetafile, WmfPlaceableFileHeader wmfHeader, bool deleteWmf)
+Metafile(nint referenceHdc, Rectangle frameRect)
+Metafile(nint referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit)
+Metafile(nint referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type)
+Metafile(nint referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type, string? desc)
+Metafile(nint referenceHdc, RectangleF frameRect)
+Metafile(nint referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit)
+Metafile(nint referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type)
+Metafile(nint referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type, string? description)
+Metafile(Stream stream)
+Metafile(Stream stream, nint referenceHdc)
+Metafile(Stream stream, nint referenceHdc, EmfType type)
+Metafile(Stream stream, nint referenceHdc, EmfType type, string? description)
+Metafile(Stream stream, nint referenceHdc, Rectangle frameRect)
+Metafile(Stream stream, nint referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit)
+Metafile(Stream stream, nint referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type)
+Metafile(Stream stream, nint referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type, string? description)
+Metafile(Stream stream, nint referenceHdc, RectangleF frameRect)
+Metafile(Stream stream, nint referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit)
+Metafile(Stream stream, nint referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type)
+Metafile(Stream stream, nint referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type, string? description)
+Metafile(string filename)
+Metafile(string fileName, nint referenceHdc)
+Metafile(string fileName, nint referenceHdc, EmfType type)
+Metafile(string fileName, nint referenceHdc, EmfType type, string? description)
+Metafile(string fileName, nint referenceHdc, Rectangle frameRect)
+Metafile(string fileName, nint referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit)
+Metafile(string fileName, nint referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type)
+Metafile(string fileName, nint referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type, string? description)
+Metafile(string fileName, nint referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, string? description)
+Metafile(string fileName, nint referenceHdc, RectangleF frameRect)
+Metafile(string fileName, nint referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit)
+Metafile(string fileName, nint referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type)
+Metafile(string fileName, nint referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type, string? description)
+Metafile(string fileName, nint referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, string? desc)
+```
+
+**Instance methods (3):**
+
+```
+nint GetHenhmetafile()
+MetafileHeader GetMetafileHeader()
+void PlayRecord(EmfPlusRecordType recordType, int flags, int dataSize, byte[] data)
+```
+
+**Static methods (4):**
+
+```
+static MetafileHeader GetMetafileHeader(nint henhmetafile)
+static MetafileHeader GetMetafileHeader(nint hmetafile, WmfPlaceableFileHeader wmfHeader)
+static MetafileHeader GetMetafileHeader(Stream stream)
+static MetafileHeader GetMetafileHeader(string fileName)
+```
+
+---
+
+### Graphics (52 methods)
+
+#### EnumerateMetafile — 36 overloads
+
+All `EnumerateMetafile` overloads throw PNSE. They enumerate EMF/WMF
+records for playback, which requires a metafile parser.
+
+```
+void EnumerateMetafile(Metafile metafile, Point destPoint, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, Point destPoint, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, Point destPoint, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+void EnumerateMetafile(Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit unit, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+void EnumerateMetafile(Metafile metafile, PointF destPoint, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, PointF destPoint, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, PointF destPoint, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+void EnumerateMetafile(Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit unit, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+void EnumerateMetafile(Metafile metafile, PointF[] destPoints, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, PointF[] destPoints, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, PointF[] destPoints, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+void EnumerateMetafile(Metafile metafile, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, PointF[] destPoints, RectangleF srcRect, GraphicsUnit unit, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+void EnumerateMetafile(Metafile metafile, Point[] destPoints, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, Point[] destPoints, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, Point[] destPoints, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+void EnumerateMetafile(Metafile metafile, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, Point[] destPoints, Rectangle srcRect, GraphicsUnit unit, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+void EnumerateMetafile(Metafile metafile, Rectangle destRect, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, Rectangle destRect, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, Rectangle destRect, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+void EnumerateMetafile(Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit unit, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+void EnumerateMetafile(Metafile metafile, RectangleF destRect, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, RectangleF destRect, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, RectangleF destRect, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+void EnumerateMetafile(Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback)
+void EnumerateMetafile(Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit, Graphics.EnumerateMetafileProc callback, nint callbackData)
+void EnumerateMetafile(Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit unit, Graphics.EnumerateMetafileProc callback, nint callbackData, ImageAttributes? imageAttr)
+```
+
+#### HDC / HWND handles — 9 methods
+
+```
+static Graphics FromHdc(nint hdc)
+static Graphics FromHdc(nint hdc, nint hdevice)
+static Graphics FromHdcInternal(nint hdc)
+static Graphics FromHwnd(nint hwnd)
+static Graphics FromHwndInternal(nint hwnd)
+nint GetHdc()
+void ReleaseHdc()
+void ReleaseHdc(nint hdc)
+void ReleaseHdcInternal(nint hdc)
+```
+
+#### Screen capture — 4 methods
+
+```
+void CopyFromScreen(Point upperLeftSource, Point upperLeftDestination, Size blockRegionSize)
+void CopyFromScreen(Point upperLeftSource, Point upperLeftDestination, Size blockRegionSize, CopyPixelOperation copyPixelOperation)
+void CopyFromScreen(int sourceX, int sourceY, int destinationX, int destinationY, Size blockRegionSize)
+void CopyFromScreen(int sourceX, int sourceY, int destinationX, int destinationY, Size blockRegionSize, CopyPixelOperation copyPixelOperation)
+```
+
+#### Metafile comment — 1 method
+
+```
+void AddMetafileComment(byte[] data)
+```
+
+#### Other — 2 methods
+
+```
+static nint GetHalftonePalette()
+object GetContextInfo()
+```
+
+---
+
+### Font (8 methods)
+
+Windows GDI font handle interop — requires HFONT, LOGFONT, and HDC
+structures that do not exist cross-platform.
+
+```
+static Font FromHdc(nint hdc)
+static Font FromHfont(nint hfont)
+static Font FromLogFont(object lf)
+static Font FromLogFont(object lf, nint hdc)
+nint ToHfont()
+void ToLogFont(object logFont)
+void ToLogFont(object logFont, Graphics graphics)
+void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+```
+
+---
+
+### Image (6 methods)
+
+GDI bitmap handles, multi-frame encoder operations, and serialization.
+
+```
+static Bitmap FromHbitmap(nint hbitmap)
+static Bitmap FromHbitmap(nint hbitmap, nint hpalette)
+EncoderParameters? GetEncoderParameterList(Guid encoder)
+void SaveAdd(Image image, EncoderParameters? encoderParams)
+void SaveAdd(EncoderParameters? encoderParams)
+void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+```
+
+---
+
+### Bitmap (5 methods)
+
+Windows GDI bitmap and icon handle interop.
+
+```
+static Bitmap FromHicon(nint hicon)
+static Bitmap FromResource(nint hinstance, string bitmapName)
+nint GetHbitmap()
+nint GetHbitmap(Color background)
+nint GetHicon()
+```
+
+---
+
+### PrinterSettings (5 methods)
+
+Windows DEVMODE printer handle interop.
+
+```
+nint GetHdevmode()
+nint GetHdevmode(PageSettings pageSettings)
+nint GetHdevnames()
+void SetHdevmode(nint hdevmode)
+void SetHdevnames(nint hdevnames)
+```
+
+---
+
+### PageSettings (2 methods)
+
+Windows DEVMODE printer handle interop.
+
+```
+void CopyToHdevmode(nint hdevmode)
+void SetHdevmode(nint hdevmode)
+```
+
+---
+
+### Icon (4 methods)
+
+Windows HICON handle interop, Win32 resource extraction, and serialization.
+
+```
+nint Handle { get; }
+static Icon FromHandle(nint handle)
+static Icon? ExtractAssociatedIcon(string filePath)
+void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+```
+
+---
+
+### BufferedGraphics / BufferedGraphicsContext (2 methods)
+
+HDC-based device context rendering.
+
+```
+void BufferedGraphics.Render(nint targetDC)
+BufferedGraphics BufferedGraphicsContext.Allocate(nint targetDC, Rectangle targetRectangle)
+```
+
+---
 
 ## Cross-Platform Alternatives
 

@@ -129,6 +129,20 @@ A drop-in replacement for `System.Drawing.Common` backed by SkiaSharp.
 - All coordinate-based curve rendering (ellipses, arcs, pies) uses a +0.5 pixel offset via `GdiCurveRect()` for GDI+ compatibility
 - Polygon vertex coordinates also use +0.5 offset via `GdiPolygonPath()`
 
+### Partial Implementations (known gaps)
+Some features are implemented but have known limitations:
+- **ImageAttributes** — `SetColorMatrix()` applied via `SKColorFilter`, but `SetGamma()`/`SetThreshold()`/`SetColorKey()` values are stored only, not applied during drawing
+- **HatchBrush** — all 53 patterns rendered but may not match GDI+ pixel-for-pixel
+- **PathGradientBrush** — approximated with `SKShader.CreateRadialGradient()`
+- **LinearGradientBrush** — basic blends work; complex multi-stop `InterpolationColors` may differ
+- **DrawString** — word wrapping implemented; character-level trimming (`EllipsisCharacter` etc.) not fully implemented
+- **MeasureString** — padding matches GDI+ ~1/6 em, but exact metrics may differ across platforms
+- **LockBits** — works for `Format32bppArgb`; sub-byte formats (`1bpp`/`4bpp`) not supported
+- **Printing** — PDF output only, no physical printer spooler integration
+- **Font** — all constructors work; some metrics may differ from GDI+ due to different font rasterizers
+
+See `source/SkiaSharp.Drawing/KNOWN-LIMITATIONS.md` for the complete list of all 130 unimplemented API stubs and detailed partial implementation notes.
+
 ### Test Rules
 - **Every new drawing feature must have pixel comparison scenarios** — add `[Fact]` methods to the appropriate class in `tests/SkiaSharp.Drawing.Scenarios/`
 - Each scenario class name = folder name for reference images (e.g., `Ellipses` class → `ReferenceImages/Ellipses/`)
