@@ -77,12 +77,12 @@ jobs:
       - checkout: self
       - pwsh: dotnet tool restore
         displayName: Restore .NET tools
-      - pwsh: dotnet build source/SkiaSharp.Drawing/SkiaSharp.Drawing.csproj -c Release
-        displayName: Build SkiaSharp.Drawing
+      - pwsh: dotnet build source/SkiaSharp.Extended.Drawing.Common/SkiaSharp.Extended.Drawing.Common.csproj -c Release
+        displayName: Build SkiaSharp.Extended.Drawing.Common
       - pwsh: >-
           dotnet apicompat
           --left tools/api-baseline/netstandard2.0/System.Drawing.Common.dll
-          --right source/SkiaSharp.Drawing/bin/Release/netstandard2.0/System.Drawing.Common.dll
+          --right source/SkiaSharp.Extended.Drawing.Common/bin/Release/netstandard2.0/System.Drawing.Common.dll
           --strict-mode
           --suppression-file tools/api-baseline/api-compat-suppressions.xml
         displayName: Run API compatibility check
@@ -95,8 +95,8 @@ jobs:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: |
           $env:SCENARIO_OUTPUT_PATH = "$(Build.ArtifactStagingDirectory)/gdi-images"
-          $env:REFERENCE_IMAGES_PATH = "$(Build.SourcesDirectory)/tests/SkiaSharp.Drawing.Scenarios.ReferenceImages"
-          dotnet test tests/SkiaSharp.Drawing.ReferenceGenerator --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
+          $env:REFERENCE_IMAGES_PATH = "$(Build.SourcesDirectory)/tests/SkiaSharp.Extended.Drawing.Common.Scenarios.ReferenceImages"
+          dotnet test tests/SkiaSharp.Extended.Drawing.Common.ReferenceGenerator --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
         displayName: Generate GDI+ reference images
       - task: PublishTestResults@2
         condition: always()
@@ -116,8 +116,8 @@ jobs:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: |
           $env:SCENARIO_OUTPUT_PATH = "$(Build.ArtifactStagingDirectory)/skia-images"
-          $env:REFERENCE_IMAGES_PATH = "$(Build.SourcesDirectory)/tests/SkiaSharp.Drawing.Scenarios.ReferenceImages"
-          dotnet test tests/SkiaSharp.Drawing.SkiaGenerator --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
+          $env:REFERENCE_IMAGES_PATH = "$(Build.SourcesDirectory)/tests/SkiaSharp.Extended.Drawing.Common.Scenarios.ReferenceImages"
+          dotnet test tests/SkiaSharp.Extended.Drawing.Common.SkiaGenerator --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
         displayName: Generate Skia reference images
       - task: PublishTestResults@2
         condition: always()
@@ -161,7 +161,7 @@ jobs:
 
           $env:REFERENCE_IMAGES_PATH = $refDir
           $env:TEST_ARTIFACTS_PATH = "$(Build.ArtifactStagingDirectory)/diff-images"
-          dotnet test tests/SkiaSharp.Drawing.PixelDiff --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
+          dotnet test tests/SkiaSharp.Extended.Drawing.Common.PixelDiff --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
         displayName: Compare Skia vs GDI images
       - task: PublishTestResults@2
         condition: always()
@@ -181,7 +181,7 @@ jobs:
     steps:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: |
-          dotnet run -c Release --project benchmarks/SkiaSharp.Drawing.Benchmarks.Skia -- --filter "*" --exporters json csv markdown --job short
+          dotnet run -c Release --project benchmarks/SkiaSharp.Extended.Drawing.Common.Benchmarks.Skia -- --filter "*" --exporters json csv markdown --job short
         displayName: Run Skia benchmarks
       - publish: BenchmarkDotNet.Artifacts
         artifact: benchmarks-skia
@@ -195,7 +195,7 @@ jobs:
     steps:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: |
-          dotnet run -c Release --project benchmarks/SkiaSharp.Drawing.Benchmarks.Gdi -- --filter "*" --exporters json csv markdown --job short
+          dotnet run -c Release --project benchmarks/SkiaSharp.Extended.Drawing.Common.Benchmarks.Gdi -- --filter "*" --exporters json csv markdown --job short
         displayName: Run GDI+ benchmarks
       - publish: BenchmarkDotNet.Artifacts
         artifact: benchmarks-gdi

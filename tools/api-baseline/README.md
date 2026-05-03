@@ -1,7 +1,7 @@
 # API Baseline
 
 This directory contains the reference assemblies used to verify API compatibility
-of `SkiaSharp.Drawing` against `System.Drawing.Common`.
+of `SkiaSharp.Extended.Drawing.Common` against `System.Drawing.Common`.
 
 ## Contents
 
@@ -13,12 +13,12 @@ of `SkiaSharp.Drawing` against `System.Drawing.Common`.
 ## How the Check Works
 
 The CI pipeline (`api_compat` job in `azure-pipelines-public.yml`) builds
-`SkiaSharp.Drawing` and runs:
+`SkiaSharp.Extended.Drawing.Common` and runs:
 
 ```
 dotnet apicompat \
   --left  tools/api-baseline/netstandard2.0/System.Drawing.Common.dll \
-  --right source/SkiaSharp.Drawing/bin/Release/netstandard2.0/System.Drawing.Common.dll \
+  --right source/SkiaSharp.Extended.Drawing.Common/bin/Release/netstandard2.0/System.Drawing.Common.dll \
   --strict-mode \
   --suppression-file tools/api-baseline/api-compat-suppressions.xml
 ```
