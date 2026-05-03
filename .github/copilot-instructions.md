@@ -186,3 +186,15 @@ dotnet test tests/SkiaSharp.Drawing.Tests/ --filter "FullyQualifiedName~PixelCom
 dotnet tool restore
 dotnet apicompat --left tools/api-baseline/netstandard2.0/System.Drawing.Common.dll --right source/SkiaSharp.Drawing/bin/Release/netstandard2.0/System.Drawing.Common.dll --strict-mode --suppression-file tools/api-baseline/api-compat-suppressions.xml
 ```
+
+### Benchmarks
+```bash
+# Run SkiaSharp.Drawing benchmarks
+dotnet run -c Release --project benchmarks/SkiaSharp.Drawing.Benchmarks.Skia/ -- --filter "*Fill*"
+
+# Run GDI+ benchmarks (Windows only)
+dotnet run -c Release --project benchmarks/SkiaSharp.Drawing.Benchmarks.Gdi/ -- --filter "*Fill*"
+
+# Run all benchmarks
+dotnet run -c Release --project benchmarks/SkiaSharp.Drawing.Benchmarks.Skia/
+```
