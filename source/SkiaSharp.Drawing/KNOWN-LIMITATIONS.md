@@ -184,3 +184,60 @@ runtime only when unimplemented features are actually called.
   Graphics object when drawing multiple operations on the same image.
 - `Brushes.*` and `Pens.*` factories use lazy initialization with caching.
   They are thread-safe for read access.
+
+## Remaining Unimplemented APIs (130 stubs)
+
+All remaining `PlatformNotSupportedException` stubs fall into these categories:
+
+| Category | Count | Reason |
+|----------|-------|--------|
+| EnumerateMetafile | 36 | EMF/WMF record playback |
+| Metafile class | 46 | EMF/WMF format construction |
+| HDC/HWND (Graphics) | 10 | Windows device context handles |
+| CopyFromScreen | 4 | Platform-specific screen capture |
+| Font GDI handles | 8 | FromHfont/ToHfont/ToLogFont/FromHdc |
+| Bitmap GDI handles | 5 | GetHbitmap/GetHicon/FromHicon |
+| Printing GDI handles | 7 | GetHdevmode/SetHdevmode |
+| Image | 6 | FromHbitmap, serialization, encoder params |
+| Icon handles | 4 | Handle, FromHandle, ExtractAssociatedIcon |
+| BufferedGraphics | 2 | HDC-based device context rendering |
+| Other | 2 | GetHalftonePalette, GetContextInfo |
+
+## Cross-Platform Alternatives
+
+For features that can't be implemented natively, these libraries may help:
+
+### Metafile / EMF / WMF
+- **[Metafiles.Net](https://www.nuget.org/packages/Metafiles.Net/)** — pure
+  managed .NET library for reading EMF and WMF files cross-platform. Could
+  be integrated to provide basic metafile loading and rendering to our
+  Graphics surface.
+
+### Screen Capture (CopyFromScreen)
+No cross-platform .NET library exists for screen capture. Platform-specific
+approaches:
+- **Windows:** P/Invoke `BitBlt` or use existing `Graphics.CopyFromScreen`
+- **macOS:** P/Invoke `CGDisplayCreateImage` or shell to `screencapture`
+- **Linux:** P/Invoke X11/XCB `XGetImage` or shell to `import` (ImageMagick)
+
+A future `ICaptureProvider` interface could allow platform-specific
+implementations to be plugged in.
+
+### HDC / HWND Interop
+These are fundamentally Windows concepts with no cross-platform equivalent.
+Applications migrating from WinForms should:
+- Replace `Graphics.FromHwnd()` with `Graphics.FromImage()` + render to bitmap
+- Replace `GetHdc()` / `ReleaseHdc()` with direct SkiaSharp canvas access
+- Replace `FromHdc()` with bitmap-based rendering
+
+### Printing
+The current PDF-based printing implementation covers most use cases. For
+physical printer access on specific platforms:
+- **macOS:** `NSPrintOperation` via platform bindings
+- **Linux:** CUPS via `libcups` P/Invoke
+- **Windows:** The original `System.Drawing.Common` can be used directly
+
+### Font Handles (HFONT / LOGFONT)
+These are GDI-specific structures. Applications should use font family name
+and style instead of GDI handles. The `Font` class fully supports creation
+from family name, size, and style across all platforms.
