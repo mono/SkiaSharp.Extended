@@ -200,8 +200,8 @@ These are primarily used by the Windows Forms designer and property grid.
 
 ## API Compatibility
 
-The assembly has **100% ABI compatibility** with `System.Drawing.Common`
-validated by `dotnet apicompat --strict-mode`. Every public type, method,
+The assembly has **API compatibility** with `System.Drawing.Common`
+validated by `dotnet apicompat`. Every public type, method,
 property, and event exists with the correct signature.
 
 Unimplemented methods throw `PlatformNotSupportedException` with a

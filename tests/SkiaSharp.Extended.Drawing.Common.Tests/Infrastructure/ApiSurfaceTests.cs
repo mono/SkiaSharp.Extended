@@ -29,7 +29,7 @@ public class ApiSurfaceTests
     public void CoreType_Exists(Type type)
     {
         Assert.NotNull(type);
-        Assert.Equal("System.Drawing.Common", type.Assembly.GetName().Name);
+        Assert.Equal("SkiaSharp.Extended.Drawing.Common", type.Assembly.GetName().Name);
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ public class ApiSurfaceTests
     public void AssemblyName_MatchesBaseline()
     {
         var assembly = typeof(System.Drawing.Graphics).Assembly;
-        Assert.Equal("System.Drawing.Common", assembly.GetName().Name);
+        Assert.Equal("SkiaSharp.Extended.Drawing.Common", assembly.GetName().Name);
     }
 
     /// <summary>

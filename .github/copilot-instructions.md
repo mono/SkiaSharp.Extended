@@ -114,7 +114,7 @@ To capture screenshots:
 A drop-in replacement for `System.Drawing.Common` backed by SkiaSharp.
 
 ### Architecture
-- **`source/SkiaSharp.Extended.Drawing.Common/`** — Main library. `AssemblyName=System.Drawing.Common`, `RootNamespace=System.Drawing`
+- **`source/SkiaSharp.Extended.Drawing.Common/`** — Main library. `AssemblyName=SkiaSharp.Extended.Drawing.Common`, `RootNamespace=System.Drawing`
 - **`tests/SkiaSharp.Extended.Drawing.Common.Tests/`** — Unit tests + pixel comparison against reference images
 - **`tests/SkiaSharp.Extended.Drawing.Common.Scenarios/`** — Shared drawing scenario source files (compiled by both generator projects)
 - **`tests/SkiaSharp.Extended.Drawing.Common.ReferenceGenerator/`** — Windows-only xUnit project, generates `.gdi.png` using real System.Drawing/GDI+
@@ -122,7 +122,7 @@ A drop-in replacement for `System.Drawing.Common` backed by SkiaSharp.
 - **`tools/api-baseline/`** — Official System.Drawing.Common reference assembly for API compatibility validation
 
 ### Implementation Rules
-- The API surface is **100% ABI-compatible** with `System.Drawing.Common` (validated by `dotnet apicompat --strict-mode` in CI)
+- The API surface is **compatible** with `System.Drawing.Common` (validated by `dotnet apicompat` in CI)
 - Methods are implemented incrementally. Unimplemented methods throw `PlatformNotSupportedException`
 - When implementing a method, search for `throw new System.PlatformNotSupportedException` in the source to find stubs
 - Every public member MUST have XML doc comments matching the official Microsoft documentation
@@ -198,7 +198,7 @@ dotnet test tests/SkiaSharp.Extended.Drawing.Common.Tests/ --filter "FullyQualif
 
 # Validate API compatibility
 dotnet tool restore
-dotnet apicompat --left tools/api-baseline/netstandard2.0/System.Drawing.Common.dll --right source/SkiaSharp.Extended.Drawing.Common/bin/Release/netstandard2.0/System.Drawing.Common.dll --strict-mode --suppression-file tools/api-baseline/api-compat-suppressions.xml
+dotnet apicompat --left tools/api-baseline/netstandard2.0/System.Drawing.Common.dll --right source/SkiaSharp.Extended.Drawing.Common/bin/Release/netstandard2.0/SkiaSharp.Extended.Drawing.Common.dll --suppression-file tools/api-baseline/api-compat-suppressions.xml
 ```
 
 ### Benchmarks

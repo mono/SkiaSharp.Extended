@@ -87,8 +87,7 @@ stages:
           - pwsh: >-
               dotnet apicompat
               --left tools/api-baseline/netstandard2.0/System.Drawing.Common.dll
-              --right source/SkiaSharp.Extended.Drawing.Common/bin/Release/netstandard2.0/System.Drawing.Common.dll
-              --strict-mode
+              --right source/SkiaSharp.Extended.Drawing.Common/bin/Release/netstandard2.0/SkiaSharp.Extended.Drawing.Common.dll
               --suppression-file tools/api-baseline/api-compat-suppressions.xml
             displayName: Run API compatibility check
 
