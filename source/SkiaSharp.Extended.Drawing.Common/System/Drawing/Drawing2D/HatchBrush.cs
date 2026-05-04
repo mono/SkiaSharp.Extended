@@ -107,11 +107,11 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 		{
 			case HatchStyle.Horizontal:
 			case HatchStyle.LightHorizontal:
-				canvas.DrawLine(0, 4, size, 4, fgPaint);
+				canvas.DrawLine(0, 0, size, 0, fgPaint);
 				break;
 			case HatchStyle.Vertical:
 			case HatchStyle.LightVertical:
-				canvas.DrawLine(4, 0, 4, size, fgPaint);
+				canvas.DrawLine(0, 0, 0, size, fgPaint);
 				break;
 			case HatchStyle.ForwardDiagonal:
 			case HatchStyle.LightDownwardDiagonal:
@@ -123,8 +123,8 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 				break;
 			case HatchStyle.Cross:
 			case HatchStyle.SmallGrid:
-				canvas.DrawLine(0, 4, size, 4, fgPaint);
-				canvas.DrawLine(4, 0, 4, size, fgPaint);
+				canvas.DrawLine(0, 0, size, 0, fgPaint);
+				canvas.DrawLine(0, 0, 0, size, fgPaint);
 				break;
 			case HatchStyle.DiagonalCross:
 			case HatchStyle.OutlinedDiamond:
@@ -166,12 +166,12 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 					canvas.DrawLine(0, y, size, y, fgPaint);
 				break;
 			case HatchStyle.DashedHorizontal:
-				canvas.DrawLine(0, 2, 4, 2, fgPaint);
-				canvas.DrawLine(4, 6, 8, 6, fgPaint);
+				canvas.DrawLine(0, 0, 4, 0, fgPaint);
+				canvas.DrawLine(4, 4, 8, 4, fgPaint);
 				break;
 			case HatchStyle.DashedVertical:
-				canvas.DrawLine(2, 0, 2, 4, fgPaint);
-				canvas.DrawLine(6, 4, 6, 8, fgPaint);
+				canvas.DrawLine(0, 0, 0, 4, fgPaint);
+				canvas.DrawLine(4, 4, 4, 8, fgPaint);
 				break;
 			case HatchStyle.DashedDownwardDiagonal:
 				canvas.DrawLine(0, 0, 4, 4, fgPaint);
