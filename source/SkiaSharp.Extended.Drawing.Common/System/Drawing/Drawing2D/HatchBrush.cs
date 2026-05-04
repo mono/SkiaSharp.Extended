@@ -115,11 +115,13 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 				break;
 			case HatchStyle.ForwardDiagonal:
 			case HatchStyle.LightDownwardDiagonal:
-				canvas.DrawLine(0, 0, size, size, fgPaint);
+				for (int i = 0; i < size; i++)
+					SetPixel(canvas, i, i, fg);
 				break;
 			case HatchStyle.BackwardDiagonal:
 			case HatchStyle.LightUpwardDiagonal:
-				canvas.DrawLine(size, 0, 0, size, fgPaint);
+				for (int i = 0; i < size; i++)
+					SetPixel(canvas, size - 1 - i, i, fg);
 				break;
 			case HatchStyle.Cross:
 			case HatchStyle.SmallGrid:
@@ -128,8 +130,11 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 				break;
 			case HatchStyle.DiagonalCross:
 			case HatchStyle.OutlinedDiamond:
-				canvas.DrawLine(0, 0, size, size, fgPaint);
-				canvas.DrawLine(size, 0, 0, size, fgPaint);
+				for (int i = 0; i < size; i++)
+				{
+					SetPixel(canvas, i, i, fg);
+					SetPixel(canvas, size - 1 - i, i, fg);
+				}
 				break;
 			case HatchStyle.DarkHorizontal:
 				fgPaint.StrokeWidth = 2;
@@ -142,20 +147,34 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 				canvas.DrawLine(6, 0, 6, size, fgPaint);
 				break;
 			case HatchStyle.DarkDownwardDiagonal:
-				fgPaint.StrokeWidth = 2;
-				canvas.DrawLine(0, 0, size, size, fgPaint);
+				for (int i = 0; i < size; i++)
+				{
+					SetPixel(canvas, i, i, fg);
+					SetPixel(canvas, (i + 1) % size, i, fg);
+				}
 				break;
 			case HatchStyle.DarkUpwardDiagonal:
-				fgPaint.StrokeWidth = 2;
-				canvas.DrawLine(size, 0, 0, size, fgPaint);
+				for (int i = 0; i < size; i++)
+				{
+					SetPixel(canvas, size - 1 - i, i, fg);
+					SetPixel(canvas, (size - 2 - i + size) % size, i, fg);
+				}
 				break;
 			case HatchStyle.WideDownwardDiagonal:
-				fgPaint.StrokeWidth = 3;
-				canvas.DrawLine(0, 0, size, size, fgPaint);
+				for (int i = 0; i < size; i++)
+				{
+					SetPixel(canvas, (i - 1 + size) % size, i, fg);
+					SetPixel(canvas, i, i, fg);
+					SetPixel(canvas, (i + 1) % size, i, fg);
+				}
 				break;
 			case HatchStyle.WideUpwardDiagonal:
-				fgPaint.StrokeWidth = 3;
-				canvas.DrawLine(size, 0, 0, size, fgPaint);
+				for (int i = 0; i < size; i++)
+				{
+					SetPixel(canvas, (size - i) % size, i, fg);
+					SetPixel(canvas, size - 1 - i, i, fg);
+					SetPixel(canvas, (size - 2 - i + size) % size, i, fg);
+				}
 				break;
 			case HatchStyle.NarrowVertical:
 				for (int x = 0; x < size; x += 2)
@@ -174,12 +193,16 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 				canvas.DrawLine(4, 4, 4, 8, fgPaint);
 				break;
 			case HatchStyle.DashedDownwardDiagonal:
-				canvas.DrawLine(0, 0, 4, 4, fgPaint);
-				canvas.DrawLine(4, 4, 8, 8, fgPaint);
+				for (int i = 0; i < 4; i++)
+					SetPixel(canvas, i, i, fg);
+				for (int i = 4; i < 8; i++)
+					SetPixel(canvas, i, i, fg);
 				break;
 			case HatchStyle.DashedUpwardDiagonal:
-				canvas.DrawLine(4, 0, 0, 4, fgPaint);
-				canvas.DrawLine(8, 4, 4, 8, fgPaint);
+				for (int i = 0; i < 4; i++)
+					SetPixel(canvas, 4 - 1 - i, i, fg);
+				for (int i = 0; i < 4; i++)
+					SetPixel(canvas, 8 - 1 - i, 4 + i, fg);
 				break;
 			case HatchStyle.Percent05:
 				SetPixel(canvas, 0, 0, fg);
