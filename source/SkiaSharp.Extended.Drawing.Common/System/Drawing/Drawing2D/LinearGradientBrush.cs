@@ -446,8 +446,8 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 			colors = new[] { SkiaConversions.ToSKColor(_color1), SkiaConversions.ToSKColor(_color2) };
 		}
 
-		var start = new SKPoint(_point1.X, _point1.Y);
-		var end = new SKPoint(_point2.X, _point2.Y);
+		var start = new SKPoint(_point1.X + 0.5f, _point1.Y + 0.5f);
+		var end = new SKPoint(_point2.X + 0.5f, _point2.Y + 0.5f);
 
 		SKShader shader;
 		if (!_transform.IsIdentity)

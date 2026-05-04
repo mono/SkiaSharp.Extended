@@ -1251,7 +1251,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 		if (points.Length < 2) throw new ArgumentException(null, nameof(points));
 		using var paint = pen.CreatePaint();
 		ApplyState(paint);
-		using var path = GdiPolygonPath(points);
+		using var path = BuildPolygonPath(points);
 		_canvas.DrawPath(path, paint);
 	}
 
@@ -2853,6 +2853,8 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 		var path = new SKPath();
 		path.MoveTo(points[offset].X, points[offset].Y);
 
+		float k = tension * 0.3f;
+
 		for (int i = offset; i < endIndex; i++)
 		{
 			// Current segment goes from points[i] to points[i+1]
@@ -2863,15 +2865,15 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 			var pPrev = (i > 0) ? points[i - 1] : p0;
 			var pNext = p1;
 
-			float cp1x = p0.X + tension * (pNext.X - pPrev.X) / 3f;
-			float cp1y = p0.Y + tension * (pNext.Y - pPrev.Y) / 3f;
+			float cp1x = p0.X + k * (pNext.X - pPrev.X);
+			float cp1y = p0.Y + k * (pNext.Y - pPrev.Y);
 
 			// Tangent at p1: use successor if available, else p1 itself
 			var p1Prev = p0;
 			var p1Next = (i + 2 < points.Length) ? points[i + 2] : p1;
 
-			float cp2x = p1.X - tension * (p1Next.X - p1Prev.X) / 3f;
-			float cp2y = p1.Y - tension * (p1Next.Y - p1Prev.Y) / 3f;
+			float cp2x = p1.X - k * (p1Next.X - p1Prev.X);
+			float cp2y = p1.Y - k * (p1Next.Y - p1Prev.Y);
 
 			path.CubicTo(cp1x, cp1y, cp2x, cp2y, p1.X, p1.Y);
 		}
@@ -2889,6 +2891,8 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 		var path = new SKPath();
 		path.MoveTo(points[0].X, points[0].Y);
 
+		float k = tension * 0.3f;
+
 		for (int i = 0; i < n; i++)
 		{
 			var p0 = points[i];
@@ -2896,11 +2900,11 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 			var pPrev = points[(i - 1 + n) % n];
 			var pNext = points[(i + 2) % n];
 
-			float cp1x = p0.X + tension * (p1.X - pPrev.X) / 3f;
-			float cp1y = p0.Y + tension * (p1.Y - pPrev.Y) / 3f;
+			float cp1x = p0.X + k * (p1.X - pPrev.X);
+			float cp1y = p0.Y + k * (p1.Y - pPrev.Y);
 
-			float cp2x = p1.X - tension * (pNext.X - p0.X) / 3f;
-			float cp2y = p1.Y - tension * (pNext.Y - p0.Y) / 3f;
+			float cp2x = p1.X - k * (pNext.X - p0.X);
+			float cp2y = p1.Y - k * (pNext.Y - p0.Y);
 
 			path.CubicTo(cp1x, cp1y, cp2x, cp2y, p1.X, p1.Y);
 		}
