@@ -82,12 +82,13 @@ stages:
           - template: /scripts/azure-pipelines-steps-prepare.yml@self
             parameters:
               installWorkloads: false
-          - pwsh: dotnet build source/SkiaSharp.Extended.Drawing.Common/SkiaSharp.Extended.Drawing.Common.csproj -c Release
-            displayName: Build SkiaSharp.Extended.Drawing.Common
+          - pwsh: dotnet build source/SkiaSharp.Extended.Drawing.Common/SkiaSharp.Extended.Drawing.Common.csproj -c Release -p:AssemblyName=System.Drawing.Common
+            displayName: Build for API compatibility
           - pwsh: >-
               dotnet apicompat
               --left tools/api-baseline/netstandard2.0/System.Drawing.Common.dll
-              --right source/SkiaSharp.Extended.Drawing.Common/bin/Release/netstandard2.0/SkiaSharp.Extended.Drawing.Common.dll
+              --right source/SkiaSharp.Extended.Drawing.Common/bin/Release/netstandard2.0/System.Drawing.Common.dll
+              --strict-mode
               --suppression-file tools/api-baseline/api-compat-suppressions.xml
             displayName: Run API compatibility check
 

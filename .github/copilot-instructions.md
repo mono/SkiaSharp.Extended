@@ -196,9 +196,10 @@ dotnet test tests/SkiaSharp.Extended.Drawing.Common.SkiaGenerator/
 # Run pixel comparison tests (Skia vs GDI checked-in refs)
 dotnet test tests/SkiaSharp.Extended.Drawing.Common.Tests/ --filter "FullyQualifiedName~PixelComparison"
 
-# Validate API compatibility
+# Validate API compatibility (build with original assembly name for matching)
 dotnet tool restore
-dotnet apicompat --left tools/api-baseline/netstandard2.0/System.Drawing.Common.dll --right source/SkiaSharp.Extended.Drawing.Common/bin/Release/netstandard2.0/SkiaSharp.Extended.Drawing.Common.dll --suppression-file tools/api-baseline/api-compat-suppressions.xml
+dotnet build source/SkiaSharp.Extended.Drawing.Common/SkiaSharp.Extended.Drawing.Common.csproj -c Release -p:AssemblyName=System.Drawing.Common
+dotnet apicompat --left tools/api-baseline/netstandard2.0/System.Drawing.Common.dll --right source/SkiaSharp.Extended.Drawing.Common/bin/Release/netstandard2.0/System.Drawing.Common.dll --strict-mode --suppression-file tools/api-baseline/api-compat-suppressions.xml
 ```
 
 ### Benchmarks
