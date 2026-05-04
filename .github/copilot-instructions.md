@@ -203,12 +203,12 @@ dotnet apicompat --left tools/api-baseline/netstandard2.0/System.Drawing.Common.
 
 ### Benchmarks
 ```bash
-# Run SkiaSharp.Extended.Drawing.Common benchmarks
-dotnet run -c Release --project benchmarks/SkiaSharp.Extended.Drawing.Common.Benchmarks.Skia/ -- --filter "*Fill*"
+# Run all benchmarks (Windows only — needs both GDI+ and Skia)
+dotnet run -c Release --project benchmarks/SkiaSharp.Extended.Drawing.Common.Benchmarks/
 
-# Run GDI+ benchmarks (Windows only)
-dotnet run -c Release --project benchmarks/SkiaSharp.Extended.Drawing.Common.Benchmarks.Gdi/ -- --filter "*Fill*"
+# Filter specific benchmark class
+dotnet run -c Release --project benchmarks/SkiaSharp.Extended.Drawing.Common.Benchmarks/ -- --filter "*Fill*"
 
-# Run all benchmarks
-dotnet run -c Release --project benchmarks/SkiaSharp.Extended.Drawing.Common.Benchmarks.Skia/
+# Quick run for testing
+dotnet run -c Release --project benchmarks/SkiaSharp.Extended.Drawing.Common.Benchmarks/ -- --filter "*Clear*" --job short
 ```
