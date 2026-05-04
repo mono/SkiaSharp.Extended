@@ -1,3 +1,5 @@
+using System;
 using BenchmarkDotNet.Running;
+using SkiaSharp.Extended.Drawing.Common.Benchmarks;
 
-BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
+BenchmarkSwitcher.FromAssembly(typeof(FillBenchmarks).Assembly).Run(args);
