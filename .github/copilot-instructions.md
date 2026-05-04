@@ -107,7 +107,7 @@ To capture screenshots:
 - `SkiaSharp.Skottie` (3.119.1+) - For Lottie animations
 - `SkiaSharp.Views.Maui.Controls` (3.119.1+)
 - `SkiaSharp.Views.Blazor` (3.119.1+) - For Blazor WebAssembly
-- `Microsoft.Maui.Controls` (9.x)
+- `Microsoft.Maui.Controls` (10.x)
 
 ## SkiaSharp.Extended.Drawing.Common
 
