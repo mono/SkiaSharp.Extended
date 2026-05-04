@@ -219,10 +219,10 @@ internal static class SkiaConversions
 	public static float[]? GetDashPattern(Drawing2D.DashStyle dashStyle) => dashStyle switch
 	{
 		Drawing2D.DashStyle.Solid => null,
-		Drawing2D.DashStyle.Dash => new float[] { 4f, 2f },
+		Drawing2D.DashStyle.Dash => new float[] { 3f, 1f },
 		Drawing2D.DashStyle.Dot => new float[] { 1f, 1f },
-		Drawing2D.DashStyle.DashDot => new float[] { 4f, 2f, 1f, 2f },
-		Drawing2D.DashStyle.DashDotDot => new float[] { 4f, 2f, 1f, 2f, 1f, 2f },
+		Drawing2D.DashStyle.DashDot => new float[] { 3f, 1f, 1f, 1f },
+		Drawing2D.DashStyle.DashDotDot => new float[] { 3f, 1f, 1f, 1f, 1f, 1f },
 		_ => null,
 	};
 }

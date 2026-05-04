@@ -62,6 +62,19 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	}
 
 	/// <summary>
+	/// Builds an SKPath for a polygon without any pixel offset (for fills).
+	/// </summary>
+	private static SKPath BuildPolygonPath(PointF[] points)
+	{
+		var path = new SKPath();
+		path.MoveTo(points[0].X, points[0].Y);
+		for (int i = 1; i < points.Length; i++)
+			path.LineTo(points[i].X, points[i].Y);
+		path.Close();
+		return path;
+	}
+
+	/// <summary>
 	/// Builds an SKPath for a polygon with GDI+-compatible half-pixel offset on vertices.
 	/// GDI+ rasterizes polygon edges with a +0.5 pixel center offset.
 	/// </summary>
@@ -1792,7 +1805,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
 		using var paint = brush.CreatePaint();
 		ApplyState(paint);
-		var oval = GdiCurveRect(x, y, width, height);
+		var oval = new SKRect(x, y, x + width, y + height);
 		using var path = new SKPath();
 		path.MoveTo(oval.MidX, oval.MidY);
 		path.ArcTo(oval, startAngle, sweepAngle, false);
@@ -1813,7 +1826,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 		if (points.Length < 2) throw new ArgumentException(null, nameof(points));
 		using var paint = brush.CreatePaint();
 		ApplyState(paint);
-		using var path = GdiPolygonPath(points);
+		using var path = BuildPolygonPath(points);
 		_canvas.DrawPath(path, paint);
 	}
 
@@ -1831,7 +1844,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 		if (points.Length < 2) throw new ArgumentException(null, nameof(points));
 		using var paint = brush.CreatePaint();
 		ApplyState(paint);
-		using var path = GdiPolygonPath(points);
+		using var path = BuildPolygonPath(points);
 		path.FillType = fillMode == FillMode.Winding ? SKPathFillType.Winding : SKPathFillType.EvenOdd;
 		_canvas.DrawPath(path, paint);
 	}
