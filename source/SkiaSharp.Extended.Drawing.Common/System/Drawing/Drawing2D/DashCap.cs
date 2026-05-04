@@ -1,9 +1,8 @@
-﻿namespace System.Drawing.Drawing2D
+﻿namespace System.Drawing.Drawing2D;
+
+public enum DashCap
 {
-	public enum DashCap
-	{
-		Flat = 0,
-		Round = 2,
-		Triangle = 3,
-	}
+	Flat = 0,
+	Round = 2,
+	Triangle = 3,
 }

@@ -1,9 +1,8 @@
-﻿namespace System.Drawing.Imaging
+﻿namespace System.Drawing.Imaging;
+
+public enum EmfType
 {
-	public enum EmfType
-	{
-		EmfOnly = 3,
-		EmfPlusOnly = 4,
-		EmfPlusDual = 5,
-	}
+	EmfOnly = 3,
+	EmfPlusOnly = 4,
+	EmfPlusDual = 5,
 }

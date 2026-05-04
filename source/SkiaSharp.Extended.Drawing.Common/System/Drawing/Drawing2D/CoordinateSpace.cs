@@ -1,9 +1,8 @@
-﻿namespace System.Drawing.Drawing2D
+﻿namespace System.Drawing.Drawing2D;
+
+public enum CoordinateSpace
 {
-	public enum CoordinateSpace
-	{
-		World = 0,
-		Page = 1,
-		Device = 2,
-	}
+	World = 0,
+	Page = 1,
+	Device = 2,
 }

@@ -1,8 +1,7 @@
-﻿namespace System.Drawing
+﻿namespace System.Drawing;
+
+public partial interface IDeviceContext : System.IDisposable
 {
-	public partial interface IDeviceContext : System.IDisposable
-	{
-		nint GetHdc();
-		void ReleaseHdc();
-	}
+	nint GetHdc();
+	void ReleaseHdc();
 }

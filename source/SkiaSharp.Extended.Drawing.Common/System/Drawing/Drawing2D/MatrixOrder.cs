@@ -1,8 +1,7 @@
-﻿namespace System.Drawing.Drawing2D
+﻿namespace System.Drawing.Drawing2D;
+
+public enum MatrixOrder
 {
-	public enum MatrixOrder
-	{
-		Prepend = 0,
-		Append = 1,
-	}
+	Prepend = 0,
+	Append = 1,
 }

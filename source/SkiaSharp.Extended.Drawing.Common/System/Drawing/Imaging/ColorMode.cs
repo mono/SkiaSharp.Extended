@@ -1,8 +1,7 @@
-﻿namespace System.Drawing.Imaging
+﻿namespace System.Drawing.Imaging;
+
+public enum ColorMode
 {
-	public enum ColorMode
-	{
-		Argb32Mode = 0,
-		Argb64Mode = 1,
-	}
+	Argb32Mode = 0,
+	Argb64Mode = 1,
 }

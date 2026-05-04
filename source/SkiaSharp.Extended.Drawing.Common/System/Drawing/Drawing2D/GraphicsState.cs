@@ -1,9 +1,8 @@
-﻿namespace System.Drawing.Drawing2D
+﻿namespace System.Drawing.Drawing2D;
+
+public sealed partial class GraphicsState : System.MarshalByRefObject
 {
-	public sealed partial class GraphicsState : System.MarshalByRefObject
-	{
-		internal int SaveCount;
-		internal GraphicsState() {}
-		internal GraphicsState(int saveCount) { SaveCount = saveCount; }
-	}
+	internal int SaveCount;
+	internal GraphicsState() {}
+	internal GraphicsState(int saveCount) { SaveCount = saveCount; }
 }

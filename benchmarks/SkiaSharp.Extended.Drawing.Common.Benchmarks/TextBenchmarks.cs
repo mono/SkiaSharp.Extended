@@ -2,10 +2,15 @@ extern alias Gdi;
 extern alias Skia;
 
 using System;
+using System.Drawing;
 using System.IO;
 using BenchmarkDotNet.Attributes;
 using GdiDrawing = Gdi::System.Drawing;
+using GdiImaging = Gdi::System.Drawing.Imaging;
+using GdiDrawing2D = Gdi::System.Drawing.Drawing2D;
 using SkiaDrawing = Skia::System.Drawing;
+using SkiaImaging = Skia::System.Drawing.Imaging;
+using SkiaDrawing2D = Skia::System.Drawing.Drawing2D;
 
 namespace SkiaSharp.Extended.Drawing.Common.Benchmarks;
 

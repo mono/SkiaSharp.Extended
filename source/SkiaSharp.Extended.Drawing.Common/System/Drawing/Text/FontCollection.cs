@@ -1,45 +1,44 @@
 using SkiaSharp;
 
-namespace System.Drawing.Text
+namespace System.Drawing.Text;
+
+/// <summary>Provides a base class for installed and private font collections.</summary>
+public abstract partial class FontCollection : System.IDisposable
 {
-	/// <summary>Provides a base class for installed and private font collections.</summary>
-	public abstract partial class FontCollection : System.IDisposable
+	private bool _disposed;
+
+	internal FontCollection() {}
+
+	/// <summary>Gets the array of <see cref="FontFamily"/> objects associated with this <see cref="FontCollection"/>.</summary>
+	public System.Drawing.FontFamily[] Families
 	{
-		private bool _disposed;
-
-		internal FontCollection() {}
-
-		/// <summary>Gets the array of <see cref="FontFamily"/> objects associated with this <see cref="FontCollection"/>.</summary>
-		public System.Drawing.FontFamily[] Families
+		get
 		{
-			get
+			var manager = SKFontManager.Default;
+			var count = manager.FontFamilyCount;
+			var families = new FontFamily[count];
+			for (int i = 0; i < count; i++)
 			{
-				var manager = SKFontManager.Default;
-				var count = manager.FontFamilyCount;
-				var families = new FontFamily[count];
-				for (int i = 0; i < count; i++)
-				{
-					families[i] = new FontFamily(manager.GetFamilyName(i));
-				}
-				return families;
+				families[i] = new FontFamily(manager.GetFamilyName(i));
 			}
+			return families;
 		}
+	}
 
-		/// <summary>Releases all resources used by this <see cref="FontCollection"/>.</summary>
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+	/// <summary>Releases all resources used by this <see cref="FontCollection"/>.</summary>
+	public void Dispose()
+	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
 
-		internal virtual void Dispose(bool disposing)
-		{
-			_disposed = true;
-		}
+	internal virtual void Dispose(bool disposing)
+	{
+		_disposed = true;
+	}
 
-		~FontCollection()
-		{
-			Dispose(false);
-		}
+	~FontCollection()
+	{
+		Dispose(false);
 	}
 }

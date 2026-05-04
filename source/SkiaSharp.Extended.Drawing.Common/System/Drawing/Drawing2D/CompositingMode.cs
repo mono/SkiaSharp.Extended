@@ -1,8 +1,7 @@
-﻿namespace System.Drawing.Drawing2D
+﻿namespace System.Drawing.Drawing2D;
+
+public enum CompositingMode
 {
-	public enum CompositingMode
-	{
-		SourceOver = 0,
-		SourceCopy = 1,
-	}
+	SourceOver = 0,
+	SourceCopy = 1,
 }

@@ -1,23 +1,22 @@
-namespace System.Drawing.Imaging
+namespace System.Drawing.Imaging;
+
+/// <summary>
+///  Defines a map for converting colors. Several methods of the <see cref="ImageAttributes"/> class adjust image colors by using a color-remap table, which is an array of <see cref="ColorMap"/> structures.
+/// </summary>
+public sealed partial class ColorMap
 {
 	/// <summary>
-	///  Defines a map for converting colors. Several methods of the <see cref="ImageAttributes"/> class adjust image colors by using a color-remap table, which is an array of <see cref="ColorMap"/> structures.
+	///  Initializes a new instance of the <see cref="ColorMap"/> class.
 	/// </summary>
-	public sealed partial class ColorMap
-	{
-		/// <summary>
-		///  Initializes a new instance of the <see cref="ColorMap"/> class.
-		/// </summary>
-		public ColorMap() { }
+	public ColorMap() { }
 
-		/// <summary>
-		///  Gets or sets the new <see cref="Color"/> structure to which to convert.
-		/// </summary>
-		public System.Drawing.Color NewColor { get; set; }
+	/// <summary>
+	///  Gets or sets the new <see cref="Color"/> structure to which to convert.
+	/// </summary>
+	public System.Drawing.Color NewColor { get; set; }
 
-		/// <summary>
-		///  Gets or sets the existing <see cref="Color"/> structure to be converted.
-		/// </summary>
-		public System.Drawing.Color OldColor { get; set; }
-	}
+	/// <summary>
+	///  Gets or sets the existing <see cref="Color"/> structure to be converted.
+	/// </summary>
+	public System.Drawing.Color OldColor { get; set; }
 }

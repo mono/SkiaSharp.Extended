@@ -2,10 +2,15 @@ extern alias Gdi;
 extern alias Skia;
 
 using System;
+using System.Drawing;
 using System.IO;
 using BenchmarkDotNet.Attributes;
 using GdiDrawing = Gdi::System.Drawing;
+using GdiImaging = Gdi::System.Drawing.Imaging;
+using GdiDrawing2D = Gdi::System.Drawing.Drawing2D;
 using SkiaDrawing = Skia::System.Drawing;
+using SkiaImaging = Skia::System.Drawing.Imaging;
+using SkiaDrawing2D = Skia::System.Drawing.Drawing2D;
 
 namespace SkiaSharp.Extended.Drawing.Common.Benchmarks;
 
@@ -27,13 +32,13 @@ public class DrawBenchmarks
     {
         _gdiBmp = new GdiDrawing.Bitmap(500, 500);
         _gdiG = GdiDrawing.Graphics.FromImage(_gdiBmp);
-        _gdiPen1 = new GdiDrawing.Pen(GdiDrawing.Color.Black, 1);
-        _gdiPen3 = new GdiDrawing.Pen(GdiDrawing.Color.Black, 3);
+        _gdiPen1 = new GdiDrawing.Pen(Color.Black, 1);
+        _gdiPen3 = new GdiDrawing.Pen(Color.Black, 3);
 
         _skiaBmp = new SkiaDrawing.Bitmap(500, 500);
         _skiaG = SkiaDrawing.Graphics.FromImage(_skiaBmp);
-        _skiaPen1 = new SkiaDrawing.Pen(SkiaDrawing.Color.Black, 1);
-        _skiaPen3 = new SkiaDrawing.Pen(SkiaDrawing.Color.Black, 3);
+        _skiaPen1 = new SkiaDrawing.Pen(Color.Black, 1);
+        _skiaPen3 = new SkiaDrawing.Pen(Color.Black, 3);
     }
 
     [GlobalCleanup]

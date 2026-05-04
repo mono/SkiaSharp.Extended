@@ -1,12 +1,11 @@
-﻿namespace System.Drawing.Drawing2D
+﻿namespace System.Drawing.Drawing2D;
+
+public enum SmoothingMode
 {
-	public enum SmoothingMode
-	{
-		Invalid = -1,
-		Default = 0,
-		HighSpeed = 1,
-		HighQuality = 2,
-		None = 3,
-		AntiAlias = 4,
-	}
+	Invalid = -1,
+	Default = 0,
+	HighSpeed = 1,
+	HighQuality = 2,
+	None = 3,
+	AntiAlias = 4,
 }

@@ -1,8 +1,7 @@
-﻿namespace System.Drawing.Imaging
+﻿namespace System.Drawing.Imaging;
+
+public enum ColorMapType
 {
-	public enum ColorMapType
-	{
-		Default = 0,
-		Brush = 1,
-	}
+	Default = 0,
+	Brush = 1,
 }

@@ -1,9 +1,8 @@
-﻿namespace System.Drawing.Text
+﻿namespace System.Drawing.Text;
+
+public enum GenericFontFamilies
 {
-	public enum GenericFontFamilies
-	{
-		Serif = 0,
-		SansSerif = 1,
-		Monospace = 2,
-	}
+	Serif = 0,
+	SansSerif = 1,
+	Monospace = 2,
 }

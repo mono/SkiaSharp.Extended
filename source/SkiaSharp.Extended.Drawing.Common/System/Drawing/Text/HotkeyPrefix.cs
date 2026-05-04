@@ -1,9 +1,8 @@
-﻿namespace System.Drawing.Text
+﻿namespace System.Drawing.Text;
+
+public enum HotkeyPrefix
 {
-	public enum HotkeyPrefix
-	{
-		None = 0,
-		Show = 1,
-		Hide = 2,
-	}
+	None = 0,
+	Show = 1,
+	Hide = 2,
 }

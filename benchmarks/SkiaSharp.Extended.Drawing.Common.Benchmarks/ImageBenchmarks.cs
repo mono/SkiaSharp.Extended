@@ -2,10 +2,15 @@ extern alias Gdi;
 extern alias Skia;
 
 using System;
+using System.Drawing;
 using System.IO;
 using BenchmarkDotNet.Attributes;
 using GdiDrawing = Gdi::System.Drawing;
+using GdiImaging = Gdi::System.Drawing.Imaging;
+using GdiDrawing2D = Gdi::System.Drawing.Drawing2D;
 using SkiaDrawing = Skia::System.Drawing;
+using SkiaImaging = Skia::System.Drawing.Imaging;
+using SkiaDrawing2D = Skia::System.Drawing.Drawing2D;
 
 namespace SkiaSharp.Extended.Drawing.Common.Benchmarks;
 
@@ -33,14 +38,14 @@ public class ImageBenchmarks
     public void SetPixel_GDI()
     {
         for (int i = 0; i < 10000; i++)
-            _gdiBmp.SetPixel(i % 500, i / 500 % 500, GdiDrawing.Color.Red);
+            _gdiBmp.SetPixel(i % 500, i / 500 % 500, Color.Red);
     }
 
     [Benchmark]
     public void SetPixel_Skia()
     {
         for (int i = 0; i < 10000; i++)
-            _skiaBmp.SetPixel(i % 500, i / 500 % 500, SkiaDrawing.Color.Red);
+            _skiaBmp.SetPixel(i % 500, i / 500 % 500, Color.Red);
     }
 
     [Benchmark(Baseline = false)]

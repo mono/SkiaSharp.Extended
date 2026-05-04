@@ -2,10 +2,15 @@ extern alias Gdi;
 extern alias Skia;
 
 using System;
+using System.Drawing;
 using System.IO;
 using BenchmarkDotNet.Attributes;
 using GdiDrawing = Gdi::System.Drawing;
+using GdiImaging = Gdi::System.Drawing.Imaging;
+using GdiDrawing2D = Gdi::System.Drawing.Drawing2D;
 using SkiaDrawing = Skia::System.Drawing;
+using SkiaImaging = Skia::System.Drawing.Imaging;
+using SkiaDrawing2D = Skia::System.Drawing.Drawing2D;
 
 namespace SkiaSharp.Extended.Drawing.Common.Benchmarks;
 
@@ -28,14 +33,14 @@ public class FillBenchmarks
         _gdiBmp = new GdiDrawing.Bitmap(500, 500);
         _gdiG = GdiDrawing.Graphics.FromImage(_gdiBmp);
         _gdiG.SmoothingMode = Gdi::System.Drawing.Drawing2D.SmoothingMode.None;
-        _gdiRedBrush = new GdiDrawing.SolidBrush(GdiDrawing.Color.Red);
-        _gdiBlueBrush = new GdiDrawing.SolidBrush(GdiDrawing.Color.Blue);
+        _gdiRedBrush = new GdiDrawing.SolidBrush(Color.Red);
+        _gdiBlueBrush = new GdiDrawing.SolidBrush(Color.Blue);
 
         _skiaBmp = new SkiaDrawing.Bitmap(500, 500);
         _skiaG = SkiaDrawing.Graphics.FromImage(_skiaBmp);
         _skiaG.SmoothingMode = Skia::System.Drawing.Drawing2D.SmoothingMode.None;
-        _skiaRedBrush = new SkiaDrawing.SolidBrush(SkiaDrawing.Color.Red);
-        _skiaBlueBrush = new SkiaDrawing.SolidBrush(SkiaDrawing.Color.Blue);
+        _skiaRedBrush = new SkiaDrawing.SolidBrush(Color.Red);
+        _skiaBlueBrush = new SkiaDrawing.SolidBrush(Color.Blue);
     }
 
     [GlobalCleanup]
@@ -79,13 +84,13 @@ public class FillBenchmarks
     public void Clear_GDI()
     {
         for (int i = 0; i < 100; i++)
-            _gdiG.Clear(GdiDrawing.Color.White);
+            _gdiG.Clear(Color.White);
     }
 
     [Benchmark]
     public void Clear_Skia()
     {
         for (int i = 0; i < 100; i++)
-            _skiaG.Clear(SkiaDrawing.Color.White);
+            _skiaG.Clear(Color.White);
     }
 }

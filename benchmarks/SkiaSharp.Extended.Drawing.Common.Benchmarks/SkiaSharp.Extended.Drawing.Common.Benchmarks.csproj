@@ -1,15 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.14.*" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
     <!-- Real System.Drawing.Common with alias -->
-    <PackageReference Include="System.Drawing.Common" Version="9.0.0">
+    <PackageReference Include="System.Drawing.Common" Version="10.0.7">
       <Aliases>Gdi</Aliases>
     </PackageReference>
     <!-- Our SkiaSharp wrapper with alias -->
@@ -17,12 +18,5 @@
       <Aliases>Skia</Aliases>
     </ProjectReference>
   </ItemGroup>
-  <!-- Ensure System.Drawing.Primitives (Color, Point, etc.) is accessible under both aliases -->
-  <Target Name="AddPrimitivesAlias" BeforeTargets="CoreCompile">
-    <ItemGroup>
-      <ReferencePath Condition="'%(FileName)' == 'System.Drawing.Primitives'">
-        <Aliases>Gdi;Skia;global</Aliases>
-      </ReferencePath>
-    </ItemGroup>
-  </Target>
+
 </Project>
