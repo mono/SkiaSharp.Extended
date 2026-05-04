@@ -1,3 +1,8 @@
+parameters:
+  - name: installWorkloads
+    type: boolean
+    default: true
+
 steps:
 
   - pwsh: |
@@ -17,23 +22,24 @@ steps:
       Write-Host "##vso[build.updatebuildnumber]$label"
     displayName: Update the build number with a more readable one
 
-  - task: JavaToolInstaller@0
-    displayName: Select JDK
-    inputs:
-      versionSpec: '17'
-      jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'PreInstalled'
+  - ${{ if parameters.installWorkloads }}:
+    - task: JavaToolInstaller@0
+      displayName: Select JDK
+      inputs:
+        versionSpec: '17'
+        jdkArchitectureOption: 'x64'
+        jdkSourceOption: 'PreInstalled'
 
-  - pwsh: |
-      Write-Host "JavaSdkDirectory is being set to: $env:JAVA_HOME"
-      Write-Host "##vso[task.setvariable variable=JavaSdkDirectory]$env:JAVA_HOME"
-    displayName: Set Java SDK Directory
+    - pwsh: |
+        Write-Host "JavaSdkDirectory is being set to: $env:JAVA_HOME"
+        Write-Host "##vso[task.setvariable variable=JavaSdkDirectory]$env:JAVA_HOME"
+      displayName: Set Java SDK Directory
 
-  - pwsh: dotnet workload install maui
-    displayName: Install MAUI workload
+    - pwsh: dotnet workload install maui
+      displayName: Install MAUI workload
 
-  - pwsh: dotnet workload install wasm-tools
-    displayName: Install WASM tools workload
+    - pwsh: dotnet workload install wasm-tools
+      displayName: Install WASM tools workload
 
   - pwsh: dotnet tool restore
     displayName: Restore the dotnet tools
