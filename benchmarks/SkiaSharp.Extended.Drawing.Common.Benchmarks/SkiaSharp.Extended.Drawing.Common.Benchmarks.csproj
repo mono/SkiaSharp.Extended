@@ -17,4 +17,12 @@
       <Aliases>Skia</Aliases>
     </ProjectReference>
   </ItemGroup>
+  <!-- Ensure System.Drawing.Primitives (Color, Point, etc.) is accessible under both aliases -->
+  <Target Name="AddPrimitivesAlias" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <ReferencePath Condition="'%(FileName)' == 'System.Drawing.Primitives'">
+        <Aliases>Gdi;Skia;global</Aliases>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
 </Project>
