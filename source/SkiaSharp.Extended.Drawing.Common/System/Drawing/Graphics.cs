@@ -998,13 +998,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="srcUnit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the units of measure used by the <paramref name="srcRect"/> parameter.</param>
 	public void DrawImage(System.Drawing.Image image, int x, int y, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit)
 	{
-		ThrowIfDisposed();
-		if (image is null) throw new ArgumentNullException(nameof(image));
-		if (image.SKBitmapBacking is null)
-			throw new ArgumentException("The image does not have a valid bitmap backing.", nameof(image));
-		var src = new SKRect(srcRect.X, srcRect.Y, srcRect.Right, srcRect.Bottom);
-		var dest = new SKRect(x, y, x + srcRect.Width, y + srcRect.Height);
-		_canvas.DrawBitmap(image.SKBitmapBacking, src, dest);
+		DrawImageCore(image, new RectangleF(x, y, srcRect.Width, srcRect.Height), new RectangleF(srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height));
 	}
 
 	/// <summary>
@@ -1043,13 +1037,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="srcUnit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the units of measure used by the <paramref name="srcRect"/> parameter.</param>
 	public void DrawImage(System.Drawing.Image image, float x, float y, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit)
 	{
-		ThrowIfDisposed();
-		if (image is null) throw new ArgumentNullException(nameof(image));
-		if (image.SKBitmapBacking is null)
-			throw new ArgumentException("The image does not have a valid bitmap backing.", nameof(image));
-		var src = new SKRect(srcRect.X, srcRect.Y, srcRect.Right, srcRect.Bottom);
-		var dest = new SKRect(x, y, x + srcRect.Width, y + srcRect.Height);
-		_canvas.DrawBitmap(image.SKBitmapBacking, src, dest);
+		DrawImageCore(image, new RectangleF(x, y, srcRect.Width, srcRect.Height), new RectangleF(srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height));
 	}
 
 	/// <summary>
@@ -1064,10 +1052,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	{
 		ThrowIfDisposed();
 		if (image is null) throw new ArgumentNullException(nameof(image));
-		if (image.SKBitmapBacking is null)
-			throw new ArgumentException("The image does not have a valid bitmap backing.", nameof(image));
-		var dest = new SKRect(x, y, x + width, y + height);
-		_canvas.DrawBitmap(image.SKBitmapBacking, dest);
+		DrawImageCore(image, new RectangleF(x, y, width, height), new RectangleF(0, 0, image.Width, image.Height));
 	}
 
 	/// <summary>
@@ -2952,7 +2937,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 			case InterpolationMode.Bilinear:
 			case InterpolationMode.Low:
 			default:
-				paint.FilterQuality = SKFilterQuality.Medium;
+				paint.FilterQuality = SKFilterQuality.Low;
 				break;
 		}
 
