@@ -2920,24 +2920,25 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 
 		using var paint = new SKPaint();
 
-		// Apply InterpolationMode as sampling options
+		// Map InterpolationMode to SKSamplingOptions
+		SKSamplingOptions sampling;
 		switch (_interpolationMode)
 		{
 			case InterpolationMode.NearestNeighbor:
-				// Nearest-neighbor filtering — set on paint is not directly supported,
-				// but we can use the FilterQuality approach via sampling options
-				paint.FilterQuality = SKFilterQuality.None;
+				sampling = new SKSamplingOptions(SKFilterMode.Nearest);
 				break;
 			case InterpolationMode.HighQualityBilinear:
+				sampling = new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.Linear);
+				break;
 			case InterpolationMode.HighQualityBicubic:
 			case InterpolationMode.Bicubic:
 			case InterpolationMode.High:
-				paint.FilterQuality = SKFilterQuality.High;
+				sampling = new SKSamplingOptions(new SKCubicResampler(1f / 3f, 1f / 3f));
 				break;
 			case InterpolationMode.Bilinear:
 			case InterpolationMode.Low:
 			default:
-				paint.FilterQuality = SKFilterQuality.Low;
+				sampling = new SKSamplingOptions(SKFilterMode.Linear);
 				break;
 		}
 
@@ -2949,7 +2950,8 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 				paint.ColorFilter = colorFilter;
 		}
 
-		_canvas.DrawBitmap(image.SKBitmapBacking, src, dest, paint);
+		using var skImage = SKImage.FromBitmap(image.SKBitmapBacking);
+		_canvas.DrawImage(skImage, src, dest, sampling, paint);
 	}
 
 	/// <summary>
