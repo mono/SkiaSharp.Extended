@@ -1,0 +1,6 @@
+@namespace SkiaSharp.Extended.UI.Blazor.Controls
+
+<SKAnimatedCanvasView IsAnimationEnabled="@(IsAnimationEnabled && _player.HasAnimation)"
+                      OnPaintSurface="HandlePaintSurface"
+                      OnUpdate="HandleUpdate"
+                      @attributes="AdditionalAttributes" />

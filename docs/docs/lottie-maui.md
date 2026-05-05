@@ -4,6 +4,8 @@ Lottie brings designer-created animations to your .NET MAUI apps. Instead of man
 
 ![Lottie animation preview][lottie-preview]
 
+> **Other platforms:** This page covers .NET MAUI. For Blazor WebAssembly, see [Blazor Lottie Animations](lottie-blazor.md). For the shared playback engine, see [Lottie Player](lottie-player.md).
+
 ## What is Lottie?
 
 [Lottie](https://airbnb.design/lottie/) is an animation format created by Airbnb. Animations are designed in Adobe After Effects, exported as JSON using the [Bodymovin](https://github.com/airbnb/lottie-web) plugin, and rendered natively on mobile and web. The name honors Lotte Reiniger, a pioneer of silhouette animation.
@@ -61,6 +63,18 @@ lottieView.Source = new SKStreamLottieImageSource { Stream = myStream };
 <skia:SKLottieView Source="animation.json" RepeatCount="-1" RepeatMode="Reverse" />
 ```
 
+> **Under the hood:** The MAUI `SKLottieView` translates `RepeatCount` and `RepeatMode` into [`SKLottieRepeat`](xref:SkiaSharp.Extended.SKLottieRepeat) values on the shared [`SKLottiePlayer`](lottie-player.md). See the [Lottie Player](lottie-player.md) docs for details on repeat semantics.
+
+### Speed and direction
+
+```xml
+<!-- Double speed -->
+<skia:SKLottieView Source="animation.json" AnimationSpeed="2.0" RepeatCount="-1" />
+
+<!-- Play in reverse -->
+<skia:SKLottieView Source="animation.json" AnimationSpeed="-1.0" RepeatCount="-1" />
+```
+
 ### Control playback programmatically
 
 ```csharp
@@ -70,7 +84,7 @@ lottieView.IsAnimationEnabled = false;
 // Resume
 lottieView.IsAnimationEnabled = true;
 
-// Jump to specific progress
+// Jump to specific progress (also works while paused for scrubbing)
 lottieView.Progress = TimeSpan.FromSeconds(1.5);
 
 // Check if complete
@@ -109,11 +123,12 @@ lottieView.AnimationCompleted += (s, e) =>
 | :------- | :--- | :---------- |
 | `Source` | [`SKLottieImageSource`](xref:SkiaSharp.Extended.UI.Controls.SKLottieImageSource) | The Lottie JSON file to play |
 | `Duration` | `TimeSpan` | Total duration of the animation (read-only) |
-| `Progress` | `TimeSpan` | Current playback position |
+| `Progress` | `TimeSpan` | Current playback position (two-way bindable) |
 | `RepeatCount` | `int` | Times to repeat (0 = once, -1 = forever) |
 | `RepeatMode` | [`SKLottieRepeatMode`](xref:SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode) | `Restart` or `Reverse` (ping-pong) |
+| `AnimationSpeed` | `double` | Speed multiplier (negative = reverse). Default: `1.0` |
 | `IsAnimationEnabled` | `bool` | Play/pause the animation |
-| `IsComplete` | `bool` | Whether playback has finished |
+| `IsComplete` | `bool` | Whether playback has finished (read-only) |
 
 ## Where to Find Animations
 
@@ -138,10 +153,12 @@ You can customize the rendering surface by overriding the control template:
 </skia:SKLottieView>
 ```
 
-The `PART_DrawingSurface` name is required—it can be either `SKCanvasView` (software) or `SKGLView` (GPU).
+The `PART_DrawingSurface` name is required — it can be either `SKCanvasView` (software) or `SKGLView` (GPU).
 
 ## Learn More
 
+- [Lottie Player](lottie-player.md) — The shared playback engine behind MAUI and Blazor views
+- [Blazor Lottie Animations](lottie-blazor.md) — Use Lottie in Blazor WebAssembly
 - [Lottie by Airbnb](https://airbnb.design/lottie/) — Official project page
 - [Lottie Documentation](https://airbnb.io/lottie/) — Format specification and guides
 - [LottieFiles](https://lottiefiles.com/) — Animation marketplace

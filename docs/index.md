@@ -62,7 +62,7 @@ Compare two images pixel by pixel, quantify differences, and generate visual dif
 
 Ready-to-use .NET MAUI controls for rich visual effects.
 
-### [Lottie Animations](docs/lottie.md)
+### [Lottie Animations](docs/lottie-maui.md)
 
 Play designer-created After Effects animations exported as Lottie JSON files.
 

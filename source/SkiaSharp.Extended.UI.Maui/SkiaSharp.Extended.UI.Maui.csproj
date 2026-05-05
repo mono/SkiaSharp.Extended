@@ -10,6 +10,7 @@
     <AssemblyName>SkiaSharp.Extended.UI</AssemblyName>
     <RootNamespace>SkiaSharp.Extended.UI</RootNamespace>
     <PublishReadyToRun>false</PublishReadyToRun>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!-- <Nullable>enable</Nullable> -->
   </PropertyGroup>
 
@@ -44,6 +45,7 @@
     <Using Include="Microsoft.Maui.Graphics.Converters" />
     <Using Include="Microsoft.Maui.Dispatching" />
     <Using Include="Microsoft.Maui.Controls.Xaml" />
+    <Using Include="SkiaSharp.Extended" />
     <Using Include="SkiaSharp.Views.Maui" />
     <Using Include="SkiaSharp.Views.Maui.Controls" />
   </ItemGroup>
