@@ -218,8 +218,7 @@ public sealed partial class HatchBrush : Brush
 		{
 			fixed (uint* ptr = pixels)
 			{
-				using var pixmap = new SKPixmap(info, (IntPtr)ptr, tileSize * sizeof(uint));
-				using var image = SKImage.FromPixelCopy(pixmap);
+				using var image = SKImage.FromPixelCopy(info, (IntPtr)ptr);
 				paint.Shader = SKShader.CreateImage(image, SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
 			}
 		}
