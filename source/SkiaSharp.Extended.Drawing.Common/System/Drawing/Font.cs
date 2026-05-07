@@ -6,9 +6,9 @@ namespace System.Drawing;
 ///  Defines a particular format for text, including font face, size, and style attributes.
 ///  This class cannot be inherited.
 /// </summary>
-[System.ComponentModel.EditorAttribute("System.Drawing.Design.FontEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-[System.ComponentModel.TypeConverterAttribute(typeof(System.Drawing.FontConverter))]
-public sealed partial class Font : System.MarshalByRefObject, System.ICloneable, System.IDisposable, System.Runtime.Serialization.ISerializable
+[ComponentModel.Editor("System.Drawing.Design.FontEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+[ComponentModel.TypeConverter(typeof(FontConverter))]
+public sealed partial class Font : MarshalByRefObject, ICloneable, IDisposable, Runtime.Serialization.ISerializable
 {
 	private const float DefaultDpi = 96f;
 
@@ -33,7 +33,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> that uses the specified existing <see cref="Font"/> and <see cref="FontStyle"/> enumeration.
 	/// </summary>
-	public Font(System.Drawing.Font prototype, System.Drawing.FontStyle newStyle)
+	public Font(Font prototype, FontStyle newStyle)
 		: this(prototype.FontFamily, prototype._emSize, newStyle, prototype._unit, prototype._gdiCharSet, prototype._gdiVerticalFont)
 	{
 	}
@@ -41,7 +41,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> using a specified <see cref="FontFamily"/> and size.
 	/// </summary>
-	public Font(System.Drawing.FontFamily family, float emSize)
+	public Font(FontFamily family, float emSize)
 		: this(family, emSize, FontStyle.Regular, GraphicsUnit.Point, 1, false)
 	{
 	}
@@ -49,7 +49,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> using a specified <see cref="FontFamily"/>, size, and style.
 	/// </summary>
-	public Font(System.Drawing.FontFamily family, float emSize, System.Drawing.FontStyle style)
+	public Font(FontFamily family, float emSize, FontStyle style)
 		: this(family, emSize, style, GraphicsUnit.Point, 1, false)
 	{
 	}
@@ -57,7 +57,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> using a specified <see cref="FontFamily"/>, size, style, and unit.
 	/// </summary>
-	public Font(System.Drawing.FontFamily family, float emSize, System.Drawing.FontStyle style, System.Drawing.GraphicsUnit unit)
+	public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit)
 		: this(family, emSize, style, unit, 1, false)
 	{
 	}
@@ -65,7 +65,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> using a specified <see cref="FontFamily"/>, size, style, unit, and character set.
 	/// </summary>
-	public Font(System.Drawing.FontFamily family, float emSize, System.Drawing.FontStyle style, System.Drawing.GraphicsUnit unit, byte gdiCharSet)
+	public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte gdiCharSet)
 		: this(family, emSize, style, unit, gdiCharSet, false)
 	{
 	}
@@ -73,7 +73,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> using a specified <see cref="FontFamily"/>, size, style, unit, character set, and vertical font flag.
 	/// </summary>
-	public Font(System.Drawing.FontFamily family, float emSize, System.Drawing.FontStyle style, System.Drawing.GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
+	public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
 	{
 		if (family is null) throw new ArgumentNullException(nameof(family));
 		if (emSize <= 0) throw new ArgumentException("emSize must be greater than 0.", nameof(emSize));
@@ -93,7 +93,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> using a specified <see cref="FontFamily"/>, size, and unit.
 	/// </summary>
-	public Font(System.Drawing.FontFamily family, float emSize, System.Drawing.GraphicsUnit unit)
+	public Font(FontFamily family, float emSize, GraphicsUnit unit)
 		: this(family, emSize, FontStyle.Regular, unit, 1, false)
 	{
 	}
@@ -109,7 +109,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> using a specified family name, size, and style.
 	/// </summary>
-	public Font(string familyName, float emSize, System.Drawing.FontStyle style)
+	public Font(string familyName, float emSize, FontStyle style)
 		: this(familyName, emSize, style, GraphicsUnit.Point, 1, false)
 	{
 	}
@@ -117,7 +117,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> using a specified family name, size, style, and unit.
 	/// </summary>
-	public Font(string familyName, float emSize, System.Drawing.FontStyle style, System.Drawing.GraphicsUnit unit)
+	public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit)
 		: this(familyName, emSize, style, unit, 1, false)
 	{
 	}
@@ -125,7 +125,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> using a specified family name, size, style, unit, and character set.
 	/// </summary>
-	public Font(string familyName, float emSize, System.Drawing.FontStyle style, System.Drawing.GraphicsUnit unit, byte gdiCharSet)
+	public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte gdiCharSet)
 		: this(familyName, emSize, style, unit, gdiCharSet, false)
 	{
 	}
@@ -133,7 +133,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> using a specified family name, size, style, unit, character set, and vertical font flag.
 	/// </summary>
-	public Font(string familyName, float emSize, System.Drawing.FontStyle style, System.Drawing.GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
+	public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
 	{
 		if (familyName is null) throw new ArgumentNullException(nameof(familyName));
 		if (emSize <= 0) throw new ArgumentException("emSize must be greater than 0.", nameof(emSize));
@@ -155,7 +155,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Initializes a new <see cref="Font"/> using a specified family name, size, and unit.
 	/// </summary>
-	public Font(string familyName, float emSize, System.Drawing.GraphicsUnit unit)
+	public Font(string familyName, float emSize, GraphicsUnit unit)
 		: this(familyName, emSize, FontStyle.Regular, unit, 1, false)
 	{
 	}
@@ -163,31 +163,31 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Gets a value that indicates whether this <see cref="Font"/> is bold.
 	/// </summary>
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 	public bool Bold => (_style & FontStyle.Bold) != 0;
 
 	/// <summary>
-	///  Gets the <see cref="System.Drawing.FontFamily"/> associated with this <see cref="Font"/>.
+	///  Gets the <see cref="Drawing.FontFamily"/> associated with this <see cref="Font"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
-	public System.Drawing.FontFamily FontFamily => new FontFamily(SKTypeface);
+	[ComponentModel.Browsable(false)]
+	public FontFamily FontFamily => new FontFamily(SKTypeface);
 
 	/// <summary>
 	///  Gets a byte value that specifies the GDI character set that this <see cref="Font"/> uses.
 	/// </summary>
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 	public byte GdiCharSet => _gdiCharSet;
 
 	/// <summary>
 	///  Gets a value that indicates whether this <see cref="Font"/> is derived from a GDI vertical font.
 	/// </summary>
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 	public bool GdiVerticalFont => _gdiVerticalFont;
 
 	/// <summary>
 	///  Gets the line spacing of this font, in pixels.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
+	[ComponentModel.Browsable(false)]
 	public int Height
 	{
 		get
@@ -201,21 +201,21 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Gets a value indicating whether this <see cref="Font"/> is a member of <see cref="SystemFonts"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
+	[ComponentModel.Browsable(false)]
 	public bool IsSystemFont => false;
 
 	/// <summary>
 	///  Gets a value that indicates whether this <see cref="Font"/> has the italic style applied.
 	/// </summary>
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 	public bool Italic => (_style & FontStyle.Italic) != 0;
 
 	/// <summary>
 	///  Gets the face name of this <see cref="Font"/>.
 	/// </summary>
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-	[System.ComponentModel.EditorAttribute("System.Drawing.Design.FontNameEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-	[System.ComponentModel.TypeConverterAttribute(typeof(System.Drawing.FontConverter.FontNameConverter))]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	[ComponentModel.Editor("System.Drawing.Design.FontNameEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	[ComponentModel.TypeConverter(typeof(FontConverter.FontNameConverter))]
 	public string Name
 	{
 		get
@@ -228,7 +228,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Gets the font family name originally specified when this <see cref="Font"/> was created.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
+	[ComponentModel.Browsable(false)]
 	public string? OriginalFontName => _originalFontName;
 
 	/// <summary>
@@ -239,58 +239,58 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Gets the em-size, in points, of this <see cref="Font"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
+	[ComponentModel.Browsable(false)]
 	public float SizeInPoints => ConvertToPoints(_emSize, _unit);
 
 	/// <summary>
 	///  Gets a value that indicates whether this <see cref="Font"/> specifies a horizontal line through the font.
 	/// </summary>
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 	public bool Strikeout => (_style & FontStyle.Strikeout) != 0;
 
 	/// <summary>
 	///  Gets style information for this <see cref="Font"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
-	public System.Drawing.FontStyle Style => _style;
+	[ComponentModel.Browsable(false)]
+	public FontStyle Style => _style;
 
 	/// <summary>
 	///  Gets the name of the system font if the <see cref="IsSystemFont"/> property returns <see langword="true"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
+	[ComponentModel.Browsable(false)]
 	public string SystemFontName => string.Empty;
 
 	/// <summary>
 	///  Gets a value that indicates whether this <see cref="Font"/> is underlined.
 	/// </summary>
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 	public bool Underline => (_style & FontStyle.Underline) != 0;
 
 	/// <summary>
 	///  Gets the unit of measure for this <see cref="Font"/>.
 	/// </summary>
-	[System.ComponentModel.TypeConverterAttribute(typeof(System.Drawing.FontConverter.FontUnitConverter))]
-	public System.Drawing.GraphicsUnit Unit => _unit;
+	[ComponentModel.TypeConverter(typeof(FontConverter.FontUnitConverter))]
+	public GraphicsUnit Unit => _unit;
 
 	/// <summary>
 	///  Creates a <see cref="Font"/> from the specified Windows handle to a device context.
 	/// </summary>
-	public static System.Drawing.Font FromHdc(nint hdc) { throw new System.PlatformNotSupportedException("FromHdc is not supported in SkiaSharp.Extended.Drawing.Common."); }
+	public static Font FromHdc(nint hdc) { throw new PlatformNotSupportedException("FromHdc is not supported in SkiaSharp.Extended.Drawing.Common."); }
 
 	/// <summary>
 	///  Creates a <see cref="Font"/> from the specified Windows handle to a font.
 	/// </summary>
-	public static System.Drawing.Font FromHfont(nint hfont) { throw new System.PlatformNotSupportedException("FromHfont is not supported in SkiaSharp.Extended.Drawing.Common."); }
+	public static Font FromHfont(nint hfont) { throw new PlatformNotSupportedException("FromHfont is not supported in SkiaSharp.Extended.Drawing.Common."); }
 
 	/// <summary>
 	///  Creates a <see cref="Font"/> from the specified GDI logical font (LOGFONT) structure.
 	/// </summary>
-	public static System.Drawing.Font FromLogFont(object lf) { throw new System.PlatformNotSupportedException("FromLogFont is not supported in SkiaSharp.Extended.Drawing.Common."); }
+	public static Font FromLogFont(object lf) { throw new PlatformNotSupportedException("FromLogFont is not supported in SkiaSharp.Extended.Drawing.Common."); }
 
 	/// <summary>
 	///  Creates a <see cref="Font"/> from the specified GDI logical font (LOGFONT) structure.
 	/// </summary>
-	public static System.Drawing.Font FromLogFont(object lf, nint hdc) { throw new System.PlatformNotSupportedException("FromLogFont is not supported in SkiaSharp.Extended.Drawing.Common."); }
+	public static Font FromLogFont(object lf, nint hdc) { throw new PlatformNotSupportedException("FromLogFont is not supported in SkiaSharp.Extended.Drawing.Common."); }
 
 	/// <summary>
 	///  Creates an exact copy of this <see cref="Font"/>.
@@ -365,7 +365,7 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Returns the line spacing, in the current unit of a specified <see cref="Graphics"/>, of this font.
 	/// </summary>
-	public float GetHeight(System.Drawing.Graphics graphics)
+	public float GetHeight(Graphics graphics)
 	{
 		ThrowIfDisposed();
 		if (graphics is null) throw new ArgumentNullException(nameof(graphics));
@@ -393,17 +393,17 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 	/// <summary>
 	///  Returns a handle to this <see cref="Font"/>.
 	/// </summary>
-	public nint ToHfont() { throw new System.PlatformNotSupportedException("ToHfont is not supported in SkiaSharp.Extended.Drawing.Common."); }
+	public nint ToHfont() { throw new PlatformNotSupportedException("ToHfont is not supported in SkiaSharp.Extended.Drawing.Common."); }
 
 	/// <summary>
 	///  Creates a GDI logical font (LOGFONT) structure from this <see cref="Font"/>.
 	/// </summary>
-	public void ToLogFont(object logFont) { throw new System.PlatformNotSupportedException("ToLogFont is not supported in SkiaSharp.Extended.Drawing.Common."); }
+	public void ToLogFont(object logFont) { throw new PlatformNotSupportedException("ToLogFont is not supported in SkiaSharp.Extended.Drawing.Common."); }
 
 	/// <summary>
 	///  Creates a GDI logical font (LOGFONT) structure from this <see cref="Font"/>.
 	/// </summary>
-	public void ToLogFont(object logFont, System.Drawing.Graphics graphics) { throw new System.PlatformNotSupportedException("ToLogFont is not supported in SkiaSharp.Extended.Drawing.Common."); }
+	public void ToLogFont(object logFont, Graphics graphics) { throw new PlatformNotSupportedException("ToLogFont is not supported in SkiaSharp.Extended.Drawing.Common."); }
 
 	/// <summary>
 	///  Returns a human-readable string representation of this <see cref="Font"/>.
@@ -428,9 +428,9 @@ public sealed partial class Font : System.MarshalByRefObject, System.ICloneable,
 			throw new ObjectDisposedException(nameof(Font));
 	}
 
-	void System.Runtime.Serialization.ISerializable.GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+	void Runtime.Serialization.ISerializable.GetObjectData(Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext context)
 	{
-		throw new System.PlatformNotSupportedException("Serialization is not supported in SkiaSharp.Extended.Drawing.Common.");
+		throw new PlatformNotSupportedException("Serialization is not supported in SkiaSharp.Extended.Drawing.Common.");
 	}
 
 	/// <summary>

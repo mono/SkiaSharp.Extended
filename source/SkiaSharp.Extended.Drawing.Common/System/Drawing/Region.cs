@@ -7,7 +7,7 @@ namespace System.Drawing;
 ///  Describes the interior of a graphics shape composed of rectangles and paths.
 ///  This class cannot be inherited.
 /// </summary>
-public sealed partial class Region : System.MarshalByRefObject, System.IDisposable
+public sealed partial class Region : MarshalByRefObject, IDisposable
 {
 	private SKPath _path;
 	private bool _disposed;
@@ -31,7 +31,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="path">A <see cref="GraphicsPath"/> that defines the new <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
-	public Region(System.Drawing.Drawing2D.GraphicsPath path)
+	public Region(GraphicsPath path)
 	{
 		if (path is null) throw new ArgumentNullException(nameof(path));
 		_path = new SKPath(path.SKPath);
@@ -43,7 +43,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="rgnData">A <see cref="RegionData"/> that defines the interior of the new <see cref="Region"/>.</param>
 	/// <exception cref="PlatformNotSupportedException">RegionData deserialization is not supported in this implementation.</exception>
-	public Region(System.Drawing.Drawing2D.RegionData rgnData)
+	public Region(RegionData rgnData)
 	{
 		throw new PlatformNotSupportedException("Region construction from RegionData is not supported in SkiaSharp.Extended.Drawing.Common.");
 	}
@@ -52,7 +52,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  Initializes a new <see cref="Region"/> from the specified <see cref="Rectangle"/> structure.
 	/// </summary>
 	/// <param name="rect">A <see cref="Rectangle"/> structure that defines the interior of the new <see cref="Region"/>.</param>
-	public Region(System.Drawing.Rectangle rect)
+	public Region(Rectangle rect)
 	{
 		_path = new SKPath();
 		_path.AddRect(new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom));
@@ -63,7 +63,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  Initializes a new <see cref="Region"/> from the specified <see cref="RectangleF"/> structure.
 	/// </summary>
 	/// <param name="rect">A <see cref="RectangleF"/> structure that defines the interior of the new <see cref="Region"/>.</param>
-	public Region(System.Drawing.RectangleF rect)
+	public Region(RectangleF rect)
 	{
 		_path = new SKPath();
 		_path.AddRect(new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom));
@@ -81,7 +81,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="hrgn">A handle to an existing <see cref="Region"/>.</param>
 	/// <returns>The new <see cref="Region"/>.</returns>
 	/// <exception cref="PlatformNotSupportedException">GDI handles are not supported in this implementation.</exception>
-	public static System.Drawing.Region FromHrgn(nint hrgn)
+	public static Region FromHrgn(nint hrgn)
 	{
 		throw new PlatformNotSupportedException("GDI region handles are not supported in SkiaSharp.Extended.Drawing.Common.");
 	}
@@ -90,7 +90,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  Creates an exact copy of this <see cref="Region"/>.
 	/// </summary>
 	/// <returns>The <see cref="Region"/> that this method creates.</returns>
-	public System.Drawing.Region Clone()
+	public Region Clone()
 	{
 		ThrowIfDisposed();
 		var clone = new Region
@@ -108,7 +108,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="path">The <see cref="GraphicsPath"/> to complement this <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
-	public void Complement(System.Drawing.Drawing2D.GraphicsPath path)
+	public void Complement(GraphicsPath path)
 	{
 		if (path is null) throw new ArgumentNullException(nameof(path));
 		ThrowIfDisposed();
@@ -120,7 +120,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  that does not intersect with this <see cref="Region"/>.
 	/// </summary>
 	/// <param name="rect">The <see cref="Rectangle"/> to complement this <see cref="Region"/>.</param>
-	public void Complement(System.Drawing.Rectangle rect)
+	public void Complement(Rectangle rect)
 	{
 		Complement((RectangleF)rect);
 	}
@@ -130,7 +130,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  that does not intersect with this <see cref="Region"/>.
 	/// </summary>
 	/// <param name="rect">The <see cref="RectangleF"/> to complement this <see cref="Region"/>.</param>
-	public void Complement(System.Drawing.RectangleF rect)
+	public void Complement(RectangleF rect)
 	{
 		ThrowIfDisposed();
 		CombineWithRect(rect, SKPathOp.ReverseDifference);
@@ -142,7 +142,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="region">The <see cref="Region"/> to complement this <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="region"/> is <see langword="null"/>.</exception>
-	public void Complement(System.Drawing.Region region)
+	public void Complement(Region region)
 	{
 		if (region is null) throw new ArgumentNullException(nameof(region));
 		ThrowIfDisposed();
@@ -165,7 +165,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="region">The <see cref="Region"/> to test.</param>
 	/// <param name="g">A <see cref="Graphics"/> that represents a drawing surface.</param>
 	/// <returns><see langword="true"/> if the interior of <paramref name="region"/> is identical to the interior of this <see cref="Region"/> when the transformation associated with the <paramref name="g"/> parameter is applied; otherwise, <see langword="false"/>.</returns>
-	public bool Equals(System.Drawing.Region region, System.Drawing.Graphics g)
+	public bool Equals(Region region, Graphics g)
 	{
 		ThrowIfDisposed();
 		if (region is null) throw new ArgumentNullException(nameof(region));
@@ -181,7 +181,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="path">The <see cref="GraphicsPath"/> to exclude from this <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
-	public void Exclude(System.Drawing.Drawing2D.GraphicsPath path)
+	public void Exclude(GraphicsPath path)
 	{
 		if (path is null) throw new ArgumentNullException(nameof(path));
 		ThrowIfDisposed();
@@ -193,7 +193,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  intersect with the specified <see cref="Rectangle"/>.
 	/// </summary>
 	/// <param name="rect">The <see cref="Rectangle"/> to exclude from this <see cref="Region"/>.</param>
-	public void Exclude(System.Drawing.Rectangle rect)
+	public void Exclude(Rectangle rect)
 	{
 		Exclude((RectangleF)rect);
 	}
@@ -203,7 +203,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  intersect with the specified <see cref="RectangleF"/>.
 	/// </summary>
 	/// <param name="rect">The <see cref="RectangleF"/> to exclude from this <see cref="Region"/>.</param>
-	public void Exclude(System.Drawing.RectangleF rect)
+	public void Exclude(RectangleF rect)
 	{
 		ThrowIfDisposed();
 		CombineWithRect(rect, SKPathOp.Difference);
@@ -215,7 +215,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="region">The <see cref="Region"/> to exclude from this <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="region"/> is <see langword="null"/>.</exception>
-	public void Exclude(System.Drawing.Region region)
+	public void Exclude(Region region)
 	{
 		if (region is null) throw new ArgumentNullException(nameof(region));
 		ThrowIfDisposed();
@@ -228,7 +228,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="g">The <see cref="Graphics"/> on which this <see cref="Region"/> is drawn.</param>
 	/// <returns>A <see cref="RectangleF"/> structure that represents the bounding rectangle for this <see cref="Region"/> on the specified drawing surface.</returns>
-	public System.Drawing.RectangleF GetBounds(System.Drawing.Graphics g)
+	public RectangleF GetBounds(Graphics g)
 	{
 		ThrowIfDisposed();
 		if (_isInfinite)
@@ -244,7 +244,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="g">The <see cref="Graphics"/> on which this <see cref="Region"/> is drawn.</param>
 	/// <returns>A Windows handle to this <see cref="Region"/>.</returns>
 	/// <exception cref="PlatformNotSupportedException">GDI handles are not supported in this implementation.</exception>
-	public nint GetHrgn(System.Drawing.Graphics g)
+	public nint GetHrgn(Graphics g)
 	{
 		throw new PlatformNotSupportedException("GDI region handles are not supported in SkiaSharp.Extended.Drawing.Common.");
 	}
@@ -254,7 +254,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <returns>A <see cref="RegionData"/> that represents the information that describes this <see cref="Region"/>.</returns>
 	/// <exception cref="PlatformNotSupportedException">RegionData serialization is not supported in this implementation.</exception>
-	public System.Drawing.Drawing2D.RegionData? GetRegionData()
+	public RegionData? GetRegionData()
 	{
 		throw new PlatformNotSupportedException("GetRegionData is not supported in SkiaSharp.Extended.Drawing.Common.");
 	}
@@ -266,7 +266,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="matrix">A <see cref="Matrix"/> that represents a geometric transformation to apply to the region.</param>
 	/// <returns>An array of <see cref="RectangleF"/> structures that approximate this <see cref="Region"/>.</returns>
 	/// <exception cref="PlatformNotSupportedException">GetRegionScans is not supported in this implementation.</exception>
-	public System.Drawing.RectangleF[] GetRegionScans(System.Drawing.Drawing2D.Matrix matrix)
+	public RectangleF[] GetRegionScans(Matrix matrix)
 	{
 		throw new PlatformNotSupportedException("GetRegionScans is not supported in SkiaSharp.Extended.Drawing.Common.");
 	}
@@ -276,7 +276,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="path">The <see cref="GraphicsPath"/> to intersect with this <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
-	public void Intersect(System.Drawing.Drawing2D.GraphicsPath path)
+	public void Intersect(GraphicsPath path)
 	{
 		if (path is null) throw new ArgumentNullException(nameof(path));
 		ThrowIfDisposed();
@@ -287,7 +287,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  Updates this <see cref="Region"/> to the intersection of itself with the specified <see cref="Rectangle"/>.
 	/// </summary>
 	/// <param name="rect">The <see cref="Rectangle"/> to intersect with this <see cref="Region"/>.</param>
-	public void Intersect(System.Drawing.Rectangle rect)
+	public void Intersect(Rectangle rect)
 	{
 		Intersect((RectangleF)rect);
 	}
@@ -296,7 +296,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  Updates this <see cref="Region"/> to the intersection of itself with the specified <see cref="RectangleF"/>.
 	/// </summary>
 	/// <param name="rect">The <see cref="RectangleF"/> to intersect with this <see cref="Region"/>.</param>
-	public void Intersect(System.Drawing.RectangleF rect)
+	public void Intersect(RectangleF rect)
 	{
 		ThrowIfDisposed();
 		CombineWithRect(rect, SKPathOp.Intersect);
@@ -307,7 +307,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="region">The <see cref="Region"/> to intersect with this <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="region"/> is <see langword="null"/>.</exception>
-	public void Intersect(System.Drawing.Region region)
+	public void Intersect(Region region)
 	{
 		if (region is null) throw new ArgumentNullException(nameof(region));
 		ThrowIfDisposed();
@@ -319,7 +319,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="g">A <see cref="Graphics"/> that represents a drawing surface.</param>
 	/// <returns><see langword="true"/> if the interior of this <see cref="Region"/> is empty; otherwise, <see langword="false"/>.</returns>
-	public bool IsEmpty(System.Drawing.Graphics g)
+	public bool IsEmpty(Graphics g)
 	{
 		ThrowIfDisposed();
 		if (_isInfinite) return false;
@@ -331,7 +331,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="g">A <see cref="Graphics"/> that represents a drawing surface.</param>
 	/// <returns><see langword="true"/> if the interior of this <see cref="Region"/> is infinite; otherwise, <see langword="false"/>.</returns>
-	public bool IsInfinite(System.Drawing.Graphics g)
+	public bool IsInfinite(Graphics g)
 	{
 		ThrowIfDisposed();
 		return _isInfinite;
@@ -342,7 +342,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="point">The <see cref="Point"/> to test.</param>
 	/// <returns><see langword="true"/> if <paramref name="point"/> is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(System.Drawing.Point point)
+	public bool IsVisible(Point point)
 	{
 		return IsVisible(point.X, point.Y, null);
 	}
@@ -354,7 +354,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="point">The <see cref="Point"/> to test.</param>
 	/// <param name="g">A <see cref="Graphics"/> that represents a drawing surface.</param>
 	/// <returns><see langword="true"/> if <paramref name="point"/> is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(System.Drawing.Point point, System.Drawing.Graphics? g)
+	public bool IsVisible(Point point, Graphics? g)
 	{
 		return IsVisible(point.X, point.Y, g);
 	}
@@ -364,7 +364,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="point">The <see cref="PointF"/> to test.</param>
 	/// <returns><see langword="true"/> if <paramref name="point"/> is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(System.Drawing.PointF point)
+	public bool IsVisible(PointF point)
 	{
 		return IsVisible(point.X, point.Y, null);
 	}
@@ -376,7 +376,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="point">The <see cref="PointF"/> to test.</param>
 	/// <param name="g">A <see cref="Graphics"/> that represents a drawing surface.</param>
 	/// <returns><see langword="true"/> if <paramref name="point"/> is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(System.Drawing.PointF point, System.Drawing.Graphics? g)
+	public bool IsVisible(PointF point, Graphics? g)
 	{
 		return IsVisible(point.X, point.Y, g);
 	}
@@ -386,7 +386,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="rect">The <see cref="Rectangle"/> to test.</param>
 	/// <returns><see langword="true"/> if any portion of <paramref name="rect"/> is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(System.Drawing.Rectangle rect)
+	public bool IsVisible(Rectangle rect)
 	{
 		return IsVisible((RectangleF)rect, null);
 	}
@@ -398,7 +398,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="rect">The <see cref="Rectangle"/> to test.</param>
 	/// <param name="g">A <see cref="Graphics"/> that represents a drawing surface.</param>
 	/// <returns><see langword="true"/> if any portion of <paramref name="rect"/> is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(System.Drawing.Rectangle rect, System.Drawing.Graphics? g)
+	public bool IsVisible(Rectangle rect, Graphics? g)
 	{
 		return IsVisible((RectangleF)rect, g);
 	}
@@ -408,7 +408,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="rect">The <see cref="RectangleF"/> to test.</param>
 	/// <returns><see langword="true"/> if any portion of <paramref name="rect"/> is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(System.Drawing.RectangleF rect)
+	public bool IsVisible(RectangleF rect)
 	{
 		return IsVisible(rect, null);
 	}
@@ -420,7 +420,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="rect">The <see cref="RectangleF"/> to test.</param>
 	/// <param name="g">A <see cref="Graphics"/> that represents a drawing surface.</param>
 	/// <returns><see langword="true"/> if any portion of <paramref name="rect"/> is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(System.Drawing.RectangleF rect, System.Drawing.Graphics? g)
+	public bool IsVisible(RectangleF rect, Graphics? g)
 	{
 		ThrowIfDisposed();
 		if (_isInfinite) return true;
@@ -439,7 +439,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="y">The y-coordinate of the point to test.</param>
 	/// <param name="g">A <see cref="Graphics"/> that represents a drawing surface.</param>
 	/// <returns><see langword="true"/> if the specified point is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(int x, int y, System.Drawing.Graphics? g)
+	public bool IsVisible(int x, int y, Graphics? g)
 	{
 		return IsVisible((float)x, (float)y, g);
 	}
@@ -467,7 +467,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="height">The height of the rectangle to test.</param>
 	/// <param name="g">A <see cref="Graphics"/> that represents a drawing surface.</param>
 	/// <returns><see langword="true"/> if any portion of the specified rectangle is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(int x, int y, int width, int height, System.Drawing.Graphics? g)
+	public bool IsVisible(int x, int y, int width, int height, Graphics? g)
 	{
 		return IsVisible(new RectangleF(x, y, width, height), g);
 	}
@@ -491,7 +491,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="y">The y-coordinate of the point to test.</param>
 	/// <param name="g">A <see cref="Graphics"/> that represents a drawing surface.</param>
 	/// <returns><see langword="true"/> if the specified point is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(float x, float y, System.Drawing.Graphics? g)
+	public bool IsVisible(float x, float y, Graphics? g)
 	{
 		ThrowIfDisposed();
 		if (_isInfinite) return true;
@@ -521,7 +521,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// <param name="height">The height of the rectangle to test.</param>
 	/// <param name="g">A <see cref="Graphics"/> that represents a drawing surface.</param>
 	/// <returns><see langword="true"/> if any portion of the specified rectangle is contained within this <see cref="Region"/>; otherwise, <see langword="false"/>.</returns>
-	public bool IsVisible(float x, float y, float width, float height, System.Drawing.Graphics? g)
+	public bool IsVisible(float x, float y, float width, float height, Graphics? g)
 	{
 		return IsVisible(new RectangleF(x, y, width, height), g);
 	}
@@ -564,7 +564,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="matrix">The <see cref="Matrix"/> by which to transform this <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="matrix"/> is <see langword="null"/>.</exception>
-	public void Transform(System.Drawing.Drawing2D.Matrix matrix)
+	public void Transform(Matrix matrix)
 	{
 		ThrowIfDisposed();
 		if (matrix is null) throw new ArgumentNullException(nameof(matrix));
@@ -597,7 +597,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="path">The <see cref="GraphicsPath"/> to unite with this <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
-	public void Union(System.Drawing.Drawing2D.GraphicsPath path)
+	public void Union(GraphicsPath path)
 	{
 		if (path is null) throw new ArgumentNullException(nameof(path));
 		ThrowIfDisposed();
@@ -608,7 +608,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  Updates this <see cref="Region"/> to the union of itself and the specified <see cref="Rectangle"/>.
 	/// </summary>
 	/// <param name="rect">The <see cref="Rectangle"/> to unite with this <see cref="Region"/>.</param>
-	public void Union(System.Drawing.Rectangle rect)
+	public void Union(Rectangle rect)
 	{
 		Union((RectangleF)rect);
 	}
@@ -617,7 +617,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  Updates this <see cref="Region"/> to the union of itself and the specified <see cref="RectangleF"/>.
 	/// </summary>
 	/// <param name="rect">The <see cref="RectangleF"/> to unite with this <see cref="Region"/>.</param>
-	public void Union(System.Drawing.RectangleF rect)
+	public void Union(RectangleF rect)
 	{
 		ThrowIfDisposed();
 		CombineWithRect(rect, SKPathOp.Union);
@@ -628,7 +628,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="region">The <see cref="Region"/> to unite with this <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="region"/> is <see langword="null"/>.</exception>
-	public void Union(System.Drawing.Region region)
+	public void Union(Region region)
 	{
 		if (region is null) throw new ArgumentNullException(nameof(region));
 		ThrowIfDisposed();
@@ -640,7 +640,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="path">The <see cref="GraphicsPath"/> to Xor with this <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
-	public void Xor(System.Drawing.Drawing2D.GraphicsPath path)
+	public void Xor(GraphicsPath path)
 	{
 		if (path is null) throw new ArgumentNullException(nameof(path));
 		ThrowIfDisposed();
@@ -651,7 +651,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  Updates this <see cref="Region"/> to the union minus the intersection of itself and the specified <see cref="Rectangle"/>.
 	/// </summary>
 	/// <param name="rect">The <see cref="Rectangle"/> to Xor with this <see cref="Region"/>.</param>
-	public void Xor(System.Drawing.Rectangle rect)
+	public void Xor(Rectangle rect)
 	{
 		Xor((RectangleF)rect);
 	}
@@ -660,7 +660,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	///  Updates this <see cref="Region"/> to the union minus the intersection of itself and the specified <see cref="RectangleF"/>.
 	/// </summary>
 	/// <param name="rect">The <see cref="RectangleF"/> to Xor with this <see cref="Region"/>.</param>
-	public void Xor(System.Drawing.RectangleF rect)
+	public void Xor(RectangleF rect)
 	{
 		ThrowIfDisposed();
 		CombineWithRect(rect, SKPathOp.Xor);
@@ -671,7 +671,7 @@ public sealed partial class Region : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="region">The <see cref="Region"/> to Xor with this <see cref="Region"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="region"/> is <see langword="null"/>.</exception>
-	public void Xor(System.Drawing.Region region)
+	public void Xor(Region region)
 	{
 		if (region is null) throw new ArgumentNullException(nameof(region));
 		ThrowIfDisposed();

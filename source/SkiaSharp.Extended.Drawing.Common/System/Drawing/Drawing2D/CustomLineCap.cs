@@ -3,7 +3,7 @@ namespace System.Drawing.Drawing2D;
 /// <summary>
 ///  Encapsulates a custom user-defined line cap.
 /// </summary>
-public partial class CustomLineCap : System.MarshalByRefObject, System.ICloneable, System.IDisposable
+public partial class CustomLineCap : MarshalByRefObject, ICloneable, IDisposable
 {
 	private GraphicsPath? _fillPath;
 	private GraphicsPath? _strokePath;
@@ -16,15 +16,15 @@ public partial class CustomLineCap : System.MarshalByRefObject, System.ICloneabl
 	private bool _disposed;
 
 	/// <summary>Initializes a new instance of the <see cref="CustomLineCap"/> class with the specified outline and fill.</summary>
-	public CustomLineCap(System.Drawing.Drawing2D.GraphicsPath? fillPath, System.Drawing.Drawing2D.GraphicsPath? strokePath)
+	public CustomLineCap(GraphicsPath? fillPath, GraphicsPath? strokePath)
 		: this(fillPath, strokePath, LineCap.Flat, 0) { }
 
 	/// <summary>Initializes a new instance of the <see cref="CustomLineCap"/> class with the specified outline, fill, and base cap.</summary>
-	public CustomLineCap(System.Drawing.Drawing2D.GraphicsPath? fillPath, System.Drawing.Drawing2D.GraphicsPath? strokePath, System.Drawing.Drawing2D.LineCap baseCap)
+	public CustomLineCap(GraphicsPath? fillPath, GraphicsPath? strokePath, LineCap baseCap)
 		: this(fillPath, strokePath, baseCap, 0) { }
 
 	/// <summary>Initializes a new instance of the <see cref="CustomLineCap"/> class with the specified outline, fill, base cap, and inset.</summary>
-	public CustomLineCap(System.Drawing.Drawing2D.GraphicsPath? fillPath, System.Drawing.Drawing2D.GraphicsPath? strokePath, System.Drawing.Drawing2D.LineCap baseCap, float baseInset)
+	public CustomLineCap(GraphicsPath? fillPath, GraphicsPath? strokePath, LineCap baseCap, float baseInset)
 	{
 		_fillPath = fillPath;
 		_strokePath = strokePath;
@@ -33,11 +33,11 @@ public partial class CustomLineCap : System.MarshalByRefObject, System.ICloneabl
 	}
 
 	/// <summary>Gets or sets the base <see cref="LineCap"/> from which this <see cref="CustomLineCap"/> is created.</summary>
-	public System.Drawing.Drawing2D.LineCap BaseCap { get => _baseCap; set => _baseCap = value; }
+	public LineCap BaseCap { get => _baseCap; set => _baseCap = value; }
 	/// <summary>Gets or sets the distance between the cap and the line.</summary>
 	public float BaseInset { get => _baseInset; set => _baseInset = value; }
 	/// <summary>Gets or sets the <see cref="LineJoin"/> enumeration that determines how lines composing this cap are joined.</summary>
-	public System.Drawing.Drawing2D.LineJoin StrokeJoin { get => _strokeJoin; set => _strokeJoin = value; }
+	public LineJoin StrokeJoin { get => _strokeJoin; set => _strokeJoin = value; }
 	/// <summary>Gets or sets the amount by which to scale this <see cref="CustomLineCap"/> with respect to the width of the <see cref="Pen"/>.</summary>
 	public float WidthScale { get => _widthScale; set => _widthScale = value; }
 
@@ -54,7 +54,7 @@ public partial class CustomLineCap : System.MarshalByRefObject, System.ICloneabl
 	/// <summary>Gets the start and end caps for this custom cap.</summary>
 	/// <param name="startCap">The <see cref="LineCap"/> used at the beginning of a line.</param>
 	/// <param name="endCap">The <see cref="LineCap"/> used at the end of a line.</param>
-	public void GetStrokeCaps(out System.Drawing.Drawing2D.LineCap startCap, out System.Drawing.Drawing2D.LineCap endCap)
+	public void GetStrokeCaps(out LineCap startCap, out LineCap endCap)
 	{
 		startCap = _startCap;
 		endCap = _endCap;
@@ -63,7 +63,7 @@ public partial class CustomLineCap : System.MarshalByRefObject, System.ICloneabl
 	/// <summary>Sets the start and end caps for this custom cap.</summary>
 	/// <param name="startCap">The <see cref="LineCap"/> to use at the beginning of a line.</param>
 	/// <param name="endCap">The <see cref="LineCap"/> to use at the end of a line.</param>
-	public void SetStrokeCaps(System.Drawing.Drawing2D.LineCap startCap, System.Drawing.Drawing2D.LineCap endCap)
+	public void SetStrokeCaps(LineCap startCap, LineCap endCap)
 	{
 		_startCap = startCap;
 		_endCap = endCap;

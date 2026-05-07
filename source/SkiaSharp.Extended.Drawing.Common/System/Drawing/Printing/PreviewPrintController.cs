@@ -5,7 +5,7 @@ namespace System.Drawing.Printing;
 /// <summary>
 ///  Specifies a print controller that displays a document on a screen as a series of images.
 /// </summary>
-public partial class PreviewPrintController : System.Drawing.Printing.PrintController
+public partial class PreviewPrintController : PrintController
 {
 	private readonly List<PreviewPageInfo> _pages = new List<PreviewPageInfo>();
 	private Bitmap? _currentBitmap;
@@ -22,12 +22,12 @@ public partial class PreviewPrintController : System.Drawing.Printing.PrintContr
 
 	/// <summary>Captures print preview information for the document.</summary>
 	/// <returns>An array of <see cref="PreviewPageInfo"/> objects.</returns>
-	public System.Drawing.Printing.PreviewPageInfo[] GetPreviewPageInfo() => _pages.ToArray();
+	public PreviewPageInfo[] GetPreviewPageInfo() => _pages.ToArray();
 
 	/// <summary>Completes the control sequence that determines when and how to preview a page in a print document.</summary>
 	/// <param name="document">The <see cref="PrintDocument"/> currently being printed.</param>
 	/// <param name="e">A <see cref="PrintPageEventArgs"/> that contains the event data.</param>
-	public override void OnEndPage(System.Drawing.Printing.PrintDocument document, System.Drawing.Printing.PrintPageEventArgs e)
+	public override void OnEndPage(PrintDocument document, PrintPageEventArgs e)
 	{
 		if (_currentBitmap != null)
 		{
@@ -40,7 +40,7 @@ public partial class PreviewPrintController : System.Drawing.Printing.PrintContr
 	/// <summary>Completes the control sequence that determines when and how to preview a print document.</summary>
 	/// <param name="document">The <see cref="PrintDocument"/> currently being printed.</param>
 	/// <param name="e">A <see cref="PrintEventArgs"/> that contains the event data.</param>
-	public override void OnEndPrint(System.Drawing.Printing.PrintDocument document, System.Drawing.Printing.PrintEventArgs e)
+	public override void OnEndPrint(PrintDocument document, PrintEventArgs e)
 	{
 	}
 
@@ -48,7 +48,7 @@ public partial class PreviewPrintController : System.Drawing.Printing.PrintContr
 	/// <param name="document">The <see cref="PrintDocument"/> currently being printed.</param>
 	/// <param name="e">A <see cref="PrintPageEventArgs"/> that contains the event data.</param>
 	/// <returns>A <see cref="Graphics"/> that represents a page from a <see cref="PrintDocument"/>.</returns>
-	public override System.Drawing.Graphics OnStartPage(System.Drawing.Printing.PrintDocument document, System.Drawing.Printing.PrintPageEventArgs e)
+	public override Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e)
 	{
 		var bounds = e.PageBounds;
 		int width = Math.Max(1, bounds.Width);
@@ -60,7 +60,7 @@ public partial class PreviewPrintController : System.Drawing.Printing.PrintContr
 	/// <summary>Begins the control sequence that determines when and how to preview a print document.</summary>
 	/// <param name="document">The <see cref="PrintDocument"/> currently being printed.</param>
 	/// <param name="e">A <see cref="PrintEventArgs"/> that contains the event data.</param>
-	public override void OnStartPrint(System.Drawing.Printing.PrintDocument document, System.Drawing.Printing.PrintEventArgs e)
+	public override void OnStartPrint(PrintDocument document, PrintEventArgs e)
 	{
 		_pages.Clear();
 	}

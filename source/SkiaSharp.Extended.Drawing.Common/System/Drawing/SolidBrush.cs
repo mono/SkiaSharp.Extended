@@ -7,7 +7,7 @@ namespace System.Drawing;
 ///  Defines a brush of a single color. Brushes are used to fill graphics shapes,
 ///  such as rectangles, ellipses, pies, polygons, and paths.
 /// </summary>
-public sealed partial class SolidBrush : System.Drawing.Brush
+public sealed partial class SolidBrush : Brush
 {
 	private Color _color;
 
@@ -17,7 +17,7 @@ public sealed partial class SolidBrush : System.Drawing.Brush
 	/// <param name="color">
 	///  A <see cref="Color"/> structure that represents the color of this brush.
 	/// </param>
-	public SolidBrush(System.Drawing.Color color)
+	public SolidBrush(Color color)
 	{
 		_color = color;
 	}
@@ -27,7 +27,7 @@ public sealed partial class SolidBrush : System.Drawing.Brush
 	/// </summary>
 	/// <value>A <see cref="Color"/> structure that represents the color of this brush.</value>
 	/// <exception cref="ObjectDisposedException">This brush has been disposed.</exception>
-	public System.Drawing.Color Color
+	public Color Color
 	{
 		get
 		{

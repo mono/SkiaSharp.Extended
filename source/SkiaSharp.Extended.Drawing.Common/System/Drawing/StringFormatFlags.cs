@@ -1,6 +1,6 @@
 ﻿namespace System.Drawing;
 
-[System.FlagsAttribute]
+[Flags]
 public enum StringFormatFlags
 {
 	DirectionRightToLeft = 1,

@@ -9,13 +9,13 @@ namespace System.Drawing.Internal;
 internal static class SkiaConversions
 {
 	/// <summary>
-	///  Converts a <see cref="System.Drawing.Color"/> to an <see cref="SKColor"/>.
+	///  Converts a <see cref="Color"/> to an <see cref="SKColor"/>.
 	/// </summary>
 	public static SKColor ToSKColor(Color color)
 		=> new SKColor(color.R, color.G, color.B, color.A);
 
 	/// <summary>
-	///  Converts an <see cref="SKColor"/> to a <see cref="System.Drawing.Color"/>.
+	///  Converts an <see cref="SKColor"/> to a <see cref="Color"/>.
 	/// </summary>
 	public static Color ToDrawingColor(SKColor color)
 		=> Color.FromArgb(color.Alpha, color.Red, color.Green, color.Blue);
@@ -177,7 +177,7 @@ internal static class SkiaConversions
 		}
 	}
 	/// <summary>
-	///  Converts a <see cref="System.Drawing.Drawing2D.LineCap"/> to an <see cref="SKStrokeCap"/>.
+	///  Converts a <see cref="Drawing2D.LineCap"/> to an <see cref="SKStrokeCap"/>.
 	/// </summary>
 	public static SKStrokeCap ToSKStrokeCap(Drawing2D.LineCap lineCap) => lineCap switch
 	{
@@ -188,7 +188,7 @@ internal static class SkiaConversions
 	};
 
 	/// <summary>
-	///  Converts a <see cref="System.Drawing.Drawing2D.LineJoin"/> to an <see cref="SKStrokeJoin"/>.
+	///  Converts a <see cref="Drawing2D.LineJoin"/> to an <see cref="SKStrokeJoin"/>.
 	/// </summary>
 	public static SKStrokeJoin ToSKStrokeJoin(Drawing2D.LineJoin lineJoin) => lineJoin switch
 	{
@@ -200,7 +200,7 @@ internal static class SkiaConversions
 	};
 
 	/// <summary>
-	///  Converts a <see cref="System.Drawing.Drawing2D.WrapMode"/> to an <see cref="SKShaderTileMode"/>.
+	///  Converts a <see cref="Drawing2D.WrapMode"/> to an <see cref="SKShaderTileMode"/>.
 	/// </summary>
 	public static SKShaderTileMode ToSKShaderTileMode(Drawing2D.WrapMode wrapMode) => wrapMode switch
 	{
@@ -213,8 +213,8 @@ internal static class SkiaConversions
 	};
 
 	/// <summary>
-	///  Gets the dash pattern array for a given <see cref="System.Drawing.Drawing2D.DashStyle"/>.
-	///  Returns <see langword="null"/> for <see cref="System.Drawing.Drawing2D.DashStyle.Solid"/>.
+	///  Gets the dash pattern array for a given <see cref="Drawing2D.DashStyle"/>.
+	///  Returns <see langword="null"/> for <see cref="Drawing2D.DashStyle.Solid"/>.
 	/// </summary>
 	public static float[]? GetDashPattern(Drawing2D.DashStyle dashStyle) => dashStyle switch
 	{

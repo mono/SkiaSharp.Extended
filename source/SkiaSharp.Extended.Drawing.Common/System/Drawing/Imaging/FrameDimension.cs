@@ -14,27 +14,27 @@ public sealed partial class FrameDimension
 	/// <summary>
 	///  Initializes a new instance of the <see cref="FrameDimension"/> class using the specified <see cref="System.Guid"/> structure.
 	/// </summary>
-	public FrameDimension(System.Guid guid) { _guid = guid; }
+	public FrameDimension(Guid guid) { _guid = guid; }
 
 	/// <summary>
 	///  Gets a globally unique identifier (GUID) that represents this <see cref="FrameDimension"/> object.
 	/// </summary>
-	public System.Guid Guid { get { return _guid; } }
+	public Guid Guid { get { return _guid; } }
 
 	/// <summary>
 	///  Gets the page dimension.
 	/// </summary>
-	public static System.Drawing.Imaging.FrameDimension Page { get { return s_page; } }
+	public static FrameDimension Page { get { return s_page; } }
 
 	/// <summary>
 	///  Gets the resolution dimension.
 	/// </summary>
-	public static System.Drawing.Imaging.FrameDimension Resolution { get { return s_resolution; } }
+	public static FrameDimension Resolution { get { return s_resolution; } }
 
 	/// <summary>
 	///  Gets the time dimension.
 	/// </summary>
-	public static System.Drawing.Imaging.FrameDimension Time { get { return s_time; } }
+	public static FrameDimension Time { get { return s_time; } }
 
 	/// <summary>
 	///  Returns a value that indicates whether the specified object is a <see cref="FrameDimension"/> equivalent to this <see cref="FrameDimension"/> object.

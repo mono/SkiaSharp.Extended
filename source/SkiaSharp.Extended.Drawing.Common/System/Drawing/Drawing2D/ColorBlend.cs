@@ -31,7 +31,7 @@ public sealed partial class ColorBlend
 	///  Gets or sets an array of colors that represents the colors to use at corresponding positions along a gradient.
 	/// </summary>
 	/// <value>An array of <see cref="Color"/> structures that represents the colors to use at corresponding positions along a gradient.</value>
-	public System.Drawing.Color[] Colors
+	public Color[] Colors
 	{
 		get => _colors;
 		set => _colors = value ?? throw new ArgumentNullException(nameof(value));

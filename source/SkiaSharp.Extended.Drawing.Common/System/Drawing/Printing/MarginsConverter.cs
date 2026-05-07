@@ -3,27 +3,27 @@
 namespace System.Drawing.Printing;
 
 /// <summary>
-///  Provides a <see cref="System.ComponentModel.TypeConverter"/> to convert <see cref="Margins"/> to and from other representations.
+///  Provides a <see cref="ComponentModel.TypeConverter"/> to convert <see cref="Margins"/> to and from other representations.
 /// </summary>
-public partial class MarginsConverter : System.ComponentModel.ExpandableObjectConverter
+public partial class MarginsConverter : ComponentModel.ExpandableObjectConverter
 {
 	/// <summary>Initializes a new instance of the <see cref="MarginsConverter"/> class.</summary>
 	public MarginsConverter() { }
 
 	/// <summary>Returns whether this converter can convert an object of one type to the type of this converter.</summary>
-	public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext? context, System.Type sourceType)
+	public override bool CanConvertFrom(ComponentModel.ITypeDescriptorContext? context, Type sourceType)
 	{
 		return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
 	}
 
 	/// <summary>Returns whether this converter can convert the object to the specified type.</summary>
-	public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext? context, System.Type? destinationType)
+	public override bool CanConvertTo(ComponentModel.ITypeDescriptorContext? context, Type? destinationType)
 	{
 		return destinationType == typeof(string) || base.CanConvertTo(context, destinationType);
 	}
 
 	/// <summary>Converts the given value to the type of this converter.</summary>
-	public override object? ConvertFrom(System.ComponentModel.ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
+	public override object? ConvertFrom(ComponentModel.ITypeDescriptorContext? context, CultureInfo? culture, object value)
 	{
 		if (value is string s)
 		{
@@ -43,7 +43,7 @@ public partial class MarginsConverter : System.ComponentModel.ExpandableObjectCo
 	}
 
 	/// <summary>Converts the given value object to the specified type.</summary>
-	public override object? ConvertTo(System.ComponentModel.ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object? value, System.Type destinationType)
+	public override object? ConvertTo(ComponentModel.ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
 	{
 		if (destinationType == typeof(string) && value is Margins m)
 		{
@@ -54,7 +54,7 @@ public partial class MarginsConverter : System.ComponentModel.ExpandableObjectCo
 	}
 
 	/// <summary>Creates an instance of the type that this converter is associated with.</summary>
-	public override object CreateInstance(System.ComponentModel.ITypeDescriptorContext? context, System.Collections.IDictionary propertyValues)
+	public override object CreateInstance(ComponentModel.ITypeDescriptorContext? context, Collections.IDictionary propertyValues)
 	{
 		if (propertyValues == null) throw new ArgumentNullException(nameof(propertyValues));
 		return new Margins(
@@ -65,5 +65,5 @@ public partial class MarginsConverter : System.ComponentModel.ExpandableObjectCo
 	}
 
 	/// <summary>Returns whether changing a value on this object requires a call to <see cref="CreateInstance"/> to create a new value.</summary>
-	public override bool GetCreateInstanceSupported(System.ComponentModel.ITypeDescriptorContext? context) => true;
+	public override bool GetCreateInstanceSupported(ComponentModel.ITypeDescriptorContext? context) => true;
 }

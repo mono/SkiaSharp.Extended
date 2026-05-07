@@ -9,7 +9,7 @@ namespace System.Drawing;
 /// <summary>
 ///  Encapsulates a GDI+ drawing surface backed by SkiaSharp. This class cannot be inherited.
 /// </summary>
-public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing.IDeviceContext, System.IDisposable
+public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisposable
 {
 	private SKCanvas _canvas = null!;
 	private SKBitmap? _bitmap;
@@ -29,7 +29,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	private int _textContrast = 4;
 	private int _clipSaveCount;
 	private Region? _clipRegion;
-	private System.Collections.Generic.Stack<GraphicsModeState>? _savedStates;
+	private Collections.Generic.Stack<GraphicsModeState>? _savedStates;
 
 	/// <summary>
 	///  Captures all mode fields for Save/Restore.
@@ -98,13 +98,13 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Provides a callback method for the EnumerateMetafile method.
 	/// </summary>
-	public delegate bool EnumerateMetafileProc(System.Drawing.Imaging.EmfPlusRecordType recordType, int flags, int dataSize, System.IntPtr data, System.Drawing.Imaging.PlayRecordCallback? callbackData);
+	public delegate bool EnumerateMetafileProc(Imaging.EmfPlusRecordType recordType, int flags, int dataSize, System.IntPtr data, Imaging.PlayRecordCallback? callbackData);
 
 	/// <summary>
 	///  Gets or sets a <see cref="Region"/> that limits the drawing region of this <see cref="Graphics"/>.
 	/// </summary>
 	/// <value>A <see cref="Region"/> that limits the portion of this <see cref="Graphics"/> that is currently available for drawing.</value>
-	public System.Drawing.Region Clip
+	public Region Clip
 	{
 		get
 		{
@@ -131,7 +131,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets a <see cref="RectangleF"/> structure that bounds the clipping region of this <see cref="Graphics"/>.
 	/// </summary>
-	public System.Drawing.RectangleF ClipBounds
+	public RectangleF ClipBounds
 	{
 		get
 		{
@@ -144,7 +144,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets or sets a value that specifies how composited images are drawn to this Graphics.
 	/// </summary>
-	public System.Drawing.Drawing2D.CompositingMode CompositingMode
+	public CompositingMode CompositingMode
 	{
 		get { ThrowIfDisposed(); return _compositingMode; }
 		set { ThrowIfDisposed(); _compositingMode = value; }
@@ -153,7 +153,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets or sets the rendering quality of composited images drawn to this Graphics.
 	/// </summary>
-	public System.Drawing.Drawing2D.CompositingQuality CompositingQuality
+	public CompositingQuality CompositingQuality
 	{
 		get { ThrowIfDisposed(); return _compositingQuality; }
 		set { ThrowIfDisposed(); _compositingQuality = value; }
@@ -178,7 +178,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets or sets the interpolation mode associated with this <see cref="Graphics"/>.
 	/// </summary>
-	public System.Drawing.Drawing2D.InterpolationMode InterpolationMode
+	public InterpolationMode InterpolationMode
 	{
 		get { ThrowIfDisposed(); return _interpolationMode; }
 		set { ThrowIfDisposed(); _interpolationMode = value; }
@@ -222,7 +222,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets or sets the unit of measure used for page coordinates in this Graphics.
 	/// </summary>
-	public System.Drawing.GraphicsUnit PageUnit
+	public GraphicsUnit PageUnit
 	{
 		get { ThrowIfDisposed(); return _pageUnit; }
 		set { ThrowIfDisposed(); _pageUnit = value; }
@@ -231,7 +231,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets or sets a value specifying how pixels are offset during rendering of this Graphics.
 	/// </summary>
-	public System.Drawing.Drawing2D.PixelOffsetMode PixelOffsetMode
+	public PixelOffsetMode PixelOffsetMode
 	{
 		get { ThrowIfDisposed(); return _pixelOffsetMode; }
 		set { ThrowIfDisposed(); _pixelOffsetMode = value; }
@@ -240,7 +240,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets or sets the rendering origin of this Graphics for dithering and for hatch brushes.
 	/// </summary>
-	public System.Drawing.Point RenderingOrigin
+	public Point RenderingOrigin
 	{
 		get { ThrowIfDisposed(); return _renderingOrigin; }
 		set { ThrowIfDisposed(); _renderingOrigin = value; }
@@ -249,7 +249,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets or sets the rendering quality for this Graphics.
 	/// </summary>
-	public System.Drawing.Drawing2D.SmoothingMode SmoothingMode
+	public SmoothingMode SmoothingMode
 	{
 		get { ThrowIfDisposed(); return _smoothingMode; }
 		set { ThrowIfDisposed(); _smoothingMode = value; }
@@ -267,7 +267,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets or sets the rendering mode for text associated with this Graphics.
 	/// </summary>
-	public System.Drawing.Text.TextRenderingHint TextRenderingHint
+	public TextRenderingHint TextRenderingHint
 	{
 		get { ThrowIfDisposed(); return _textRenderingHint; }
 		set { ThrowIfDisposed(); _textRenderingHint = value; }
@@ -276,12 +276,12 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets or sets a copy of the geometric world transformation for this Graphics.
 	/// </summary>
-	public System.Drawing.Drawing2D.Matrix Transform
+	public Matrix Transform
 	{
 		get
 		{
 			ThrowIfDisposed();
-			return new Drawing2D.Matrix { SKMatrix = _canvas.TotalMatrix };
+			return new Matrix { SKMatrix = _canvas.TotalMatrix };
 		}
 		set
 		{
@@ -294,7 +294,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets the bounding rectangle of the visible clipping region of this <see cref="Graphics"/>.
 	/// </summary>
-	public System.Drawing.RectangleF VisibleClipBounds
+	public RectangleF VisibleClipBounds
 	{
 		get
 		{
@@ -307,28 +307,28 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Creates a new Graphics from the specified handle to a device context.
 	/// </summary>
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-	public static System.Drawing.Graphics FromHdc(nint hdc) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	[EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
+	public static Graphics FromHdc(nint hdc) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Creates a new Graphics from the specified handle to a device context and handle to a device.
 	/// </summary>
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-	public static System.Drawing.Graphics FromHdc(nint hdc, nint hdevice) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	[EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
+	public static Graphics FromHdc(nint hdc, nint hdevice) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Returns a Graphics for the specified device context.
 	/// </summary>
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-	public static System.Drawing.Graphics FromHdcInternal(nint hdc) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	[EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
+	public static Graphics FromHdcInternal(nint hdc) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Creates a new Graphics from the specified handle to a window.
 	/// </summary>
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-	public static System.Drawing.Graphics FromHwnd(nint hwnd) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	[EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
+	public static Graphics FromHwnd(nint hwnd) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Creates a new Graphics for the specified Windows handle.
 	/// </summary>
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-	public static System.Drawing.Graphics FromHwndInternal(nint hwnd) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	[EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
+	public static Graphics FromHwndInternal(nint hwnd) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 
 	/// <summary>
 	///  Creates a new <see cref="Graphics"/> from the specified <see cref="Image"/>.
@@ -337,7 +337,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <returns>This method returns a new <see cref="Graphics"/> for the specified <see cref="Image"/>.</returns>
 	/// <exception cref="ArgumentNullException"><paramref name="image"/> is <see langword="null"/>.</exception>
 	/// <exception cref="ArgumentException">The backing bitmap of <paramref name="image"/> is <see langword="null"/>.</exception>
-	public static System.Drawing.Graphics FromImage(System.Drawing.Image image)
+	public static Graphics FromImage(Image image)
 	{
 		if (image is null) throw new ArgumentNullException(nameof(image));
 		if (image.SKBitmapBacking is null)
@@ -387,19 +387,19 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Returns a Windows halftone palette.
 	/// </summary>
 	/// <returns>An internal pointer to the handle of the palette.</returns>
-	public static nint GetHalftonePalette() { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public static nint GetHalftonePalette() { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 
 	/// <summary>
 	///  Adds a comment to the current Metafile.
 	/// </summary>
 	/// <param name="data">Array of bytes that contains the comment.</param>
-	public void AddMetafileComment(byte[] data) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void AddMetafileComment(byte[] data) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 
 	/// <summary>
 	///  Saves a graphics container with the current state of this Graphics and opens and uses a new graphics container.
 	/// </summary>
 	/// <returns>A <see cref="GraphicsContainer"/> that represents the state of this Graphics.</returns>
-	public System.Drawing.Drawing2D.GraphicsContainer BeginContainer()
+	public GraphicsContainer BeginContainer()
 	{
 		ThrowIfDisposed();
 		int count = _canvas.Save();
@@ -413,7 +413,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="srcrect">A <see cref="Rectangle"/> structure that, together with the <paramref name="dstrect"/> parameter, specifies a scale transformation for the new graphics container.</param>
 	/// <param name="unit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the unit of measure for the container.</param>
 	/// <returns>A <see cref="GraphicsContainer"/> that represents the state of this Graphics.</returns>
-	public System.Drawing.Drawing2D.GraphicsContainer BeginContainer(System.Drawing.Rectangle dstrect, System.Drawing.Rectangle srcrect, System.Drawing.GraphicsUnit unit)
+	public GraphicsContainer BeginContainer(Rectangle dstrect, Rectangle srcrect, GraphicsUnit unit)
 		=> BeginContainer((RectangleF)dstrect, (RectangleF)srcrect, unit);
 
 	/// <summary>
@@ -423,7 +423,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="srcrect">A <see cref="RectangleF"/> structure that, together with the <paramref name="dstrect"/> parameter, specifies a scale transformation for the new graphics container.</param>
 	/// <param name="unit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the unit of measure for the container.</param>
 	/// <returns>A <see cref="GraphicsContainer"/> that represents the state of this Graphics.</returns>
-	public System.Drawing.Drawing2D.GraphicsContainer BeginContainer(System.Drawing.RectangleF dstrect, System.Drawing.RectangleF srcrect, System.Drawing.GraphicsUnit unit)
+	public GraphicsContainer BeginContainer(RectangleF dstrect, RectangleF srcrect, GraphicsUnit unit)
 	{
 		ThrowIfDisposed();
 		int count = _canvas.Save();
@@ -441,7 +441,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Clears the entire drawing surface and fills it with the specified background color.
 	/// </summary>
 	/// <param name="color"><see cref="Color"/> structure that represents the background color of the drawing surface.</param>
-	public void Clear(System.Drawing.Color color)
+	public void Clear(Color color)
 	{
 		ThrowIfDisposed();
 		_canvas.Clear(SkiaConversions.ToSKColor(color));
@@ -450,22 +450,22 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Performs a bit-block transfer of color data from the screen to the drawing surface of this Graphics.
 	/// </summary>
-	public void CopyFromScreen(System.Drawing.Point upperLeftSource, System.Drawing.Point upperLeftDestination, System.Drawing.Size blockRegionSize) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void CopyFromScreen(Point upperLeftSource, Point upperLeftDestination, Size blockRegionSize) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 
 	/// <summary>
 	///  Performs a bit-block transfer of color data from the screen to the drawing surface of this Graphics.
 	/// </summary>
-	public void CopyFromScreen(System.Drawing.Point upperLeftSource, System.Drawing.Point upperLeftDestination, System.Drawing.Size blockRegionSize, System.Drawing.CopyPixelOperation copyPixelOperation) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void CopyFromScreen(Point upperLeftSource, Point upperLeftDestination, Size blockRegionSize, CopyPixelOperation copyPixelOperation) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 
 	/// <summary>
 	///  Performs a bit-block transfer of color data from the screen to the drawing surface of this Graphics.
 	/// </summary>
-	public void CopyFromScreen(int sourceX, int sourceY, int destinationX, int destinationY, System.Drawing.Size blockRegionSize) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void CopyFromScreen(int sourceX, int sourceY, int destinationX, int destinationY, Size blockRegionSize) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 
 	/// <summary>
 	///  Performs a bit-block transfer of color data from the screen to the drawing surface of this Graphics.
 	/// </summary>
-	public void CopyFromScreen(int sourceX, int sourceY, int destinationX, int destinationY, System.Drawing.Size blockRegionSize, System.Drawing.CopyPixelOperation copyPixelOperation) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void CopyFromScreen(int sourceX, int sourceY, int destinationX, int destinationY, Size blockRegionSize, CopyPixelOperation copyPixelOperation) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 
 	/// <summary>
 	///  Releases all resources used by this <see cref="Graphics"/>.
@@ -479,19 +479,19 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws an arc representing a portion of an ellipse specified by a <see cref="Rectangle"/> structure.
 	/// </summary>
-	public void DrawArc(System.Drawing.Pen pen, System.Drawing.Rectangle rect, float startAngle, float sweepAngle)
+	public void DrawArc(Pen pen, Rectangle rect, float startAngle, float sweepAngle)
 		=> DrawArc(pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 
 	/// <summary>
 	///  Draws an arc representing a portion of an ellipse specified by a <see cref="RectangleF"/> structure.
 	/// </summary>
-	public void DrawArc(System.Drawing.Pen pen, System.Drawing.RectangleF rect, float startAngle, float sweepAngle)
+	public void DrawArc(Pen pen, RectangleF rect, float startAngle, float sweepAngle)
 		=> DrawArc(pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 
 	/// <summary>
 	///  Draws an arc representing a portion of an ellipse specified by a pair of coordinates, a width, and a height.
 	/// </summary>
-	public void DrawArc(System.Drawing.Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
+	public void DrawArc(Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		=> DrawArc(pen, (float)x, (float)y, (float)width, (float)height, (float)startAngle, (float)sweepAngle);
 
 	/// <summary>
@@ -504,7 +504,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="height">Height of the rectangle that defines the ellipse.</param>
 	/// <param name="startAngle">Angle in degrees measured clockwise from the x-axis to the starting point of the arc.</param>
 	/// <param name="sweepAngle">Angle in degrees measured clockwise from the <paramref name="startAngle"/> parameter to ending point of the arc.</param>
-	public void DrawArc(System.Drawing.Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
+	public void DrawArc(Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -524,7 +524,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="pt2">A <see cref="Point"/> structure that represents the first control point of the curve.</param>
 	/// <param name="pt3">A <see cref="Point"/> structure that represents the second control point of the curve.</param>
 	/// <param name="pt4">A <see cref="Point"/> structure that represents the ending point of the curve.</param>
-	public void DrawBezier(System.Drawing.Pen pen, System.Drawing.Point pt1, System.Drawing.Point pt2, System.Drawing.Point pt3, System.Drawing.Point pt4)
+	public void DrawBezier(Pen pen, Point pt1, Point pt2, Point pt3, Point pt4)
 		=> DrawBezier(pen, (float)pt1.X, (float)pt1.Y, (float)pt2.X, (float)pt2.Y, (float)pt3.X, (float)pt3.Y, (float)pt4.X, (float)pt4.Y);
 
 	/// <summary>
@@ -535,7 +535,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="pt2">A <see cref="PointF"/> structure that represents the first control point of the curve.</param>
 	/// <param name="pt3">A <see cref="PointF"/> structure that represents the second control point of the curve.</param>
 	/// <param name="pt4">A <see cref="PointF"/> structure that represents the ending point of the curve.</param>
-	public void DrawBezier(System.Drawing.Pen pen, System.Drawing.PointF pt1, System.Drawing.PointF pt2, System.Drawing.PointF pt3, System.Drawing.PointF pt4)
+	public void DrawBezier(Pen pen, PointF pt1, PointF pt2, PointF pt3, PointF pt4)
 		=> DrawBezier(pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 
 	/// <summary>
@@ -550,7 +550,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="y3">The y-coordinate of the second control point of the curve.</param>
 	/// <param name="x4">The x-coordinate of the ending point of the curve.</param>
 	/// <param name="y4">The y-coordinate of the ending point of the curve.</param>
-	public void DrawBezier(System.Drawing.Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+	public void DrawBezier(Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -567,7 +567,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen">The <see cref="Pen"/> that determines the color, width, and style of the curve.</param>
 	/// <param name="points">An array of <see cref="PointF"/> structures that represent the points that determine the curve. The number of points in the array should be a multiple of 3 plus 1, such as 4, 7, or 10.</param>
-	public void DrawBeziers(System.Drawing.Pen pen, System.Drawing.PointF[] points)
+	public void DrawBeziers(Pen pen, PointF[] points)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -587,7 +587,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen">The <see cref="Pen"/> that determines the color, width, and style of the curve.</param>
 	/// <param name="points">An array of <see cref="Point"/> structures that represent the points that determine the curve.</param>
-	public void DrawBeziers(System.Drawing.Pen pen, System.Drawing.Point[] points)
+	public void DrawBeziers(Pen pen, Point[] points)
 	{
 		ThrowIfDisposed();
 		if (points is null) throw new ArgumentNullException(nameof(points));
@@ -602,7 +602,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
-	public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points)
+	public void DrawClosedCurve(Pen pen, PointF[] points)
 		=> DrawClosedCurve(pen, points, 0.5f, Drawing2D.FillMode.Alternate);
 
 	/// <summary>
@@ -612,7 +612,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
 	/// <param name="tension">Value that specifies the amount that the curve bends through the points.</param>
 	/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
-	public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, float tension, System.Drawing.Drawing2D.FillMode fillmode)
+	public void DrawClosedCurve(Pen pen, PointF[] points, float tension, FillMode fillmode)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -629,7 +629,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
 	/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
-	public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.Point[] points)
+	public void DrawClosedCurve(Pen pen, Point[] points)
 		=> DrawClosedCurve(pen, ToPointFArray(points));
 
 	/// <summary>
@@ -639,7 +639,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
 	/// <param name="tension">Value that specifies the amount that the curve bends through the points.</param>
 	/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
-	public void DrawClosedCurve(System.Drawing.Pen pen, System.Drawing.Point[] points, float tension, System.Drawing.Drawing2D.FillMode fillmode)
+	public void DrawClosedCurve(Pen pen, Point[] points, float tension, FillMode fillmode)
 		=> DrawClosedCurve(pen, ToPointFArray(points), tension, fillmode);
 
 	/// <summary>
@@ -647,7 +647,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
-	public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points)
+	public void DrawCurve(Pen pen, PointF[] points)
 		=> DrawCurve(pen, points, 0, points?.Length - 1 ?? 0, 0.5f);
 
 	/// <summary>
@@ -657,7 +657,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
 	/// <param name="offset">Offset from the first element in the array to the starting point of the curve.</param>
 	/// <param name="numberOfSegments">Number of segments after the starting point to include in the curve.</param>
-	public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, int offset, int numberOfSegments)
+	public void DrawCurve(Pen pen, PointF[] points, int offset, int numberOfSegments)
 		=> DrawCurve(pen, points, offset, numberOfSegments, 0.5f);
 
 	/// <summary>
@@ -668,7 +668,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="offset">Offset from the first element in the array to the starting point of the curve.</param>
 	/// <param name="numberOfSegments">Number of segments after the starting point to include in the curve.</param>
 	/// <param name="tension">Value that specifies the amount that the curve bends through the control points.</param>
-	public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, int offset, int numberOfSegments, float tension)
+	public void DrawCurve(Pen pen, PointF[] points, int offset, int numberOfSegments, float tension)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -686,7 +686,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
 	/// <param name="tension">Value that specifies the amount that the curve bends through the control points.</param>
-	public void DrawCurve(System.Drawing.Pen pen, System.Drawing.PointF[] points, float tension)
+	public void DrawCurve(Pen pen, PointF[] points, float tension)
 		=> DrawCurve(pen, points, 0, points?.Length - 1 ?? 0, tension);
 
 	/// <summary>
@@ -694,7 +694,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
 	/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
-	public void DrawCurve(System.Drawing.Pen pen, System.Drawing.Point[] points)
+	public void DrawCurve(Pen pen, Point[] points)
 		=> DrawCurve(pen, ToPointFArray(points));
 
 	/// <summary>
@@ -705,7 +705,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="offset">Offset from the first element in the array to the starting point of the curve.</param>
 	/// <param name="numberOfSegments">Number of segments after the starting point to include in the curve.</param>
 	/// <param name="tension">Value that specifies the amount that the curve bends through the control points.</param>
-	public void DrawCurve(System.Drawing.Pen pen, System.Drawing.Point[] points, int offset, int numberOfSegments, float tension)
+	public void DrawCurve(Pen pen, Point[] points, int offset, int numberOfSegments, float tension)
 		=> DrawCurve(pen, ToPointFArray(points), offset, numberOfSegments, tension);
 
 	/// <summary>
@@ -714,25 +714,25 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
 	/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
 	/// <param name="tension">Value that specifies the amount that the curve bends through the control points.</param>
-	public void DrawCurve(System.Drawing.Pen pen, System.Drawing.Point[] points, float tension)
+	public void DrawCurve(Pen pen, Point[] points, float tension)
 		=> DrawCurve(pen, ToPointFArray(points), tension);
 
 	/// <summary>
 	///  Draws an ellipse specified by a bounding <see cref="Rectangle"/> structure.
 	/// </summary>
-	public void DrawEllipse(System.Drawing.Pen pen, System.Drawing.Rectangle rect)
+	public void DrawEllipse(Pen pen, Rectangle rect)
 		=> DrawEllipse(pen, (float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 
 	/// <summary>
 	///  Draws an ellipse defined by a bounding <see cref="RectangleF"/>.
 	/// </summary>
-	public void DrawEllipse(System.Drawing.Pen pen, System.Drawing.RectangleF rect)
+	public void DrawEllipse(Pen pen, RectangleF rect)
 		=> DrawEllipse(pen, rect.X, rect.Y, rect.Width, rect.Height);
 
 	/// <summary>
 	///  Draws an ellipse defined by a bounding rectangle specified by coordinates.
 	/// </summary>
-	public void DrawEllipse(System.Drawing.Pen pen, int x, int y, int width, int height)
+	public void DrawEllipse(Pen pen, int x, int y, int width, int height)
 		=> DrawEllipse(pen, (float)x, (float)y, (float)width, (float)height);
 
 	/// <summary>
@@ -743,7 +743,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="y">The y-coordinate of the upper-left corner of the bounding rectangle that defines the ellipse.</param>
 	/// <param name="width">Width of the bounding rectangle that defines the ellipse.</param>
 	/// <param name="height">Height of the bounding rectangle that defines the ellipse.</param>
-	public void DrawEllipse(System.Drawing.Pen pen, float x, float y, float width, float height)
+	public void DrawEllipse(Pen pen, float x, float y, float width, float height)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -755,7 +755,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws the image represented by the specified Icon within the area specified by a Rectangle structure.
 	/// </summary>
-	public void DrawIcon(System.Drawing.Icon icon, System.Drawing.Rectangle targetRect)
+	public void DrawIcon(Icon icon, Rectangle targetRect)
 	{
 		ThrowIfDisposed();
 		if (icon is null) throw new ArgumentNullException(nameof(icon));
@@ -765,7 +765,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws the image represented by the specified Icon at the specified coordinates.
 	/// </summary>
-	public void DrawIcon(System.Drawing.Icon icon, int x, int y)
+	public void DrawIcon(Icon icon, int x, int y)
 	{
 		ThrowIfDisposed();
 		if (icon is null) throw new ArgumentNullException(nameof(icon));
@@ -775,7 +775,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws the image represented by the specified Icon without scaling the image.
 	/// </summary>
-	public void DrawIconUnstretched(System.Drawing.Icon icon, System.Drawing.Rectangle targetRect)
+	public void DrawIconUnstretched(Icon icon, Rectangle targetRect)
 	{
 		ThrowIfDisposed();
 		if (icon is null) throw new ArgumentNullException(nameof(icon));
@@ -788,7 +788,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="image"><see cref="Image"/> to draw.</param>
 	/// <param name="point"><see cref="Point"/> structure that represents the upper-left corner of the drawn image.</param>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Point point)
+	public void DrawImage(Image image, Point point)
 		=> DrawImage(image, (float)point.X, (float)point.Y);
 
 	/// <summary>
@@ -796,7 +796,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="image"><see cref="Image"/> to draw.</param>
 	/// <param name="point"><see cref="PointF"/> structure that represents the upper-left corner of the drawn image.</param>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.PointF point)
+	public void DrawImage(Image image, PointF point)
 		=> DrawImage(image, point.X, point.Y);
 
 	/// <summary>
@@ -804,7 +804,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="image"><see cref="Image"/> to draw.</param>
 	/// <param name="destPoints">Array of three <see cref="PointF"/> structures that define a parallelogram.</param>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints)
+	public void DrawImage(Image image, PointF[] destPoints)
 	{
 		ThrowIfDisposed();
 		if (image is null) throw new ArgumentNullException(nameof(image));
@@ -817,7 +817,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit)
+	public void DrawImage(Image image, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit)
 	{
 		ThrowIfDisposed();
 		if (image is null) throw new ArgumentNullException(nameof(image));
@@ -830,18 +830,18 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr)
+	public void DrawImage(Image image, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttr)
 		=> DrawImage(image, destPoints, srcRect, srcUnit);
 	// TODO: Apply imageAttr to parallelogram-based DrawImage when imageAttr is non-null
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback)
+	public void DrawImage(Image image, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttr, DrawImageAbort? callback)
 		=> DrawImage(image, destPoints, srcRect, srcUnit);
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback, int callbackData)
+	public void DrawImage(Image image, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttr, DrawImageAbort? callback, int callbackData)
 		=> DrawImage(image, destPoints, srcRect, srcUnit);
 
 	/// <summary>
@@ -849,7 +849,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="image"><see cref="Image"/> to draw.</param>
 	/// <param name="destPoints">Array of three <see cref="Point"/> structures that define a parallelogram.</param>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints)
+	public void DrawImage(Image image, Point[] destPoints)
 	{
 		if (destPoints is null) throw new ArgumentNullException(nameof(destPoints));
 		var ptsF = new PointF[destPoints.Length];
@@ -860,7 +860,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit)
+	public void DrawImage(Image image, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)
 	{
 		if (destPoints is null) throw new ArgumentNullException(nameof(destPoints));
 		var ptsF = new PointF[destPoints.Length];
@@ -871,7 +871,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr)
+	public void DrawImage(Image image, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttr)
 	{
 		if (destPoints is null) throw new ArgumentNullException(nameof(destPoints));
 		var ptsF = new PointF[destPoints.Length];
@@ -882,7 +882,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback)
+	public void DrawImage(Image image, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttr, DrawImageAbort? callback)
 	{
 		if (destPoints is null) throw new ArgumentNullException(nameof(destPoints));
 		var ptsF = new PointF[destPoints.Length];
@@ -893,7 +893,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback, int callbackData)
+	public void DrawImage(Image image, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttr, DrawImageAbort? callback, int callbackData)
 	{
 		if (destPoints is null) throw new ArgumentNullException(nameof(destPoints));
 		var ptsF = new PointF[destPoints.Length];
@@ -907,7 +907,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="image"><see cref="Image"/> to draw.</param>
 	/// <param name="rect"><see cref="Rectangle"/> structure that specifies the location and size of the drawn image.</param>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle rect)
+	public void DrawImage(Image image, Rectangle rect)
 		=> DrawImage(image, (float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 
 	/// <summary>
@@ -917,48 +917,48 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="destRect">A <see cref="Rectangle"/> structure that specifies the location and size of the drawn image.</param>
 	/// <param name="srcRect">A <see cref="Rectangle"/> structure that specifies the portion of the image to draw.</param>
 	/// <param name="srcUnit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the units of measure used by the <paramref name="srcRect"/> parameter.</param>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit)
+	public void DrawImage(Image image, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit)
 		=> DrawImageCore(image, (RectangleF)destRect, (RectangleF)srcRect);
 
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit)
+	public void DrawImage(Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit)
 		=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr)
+	public void DrawImage(Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttr)
 		=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttr);
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttr, System.Drawing.Graphics.DrawImageAbort? callback)
+	public void DrawImage(Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttr, DrawImageAbort? callback)
 		=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttr);
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback, nint callbackData)
+	public void DrawImage(Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttrs, DrawImageAbort? callback, nint callbackData)
 		=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttrs);
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit)
+	public void DrawImage(Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit)
 		=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight));
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs)
+	public void DrawImage(Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttrs)
 		=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttrs);
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback)
+	public void DrawImage(Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttrs, DrawImageAbort? callback)
 		=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttrs);
 	/// <summary>
 	///  Draws the specified portion of the specified Image at the specified location and with the specified size.
 	/// </summary>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Imaging.ImageAttributes? imageAttrs, System.Drawing.Graphics.DrawImageAbort? callback, nint callbackData)
+	public void DrawImage(Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, Imaging.ImageAttributes? imageAttrs, DrawImageAbort? callback, nint callbackData)
 		=> DrawImageCore(image, (RectangleF)destRect, new RectangleF(srcX, srcY, srcWidth, srcHeight), imageAttrs);
 
 	/// <summary>
@@ -966,7 +966,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="image"><see cref="Image"/> to draw.</param>
 	/// <param name="rect"><see cref="RectangleF"/> structure that specifies the location and size of the drawn image.</param>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.RectangleF rect)
+	public void DrawImage(Image image, RectangleF rect)
 		=> DrawImage(image, rect.X, rect.Y, rect.Width, rect.Height);
 
 	/// <summary>
@@ -976,7 +976,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="destRect">A <see cref="RectangleF"/> structure that specifies the location and size of the drawn image.</param>
 	/// <param name="srcRect">A <see cref="RectangleF"/> structure that specifies the portion of the image to draw.</param>
 	/// <param name="srcUnit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the units of measure used by the <paramref name="srcRect"/> parameter.</param>
-	public void DrawImage(System.Drawing.Image image, System.Drawing.RectangleF destRect, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit)
+	public void DrawImage(Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit)
 		=> DrawImageCore(image, destRect, srcRect);
 
 	/// <summary>
@@ -985,7 +985,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="image"><see cref="Image"/> to draw.</param>
 	/// <param name="x">The x-coordinate of the upper-left corner of the drawn image.</param>
 	/// <param name="y">The y-coordinate of the upper-left corner of the drawn image.</param>
-	public void DrawImage(System.Drawing.Image image, int x, int y)
+	public void DrawImage(Image image, int x, int y)
 		=> DrawImage(image, (float)x, (float)y);
 
 	/// <summary>
@@ -996,7 +996,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="y">The y-coordinate of the upper-left corner of the drawn image.</param>
 	/// <param name="srcRect">A <see cref="Rectangle"/> structure that specifies the portion of the image to draw.</param>
 	/// <param name="srcUnit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the units of measure used by the <paramref name="srcRect"/> parameter.</param>
-	public void DrawImage(System.Drawing.Image image, int x, int y, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit)
+	public void DrawImage(Image image, int x, int y, Rectangle srcRect, GraphicsUnit srcUnit)
 	{
 		DrawImageCore(image, new RectangleF(x, y, srcRect.Width, srcRect.Height), new RectangleF(srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height));
 	}
@@ -1009,7 +1009,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="y">The y-coordinate of the upper-left corner of the drawn image.</param>
 	/// <param name="width">Width of the drawn image.</param>
 	/// <param name="height">Height of the drawn image.</param>
-	public void DrawImage(System.Drawing.Image image, int x, int y, int width, int height)
+	public void DrawImage(Image image, int x, int y, int width, int height)
 		=> DrawImage(image, (float)x, (float)y, (float)width, (float)height);
 
 	/// <summary>
@@ -1018,7 +1018,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="image"><see cref="Image"/> to draw.</param>
 	/// <param name="x">The x-coordinate of the upper-left corner of the drawn image.</param>
 	/// <param name="y">The y-coordinate of the upper-left corner of the drawn image.</param>
-	public void DrawImage(System.Drawing.Image image, float x, float y)
+	public void DrawImage(Image image, float x, float y)
 	{
 		ThrowIfDisposed();
 		if (image is null) throw new ArgumentNullException(nameof(image));
@@ -1035,7 +1035,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="y">The y-coordinate of the upper-left corner of the drawn image.</param>
 	/// <param name="srcRect">A <see cref="RectangleF"/> structure that specifies the portion of the image to draw.</param>
 	/// <param name="srcUnit">Member of the <see cref="GraphicsUnit"/> enumeration that specifies the units of measure used by the <paramref name="srcRect"/> parameter.</param>
-	public void DrawImage(System.Drawing.Image image, float x, float y, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit)
+	public void DrawImage(Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit)
 	{
 		DrawImageCore(image, new RectangleF(x, y, srcRect.Width, srcRect.Height), new RectangleF(srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height));
 	}
@@ -1048,7 +1048,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="y">The y-coordinate of the upper-left corner of the drawn image.</param>
 	/// <param name="width">Width of the drawn image.</param>
 	/// <param name="height">Height of the drawn image.</param>
-	public void DrawImage(System.Drawing.Image image, float x, float y, float width, float height)
+	public void DrawImage(Image image, float x, float y, float width, float height)
 	{
 		ThrowIfDisposed();
 		if (image is null) throw new ArgumentNullException(nameof(image));
@@ -1058,13 +1058,13 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws the specified image using its original physical size at the location specified by a Point structure.
 	/// </summary>
-	public void DrawImageUnscaled(System.Drawing.Image image, System.Drawing.Point point)
+	public void DrawImageUnscaled(Image image, Point point)
 		=> DrawImage(image, (float)point.X, (float)point.Y);
 
 	/// <summary>
 	///  Draws a specified image using its original physical size at a specified location.
 	/// </summary>
-	public void DrawImageUnscaled(System.Drawing.Image image, System.Drawing.Rectangle rect)
+	public void DrawImageUnscaled(Image image, Rectangle rect)
 		=> DrawImage(image, (float)rect.X, (float)rect.Y);
 
 	/// <summary>
@@ -1073,13 +1073,13 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="image"><see cref="Image"/> to draw.</param>
 	/// <param name="x">The x-coordinate of the upper-left corner of the drawn image.</param>
 	/// <param name="y">The y-coordinate of the upper-left corner of the drawn image.</param>
-	public void DrawImageUnscaled(System.Drawing.Image image, int x, int y)
+	public void DrawImageUnscaled(Image image, int x, int y)
 		=> DrawImage(image, (float)x, (float)y);
 
 	/// <summary>
 	///  Draws a specified image using its original physical size at a specified location.
 	/// </summary>
-	public void DrawImageUnscaled(System.Drawing.Image image, int x, int y, int width, int height)
+	public void DrawImageUnscaled(Image image, int x, int y, int width, int height)
 		=> DrawImage(image, (float)x, (float)y);
 
 	/// <summary>
@@ -1087,7 +1087,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="image"><see cref="Image"/> to draw.</param>
 	/// <param name="rect">The <see cref="Rectangle"/> in which to draw the image.</param>
-	public void DrawImageUnscaledAndClipped(System.Drawing.Image image, System.Drawing.Rectangle rect)
+	public void DrawImageUnscaledAndClipped(Image image, Rectangle rect)
 	{
 		ThrowIfDisposed();
 		if (image is null) throw new ArgumentNullException(nameof(image));
@@ -1102,19 +1102,19 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws a line connecting two <see cref="Point"/> structures.
 	/// </summary>
-	public void DrawLine(System.Drawing.Pen pen, System.Drawing.Point pt1, System.Drawing.Point pt2)
+	public void DrawLine(Pen pen, Point pt1, Point pt2)
 		=> DrawLine(pen, (float)pt1.X, (float)pt1.Y, (float)pt2.X, (float)pt2.Y);
 
 	/// <summary>
 	///  Draws a line connecting two <see cref="PointF"/> structures.
 	/// </summary>
-	public void DrawLine(System.Drawing.Pen pen, System.Drawing.PointF pt1, System.Drawing.PointF pt2)
+	public void DrawLine(Pen pen, PointF pt1, PointF pt2)
 		=> DrawLine(pen, pt1.X, pt1.Y, pt2.X, pt2.Y);
 
 	/// <summary>
 	///  Draws a line connecting the two points specified by the coordinate pairs.
 	/// </summary>
-	public void DrawLine(System.Drawing.Pen pen, int x1, int y1, int x2, int y2)
+	public void DrawLine(Pen pen, int x1, int y1, int x2, int y2)
 		=> DrawLine(pen, (float)x1, (float)y1, (float)x2, (float)y2);
 
 	/// <summary>
@@ -1125,7 +1125,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="y1">The y-coordinate of the first point.</param>
 	/// <param name="x2">The x-coordinate of the second point.</param>
 	/// <param name="y2">The y-coordinate of the second point.</param>
-	public void DrawLine(System.Drawing.Pen pen, float x1, float y1, float x2, float y2)
+	public void DrawLine(Pen pen, float x1, float y1, float x2, float y2)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -1139,7 +1139,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the line segments.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that represent the points to connect.</param>
-	public void DrawLines(System.Drawing.Pen pen, System.Drawing.PointF[] points)
+	public void DrawLines(Pen pen, PointF[] points)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -1159,7 +1159,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the line segments.</param>
 	/// <param name="points">Array of <see cref="Point"/> structures that represent the points to connect.</param>
-	public void DrawLines(System.Drawing.Pen pen, System.Drawing.Point[] points)
+	public void DrawLines(Pen pen, Point[] points)
 	{
 		if (points is null) throw new ArgumentNullException(nameof(points));
 		var ptsF = new PointF[points.Length];
@@ -1171,7 +1171,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws a GraphicsPath.
 	/// </summary>
-	public void DrawPath(System.Drawing.Pen pen, System.Drawing.Drawing2D.GraphicsPath path)
+	public void DrawPath(Pen pen, GraphicsPath path)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -1184,19 +1184,19 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws a pie shape defined by an ellipse specified by a Rectangle structure and two radial lines.
 	/// </summary>
-	public void DrawPie(System.Drawing.Pen pen, System.Drawing.Rectangle rect, float startAngle, float sweepAngle)
+	public void DrawPie(Pen pen, Rectangle rect, float startAngle, float sweepAngle)
 		=> DrawPie(pen, (float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height, startAngle, sweepAngle);
 
 	/// <summary>
 	///  Draws a pie shape defined by an ellipse specified by a RectangleF structure and two radial lines.
 	/// </summary>
-	public void DrawPie(System.Drawing.Pen pen, System.Drawing.RectangleF rect, float startAngle, float sweepAngle)
+	public void DrawPie(Pen pen, RectangleF rect, float startAngle, float sweepAngle)
 		=> DrawPie(pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 
 	/// <summary>
 	///  Draws a pie shape defined by an ellipse and two radial lines.
 	/// </summary>
-	public void DrawPie(System.Drawing.Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
+	public void DrawPie(Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		=> DrawPie(pen, (float)x, (float)y, (float)width, (float)height, (float)startAngle, (float)sweepAngle);
 
 	/// <summary>
@@ -1209,7 +1209,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="height">Height of the bounding rectangle that defines the ellipse from which the pie shape comes.</param>
 	/// <param name="startAngle">Angle measured in degrees clockwise from the x-axis to the first side of the pie shape.</param>
 	/// <param name="sweepAngle">Angle measured in degrees clockwise from the <paramref name="startAngle"/> parameter to the second side of the pie shape.</param>
-	public void DrawPie(System.Drawing.Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
+	public void DrawPie(Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -1228,7 +1228,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the polygon.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that represent the vertices of the polygon.</param>
-	public void DrawPolygon(System.Drawing.Pen pen, System.Drawing.PointF[] points)
+	public void DrawPolygon(Pen pen, PointF[] points)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -1245,7 +1245,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the polygon.</param>
 	/// <param name="points">Array of <see cref="Point"/> structures that represent the vertices of the polygon.</param>
-	public void DrawPolygon(System.Drawing.Pen pen, System.Drawing.Point[] points)
+	public void DrawPolygon(Pen pen, Point[] points)
 	{
 		if (points is null) throw new ArgumentNullException(nameof(points));
 		var ptsF = new PointF[points.Length];
@@ -1257,13 +1257,13 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Draws a rectangle specified by a <see cref="Rectangle"/> structure.
 	/// </summary>
-	public void DrawRectangle(System.Drawing.Pen pen, System.Drawing.Rectangle rect)
+	public void DrawRectangle(Pen pen, Rectangle rect)
 		=> DrawRectangle(pen, (float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 
 	/// <summary>
 	///  Draws a rectangle specified by a coordinate pair, a width, and a height.
 	/// </summary>
-	public void DrawRectangle(System.Drawing.Pen pen, int x, int y, int width, int height)
+	public void DrawRectangle(Pen pen, int x, int y, int width, int height)
 		=> DrawRectangle(pen, (float)x, (float)y, (float)width, (float)height);
 
 	/// <summary>
@@ -1274,7 +1274,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="y">The y-coordinate of the upper-left corner of the rectangle to draw.</param>
 	/// <param name="width">The width of the rectangle to draw.</param>
 	/// <param name="height">The height of the rectangle to draw.</param>
-	public void DrawRectangle(System.Drawing.Pen pen, float x, float y, float width, float height)
+	public void DrawRectangle(Pen pen, float x, float y, float width, float height)
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
@@ -1288,7 +1288,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the outlines of the rectangles.</param>
 	/// <param name="rects">Array of <see cref="RectangleF"/> structures that represent the rectangles to draw.</param>
-	public void DrawRectangles(System.Drawing.Pen pen, System.Drawing.RectangleF[] rects)
+	public void DrawRectangles(Pen pen, RectangleF[] rects)
 	{
 		if (rects is null) throw new ArgumentNullException(nameof(rects));
 		for (int i = 0; i < rects.Length; i++)
@@ -1300,7 +1300,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the outlines of the rectangles.</param>
 	/// <param name="rects">Array of <see cref="Rectangle"/> structures that represent the rectangles to draw.</param>
-	public void DrawRectangles(System.Drawing.Pen pen, System.Drawing.Rectangle[] rects)
+	public void DrawRectangles(Pen pen, Rectangle[] rects)
 	{
 		if (rects is null) throw new ArgumentNullException(nameof(rects));
 		for (int i = 0; i < rects.Length; i++)
@@ -1314,7 +1314,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
 	/// <param name="brush"><see cref="Brush"/> that determines the color and texture of the drawn text.</param>
 	/// <param name="point"><see cref="PointF"/> structure that specifies the upper-left corner of the drawn text.</param>
-	public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.PointF point)
+	public void DrawString(string? s, Font font, Brush brush, PointF point)
 		=> DrawString(s, font, brush, point.X, point.Y, null);
 
 	/// <summary>
@@ -1325,7 +1325,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="brush"><see cref="Brush"/> that determines the color and texture of the drawn text.</param>
 	/// <param name="point"><see cref="PointF"/> structure that specifies the upper-left corner of the drawn text.</param>
 	/// <param name="format"><see cref="StringFormat"/> that specifies formatting attributes applied to the drawn text.</param>
-	public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.PointF point, System.Drawing.StringFormat? format)
+	public void DrawString(string? s, Font font, Brush brush, PointF point, StringFormat? format)
 		=> DrawString(s, font, brush, point.X, point.Y, format);
 
 	/// <summary>
@@ -1335,7 +1335,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
 	/// <param name="brush"><see cref="Brush"/> that determines the color and texture of the drawn text.</param>
 	/// <param name="layoutRectangle"><see cref="RectangleF"/> structure that specifies the location of the drawn text.</param>
-	public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.RectangleF layoutRectangle)
+	public void DrawString(string? s, Font font, Brush brush, RectangleF layoutRectangle)
 		=> DrawString(s, font, brush, layoutRectangle, null);
 
 	/// <summary>
@@ -1346,7 +1346,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="brush"><see cref="Brush"/> that determines the color and texture of the drawn text.</param>
 	/// <param name="layoutRectangle"><see cref="RectangleF"/> structure that specifies the location of the drawn text.</param>
 	/// <param name="format"><see cref="StringFormat"/> that specifies formatting attributes applied to the drawn text.</param>
-	public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, System.Drawing.RectangleF layoutRectangle, System.Drawing.StringFormat? format)
+	public void DrawString(string? s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat? format)
 	{
 		ThrowIfDisposed();
 		if (s is null) throw new ArgumentNullException(nameof(s));
@@ -1364,7 +1364,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 		bool noWrap = format != null && (format.FormatFlags & StringFormatFlags.NoWrap) != 0;
 
 		// Split text into visual lines (respecting newlines and word wrap)
-		var lines = new System.Collections.Generic.List<string>();
+		var lines = new Collections.Generic.List<string>();
 		var textLines = s.Split('\n');
 		foreach (var textLine in textLines)
 		{
@@ -1445,7 +1445,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="brush"><see cref="Brush"/> that determines the color and texture of the drawn text.</param>
 	/// <param name="x">The x-coordinate of the upper-left corner of the drawn text.</param>
 	/// <param name="y">The y-coordinate of the upper-left corner of the drawn text.</param>
-	public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, float x, float y)
+	public void DrawString(string? s, Font font, Brush brush, float x, float y)
 		=> DrawString(s, font, brush, x, y, null);
 
 	/// <summary>
@@ -1457,7 +1457,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="x">The x-coordinate of the upper-left corner of the drawn text.</param>
 	/// <param name="y">The y-coordinate of the upper-left corner of the drawn text.</param>
 	/// <param name="format"><see cref="StringFormat"/> that specifies formatting attributes applied to the drawn text.</param>
-	public void DrawString(string? s, System.Drawing.Font font, System.Drawing.Brush brush, float x, float y, System.Drawing.StringFormat? format)
+	public void DrawString(string? s, Font font, Brush brush, float x, float y, StringFormat? format)
 	{
 		ThrowIfDisposed();
 		if (s is null) throw new ArgumentNullException(nameof(s));
@@ -1477,7 +1477,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Closes the current graphics container and restores the state of this Graphics to the state saved by a call to BeginContainer.
 	/// </summary>
 	/// <param name="container">A <see cref="GraphicsContainer"/> that represents the container this method restores.</param>
-	public void EndContainer(System.Drawing.Drawing2D.GraphicsContainer container)
+	public void EndContainer(GraphicsContainer container)
 	{
 		ThrowIfDisposed();
 		if (container is null) throw new ArgumentNullException(nameof(container));
@@ -1486,153 +1486,153 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point destPoint, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point destPoint, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point destPoint, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point destPoint, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point destPoint, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point destPoint, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point destPoint, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point destPoint, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point destPoint, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit unit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point destPoint, Rectangle srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF destPoint, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF destPoint, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF destPoint, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF destPoint, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF destPoint, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF destPoint, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF destPoint, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF destPoint, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF destPoint, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit unit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF destPoint, RectangleF srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF[] destPoints, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF[] destPoints, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF[] destPoints, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF[] destPoints, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF[] destPoints, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF[] destPoints, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.PointF[] destPoints, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit unit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, PointF[] destPoints, RectangleF srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point[] destPoints, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point[] destPoints, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point[] destPoints, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point[] destPoints, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point[] destPoints, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point[] destPoints, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Point[] destPoints, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit unit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Point[] destPoints, Rectangle srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Rectangle destRect, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Rectangle destRect, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Rectangle destRect, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Rectangle destRect, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Rectangle destRect, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Rectangle destRect, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Rectangle destRect, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Rectangle destRect, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.Rectangle destRect, System.Drawing.Rectangle srcRect, System.Drawing.GraphicsUnit unit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, Rectangle destRect, Rectangle srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.RectangleF destRect, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, RectangleF destRect, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.RectangleF destRect, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, RectangleF destRect, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.RectangleF destRect, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, RectangleF destRect, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.RectangleF destRect, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.RectangleF destRect, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit srcUnit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, nint callbackData) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Sends the records in the specified Metafile to a callback method for display.
 	/// </summary>
-	public void EnumerateMetafile(System.Drawing.Imaging.Metafile metafile, System.Drawing.RectangleF destRect, System.Drawing.RectangleF srcRect, System.Drawing.GraphicsUnit unit, System.Drawing.Graphics.EnumerateMetafileProc callback, nint callbackData, System.Drawing.Imaging.ImageAttributes? imageAttr) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void EnumerateMetafile(Imaging.Metafile metafile, RectangleF destRect, RectangleF srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, nint callbackData, Imaging.ImageAttributes? imageAttr) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 
 	/// <summary>
 	///  Updates the clip region of this <see cref="Graphics"/> to exclude the area specified by a <see cref="Rectangle"/>.
 	/// </summary>
 	/// <param name="rect">A <see cref="Rectangle"/> structure that specifies the rectangle to exclude from the clip region.</param>
-	public void ExcludeClip(System.Drawing.Rectangle rect)
+	public void ExcludeClip(Rectangle rect)
 	{
 		ThrowIfDisposed();
 		_canvas.ClipRect(new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom), SKClipOperation.Difference);
@@ -1642,7 +1642,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Updates the clip region of this <see cref="Graphics"/> to exclude the area specified by a <see cref="Region"/>.
 	/// </summary>
 	/// <param name="region">A <see cref="Region"/> that specifies the region to exclude from the clip region.</param>
-	public void ExcludeClip(System.Drawing.Region region)
+	public void ExcludeClip(Region region)
 	{
 		ThrowIfDisposed();
 		if (region is null) throw new ArgumentNullException(nameof(region));
@@ -1655,7 +1655,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
-	public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.PointF[] points)
+	public void FillClosedCurve(Brush brush, PointF[] points)
 		=> FillClosedCurve(brush, points, Drawing2D.FillMode.Alternate, 0.5f);
 
 	/// <summary>
@@ -1664,7 +1664,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
 	/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
-	public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.PointF[] points, System.Drawing.Drawing2D.FillMode fillmode)
+	public void FillClosedCurve(Brush brush, PointF[] points, FillMode fillmode)
 		=> FillClosedCurve(brush, points, fillmode, 0.5f);
 
 	/// <summary>
@@ -1674,7 +1674,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
 	/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
 	/// <param name="tension">Value that specifies the amount that the curve bends through the points.</param>
-	public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.PointF[] points, System.Drawing.Drawing2D.FillMode fillmode, float tension)
+	public void FillClosedCurve(Brush brush, PointF[] points, FillMode fillmode, float tension)
 	{
 		ThrowIfDisposed();
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
@@ -1692,7 +1692,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
-	public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.Point[] points)
+	public void FillClosedCurve(Brush brush, Point[] points)
 		=> FillClosedCurve(brush, ToPointFArray(points));
 
 	/// <summary>
@@ -1701,7 +1701,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
 	/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
-	public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.Point[] points, System.Drawing.Drawing2D.FillMode fillmode)
+	public void FillClosedCurve(Brush brush, Point[] points, FillMode fillmode)
 		=> FillClosedCurve(brush, ToPointFArray(points), fillmode);
 
 	/// <summary>
@@ -1711,25 +1711,25 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="points">Array of <see cref="Point"/> structures that define the spline.</param>
 	/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
 	/// <param name="tension">Value that specifies the amount that the curve bends through the points.</param>
-	public void FillClosedCurve(System.Drawing.Brush brush, System.Drawing.Point[] points, System.Drawing.Drawing2D.FillMode fillmode, float tension)
+	public void FillClosedCurve(Brush brush, Point[] points, FillMode fillmode, float tension)
 		=> FillClosedCurve(brush, ToPointFArray(points), fillmode, tension);
 
 	/// <summary>
 	///  Fills the interior of an ellipse defined by a bounding rectangle specified by a <see cref="Rectangle"/> structure.
 	/// </summary>
-	public void FillEllipse(System.Drawing.Brush brush, System.Drawing.Rectangle rect)
+	public void FillEllipse(Brush brush, Rectangle rect)
 		=> FillEllipse(brush, (float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 
 	/// <summary>
 	///  Fills the interior of an ellipse defined by a bounding rectangle specified by a <see cref="RectangleF"/> structure.
 	/// </summary>
-	public void FillEllipse(System.Drawing.Brush brush, System.Drawing.RectangleF rect)
+	public void FillEllipse(Brush brush, RectangleF rect)
 		=> FillEllipse(brush, rect.X, rect.Y, rect.Width, rect.Height);
 
 	/// <summary>
 	///  Fills the interior of an ellipse defined by a bounding rectangle.
 	/// </summary>
-	public void FillEllipse(System.Drawing.Brush brush, int x, int y, int width, int height)
+	public void FillEllipse(Brush brush, int x, int y, int width, int height)
 		=> FillEllipse(brush, (float)x, (float)y, (float)width, (float)height);
 
 	/// <summary>
@@ -1740,7 +1740,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="y">The y-coordinate of the upper-left corner of the bounding rectangle that defines the ellipse.</param>
 	/// <param name="width">Width of the bounding rectangle that defines the ellipse.</param>
 	/// <param name="height">Height of the bounding rectangle that defines the ellipse.</param>
-	public void FillEllipse(System.Drawing.Brush brush, float x, float y, float width, float height)
+	public void FillEllipse(Brush brush, float x, float y, float width, float height)
 	{
 		ThrowIfDisposed();
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
@@ -1752,7 +1752,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Fills the interior of a GraphicsPath.
 	/// </summary>
-	public void FillPath(System.Drawing.Brush brush, System.Drawing.Drawing2D.GraphicsPath path)
+	public void FillPath(Brush brush, GraphicsPath path)
 	{
 		ThrowIfDisposed();
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
@@ -1765,13 +1765,13 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Fills the interior of a pie section defined by an ellipse specified by a Rectangle structure and two radial lines.
 	/// </summary>
-	public void FillPie(System.Drawing.Brush brush, System.Drawing.Rectangle rect, float startAngle, float sweepAngle)
+	public void FillPie(Brush brush, Rectangle rect, float startAngle, float sweepAngle)
 		=> FillPie(brush, (float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height, startAngle, sweepAngle);
 
 	/// <summary>
 	///  Fills the interior of a pie section defined by an ellipse and two radial lines.
 	/// </summary>
-	public void FillPie(System.Drawing.Brush brush, int x, int y, int width, int height, int startAngle, int sweepAngle)
+	public void FillPie(Brush brush, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		=> FillPie(brush, (float)x, (float)y, (float)width, (float)height, (float)startAngle, (float)sweepAngle);
 
 	/// <summary>
@@ -1784,7 +1784,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="height">Height of the bounding rectangle that defines the ellipse from which the pie section comes.</param>
 	/// <param name="startAngle">Angle in degrees measured clockwise from the x-axis to the first side of the pie section.</param>
 	/// <param name="sweepAngle">Angle in degrees measured clockwise from the <paramref name="startAngle"/> parameter to the second side of the pie section.</param>
-	public void FillPie(System.Drawing.Brush brush, float x, float y, float width, float height, float startAngle, float sweepAngle)
+	public void FillPie(Brush brush, float x, float y, float width, float height, float startAngle, float sweepAngle)
 	{
 		ThrowIfDisposed();
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
@@ -1803,7 +1803,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that represent the vertices of the polygon to fill.</param>
-	public void FillPolygon(System.Drawing.Brush brush, System.Drawing.PointF[] points)
+	public void FillPolygon(Brush brush, PointF[] points)
 	{
 		ThrowIfDisposed();
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
@@ -1821,7 +1821,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that represent the vertices of the polygon to fill.</param>
 	/// <param name="fillMode">Member of the <see cref="FillMode"/> enumeration that determines the style of the fill.</param>
-	public void FillPolygon(System.Drawing.Brush brush, System.Drawing.PointF[] points, System.Drawing.Drawing2D.FillMode fillMode)
+	public void FillPolygon(Brush brush, PointF[] points, FillMode fillMode)
 	{
 		ThrowIfDisposed();
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
@@ -1839,7 +1839,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="points">Array of <see cref="Point"/> structures that represent the vertices of the polygon to fill.</param>
-	public void FillPolygon(System.Drawing.Brush brush, System.Drawing.Point[] points)
+	public void FillPolygon(Brush brush, Point[] points)
 	{
 		if (points is null) throw new ArgumentNullException(nameof(points));
 		var ptsF = new PointF[points.Length];
@@ -1854,7 +1854,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="points">Array of <see cref="Point"/> structures that represent the vertices of the polygon to fill.</param>
 	/// <param name="fillMode">Member of the <see cref="FillMode"/> enumeration that determines the style of the fill.</param>
-	public void FillPolygon(System.Drawing.Brush brush, System.Drawing.Point[] points, System.Drawing.Drawing2D.FillMode fillMode)
+	public void FillPolygon(Brush brush, Point[] points, FillMode fillMode)
 	{
 		if (points is null) throw new ArgumentNullException(nameof(points));
 		var ptsF = new PointF[points.Length];
@@ -1866,19 +1866,19 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Fills the interior of a rectangle specified by a <see cref="Rectangle"/> structure.
 	/// </summary>
-	public void FillRectangle(System.Drawing.Brush brush, System.Drawing.Rectangle rect)
+	public void FillRectangle(Brush brush, Rectangle rect)
 		=> FillRectangle(brush, (float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 
 	/// <summary>
 	///  Fills the interior of a rectangle specified by a <see cref="RectangleF"/> structure.
 	/// </summary>
-	public void FillRectangle(System.Drawing.Brush brush, System.Drawing.RectangleF rect)
+	public void FillRectangle(Brush brush, RectangleF rect)
 		=> FillRectangle(brush, rect.X, rect.Y, rect.Width, rect.Height);
 
 	/// <summary>
 	///  Fills the interior of a rectangle specified by a pair of coordinates, a width, and a height.
 	/// </summary>
-	public void FillRectangle(System.Drawing.Brush brush, int x, int y, int width, int height)
+	public void FillRectangle(Brush brush, int x, int y, int width, int height)
 		=> FillRectangle(brush, (float)x, (float)y, (float)width, (float)height);
 
 	/// <summary>
@@ -1889,7 +1889,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="y">The y-coordinate of the upper-left corner of the rectangle to fill.</param>
 	/// <param name="width">Width of the rectangle to fill.</param>
 	/// <param name="height">Height of the rectangle to fill.</param>
-	public void FillRectangle(System.Drawing.Brush brush, float x, float y, float width, float height)
+	public void FillRectangle(Brush brush, float x, float y, float width, float height)
 	{
 		ThrowIfDisposed();
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
@@ -1903,7 +1903,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="rects">Array of <see cref="RectangleF"/> structures that represent the rectangles to fill.</param>
-	public void FillRectangles(System.Drawing.Brush brush, System.Drawing.RectangleF[] rects)
+	public void FillRectangles(Brush brush, RectangleF[] rects)
 	{
 		if (rects is null) throw new ArgumentNullException(nameof(rects));
 		for (int i = 0; i < rects.Length; i++)
@@ -1915,7 +1915,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="rects">Array of <see cref="Rectangle"/> structures that represent the rectangles to fill.</param>
-	public void FillRectangles(System.Drawing.Brush brush, System.Drawing.Rectangle[] rects)
+	public void FillRectangles(Brush brush, Rectangle[] rects)
 	{
 		if (rects is null) throw new ArgumentNullException(nameof(rects));
 		for (int i = 0; i < rects.Length; i++)
@@ -1927,7 +1927,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="region"><see cref="Region"/> that represents the area to fill.</param>
-	public void FillRegion(System.Drawing.Brush brush, System.Drawing.Region region)
+	public void FillRegion(Brush brush, Region region)
 	{
 		ThrowIfDisposed();
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
@@ -1950,7 +1950,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Forces execution of all pending graphics operations with the method waiting or not waiting, as specified, to return before the operations finish.
 	/// </summary>
 	/// <param name="intention">Member of the <see cref="FlushIntention"/> enumeration that specifies whether the method returns immediately or waits for any existing operations to finish.</param>
-	public void Flush(System.Drawing.Drawing2D.FlushIntention intention)
+	public void Flush(FlushIntention intention)
 	{
 		ThrowIfDisposed();
 		_canvas.Flush();
@@ -1959,19 +1959,19 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Gets the cumulative graphics context.
 	/// </summary>
-	public object GetContextInfo() { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public object GetContextInfo() { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 
 	/// <summary>
 	///  Gets the handle to the device context associated with this Graphics.
 	/// </summary>
-	public nint GetHdc() { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public nint GetHdc() { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 
 	/// <summary>
 	///  Gets the nearest color to the specified <see cref="Color"/> structure.
 	/// </summary>
 	/// <param name="color"><see cref="Color"/> structure for which to find a match.</param>
 	/// <returns>A <see cref="Color"/> structure that represents the nearest color to the one specified with the <paramref name="color"/> parameter.</returns>
-	public System.Drawing.Color GetNearestColor(System.Drawing.Color color)
+	public Color GetNearestColor(Color color)
 	{
 		ThrowIfDisposed();
 		return color;
@@ -1981,7 +1981,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Updates the clip region of this <see cref="Graphics"/> to the intersection of the current clip region and the specified <see cref="Rectangle"/> structure.
 	/// </summary>
 	/// <param name="rect">A <see cref="Rectangle"/> structure to intersect with the current clip region.</param>
-	public void IntersectClip(System.Drawing.Rectangle rect)
+	public void IntersectClip(Rectangle rect)
 	{
 		ThrowIfDisposed();
 		_canvas.ClipRect(new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom), SKClipOperation.Intersect);
@@ -1991,7 +1991,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Updates the clip region of this <see cref="Graphics"/> to the intersection of the current clip region and the specified <see cref="RectangleF"/> structure.
 	/// </summary>
 	/// <param name="rect">A <see cref="RectangleF"/> structure to intersect with the current clip region.</param>
-	public void IntersectClip(System.Drawing.RectangleF rect)
+	public void IntersectClip(RectangleF rect)
 	{
 		ThrowIfDisposed();
 		_canvas.ClipRect(new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom), SKClipOperation.Intersect);
@@ -2001,7 +2001,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Updates the clip region of this <see cref="Graphics"/> to the intersection of the current clip region and the specified <see cref="Region"/>.
 	/// </summary>
 	/// <param name="region">A <see cref="Region"/> to intersect with the current region.</param>
-	public void IntersectClip(System.Drawing.Region region)
+	public void IntersectClip(Region region)
 	{
 		ThrowIfDisposed();
 		if (region is null) throw new ArgumentNullException(nameof(region));
@@ -2012,19 +2012,19 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Indicates whether the specified Point structure is contained within the visible clip region of this Graphics.
 	/// </summary>
-	public bool IsVisible(System.Drawing.Point point) => IsVisible((float)point.X, (float)point.Y);
+	public bool IsVisible(Point point) => IsVisible((float)point.X, (float)point.Y);
 	/// <summary>
 	///  Indicates whether the specified PointF structure is contained within the visible clip region of this Graphics.
 	/// </summary>
-	public bool IsVisible(System.Drawing.PointF point) => IsVisible(point.X, point.Y);
+	public bool IsVisible(PointF point) => IsVisible(point.X, point.Y);
 	/// <summary>
 	///  Indicates whether the rectangle specified by a Rectangle structure is contained within the visible clip region of this Graphics.
 	/// </summary>
-	public bool IsVisible(System.Drawing.Rectangle rect) => IsVisible((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
+	public bool IsVisible(Rectangle rect) => IsVisible((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
 	/// <summary>
 	///  Indicates whether the rectangle specified by a RectangleF structure is contained within the visible clip region of this Graphics.
 	/// </summary>
-	public bool IsVisible(System.Drawing.RectangleF rect) => IsVisible(rect.X, rect.Y, rect.Width, rect.Height);
+	public bool IsVisible(RectangleF rect) => IsVisible(rect.X, rect.Y, rect.Width, rect.Height);
 	/// <summary>
 	///  Indicates whether the point specified by a pair of coordinates is contained within the visible clip region of this Graphics.
 	/// </summary>
@@ -2049,25 +2049,25 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	{
 		ThrowIfDisposed();
 		var clipBounds = _canvas.DeviceClipBounds;
-		var testRect = new SkiaSharp.SKRect(x, y, x + width, y + height);
-		var clipRect = new SkiaSharp.SKRect(clipBounds.Left, clipBounds.Top, clipBounds.Right, clipBounds.Bottom);
+		var testRect = new SKRect(x, y, x + width, y + height);
+		var clipRect = new SKRect(clipBounds.Left, clipBounds.Top, clipBounds.Right, clipBounds.Bottom);
 		return testRect.IntersectsWith(clipRect);
 	}
 
 	/// <summary>
 	///  Gets an array of Region objects, each of which bounds a range of character positions within the specified string.
 	/// </summary>
-	public System.Drawing.Region[] MeasureCharacterRanges(string? text, System.Drawing.Font font, System.Drawing.RectangleF layoutRect, System.Drawing.StringFormat? stringFormat)
+	public Region[] MeasureCharacterRanges(string? text, Font font, RectangleF layoutRect, StringFormat? stringFormat)
 	{
 		ThrowIfDisposed();
 		if (font is null) throw new ArgumentNullException(nameof(font));
 
 		var ranges = stringFormat != null ? GetMeasurableRanges(stringFormat) : Array.Empty<CharacterRange>();
 		if (ranges.Length == 0 || string.IsNullOrEmpty(text))
-			return new Region[] { new Region(new Drawing2D.GraphicsPath()) };
+			return new Region[] { new Region(new GraphicsPath()) };
 
 		var regions = new Region[ranges.Length];
-		using var paint = new SkiaSharp.SKPaint();
+		using var paint = new SKPaint();
 		paint.TextSize = font.SKFont.Size;
 		paint.Typeface = font.SKTypeface;
 
@@ -2107,7 +2107,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="text">String to measure.</param>
 	/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
 	/// <returns>A <see cref="SizeF"/> structure that represents the size of the string, in the units specified by the PageUnit property.</returns>
-	public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font)
+	public SizeF MeasureString(string? text, Font font)
 		=> MeasureString(text, font, new SizeF(float.MaxValue, float.MaxValue), null);
 
 	/// <summary>
@@ -2118,7 +2118,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="origin"><see cref="PointF"/> structure that represents the upper-left corner of the string. This is currently ignored.</param>
 	/// <param name="stringFormat"><see cref="StringFormat"/> that represents formatting information for the string.</param>
 	/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
-	public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.PointF origin, System.Drawing.StringFormat? stringFormat)
+	public SizeF MeasureString(string? text, Font font, PointF origin, StringFormat? stringFormat)
 		=> MeasureString(text, font, new SizeF(float.MaxValue, float.MaxValue), stringFormat);
 
 	/// <summary>
@@ -2128,7 +2128,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
 	/// <param name="layoutArea"><see cref="SizeF"/> structure that specifies the maximum layout area for the text.</param>
 	/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
-	public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.SizeF layoutArea)
+	public SizeF MeasureString(string? text, Font font, SizeF layoutArea)
 		=> MeasureString(text, font, layoutArea, null);
 
 	/// <summary>
@@ -2139,7 +2139,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="layoutArea"><see cref="SizeF"/> structure that specifies the maximum layout area for the text.</param>
 	/// <param name="stringFormat"><see cref="StringFormat"/> that represents formatting information for the string.</param>
 	/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
-	public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.SizeF layoutArea, System.Drawing.StringFormat? stringFormat)
+	public SizeF MeasureString(string? text, Font font, SizeF layoutArea, StringFormat? stringFormat)
 	{
 		int charactersFitted;
 		int linesFilled;
@@ -2156,7 +2156,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="charactersFitted">Number of characters in the string.</param>
 	/// <param name="linesFilled">Number of text lines in the string.</param>
 	/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
-	public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, System.Drawing.SizeF layoutArea, System.Drawing.StringFormat? stringFormat, out int charactersFitted, out int linesFilled)
+	public SizeF MeasureString(string? text, Font font, SizeF layoutArea, StringFormat? stringFormat, out int charactersFitted, out int linesFilled)
 	{
 		ThrowIfDisposed();
 		charactersFitted = 0;
@@ -2239,7 +2239,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="font"><see cref="Font"/> that defines the text format of the string.</param>
 	/// <param name="width">Maximum width of the string in pixels.</param>
 	/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
-	public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, int width)
+	public SizeF MeasureString(string? text, Font font, int width)
 		=> MeasureString(text, font, new SizeF(width, float.MaxValue), null);
 
 	/// <summary>
@@ -2250,7 +2250,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="width">Maximum width of the string in pixels.</param>
 	/// <param name="format"><see cref="StringFormat"/> that represents formatting information for the string.</param>
 	/// <returns>A <see cref="SizeF"/> structure that represents the size of the string.</returns>
-	public System.Drawing.SizeF MeasureString(string? text, System.Drawing.Font font, int width, System.Drawing.StringFormat? format)
+	public SizeF MeasureString(string? text, Font font, int width, StringFormat? format)
 		=> MeasureString(text, font, new SizeF(width, float.MaxValue), format);
 
 	/// <summary>
@@ -2285,7 +2285,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Multiplies the world transformation of this <see cref="Graphics"/> and specified the <see cref="Matrix"/>.
 	/// </summary>
 	/// <param name="matrix">A <see cref="Matrix"/> that multiplies the world transformation.</param>
-	public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix)
+	public void MultiplyTransform(Matrix matrix)
 	{
 		MultiplyTransform(matrix, Drawing2D.MatrixOrder.Prepend);
 	}
@@ -2294,7 +2294,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="matrix">A <see cref="Matrix"/> that multiplies the world transformation.</param>
 	/// <param name="order">Member of the <see cref="MatrixOrder"/> enumeration that determines the order of the multiplication.</param>
-	public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix, System.Drawing.Drawing2D.MatrixOrder order)
+	public void MultiplyTransform(Matrix matrix, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		if (matrix is null) throw new ArgumentNullException(nameof(matrix));
@@ -2312,17 +2312,17 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Releases a device context handle obtained by a previous call to the GetHdc method of this Graphics.
 	/// </summary>
-	public void ReleaseHdc() { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	public void ReleaseHdc() { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Releases a device context handle obtained by a previous call to the GetHdc method of this Graphics.
 	/// </summary>
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-	public void ReleaseHdc(nint hdc) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	[EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
+	public void ReleaseHdc(nint hdc) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 	/// <summary>
 	///  Releases a handle to a device context.
 	/// </summary>
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
-	public void ReleaseHdcInternal(nint hdc) { throw new System.PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
+	[EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public void ReleaseHdcInternal(nint hdc) { throw new PlatformNotSupportedException("Not yet implemented in SkiaSharp.Extended.Drawing.Common"); }
 
 	/// <summary>
 	///  Resets the clip region of this <see cref="Graphics"/> to an infinite region.
@@ -2348,7 +2348,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Restores the state of this <see cref="Graphics"/> to the state represented by a <see cref="GraphicsState"/>.
 	/// </summary>
 	/// <param name="gstate">A <see cref="GraphicsState"/> that represents the state to which to restore this <see cref="Graphics"/>.</param>
-	public void Restore(System.Drawing.Drawing2D.GraphicsState gstate)
+	public void Restore(GraphicsState gstate)
 	{
 		ThrowIfDisposed();
 		if (gstate is null) throw new ArgumentNullException(nameof(gstate));
@@ -2388,7 +2388,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="angle">Angle of rotation in degrees.</param>
 	/// <param name="order">Member of the <see cref="MatrixOrder"/> enumeration that specifies whether the rotation is appended or prepended to the matrix transformation.</param>
-	public void RotateTransform(float angle, System.Drawing.Drawing2D.MatrixOrder order)
+	public void RotateTransform(float angle, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		if (order == Drawing2D.MatrixOrder.Prepend)
@@ -2406,12 +2406,12 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Saves the current state of this <see cref="Graphics"/> and identifies the saved state with a <see cref="GraphicsState"/>.
 	/// </summary>
 	/// <returns>This method returns a <see cref="GraphicsState"/> that represents the saved state of this <see cref="Graphics"/>.</returns>
-	public System.Drawing.Drawing2D.GraphicsState Save()
+	public GraphicsState Save()
 	{
 		ThrowIfDisposed();
 
 		// Save mode state
-		_savedStates ??= new System.Collections.Generic.Stack<GraphicsModeState>();
+		_savedStates ??= new Collections.Generic.Stack<GraphicsModeState>();
 		_savedStates.Push(new GraphicsModeState
 		{
 			SmoothingMode = _smoothingMode,
@@ -2449,7 +2449,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="sx">Scale factor in the x direction.</param>
 	/// <param name="sy">Scale factor in the y direction.</param>
 	/// <param name="order">Member of the <see cref="MatrixOrder"/> enumeration that specifies whether the scaling operation is prepended or appended to the transformation matrix.</param>
-	public void ScaleTransform(float sx, float sy, System.Drawing.Drawing2D.MatrixOrder order)
+	public void ScaleTransform(float sx, float sy, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		if (order == Drawing2D.MatrixOrder.Prepend)
@@ -2467,7 +2467,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Sets the clipping region of this <see cref="Graphics"/> to the specified <see cref="GraphicsPath"/>.
 	/// </summary>
 	/// <param name="path">The <see cref="GraphicsPath"/> that represents the new clip region.</param>
-	public void SetClip(System.Drawing.Drawing2D.GraphicsPath path)
+	public void SetClip(GraphicsPath path)
 	{
 		SetClip(path, Drawing2D.CombineMode.Replace);
 	}
@@ -2476,7 +2476,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="path">The <see cref="GraphicsPath"/> to combine.</param>
 	/// <param name="combineMode">The <see cref="CombineMode"/> to use.</param>
-	public void SetClip(System.Drawing.Drawing2D.GraphicsPath path, System.Drawing.Drawing2D.CombineMode combineMode)
+	public void SetClip(GraphicsPath path, CombineMode combineMode)
 	{
 		ThrowIfDisposed();
 		if (path is null) throw new ArgumentNullException(nameof(path));
@@ -2506,14 +2506,14 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Sets the clipping region of this Graphics.
 	/// </summary>
-	public void SetClip(System.Drawing.Graphics g)
+	public void SetClip(Graphics g)
 	{
 		SetClip(g, Drawing2D.CombineMode.Replace);
 	}
 	/// <summary>
 	///  Sets the clipping region of this Graphics to the Clip property of the specified Graphics.
 	/// </summary>
-	public void SetClip(System.Drawing.Graphics g, System.Drawing.Drawing2D.CombineMode combineMode)
+	public void SetClip(Graphics g, CombineMode combineMode)
 	{
 		ThrowIfDisposed();
 		if (g is null) throw new ArgumentNullException(nameof(g));
@@ -2525,7 +2525,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Sets the clipping region of this <see cref="Graphics"/> to the specified <see cref="Rectangle"/>.
 	/// </summary>
 	/// <param name="rect">A <see cref="Rectangle"/> structure that represents the new clip region.</param>
-	public void SetClip(System.Drawing.Rectangle rect)
+	public void SetClip(Rectangle rect)
 	{
 		SetClip(rect, Drawing2D.CombineMode.Replace);
 	}
@@ -2534,7 +2534,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="rect">A <see cref="Rectangle"/> structure to combine.</param>
 	/// <param name="combineMode">A <see cref="CombineMode"/> enumeration that specifies the combining operation to use.</param>
-	public void SetClip(System.Drawing.Rectangle rect, System.Drawing.Drawing2D.CombineMode combineMode)
+	public void SetClip(Rectangle rect, CombineMode combineMode)
 	{
 		SetClip((RectangleF)rect, combineMode);
 	}
@@ -2542,7 +2542,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Sets the clipping region of this <see cref="Graphics"/> to the specified <see cref="RectangleF"/>.
 	/// </summary>
 	/// <param name="rect">A <see cref="RectangleF"/> structure that represents the new clip region.</param>
-	public void SetClip(System.Drawing.RectangleF rect)
+	public void SetClip(RectangleF rect)
 	{
 		SetClip(rect, Drawing2D.CombineMode.Replace);
 	}
@@ -2551,7 +2551,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="rect">A <see cref="RectangleF"/> structure to combine.</param>
 	/// <param name="combineMode">A <see cref="CombineMode"/> enumeration that specifies the combining operation to use.</param>
-	public void SetClip(System.Drawing.RectangleF rect, System.Drawing.Drawing2D.CombineMode combineMode)
+	public void SetClip(RectangleF rect, CombineMode combineMode)
 	{
 		ThrowIfDisposed();
 		var skRect = new SKRect(rect.X, rect.Y, rect.Right, rect.Bottom);
@@ -2586,7 +2586,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// </summary>
 	/// <param name="region">A <see cref="Region"/> to combine.</param>
 	/// <param name="combineMode">A <see cref="CombineMode"/> enumeration that specifies the combining operation to use.</param>
-	public void SetClip(System.Drawing.Region region, System.Drawing.Drawing2D.CombineMode combineMode)
+	public void SetClip(Region region, CombineMode combineMode)
 	{
 		ThrowIfDisposed();
 		if (region is null) throw new ArgumentNullException(nameof(region));
@@ -2620,7 +2620,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Transforms an array of points from one coordinate space to another.
 	/// </summary>
-	public void TransformPoints(System.Drawing.Drawing2D.CoordinateSpace destSpace, System.Drawing.Drawing2D.CoordinateSpace srcSpace, System.Drawing.PointF[] pts)
+	public void TransformPoints(CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF[] pts)
 	{
 		ThrowIfDisposed();
 		if (pts is null) throw new ArgumentNullException(nameof(pts));
@@ -2660,7 +2660,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Transforms an array of points from one coordinate space to another.
 	/// </summary>
-	public void TransformPoints(System.Drawing.Drawing2D.CoordinateSpace destSpace, System.Drawing.Drawing2D.CoordinateSpace srcSpace, System.Drawing.Point[] pts)
+	public void TransformPoints(CoordinateSpace destSpace, CoordinateSpace srcSpace, Point[] pts)
 	{
 		ThrowIfDisposed();
 		if (pts is null) throw new ArgumentNullException(nameof(pts));
@@ -2711,7 +2711,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <param name="dx">The x-coordinate of the translation.</param>
 	/// <param name="dy">The y-coordinate of the translation.</param>
 	/// <param name="order">Member of the <see cref="MatrixOrder"/> enumeration that specifies whether the translation is prepended or appended to the transformation matrix.</param>
-	public void TranslateTransform(float dx, float dy, System.Drawing.Drawing2D.MatrixOrder order)
+	public void TranslateTransform(float dx, float dy, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		if (order == Drawing2D.MatrixOrder.Prepend)
@@ -2781,7 +2781,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	///  Applies a Union, Xor, or Complement clip combine mode by computing the combined path
 	///  with SKPath.Op and re-applying as a clip.
 	/// </summary>
-	private void ApplyPathCombineMode(SKPath newPath, Drawing2D.CombineMode combineMode)
+	private void ApplyPathCombineMode(SKPath newPath, CombineMode combineMode)
 	{
 		SKPathOp op;
 		switch (combineMode)
@@ -2814,7 +2814,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 			_canvas.ClipPath(combined);
 
 			// Update clip region
-			using var regionPath = new Drawing2D.GraphicsPath();
+			using var regionPath = new GraphicsPath();
 			regionPath.SKPath.Dispose();
 			regionPath.SKPath = new SKPath(combined);
 			_clipRegion = new Region(regionPath);
@@ -2909,7 +2909,7 @@ public sealed partial class Graphics : System.MarshalByRefObject, System.Drawing
 	/// <summary>
 	///  Core helper to draw a portion of an image into a destination rectangle, with optional ImageAttributes.
 	/// </summary>
-	private void DrawImageCore(Image image, RectangleF destRect, RectangleF srcRect, System.Drawing.Imaging.ImageAttributes? imageAttr)
+	private void DrawImageCore(Image image, RectangleF destRect, RectangleF srcRect, Imaging.ImageAttributes? imageAttr)
 	{
 		ThrowIfDisposed();
 		if (image is null) throw new ArgumentNullException(nameof(image));

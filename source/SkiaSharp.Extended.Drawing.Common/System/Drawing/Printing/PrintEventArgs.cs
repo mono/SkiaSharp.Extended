@@ -3,7 +3,7 @@ namespace System.Drawing.Printing;
 /// <summary>
 ///  Provides data for the <see cref="PrintDocument.BeginPrint"/> and <see cref="PrintDocument.EndPrint"/> events.
 /// </summary>
-public partial class PrintEventArgs : System.ComponentModel.CancelEventArgs
+public partial class PrintEventArgs : ComponentModel.CancelEventArgs
 {
 	private PrintAction _printAction;
 
@@ -13,5 +13,5 @@ public partial class PrintEventArgs : System.ComponentModel.CancelEventArgs
 	internal PrintEventArgs(PrintAction action) { _printAction = action; }
 
 	/// <summary>Gets the <see cref="PrintAction"/> for the print job.</summary>
-	public System.Drawing.Printing.PrintAction PrintAction => _printAction;
+	public PrintAction PrintAction => _printAction;
 }

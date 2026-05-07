@@ -25,7 +25,7 @@ public sealed partial class ImageCodecInfo
 	/// <summary>
 	///  Gets or sets a <see cref="Guid"/> structure that contains a GUID that identifies the codec's class.
 	/// </summary>
-	public System.Guid Clsid { get { return _clsid; } set { _clsid = value; } }
+	public Guid Clsid { get { return _clsid; } set { _clsid = value; } }
 
 	/// <summary>
 	///  Gets or sets a string that contains the name of the codec.
@@ -45,7 +45,7 @@ public sealed partial class ImageCodecInfo
 	/// <summary>
 	///  Gets or sets flags of the <see cref="ImageCodecInfo"/> object.
 	/// </summary>
-	public System.Drawing.Imaging.ImageCodecFlags Flags { get { return _flags; } set { _flags = value; } }
+	public ImageCodecFlags Flags { get { return _flags; } set { _flags = value; } }
 
 	/// <summary>
 	///  Gets or sets a string that describes the codec's file format.
@@ -55,7 +55,7 @@ public sealed partial class ImageCodecInfo
 	/// <summary>
 	///  Gets or sets a <see cref="Guid"/> structure that contains a GUID that identifies the codec's format.
 	/// </summary>
-	public System.Guid FormatID { get { return _formatID; } set { _formatID = value; } }
+	public Guid FormatID { get { return _formatID; } set { _formatID = value; } }
 
 	/// <summary>
 	///  Gets or sets a string that contains the codec's Multipurpose Internet Mail Extensions (MIME) type.
@@ -80,7 +80,7 @@ public sealed partial class ImageCodecInfo
 	/// <summary>
 	///  Returns an array of <see cref="ImageCodecInfo"/> objects that contain information about the image decoders built into GDI+.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageCodecInfo[] GetImageDecoders()
+	public static ImageCodecInfo[] GetImageDecoders()
 	{
 		return Array.Empty<ImageCodecInfo>();
 	}
@@ -88,7 +88,7 @@ public sealed partial class ImageCodecInfo
 	/// <summary>
 	///  Returns an array of <see cref="ImageCodecInfo"/> objects that contain information about the image encoders built into GDI+.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageCodecInfo[] GetImageEncoders()
+	public static ImageCodecInfo[] GetImageEncoders()
 	{
 		return Array.Empty<ImageCodecInfo>();
 	}

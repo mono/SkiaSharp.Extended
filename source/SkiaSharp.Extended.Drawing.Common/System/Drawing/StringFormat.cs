@@ -5,7 +5,7 @@ namespace System.Drawing;
 ///  display manipulations (such as ellipsis insertion and national digit substitution),
 ///  and OpenType features. This class cannot be inherited.
 /// </summary>
-public sealed partial class StringFormat : System.MarshalByRefObject, System.ICloneable, System.IDisposable
+public sealed partial class StringFormat : MarshalByRefObject, ICloneable, IDisposable
 {
 	private StringAlignment _alignment;
 	private StringAlignment _lineAlignment;
@@ -31,7 +31,7 @@ public sealed partial class StringFormat : System.MarshalByRefObject, System.ICl
 	///  Initializes a new <see cref="StringFormat"/> object from the specified existing <see cref="StringFormat"/> object.
 	/// </summary>
 	/// <param name="format">The <see cref="StringFormat"/> object from which to initialize the new <see cref="StringFormat"/> object.</param>
-	public StringFormat(System.Drawing.StringFormat format)
+	public StringFormat(StringFormat format)
 	{
 		if (format is null) throw new ArgumentNullException(nameof(format));
 		_alignment = format._alignment;
@@ -50,7 +50,7 @@ public sealed partial class StringFormat : System.MarshalByRefObject, System.ICl
 	///  Initializes a new <see cref="StringFormat"/> object with the specified <see cref="StringFormatFlags"/> enumeration.
 	/// </summary>
 	/// <param name="options">The <see cref="StringFormatFlags"/> enumeration for the new <see cref="StringFormat"/> object.</param>
-	public StringFormat(System.Drawing.StringFormatFlags options)
+	public StringFormat(StringFormatFlags options)
 		: this(options, 0)
 	{
 	}
@@ -60,7 +60,7 @@ public sealed partial class StringFormat : System.MarshalByRefObject, System.ICl
 	/// </summary>
 	/// <param name="options">The <see cref="StringFormatFlags"/> enumeration for the new <see cref="StringFormat"/> object.</param>
 	/// <param name="language">A value that indicates the language of the text.</param>
-	public StringFormat(System.Drawing.StringFormatFlags options, int language)
+	public StringFormat(StringFormatFlags options, int language)
 	{
 		_formatFlags = options;
 		_digitSubstitutionLanguage = language;
@@ -70,7 +70,7 @@ public sealed partial class StringFormat : System.MarshalByRefObject, System.ICl
 	/// <summary>
 	///  Gets or sets horizontal alignment of the string.
 	/// </summary>
-	public System.Drawing.StringAlignment Alignment
+	public StringAlignment Alignment
 	{
 		get => _alignment;
 		set => _alignment = value;
@@ -84,12 +84,12 @@ public sealed partial class StringFormat : System.MarshalByRefObject, System.ICl
 	/// <summary>
 	///  Gets the method to be used for digit substitution.
 	/// </summary>
-	public System.Drawing.StringDigitSubstitute DigitSubstitutionMethod => _digitSubstitutionMethod;
+	public StringDigitSubstitute DigitSubstitutionMethod => _digitSubstitutionMethod;
 
 	/// <summary>
 	///  Gets or sets a <see cref="StringFormatFlags"/> enumeration that contains formatting information.
 	/// </summary>
-	public System.Drawing.StringFormatFlags FormatFlags
+	public StringFormatFlags FormatFlags
 	{
 		get => _formatFlags;
 		set => _formatFlags = value;
@@ -98,12 +98,12 @@ public sealed partial class StringFormat : System.MarshalByRefObject, System.ICl
 	/// <summary>
 	///  Gets a generic default <see cref="StringFormat"/> object.
 	/// </summary>
-	public static System.Drawing.StringFormat GenericDefault => new StringFormat();
+	public static StringFormat GenericDefault => new StringFormat();
 
 	/// <summary>
 	///  Gets a generic typographic <see cref="StringFormat"/> object.
 	/// </summary>
-	public static System.Drawing.StringFormat GenericTypographic => new StringFormat(
+	public static StringFormat GenericTypographic => new StringFormat(
 		StringFormatFlags.FitBlackBox | StringFormatFlags.LineLimit | StringFormatFlags.NoClip)
 	{
 		_trimming = StringTrimming.None,
@@ -112,7 +112,7 @@ public sealed partial class StringFormat : System.MarshalByRefObject, System.ICl
 	/// <summary>
 	///  Gets or sets the <see cref="Text.HotkeyPrefix"/> object for this <see cref="StringFormat"/> object.
 	/// </summary>
-	public System.Drawing.Text.HotkeyPrefix HotkeyPrefix
+	public Text.HotkeyPrefix HotkeyPrefix
 	{
 		get => _hotkeyPrefix;
 		set => _hotkeyPrefix = value;
@@ -121,7 +121,7 @@ public sealed partial class StringFormat : System.MarshalByRefObject, System.ICl
 	/// <summary>
 	///  Gets or sets the vertical alignment of the string.
 	/// </summary>
-	public System.Drawing.StringAlignment LineAlignment
+	public StringAlignment LineAlignment
 	{
 		get => _lineAlignment;
 		set => _lineAlignment = value;
@@ -130,7 +130,7 @@ public sealed partial class StringFormat : System.MarshalByRefObject, System.ICl
 	/// <summary>
 	///  Gets or sets the <see cref="StringTrimming"/> enumeration for this <see cref="StringFormat"/> object.
 	/// </summary>
-	public System.Drawing.StringTrimming Trimming
+	public StringTrimming Trimming
 	{
 		get => _trimming;
 		set => _trimming = value;
@@ -171,7 +171,7 @@ public sealed partial class StringFormat : System.MarshalByRefObject, System.ICl
 	/// </summary>
 	/// <param name="language">A National Language Support (NLS) language identifier.</param>
 	/// <param name="substitute">The <see cref="StringDigitSubstitute"/> specifying how digits are displayed.</param>
-	public void SetDigitSubstitution(int language, System.Drawing.StringDigitSubstitute substitute)
+	public void SetDigitSubstitution(int language, StringDigitSubstitute substitute)
 	{
 		_digitSubstitutionLanguage = language;
 		_digitSubstitutionMethod = substitute;
@@ -182,7 +182,7 @@ public sealed partial class StringFormat : System.MarshalByRefObject, System.ICl
 	///  measured by a call to the <see cref="Graphics.MeasureCharacterRanges"/> method.
 	/// </summary>
 	/// <param name="ranges">An array of <see cref="CharacterRange"/> structures that specifies the ranges of characters.</param>
-	public void SetMeasurableCharacterRanges(System.Drawing.CharacterRange[] ranges)
+	public void SetMeasurableCharacterRanges(CharacterRange[] ranges)
 	{
 		_measurableRanges = ranges != null ? (CharacterRange[])ranges.Clone() : null;
 	}

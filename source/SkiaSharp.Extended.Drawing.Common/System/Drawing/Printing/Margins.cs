@@ -3,8 +3,8 @@ namespace System.Drawing.Printing;
 /// <summary>
 ///  Specifies the dimensions of the margins of a printed page.
 /// </summary>
-[System.ComponentModel.TypeConverterAttribute(typeof(System.Drawing.Printing.MarginsConverter))]
-public partial class Margins : System.ICloneable
+[ComponentModel.TypeConverter(typeof(MarginsConverter))]
+public partial class Margins : ICloneable
 {
 	/// <summary>Initializes a new instance of the <see cref="Margins"/> class with 1-inch margins.</summary>
 	public Margins() { Left = 100; Right = 100; Top = 100; Bottom = 100; }
@@ -33,7 +33,7 @@ public partial class Margins : System.ICloneable
 	public int Top { get; set; }
 
 	/// <summary>Compares two <see cref="Margins"/> objects to determine whether they are equal.</summary>
-	public static bool operator ==(System.Drawing.Printing.Margins? m1, System.Drawing.Printing.Margins? m2)
+	public static bool operator ==(Margins? m1, Margins? m2)
 	{
 		if (m1 is null) return m2 is null;
 		if (m2 is null) return false;
@@ -41,7 +41,7 @@ public partial class Margins : System.ICloneable
 	}
 
 	/// <summary>Compares two <see cref="Margins"/> objects to determine whether they are not equal.</summary>
-	public static bool operator !=(System.Drawing.Printing.Margins? m1, System.Drawing.Printing.Margins? m2) => !(m1 == m2);
+	public static bool operator !=(Margins? m1, Margins? m2) => !(m1 == m2);
 
 	/// <summary>Creates an exact copy of this <see cref="Margins"/>.</summary>
 	public object Clone() => new Margins(Left, Right, Top, Bottom);

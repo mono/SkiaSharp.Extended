@@ -8,7 +8,7 @@ namespace System.Drawing;
 ///  Encapsulates a <see cref="Brush"/> object that fills the interior of a shape with
 ///  an image. This class cannot be inherited.
 /// </summary>
-public sealed partial class TextureBrush : System.Drawing.Brush
+public sealed partial class TextureBrush : Brush
 {
 	private readonly Image _image;
 	private WrapMode _wrapMode;
@@ -20,7 +20,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// </summary>
 	/// <param name="bitmap">The <see cref="Image"/> object with which this <see cref="TextureBrush"/> object fills interiors.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="bitmap"/> is <see langword="null"/>.</exception>
-	public TextureBrush(System.Drawing.Image bitmap)
+	public TextureBrush(Image bitmap)
 		: this(bitmap, WrapMode.Tile) { }
 
 	/// <summary>
@@ -30,7 +30,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// <param name="image">The <see cref="Image"/> object with which this <see cref="TextureBrush"/> object fills interiors.</param>
 	/// <param name="wrapMode">A <see cref="WrapMode"/> enumeration that specifies how this <see cref="TextureBrush"/> object is tiled.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="image"/> is <see langword="null"/>.</exception>
-	public TextureBrush(System.Drawing.Image image, System.Drawing.Drawing2D.WrapMode wrapMode)
+	public TextureBrush(Image image, WrapMode wrapMode)
 	{
 		_image = image ?? throw new ArgumentNullException(nameof(image));
 		_wrapMode = wrapMode;
@@ -45,7 +45,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// <param name="wrapMode">A <see cref="WrapMode"/> enumeration that specifies how this <see cref="TextureBrush"/> object is tiled.</param>
 	/// <param name="dstRect">A <see cref="Rectangle"/> structure that represents the bounding rectangle for this <see cref="TextureBrush"/> object.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="image"/> is <see langword="null"/>.</exception>
-	public TextureBrush(System.Drawing.Image image, System.Drawing.Drawing2D.WrapMode wrapMode, System.Drawing.Rectangle dstRect)
+	public TextureBrush(Image image, WrapMode wrapMode, Rectangle dstRect)
 	{
 		_image = image ?? throw new ArgumentNullException(nameof(image));
 		_wrapMode = wrapMode;
@@ -60,7 +60,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// <param name="wrapMode">A <see cref="WrapMode"/> enumeration that specifies how this <see cref="TextureBrush"/> object is tiled.</param>
 	/// <param name="dstRect">A <see cref="RectangleF"/> structure that represents the bounding rectangle for this <see cref="TextureBrush"/> object.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="image"/> is <see langword="null"/>.</exception>
-	public TextureBrush(System.Drawing.Image image, System.Drawing.Drawing2D.WrapMode wrapMode, System.Drawing.RectangleF dstRect)
+	public TextureBrush(Image image, WrapMode wrapMode, RectangleF dstRect)
 	{
 		_image = image ?? throw new ArgumentNullException(nameof(image));
 		_wrapMode = wrapMode;
@@ -74,7 +74,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// <param name="image">The <see cref="Image"/> object with which this <see cref="TextureBrush"/> object fills interiors.</param>
 	/// <param name="dstRect">A <see cref="Rectangle"/> structure that represents the bounding rectangle for this <see cref="TextureBrush"/> object.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="image"/> is <see langword="null"/>.</exception>
-	public TextureBrush(System.Drawing.Image image, System.Drawing.Rectangle dstRect)
+	public TextureBrush(Image image, Rectangle dstRect)
 		: this(image, WrapMode.Tile, (RectangleF)dstRect) { }
 
 	/// <summary>
@@ -85,7 +85,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// <param name="dstRect">A <see cref="Rectangle"/> structure that represents the bounding rectangle for this <see cref="TextureBrush"/> object.</param>
 	/// <param name="imageAttr">An <see cref="Imaging.ImageAttributes"/> object that contains additional information about the image used by this <see cref="TextureBrush"/> object.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="image"/> is <see langword="null"/>.</exception>
-	public TextureBrush(System.Drawing.Image image, System.Drawing.Rectangle dstRect, System.Drawing.Imaging.ImageAttributes? imageAttr)
+	public TextureBrush(Image image, Rectangle dstRect, Imaging.ImageAttributes? imageAttr)
 	{
 		_image = image ?? throw new ArgumentNullException(nameof(image));
 		_wrapMode = WrapMode.Tile;
@@ -100,7 +100,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// <param name="image">The <see cref="Image"/> object with which this <see cref="TextureBrush"/> object fills interiors.</param>
 	/// <param name="dstRect">A <see cref="RectangleF"/> structure that represents the bounding rectangle for this <see cref="TextureBrush"/> object.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="image"/> is <see langword="null"/>.</exception>
-	public TextureBrush(System.Drawing.Image image, System.Drawing.RectangleF dstRect)
+	public TextureBrush(Image image, RectangleF dstRect)
 		: this(image, WrapMode.Tile, dstRect) { }
 
 	/// <summary>
@@ -111,7 +111,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// <param name="dstRect">A <see cref="RectangleF"/> structure that represents the bounding rectangle for this <see cref="TextureBrush"/> object.</param>
 	/// <param name="imageAttr">An <see cref="Imaging.ImageAttributes"/> object that contains additional information about the image used by this <see cref="TextureBrush"/> object.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="image"/> is <see langword="null"/>.</exception>
-	public TextureBrush(System.Drawing.Image image, System.Drawing.RectangleF dstRect, System.Drawing.Imaging.ImageAttributes? imageAttr)
+	public TextureBrush(Image image, RectangleF dstRect, Imaging.ImageAttributes? imageAttr)
 	{
 		_image = image ?? throw new ArgumentNullException(nameof(image));
 		_wrapMode = WrapMode.Tile;
@@ -123,7 +123,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	///  Gets the <see cref="Image"/> object associated with this <see cref="TextureBrush"/> object.
 	/// </summary>
 	/// <value>An <see cref="Image"/> object that represents the image associated with this <see cref="TextureBrush"/> object.</value>
-	public System.Drawing.Image Image
+	public Image Image
 	{
 		get { ThrowIfDisposed(); return _image; }
 	}
@@ -133,7 +133,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	///  transformation for the image associated with this <see cref="TextureBrush"/> object.
 	/// </summary>
 	/// <value>A copy of the <see cref="Matrix"/> object that defines a geometric transformation that applies only to fills drawn by using this <see cref="TextureBrush"/> object.</value>
-	public System.Drawing.Drawing2D.Matrix Transform
+	public Matrix Transform
 	{
 		get { ThrowIfDisposed(); return _transform ?? new Matrix(); }
 		set { ThrowIfDisposed(); _transform = value ?? throw new ArgumentNullException(nameof(value)); }
@@ -144,7 +144,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	///  for this <see cref="TextureBrush"/> object.
 	/// </summary>
 	/// <value>A <see cref="WrapMode"/> enumeration that specifies how this <see cref="TextureBrush"/> object is tiled.</value>
-	public System.Drawing.Drawing2D.WrapMode WrapMode
+	public WrapMode WrapMode
 	{
 		get { ThrowIfDisposed(); return _wrapMode; }
 		set { ThrowIfDisposed(); _wrapMode = value; }
@@ -168,7 +168,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	///  <see cref="Matrix"/> object by prepending the specified <see cref="Matrix"/> object.
 	/// </summary>
 	/// <param name="matrix">The <see cref="Matrix"/> object by which to multiply the geometric transformation.</param>
-	public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix)
+	public void MultiplyTransform(Matrix matrix)
 	{
 		MultiplyTransform(matrix, MatrixOrder.Prepend);
 	}
@@ -180,7 +180,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// </summary>
 	/// <param name="matrix">The <see cref="Matrix"/> object by which to multiply the geometric transformation.</param>
 	/// <param name="order">A <see cref="MatrixOrder"/> enumeration that specifies the order in which to multiply the two matrices.</param>
-	public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix, System.Drawing.Drawing2D.MatrixOrder order)
+	public void MultiplyTransform(Matrix matrix, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_ = matrix;
@@ -212,7 +212,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// </summary>
 	/// <param name="angle">The angle of rotation.</param>
 	/// <param name="order">A <see cref="MatrixOrder"/> enumeration that specifies whether to append or prepend the rotation matrix.</param>
-	public void RotateTransform(float angle, System.Drawing.Drawing2D.MatrixOrder order)
+	public void RotateTransform(float angle, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_ = angle;
@@ -237,7 +237,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// <param name="sx">The amount by which to scale the transformation in the x direction.</param>
 	/// <param name="sy">The amount by which to scale the transformation in the y direction.</param>
 	/// <param name="order">A <see cref="MatrixOrder"/> enumeration that specifies whether to append or prepend the scaling matrix.</param>
-	public void ScaleTransform(float sx, float sy, System.Drawing.Drawing2D.MatrixOrder order)
+	public void ScaleTransform(float sx, float sy, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_ = sx;
@@ -263,7 +263,7 @@ public sealed partial class TextureBrush : System.Drawing.Brush
 	/// <param name="dx">The dimension by which to translate the transformation in the x direction.</param>
 	/// <param name="dy">The dimension by which to translate the transformation in the y direction.</param>
 	/// <param name="order">The order (prepend or append) in which to apply the translation.</param>
-	public void TranslateTransform(float dx, float dy, System.Drawing.Drawing2D.MatrixOrder order)
+	public void TranslateTransform(float dx, float dy, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_ = dx;

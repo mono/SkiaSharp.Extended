@@ -5,9 +5,9 @@ namespace System.Drawing;
 /// <summary>
 ///  Represents a Windows icon, which is a small bitmap image that is used to represent an object.
 /// </summary>
-[System.ComponentModel.EditorAttribute("System.Drawing.Design.IconEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-[System.ComponentModel.TypeConverterAttribute(typeof(System.Drawing.IconConverter))]
-public sealed partial class Icon : System.MarshalByRefObject, System.ICloneable, System.IDisposable, System.Runtime.Serialization.ISerializable
+[ComponentModel.Editor("System.Drawing.Design.IconEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+[ComponentModel.TypeConverter(typeof(IconConverter))]
+public sealed partial class Icon : MarshalByRefObject, ICloneable, IDisposable, Runtime.Serialization.ISerializable
 {
 	private SKBitmap? _bitmap;
 	private bool _disposed;
@@ -18,10 +18,10 @@ public sealed partial class Icon : System.MarshalByRefObject, System.ICloneable,
 	}
 
 	/// <summary>Initializes a new instance of the <see cref="Icon"/> class from the specified original icon and size.</summary>
-	public Icon(System.Drawing.Icon original, System.Drawing.Size size) : this(original, size.Width, size.Height) { }
+	public Icon(Icon original, Size size) : this(original, size.Width, size.Height) { }
 
 	/// <summary>Initializes a new instance of the <see cref="Icon"/> class from the specified original icon, at the specified size.</summary>
-	public Icon(System.Drawing.Icon original, int width, int height)
+	public Icon(Icon original, int width, int height)
 	{
 		if (original is null) throw new ArgumentNullException(nameof(original));
 		if (original._bitmap is null) throw new ArgumentException("The source icon has been disposed.", nameof(original));
@@ -35,11 +35,11 @@ public sealed partial class Icon : System.MarshalByRefObject, System.ICloneable,
 	}
 
 	/// <summary>Initializes a new instance of the <see cref="Icon"/> class from the specified data stream.</summary>
-	public Icon(System.IO.Stream stream) { _bitmap = LoadFromStream(stream); }
+	public Icon(IO.Stream stream) { _bitmap = LoadFromStream(stream); }
 	/// <summary>Initializes a new instance of the <see cref="Icon"/> class from the specified stream, at the specified size.</summary>
-	public Icon(System.IO.Stream stream, System.Drawing.Size size) : this(stream, size.Width, size.Height) { }
+	public Icon(IO.Stream stream, Size size) : this(stream, size.Width, size.Height) { }
 	/// <summary>Initializes a new instance of the <see cref="Icon"/> class from the specified stream, at the specified width and height.</summary>
-	public Icon(System.IO.Stream stream, int width, int height)
+	public Icon(IO.Stream stream, int width, int height)
 	{
 		var full = LoadFromStream(stream);
 		if (full.Width == width && full.Height == height)
@@ -61,7 +61,7 @@ public sealed partial class Icon : System.MarshalByRefObject, System.ICloneable,
 	}
 
 	/// <summary>Initializes a new instance of the <see cref="Icon"/> class from the specified file name, at the specified size.</summary>
-	public Icon(string fileName, System.Drawing.Size size) : this(fileName, size.Width, size.Height) { }
+	public Icon(string fileName, Size size) : this(fileName, size.Width, size.Height) { }
 
 	/// <summary>Initializes a new instance of the <see cref="Icon"/> class from the specified file name, at the specified width and height.</summary>
 	public Icon(string fileName, int width, int height)
@@ -80,7 +80,7 @@ public sealed partial class Icon : System.MarshalByRefObject, System.ICloneable,
 	}
 
 	/// <summary>Initializes a new instance of the <see cref="Icon"/> class from a resource in the specified assembly.</summary>
-	public Icon(System.Type type, string resource)
+	public Icon(Type type, string resource)
 	{
 		if (type is null) throw new ArgumentNullException(nameof(type));
 		if (resource is null) throw new ArgumentNullException(nameof(resource));
@@ -91,25 +91,25 @@ public sealed partial class Icon : System.MarshalByRefObject, System.ICloneable,
 	}
 
 	/// <summary>Gets the handle of this <see cref="Icon"/>. This is not a true Win32 HICON.</summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
-	public nint Handle { get { throw new System.PlatformNotSupportedException("Icon handles are not supported in SkiaSharp.Extended.Drawing.Common."); } }
+	[ComponentModel.Browsable(false)]
+	public nint Handle { get { throw new PlatformNotSupportedException("Icon handles are not supported in SkiaSharp.Extended.Drawing.Common."); } }
 
 	/// <summary>Gets the height of this <see cref="Icon"/>.</summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
+	[ComponentModel.Browsable(false)]
 	public int Height => _bitmap?.Height ?? 0;
 
 	/// <summary>Gets the size of this <see cref="Icon"/>.</summary>
-	public System.Drawing.Size Size => new Size(Width, Height);
+	public Size Size => new Size(Width, Height);
 
 	/// <summary>Gets the width of this <see cref="Icon"/>.</summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
+	[ComponentModel.Browsable(false)]
 	public int Width => _bitmap?.Width ?? 0;
 
 	/// <summary>Returns an icon representation of an image that is contained in the specified file.</summary>
-	public static System.Drawing.Icon? ExtractAssociatedIcon(string filePath) { throw new System.PlatformNotSupportedException("ExtractAssociatedIcon is not supported in SkiaSharp.Extended.Drawing.Common."); }
+	public static Icon? ExtractAssociatedIcon(string filePath) { throw new PlatformNotSupportedException("ExtractAssociatedIcon is not supported in SkiaSharp.Extended.Drawing.Common."); }
 
 	/// <summary>Creates a GDI+ Icon from the specified Windows handle.</summary>
-	public static System.Drawing.Icon FromHandle(nint handle) { throw new System.PlatformNotSupportedException("Icon handles are not supported in SkiaSharp.Extended.Drawing.Common."); }
+	public static Icon FromHandle(nint handle) { throw new PlatformNotSupportedException("Icon handles are not supported in SkiaSharp.Extended.Drawing.Common."); }
 
 	/// <summary>Clones the <see cref="Icon"/>, creating a duplicate image.</summary>
 	public object Clone()
@@ -131,8 +131,8 @@ public sealed partial class Icon : System.MarshalByRefObject, System.ICloneable,
 	}
 
 	/// <summary>Saves this <see cref="Icon"/> to the specified output stream.</summary>
-	/// <param name="outputStream">The <see cref="System.IO.Stream"/> to save to.</param>
-	public void Save(System.IO.Stream outputStream)
+	/// <param name="outputStream">The <see cref="IO.Stream"/> to save to.</param>
+	public void Save(IO.Stream outputStream)
 	{
 		if (outputStream is null) throw new ArgumentNullException(nameof(outputStream));
 		if (_bitmap is null) throw new ObjectDisposedException(nameof(Icon));
@@ -143,7 +143,7 @@ public sealed partial class Icon : System.MarshalByRefObject, System.ICloneable,
 
 	/// <summary>Converts this <see cref="Icon"/> to a GDI+ <see cref="Bitmap"/>.</summary>
 	/// <returns>A <see cref="Bitmap"/> that represents the converted <see cref="Icon"/>.</returns>
-	public System.Drawing.Bitmap ToBitmap()
+	public Bitmap ToBitmap()
 	{
 		if (_bitmap is null) throw new ObjectDisposedException(nameof(Icon));
 		var bmp = new Bitmap(Width, Height);
@@ -158,12 +158,12 @@ public sealed partial class Icon : System.MarshalByRefObject, System.ICloneable,
 	~Icon() { Dispose(); }
 
 	/// <inheritdoc/>
-	void System.Runtime.Serialization.ISerializable.GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+	void Runtime.Serialization.ISerializable.GetObjectData(Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext context)
 	{
-		throw new System.PlatformNotSupportedException("Icon serialization is not supported in SkiaSharp.Extended.Drawing.Common.");
+		throw new PlatformNotSupportedException("Icon serialization is not supported in SkiaSharp.Extended.Drawing.Common.");
 	}
 
-	private static SKBitmap LoadFromStream(System.IO.Stream stream)
+	private static SKBitmap LoadFromStream(IO.Stream stream)
 	{
 		if (stream is null) throw new ArgumentNullException(nameof(stream));
 		var bitmap = SKBitmap.Decode(stream);

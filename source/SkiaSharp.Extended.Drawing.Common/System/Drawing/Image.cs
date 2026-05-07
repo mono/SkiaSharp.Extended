@@ -8,16 +8,16 @@ namespace System.Drawing;
 /// <summary>
 ///  An abstract base class that provides functionality for the <see cref="Bitmap"/> and Metafile descended classes.
 /// </summary>
-[System.ComponentModel.EditorAttribute("System.Drawing.Design.ImageEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-[System.ComponentModel.ImmutableObjectAttribute(true)]
-[System.ComponentModel.TypeConverterAttribute(typeof(System.Drawing.ImageConverter))]
-public abstract partial class Image : System.MarshalByRefObject, System.ICloneable, System.IDisposable, System.Runtime.Serialization.ISerializable
+[ComponentModel.Editor("System.Drawing.Design.ImageEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+[ComponentModel.ImmutableObject(true)]
+[ComponentModel.TypeConverter(typeof(ImageConverter))]
+public abstract partial class Image : MarshalByRefObject, ICloneable, IDisposable, Runtime.Serialization.ISerializable
 {
 	internal SKBitmap? SKBitmapBacking;
 	internal ImageFormat _rawFormat = ImageFormat.MemoryBmp;
 	internal float _horizontalResolution = 96f;
 	internal float _verticalResolution = 96f;
-	internal Imaging.PixelFormat _requestedPixelFormat;
+	internal PixelFormat _requestedPixelFormat;
 	private object? _tag;
 	private byte[]? _codecData;
 
@@ -34,7 +34,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets attribute flags for the pixel data of this <see cref="Image"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
+	[ComponentModel.Browsable(false)]
 	public int Flags
 	{
 		get
@@ -50,8 +50,8 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets an array of GUIDs that represent the dimensions of frames within this <see cref="Image"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
-	public System.Guid[] FrameDimensionsList
+	[ComponentModel.Browsable(false)]
+	public Guid[] FrameDimensionsList
 	{
 		get
 		{
@@ -63,9 +63,9 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets the height, in pixels, of this <see cref="Image"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
-	[System.ComponentModel.DefaultValueAttribute(false)]
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	[ComponentModel.Browsable(false)]
+	[ComponentModel.DefaultValue(false)]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 	public int Height
 	{
 		get
@@ -90,8 +90,8 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets or sets the color palette used for this <see cref="Image"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
-	public System.Drawing.Imaging.ColorPalette Palette
+	[ComponentModel.Browsable(false)]
+	public ColorPalette Palette
 	{
 		get
 		{
@@ -108,7 +108,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets the width and height of this image.
 	/// </summary>
-	public System.Drawing.SizeF PhysicalDimension
+	public SizeF PhysicalDimension
 	{
 		get
 		{
@@ -120,7 +120,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets the pixel format for this <see cref="Image"/>.
 	/// </summary>
-	public System.Drawing.Imaging.PixelFormat PixelFormat
+	public PixelFormat PixelFormat
 	{
 		get
 		{
@@ -134,7 +134,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets IDs of the property items stored in this <see cref="Image"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
+	[ComponentModel.Browsable(false)]
 	public int[] PropertyIdList
 	{
 		get
@@ -147,8 +147,8 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets all the property items (pieces of metadata) stored in this <see cref="Image"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
-	public System.Drawing.Imaging.PropertyItem[] PropertyItems
+	[ComponentModel.Browsable(false)]
+	public PropertyItem[] PropertyItems
 	{
 		get
 		{
@@ -160,7 +160,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets the file format of this <see cref="Image"/>.
 	/// </summary>
-	public System.Drawing.Imaging.ImageFormat RawFormat
+	public ImageFormat RawFormat
 	{
 		get
 		{
@@ -172,7 +172,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets the width and height, in pixels, of this image.
 	/// </summary>
-	public System.Drawing.Size Size
+	public Size Size
 	{
 		get
 		{
@@ -184,8 +184,8 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets or sets an object that provides additional data about the image.
 	/// </summary>
-	[System.ComponentModel.DefaultValueAttribute(null)]
-	[System.ComponentModel.LocalizableAttribute(false)]
+	[ComponentModel.DefaultValue(null)]
+	[ComponentModel.Localizable(false)]
 	public object? Tag { get { return _tag; } set { _tag = value; } }
 
 	/// <summary>
@@ -203,9 +203,9 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets the width, in pixels, of this <see cref="Image"/>.
 	/// </summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
-	[System.ComponentModel.DefaultValueAttribute(false)]
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	[ComponentModel.Browsable(false)]
+	[ComponentModel.DefaultValue(false)]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 	public int Width
 	{
 		get
@@ -218,7 +218,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Creates an <see cref="Image"/> from the specified file.
 	/// </summary>
-	public static System.Drawing.Image FromFile(string filename)
+	public static Image FromFile(string filename)
 	{
 		if (filename == null) throw new ArgumentNullException(nameof(filename));
 		var bitmap = SKBitmap.Decode(filename);
@@ -234,7 +234,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Creates an <see cref="Image"/> from the specified file using embedded color management information in that file.
 	/// </summary>
-	public static System.Drawing.Image FromFile(string filename, bool useEmbeddedColorManagement)
+	public static Image FromFile(string filename, bool useEmbeddedColorManagement)
 	{
 		// useEmbeddedColorManagement is ignored; SkiaSharp handles color spaces internally.
 		return FromFile(filename);
@@ -243,17 +243,17 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Creates a <see cref="Bitmap"/> from a Windows handle to a bitmap.
 	/// </summary>
-	public static System.Drawing.Bitmap FromHbitmap(nint hbitmap) { throw new System.PlatformNotSupportedException("FromHbitmap is not supported on this platform because it requires a Windows GDI handle."); }
+	public static Bitmap FromHbitmap(nint hbitmap) { throw new PlatformNotSupportedException("FromHbitmap is not supported on this platform because it requires a Windows GDI handle."); }
 
 	/// <summary>
 	///  Creates a <see cref="Bitmap"/> from a Windows handle to a bitmap and a Windows handle to a palette.
 	/// </summary>
-	public static System.Drawing.Bitmap FromHbitmap(nint hbitmap, nint hpalette) { throw new System.PlatformNotSupportedException("FromHbitmap is not supported on this platform because it requires a Windows GDI handle."); }
+	public static Bitmap FromHbitmap(nint hbitmap, nint hpalette) { throw new PlatformNotSupportedException("FromHbitmap is not supported on this platform because it requires a Windows GDI handle."); }
 
 	/// <summary>
 	///  Creates an <see cref="Image"/> from the specified data stream.
 	/// </summary>
-	public static System.Drawing.Image FromStream(System.IO.Stream stream)
+	public static Image FromStream(Stream stream)
 	{
 		if (stream == null) throw new ArgumentNullException(nameof(stream));
 		// Copy stream to byte array for codec support
@@ -274,7 +274,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Creates an <see cref="Image"/> from the specified data stream, optionally using embedded color management information in that stream.
 	/// </summary>
-	public static System.Drawing.Image FromStream(System.IO.Stream stream, bool useEmbeddedColorManagement)
+	public static Image FromStream(Stream stream, bool useEmbeddedColorManagement)
 	{
 		return FromStream(stream);
 	}
@@ -282,7 +282,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Creates an <see cref="Image"/> from the specified data stream, optionally using embedded color management information and validating the image data.
 	/// </summary>
-	public static System.Drawing.Image FromStream(System.IO.Stream stream, bool useEmbeddedColorManagement, bool validateImageData)
+	public static Image FromStream(Stream stream, bool useEmbeddedColorManagement, bool validateImageData)
 	{
 		return FromStream(stream);
 	}
@@ -290,7 +290,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Returns the number of bits per pixel for the specified pixel format.
 	/// </summary>
-	public static int GetPixelFormatSize(System.Drawing.Imaging.PixelFormat pixfmt)
+	public static int GetPixelFormatSize(PixelFormat pixfmt)
 	{
 		return SkiaConversions.GetBitsPerPixel(pixfmt);
 	}
@@ -298,7 +298,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Returns a value that indicates whether the pixel format for this <see cref="Image"/> contains alpha information.
 	/// </summary>
-	public static bool IsAlphaPixelFormat(System.Drawing.Imaging.PixelFormat pixfmt)
+	public static bool IsAlphaPixelFormat(PixelFormat pixfmt)
 	{
 		return (pixfmt & Imaging.PixelFormat.Alpha) != 0 || (pixfmt & Imaging.PixelFormat.PAlpha) != 0;
 	}
@@ -306,7 +306,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Returns a value that indicates whether the pixel format is canonical.
 	/// </summary>
-	public static bool IsCanonicalPixelFormat(System.Drawing.Imaging.PixelFormat pixfmt)
+	public static bool IsCanonicalPixelFormat(PixelFormat pixfmt)
 	{
 		return (pixfmt & Imaging.PixelFormat.Canonical) != 0;
 	}
@@ -314,7 +314,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Returns a value that indicates whether the pixel format is extended (64 bits per pixel).
 	/// </summary>
-	public static bool IsExtendedPixelFormat(System.Drawing.Imaging.PixelFormat pixfmt)
+	public static bool IsExtendedPixelFormat(PixelFormat pixfmt)
 	{
 		return (pixfmt & Imaging.PixelFormat.Extended) != 0;
 	}
@@ -347,7 +347,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets the bounds of the image in the specified unit.
 	/// </summary>
-	public System.Drawing.RectangleF GetBounds(ref System.Drawing.GraphicsUnit pageUnit)
+	public RectangleF GetBounds(ref GraphicsUnit pageUnit)
 	{
 		ThrowIfDisposed();
 		pageUnit = GraphicsUnit.Pixel;
@@ -357,15 +357,15 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Returns information about the encoder parameters supported by the specified image encoder.
 	/// </summary>
-	public System.Drawing.Imaging.EncoderParameters? GetEncoderParameterList(System.Guid encoder)
+	public EncoderParameters? GetEncoderParameterList(Guid encoder)
 	{
-		throw new System.PlatformNotSupportedException("GetEncoderParameterList is not supported in the SkiaSharp-backed System.Drawing implementation because SkiaSharp does not use GDI+ codec parameters.");
+		throw new PlatformNotSupportedException("GetEncoderParameterList is not supported in the SkiaSharp-backed System.Drawing implementation because SkiaSharp does not use GDI+ codec parameters.");
 	}
 
 	/// <summary>
 	///  Returns the number of frames of the specified dimension.
 	/// </summary>
-	public int GetFrameCount(System.Drawing.Imaging.FrameDimension dimension)
+	public int GetFrameCount(FrameDimension dimension)
 	{
 		ThrowIfDisposed();
 		if (_codecData != null)
@@ -380,7 +380,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Gets the specified property item from this <see cref="Image"/>.
 	/// </summary>
-	public System.Drawing.Imaging.PropertyItem? GetPropertyItem(int propid)
+	public PropertyItem? GetPropertyItem(int propid)
 	{
 		ThrowIfDisposed();
 		throw new ArgumentException("Property ID " + propid + " was not found in the image.");
@@ -389,7 +389,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Returns a thumbnail for this <see cref="Image"/>.
 	/// </summary>
-	public System.Drawing.Image GetThumbnailImage(int thumbWidth, int thumbHeight, System.Drawing.Image.GetThumbnailImageAbort? callback, nint callbackData)
+	public Image GetThumbnailImage(int thumbWidth, int thumbHeight, GetThumbnailImageAbort? callback, nint callbackData)
 	{
 		ThrowIfDisposed();
 		if (thumbWidth <= 0) throw new ArgumentOutOfRangeException(nameof(thumbWidth));
@@ -416,7 +416,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Rotates, flips, or rotates and flips the <see cref="Image"/>.
 	/// </summary>
-	public void RotateFlip(System.Drawing.RotateFlipType rotateFlipType)
+	public void RotateFlip(RotateFlipType rotateFlipType)
 	{
 		ThrowIfDisposed();
 
@@ -474,7 +474,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Saves this <see cref="Image"/> to the specified stream in the specified format with the specified encoder parameters.
 	/// </summary>
-	public void Save(System.IO.Stream stream, System.Drawing.Imaging.ImageCodecInfo encoder, System.Drawing.Imaging.EncoderParameters? encoderParams)
+	public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters? encoderParams)
 	{
 		ThrowIfDisposed();
 		if (stream == null) throw new ArgumentNullException(nameof(stream));
@@ -491,7 +491,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Saves this image to the specified stream in the specified format.
 	/// </summary>
-	public void Save(System.IO.Stream stream, System.Drawing.Imaging.ImageFormat format)
+	public void Save(Stream stream, ImageFormat format)
 	{
 		ThrowIfDisposed();
 		if (stream == null) throw new ArgumentNullException(nameof(stream));
@@ -517,7 +517,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Saves this <see cref="Image"/> to the specified file with the specified encoder and image-encoder parameters.
 	/// </summary>
-	public void Save(string filename, System.Drawing.Imaging.ImageCodecInfo encoder, System.Drawing.Imaging.EncoderParameters? encoderParams)
+	public void Save(string filename, ImageCodecInfo encoder, EncoderParameters? encoderParams)
 	{
 		ThrowIfDisposed();
 		if (filename == null) throw new ArgumentNullException(nameof(filename));
@@ -536,7 +536,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Saves this <see cref="Image"/> to the specified file in the specified format.
 	/// </summary>
-	public void Save(string filename, System.Drawing.Imaging.ImageFormat format)
+	public void Save(string filename, ImageFormat format)
 	{
 		ThrowIfDisposed();
 		if (filename == null) throw new ArgumentNullException(nameof(filename));
@@ -550,23 +550,23 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Adds a frame to the file or stream specified in a previous call to the <see cref="Save(string)"/> method.
 	/// </summary>
-	public void SaveAdd(System.Drawing.Image image, System.Drawing.Imaging.EncoderParameters? encoderParams)
+	public void SaveAdd(Image image, EncoderParameters? encoderParams)
 	{
-		throw new System.PlatformNotSupportedException("Multi-frame image saving (SaveAdd) is not supported in the SkiaSharp-backed System.Drawing implementation.");
+		throw new PlatformNotSupportedException("Multi-frame image saving (SaveAdd) is not supported in the SkiaSharp-backed System.Drawing implementation.");
 	}
 
 	/// <summary>
 	///  Adds a frame to the file or stream specified in a previous call to the <see cref="Save(string)"/> method.
 	/// </summary>
-	public void SaveAdd(System.Drawing.Imaging.EncoderParameters? encoderParams)
+	public void SaveAdd(EncoderParameters? encoderParams)
 	{
-		throw new System.PlatformNotSupportedException("Multi-frame image saving (SaveAdd) is not supported in the SkiaSharp-backed System.Drawing implementation.");
+		throw new PlatformNotSupportedException("Multi-frame image saving (SaveAdd) is not supported in the SkiaSharp-backed System.Drawing implementation.");
 	}
 
 	/// <summary>
 	///  Selects the frame specified by the dimension and index.
 	/// </summary>
-	public int SelectActiveFrame(System.Drawing.Imaging.FrameDimension dimension, int frameIndex)
+	public int SelectActiveFrame(FrameDimension dimension, int frameIndex)
 	{
 		ThrowIfDisposed();
 		if (_codecData != null)
@@ -591,7 +591,7 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	/// <summary>
 	///  Stores a property item (piece of metadata) in this <see cref="Image"/>.
 	/// </summary>
-	public void SetPropertyItem(System.Drawing.Imaging.PropertyItem propitem)
+	public void SetPropertyItem(PropertyItem propitem)
 	{
 		ThrowIfDisposed();
 		// No-op: SkiaSharp does not support setting property items on decoded bitmaps.
@@ -618,11 +618,11 @@ public abstract partial class Image : System.MarshalByRefObject, System.ICloneab
 	}
 
 	/// <summary>
-	///  Populates a <see cref="System.Runtime.Serialization.SerializationInfo"/> with the data needed to serialize the target object.
+	///  Populates a <see cref="Runtime.Serialization.SerializationInfo"/> with the data needed to serialize the target object.
 	/// </summary>
-	void System.Runtime.Serialization.ISerializable.GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+	void Runtime.Serialization.ISerializable.GetObjectData(Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext context)
 	{
-		throw new System.PlatformNotSupportedException("Binary serialization of Image objects is not supported in the SkiaSharp-backed System.Drawing implementation.");
+		throw new PlatformNotSupportedException("Binary serialization of Image objects is not supported in the SkiaSharp-backed System.Drawing implementation.");
 	}
 
 	private void SaveToStream(Stream stream, SKEncodedImageFormat format)

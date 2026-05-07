@@ -3,7 +3,7 @@
 /// <summary>
 ///  Specifies settings that apply to a single, printed page.
 /// </summary>
-public partial class PageSettings : System.ICloneable
+public partial class PageSettings : ICloneable
 {
 	private bool _color = true;
 	private bool _landscape;
@@ -18,13 +18,13 @@ public partial class PageSettings : System.ICloneable
 
 	/// <summary>Initializes a new instance of the <see cref="PageSettings"/> class using the specified printer settings.</summary>
 	/// <param name="printerSettings">The <see cref="PrinterSettings"/> that describes the printer to use.</param>
-	public PageSettings(System.Drawing.Printing.PrinterSettings printerSettings)
+	public PageSettings(PrinterSettings printerSettings)
 	{
 		_printerSettings = printerSettings;
 	}
 
 	/// <summary>Gets the bounds of the page, taking into account the <see cref="Landscape"/> property.</summary>
-	public System.Drawing.Rectangle Bounds
+	public Rectangle Bounds
 	{
 		get
 		{
@@ -47,28 +47,28 @@ public partial class PageSettings : System.ICloneable
 	public bool Landscape { get => _landscape; set => _landscape = value; }
 
 	/// <summary>Gets or sets the margins for this page.</summary>
-	public System.Drawing.Printing.Margins Margins
+	public Margins Margins
 	{
 		get => _margins;
 		set => _margins = value ?? throw new ArgumentNullException(nameof(value));
 	}
 
 	/// <summary>Gets or sets the paper size for the page.</summary>
-	public System.Drawing.Printing.PaperSize PaperSize
+	public PaperSize PaperSize
 	{
 		get => _paperSize;
 		set => _paperSize = value ?? throw new ArgumentNullException(nameof(value));
 	}
 
 	/// <summary>Gets or sets the page's paper source.</summary>
-	public System.Drawing.Printing.PaperSource PaperSource
+	public PaperSource PaperSource
 	{
 		get => _paperSource;
 		set => _paperSource = value ?? throw new ArgumentNullException(nameof(value));
 	}
 
 	/// <summary>Gets the bounds of the printable area of the page for the printer.</summary>
-	public System.Drawing.RectangleF PrintableArea
+	public RectangleF PrintableArea
 	{
 		get
 		{
@@ -81,14 +81,14 @@ public partial class PageSettings : System.ICloneable
 	}
 
 	/// <summary>Gets or sets the printer resolution for the page.</summary>
-	public System.Drawing.Printing.PrinterResolution PrinterResolution
+	public PrinterResolution PrinterResolution
 	{
 		get => _printerResolution;
 		set => _printerResolution = value ?? throw new ArgumentNullException(nameof(value));
 	}
 
 	/// <summary>Gets or sets the printer settings associated with the page.</summary>
-	public System.Drawing.Printing.PrinterSettings PrinterSettings
+	public PrinterSettings PrinterSettings
 	{
 		get => _printerSettings ??= new PrinterSettings();
 		set => _printerSettings = value ?? throw new ArgumentNullException(nameof(value));
@@ -106,10 +106,10 @@ public partial class PageSettings : System.ICloneable
 	}
 
 	/// <summary>Copies the relevant information from the <see cref="PageSettings"/> to the specified DEVMODE structure.</summary>
-	public void CopyToHdevmode(nint hdevmode) { throw new System.PlatformNotSupportedException("CopyToHdevmode requires Windows GDI and is not supported on this platform."); }
+	public void CopyToHdevmode(nint hdevmode) { throw new PlatformNotSupportedException("CopyToHdevmode requires Windows GDI and is not supported on this platform."); }
 
 	/// <summary>Sets the relevant information from the specified DEVMODE structure to this <see cref="PageSettings"/>.</summary>
-	public void SetHdevmode(nint hdevmode) { throw new System.PlatformNotSupportedException("SetHdevmode requires Windows GDI and is not supported on this platform."); }
+	public void SetHdevmode(nint hdevmode) { throw new PlatformNotSupportedException("SetHdevmode requires Windows GDI and is not supported on this platform."); }
 
 	/// <summary>Returns a string representation of this <see cref="PageSettings"/>.</summary>
 	public override string ToString() =>

@@ -20,7 +20,7 @@ public sealed partial class ColorPalette
 	/// <summary>
 	///  Gets an array of <see cref="Color"/> structures.
 	/// </summary>
-	public System.Drawing.Color[] Entries { get { return _entries; } }
+	public Color[] Entries { get { return _entries; } }
 
 	/// <summary>
 	///  Gets a value that specifies how to interpret the color information in the array of colors.

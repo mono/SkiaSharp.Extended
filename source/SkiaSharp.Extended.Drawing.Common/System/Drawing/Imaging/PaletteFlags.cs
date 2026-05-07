@@ -1,6 +1,6 @@
 ﻿namespace System.Drawing.Imaging;
 
-[System.FlagsAttribute]
+[Flags]
 public enum PaletteFlags
 {
 	HasAlpha = 1,

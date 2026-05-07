@@ -7,7 +7,7 @@ namespace System.Drawing.Drawing2D;
 ///  Encapsulates a <see cref="Brush"/> object that fills the interior of a <see cref="GraphicsPath"/>
 ///  object with a gradient. This class cannot be inherited.
 /// </summary>
-public sealed partial class PathGradientBrush : System.Drawing.Brush
+public sealed partial class PathGradientBrush : Brush
 {
 	private PointF[] _points;
 	private RectangleF _rect;
@@ -25,7 +25,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	/// </summary>
 	/// <param name="path">The <see cref="GraphicsPath"/> that defines the area filled by this <see cref="PathGradientBrush"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
-	public PathGradientBrush(System.Drawing.Drawing2D.GraphicsPath path)
+	public PathGradientBrush(GraphicsPath path)
 	{
 		if (path is null) throw new ArgumentNullException(nameof(path));
 		var bounds = path.SKPath.Bounds;
@@ -55,7 +55,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	/// </summary>
 	/// <param name="points">An array of <see cref="PointF"/> structures that represents the points that make up the vertices of the path.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="points"/> is <see langword="null"/>.</exception>
-	public PathGradientBrush(System.Drawing.PointF[] points)
+	public PathGradientBrush(PointF[] points)
 		: this(points, WrapMode.Clamp) { }
 
 	/// <summary>
@@ -64,7 +64,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	/// <param name="points">An array of <see cref="PointF"/> structures that represents the points that make up the vertices of the path.</param>
 	/// <param name="wrapMode">A <see cref="WrapMode"/> that specifies how fills drawn with this <see cref="PathGradientBrush"/> are tiled.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="points"/> is <see langword="null"/>.</exception>
-	public PathGradientBrush(System.Drawing.PointF[] points, System.Drawing.Drawing2D.WrapMode wrapMode)
+	public PathGradientBrush(PointF[] points, WrapMode wrapMode)
 	{
 		if (points is null) throw new ArgumentNullException(nameof(points));
 		_points = (PointF[])points.Clone();
@@ -80,7 +80,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	/// </summary>
 	/// <param name="points">An array of <see cref="Point"/> structures that represents the points that make up the vertices of the path.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="points"/> is <see langword="null"/>.</exception>
-	public PathGradientBrush(System.Drawing.Point[] points)
+	public PathGradientBrush(Point[] points)
 		: this(points, WrapMode.Clamp) { }
 
 	/// <summary>
@@ -89,7 +89,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	/// <param name="points">An array of <see cref="Point"/> structures that represents the points that make up the vertices of the path.</param>
 	/// <param name="wrapMode">A <see cref="WrapMode"/> that specifies how fills drawn with this <see cref="PathGradientBrush"/> are tiled.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="points"/> is <see langword="null"/>.</exception>
-	public PathGradientBrush(System.Drawing.Point[] points, System.Drawing.Drawing2D.WrapMode wrapMode)
+	public PathGradientBrush(Point[] points, WrapMode wrapMode)
 	{
 		if (points is null) throw new ArgumentNullException(nameof(points));
 		_points = new PointF[points.Length];
@@ -106,7 +106,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	///  Gets or sets a <see cref="Drawing2D.Blend"/> that specifies positions and factors that define a custom falloff for the gradient.
 	/// </summary>
 	/// <value>A <see cref="Drawing2D.Blend"/> that represents a custom falloff for the gradient.</value>
-	public System.Drawing.Drawing2D.Blend Blend
+	public Blend Blend
 	{
 		get { ThrowIfDisposed(); return _blend ?? new Blend(); }
 		set { ThrowIfDisposed(); _blend = value; }
@@ -116,7 +116,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	///  Gets or sets the color at the center of the path gradient.
 	/// </summary>
 	/// <value>A <see cref="Color"/> that represents the color at the center of the path gradient.</value>
-	public System.Drawing.Color CenterColor
+	public Color CenterColor
 	{
 		get { ThrowIfDisposed(); return _centerColor; }
 		set { ThrowIfDisposed(); _centerColor = value; }
@@ -126,7 +126,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	///  Gets or sets the center point of the path gradient.
 	/// </summary>
 	/// <value>A <see cref="PointF"/> that represents the center point of the path gradient.</value>
-	public System.Drawing.PointF CenterPoint
+	public PointF CenterPoint
 	{
 		get { ThrowIfDisposed(); return _centerPoint; }
 		set { ThrowIfDisposed(); _centerPoint = value; }
@@ -136,7 +136,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	///  Gets or sets the focus point for the gradient falloff.
 	/// </summary>
 	/// <value>A <see cref="PointF"/> that represents the focus scales for the gradient falloff.</value>
-	public System.Drawing.PointF FocusScales
+	public PointF FocusScales
 	{
 		get { ThrowIfDisposed(); return _focusScales; }
 		set { ThrowIfDisposed(); _focusScales = value; }
@@ -146,7 +146,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	///  Gets or sets a <see cref="ColorBlend"/> that defines a multicolor linear gradient.
 	/// </summary>
 	/// <value>A <see cref="ColorBlend"/> that defines a multicolor linear gradient.</value>
-	public System.Drawing.Drawing2D.ColorBlend InterpolationColors
+	public ColorBlend InterpolationColors
 	{
 		get { ThrowIfDisposed(); return _interpolationColors ?? new ColorBlend(); }
 		set { ThrowIfDisposed(); _interpolationColors = value ?? throw new ArgumentNullException(nameof(value)); }
@@ -156,7 +156,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	///  Gets a bounding rectangle for this <see cref="PathGradientBrush"/>.
 	/// </summary>
 	/// <value>A <see cref="RectangleF"/> that represents a rectangular region that bounds the path this <see cref="PathGradientBrush"/> fills.</value>
-	public System.Drawing.RectangleF Rectangle
+	public RectangleF Rectangle
 	{
 		get { ThrowIfDisposed(); return _rect; }
 	}
@@ -165,7 +165,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	///  Gets or sets an array of colors that correspond to the points in the path this <see cref="PathGradientBrush"/> fills.
 	/// </summary>
 	/// <value>An array of <see cref="Color"/> structures that represents the colors associated with each point in the path this <see cref="PathGradientBrush"/> fills.</value>
-	public System.Drawing.Color[] SurroundColors
+	public Color[] SurroundColors
 	{
 		get { ThrowIfDisposed(); return (Color[])_surroundColors.Clone(); }
 		set { ThrowIfDisposed(); _surroundColors = value ?? throw new ArgumentNullException(nameof(value)); }
@@ -175,7 +175,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	///  Gets or sets a copy of the <see cref="Matrix"/> that defines a local geometric transform for this <see cref="PathGradientBrush"/>.
 	/// </summary>
 	/// <value>A copy of the <see cref="Matrix"/> that defines a geometric transform that applies only to fills drawn with this <see cref="PathGradientBrush"/>.</value>
-	public System.Drawing.Drawing2D.Matrix Transform
+	public Matrix Transform
 	{
 		get { ThrowIfDisposed(); return _transform.Clone(); }
 		set { ThrowIfDisposed(); _transform = value ?? throw new ArgumentNullException(nameof(value)); }
@@ -185,7 +185,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	///  Gets or sets a <see cref="Drawing2D.WrapMode"/> that indicates the wrap mode for this <see cref="PathGradientBrush"/>.
 	/// </summary>
 	/// <value>A <see cref="Drawing2D.WrapMode"/> that specifies how fills drawn with this <see cref="PathGradientBrush"/> are tiled.</value>
-	public System.Drawing.Drawing2D.WrapMode WrapMode
+	public WrapMode WrapMode
 	{
 		get { ThrowIfDisposed(); return _wrapMode; }
 		set { ThrowIfDisposed(); _wrapMode = value; }
@@ -214,7 +214,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	///  Multiplies the <see cref="Matrix"/> that represents the local geometric transform of this <see cref="PathGradientBrush"/> by the specified <see cref="Matrix"/> by prepending the specified <see cref="Matrix"/>.
 	/// </summary>
 	/// <param name="matrix">The <see cref="Matrix"/> by which to multiply the geometric transform.</param>
-	public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix)
+	public void MultiplyTransform(Matrix matrix)
 	{
 		MultiplyTransform(matrix, MatrixOrder.Prepend);
 	}
@@ -224,7 +224,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	/// </summary>
 	/// <param name="matrix">The <see cref="Matrix"/> by which to multiply the geometric transform.</param>
 	/// <param name="order">A <see cref="MatrixOrder"/> enumeration that specifies the order in which to multiply the two matrices.</param>
-	public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix, System.Drawing.Drawing2D.MatrixOrder order)
+	public void MultiplyTransform(Matrix matrix, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		if (matrix is null) throw new ArgumentNullException(nameof(matrix));
@@ -254,7 +254,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	/// </summary>
 	/// <param name="angle">The angle (extent) of rotation.</param>
 	/// <param name="order">A <see cref="MatrixOrder"/> that specifies whether to append or prepend the rotation matrix.</param>
-	public void RotateTransform(float angle, System.Drawing.Drawing2D.MatrixOrder order)
+	public void RotateTransform(float angle, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_transform.Rotate(angle, order);
@@ -276,7 +276,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	/// <param name="sx">The amount by which to scale the transform in the x-axis direction.</param>
 	/// <param name="sy">The amount by which to scale the transform in the y-axis direction.</param>
 	/// <param name="order">A <see cref="MatrixOrder"/> that specifies whether to append or prepend the scaling matrix.</param>
-	public void ScaleTransform(float sx, float sy, System.Drawing.Drawing2D.MatrixOrder order)
+	public void ScaleTransform(float sx, float sy, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_transform.Scale(sx, sy, order);
@@ -354,7 +354,7 @@ public sealed partial class PathGradientBrush : System.Drawing.Brush
 	/// <param name="dx">The value of the translation in x.</param>
 	/// <param name="dy">The value of the translation in y.</param>
 	/// <param name="order">The order (prepend or append) in which to apply the translation.</param>
-	public void TranslateTransform(float dx, float dy, System.Drawing.Drawing2D.MatrixOrder order)
+	public void TranslateTransform(float dx, float dy, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_transform.Translate(dx, dy, order);

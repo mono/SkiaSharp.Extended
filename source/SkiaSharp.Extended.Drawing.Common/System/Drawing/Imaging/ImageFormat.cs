@@ -3,7 +3,7 @@
 /// <summary>
 ///  Specifies the file format of the image.
 /// </summary>
-[System.ComponentModel.TypeConverterAttribute(typeof(System.Drawing.ImageFormatConverter))]
+[ComponentModel.TypeConverter(typeof(ImageFormatConverter))]
 public sealed partial class ImageFormat
 {
 	private readonly Guid _guid;
@@ -22,62 +22,62 @@ public sealed partial class ImageFormat
 	/// <summary>
 	///  Initializes a new instance of the <see cref="ImageFormat"/> class by using the specified <see cref="System.Guid"/> structure.
 	/// </summary>
-	public ImageFormat(System.Guid guid) { _guid = guid; }
+	public ImageFormat(Guid guid) { _guid = guid; }
 
 	/// <summary>
 	///  Gets the BMP image format.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageFormat Bmp { get { return s_bmp; } }
+	public static ImageFormat Bmp { get { return s_bmp; } }
 
 	/// <summary>
 	///  Gets the enhanced metafile (EMF) image format.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageFormat Emf { get { return s_emf; } }
+	public static ImageFormat Emf { get { return s_emf; } }
 
 	/// <summary>
 	///  Gets the Exchangeable Image File (Exif) format.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageFormat Exif { get { return s_exif; } }
+	public static ImageFormat Exif { get { return s_exif; } }
 
 	/// <summary>
 	///  Gets the Graphics Interchange Format (GIF) image format.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageFormat Gif { get { return s_gif; } }
+	public static ImageFormat Gif { get { return s_gif; } }
 
 	/// <summary>
 	///  Gets a <see cref="System.Guid"/> structure that represents this <see cref="ImageFormat"/> object.
 	/// </summary>
-	public System.Guid Guid { get { return _guid; } }
+	public Guid Guid { get { return _guid; } }
 
 	/// <summary>
 	///  Gets the Windows icon image format.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageFormat Icon { get { return s_icon; } }
+	public static ImageFormat Icon { get { return s_icon; } }
 
 	/// <summary>
 	///  Gets the Joint Photographic Experts Group (JPEG) image format.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageFormat Jpeg { get { return s_jpeg; } }
+	public static ImageFormat Jpeg { get { return s_jpeg; } }
 
 	/// <summary>
 	///  Gets the format of a bitmap in memory.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageFormat MemoryBmp { get { return s_memoryBmp; } }
+	public static ImageFormat MemoryBmp { get { return s_memoryBmp; } }
 
 	/// <summary>
 	///  Gets the W3C Portable Network Graphics (PNG) image format.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageFormat Png { get { return s_png; } }
+	public static ImageFormat Png { get { return s_png; } }
 
 	/// <summary>
 	///  Gets the Tagged Image File Format (TIFF) image format.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageFormat Tiff { get { return s_tiff; } }
+	public static ImageFormat Tiff { get { return s_tiff; } }
 
 	/// <summary>
 	///  Gets the Windows metafile (WMF) image format.
 	/// </summary>
-	public static System.Drawing.Imaging.ImageFormat Wmf { get { return s_wmf; } }
+	public static ImageFormat Wmf { get { return s_wmf; } }
 
 	/// <summary>
 	///  Returns a value that indicates whether the specified object is an <see cref="ImageFormat"/> object that is equivalent to this <see cref="ImageFormat"/> object.

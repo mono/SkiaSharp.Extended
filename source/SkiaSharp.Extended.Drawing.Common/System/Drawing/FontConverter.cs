@@ -112,7 +112,7 @@ public partial class FontConverter : TypeConverter
 		return base.ConvertTo(context, culture, value, destinationType);
 	}
 
-	public override object CreateInstance(ITypeDescriptorContext? context, System.Collections.IDictionary propertyValues)
+	public override object CreateInstance(ITypeDescriptorContext? context, Collections.IDictionary propertyValues)
 	{
 		if (propertyValues == null) throw new ArgumentNullException(nameof(propertyValues));
 		var name = propertyValues["Name"] as string ?? "Arial";

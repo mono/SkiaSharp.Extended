@@ -1,6 +1,6 @@
 ﻿namespace System.Drawing.Imaging;
 
-[System.FlagsAttribute]
+[Flags]
 public enum ImageCodecFlags
 {
 	Encoder = 1,

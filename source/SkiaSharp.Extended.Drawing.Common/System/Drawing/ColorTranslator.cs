@@ -12,7 +12,7 @@ public static partial class ColorTranslator
 	/// </summary>
 	/// <param name="htmlColor">The string representation of the HTML color to translate.</param>
 	/// <returns>The <see cref="Color"/> structure that represents the translated HTML color.</returns>
-	public static System.Drawing.Color FromHtml(string htmlColor)
+	public static Color FromHtml(string htmlColor)
 	{
 		if (string.IsNullOrEmpty(htmlColor))
 			return Color.Empty;
@@ -79,7 +79,7 @@ public static partial class ColorTranslator
 	/// </summary>
 	/// <param name="oleColor">The OLE color to translate.</param>
 	/// <returns>The <see cref="Color"/> structure that represents the translated OLE color.</returns>
-	public static System.Drawing.Color FromOle(int oleColor)
+	public static Color FromOle(int oleColor)
 	{
 		return FromWin32(oleColor);
 	}
@@ -89,7 +89,7 @@ public static partial class ColorTranslator
 	/// </summary>
 	/// <param name="win32Color">The Windows color to translate.</param>
 	/// <returns>The <see cref="Color"/> structure that represents the translated Windows color.</returns>
-	public static System.Drawing.Color FromWin32(int win32Color)
+	public static Color FromWin32(int win32Color)
 	{
 		// Win32 COLORREF format: 0x00BBGGRR
 		int r = win32Color & 0xFF;
@@ -103,7 +103,7 @@ public static partial class ColorTranslator
 	/// </summary>
 	/// <param name="c">The <see cref="Color"/> structure to translate.</param>
 	/// <returns>The string that represents the HTML color.</returns>
-	public static string ToHtml(System.Drawing.Color c)
+	public static string ToHtml(Color c)
 	{
 		if (c.IsEmpty)
 			return string.Empty;
@@ -124,7 +124,7 @@ public static partial class ColorTranslator
 	/// </summary>
 	/// <param name="c">The <see cref="Color"/> structure to translate.</param>
 	/// <returns>The OLE color value.</returns>
-	public static int ToOle(System.Drawing.Color c)
+	public static int ToOle(Color c)
 	{
 		return ToWin32(c);
 	}
@@ -134,7 +134,7 @@ public static partial class ColorTranslator
 	/// </summary>
 	/// <param name="c">The <see cref="Color"/> structure to translate.</param>
 	/// <returns>The Windows color value.</returns>
-	public static int ToWin32(System.Drawing.Color c)
+	public static int ToWin32(Color c)
 	{
 		// Win32 COLORREF format: 0x00BBGGRR
 		return c.R | (c.G << 8) | (c.B << 16);

@@ -7,7 +7,7 @@ namespace System.Drawing;
 ///  Defines objects used to fill the interiors of graphical shapes such as rectangles,
 ///  ellipses, pies, polygons, and paths.
 /// </summary>
-public abstract partial class Brush : System.MarshalByRefObject, System.ICloneable, System.IDisposable
+public abstract partial class Brush : MarshalByRefObject, ICloneable, IDisposable
 {
 	private bool _disposed;
 	internal bool _immutable;

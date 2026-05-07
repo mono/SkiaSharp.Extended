@@ -13,10 +13,10 @@ public sealed partial class ColorMap
 	/// <summary>
 	///  Gets or sets the new <see cref="Color"/> structure to which to convert.
 	/// </summary>
-	public System.Drawing.Color NewColor { get; set; }
+	public Color NewColor { get; set; }
 
 	/// <summary>
 	///  Gets or sets the existing <see cref="Color"/> structure to be converted.
 	/// </summary>
-	public System.Drawing.Color OldColor { get; set; }
+	public Color OldColor { get; set; }
 }

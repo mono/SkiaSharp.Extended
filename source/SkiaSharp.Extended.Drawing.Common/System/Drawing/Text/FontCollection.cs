@@ -3,14 +3,14 @@ using SkiaSharp;
 namespace System.Drawing.Text;
 
 /// <summary>Provides a base class for installed and private font collections.</summary>
-public abstract partial class FontCollection : System.IDisposable
+public abstract partial class FontCollection : IDisposable
 {
 	private bool _disposed;
 
 	internal FontCollection() {}
 
 	/// <summary>Gets the array of <see cref="FontFamily"/> objects associated with this <see cref="FontCollection"/>.</summary>
-	public System.Drawing.FontFamily[] Families
+	public FontFamily[] Families
 	{
 		get
 		{

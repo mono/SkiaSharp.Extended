@@ -2,8 +2,8 @@
 
 /// <summary>
 ///  Specifies the attributes of a bitmap image. The <see cref="BitmapData"/> class is used by the
-///  <see cref="System.Drawing.Bitmap.LockBits(System.Drawing.Rectangle, ImageLockMode, PixelFormat)"/> and
-///  <see cref="System.Drawing.Bitmap.UnlockBits(BitmapData)"/> methods of the <see cref="System.Drawing.Bitmap"/> class.
+///  <see cref="Bitmap.LockBits(Rectangle, ImageLockMode, PixelFormat)"/> and
+///  <see cref="Bitmap.UnlockBits(BitmapData)"/> methods of the <see cref="Bitmap"/> class.
 /// </summary>
 public sealed partial class BitmapData
 {
@@ -20,14 +20,14 @@ public sealed partial class BitmapData
 	public BitmapData() { }
 
 	/// <summary>
-	///  Gets or sets the pixel height of the <see cref="System.Drawing.Bitmap"/> object. Also sometimes referred to as the number of scan lines.
+	///  Gets or sets the pixel height of the <see cref="Bitmap"/> object. Also sometimes referred to as the number of scan lines.
 	/// </summary>
 	public int Height { get { return _height; } set { _height = value; } }
 
 	/// <summary>
-	///  Gets or sets the format of the pixel information in the <see cref="System.Drawing.Bitmap"/> object that returned this <see cref="BitmapData"/> object.
+	///  Gets or sets the format of the pixel information in the <see cref="Bitmap"/> object that returned this <see cref="BitmapData"/> object.
 	/// </summary>
-	public System.Drawing.Imaging.PixelFormat PixelFormat { get { return _pixelFormat; } set { _pixelFormat = value; } }
+	public PixelFormat PixelFormat { get { return _pixelFormat; } set { _pixelFormat = value; } }
 
 	/// <summary>
 	///  Reserved. Do not use.
@@ -40,12 +40,12 @@ public sealed partial class BitmapData
 	public nint Scan0 { get { return _scan0; } set { _scan0 = value; } }
 
 	/// <summary>
-	///  Gets or sets the stride width (also called scan width) of the <see cref="System.Drawing.Bitmap"/> object.
+	///  Gets or sets the stride width (also called scan width) of the <see cref="Bitmap"/> object.
 	/// </summary>
 	public int Stride { get { return _stride; } set { _stride = value; } }
 
 	/// <summary>
-	///  Gets or sets the pixel width of the <see cref="System.Drawing.Bitmap"/> object. This can also be thought of as the number of pixels in one scan line.
+	///  Gets or sets the pixel width of the <see cref="Bitmap"/> object. This can also be thought of as the number of pixels in one scan line.
 	/// </summary>
 	public int Width { get { return _width; } set { _width = value; } }
 }

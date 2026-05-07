@@ -1,7 +1,7 @@
 ﻿namespace System.Drawing.Design;
 
 /// <summary>Represents a collection of category name strings.</summary>
-public sealed partial class CategoryNameCollection : System.Collections.ReadOnlyCollectionBase
+public sealed partial class CategoryNameCollection : Collections.ReadOnlyCollectionBase
 {
 	/// <summary>Initializes a new instance of the <see cref="CategoryNameCollection"/> class with the specified collection.</summary>
 	public CategoryNameCollection(CategoryNameCollection value)

@@ -1,8 +1,8 @@
 ﻿namespace System.Drawing;
 
 /// <summary>Allows you to specify an icon to represent a control in a container.</summary>
-[System.AttributeUsageAttribute(System.AttributeTargets.Class)]
-public partial class ToolboxBitmapAttribute : System.Attribute
+[AttributeUsage(System.AttributeTargets.Class)]
+public partial class ToolboxBitmapAttribute : Attribute
 {
 	private readonly Type? _type;
 	private readonly string? _imageFile;

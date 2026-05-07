@@ -8,7 +8,7 @@ public partial class PrinterResolution
 	/// <summary>Initializes a new instance of the <see cref="PrinterResolution"/> class.</summary>
 	public PrinterResolution() { }
 	/// <summary>Gets or sets the printer resolution kind.</summary>
-	public System.Drawing.Printing.PrinterResolutionKind Kind { get; set; }
+	public PrinterResolutionKind Kind { get; set; }
 	/// <summary>Gets or sets the horizontal printer resolution, in dots per inch.</summary>
 	public int X { get; set; }
 	/// <summary>Gets or sets the vertical printer resolution, in dots per inch.</summary>

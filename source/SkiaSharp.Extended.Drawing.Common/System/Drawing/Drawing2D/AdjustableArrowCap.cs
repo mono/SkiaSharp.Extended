@@ -3,7 +3,7 @@ namespace System.Drawing.Drawing2D;
 /// <summary>
 ///  Represents an adjustable arrow-shaped line cap.
 /// </summary>
-public sealed partial class AdjustableArrowCap : System.Drawing.Drawing2D.CustomLineCap
+public sealed partial class AdjustableArrowCap : CustomLineCap
 {
 	private float _width;
 	private float _height;

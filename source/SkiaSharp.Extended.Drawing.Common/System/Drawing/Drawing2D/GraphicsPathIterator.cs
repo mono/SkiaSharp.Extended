@@ -6,7 +6,7 @@ namespace System.Drawing.Drawing2D;
 ///  Provides the ability to iterate through subpaths in a <see cref="GraphicsPath"/>
 ///  and test the types of shapes contained in each subpath.
 /// </summary>
-public sealed partial class GraphicsPathIterator : System.MarshalByRefObject, System.IDisposable
+public sealed partial class GraphicsPathIterator : MarshalByRefObject, IDisposable
 {
 	private readonly PointF[] _points;
 	private readonly byte[] _types;

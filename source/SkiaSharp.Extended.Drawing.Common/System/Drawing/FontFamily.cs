@@ -6,7 +6,7 @@ namespace System.Drawing;
 ///  Defines a group of type faces having a similar basic design and certain variations in styles.
 ///  This class cannot be inherited.
 /// </summary>
-public sealed partial class FontFamily : System.MarshalByRefObject, System.IDisposable
+public sealed partial class FontFamily : MarshalByRefObject, IDisposable
 {
 	/// <summary>
 	///  The SkiaSharp typeface that backs this font family.
@@ -19,7 +19,7 @@ public sealed partial class FontFamily : System.MarshalByRefObject, System.IDisp
 	///  Initializes a new <see cref="FontFamily"/> from the specified generic font family.
 	/// </summary>
 	/// <param name="genericFamily">The <see cref="Text.GenericFontFamilies"/> from which to create the new <see cref="FontFamily"/>.</param>
-	public FontFamily(System.Drawing.Text.GenericFontFamilies genericFamily)
+	public FontFamily(Text.GenericFontFamilies genericFamily)
 	{
 		var name = genericFamily switch
 		{
@@ -45,7 +45,7 @@ public sealed partial class FontFamily : System.MarshalByRefObject, System.IDisp
 	/// </summary>
 	/// <param name="name">The name of the new <see cref="FontFamily"/>.</param>
 	/// <param name="fontCollection">The <see cref="Text.FontCollection"/> that contains this <see cref="FontFamily"/>.</param>
-	public FontFamily(string name, System.Drawing.Text.FontCollection? fontCollection)
+	public FontFamily(string name, Text.FontCollection? fontCollection)
 	{
 		// FontCollection is not used in the SkiaSharp implementation.
 		SKTypeface = SKTypeface.FromFamilyName(name) ?? SKTypeface.Default;
@@ -63,7 +63,7 @@ public sealed partial class FontFamily : System.MarshalByRefObject, System.IDisp
 	/// <summary>
 	///  Returns an array that contains all the <see cref="FontFamily"/> objects currently available in the system.
 	/// </summary>
-	public static System.Drawing.FontFamily[] Families
+	public static FontFamily[] Families
 	{
 		get
 		{
@@ -81,17 +81,17 @@ public sealed partial class FontFamily : System.MarshalByRefObject, System.IDisp
 	/// <summary>
 	///  Gets a generic monospace <see cref="FontFamily"/>.
 	/// </summary>
-	public static System.Drawing.FontFamily GenericMonospace => new FontFamily(Text.GenericFontFamilies.Monospace);
+	public static FontFamily GenericMonospace => new FontFamily(Text.GenericFontFamilies.Monospace);
 
 	/// <summary>
 	///  Gets a generic sans serif <see cref="FontFamily"/>.
 	/// </summary>
-	public static System.Drawing.FontFamily GenericSansSerif => new FontFamily(Text.GenericFontFamilies.SansSerif);
+	public static FontFamily GenericSansSerif => new FontFamily(Text.GenericFontFamilies.SansSerif);
 
 	/// <summary>
 	///  Gets a generic serif <see cref="FontFamily"/>.
 	/// </summary>
-	public static System.Drawing.FontFamily GenericSerif => new FontFamily(Text.GenericFontFamilies.Serif);
+	public static FontFamily GenericSerif => new FontFamily(Text.GenericFontFamilies.Serif);
 
 	/// <summary>
 	///  Gets the name of this <see cref="FontFamily"/>.
@@ -101,8 +101,8 @@ public sealed partial class FontFamily : System.MarshalByRefObject, System.IDisp
 	/// <summary>
 	///  Returns an array that contains all the <see cref="FontFamily"/> objects associated with the specified graphics.
 	/// </summary>
-	[System.ObsoleteAttribute("FontFamily.GetFamilies has been deprecated. Use Families instead.")]
-	public static System.Drawing.FontFamily[] GetFamilies(System.Drawing.Graphics graphics)
+	[Obsolete("FontFamily.GetFamilies has been deprecated. Use Families instead.")]
+	public static FontFamily[] GetFamilies(Graphics graphics)
 		=> Families;
 
 	/// <summary>
@@ -139,7 +139,7 @@ public sealed partial class FontFamily : System.MarshalByRefObject, System.IDisp
 	/// </summary>
 	/// <param name="style">The <see cref="FontStyle"/> for which to get the em height.</param>
 	/// <returns>The height of the em square.</returns>
-	public int GetEmHeight(System.Drawing.FontStyle style)
+	public int GetEmHeight(FontStyle style)
 		=> SKTypeface.UnitsPerEm;
 
 	/// <summary>
@@ -147,7 +147,7 @@ public sealed partial class FontFamily : System.MarshalByRefObject, System.IDisp
 	/// </summary>
 	/// <param name="style">A <see cref="FontStyle"/> that contains style information for the font family.</param>
 	/// <returns>The cell ascent for this <see cref="FontFamily"/> that uses the specified <see cref="FontStyle"/>.</returns>
-	public int GetCellAscent(System.Drawing.FontStyle style)
+	public int GetCellAscent(FontStyle style)
 	{
 		using var typeface = CreateTypefaceForStyle(style);
 		using var font = new SKFont(typeface, (float)typeface.UnitsPerEm);
@@ -159,7 +159,7 @@ public sealed partial class FontFamily : System.MarshalByRefObject, System.IDisp
 	/// </summary>
 	/// <param name="style">A <see cref="FontStyle"/> that contains style information for the font family.</param>
 	/// <returns>The cell descent metric for this <see cref="FontFamily"/> that uses the specified <see cref="FontStyle"/>.</returns>
-	public int GetCellDescent(System.Drawing.FontStyle style)
+	public int GetCellDescent(FontStyle style)
 	{
 		using var typeface = CreateTypefaceForStyle(style);
 		using var font = new SKFont(typeface, (float)typeface.UnitsPerEm);
@@ -178,7 +178,7 @@ public sealed partial class FontFamily : System.MarshalByRefObject, System.IDisp
 	/// </summary>
 	/// <param name="style">The <see cref="FontStyle"/> to apply.</param>
 	/// <returns>The distance between two consecutive lines of text.</returns>
-	public int GetLineSpacing(System.Drawing.FontStyle style)
+	public int GetLineSpacing(FontStyle style)
 	{
 		using var typeface = CreateTypefaceForStyle(style);
 		using var font = new SKFont(typeface, (float)typeface.UnitsPerEm);
@@ -198,7 +198,7 @@ public sealed partial class FontFamily : System.MarshalByRefObject, System.IDisp
 	/// </summary>
 	/// <param name="style">The <see cref="FontStyle"/> to test.</param>
 	/// <returns><see langword="true"/> if the specified <see cref="FontStyle"/> is available; otherwise, <see langword="false"/>.</returns>
-	public bool IsStyleAvailable(System.Drawing.FontStyle style)
+	public bool IsStyleAvailable(FontStyle style)
 	{
 		// SkiaSharp will always resolve a typeface (possibly via fallback),
 		// so all styles are considered available.

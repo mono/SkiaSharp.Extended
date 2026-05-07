@@ -5,7 +5,7 @@ namespace System.Drawing.Drawing2D;
 /// <summary>
 ///  Represents a series of connected lines and curves, backed by an <see cref="SKPath"/>.
 /// </summary>
-public sealed partial class GraphicsPath : System.MarshalByRefObject, System.ICloneable, System.IDisposable
+public sealed partial class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable
 {
 	private bool _disposed;
 	private bool _needsNewFigure;
@@ -868,7 +868,7 @@ public sealed partial class GraphicsPath : System.MarshalByRefObject, System.ICl
 		ThrowIfDisposed();
 		// Create a reversed copy of the path by iterating backwards.
 		using var iter = SKPath.CreateIterator(false);
-		var verbs = new System.Collections.Generic.List<(SKPathVerb verb, SKPoint[] pts, float weight)>();
+		var verbs = new Collections.Generic.List<(SKPathVerb verb, SKPoint[] pts, float weight)>();
 		var pts = new SKPoint[4];
 		while (true)
 		{
@@ -1065,7 +1065,7 @@ public sealed partial class GraphicsPath : System.MarshalByRefObject, System.ICl
 	private byte[] ExtractPathTypes()
 	{
 		using var iter = SKPath.CreateIterator(false);
-		var typesList = new System.Collections.Generic.List<byte>();
+		var typesList = new Collections.Generic.List<byte>();
 		var pts = new SKPoint[4];
 
 		SKPathVerb? nextVerb = null;
@@ -1114,8 +1114,8 @@ public sealed partial class GraphicsPath : System.MarshalByRefObject, System.ICl
 		// GDI+ AddString uses World units; emSize is in the unit of the Graphics, default points.
 		// Convert points to pixels (96 dpi): pixels = points * 96/72 = points * 4/3
 		float sizeInPixels = emSize * 96f / 72f;
-		using var font = new SkiaSharp.SKFont(typeface, sizeInPixels);
-		using var textPath = font.GetTextPath(s, new SkiaSharp.SKPoint(x, y));
+		using var font = new SKFont(typeface, sizeInPixels);
+		using var textPath = font.GetTextPath(s, new SKPoint(x, y));
 		if (textPath != null && textPath.PointCount > 0)
 			SKPath.AddPath(textPath, SKPathAddMode.Append);
 	}

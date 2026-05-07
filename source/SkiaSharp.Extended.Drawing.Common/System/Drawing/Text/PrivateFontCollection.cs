@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace System.Drawing.Text;
 
 /// <summary>Provides a collection of font families built from font files that are provided by the client application.</summary>
-public sealed partial class PrivateFontCollection : System.Drawing.Text.FontCollection
+public sealed partial class PrivateFontCollection : FontCollection
 {
 	private readonly List<SKTypeface> _typefaces = new();
 

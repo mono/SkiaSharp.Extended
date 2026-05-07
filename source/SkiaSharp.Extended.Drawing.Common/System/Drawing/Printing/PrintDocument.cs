@@ -3,9 +3,9 @@
 /// <summary>
 ///  Defines a reusable object that sends output to a printer, when printing from a Windows Forms application.
 /// </summary>
-[System.ComponentModel.DefaultEventAttribute("PrintPage")]
-[System.ComponentModel.DefaultPropertyAttribute("DocumentName")]
-public partial class PrintDocument : System.ComponentModel.Component
+[ComponentModel.DefaultEvent("PrintPage")]
+[ComponentModel.DefaultProperty("DocumentName")]
+public partial class PrintDocument : ComponentModel.Component
 {
 	private string _documentName = "document";
 	private PageSettings? _defaultPageSettings;
@@ -22,16 +22,16 @@ public partial class PrintDocument : System.ComponentModel.Component
 	public PrintDocument() { }
 
 	/// <summary>Gets or sets page settings that are used as defaults for all pages to be printed.</summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-	public System.Drawing.Printing.PageSettings DefaultPageSettings
+	[ComponentModel.Browsable(false)]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	public PageSettings DefaultPageSettings
 	{
 		get => _defaultPageSettings ??= new PageSettings(PrinterSettings);
 		set => _defaultPageSettings = value;
 	}
 
 	/// <summary>Gets or sets the document name to display while printing the document.</summary>
-	[System.ComponentModel.DefaultValueAttribute("document")]
+	[ComponentModel.DefaultValue("document")]
 	public string DocumentName
 	{
 		get => _documentName;
@@ -39,50 +39,50 @@ public partial class PrintDocument : System.ComponentModel.Component
 	}
 
 	/// <summary>Gets or sets a value indicating whether the position of a graphics object associated with a page is located just inside the user-specified margins or at the top-left corner of the printable area of the page.</summary>
-	[System.ComponentModel.DefaultValueAttribute(false)]
+	[ComponentModel.DefaultValue(false)]
 	public bool OriginAtMargins { get => _originAtMargins; set => _originAtMargins = value; }
 
 	/// <summary>Gets or sets the print controller that guides the printing process.</summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-	public System.Drawing.Printing.PrintController PrintController
+	[ComponentModel.Browsable(false)]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	public PrintController PrintController
 	{
 		get => _printController ??= new StandardPrintController();
 		set => _printController = value;
 	}
 
 	/// <summary>Gets or sets the printer that prints the document.</summary>
-	[System.ComponentModel.BrowsableAttribute(false)]
-	[System.ComponentModel.DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-	public System.Drawing.Printing.PrinterSettings PrinterSettings
+	[ComponentModel.Browsable(false)]
+	[ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+	public PrinterSettings PrinterSettings
 	{
 		get => _printerSettings ??= new PrinterSettings();
 		set => _printerSettings = value;
 	}
 
 	/// <summary>Occurs when the <see cref="Print"/> method is called and before the first page of the document prints.</summary>
-	public event System.Drawing.Printing.PrintEventHandler BeginPrint
+	public event PrintEventHandler BeginPrint
 	{
 		add => _beginPrint += value;
 		remove => _beginPrint -= value;
 	}
 
 	/// <summary>Occurs when the last page of the document has printed.</summary>
-	public event System.Drawing.Printing.PrintEventHandler EndPrint
+	public event PrintEventHandler EndPrint
 	{
 		add => _endPrint += value;
 		remove => _endPrint -= value;
 	}
 
 	/// <summary>Occurs when the output to print for the current page is needed.</summary>
-	public event System.Drawing.Printing.PrintPageEventHandler PrintPage
+	public event PrintPageEventHandler PrintPage
 	{
 		add => _printPage += value;
 		remove => _printPage -= value;
 	}
 
 	/// <summary>Occurs immediately before each <see cref="PrintPage"/> event.</summary>
-	public event System.Drawing.Printing.QueryPageSettingsEventHandler QueryPageSettings
+	public event QueryPageSettingsEventHandler QueryPageSettings
 	{
 		add => _queryPageSettings += value;
 		remove => _queryPageSettings -= value;
@@ -143,28 +143,28 @@ public partial class PrintDocument : System.ComponentModel.Component
 
 	/// <summary>Raises the <see cref="BeginPrint"/> event.</summary>
 	/// <param name="e">A <see cref="PrintEventArgs"/> that contains the event data.</param>
-	protected internal virtual void OnBeginPrint(System.Drawing.Printing.PrintEventArgs e)
+	protected internal virtual void OnBeginPrint(PrintEventArgs e)
 	{
 		_beginPrint?.Invoke(this, e);
 	}
 
 	/// <summary>Raises the <see cref="EndPrint"/> event.</summary>
 	/// <param name="e">A <see cref="PrintEventArgs"/> that contains the event data.</param>
-	protected internal virtual void OnEndPrint(System.Drawing.Printing.PrintEventArgs e)
+	protected internal virtual void OnEndPrint(PrintEventArgs e)
 	{
 		_endPrint?.Invoke(this, e);
 	}
 
 	/// <summary>Raises the <see cref="PrintPage"/> event.</summary>
 	/// <param name="e">A <see cref="PrintPageEventArgs"/> that contains the event data.</param>
-	protected internal virtual void OnPrintPage(System.Drawing.Printing.PrintPageEventArgs e)
+	protected internal virtual void OnPrintPage(PrintPageEventArgs e)
 	{
 		_printPage?.Invoke(this, e);
 	}
 
 	/// <summary>Raises the <see cref="QueryPageSettings"/> event.</summary>
 	/// <param name="e">A <see cref="QueryPageSettingsEventArgs"/> that contains the event data.</param>
-	protected internal virtual void OnQueryPageSettings(System.Drawing.Printing.QueryPageSettingsEventArgs e)
+	protected internal virtual void OnQueryPageSettings(QueryPageSettingsEventArgs e)
 	{
 		_queryPageSettings?.Invoke(this, e);
 	}

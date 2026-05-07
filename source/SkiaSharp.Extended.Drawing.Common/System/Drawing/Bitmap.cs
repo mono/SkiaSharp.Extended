@@ -10,13 +10,13 @@ namespace System.Drawing;
 ///  Encapsulates a GDI+ bitmap, which consists of the pixel data for a graphics image and its attributes.
 ///  A <see cref="Bitmap"/> is an object used to work with images defined by pixel data.
 /// </summary>
-[System.ComponentModel.EditorAttribute("System.Drawing.Design.BitmapEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-public sealed partial class Bitmap : System.Drawing.Image
+[ComponentModel.Editor("System.Drawing.Design.BitmapEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+public sealed partial class Bitmap : Image
 {
 	/// <summary>
 	///  Initializes a new instance of the <see cref="Bitmap"/> class from the specified existing image.
 	/// </summary>
-	public Bitmap(System.Drawing.Image original)
+	public Bitmap(Image original)
 	{
 		if (original == null) throw new ArgumentNullException(nameof(original));
 		if (original.SKBitmapBacking == null) throw new ArgumentException("The source image has been disposed.", nameof(original));
@@ -29,7 +29,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Initializes a new instance of the <see cref="Bitmap"/> class from the specified existing image, scaled to the specified size.
 	/// </summary>
-	public Bitmap(System.Drawing.Image original, System.Drawing.Size newSize)
+	public Bitmap(Image original, Size newSize)
 		: this(original, newSize.Width, newSize.Height)
 	{
 	}
@@ -37,7 +37,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Initializes a new instance of the <see cref="Bitmap"/> class from the specified existing image, scaled to the specified size.
 	/// </summary>
-	public Bitmap(System.Drawing.Image original, int width, int height)
+	public Bitmap(Image original, int width, int height)
 	{
 		if (original == null) throw new ArgumentNullException(nameof(original));
 		if (original.SKBitmapBacking == null) throw new ArgumentException("The source image has been disposed.", nameof(original));
@@ -67,7 +67,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Initializes a new instance of the <see cref="Bitmap"/> class with the specified size and with the resolution of the specified <see cref="Graphics"/> object.
 	/// </summary>
-	public Bitmap(int width, int height, System.Drawing.Graphics g)
+	public Bitmap(int width, int height, Graphics g)
 	{
 		if (g is null) throw new ArgumentNullException(nameof(g));
 		if (width <= 0) throw new ArgumentException(null, nameof(width));
@@ -80,7 +80,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Initializes a new instance of the <see cref="Bitmap"/> class with the specified size and format.
 	/// </summary>
-	public Bitmap(int width, int height, System.Drawing.Imaging.PixelFormat format)
+	public Bitmap(int width, int height, PixelFormat format)
 	{
 		if (width <= 0) throw new ArgumentException(null, nameof(width));
 		if (height <= 0) throw new ArgumentException(null, nameof(height));
@@ -94,7 +94,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Initializes a new instance of the <see cref="Bitmap"/> class with the specified size, pixel format, and pixel data.
 	/// </summary>
-	public Bitmap(int width, int height, int stride, System.Drawing.Imaging.PixelFormat format, nint scan0)
+	public Bitmap(int width, int height, int stride, PixelFormat format, nint scan0)
 	{
 		if (width <= 0) throw new ArgumentException(null, nameof(width));
 		if (height <= 0) throw new ArgumentException(null, nameof(height));
@@ -112,7 +112,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Initializes a new instance of the <see cref="Bitmap"/> class from the specified data stream.
 	/// </summary>
-	public Bitmap(System.IO.Stream stream)
+	public Bitmap(Stream stream)
 	{
 		if (stream == null) throw new ArgumentNullException(nameof(stream));
 		SKBitmapBacking = SKBitmap.Decode(stream);
@@ -124,7 +124,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Initializes a new instance of the <see cref="Bitmap"/> class from the specified data stream.
 	/// </summary>
-	public Bitmap(System.IO.Stream stream, bool useIcm)
+	public Bitmap(Stream stream, bool useIcm)
 		: this(stream)
 	{
 	}
@@ -152,7 +152,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Initializes a new instance of the <see cref="Bitmap"/> class from a specified resource.
 	/// </summary>
-	public Bitmap(System.Type type, string resource)
+	public Bitmap(Type type, string resource)
 	{
 		if (type == null) throw new ArgumentNullException(nameof(type));
 		if (resource == null) throw new ArgumentNullException(nameof(resource));
@@ -175,23 +175,23 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Creates a GDI bitmap object from a GDI+ <see cref="Icon"/>.
 	/// </summary>
-	public static System.Drawing.Bitmap FromHicon(nint hicon)
+	public static Bitmap FromHicon(nint hicon)
 	{
-		throw new System.PlatformNotSupportedException("FromHicon is not supported on this platform because it requires a Windows GDI handle.");
+		throw new PlatformNotSupportedException("FromHicon is not supported on this platform because it requires a Windows GDI handle.");
 	}
 
 	/// <summary>
 	///  Creates a <see cref="Bitmap"/> from the specified Windows resource.
 	/// </summary>
-	public static System.Drawing.Bitmap FromResource(nint hinstance, string bitmapName)
+	public static Bitmap FromResource(nint hinstance, string bitmapName)
 	{
-		throw new System.PlatformNotSupportedException("FromResource is not supported on this platform because it requires a Windows module handle.");
+		throw new PlatformNotSupportedException("FromResource is not supported on this platform because it requires a Windows module handle.");
 	}
 
 	/// <summary>
 	///  Creates a copy of the section of this <see cref="Bitmap"/> defined by <see cref="Rectangle"/> structure and with a specified <see cref="PixelFormat"/> enumeration.
 	/// </summary>
-	public System.Drawing.Bitmap Clone(System.Drawing.Rectangle rect, System.Drawing.Imaging.PixelFormat format)
+	public Bitmap Clone(Rectangle rect, PixelFormat format)
 	{
 		return Clone(new RectangleF(rect.X, rect.Y, rect.Width, rect.Height), format);
 	}
@@ -199,7 +199,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Creates a copy of the section of this <see cref="Bitmap"/> defined with a specified <see cref="PixelFormat"/> enumeration.
 	/// </summary>
-	public System.Drawing.Bitmap Clone(System.Drawing.RectangleF rect, System.Drawing.Imaging.PixelFormat format)
+	public Bitmap Clone(RectangleF rect, PixelFormat format)
 	{
 		ThrowIfDisposed();
 
@@ -233,34 +233,34 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Creates a GDI bitmap object from this <see cref="Bitmap"/>.
 	/// </summary>
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+	[ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
 	public nint GetHbitmap()
 	{
-		throw new System.PlatformNotSupportedException("GetHbitmap is not supported on this platform because it requires Windows GDI.");
+		throw new PlatformNotSupportedException("GetHbitmap is not supported on this platform because it requires Windows GDI.");
 	}
 
 	/// <summary>
 	///  Creates a GDI bitmap object from this <see cref="Bitmap"/>.
 	/// </summary>
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-	public nint GetHbitmap(System.Drawing.Color background)
+	[ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
+	public nint GetHbitmap(Color background)
 	{
-		throw new System.PlatformNotSupportedException("GetHbitmap is not supported on this platform because it requires Windows GDI.");
+		throw new PlatformNotSupportedException("GetHbitmap is not supported on this platform because it requires Windows GDI.");
 	}
 
 	/// <summary>
 	///  Returns the handle to an icon.
 	/// </summary>
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+	[ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
 	public nint GetHicon()
 	{
-		throw new System.PlatformNotSupportedException("GetHicon is not supported on this platform because it requires Windows GDI.");
+		throw new PlatformNotSupportedException("GetHicon is not supported on this platform because it requires Windows GDI.");
 	}
 
 	/// <summary>
 	///  Gets the color of the specified pixel in this <see cref="Bitmap"/>.
 	/// </summary>
-	public System.Drawing.Color GetPixel(int x, int y)
+	public Color GetPixel(int x, int y)
 	{
 		ThrowIfDisposed();
 		if (x < 0 || x >= SKBitmapBacking!.Width)
@@ -273,7 +273,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Locks a <see cref="Bitmap"/> into system memory.
 	/// </summary>
-	public System.Drawing.Imaging.BitmapData LockBits(System.Drawing.Rectangle rect, System.Drawing.Imaging.ImageLockMode flags, System.Drawing.Imaging.PixelFormat format)
+	public BitmapData LockBits(Rectangle rect, ImageLockMode flags, PixelFormat format)
 	{
 		return LockBits(rect, flags, format, new BitmapData());
 	}
@@ -281,7 +281,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Locks a <see cref="Bitmap"/> into system memory.
 	/// </summary>
-	public System.Drawing.Imaging.BitmapData LockBits(System.Drawing.Rectangle rect, System.Drawing.Imaging.ImageLockMode flags, System.Drawing.Imaging.PixelFormat format, System.Drawing.Imaging.BitmapData bitmapData)
+	public BitmapData LockBits(Rectangle rect, ImageLockMode flags, PixelFormat format, BitmapData bitmapData)
 	{
 		ThrowIfDisposed();
 		if (bitmapData == null) throw new ArgumentNullException(nameof(bitmapData));
@@ -316,7 +316,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Makes the specified color transparent for this <see cref="Bitmap"/>.
 	/// </summary>
-	public void MakeTransparent(System.Drawing.Color transparentColor)
+	public void MakeTransparent(Color transparentColor)
 	{
 		ThrowIfDisposed();
 		var skTransparent = SkiaConversions.ToSKColor(transparentColor);
@@ -348,7 +348,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Sets the color of the specified pixel in this <see cref="Bitmap"/>.
 	/// </summary>
-	public void SetPixel(int x, int y, System.Drawing.Color color)
+	public void SetPixel(int x, int y, Color color)
 	{
 		ThrowIfDisposed();
 		if (x < 0 || x >= SKBitmapBacking!.Width)
@@ -371,7 +371,7 @@ public sealed partial class Bitmap : System.Drawing.Image
 	/// <summary>
 	///  Unlocks this <see cref="Bitmap"/> from system memory.
 	/// </summary>
-	public void UnlockBits(System.Drawing.Imaging.BitmapData bitmapdata)
+	public void UnlockBits(BitmapData bitmapdata)
 	{
 		ThrowIfDisposed();
 		if (bitmapdata == null) throw new ArgumentNullException(nameof(bitmapdata));

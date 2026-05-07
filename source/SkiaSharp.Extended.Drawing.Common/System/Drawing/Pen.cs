@@ -7,7 +7,7 @@ namespace System.Drawing;
 /// <summary>
 ///  Defines an object used to draw lines and curves. This class cannot be inherited.
 /// </summary>
-public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, System.IDisposable
+public sealed partial class Pen : MarshalByRefObject, ICloneable, IDisposable
 {
 	private Color _color;
 	private float _width;
@@ -33,7 +33,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// </summary>
 	/// <param name="brush">A <see cref="Brush"/> that determines the fill properties of this <see cref="Pen"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="brush"/> is <see langword="null"/>.</exception>
-	public Pen(System.Drawing.Brush brush) : this(brush, 1f) { }
+	public Pen(Brush brush) : this(brush, 1f) { }
 
 	/// <summary>
 	///  Initializes a new instance of the <see cref="Pen"/> class with the specified
@@ -42,7 +42,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// <param name="brush">A <see cref="Brush"/> that determines the characteristics of this <see cref="Pen"/>.</param>
 	/// <param name="width">The width of the new <see cref="Pen"/>.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="brush"/> is <see langword="null"/>.</exception>
-	public Pen(System.Drawing.Brush brush, float width)
+	public Pen(Brush brush, float width)
 	{
 		_brush = brush ?? throw new ArgumentNullException(nameof(brush));
 		if (width < 0) throw new ArgumentException("Width cannot be negative.", nameof(width));
@@ -54,7 +54,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	///  Initializes a new instance of the <see cref="Pen"/> class with the specified color.
 	/// </summary>
 	/// <param name="color">A <see cref="Color"/> structure that indicates the color of this <see cref="Pen"/>.</param>
-	public Pen(System.Drawing.Color color) : this(color, 1f) { }
+	public Pen(Color color) : this(color, 1f) { }
 
 	/// <summary>
 	///  Initializes a new instance of the <see cref="Pen"/> class with the specified
@@ -62,7 +62,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// </summary>
 	/// <param name="color">A <see cref="Color"/> structure that indicates the color of this <see cref="Pen"/>.</param>
 	/// <param name="width">A value indicating the width of this <see cref="Pen"/>.</param>
-	public Pen(System.Drawing.Color color, float width)
+	public Pen(Color color, float width)
 	{
 		if (width < 0) throw new ArgumentException("Width cannot be negative.", nameof(width));
 		_color = color;
@@ -76,7 +76,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// <value>
 	///  A <see cref="PenAlignment"/> that represents the alignment for this <see cref="Pen"/>.
 	/// </value>
-	public System.Drawing.Drawing2D.PenAlignment Alignment
+	public PenAlignment Alignment
 	{
 		get { ThrowIfDisposed(); return _alignment; }
 		set { ThrowIfDisposed(); ThrowIfImmutable(); _alignment = value; }
@@ -86,7 +86,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	///  Gets or sets the <see cref="Brush"/> that determines attributes of this <see cref="Pen"/>.
 	/// </summary>
 	/// <value>A <see cref="Brush"/> that determines attributes of this <see cref="Pen"/>.</value>
-	public System.Drawing.Brush Brush
+	public Brush Brush
 	{
 		get { ThrowIfDisposed(); return _brush; }
 		set
@@ -103,7 +103,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	///  Gets or sets the color of this <see cref="Pen"/>.
 	/// </summary>
 	/// <value>A <see cref="Color"/> structure that represents the color of this <see cref="Pen"/>.</value>
-	public System.Drawing.Color Color
+	public Color Color
 	{
 		get { ThrowIfDisposed(); return _color; }
 		set
@@ -132,7 +132,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// <value>
 	///  A <see cref="CustomLineCap"/> that represents the cap used at the end of lines drawn with this <see cref="Pen"/>.
 	/// </value>
-	public System.Drawing.Drawing2D.CustomLineCap CustomEndCap
+	public CustomLineCap CustomEndCap
 	{
 		get { ThrowIfDisposed(); return _customEndCap!; }
 		set { ThrowIfDisposed(); ThrowIfImmutable(); _customEndCap = value; }
@@ -144,7 +144,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// <value>
 	///  A <see cref="CustomLineCap"/> that represents the cap used at the beginning of lines drawn with this <see cref="Pen"/>.
 	/// </value>
-	public System.Drawing.Drawing2D.CustomLineCap CustomStartCap
+	public CustomLineCap CustomStartCap
 	{
 		get { ThrowIfDisposed(); return _customStartCap!; }
 		set { ThrowIfDisposed(); ThrowIfImmutable(); _customStartCap = value; }
@@ -158,7 +158,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	///  One of the <see cref="DashCap"/> values that represents the cap style used at the
 	///  beginning and end of the dashes that make up dashed lines drawn with this <see cref="Pen"/>.
 	/// </value>
-	public System.Drawing.Drawing2D.DashCap DashCap
+	public DashCap DashCap
 	{
 		get { ThrowIfDisposed(); return _dashCap; }
 		set { ThrowIfDisposed(); ThrowIfImmutable(); _dashCap = value; }
@@ -197,7 +197,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	///  A <see cref="DashStyle"/> that represents the style used for dashed lines drawn
 	///  with this <see cref="Pen"/>.
 	/// </value>
-	public System.Drawing.Drawing2D.DashStyle DashStyle
+	public DashStyle DashStyle
 	{
 		get { ThrowIfDisposed(); return _dashStyle; }
 		set
@@ -217,7 +217,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	///  One of the <see cref="LineCap"/> values that represents the cap style used at the
 	///  end of lines drawn with this <see cref="Pen"/>.
 	/// </value>
-	public System.Drawing.Drawing2D.LineCap EndCap
+	public LineCap EndCap
 	{
 		get { ThrowIfDisposed(); return _endCap; }
 		set { ThrowIfDisposed(); ThrowIfImmutable(); _endCap = value; }
@@ -230,7 +230,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	///  A <see cref="LineJoin"/> that represents the join style for the ends of two consecutive
 	///  lines drawn with this <see cref="Pen"/>.
 	/// </value>
-	public System.Drawing.Drawing2D.LineJoin LineJoin
+	public LineJoin LineJoin
 	{
 		get { ThrowIfDisposed(); return _lineJoin; }
 		set { ThrowIfDisposed(); ThrowIfImmutable(); _lineJoin = value; }
@@ -254,7 +254,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// <value>
 	///  A <see cref="PenType"/> enumeration that specifies the style of lines drawn with this <see cref="Pen"/>.
 	/// </value>
-	public System.Drawing.Drawing2D.PenType PenType
+	public PenType PenType
 	{
 		get
 		{
@@ -263,11 +263,11 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 				return PenType.SolidColor;
 			if (_brush is TextureBrush)
 				return PenType.TextureFill;
-			if (_brush is Drawing2D.HatchBrush)
+			if (_brush is HatchBrush)
 				return PenType.HatchFill;
-			if (_brush is Drawing2D.LinearGradientBrush)
+			if (_brush is LinearGradientBrush)
 				return PenType.LinearGradient;
-			if (_brush is Drawing2D.PathGradientBrush)
+			if (_brush is PathGradientBrush)
 				return PenType.PathGradient;
 			return PenType.SolidColor;
 		}
@@ -280,7 +280,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	///  One of the <see cref="LineCap"/> values that represents the cap style used at the
 	///  beginning of lines drawn with this <see cref="Pen"/>.
 	/// </value>
-	public System.Drawing.Drawing2D.LineCap StartCap
+	public LineCap StartCap
 	{
 		get { ThrowIfDisposed(); return _startCap; }
 		set { ThrowIfDisposed(); ThrowIfImmutable(); _startCap = value; }
@@ -290,7 +290,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	///  Gets or sets a copy of the geometric transformation for this <see cref="Pen"/>.
 	/// </summary>
 	/// <value>A copy of the <see cref="Matrix"/> that represents the geometric transformation for this <see cref="Pen"/>.</value>
-	public System.Drawing.Drawing2D.Matrix Transform
+	public Matrix Transform
 	{
 		get { ThrowIfDisposed(); return _transform ?? new Matrix(); }
 		set { ThrowIfDisposed(); ThrowIfImmutable(); _transform = value ?? throw new ArgumentNullException(nameof(value)); }
@@ -353,7 +353,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	///  Multiplies the transformation matrix for this <see cref="Pen"/> by the specified <see cref="Matrix"/>.
 	/// </summary>
 	/// <param name="matrix">The <see cref="Matrix"/> object by which to multiply the transformation matrix.</param>
-	public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix)
+	public void MultiplyTransform(Matrix matrix)
 	{
 		MultiplyTransform(matrix, MatrixOrder.Prepend);
 	}
@@ -364,7 +364,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// </summary>
 	/// <param name="matrix">The <see cref="Matrix"/> by which to multiply the transformation matrix.</param>
 	/// <param name="order">The order in which to perform the multiplication operation.</param>
-	public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix, System.Drawing.Drawing2D.MatrixOrder order)
+	public void MultiplyTransform(Matrix matrix, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		if (matrix is null) throw new ArgumentNullException(nameof(matrix));
@@ -395,7 +395,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// </summary>
 	/// <param name="angle">The angle of rotation.</param>
 	/// <param name="order">A <see cref="MatrixOrder"/> that specifies whether to append or prepend the rotation matrix.</param>
-	public void RotateTransform(float angle, System.Drawing.Drawing2D.MatrixOrder order)
+	public void RotateTransform(float angle, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_transform ??= new Matrix();
@@ -418,7 +418,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// <param name="sx">The factor by which to scale the transformation in the x-axis direction.</param>
 	/// <param name="sy">The factor by which to scale the transformation in the y-axis direction.</param>
 	/// <param name="order">A <see cref="MatrixOrder"/> that specifies whether to append or prepend the scaling matrix.</param>
-	public void ScaleTransform(float sx, float sy, System.Drawing.Drawing2D.MatrixOrder order)
+	public void ScaleTransform(float sx, float sy, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_transform ??= new Matrix();
@@ -431,7 +431,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// <param name="startCap">A <see cref="LineCap"/> that represents the cap style to use at the beginning of lines drawn with this <see cref="Pen"/>.</param>
 	/// <param name="endCap">A <see cref="LineCap"/> that represents the cap style to use at the end of lines drawn with this <see cref="Pen"/>.</param>
 	/// <param name="dashCap">A <see cref="DashCap"/> that represents the cap style to use at the beginning or end of dashed lines drawn with this <see cref="Pen"/>.</param>
-	public void SetLineCap(System.Drawing.Drawing2D.LineCap startCap, System.Drawing.Drawing2D.LineCap endCap, System.Drawing.Drawing2D.DashCap dashCap)
+	public void SetLineCap(LineCap startCap, LineCap endCap, DashCap dashCap)
 	{
 		ThrowIfDisposed();
 		_startCap = startCap;
@@ -455,7 +455,7 @@ public sealed partial class Pen : System.MarshalByRefObject, System.ICloneable, 
 	/// <param name="dx">The value of the translation in x.</param>
 	/// <param name="dy">The value of the translation in y.</param>
 	/// <param name="order">The order (prepend or append) in which to apply the translation.</param>
-	public void TranslateTransform(float dx, float dy, System.Drawing.Drawing2D.MatrixOrder order)
+	public void TranslateTransform(float dx, float dy, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_transform ??= new Matrix();

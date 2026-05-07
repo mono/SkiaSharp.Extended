@@ -26,7 +26,7 @@ public partial class PaperSize
 	/// <summary>Gets or sets the height of the paper, in hundredths of an inch.</summary>
 	public int Height { get; set; }
 	/// <summary>Gets the type of paper.</summary>
-	public System.Drawing.Printing.PaperKind Kind => (PaperKind)_rawKind;
+	public PaperKind Kind => (PaperKind)_rawKind;
 	/// <summary>Gets or sets the name of the type of paper.</summary>
 	public string PaperName { get => _name; set => _name = value ?? string.Empty; }
 	/// <summary>Gets or sets the paper size raw kind value.</summary>

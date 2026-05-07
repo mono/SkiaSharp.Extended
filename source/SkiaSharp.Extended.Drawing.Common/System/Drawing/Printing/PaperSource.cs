@@ -12,7 +12,7 @@ public partial class PaperSource
 	public PaperSource() { _rawKind = (int)PaperSourceKind.Custom; }
 
 	/// <summary>Gets the paper source.</summary>
-	public System.Drawing.Printing.PaperSourceKind Kind => (PaperSourceKind)_rawKind;
+	public PaperSourceKind Kind => (PaperSourceKind)_rawKind;
 	/// <summary>Gets or sets the paper source raw kind value.</summary>
 	public int RawKind { get => _rawKind; set => _rawKind = value; }
 	/// <summary>Gets or sets the name of the paper source.</summary>

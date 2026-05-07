@@ -6,7 +6,7 @@ namespace System.Drawing.Drawing2D;
 /// <summary>
 ///  Encapsulates a <see cref="Brush"/> with a linear gradient. This class cannot be inherited.
 /// </summary>
-public sealed partial class LinearGradientBrush : System.Drawing.Brush
+public sealed partial class LinearGradientBrush : Brush
 {
 	private PointF _point1;
 	private PointF _point2;
@@ -26,7 +26,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// <param name="point2">A <see cref="Point"/> structure that represents the endpoint of the linear gradient.</param>
 	/// <param name="color1">A <see cref="Color"/> structure that represents the starting color of the linear gradient.</param>
 	/// <param name="color2">A <see cref="Color"/> structure that represents the ending color of the linear gradient.</param>
-	public LinearGradientBrush(System.Drawing.Point point1, System.Drawing.Point point2, System.Drawing.Color color1, System.Drawing.Color color2)
+	public LinearGradientBrush(Point point1, Point point2, Color color1, Color color2)
 		: this(new PointF(point1.X, point1.Y), new PointF(point2.X, point2.Y), color1, color2) { }
 
 	/// <summary>
@@ -36,7 +36,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// <param name="point2">A <see cref="PointF"/> structure that represents the endpoint of the linear gradient.</param>
 	/// <param name="color1">A <see cref="Color"/> structure that represents the starting color of the linear gradient.</param>
 	/// <param name="color2">A <see cref="Color"/> structure that represents the ending color of the linear gradient.</param>
-	public LinearGradientBrush(System.Drawing.PointF point1, System.Drawing.PointF point2, System.Drawing.Color color1, System.Drawing.Color color2)
+	public LinearGradientBrush(PointF point1, PointF point2, Color color1, Color color2)
 	{
 		_point1 = point1;
 		_point2 = point2;
@@ -56,7 +56,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// <param name="color1">A <see cref="Color"/> structure that represents the starting color for the gradient.</param>
 	/// <param name="color2">A <see cref="Color"/> structure that represents the ending color for the gradient.</param>
 	/// <param name="linearGradientMode">A <see cref="LinearGradientMode"/> enumeration element that specifies the orientation of the gradient.</param>
-	public LinearGradientBrush(System.Drawing.Rectangle rect, System.Drawing.Color color1, System.Drawing.Color color2, System.Drawing.Drawing2D.LinearGradientMode linearGradientMode)
+	public LinearGradientBrush(Rectangle rect, Color color1, Color color2, LinearGradientMode linearGradientMode)
 		: this((RectangleF)rect, color1, color2, linearGradientMode) { }
 
 	/// <summary>
@@ -66,7 +66,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// <param name="color1">A <see cref="Color"/> structure that represents the starting color for the gradient.</param>
 	/// <param name="color2">A <see cref="Color"/> structure that represents the ending color for the gradient.</param>
 	/// <param name="angle">The angle, measured in degrees clockwise from the x-axis, of the gradient's orientation line.</param>
-	public LinearGradientBrush(System.Drawing.Rectangle rect, System.Drawing.Color color1, System.Drawing.Color color2, float angle)
+	public LinearGradientBrush(Rectangle rect, Color color1, Color color2, float angle)
 		: this((RectangleF)rect, color1, color2, angle, false) { }
 
 	/// <summary>
@@ -77,7 +77,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// <param name="color2">A <see cref="Color"/> structure that represents the ending color for the gradient.</param>
 	/// <param name="angle">The angle, measured in degrees clockwise from the x-axis, of the gradient's orientation line.</param>
 	/// <param name="isAngleScaleable"><see langword="true"/> to specify that the angle is affected by the transform associated with this <see cref="LinearGradientBrush"/>; otherwise, <see langword="false"/>.</param>
-	public LinearGradientBrush(System.Drawing.Rectangle rect, System.Drawing.Color color1, System.Drawing.Color color2, float angle, bool isAngleScaleable)
+	public LinearGradientBrush(Rectangle rect, Color color1, Color color2, float angle, bool isAngleScaleable)
 		: this((RectangleF)rect, color1, color2, angle, isAngleScaleable) { }
 
 	/// <summary>
@@ -87,7 +87,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// <param name="color1">A <see cref="Color"/> structure that represents the starting color for the gradient.</param>
 	/// <param name="color2">A <see cref="Color"/> structure that represents the ending color for the gradient.</param>
 	/// <param name="linearGradientMode">A <see cref="LinearGradientMode"/> enumeration element that specifies the orientation of the gradient.</param>
-	public LinearGradientBrush(System.Drawing.RectangleF rect, System.Drawing.Color color1, System.Drawing.Color color2, System.Drawing.Drawing2D.LinearGradientMode linearGradientMode)
+	public LinearGradientBrush(RectangleF rect, Color color1, Color color2, LinearGradientMode linearGradientMode)
 	{
 		_rect = rect;
 		_color1 = color1;
@@ -127,7 +127,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// <param name="color1">A <see cref="Color"/> structure that represents the starting color for the gradient.</param>
 	/// <param name="color2">A <see cref="Color"/> structure that represents the ending color for the gradient.</param>
 	/// <param name="angle">The angle, measured in degrees clockwise from the x-axis, of the gradient's orientation line.</param>
-	public LinearGradientBrush(System.Drawing.RectangleF rect, System.Drawing.Color color1, System.Drawing.Color color2, float angle)
+	public LinearGradientBrush(RectangleF rect, Color color1, Color color2, float angle)
 		: this(rect, color1, color2, angle, false) { }
 
 	/// <summary>
@@ -138,7 +138,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// <param name="color2">A <see cref="Color"/> structure that represents the ending color for the gradient.</param>
 	/// <param name="angle">The angle, measured in degrees clockwise from the x-axis, of the gradient's orientation line.</param>
 	/// <param name="isAngleScaleable"><see langword="true"/> to specify that the angle is affected by the transform associated with this <see cref="LinearGradientBrush"/>; otherwise, <see langword="false"/>.</param>
-	public LinearGradientBrush(System.Drawing.RectangleF rect, System.Drawing.Color color1, System.Drawing.Color color2, float angle, bool isAngleScaleable)
+	public LinearGradientBrush(RectangleF rect, Color color1, Color color2, float angle, bool isAngleScaleable)
 	{
 		_rect = rect;
 		_color1 = color1;
@@ -161,7 +161,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	///  Gets or sets a <see cref="Drawing2D.Blend"/> that specifies positions and factors that define a custom falloff for the gradient.
 	/// </summary>
 	/// <value>A <see cref="Drawing2D.Blend"/> that represents a custom falloff for the gradient.</value>
-	public System.Drawing.Drawing2D.Blend? Blend
+	public Blend? Blend
 	{
 		get { ThrowIfDisposed(); return _blend; }
 		set { ThrowIfDisposed(); _blend = value; }
@@ -181,7 +181,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	///  Gets or sets a <see cref="ColorBlend"/> that defines a multicolor linear gradient.
 	/// </summary>
 	/// <value>A <see cref="ColorBlend"/> that defines a multicolor linear gradient.</value>
-	public System.Drawing.Drawing2D.ColorBlend InterpolationColors
+	public ColorBlend InterpolationColors
 	{
 		get { ThrowIfDisposed(); return _interpolationColors ?? new ColorBlend(); }
 		set { ThrowIfDisposed(); _interpolationColors = value ?? throw new ArgumentNullException(nameof(value)); }
@@ -191,7 +191,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	///  Gets or sets the starting and ending colors of the gradient.
 	/// </summary>
 	/// <value>An array of two <see cref="Color"/> structures that represents the starting and ending colors of the gradient.</value>
-	public System.Drawing.Color[] LinearColors
+	public Color[] LinearColors
 	{
 		get { ThrowIfDisposed(); return new[] { _color1, _color2 }; }
 		set
@@ -208,7 +208,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	///  Gets a rectangular region that defines the starting and ending points of the gradient.
 	/// </summary>
 	/// <value>A <see cref="RectangleF"/> structure that specifies the starting and ending points of the gradient.</value>
-	public System.Drawing.RectangleF Rectangle
+	public RectangleF Rectangle
 	{
 		get { ThrowIfDisposed(); return _rect; }
 	}
@@ -217,7 +217,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	///  Gets or sets a copy of the <see cref="Matrix"/> that defines a local geometric transform for this <see cref="LinearGradientBrush"/>.
 	/// </summary>
 	/// <value>A copy of the <see cref="Matrix"/> that defines a geometric transform that applies only to fills drawn with this <see cref="LinearGradientBrush"/>.</value>
-	public System.Drawing.Drawing2D.Matrix Transform
+	public Matrix Transform
 	{
 		get { ThrowIfDisposed(); return _transform.Clone(); }
 		set { ThrowIfDisposed(); _transform = value ?? throw new ArgumentNullException(nameof(value)); }
@@ -227,7 +227,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	///  Gets or sets a <see cref="Drawing2D.WrapMode"/> enumeration that indicates the wrap mode for this <see cref="LinearGradientBrush"/>.
 	/// </summary>
 	/// <value>A <see cref="Drawing2D.WrapMode"/> that specifies how fills drawn with this <see cref="LinearGradientBrush"/> are tiled.</value>
-	public System.Drawing.Drawing2D.WrapMode WrapMode
+	public WrapMode WrapMode
 	{
 		get { ThrowIfDisposed(); return _wrapMode; }
 		set { ThrowIfDisposed(); _wrapMode = value; }
@@ -255,7 +255,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	///  Multiplies the <see cref="Matrix"/> that represents the local geometric transform of this <see cref="LinearGradientBrush"/> by the specified <see cref="Matrix"/> by prepending the specified <see cref="Matrix"/>.
 	/// </summary>
 	/// <param name="matrix">The <see cref="Matrix"/> by which to multiply the geometric transform.</param>
-	public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix)
+	public void MultiplyTransform(Matrix matrix)
 	{
 		MultiplyTransform(matrix, MatrixOrder.Prepend);
 	}
@@ -265,7 +265,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// </summary>
 	/// <param name="matrix">The <see cref="Matrix"/> by which to multiply the geometric transform.</param>
 	/// <param name="order">A <see cref="MatrixOrder"/> enumeration that specifies the order in which to multiply the two matrices.</param>
-	public void MultiplyTransform(System.Drawing.Drawing2D.Matrix matrix, System.Drawing.Drawing2D.MatrixOrder order)
+	public void MultiplyTransform(Matrix matrix, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		if (matrix is null) throw new ArgumentNullException(nameof(matrix));
@@ -295,7 +295,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// </summary>
 	/// <param name="angle">The angle of rotation.</param>
 	/// <param name="order">A <see cref="MatrixOrder"/> that specifies whether to append or prepend the rotation matrix.</param>
-	public void RotateTransform(float angle, System.Drawing.Drawing2D.MatrixOrder order)
+	public void RotateTransform(float angle, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_transform.Rotate(angle, order);
@@ -317,7 +317,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// <param name="sx">The amount by which to scale the transform in the x-axis direction.</param>
 	/// <param name="sy">The amount by which to scale the transform in the y-axis direction.</param>
 	/// <param name="order">A <see cref="MatrixOrder"/> that specifies whether to append or prepend the scaling matrix.</param>
-	public void ScaleTransform(float sx, float sy, System.Drawing.Drawing2D.MatrixOrder order)
+	public void ScaleTransform(float sx, float sy, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_transform.Scale(sx, sy, order);
@@ -398,7 +398,7 @@ public sealed partial class LinearGradientBrush : System.Drawing.Brush
 	/// <param name="dx">The value of the translation in x.</param>
 	/// <param name="dy">The value of the translation in y.</param>
 	/// <param name="order">The order (prepend or append) in which to apply the translation.</param>
-	public void TranslateTransform(float dx, float dy, System.Drawing.Drawing2D.MatrixOrder order)
+	public void TranslateTransform(float dx, float dy, MatrixOrder order)
 	{
 		ThrowIfDisposed();
 		_transform.Translate(dx, dy, order);

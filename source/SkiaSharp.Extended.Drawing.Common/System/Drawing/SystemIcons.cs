@@ -46,7 +46,7 @@ public static partial class SystemIcons
 		bmp.SKBitmapBacking?.Dispose();
 		bmp.SKBitmapBacking = bitmap;
 		// Save to stream and load as icon
-		using var ms = new System.IO.MemoryStream();
+		using var ms = new IO.MemoryStream();
 		bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 		ms.Position = 0;
 		return new Icon(ms);

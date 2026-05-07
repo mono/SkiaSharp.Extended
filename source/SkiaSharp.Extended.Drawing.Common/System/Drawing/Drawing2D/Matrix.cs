@@ -6,7 +6,7 @@ namespace System.Drawing.Drawing2D;
 ///  Encapsulates a 3-by-3 affine matrix that represents a geometric transform,
 ///  backed by an <see cref="SKMatrix"/>.
 /// </summary>
-public sealed partial class Matrix : System.MarshalByRefObject, System.IDisposable
+public sealed partial class Matrix : MarshalByRefObject, IDisposable
 {
 	private bool _disposed;
 
@@ -29,7 +29,7 @@ public sealed partial class Matrix : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="rect">A <see cref="Rectangle"/> structure that represents the rectangle to be transformed.</param>
 	/// <param name="plgpts">An array of three <see cref="Point"/> structures that represents the points of a parallelogram.</param>
-	public Matrix(System.Drawing.Rectangle rect, System.Drawing.Point[] plgpts)
+	public Matrix(Rectangle rect, Point[] plgpts)
 	{
 		if (plgpts is null) throw new ArgumentNullException(nameof(plgpts));
 		if (plgpts.Length != 3) throw new ArgumentException("Array must contain exactly 3 points.", nameof(plgpts));
@@ -45,7 +45,7 @@ public sealed partial class Matrix : System.MarshalByRefObject, System.IDisposab
 	/// </summary>
 	/// <param name="rect">A <see cref="RectangleF"/> structure that represents the rectangle to be transformed.</param>
 	/// <param name="plgpts">An array of three <see cref="PointF"/> structures that represents the points of a parallelogram.</param>
-	public Matrix(System.Drawing.RectangleF rect, System.Drawing.PointF[] plgpts)
+	public Matrix(RectangleF rect, PointF[] plgpts)
 	{
 		if (plgpts is null) throw new ArgumentNullException(nameof(plgpts));
 		if (plgpts.Length != 3) throw new ArgumentException("Array must contain exactly 3 points.", nameof(plgpts));

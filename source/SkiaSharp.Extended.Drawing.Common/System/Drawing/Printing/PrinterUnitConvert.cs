@@ -8,14 +8,14 @@ public sealed partial class PrinterUnitConvert
 	internal PrinterUnitConvert() {}
 
 	/// <summary>Converts a double-precision floating-point number from one <see cref="PrinterUnit"/> type to another.</summary>
-	public static double Convert(double value, System.Drawing.Printing.PrinterUnit fromUnit, System.Drawing.Printing.PrinterUnit toUnit)
+	public static double Convert(double value, PrinterUnit fromUnit, PrinterUnit toUnit)
 	{
 		double inThousandths = ConvertToThousandthsOfAnInch(value, fromUnit);
 		return ConvertFromThousandthsOfAnInch(inThousandths, toUnit);
 	}
 
 	/// <summary>Converts a <see cref="Point"/> from one <see cref="PrinterUnit"/> type to another.</summary>
-	public static System.Drawing.Point Convert(System.Drawing.Point value, System.Drawing.Printing.PrinterUnit fromUnit, System.Drawing.Printing.PrinterUnit toUnit)
+	public static Point Convert(Point value, PrinterUnit fromUnit, PrinterUnit toUnit)
 	{
 		return new Point(
 			(int)Convert((double)value.X, fromUnit, toUnit),
@@ -23,7 +23,7 @@ public sealed partial class PrinterUnitConvert
 	}
 
 	/// <summary>Converts a <see cref="Margins"/> from one <see cref="PrinterUnit"/> type to another.</summary>
-	public static System.Drawing.Printing.Margins Convert(System.Drawing.Printing.Margins value, System.Drawing.Printing.PrinterUnit fromUnit, System.Drawing.Printing.PrinterUnit toUnit)
+	public static Margins Convert(Margins value, PrinterUnit fromUnit, PrinterUnit toUnit)
 	{
 		return new Margins(
 			(int)Convert((double)value.Left, fromUnit, toUnit),
@@ -33,7 +33,7 @@ public sealed partial class PrinterUnitConvert
 	}
 
 	/// <summary>Converts a <see cref="Rectangle"/> from one <see cref="PrinterUnit"/> type to another.</summary>
-	public static System.Drawing.Rectangle Convert(System.Drawing.Rectangle value, System.Drawing.Printing.PrinterUnit fromUnit, System.Drawing.Printing.PrinterUnit toUnit)
+	public static Rectangle Convert(Rectangle value, PrinterUnit fromUnit, PrinterUnit toUnit)
 	{
 		return new Rectangle(
 			(int)Convert((double)value.X, fromUnit, toUnit),
@@ -43,7 +43,7 @@ public sealed partial class PrinterUnitConvert
 	}
 
 	/// <summary>Converts a <see cref="Size"/> from one <see cref="PrinterUnit"/> type to another.</summary>
-	public static System.Drawing.Size Convert(System.Drawing.Size value, System.Drawing.Printing.PrinterUnit fromUnit, System.Drawing.Printing.PrinterUnit toUnit)
+	public static Size Convert(Size value, PrinterUnit fromUnit, PrinterUnit toUnit)
 	{
 		return new Size(
 			(int)Convert((double)value.Width, fromUnit, toUnit),
@@ -51,7 +51,7 @@ public sealed partial class PrinterUnitConvert
 	}
 
 	/// <summary>Converts an integer from one <see cref="PrinterUnit"/> type to another.</summary>
-	public static int Convert(int value, System.Drawing.Printing.PrinterUnit fromUnit, System.Drawing.Printing.PrinterUnit toUnit)
+	public static int Convert(int value, PrinterUnit fromUnit, PrinterUnit toUnit)
 	{
 		return (int)Convert((double)value, fromUnit, toUnit);
 	}
