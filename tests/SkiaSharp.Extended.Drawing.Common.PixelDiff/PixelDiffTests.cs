@@ -91,7 +91,8 @@ public class PixelDiffTests
         Assert.NotNull(gdi);
         Assert.NotNull(skia);
 
-        var result = SKPixelComparer.Compare(skia, gdi);
+        // Per-pixel tolerance: allow ±1 per RGB channel (covers gradient rounding differences)
+        var result = SKPixelComparer.Compare(skia, gdi, tolerance: 3);
 
         double tolerance = category switch
         {
