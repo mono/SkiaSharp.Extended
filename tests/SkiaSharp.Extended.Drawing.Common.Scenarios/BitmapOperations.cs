@@ -20,33 +20,189 @@ public partial class BitmapOperations : ScenarioBase
         return bmp;
     }
 
-    [Fact] public void Bitmap_RotateFlip_90() => Render(100, 100, g => {
+    // --- RotateFlipType: all 15 non-trivial values ---
+
+    [Fact] public void Bitmap_RotateFlip_Rotate90FlipNone() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
-        using var src = CreateColorQuadrant(40);
-        src.RotateFlip(RotateFlipType.Rotate90FlipNone);
-        g.DrawImage(src, 30, 30, 40, 40);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate90FlipNone);
+        g.DrawImage(bmp, 30, 30);
     });
 
-    [Fact] public void Bitmap_RotateFlip_180() => Render(100, 100, g => {
+    [Fact] public void Bitmap_RotateFlip_Rotate90FlipX() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
-        using var src = CreateColorQuadrant(40);
-        src.RotateFlip(RotateFlipType.Rotate180FlipNone);
-        g.DrawImage(src, 30, 30, 40, 40);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate90FlipX);
+        g.DrawImage(bmp, 30, 30);
     });
 
-    [Fact] public void Bitmap_RotateFlip_FlipX() => Render(100, 100, g => {
+    [Fact] public void Bitmap_RotateFlip_Rotate90FlipXY() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
-        using var src = CreateColorQuadrant(40);
-        src.RotateFlip(RotateFlipType.RotateNoneFlipX);
-        g.DrawImage(src, 30, 30, 40, 40);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate90FlipXY);
+        g.DrawImage(bmp, 30, 30);
     });
 
-    [Fact] public void Bitmap_RotateFlip_FlipY() => Render(100, 100, g => {
+    [Fact] public void Bitmap_RotateFlip_Rotate90FlipY() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
-        using var src = CreateColorQuadrant(40);
-        src.RotateFlip(RotateFlipType.RotateNoneFlipY);
-        g.DrawImage(src, 30, 30, 40, 40);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate90FlipY);
+        g.DrawImage(bmp, 30, 30);
     });
+
+    [Fact] public void Bitmap_RotateFlip_Rotate180FlipNone() => Render(100, 100, g => {
+        g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate180FlipNone);
+        g.DrawImage(bmp, 30, 30);
+    });
+
+    [Fact] public void Bitmap_RotateFlip_Rotate180FlipX() => Render(100, 100, g => {
+        g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate180FlipX);
+        g.DrawImage(bmp, 30, 30);
+    });
+
+    [Fact] public void Bitmap_RotateFlip_Rotate180FlipXY() => Render(100, 100, g => {
+        g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate180FlipXY);
+        g.DrawImage(bmp, 30, 30);
+    });
+
+    [Fact] public void Bitmap_RotateFlip_Rotate180FlipY() => Render(100, 100, g => {
+        g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate180FlipY);
+        g.DrawImage(bmp, 30, 30);
+    });
+
+    [Fact] public void Bitmap_RotateFlip_Rotate270FlipNone() => Render(100, 100, g => {
+        g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+        g.DrawImage(bmp, 30, 30);
+    });
+
+    [Fact] public void Bitmap_RotateFlip_Rotate270FlipX() => Render(100, 100, g => {
+        g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate270FlipX);
+        g.DrawImage(bmp, 30, 30);
+    });
+
+    [Fact] public void Bitmap_RotateFlip_Rotate270FlipXY() => Render(100, 100, g => {
+        g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate270FlipXY);
+        g.DrawImage(bmp, 30, 30);
+    });
+
+    [Fact] public void Bitmap_RotateFlip_Rotate270FlipY() => Render(100, 100, g => {
+        g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.Rotate270FlipY);
+        g.DrawImage(bmp, 30, 30);
+    });
+
+    [Fact] public void Bitmap_RotateFlip_RotateNoneFlipX() => Render(100, 100, g => {
+        g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.RotateNoneFlipX);
+        g.DrawImage(bmp, 30, 30);
+    });
+
+    [Fact] public void Bitmap_RotateFlip_RotateNoneFlipXY() => Render(100, 100, g => {
+        g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.RotateNoneFlipXY);
+        g.DrawImage(bmp, 30, 30);
+    });
+
+    [Fact] public void Bitmap_RotateFlip_RotateNoneFlipY() => Render(100, 100, g => {
+        g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
+        using var bmp = new Bitmap(40, 40);
+        using var bg = Graphics.FromImage(bmp);
+        bg.Clear(Color.White);
+        bg.FillRectangle(Brushes.Red, 0, 0, 20, 20);
+        bg.FillRectangle(Brushes.Blue, 20, 0, 20, 20);
+        bg.FillRectangle(Brushes.Green, 0, 20, 20, 20);
+        bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+        g.DrawImage(bmp, 30, 30);
+    });
+
+    // --- Other bitmap operations ---
 
     [Fact] public void Bitmap_Clone_Region() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
@@ -66,10 +222,8 @@ public partial class BitmapOperations : ScenarioBase
 
     [Fact] public void Bitmap_Transparent() => Render(100, 100, g => {
         g.SmoothingMode = SmoothingMode.None; g.Clear(Color.White);
-        // Draw a background pattern first
         g.FillRectangle(Brushes.LightGray, 0, 0, 50, 50);
         g.FillRectangle(Brushes.LightGray, 50, 50, 50, 50);
-        // Create bitmap with transparent regions
         using var bmp = new Bitmap(40, 40, PixelFormat.Format32bppArgb);
         using var bg = Graphics.FromImage(bmp);
         bg.Clear(Color.Transparent);
