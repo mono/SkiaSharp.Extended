@@ -192,8 +192,8 @@ public sealed partial class HatchBrush : Brush
 	{
 		ThrowIfDisposed();
 		var paint = new SKPaint { Style = SKPaintStyle.Fill, IsAntialias = false };
-		var fg = SkiaConversions.ToSKColor(_foreColor);
-		var bg = SkiaConversions.ToSKColor(_backColor);
+		uint fg = (uint)SkiaConversions.ToSKColor(_foreColor);
+		uint bg = (uint)SkiaConversions.ToSKColor(_backColor);
 
 		int index = (int)_hatchStyle;
 		if (index < 0 || index > 52)
@@ -202,17 +202,27 @@ public sealed partial class HatchBrush : Brush
 		var data = HatchPatternData;
 		int offset = index * 8;
 		const int tileSize = 8;
-		using var tileBitmap = new SKBitmap(tileSize, tileSize);
 
+		// Build 64-pixel tile in a stack-friendly buffer, then copy into SKImage
+		Span<uint> pixels = stackalloc uint[tileSize * tileSize];
 		for (int y = 0; y < tileSize; y++)
 		{
 			byte row = data[offset + y];
+			int rowOffset = y * tileSize;
 			for (int x = 0; x < tileSize; x++)
-				tileBitmap.SetPixel(x, y, (row & (0x80 >> x)) != 0 ? fg : bg);
+				pixels[rowOffset + x] = (row & (0x80 >> x)) != 0 ? fg : bg;
 		}
 
-		using var image = SKImage.FromBitmap(tileBitmap);
-		paint.Shader = SKShader.CreateImage(image, SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
+		var info = new SKImageInfo(tileSize, tileSize, SKColorType.Bgra8888, SKAlphaType.Premul);
+		unsafe
+		{
+			fixed (uint* ptr = pixels)
+			{
+				using var pixmap = new SKPixmap(info, (IntPtr)ptr, tileSize * sizeof(uint));
+				using var image = SKImage.FromPixelCopy(pixmap);
+				paint.Shader = SKShader.CreateImage(image, SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
+			}
+		}
 		return paint;
 	}
 }
