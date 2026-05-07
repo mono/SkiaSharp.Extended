@@ -2735,8 +2735,8 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 
 	private void ApplyState(SKPaint paint)
 	{
-		paint.IsAntialias = _smoothingMode != SmoothingMode.None
-		                 && _smoothingMode != SmoothingMode.HighSpeed;
+		paint.IsAntialias = _smoothingMode == SmoothingMode.AntiAlias
+		                 || _smoothingMode == SmoothingMode.HighQuality;
 	}
 
 	private void ThrowIfDisposed()
