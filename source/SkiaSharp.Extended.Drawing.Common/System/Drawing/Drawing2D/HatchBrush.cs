@@ -86,32 +86,26 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 		using var tileCanvas = new SKCanvas(tileBitmap);
 		tileCanvas.Clear(bg);
 
-		using var fgPaint = new SKPaint
-		{
-			Color = fg,
-			IsAntialias = false,
-			StrokeWidth = 1,
-			Style = SKPaintStyle.Stroke,
-		};
-
-		DrawHatchPattern(tileCanvas, fgPaint, fg, bg, tileSize);
+		DrawHatchPattern(tileCanvas, fg, bg, tileSize);
 
 		using var image = SKImage.FromBitmap(tileBitmap);
 		paint.Shader = SKShader.CreateImage(image, SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
 		return paint;
 	}
 
-	private void DrawHatchPattern(SKCanvas canvas, SKPaint fgPaint, SKColor fg, SKColor bg, int size)
+	private void DrawHatchPattern(SKCanvas canvas, SKColor fg, SKColor bg, int size)
 	{
 		switch (_hatchStyle)
 		{
 			case HatchStyle.Horizontal:
 			case HatchStyle.LightHorizontal:
-				canvas.DrawLine(0, 0, size, 0, fgPaint);
+				for (int x = 0; x < size; x++)
+					SetPixel(canvas, x, 0, fg);
 				break;
 			case HatchStyle.Vertical:
 			case HatchStyle.LightVertical:
-				canvas.DrawLine(0, 0, 0, size, fgPaint);
+				for (int y = 0; y < size; y++)
+					SetPixel(canvas, 0, y, fg);
 				break;
 			case HatchStyle.ForwardDiagonal:
 			case HatchStyle.LightDownwardDiagonal:
@@ -125,8 +119,10 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 				break;
 			case HatchStyle.Cross:
 			case HatchStyle.SmallGrid:
-				canvas.DrawLine(0, 0, size, 0, fgPaint);
-				canvas.DrawLine(0, 0, 0, size, fgPaint);
+				for (int x = 0; x < size; x++)
+					SetPixel(canvas, x, 0, fg);
+				for (int y = 1; y < size; y++)
+					SetPixel(canvas, 0, y, fg);
 				break;
 			case HatchStyle.DiagonalCross:
 			case HatchStyle.OutlinedDiamond:
@@ -137,14 +133,22 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 				}
 				break;
 			case HatchStyle.DarkHorizontal:
-				fgPaint.StrokeWidth = 2;
-				canvas.DrawLine(0, 2, size, 2, fgPaint);
-				canvas.DrawLine(0, 6, size, 6, fgPaint);
+				for (int x = 0; x < size; x++)
+				{
+					SetPixel(canvas, x, 0, fg);
+					SetPixel(canvas, x, 1, fg);
+					SetPixel(canvas, x, 4, fg);
+					SetPixel(canvas, x, 5, fg);
+				}
 				break;
 			case HatchStyle.DarkVertical:
-				fgPaint.StrokeWidth = 2;
-				canvas.DrawLine(2, 0, 2, size, fgPaint);
-				canvas.DrawLine(6, 0, 6, size, fgPaint);
+				for (int y = 0; y < size; y++)
+				{
+					SetPixel(canvas, 0, y, fg);
+					SetPixel(canvas, 1, y, fg);
+					SetPixel(canvas, 4, y, fg);
+					SetPixel(canvas, 5, y, fg);
+				}
 				break;
 			case HatchStyle.DarkDownwardDiagonal:
 				for (int i = 0; i < size; i++)
@@ -178,19 +182,25 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 				break;
 			case HatchStyle.NarrowVertical:
 				for (int x = 0; x < size; x += 2)
-					canvas.DrawLine(x, 0, x, size, fgPaint);
+					for (int y = 0; y < size; y++)
+						SetPixel(canvas, x, y, fg);
 				break;
 			case HatchStyle.NarrowHorizontal:
 				for (int y = 0; y < size; y += 2)
-					canvas.DrawLine(0, y, size, y, fgPaint);
+					for (int x = 0; x < size; x++)
+						SetPixel(canvas, x, y, fg);
 				break;
 			case HatchStyle.DashedHorizontal:
-				canvas.DrawLine(0, 0, 4, 0, fgPaint);
-				canvas.DrawLine(4, 4, 8, 4, fgPaint);
+				for (int x = 0; x < 4; x++)
+					SetPixel(canvas, x, 0, fg);
+				for (int x = 4; x < 8; x++)
+					SetPixel(canvas, x, 4, fg);
 				break;
 			case HatchStyle.DashedVertical:
-				canvas.DrawLine(0, 0, 0, 4, fgPaint);
-				canvas.DrawLine(4, 4, 4, 8, fgPaint);
+				for (int y = 0; y < 4; y++)
+					SetPixel(canvas, 0, y, fg);
+				for (int y = 4; y < 8; y++)
+					SetPixel(canvas, 4, y, fg);
 				break;
 			case HatchStyle.DashedDownwardDiagonal:
 				for (int i = 0; i < 4; i++)
@@ -274,18 +284,23 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 				for (int y = 0; y < 4; y++)
 					for (int x = 0; x < 4; x++)
 						SetPixel(canvas, x, y, ((x + y) % 2 == 0) ? fg : bg);
-				using (var fillPaint = new SKPaint { Color = fg, IsAntialias = false })
-					canvas.DrawRect(4, 0, 4, 4, fillPaint);
+				for (int y = 0; y < 4; y++)
+					for (int x = 4; x < 8; x++)
+						SetPixel(canvas, x, y, fg);
 				for (int y = 4; y < 8; y++)
 					for (int x = 0; x < 4; x++)
 						SetPixel(canvas, x, y, fg);
 				break;
 			case HatchStyle.Sphere:
 				// Circle-ish dot pattern
-				using (var fillPaint = new SKPaint { Color = fg, IsAntialias = false, Style = SKPaintStyle.Fill })
-				{
-					canvas.DrawOval(new SKRect(1, 1, 5, 5), fillPaint);
-				}
+				SetPixel(canvas, 2, 0, fg); SetPixel(canvas, 3, 0, fg);
+				SetPixel(canvas, 1, 1, fg); SetPixel(canvas, 4, 1, fg);
+				SetPixel(canvas, 1, 2, fg); SetPixel(canvas, 4, 2, fg);
+				SetPixel(canvas, 2, 3, fg); SetPixel(canvas, 3, 3, fg);
+				SetPixel(canvas, 6, 4, fg); SetPixel(canvas, 7, 4, fg);
+				SetPixel(canvas, 5, 5, fg); SetPixel(canvas, 0, 5, fg);
+				SetPixel(canvas, 5, 6, fg); SetPixel(canvas, 0, 6, fg);
+				SetPixel(canvas, 6, 7, fg); SetPixel(canvas, 7, 7, fg);
 				break;
 			case HatchStyle.Trellis:
 				// Alternating rows of checks
@@ -294,18 +309,34 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 						SetPixel(canvas, x, y, ((x + y) % 2 == 0) ? fg : bg);
 				break;
 			case HatchStyle.Weave:
-				canvas.DrawLine(0, 0, 4, 4, fgPaint);
-				canvas.DrawLine(4, 4, 8, 0, fgPaint);
-				canvas.DrawLine(4, 4, 4, 8, fgPaint);
+				// Downward diagonal (0,0)→(4,4), upward (4,4)→(7,1), vertical (4,4)→(4,7)
+				SetPixel(canvas, 0, 0, fg);
+				SetPixel(canvas, 1, 1, fg);
+				SetPixel(canvas, 2, 2, fg);
+				SetPixel(canvas, 3, 3, fg);
+				SetPixel(canvas, 4, 4, fg);
+				SetPixel(canvas, 5, 3, fg);
+				SetPixel(canvas, 6, 2, fg);
+				SetPixel(canvas, 7, 1, fg);
+				SetPixel(canvas, 4, 5, fg);
+				SetPixel(canvas, 4, 6, fg);
+				SetPixel(canvas, 4, 7, fg);
 				break;
 			case HatchStyle.HorizontalBrick:
-				canvas.DrawLine(0, 4, size, 4, fgPaint);
-				canvas.DrawLine(0, 0, 0, 4, fgPaint);
-				canvas.DrawLine(4, 4, 4, 8, fgPaint);
+				// Horizontal line at y=4, vertical mortar at x=0 (top) and x=4 (bottom)
+				for (int x = 0; x < size; x++)
+					SetPixel(canvas, x, 4, fg);
+				for (int y = 0; y < 4; y++)
+					SetPixel(canvas, 0, y, fg);
+				for (int y = 5; y < size; y++)
+					SetPixel(canvas, 4, y, fg);
 				break;
 			case HatchStyle.DiagonalBrick:
-				canvas.DrawLine(0, 0, size, size, fgPaint);
-				canvas.DrawLine(0, size, size / 2, size / 2, fgPaint);
+				// Main diagonal + counter diagonal from bottom-left to center
+				for (int i = 0; i < size; i++)
+					SetPixel(canvas, i, i, fg);
+				for (int i = 1; i < size / 2; i++)
+					SetPixel(canvas, i, size - i, fg);
 				break;
 			case HatchStyle.DottedGrid:
 				for (int i = 0; i < size; i += 2)
@@ -335,25 +366,37 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 				SetPixel(canvas, 6, 7, fg);
 				break;
 			case HatchStyle.LargeConfetti:
-				using (var fillPaint = new SKPaint { Color = fg, IsAntialias = false, Style = SKPaintStyle.Fill })
-				{
-					canvas.DrawRect(0, 0, 2, 2, fillPaint);
-					canvas.DrawRect(4, 4, 2, 2, fillPaint);
-				}
+				for (int dy = 0; dy < 2; dy++)
+					for (int dx = 0; dx < 2; dx++)
+					{
+						SetPixel(canvas, dx, dy, fg);
+						SetPixel(canvas, 4 + dx, 4 + dy, fg);
+					}
 				break;
 			case HatchStyle.ZigZag:
-				canvas.DrawLine(0, 4, 4, 0, fgPaint);
-				canvas.DrawLine(4, 0, 8, 4, fgPaint);
+				// V shape: up from (0,4) to (4,0) then down to (7,3)
+				for (int i = 0; i <= 4; i++)
+					SetPixel(canvas, i, 4 - i, fg);
+				for (int i = 1; i < 4; i++)
+					SetPixel(canvas, 4 + i, i, fg);
 				break;
 			case HatchStyle.Wave:
-				canvas.DrawLine(0, 4, 2, 2, fgPaint);
-				canvas.DrawLine(2, 2, 4, 4, fgPaint);
-				canvas.DrawLine(4, 4, 6, 2, fgPaint);
-				canvas.DrawLine(6, 2, 8, 4, fgPaint);
+				// Sine-like wave: down-up-down-up
+				SetPixel(canvas, 0, 4, fg);
+				SetPixel(canvas, 1, 3, fg);
+				SetPixel(canvas, 2, 2, fg);
+				SetPixel(canvas, 3, 3, fg);
+				SetPixel(canvas, 4, 4, fg);
+				SetPixel(canvas, 5, 3, fg);
+				SetPixel(canvas, 6, 2, fg);
+				SetPixel(canvas, 7, 3, fg);
 				break;
 			case HatchStyle.Shingle:
-				canvas.DrawLine(0, 0, 8, 8, fgPaint);
-				canvas.DrawLine(0, 8, 4, 4, fgPaint);
+				// Main diagonal + counter line from bottom-left to center
+				for (int i = 0; i < size; i++)
+					SetPixel(canvas, i, i, fg);
+				for (int i = 1; i < size / 2; i++)
+					SetPixel(canvas, i, size - i, fg);
 				break;
 			case HatchStyle.Divot:
 				SetPixel(canvas, 2, 1, fg);
@@ -375,29 +418,23 @@ public sealed partial class HatchBrush : System.Drawing.Brush
 				}
 				break;
 			case HatchStyle.SmallCheckerBoard:
-				using (var fillPaint = new SKPaint { Color = fg, IsAntialias = false, Style = SKPaintStyle.Fill })
-				{
-					canvas.DrawRect(0, 0, 2, 2, fillPaint);
-					canvas.DrawRect(4, 0, 2, 2, fillPaint);
-					canvas.DrawRect(2, 2, 2, 2, fillPaint);
-					canvas.DrawRect(6, 2, 2, 2, fillPaint);
-					canvas.DrawRect(0, 4, 2, 2, fillPaint);
-					canvas.DrawRect(4, 4, 2, 2, fillPaint);
-					canvas.DrawRect(2, 6, 2, 2, fillPaint);
-					canvas.DrawRect(6, 6, 2, 2, fillPaint);
-				}
+				for (int y = 0; y < size; y++)
+					for (int x = 0; x < size; x++)
+						if (((x / 2) + (y / 2)) % 2 == 0)
+							SetPixel(canvas, x, y, fg);
 				break;
 			case HatchStyle.LargeCheckerBoard:
-				using (var fillPaint = new SKPaint { Color = fg, IsAntialias = false, Style = SKPaintStyle.Fill })
-				{
-					canvas.DrawRect(0, 0, 4, 4, fillPaint);
-					canvas.DrawRect(4, 4, 4, 4, fillPaint);
-				}
+				for (int y = 0; y < size; y++)
+					for (int x = 0; x < size; x++)
+						if (((x / 4) + (y / 4)) % 2 == 0)
+							SetPixel(canvas, x, y, fg);
 				break;
 			default:
 				// Fallback: cross pattern
-				canvas.DrawLine(0, 4, size, 4, fgPaint);
-				canvas.DrawLine(4, 0, 4, size, fgPaint);
+				for (int x = 0; x < size; x++)
+					SetPixel(canvas, x, 4, fg);
+				for (int y = 0; y < size; y++)
+					SetPixel(canvas, 4, y, fg);
 				break;
 		}
 	}
