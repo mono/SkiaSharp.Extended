@@ -361,8 +361,89 @@ public sealed partial class PathGradientBrush : Brush
 	}
 
 	/// <summary>
-	///  Creates an <see cref="SKPaint"/> configured for fill operations with this path gradient brush.
-	///  Uses <see cref="SKShader.CreateRadialGradient(SKPoint, float, SKColor[], SKShaderTileMode)"/> as an approximation of the path gradient.
+	///  Renders the path gradient directly onto a canvas using a triangle fan with per-vertex colors.
+	///  This produces a gradient that follows the path shape, unlike a radial gradient.
+	/// </summary>
+	internal void FillOnCanvas(SKCanvas canvas, SKPath clipPath, bool antialias)
+	{
+		ThrowIfDisposed();
+
+		var center = new SKPoint(_centerPoint.X, _centerPoint.Y);
+		var skCenterColor = SkiaConversions.ToSKColor(_centerColor);
+
+		// Flatten the path to get boundary points
+		var boundaryPoints = new System.Collections.Generic.List<SKPoint>();
+		using var iter = clipPath.CreateIterator(false);
+		var pts = new SKPoint[4];
+		SKPathVerb verb;
+		while ((verb = iter.Next(pts)) != SKPathVerb.Done)
+		{
+			switch (verb)
+			{
+				case SKPathVerb.Move:
+					boundaryPoints.Add(pts[0]);
+					break;
+				case SKPathVerb.Line:
+					boundaryPoints.Add(pts[1]);
+					break;
+				case SKPathVerb.Quad:
+					// Subdivide quadratic into line segments
+					for (int s = 1; s <= 4; s++)
+					{
+						float t = s / 4f;
+						float x = (1 - t) * (1 - t) * pts[0].X + 2 * (1 - t) * t * pts[1].X + t * t * pts[2].X;
+						float y = (1 - t) * (1 - t) * pts[0].Y + 2 * (1 - t) * t * pts[1].Y + t * t * pts[2].Y;
+						boundaryPoints.Add(new SKPoint(x, y));
+					}
+					break;
+				case SKPathVerb.Cubic:
+					// Subdivide cubic into line segments
+					for (int s = 1; s <= 8; s++)
+					{
+						float t = s / 8f;
+						float u = 1 - t;
+						float x = u * u * u * pts[0].X + 3 * u * u * t * pts[1].X + 3 * u * t * t * pts[2].X + t * t * t * pts[3].X;
+						float y = u * u * u * pts[0].Y + 3 * u * u * t * pts[1].Y + 3 * u * t * t * pts[2].Y + t * t * t * pts[3].Y;
+						boundaryPoints.Add(new SKPoint(x, y));
+					}
+					break;
+				case SKPathVerb.Close:
+					break;
+			}
+		}
+
+		int n = boundaryPoints.Count;
+		if (n < 3) return;
+
+		// Build triangle fan: center + N boundary + close
+		var fanPts = new SKPoint[n + 2];
+		var fanCols = new SKColor[n + 2];
+
+		fanPts[0] = center;
+		fanCols[0] = skCenterColor;
+
+		for (int i = 0; i < n; i++)
+		{
+			fanPts[i + 1] = boundaryPoints[i];
+			fanCols[i + 1] = SkiaConversions.ToSKColor(_surroundColors[i % _surroundColors.Length]);
+		}
+
+		// Close the fan
+		fanPts[n + 1] = fanPts[1];
+		fanCols[n + 1] = fanCols[1];
+
+		using var verts = SKVertices.CreateCopy(SKVertexMode.TriangleFan, fanPts, fanCols);
+		using var paint = new SKPaint { IsAntialias = antialias, Color = SKColors.White };
+
+		canvas.Save();
+		canvas.ClipPath(clipPath);
+		canvas.DrawVertices(verts, SKBlendMode.Modulate, paint);
+		canvas.Restore();
+	}
+
+	/// <summary>
+	///  Creates an <see cref="SKPaint"/> as fallback for cases where direct canvas rendering isn't available.
+	///  Uses <see cref="SKShader.CreateRadialGradient(SKPoint, float, SKColor[], SKShaderTileMode)"/> as an approximation.
 	/// </summary>
 	/// <returns>A new <see cref="SKPaint"/> with a radial gradient <see cref="SKShader"/>.</returns>
 	internal override SKPaint CreatePaint()

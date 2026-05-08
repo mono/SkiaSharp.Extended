@@ -1744,6 +1744,14 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	{
 		ThrowIfDisposed();
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
+		if (brush is PathGradientBrush pgb)
+		{
+			bool aa = _smoothingMode == SmoothingMode.AntiAlias || _smoothingMode == SmoothingMode.HighQuality;
+			using var ellipsePath = new SKPath();
+			ellipsePath.AddOval(GdiCurveRect(x, y, width, height));
+			pgb.FillOnCanvas(_canvas, ellipsePath, aa);
+			return;
+		}
 		using var paint = brush.CreatePaint();
 		ApplyState(paint);
 		_canvas.DrawOval(GdiCurveRect(x, y, width, height), paint);
@@ -1757,6 +1765,12 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		ThrowIfDisposed();
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
 		if (path is null) throw new ArgumentNullException(nameof(path));
+		if (brush is PathGradientBrush pgb)
+		{
+			bool aa = _smoothingMode == SmoothingMode.AntiAlias || _smoothingMode == SmoothingMode.HighQuality;
+			pgb.FillOnCanvas(_canvas, path.SKPath, aa);
+			return;
+		}
 		using var paint = brush.CreatePaint();
 		ApplyState(paint);
 		_canvas.DrawPath(path.SKPath, paint);
@@ -1893,6 +1907,14 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	{
 		ThrowIfDisposed();
 		if (brush is null) throw new ArgumentNullException(nameof(brush));
+		if (brush is PathGradientBrush pgb)
+		{
+			bool aa = _smoothingMode == SmoothingMode.AntiAlias || _smoothingMode == SmoothingMode.HighQuality;
+			using var rectPath = new SKPath();
+			rectPath.AddRect(new SKRect(x, y, x + width, y + height));
+			pgb.FillOnCanvas(_canvas, rectPath, aa);
+			return;
+		}
 		using var paint = brush.CreatePaint();
 		ApplyState(paint);
 		_canvas.DrawRect(new SKRect(x, y, x + width, y + height), paint);
