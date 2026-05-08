@@ -1,0 +1,1411 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - link "Skip to content" [ref=e4] [cursor=pointer]:
+        - /url: "#start-of-content"
+      - banner [ref=e6]:
+        - heading "Navigation Menu" [level=2] [ref=e7]
+        - generic [ref=e8]:
+          - link "Homepage" [ref=e10] [cursor=pointer]:
+            - /url: /
+            - img [ref=e11]
+          - generic [ref=e13]:
+            - navigation "Global" [ref=e16]:
+              - list [ref=e17]:
+                - listitem [ref=e18]:
+                  - button "Platform" [ref=e20] [cursor=pointer]:
+                    - text: Platform
+                    - img [ref=e21]
+                - listitem [ref=e23]:
+                  - button "Solutions" [ref=e25] [cursor=pointer]:
+                    - text: Solutions
+                    - img [ref=e26]
+                - listitem [ref=e28]:
+                  - button "Resources" [ref=e30] [cursor=pointer]:
+                    - text: Resources
+                    - img [ref=e31]
+                - listitem [ref=e33]:
+                  - button "Open Source" [ref=e35] [cursor=pointer]:
+                    - text: Open Source
+                    - img [ref=e36]
+                - listitem [ref=e38]:
+                  - button "Enterprise" [ref=e40] [cursor=pointer]:
+                    - text: Enterprise
+                    - img [ref=e41]
+                - listitem [ref=e43]:
+                  - link "Pricing" [ref=e44] [cursor=pointer]:
+                    - /url: https://github.com/pricing
+                    - generic [ref=e45]: Pricing
+            - generic [ref=e46]:
+              - button "Search or jump to…" [ref=e49] [cursor=pointer]:
+                - img [ref=e51]
+              - link "Sign in" [ref=e54] [cursor=pointer]:
+                - /url: /login?return_to=https%3A%2F%2Fgithub.com%2Fmono%2Flibgdiplus%2Fblob%2Fmain%2Fsrc%2Fbrush.c
+              - link "Sign up" [ref=e55] [cursor=pointer]:
+                - /url: /signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fblob%2Fshow&source=header-repo&source_repo=mono%2Flibgdiplus
+              - button "Appearance settings" [ref=e58] [cursor=pointer]:
+                - img
+    - main [ref=e62]:
+      - generic [ref=e63]: This repository was archived by the owner on Mar 7, 2025. It is now read-only.
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e67]:
+            - img [ref=e68]
+            - link "mono" [ref=e71] [cursor=pointer]:
+              - /url: /mono
+            - generic [ref=e72]: /
+            - strong [ref=e73]:
+              - link "libgdiplus" [ref=e74] [cursor=pointer]:
+                - /url: /mono/libgdiplus
+            - generic [ref=e75]: Public archive
+          - generic [ref=e76]:
+            - list:
+              - listitem [ref=e77]:
+                - link "You must be signed in to change notification settings" [ref=e78] [cursor=pointer]:
+                  - /url: /login?return_to=%2Fmono%2Flibgdiplus
+                  - img [ref=e79]
+                  - text: Notifications
+              - listitem [ref=e81]:
+                - link "Fork 175" [ref=e82] [cursor=pointer]:
+                  - /url: /login?return_to=%2Fmono%2Flibgdiplus
+                  - img [ref=e83]
+                  - text: Fork
+                  - generic "175" [ref=e85]
+              - listitem [ref=e86]:
+                - link "You must be signed in to star a repository" [ref=e88] [cursor=pointer]:
+                  - /url: /login?return_to=%2Fmono%2Flibgdiplus
+                  - img [ref=e89]
+                  - text: Star
+                  - generic "354 users starred this repository" [ref=e91]: "354"
+        - navigation "Repository" [ref=e92]:
+          - list [ref=e93]:
+            - listitem [ref=e94]:
+              - link "Code" [ref=e95] [cursor=pointer]:
+                - /url: /mono/libgdiplus
+                - img [ref=e96]
+                - generic [ref=e98]: Code
+            - listitem [ref=e99]:
+              - link "Issues 175" [ref=e100] [cursor=pointer]:
+                - /url: /mono/libgdiplus/issues
+                - img [ref=e101]
+                - generic [ref=e104]: Issues
+                - generic "175" [ref=e105]
+            - listitem [ref=e106]:
+              - link "Pull requests 15" [ref=e107] [cursor=pointer]:
+                - /url: /mono/libgdiplus/pulls
+                - img [ref=e108]
+                - generic [ref=e110]: Pull requests
+                - generic "15" [ref=e111]
+            - listitem [ref=e112]:
+              - link "Actions" [ref=e113] [cursor=pointer]:
+                - /url: /mono/libgdiplus/actions
+                - img [ref=e114]
+                - generic [ref=e116]: Actions
+            - listitem [ref=e117]:
+              - link "Security and quality" [ref=e118] [cursor=pointer]:
+                - /url: /mono/libgdiplus/security
+                - img [ref=e119]
+                - generic [ref=e121]: Security and quality
+            - listitem [ref=e122]:
+              - link "Insights" [ref=e123] [cursor=pointer]:
+                - /url: /mono/libgdiplus/pulse
+                - img [ref=e124]
+                - generic [ref=e126]: Insights
+      - generic [ref=e134]:
+        - generic [ref=e136]:
+          - generic [ref=e139]:
+            - generic [ref=e140]:
+              - generic [ref=e141]:
+                - heading "Collapse file tree" [level=2] [ref=e142]:
+                  - button "Collapse file tree" [expanded] [ref=e143] [cursor=pointer]:
+                    - img [ref=e144]
+                - heading "Files" [level=2] [ref=e147]
+              - generic [ref=e148]:
+                - button "main branch" [ref=e150] [cursor=pointer]:
+                  - generic [ref=e151]:
+                    - generic [ref=e153]:
+                      - img [ref=e155]
+                      - generic [ref=e158]: main
+                    - generic:
+                      - img
+                - button "Search this repository (forward slash)" [ref=e160] [cursor=pointer]:
+                  - img [ref=e161]
+            - generic [ref=e164]:
+              - img [ref=e166]
+              - combobox "Go to file" [ref=e168]
+            - navigation "File Tree Navigation" [ref=e174]:
+              - tree "Files" [ref=e176]:
+                - treeitem ".vscode" [level=1] [ref=e177]:
+                  - generic [ref=e178] [cursor=pointer]:
+                    - img [ref=e180]
+                    - generic [ref=e182]:
+                      - img [ref=e186]
+                      - generic [ref=e188]: .vscode
+                - treeitem "docs" [level=1] [ref=e189]:
+                  - generic [ref=e190] [cursor=pointer]:
+                    - img [ref=e192]
+                    - generic [ref=e194]:
+                      - img [ref=e198]
+                      - generic [ref=e200]: docs
+                - treeitem "external" [level=1] [ref=e201]:
+                  - generic [ref=e202] [cursor=pointer]:
+                    - img [ref=e204]
+                    - generic [ref=e206]:
+                      - img [ref=e210]
+                      - generic [ref=e212]: external
+                - treeitem "src" [expanded] [level=1] [ref=e213]:
+                  - generic [ref=e214] [cursor=pointer]:
+                    - img [ref=e216]
+                    - generic [ref=e218]:
+                      - img [ref=e222]
+                      - generic [ref=e224]: src
+                  - group "src" [ref=e225]:
+                    - treeitem ".gitignore" [level=2] [ref=e226]:
+                      - generic [ref=e231] [cursor=pointer]:
+                        - img [ref=e234]
+                        - generic [ref=e236]: .gitignore
+                    - treeitem "GdiPlusFlat.h" [level=2] [ref=e237]:
+                      - generic [ref=e242] [cursor=pointer]:
+                        - img [ref=e245]
+                        - generic [ref=e247]: GdiPlusFlat.h
+                    - treeitem "Makefile.am" [level=2] [ref=e248]:
+                      - generic [ref=e253] [cursor=pointer]:
+                        - img [ref=e256]
+                        - generic [ref=e258]: Makefile.am
+                    - treeitem "adjustablearrowcap-private.h" [level=2] [ref=e259]:
+                      - generic [ref=e264] [cursor=pointer]:
+                        - img [ref=e267]
+                        - generic [ref=e269]: adjustablearrowcap-private.h
+                    - treeitem "adjustablearrowcap.c" [level=2] [ref=e270]:
+                      - generic [ref=e275] [cursor=pointer]:
+                        - img [ref=e278]
+                        - generic [ref=e280]: adjustablearrowcap.c
+                    - treeitem "adjustablearrowcap.h" [level=2] [ref=e281]:
+                      - generic [ref=e286] [cursor=pointer]:
+                        - img [ref=e289]
+                        - generic [ref=e291]: adjustablearrowcap.h
+                    - treeitem "alpha-premul-table.inc" [level=2] [ref=e292]:
+                      - generic [ref=e297] [cursor=pointer]:
+                        - img [ref=e300]
+                        - generic [ref=e302]: alpha-premul-table.inc
+                    - treeitem "bitmap-private.h" [level=2] [ref=e303]:
+                      - generic [ref=e308] [cursor=pointer]:
+                        - img [ref=e311]
+                        - generic [ref=e313]: bitmap-private.h
+                    - treeitem "bitmap.c" [level=2] [ref=e314]:
+                      - generic [ref=e319] [cursor=pointer]:
+                        - img [ref=e322]
+                        - generic [ref=e324]: bitmap.c
+                    - treeitem "bitmap.h" [level=2] [ref=e325]:
+                      - generic [ref=e330] [cursor=pointer]:
+                        - img [ref=e333]
+                        - generic [ref=e335]: bitmap.h
+                    - treeitem "bmpcodec.c" [level=2] [ref=e336]:
+                      - generic [ref=e341] [cursor=pointer]:
+                        - img [ref=e344]
+                        - generic [ref=e346]: bmpcodec.c
+                    - treeitem "bmpcodec.h" [level=2] [ref=e347]:
+                      - generic [ref=e352] [cursor=pointer]:
+                        - img [ref=e355]
+                        - generic [ref=e357]: bmpcodec.h
+                    - treeitem "brush-private.h" [level=2] [ref=e358]:
+                      - generic [ref=e363] [cursor=pointer]:
+                        - img [ref=e366]
+                        - generic [ref=e368]: brush-private.h
+                    - treeitem "brush.c" [level=2] [ref=e369]:
+                      - generic [ref=e374] [cursor=pointer]:
+                        - img [ref=e377]
+                        - generic [ref=e379]: brush.c
+                    - treeitem "brush.h" [level=2] [ref=e380]:
+                      - generic [ref=e385] [cursor=pointer]:
+                        - img [ref=e388]
+                        - generic [ref=e390]: brush.h
+                    - treeitem "carbon-private.c" [level=2] [ref=e391]:
+                      - generic [ref=e396] [cursor=pointer]:
+                        - img [ref=e399]
+                        - generic [ref=e401]: carbon-private.c
+                    - treeitem "carbon-private.h" [level=2] [ref=e402]:
+                      - generic [ref=e407] [cursor=pointer]:
+                        - img [ref=e410]
+                        - generic [ref=e412]: carbon-private.h
+                    - treeitem "codecs-private.h" [level=2] [ref=e413]:
+                      - generic [ref=e418] [cursor=pointer]:
+                        - img [ref=e421]
+                        - generic [ref=e423]: codecs-private.h
+                    - treeitem "codecs.h" [level=2] [ref=e424]:
+                      - generic [ref=e429] [cursor=pointer]:
+                        - img [ref=e432]
+                        - generic [ref=e434]: codecs.h
+                    - treeitem "customlinecap-private.h" [level=2] [ref=e435]:
+                      - generic [ref=e440] [cursor=pointer]:
+                        - img [ref=e443]
+                        - generic [ref=e445]: customlinecap-private.h
+                    - treeitem "customlinecap.c" [level=2] [ref=e446]:
+                      - generic [ref=e451] [cursor=pointer]:
+                        - img [ref=e454]
+                        - generic [ref=e456]: customlinecap.c
+                    - treeitem "customlinecap.h" [level=2] [ref=e457]:
+                      - generic [ref=e462] [cursor=pointer]:
+                        - img [ref=e465]
+                        - generic [ref=e467]: customlinecap.h
+                    - treeitem "dstream.c" [level=2] [ref=e468]:
+                      - generic [ref=e473] [cursor=pointer]:
+                        - img [ref=e476]
+                        - generic [ref=e478]: dstream.c
+                    - treeitem "dstream.h" [level=2] [ref=e479]:
+                      - generic [ref=e484] [cursor=pointer]:
+                        - img [ref=e487]
+                        - generic [ref=e489]: dstream.h
+                    - treeitem "emfcodec.c" [level=2] [ref=e490]:
+                      - generic [ref=e495] [cursor=pointer]:
+                        - img [ref=e498]
+                        - generic [ref=e500]: emfcodec.c
+                    - treeitem "emfcodec.h" [level=2] [ref=e501]:
+                      - generic [ref=e506] [cursor=pointer]:
+                        - img [ref=e509]
+                        - generic [ref=e511]: emfcodec.h
+                    - treeitem "emfplus.c" [level=2] [ref=e512]:
+                      - generic [ref=e517] [cursor=pointer]:
+                        - img [ref=e520]
+                        - generic [ref=e522]: emfplus.c
+                    - treeitem "emfplus.h" [level=2] [ref=e523]:
+                      - generic [ref=e528] [cursor=pointer]:
+                        - img [ref=e531]
+                        - generic [ref=e533]: emfplus.h
+                    - treeitem "font-private.h" [level=2] [ref=e534]:
+                      - generic [ref=e539] [cursor=pointer]:
+                        - img [ref=e542]
+                        - generic [ref=e544]: font-private.h
+                    - treeitem "font.c" [level=2] [ref=e545]:
+                      - generic [ref=e550] [cursor=pointer]:
+                        - img [ref=e553]
+                        - generic [ref=e555]: font.c
+                    - treeitem "font.h" [level=2] [ref=e556]:
+                      - generic [ref=e561] [cursor=pointer]:
+                        - img [ref=e564]
+                        - generic [ref=e566]: font.h
+                    - treeitem "fontcollection-private.h" [level=2] [ref=e567]:
+                      - generic [ref=e572] [cursor=pointer]:
+                        - img [ref=e575]
+                        - generic [ref=e577]: fontcollection-private.h
+                    - treeitem "fontcollection.h" [level=2] [ref=e578]:
+                      - generic [ref=e583] [cursor=pointer]:
+                        - img [ref=e586]
+                        - generic [ref=e588]: fontcollection.h
+                    - treeitem "fontfamily-private.h" [level=2] [ref=e589]:
+                      - generic [ref=e594] [cursor=pointer]:
+                        - img [ref=e597]
+                        - generic [ref=e599]: fontfamily-private.h
+                    - treeitem "fontfamily.h" [level=2] [ref=e600]:
+                      - generic [ref=e605] [cursor=pointer]:
+                        - img [ref=e608]
+                        - generic [ref=e610]: fontfamily.h
+                    - treeitem "gdi32.c" [level=2] [ref=e611]:
+                      - generic [ref=e616] [cursor=pointer]:
+                        - img [ref=e619]
+                        - generic [ref=e621]: gdi32.c
+                    - treeitem "gdi32.h" [level=2] [ref=e622]:
+                      - generic [ref=e627] [cursor=pointer]:
+                        - img [ref=e630]
+                        - generic [ref=e632]: gdi32.h
+                    - treeitem "gdip.h" [level=2] [ref=e633]:
+                      - generic [ref=e638] [cursor=pointer]:
+                        - img [ref=e641]
+                        - generic [ref=e643]: gdip.h
+                    - treeitem "gdipenums.h" [level=2] [ref=e644]:
+                      - generic [ref=e649] [cursor=pointer]:
+                        - img [ref=e652]
+                        - generic [ref=e654]: gdipenums.h
+                    - treeitem "gdiplus-private.h" [level=2] [ref=e655]:
+                      - generic [ref=e660] [cursor=pointer]:
+                        - img [ref=e663]
+                        - generic [ref=e665]: gdiplus-private.h
+                    - treeitem "gdiplusimaging.h" [level=2] [ref=e666]:
+                      - generic [ref=e671] [cursor=pointer]:
+                        - img [ref=e674]
+                        - generic [ref=e676]: gdiplusimaging.h
+                    - treeitem "gdipluspixelformats.h" [level=2] [ref=e677]:
+                      - generic [ref=e682] [cursor=pointer]:
+                        - img [ref=e685]
+                        - generic [ref=e687]: gdipluspixelformats.h
+                    - treeitem "gdipstructs.h" [level=2] [ref=e688]:
+                      - generic [ref=e693] [cursor=pointer]:
+                        - img [ref=e696]
+                        - generic [ref=e698]: gdipstructs.h
+                    - treeitem "general-private.h" [level=2] [ref=e699]:
+                      - generic [ref=e704] [cursor=pointer]:
+                        - img [ref=e707]
+                        - generic [ref=e709]: general-private.h
+                    - treeitem "general.c" [level=2] [ref=e710]:
+                      - generic [ref=e715] [cursor=pointer]:
+                        - img [ref=e718]
+                        - generic [ref=e720]: general.c
+                    - treeitem "general.h" [level=2] [ref=e721]:
+                      - generic [ref=e726] [cursor=pointer]:
+                        - img [ref=e729]
+                        - generic [ref=e731]: general.h
+                    - treeitem "gifcodec.c" [level=2] [ref=e732]:
+                      - generic [ref=e737] [cursor=pointer]:
+                        - img [ref=e740]
+                        - generic [ref=e742]: gifcodec.c
+                    - treeitem "gifcodec.h" [level=2] [ref=e743]:
+                      - generic [ref=e748] [cursor=pointer]:
+                        - img [ref=e751]
+                        - generic [ref=e753]: gifcodec.h
+                    - treeitem "graphics-cairo-private.h" [level=2] [ref=e754]:
+                      - generic [ref=e759] [cursor=pointer]:
+                        - img [ref=e762]
+                        - generic [ref=e764]: graphics-cairo-private.h
+                    - treeitem "graphics-cairo.c" [level=2] [ref=e765]:
+                      - generic [ref=e770] [cursor=pointer]:
+                        - img [ref=e773]
+                        - generic [ref=e775]: graphics-cairo.c
+                    - treeitem "graphics-metafile-private.h" [level=2] [ref=e776]:
+                      - generic [ref=e781] [cursor=pointer]:
+                        - img [ref=e784]
+                        - generic [ref=e786]: graphics-metafile-private.h
+                    - treeitem "graphics-metafile.c" [level=2] [ref=e787]:
+                      - generic [ref=e792] [cursor=pointer]:
+                        - img [ref=e795]
+                        - generic [ref=e797]: graphics-metafile.c
+                    - treeitem "graphics-path-private.h" [level=2] [ref=e798]:
+                      - generic [ref=e803] [cursor=pointer]:
+                        - img [ref=e806]
+                        - generic [ref=e808]: graphics-path-private.h
+                    - treeitem "graphics-path.c" [level=2] [ref=e809]:
+                      - generic [ref=e814] [cursor=pointer]:
+                        - img [ref=e817]
+                        - generic [ref=e819]: graphics-path.c
+                    - treeitem "graphics-path.h" [level=2] [ref=e820]:
+                      - generic [ref=e825] [cursor=pointer]:
+                        - img [ref=e828]
+                        - generic [ref=e830]: graphics-path.h
+                    - treeitem "graphics-pathiterator-private.h" [level=2] [ref=e831]:
+                      - generic [ref=e836] [cursor=pointer]:
+                        - img [ref=e839]
+                        - generic [ref=e841]: graphics-pathiterator-private.h
+                    - treeitem "graphics-pathiterator.c" [level=2] [ref=e842]:
+                      - generic [ref=e847] [cursor=pointer]:
+                        - img [ref=e850]
+                        - generic [ref=e852]: graphics-pathiterator.c
+                    - treeitem "graphics-pathiterator.h" [level=2] [ref=e853]:
+                      - generic [ref=e858] [cursor=pointer]:
+                        - img [ref=e861]
+                        - generic [ref=e863]: graphics-pathiterator.h
+                    - treeitem "graphics-private.h" [level=2] [ref=e864]:
+                      - generic [ref=e869] [cursor=pointer]:
+                        - img [ref=e872]
+                        - generic [ref=e874]: graphics-private.h
+                    - treeitem "graphics.c" [level=2] [ref=e875]:
+                      - generic [ref=e880] [cursor=pointer]:
+                        - img [ref=e883]
+                        - generic [ref=e885]: graphics.c
+                    - treeitem "graphics.h" [level=2] [ref=e886]:
+                      - generic [ref=e891] [cursor=pointer]:
+                        - img [ref=e894]
+                        - generic [ref=e896]: graphics.h
+                    - treeitem "hatchbrush-private.h" [level=2] [ref=e897]:
+                      - generic [ref=e902] [cursor=pointer]:
+                        - img [ref=e905]
+                        - generic [ref=e907]: hatchbrush-private.h
+                    - treeitem "hatchbrush.c" [level=2] [ref=e908]:
+                      - generic [ref=e913] [cursor=pointer]:
+                        - img [ref=e916]
+                        - generic [ref=e918]: hatchbrush.c
+                    - treeitem "hatchbrush.h" [level=2] [ref=e919]:
+                      - generic [ref=e924] [cursor=pointer]:
+                        - img [ref=e927]
+                        - generic [ref=e929]: hatchbrush.h
+                    - treeitem "icocodec.c" [level=2] [ref=e930]:
+                      - generic [ref=e935] [cursor=pointer]:
+                        - img [ref=e938]
+                        - generic [ref=e940]: icocodec.c
+                    - treeitem "icocodec.h" [level=2] [ref=e941]:
+                      - generic [ref=e946] [cursor=pointer]:
+                        - img [ref=e949]
+                        - generic [ref=e951]: icocodec.h
+                    - treeitem "image-private.h" [level=2] [ref=e952]:
+                      - generic [ref=e957] [cursor=pointer]:
+                        - img [ref=e960]
+                        - generic [ref=e962]: image-private.h
+                    - treeitem "image.c" [level=2] [ref=e963]:
+                      - generic [ref=e968] [cursor=pointer]:
+                        - img [ref=e971]
+                        - generic [ref=e973]: image.c
+                    - treeitem "image.h" [level=2] [ref=e974]:
+                      - generic [ref=e979] [cursor=pointer]:
+                        - img [ref=e982]
+                        - generic [ref=e984]: image.h
+                    - treeitem "imageattributes-private.h" [level=2] [ref=e985]:
+                      - generic [ref=e990] [cursor=pointer]:
+                        - img [ref=e993]
+                        - generic [ref=e995]: imageattributes-private.h
+                    - treeitem "imageattributes.c" [level=2] [ref=e996]:
+                      - generic [ref=e1001] [cursor=pointer]:
+                        - img [ref=e1004]
+                        - generic [ref=e1006]: imageattributes.c
+                    - treeitem "imageattributes.h" [level=2] [ref=e1007]:
+                      - generic [ref=e1012] [cursor=pointer]:
+                        - img [ref=e1015]
+                        - generic [ref=e1017]: imageattributes.h
+                    - treeitem "jpegcodec.c" [level=2] [ref=e1018]:
+                      - generic [ref=e1023] [cursor=pointer]:
+                        - img [ref=e1026]
+                        - generic [ref=e1028]: jpegcodec.c
+                    - treeitem "jpegcodec.h" [level=2] [ref=e1029]:
+                      - generic [ref=e1034] [cursor=pointer]:
+                        - img [ref=e1037]
+                        - generic [ref=e1039]: jpegcodec.h
+                    - treeitem "libgdiplus.vcxproj" [level=2] [ref=e1040]:
+                      - generic [ref=e1045] [cursor=pointer]:
+                        - img [ref=e1048]
+                        - generic [ref=e1050]: libgdiplus.vcxproj
+                    - treeitem "lineargradientbrush-private.h" [level=2] [ref=e1051]:
+                      - generic [ref=e1056] [cursor=pointer]:
+                        - img [ref=e1059]
+                        - generic [ref=e1061]: lineargradientbrush-private.h
+                    - treeitem "lineargradientbrush.c" [level=2] [ref=e1062]:
+                      - generic [ref=e1067] [cursor=pointer]:
+                        - img [ref=e1070]
+                        - generic [ref=e1072]: lineargradientbrush.c
+                    - treeitem "lineargradientbrush.h" [level=2] [ref=e1073]:
+                      - generic [ref=e1078] [cursor=pointer]:
+                        - img [ref=e1081]
+                        - generic [ref=e1083]: lineargradientbrush.h
+                    - treeitem "matrix-private.h" [level=2] [ref=e1084]:
+                      - generic [ref=e1089] [cursor=pointer]:
+                        - img [ref=e1092]
+                        - generic [ref=e1094]: matrix-private.h
+                    - treeitem "matrix.c" [level=2] [ref=e1095]:
+                      - generic [ref=e1100] [cursor=pointer]:
+                        - img [ref=e1103]
+                        - generic [ref=e1105]: matrix.c
+                    - treeitem "matrix.h" [level=2] [ref=e1106]:
+                      - generic [ref=e1111] [cursor=pointer]:
+                        - img [ref=e1114]
+                        - generic [ref=e1116]: matrix.h
+                    - treeitem "metafile-private.h" [level=2] [ref=e1117]:
+                      - generic [ref=e1122] [cursor=pointer]:
+                        - img [ref=e1125]
+                        - generic [ref=e1127]: metafile-private.h
+                    - treeitem "metafile.c" [level=2] [ref=e1128]:
+                      - generic [ref=e1133] [cursor=pointer]:
+                        - img [ref=e1136]
+                        - generic [ref=e1138]: metafile.c
+                    - treeitem "metafile.h" [level=2] [ref=e1139]:
+                      - generic [ref=e1144] [cursor=pointer]:
+                        - img [ref=e1147]
+                        - generic [ref=e1149]: metafile.h
+                    - treeitem "pathgradientbrush-private.h" [level=2] [ref=e1150]:
+                      - generic [ref=e1155] [cursor=pointer]:
+                        - img [ref=e1158]
+                        - generic [ref=e1160]: pathgradientbrush-private.h
+                    - treeitem "pathgradientbrush.c" [level=2] [ref=e1161]:
+                      - generic [ref=e1166] [cursor=pointer]:
+                        - img [ref=e1169]
+                        - generic [ref=e1171]: pathgradientbrush.c
+                    - treeitem "pathgradientbrush.h" [level=2] [ref=e1172]:
+                      - generic [ref=e1177] [cursor=pointer]:
+                        - img [ref=e1180]
+                        - generic [ref=e1182]: pathgradientbrush.h
+                    - treeitem "pen-private.h" [level=2] [ref=e1183]:
+                      - generic [ref=e1188] [cursor=pointer]:
+                        - img [ref=e1191]
+                        - generic [ref=e1193]: pen-private.h
+                    - treeitem "pen.c" [level=2] [ref=e1194]:
+                      - generic [ref=e1199] [cursor=pointer]:
+                        - img [ref=e1202]
+                        - generic [ref=e1204]: pen.c
+                    - treeitem "pen.h" [level=2] [ref=e1205]:
+                      - generic [ref=e1210] [cursor=pointer]:
+                        - img [ref=e1213]
+                        - generic [ref=e1215]: pen.h
+                    - treeitem "pngcodec.c" [level=2] [ref=e1216]:
+                      - generic [ref=e1221] [cursor=pointer]:
+                        - img [ref=e1224]
+                        - generic [ref=e1226]: pngcodec.c
+                    - treeitem "pngcodec.h" [level=2] [ref=e1227]:
+                      - generic [ref=e1232] [cursor=pointer]:
+                        - img [ref=e1235]
+                        - generic [ref=e1237]: pngcodec.h
+                    - treeitem "print.c" [level=2] [ref=e1238]:
+                      - generic [ref=e1243] [cursor=pointer]:
+                        - img [ref=e1246]
+                        - generic [ref=e1248]: print.c
+                    - treeitem "region-bitmap.c" [level=2] [ref=e1249]:
+                      - generic [ref=e1254] [cursor=pointer]:
+                        - img [ref=e1257]
+                        - generic [ref=e1259]: region-bitmap.c
+                    - treeitem "region-bitmap.h" [level=2] [ref=e1260]:
+                      - generic [ref=e1265] [cursor=pointer]:
+                        - img [ref=e1268]
+                        - generic [ref=e1270]: region-bitmap.h
+                    - treeitem "region-path-tree.c" [level=2] [ref=e1271]:
+                      - generic [ref=e1276] [cursor=pointer]:
+                        - img [ref=e1279]
+                        - generic [ref=e1281]: region-path-tree.c
+                    - treeitem "region-path-tree.h" [level=2] [ref=e1282]:
+                      - generic [ref=e1287] [cursor=pointer]:
+                        - img [ref=e1290]
+                        - generic [ref=e1292]: region-path-tree.h
+                    - treeitem "region-private.h" [level=2] [ref=e1293]:
+                      - generic [ref=e1298] [cursor=pointer]:
+                        - img [ref=e1301]
+                        - generic [ref=e1303]: region-private.h
+                    - treeitem "region.c" [level=2] [ref=e1304]:
+                      - generic [ref=e1309] [cursor=pointer]:
+                        - img [ref=e1312]
+                        - generic [ref=e1314]: region.c
+                    - treeitem "region.h" [level=2] [ref=e1315]:
+                      - generic [ref=e1320] [cursor=pointer]:
+                        - img [ref=e1323]
+                        - generic [ref=e1325]: region.h
+                    - treeitem "solidbrush-private.h" [level=2] [ref=e1326]:
+                      - generic [ref=e1331] [cursor=pointer]:
+                        - img [ref=e1334]
+                        - generic [ref=e1336]: solidbrush-private.h
+                    - treeitem "solidbrush.c" [level=2] [ref=e1337]:
+                      - generic [ref=e1342] [cursor=pointer]:
+                        - img [ref=e1345]
+                        - generic [ref=e1347]: solidbrush.c
+                    - treeitem "solidbrush.h" [level=2] [ref=e1348]:
+                      - generic [ref=e1353] [cursor=pointer]:
+                        - img [ref=e1356]
+                        - generic [ref=e1358]: solidbrush.h
+                    - treeitem "stringformat-private.h" [level=2] [ref=e1359]:
+                      - generic [ref=e1364] [cursor=pointer]:
+                        - img [ref=e1367]
+                        - generic [ref=e1369]: stringformat-private.h
+                    - treeitem "stringformat.c" [level=2] [ref=e1370]:
+                      - generic [ref=e1375] [cursor=pointer]:
+                        - img [ref=e1378]
+                        - generic [ref=e1380]: stringformat.c
+                    - treeitem "stringformat.h" [level=2] [ref=e1381]:
+                      - generic [ref=e1386] [cursor=pointer]:
+                        - img [ref=e1389]
+                        - generic [ref=e1391]: stringformat.h
+                    - treeitem "text-cairo-private.h" [level=2] [ref=e1392]:
+                      - generic [ref=e1397] [cursor=pointer]:
+                        - img [ref=e1400]
+                        - generic [ref=e1402]: text-cairo-private.h
+                    - treeitem "text-cairo.c" [level=2] [ref=e1403]:
+                      - generic [ref=e1408] [cursor=pointer]:
+                        - img [ref=e1411]
+                        - generic [ref=e1413]: text-cairo.c
+                    - treeitem "text-metafile-private.h" [level=2] [ref=e1414]:
+                      - generic [ref=e1419] [cursor=pointer]:
+                        - img [ref=e1422]
+                        - generic [ref=e1424]: text-metafile-private.h
+                    - treeitem "text-metafile.c" [level=2] [ref=e1425]:
+                      - generic [ref=e1430] [cursor=pointer]:
+                        - img [ref=e1433]
+                        - generic [ref=e1435]: text-metafile.c
+                    - treeitem "text-pango-private.h" [level=2] [ref=e1436]:
+                      - generic [ref=e1441] [cursor=pointer]:
+                        - img [ref=e1444]
+                        - generic [ref=e1446]: text-pango-private.h
+                    - treeitem "text-pango.c" [level=2] [ref=e1447]:
+                      - generic [ref=e1452] [cursor=pointer]:
+                        - img [ref=e1455]
+                        - generic [ref=e1457]: text-pango.c
+                    - treeitem "text.c" [level=2] [ref=e1458]:
+                      - generic [ref=e1463] [cursor=pointer]:
+                        - img [ref=e1466]
+                        - generic [ref=e1468]: text.c
+                    - treeitem "text.h" [level=2] [ref=e1469]:
+                      - generic [ref=e1474] [cursor=pointer]:
+                        - img [ref=e1477]
+                        - generic [ref=e1479]: text.h
+                    - treeitem "text.notes" [level=2] [ref=e1480]:
+                      - generic [ref=e1485] [cursor=pointer]:
+                        - img [ref=e1488]
+                        - generic [ref=e1490]: text.notes
+                    - treeitem "texturebrush-private.h" [level=2] [ref=e1491]:
+                      - generic [ref=e1496] [cursor=pointer]:
+                        - img [ref=e1499]
+                        - generic [ref=e1501]: texturebrush-private.h
+                    - treeitem "texturebrush.c" [level=2] [ref=e1502]:
+                      - generic [ref=e1507] [cursor=pointer]:
+                        - img [ref=e1510]
+                        - generic [ref=e1512]: texturebrush.c
+                    - treeitem "texturebrush.h" [level=2] [ref=e1513]:
+                      - generic [ref=e1518] [cursor=pointer]:
+                        - img [ref=e1521]
+                        - generic [ref=e1523]: texturebrush.h
+                    - treeitem "tiffcodec.c" [level=2] [ref=e1524]:
+                      - generic [ref=e1529] [cursor=pointer]:
+                        - img [ref=e1532]
+                        - generic [ref=e1534]: tiffcodec.c
+                    - treeitem "tiffcodec.h" [level=2] [ref=e1535]:
+                      - generic [ref=e1540] [cursor=pointer]:
+                        - img [ref=e1543]
+                        - generic [ref=e1545]: tiffcodec.h
+                    - treeitem "win32-private.c" [level=2] [ref=e1546]:
+                      - generic [ref=e1551] [cursor=pointer]:
+                        - img [ref=e1554]
+                        - generic [ref=e1556]: win32-private.c
+                    - treeitem "win32-private.h" [level=2] [ref=e1557]:
+                      - generic [ref=e1562] [cursor=pointer]:
+                        - img [ref=e1565]
+                        - generic [ref=e1567]: win32-private.h
+                    - treeitem "win32structs.h" [level=2] [ref=e1568]:
+                      - generic [ref=e1573] [cursor=pointer]:
+                        - img [ref=e1576]
+                        - generic [ref=e1578]: win32structs.h
+                    - treeitem "wmfcodec.c" [level=2] [ref=e1579]:
+                      - generic [ref=e1584] [cursor=pointer]:
+                        - img [ref=e1587]
+                        - generic [ref=e1589]: wmfcodec.c
+                    - treeitem "wmfcodec.h" [level=2] [ref=e1590]:
+                      - generic [ref=e1595] [cursor=pointer]:
+                        - img [ref=e1598]
+                        - generic [ref=e1600]: wmfcodec.h
+                - treeitem "tests" [level=1] [ref=e1601]:
+                  - generic [ref=e1602] [cursor=pointer]:
+                    - img [ref=e1604]
+                    - generic [ref=e1606]:
+                      - img [ref=e1610]
+                      - generic [ref=e1612]: tests
+                - treeitem ".azure-pipelines.yml" [level=1] [ref=e1613]:
+                  - generic [ref=e1615] [cursor=pointer]:
+                    - img [ref=e1618]
+                    - generic [ref=e1620]: .azure-pipelines.yml
+                - treeitem ".gitattributes" [level=1] [ref=e1621]:
+                  - generic [ref=e1623] [cursor=pointer]:
+                    - img [ref=e1626]
+                    - generic [ref=e1628]: .gitattributes
+                - treeitem ".gitignore" [level=1] [ref=e1629]:
+                  - generic [ref=e1631] [cursor=pointer]:
+                    - img [ref=e1634]
+                    - generic [ref=e1636]: .gitignore
+                - treeitem ".gitmodules" [level=1] [ref=e1637]:
+                  - generic [ref=e1639] [cursor=pointer]:
+                    - img [ref=e1642]
+                    - generic [ref=e1644]: .gitmodules
+                - treeitem "AUTHORS" [level=1] [ref=e1645]:
+                  - generic [ref=e1647] [cursor=pointer]:
+                    - img [ref=e1650]
+                    - generic [ref=e1652]: AUTHORS
+                - treeitem "CODE-OF-CONDUCT.md" [level=1] [ref=e1653]:
+                  - generic [ref=e1655] [cursor=pointer]:
+                    - img [ref=e1658]
+                    - generic [ref=e1660]: CODE-OF-CONDUCT.md
+                - treeitem "COPYING" [level=1] [ref=e1661]:
+                  - generic [ref=e1663] [cursor=pointer]:
+                    - img [ref=e1666]
+                    - generic [ref=e1668]: COPYING
+                - treeitem "ChangeLog" [level=1] [ref=e1669]:
+                  - generic [ref=e1671] [cursor=pointer]:
+                    - img [ref=e1674]
+                    - generic [ref=e1676]: ChangeLog
+                - treeitem "INSTALL" [level=1] [ref=e1677]:
+                  - generic [ref=e1679] [cursor=pointer]:
+                    - img [ref=e1682]
+                    - generic [ref=e1684]: INSTALL
+                - treeitem "LICENSE" [level=1] [ref=e1685]:
+                  - generic [ref=e1687] [cursor=pointer]:
+                    - img [ref=e1690]
+                    - generic [ref=e1692]: LICENSE
+                - treeitem "Makefile.am" [level=1] [ref=e1693]:
+                  - generic [ref=e1695] [cursor=pointer]:
+                    - img [ref=e1698]
+                    - generic [ref=e1700]: Makefile.am
+                - treeitem "NEWS" [level=1] [ref=e1701]:
+                  - generic [ref=e1703] [cursor=pointer]:
+                    - img [ref=e1706]
+                    - generic [ref=e1708]: NEWS
+                - treeitem "README.md" [level=1] [ref=e1709]:
+                  - generic [ref=e1711] [cursor=pointer]:
+                    - img [ref=e1714]
+                    - generic [ref=e1716]: README.md
+                - treeitem "TODO" [level=1] [ref=e1717]:
+                  - generic [ref=e1719] [cursor=pointer]:
+                    - img [ref=e1722]
+                    - generic [ref=e1724]: TODO
+                - treeitem "autogen.sh" [level=1] [ref=e1725]:
+                  - generic [ref=e1727] [cursor=pointer]:
+                    - img [ref=e1730]
+                    - generic [ref=e1732]: autogen.sh
+                - treeitem "configure.ac" [level=1] [ref=e1733]:
+                  - generic [ref=e1735] [cursor=pointer]:
+                    - img [ref=e1738]
+                    - generic [ref=e1740]: configure.ac
+                - treeitem "libgdiplus.pc.in" [level=1] [ref=e1741]:
+                  - generic [ref=e1743] [cursor=pointer]:
+                    - img [ref=e1746]
+                    - generic [ref=e1748]: libgdiplus.pc.in
+                - treeitem "libgdiplus.sln" [level=1] [ref=e1749]:
+                  - generic [ref=e1751] [cursor=pointer]:
+                    - img [ref=e1754]
+                    - generic [ref=e1756]: libgdiplus.sln
+                - treeitem "libgdiplus0.spec.in" [level=1] [ref=e1757]:
+                  - generic [ref=e1759] [cursor=pointer]:
+                    - img [ref=e1762]
+                    - generic [ref=e1764]: libgdiplus0.spec.in
+                - treeitem "update_submodules.sh" [level=1] [ref=e1765]:
+                  - generic [ref=e1767] [cursor=pointer]:
+                    - img [ref=e1770]
+                    - generic [ref=e1772]: update_submodules.sh
+                - treeitem "winconfig.h.in" [level=1] [ref=e1773]:
+                  - generic [ref=e1775] [cursor=pointer]:
+                    - img [ref=e1778]
+                    - generic [ref=e1780]: winconfig.h.in
+          - slider "Draggable pane splitter" [ref=e1782]
+        - generic [ref=e1785]:
+          - generic [ref=e1789]:
+            - generic [ref=e1791]:
+              - navigation "Breadcrumbs" [ref=e1792]:
+                - heading "Breadcrumbs" [level=2] [ref=e1793]
+                - list [ref=e1794]:
+                  - listitem [ref=e1795]:
+                    - link "libgdiplus" [ref=e1796] [cursor=pointer]:
+                      - /url: /mono/libgdiplus/tree/main
+                  - listitem [ref=e1797]:
+                    - text: /
+                    - link "src" [ref=e1798] [cursor=pointer]:
+                      - /url: /mono/libgdiplus/tree/main/src
+              - generic [ref=e1799]:
+                - text: /
+                - heading "brush.c" [level=1] [ref=e1800]
+              - button "Copy path" [ref=e1801] [cursor=pointer]:
+                - img [ref=e1802]
+            - button "More file actions" [ref=e1808] [cursor=pointer]:
+              - img [ref=e1809]
+          - generic [ref=e1811]:
+            - generic [ref=e1813]:
+              - heading "Latest commit" [level=2] [ref=e1814]
+              - generic [ref=e1817]:
+                - heading "History" [level=2] [ref=e1818]
+                - link "History" [ref=e1819] [cursor=pointer]:
+                  - /url: /mono/libgdiplus/commits/main/src/brush.c
+                  - generic [ref=e1820]:
+                    - generic:
+                      - img
+                    - generic [ref=e1821]: History
+            - generic [ref=e1823]:
+              - generic [ref=e1824]:
+                - generic [ref=e1827]:
+                  - generic [ref=e1828]:
+                    - navigation "Breadcrumbs" [ref=e1829]:
+                      - heading "Breadcrumbs" [level=2] [ref=e1830]
+                      - list [ref=e1831]:
+                        - listitem [ref=e1832]:
+                          - link "libgdiplus" [ref=e1833] [cursor=pointer]:
+                            - /url: /mono/libgdiplus/tree/main
+                        - listitem [ref=e1834]:
+                          - text: /
+                          - link "src" [ref=e1835] [cursor=pointer]:
+                            - /url: /mono/libgdiplus/tree/main/src
+                    - generic [ref=e1836]:
+                      - text: /
+                      - heading "brush.c" [level=1] [ref=e1837]
+                  - button "Top" [ref=e1838] [cursor=pointer]:
+                    - generic [ref=e1839]:
+                      - generic:
+                        - img
+                      - generic [ref=e1840]: Top
+                - generic [ref=e1841]:
+                  - heading "File metadata and controls" [level=2] [ref=e1842]
+                  - list "File view" [ref=e1844]:
+                    - listitem [ref=e1845]:
+                      - button "Code" [ref=e1846] [cursor=pointer]:
+                        - generic [ref=e1848]: Code
+                    - listitem [ref=e1849]:
+                      - button "Blame" [ref=e1850] [cursor=pointer]:
+                        - generic [ref=e1852]: Blame
+                  - generic [ref=e1853]:
+                    - generic [ref=e1854]:
+                      - generic [ref=e1855]:
+                        - link "Raw" [ref=e1857] [cursor=pointer]:
+                          - /url: https://github.com/mono/libgdiplus/raw/refs/heads/main/src/brush.c
+                          - generic [ref=e1859]: Raw
+                        - button "Copy raw file" [ref=e1861] [cursor=pointer]:
+                          - img [ref=e1862]
+                        - button "Download raw file" [ref=e1866] [cursor=pointer]:
+                          - img [ref=e1867]
+                      - generic [ref=e1870]:
+                        - button "You must be signed in to make or propose changes" [disabled] [ref=e1872]:
+                          - img [ref=e1873]
+                        - button "More edit options" [ref=e1876] [cursor=pointer]:
+                          - img [ref=e1877]
+                    - button "Open symbols panel" [ref=e1879] [cursor=pointer]:
+                      - img [ref=e1880]
+              - region "brush.c" [ref=e1883]:
+                - generic [ref=e1885]:
+                  - generic [ref=e1887]:
+                    - textbox "file content" [ref=e1892]: "/* * brush.c * * Copyright (c) 2003 Alexandre Pigolkine * Copyright (C) 2007 Novell, Inc. http://www.novell.com * * Permission is hereby granted, free of charge, to any person obtaining a copy of this software * and associated documentation files (the \"Software\"), to deal in the Software without restriction, * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, * subject to the following conditions: * * The above copyright notice and this permission notice shall be included in all copies or substantial * portions of the Software. * * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. * * Authors: * Alexandre Pigolkine(pigolkine@gmx.de) * Ravindra (rkumar@novell.com) */ #include \"brush-private.h\" #include \"graphics-private.h\" void gdip_brush_init (GpBrush *brush, BrushClass* vtable) { brush->vtable = vtable; /* Set the changed state to true, so that we don't miss the * first setup of the brush. */ brush->changed = TRUE; } GpStatus gdip_brush_setup (GpGraphics *graphics, GpBrush *brush) { /* Don't need to setup, if brush is the same as the cached brush and * it is not changed. Just comparing pointers may not be sufficient * to say that the brushes are same. It is possible to have different * brush on the same memory, but probability is very low. We would * need a function to check the equality of the brushes in that case. */ if (brush == graphics->last_brush && !brush->changed) return Ok; else { GpStatus status = brush->vtable->setup (graphics, brush); if (status == Ok) { brush->changed = FALSE; graphics->last_brush = brush; } return status; } } /* coverity[+alloc : arg-*1] */ GpStatus WINGDIPAPI GdipCloneBrush (GpBrush *brush, GpBrush **clonedBrush) { if (!brush || !clonedBrush) return InvalidParameter; return brush->vtable->clone_brush (brush, clonedBrush); } GpStatus WINGDIPAPI GdipDeleteBrush (GpBrush *brush) { GpStatus status; if (!brush) return InvalidParameter; status = brush->vtable->destroy (brush); GdipFree (brush); return status; } GpStatus WINGDIPAPI GdipGetBrushType (GpBrush *brush, GpBrushType *type) { if (!brush || !type) return InvalidParameter; *type = brush->vtable->type; return Ok; }"
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic [ref=e1893]:
+                            - generic [ref=e1894] [cursor=pointer]: "1"
+                            - generic [ref=e1895] [cursor=pointer]: "2"
+                            - generic [ref=e1896] [cursor=pointer]: "3"
+                            - generic [ref=e1897] [cursor=pointer]: "4"
+                            - generic [ref=e1898] [cursor=pointer]: "5"
+                            - generic [ref=e1899] [cursor=pointer]: "6"
+                            - generic [ref=e1900] [cursor=pointer]: "7"
+                            - generic [ref=e1901] [cursor=pointer]: "8"
+                            - generic [ref=e1902] [cursor=pointer]: "9"
+                            - generic [ref=e1903] [cursor=pointer]: "10"
+                            - generic [ref=e1904] [cursor=pointer]: "11"
+                            - generic [ref=e1905] [cursor=pointer]: "12"
+                            - generic [ref=e1906] [cursor=pointer]: "13"
+                            - generic [ref=e1907] [cursor=pointer]: "14"
+                            - generic [ref=e1908] [cursor=pointer]: "15"
+                            - generic [ref=e1909] [cursor=pointer]: "16"
+                            - generic [ref=e1910] [cursor=pointer]: "17"
+                            - generic [ref=e1911] [cursor=pointer]: "18"
+                            - generic [ref=e1912] [cursor=pointer]: "19"
+                            - generic [ref=e1913] [cursor=pointer]: "20"
+                            - generic [ref=e1914] [cursor=pointer]: "21"
+                            - generic [ref=e1915] [cursor=pointer]: "22"
+                            - generic [ref=e1916] [cursor=pointer]: "23"
+                            - generic [ref=e1917] [cursor=pointer]: "24"
+                            - generic [ref=e1918] [cursor=pointer]: "25"
+                            - generic [ref=e1919] [cursor=pointer]: "26"
+                            - generic [ref=e1920] [cursor=pointer]: "27"
+                            - generic [ref=e1921] [cursor=pointer]: "28"
+                            - generic [ref=e1922] [cursor=pointer]: "29"
+                            - generic [ref=e1923] [cursor=pointer]: "30"
+                            - generic [ref=e1924] [cursor=pointer]: "31"
+                            - generic [ref=e1925] [cursor=pointer]: "32"
+                            - generic [ref=e1926] [cursor=pointer]: "33"
+                            - generic [ref=e1927] [cursor=pointer]: "34"
+                            - generic [ref=e1928] [cursor=pointer]: "35"
+                            - generic [ref=e1929] [cursor=pointer]: "36"
+                            - generic [ref=e1930] [cursor=pointer]: "37"
+                            - generic [ref=e1931] [cursor=pointer]: "38"
+                            - generic [ref=e1932] [cursor=pointer]: "39"
+                            - generic [ref=e1933] [cursor=pointer]: "40"
+                            - generic [ref=e1934] [cursor=pointer]: "41"
+                            - generic [ref=e1935] [cursor=pointer]: "42"
+                            - generic [ref=e1936] [cursor=pointer]: "43"
+                            - generic [ref=e1937] [cursor=pointer]: "44"
+                            - generic [ref=e1938] [cursor=pointer]: "45"
+                            - generic [ref=e1939] [cursor=pointer]: "46"
+                            - generic [ref=e1940] [cursor=pointer]: "47"
+                            - generic [ref=e1941] [cursor=pointer]: "48"
+                            - generic [ref=e1942] [cursor=pointer]: "49"
+                            - generic [ref=e1943] [cursor=pointer]: "50"
+                            - generic [ref=e1944] [cursor=pointer]: "51"
+                            - generic [ref=e1945] [cursor=pointer]: "52"
+                            - generic [ref=e1946] [cursor=pointer]: "53"
+                            - generic [ref=e1947] [cursor=pointer]: "54"
+                            - generic [ref=e1948] [cursor=pointer]: "55"
+                            - generic [ref=e1949] [cursor=pointer]: "56"
+                            - generic [ref=e1950] [cursor=pointer]: "57"
+                            - generic [ref=e1951] [cursor=pointer]: "58"
+                            - generic [ref=e1952] [cursor=pointer]: "59"
+                            - generic [ref=e1953] [cursor=pointer]: "60"
+                            - generic [ref=e1954] [cursor=pointer]: "61"
+                            - generic [ref=e1955] [cursor=pointer]: "62"
+                            - generic [ref=e1956] [cursor=pointer]: "63"
+                            - generic [ref=e1957] [cursor=pointer]: "64"
+                            - generic [ref=e1958] [cursor=pointer]: "65"
+                            - generic [ref=e1959] [cursor=pointer]: "66"
+                            - generic [ref=e1960] [cursor=pointer]: "67"
+                            - generic [ref=e1961] [cursor=pointer]: "68"
+                            - generic [ref=e1962] [cursor=pointer]: "69"
+                            - generic [ref=e1963] [cursor=pointer]: "70"
+                            - generic [ref=e1964] [cursor=pointer]: "71"
+                            - generic [ref=e1965] [cursor=pointer]: "72"
+                            - generic [ref=e1966] [cursor=pointer]: "73"
+                            - generic [ref=e1967] [cursor=pointer]: "74"
+                            - generic [ref=e1968] [cursor=pointer]: "75"
+                            - generic [ref=e1969] [cursor=pointer]: "76"
+                            - generic [ref=e1970] [cursor=pointer]: "77"
+                            - generic [ref=e1971] [cursor=pointer]: "78"
+                            - generic [ref=e1972] [cursor=pointer]: "79"
+                            - generic [ref=e1973] [cursor=pointer]: "80"
+                            - generic [ref=e1974] [cursor=pointer]: "81"
+                            - generic [ref=e1975] [cursor=pointer]: "82"
+                            - generic [ref=e1976] [cursor=pointer]: "83"
+                            - generic [ref=e1977] [cursor=pointer]: "84"
+                            - generic [ref=e1978] [cursor=pointer]: "85"
+                            - generic [ref=e1979] [cursor=pointer]: "86"
+                            - generic [ref=e1980] [cursor=pointer]: "87"
+                            - generic [ref=e1981] [cursor=pointer]: "88"
+                            - generic [ref=e1982] [cursor=pointer]: "89"
+                            - generic [ref=e1983] [cursor=pointer]: "90"
+                            - generic [ref=e1984] [cursor=pointer]: "91"
+                            - generic [ref=e1985] [cursor=pointer]: "92"
+                            - generic [ref=e1986] [cursor=pointer]: "93"
+                            - generic [ref=e1987] [cursor=pointer]: "94"
+                            - generic [ref=e1988] [cursor=pointer]: "95"
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: /*
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* brush.c"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "*"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* Copyright (c) 2003 Alexandre Pigolkine"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* Copyright (C) 2007 Novell, Inc. http://www.novell.com"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "*"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* Permission is hereby granted, free of charge, to any person obtaining a copy of this software"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* and associated documentation files (the \"Software\"), to deal in the Software without restriction,"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* subject to the following conditions:"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "*"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* The above copyright notice and this permission notice shall be included in all copies or substantial"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* portions of the Software."
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "*"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT."
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "*"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* Authors:"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* Alexandre Pigolkine(pigolkine@gmx.de)"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* Ravindra (rkumar@novell.com)"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "*/"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "#include"
+                                  - generic: "\"brush-private.h\""
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "#include"
+                                  - generic: "\"graphics-private.h\""
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: void
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: gdip_brush_init
+                                  - text: (
+                                  - generic: GpBrush
+                                  - generic: "*"
+                                  - generic: brush
+                                  - text: ","
+                                  - generic: BrushClass
+                                  - generic: "*"
+                                  - generic: vtable
+                                  - text: )
+                            - generic:
+                              - generic:
+                                - generic: "{"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: brush
+                                  - generic: "->"
+                                  - generic: vtable
+                                  - generic: =
+                                  - generic: vtable
+                                  - text: ;
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: /* Set the changed state to true, so that we don't miss the
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* first setup of the brush."
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "*/"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: brush
+                                  - generic: "->"
+                                  - generic: changed
+                                  - generic: =
+                                  - text: TRUE;
+                            - generic:
+                              - generic:
+                                - generic: "}"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: GpStatus
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: gdip_brush_setup
+                                  - text: (
+                                  - generic: GpGraphics
+                                  - generic: "*"
+                                  - generic: graphics
+                                  - text: ","
+                                  - generic: GpBrush
+                                  - generic: "*"
+                                  - generic: brush
+                                  - text: )
+                            - generic:
+                              - generic:
+                                - generic: "{"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: /* Don't need to setup, if brush is the same as the cached brush and
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* it is not changed. Just comparing pointers may not be sufficient"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* to say that the brushes are same. It is possible to have different"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* brush on the same memory, but probability is very low. We would"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "* need a function to check the equality of the brushes in that case."
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "*/"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: if
+                                  - text: (
+                                  - generic: brush
+                                  - generic: ==
+                                  - generic: graphics
+                                  - generic: "->"
+                                  - generic: last_brush
+                                  - generic: "&&"
+                                  - text: "!"
+                                  - generic: brush
+                                  - generic: "->"
+                                  - generic: changed
+                                  - text: )
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: return
+                                  - generic: Ok
+                                  - text: ;
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: else
+                                  - text: "{"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: GpStatus
+                                  - generic: status
+                                  - generic: =
+                                  - generic: brush
+                                  - generic: "->"
+                                  - generic: vtable
+                                  - generic: "->"
+                                  - generic: setup
+                                  - text: (
+                                  - generic: graphics
+                                  - text: ","
+                                  - generic: brush
+                                  - text: );
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: if
+                                  - text: (
+                                  - generic: status
+                                  - generic: ==
+                                  - generic: Ok
+                                  - text: ") {"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: brush
+                                  - generic: "->"
+                                  - generic: changed
+                                  - generic: =
+                                  - text: FALSE;
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: graphics
+                                  - generic: "->"
+                                  - generic: last_brush
+                                  - generic: =
+                                  - generic: brush
+                                  - text: ;
+                            - generic:
+                              - generic:
+                                - generic: "}"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: return
+                                  - generic: status
+                                  - text: ;
+                            - generic:
+                              - generic:
+                                - generic: "}"
+                            - generic:
+                              - generic:
+                                - generic: "}"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "/* coverity[+alloc : arg-*1] */"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: GpStatus
+                                  - generic: WINGDIPAPI
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: GdipCloneBrush
+                                  - text: (
+                                  - generic: GpBrush
+                                  - generic: "*"
+                                  - generic: brush
+                                  - text: ","
+                                  - generic: GpBrush
+                                  - generic: "*"
+                                  - generic: "*"
+                                  - generic: clonedBrush
+                                  - text: )
+                            - generic:
+                              - generic:
+                                - generic: "{"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: if
+                                  - text: (!
+                                  - generic: brush
+                                  - generic: "||"
+                                  - text: "!"
+                                  - generic: clonedBrush
+                                  - text: )
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: return
+                                  - generic: InvalidParameter
+                                  - text: ;
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: return
+                                  - generic: brush
+                                  - generic: "->"
+                                  - generic: vtable
+                                  - generic: "->"
+                                  - generic: clone_brush
+                                  - text: (
+                                  - generic: brush
+                                  - text: ","
+                                  - generic: clonedBrush
+                                  - text: );
+                            - generic:
+                              - generic:
+                                - generic: "}"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: GpStatus
+                                  - generic: WINGDIPAPI
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: GdipDeleteBrush
+                                  - text: (
+                                  - generic: GpBrush
+                                  - generic: "*"
+                                  - generic: brush
+                                  - text: )
+                            - generic:
+                              - generic:
+                                - generic: "{"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: GpStatus
+                                  - generic: status
+                                  - text: ;
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: if
+                                  - text: (!
+                                  - generic: brush
+                                  - text: )
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: return
+                                  - generic: InvalidParameter
+                                  - text: ;
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: status
+                                  - generic: =
+                                  - generic: brush
+                                  - generic: "->"
+                                  - generic: vtable
+                                  - generic: "->"
+                                  - generic: destroy
+                                  - text: (
+                                  - generic: brush
+                                  - text: );
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: GdipFree
+                                  - text: (
+                                  - generic: brush
+                                  - text: );
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: return
+                                  - generic: status
+                                  - text: ;
+                            - generic:
+                              - generic:
+                                - generic: "}"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: GpStatus
+                                  - generic: WINGDIPAPI
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: GdipGetBrushType
+                                  - text: (
+                                  - generic: GpBrush
+                                  - generic: "*"
+                                  - generic: brush
+                                  - text: ","
+                                  - generic: GpBrushType
+                                  - generic: "*"
+                                  - generic: type
+                                  - text: )
+                            - generic:
+                              - generic:
+                                - generic: "{"
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: if
+                                  - text: (!
+                                  - generic: brush
+                                  - generic: "||"
+                                  - text: "!"
+                                  - generic: type
+                                  - text: )
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: return
+                                  - generic: InvalidParameter
+                                  - text: ;
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: "*"
+                                  - generic: type
+                                  - generic: =
+                                  - generic: brush
+                                  - generic: "->"
+                                  - generic: vtable
+                                  - generic: "->"
+                                  - generic: type
+                                  - text: ;
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic: return
+                                  - generic: Ok
+                                  - text: ;
+                            - generic:
+                              - generic:
+                                - generic: "}"
+                  - button "Line 38 options" [ref=e1991] [cursor=pointer]:
+                    - img [ref=e1992]
+  - alert [ref=e1997]

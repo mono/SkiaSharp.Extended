@@ -16,7 +16,7 @@ interesting projects:
 
 ## Building
 
-To build the projects and samples, just open `SkiaSharp.Extended.sln` 
+To build the projects and samples, just open `SkiaSharp.Extended.slnx` 
 in Visual Studio.
 
 The CI server just runs `dotnet cake` and outputs all the packages,

@@ -33,7 +33,7 @@ ProcessArgumentBuilder AppendForwardingLogger(ProcessArgumentBuilder args)
 Task("build")
 	.Does(() =>
 {
-	DotNetBuild("./SkiaSharp.Extended.sln", new DotNetBuildSettings
+	DotNetBuild("./SkiaSharp.Extended.slnx", new DotNetBuildSettings
 	{
 		Configuration = CONFIGURATION,
 		MSBuildSettings = new DotNetMSBuildSettings()

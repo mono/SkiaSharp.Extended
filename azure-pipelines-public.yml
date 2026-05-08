@@ -29,41 +29,165 @@ variables:
 pool:
   vmImage: windows-latest
 
-jobs:
-  - job: build
-    displayName: Build
-    steps:
-      - template: /scripts/azure-pipelines-steps-prepare.yml@self
-      - pwsh: dotnet cake --target=build
-        displayName: Build everything
-      - publish: output
-        artifact: build
-        condition: always()
-        displayName: Upload Logs
+stages:
 
-  - job: pack
-    displayName: Pack
-    steps:
-      - template: /scripts/azure-pipelines-steps-prepare.yml@self
-      - pwsh: dotnet cake --target=pack
-        displayName: Pack NuGet packages
-      - publish: output
-        artifact: pack
-        condition: always()
-        displayName: Upload Logs
+  - stage: main
+    displayName: Build & Test
+    jobs:
+      - job: build
+        displayName: Build
+        steps:
+          - template: /scripts/azure-pipelines-steps-prepare.yml@self
+          - pwsh: dotnet cake --target=build
+            displayName: Build everything
+          - publish: output
+            artifact: build
+            condition: always()
+            displayName: Upload Logs
 
-  - job: test
-    displayName: Test
-    steps:
-      - template: /scripts/azure-pipelines-steps-prepare.yml@self
-      - pwsh: dotnet cake --target=test
-        displayName: Run tests
-      - task: PublishTestResults@2
-        condition: always()
-        inputs:
-          testResultsFormat: VSTest
-          testResultsFiles: output/test-results/*.trx
-      - publish: output
-        artifact: test
-        condition: always()
-        displayName: Upload Logs
+      - job: pack
+        displayName: Pack
+        steps:
+          - template: /scripts/azure-pipelines-steps-prepare.yml@self
+          - pwsh: dotnet cake --target=pack
+            displayName: Pack NuGet packages
+          - publish: output
+            artifact: pack
+            condition: always()
+            displayName: Upload Logs
+
+      - job: test
+        displayName: Test
+        steps:
+          - template: /scripts/azure-pipelines-steps-prepare.yml@self
+          - pwsh: dotnet cake --target=test
+            displayName: Run tests
+          - task: PublishTestResults@2
+            condition: always()
+            inputs:
+              testResultsFormat: VSTest
+              testResultsFiles: output/test-results/*.trx
+          - publish: output
+            artifact: test
+            condition: always()
+            displayName: Upload Logs
+
+  - stage: drawing
+    displayName: Drawing.Common Validation
+    dependsOn: []
+    jobs:
+      - job: api_compat
+        displayName: API Compatibility
+        steps:
+          - template: /scripts/azure-pipelines-steps-prepare.yml@self
+            parameters:
+              installWorkloads: false
+          - pwsh: dotnet build source/SkiaSharp.Extended.Drawing.Common/SkiaSharp.Extended.Drawing.Common.csproj -c Release -p:AssemblyName=System.Drawing.Common
+            displayName: Build for API compatibility
+          - pwsh: >-
+              dotnet apicompat
+              --left tools/api-baseline/netstandard2.0/System.Drawing.Common.dll
+              --right source/SkiaSharp.Extended.Drawing.Common/bin/Release/netstandard2.0/System.Drawing.Common.dll
+              --strict-mode
+              --suppression-file tools/api-baseline/api-compat-suppressions.xml
+            displayName: Run API compatibility check
+
+      - job: gdi_generate
+        displayName: Generate GDI+ Images
+        steps:
+          - template: /scripts/azure-pipelines-steps-prepare.yml@self
+            parameters:
+              installWorkloads: false
+          - pwsh: |
+              $env:SCENARIO_OUTPUT_PATH = "$(Build.ArtifactStagingDirectory)/gdi-images"
+              $env:REFERENCE_IMAGES_PATH = "$(Build.SourcesDirectory)/tests/SkiaSharp.Extended.Drawing.Common.Scenarios.ReferenceImages"
+              dotnet test tests/SkiaSharp.Extended.Drawing.Common.ReferenceGenerator --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
+            displayName: Generate GDI+ reference images
+          - task: PublishTestResults@2
+            condition: always()
+            inputs:
+              testResultsFormat: VSTest
+              testResultsFiles: $(Build.ArtifactStagingDirectory)/test-results/*.trx
+              testRunTitle: GDI+ Generation
+          - publish: $(Build.ArtifactStagingDirectory)/gdi-images
+            artifact: gdi-images
+            displayName: Upload GDI+ images
+
+      - job: skia_generate
+        displayName: Generate Skia Images
+        steps:
+          - template: /scripts/azure-pipelines-steps-prepare.yml@self
+            parameters:
+              installWorkloads: false
+          - pwsh: |
+              $env:SCENARIO_OUTPUT_PATH = "$(Build.ArtifactStagingDirectory)/skia-images"
+              $env:REFERENCE_IMAGES_PATH = "$(Build.SourcesDirectory)/tests/SkiaSharp.Extended.Drawing.Common.Scenarios.ReferenceImages"
+              dotnet test tests/SkiaSharp.Extended.Drawing.Common.SkiaGenerator --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
+            displayName: Generate Skia reference images
+          - task: PublishTestResults@2
+            condition: always()
+            inputs:
+              testResultsFormat: VSTest
+              testResultsFiles: $(Build.ArtifactStagingDirectory)/test-results/*.trx
+              testRunTitle: Skia Generation
+          - publish: $(Build.ArtifactStagingDirectory)/skia-images
+            artifact: skia-images
+            displayName: Upload Skia images
+
+      - job: pixel_diff
+        displayName: Pixel Diff (Skia vs GDI)
+        dependsOn:
+          - gdi_generate
+          - skia_generate
+        steps:
+          - template: /scripts/azure-pipelines-steps-prepare.yml@self
+            parameters:
+              installWorkloads: false
+          - download: current
+            artifact: gdi-images
+          - download: current
+            artifact: skia-images
+          - pwsh: |
+              $refDir = "$(Build.ArtifactStagingDirectory)/merged-refs"
+              New-Item -ItemType Directory -Path $refDir -Force | Out-Null
+
+              foreach ($src in @("$(Pipeline.Workspace)/gdi-images", "$(Pipeline.Workspace)/skia-images")) {
+                  Get-ChildItem $src -Recurse -Filter "*.png" | ForEach-Object {
+                      $rel = $_.FullName.Substring($src.Length + 1)
+                      $dest = Join-Path $refDir $rel
+                      New-Item -ItemType Directory -Path (Split-Path $dest -Parent) -Force | Out-Null
+                      Copy-Item $_.FullName $dest
+                  }
+              }
+
+              $count = (Get-ChildItem $refDir -Recurse -Filter "*.png").Count
+              Write-Host "$count images merged for comparison"
+
+              $env:REFERENCE_IMAGES_PATH = $refDir
+              $env:TEST_ARTIFACTS_PATH = "$(Build.ArtifactStagingDirectory)/diff-images"
+              dotnet test tests/SkiaSharp.Extended.Drawing.Common.PixelDiff --nologo --logger trx --results-directory "$(Build.ArtifactStagingDirectory)/test-results"
+            displayName: Compare Skia vs GDI images
+          - task: PublishTestResults@2
+            condition: always()
+            inputs:
+              testResultsFormat: VSTest
+              testResultsFiles: $(Build.ArtifactStagingDirectory)/test-results/*.trx
+              testRunTitle: Pixel Diff
+          - publish: $(Build.ArtifactStagingDirectory)/diff-images
+            artifact: diff-images
+            condition: always()
+            displayName: Upload diff images
+
+      - job: benchmarks
+        displayName: Benchmarks (GDI+ vs Skia)
+        steps:
+          - template: /scripts/azure-pipelines-steps-prepare.yml@self
+            parameters:
+              installWorkloads: false
+          - pwsh: |
+              dotnet run -c Release --project benchmarks/SkiaSharp.Extended.Drawing.Common.Benchmarks -- --filter "*" --exporters json csv markdown --job short
+            displayName: Run benchmarks (GDI+ vs Skia)
+          - publish: BenchmarkDotNet.Artifacts
+            artifact: benchmarks
+            condition: always()
+            displayName: Upload benchmark results
