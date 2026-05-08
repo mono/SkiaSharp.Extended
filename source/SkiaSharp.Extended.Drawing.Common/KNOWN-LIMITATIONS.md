@@ -267,21 +267,26 @@ These are primarily used by the Windows Forms designer and property grid.
 
 ### PixelOffsetMode
 
-`PixelOffsetMode.Half` and `PixelOffsetMode.HighQuality` are stored but not
-fully implemented. These modes should shift rendering by 0.5 pixels for
-quality improvement. Currently has no effect on output.
+`PixelOffsetMode.Half` and `PixelOffsetMode.HighQuality` are implemented via a
+`-0.5, -0.5` canvas translate, matching GDI+'s pixel-center alignment behavior.
+Minor rounding differences (~0.1% pixel error) may remain due to different
+rasterizers. `Save()`/`Restore()` correctly preserves the offset state.
 
 ### CompositingMode
 
-`CompositingMode.SourceCopy` is stored but not applied during rendering.
-GDI+ SourceCopy overwrites destination pixels without alpha blending. Our
-implementation always uses SourceOver (alpha blend).
+`CompositingMode.SourceCopy` is implemented and maps to `SKBlendMode.Src`
+(overwrite destination pixels). `CompositingMode.SourceOver` maps to
+`SKBlendMode.SrcOver` (alpha blend). Both modes are applied to all drawing
+operations including `DrawImage`.
 
 ### DrawImage Interpolation
 
 Uses `SKSamplingOptions` with `SKFilterMode.Linear` for default bilinear.
 Boundary pixel sampling may differ from GDI+'s bilinear implementation,
 producing visible differences at color edges when upscaling small images.
+Checkerboard patterns upscaled with bilinear filtering show significant
+differences (~63% pixel error) because GDI+ and Skia use different
+sub-pixel sampling strategies.
 
 ## API Compatibility
 

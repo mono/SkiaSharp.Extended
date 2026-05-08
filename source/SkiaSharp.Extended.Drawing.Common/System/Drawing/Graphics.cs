@@ -263,7 +263,23 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	public PixelOffsetMode PixelOffsetMode
 	{
 		get { ThrowIfDisposed(); return _pixelOffsetMode; }
-		set { ThrowIfDisposed(); _pixelOffsetMode = value; }
+		set
+		{
+			ThrowIfDisposed();
+			if (_pixelOffsetMode != value)
+			{
+				// Remove previous offset
+				if (_pixelOffsetMode == PixelOffsetMode.Half || _pixelOffsetMode == PixelOffsetMode.HighQuality)
+					_canvas.Translate(0.5f, 0.5f);
+
+				_pixelOffsetMode = value;
+
+				// Apply new offset — GDI+ shifts rendering by -0.5 pixels so
+				// pixel centers align to integer coordinates.
+				if (value == PixelOffsetMode.Half || value == PixelOffsetMode.HighQuality)
+					_canvas.Translate(-0.5f, -0.5f);
+			}
+		}
 	}
 
 	/// <summary>
@@ -2405,6 +2421,11 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 			_textContrast = state.TextContrast;
 			_clipSaveCount = state.ClipSaveCount;
 			_clipRegion = state.ClipRegion;
+
+			// Re-apply PixelOffsetMode translate — canvas.RestoreToCount
+			// undid the translate that was on the canvas before Save.
+			if (_pixelOffsetMode == PixelOffsetMode.Half || _pixelOffsetMode == PixelOffsetMode.HighQuality)
+				_canvas.Translate(-0.5f, -0.5f);
 		}
 	}
 
@@ -2464,6 +2485,9 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		});
 
 		int count = _canvas.Save();
+		// Create a new clip scope within this save level so that
+		// SetClip(Replace) doesn't restore past the g.Save() boundary.
+		_clipSaveCount = _canvas.Save();
 		return new GraphicsState(count);
 	}
 
@@ -2772,6 +2796,10 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	{
 		paint.IsAntialias = _smoothingMode == SmoothingMode.AntiAlias
 		                 || _smoothingMode == SmoothingMode.HighQuality;
+
+		paint.BlendMode = _compositingMode == CompositingMode.SourceCopy
+			? SKBlendMode.Src
+			: SKBlendMode.SrcOver;
 	}
 
 	/// <summary>
@@ -3057,6 +3085,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		var dest = new SKRect(destRect.X, destRect.Y, destRect.Right, destRect.Bottom);
 
 		using var paint = new SKPaint();
+		ApplyState(paint);
 
 		// Map InterpolationMode to SKSamplingOptions
 		SKSamplingOptions sampling;
