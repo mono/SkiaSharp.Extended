@@ -396,6 +396,19 @@ public sealed partial class PathGradientBrush : Brush
 						boundaryPoints.Add(new SKPoint(x, y));
 					}
 					break;
+				case SKPathVerb.Conic:
+					// Rational quadratic (conic) — subdivide with weight from iterator
+					float w = iter.ConicWeight();
+					for (int s = 1; s <= 8; s++)
+					{
+						float t = s / 8f;
+						float u = 1 - t;
+						float denom = u * u + 2 * u * t * w + t * t;
+						float cx = (u * u * pts[0].X + 2 * u * t * w * pts[1].X + t * t * pts[2].X) / denom;
+						float cy = (u * u * pts[0].Y + 2 * u * t * w * pts[1].Y + t * t * pts[2].Y) / denom;
+						boundaryPoints.Add(new SKPoint(cx, cy));
+					}
+					break;
 				case SKPathVerb.Cubic:
 					// Subdivide cubic into line segments
 					for (int s = 1; s <= 8; s++)
