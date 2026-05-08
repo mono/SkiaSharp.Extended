@@ -19,6 +19,12 @@ This is a fundamental difference between the two rasterizers and cannot
 be eliminated. The shape outlines and interiors are correct; only the
 boundary pixel blending differs.
 
+### SmoothingMode Mapping
+
+`SmoothingMode.Default` and `SmoothingMode.Invalid` map to **no anti-aliasing**
+(matching GDI+ behavior). Only `SmoothingMode.AntiAlias` and
+`SmoothingMode.HighQuality` enable AA in SkiaSharp.
+
 ### Half-Pixel Coordinate Offset
 
 GDI+ treats integer coordinates with a +0.5 pixel center offset for
@@ -53,6 +59,20 @@ differences are proportionally smaller.
 GDI+ interpolates gradients in sRGB color space. SkiaSharp can
 interpolate in either sRGB or linear space. The default behavior may
 produce slightly different color values in gradient midpoints.
+
+### Gradient Color Rounding
+
+GDI+ and Skia use different float-to-byte rounding for gradient color
+interpolation. This produces ±1 RGB value differences at ~30% of pixels.
+Visually identical (MAE < 0.5). The pixel diff tests use a per-pixel
+tolerance of 3 (±1 per channel) to account for this.
+
+### Cardinal Spline Tension
+
+The cardinal spline implementation uses a `tension * 0.3` factor (matching
+the Wine/ReactOS GDI+ implementation) instead of the mathematically
+standard `tension / 3` (~0.333). The difference is < 1% for default
+tension and is consistent with how GDI+ actually behaves.
 
 ## Unimplemented Features
 
@@ -124,6 +144,34 @@ The following methods store values but are **not yet applied** during drawing:
 - `SetThreshold()` — threshold value stored, not applied
 - `SetColorKey()` — color key range stored, not applied
 
+### Pen
+
+- **Pen.Transform** — Only uniform scale extraction. GDI+ applies the full
+  matrix (anisotropic scaling, rotation, shear) to the stroke pattern. We
+  extract only the X-axis scale magnitude and multiply stroke width
+  uniformly. A pen transform that scales X by 2 and Y by 1 produces
+  asymmetric strokes in GDI+ but uniform 2px strokes in our implementation.
+- **StartCap vs EndCap** — When StartCap differs from EndCap, Skia can only
+  apply one cap per paint. We prefer the non-Flat cap and fall back to
+  EndCap. GDI+ draws different cap shapes at each end of a line. Proper fix
+  requires drawing the line body without caps, then manually rendering cap
+  shapes at endpoints.
+- **Anchor caps** (RoundAnchor, SquareAnchor, DiamondAnchor, ArrowAnchor,
+  Triangle, AnchorMask) — All map to flat (butt) cap. GDI+ renders circles,
+  squares, diamonds, or arrows at line endpoints. These would require custom
+  path shapes drawn at each endpoint.
+- **DashCap** — Stored but not applied to `SKPaint`. GDI+ applies separate
+  cap styles to dash segment ends (Round, Triangle, Flat). Skia uses the
+  same stroke cap for dashes and line ends.
+- **PenAlignment.Inset** — Implemented via clip-to-path trick (clip to shape
+  boundary, double stroke width). Works for closed shapes but may produce
+  different AA at boundaries than GDI+'s true inset stroke. Does not work
+  for open paths (lines).
+- **CompoundArray** — Implemented via `GetFillPath()` and
+  `SKPathOp.Difference` to carve out sub-strokes within the pen width. May
+  not match GDI+ pixel-for-pixel at stroke boundaries, especially on
+  curves.
+
 ### HatchBrush
 
 All 53 standard hatch patterns are rendered as tiled 8×8 pixel bitmaps using
@@ -131,10 +179,29 @@ All 53 standard hatch patterns are rendered as tiled 8×8 pixel bitmaps using
 match GDI+ pixel-for-pixel due to different rasterization approaches.
 Unrecognized styles fall back to a cross pattern.
 
+**Diagonal hatch anti-aliasing:** GDI+ applies anti-aliasing to diagonal
+hatch lines (ForwardDiagonal, BackwardDiagonal, DiagonalCross), producing
+sub-pixel blending at tile boundaries. Skia renders these as 1-bit patterns
+without AA, resulting in ~37-63% pixel error for diagonal styles. The
+patterns are structurally correct but lack the edge smoothing.
+
 ### PathGradientBrush
 
-Approximated using `SKShader.CreateRadialGradient()`. Does not perfectly
-match GDI+'s path gradient algorithm for non-circular paths.
+Implemented using `SKCanvas.DrawVertices` with a triangle fan. The center
+vertex has `CenterColor`; boundary vertices have `SurroundColors`. The path
+is flattened (beziers/conics subdivided to polylines) and clipped for
+concave shapes.
+
+- **Interpolation difference**: Skia uses barycentric interpolation within
+  each triangle; GDI+ uses ray-from-center interpolation. This produces
+  visible differences (25-65% pixel error) especially for multi-color
+  gradients, though shapes and colors are correct.
+- **Blend/InterpolationColors**: Not applied to the triangle fan. The Blend
+  and InterpolationColors properties affect the center-to-edge falloff
+  curve, which would require inserting concentric rings of intermediate
+  vertices.
+- **FocusScales**: Stored but not applied to rendering.
+- **WrapMode**: Not applied (triangle fan fills the path interior only).
 
 ### LinearGradientBrush
 
@@ -197,6 +264,24 @@ rendering effect.
 `FontConverter`, `ImageConverter`, `ImageFormatConverter`, `ColorConverter`,
 `MarginsConverter`, `IconConverter` — most conversion methods throw PNSE.
 These are primarily used by the Windows Forms designer and property grid.
+
+### PixelOffsetMode
+
+`PixelOffsetMode.Half` and `PixelOffsetMode.HighQuality` are stored but not
+fully implemented. These modes should shift rendering by 0.5 pixels for
+quality improvement. Currently has no effect on output.
+
+### CompositingMode
+
+`CompositingMode.SourceCopy` is stored but not applied during rendering.
+GDI+ SourceCopy overwrites destination pixels without alpha blending. Our
+implementation always uses SourceOver (alpha blend).
+
+### DrawImage Interpolation
+
+Uses `SKSamplingOptions` with `SKFilterMode.Linear` for default bilinear.
+Boundary pixel sampling may differ from GDI+'s bilinear implementation,
+producing visible differences at color edges when upscaling small images.
 
 ## API Compatibility
 
