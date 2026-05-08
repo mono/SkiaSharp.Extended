@@ -472,6 +472,16 @@ public sealed partial class Pen : MarshalByRefObject, ICloneable, IDisposable
 	}
 
 	/// <summary>
+	///  Gets whether this pen uses <see cref="PenAlignment.Inset"/> alignment.
+	/// </summary>
+	internal bool IsInset => _alignment == PenAlignment.Inset;
+
+	/// <summary>
+	///  Gets the internal compound array, or <see langword="null"/> if not set.
+	/// </summary>
+	internal float[]? InternalCompoundArray => _compoundArray;
+
+	/// <summary>
 	///  Creates an <see cref="SKPaint"/> configured for stroke operations from this pen.
 	/// </summary>
 	/// <returns>A new <see cref="SKPaint"/> with <see cref="SKPaintStyle.Stroke"/> and mapped pen properties.</returns>
@@ -497,17 +507,36 @@ public sealed partial class Pen : MarshalByRefObject, ICloneable, IDisposable
 		// Overlay stroke properties
 		paint.Style = SKPaintStyle.Stroke;
 		paint.StrokeWidth = _width;
-		paint.StrokeCap = SkiaConversions.ToSKStrokeCap(_endCap);
+
+		// Apply transform scale to stroke width
+		if (_transform != null)
+		{
+			var m = _transform.SKMatrix;
+			if (!m.IsIdentity)
+			{
+				float scaleX = (float)Math.Sqrt(m.ScaleX * m.ScaleX + m.SkewY * m.SkewY);
+				paint.StrokeWidth *= scaleX;
+			}
+		}
+
+		// Stroke caps: when both caps match, use that cap; prefer the non-Flat cap
+		if (_startCap == _endCap || _startCap == LineCap.Flat)
+			paint.StrokeCap = SkiaConversions.ToSKStrokeCap(_endCap);
+		else if (_endCap == LineCap.Flat)
+			paint.StrokeCap = SkiaConversions.ToSKStrokeCap(_startCap);
+		else
+			paint.StrokeCap = SkiaConversions.ToSKStrokeCap(_endCap);
+
 		paint.StrokeJoin = SkiaConversions.ToSKStrokeJoin(_lineJoin);
 		paint.StrokeMiter = _miterLimit;
 
-		// Apply dash pattern
+		// Apply dash pattern (scale by effective stroke width after transform)
 		var pattern = _dashStyle == DashStyle.Custom ? _dashPattern : SkiaConversions.GetDashPattern(_dashStyle);
 		if (pattern != null && pattern.Length >= 2)
 		{
 			// Scale dash pattern by stroke width (GDI+ convention)
 			var scaledPattern = new float[pattern.Length];
-			var scale = _width > 0 ? _width : 1f;
+			var scale = paint.StrokeWidth > 0 ? paint.StrokeWidth : 1f;
 			for (int i = 0; i < pattern.Length; i++)
 				scaledPattern[i] = pattern[i] * scale;
 

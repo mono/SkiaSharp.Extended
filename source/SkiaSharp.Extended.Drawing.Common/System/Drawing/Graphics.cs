@@ -537,12 +537,10 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
 		var rect = GdiCurveRect(x, y, width, height);
 		using var path = new SKPath();
 		path.AddArc(rect, startAngle, sweepAngle);
-		_canvas.DrawPath(path, paint);
+		DrawStroke(pen, path);
 	}
 
 	/// <summary>
@@ -583,12 +581,10 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
 		using var path = new SKPath();
 		path.MoveTo(x1, y1);
 		path.CubicTo(x2, y2, x3, y3, x4, y4);
-		_canvas.DrawPath(path, paint);
+		DrawStroke(pen, path);
 	}
 
 	/// <summary>
@@ -602,13 +598,11 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
 		if (points is null) throw new ArgumentNullException(nameof(points));
 		if (points.Length < 4) throw new ArgumentException("Array must contain at least 4 points.", nameof(points));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
 		using var path = new SKPath();
 		path.MoveTo(points[0].X, points[0].Y);
 		for (int i = 1; i + 2 < points.Length; i += CubicBezierStride)
 			path.CubicTo(points[i].X, points[i].Y, points[i + 1].X, points[i + 1].Y, points[i + 2].X, points[i + 2].Y);
-		_canvas.DrawPath(path, paint);
+		DrawStroke(pen, path);
 	}
 
 	/// <summary>
@@ -647,10 +641,8 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
 		if (points is null) throw new ArgumentNullException(nameof(points));
 		if (points.Length < 3) throw new ArgumentException("Array must contain at least 3 points.", nameof(points));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
 		using var path = BuildClosedCardinalSplinePath(points, tension);
-		_canvas.DrawPath(path, paint);
+		DrawStroke(pen, path, isClosedShape: true);
 	}
 
 	/// <summary>
@@ -703,10 +695,8 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
 		if (points is null) throw new ArgumentNullException(nameof(points));
 		if (points.Length < 2) throw new ArgumentException("Array must contain at least 2 points.", nameof(points));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
 		using var path = BuildCardinalSplinePath(points, offset, numberOfSegments, tension);
-		_canvas.DrawPath(path, paint);
+		DrawStroke(pen, path);
 	}
 
 	/// <summary>
@@ -776,9 +766,10 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
-		_canvas.DrawOval(GdiCurveRect(x, y, width, height), paint);
+		var rect = GdiCurveRect(x, y, width, height);
+		using var path = new SKPath();
+		path.AddOval(rect);
+		DrawStroke(pen, path, isClosedShape: true);
 	}
 
 	/// <summary>
@@ -1158,9 +1149,10 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
-		_canvas.DrawLine(x1, y1, x2, y2, paint);
+		using var path = new SKPath();
+		path.MoveTo(x1, y1);
+		path.LineTo(x2, y2);
+		DrawStroke(pen, path);
 	}
 
 	/// <summary>
@@ -1174,13 +1166,11 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
 		if (points is null) throw new ArgumentNullException(nameof(points));
 		if (points.Length < 2) throw new ArgumentException(null, nameof(points));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
 		using var path = new SKPath();
 		path.MoveTo(points[0].X, points[0].Y);
 		for (int i = 1; i < points.Length; i++)
 			path.LineTo(points[i].X, points[i].Y);
-		_canvas.DrawPath(path, paint);
+		DrawStroke(pen, path);
 	}
 
 	/// <summary>
@@ -1205,9 +1195,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
 		if (path is null) throw new ArgumentNullException(nameof(path));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
-		_canvas.DrawPath(path.SKPath, paint);
+		DrawStroke(pen, path.SKPath, isClosedShape: true);
 	}
 
 	/// <summary>
@@ -1242,14 +1230,12 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
 		var oval = GdiCurveRect(x, y, width, height);
 		using var path = new SKPath();
 		path.MoveTo(oval.MidX, oval.MidY);
 		path.ArcTo(oval, startAngle, sweepAngle, false);
 		path.Close();
-		_canvas.DrawPath(path, paint);
+		DrawStroke(pen, path, isClosedShape: true);
 	}
 
 	/// <summary>
@@ -1263,10 +1249,8 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
 		if (points is null) throw new ArgumentNullException(nameof(points));
 		if (points.Length < 2) throw new ArgumentException(null, nameof(points));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
 		using var path = BuildPolygonPath(points);
-		_canvas.DrawPath(path, paint);
+		DrawStroke(pen, path, isClosedShape: true);
 	}
 
 	/// <summary>
@@ -1307,9 +1291,9 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	{
 		ThrowIfDisposed();
 		if (pen is null) throw new ArgumentNullException(nameof(pen));
-		using var paint = pen.CreatePaint();
-		ApplyState(paint);
-		_canvas.DrawRect(new SKRect(x, y, x + width, y + height), paint);
+		using var path = new SKPath();
+		path.AddRect(new SKRect(x, y, x + width, y + height));
+		DrawStroke(pen, path, isClosedShape: true);
 	}
 
 	/// <summary>
@@ -2788,6 +2772,109 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	{
 		paint.IsAntialias = _smoothingMode == SmoothingMode.AntiAlias
 		                 || _smoothingMode == SmoothingMode.HighQuality;
+	}
+
+	/// <summary>
+	///  Strokes a path using the specified pen, handling Inset alignment and CompoundArray features.
+	/// </summary>
+	/// <param name="pen">The pen to stroke with.</param>
+	/// <param name="path">The path to stroke.</param>
+	/// <param name="isClosedShape">Whether the path represents a closed shape (required for Inset alignment).</param>
+	private void DrawStroke(Pen pen, SKPath path, bool isClosedShape = false)
+	{
+		using var paint = pen.CreatePaint();
+		ApplyState(paint);
+
+		var compoundArray = pen.InternalCompoundArray;
+		if (compoundArray != null && compoundArray.Length >= 4)
+		{
+			DrawCompoundStroke(path, paint, compoundArray);
+			return;
+		}
+
+		if (pen.IsInset && isClosedShape)
+		{
+			int count = _canvas.Save();
+			_canvas.ClipPath(path);
+			paint.StrokeWidth *= 2;
+			_canvas.DrawPath(path, paint);
+			_canvas.RestoreToCount(count);
+			return;
+		}
+
+		_canvas.DrawPath(path, paint);
+	}
+
+	/// <summary>
+	///  Draws compound (railroad track) strokes by splitting the pen width into sub-strokes
+	///  defined by the compound array value pairs.
+	/// </summary>
+	private void DrawCompoundStroke(SKPath originalPath, SKPaint basePaint, float[] compoundArray)
+	{
+		float W = basePaint.StrokeWidth;
+		if (W <= 0) return;
+
+		using var fillPaint = new SKPaint
+		{
+			Style = SKPaintStyle.Fill,
+			Color = basePaint.Color,
+			Shader = basePaint.Shader,
+			IsAntialias = basePaint.IsAntialias,
+			ColorFilter = basePaint.ColorFilter,
+		};
+
+		using var strokeHelper = new SKPaint
+		{
+			Style = SKPaintStyle.Stroke,
+			IsAntialias = basePaint.IsAntialias,
+		};
+
+		for (int i = 0; i < compoundArray.Length - 1; i += 2)
+		{
+			float start = compoundArray[i];
+			float end = compoundArray[i + 1];
+			if (end <= start) continue;
+
+			// Width from center to the boundary at 'start' and 'end' positions
+			float outerWidth = W * (1f - 2f * start);
+			float innerWidth = W * (1f - 2f * end);
+
+			float absOuter = Math.Abs(outerWidth);
+			float absInner = Math.Abs(innerWidth);
+
+			// Ensure absOuter >= absInner for the difference operation
+			if (absOuter < absInner)
+				(absOuter, absInner) = (absInner, absOuter);
+
+			using var outerFill = new SKPath();
+			using var innerFill = new SKPath();
+
+			bool hasOuter = false;
+			bool hasInner = false;
+
+			if (absOuter > 0.001f)
+			{
+				strokeHelper.StrokeWidth = absOuter;
+				hasOuter = strokeHelper.GetFillPath(originalPath, outerFill);
+			}
+
+			if (absInner > 0.001f)
+			{
+				strokeHelper.StrokeWidth = absInner;
+				hasInner = strokeHelper.GetFillPath(originalPath, innerFill);
+			}
+
+			if (hasOuter && hasInner)
+			{
+				using var trackPath = new SKPath();
+				outerFill.Op(innerFill, SKPathOp.Difference, trackPath);
+				_canvas.DrawPath(trackPath, fillPaint);
+			}
+			else if (hasOuter)
+			{
+				_canvas.DrawPath(outerFill, fillPaint);
+			}
+		}
 	}
 
 	private void ThrowIfDisposed()
