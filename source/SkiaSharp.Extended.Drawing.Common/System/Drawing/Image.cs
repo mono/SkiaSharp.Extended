@@ -421,29 +421,18 @@ public abstract partial class Image : MarshalByRefObject, ICloneable, IDisposabl
 		ThrowIfDisposed();
 
 		var source = SKBitmapBacking!;
-		bool rotate90 = rotateFlipType == RotateFlipType.Rotate90FlipNone ||
-		                rotateFlipType == RotateFlipType.Rotate90FlipX ||
-		                rotateFlipType == RotateFlipType.Rotate90FlipY ||
-		                rotateFlipType == RotateFlipType.Rotate90FlipXY;
-		bool rotate180 = rotateFlipType == RotateFlipType.Rotate180FlipNone ||
-		                 rotateFlipType == RotateFlipType.Rotate180FlipX ||
-		                 rotateFlipType == RotateFlipType.Rotate180FlipY ||
-		                 rotateFlipType == RotateFlipType.Rotate180FlipXY;
-		bool rotate270 = rotateFlipType == RotateFlipType.Rotate270FlipNone ||
-		                 rotateFlipType == RotateFlipType.Rotate270FlipX ||
-		                 rotateFlipType == RotateFlipType.Rotate270FlipY ||
-		                 rotateFlipType == RotateFlipType.Rotate270FlipXY;
-		bool flipX = rotateFlipType == RotateFlipType.RotateNoneFlipX ||
-		             rotateFlipType == RotateFlipType.Rotate90FlipX ||
-		             rotateFlipType == RotateFlipType.Rotate180FlipX ||
-		             rotateFlipType == RotateFlipType.Rotate270FlipX;
-		bool flipY = rotateFlipType == RotateFlipType.RotateNoneFlipY ||
-		             rotateFlipType == RotateFlipType.Rotate90FlipY ||
-		             rotateFlipType == RotateFlipType.Rotate180FlipY ||
-		             rotateFlipType == RotateFlipType.Rotate270FlipY;
 
-		int destWidth = (rotate90 || rotate270) ? source.Height : source.Width;
-		int destHeight = (rotate90 || rotate270) ? source.Width : source.Height;
+		// The RotateFlipType enum encodes rotation and flip in a 3-bit value:
+		// Bits 0-1: rotation (0=0°, 1=90°, 2=180°, 3=270°)
+		// Bit 2: 0=no flip, 1=flip X (horizontal mirror)
+		// FlipY = FlipX + Rotate180, FlipXY = Rotate180
+		int value = (int)rotateFlipType;
+		int rotation = value & 3;       // 0, 1, 2, or 3 → 0°, 90°, 180°, 270°
+		bool flipX = (value & 4) != 0;  // bit 2 = horizontal flip
+
+		bool is90or270 = rotation == 1 || rotation == 3;
+		int destWidth = is90or270 ? source.Height : source.Width;
+		int destHeight = is90or270 ? source.Width : source.Height;
 		var dest = new SKBitmap(destWidth, destHeight, source.ColorType, source.AlphaType);
 
 		using (var canvas = new SKCanvas(dest))
@@ -455,13 +444,19 @@ public abstract partial class Image : MarshalByRefObject, ICloneable, IDisposabl
 
 			canvas.Translate(cx, cy);
 
-			if (rotate90) canvas.RotateDegrees(90);
-			else if (rotate180) canvas.RotateDegrees(180);
-			else if (rotate270) canvas.RotateDegrees(270);
+			if (rotation == 1) canvas.RotateDegrees(90);
+			else if (rotation == 2) canvas.RotateDegrees(180);
+			else if (rotation == 3) canvas.RotateDegrees(270);
 
-			float scaleX = flipX ? -1 : 1;
-			float scaleY = flipY ? -1 : 1;
-			canvas.Scale(scaleX, scaleY);
+			// Flip is applied in source space (before rotation visually)
+			// For 90/270 rotations, X-flip in rotated space = Y-flip in source
+			if (flipX)
+			{
+				if (is90or270)
+					canvas.Scale(1, -1);
+				else
+					canvas.Scale(-1, 1);
+			}
 
 			canvas.Translate(-source.Width / 2f, -source.Height / 2f);
 			canvas.DrawBitmap(source, 0, 0);
