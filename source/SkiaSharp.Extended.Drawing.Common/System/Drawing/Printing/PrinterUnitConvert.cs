@@ -5,6 +5,18 @@
 /// </summary>
 public sealed partial class PrinterUnitConvert
 {
+	/// <summary>Hundredths of a millimeter per inch.</summary>
+	private const double HundredthsMmPerInch = 2540.0;
+
+	/// <summary>Tenths of a millimeter per inch.</summary>
+	private const double TenthsMmPerInch = 254.0;
+
+	/// <summary>Display units (hundredths of an inch) per thousandth of an inch.</summary>
+	private const double DisplayUnitsPerThousandth = 10.0;
+
+	/// <summary>Thousandths of an inch per inch.</summary>
+	private const double ThousandthsPerInch = 1000.0;
+
 	internal PrinterUnitConvert() {}
 
 	/// <summary>Converts a double-precision floating-point number from one <see cref="PrinterUnit"/> type to another.</summary>
@@ -62,15 +74,15 @@ public sealed partial class PrinterUnitConvert
 		{
 			case PrinterUnit.Display:
 				// Display units are hundredths of an inch
-				return value * 10.0;
+				return value * DisplayUnitsPerThousandth;
 			case PrinterUnit.ThousandthsOfAnInch:
 				return value;
 			case PrinterUnit.HundredthsOfAMillimeter:
 				// 1 inch = 2540 hundredths of a millimeter
-				return value * 1000.0 / 2540.0;
+				return value * ThousandthsPerInch / HundredthsMmPerInch;
 			case PrinterUnit.TenthsOfAMillimeter:
 				// 1 inch = 254 tenths of a millimeter
-				return value * 1000.0 / 254.0;
+				return value * ThousandthsPerInch / TenthsMmPerInch;
 			default:
 				return value;
 		}
@@ -81,13 +93,13 @@ public sealed partial class PrinterUnitConvert
 		switch (unit)
 		{
 			case PrinterUnit.Display:
-				return value / 10.0;
+				return value / DisplayUnitsPerThousandth;
 			case PrinterUnit.ThousandthsOfAnInch:
 				return value;
 			case PrinterUnit.HundredthsOfAMillimeter:
-				return value * 2540.0 / 1000.0;
+				return value * HundredthsMmPerInch / ThousandthsPerInch;
 			case PrinterUnit.TenthsOfAMillimeter:
-				return value * 254.0 / 1000.0;
+				return value * TenthsMmPerInch / ThousandthsPerInch;
 			default:
 				return value;
 		}

@@ -7,6 +7,18 @@ namespace System.Drawing.Drawing2D;
 /// </summary>
 public sealed partial class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable
 {
+	/// <summary>Points per inch (typographic standard).</summary>
+	private const float PointsPerInch = 72f;
+
+	/// <summary>Default screen DPI assumed for point-to-pixel conversion.</summary>
+	private const float DefaultDpi = 96f;
+
+	/// <summary>
+	/// GDI+ cardinal spline control point scaling factor (Catmull-Rom).
+	/// Control points are computed as: p[i] ± (tension * GdiTensionFactor) * (p[i+1] - p[i-1]).
+	/// </summary>
+	private const float GdiTensionFactor = 0.3f;
+
 	private bool _disposed;
 	private bool _needsNewFigure;
 
@@ -1112,8 +1124,8 @@ public sealed partial class GraphicsPath : MarshalByRefObject, ICloneable, IDisp
 	{
 		var typeface = family.CreateTypefaceForStyle((FontStyle)style);
 		// GDI+ AddString uses World units; emSize is in the unit of the Graphics, default points.
-		// Convert points to pixels (96 dpi): pixels = points * 96/72 = points * 4/3
-		float sizeInPixels = emSize * 96f / 72f;
+		// Convert points to pixels (96 dpi): pixels = points * 96/72
+		float sizeInPixels = emSize * DefaultDpi / PointsPerInch;
 		using var font = new SKFont(typeface, sizeInPixels);
 		using var textPath = font.GetTextPath(s, new SKPoint(x, y));
 		if (textPath != null && textPath.PointCount > 0)
@@ -1130,7 +1142,7 @@ public sealed partial class GraphicsPath : MarshalByRefObject, ICloneable, IDisp
 		var path = new SKPath();
 		path.MoveTo(points[offset].X, points[offset].Y);
 
-		float k = tension * 0.3f;
+		float k = tension * GdiTensionFactor;
 
 		for (int i = offset; i < endIndex; i++)
 		{
@@ -1160,7 +1172,7 @@ public sealed partial class GraphicsPath : MarshalByRefObject, ICloneable, IDisp
 		var path = new SKPath();
 		path.MoveTo(points[0].X, points[0].Y);
 
-		float k = tension * 0.3f;
+		float k = tension * GdiTensionFactor;
 
 		for (int i = 0; i < n; i++)
 		{

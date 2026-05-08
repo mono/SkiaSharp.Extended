@@ -8,6 +8,12 @@ namespace System.Drawing.Printing;
 /// </summary>
 public partial class StandardPrintController : PrintController
 {
+	/// <summary>Points per inch (typographic standard).</summary>
+	private const float PointsPerInch = 72f;
+
+	/// <summary>Hundredths of an inch per inch (GDI+ page bounds unit).</summary>
+	private const float HundredthsPerInch = 100f;
+
 	private SKDocument? _document;
 	private Stream? _stream;
 	private bool _ownsStream;
@@ -51,12 +57,12 @@ public partial class StandardPrintController : PrintController
 
 		var bounds = e.PageBounds;
 		// Convert hundredths of an inch to points (72 points per inch)
-		float widthPt = bounds.Width * 72f / 100f;
-		float heightPt = bounds.Height * 72f / 100f;
+		float widthPt = bounds.Width * PointsPerInch / HundredthsPerInch;
+		float heightPt = bounds.Height * PointsPerInch / HundredthsPerInch;
 
 		var canvas = _document.BeginPage(widthPt, heightPt);
 		// Scale canvas so drawing in hundredths-of-an-inch maps to points
-		canvas.Scale(72f / 100f, 72f / 100f);
+		canvas.Scale(PointsPerInch / HundredthsPerInch, PointsPerInch / HundredthsPerInch);
 
 		return Graphics.FromCanvas(canvas, ownsClipSave: false);
 	}

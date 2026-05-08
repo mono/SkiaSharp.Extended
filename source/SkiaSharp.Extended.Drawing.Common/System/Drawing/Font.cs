@@ -12,6 +12,15 @@ public sealed partial class Font : MarshalByRefObject, ICloneable, IDisposable, 
 {
 	private const float DefaultDpi = 96f;
 
+	/// <summary>Points per inch (typographic standard).</summary>
+	private const float PointsPerInch = 72f;
+
+	/// <summary>Document units per inch (GDI+ Document unit = 1/300 inch).</summary>
+	private const float DocumentUnitsPerInch = 300f;
+
+	/// <summary>Millimeters per inch.</summary>
+	private const float MillimetersPerInch = 25.4f;
+
 	/// <summary>
 	///  The SkiaSharp font used for text measurement and rendering.
 	/// </summary>
@@ -382,7 +391,7 @@ public sealed partial class Font : MarshalByRefObject, ICloneable, IDisposable, 
 		ThrowIfDisposed();
 		// Compute line spacing in pixels at the target DPI
 		float sizeInPoints = SizeInPoints;
-		float sizeInPixelsAtDpi = sizeInPoints * dpi / 72f;
+		float sizeInPixelsAtDpi = sizeInPoints * dpi / PointsPerInch;
 
 		// Scale the font metrics proportionally
 		using var tempFont = new SKFont(SKTypeface, sizeInPixelsAtDpi);
@@ -441,10 +450,10 @@ public sealed partial class Font : MarshalByRefObject, ICloneable, IDisposable, 
 		return unit switch
 		{
 			GraphicsUnit.Pixel => emSize,
-			GraphicsUnit.Point => emSize * DefaultDpi / 72f,
+			GraphicsUnit.Point => emSize * DefaultDpi / PointsPerInch,
 			GraphicsUnit.Inch => emSize * DefaultDpi,
-			GraphicsUnit.Document => emSize * DefaultDpi / 300f,
-			GraphicsUnit.Millimeter => emSize * DefaultDpi / 25.4f,
+			GraphicsUnit.Document => emSize * DefaultDpi / DocumentUnitsPerInch,
+			GraphicsUnit.Millimeter => emSize * DefaultDpi / MillimetersPerInch,
 			GraphicsUnit.Display => emSize, // 1 display unit = 1 pixel at 96 DPI
 			GraphicsUnit.World => emSize,
 			_ => emSize,
@@ -459,12 +468,12 @@ public sealed partial class Font : MarshalByRefObject, ICloneable, IDisposable, 
 		return unit switch
 		{
 			GraphicsUnit.Point => emSize,
-			GraphicsUnit.Pixel => emSize * 72f / DefaultDpi,
-			GraphicsUnit.Inch => emSize * 72f,
-			GraphicsUnit.Document => emSize * 72f / 300f,
-			GraphicsUnit.Millimeter => emSize * 72f / 25.4f,
-			GraphicsUnit.Display => emSize * 72f / DefaultDpi,
-			GraphicsUnit.World => emSize * 72f / DefaultDpi,
+			GraphicsUnit.Pixel => emSize * PointsPerInch / DefaultDpi,
+			GraphicsUnit.Inch => emSize * PointsPerInch,
+			GraphicsUnit.Document => emSize * PointsPerInch / DocumentUnitsPerInch,
+			GraphicsUnit.Millimeter => emSize * PointsPerInch / MillimetersPerInch,
+			GraphicsUnit.Display => emSize * PointsPerInch / DefaultDpi,
+			GraphicsUnit.World => emSize * PointsPerInch / DefaultDpi,
 			_ => emSize,
 		};
 	}

@@ -13,10 +13,30 @@ namespace System.Drawing;
 [ComponentModel.TypeConverter(typeof(ImageConverter))]
 public abstract partial class Image : MarshalByRefObject, ICloneable, IDisposable, Runtime.Serialization.ISerializable
 {
+	private const float DefaultDpi = 96f;
+
+	/// <summary>Bitmask to extract the rotation component (bits 0-1) from a RotateFlipType value.</summary>
+	private const int RotationMask = 0x03;
+
+	/// <summary>Bitmask to extract the horizontal flip flag (bit 2) from a RotateFlipType value.</summary>
+	private const int FlipXMask = 0x04;
+
+	/// <summary>Rotation code for 90 degrees clockwise.</summary>
+	private const int Rotation90 = 1;
+
+	/// <summary>Rotation code for 180 degrees.</summary>
+	private const int Rotation180 = 2;
+
+	/// <summary>Rotation code for 270 degrees clockwise.</summary>
+	private const int Rotation270 = 3;
+
+	/// <summary>Maximum image encoding quality (100%).</summary>
+	private const int MaxEncodingQuality = 100;
+
 	internal SKBitmap? SKBitmapBacking;
 	internal ImageFormat _rawFormat = ImageFormat.MemoryBmp;
-	internal float _horizontalResolution = 96f;
-	internal float _verticalResolution = 96f;
+	internal float _horizontalResolution = DefaultDpi;
+	internal float _verticalResolution = DefaultDpi;
 	internal PixelFormat _requestedPixelFormat;
 	private object? _tag;
 	private byte[]? _codecData;
@@ -427,10 +447,10 @@ public abstract partial class Image : MarshalByRefObject, ICloneable, IDisposabl
 		// Bit 2: 0=no flip, 1=flip X (horizontal mirror)
 		// FlipY = FlipX + Rotate180, FlipXY = Rotate180
 		int value = (int)rotateFlipType;
-		int rotation = value & 3;       // 0, 1, 2, or 3 → 0°, 90°, 180°, 270°
-		bool flipX = (value & 4) != 0;  // bit 2 = horizontal flip
+		int rotation = value & RotationMask;
+		bool flipX = (value & FlipXMask) != 0;
 
-		bool is90or270 = rotation == 1 || rotation == 3;
+		bool is90or270 = rotation == Rotation90 || rotation == Rotation270;
 		int destWidth = is90or270 ? source.Height : source.Width;
 		int destHeight = is90or270 ? source.Width : source.Height;
 		var dest = new SKBitmap(destWidth, destHeight, source.ColorType, source.AlphaType);
@@ -444,9 +464,9 @@ public abstract partial class Image : MarshalByRefObject, ICloneable, IDisposabl
 
 			canvas.Translate(cx, cy);
 
-			if (rotation == 1) canvas.RotateDegrees(90);
-			else if (rotation == 2) canvas.RotateDegrees(180);
-			else if (rotation == 3) canvas.RotateDegrees(270);
+			if (rotation == Rotation90) canvas.RotateDegrees(90);
+			else if (rotation == Rotation180) canvas.RotateDegrees(180);
+			else if (rotation == Rotation270) canvas.RotateDegrees(270);
 
 			// Flip is applied in source space (before rotation visually)
 			// For 90/270 rotations, X-flip in rotated space = Y-flip in source
@@ -624,7 +644,7 @@ public abstract partial class Image : MarshalByRefObject, ICloneable, IDisposabl
 	{
 		using (var image = SKImage.FromBitmap(SKBitmapBacking!))
 		{
-			using var data = image.Encode(format, 100);
+			using var data = image.Encode(format, MaxEncodingQuality);
 			if (data == null)
 				throw new ArgumentException("Failed to encode the image to the specified format.");
 			data.SaveTo(stream);

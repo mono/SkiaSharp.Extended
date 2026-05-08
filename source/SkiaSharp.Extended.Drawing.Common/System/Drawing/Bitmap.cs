@@ -291,13 +291,14 @@ public sealed partial class Bitmap : Image
 			throw new InvalidOperationException("Cannot lock bitmap pixels.");
 
 		int bpp = SkiaConversions.GetBitsPerPixel(format);
+		const int BitsPerByte = 8;
 		int stride = SKBitmapBacking.RowBytes;
 
 		bitmapData.Width = rect.Width;
 		bitmapData.Height = rect.Height;
 		bitmapData.Stride = stride;
 		bitmapData.PixelFormat = format;
-		bitmapData.Scan0 = pixels + (rect.Y * stride) + (rect.X * (bpp / 8));
+		bitmapData.Scan0 = pixels + (rect.Y * stride) + (rect.X * (bpp / BitsPerByte));
 
 		return bitmapData;
 	}

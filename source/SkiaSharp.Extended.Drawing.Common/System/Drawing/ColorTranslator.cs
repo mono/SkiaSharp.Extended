@@ -7,6 +7,14 @@ namespace System.Drawing;
 /// </summary>
 public static partial class ColorTranslator
 {
+	/// <summary>Bit mask for extracting a single color channel (8 bits) from a Win32 COLORREF.</summary>
+	private const int ColorChannelMask = 0xFF;
+
+	/// <summary>Bit shift for the green channel in Win32 COLORREF format.</summary>
+	private const int GreenChannelShift = 8;
+
+	/// <summary>Bit shift for the blue channel in Win32 COLORREF format.</summary>
+	private const int BlueChannelShift = 16;
 	/// <summary>
 	///  Translates an HTML color representation to a GDI+ <see cref="Color"/> structure.
 	/// </summary>
@@ -92,9 +100,9 @@ public static partial class ColorTranslator
 	public static Color FromWin32(int win32Color)
 	{
 		// Win32 COLORREF format: 0x00BBGGRR
-		int r = win32Color & 0xFF;
-		int g = (win32Color >> 8) & 0xFF;
-		int b = (win32Color >> 16) & 0xFF;
+		int r = win32Color & ColorChannelMask;
+		int g = (win32Color >> GreenChannelShift) & ColorChannelMask;
+		int b = (win32Color >> BlueChannelShift) & ColorChannelMask;
 		return Color.FromArgb(r, g, b);
 	}
 
@@ -137,6 +145,6 @@ public static partial class ColorTranslator
 	public static int ToWin32(Color c)
 	{
 		// Win32 COLORREF format: 0x00BBGGRR
-		return c.R | (c.G << 8) | (c.B << 16);
+		return c.R | (c.G << GreenChannelShift) | (c.B << BlueChannelShift);
 	}
 }

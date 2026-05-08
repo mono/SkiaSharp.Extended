@@ -8,6 +8,12 @@ namespace System.Drawing.Internal;
 /// </summary>
 internal static class SkiaConversions
 {
+	/// <summary>GDI+ dash unit length in the standard dash patterns.</summary>
+	private const float DashLength = 3f;
+
+	/// <summary>GDI+ dot/gap unit length in the standard dash patterns.</summary>
+	private const float DotLength = 1f;
+
 	/// <summary>
 	///  Converts a <see cref="Color"/> to an <see cref="SKColor"/>.
 	/// </summary>
@@ -219,10 +225,10 @@ internal static class SkiaConversions
 	public static float[]? GetDashPattern(Drawing2D.DashStyle dashStyle) => dashStyle switch
 	{
 		Drawing2D.DashStyle.Solid => null,
-		Drawing2D.DashStyle.Dash => new float[] { 3f, 1f },
-		Drawing2D.DashStyle.Dot => new float[] { 1f, 1f },
-		Drawing2D.DashStyle.DashDot => new float[] { 3f, 1f, 1f, 1f },
-		Drawing2D.DashStyle.DashDotDot => new float[] { 3f, 1f, 1f, 1f, 1f, 1f },
+		Drawing2D.DashStyle.Dash => new float[] { DashLength, DotLength },
+		Drawing2D.DashStyle.Dot => new float[] { DotLength, DotLength },
+		Drawing2D.DashStyle.DashDot => new float[] { DashLength, DotLength, DotLength, DotLength },
+		Drawing2D.DashStyle.DashDotDot => new float[] { DashLength, DotLength, DotLength, DotLength, DotLength, DotLength },
 		_ => null,
 	};
 }

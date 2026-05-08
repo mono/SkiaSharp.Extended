@@ -42,7 +42,7 @@ public sealed partial class GraphicsPathIterator : MarshalByRefObject, IDisposab
 			int count = 0;
 			for (int i = 0; i < _types.Length; i++)
 			{
-				if ((_types[i] & 0x07) == 0) // PathPointType.Start
+				if ((_types[i] & (byte)PathPointType.PathTypeMask) == (byte)PathPointType.Start)
 					count++;
 			}
 			return count;
@@ -86,8 +86,8 @@ public sealed partial class GraphicsPathIterator : MarshalByRefObject, IDisposab
 	{
 		for (int i = 0; i < _types.Length; i++)
 		{
-			byte baseType = (byte)(_types[i] & 0x07);
-			if (baseType == 3) // PathPointType.Bezier3
+			byte baseType = (byte)(_types[i] & (byte)PathPointType.PathTypeMask);
+			if (baseType == (byte)PathPointType.Bezier3)
 				return true;
 		}
 		return false;
@@ -117,7 +117,7 @@ public sealed partial class GraphicsPathIterator : MarshalByRefObject, IDisposab
 		int i = _markerIndex;
 		while (i < _types.Length)
 		{
-			if ((_types[i] & 0x20) != 0) // PathPointType.MarkerMask = 0x20
+			if ((_types[i] & (byte)PathPointType.PathMarker) != 0)
 			{
 				endIndex = i;
 				_markerIndex = i + 1;
@@ -140,10 +140,10 @@ public sealed partial class GraphicsPathIterator : MarshalByRefObject, IDisposab
 		if (_typeIndex >= _types.Length) return 0;
 
 		startIndex = _typeIndex;
-		byte baseType = (byte)(_types[_typeIndex] & 0x07);
+		byte baseType = (byte)(_types[_typeIndex] & (byte)PathPointType.PathTypeMask);
 		pathType = baseType;
 		int i = _typeIndex + 1;
-		while (i < _types.Length && (_types[i] & 0x07) == baseType)
+		while (i < _types.Length && (_types[i] & (byte)PathPointType.PathTypeMask) == baseType)
 			i++;
 		endIndex = i - 1;
 		_typeIndex = i;
@@ -167,13 +167,13 @@ public sealed partial class GraphicsPathIterator : MarshalByRefObject, IDisposab
 		startIndex = _subpathIndex;
 		// Find the next Start point after current
 		int i = _subpathIndex + 1;
-		while (i < _types.Length && (_types[i] & 0x07) != 0) // not Start
+		while (i < _types.Length && (_types[i] & (byte)PathPointType.PathTypeMask) != (byte)PathPointType.Start)
 			i++;
 		endIndex = i - 1;
 		_subpathIndex = i;
 
-		// Check if the last point has the close flag (0x80 = CloseSubpath)
-		isClosed = (_types[endIndex] & 0x80) != 0;
+		// Check if the last point has the close flag
+		isClosed = (_types[endIndex] & (byte)PathPointType.CloseSubpath) != 0;
 		return endIndex - startIndex + 1;
 	}
 

@@ -9,6 +9,12 @@ namespace System.Drawing.Drawing2D;
 /// </summary>
 public sealed partial class PathGradientBrush : Brush
 {
+	/// <summary>Number of line segments used to subdivide a quadratic Bézier curve for boundary approximation.</summary>
+	private const int QuadSubdivisions = 4;
+
+	/// <summary>Number of line segments used to subdivide a conic or cubic Bézier curve for boundary approximation.</summary>
+	private const int CubicConicSubdivisions = 8;
+
 	private PointF[] _points;
 	private RectangleF _rect;
 	private Color _centerColor;
@@ -388,9 +394,9 @@ public sealed partial class PathGradientBrush : Brush
 					break;
 				case SKPathVerb.Quad:
 					// Subdivide quadratic into line segments
-					for (int s = 1; s <= 4; s++)
+					for (int s = 1; s <= QuadSubdivisions; s++)
 					{
-						float t = s / 4f;
+						float t = s / (float)QuadSubdivisions;
 						float x = (1 - t) * (1 - t) * pts[0].X + 2 * (1 - t) * t * pts[1].X + t * t * pts[2].X;
 						float y = (1 - t) * (1 - t) * pts[0].Y + 2 * (1 - t) * t * pts[1].Y + t * t * pts[2].Y;
 						boundaryPoints.Add(new SKPoint(x, y));
@@ -399,9 +405,9 @@ public sealed partial class PathGradientBrush : Brush
 				case SKPathVerb.Conic:
 					// Rational quadratic (conic) — subdivide with weight from iterator
 					float w = iter.ConicWeight();
-					for (int s = 1; s <= 8; s++)
+					for (int s = 1; s <= CubicConicSubdivisions; s++)
 					{
-						float t = s / 8f;
+						float t = s / (float)CubicConicSubdivisions;
 						float u = 1 - t;
 						float denom = u * u + 2 * u * t * w + t * t;
 						float cx = (u * u * pts[0].X + 2 * u * t * w * pts[1].X + t * t * pts[2].X) / denom;
@@ -411,9 +417,9 @@ public sealed partial class PathGradientBrush : Brush
 					break;
 				case SKPathVerb.Cubic:
 					// Subdivide cubic into line segments
-					for (int s = 1; s <= 8; s++)
+					for (int s = 1; s <= CubicConicSubdivisions; s++)
 					{
-						float t = s / 8f;
+						float t = s / (float)CubicConicSubdivisions;
 						float u = 1 - t;
 						float x = u * u * u * pts[0].X + 3 * u * u * t * pts[1].X + 3 * u * t * t * pts[2].X + t * t * t * pts[3].X;
 						float y = u * u * u * pts[0].Y + 3 * u * u * t * pts[1].Y + 3 * u * t * t * pts[2].Y + t * t * t * pts[3].Y;

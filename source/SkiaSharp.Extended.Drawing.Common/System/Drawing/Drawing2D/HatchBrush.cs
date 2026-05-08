@@ -197,12 +197,12 @@ public sealed partial class HatchBrush : Brush
 		uint bg = (uint)SkiaConversions.ToSKColor(_backColor);
 
 		int index = (int)_hatchStyle;
-		if (index < 0 || index > 52)
+		if (index < 0 || index > (int)HatchStyle.SolidDiamond)
 			index = 0;
 
 		var data = HatchPatternData;
-		int offset = index * 8;
 		const int tileSize = 8;
+		int offset = index * tileSize;
 
 		// Build 64-pixel tile in a stack-friendly buffer, then copy into SKImage
 		Span<uint> pixels = stackalloc uint[tileSize * tileSize];
@@ -210,8 +210,9 @@ public sealed partial class HatchBrush : Brush
 		{
 			byte row = data[offset + y];
 			int rowOffset = y * tileSize;
+			const byte msbMask = 0x80;
 			for (int x = 0; x < tileSize; x++)
-				pixels[rowOffset + x] = (row & (0x80 >> x)) != 0 ? fg : bg;
+				pixels[rowOffset + x] = (row & (msbMask >> x)) != 0 ? fg : bg;
 		}
 
 		var info = new SKImageInfo(tileSize, tileSize, SKColorType.Bgra8888, SKAlphaType.Premul);

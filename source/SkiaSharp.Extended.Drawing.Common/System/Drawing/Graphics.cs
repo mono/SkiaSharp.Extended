@@ -11,12 +11,41 @@ namespace System.Drawing;
 /// </summary>
 public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisposable
 {
+	private const float DefaultDpi = 96f;
+
+	/// <summary>GDI+ half-pixel offset applied to curve and polygon coordinates for rasterization compatibility.</summary>
+	private const float GdiPixelCenterOffset = 0.5f;
+
+	/// <summary>Default tension value for cardinal spline curves when not specified by the caller.</summary>
+	private const float DefaultCurveTension = 0.5f;
+
+	/// <summary>
+	/// GDI+ cardinal spline control point scaling factor (Catmull-Rom).
+	/// Control points are computed as: p[i] ± (tension * GdiTensionFactor) * (p[i+1] - p[i-1]).
+	/// </summary>
+	private const float GdiTensionFactor = 0.3f;
+
+	/// <summary>Default GDI+ text contrast value.</summary>
+	private const int DefaultTextContrast = 4;
+
+	/// <summary>GDI+ MeasureString em-padding divisor (~1/6 em padding on each side).</summary>
+	private const float TextEmPaddingDivisor = 6f;
+
+	/// <summary>Number of padding sides (left + right) applied to text measurement.</summary>
+	private const int TextPaddingSides = 2;
+
+	/// <summary>Floating-point tolerance for line-height overflow checks in text layout.</summary>
+	private const float LineHeightTolerance = 0.5f;
+
+	/// <summary>Stride for iterating cubic Bézier control points (each segment uses 3 points after the start).</summary>
+	private const int CubicBezierStride = 3;
+
 	private SKCanvas _canvas = null!;
 	private SKBitmap? _bitmap;
 	private bool _disposed;
 	private bool _ownsCanvas = true;
-	private float _dpiX = 96f;
-	private float _dpiY = 96f;
+	private float _dpiX = DefaultDpi;
+	private float _dpiY = DefaultDpi;
 	private SmoothingMode _smoothingMode = SmoothingMode.Default;
 	private InterpolationMode _interpolationMode = InterpolationMode.Default;
 	private CompositingMode _compositingMode = CompositingMode.SourceOver;
@@ -26,7 +55,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	private GraphicsUnit _pageUnit = GraphicsUnit.Display;
 	private float _pageScale = 1f;
 	private Point _renderingOrigin = Point.Empty;
-	private int _textContrast = 4;
+	private int _textContrast = DefaultTextContrast;
 	private int _clipSaveCount;
 	private Region? _clipRegion;
 	private Collections.Generic.Stack<GraphicsModeState>? _savedStates;
@@ -58,7 +87,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	/// </summary>
 	private static SKRect GdiCurveRect(float x, float y, float width, float height)
 	{
-		return new SKRect(x + 0.5f, y + 0.5f, x + width + 0.5f, y + height + 0.5f);
+		return new SKRect(x + GdiPixelCenterOffset, y + GdiPixelCenterOffset, x + width + GdiPixelCenterOffset, y + height + GdiPixelCenterOffset);
 	}
 
 	/// <summary>
@@ -81,9 +110,9 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	private static SKPath GdiPolygonPath(PointF[] points)
 	{
 		var path = new SKPath();
-		path.MoveTo(points[0].X + 0.5f, points[0].Y + 0.5f);
+		path.MoveTo(points[0].X + GdiPixelCenterOffset, points[0].Y + GdiPixelCenterOffset);
 		for (int i = 1; i < points.Length; i++)
-			path.LineTo(points[i].X + 0.5f, points[i].Y + 0.5f);
+			path.LineTo(points[i].X + GdiPixelCenterOffset, points[i].Y + GdiPixelCenterOffset);
 		path.Close();
 		return path;
 	}
@@ -577,7 +606,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		ApplyState(paint);
 		using var path = new SKPath();
 		path.MoveTo(points[0].X, points[0].Y);
-		for (int i = 1; i + 2 < points.Length; i += 3)
+		for (int i = 1; i + 2 < points.Length; i += CubicBezierStride)
 			path.CubicTo(points[i].X, points[i].Y, points[i + 1].X, points[i + 1].Y, points[i + 2].X, points[i + 2].Y);
 		_canvas.DrawPath(path, paint);
 	}
@@ -603,7 +632,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
 	public void DrawClosedCurve(Pen pen, PointF[] points)
-		=> DrawClosedCurve(pen, points, 0.5f, Drawing2D.FillMode.Alternate);
+		=> DrawClosedCurve(pen, points, DefaultCurveTension, Drawing2D.FillMode.Alternate);
 
 	/// <summary>
 	///  Draws a closed cardinal spline defined by an array of PointF structures using the specified tension.
@@ -648,7 +677,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	/// <param name="pen"><see cref="Pen"/> that determines the color, width, and style of the curve.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
 	public void DrawCurve(Pen pen, PointF[] points)
-		=> DrawCurve(pen, points, 0, points?.Length - 1 ?? 0, 0.5f);
+		=> DrawCurve(pen, points, 0, points?.Length - 1 ?? 0, DefaultCurveTension);
 
 	/// <summary>
 	///  Draws a cardinal spline through a specified array of PointF structures using a specified offset and tension.
@@ -658,7 +687,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	/// <param name="offset">Offset from the first element in the array to the starting point of the curve.</param>
 	/// <param name="numberOfSegments">Number of segments after the starting point to include in the curve.</param>
 	public void DrawCurve(Pen pen, PointF[] points, int offset, int numberOfSegments)
-		=> DrawCurve(pen, points, offset, numberOfSegments, 0.5f);
+		=> DrawCurve(pen, points, offset, numberOfSegments, DefaultCurveTension);
 
 	/// <summary>
 	///  Draws a cardinal spline through a specified array of PointF structures using a specified offset, number of segments, and tension.
@@ -1656,7 +1685,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	/// <param name="brush"><see cref="Brush"/> that determines the characteristics of the fill.</param>
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
 	public void FillClosedCurve(Brush brush, PointF[] points)
-		=> FillClosedCurve(brush, points, Drawing2D.FillMode.Alternate, 0.5f);
+		=> FillClosedCurve(brush, points, Drawing2D.FillMode.Alternate, DefaultCurveTension);
 
 	/// <summary>
 	///  Fills the interior of a closed cardinal spline curve defined by an array of PointF structures using the specified fill mode.
@@ -1665,7 +1694,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 	/// <param name="points">Array of <see cref="PointF"/> structures that define the spline.</param>
 	/// <param name="fillmode">Member of the <see cref="FillMode"/> enumeration that determines how the curve is filled.</param>
 	public void FillClosedCurve(Brush brush, PointF[] points, FillMode fillmode)
-		=> FillClosedCurve(brush, points, fillmode, 0.5f);
+		=> FillClosedCurve(brush, points, fillmode, DefaultCurveTension);
 
 	/// <summary>
 	///  Fills the interior of a closed cardinal spline curve defined by an array of PointF structures using the specified fill mode and tension.
@@ -2195,14 +2224,14 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		// GDI+ MeasureString adds ~1/6 em padding on each side for compatibility
 		bool addPadding = stringFormat == null ||
 			(stringFormat.FormatFlags & StringFormatFlags.MeasureTrailingSpaces) == 0;
-		float emPadding = addPadding ? skFont.Size / 6f : 0f;
+		float emPadding = addPadding ? skFont.Size / TextEmPaddingDivisor : 0f;
 
 		bool noWrap = stringFormat != null &&
 			(stringFormat.FormatFlags & StringFormatFlags.NoWrap) != 0;
 
 		float maxWidth = layoutArea.Width;
 		if (maxWidth < float.MaxValue && addPadding)
-			maxWidth = Math.Max(0, maxWidth - 2 * emPadding);
+			maxWidth = Math.Max(0, maxWidth - TextPaddingSides * emPadding);
 
 		if (noWrap || maxWidth >= float.MaxValue)
 		{
@@ -2210,7 +2239,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 			float textWidth = skFont.MeasureText(text);
 			charactersFitted = text!.Length;
 			linesFilled = 1;
-			return new SizeF(textWidth + 2 * emPadding, lineHeight);
+			return new SizeF(textWidth + TextPaddingSides * emPadding, lineHeight);
 		}
 
 		// Multi-line word wrap measurement
@@ -2223,7 +2252,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		while (pos < text!.Length)
 		{
 			// Check if adding another line would exceed the layout height
-			if (layoutArea.Height < float.MaxValue && totalHeight + lineHeight > layoutArea.Height + 0.5f)
+			if (layoutArea.Height < float.MaxValue && totalHeight + lineHeight > layoutArea.Height + LineHeightTolerance)
 				break;
 
 			// Find how many characters fit in the available width
@@ -2251,7 +2280,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 
 		charactersFitted = totalChars;
 		linesFilled = lines;
-		return new SizeF(maxLineWidth + 2 * emPadding, totalHeight);
+		return new SizeF(maxLineWidth + TextPaddingSides * emPadding, totalHeight);
 	}
 
 	/// <summary>
@@ -2860,7 +2889,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		var path = new SKPath();
 		path.MoveTo(points[offset].X, points[offset].Y);
 
-		float k = tension * 0.3f;
+		float k = tension * GdiTensionFactor;
 
 		for (int i = offset; i < endIndex; i++)
 		{
@@ -2898,7 +2927,7 @@ public sealed partial class Graphics : MarshalByRefObject, IDeviceContext, IDisp
 		var path = new SKPath();
 		path.MoveTo(points[0].X, points[0].Y);
 
-		float k = tension * 0.3f;
+		float k = tension * GdiTensionFactor;
 
 		for (int i = 0; i < n; i++)
 		{
