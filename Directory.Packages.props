@@ -11,32 +11,27 @@
 
   <ItemGroup>
     <!-- .NET MAUI -->
-    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.20" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.80" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Blazor / ASP.NET Core -->
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.3" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.9" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Sample dependencies -->
     <PackageVersion Include="NLipsum" Version="1.1.0" />
     <PackageVersion Include="Svg.Skia" Version="2.0.0.4" />
-    <PackageVersion Include="Topten.RichTextKit" Version="0.4.166" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- Build / packaging -->
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <PackageVersion Include="Topten.RichTextKit" Version="0.4.167" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Testing -->
-    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.2" />
-    <PackageVersion Include="xunit.v3" Version="3.1.0" />
+    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
 

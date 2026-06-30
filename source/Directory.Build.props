@@ -52,8 +52,4 @@
   <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(Configuration)'=='Release' ">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
-  </ItemGroup>
-
 </Project>

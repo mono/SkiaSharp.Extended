@@ -60,11 +60,14 @@ public partial class ShapesPage : ContentPage
 		// clear the surface
 		canvas.Clear(SKColors.Transparent);
 
-		// create a paint for text
+		// create a paint and font for text
+		var textFont = new SKFont
+		{
+			Size = 12,
+		};
 		var textPaint = new SKPaint
 		{
 			IsAntialias = true,
-			TextSize = 12,
 			Color = ((SolidColorBrush)App.Current!.Resources["ForegroundBrush"]).Color.ToSKColor(),
 		};
 
@@ -83,36 +86,36 @@ public partial class ShapesPage : ContentPage
 		var offsetY = bigSpace;
 
 		// Square
-		offsetY += textPaint.TextSize;
-		canvas.DrawText("Square (from center)", offsetX, offsetY, textPaint);
+		offsetY += textFont.Size;
+		canvas.DrawText("Square (from center)", offsetX, offsetY, textFont, textPaint);
 		offsetY += smallSpace;
 		canvas.DrawSquare(offsetX + 50, offsetY + 50, 75, shapePaint);
 		offsetY += shapeSize;
 
 		// Triangle
-		offsetY += textPaint.TextSize;
-		canvas.DrawText("Triangle (using radius)", offsetX, offsetY, textPaint);
+		offsetY += textFont.Size;
+		canvas.DrawText("Triangle (using radius)", offsetX, offsetY, textFont, textPaint);
 		offsetY += smallSpace;
 		canvas.DrawTriangle(offsetX + 50, offsetY + 50, 40, shapePaint);
 		offsetY += shapeSize;
 
 		// Triangle
-		offsetY += textPaint.TextSize;
-		canvas.DrawText("Triangle (using radius)", offsetX, offsetY, textPaint);
+		offsetY += textFont.Size;
+		canvas.DrawText("Triangle (using radius)", offsetX, offsetY, textFont, textPaint);
 		offsetY += smallSpace;
 		canvas.DrawTriangle(offsetX + 75, offsetY + 50, 75, 40, shapePaint);
 		offsetY += shapeSize;
 
 		// Triangle
-		offsetY += textPaint.TextSize;
-		canvas.DrawText("Triangle (using rect)", offsetX, offsetY, textPaint);
+		offsetY += textFont.Size;
+		canvas.DrawText("Triangle (using rect)", offsetX, offsetY, textFont, textPaint);
 		offsetY += smallSpace;
 		canvas.DrawTriangle(SKRect.Create(offsetX, offsetY + 15, 150, 75), shapePaint);
 		offsetY += shapeSize;
 
 		// Regular Polygons
-		offsetY += textPaint.TextSize;
-		canvas.DrawText("Regular Polygons", offsetX, offsetY, textPaint);
+		offsetY += textFont.Size;
+		canvas.DrawText("Regular Polygons", offsetX, offsetY, textFont, textPaint);
 		offsetY += smallSpace;
 		for (var i = 5; i < 12; i++)
 		{
@@ -122,8 +125,8 @@ public partial class ShapesPage : ContentPage
 		offsetY += shapeSize;
 
 		// Regular Stars
-		offsetY += textPaint.TextSize;
-		canvas.DrawText("Regular Stars", offsetX, offsetY, textPaint);
+		offsetY += textFont.Size;
+		canvas.DrawText("Regular Stars", offsetX, offsetY, textFont, textPaint);
 		offsetY += smallSpace;
 		for (var i = 5; i < 12; i++)
 		{
