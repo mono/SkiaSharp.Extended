@@ -202,7 +202,7 @@ controller.Load(source, new SKDiskCacheTileProvider(
     &quot;/cache/tiles&quot;,
     expiry: TimeSpan.FromDays(7)));
 </code></pre>
-<p>See the <a href="fetching.html">Tile Providers</a> docs for implementing browser storage caches, delay
+<p>See the <a href="providers.html">Tile Providers &amp; Caching</a> docs for implementing browser storage caches, delay
 wrappers, and other custom strategies.</p>
 <h2 id="canvas-resize">Canvas Resize</h2>
 <p>When the Blazor page resizes, <code>SetControlSize</code> automatically picks up the new dimensions on the next paint. If you want to trigger a reset to fit the image after a resize:</p>
@@ -224,8 +224,7 @@ public void OnCanvasResized()
 <ul>
 <li><a href="index.html">Image Pyramid overview</a></li>
 <li><a href="controller.html">Controller &amp; Viewport</a></li>
-<li><a href="fetching.html">Tile Providers</a></li>
-<li><a href="caching.html">Caching</a></li>
+<li><a href="providers.html">Tile Providers &amp; Caching</a></li>
 <li><a href="maui.html">Image Pyramid for MAUI</a></li>
 </ul>
 
@@ -249,7 +248,7 @@ public void OnCanvasResized()
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 8146c7d
+          source: PR #379 · 390307c
         </div>
       </div>
     </footer>
