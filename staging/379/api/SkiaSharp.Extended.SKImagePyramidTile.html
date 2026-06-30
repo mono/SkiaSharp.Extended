@@ -99,8 +99,8 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>An opaque tile that holds the decoded image for rendering and optionally
-the original encoded bytes for storage.</p>
+  <div class="markdown summary"><p>A decoded tile held in the controller's render buffer. Tiles live above the decode
+gate and carry only the decoded image — encoded bytes never travel past the controller.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -158,8 +158,8 @@ the original encoded bytes for storage.</p>
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.-ctor.html#SkiaSharp_Extended_SKImagePyramidTile__ctor_SkiaSharp_SKImage_System_Byte___">SKImagePyramidTile(SKImage, byte[]?)</a></dt>
-    <dd><p>Creates a new tile from a decoded image and optional raw bytes.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.-ctor.html#SkiaSharp_Extended_SKImagePyramidTile__ctor_SkiaSharp_SKImage_">SKImagePyramidTile(SKImage)</a></dt>
+    <dd><p>Creates a tile from a decoded image.</p>
 </dd>
   </dl>
 
@@ -168,13 +168,7 @@ the original encoded bytes for storage.</p>
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.Image.html#SkiaSharp_Extended_SKImagePyramidTile_Image">Image</a></dt>
-    <dd><p>The decoded image for rendering.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.RawData.html#SkiaSharp_Extended_SKImagePyramidTile_RawData">RawData</a></dt>
-    <dd><p>The original encoded bytes (JPEG, PNG, etc.) for disk or browser storage.
-Null when the tile was created for render-only use without persistence.</p>
+    <dd><p>The decoded image used for rendering.</p>
 </dd>
   </dl>
 
@@ -207,7 +201,7 @@ Null when the tile was created for render-only use without persistence.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 5f3cfaa
+          source: PR #379 · 3ee7c29
         </div>
       </div>
     </footer>

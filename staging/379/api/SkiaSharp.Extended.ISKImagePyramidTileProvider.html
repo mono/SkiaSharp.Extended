@@ -99,8 +99,9 @@
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Returns decoded tiles to the controller. How the tile is obtained
-(cache, network, filesystem) is an implementation detail.</p>
+  <div class="markdown summary"><p>Supplies encoded tile bytes for a URL. Everything in the fetch/cache pipeline is a
+provider: origins produce bytes (HTTP, file) and decorators wrap an inner provider to
+add behaviour (caching, fallback, latency). Build a pipeline by nesting providers.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -126,12 +127,14 @@
 
 
   <h2 id="SkiaSharp_Extended_ISKImagePyramidTileProvider_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p>
-Built-in implementations:
-<ul><li><a class="xref" href="SkiaSharp.Extended.SKTieredTileProvider.html">SKTieredTileProvider</a> — composes a fetcher and optional persistent cache.</li></ul>
-
+  <div class="markdown level0 remarks"><p>Built-in implementations:</p>
+<ul><li><a class="xref" href="SkiaSharp.Extended.SKHttpTileProvider.html">SKHttpTileProvider</a> — HTTP origin.</li><li><a class="xref" href="SkiaSharp.Extended.SKFileTileProvider.html">SKFileTileProvider</a> — local filesystem origin.</li><li><a class="xref" href="SkiaSharp.Extended.SKCompositeTileProvider.html">SKCompositeTileProvider</a> — tries inner providers in order.</li><li><a class="xref" href="SkiaSharp.Extended.SKCachedTileProvider.html">SKCachedTileProvider</a> — base class for persistent cache decorators
+  such as <a class="xref" href="SkiaSharp.Extended.SKDiskCacheTileProvider.html">SKDiskCacheTileProvider</a>.</li></ul>
 <p>
-Custom implementations are supported by implementing this interface directly.
+Providers only ever deal in encoded bytes — decoding happens once, in
+<a class="xref" href="SkiaSharp.Extended.SKImagePyramidController.html">SKImagePyramidController</a>. Return <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> for permanent
+failures (404, missing file) and throw <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.operationcanceledexception">OperationCanceledException</a> when
+cancelled.
 </p>
 </div>
 
@@ -140,7 +143,8 @@ Custom implementations are supported by implementing this interface directly.
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileProvider.GetTileAsync.html#SkiaSharp_Extended_ISKImagePyramidTileProvider_GetTileAsync_System_String_System_Threading_CancellationToken_">GetTileAsync(string, CancellationToken)</a></dt>
-    <dd><p>Returns a tile for the given URL, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if unavailable (e.g. 404, missing file).</p>
+    <dd><p>Returns the encoded bytes for a tile, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if the tile is
+unavailable (for example a 404 or a missing file).</p>
 </dd>
   </dl>
 
@@ -165,7 +169,7 @@ Custom implementations are supported by implementing this interface directly.
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 5f3cfaa
+          source: PR #379 · 3ee7c29
         </div>
       </div>
     </footer>

@@ -110,7 +110,7 @@ var json = await http.GetStringAsync(&quot;https://example.org/iiif/image/my-ima
 var source = SKImagePyramidIiifSource.Parse(json);
 
 // Load into the controller (same as DZI)
-controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
+controller.Load(source, new SKHttpTileProvider());
 </code></pre>
 <h3 id="construct-manually">Construct manually</h3>
 <pre><code class="lang-csharp">var source = new SKImagePyramidIiifSource(
@@ -142,12 +142,12 @@ controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
     {
         var coll = SKImagePyramidDziCollectionSource.Parse(content);
         coll.TilesBaseUri = url[..url.LastIndexOf('/')] + &quot;/&quot;;
-        controller.Load(coll, fetcher);
+        controller.Load(coll, provider);
     }
     else if (isIiif || (!isDzi &amp;&amp; content.TrimStart().StartsWith(&quot;{&quot;)))
     {
         var source = SKImagePyramidIiifSource.Parse(content);
-        controller.Load(source, fetcher);
+        controller.Load(source, provider);
     }
     else
     {
@@ -155,7 +155,7 @@ controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
         string baseDir = url[..url.LastIndexOf('/')] + &quot;/&quot;;
         string stem = Path.GetFileNameWithoutExtension(url);
         var source = SKImagePyramidDziSource.Parse(content, $&quot;{baseDir}{stem}_files/&quot;);
-        controller.Load(source, fetcher);
+        controller.Load(source, provider);
     }
 }
 </code></pre>
@@ -336,7 +336,7 @@ accepts any source type, making it easy to add support for other formats.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 5f3cfaa
+          source: PR #379 · 3ee7c29
         </div>
       </div>
     </footer>

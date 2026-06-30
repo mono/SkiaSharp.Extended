@@ -86,31 +86,50 @@
         <article data-uid="">
 <h1 id="image-pyramid--caching">Image Pyramid — Caching</h1>
 
-<p>The tile caching system is split into two separate concerns with distinct owners:</p>
+<p>There are two distinct caches in the system, with distinct owners — and a single <strong>decode
+gate</strong> that separates them:</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Concern</th>
+<th style="text-align: left;">Cache</th>
+<th style="text-align: left;">Holds</th>
 <th style="text-align: left;">Owner</th>
-<th style="text-align: left;">Interface</th>
+<th style="text-align: left;">Type</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Hot render buffer</td>
+<td style="text-align: left;">Render buffer</td>
+<td style="text-align: left;">Decoded <code>SKImage</code> tiles</td>
 <td style="text-align: left;">Controller (internal)</td>
 <td style="text-align: left;"><code>ISKImagePyramidTileCache</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Persistent storage (disk, browser)</td>
-<td style="text-align: left;">Provider</td>
-<td style="text-align: left;"><code>ISKImagePyramidTileProvider</code></td>
+<td style="text-align: left;">Persistent cache</td>
+<td style="text-align: left;">Encoded bytes</td>
+<td style="text-align: left;">Provider (you compose it)</td>
+<td style="text-align: left;"><code>SKCachedTileProvider</code></td>
 </tr>
 </tbody>
 </table>
+<p>The persistent cache lives <strong>below</strong> the decode gate and stores small encoded bytes; the render
+buffer lives <strong>above</strong> it and holds decoded images ready to draw.</p>
+<hr>
+<h2 id="the-decode-gate">The decode gate</h2>
+<p>Providers deal only in encoded bytes (<code>SKImagePyramidTileData</code>). The controller decodes each
+tile exactly once, on the async load path, right before it enters the render buffer:</p>
+<pre><code>provider.GetTileAsync(url)   →  SKImagePyramidTileData   (encoded bytes, below the gate)
+        │
+        ▼  SKImage.FromEncodedData(...)                  ← the decode gate (controller)
+        │
+   SKImagePyramidTile        →  render buffer            (decoded SKImage, above the gate)
+</code></pre>
+<p>Because decoding happens in one place, no cache ever holds a decoded copy by accident, and a
+<code>SKImagePyramidTile</code> carries only a decoded image — there is no second encoded copy to leak.</p>
 <hr>
 <h2 id="the-render-buffer-iskimagepyramidtilecache">The Render Buffer (ISKImagePyramidTileCache)</h2>
-<p>The render buffer is a <strong>sync-only, in-memory LRU cache</strong> owned entirely by the controller. Its job is to hold decoded tiles so the renderer can draw the current viewport without any I/O.</p>
+<p>The render buffer is a <strong>sync-only, in-memory LRU cache</strong> owned entirely by the controller. Its
+job is to hold decoded tiles so the renderer can draw the current viewport without any I/O.</p>
 <pre><code class="lang-csharp">public interface ISKImagePyramidTileCache : IDisposable
 {
     int Count { get; }
@@ -124,60 +143,59 @@
     void FlushEvicted();
 }
 </code></pre>
-<p>The controller creates and manages this cache internally — you don't create or configure it. The <code>Cache</code> property on the controller exposes it for read-only monitoring (e.g. showing a tile count in a debug overlay):</p>
+<p>The controller creates and manages this cache internally — you don't create or configure it.
+The <code>Cache</code> property on the controller exposes it for read-only monitoring (e.g. showing a tile
+count in a debug overlay):</p>
 <pre><code class="lang-csharp">// Read-only monitoring — do not call Put/Remove directly
 int cachedTileCount = controller.Cache.Count;
 </code></pre>
 <blockquote>
-<p><strong>Note:</strong> The cache's <code>FlushEvicted()</code> is called automatically inside <code>Render()</code> — you do not need to call it yourself.</p>
+<p><strong>Note:</strong> The cache's <code>FlushEvicted()</code> is called automatically inside <code>Render()</code> — you do not
+need to call it yourself.</p>
 </blockquote>
 <hr>
-<h2 id="persistent-storage-iskimagepyramidtileprovider">Persistent Storage (ISKImagePyramidTileProvider)</h2>
-<p>Persistent tile storage is the <strong>provider's</strong> responsibility, not the controller's. The controller simply calls <code>provider.GetTileAsync(url)</code> and the provider decides how to fulfil that request — from a disk cache, browser storage, or directly from the network.</p>
-<p>See <a href="fetching.html">Tile Fetching</a> for the full provider design and built-in implementations.</p>
+<h2 id="persistent-storage-skcachedtileprovider">Persistent Storage (SKCachedTileProvider)</h2>
+<p>Persistent tile storage is the <strong>provider's</strong> responsibility, not the controller's. The
+controller simply calls <code>provider.GetTileAsync(url)</code>; how that request is fulfilled — from a
+disk cache, browser storage, or directly from the network — is decided by how you nest your
+providers.</p>
+<p>Persistent caches deal in encoded bytes and derive from <code>SKCachedTileProvider</code>, which
+implements the read-through/write-back flow once. See <a href="fetching.html">Tile Providers</a> for the
+full design.</p>
 <h3 id="remote-tiles-http--disk-cache">Remote tiles (HTTP + disk cache)</h3>
-<pre><code class="lang-csharp">// SKTieredTileProvider with disk cache persists fetched tiles across app restarts
-var provider = new SKTieredTileProvider(
-    new SKHttpTileFetcher(),
-    new SKDiskTileCacheStore(&quot;/tmp/mycache&quot;));
+<pre><code class="lang-csharp">// SKDiskCacheTileProvider wraps an HTTP origin and persists fetched tiles across app restarts
+var provider = new SKDiskCacheTileProvider(
+    new SKHttpTileProvider(),
+    Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;));
+
 controller.Load(source, provider);
 </code></pre>
 <h3 id="local-tiles-no-disk-cache-needed">Local tiles (no disk cache needed)</h3>
-<pre><code class="lang-csharp">// SKFileTileFetcher reads tiles directly from the filesystem — no extra caching
-var provider = new SKTieredTileProvider(new SKFileTileFetcher());
-controller.Load(source, provider);
+<pre><code class="lang-csharp">// SKFileTileProvider reads tiles directly from the filesystem — no extra caching
+controller.Load(source, new SKFileTileProvider());
 </code></pre>
 <h3 id="custom-persistent-cache">Custom persistent cache</h3>
-<p>To add your own persistent storage, wrap a provider in a decorator:</p>
-<pre><code class="lang-csharp">public sealed class MyPersistentProvider : ISKImagePyramidTileProvider
+<p>To add your own persistent storage, derive from <code>SKCachedTileProvider</code> and implement only the
+storage backend — the caching flow is inherited:</p>
+<pre><code class="lang-csharp">public sealed class MyPersistentProvider : SKCachedTileProvider
 {
-    private readonly ISKImagePyramidTileProvider _inner;
     private readonly IMyStorage _storage;
 
     public MyPersistentProvider(ISKImagePyramidTileProvider inner, IMyStorage storage)
+        : base(inner) =&gt; _storage = storage;
+
+    protected override async Task&lt;SKImagePyramidTileData?&gt; ReadAsync(string key, CancellationToken ct)
     {
-        _inner = inner;
-        _storage = storage;
+        var bytes = await _storage.TryReadAsync(key, ct);
+        return bytes is null ? null : new SKImagePyramidTileData(bytes);
     }
 
-    public async Task&lt;SKImagePyramidTile?&gt; GetTileAsync(string url, CancellationToken ct = default)
-    {
-        // 1. Check your persistent store first
-        var cached = await _storage.TryReadAsync(url, ct);
-        if (cached is not null) return cached;
-
-        // 2. Delegate to the inner provider (e.g. SKTieredTileProvider)
-        var tile = await _inner.GetTileAsync(url, ct);
-        if (tile is null) return null;
-
-        // 3. Persist for next time — use CancellationToken.None so a cancellation
-        //    after fetch doesn't leave the tile un-stored
-        await _storage.WriteAsync(url, tile, CancellationToken.None);
-        return tile;
-    }
-
-    public void Dispose() =&gt; _inner.Dispose();
+    protected override Task WriteAsync(string key, SKImagePyramidTileData data, CancellationToken ct)
+        =&gt; _storage.WriteAsync(key, data.Data, ct);  // CancellationToken.None is passed by the base
 }
+</code></pre>
+<pre><code class="lang-csharp">// Nest an origin inside it
+controller.Load(source, new MyPersistentProvider(new SKHttpTileProvider(), myStorage));
 </code></pre>
 <hr>
 <h2 id="skimagepyramidtileid">SKImagePyramidTileId</h2>
@@ -195,7 +213,8 @@ Assert.Equal(id, same);  // ✅
 </code></pre>
 <hr>
 <h2 id="render-buffer-capacity">Render Buffer Capacity</h2>
-<p>The controller creates its render buffer with a default capacity of 256 tiles. Each tile is typically a 256×256 decoded image — roughly 256 KB at full colour.</p>
+<p>The controller creates its render buffer with a default capacity of 256 tiles. Each tile is
+typically a 256×256 decoded image — roughly 256 KB at full colour.</p>
 <table>
 <thead>
 <tr>
@@ -219,16 +238,17 @@ Assert.Equal(id, same);  // ✅
 </tbody>
 </table>
 <blockquote>
-<p><strong>Custom capacity</strong> is not currently exposed via the public API. The 256-tile default suits most use cases.</p>
+<p><strong>Custom capacity</strong> is not currently exposed via the public API. The 256-tile default suits
+most use cases.</p>
 </blockquote>
 <hr>
 <h2 id="related">Related</h2>
 <ul>
 <li><a href="index.html">Image Pyramid overview</a></li>
 <li><a href="controller.html">Controller &amp; Viewport</a></li>
-<li><a href="fetching.html">Tile Fetching</a></li>
+<li><a href="fetching.html">Tile Providers</a></li>
 <li><a class="xref" href="../../api/SkiaSharp.Extended.ISKImagePyramidTileCache.html">API Reference — ISKImagePyramidTileCache</a></li>
-<li><a class="xref" href="../../api/SkiaSharp.Extended.ISKImagePyramidTileProvider.html">API Reference — ISKImagePyramidTileProvider</a></li>
+<li><a class="xref" href="../../api/SkiaSharp.Extended.SKCachedTileProvider.html">API Reference — SKCachedTileProvider</a></li>
 </ul>
 
 </article>
@@ -251,7 +271,7 @@ Assert.Equal(id, same);  // ✅
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 5f3cfaa
+          source: PR #379 · 3ee7c29
         </div>
       </div>
     </footer>

@@ -201,7 +201,7 @@ Rect&lt;int&gt; bounds = source.GetTileBounds(level: 12, col: 3, row: 5);
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = &quot;https://example.com/&quot;;
 
-controller.Load(collection, new SKTieredTileProvider(new SKHttpTileFetcher()));
+controller.Load(collection, new SKHttpTileProvider());
 
 // Access sub-images
 foreach (var sub in collection.Items)
@@ -282,7 +282,7 @@ int morton = SKImagePyramidDziCollectionSource.GridToMorton(col: 1, row: 1);
 <ul>
 <li><a href="index.html">Image Pyramid overview</a></li>
 <li><a href="iiif.html">IIIF Image API</a></li>
-<li><a href="fetching.html">Tile Fetching</a></li>
+<li><a href="fetching.html">Tile Providers</a></li>
 <li><a class="xref" href="../../api/SkiaSharp.Extended.SKImagePyramidDziSource.html">API Reference — SKImagePyramidDziSource</a></li>
 <li><a class="xref" href="../../api/SkiaSharp.Extended.SKImagePyramidDziCollectionSource.html">API Reference — SKImagePyramidDziCollectionSource</a></li>
 </ul>
@@ -307,7 +307,7 @@ int morton = SKImagePyramidDziCollectionSource.GridToMorton(col: 1, row: 1);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 5f3cfaa
+          source: PR #379 · 3ee7c29
         </div>
       </div>
     </footer>

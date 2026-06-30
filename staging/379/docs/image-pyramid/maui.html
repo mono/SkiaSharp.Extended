@@ -148,10 +148,10 @@ public partial class ImagePyramidPage : ContentPage
 }
 </code></pre>
 <h2 id="app-package-tile-provider">App-Package Tile Provider</h2>
-<p>When tiles are bundled as MAUI assets, implement <code>ISKImagePyramidTileProvider</code> to read them via <code>FileSystem.OpenAppPackageFileAsync</code>, buffer the bytes, and decode with <code>SKImage.FromEncodedData</code>:</p>
+<p>When tiles are bundled as MAUI assets, implement <code>ISKImagePyramidTileProvider</code> to read them via <code>FileSystem.OpenAppPackageFileAsync</code> and return the encoded bytes — the controller decodes them:</p>
 <pre><code class="lang-csharp">public sealed class AppPackageProvider : ISKImagePyramidTileProvider
 {
-    public async Task&lt;SKImagePyramidTile?&gt; GetTileAsync(string url, CancellationToken ct = default)
+    public async Task&lt;SKImagePyramidTileData?&gt; GetTileAsync(string url, CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
         try
@@ -159,9 +159,7 @@ public partial class ImagePyramidPage : ContentPage
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms, ct);
-            var bytes = ms.ToArray();
-            var image = SKImage.FromEncodedData(bytes);
-            return image != null ? new SKImagePyramidTile(image, bytes) : null;
+            return new SKImagePyramidTileData(ms.ToArray());
         }
         catch (OperationCanceledException) { throw; }
         catch
@@ -185,16 +183,15 @@ public partial class ImagePyramidPage : ContentPage
 &lt;/ItemGroup&gt;
 </code></pre>
 <h2 id="http-tile-provider">HTTP Tile Provider</h2>
-<p>For remote images, use <code>SKTieredTileProvider</code> with <code>SKHttpTileFetcher</code>:</p>
+<p>For remote images, use <code>SKHttpTileProvider</code>, optionally wrapped in a disk cache:</p>
 <pre><code class="lang-csharp">// HTTP only, no disk cache
-_controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
+_controller.Load(source, new SKHttpTileProvider());
 
 // With disk cache (persists across sessions)
-_controller.Load(source, new SKTieredTileProvider(
-    fetcher: new SKHttpTileFetcher(),
-    persistentCache: new SKDiskTileCacheStore(
-        Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;),
-        expiry: TimeSpan.FromDays(30))));
+_controller.Load(source, new SKDiskCacheTileProvider(
+    new SKHttpTileProvider(),
+    Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;),
+    expiry: TimeSpan.FromDays(30)));
 </code></pre>
 <h2 id="pan-and-zoom">Pan and Zoom</h2>
 <p>Add gesture recognizers or pointer events to enable interactive navigation:</p>
@@ -258,9 +255,9 @@ _controller.Load(collection, new AppPackageProvider());
 <h2 id="provider-configuration">Provider Configuration</h2>
 <p>The controller's internal render buffer has a fixed 256-entry capacity — this is sufficient for most tile pyramid use cases. If you need disk persistence, pass a configured provider:</p>
 <pre><code class="lang-csharp">// With disk cache for memory-constrained devices that benefit from persistence
-_controller.Load(source, new SKTieredTileProvider(
-    new SKHttpTileFetcher(),
-    new SKDiskTileCacheStore(Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;))));
+_controller.Load(source, new SKDiskCacheTileProvider(
+    new SKHttpTileProvider(),
+    Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;)));
 </code></pre>
 <p>See the <a href="fetching.html">Tile Providers docs</a> for custom providers.</p>
 <h2 id="rendering-behaviour">Rendering Behaviour</h2>
@@ -273,7 +270,7 @@ _controller.Load(source, new SKTieredTileProvider(
 <ul>
 <li><a href="index.html">Image Pyramid overview</a></li>
 <li><a href="controller.html">Controller &amp; Viewport</a></li>
-<li><a href="fetching.html">Tile Fetching</a></li>
+<li><a href="fetching.html">Tile Providers</a></li>
 <li><a href="caching.html">Caching</a></li>
 <li><a href="blazor.html">Image Pyramid for Blazor</a></li>
 </ul>
@@ -298,7 +295,7 @@ _controller.Load(source, new SKTieredTileProvider(
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 5f3cfaa
+          source: PR #379 · 3ee7c29
         </div>
       </div>
     </footer>

@@ -153,19 +153,27 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>ISKImagePyramidTileProvider</code></td>
-<td style="text-align: left;">Owns the full fetch+cache pipeline for a tile URL.</td>
+<td style="text-align: left;">The one provider interface: returns encoded tile bytes for a URL. Everything nests.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>SKTieredTileProvider</code></td>
-<td style="text-align: left;">Composes a fetcher + optional persistent cache into a tile provider.</td>
+<td style="text-align: left;"><code>SKHttpTileProvider</code></td>
+<td style="text-align: left;">HTTP origin (encoded bytes).</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>SKHttpTileFetcher</code></td>
-<td style="text-align: left;">HTTP origin fetch (no caching).</td>
+<td style="text-align: left;"><code>SKFileTileProvider</code></td>
+<td style="text-align: left;">Local file origin (encoded bytes).</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>SKFileTileFetcher</code></td>
-<td style="text-align: left;">Local file origin fetch (no caching).</td>
+<td style="text-align: left;"><code>SKCompositeTileProvider</code></td>
+<td style="text-align: left;">Tries inner providers in order; first non-null wins.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKCachedTileProvider</code></td>
+<td style="text-align: left;">Abstract base for persistent cache decorators.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SKDiskCacheTileProvider</code></td>
+<td style="text-align: left;">Disk-backed read-through cache decorator.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ISKImagePyramidRenderer</code></td>
@@ -187,12 +195,12 @@ var controller = new SKImagePyramidController();
 <pre><code class="lang-csharp">// Deep Zoom Image (DZI)
 var xml = await httpClient.GetStringAsync(&quot;https://example.com/image.dzi&quot;);
 var source = SKImagePyramidDziSource.Parse(xml, &quot;https://example.com/image_files/&quot;);
-controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
+controller.Load(source, new SKHttpTileProvider());
 
 // IIIF Image API
 var json = await httpClient.GetStringAsync(&quot;https://example.com/image/info.json&quot;);
 var iiifSource = SKImagePyramidIiifSource.Parse(json);
-controller.Load(iiifSource, new SKTieredTileProvider(new SKHttpTileFetcher()));
+controller.Load(iiifSource, new SKHttpTileProvider());
 </code></pre>
 <h3 id="3-wire-the-canvas">3. Wire the canvas</h3>
 <pre><code class="lang-csharp">private readonly SKImagePyramidRenderer _renderer = new();
@@ -253,7 +261,7 @@ void OnPaintSurface(SKPaintSurfaceEventArgs e)
 <h2 id="deeper-dives">Deeper Dives</h2>
 <ul>
 <li><a href="controller.html">Controller &amp; Viewport</a></li>
-<li><a href="fetching.html">Tile Fetching</a></li>
+<li><a href="fetching.html">Tile Providers</a></li>
 <li><a href="caching.html">Caching</a></li>
 </ul>
 <h2 id="learn-more">Learn More</h2>
@@ -283,7 +291,7 @@ void OnPaintSurface(SKPaintSurfaceEventArgs e)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 5f3cfaa
+          source: PR #379 · 3ee7c29
         </div>
       </div>
     </footer>

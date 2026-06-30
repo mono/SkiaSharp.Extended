@@ -95,20 +95,21 @@ var controller = new SKImagePyramidController();
 <h3 id="loading-images">Loading Images</h3>
 <pre><code class="lang-csharp">// DZI — single image (HTTP)
 var source = SKImagePyramidDziSource.Parse(xmlString, &quot;https://example.com/image_files/&quot;);
-controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
+controller.Load(source, new SKHttpTileProvider());
 
 // DZC — collection of images
 var collection = SKImagePyramidDziCollectionSource.Parse(xmlString);
 collection.TilesBaseUri = &quot;https://example.com/&quot;;
-controller.Load(collection, new SKTieredTileProvider(new SKHttpTileFetcher()));
+controller.Load(collection, new SKHttpTileProvider());
 
 // DZI with disk cache (persists across app restarts)
-controller.Load(source, new SKTieredTileProvider(
-    new SKHttpTileFetcher(),
-    new SKDiskTileCacheStore(Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;), expiry: TimeSpan.FromDays(30))));
+controller.Load(source, new SKDiskCacheTileProvider(
+    new SKHttpTileProvider(),
+    Path.Combine(FileSystem.CacheDirectory, &quot;tiles&quot;),
+    expiry: TimeSpan.FromDays(30)));
 
 // Local files
-controller.Load(source, new SKTieredTileProvider(new SKFileTileFetcher()));
+controller.Load(source, new SKFileTileProvider());
 </code></pre>
 <p><code>Load()</code> resets the viewport to show the full image and starts fetching tiles in the background.</p>
 <h3 id="render-loop">Render Loop</h3>
@@ -744,7 +745,7 @@ foreach (var req in tiles)
 <h2 id="related">Related</h2>
 <ul>
 <li><a href="index.html">Image Pyramid overview</a></li>
-<li><a href="fetching.html">Tile Fetching</a></li>
+<li><a href="fetching.html">Tile Providers</a></li>
 <li><a href="caching.html">Caching</a></li>
 <li><a href="blazor.html">Blazor Integration</a></li>
 <li><a href="maui.html">MAUI Integration</a></li>
@@ -772,7 +773,7 @@ foreach (var req in tiles)
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 5f3cfaa
+          source: PR #379 · 3ee7c29
         </div>
       </div>
     </footer>

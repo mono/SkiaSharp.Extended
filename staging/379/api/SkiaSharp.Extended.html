@@ -102,26 +102,31 @@ Classes
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKChainedTileCacheStore.html">SKChainedTileCacheStore</a></dt>
-      <dd><p>Tries multiple cache stores in order for reads. Writes go to all writable stores.
-Use for layered caching (e.g. app-package read-only store + disk cache).</p>
+      <dt><a class="xref" href="SkiaSharp.Extended.SKCachedTileProvider.html">SKCachedTileProvider</a></dt>
+      <dd><p>A base class for persistent cache decorators. It wraps an inner provider and adds a
+read-through / write-back cache: derived classes implement only the storage backend by
+overriding <a class="xref" href="SkiaSharp.Extended.SKCachedTileProvider.ReadAsync.html#SkiaSharp_Extended_SKCachedTileProvider_ReadAsync_System_String_System_Threading_CancellationToken_">ReadAsync(string, CancellationToken)</a> and <a class="xref" href="SkiaSharp.Extended.SKCachedTileProvider.WriteAsync.html#SkiaSharp_Extended_SKCachedTileProvider_WriteAsync_System_String_SkiaSharp_Extended_SKImagePyramidTileData_System_Threading_CancellationToken_">WriteAsync(string, SKImagePyramidTileData, CancellationToken)</a>, while the caching flow
+(check cache → on miss call inner → persist) is handled here.</p>
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKCompositeTileFetcher.html">SKCompositeTileFetcher</a></dt>
-      <dd><p>Tries multiple fetchers in order, returning the first non-null result.
-Use for hybrid scenarios (e.g. app package first, HTTP fallback).</p>
+      <dt><a class="xref" href="SkiaSharp.Extended.SKCompositeTileProvider.html">SKCompositeTileProvider</a></dt>
+      <dd><p>A decorator that tries several inner providers in order and returns the first non-null
+result. Use it for hybrid origins, for example an app-packaged source with an HTTP
+fallback.</p>
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKDiskTileCacheStore.html">SKDiskTileCacheStore</a></dt>
-      <dd><p>Persistent tile cache backed by the local filesystem.
-Uses URL-derived hash keys, bucketed directories, and configurable expiry.</p>
+      <dt><a class="xref" href="SkiaSharp.Extended.SKDiskCacheTileProvider.html">SKDiskCacheTileProvider</a></dt>
+      <dd><p>A persistent cache decorator backed by the local filesystem. It wraps an inner provider
+(for example <a class="xref" href="SkiaSharp.Extended.SKHttpTileProvider.html">SKHttpTileProvider</a>) and stores fetched tiles on disk using
+hashed, bucketed filenames with a configurable expiry.</p>
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKFileTileFetcher.html">SKFileTileFetcher</a></dt>
-      <dd><p>Reads tiles from the local filesystem. No caching — the file IS the source.</p>
+      <dt><a class="xref" href="SkiaSharp.Extended.SKFileTileProvider.html">SKFileTileProvider</a></dt>
+      <dd><p>An origin provider that reads encoded tile bytes from the local filesystem. Accepts
+plain paths or <code>file://</code> URIs.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -135,8 +140,8 @@ Uses URL-derived hash keys, bucketed directories, and configurable expiry.</p>
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKHttpTileFetcher.html">SKHttpTileFetcher</a></dt>
-      <dd><p>Fetches tiles over HTTP. Pure network access — no caching.</p>
+      <dt><a class="xref" href="SkiaSharp.Extended.SKHttpTileProvider.html">SKHttpTileProvider</a></dt>
+      <dd><p>An origin provider that fetches encoded tile bytes over HTTP.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -191,8 +196,8 @@ Mirrors Silverlight's MultiScaleSubImage with inverted viewport coordinates.</p>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKImagePyramidTile.html">SKImagePyramidTile</a></dt>
-      <dd><p>An opaque tile that holds the decoded image for rendering and optionally
-the original encoded bytes for storage.</p>
+      <dd><p>A decoded tile held in the controller's render buffer. Tiles live above the decode
+gate and carry only the decoded image — encoded bytes never travel past the controller.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -221,12 +226,6 @@ and image pixel spaces. Mirrors Silverlight's MultiScaleImage viewport behavior.
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKNullTileCacheStore.html">SKNullTileCacheStore</a></dt>
-      <dd><p>A no-op cache store that never stores or returns anything.
-Use for testing or when persistent caching is disabled.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKPathInterpolation.html">SKPathInterpolation</a></dt>
       <dd><p>Interpolates between two <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpath">SKPath</a> objects by converting them to normalized point arrays and morphing between them.</p>
 </dd>
@@ -245,12 +244,6 @@ This class is thread-safe as all methods are stateless static operations.</p>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.SKPixelComparisonResult.html">SKPixelComparisonResult</a></dt>
       <dd><p>Holds the results of a pixel-by-pixel image comparison.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.SKTieredTileProvider.html">SKTieredTileProvider</a></dt>
-      <dd><p>Composes a fetcher and optional persistent cache into a tile provider.
-Flow: persistent cache → origin fetch → persist → decode → return.</p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -323,20 +316,9 @@ Stores hot decoded tiles for the render loop.</p>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="SkiaSharp.Extended.ISKImagePyramidTileProvider.html">ISKImagePyramidTileProvider</a></dt>
-      <dd><p>Returns decoded tiles to the controller. How the tile is obtained
-(cache, network, filesystem) is an implementation detail.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.ISKTileCacheStore.html">ISKTileCacheStore</a></dt>
-      <dd><p>Platform-agnostic persistent tile storage keyed by string.
-Implementations provide disk, browser, or database-backed stores.</p>
-</dd>
-    </dl>
-    <dl class="jumplist">
-      <dt><a class="xref" href="SkiaSharp.Extended.ISKTileFetcher.html">ISKTileFetcher</a></dt>
-      <dd><p>Fetches raw encoded tile data from an origin source.
-No caching logic — pure network, filesystem, or resource access.</p>
+      <dd><p>Supplies encoded tile bytes for a URL. Everything in the fetch/cache pipeline is a
+provider: origins produce bytes (HTTP, file) and decorators wrap an inner provider to
+add behaviour (caching, fallback, latency). Build a pipeline by nesting providers.</p>
 </dd>
     </dl>
 
@@ -359,7 +341,7 @@ No caching logic — pure network, filesystem, or resource access.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #379 · 5f3cfaa
+          source: PR #379 · 3ee7c29
         </div>
       </div>
     </footer>
