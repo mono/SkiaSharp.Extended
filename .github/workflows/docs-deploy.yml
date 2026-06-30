@@ -69,6 +69,11 @@ jobs:
             echo "source_label=main" >> $GITHUB_OUTPUT
           fi
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
       - name: Install MAUI workload
         run: dotnet workload install maui-android
 
