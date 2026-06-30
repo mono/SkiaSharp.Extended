@@ -206,7 +206,7 @@ _controller.Load(source, new SKDiskCacheTileProvider(
     Path.Combine(FileSystem.CacheDirectory, "tiles")));
 ```
 
-See the [Tile Providers docs](fetching.md) for custom providers.
+See the [Tile Providers & Caching docs](providers.md) for custom providers.
 
 ## Rendering Behaviour
 
@@ -218,6 +218,5 @@ See the [Tile Providers docs](fetching.md) for custom providers.
 
 - [Image Pyramid overview](index.md)
 - [Controller & Viewport](controller.md)
-- [Tile Providers](fetching.md)
-- [Caching](caching.md)
+- [Tile Providers & Caching](providers.md)
 - [Image Pyramid for Blazor](blazor.md)

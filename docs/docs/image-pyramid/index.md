@@ -126,8 +126,7 @@ See the [Image Sources](deepzoom.md) section for details on each format.
 ## Deeper Dives
 
 - [Controller & Viewport](controller.md)
-- [Tile Providers](fetching.md)
-- [Caching](caching.md)
+- [Tile Providers & Caching](providers.md)
 
 ## Learn More
 

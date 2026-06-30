@@ -1,8 +1,8 @@
-# Image Pyramid — Tile Providers
+# Image Pyramid — Tile Providers & Caching
 
-Everything in the fetch/cache pipeline is a **provider**. There is a single public interface,
-and you build a pipeline by **nesting** providers: an _origin_ produces encoded bytes (HTTP,
-file) and _decorators_ wrap an inner provider to add behaviour (caching, fallback, latency).
+Everything in the tile pipeline is a **provider**. There is a single public interface, and you
+build a pipeline by **nesting** providers: an _origin_ produces encoded bytes (HTTP, file) and
+_decorators_ wrap an inner provider to add behaviour (caching, fallback, latency).
 
 ```
 Controller
@@ -14,9 +14,38 @@ SKDiskCacheTileProvider        (decorator: read-through disk cache)
 ```
 
 The controller asks a provider for the encoded bytes of a tile by URL. Everything below —
-caching, fallback, retries — is the provider's responsibility. **Decoding happens once, in the
-controller** (see [Caching](caching.md#the-decode-gate)), so providers never deal with
-`SKImage` — only bytes.
+caching, fallback, retries — is the provider's responsibility.
+
+---
+
+## Two caches, one decode gate
+
+There are two distinct caches in the system, with distinct owners — separated by a single
+**decode gate**:
+
+| Cache | Holds | Owner | Type |
+| :---- | :---- | :---- | :--- |
+| Render buffer | Decoded `SKImage` tiles | Controller (internal) | `ISKImagePyramidTileCache` |
+| Persistent cache | Encoded bytes | Provider (you compose it) | `SKCachedTileProvider` |
+
+Providers deal only in encoded bytes (`SKImagePyramidTileData`). The controller decodes each
+tile exactly once, on the async load path, right before it enters the render buffer:
+
+```
+provider.GetTileAsync(url)   →  SKImagePyramidTileData   (encoded bytes, below the gate)
+        │
+        ▼  SKImage.FromEncodedData(...)                  ← the decode gate (controller)
+        │
+   SKImagePyramidTile        →  render buffer            (decoded SKImage, above the gate)
+```
+
+Because decoding happens in one place, no cache ever holds a decoded copy by accident: a
+persistent cache stays small (encoded bytes), and a `SKImagePyramidTile` carries only a decoded
+image — there is no second encoded copy to leak.
+
+> **Why bytes and not a decoded tile?** Encoded bytes are small (a JPEG tile is ~15–40 KB; the
+> same tile decoded to RGBA is ~256 KB). Keeping the pipeline in bytes means a cache can never
+> accidentally hold a second, decoded copy.
 
 ---
 
@@ -32,11 +61,6 @@ public interface ISKImagePyramidTileProvider : IDisposable
     Task<SKImagePyramidTileData?> GetTileAsync(string url, CancellationToken ct = default);
 }
 ```
-
-> **Why bytes and not a decoded tile?** Encoded bytes are small (a JPEG tile is ~15–40 KB; the
-> same tile decoded to RGBA is ~256 KB). Keeping the pipeline in bytes means a cache can never
-> accidentally hold a second, decoded copy. The single decode happens in the controller right
-> before the tile enters the render buffer.
 
 ---
 
@@ -96,7 +120,7 @@ provider.Clear();  // delete everything this cache has stored
 
 ---
 
-## SKCachedTileProvider — the cache base class
+## SKCachedTileProvider — the persistent-cache base class
 
 `SKCachedTileProvider` is an abstract base for persistent cache decorators. It implements the
 entire caching flow once; a subclass only provides the storage backend by overriding two
@@ -124,7 +148,56 @@ the identical flow — they differ only in `ReadAsync`/`WriteAsync`.
 
 ---
 
-## Common Compositions
+## The render buffer (ISKImagePyramidTileCache)
+
+The render buffer is a **sync-only, in-memory LRU cache** owned entirely by the controller. It
+lives _above_ the decode gate and holds decoded tiles so the renderer can draw the current
+viewport without any I/O.
+
+```csharp
+public interface ISKImagePyramidTileCache : IDisposable
+{
+    int Count { get; }
+    bool Contains(SKImagePyramidTileId id);
+    bool TryGet(SKImagePyramidTileId id, out SKImagePyramidTile? tile);
+    void Put(SKImagePyramidTileId id, SKImagePyramidTile tile);
+    bool Remove(SKImagePyramidTileId id);
+    void Clear();
+
+    // Call once per frame before drawing to safely dispose evicted tiles
+    void FlushEvicted();
+}
+```
+
+The controller creates and manages this cache internally — you don't create or configure it.
+The `Cache` property on the controller exposes it for read-only monitoring (e.g. showing a tile
+count in a debug overlay):
+
+```csharp
+// Read-only monitoring — do not call Put/Remove directly
+int cachedTileCount = controller.Cache.Count;
+```
+
+> **Note:** The cache's `FlushEvicted()` is called automatically inside `Render()` — you do not
+> need to call it yourself.
+
+### Capacity
+
+The controller creates its render buffer with a default capacity of 256 tiles. Each tile is
+typically a 256×256 decoded image — roughly 256 KB at full colour.
+
+| Device | Approximate capacity |
+| :----- | :------------------- |
+| Desktop / laptop | 1024–4096 |
+| Mid-range mobile | 256–512 |
+| Low-memory devices | 64–128 |
+
+> **Custom capacity** is not currently exposed via the public API. The 256-tile default suits
+> most use cases.
+
+---
+
+## Common compositions
 
 ### HTTP only (no persistence)
 
@@ -169,7 +242,7 @@ controller.Load(source, provider);
 
 ---
 
-## Provider Lifecycle
+## Provider lifecycle
 
 The caller owns the provider tree. Disposing the **root** provider cascades `Dispose` to every
 nested provider, so you only ever dispose the outermost one. The controller does **not** own
@@ -195,7 +268,7 @@ public override void Dispose()
 
 ---
 
-## Custom Origin
+## Custom origin
 
 Implement `ISKImagePyramidTileProvider` directly for full control (authentication, custom
 headers, app-package assets, etc.). Return **encoded bytes** — never decode.
@@ -232,7 +305,7 @@ without recording a failure, so the tile is retried.
 
 ---
 
-## Custom Cache
+## Custom persistent cache
 
 To add your own persistent storage, derive from `SKCachedTileProvider` and implement only the
 two storage methods — the read-through/write-back flow is inherited:
@@ -252,19 +325,19 @@ public sealed class MyStorageCacheProvider : SKCachedTileProvider
     }
 
     protected override Task WriteAsync(string key, SKImagePyramidTileData data, CancellationToken ct)
-        => _storage.WriteAsync(key, data.Data, ct);
+        => _storage.WriteAsync(key, data.Data, ct);  // CancellationToken.None is passed by the base
 }
 ```
 
 Use it by nesting an origin inside it:
 
 ```csharp
-var provider = new MyStorageCacheProvider(new SKHttpTileProvider(), myStorage);
+controller.Load(source, new MyStorageCacheProvider(new SKHttpTileProvider(), myStorage));
 ```
 
 ---
 
-## Custom Decorator
+## Custom decorator
 
 Wrap any provider to add cross-cutting behaviour — logging, latency simulation, metrics.
 Because the pipeline is bytes, a decorator just forwards the inner result:
@@ -285,11 +358,30 @@ public sealed class DelayTileProvider(ISKImagePyramidTileProvider inner, int del
 
 ---
 
+## SKImagePyramidTileId
+
+Each tile is identified by a `readonly record struct` with value equality:
+
+```csharp
+// Level = pyramid level (0 = lowest resolution, MaxLevel = highest)
+// Col   = column index at that level
+// Row   = row index at that level
+var id = new SKImagePyramidTileId(Level: 12, Col: 3, Row: 5);
+
+Console.WriteLine(id);   // "(12,3,5)"
+
+// Value equality — safe to use as a dictionary key
+var same = new SKImagePyramidTileId(12, 3, 5);
+Assert.Equal(id, same);  // ✅
+```
+
+---
+
 ## Related
 
 - [Image Pyramid overview](index.md)
 - [Controller & Viewport](controller.md)
-- [Caching](caching.md)
 - [API Reference — ISKImagePyramidTileProvider](xref:SkiaSharp.Extended.ISKImagePyramidTileProvider)
 - [API Reference — SKCachedTileProvider](xref:SkiaSharp.Extended.SKCachedTileProvider)
 - [API Reference — SKDiskCacheTileProvider](xref:SkiaSharp.Extended.SKDiskCacheTileProvider)
+- [API Reference — ISKImagePyramidTileCache](xref:SkiaSharp.Extended.ISKImagePyramidTileCache)

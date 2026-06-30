@@ -155,6 +155,6 @@ Try these public DZI files in the demo apps (all support CORS):
 
 - [Image Pyramid overview](index.md)
 - [IIIF Image API](iiif.md)
-- [Tile Providers](fetching.md)
+- [Tile Providers & Caching](providers.md)
 - [API Reference — SKImagePyramidDziSource](xref:SkiaSharp.Extended.SKImagePyramidDziSource)
 - [API Reference — SKImagePyramidDziCollectionSource](xref:SkiaSharp.Extended.SKImagePyramidDziCollectionSource)

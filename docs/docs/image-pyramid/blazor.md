@@ -136,7 +136,7 @@ controller.Load(source, new SKDiskCacheTileProvider(
     expiry: TimeSpan.FromDays(7)));
 ```
 
-See the [Tile Providers](fetching.md) docs for implementing browser storage caches, delay
+See the [Tile Providers & Caching](providers.md) docs for implementing browser storage caches, delay
 wrappers, and other custom strategies.
 
 ## Canvas Resize
@@ -163,6 +163,5 @@ public void OnCanvasResized()
 
 - [Image Pyramid overview](index.md)
 - [Controller & Viewport](controller.md)
-- [Tile Providers](fetching.md)
-- [Caching](caching.md)
+- [Tile Providers & Caching](providers.md)
 - [Image Pyramid for MAUI](maui.md)

@@ -443,8 +443,7 @@ foreach (var req in tiles)
 ## Related
 
 - [Image Pyramid overview](index.md)
-- [Tile Providers](fetching.md)
-- [Caching](caching.md)
+- [Tile Providers & Caching](providers.md)
 - [Blazor Integration](blazor.md)
 - [MAUI Integration](maui.md)
 - [API Reference — SKImagePyramidController](xref:SkiaSharp.Extended.SKImagePyramidController)
