@@ -116,7 +116,7 @@ Create a minimal .csproj:
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="/path/to/source/SkiaSharp.Extended/SkiaSharp.Extended.csproj" />
@@ -176,7 +176,7 @@ dotnet new maui -n TestApp
 cd TestApp
 dotnet add package SkiaSharp.Views.Maui.Controls
 dotnet add reference /path/to/source/SkiaSharp.Extended/SkiaSharp.Extended.csproj
-dotnet build -f net9.0-maccatalyst  # or net9.0-android
+dotnet build -f net10.0-maccatalyst  # or net10.0-android
 ```
 
 ### SKBitmap to ImageSource
@@ -324,7 +324,7 @@ Create .csproj:
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
