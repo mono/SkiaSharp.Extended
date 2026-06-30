@@ -3,6 +3,11 @@
 <aside class="ip-inspector">
     <h3>🔍 Inspector</h3>
 
+    @if (!string.IsNullOrEmpty(StatusMessage))
+    {
+        <div class="ip-inspector-status @(IsError ? "error" : "")">@StatusMessage</div>
+    }
+
     @if (Controller != null)
     {
         <details open>
@@ -195,6 +200,12 @@
 
 @code {
     [Parameter] public SKImagePyramidController? Controller { get; set; }
+
+    /// <summary>Transient status or error text shown as a banner at the top of the inspector.</summary>
+    [Parameter] public string? StatusMessage { get; set; }
+
+    /// <summary>When true, <see cref="StatusMessage"/> is rendered as an error.</summary>
+    [Parameter] public bool IsError { get; set; }
 
     [Parameter] public bool ShowTileBorders { get; set; }
     [Parameter] public EventCallback<bool> ShowTileBordersChanged { get; set; }

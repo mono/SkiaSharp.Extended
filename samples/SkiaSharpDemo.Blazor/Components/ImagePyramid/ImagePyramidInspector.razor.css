@@ -16,6 +16,22 @@
 .ip-inspector h3 { margin: 0 0 0.5rem; font-size: 1rem; }
 .ip-inspector dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; margin: 0; }
 .ip-inspector dt { color: #aaa; white-space: nowrap; }
+
+.ip-inspector-status {
+    margin: 0 0 0.5rem;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    background: #1e2a38;
+    color: #90caf9;
+    border: 1px solid #2c3e50;
+}
+.ip-inspector-status.error {
+    background: #3a1212;
+    color: #ff8a80;
+    border-color: #5c1010;
+}
 .ip-inspector dd { margin: 0; word-break: break-all; }
 .ip-inspector details { margin-bottom: 0.4rem; border: 1px solid #333; border-radius: 4px; }
 .ip-inspector details > summary {

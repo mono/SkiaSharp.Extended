@@ -39,30 +39,6 @@
     cursor: grabbing;
 }
 
-.ip-status {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    padding: 4px 8px;
-    background: rgba(0,0,0,0.65);
-    font-size: 0.8rem;
-    color: #aaa;
-}
-
-.ip-error {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    padding: 4px 8px;
-    background: #5c1010;
-    color: #ff8a80;
-    font-size: 0.8rem;
-}
-
 .ip-toggle-btn {
     position: fixed;
     bottom: 1rem;

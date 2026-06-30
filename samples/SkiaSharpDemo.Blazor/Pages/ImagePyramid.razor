@@ -43,14 +43,6 @@
 <div class="ip-layout @(_showInspector ? "ip-with-inspector" : "")">
 
     <div class="ip-canvas-wrapper">
-        @if (_statusText != null)
-        {
-            <div class="ip-status">@_statusText</div>
-        }
-        @if (_errorMessage != null)
-        {
-            <div class="ip-error">@_errorMessage</div>
-        }
         <ImagePyramidView @ref="_view"
                           Source="_currentSource"
                           Provider="_delayProvider"
@@ -64,6 +56,8 @@
     {
         <ImagePyramidInspector
             Controller="_view?.Controller"
+            StatusMessage="@(_errorMessage ?? _statusText)"
+            IsError="@(_errorMessage != null)"
             @bind-ShowTileBorders="_showTileBorders"
             @bind-ShowTileBorders:after="OnDebugOptionsChanged"
             @bind-EnableLodBlending="_enableLodBlending"
@@ -250,14 +244,14 @@
             {
                 var tileSource = SKImagePyramidIiifSource.Parse(content);
                 _currentSource = tileSource;
-                _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels, IIIF)";
+                _statusText = null;
             }
             else
             {
                 string tilesBase = $"{baseDir}{stem}_files/";
                 var tileSource = SKImagePyramidDziSource.Parse(content, tilesBase);
                 _currentSource = tileSource;
-                _statusText = $"{tileSource.ImageWidth}×{tileSource.ImageHeight}  ({tileSource.MaxLevel + 1} levels)";
+                _statusText = null;
             }
 
             // The view's Source parameter setter calls controller.Load() automatically
