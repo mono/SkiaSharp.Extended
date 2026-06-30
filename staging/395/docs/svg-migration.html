@@ -154,8 +154,8 @@ SkiaSharp.SKMatrix SkiaSharp.SKMatrix.MakeTranslation(single,single)
 <p><strong>Solution:</strong> This error occurs when using <code>SkiaSharp.Extended.Svg</code> with modern SkiaSharp versions. Migrate to <code>Svg.Skia</code> as described above.</p>
 <h3 id="issue-package-version-conflicts">Issue: Package Version Conflicts</h3>
 <p>If you're experiencing package conflicts, ensure all SkiaSharp-related packages are aligned to compatible versions:</p>
-<pre><code class="lang-xml">&lt;PackageReference Include=&quot;SkiaSharp&quot; Version=&quot;3.119.2&quot; /&gt;
-&lt;PackageReference Include=&quot;SkiaSharp.Views.Maui.Controls&quot; Version=&quot;3.119.2&quot; /&gt;
+<pre><code class="lang-xml">&lt;PackageReference Include=&quot;SkiaSharp&quot; Version=&quot;4.148.0&quot; /&gt;
+&lt;PackageReference Include=&quot;SkiaSharp.Views.Maui.Controls&quot; Version=&quot;4.148.0&quot; /&gt;
 &lt;PackageReference Include=&quot;Svg.Skia&quot; Version=&quot;5.1.1&quot; /&gt;
 </code></pre>
 <h2 id="example-complete-migration">Example: Complete Migration</h2>
@@ -259,7 +259,7 @@ namespace MyApp
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #395 · ed7b283
+          source: PR #395 · b8d6b57
         </div>
       </div>
     </footer>
