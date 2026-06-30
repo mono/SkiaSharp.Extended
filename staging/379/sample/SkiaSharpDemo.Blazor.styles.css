@@ -17,6 +17,22 @@
 .ip-inspector h3[b-eona1ezcjb] { margin: 0 0 0.5rem; font-size: 1rem; }
 .ip-inspector dl[b-eona1ezcjb] { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; margin: 0; }
 .ip-inspector dt[b-eona1ezcjb] { color: #aaa; white-space: nowrap; }
+
+.ip-inspector-status[b-eona1ezcjb] {
+    margin: 0 0 0.5rem;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    background: #1e2a38;
+    color: #90caf9;
+    border: 1px solid #2c3e50;
+}
+.ip-inspector-status.error[b-eona1ezcjb] {
+    background: #3a1212;
+    color: #ff8a80;
+    border-color: #5c1010;
+}
 .ip-inspector dd[b-eona1ezcjb] { margin: 0; word-break: break-all; }
 .ip-inspector details[b-eona1ezcjb] { margin-bottom: 0.4rem; border: 1px solid #333; border-radius: 4px; }
 .ip-inspector details > summary[b-eona1ezcjb] {
@@ -319,30 +335,6 @@ main[b-u7t1t1ae9g] {
 
 .ip-canvas-wrapper.dragging[b-l7pcepf0b4] {
     cursor: grabbing;
-}
-
-.ip-status[b-l7pcepf0b4] {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    padding: 4px 8px;
-    background: rgba(0,0,0,0.65);
-    font-size: 0.8rem;
-    color: #aaa;
-}
-
-.ip-error[b-l7pcepf0b4] {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    padding: 4px 8px;
-    background: #5c1010;
-    color: #ff8a80;
-    font-size: 0.8rem;
 }
 
 .ip-toggle-btn[b-l7pcepf0b4] {
