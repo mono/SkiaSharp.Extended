@@ -307,7 +307,7 @@ main[b-u7t1t1ae9g] {
     overflow: hidden;
 }
 
-.ip-canvas-area[b-l7pcepf0b4] {
+.ip-canvas-wrapper[b-l7pcepf0b4] {
     position: relative;
     flex: 1 1 0px;
     min-width: 0;
@@ -317,7 +317,7 @@ main[b-u7t1t1ae9g] {
     touch-action: none;
 }
 
-.ip-canvas-area.dragging[b-l7pcepf0b4] {
+.ip-canvas-wrapper.dragging[b-l7pcepf0b4] {
     cursor: grabbing;
 }
 
@@ -391,6 +391,6 @@ main[b-u7t1t1ae9g] {
 .ip-example-select:hover[b-l7pcepf0b4] { border-color: #888; }
 
 /* Separator between canvas area and inspector when inspector is open */
-.ip-layout.ip-with-inspector .ip-canvas-area[b-l7pcepf0b4] {
+.ip-layout.ip-with-inspector .ip-canvas-wrapper[b-l7pcepf0b4] {
     border-right: 1px solid #333;
 }
