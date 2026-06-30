@@ -25,7 +25,7 @@
     overflow: hidden;
 }
 
-.ip-canvas-area {
+.ip-canvas-wrapper {
     position: relative;
     flex: 1 1 0px;
     min-width: 0;
@@ -35,7 +35,7 @@
     touch-action: none;
 }
 
-.ip-canvas-area.dragging {
+.ip-canvas-wrapper.dragging {
     cursor: grabbing;
 }
 
@@ -109,6 +109,6 @@
 .ip-example-select:hover { border-color: #888; }
 
 /* Separator between canvas area and inspector when inspector is open */
-.ip-layout.ip-with-inspector .ip-canvas-area {
+.ip-layout.ip-with-inspector .ip-canvas-wrapper {
     border-right: 1px solid #333;
 }

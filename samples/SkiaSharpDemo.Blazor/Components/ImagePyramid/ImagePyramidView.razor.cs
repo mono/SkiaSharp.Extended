@@ -87,6 +87,7 @@ public partial class ImagePyramidView : IAsyncDisposable
     {
         _controller?.SetZoom(zoom);
         SyncZoom();
+        _canvas?.Invalidate();
     }
 
     /// <summary>Syncs internal zoom tracking from the controller viewport.</summary>
