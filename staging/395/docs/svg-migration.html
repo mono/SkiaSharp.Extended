@@ -87,12 +87,12 @@
 <h1 id="migrating-from-skiasharpextendedsvg-to-svgskia">Migrating from SkiaSharp.Extended.Svg to Svg.Skia</h1>
 
 <h2 id="overview">Overview</h2>
-<p><code>SkiaSharp.Extended.Svg</code> has been deprecated and is no longer maintained. Due to breaking changes in SkiaSharp (specifically the removal of <code>SKMatrix.MakeTranslation</code> method), the old library is incompatible with .NET 9 and recent versions of SkiaSharp.</p>
+<p><code>SkiaSharp.Extended.Svg</code> has been deprecated and is no longer maintained. Due to breaking changes in SkiaSharp (specifically the removal of <code>SKMatrix.MakeTranslation</code> method), the old library is incompatible with modern .NET versions and recent versions of SkiaSharp.</p>
 <p><strong>The recommended migration path is to use the <a href="https://github.com/wieslawsoltes/Svg.Skia">Svg.Skia</a> library</strong>, which is actively maintained and fully compatible with modern SkiaSharp versions.</p>
 <h2 id="why-migrate">Why Migrate?</h2>
 <ul>
 <li>⚠️ <code>SkiaSharp.Extended.Svg</code> is <strong>no longer maintained</strong></li>
-<li>❌ Incompatible with .NET 9 and recent SkiaSharp versions</li>
+<li>❌ Incompatible with modern .NET and recent SkiaSharp versions</li>
 <li>🚫 Causes runtime errors: <code>MissingMethodException: Method not found: SkiaSharp.SKMatrix.MakeTranslation</code></li>
 <li>✅ <code>Svg.Skia</code> is actively maintained with regular updates</li>
 <li>✅ Full SVG specification support</li>
@@ -153,9 +153,9 @@ SkiaSharp.SKMatrix SkiaSharp.SKMatrix.MakeTranslation(single,single)
 <p><strong>Solution:</strong> This error occurs when using <code>SkiaSharp.Extended.Svg</code> with modern SkiaSharp versions. Migrate to <code>Svg.Skia</code> as described above.</p>
 <h3 id="issue-package-version-conflicts">Issue: Package Version Conflicts</h3>
 <p>If you're experiencing package conflicts, ensure all SkiaSharp-related packages are aligned to compatible versions:</p>
-<pre><code class="lang-xml">&lt;PackageReference Include=&quot;SkiaSharp&quot; Version=&quot;3.119.0&quot; /&gt;
-&lt;PackageReference Include=&quot;SkiaSharp.Views.Maui.Controls&quot; Version=&quot;3.119.0&quot; /&gt;
-&lt;PackageReference Include=&quot;Svg.Skia&quot; Version=&quot;3.4.1&quot; /&gt;
+<pre><code class="lang-xml">&lt;PackageReference Include=&quot;SkiaSharp&quot; Version=&quot;3.119.2&quot; /&gt;
+&lt;PackageReference Include=&quot;SkiaSharp.Views.Maui.Controls&quot; Version=&quot;3.119.2&quot; /&gt;
+&lt;PackageReference Include=&quot;Svg.Skia&quot; Version=&quot;5.1.1&quot; /&gt;
 </code></pre>
 <h2 id="example-complete-migration">Example: Complete Migration</h2>
 <h3 id="before-skiasharpextendedsvg">Before (SkiaSharp.Extended.Svg)</h3>
@@ -258,7 +258,7 @@ namespace MyApp
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #395 · 3d2ffa9
+          source: PR #395 · b2b1e37
         </div>
       </div>
     </footer>
