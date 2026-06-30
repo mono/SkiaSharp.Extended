@@ -58,7 +58,7 @@ public class ImagePyramidRendererTest
         var bitmap = new SKBitmap(256, 256);
         using (var tileCanvas = new SKCanvas(bitmap))
             tileCanvas.Clear(SKColors.Red);
-        cache.Put(tileId, new SKImagePyramidTile(SKImage.FromBitmap(bitmap), new byte[] { 0xFF, 0xD8 }));
+        cache.Put(tileId, new SKImagePyramidTile(SKImage.FromBitmap(bitmap)));
 
         // Clear surface to white
         surface.Canvas.Clear(SKColors.White);
@@ -110,7 +110,7 @@ public class ImagePyramidRendererTest
             var bitmap = new SKBitmap(256, 256);
             using (var tileCanvas = new SKCanvas(bitmap))
                 tileCanvas.Clear(SKColors.Blue);
-            cache.Put(tileId, new SKImagePyramidTile(SKImage.FromBitmap(bitmap), new byte[] { 0xFF, 0xD8 }));
+            cache.Put(tileId, new SKImagePyramidTile(SKImage.FromBitmap(bitmap)));
         }
 
         surface.Canvas.Clear(SKColors.White);
@@ -154,7 +154,7 @@ public class ImagePyramidRendererTest
             var bmp = new SKBitmap(256, 256);
             using (var c = new SKCanvas(bmp))
                 c.Clear(SKColors.Green);
-            controller.Cache.Put(req.TileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
+            controller.Cache.Put(req.TileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp)));
         }
 
         surface.Canvas.Clear(SKColors.White);
@@ -211,7 +211,7 @@ public class ImagePyramidRendererTest
         var bmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(bmp))
             c.Clear(SKColors.Magenta);
-        controller.Cache.Put(tileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
+        controller.Cache.Put(tileId, new SKImagePyramidTile(SKImage.FromBitmap(bmp)));
 
         // Clear to white, then render
         surface.Canvas.Clear(SKColors.White);
@@ -271,7 +271,7 @@ public class ImagePyramidRendererTest
         controller.Viewport.ViewportOriginX = 0;
         controller.Viewport.ViewportOriginY = 0;
         controller.Viewport.AspectRatio = 1.0;
-        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
+        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp)));
 
         var ex = Record.Exception(() =>
         {
@@ -329,7 +329,7 @@ public class ImagePyramidRendererTest
         var bmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(bmp))
             c.Clear(SKColors.Cyan);
-        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
+        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp)));
 
         // Also put tiles for whichever level the layout picks
         var tiles = layout.GetVisibleTiles(dzi, controller.Viewport);
@@ -340,7 +340,7 @@ public class ImagePyramidRendererTest
                 var tileBmp = new SKBitmap(256, 256);
                 using (var c = new SKCanvas(tileBmp))
                     c.Clear(SKColors.Cyan);
-                controller.Cache.Put(t.TileId, new SKImagePyramidTile(SKImage.FromBitmap(tileBmp), new byte[] { 0xFF, 0xD8 }));
+                controller.Cache.Put(t.TileId, new SKImagePyramidTile(SKImage.FromBitmap(tileBmp)));
             }
         }
 
@@ -381,7 +381,7 @@ public class ImagePyramidRendererTest
         // Only cache a level-0 (1x1 pixel) parent tile as yellow — do NOT cache the requested level tiles
         var parentBmp = new SKBitmap(1, 1);
         parentBmp.SetPixel(0, 0, SKColors.Yellow);
-        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
+        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp)));
 
         surface.Canvas.Clear(SKColors.White);
         renderer.Canvas = surface.Canvas;
@@ -451,7 +451,7 @@ public class ImagePyramidRendererTest
 
         var parentBmp = new SKBitmap(1, 1);
         parentBmp.SetPixel(0, 0, SKColors.Yellow);
-        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
+        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp)));
 
         surface.Canvas.Clear(SKColors.White);
         renderer.Canvas = surface.Canvas;
@@ -493,7 +493,7 @@ public class ImagePyramidRendererTest
         // Cache a blue parent tile at level 0 (fallback)
         var parentBmp = new SKBitmap(1, 1);
         parentBmp.SetPixel(0, 0, SKColors.Blue);
-        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp), new byte[] { 0xFF, 0xD8 }));
+        controller.Cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(parentBmp)));
 
         // Cache a green high-res tile for only the first visible tile
         var visibleTiles = layout.GetVisibleTiles(dzi, controller.Viewport);
@@ -502,7 +502,7 @@ public class ImagePyramidRendererTest
         var highResBmp = new SKBitmap(256, 256);
         using (var c = new SKCanvas(highResBmp))
             c.Clear(SKColors.Green);
-        controller.Cache.Put(firstTile, new SKImagePyramidTile(SKImage.FromBitmap(highResBmp), new byte[] { 0xFF, 0xD8 }));
+        controller.Cache.Put(firstTile, new SKImagePyramidTile(SKImage.FromBitmap(highResBmp)));
 
         surface.Canvas.Clear(SKColors.White);
         renderer.Canvas = surface.Canvas;

@@ -459,13 +459,28 @@ public class SKImagePyramidController : IDisposable
             string? url = source.GetFullTileUrl(tileId.Level, tileId.Col, tileId.Row);
             if (url == null) return;
 
-            tile = await provider.GetTileAsync(url, ct).ConfigureAwait(false);
+            // Providers deal only in encoded bytes. This is the decode gate: bytes are
+            // decoded into an SKImage exactly once, here on the async load path, so the
+            // render thread only ever sees ready-to-draw tiles.
+            var data = await provider.GetTileAsync(url, ct).ConfigureAwait(false);
 
-            if (tile == null)
+            if (data == null)
             {
                 _failures.RecordFailure(tileId);
                 return;
             }
+
+            if (ct.IsCancellationRequested || _disposed)
+                return;
+
+            var image = SKImage.FromEncodedData(data.Data);
+            if (image == null)
+            {
+                _failures.RecordFailure(tileId);
+                return;
+            }
+
+            tile = new SKImagePyramidTile(image);
 
             if (!ct.IsCancellationRequested && !_disposed)
             {

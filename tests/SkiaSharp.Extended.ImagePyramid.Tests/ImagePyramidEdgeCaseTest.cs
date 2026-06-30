@@ -284,10 +284,10 @@ public class ImagePyramidEdgeCaseTest
         var bmp1 = new SKBitmap(10, 10);
         var bmp2 = new SKBitmap(10, 10);
 
-        cache.Put(a, new SKImagePyramidTile(SKImage.FromBitmap(bmp1), new byte[] { 0xFF, 0xD8 }));
+        cache.Put(a, new SKImagePyramidTile(SKImage.FromBitmap(bmp1)));
         Assert.True(cache.TryGet(a, out _));
 
-        cache.Put(b, new SKImagePyramidTile(SKImage.FromBitmap(bmp2), new byte[] { 0xFF, 0xD8 }));
+        cache.Put(b, new SKImagePyramidTile(SKImage.FromBitmap(bmp2)));
         Assert.False(cache.TryGet(a, out _)); // Evicted
         Assert.True(cache.TryGet(b, out _));
     }
@@ -298,7 +298,7 @@ public class ImagePyramidEdgeCaseTest
         var cache = new SKImagePyramidMemoryTileCache(10);
         for (int i = 0; i < 5; i++)
         {
-            cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF }));
+            cache.Put(new SKImagePyramidTileId(i, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10))));
         }
 
         Assert.Equal(5, cache.Count);
@@ -311,7 +311,7 @@ public class ImagePyramidEdgeCaseTest
     {
         var cache = new SKImagePyramidMemoryTileCache(10);
         var id = new SKImagePyramidTileId(0, 0, 0);
-        cache.Put(id, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF }));
+        cache.Put(id, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10))));
         Assert.True(cache.Remove(id));
         Assert.False(cache.Remove(id));
     }
@@ -325,13 +325,13 @@ public class ImagePyramidEdgeCaseTest
         var c = new SKImagePyramidTileId(0, 0, 1);
         var d = new SKImagePyramidTileId(0, 1, 1);
 
-        cache.Put(a, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF }));
-        cache.Put(b, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF }));
-        cache.Put(c, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF }));
+        cache.Put(a, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10))));
+        cache.Put(b, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10))));
+        cache.Put(c, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10))));
 
         cache.TryGet(a, out _); // Touch "a"
 
-        cache.Put(d, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)), new byte[] { 0xFF })); // Evicts "b"
+        cache.Put(d, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(10, 10)))); // Evicts "b"
 
         Assert.True(cache.TryGet(a, out _));
         Assert.False(cache.TryGet(b, out _)); // evicted

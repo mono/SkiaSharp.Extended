@@ -32,7 +32,7 @@ var json = await http.GetStringAsync("https://example.org/iiif/image/my-image/in
 var source = SKImagePyramidIiifSource.Parse(json);
 
 // Load into the controller (same as DZI)
-controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
+controller.Load(source, new SKHttpTileProvider());
 ```
 
 ### Construct manually
@@ -71,12 +71,12 @@ private async Task LoadFromUrlAsync(string url)
     {
         var coll = SKImagePyramidDziCollectionSource.Parse(content);
         coll.TilesBaseUri = url[..url.LastIndexOf('/')] + "/";
-        controller.Load(coll, fetcher);
+        controller.Load(coll, provider);
     }
     else if (isIiif || (!isDzi && content.TrimStart().StartsWith("{")))
     {
         var source = SKImagePyramidIiifSource.Parse(content);
-        controller.Load(source, fetcher);
+        controller.Load(source, provider);
     }
     else
     {
@@ -84,7 +84,7 @@ private async Task LoadFromUrlAsync(string url)
         string baseDir = url[..url.LastIndexOf('/')] + "/";
         string stem = Path.GetFileNameWithoutExtension(url);
         var source = SKImagePyramidDziSource.Parse(content, $"{baseDir}{stem}_files/");
-        controller.Load(source, fetcher);
+        controller.Load(source, provider);
     }
 }
 ```

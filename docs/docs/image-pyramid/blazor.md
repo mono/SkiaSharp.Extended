@@ -30,7 +30,7 @@ Use `SKImagePyramidController` with a plain `SKCanvasView` in Blazor WebAssembly
         var baseUrl = new Uri(Http.BaseAddress!, "deepzoom/image_files/").ToString();
         var source  = SKImagePyramidDziSource.Parse(xml, baseUrl);
 
-        _controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
+        _controller.Load(source, new SKHttpTileProvider());
     }
 
     private void OnPaintSurface(SKPaintSurfaceEventArgs e)
@@ -67,7 +67,8 @@ Place `.dzi` and tile folder under `wwwroot`. In the project file, mark them as 
 </ItemGroup>
 ```
 
-The `SKTieredTileProvider` with `SKHttpTileFetcher` fetches each tile via `HttpClient`; tile URLs are constructed automatically from the base URL you pass to `SKImagePyramidDziSource.Parse`.
+The `SKHttpTileProvider` fetches each tile via `HttpClient`; tile URLs are constructed
+automatically from the base URL you pass to `SKImagePyramidDziSource.Parse`.
 
 ## Pan and Zoom
 
@@ -120,7 +121,7 @@ Wire mouse and touch events to the controller's navigation methods:
 var xml = await Http.GetStringAsync("collection.dzc");
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = Http.BaseAddress!.ToString();
-_controller!.Load(collection, new SKTieredTileProvider(new SKHttpTileFetcher()));
+_controller!.Load(collection, new SKHttpTileProvider());
 ```
 
 ## Custom Provider
@@ -129,12 +130,14 @@ Pass a custom `ISKImagePyramidTileProvider` to the controller's `Load()` method 
 
 ```csharp
 // With disk cache (persists across Blazor restarts via OPFS or service worker)
-controller.Load(source, new SKTieredTileProvider(
-    new SKHttpTileFetcher(),
-    new SKDiskTileCacheStore("/cache/tiles", expiry: TimeSpan.FromDays(7))));
+controller.Load(source, new SKDiskCacheTileProvider(
+    new SKHttpTileProvider(),
+    "/cache/tiles",
+    expiry: TimeSpan.FromDays(7)));
 ```
 
-See the [Tile Providers](fetching.md) docs for implementing browser storage tiers, delay wrappers, and other custom strategies.
+See the [Tile Providers](fetching.md) docs for implementing browser storage caches, delay
+wrappers, and other custom strategies.
 
 ## Canvas Resize
 
@@ -160,6 +163,6 @@ public void OnCanvasResized()
 
 - [Image Pyramid overview](index.md)
 - [Controller & Viewport](controller.md)
-- [Tile Fetching](fetching.md)
+- [Tile Providers](fetching.md)
 - [Caching](caching.md)
 - [Image Pyramid for MAUI](maui.md)

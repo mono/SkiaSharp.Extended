@@ -25,7 +25,7 @@ public sealed class DelayTileProvider(ISKImagePyramidTileProvider inner) : ISKIm
     public int MaxDelayMs { get; set; } = 500;
 
     /// <inheritdoc/>
-    public async Task<SKImagePyramidTile?> GetTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImagePyramidTileData?> GetTileAsync(string url, CancellationToken ct = default)
     {
         if (IsEnabled)
         {

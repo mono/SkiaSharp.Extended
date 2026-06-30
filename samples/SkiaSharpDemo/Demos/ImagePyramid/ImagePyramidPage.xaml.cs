@@ -69,7 +69,7 @@ public partial class ImagePyramidPage : ContentPage
             string baseDir = fetchUrl[..fetchUrl.LastIndexOf('/')] + "/";
             string stem    = System.IO.Path.GetFileNameWithoutExtension(fetchUrl);
 
-            ReplaceProvider(new SKTieredTileProvider(new SKHttpTileFetcher()));
+            ReplaceProvider(new SKHttpTileProvider());
 
             if (isDzc)
             {

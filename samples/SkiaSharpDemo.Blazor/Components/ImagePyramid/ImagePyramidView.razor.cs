@@ -14,9 +14,6 @@ namespace SkiaSharpDemo.Blazor.Components.ImagePyramid;
 /// </summary>
 public partial class ImagePyramidView : IAsyncDisposable
 {
-    // ---- Injected ----
-    [Inject] private IJSRuntime JS2 { get; set; } = null!;
-
     // ---- Parameters ----
 
     /// <summary>
@@ -146,7 +143,7 @@ public partial class ImagePyramidView : IAsyncDisposable
         if (!firstRender) return;
 
         _thisRef = DotNetObjectReference.Create(this);
-        await JS2.InvokeVoidAsync("deepZoomRegisterResize", _thisRef);
+        await JS.InvokeVoidAsync("imagePyramidRegisterResize", _thisRef);
 
         _defaultRenderer = new SKImagePyramidRenderer();
         _controller = new SKImagePyramidController();
@@ -277,7 +274,7 @@ public partial class ImagePyramidView : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        try { await JS2.InvokeVoidAsync("deepZoomUnregisterResize"); } catch { }
+        try { await JS.InvokeVoidAsync("imagePyramidUnregisterResize"); } catch { }
         _thisRef?.Dispose();
         if (_controller != null)
         {

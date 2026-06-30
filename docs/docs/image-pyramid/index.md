@@ -46,10 +46,12 @@ graph TD
 | `SKImagePyramidIiifSource` | Parses IIIF Image API v2/v3 `info.json`. |
 | `SKImagePyramidController` | The central orchestrator: viewport, scheduling, render buffer, rendering. |
 | `SKImagePyramidViewport` | Coordinate math between screen pixels and logical (0–1) image space. |
-| `ISKImagePyramidTileProvider` | Owns the full fetch+cache pipeline for a tile URL. |
-| `SKTieredTileProvider` | Composes a fetcher + optional persistent cache into a tile provider. |
-| `SKHttpTileFetcher` | HTTP origin fetch (no caching). |
-| `SKFileTileFetcher` | Local file origin fetch (no caching). |
+| `ISKImagePyramidTileProvider` | The one provider interface: returns encoded tile bytes for a URL. Everything nests. |
+| `SKHttpTileProvider` | HTTP origin (encoded bytes). |
+| `SKFileTileProvider` | Local file origin (encoded bytes). |
+| `SKCompositeTileProvider` | Tries inner providers in order; first non-null wins. |
+| `SKCachedTileProvider` | Abstract base for persistent cache decorators. |
+| `SKDiskCacheTileProvider` | Disk-backed read-through cache decorator. |
 | `ISKImagePyramidRenderer` | Pluggable renderer interface. |
 | `SKImagePyramidRenderer` | Default SkiaSharp renderer; LOD blending, tile compositing. |
 
@@ -69,12 +71,12 @@ var controller = new SKImagePyramidController();
 // Deep Zoom Image (DZI)
 var xml = await httpClient.GetStringAsync("https://example.com/image.dzi");
 var source = SKImagePyramidDziSource.Parse(xml, "https://example.com/image_files/");
-controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
+controller.Load(source, new SKHttpTileProvider());
 
 // IIIF Image API
 var json = await httpClient.GetStringAsync("https://example.com/image/info.json");
 var iiifSource = SKImagePyramidIiifSource.Parse(json);
-controller.Load(iiifSource, new SKTieredTileProvider(new SKHttpTileFetcher()));
+controller.Load(iiifSource, new SKHttpTileProvider());
 ```
 
 ### 3. Wire the canvas
@@ -124,7 +126,7 @@ See the [Image Sources](deepzoom.md) section for details on each format.
 ## Deeper Dives
 
 - [Controller & Viewport](controller.md)
-- [Tile Fetching](fetching.md)
+- [Tile Providers](fetching.md)
 - [Caching](caching.md)
 
 ## Learn More

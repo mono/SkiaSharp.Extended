@@ -311,13 +311,17 @@
         RebuildProvider();
     }
 
-    private void OnClearCache() => _view?.Controller?.Cache.Clear();
+    private async Task OnClearCache()
+    {
+        _view?.Controller?.Cache.Clear();
+        try { await JS.InvokeVoidAsync("imagePyramidCacheClear"); } catch { }
+    }
 
     private ISKImagePyramidTileProvider BuildInnerProvider()
     {
-        var http = new SKTieredTileProvider(new SKHttpTileFetcher());
+        var http = new SKHttpTileProvider(Http);
         if (_useBrowserCache)
-            return new BrowserStorageTileProvider(http, JS);
+            return new BrowserCacheTileProvider(http, JS);
         return http;
     }
 

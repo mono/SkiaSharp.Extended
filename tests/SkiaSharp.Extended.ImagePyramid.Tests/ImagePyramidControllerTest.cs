@@ -6,40 +6,42 @@ using Xunit;
 namespace SkiaSharp.Extended.ImagePyramid.Tests;
 
 /// <summary>
-/// In-memory tile provider for testing. Returns solid-colored tiles.
+/// In-memory tile provider for testing. Returns encoded (PNG) tile bytes.
+/// Providers live below the decode gate, so they hand back encoded bytes; the
+/// controller decodes them once into the render buffer.
 /// </summary>
 internal class MemoryTileProvider : ISKImagePyramidTileProvider
 {
-    private readonly ConcurrentDictionary<string, SKImagePyramidTile> _tiles = new();
+    private readonly ConcurrentDictionary<string, byte[]> _tiles = new();
     public int FetchCount { get; private set; }
     public List<string> FetchedUrls { get; } = new();
     public bool IsDisposed { get; private set; }
 
-    public void AddTile(string url, SKImagePyramidTile tile) => _tiles[url] = tile;
+    public void AddTile(string url, byte[] encoded) => _tiles[url] = encoded;
 
     public void AddSolidTile(string url, int width, int height, SKColor color)
     {
         using var surface = SKSurface.Create(new SKImageInfo(width, height));
         surface.Canvas.Clear(color);
-        _tiles[url] = new SKImagePyramidTile(surface.Snapshot(), new byte[] { 0xFF });
+        using var image = surface.Snapshot();
+        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+        _tiles[url] = data.ToArray();
     }
 
-    public Task<SKImagePyramidTile?> GetTileAsync(string url, CancellationToken ct = default)
+    public Task<SKImagePyramidTileData?> GetTileAsync(string url, CancellationToken ct = default)
     {
         FetchCount++;
         FetchedUrls.Add(url);
 
-        if (_tiles.TryGetValue(url, out var image))
-            return Task.FromResult<SKImagePyramidTile?>(image);
+        if (_tiles.TryGetValue(url, out var bytes))
+            return Task.FromResult<SKImagePyramidTileData?>(new SKImagePyramidTileData(bytes));
 
-        return Task.FromResult<SKImagePyramidTile?>(null);
+        return Task.FromResult<SKImagePyramidTileData?>(null);
     }
 
     public void Dispose()
     {
         IsDisposed = true;
-        foreach (var image in _tiles.Values)
-            image.Dispose();
         _tiles.Clear();
     }
 }

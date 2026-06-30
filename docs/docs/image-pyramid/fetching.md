@@ -1,117 +1,126 @@
-# Image Pyramid — Tile Fetching
+# Image Pyramid — Tile Providers
 
-The fetching system is split into three layers with clear separation of concerns:
+Everything in the fetch/cache pipeline is a **provider**. There is a single public interface,
+and you build a pipeline by **nesting** providers: an _origin_ produces encoded bytes (HTTP,
+file) and _decorators_ wrap an inner provider to add behaviour (caching, fallback, latency).
 
 ```
 Controller
-    │  GetTileAsync(url)
+    │  GetTileAsync(url)  →  encoded bytes
     ▼
-SKTieredTileProvider : ISKImagePyramidTileProvider
+SKDiskCacheTileProvider        (decorator: read-through disk cache)
     │
-    ├── ISKTileCacheStore  (persistent cache: disk, browser, etc.)
-    │
-    └── ISKTileFetcher     (origin fetch: HTTP, file, composite)
+    └── SKHttpTileProvider     (origin: HTTP GET)
 ```
 
-The controller only asks for a decoded tile by URL. Everything below — caching and fetching — is the provider's responsibility.
+The controller asks a provider for the encoded bytes of a tile by URL. Everything below —
+caching, fallback, retries — is the provider's responsibility. **Decoding happens once, in the
+controller** (see [Caching](caching.md#the-decode-gate)), so providers never deal with
+`SKImage` — only bytes.
 
 ---
 
-## ISKTileFetcher
+## ISKImagePyramidTileProvider
 
-Pure origin fetch — no caching logic. Returns raw encoded bytes, or `null` for a permanent miss (404, file not found). Throws on retriable failures (network errors) so the caller can decide the retry policy.
+The one and only provider interface. It returns encoded bytes wrapped in
+`SKImagePyramidTileData`, or `null` for a permanent miss (404, file not found). It throws
+`OperationCanceledException` when the token is cancelled.
 
 ```csharp
-public interface ISKTileFetcher : IDisposable
+public interface ISKImagePyramidTileProvider : IDisposable
 {
-    Task<SKImagePyramidTileData?> FetchAsync(string url, CancellationToken ct = default);
+    Task<SKImagePyramidTileData?> GetTileAsync(string url, CancellationToken ct = default);
 }
 ```
 
-### Built-in fetchers
+> **Why bytes and not a decoded tile?** Encoded bytes are small (a JPEG tile is ~15–40 KB; the
+> same tile decoded to RGBA is ~256 KB). Keeping the pipeline in bytes means a cache can never
+> accidentally hold a second, decoded copy. The single decode happens in the controller right
+> before the tile enters the render buffer.
 
-**`SKHttpTileFetcher`** — HTTP GET. Pass your own `HttpClient` or let the fetcher manage one internally.
+---
+
+## Origins
+
+An origin is a provider with no inner provider — it produces bytes from somewhere.
+
+**`SKHttpTileProvider`** — HTTP GET. Pass your own `HttpClient` or let the provider manage one
+internally (it only disposes a client it created).
 
 ```csharp
-// Internal HttpClient (manages its own lifetime)
-var fetcher = new SKHttpTileFetcher();
+// Internal HttpClient (disposed with the provider)
+var provider = new SKHttpTileProvider();
 
-// Shared HttpClient (you manage its lifetime)
-var fetcher = new SKHttpTileFetcher(myHttpClient);
+// Shared HttpClient (you own its lifetime; the provider won't dispose it)
+var provider = new SKHttpTileProvider(myHttpClient);
 ```
 
-**`SKFileTileFetcher`** — Reads from the local filesystem. Accepts plain paths and `file://` URIs.
+**`SKFileTileProvider`** — Reads from the local filesystem. Accepts plain paths and `file://`
+URIs.
 
 ```csharp
-var fetcher = new SKFileTileFetcher();
-```
-
-**`SKCompositeTileFetcher`** — Tries multiple fetchers in order; first non-null result wins.
-
-```csharp
-// Try app-package assets first, fall back to HTTP
-var fetcher = new SKCompositeTileFetcher(
-    new MauiAssetFetcher(),
-    new SKHttpTileFetcher());
+var provider = new SKFileTileProvider();
 ```
 
 ---
 
-## ISKTileCacheStore
+## Decorators
 
-Persistent tile storage keyed by URL hash. Platform-specific implementations provide disk, browser storage, or database backends.
+A decorator wraps an inner provider and adds behaviour. Because a decorator is itself a
+provider, decorators nest arbitrarily.
+
+**`SKCompositeTileProvider`** — Tries several inner providers in order; the first non-null
+result wins. Use it for hybrid origins.
 
 ```csharp
-public interface ISKTileCacheStore : IDisposable
-{
-    Task<SKImagePyramidTileData?> TryGetAsync(string key, CancellationToken ct = default);
-    Task SetAsync(string key, SKImagePyramidTileData data, CancellationToken ct = default);
-    Task RemoveAsync(string key, CancellationToken ct = default);
-    Task ClearAsync(CancellationToken ct = default);
-}
+// Try app-packaged tiles first, fall back to HTTP
+var provider = new SKCompositeTileProvider(
+    new MyAppPackageProvider(),
+    new SKHttpTileProvider());
 ```
 
-### Built-in stores
-
-**`SKDiskTileCacheStore`** — Filesystem-backed. Uses FNV-1a URL hashing, bucketed directories, and configurable expiry.
+**`SKDiskCacheTileProvider`** — A persistent, read-through disk cache. It wraps an origin and
+stores fetched tiles on disk using hashed, bucketed filenames with a configurable expiry.
 
 ```csharp
-var store = new SKDiskTileCacheStore(
+var provider = new SKDiskCacheTileProvider(
+    inner: new SKHttpTileProvider(),
     basePath: Path.Combine(FileSystem.CacheDirectory, "tiles"),
     expiry: TimeSpan.FromDays(30)); // default: 30 days
+
+provider.Clear();  // delete everything this cache has stored
 ```
 
-**`SKNullTileCacheStore`** — No-op. Useful for testing or when persistence is unwanted.
-
-```csharp
-var store = new SKNullTileCacheStore();
-```
-
-**`SKChainedTileCacheStore`** — Tries stores in order for reads; writes go to all stores.
-
-```csharp
-// Read from an app-bundle read-only store, write to disk
-var store = new SKChainedTileCacheStore(
-    new AppBundleReadOnlyStore(),
-    new SKDiskTileCacheStore(cachePath));
-```
+`SKDiskCacheTileProvider` derives from `SKCachedTileProvider` (see below), so its flow is:
+**read cache → on miss call inner → persist (fire-and-forget) → return bytes.**
 
 ---
 
-## SKTieredTileProvider
+## SKCachedTileProvider — the cache base class
 
-Composes a fetcher and optional persistent cache into an `ISKImagePyramidTileProvider`. This is the standard implementation for most use cases.
+`SKCachedTileProvider` is an abstract base for persistent cache decorators. It implements the
+entire caching flow once; a subclass only provides the storage backend by overriding two
+methods:
 
 ```csharp
-public sealed class SKTieredTileProvider : ISKImagePyramidTileProvider
-{
-    public SKTieredTileProvider(
-        ISKTileFetcher fetcher,
-        ISKTileCacheStore? persistentCache = null) { ... }
-}
+protected abstract Task<SKImagePyramidTileData?> ReadAsync(string key, CancellationToken ct);
+protected abstract Task WriteAsync(string key, SKImagePyramidTileData data, CancellationToken ct);
 ```
 
-**Flow:** persistent cache hit → return decoded tile. Cache miss → fetch from origin → persist (fire-and-forget, `CancellationToken.None`) → decode → return.
+The base class handles everything else:
+
+- **Key generation** — `ComputeKey(url)` returns a stable, filesystem-safe 64-bit FNV-1a hash
+  as 16 hex characters. Subclasses use it to name their storage slots.
+- **Read-through** — a cache hit short-circuits the inner provider; a read error is treated as
+  a miss, never a failure.
+- **Write-back** — on a miss it calls the inner provider, then persists the result
+  fire-and-forget (using `CancellationToken.None`) so a slow disk never blocks rendering and a
+  cancelled request still warms the cache it just paid for. A failed write is swallowed — the
+  tile was already returned to the caller.
+
+`SKDiskCacheTileProvider` is the built-in subclass; the Blazor sample's
+`BrowserCacheTileProvider` is another, storing tiles in browser `sessionStorage`. Both reuse
+the identical flow — they differ only in `ReadAsync`/`WriteAsync`.
 
 ---
 
@@ -120,45 +129,40 @@ public sealed class SKTieredTileProvider : ISKImagePyramidTileProvider
 ### HTTP only (no persistence)
 
 ```csharp
-var provider = new SKTieredTileProvider(
-    new SKHttpTileFetcher());
-
-controller.Load(source, provider);
+controller.Load(source, new SKHttpTileProvider());
 ```
 
 ### HTTP + disk cache
 
 ```csharp
-var provider = new SKTieredTileProvider(
-    fetcher: new SKHttpTileFetcher(),
-    persistentCache: new SKDiskTileCacheStore(cachePath));
+var provider = new SKDiskCacheTileProvider(
+    new SKHttpTileProvider(),
+    Path.Combine(FileSystem.CacheDirectory, "tiles"));
 
-controller.SetProvider(provider);
-controller.Load(source);
+controller.Load(source, provider);
 ```
 
 ### Local file (no cache needed)
 
 ```csharp
-var provider = new SKTieredTileProvider(new SKFileTileFetcher());
-controller.Load(source, provider);
+controller.Load(source, new SKFileTileProvider());
 ```
 
-### MAUI app-bundled tiles
+### Hybrid origin (app-package, then HTTP)
 
 ```csharp
-var provider = new SKTieredTileProvider(
-    fetcher: new MauiAssetFetcher()); // reads from app package
+var provider = new SKCompositeTileProvider(
+    new MyAppPackageProvider(),  // reads from the app bundle
+    new SKHttpTileProvider());   // falls back to the network
 
 controller.Load(localDziSource, provider);
 ```
 
-### Blazor WASM (browser storage)
+### Blazor WASM (browser storage cache)
 
 ```csharp
-// Browser sessionStorage L2 cache via JS interop
-var provider = new BrowserStorageTileProvider(
-    new SKTieredTileProvider(new SKHttpTileFetcher()), js);
+// BrowserCacheTileProvider (a sample SKCachedTileProvider subclass) caches to sessionStorage
+var provider = new BrowserCacheTileProvider(new SKHttpTileProvider(http), js);
 
 controller.Load(source, provider);
 ```
@@ -167,10 +171,11 @@ controller.Load(source, provider);
 
 ## Provider Lifecycle
 
-The controller does **NOT** own the provider lifecycle — the caller manages disposal. Always dispose the old provider before replacing it:
+The caller owns the provider tree. Disposing the **root** provider cascades `Dispose` to every
+nested provider, so you only ever dispose the outermost one. The controller does **not** own
+the provider lifecycle.
 
 ```csharp
-// Correct — dispose old before assigning new
 private ISKImagePyramidTileProvider? _provider;
 
 private void SwitchProvider(ISKImagePyramidTileProvider newProvider)
@@ -178,28 +183,28 @@ private void SwitchProvider(ISKImagePyramidTileProvider newProvider)
     var old = _provider;
     _provider = newProvider;
     _controller.SetProvider(newProvider);
-    old?.Dispose();
+    old?.Dispose();              // disposes the whole old tree
 }
 
-// Correct — dispose on page/component teardown
 public override void Dispose()
 {
     _controller.Dispose();
-    _provider?.Dispose();
+    _provider?.Dispose();        // disposes the whole tree
 }
 ```
 
 ---
 
-## Custom Provider
+## Custom Origin
 
-Implement `ISKImagePyramidTileProvider` directly for full control (authentication, custom headers, etc.):
+Implement `ISKImagePyramidTileProvider` directly for full control (authentication, custom
+headers, app-package assets, etc.). Return **encoded bytes** — never decode.
 
 ```csharp
 public sealed class AuthenticatedProvider(HttpClient http, string token)
     : ISKImagePyramidTileProvider
 {
-    public async Task<SKImagePyramidTile?> GetTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImagePyramidTileData?> GetTileAsync(string url, CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -209,8 +214,7 @@ public sealed class AuthenticatedProvider(HttpClient http, string token)
             using var response = await http.SendAsync(request, ct);
             if (!response.IsSuccessStatusCode) return null;
             var bytes = await response.Content.ReadAsByteArrayAsync(ct);
-            var image = SKImage.FromEncodedData(bytes);
-            return image != null ? new SKImagePyramidTile(image, bytes) : null;
+            return new SKImagePyramidTileData(bytes);
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
         catch { return null; }
@@ -220,21 +224,56 @@ public sealed class AuthenticatedProvider(HttpClient http, string token)
 }
 ```
 
-**Return `null`** for permanent misses (404, file not found) — the controller records a temporary failure with exponential backoff via `TileFailureTracker`.
+**Return `null`** for permanent misses (404, file not found) — the controller records a
+temporary failure with exponential backoff via `TileFailureTracker`.
 
-**Throw `OperationCanceledException`** when `ct` is cancelled — the controller handles this without recording a failure, so the tile will be retried.
+**Throw `OperationCanceledException`** when `ct` is cancelled — the controller handles this
+without recording a failure, so the tile is retried.
 
 ---
 
-## Provider Decorator
+## Custom Cache
 
-Wrap any provider to add behaviour (logging, delay simulation, browser storage):
+To add your own persistent storage, derive from `SKCachedTileProvider` and implement only the
+two storage methods — the read-through/write-back flow is inherited:
+
+```csharp
+public sealed class MyStorageCacheProvider : SKCachedTileProvider
+{
+    private readonly IMyStorage _storage;
+
+    public MyStorageCacheProvider(ISKImagePyramidTileProvider inner, IMyStorage storage)
+        : base(inner) => _storage = storage;
+
+    protected override async Task<SKImagePyramidTileData?> ReadAsync(string key, CancellationToken ct)
+    {
+        var bytes = await _storage.TryReadAsync(key, ct);
+        return bytes is null ? null : new SKImagePyramidTileData(bytes);
+    }
+
+    protected override Task WriteAsync(string key, SKImagePyramidTileData data, CancellationToken ct)
+        => _storage.WriteAsync(key, data.Data, ct);
+}
+```
+
+Use it by nesting an origin inside it:
+
+```csharp
+var provider = new MyStorageCacheProvider(new SKHttpTileProvider(), myStorage);
+```
+
+---
+
+## Custom Decorator
+
+Wrap any provider to add cross-cutting behaviour — logging, latency simulation, metrics.
+Because the pipeline is bytes, a decorator just forwards the inner result:
 
 ```csharp
 public sealed class DelayTileProvider(ISKImagePyramidTileProvider inner, int delayMs)
     : ISKImagePyramidTileProvider
 {
-    public async Task<SKImagePyramidTile?> GetTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImagePyramidTileData?> GetTileAsync(string url, CancellationToken ct = default)
     {
         await Task.Delay(delayMs, ct);
         return await inner.GetTileAsync(url, ct);
@@ -252,6 +291,5 @@ public sealed class DelayTileProvider(ISKImagePyramidTileProvider inner, int del
 - [Controller & Viewport](controller.md)
 - [Caching](caching.md)
 - [API Reference — ISKImagePyramidTileProvider](xref:SkiaSharp.Extended.ISKImagePyramidTileProvider)
-- [API Reference — ISKTileFetcher](xref:SkiaSharp.Extended.ISKTileFetcher)
-- [API Reference — ISKTileCacheStore](xref:SkiaSharp.Extended.ISKTileCacheStore)
-- [API Reference — SKTieredTileProvider](xref:SkiaSharp.Extended.SKTieredTileProvider)
+- [API Reference — SKCachedTileProvider](xref:SkiaSharp.Extended.SKCachedTileProvider)
+- [API Reference — SKDiskCacheTileProvider](xref:SkiaSharp.Extended.SKDiskCacheTileProvider)

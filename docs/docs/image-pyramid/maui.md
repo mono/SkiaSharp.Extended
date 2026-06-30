@@ -71,12 +71,12 @@ public partial class ImagePyramidPage : ContentPage
 
 ## App-Package Tile Provider
 
-When tiles are bundled as MAUI assets, implement `ISKImagePyramidTileProvider` to read them via `FileSystem.OpenAppPackageFileAsync`, buffer the bytes, and decode with `SKImage.FromEncodedData`:
+When tiles are bundled as MAUI assets, implement `ISKImagePyramidTileProvider` to read them via `FileSystem.OpenAppPackageFileAsync` and return the encoded bytes — the controller decodes them:
 
 ```csharp
 public sealed class AppPackageProvider : ISKImagePyramidTileProvider
 {
-    public async Task<SKImagePyramidTile?> GetTileAsync(string url, CancellationToken ct = default)
+    public async Task<SKImagePyramidTileData?> GetTileAsync(string url, CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
         try
@@ -84,9 +84,7 @@ public sealed class AppPackageProvider : ISKImagePyramidTileProvider
             using var stream = await FileSystem.OpenAppPackageFileAsync(url);
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms, ct);
-            var bytes = ms.ToArray();
-            var image = SKImage.FromEncodedData(bytes);
-            return image != null ? new SKImagePyramidTile(image, bytes) : null;
+            return new SKImagePyramidTileData(ms.ToArray());
         }
         catch (OperationCanceledException) { throw; }
         catch
@@ -118,18 +116,17 @@ Include assets in the project file:
 
 ## HTTP Tile Provider
 
-For remote images, use `SKTieredTileProvider` with `SKHttpTileFetcher`:
+For remote images, use `SKHttpTileProvider`, optionally wrapped in a disk cache:
 
 ```csharp
 // HTTP only, no disk cache
-_controller.Load(source, new SKTieredTileProvider(new SKHttpTileFetcher()));
+_controller.Load(source, new SKHttpTileProvider());
 
 // With disk cache (persists across sessions)
-_controller.Load(source, new SKTieredTileProvider(
-    fetcher: new SKHttpTileFetcher(),
-    persistentCache: new SKDiskTileCacheStore(
-        Path.Combine(FileSystem.CacheDirectory, "tiles"),
-        expiry: TimeSpan.FromDays(30))));
+_controller.Load(source, new SKDiskCacheTileProvider(
+    new SKHttpTileProvider(),
+    Path.Combine(FileSystem.CacheDirectory, "tiles"),
+    expiry: TimeSpan.FromDays(30)));
 ```
 
 ## Pan and Zoom
@@ -204,9 +201,9 @@ The controller's internal render buffer has a fixed 256-entry capacity — this 
 
 ```csharp
 // With disk cache for memory-constrained devices that benefit from persistence
-_controller.Load(source, new SKTieredTileProvider(
-    new SKHttpTileFetcher(),
-    new SKDiskTileCacheStore(Path.Combine(FileSystem.CacheDirectory, "tiles"))));
+_controller.Load(source, new SKDiskCacheTileProvider(
+    new SKHttpTileProvider(),
+    Path.Combine(FileSystem.CacheDirectory, "tiles")));
 ```
 
 See the [Tile Providers docs](fetching.md) for custom providers.
@@ -221,6 +218,6 @@ See the [Tile Providers docs](fetching.md) for custom providers.
 
 - [Image Pyramid overview](index.md)
 - [Controller & Viewport](controller.md)
-- [Tile Fetching](fetching.md)
+- [Tile Providers](fetching.md)
 - [Caching](caching.md)
 - [Image Pyramid for Blazor](blazor.md)

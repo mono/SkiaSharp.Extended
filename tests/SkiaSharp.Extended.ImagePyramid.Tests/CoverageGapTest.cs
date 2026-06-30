@@ -199,8 +199,8 @@ public class CoverageGapTest
     /// <summary>A tile provider that always returns null (simulates 404s).</summary>
     private class NullTileProvider : ISKImagePyramidTileProvider
     {
-        public Task<SKImagePyramidTile?> GetTileAsync(string url, CancellationToken ct = default)
-            => Task.FromResult<SKImagePyramidTile?>(null);
+        public Task<SKImagePyramidTileData?> GetTileAsync(string url, CancellationToken ct = default)
+            => Task.FromResult<SKImagePyramidTileData?>(null);
         public void Dispose() { }
     }
 }

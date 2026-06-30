@@ -8,7 +8,7 @@ namespace SkiaSharp.Extended.ImagePyramid.Tests;
 public class TileCacheTest
 {
     private static SKImagePyramidTile MakeTile() =>
-        new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1, SKColorType.Rgba8888)), new byte[] { 0xFF });
+        new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1, SKColorType.Rgba8888)));
 
     [Fact]
     public void Empty_Cache_HasZeroCount()
@@ -184,11 +184,11 @@ public class TileCacheTest
         var id = new SKImagePyramidTileId(3, 1, 2);
 
         var bmp1 = new SkiaSharp.SKBitmap(64, 64);
-        cache.Put(id, new SKImagePyramidTile(SKImage.FromBitmap(bmp1), new byte[] { 0xFF, 0xD8 }));
+        cache.Put(id, new SKImagePyramidTile(SKImage.FromBitmap(bmp1)));
         Assert.Equal(1, cache.Count);
 
         var bmp2 = new SkiaSharp.SKBitmap(128, 128);
-        cache.Put(id, new SKImagePyramidTile(SKImage.FromBitmap(bmp2), new byte[] { 0xFF, 0xD8 }));
+        cache.Put(id, new SKImagePyramidTile(SKImage.FromBitmap(bmp2)));
         Assert.Equal(1, cache.Count);
 
         Assert.True(cache.TryGet(id, out var result));
@@ -202,11 +202,11 @@ public class TileCacheTest
     {
         using var cache = new SKImagePyramidMemoryTileCache(2);
         var bmp0 = new SKBitmap(1, 1);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp0), new byte[] { 0xFF, 0xD8 }));
-        cache.Put(new SKImagePyramidTileId(1, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1)), new byte[] { 0xFF }));
+        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp0)));
+        cache.Put(new SKImagePyramidTileId(1, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1))));
 
         // Evict id0 by adding a 3rd item
-        cache.Put(new SKImagePyramidTileId(2, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1)), new byte[] { 0xFF }));
+        cache.Put(new SKImagePyramidTileId(2, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1))));
         Assert.Equal(2, cache.Count);
         Assert.False(cache.Contains(new SKImagePyramidTileId(0, 0, 0)));
 
@@ -220,7 +220,7 @@ public class TileCacheTest
         using var cache = new SKImagePyramidMemoryTileCache(10);
         var bmp = new SKBitmap(1, 1);
         var id = new SKImagePyramidTileId(0, 0, 0);
-        cache.Put(id, new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 }));
+        cache.Put(id, new SKImagePyramidTile(SKImage.FromBitmap(bmp)));
 
         Assert.True(cache.Remove(id));
         Assert.Equal(0, cache.Count);
@@ -233,9 +233,9 @@ public class TileCacheTest
     public void Clear_DisposesEverything_IncludingPendingEvictions()
     {
         using var cache = new SKImagePyramidMemoryTileCache(2);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1)), new byte[] { 0xFF }));
-        cache.Put(new SKImagePyramidTileId(1, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1)), new byte[] { 0xFF }));
-        cache.Put(new SKImagePyramidTileId(2, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1)), new byte[] { 0xFF })); // evicts id0
+        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1))));
+        cache.Put(new SKImagePyramidTileId(1, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1))));
+        cache.Put(new SKImagePyramidTileId(2, 0, 0), new SKImagePyramidTile(SKImage.Create(new SKImageInfo(1, 1)))); // evicts id0
 
         // Clear disposes all entries and pending evictions
         cache.Clear();
@@ -252,7 +252,7 @@ public class TileCacheTest
         cache.Dispose();
 
         var bmp = new SKBitmap(32, 32);
-        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp), new byte[] { 0xFF, 0xD8 })); // should not throw
+        cache.Put(new SKImagePyramidTileId(0, 0, 0), new SKImagePyramidTile(SKImage.FromBitmap(bmp))); // should not throw
         // The bitmap was disposed by Put — verify by checking the cache didn't retain it
         Assert.Equal(0, cache.Count);
         Assert.False(cache.Contains(new SKImagePyramidTileId(0, 0, 0)));
@@ -263,7 +263,7 @@ public class TileCacheTest
     {
         var cache = new SKImagePyramidMemoryTileCache(10);
         var tileId = new SKImagePyramidTileId(3, 1, 2);
-        cache.Put(tileId, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(32, 32)), new byte[] { 0xFF }));
+        cache.Put(tileId, new SKImagePyramidTile(SKImage.Create(new SKImageInfo(32, 32))));
 
         cache.Dispose();
 
@@ -272,20 +272,11 @@ public class TileCacheTest
     }
 
     [Fact]
-    public void SKImagePyramidTile_NoSourceId_InNewApi()
+    public void SKImagePyramidTile_WrapsDecodedImage()
     {
         using var bmp = new SkiaSharp.SKBitmap(2, 2);
         using var img = SkiaSharp.SKImage.FromBitmap(bmp);
-        // SourceId parameter was removed; constructor now takes (image, rawData?)
-        var tile = new SKImagePyramidTile(img, new byte[] { 0xFF });
-        Assert.NotNull(tile.Image);
-    }
-
-    [Fact]
-    public void SKImagePyramidTile_NullRawData_Works()
-    {
-        using var bmp = new SkiaSharp.SKBitmap(2, 2);
-        using var img = SkiaSharp.SKImage.FromBitmap(bmp);
+        // The tile carries only a decoded image; encoded bytes live below the decode gate.
         var tile = new SKImagePyramidTile(img);
         Assert.NotNull(tile.Image);
     }

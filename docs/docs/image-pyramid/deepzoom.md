@@ -107,7 +107,7 @@ string xml = await httpClient.GetStringAsync("https://example.com/collection.dzc
 var collection = SKImagePyramidDziCollectionSource.Parse(xml);
 collection.TilesBaseUri = "https://example.com/";
 
-controller.Load(collection, new SKTieredTileProvider(new SKHttpTileFetcher()));
+controller.Load(collection, new SKHttpTileProvider());
 
 // Access sub-images
 foreach (var sub in collection.Items)
@@ -155,6 +155,6 @@ Try these public DZI files in the demo apps (all support CORS):
 
 - [Image Pyramid overview](index.md)
 - [IIIF Image API](iiif.md)
-- [Tile Fetching](fetching.md)
+- [Tile Providers](fetching.md)
 - [API Reference — SKImagePyramidDziSource](xref:SkiaSharp.Extended.SKImagePyramidDziSource)
 - [API Reference — SKImagePyramidDziCollectionSource](xref:SkiaSharp.Extended.SKImagePyramidDziCollectionSource)
