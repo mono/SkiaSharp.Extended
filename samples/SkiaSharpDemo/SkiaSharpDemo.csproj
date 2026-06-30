@@ -35,6 +35,19 @@
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
+  <!--
+    This sample is only compile-verified in CI and is never published to a store,
+    so it does not need Android AOT. Release defaults to profiled AOT, and on a
+    Windows host that cross-compilation appends the host RID (win-x64) to the
+    Android restore graph. With UseMonoRuntime that pulls the host runtime pack
+    Microsoft.NETCore.App.Runtime.Mono.win-x64, which the .NET workload no longer
+    drops in the toolcache and is not on our curated feed, breaking restore.
+  -->
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <RunAOTCompilation>false</RunAOTCompilation>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="HarfBuzzSharp" />
     <PackageReference Include="NLipsum" />
