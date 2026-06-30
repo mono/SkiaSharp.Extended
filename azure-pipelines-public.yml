@@ -33,6 +33,11 @@ jobs:
   - job: build
     displayName: Build
     steps:
+      - task: UseDotNet@2
+        displayName: Install pinned .NET SDK (global.json)
+        inputs:
+          packageType: sdk
+          useGlobalJson: true
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: dotnet cake --target=build
         displayName: Build everything
@@ -44,6 +49,11 @@ jobs:
   - job: pack
     displayName: Pack
     steps:
+      - task: UseDotNet@2
+        displayName: Install pinned .NET SDK (global.json)
+        inputs:
+          packageType: sdk
+          useGlobalJson: true
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: dotnet cake --target=pack
         displayName: Pack NuGet packages
@@ -55,6 +65,11 @@ jobs:
   - job: test
     displayName: Test
     steps:
+      - task: UseDotNet@2
+        displayName: Install pinned .NET SDK (global.json)
+        inputs:
+          packageType: sdk
+          useGlobalJson: true
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
       - pwsh: dotnet cake --target=test
         displayName: Run tests
