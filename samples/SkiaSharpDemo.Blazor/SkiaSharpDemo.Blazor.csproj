@@ -18,14 +18,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Expose BuildInfo as an assembly-level attribute so the Blazor app can read it at runtime -->
-    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
-      <_Parameter1>BuildInfo</_Parameter1>
-      <_Parameter2>$(BuildInfo)</_Parameter2>
-    </AssemblyAttribute>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.3" PrivateAssets="all" />
     <PackageReference Include="SkiaSharp.Views.Blazor" Version="3.119.1" />

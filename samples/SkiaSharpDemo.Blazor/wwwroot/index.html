@@ -39,6 +39,38 @@
         <span class="dismiss">🗙</span>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        window.imagePyramidRegisterResize = function (dotNetRef) {
+            var handler = function () { dotNetRef.invokeMethodAsync('OnWindowResize'); };
+            window.addEventListener('resize', handler);
+            window._imagePyramidResizeHandler = handler;
+        };
+        window.imagePyramidUnregisterResize = function () {
+            if (window._imagePyramidResizeHandler) {
+                window.removeEventListener('resize', window._imagePyramidResizeHandler);
+                window._imagePyramidResizeHandler = null;
+            }
+        };
+
+        // Browser tile cache: stores base64-encoded tile bytes in sessionStorage.
+        // Uses sessionStorage (not localStorage) so tiles are cleared on tab close.
+        window.imagePyramidCacheGet = function (key) {
+            try { return sessionStorage.getItem('ip:' + key); } catch { return null; }
+        };
+        window.imagePyramidCacheSet = function (key, base64) {
+            try { sessionStorage.setItem('ip:' + key, base64); } catch { /* quota */ }
+        };
+        window.imagePyramidCacheClear = function () {
+            try {
+                var toRemove = [];
+                for (var i = 0; i < sessionStorage.length; i++) {
+                    var k = sessionStorage.key(i);
+                    if (k && k.startsWith('ip:')) toRemove.push(k);
+                }
+                toRemove.forEach(function (k) { sessionStorage.removeItem(k); });
+            } catch { }
+        };
+    </script>
 </body>
 
 </html>
