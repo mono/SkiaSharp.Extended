@@ -36,21 +36,16 @@
   </PropertyGroup>
 
   <!--
-    This sample is only compile-verified in CI and is never published to a store.
-    In Release, MAUI sets PublishTrimmed=true for the Android head. On a Windows
-    build host the .NET SDK (Microsoft.NET.RuntimeIdentifierInference.targets) then
-    appends the host RID (win-x64) to the Android restore graph. With UseMonoRuntime
-    that resolves Microsoft.NETCore.App.Runtime.Mono.win-x64, which .NET 10 no longer
-    ships in the toolcache and is not on our curated feed, breaking restore (NU1102).
-    Setting UseDefaultPublishRuntimeIdentifier=false suppresses the host-RID append -
-    the same workaround the Android SDK applies by default (dotnet/android#10722); we
-    set it explicitly so it also holds with older Android workloads on the build agent.
-    AOT is disabled too since the sample is never published.
+    Prevent the .NET SDK from adding the host RID to RuntimeIdentifiers, see:
+    https://github.com/dotnet/android/issues/10722
+    A Release net10.0-android build with no explicit RID makes the SDK append the
+    build host's RID (e.g. win-x64 on the CI agent) to the Android restore graph.
+    With UseMonoRuntime that resolves Microsoft.NETCore.App.Runtime.Mono.win-x64,
+    which no longer ships in .NET 10, breaking restore (NU1102). This is the same
+    workaround the dotnet/android team applies to their own projects.
   -->
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
     <UseDefaultPublishRuntimeIdentifier>false</UseDefaultPublishRuntimeIdentifier>
-    <RunAOTCompilation>false</RunAOTCompilation>
-    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
   </PropertyGroup>
 
   <ItemGroup>
