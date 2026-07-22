@@ -103,8 +103,8 @@ To capture screenshots:
 
 ## Dependencies
 
-- `SkiaSharp` (4.148.0+)
-- `SkiaSharp.Skottie` (4.148.0+) - For Lottie animations
-- `SkiaSharp.Views.Maui.Controls` (4.148.0+)
-- `SkiaSharp.Views.Blazor` (4.148.0+) - For Blazor WebAssembly
+- `SkiaSharp` (4.150.1+)
+- `SkiaSharp.Skottie` (4.150.1+) - For Lottie animations
+- `SkiaSharp.Views.Maui.Controls` (4.150.1+)
+- `SkiaSharp.Views.Blazor` (4.150.1+) - For Blazor WebAssembly
 - `Microsoft.Maui.Controls` (10.x)

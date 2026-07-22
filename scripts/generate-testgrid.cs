@@ -16,7 +16,7 @@
 //   <name>_files/<level>/   — tile images (PNG, 256×256 + 1px overlap)
 
 #:property ManagePackageVersionsCentrally=false
-#:package SkiaSharp@4.148.0
+#:package SkiaSharp@4.150.1
 
 using SkiaSharp;
 
