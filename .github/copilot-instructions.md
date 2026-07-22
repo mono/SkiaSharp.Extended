@@ -19,7 +19,7 @@ dotnet cake --target=test
 dotnet test tests/SkiaSharp.Extended.Tests --filter "FullyQualifiedName~CanEncodeAndDecode"
 
 # Build specific project (useful for MAUI on Linux - only Android supported)
-dotnet build source/SkiaSharp.Extended.UI.Maui/SkiaSharp.Extended.UI.Maui.csproj -f net9.0-android35.0
+dotnet build source/SkiaSharp.Extended.UI.Maui/SkiaSharp.Extended.UI.Maui.csproj -f net10.0-android36.0
 ```
 
 ## Architecture
@@ -31,7 +31,7 @@ This repository contains two main libraries:
   - Geometry helpers
   - Path interpolation
   - Image comparison utilities
-  - Targets: `netstandard2.0`, `net9.0`
+  - Targets: `netstandard2.0`, `net9.0+`
 
 - **SkiaSharp.Extended.UI.Maui** (`source/SkiaSharp.Extended.UI.Maui/`) - .NET MAUI controls
   - Lottie animation support (`SKLottieView`)
@@ -107,4 +107,4 @@ To capture screenshots:
 - `SkiaSharp.Skottie` (3.119.1+) - For Lottie animations
 - `SkiaSharp.Views.Maui.Controls` (3.119.1+)
 - `SkiaSharp.Views.Blazor` (3.119.1+) - For Blazor WebAssembly
-- `Microsoft.Maui.Controls` (9.x)
+- `Microsoft.Maui.Controls` (10.x)
