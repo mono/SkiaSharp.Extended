@@ -31,7 +31,7 @@ private void OnTouch(object? sender, SKTouchEventArgs e)
     {
         SKTouchAction.Pressed => tracker.ProcessTouchDown(e.Id, e.Location, e.DeviceType == SKTouchDeviceType.Mouse),
         SKTouchAction.Moved => tracker.ProcessTouchMove(e.Id, e.Location, e.InContact),
-        SKTouchAction.Released => tracker.ProcessTouchUp(e.Id, e.Location, e.DeviceType == SKTouchDeviceType.Mouse),
+        SKTouchAction.Released => tracker.ProcessTouchUp(e.Id, e.Location),
         SKTouchAction.Cancelled => tracker.ProcessTouchCancel(e.Id),
         SKTouchAction.WheelChanged => tracker.ProcessMouseWheel(e.Location, 0, e.WheelDelta),
         _ => true,

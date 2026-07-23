@@ -6,8 +6,8 @@ namespace SkiaSharp.Extended;
 /// Provides data for tap gesture events, including single and multi-tap interactions.
 /// </summary>
 /// <remarks>
-/// <para>This event argument is used by both <see cref="SKGestureDetector.TapDetected"/> and
-/// <see cref="SKGestureDetector.DoubleTapDetected"/> events. For single taps, <see cref="TapCount"/>
+/// <para>This event argument is used by both <see cref="SKGestureTracker.TapDetected"/> and
+/// <see cref="SKGestureTracker.DoubleTapDetected"/> events. For single taps, <see cref="TapCount"/>
 /// is <c>1</c>. For double taps, it is <c>2</c> or greater.</para>
 /// <example>
 /// <para>The following example shows how to handle tap events:</para>
@@ -25,8 +25,8 @@ namespace SkiaSharp.Extended;
 /// };
 /// </code>
 /// </example>
-/// <seealso cref="SKGestureDetector.TapDetected"/>
-/// <seealso cref="SKGestureDetector.DoubleTapDetected"/>
+/// <seealso cref="SKGestureTracker.TapDetected"/>
+/// <seealso cref="SKGestureTracker.DoubleTapDetected"/>
 /// </remarks>
 public class SKTapGestureEventArgs : EventArgs
 {
@@ -49,7 +49,7 @@ public class SKTapGestureEventArgs : EventArgs
 	/// should be skipped; otherwise, <see langword="false"/>. The default is <see langword="false"/>.
 	/// </value>
 	/// <remarks>
-	/// Set this to <see langword="true"/> in a <see cref="SKGestureDetector.DoubleTapDetected"/>
+	/// Set this to <see langword="true"/> in a <see cref="SKGestureTracker.DoubleTapDetected"/>
 	/// handler to prevent the <see cref="SKGestureTracker"/> from applying its default
 	/// double-tap zoom behavior.
 	/// </remarks>

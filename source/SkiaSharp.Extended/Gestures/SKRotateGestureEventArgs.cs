@@ -10,7 +10,6 @@ namespace SkiaSharp.Extended;
 /// two or more touches are active. The <see cref="RotationDelta"/> is a per-event incremental
 /// angle change in degrees. To compute cumulative rotation, sum successive deltas or use the
 /// <see cref="SKGestureTracker.Rotation"/> property.</para>
-/// <seealso cref="SKGestureDetector.RotateDetected"/>
 /// <seealso cref="SKGestureTracker.RotateDetected"/>
 /// <seealso cref="SKPinchGestureEventArgs"/>
 /// </remarks>
