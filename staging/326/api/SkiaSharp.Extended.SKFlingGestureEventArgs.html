@@ -1,13 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Class SKFlingGestureEventArgs
- | SkiaSharp.Extended </title>
+      <title>Class SKFlingGestureEventArgs | SkiaSharp.Extended </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Class SKFlingGestureEventArgs
- | SkiaSharp.Extended ">
+      <meta name="title" content="Class SKFlingGestureEventArgs | SkiaSharp.Extended ">
       
+      <meta name="description" content="Provides data for fling gesture events, including the initial fling detection and per-frame animation updates.">
       <link rel="icon" href="../images/logo.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -30,15 +29,15 @@
       <meta name="loc:changeTheme" content="Change theme">
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-
-  <script type="module" src="./../public/docfx.min.js"></script>
-
-  <script>
-    const theme = localStorage.getItem('theme') || 'auto'
-    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
-  </script>
-
 
   <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
     <header class="bg-body border-bottom">
@@ -55,7 +54,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -78,7 +77,7 @@
 
       <div class="content">
         <div class="actionbar">
-          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
             <i class="bi bi-list"></i>
           </button>
 
@@ -90,8 +89,7 @@
 
 
   <h1 id="SkiaSharp_Extended_SKFlingGestureEventArgs" data-uid="SkiaSharp.Extended.SKFlingGestureEventArgs" class="text-break">
-    Class SKFlingGestureEventArgs
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKFlingGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
+Class SKFlingGestureEventArgs  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKFlingGestureEventArgs.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -122,7 +120,7 @@ per-frame animation updates.</p>
 
 
 
-  <dl class="typelist derived">
+  <dl class="typelist inheritedMembers">
     <dt>Inherited Members</dt>
     <dd>
     <div>
@@ -156,12 +154,12 @@ per-frame animation updates.</p>
 
   <h2 id="SkiaSharp_Extended_SKFlingGestureEventArgs_remarks">Remarks</h2>
   <div class="markdown level0 remarks"><p>This class is used by two distinct events:</p>
-<ul><li><a class="xref" href="SkiaSharp.Extended.SKGestureDetector.FlingDetected.html">FlingDetected</a> / <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingDetected.html">FlingDetected</a>:
+<ul><li><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingDetected.html">FlingDetected</a>:
 Fired once when a fling is initiated. <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.Velocity.html#SkiaSharp_Extended_SKFlingGestureEventArgs_Velocity">Velocity</a> contains the initial velocity.
 <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.Delta.html#SkiaSharp_Extended_SKFlingGestureEventArgs_Delta">Delta</a> is <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint.empty">Empty</a>.</li><li><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingUpdated.html">FlingUpdated</a>: Fired each animation frame during
 the fling deceleration. <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.Velocity.html#SkiaSharp_Extended_SKFlingGestureEventArgs_Velocity">Velocity</a> contains the current (decaying) velocity, and
 <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.Delta.html#SkiaSharp_Extended_SKFlingGestureEventArgs_Delta">Delta</a> contains the per-frame displacement in pixels.</li></ul>
-<a class="xref" href="SkiaSharp.Extended.SKGestureDetector.FlingDetected.html">FlingDetected</a>
+<a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingDetected.html">FlingDetected</a>
 <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingUpdated.html">FlingUpdated</a>
 <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingCompleted.html">FlingCompleted</a>
 </div>
@@ -172,7 +170,7 @@ the fling deceleration. <a class="xref" href="SkiaSharp.Extended.SKFlingGestureE
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.-ctor.html#SkiaSharp_Extended_SKFlingGestureEventArgs__ctor_SkiaSharp_SKPoint_">SKFlingGestureEventArgs(SKPoint)</a></dt>
     <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.SKFlingGestureEventArgs.html">SKFlingGestureEventArgs</a> class with
-velocity only. Used for the initial <a class="xref" href="SkiaSharp.Extended.SKGestureDetector.FlingDetected.html">FlingDetected</a> event.</p>
+velocity only. Used for the initial <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingDetected.html">FlingDetected</a> event.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -222,7 +220,7 @@ velocity and per-frame displacement. Used for <a class="xref" href="SkiaSharp.Ex
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 3f88e0e
+          source: PR #326 · 74551e1
         </div>
       </div>
     </footer>

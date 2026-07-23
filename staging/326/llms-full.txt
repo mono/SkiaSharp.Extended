@@ -707,7 +707,7 @@ tracker.IsScrollZoomEnabled = false;
 tracker.IsHoverEnabled = false;
 ```
 
-When a gesture is disabled, the tracker suppresses its events. The underlying detector still recognizes the gesture, so you can re-enable it at runtime without losing state.
+When a gesture is disabled, the tracker suppresses its events. You can toggle any of these at runtime without losing transform state.
 
 ## Reading Transform State
 
@@ -789,6 +789,12 @@ tracker.LongPressDetected += (s, e) =>
     // e.Duration — how long the finger was held
 };
 ```
+
+> **Note:** A double tap always raises `TapDetected` for the first tap, then `DoubleTapDetected` for the
+> second (the second tap raises only `DoubleTapDetected`, not another `TapDetected`). Taps fire immediately
+> on finger-up — there is no delay to disambiguate a possible second tap — so the sequence is
+> `TapDetected` → `DoubleTapDetected`. If you need tap and double-tap to be mutually exclusive, handle the
+> first tap optimistically and undo it when the `DoubleTapDetected` arrives.
 
 ## Pan
 
@@ -972,7 +978,7 @@ private void OnTouch(object? sender, SKTouchEventArgs e)
     {
         SKTouchAction.Pressed => tracker.ProcessTouchDown(e.Id, e.Location, e.DeviceType == SKTouchDeviceType.Mouse),
         SKTouchAction.Moved => tracker.ProcessTouchMove(e.Id, e.Location, e.InContact),
-        SKTouchAction.Released => tracker.ProcessTouchUp(e.Id, e.Location, e.DeviceType == SKTouchDeviceType.Mouse),
+        SKTouchAction.Released => tracker.ProcessTouchUp(e.Id, e.Location),
         SKTouchAction.Cancelled => tracker.ProcessTouchCancel(e.Id),
         SKTouchAction.WheelChanged => tracker.ProcessMouseWheel(e.Location, 0, e.WheelDelta),
         _ => true,
@@ -1014,14 +1020,7 @@ private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
 
 ## How It Works
 
-The gesture system has two layers:
-
-| Layer | Class | Role |
-| :---- | :---- | :--- |
-| **Detection** | `SKGestureDetector` | Recognizes raw touch sequences as gestures (tap, pan, pinch, etc.) |
-| **Tracking** | `SKGestureTracker` | Manages a transform matrix (pan/zoom/rotate), fling animation, and drag lifecycle |
-
-Most apps only need `SKGestureTracker`. It wraps a detector internally and translates gesture events into transform updates. If you need raw gesture detection without transform management, you can use `SKGestureDetector` directly.
+`SKGestureTracker` is the single entry point. You feed it raw touch input — `ProcessTouchDown`, `ProcessTouchMove`, `ProcessTouchUp`, `ProcessTouchCancel`, and `ProcessMouseWheel` — and it recognizes gestures, maintains a transform matrix (pan/zoom/rotate), runs fling and zoom animations, and raises events you subscribe to. Apply its `Matrix` when painting, and redraw on `TransformChanged`.
 
 ### Coordinate spaces
 
@@ -1052,7 +1051,6 @@ For detailed code examples and event handler patterns for each gesture, see [Ges
 - **[Gesture Events](gesture-events.md)** — Detailed reference for every gesture event with code examples
 - **[Configuration](gesture-configuration.md)** — Options, feature toggles, transform state, and programmatic control
 - [API Reference — SKGestureTracker](xref:SkiaSharp.Extended.SKGestureTracker) — Full property and event documentation
-- [API Reference — SKGestureDetector](xref:SkiaSharp.Extended.SKGestureDetector) — Low-level gesture detection
 - [MAUI Sample](https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo/Demos/Gestures) — Full MAUI demo with stickers
 - [Blazor Sample](https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo.Blazor/Pages/Gestures.razor) — Full Blazor demo
 
@@ -1620,14 +1618,14 @@ if (result.ErrorPixelCount > 0)
 
 ## Overview
 
-`SkiaSharp.Extended.Svg` has been deprecated and is no longer maintained. Due to breaking changes in SkiaSharp (specifically the removal of `SKMatrix.MakeTranslation` method), the old library is incompatible with .NET 9 and recent versions of SkiaSharp.
+`SkiaSharp.Extended.Svg` has been deprecated and is no longer maintained. Due to breaking changes in SkiaSharp (specifically the removal of `SKMatrix.MakeTranslation` method), the old library is incompatible with modern .NET versions and recent versions of SkiaSharp.
 
 **The recommended migration path is to use the [Svg.Skia](https://github.com/wieslawsoltes/Svg.Skia) library**, which is actively maintained and fully compatible with modern SkiaSharp versions.
 
 ## Why Migrate?
 
 - ⚠️ `SkiaSharp.Extended.Svg` is **no longer maintained**
-- ❌ Incompatible with .NET 9 and recent SkiaSharp versions
+- ❌ Incompatible with modern .NET and recent SkiaSharp versions
 - 🚫 Causes runtime errors: `MissingMethodException: Method not found: SkiaSharp.SKMatrix.MakeTranslation`
 - ✅ `Svg.Skia` is actively maintained with regular updates
 - ✅ Full SVG specification support
@@ -1713,9 +1711,9 @@ SkiaSharp.SKMatrix SkiaSharp.SKMatrix.MakeTranslation(single,single)
 If you're experiencing package conflicts, ensure all SkiaSharp-related packages are aligned to compatible versions:
 
 ```xml
-<PackageReference Include="SkiaSharp" Version="3.119.0" />
-<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
-<PackageReference Include="Svg.Skia" Version="3.4.1" />
+<PackageReference Include="SkiaSharp" Version="4.150.1" />
+<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="4.150.1" />
+<PackageReference Include="Svg.Skia" Version="5.1.1" />
 ```
 
 ## Example: Complete Migration
