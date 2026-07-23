@@ -73,14 +73,14 @@ private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
 
 ## How It Works
 
-The gesture system has two layers:
+The gesture system is built in two conceptual layers:
 
-| Layer | Class | Role |
-| :---- | :---- | :--- |
-| **Detection** | `SKGestureDetector` | Recognizes raw touch sequences as gestures (tap, pan, pinch, etc.) |
-| **Tracking** | `SKGestureTracker` | Manages a transform matrix (pan/zoom/rotate), fling animation, and drag lifecycle |
+| Layer | Role |
+| :---- | :--- |
+| **Tracking** (`SKGestureTracker`) | The public API. Manages a transform matrix (pan/zoom/rotate), fling and zoom animation, and the drag lifecycle. |
+| **Detection** (internal) | Recognizes raw touch sequences as gestures (tap, pan, pinch, etc.). |
 
-Most apps only need `SKGestureTracker`. It wraps a detector internally and translates gesture events into transform updates. If you need raw gesture detection without transform management, you can use `SKGestureDetector` directly.
+`SKGestureTracker` is the single entry point: it wraps the internal detector and translates gesture events into transform updates. You feed it raw touch input and subscribe to its events.
 
 ### Coordinate spaces
 
@@ -111,6 +111,5 @@ For detailed code examples and event handler patterns for each gesture, see [Ges
 - **[Gesture Events](gesture-events.md)** — Detailed reference for every gesture event with code examples
 - **[Configuration](gesture-configuration.md)** — Options, feature toggles, transform state, and programmatic control
 - [API Reference — SKGestureTracker](xref:SkiaSharp.Extended.SKGestureTracker) — Full property and event documentation
-- [API Reference — SKGestureDetector](xref:SkiaSharp.Extended.SKGestureDetector) — Low-level gesture detection
 - [MAUI Sample](https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo/Demos/Gestures) — Full MAUI demo with stickers
 - [Blazor Sample](https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo.Blazor/Pages/Gestures.razor) — Full Blazor demo

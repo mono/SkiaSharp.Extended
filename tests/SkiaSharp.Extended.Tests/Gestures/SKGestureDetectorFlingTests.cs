@@ -7,20 +7,20 @@ namespace SkiaSharp.Extended.Tests.Gestures;
 /// <summary>Tests for fling detection and animation in <see cref="SKGestureDetector"/>.</summary>
 public class SKGestureDetectorFlingTests
 {
-	private long _testTicks = 1000000;
+	private readonly FakeGestureClock _clock = new(1000000);
 
 	private SKGestureDetector CreateEngine()
 	{
 		var engine = new SKGestureDetector
 		{
-			TimeProvider = () => _testTicks
+			Clock = _clock
 		};
 		return engine;
 	}
 
 	private void AdvanceTime(long milliseconds)
 	{
-		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
+		_clock.Advance(TimeSpan.FromMilliseconds(milliseconds));
 	}
 
 

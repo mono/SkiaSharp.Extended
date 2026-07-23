@@ -197,8 +197,7 @@
     private void OnPointerUp(PointerEventArgs e)
     {
         var location = GetCanvasLocation(e);
-        var isMouse = e.PointerType == "mouse";
-        _tracker.ProcessTouchUp(e.PointerId, location, isMouse);
+        _tracker.ProcessTouchUp(e.PointerId, location);
         Invalidate();
     }
 

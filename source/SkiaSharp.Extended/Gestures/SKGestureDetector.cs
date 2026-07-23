@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace SkiaSharp.Extended;
 
@@ -12,12 +11,11 @@ namespace SkiaSharp.Extended;
 /// <para>This engine is a pure gesture detector. It processes touch events and raises
 /// events when gestures are recognized. It does not maintain transform state or run
 /// animations — use <see cref="SKGestureTracker"/> for that.</para>
-/// <para>The engine must be used on the UI thread. It captures the current 
-/// <see cref="SynchronizationContext"/> when processing touch events and uses it
-/// to marshal timer callbacks back to the UI thread.</para>
+/// <para>The engine must be used on the UI thread. Long-press timing is scheduled through
+/// an <see cref="ISKGestureClock"/>, which marshals the callback back to the UI thread.</para>
 /// <para>Call <see cref="Dispose"/> to clean up resources when done.</para>
 /// </remarks>
-public sealed class SKGestureDetector : IDisposable
+internal sealed class SKGestureDetector : IDisposable
 {
 	// Timing constants
 	private const long ShortTapTicks = 125 * TimeSpan.TicksPerMillisecond;
@@ -26,9 +24,8 @@ public sealed class SKGestureDetector : IDisposable
 
 	private readonly Dictionary<long, TouchState> _touches = new();
 	private readonly SKFlingTracker _flingTracker = new();
-	private SynchronizationContext? _syncContext;
-	private Timer? _longPressTimer;
-	private int _longPressToken;
+	private ISKGestureClock _clock = SystemGestureClock.Default;
+	private IDisposable? _longPressRegistration;
 
 	private SKPoint _initialTouch = SKPoint.Empty;
 	private SKPoint _lastTapLocation = SKPoint.Empty;
@@ -63,23 +60,16 @@ public sealed class SKGestureDetector : IDisposable
 	public SKGestureDetectorOptions Options { get; }
 
 	/// <summary>
-	/// Gets or sets the time provider function used to obtain the current time in ticks.
+	/// Gets or sets the clock used to obtain the current time and schedule long-press timing.
 	/// </summary>
-	/// <value>
-	/// A <see cref="Func{T}"/> that returns the current time in ticks (10,000 ticks per millisecond).
-	/// The default uses <see cref="DateTime.UtcNow"/> ticks, which provides
-	/// consistent behavior across all target frameworks including netstandard2.0.
-	/// </value>
 	/// <remarks>
-	/// Override this for deterministic testing by supplying a custom tick source.
+	/// Defaults to <see cref="SystemGestureClock"/>. Tests inject a deterministic fake clock.
 	/// </remarks>
-	public Func<long> TimeProvider
+	internal ISKGestureClock Clock
 	{
-		get => _timeProvider;
-		set => _timeProvider = value ?? throw new ArgumentNullException(nameof(value));
+		get => _clock;
+		set => _clock = value ?? throw new ArgumentNullException(nameof(value));
 	}
-
-	private Func<long> _timeProvider = () => DateTime.UtcNow.Ticks;
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the gesture detector is enabled.
@@ -195,10 +185,7 @@ public sealed class SKGestureDetector : IDisposable
 		if (!IsEnabled || _disposed)
 			return false;
 
-		// Capture the synchronization context on first touch (UI thread)
-		_syncContext ??= SynchronizationContext.Current;
-
-		var ticks = TimeProvider();
+		var ticks = _clock.GetTimestamp();
 
 		_touches[id] = new TouchState(id, location, ticks, true, isMouse);
 
@@ -224,7 +211,7 @@ public sealed class SKGestureDetector : IDisposable
 			_tapCount = 1;
 		}
 
-		var touchPoints = GetActiveTouchPoints();
+		using var touchPoints = GetActiveTouchPoints();
 
 		if (touchPoints.Length > 0)
 		{
@@ -237,7 +224,7 @@ public sealed class SKGestureDetector : IDisposable
 				StopLongPressTimer();
 				_tapCount = 0;
 				_lastTapTicks = 0;
-				_pinchState = PinchState.FromLocations(touchPoints);
+				_pinchState = PinchState.FromLocations(touchPoints.Span);
 				_gestureState = GestureState.Pinching;
 			}
 			else
@@ -264,7 +251,7 @@ public sealed class SKGestureDetector : IDisposable
 		if (!IsEnabled || _disposed)
 			return false;
 
-		var ticks = TimeProvider();
+		var ticks = _clock.GetTimestamp();
 
 		// Handle hover (mouse without contact) — no prior touch down required
 		if (!inContact)
@@ -279,7 +266,7 @@ public sealed class SKGestureDetector : IDisposable
 		_touches[id] = new TouchState(id, location, ticks, inContact, existingTouch.IsMouse);
 		_flingTracker.AddEvent(id, location, ticks);
 
-		var touchPoints = GetActiveTouchPoints();
+		using var touchPoints = GetActiveTouchPoints();
 		var distance = SKPoint.Distance(location, _initialTouch);
 
 		// Start pan if moved beyond touch slop
@@ -306,7 +293,7 @@ public sealed class SKGestureDetector : IDisposable
 			case GestureState.Pinching:
 				if (touchPoints.Length >= 2)
 				{
-					var newPinch = PinchState.FromLocations(touchPoints);
+					var newPinch = PinchState.FromLocations(touchPoints.Span);
 
 					// Calculate scale
 					var scaleDelta = _pinchState.Radius > 0 ? newPinch.Radius / _pinchState.Radius : 1f;
@@ -330,25 +317,24 @@ public sealed class SKGestureDetector : IDisposable
 	/// </summary>
 	/// <param name="id">The unique identifier for this touch.</param>
 	/// <param name="location">The final location of the touch.</param>
-	/// <param name="isMouse">Whether this is a mouse event (kept for backward compatibility; the stored value from touch-down is used internally).</param>
 	/// <returns>True if the event was handled.</returns>
-	public bool ProcessTouchUp(long id, SKPoint location, bool isMouse = false)
+	public bool ProcessTouchUp(long id, SKPoint location)
 	{
 		if (!IsEnabled || _disposed)
 			return false;
 
 		StopLongPressTimer();
-		var ticks = TimeProvider();
+		var ticks = _clock.GetTimestamp();
 
 		if (!_touches.TryGetValue(id, out var releasedTouch))
 			return false;
 
-		// Use the stored IsMouse value from touch-down (more reliable than caller-supplied value)
+		// The device type recorded at touch-down is authoritative.
 		var storedIsMouse = releasedTouch.IsMouse;
 
 		_touches.Remove(id);
 
-		var touchPoints = GetActiveTouchPoints();
+		using var touchPoints = GetActiveTouchPoints();
 		var handled = false;
 
 		// Check for fling — only after a single-finger pan, not after pinch/rotate
@@ -422,7 +408,7 @@ public sealed class SKGestureDetector : IDisposable
 		else if (touchPoints.Length >= 2)
 		{
 			// Recalculate pinch state for remaining fingers to avoid jumps
-			_pinchState = PinchState.FromLocations(touchPoints);
+			_pinchState = PinchState.FromLocations(touchPoints.Span);
 		}
 
 		return handled;
@@ -442,7 +428,7 @@ public sealed class SKGestureDetector : IDisposable
 		_touches.Remove(id);
 		_flingTracker.RemoveId(id);
 
-		var touchPoints = GetActiveTouchPoints();
+		using var touchPoints = GetActiveTouchPoints();
 		if (touchPoints.Length == 0)
 		{
 			if (_gestureState != GestureState.None)
@@ -466,7 +452,7 @@ public sealed class SKGestureDetector : IDisposable
 		else if (touchPoints.Length >= 2)
 		{
 			// Recalculate pinch state for remaining fingers to avoid jumps
-			_pinchState = PinchState.FromLocations(touchPoints);
+			_pinchState = PinchState.FromLocations(touchPoints.Span);
 		}
 
 		return true;
@@ -524,41 +510,14 @@ public sealed class SKGestureDetector : IDisposable
 	private void StartLongPressTimer()
 	{
 		StopLongPressTimer();
-		var token = Interlocked.Increment(ref _longPressToken);
-		var timer = new Timer(OnLongPressTimerTick, token, (int)Options.LongPressDuration.TotalMilliseconds, Timeout.Infinite);
-		_longPressTimer = timer;
+		_longPressRegistration = _clock.Schedule(Options.LongPressDuration, TimeSpan.Zero, HandleLongPress);
 	}
 
 	private void StopLongPressTimer()
 	{
-		Interlocked.Increment(ref _longPressToken);
-		var timer = _longPressTimer;
-		_longPressTimer = null;
-		timer?.Change(Timeout.Infinite, Timeout.Infinite);
-		timer?.Dispose();
-	}
-
-	private void OnLongPressTimerTick(object? state)
-	{
-		// Verify this callback is for the current timer (not a stale one)
-		if (state is not int token || token != Volatile.Read(ref _longPressToken))
-			return;
-
-		// Marshal to UI thread if we have a sync context
-		var ctx = _syncContext;
-		if (ctx != null)
-		{
-			ctx.Post(_ =>
-			{
-				if (token == Volatile.Read(ref _longPressToken))
-					HandleLongPress();
-			}, null);
-		}
-		else
-		{
-			// No sync context (testing or console app) - run directly
-			HandleLongPress();
-		}
+		var registration = _longPressRegistration;
+		_longPressRegistration = null;
+		registration?.Dispose();
 	}
 
 	private void HandleLongPress()
@@ -566,7 +525,7 @@ public sealed class SKGestureDetector : IDisposable
 		if (_disposed || !IsEnabled || _longPressTriggered || _gestureState != GestureState.Detecting)
 			return;
 
-		var touchPoints = GetActiveTouchPoints();
+		using var touchPoints = GetActiveTouchPoints();
 
 		if (touchPoints.Length == 1)
 		{
@@ -575,17 +534,17 @@ public sealed class SKGestureDetector : IDisposable
 			{
 				_longPressTriggered = true;
 				StopLongPressTimer();
-				var duration = TimeSpan.FromTicks(TimeProvider() - _touchStartTicks);
+				var duration = TimeSpan.FromTicks(_clock.GetTimestamp() - _touchStartTicks);
 				OnLongPressDetected(new SKLongPressGestureEventArgs(touchPoints[0], duration));
 			}
 		}
 	}
 
-	private SKPoint[] GetActiveTouchPoints()
+	// Rents a pooled buffer holding the active (in-contact) touch points, sorted by touch ID
+	// for stable ordering (prevents angle jumps when fingers are added/removed and Dictionary
+	// iteration order changes). The caller must dispose it (with 'using') to return the buffer.
+	private TempArray<SKPoint> GetActiveTouchPoints()
 	{
-		// Avoid LINQ allocations in this 60Hz hot path.
-		// Sort by touch ID for stable ordering — prevents angle jumps when fingers
-		// are added/removed and Dictionary iteration order changes.
 		var count = 0;
 		foreach (var kv in _touches)
 		{
@@ -593,11 +552,11 @@ public sealed class SKGestureDetector : IDisposable
 				count++;
 		}
 
+		var points = new TempArray<SKPoint>(count);
 		if (count == 0)
-			return Array.Empty<SKPoint>();
+			return points;
 
-		var ids = new long[count];
-		var points = new SKPoint[count];
+		Span<long> ids = count <= 16 ? stackalloc long[16] : new long[count];
 		var i = 0;
 		foreach (var kv in _touches)
 		{
@@ -696,10 +655,10 @@ public sealed class SKGestureDetector : IDisposable
 
 	private readonly record struct PinchState(SKPoint Center, float Radius, float Angle)
 	{
-		public static PinchState FromLocations(SKPoint[] locations)
+		public static PinchState FromLocations(ReadOnlySpan<SKPoint> locations)
 		{
-			if (locations == null || locations.Length < 2)
-				return new PinchState(locations?.Length > 0 ? locations[0] : SKPoint.Empty, 0, 0);
+			if (locations.Length < 2)
+				return new PinchState(locations.Length > 0 ? locations[0] : SKPoint.Empty, 0, 0);
 
 			var centerX = 0f;
 			var centerY = 0f;

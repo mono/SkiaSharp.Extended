@@ -8,20 +8,20 @@ namespace SkiaSharp.Extended.Tests.Gestures;
 /// <summary>Tests for fling animation in <see cref="SKGestureTracker"/>.</summary>
 public class SKGestureTrackerFlingTests
 {
-	private long _testTicks = 1000000;
+	private readonly FakeGestureClock _clock = new(1000000);
 
 	private SKGestureTracker CreateTracker()
 	{
 		var tracker = new SKGestureTracker
 		{
-			TimeProvider = () => _testTicks
+			Clock = _clock
 		};
 		return tracker;
 	}
 
 	private void AdvanceTime(long milliseconds)
 	{
-		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
+		_clock.Advance(TimeSpan.FromMilliseconds(milliseconds));
 	}
 
 	private void SimulateFastSwipe(SKGestureTracker tracker, SKPoint start, SKPoint end)
@@ -51,7 +51,7 @@ public class SKGestureTrackerFlingTests
 	}
 
 	[Fact]
-	public async Task Fling_FiresFlingUpdatedEvents()
+	public void Fling_FiresFlingUpdatedEvents()
 	{
 		var tracker = CreateTracker();
 		tracker.Options.FlingFrameInterval = TimeSpan.FromMilliseconds(16);
@@ -60,14 +60,14 @@ public class SKGestureTrackerFlingTests
 
 		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
 
-		await Task.Delay(200);
+		AdvanceTime(200);
 
 		Assert.True(flingUpdatedCount > 0, $"FlingUpdated should have fired, count was {flingUpdatedCount}");
 		tracker.Dispose();
 	}
 
 	[Fact]
-	public async Task Fling_UpdatesOffset()
+	public void Fling_UpdatesOffset()
 	{
 		var tracker = CreateTracker();
 		tracker.Options.FlingFrameInterval = TimeSpan.FromMilliseconds(16);
@@ -77,7 +77,7 @@ public class SKGestureTrackerFlingTests
 		SimulateFastSwipe(tracker, new SKPoint(100, 200), new SKPoint(500, 200));
 		var offsetAfterSwipe = tracker.Offset;
 
-		await Task.Delay(200);
+		AdvanceTime(200);
 
 		Assert.True(flingUpdatedFired, "FlingUpdated event should have fired");
 		Assert.True(tracker.Offset.X > offsetAfterSwipe.X || !tracker.IsFlinging,
@@ -114,29 +114,27 @@ public class SKGestureTrackerFlingTests
 	}
 
 	[Fact]
-	public async Task Fling_EventuallyCompletes()
+	public void Fling_EventuallyCompletes()
 	{
-		// Use real TimeProvider so fling frame timing advances with wall-clock time
-		var tracker = new SKGestureTracker();
+		var tracker = CreateTracker();
 		tracker.Options.FlingFrameInterval = TimeSpan.FromMilliseconds(16);
 		tracker.Options.FlingFriction = 0.5f;
 		tracker.Options.FlingMinVelocity = 100f;
 		var flingCompleted = false;
 		tracker.FlingCompleted += (s, e) => flingCompleted = true;
 
-		// Use the tracker's own TimeProvider for touch timestamps so velocity is computed correctly
 		var start = new SKPoint(100, 200);
 		var mid = new SKPoint(300, 200);
 		var end = new SKPoint(500, 200);
 		tracker.ProcessTouchDown(1, start);
-		await Task.Delay(20);
+		AdvanceTime(20);
 		tracker.ProcessTouchMove(1, mid);
-		await Task.Delay(20);
+		AdvanceTime(20);
 		tracker.ProcessTouchMove(1, end);
-		await Task.Delay(20);
+		AdvanceTime(20);
 		tracker.ProcessTouchUp(1, end);
 
-		await Task.Delay(2000);
+		AdvanceTime(2000);
 
 		Assert.True(flingCompleted, "Fling should eventually complete");
 		Assert.False(tracker.IsFlinging);

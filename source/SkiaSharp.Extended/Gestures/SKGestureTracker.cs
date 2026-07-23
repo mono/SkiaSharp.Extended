@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 
 namespace SkiaSharp.Extended;
 
@@ -42,7 +41,6 @@ namespace SkiaSharp.Extended;
 public sealed class SKGestureTracker : IDisposable
 {
 	private readonly SKGestureDetector _engine;
-	private SynchronizationContext? _syncContext;
 	private bool _disposed;
 
 	// Transform state
@@ -57,16 +55,14 @@ public sealed class SKGestureTracker : IDisposable
 	private SKPoint _prevPanLocation;
 
 	// Fling animation state
-	private Timer? _flingTimer;
-	private int _flingToken;
+	private IDisposable? _flingRegistration;
 	private float _flingVelocityX;
 	private float _flingVelocityY;
 	private bool _isFlinging;
-	private long _flingLastFrameTimestamp; // TimeProvider() ticks at last fling frame
+	private long _flingLastFrameTimestamp; // clock ticks at last fling frame
 
 	// Zoom animation state
-	private Timer? _zoomTimer;
-	private int _zoomToken;
+	private IDisposable? _zoomRegistration;
 	private bool _isZoomAnimating;
 	private float _zoomStartScale;
 	private float _zoomTargetFactor;
@@ -131,10 +127,9 @@ public sealed class SKGestureTracker : IDisposable
 	/// </summary>
 	/// <param name="id">The unique identifier for this touch pointer.</param>
 	/// <param name="location">The final location of the touch in view coordinates.</param>
-	/// <param name="isMouse">Whether this event originates from a mouse device.</param>
 	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
-	public bool ProcessTouchUp(long id, SKPoint location, bool isMouse = false)
-		=> _engine.ProcessTouchUp(id, location, isMouse);
+	public bool ProcessTouchUp(long id, SKPoint location)
+		=> _engine.ProcessTouchUp(id, location);
 
 	/// <summary>
 	/// Processes a touch cancel event and forwards it to the internal gesture detector.
@@ -172,16 +167,12 @@ public sealed class SKGestureTracker : IDisposable
 	}
 
 	/// <summary>
-	/// Gets or sets the time provider function used to obtain the current time in ticks.
+	/// Gets or sets the clock used for gesture timing and animations. Internal test seam.
 	/// </summary>
-	/// <value>
-	/// A <see cref="Func{T}"/> that returns the current time in <see cref="DateTime.Ticks"/>.
-	/// Override this for deterministic testing.
-	/// </value>
-	public Func<long> TimeProvider
+	internal ISKGestureClock Clock
 	{
-		get => _engine.TimeProvider;
-		set => _engine.TimeProvider = value ?? throw new ArgumentNullException(nameof(value));
+		get => _engine.Clock;
+		set => _engine.Clock = value;
 	}
 
 	#endregion
@@ -461,20 +452,17 @@ public sealed class SKGestureTracker : IDisposable
 			throw new ArgumentOutOfRangeException(nameof(factor), factor, "Factor must be a positive finite number.");
 
 		StopZoomAnimation();
-		_syncContext ??= SynchronizationContext.Current;
 
 		_zoomStartScale = _scale;
 		_zoomTargetFactor = factor;
 		_zoomFocalPoint = focalPoint;
-		_zoomStartTicks = TimeProvider();
+		_zoomStartTicks = _engine.Clock.GetTimestamp();
 		_isZoomAnimating = true;
 
-		var token = Interlocked.Increment(ref _zoomToken);
-		_zoomTimer = new Timer(
-			OnZoomTimerTick,
-			token,
-			(int)Options.ZoomAnimationInterval.TotalMilliseconds,
-			(int)Options.ZoomAnimationInterval.TotalMilliseconds);
+		_zoomRegistration = _engine.Clock.Schedule(
+			Options.ZoomAnimationInterval,
+			Options.ZoomAnimationInterval,
+			HandleZoomFrame);
 	}
 
 	/// <summary>Stops any active zoom animation immediately.</summary>
@@ -484,11 +472,9 @@ public sealed class SKGestureTracker : IDisposable
 			return;
 
 		_isZoomAnimating = false;
-		Interlocked.Increment(ref _zoomToken);
-		var timer = _zoomTimer;
-		_zoomTimer = null;
-		timer?.Change(Timeout.Infinite, Timeout.Infinite);
-		timer?.Dispose();
+		var registration = _zoomRegistration;
+		_zoomRegistration = null;
+		registration?.Dispose();
 	}
 
 	/// <summary>
@@ -512,11 +498,9 @@ public sealed class SKGestureTracker : IDisposable
 		_isFlinging = false;
 		_flingVelocityX = 0;
 		_flingVelocityY = 0;
-		Interlocked.Increment(ref _flingToken);
-		var timer = _flingTimer;
-		_flingTimer = null;
-		timer?.Change(Timeout.Infinite, Timeout.Infinite);
-		timer?.Dispose();
+		var registration = _flingRegistration;
+		_flingRegistration = null;
+		registration?.Dispose();
 	}
 
 	/// <summary>
@@ -545,7 +529,7 @@ public sealed class SKGestureTracker : IDisposable
 			return;
 
 		_disposed = true;
-		StopFling();
+		CancelFlingInternal();
 		StopZoomAnimation();
 		UnsubscribeEngineEvents();
 		_engine.Dispose();
@@ -744,7 +728,6 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEngineGestureStarted(object? s, SKGestureLifecycleEventArgs e)
 	{
-		_syncContext ??= SynchronizationContext.Current;
 		CancelFlingInternal(); // Don't fire FlingCompleted — fling was interrupted by new touch
 		StopZoomAnimation();
 		GestureStarted?.Invoke(this, new SKGestureLifecycleEventArgs());
@@ -810,42 +793,16 @@ public sealed class SKGestureTracker : IDisposable
 	private void StartFlingAnimation(float velocityX, float velocityY)
 	{
 		StopFling();
-		_syncContext ??= SynchronizationContext.Current;
 
 		_flingVelocityX = velocityX;
 		_flingVelocityY = velocityY;
 		_isFlinging = true;
-		_flingLastFrameTimestamp = TimeProvider();
+		_flingLastFrameTimestamp = _engine.Clock.GetTimestamp();
 
-		var token = Interlocked.Increment(ref _flingToken);
-		_flingTimer = new Timer(
-			OnFlingTimerTick,
-			token,
-			(int)Options.FlingFrameInterval.TotalMilliseconds,
-			(int)Options.FlingFrameInterval.TotalMilliseconds);
-	}
-
-	private void OnFlingTimerTick(object? state)
-	{
-		if (state is not int token || token != Volatile.Read(ref _flingToken))
-			return;
-
-		if (!_isFlinging || _disposed)
-			return;
-
-		var ctx = _syncContext;
-		if (ctx != null)
-		{
-			ctx.Post(_ =>
-			{
-				if (token == Volatile.Read(ref _flingToken))
-					HandleFlingFrame();
-			}, null);
-		}
-		else
-		{
-			HandleFlingFrame();
-		}
+		_flingRegistration = _engine.Clock.Schedule(
+			Options.FlingFrameInterval,
+			Options.FlingFrameInterval,
+			HandleFlingFrame);
 	}
 
 	private void HandleFlingFrame()
@@ -854,7 +811,7 @@ public sealed class SKGestureTracker : IDisposable
 			return;
 
 		// Use actual elapsed time for frame-rate-independent deceleration
-		var now = TimeProvider();
+		var now = _engine.Clock.GetTimestamp();
 		var actualDtMs = Math.Max(1f, (float)((now - _flingLastFrameTimestamp) / (double)TimeSpan.TicksPerMillisecond));
 		_flingLastFrameTimestamp = now;
 
@@ -888,35 +845,12 @@ public sealed class SKGestureTracker : IDisposable
 
 	#region Zoom Animation
 
-	private void OnZoomTimerTick(object? state)
-	{
-		if (state is not int token || token != Volatile.Read(ref _zoomToken))
-			return;
-
-		if (!_isZoomAnimating || _disposed)
-			return;
-
-		var ctx = _syncContext;
-		if (ctx != null)
-		{
-			ctx.Post(_ =>
-			{
-				if (token == Volatile.Read(ref _zoomToken))
-					HandleZoomFrame();
-			}, null);
-		}
-		else
-		{
-			HandleZoomFrame();
-		}
-	}
-
 	private void HandleZoomFrame()
 	{
 		if (!_isZoomAnimating || _disposed)
 			return;
 
-		var elapsed = TimeProvider() - _zoomStartTicks;
+		var elapsed = _engine.Clock.GetTimestamp() - _zoomStartTicks;
 		var duration = Options.ZoomAnimationDuration.Ticks;
 		var t = duration > 0 ? Math.Min(1.0, (double)elapsed / duration) : 1.0;
 
@@ -934,14 +868,7 @@ public sealed class SKGestureTracker : IDisposable
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 
 		if (t >= 1.0)
-		{
-			_isZoomAnimating = false;
-			Interlocked.Increment(ref _zoomToken);
-			var timer = _zoomTimer;
-			_zoomTimer = null;
-			timer?.Change(Timeout.Infinite, Timeout.Infinite);
-			timer?.Dispose();
-		}
+			StopZoomAnimation();
 	}
 
 	#endregion

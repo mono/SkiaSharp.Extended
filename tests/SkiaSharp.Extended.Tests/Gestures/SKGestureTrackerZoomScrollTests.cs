@@ -8,20 +8,20 @@ namespace SkiaSharp.Extended.Tests.Gestures;
 /// <summary>Tests for double-tap zoom and scroll zoom in <see cref="SKGestureTracker"/>.</summary>
 public class SKGestureTrackerZoomScrollTests
 {
-	private long _testTicks = 1000000;
+	private readonly FakeGestureClock _clock = new(1000000);
 
 	private SKGestureTracker CreateTracker()
 	{
 		var tracker = new SKGestureTracker
 		{
-			TimeProvider = () => _testTicks
+			Clock = _clock
 		};
 		return tracker;
 	}
 
 	private void AdvanceTime(long milliseconds)
 	{
-		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
+		_clock.Advance(TimeSpan.FromMilliseconds(milliseconds));
 	}
 
 	private void SimulateDoubleTap(SKGestureTracker tracker, SKPoint location)
@@ -48,7 +48,7 @@ public class SKGestureTrackerZoomScrollTests
 	}
 
 	[Fact]
-	public async Task DoubleTap_ScaleChangesToDoubleTapZoomFactor()
+	public void DoubleTap_ScaleChangesToDoubleTapZoomFactor()
 	{
 		var tracker = CreateTracker();
 		tracker.Options.DoubleTapZoomFactor = 2f;
@@ -57,15 +57,14 @@ public class SKGestureTrackerZoomScrollTests
 		SimulateDoubleTap(tracker, new SKPoint(200, 200));
 
 		// Advance test time past animation duration so timer tick sees it as complete
-		_testTicks += 200 * TimeSpan.TicksPerMillisecond;
-		await Task.Delay(200);
+		AdvanceTime(200);
 
 		Assert.Equal(2f, tracker.Scale, 0.1);
 		tracker.Dispose();
 	}
 
 	[Fact]
-	public async Task DoubleTap_AtMaxScale_ResetsToOne()
+	public void DoubleTap_AtMaxScale_ResetsToOne()
 	{
 		var tracker = CreateTracker();
 		tracker.Options.DoubleTapZoomFactor = 2f;
@@ -74,22 +73,20 @@ public class SKGestureTrackerZoomScrollTests
 
 		// First double tap: zoom to 2x
 		SimulateDoubleTap(tracker, new SKPoint(200, 200));
-		_testTicks += 200 * TimeSpan.TicksPerMillisecond;
-		await Task.Delay(200);
+		AdvanceTime(200);
 		Assert.Equal(2f, tracker.Scale, 0.1);
 
 		// Second double tap at max: should reset to 1.0
 		AdvanceTime(500);
 		SimulateDoubleTap(tracker, new SKPoint(200, 200));
-		_testTicks += 200 * TimeSpan.TicksPerMillisecond;
-		await Task.Delay(200);
+		AdvanceTime(200);
 		Assert.Equal(1f, tracker.Scale, 0.1);
 
 		tracker.Dispose();
 	}
 
 	[Fact]
-	public async Task DoubleTap_FiresTransformChanged()
+	public void DoubleTap_FiresTransformChanged()
 	{
 		var tracker = CreateTracker();
 		tracker.Options.ZoomAnimationDuration = TimeSpan.FromMilliseconds(100);
@@ -97,8 +94,7 @@ public class SKGestureTrackerZoomScrollTests
 		tracker.TransformChanged += (s, e) => changeCount++;
 
 		SimulateDoubleTap(tracker, new SKPoint(200, 200));
-		_testTicks += 200 * TimeSpan.TicksPerMillisecond;
-		await Task.Delay(200);
+		AdvanceTime(200);
 
 		Assert.True(changeCount > 0, "TransformChanged should fire during zoom animation");
 		tracker.Dispose();

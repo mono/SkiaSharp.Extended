@@ -8,20 +8,20 @@ namespace SkiaSharp.Extended.Tests.Gestures;
 /// <summary>Tests for tap, double-tap, and long-press detection in <see cref="SKGestureDetector"/>.</summary>
 public class SKGestureDetectorTapTests
 {
-	private long _testTicks = 1000000;
+	private readonly FakeGestureClock _clock = new(1000000);
 
 	private SKGestureDetector CreateEngine()
 	{
 		var engine = new SKGestureDetector
 		{
-			TimeProvider = () => _testTicks
+			Clock = _clock
 		};
 		return engine;
 	}
 
 	private void AdvanceTime(long milliseconds)
 	{
-		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
+		_clock.Advance(TimeSpan.FromMilliseconds(milliseconds));
 	}
 
 
@@ -115,24 +115,24 @@ public class SKGestureDetectorTapTests
 
 
 	[Fact]
-	public async Task LongTouch_RaisesLongPressDetected()
+	public void LongTouch_RaisesLongPressDetected()
 	{
-		var engine = new SKGestureDetector();
+		var engine = new SKGestureDetector { Clock = _clock };
 		engine.Options.LongPressDuration = TimeSpan.FromMilliseconds(100); // Short duration for testing
 		var longPressRaised = false;
 		engine.LongPressDetected += (s, e) => longPressRaised = true;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		await Task.Delay(200); // Wait for timer to fire
+		AdvanceTime(200); // Wait for timer to fire
 
 		Assert.True(longPressRaised);
 		engine.Dispose();
 	}
 
 	[Fact]
-	public async Task LongPress_DoesNotRaiseTapOnRelease()
+	public void LongPress_DoesNotRaiseTapOnRelease()
 	{
-		var engine = new SKGestureDetector();
+		var engine = new SKGestureDetector { Clock = _clock };
 		engine.Options.LongPressDuration = TimeSpan.FromMilliseconds(100);
 		var tapRaised = false;
 		var longPressRaised = false;
@@ -140,7 +140,7 @@ public class SKGestureDetectorTapTests
 		engine.LongPressDetected += (s, e) => longPressRaised = true;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		await Task.Delay(200);
+		AdvanceTime(200);
 		engine.ProcessTouchUp(1, new SKPoint(100, 100));
 
 		Assert.True(longPressRaised);
@@ -149,18 +149,18 @@ public class SKGestureDetectorTapTests
 	}
 
 	[Fact]
-	public async Task LongPressDuration_CanBeCustomized()
+	public void LongPressDuration_CanBeCustomized()
 	{
-		var engine = new SKGestureDetector();
+		var engine = new SKGestureDetector { Clock = _clock };
 		engine.Options.LongPressDuration = TimeSpan.FromMilliseconds(300);
 		var longPressRaised = false;
 		engine.LongPressDetected += (s, e) => longPressRaised = true;
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100));
-		await Task.Delay(100);
+		AdvanceTime(100);
 		Assert.False(longPressRaised);
 		
-		await Task.Delay(300);
+		AdvanceTime(300);
 		Assert.True(longPressRaised);
 		engine.Dispose();
 	}
@@ -176,7 +176,7 @@ public class SKGestureDetectorTapTests
 
 		engine.ProcessTouchDown(1, new SKPoint(100, 100), isMouse: true);
 		AdvanceTime(300); // Beyond ShortClickTicks (250ms)
-		engine.ProcessTouchUp(1, new SKPoint(100, 100), isMouse: true);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
 
 		Assert.False(tapRaised, "Mouse click held too long should not fire tap");
 	}

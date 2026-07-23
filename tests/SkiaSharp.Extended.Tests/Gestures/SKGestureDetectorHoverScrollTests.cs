@@ -7,20 +7,20 @@ namespace SkiaSharp.Extended.Tests.Gestures;
 /// <summary>Tests for hover and mouse wheel detection in <see cref="SKGestureDetector"/>.</summary>
 public class SKGestureDetectorHoverScrollTests
 {
-	private long _testTicks = 1000000;
+	private readonly FakeGestureClock _clock = new(1000000);
 
 	private SKGestureDetector CreateEngine()
 	{
 		var engine = new SKGestureDetector
 		{
-			TimeProvider = () => _testTicks
+			Clock = _clock
 		};
 		return engine;
 	}
 
 	private void AdvanceTime(long milliseconds)
 	{
-		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
+		_clock.Advance(TimeSpan.FromMilliseconds(milliseconds));
 	}
 
 
