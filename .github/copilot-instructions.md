@@ -31,7 +31,7 @@ This repository contains two main libraries:
   - Geometry helpers
   - Path interpolation
   - Image comparison utilities
-  - Targets: `netstandard2.0`, `net9.0+`
+  - Targets: `netstandard2.0`, `net10.0+`
 
 - **SkiaSharp.Extended.UI.Maui** (`source/SkiaSharp.Extended.UI.Maui/`) - .NET MAUI controls
   - Lottie animation support (`SKLottieView`)
@@ -103,8 +103,8 @@ To capture screenshots:
 
 ## Dependencies
 
-- `SkiaSharp` (3.119.1+)
-- `SkiaSharp.Skottie` (3.119.1+) - For Lottie animations
-- `SkiaSharp.Views.Maui.Controls` (3.119.1+)
-- `SkiaSharp.Views.Blazor` (3.119.1+) - For Blazor WebAssembly
+- `SkiaSharp` (4.150.1+)
+- `SkiaSharp.Skottie` (4.150.1+) - For Lottie animations
+- `SkiaSharp.Views.Maui.Controls` (4.150.1+)
+- `SkiaSharp.Views.Blazor` (4.150.1+) - For Blazor WebAssembly
 - `Microsoft.Maui.Controls` (10.x)

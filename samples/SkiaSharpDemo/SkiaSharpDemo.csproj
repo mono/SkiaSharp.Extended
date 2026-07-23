@@ -35,12 +35,25 @@
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
+  <!--
+    Prevent the .NET SDK from adding the host RID to RuntimeIdentifiers, see:
+    https://github.com/dotnet/android/issues/10722
+    A Release net10.0-android build with no explicit RID makes the SDK append the
+    build host's RID (e.g. win-x64 on the CI agent) to the Android restore graph.
+    With UseMonoRuntime that resolves Microsoft.NETCore.App.Runtime.Mono.win-x64,
+    which no longer ships in .NET 10, breaking restore (NU1102). This is the same
+    workaround the dotnet/android team applies to their own projects.
+  -->
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <UseDefaultPublishRuntimeIdentifier>false</UseDefaultPublishRuntimeIdentifier>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="HarfBuzzSharp" Version="8.3.0.1" />
-    <PackageReference Include="NLipsum" Version="1.1.0" />
-    <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
-    <PackageReference Include="Topten.RichTextKit" Version="0.4.166" />
-    <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+    <PackageReference Include="HarfBuzzSharp" />
+    <PackageReference Include="NLipsum" />
+    <PackageReference Include="Svg.Skia" />
+    <PackageReference Include="Topten.RichTextKit" />
+    <PackageReference Include="Microsoft.Maui.Controls" />
   </ItemGroup>
 
   <ItemGroup>

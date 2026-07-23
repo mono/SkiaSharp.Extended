@@ -11,7 +11,8 @@
 // Example:
 //   dotnet run scripts/generate-dzi.cs -- myimage.png output/ --tile-size 256 --overlap 1
 
-#:package SkiaSharp@3.119.1
+#:property ManagePackageVersionsCentrally=false
+#:package SkiaSharp@4.150.1
 
 using System;
 using System.IO;

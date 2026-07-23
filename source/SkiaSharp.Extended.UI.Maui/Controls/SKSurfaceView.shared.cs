@@ -7,11 +7,15 @@ public class SKSurfaceView : TemplatedView
 {
 #if DEBUG
 	private const float DebugStatusMargin = 12f;
+	private readonly SKFont debugStatusFont =
+		new SKFont
+		{
+			Size = 12
+		};
 	private readonly SKPaint debugStatusPaint =
 		new SKPaint
 		{
-			IsAntialias = true,
-			TextSize = 12
+			IsAntialias = true
 		};
 	private float debugStatusOffset;
 	private SKCanvas? debugStatusCanvas;
@@ -106,9 +110,9 @@ public class SKSurfaceView : TemplatedView
 		if (debugStatusCanvas is null)
 			return;
 
-		debugStatusOffset += debugStatusPaint.TextSize;
+		debugStatusOffset += debugStatusFont.Size;
 
-		debugStatusCanvas.DrawText(statusMessage, DebugStatusMargin, debugStatusOffset, debugStatusPaint);
+		debugStatusCanvas.DrawText(statusMessage, DebugStatusMargin, debugStatusOffset, debugStatusFont, debugStatusPaint);
 	}
 #endif
 

@@ -15,7 +15,8 @@
 //   <name>.dzi              — DZI manifest
 //   <name>_files/<level>/   — tile images (PNG, 256×256 + 1px overlap)
 
-#:package SkiaSharp@3.119.1
+#:property ManagePackageVersionsCentrally=false
+#:package SkiaSharp@4.150.1
 
 using SkiaSharp;
 

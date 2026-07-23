@@ -2,14 +2,14 @@
 
 ## Overview
 
-`SkiaSharp.Extended.Svg` has been deprecated and is no longer maintained. Due to breaking changes in SkiaSharp (specifically the removal of `SKMatrix.MakeTranslation` method), the old library is incompatible with .NET 9 and recent versions of SkiaSharp.
+`SkiaSharp.Extended.Svg` has been deprecated and is no longer maintained. Due to breaking changes in SkiaSharp (specifically the removal of `SKMatrix.MakeTranslation` method), the old library is incompatible with modern .NET versions and recent versions of SkiaSharp.
 
 **The recommended migration path is to use the [Svg.Skia](https://github.com/wieslawsoltes/Svg.Skia) library**, which is actively maintained and fully compatible with modern SkiaSharp versions.
 
 ## Why Migrate?
 
 - ⚠️ `SkiaSharp.Extended.Svg` is **no longer maintained**
-- ❌ Incompatible with .NET 9 and recent SkiaSharp versions
+- ❌ Incompatible with modern .NET and recent SkiaSharp versions
 - 🚫 Causes runtime errors: `MissingMethodException: Method not found: SkiaSharp.SKMatrix.MakeTranslation`
 - ✅ `Svg.Skia` is actively maintained with regular updates
 - ✅ Full SVG specification support
@@ -95,9 +95,9 @@ SkiaSharp.SKMatrix SkiaSharp.SKMatrix.MakeTranslation(single,single)
 If you're experiencing package conflicts, ensure all SkiaSharp-related packages are aligned to compatible versions:
 
 ```xml
-<PackageReference Include="SkiaSharp" Version="3.119.0" />
-<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
-<PackageReference Include="Svg.Skia" Version="3.4.1" />
+<PackageReference Include="SkiaSharp" Version="4.150.1" />
+<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="4.150.1" />
+<PackageReference Include="Svg.Skia" Version="5.1.1" />
 ```
 
 ## Example: Complete Migration
