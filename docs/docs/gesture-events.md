@@ -28,6 +28,12 @@ tracker.LongPressDetected += (s, e) =>
 };
 ```
 
+> **Note:** A double tap always raises `TapDetected` for the first tap, then `DoubleTapDetected` for the
+> second (the second tap raises only `DoubleTapDetected`, not another `TapDetected`). Taps fire immediately
+> on finger-up — there is no delay to disambiguate a possible second tap — so the sequence is
+> `TapDetected` → `DoubleTapDetected`. If you need tap and double-tap to be mutually exclusive, handle the
+> first tap optimistically and undo it when the `DoubleTapDetected` arrives.
+
 ## Pan
 
 Single finger drag. The tracker automatically updates its internal offset.

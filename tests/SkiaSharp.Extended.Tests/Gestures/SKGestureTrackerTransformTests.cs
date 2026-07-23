@@ -7,20 +7,20 @@ namespace SkiaSharp.Extended.Tests.Gestures;
 /// <summary>Tests for matrix composition, pivot, and SetScale/SetRotation in <see cref="SKGestureTracker"/>.</summary>
 public class SKGestureTrackerTransformTests
 {
-	private long _testTicks = 1000000;
+	private readonly FakeGestureClock _clock = new(1000000);
 
 	private SKGestureTracker CreateTracker()
 	{
 		var tracker = new SKGestureTracker
 		{
-			TimeProvider = () => _testTicks
+			Clock = _clock
 		};
 		return tracker;
 	}
 
 	private void AdvanceTime(long milliseconds)
 	{
-		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
+		_clock.Advance(TimeSpan.FromMilliseconds(milliseconds));
 	}
 
 

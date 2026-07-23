@@ -11,20 +11,20 @@ namespace SkiaSharp.Extended.Tests.Gestures;
 /// </summary>
 public class SKGestureTrackerTests
 {
-	private long _testTicks = 1000000;
+	private readonly FakeGestureClock _clock = new(1000000);
 
 	private SKGestureTracker CreateTracker()
 	{
 		var tracker = new SKGestureTracker
 		{
-			TimeProvider = () => _testTicks
+			Clock = _clock
 		};
 		return tracker;
 	}
 
 	private void AdvanceTime(long milliseconds)
 	{
-		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
+		_clock.Advance(TimeSpan.FromMilliseconds(milliseconds));
 	}
 
 	private void SimulateFastSwipe(SKGestureTracker tracker, SKPoint start, SKPoint end)
@@ -515,7 +515,7 @@ public class SKGestureTrackerTests
 	}
 
 	[Fact]
-	public async Task IsLongPressEnabled_False_SuppressesLongPress()
+	public void IsLongPressEnabled_False_SuppressesLongPress()
 	{
 		var tracker = CreateTracker();
 		tracker.IsTapEnabled = false;
@@ -524,7 +524,7 @@ public class SKGestureTrackerTests
 		tracker.LongPressDetected += (s, e) => longPressFired = true;
 
 		tracker.ProcessTouchDown(1, new SKPoint(100, 100));
-		await Task.Delay(600);
+		AdvanceTime(600);
 		tracker.ProcessTouchUp(1, new SKPoint(100, 100));
 
 		Assert.False(longPressFired);
@@ -606,7 +606,7 @@ public class SKGestureTrackerTests
 		};
 		var tracker = new SKGestureTracker(options)
 		{
-			TimeProvider = () => _testTicks
+			Clock = _clock
 		};
 
 		Assert.Equal(0.5f, tracker.Options.MinScale);
@@ -955,13 +955,6 @@ public class SKGestureTrackerTests
 	}
 
 	[Fact]
-	public void TimeProvider_SetNull_ThrowsArgumentNullException()
-	{
-		var tracker = CreateTracker();
-		Assert.Throws<ArgumentNullException>(() => tracker.TimeProvider = null!);
-	}
-
-	[Fact]
 	public void ZoomTo_AfterDispose_ThrowsObjectDisposedException()
 	{
 		var tracker = CreateTracker();
@@ -1070,7 +1063,7 @@ public class SKGestureTrackerTests
 	{
 		var tracker = new SKGestureTracker
 		{
-			TimeProvider = () => _testTicks
+			Clock = _clock
 		};
 		tracker.Options.MinScale = 0.5f;
 		tracker.Options.MaxScale = 3f;
@@ -1086,9 +1079,7 @@ public class SKGestureTrackerTests
 	public void PinchAndPan_Simultaneously_BothApply()
 	{
 		var tracker = CreateTracker();
-		var panFired = false;
 		var pinchFired = false;
-		tracker.PanDetected += (s, e) => panFired = true;
 		tracker.PinchDetected += (s, e) => pinchFired = true;
 
 		// Two finger down

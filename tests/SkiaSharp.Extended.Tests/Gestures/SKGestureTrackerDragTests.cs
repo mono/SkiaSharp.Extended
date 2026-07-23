@@ -9,20 +9,20 @@ namespace SkiaSharp.Extended.Tests.Gestures;
 /// <summary>Tests for drag lifecycle in <see cref="SKGestureTracker"/>.</summary>
 public class SKGestureTrackerDragTests
 {
-	private long _testTicks = 1000000;
+	private readonly FakeGestureClock _clock = new(1000000);
 
 	private SKGestureTracker CreateTracker()
 	{
 		var tracker = new SKGestureTracker
 		{
-			TimeProvider = () => _testTicks
+			Clock = _clock
 		};
 		return tracker;
 	}
 
 	private void AdvanceTime(long milliseconds)
 	{
-		_testTicks += milliseconds * TimeSpan.TicksPerMillisecond;
+		_clock.Advance(TimeSpan.FromMilliseconds(milliseconds));
 	}
 
 	private void SimulateFastSwipe(SKGestureTracker tracker, SKPoint start, SKPoint end)
@@ -127,7 +127,7 @@ public class SKGestureTrackerDragTests
 
 
 	[Fact]
-	public async Task DragHandled_SuppressesFlingAnimation()
+	public void DragHandled_SuppressesFlingAnimation()
 	{
 		var tracker = CreateTracker();
 		tracker.DragStarted += (s, e) => e.Handled = true;
@@ -137,7 +137,7 @@ public class SKGestureTrackerDragTests
 		var offsetAfterSwipe = tracker.Offset;
 
 		// Wait for potential fling animation
-		await Task.Delay(100);
+		AdvanceTime(100);
 
 		// Offset should not have changed — fling animation was suppressed
 		Assert.Equal(offsetAfterSwipe, tracker.Offset);

@@ -143,7 +143,7 @@ public partial class GesturePage : ContentPage
 		{
 			SKTouchAction.Pressed => tracker.ProcessTouchDown(e.Id, location, isMouse),
 			SKTouchAction.Moved => tracker.ProcessTouchMove(e.Id, location, e.InContact),
-			SKTouchAction.Released => tracker.ProcessTouchUp(e.Id, location, isMouse),
+			SKTouchAction.Released => tracker.ProcessTouchUp(e.Id, location),
 			SKTouchAction.Cancelled => tracker.ProcessTouchCancel(e.Id),
 			SKTouchAction.WheelChanged => tracker.ProcessMouseWheel(location, 0, e.WheelDelta),
 			_ => true, // Entered/Exited — accept to keep receiving events
