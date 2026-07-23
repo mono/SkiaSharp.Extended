@@ -73,14 +73,7 @@ private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
 
 ## How It Works
 
-The gesture system is built in two conceptual layers:
-
-| Layer | Role |
-| :---- | :--- |
-| **Tracking** (`SKGestureTracker`) | The public API. Manages a transform matrix (pan/zoom/rotate), fling and zoom animation, and the drag lifecycle. |
-| **Detection** (internal) | Recognizes raw touch sequences as gestures (tap, pan, pinch, etc.). |
-
-`SKGestureTracker` is the single entry point: it wraps the internal detector and translates gesture events into transform updates. You feed it raw touch input and subscribe to its events.
+`SKGestureTracker` is the single entry point. You feed it raw touch input — `ProcessTouchDown`, `ProcessTouchMove`, `ProcessTouchUp`, `ProcessTouchCancel`, and `ProcessMouseWheel` — and it recognizes gestures, maintains a transform matrix (pan/zoom/rotate), runs fling and zoom animations, and raises events you subscribe to. Apply its `Matrix` when painting, and redraw on `TransformChanged`.
 
 ### Coordinate spaces
 
