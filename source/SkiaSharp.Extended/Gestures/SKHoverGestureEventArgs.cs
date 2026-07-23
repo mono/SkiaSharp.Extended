@@ -7,9 +7,8 @@ namespace SkiaSharp.Extended;
 /// </summary>
 /// <remarks>
 /// <para>Hover events are raised when a mouse cursor moves over the surface without any buttons
-/// pressed (i.e., <c>inContact</c> is <see langword="false"/> in <see cref="SKGestureDetector.ProcessTouchMove"/>).
+/// pressed (i.e., <c>inContact</c> is <see langword="false"/> in <see cref="SKGestureTracker.ProcessTouchMove"/>).
 /// This is a mouse-only gesture that has no equivalent on touch devices.</para>
-/// <seealso cref="SKGestureDetector.HoverDetected"/>
 /// <seealso cref="SKGestureTracker.HoverDetected"/>
 /// </remarks>
 public class SKHoverGestureEventArgs : EventArgs

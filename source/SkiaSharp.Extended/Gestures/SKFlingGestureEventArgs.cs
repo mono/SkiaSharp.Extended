@@ -9,14 +9,14 @@ namespace SkiaSharp.Extended;
 /// <remarks>
 /// <para>This class is used by two distinct events:</para>
 /// <list type="bullet">
-/// <item><description><see cref="SKGestureDetector.FlingDetected"/> / <see cref="SKGestureTracker.FlingDetected"/>:
+/// <item><description><see cref="SKGestureTracker.FlingDetected"/>:
 /// Fired once when a fling is initiated. <see cref="Velocity"/> contains the initial velocity.
 /// <see cref="Delta"/> is <see cref="SKPoint.Empty"/>.</description></item>
 /// <item><description><see cref="SKGestureTracker.FlingUpdated"/>: Fired each animation frame during
 /// the fling deceleration. <see cref="Velocity"/> contains the current (decaying) velocity, and
 /// <see cref="Delta"/> contains the per-frame displacement in pixels.</description></item>
 /// </list>
-/// <seealso cref="SKGestureDetector.FlingDetected"/>
+/// <seealso cref="SKGestureTracker.FlingDetected"/>
 /// <seealso cref="SKGestureTracker.FlingUpdated"/>
 /// <seealso cref="SKGestureTracker.FlingCompleted"/>
 /// </remarks>
@@ -24,7 +24,7 @@ public class SKFlingGestureEventArgs : EventArgs
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKFlingGestureEventArgs"/> class with
-	/// velocity only. Used for the initial <see cref="SKGestureDetector.FlingDetected"/> event.
+	/// velocity only. Used for the initial <see cref="SKGestureTracker.FlingDetected"/> event.
 	/// </summary>
 	/// <param name="velocity">The initial velocity in pixels per second.</param>
 	public SKFlingGestureEventArgs(SKPoint velocity)
@@ -58,7 +58,7 @@ public class SKFlingGestureEventArgs : EventArgs
 	/// </summary>
 	/// <value>
 	/// An <see cref="SKPoint"/> with the per-frame displacement in pixels. This is
-	/// <see cref="SKPoint.Empty"/> for <see cref="SKGestureDetector.FlingDetected"/> events.
+	/// <see cref="SKPoint.Empty"/> for <see cref="SKGestureTracker.FlingDetected"/> events.
 	/// </value>
 	public SKPoint Delta { get; }
 

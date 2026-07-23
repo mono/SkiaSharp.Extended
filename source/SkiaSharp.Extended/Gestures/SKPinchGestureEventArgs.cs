@@ -10,7 +10,6 @@ namespace SkiaSharp.Extended;
 /// The <see cref="ScaleDelta"/> is a relative (per-event) multiplier, not an absolute scale. To
 /// compute the cumulative scale, multiply successive <see cref="ScaleDelta"/> values together, or
 /// use the <see cref="SKGestureTracker.Scale"/> property which maintains the absolute value.</para>
-/// <seealso cref="SKGestureDetector.PinchDetected"/>
 /// <seealso cref="SKGestureTracker.PinchDetected"/>
 /// <seealso cref="SKRotateGestureEventArgs"/>
 /// </remarks>

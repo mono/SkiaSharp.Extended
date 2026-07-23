@@ -12,8 +12,8 @@ namespace SkiaSharp.Extended;
 /// <para><strong>Platform note:</strong> The sign convention for scroll deltas may vary by platform
 /// and input device. Typically, positive <see cref="Delta"/>.Y indicates scrolling up (or zooming in),
 /// but this depends on the platform's scroll event normalization.</para>
-/// <seealso cref="SKGestureDetector.ScrollDetected"/>
-/// <seealso cref="SKGestureDetector.ProcessMouseWheel"/>
+/// <seealso cref="SKGestureTracker.ScrollDetected"/>
+/// <seealso cref="SKGestureTracker.ProcessMouseWheel"/>
 /// <seealso cref="SKGestureTracker.ScrollDetected"/>
 /// </remarks>
 public class SKScrollGestureEventArgs : EventArgs
