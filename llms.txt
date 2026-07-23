@@ -3,7 +3,7 @@
 > SkiaSharp.Extended provides powerful graphics utilities and .NET MAUI controls for SkiaSharp projects—from blur hash placeholders to Lottie animations and confetti effects.
 
 SkiaSharp.Extended consists of two main libraries:
-- **SkiaSharp.Extended** — Core utilities for image processing, geometry, and path manipulation (targets netstandard2.0 and net9.0+).
+- **SkiaSharp.Extended** — Core utilities for image processing, geometry, and path manipulation (targets netstandard2.0 and net10.0+).
 - **SkiaSharp.Extended.UI.Maui** — .NET MAUI controls for Lottie animations, confetti effects, and animated surface views (iOS, Android, macOS Catalyst, Windows).
 
 ## Docs
