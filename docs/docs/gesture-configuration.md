@@ -72,7 +72,7 @@ tracker.IsScrollZoomEnabled = false;
 tracker.IsHoverEnabled = false;
 ```
 
-When a gesture is disabled, the tracker suppresses its events. The underlying detector still recognizes the gesture, so you can re-enable it at runtime without losing state.
+When a gesture is disabled, the tracker suppresses its events. You can toggle any of these at runtime without losing transform state.
 
 ## Reading Transform State
 

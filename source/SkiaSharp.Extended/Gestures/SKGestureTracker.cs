@@ -3,8 +3,8 @@ using System;
 namespace SkiaSharp.Extended;
 
 /// <summary>
-/// A high-level gesture handler that tracks touch input and maintains an absolute transform
-/// (scale, rotation, and offset) by consuming events from an internal <see cref="SKGestureDetector"/>.
+/// A high-level gesture handler that recognizes touch gestures and maintains an absolute transform
+/// (scale, rotation, and offset).
 /// </summary>
 /// <remarks>
 /// <para>The tracker is the primary public API for gesture handling. It accepts raw touch input
@@ -35,7 +35,6 @@ namespace SkiaSharp.Extended;
 /// tracker.TransformChanged += (s, e) => canvasView.InvalidateSurface();
 /// </code>
 /// </example>
-/// <seealso cref="SKGestureDetector"/>
 /// <seealso cref="SKGestureTrackerOptions"/>
 /// </remarks>
 public sealed class SKGestureTracker : IDisposable
@@ -100,7 +99,7 @@ public sealed class SKGestureTracker : IDisposable
 	#region Touch Input
 
 	/// <summary>
-	/// Processes a touch down event and forwards it to the internal gesture detector.
+	/// Processes a touch down event.
 	/// </summary>
 	/// <param name="id">The unique identifier for this touch pointer.</param>
 	/// <param name="location">The location of the touch in view coordinates.</param>
@@ -110,7 +109,7 @@ public sealed class SKGestureTracker : IDisposable
 		=> _engine.ProcessTouchDown(id, location, isMouse);
 
 	/// <summary>
-	/// Processes a touch move event and forwards it to the internal gesture detector.
+	/// Processes a touch move event.
 	/// </summary>
 	/// <param name="id">The unique identifier for this touch pointer.</param>
 	/// <param name="location">The new location of the touch in view coordinates.</param>
@@ -123,7 +122,7 @@ public sealed class SKGestureTracker : IDisposable
 		=> _engine.ProcessTouchMove(id, location, inContact);
 
 	/// <summary>
-	/// Processes a touch up event and forwards it to the internal gesture detector.
+	/// Processes a touch up event.
 	/// </summary>
 	/// <param name="id">The unique identifier for this touch pointer.</param>
 	/// <param name="location">The final location of the touch in view coordinates.</param>
@@ -132,7 +131,7 @@ public sealed class SKGestureTracker : IDisposable
 		=> _engine.ProcessTouchUp(id, location);
 
 	/// <summary>
-	/// Processes a touch cancel event and forwards it to the internal gesture detector.
+	/// Processes a touch cancel event.
 	/// </summary>
 	/// <param name="id">The unique identifier for the cancelled touch pointer.</param>
 	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
@@ -140,7 +139,7 @@ public sealed class SKGestureTracker : IDisposable
 		=> _engine.ProcessTouchCancel(id);
 
 	/// <summary>
-	/// Processes a mouse wheel (scroll) event and forwards it to the internal gesture detector.
+	/// Processes a mouse wheel (scroll) event.
 	/// </summary>
 	/// <param name="location">The position of the mouse cursor in view coordinates.</param>
 	/// <param name="deltaX">The horizontal scroll delta.</param>
@@ -284,44 +283,44 @@ public sealed class SKGestureTracker : IDisposable
 	public bool IsFlinging => _isFlinging;
 
 	/// <summary>Gets a value indicating whether any gesture is currently active (touch contact in progress).</summary>
-	/// <value><see langword="true"/> if the internal detector is tracking an active gesture; otherwise, <see langword="false"/>.</value>
+	/// <value><see langword="true"/> if a gesture is currently being tracked; otherwise, <see langword="false"/>.</value>
 	public bool IsGestureActive => _engine.IsGestureActive;
 
 	#endregion
 
 	#region Gesture Events (forwarded from engine)
 
-	/// <summary>Occurs when a single tap is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
+	/// <summary>Occurs when a single tap is detected.</summary>
 	public event EventHandler<SKTapGestureEventArgs>? TapDetected;
 
-	/// <summary>Occurs when a double tap is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
+	/// <summary>Occurs when a double tap is detected.</summary>
 	public event EventHandler<SKTapGestureEventArgs>? DoubleTapDetected;
 
-	/// <summary>Occurs when a long press is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
+	/// <summary>Occurs when a long press is detected.</summary>
 	public event EventHandler<SKLongPressGestureEventArgs>? LongPressDetected;
 
-	/// <summary>Occurs when a pan gesture is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
+	/// <summary>Occurs when a pan gesture is detected.</summary>
 	public event EventHandler<SKPanGestureEventArgs>? PanDetected;
 
-	/// <summary>Occurs when a pinch (scale) gesture is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
+	/// <summary>Occurs when a pinch (scale) gesture is detected.</summary>
 	public event EventHandler<SKPinchGestureEventArgs>? PinchDetected;
 
-	/// <summary>Occurs when a rotation gesture is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
+	/// <summary>Occurs when a rotation gesture is detected.</summary>
 	public event EventHandler<SKRotateGestureEventArgs>? RotateDetected;
 
-	/// <summary>Occurs when a fling gesture is detected (once, with initial velocity). Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
+	/// <summary>Occurs when a fling gesture is detected (once, with initial velocity).</summary>
 	public event EventHandler<SKFlingGestureEventArgs>? FlingDetected;
 
-	/// <summary>Occurs when a hover is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
+	/// <summary>Occurs when a hover is detected.</summary>
 	public event EventHandler<SKHoverGestureEventArgs>? HoverDetected;
 
-	/// <summary>Occurs when a scroll (mouse wheel) event is detected. Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
+	/// <summary>Occurs when a scroll (mouse wheel) event is detected.</summary>
 	public event EventHandler<SKScrollGestureEventArgs>? ScrollDetected;
 
-	/// <summary>Occurs when a gesture interaction begins (first touch contact). Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
+	/// <summary>Occurs when a gesture interaction begins (first touch contact).</summary>
 	public event EventHandler<SKGestureLifecycleEventArgs>? GestureStarted;
 
-	/// <summary>Occurs when a gesture interaction ends (last touch released). Forwarded from the internal <see cref="SKGestureDetector"/>.</summary>
+	/// <summary>Occurs when a gesture interaction ends (last touch released).</summary>
 	public event EventHandler<SKGestureLifecycleEventArgs>? GestureEnded;
 
 	#endregion
@@ -521,7 +520,7 @@ public sealed class SKGestureTracker : IDisposable
 
 	/// <summary>
 	/// Releases all resources used by this <see cref="SKGestureTracker"/> instance, including
-	/// stopping all animations and disposing the internal <see cref="SKGestureDetector"/>.
+	/// stopping all animations.
 	/// </summary>
 	public void Dispose()
 	{
