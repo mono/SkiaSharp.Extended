@@ -30,9 +30,11 @@ internal interface ISKGestureClock
 
 /// <summary>
 /// The default <see cref="ISKGestureClock"/> used in production. Reads wall-clock time from
-/// <see cref="DateTime.UtcNow"/> and schedules callbacks with <see cref="Timer"/>, marshalling
-/// each callback back to the <see cref="SynchronizationContext"/> captured when
-/// <see cref="Schedule"/> was called (the UI thread).
+/// <see cref="DateTime.UtcNow"/> and schedules callbacks with <see cref="Timer"/>. When a
+/// <see cref="SynchronizationContext"/> is present (the UI thread on MAUI/WPF/WinUI), each callback
+/// is marshalled back to it; on single-threaded hosts such as Blazor WebAssembly, where no
+/// <see cref="SynchronizationContext"/> exists, the callback runs directly on the timer's thread
+/// (which is the single main thread).
 /// </summary>
 internal sealed class SystemGestureClock : ISKGestureClock
 {
@@ -48,10 +50,10 @@ internal sealed class SystemGestureClock : ISKGestureClock
 		if (onTick is null)
 			throw new ArgumentNullException(nameof(onTick));
 
-		var context = SynchronizationContext.Current
-			?? throw new InvalidOperationException(
-				"Gesture timing requires a SynchronizationContext (for example, the UI thread). " +
-				"Create and drive the gesture tracker or detector on the UI thread.");
+		// Capture the current context — the UI thread on MAUI/WPF/WinUI. On single-threaded
+		// hosts such as Blazor WebAssembly there is no SynchronizationContext; there the timer
+		// callback already runs on the single main thread, so it is invoked directly.
+		var context = SynchronizationContext.Current;
 
 		return new ScheduledTimer(dueTime, period, onTick, context);
 	}
@@ -59,12 +61,12 @@ internal sealed class SystemGestureClock : ISKGestureClock
 	private sealed class ScheduledTimer : IDisposable
 	{
 		private readonly Action _onTick;
-		private readonly SynchronizationContext _context;
+		private readonly SynchronizationContext? _context;
 		private readonly SendOrPostCallback _post;
 		private Timer? _timer;
 		private int _disposed;
 
-		public ScheduledTimer(TimeSpan dueTime, TimeSpan period, Action onTick, SynchronizationContext context)
+		public ScheduledTimer(TimeSpan dueTime, TimeSpan period, Action onTick, SynchronizationContext? context)
 		{
 			_onTick = onTick;
 			_context = context;
@@ -83,7 +85,10 @@ internal sealed class SystemGestureClock : ISKGestureClock
 			if (Volatile.Read(ref _disposed) != 0)
 				return;
 
-			_context.Post(_post, null);
+			if (_context != null)
+				_context.Post(_post, null);
+			else
+				_post(null); // single-threaded host (e.g. Blazor WebAssembly): run inline
 		}
 
 		public void Dispose()
