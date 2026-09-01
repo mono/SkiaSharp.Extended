@@ -104,7 +104,7 @@ extends:
             scanArtifacts:
              - nuget
             apiScanSoftwareName: SkiaSharp
-            apiScanSoftwareVersionNum: $(MAJOR_VERSION)
+            apiScanSoftwareVersionNum: 3
             apiScanAuthConnectionString: 'runAs=App;AppId=$(ApiScanClientId)'
             preScanSteps:
               - pwsh: |

@@ -1,5 +1,7 @@
 <Project>
 
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
   <PropertyGroup>
     <NeutralLanguage>en</NeutralLanguage>
     <LangVersion>10.0</LangVersion>
@@ -22,7 +24,7 @@
     <RepositoryUrl>https://go.microsoft.com/fwlink/?linkid=2071915</RepositoryUrl>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyFileVersion>2.0.0.0</AssemblyFileVersion>
-    <Version>3.1.0</Version>
+    <Version>4.0.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageVersion Condition=" '$(Version)' != '' and '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
   </PropertyGroup>
@@ -48,10 +50,6 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(Configuration)'=='Release' ">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

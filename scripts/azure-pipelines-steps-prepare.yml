@@ -29,6 +29,12 @@ steps:
       Write-Host "##vso[task.setvariable variable=JavaSdkDirectory]$env:JAVA_HOME"
     displayName: Set Java SDK Directory
 
+  - task: UseDotNet@2
+    displayName: Install .NET SDK
+    inputs:
+      packageType: 'sdk'
+      version: '10.0.x'
+
   - pwsh: dotnet workload install maui
     displayName: Install MAUI workload
 
