@@ -7,10 +7,10 @@ namespace SkiaSharp.Extended;
 /// </summary>
 /// <remarks>
 /// <para>A long press is detected when a touch is held stationary (within the
-/// <see cref="SKGestureDetectorOptions.TouchSlop"/> threshold) for at least
-/// <see cref="SKGestureDetectorOptions.LongPressDuration"/> milliseconds.</para>
+/// <see cref="SKGestureTrackerOptions.TouchSlop"/> threshold) for at least
+/// <see cref="SKGestureTrackerOptions.LongPressDuration"/> milliseconds.</para>
 /// <seealso cref="SKGestureTracker.LongPressDetected"/>
-/// <seealso cref="SKGestureDetectorOptions.LongPressDuration"/>
+/// <seealso cref="SKGestureTrackerOptions.LongPressDuration"/>
 /// </remarks>
 public class SKLongPressGestureEventArgs : EventArgs
 {

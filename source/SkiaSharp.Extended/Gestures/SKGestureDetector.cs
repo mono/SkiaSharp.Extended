@@ -41,14 +41,14 @@ internal sealed class SKGestureDetector : IDisposable
 	/// Initializes a new instance of <see cref="SKGestureDetector"/> with default options.
 	/// </summary>
 	public SKGestureDetector()
-		: this(new SKGestureDetectorOptions())
+		: this(new SKGestureTrackerOptions())
 	{
 	}
 
 	/// <summary>
 	/// Initializes a new instance of <see cref="SKGestureDetector"/> with the specified options.
 	/// </summary>
-	public SKGestureDetector(SKGestureDetectorOptions options)
+	public SKGestureDetector(SKGestureTrackerOptions options)
 	{
 		Options = options ?? throw new ArgumentNullException(nameof(options));
 	}
@@ -56,8 +56,8 @@ internal sealed class SKGestureDetector : IDisposable
 	/// <summary>
 	/// Gets the configuration options for this detector.
 	/// </summary>
-	/// <value>The <see cref="SKGestureDetectorOptions"/> instance controlling detection thresholds.</value>
-	public SKGestureDetectorOptions Options { get; }
+	/// <value>The <see cref="SKGestureTrackerOptions"/> instance controlling gesture behavior.</value>
+	public SKGestureTrackerOptions Options { get; }
 
 	/// <summary>
 	/// Gets or sets the clock used to obtain the current time and schedule long-press timing.
@@ -93,7 +93,7 @@ internal sealed class SKGestureDetector : IDisposable
 	/// Occurs when a single tap is detected.
 	/// </summary>
 	/// <remarks>
-	/// A tap is recognized when a touch down and up occur within the <see cref="SKGestureDetectorOptions.TouchSlop"/>
+	/// A tap is recognized when a touch down and up occur within the <see cref="SKGestureTrackerOptions.TouchSlop"/>
 	/// distance and within the long press duration threshold.
 	/// </remarks>
 	public event EventHandler<SKTapGestureEventArgs>? TapDetected;
@@ -103,7 +103,7 @@ internal sealed class SKGestureDetector : IDisposable
 	/// </summary>
 	/// <remarks>
 	/// A double tap is recognized when two taps occur within 300 ms of each other and within the
-	/// <see cref="SKGestureDetectorOptions.DoubleTapSlop"/> distance.
+	/// <see cref="SKGestureTrackerOptions.DoubleTapSlop"/> distance.
 	/// </remarks>
 	public event EventHandler<SKTapGestureEventArgs>? DoubleTapDetected;
 
@@ -112,8 +112,8 @@ internal sealed class SKGestureDetector : IDisposable
 	/// </summary>
 	/// <remarks>
 	/// A long press is recognized when a touch is held stationary for at least
-	/// <see cref="SKGestureDetectorOptions.LongPressDuration"/> milliseconds without exceeding
-	/// the <see cref="SKGestureDetectorOptions.TouchSlop"/> distance.
+	/// <see cref="SKGestureTrackerOptions.LongPressDuration"/> milliseconds without exceeding
+	/// the <see cref="SKGestureTrackerOptions.TouchSlop"/> distance.
 	/// </remarks>
 	public event EventHandler<SKLongPressGestureEventArgs>? LongPressDetected;
 
@@ -122,7 +122,7 @@ internal sealed class SKGestureDetector : IDisposable
 	/// </summary>
 	/// <remarks>
 	/// Pan events fire continuously as a single touch moves beyond the
-	/// <see cref="SKGestureDetectorOptions.TouchSlop"/> threshold.
+	/// <see cref="SKGestureTrackerOptions.TouchSlop"/> threshold.
 	/// </remarks>
 	public event EventHandler<SKPanGestureEventArgs>? PanDetected;
 
@@ -148,7 +148,7 @@ internal sealed class SKGestureDetector : IDisposable
 	/// </summary>
 	/// <remarks>
 	/// A fling is triggered when a single-finger pan ends with a velocity exceeding the
-	/// <see cref="SKGestureDetectorOptions.FlingThreshold"/>. Flings are not triggered after
+	/// <see cref="SKGestureTrackerOptions.FlingThreshold"/>. Flings are not triggered after
 	/// multi-finger gestures (pinch/rotate).
 	/// </remarks>
 	public event EventHandler<SKFlingGestureEventArgs>? FlingDetected;
