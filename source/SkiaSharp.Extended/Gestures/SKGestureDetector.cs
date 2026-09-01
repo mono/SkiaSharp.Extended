@@ -187,7 +187,7 @@ internal sealed class SKGestureDetector : IDisposable
 
 		var ticks = _clock.GetTimestamp();
 
-		_touches[id] = new TouchState(id, location, ticks, true, isMouse);
+		_touches[id] = new TouchState(location, isMouse);
 
 		// Only set initial touch state for the first finger
 		if (_touches.Count == 1)
@@ -211,7 +211,7 @@ internal sealed class SKGestureDetector : IDisposable
 			_tapCount = 1;
 		}
 
-		using var touchPoints = GetActiveTouchPoints();
+		var touchPoints = GetActiveTouchPoints();
 
 		if (touchPoints.Length > 0)
 		{
@@ -224,7 +224,7 @@ internal sealed class SKGestureDetector : IDisposable
 				StopLongPressTimer();
 				_tapCount = 0;
 				_lastTapTicks = 0;
-				_pinchState = PinchState.FromLocations(touchPoints.Span);
+				_pinchState = PinchState.FromLocations(touchPoints);
 				_gestureState = GestureState.Pinching;
 			}
 			else
@@ -263,10 +263,10 @@ internal sealed class SKGestureDetector : IDisposable
 		if (!_touches.TryGetValue(id, out var existingTouch))
 			return false;
 
-		_touches[id] = new TouchState(id, location, ticks, inContact, existingTouch.IsMouse);
+		_touches[id] = new TouchState(location, existingTouch.IsMouse);
 		_flingTracker.AddEvent(id, location, ticks);
 
-		using var touchPoints = GetActiveTouchPoints();
+		var touchPoints = GetActiveTouchPoints();
 		var distance = SKPoint.Distance(location, _initialTouch);
 
 		// Start pan if moved beyond touch slop
@@ -293,7 +293,7 @@ internal sealed class SKGestureDetector : IDisposable
 			case GestureState.Pinching:
 				if (touchPoints.Length >= 2)
 				{
-					var newPinch = PinchState.FromLocations(touchPoints.Span);
+					var newPinch = PinchState.FromLocations(touchPoints);
 
 					// Calculate scale
 					var scaleDelta = _pinchState.Radius > 0 ? newPinch.Radius / _pinchState.Radius : 1f;
@@ -334,7 +334,7 @@ internal sealed class SKGestureDetector : IDisposable
 
 		_touches.Remove(id);
 
-		using var touchPoints = GetActiveTouchPoints();
+		var touchPoints = GetActiveTouchPoints();
 		var handled = false;
 
 		// Check for fling — only after a single-finger pan, not after pinch/rotate
@@ -408,7 +408,7 @@ internal sealed class SKGestureDetector : IDisposable
 		else if (touchPoints.Length >= 2)
 		{
 			// Recalculate pinch state for remaining fingers to avoid jumps
-			_pinchState = PinchState.FromLocations(touchPoints.Span);
+			_pinchState = PinchState.FromLocations(touchPoints);
 		}
 
 		return handled;
@@ -428,7 +428,7 @@ internal sealed class SKGestureDetector : IDisposable
 		_touches.Remove(id);
 		_flingTracker.RemoveId(id);
 
-		using var touchPoints = GetActiveTouchPoints();
+		var touchPoints = GetActiveTouchPoints();
 		if (touchPoints.Length == 0)
 		{
 			if (_gestureState != GestureState.None)
@@ -452,7 +452,7 @@ internal sealed class SKGestureDetector : IDisposable
 		else if (touchPoints.Length >= 2)
 		{
 			// Recalculate pinch state for remaining fingers to avoid jumps
-			_pinchState = PinchState.FromLocations(touchPoints.Span);
+			_pinchState = PinchState.FromLocations(touchPoints);
 		}
 
 		return true;
@@ -525,7 +525,7 @@ internal sealed class SKGestureDetector : IDisposable
 		if (_disposed || !IsEnabled || _longPressTriggered || _gestureState != GestureState.Detecting)
 			return;
 
-		using var touchPoints = GetActiveTouchPoints();
+		var touchPoints = GetActiveTouchPoints();
 
 		if (touchPoints.Length == 1)
 		{
@@ -540,50 +540,20 @@ internal sealed class SKGestureDetector : IDisposable
 		}
 	}
 
-	// Rents a pooled buffer holding the active (in-contact) touch points, sorted by touch ID
-	// for stable ordering (prevents angle jumps when fingers are added/removed and Dictionary
-	// iteration order changes). The caller must dispose it (with 'using') to return the buffer.
-	private TempArray<SKPoint> GetActiveTouchPoints()
+	private SKPoint[] GetActiveTouchPoints()
 	{
-		var count = 0;
-		foreach (var kv in _touches)
-		{
-			if (kv.Value.InContact)
-				count++;
-		}
-
-		var points = new TempArray<SKPoint>(count);
-		if (count == 0)
-			return points;
-
-		Span<long> ids = count <= 16 ? stackalloc long[16] : new long[count];
+		var count = _touches.Count;
+		var ids = new long[count];
+		var points = new SKPoint[count];
 		var i = 0;
 		foreach (var kv in _touches)
 		{
-			if (kv.Value.InContact)
-			{
-				ids[i] = kv.Key;
-				points[i] = kv.Value.Location;
-				i++;
-			}
+			ids[i] = kv.Key;
+			points[i] = kv.Value.Location;
+			i++;
 		}
 
-		// Simple insertion sort (typically 1-5 elements)
-		for (i = 1; i < count; i++)
-		{
-			var keyId = ids[i];
-			var keyPt = points[i];
-			var j = i - 1;
-			while (j >= 0 && ids[j] > keyId)
-			{
-				ids[j + 1] = ids[j];
-				points[j + 1] = points[j];
-				j--;
-			}
-			ids[j + 1] = keyId;
-			points[j + 1] = keyPt;
-		}
-
+		Array.Sort(ids, points);
 		return points;
 	}
 
@@ -651,7 +621,7 @@ internal sealed class SKGestureDetector : IDisposable
 		Pinching
 	}
 
-	private readonly record struct TouchState(long Id, SKPoint Location, long Ticks, bool InContact, bool IsMouse);
+	private readonly record struct TouchState(SKPoint Location, bool IsMouse);
 
 	private readonly record struct PinchState(SKPoint Center, float Radius, float Angle)
 	{
