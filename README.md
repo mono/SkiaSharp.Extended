@@ -1,5 +1,7 @@
 # SkiaSharp.Extended
 
+[![Build Status](https://dev.azure.com/dnceng-public/public/_apis/build/status/346?branchName=main)](https://dev.azure.com/dnceng-public/public/_build?definitionId=346&branchName=main)
+
 **SkiaSharp.Extended** is a collection some cool libraries that may be
 useful to some apps. There are several repositories that may have
 interesting projects:
