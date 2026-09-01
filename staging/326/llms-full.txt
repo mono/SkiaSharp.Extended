@@ -644,11 +644,11 @@ Configure thresholds and behavior through `SKGestureTrackerOptions`:
 ```csharp
 var options = new SKGestureTrackerOptions
 {
-    // Detection thresholds (inherited from SKGestureDetectorOptions)
+    // Gesture recognition thresholds
     TouchSlop = 8f,           // Pixels to move before pan starts (default: 8)
     DoubleTapSlop = 40f,      // Max distance between double-tap taps (default: 40)
     FlingThreshold = 200f,    // Min velocity (px/s) to trigger fling (default: 200)
-    LongPressDuration = 500,  // Milliseconds to hold for long press (default: 500)
+    LongPressDuration = TimeSpan.FromMilliseconds(500),
 
     // Scale limits
     MinScale = 0.1f,          // Minimum zoom level (default: 0.1)
@@ -656,8 +656,8 @@ var options = new SKGestureTrackerOptions
 
     // Double-tap zoom
     DoubleTapZoomFactor = 2f, // Scale multiplier on double tap (default: 2)
-    ZoomAnimationDuration = 250, // Animation duration in ms (default: 250)
-    ZoomAnimationInterval = 16,  // Frame interval for zoom animation in ms (~60fps) (default: 16)
+    ZoomAnimationDuration = TimeSpan.FromMilliseconds(250),
+    ZoomAnimationInterval = TimeSpan.FromMilliseconds(16),
 
     // Scroll zoom
     ScrollZoomFactor = 0.1f,  // Zoom per scroll unit (default: 0.1)
@@ -665,7 +665,7 @@ var options = new SKGestureTrackerOptions
     // Fling animation
     FlingFriction = 0.08f,    // Velocity decay per frame (default: 0.08)
     FlingMinVelocity = 5f,    // Stop threshold in px/s (default: 5)
-    FlingFrameInterval = 16,  // Frame interval in ms (~60fps) (default: 16)
+    FlingFrameInterval = TimeSpan.FromMilliseconds(16),
 };
 
 var tracker = new SKGestureTracker(options);

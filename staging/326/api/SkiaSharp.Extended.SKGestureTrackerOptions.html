@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class SKGestureTrackerOptions | SkiaSharp.Extended ">
       
-      <meta name="description" content="Configuration options for . Inherits gesture detection thresholds from  and adds tracker-specific settings for transform limits, animation, and feature toggles.">
+      <meta name="description" content="Configuration options for , including gesture recognition thresholds, transform limits, animation, and feature toggles.">
       <link rel="icon" href="../images/logo.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -97,14 +97,13 @@ Class SKGestureTrackerOptions  <a class="header-action link-secondary" title="Vi
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Configuration options for <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a>. Inherits gesture detection thresholds
-from <a class="xref" href="SkiaSharp.Extended.SKGestureDetectorOptions.html">SKGestureDetectorOptions</a> and adds tracker-specific settings for transform
-limits, animation, and feature toggles.</p>
+  <div class="markdown summary"><p>Configuration options for <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a>, including gesture recognition
+thresholds, transform limits, animation, and feature toggles.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKGestureTrackerOptions : SKGestureDetectorOptions</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class SKGestureTrackerOptions</code></pre>
   </div>
 
 
@@ -114,7 +113,6 @@ limits, animation, and feature toggles.</p>
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><a class="xref" href="SkiaSharp.Extended.SKGestureDetectorOptions.html">SKGestureDetectorOptions</a></div>
       <div><span class="xref">SKGestureTrackerOptions</span></div>
     </dd>
   </dl>
@@ -125,22 +123,7 @@ limits, animation, and feature toggles.</p>
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="SkiaSharp.Extended.SKGestureDetectorOptions.TouchSlop.html#SkiaSharp_Extended_SKGestureDetectorOptions_TouchSlop">SKGestureDetectorOptions.TouchSlop</a>
-    </div>
-    <div>
-      <a class="xref" href="SkiaSharp.Extended.SKGestureDetectorOptions.DoubleTapSlop.html#SkiaSharp_Extended_SKGestureDetectorOptions_DoubleTapSlop">SKGestureDetectorOptions.DoubleTapSlop</a>
-    </div>
-    <div>
-      <a class="xref" href="SkiaSharp.Extended.SKGestureDetectorOptions.FlingThreshold.html#SkiaSharp_Extended_SKGestureDetectorOptions_FlingThreshold">SKGestureDetectorOptions.FlingThreshold</a>
-    </div>
-    <div>
-      <a class="xref" href="SkiaSharp.Extended.SKGestureDetectorOptions.LongPressDuration.html#SkiaSharp_Extended_SKGestureDetectorOptions_LongPressDuration">SKGestureDetectorOptions.LongPressDuration</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
@@ -163,8 +146,7 @@ limits, animation, and feature toggles.</p>
 
 
   <h2 id="SkiaSharp_Extended_SKGestureTrackerOptions_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a>
-<a class="xref" href="SkiaSharp.Extended.SKGestureDetectorOptions.html">SKGestureDetectorOptions</a></p>
+  <div class="markdown level0 remarks"><p><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a></p>
 </div>
 
   <h2 class="section" id="constructors">Constructors
@@ -178,6 +160,12 @@ limits, animation, and feature toggles.</p>
   <h2 class="section" id="properties">Properties
 </h2>
 
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapSlop.html#SkiaSharp_Extended_SKGestureTrackerOptions_DoubleTapSlop">DoubleTapSlop</a></dt>
+    <dd><p>Gets or sets the maximum distance, in pixels, between two taps for them to be recognized
+as a double-tap gesture.</p>
+</dd>
+  </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapZoomFactor.html#SkiaSharp_Extended_SKGestureTrackerOptions_DoubleTapZoomFactor">DoubleTapZoomFactor</a></dt>
     <dd><p>Gets or sets the multiplicative zoom factor applied when a double-tap is detected.</p>
@@ -196,6 +184,12 @@ limits, animation, and feature toggles.</p>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.FlingMinVelocity.html#SkiaSharp_Extended_SKGestureTrackerOptions_FlingMinVelocity">FlingMinVelocity</a></dt>
     <dd><p>Gets or sets the minimum velocity, in pixels per second, below which the fling animation stops.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.FlingThreshold.html#SkiaSharp_Extended_SKGestureTrackerOptions_FlingThreshold">FlingThreshold</a></dt>
+    <dd><p>Gets or sets the minimum velocity, in pixels per second, required for a pan gesture
+to be classified as a fling upon touch release.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -249,6 +243,11 @@ limits, animation, and feature toggles.</p>
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.LongPressDuration.html#SkiaSharp_Extended_SKGestureTrackerOptions_LongPressDuration">LongPressDuration</a></dt>
+    <dd><p>Gets or sets the duration a touch must be held stationary before a long press gesture is recognized.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.MaxScale.html#SkiaSharp_Extended_SKGestureTrackerOptions_MaxScale">MaxScale</a></dt>
     <dd><p>Gets or sets the maximum allowed zoom scale.</p>
 </dd>
@@ -261,6 +260,11 @@ limits, animation, and feature toggles.</p>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.ScrollZoomFactor.html#SkiaSharp_Extended_SKGestureTrackerOptions_ScrollZoomFactor">ScrollZoomFactor</a></dt>
     <dd><p>Gets or sets the scale sensitivity for mouse scroll-wheel zoom.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop.html#SkiaSharp_Extended_SKGestureTrackerOptions_TouchSlop">TouchSlop</a></dt>
+    <dd><p>Gets or sets the minimum movement distance, in pixels, before a touch is considered a pan gesture.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -306,7 +310,7 @@ entirely outside the current default range of [0.1, 10].</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · ad019e2
+          source: PR #326 · c7c5575
         </div>
       </div>
     </footer>

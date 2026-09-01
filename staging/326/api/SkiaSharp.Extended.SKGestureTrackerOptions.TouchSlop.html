@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Constructor SKGestureDetectorOptions | SkiaSharp.Extended </title>
+      <title>Property TouchSlop | SkiaSharp.Extended </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Constructor SKGestureDetectorOptions | SkiaSharp.Extended ">
+      <meta name="title" content="Property TouchSlop | SkiaSharp.Extended ">
       
       
       <link rel="icon" href="../images/logo.ico">
@@ -84,14 +84,14 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="SkiaSharp.Extended.SKGestureDetectorOptions.#ctor*">
+        <article data-uid="SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop*">
 
 
 
 
 
-<h1 id="SkiaSharp_Extended_SKGestureDetectorOptions__ctor_" data-uid="SkiaSharp.Extended.SKGestureDetectorOptions.#ctor*" class="text-break">
-Constructor SKGestureDetectorOptions  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureDetectorOptions.cs"><i class="bi bi-code-slash"></i></a>
+<h1 id="SkiaSharp_Extended_SKGestureTrackerOptions_TouchSlop_" data-uid="SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop*" class="text-break">
+Property TouchSlop  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTrackerOptions.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
@@ -117,36 +117,49 @@ Constructor SKGestureDetectorOptions  <a class="header-action link-secondary" ti
 
 
 
-<a id="SkiaSharp_Extended_SKGestureDetectorOptions__ctor_" data-uid="SkiaSharp.Extended.SKGestureDetectorOptions.#ctor*"></a>
+<a id="SkiaSharp_Extended_SKGestureTrackerOptions_TouchSlop_" data-uid="SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop*"></a>
 
-<h3 id="SkiaSharp_Extended_SKGestureDetectorOptions__ctor" data-uid="SkiaSharp.Extended.SKGestureDetectorOptions.#ctor">
-  SKGestureDetectorOptions()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureDetectorOptions.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_SKGestureTrackerOptions_TouchSlop" data-uid="SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop">
+  TouchSlop
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTrackerOptions.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"></div>
+<div class="markdown level1 summary"><p>Gets or sets the minimum movement distance, in pixels, before a touch is considered a pan gesture.</p>
+</div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">public SKGestureDetectorOptions()</code></pre>
+  <pre><code class="lang-csharp hljs">public float TouchSlop { get; set; }</code></pre>
 </div>
 
 
 
 
 
+<h4 class="section">Property Value</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+  <dd><p>The touch slop distance in pixels. The default is <code>8</code>.</p>
+</dd>
+</dl>
 
 
 
 
 
+<h4 class="section">Exceptions</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
+  <dd><p><code class="paramref">value</code> is negative.</p>
+</dd>
+</dl>
 
 
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureDetectorOptions.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTrackerOptions.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -162,7 +175,7 @@ Constructor SKGestureDetectorOptions  <a class="header-action link-secondary" ti
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · ad019e2
+          source: PR #326 · c7c5575
         </div>
       </div>
     </footer>

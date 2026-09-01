@@ -457,78 +457,6 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKGeometryExtensions.DrawTriangle
   fullName: SkiaSharp.Extended.SKGeometryExtensions.DrawTriangle
   nameWithType: SKGeometryExtensions.DrawTriangle
-- uid: SkiaSharp.Extended.SKGestureDetectorOptions
-  name: SKGestureDetectorOptions
-  href: api/SkiaSharp.Extended.SKGestureDetectorOptions.html
-  commentId: T:SkiaSharp.Extended.SKGestureDetectorOptions
-  fullName: SkiaSharp.Extended.SKGestureDetectorOptions
-  nameWithType: SKGestureDetectorOptions
-- uid: SkiaSharp.Extended.SKGestureDetectorOptions.#ctor
-  name: SKGestureDetectorOptions()
-  href: api/SkiaSharp.Extended.SKGestureDetectorOptions.-ctor.html#SkiaSharp_Extended_SKGestureDetectorOptions__ctor
-  commentId: M:SkiaSharp.Extended.SKGestureDetectorOptions.#ctor
-  name.vb: New()
-  fullName: SkiaSharp.Extended.SKGestureDetectorOptions.SKGestureDetectorOptions()
-  fullName.vb: SkiaSharp.Extended.SKGestureDetectorOptions.New()
-  nameWithType: SKGestureDetectorOptions.SKGestureDetectorOptions()
-  nameWithType.vb: SKGestureDetectorOptions.New()
-- uid: SkiaSharp.Extended.SKGestureDetectorOptions.#ctor*
-  name: SKGestureDetectorOptions
-  href: api/SkiaSharp.Extended.SKGestureDetectorOptions.-ctor.html
-  commentId: Overload:SkiaSharp.Extended.SKGestureDetectorOptions.#ctor
-  name.vb: New
-  fullName: SkiaSharp.Extended.SKGestureDetectorOptions.SKGestureDetectorOptions
-  fullName.vb: SkiaSharp.Extended.SKGestureDetectorOptions.New
-  nameWithType: SKGestureDetectorOptions.SKGestureDetectorOptions
-  nameWithType.vb: SKGestureDetectorOptions.New
-- uid: SkiaSharp.Extended.SKGestureDetectorOptions.DoubleTapSlop
-  name: DoubleTapSlop
-  href: api/SkiaSharp.Extended.SKGestureDetectorOptions.DoubleTapSlop.html#SkiaSharp_Extended_SKGestureDetectorOptions_DoubleTapSlop
-  commentId: P:SkiaSharp.Extended.SKGestureDetectorOptions.DoubleTapSlop
-  fullName: SkiaSharp.Extended.SKGestureDetectorOptions.DoubleTapSlop
-  nameWithType: SKGestureDetectorOptions.DoubleTapSlop
-- uid: SkiaSharp.Extended.SKGestureDetectorOptions.DoubleTapSlop*
-  name: DoubleTapSlop
-  href: api/SkiaSharp.Extended.SKGestureDetectorOptions.DoubleTapSlop.html
-  commentId: Overload:SkiaSharp.Extended.SKGestureDetectorOptions.DoubleTapSlop
-  fullName: SkiaSharp.Extended.SKGestureDetectorOptions.DoubleTapSlop
-  nameWithType: SKGestureDetectorOptions.DoubleTapSlop
-- uid: SkiaSharp.Extended.SKGestureDetectorOptions.FlingThreshold
-  name: FlingThreshold
-  href: api/SkiaSharp.Extended.SKGestureDetectorOptions.FlingThreshold.html#SkiaSharp_Extended_SKGestureDetectorOptions_FlingThreshold
-  commentId: P:SkiaSharp.Extended.SKGestureDetectorOptions.FlingThreshold
-  fullName: SkiaSharp.Extended.SKGestureDetectorOptions.FlingThreshold
-  nameWithType: SKGestureDetectorOptions.FlingThreshold
-- uid: SkiaSharp.Extended.SKGestureDetectorOptions.FlingThreshold*
-  name: FlingThreshold
-  href: api/SkiaSharp.Extended.SKGestureDetectorOptions.FlingThreshold.html
-  commentId: Overload:SkiaSharp.Extended.SKGestureDetectorOptions.FlingThreshold
-  fullName: SkiaSharp.Extended.SKGestureDetectorOptions.FlingThreshold
-  nameWithType: SKGestureDetectorOptions.FlingThreshold
-- uid: SkiaSharp.Extended.SKGestureDetectorOptions.LongPressDuration
-  name: LongPressDuration
-  href: api/SkiaSharp.Extended.SKGestureDetectorOptions.LongPressDuration.html#SkiaSharp_Extended_SKGestureDetectorOptions_LongPressDuration
-  commentId: P:SkiaSharp.Extended.SKGestureDetectorOptions.LongPressDuration
-  fullName: SkiaSharp.Extended.SKGestureDetectorOptions.LongPressDuration
-  nameWithType: SKGestureDetectorOptions.LongPressDuration
-- uid: SkiaSharp.Extended.SKGestureDetectorOptions.LongPressDuration*
-  name: LongPressDuration
-  href: api/SkiaSharp.Extended.SKGestureDetectorOptions.LongPressDuration.html
-  commentId: Overload:SkiaSharp.Extended.SKGestureDetectorOptions.LongPressDuration
-  fullName: SkiaSharp.Extended.SKGestureDetectorOptions.LongPressDuration
-  nameWithType: SKGestureDetectorOptions.LongPressDuration
-- uid: SkiaSharp.Extended.SKGestureDetectorOptions.TouchSlop
-  name: TouchSlop
-  href: api/SkiaSharp.Extended.SKGestureDetectorOptions.TouchSlop.html#SkiaSharp_Extended_SKGestureDetectorOptions_TouchSlop
-  commentId: P:SkiaSharp.Extended.SKGestureDetectorOptions.TouchSlop
-  fullName: SkiaSharp.Extended.SKGestureDetectorOptions.TouchSlop
-  nameWithType: SKGestureDetectorOptions.TouchSlop
-- uid: SkiaSharp.Extended.SKGestureDetectorOptions.TouchSlop*
-  name: TouchSlop
-  href: api/SkiaSharp.Extended.SKGestureDetectorOptions.TouchSlop.html
-  commentId: Overload:SkiaSharp.Extended.SKGestureDetectorOptions.TouchSlop
-  fullName: SkiaSharp.Extended.SKGestureDetectorOptions.TouchSlop
-  nameWithType: SKGestureDetectorOptions.TouchSlop
 - uid: SkiaSharp.Extended.SKGestureLifecycleEventArgs
   name: SKGestureLifecycleEventArgs
   href: api/SkiaSharp.Extended.SKGestureLifecycleEventArgs.html
@@ -1117,6 +1045,18 @@ references:
   fullName.vb: SkiaSharp.Extended.SKGestureTrackerOptions.New
   nameWithType: SKGestureTrackerOptions.SKGestureTrackerOptions
   nameWithType.vb: SKGestureTrackerOptions.New
+- uid: SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapSlop
+  name: DoubleTapSlop
+  href: api/SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapSlop.html#SkiaSharp_Extended_SKGestureTrackerOptions_DoubleTapSlop
+  commentId: P:SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapSlop
+  fullName: SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapSlop
+  nameWithType: SKGestureTrackerOptions.DoubleTapSlop
+- uid: SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapSlop*
+  name: DoubleTapSlop
+  href: api/SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapSlop.html
+  commentId: Overload:SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapSlop
+  fullName: SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapSlop
+  nameWithType: SKGestureTrackerOptions.DoubleTapSlop
 - uid: SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapZoomFactor
   name: DoubleTapZoomFactor
   href: api/SkiaSharp.Extended.SKGestureTrackerOptions.DoubleTapZoomFactor.html#SkiaSharp_Extended_SKGestureTrackerOptions_DoubleTapZoomFactor
@@ -1165,6 +1105,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKGestureTrackerOptions.FlingMinVelocity
   fullName: SkiaSharp.Extended.SKGestureTrackerOptions.FlingMinVelocity
   nameWithType: SKGestureTrackerOptions.FlingMinVelocity
+- uid: SkiaSharp.Extended.SKGestureTrackerOptions.FlingThreshold
+  name: FlingThreshold
+  href: api/SkiaSharp.Extended.SKGestureTrackerOptions.FlingThreshold.html#SkiaSharp_Extended_SKGestureTrackerOptions_FlingThreshold
+  commentId: P:SkiaSharp.Extended.SKGestureTrackerOptions.FlingThreshold
+  fullName: SkiaSharp.Extended.SKGestureTrackerOptions.FlingThreshold
+  nameWithType: SKGestureTrackerOptions.FlingThreshold
+- uid: SkiaSharp.Extended.SKGestureTrackerOptions.FlingThreshold*
+  name: FlingThreshold
+  href: api/SkiaSharp.Extended.SKGestureTrackerOptions.FlingThreshold.html
+  commentId: Overload:SkiaSharp.Extended.SKGestureTrackerOptions.FlingThreshold
+  fullName: SkiaSharp.Extended.SKGestureTrackerOptions.FlingThreshold
+  nameWithType: SKGestureTrackerOptions.FlingThreshold
 - uid: SkiaSharp.Extended.SKGestureTrackerOptions.IsDoubleTapEnabled
   name: IsDoubleTapEnabled
   href: api/SkiaSharp.Extended.SKGestureTrackerOptions.IsDoubleTapEnabled.html#SkiaSharp_Extended_SKGestureTrackerOptions_IsDoubleTapEnabled
@@ -1285,6 +1237,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKGestureTrackerOptions.IsTapEnabled
   fullName: SkiaSharp.Extended.SKGestureTrackerOptions.IsTapEnabled
   nameWithType: SKGestureTrackerOptions.IsTapEnabled
+- uid: SkiaSharp.Extended.SKGestureTrackerOptions.LongPressDuration
+  name: LongPressDuration
+  href: api/SkiaSharp.Extended.SKGestureTrackerOptions.LongPressDuration.html#SkiaSharp_Extended_SKGestureTrackerOptions_LongPressDuration
+  commentId: P:SkiaSharp.Extended.SKGestureTrackerOptions.LongPressDuration
+  fullName: SkiaSharp.Extended.SKGestureTrackerOptions.LongPressDuration
+  nameWithType: SKGestureTrackerOptions.LongPressDuration
+- uid: SkiaSharp.Extended.SKGestureTrackerOptions.LongPressDuration*
+  name: LongPressDuration
+  href: api/SkiaSharp.Extended.SKGestureTrackerOptions.LongPressDuration.html
+  commentId: Overload:SkiaSharp.Extended.SKGestureTrackerOptions.LongPressDuration
+  fullName: SkiaSharp.Extended.SKGestureTrackerOptions.LongPressDuration
+  nameWithType: SKGestureTrackerOptions.LongPressDuration
 - uid: SkiaSharp.Extended.SKGestureTrackerOptions.MaxScale
   name: MaxScale
   href: api/SkiaSharp.Extended.SKGestureTrackerOptions.MaxScale.html#SkiaSharp_Extended_SKGestureTrackerOptions_MaxScale
@@ -1336,6 +1300,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.SKGestureTrackerOptions.SetScaleRange
   fullName: SkiaSharp.Extended.SKGestureTrackerOptions.SetScaleRange
   nameWithType: SKGestureTrackerOptions.SetScaleRange
+- uid: SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop
+  name: TouchSlop
+  href: api/SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop.html#SkiaSharp_Extended_SKGestureTrackerOptions_TouchSlop
+  commentId: P:SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop
+  fullName: SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop
+  nameWithType: SKGestureTrackerOptions.TouchSlop
+- uid: SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop*
+  name: TouchSlop
+  href: api/SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop.html
+  commentId: Overload:SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop
+  fullName: SkiaSharp.Extended.SKGestureTrackerOptions.TouchSlop
+  nameWithType: SKGestureTrackerOptions.TouchSlop
 - uid: SkiaSharp.Extended.SKGestureTrackerOptions.ZoomAnimationDuration
   name: ZoomAnimationDuration
   href: api/SkiaSharp.Extended.SKGestureTrackerOptions.ZoomAnimationDuration.html#SkiaSharp_Extended_SKGestureTrackerOptions_ZoomAnimationDuration
