@@ -93,7 +93,6 @@ The tracker is coordinate-space-agnostic — it operates on whatever numbers you
 | **Pinch** | Two finger spread/pinch | `ScaleDelta`, `FocalPoint` |
 | **Rotate** | Two finger rotation | `RotationDelta`, `FocalPoint` |
 | **Fling** | Fast pan with momentum | `Velocity` |
-| **Drag** | App-level object dragging | `Location`, `Delta` |
 | **Scroll** | Mouse wheel | `Delta` |
 | **Hover** | Mouse move (no buttons) | `Location` |
 

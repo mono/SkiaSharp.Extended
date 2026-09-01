@@ -10,7 +10,7 @@ namespace SkiaSharp.Extended;
 /// <para>The tracker is the primary public API for gesture handling. It accepts raw touch input
 /// via <see cref="ProcessTouchDown"/>, <see cref="ProcessTouchMove"/>, <see cref="ProcessTouchUp"/>,
 /// and <see cref="ProcessMouseWheel"/>, detects gestures internally, and translates them into
-/// transform state changes and higher-level events such as drag lifecycle and fling animation.</para>
+/// transform state changes and fling animation.</para>
 /// <para>Use the <see cref="Matrix"/> property to apply the current transform when painting.
 /// The matrix uses (0,0) as its origin — no view size configuration is required.</para>
 /// <para>All coordinates are in view (screen) space. The tracker converts screen-space deltas
@@ -47,11 +47,7 @@ public sealed class SKGestureTracker : IDisposable
 	private float _rotation;
 	private SKPoint _offset = SKPoint.Empty;
 
-	// Drag lifecycle state
-	private bool _isDragging;
-	private bool _isDragHandled;
-	private SKPoint _lastPanLocation;
-	private SKPoint _prevPanLocation;
+	private bool _isPanHandled;
 
 	// Fling animation state
 	private IDisposable? _flingRegistration;
@@ -340,25 +336,6 @@ public sealed class SKGestureTracker : IDisposable
 	public event EventHandler? TransformChanged;
 
 	/// <summary>
-	/// Occurs when a drag operation starts (first pan movement after touch down).
-	/// </summary>
-	/// <remarks>
-	/// Set <see cref="SKDragGestureEventArgs.Handled"/> to <see langword="true"/> to prevent the
-	/// tracker from updating <see cref="Offset"/> for this drag (useful for custom object dragging).
-	/// </remarks>
-	public event EventHandler<SKDragGestureEventArgs>? DragStarted;
-
-	/// <summary>
-	/// Occurs on each movement during a drag operation.
-	/// </summary>
-	public event EventHandler<SKDragGestureEventArgs>? DragUpdated;
-
-	/// <summary>
-	/// Occurs when a drag operation ends (all touches released).
-	/// </summary>
-	public event EventHandler<SKDragGestureEventArgs>? DragEnded;
-
-	/// <summary>
 	/// Occurs each animation frame during a fling deceleration.
 	/// </summary>
 	/// <remarks>
@@ -513,7 +490,7 @@ public sealed class SKGestureTracker : IDisposable
 		_scale = 1f;
 		_rotation = 0f;
 		_offset = SKPoint.Empty;
-		_isDragging = false;
+		_isPanHandled = false;
 		_engine.Reset();
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
@@ -617,32 +594,12 @@ public sealed class SKGestureTracker : IDisposable
 		if (IsPanEnabled)
 			PanDetected?.Invoke(this, e);
 
-		// Track last pan position for DragEnded
-		_prevPanLocation = _lastPanLocation;
-		_lastPanLocation = e.Location;
+		if (e.Handled)
+			_isPanHandled = true;
 
-		// Derive drag lifecycle
-		SKDragGestureEventArgs? dragArgs = null;
-		if (!_isDragging)
-		{
-			_isDragging = true;
-			_isDragHandled = false;
-			_lastPanLocation = e.Location;
-			dragArgs = new SKDragGestureEventArgs(e.Location, e.PreviousLocation);
-			DragStarted?.Invoke(this, dragArgs);
-		}
-		else
-		{
-			dragArgs = new SKDragGestureEventArgs(e.Location, e.PreviousLocation);
-			DragUpdated?.Invoke(this, dragArgs);
-		}
-
-		// Track whether the consumer is handling this drag (e.g. sticker drag)
-		if (dragArgs?.Handled ?? false)
-			_isDragHandled = true;
-
-		// Skip offset update if consumer handled the pan or drag (e.g. sticker drag)
-		if (!IsPanEnabled || e.Handled || _isDragHandled)
+		// Once any pan event is handled, suppress viewport movement and fling for
+		// the remainder of the gesture.
+		if (!IsPanEnabled || _isPanHandled)
 			return;
 
 		// Update offset
@@ -697,7 +654,7 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEngineFlingDetected(object? s, SKFlingGestureEventArgs e)
 	{
-		if (!IsFlingEnabled || _isDragHandled)
+		if (!IsFlingEnabled || _isPanHandled)
 			return;
 
 		FlingDetected?.Invoke(this, e);
@@ -729,19 +686,14 @@ public sealed class SKGestureTracker : IDisposable
 	{
 		CancelFlingInternal(); // Don't fire FlingCompleted — fling was interrupted by new touch
 		StopZoomAnimation();
+		_isPanHandled = false;
 		GestureStarted?.Invoke(this, new SKGestureLifecycleEventArgs());
 	}
 
 	private void OnEngineGestureEnded(object? s, SKGestureLifecycleEventArgs e)
 	{
 		_gesturePivotOverride = null;
-
-		if (_isDragging)
-		{
-			_isDragging = false;
-			_isDragHandled = false;
-			DragEnded?.Invoke(this, new SKDragGestureEventArgs(_lastPanLocation, _prevPanLocation));
-		}
+		_isPanHandled = false;
 		GestureEnded?.Invoke(this, new SKGestureLifecycleEventArgs());
 	}
 

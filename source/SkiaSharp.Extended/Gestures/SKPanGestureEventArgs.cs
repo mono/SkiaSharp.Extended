@@ -35,7 +35,8 @@ public class SKPanGestureEventArgs : EventArgs
 	/// </value>
 	/// <remarks>
 	/// Set this to <see langword="true"/> in a <see cref="SKGestureTracker.PanDetected"/> handler
-	/// to prevent the <see cref="SKGestureTracker"/> from updating <see cref="SKGestureTracker.Offset"/>.
+	/// to prevent the <see cref="SKGestureTracker"/> from updating <see cref="SKGestureTracker.Offset"/>
+	/// or starting a fling for the remainder of the gesture.
 	/// </remarks>
 	public bool Handled { get; set; }
 
