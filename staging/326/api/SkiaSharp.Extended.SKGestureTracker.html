@@ -155,7 +155,7 @@ Class SKGestureTracker  <a class="header-action link-secondary" title="View sour
   <div class="markdown level0 remarks"><p>The tracker is the primary public API for gesture handling. It accepts raw touch input
 via <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.ProcessTouchDown.html#SkiaSharp_Extended_SKGestureTracker_ProcessTouchDown_System_Int64_SkiaSharp_SKPoint_System_Boolean_">ProcessTouchDown(long, SKPoint, bool)</a>, <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.ProcessTouchMove.html#SkiaSharp_Extended_SKGestureTracker_ProcessTouchMove_System_Int64_SkiaSharp_SKPoint_System_Boolean_">ProcessTouchMove(long, SKPoint, bool)</a>, <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.ProcessTouchUp.html#SkiaSharp_Extended_SKGestureTracker_ProcessTouchUp_System_Int64_SkiaSharp_SKPoint_">ProcessTouchUp(long, SKPoint)</a>,
 and <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.ProcessMouseWheel.html#SkiaSharp_Extended_SKGestureTracker_ProcessMouseWheel_SkiaSharp_SKPoint_System_Single_System_Single_">ProcessMouseWheel(SKPoint, float, float)</a>, detects gestures internally, and translates them into
-transform state changes and higher-level events such as drag lifecycle and fling animation.</p>
+transform state changes and fling animation.</p>
 <p>Use the <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.Matrix.html#SkiaSharp_Extended_SKGestureTracker_Matrix">Matrix</a> property to apply the current transform when painting.
 The matrix uses (0,0) as its origin — no view size configuration is required.</p>
 <p>All coordinates are in view (screen) space. The tracker converts screen-space deltas
@@ -379,21 +379,6 @@ and raises <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.TransformCh
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.DragEnded.html">DragEnded</a></dt>
-    <dd><p>Occurs when a drag operation ends (all touches released).</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.DragStarted.html">DragStarted</a></dt>
-    <dd><p>Occurs when a drag operation starts (first pan movement after touch down).</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.DragUpdated.html">DragUpdated</a></dt>
-    <dd><p>Occurs on each movement during a drag operation.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingCompleted.html">FlingCompleted</a></dt>
     <dd><p>Occurs when a fling animation completes (velocity drops below
 <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.FlingMinVelocity.html#SkiaSharp_Extended_SKGestureTrackerOptions_FlingMinVelocity">FlingMinVelocity</a>).</p>
@@ -482,7 +467,7 @@ and raises <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.TransformCh
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · ab62189
+          source: PR #326 · c555988
         </div>
       </div>
     </footer>

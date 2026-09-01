@@ -856,39 +856,40 @@ tracker.FlingCompleted += (s, e) =>
 };
 ```
 
-## Drag (App-Level Object Dragging)
+## Object Dragging with Pan
 
-The tracker provides a drag lifecycle derived from pan events. Use this to move objects within your canvas (e.g., stickers, nodes in a graph editor).
+Use `PanDetected` for app-level object dragging. Select the object when the pointer goes down,
+move it by each pan delta, and clear it when the pointer goes up or is cancelled.
 
 ```csharp
-tracker.DragStarted += (s, e) =>
-{
-    if (HitTest(e.Location) is { } item)
-    {
-        selectedItem = item;
-        e.Handled = true; // Prevents pan from updating the transform
-    }
-};
+private Item? draggedItem;
 
-tracker.DragUpdated += (s, e) =>
+void OnPointerDown(long id, SKPoint location)
 {
-    if (selectedItem != null)
+    draggedItem = HitTest(location);
+    tracker.ProcessTouchDown(id, location);
+}
+
+tracker.PanDetected += (s, e) =>
+{
+    if (draggedItem != null)
     {
-        // Convert screen delta to content coordinates
-        var inverse = tracker.Matrix; inverse.TryInvert(out inverse);
+        tracker.Matrix.TryInvert(out var inverse);
         var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
-        selectedItem.Position += contentDelta;
+        draggedItem.Position += contentDelta;
         e.Handled = true;
     }
 };
 
-tracker.DragEnded += (s, e) =>
+void OnPointerUp(long id, SKPoint location)
 {
-    selectedItem = null;
-};
+    tracker.ProcessTouchUp(id, location);
+    draggedItem = null;
+}
 ```
 
-When `DragStarted` or `DragUpdated` sets `Handled = true`, the tracker skips its normal pan offset update **and** suppresses fling after release.
+Once a `PanDetected` handler sets `Handled = true`, the tracker skips viewport movement and
+suppresses fling for the remainder of that gesture.
 
 ## Scroll (Mouse Wheel)
 
@@ -1040,7 +1041,6 @@ The tracker is coordinate-space-agnostic — it operates on whatever numbers you
 | **Pinch** | Two finger spread/pinch | `ScaleDelta`, `FocalPoint` |
 | **Rotate** | Two finger rotation | `RotationDelta`, `FocalPoint` |
 | **Fling** | Fast pan with momentum | `Velocity` |
-| **Drag** | App-level object dragging | `Location`, `Delta` |
 | **Scroll** | Mouse wheel | `Delta` |
 | **Hover** | Mouse move (no buttons) | `Location` |
 

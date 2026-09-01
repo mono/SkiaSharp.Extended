@@ -161,35 +161,36 @@ tracker.FlingCompleted += (s, e) =&gt;
     // Fling animation finished
 };
 </code></pre>
-<h2 id="drag-app-level-object-dragging">Drag (App-Level Object Dragging)</h2>
-<p>The tracker provides a drag lifecycle derived from pan events. Use this to move objects within your canvas (e.g., stickers, nodes in a graph editor).</p>
-<pre><code class="lang-csharp">tracker.DragStarted += (s, e) =&gt;
-{
-    if (HitTest(e.Location) is { } item)
-    {
-        selectedItem = item;
-        e.Handled = true; // Prevents pan from updating the transform
-    }
-};
+<h2 id="object-dragging-with-pan">Object Dragging with Pan</h2>
+<p>Use <code>PanDetected</code> for app-level object dragging. Select the object when the pointer goes down,
+move it by each pan delta, and clear it when the pointer goes up or is cancelled.</p>
+<pre><code class="lang-csharp">private Item? draggedItem;
 
-tracker.DragUpdated += (s, e) =&gt;
+void OnPointerDown(long id, SKPoint location)
 {
-    if (selectedItem != null)
+    draggedItem = HitTest(location);
+    tracker.ProcessTouchDown(id, location);
+}
+
+tracker.PanDetected += (s, e) =&gt;
+{
+    if (draggedItem != null)
     {
-        // Convert screen delta to content coordinates
-        var inverse = tracker.Matrix; inverse.TryInvert(out inverse);
+        tracker.Matrix.TryInvert(out var inverse);
         var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
-        selectedItem.Position += contentDelta;
+        draggedItem.Position += contentDelta;
         e.Handled = true;
     }
 };
 
-tracker.DragEnded += (s, e) =&gt;
+void OnPointerUp(long id, SKPoint location)
 {
-    selectedItem = null;
-};
+    tracker.ProcessTouchUp(id, location);
+    draggedItem = null;
+}
 </code></pre>
-<p>When <code>DragStarted</code> or <code>DragUpdated</code> sets <code>Handled = true</code>, the tracker skips its normal pan offset update <strong>and</strong> suppresses fling after release.</p>
+<p>Once a <code>PanDetected</code> handler sets <code>Handled = true</code>, the tracker skips viewport movement and
+suppresses fling for the remainder of that gesture.</p>
 <h2 id="scroll-mouse-wheel">Scroll (Mouse Wheel)</h2>
 <p>Mouse wheel zoom. Call <code>ProcessMouseWheel</code> to feed wheel events.</p>
 <pre><code class="lang-csharp">tracker.ScrollDetected += (s, e) =&gt;
@@ -247,7 +248,7 @@ tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · ab62189
+          source: PR #326 · c555988
         </div>
       </div>
     </footer>
