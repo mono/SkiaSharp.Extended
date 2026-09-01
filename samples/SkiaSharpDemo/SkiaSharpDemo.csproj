@@ -54,6 +54,7 @@
     <PackageReference Include="Svg.Skia" />
     <PackageReference Include="Topten.RichTextKit" />
     <PackageReference Include="Microsoft.Maui.Controls" />
+    <PackageReference Include="Microsoft.Maui.DevFlow.Agent" Condition="'$(Configuration)' == 'Debug'" />
   </ItemGroup>
 
   <ItemGroup>
