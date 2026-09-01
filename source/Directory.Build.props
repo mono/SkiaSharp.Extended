@@ -36,7 +36,7 @@
   <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)'=='Release' and $([MSBuild]::IsOSPlatform('windows')) ">
+  <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>

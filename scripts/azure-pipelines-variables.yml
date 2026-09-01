@@ -1,7 +1,13 @@
 variables:
   BASE_VERSION: 4.0.0
+  EXTENDED_VERSION: $(BASE_VERSION)
   PREVIEW_LABEL: 'preview'
-  BUILD_NUMBER: $[counter(format('{0}_{1}_{2}', variables['BASE_VERSION'], variables['Build.SourceBranch'], variables['PREVIEW_LABEL']), 1)]
+  ARCADE_OFFICIAL_BUILD_ID: $[format('{0}.{1}', format('{0:yyyyMMdd}', pipeline.startTime), counter(format('arcade_{0}', format('{0:yyyyMMdd}', pipeline.startTime)), 1))]
+  BUILD_NUMBER: ''
+  BUILD_COUNTER: $[counter('global_counter', 1)]
   GIT_SHA: $(Build.SourceVersion)
-  GIT_BRANCH_NAME: $(Build.SourceBranchName)
+  GIT_BRANCH_NAME: $(Build.SourceBranch)
+  GIT_URL: $(Build.Repository.Uri)
+  DOTNET_FINAL_VERSION_KIND: ''
+  DOTNET_VERSION: 10.0.400
   TeamName: .NET MAUI

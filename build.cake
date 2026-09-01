@@ -45,32 +45,25 @@ Task("build")
 Task("pack")
 	.Does(() =>
 {
-	DotNetPack("./scripts/SkiaSharp.Extended-Pack.slnf", new DotNetPackSettings
+	var outputDirectory = OUTPUT_ROOT.Combine("nugets");
+	CleanDirectory(outputDirectory);
+
+	var settings = new DotNetPackSettings
 	{
 		Configuration = CONFIGURATION,
 		MSBuildSettings = new DotNetMSBuildSettings()
 			.EnableBinaryLogger(OUTPUT_ROOT.Combine("binlogs").CombineWithFilePath("pack.binlog").FullPath),
-		OutputDirectory = OUTPUT_ROOT.Combine("nugets"),
+		OutputDirectory = outputDirectory,
 		ArgumentCustomization = AppendForwardingLogger
-	});
-
-	var preview = PREVIEW_LABEL;
-	if (!string.IsNullOrEmpty(BUILD_NUMBER))
+	};
+	if (!string.Equals(PREVIEW_LABEL, "stable", StringComparison.OrdinalIgnoreCase))
 	{
-		preview += $".{BUILD_NUMBER}";
+		settings.VersionSuffix = string.IsNullOrEmpty(BUILD_NUMBER)
+			? PREVIEW_LABEL
+			: $"{PREVIEW_LABEL}.{BUILD_NUMBER}";
 	}
 
-	DotNetPack("./scripts/SkiaSharp.Extended-Pack.slnf", new DotNetPackSettings
-	{
-		Configuration = CONFIGURATION,
-		MSBuildSettings = new DotNetMSBuildSettings()
-			.EnableBinaryLogger(OUTPUT_ROOT.Combine("binlogs").CombineWithFilePath("pack-preview.binlog").FullPath),
-		OutputDirectory = OUTPUT_ROOT.Combine("nugets"),
-		VersionSuffix = preview,
-		ArgumentCustomization = AppendForwardingLogger
-	});
-
-	CopyFileToDirectory("./source/SignList.xml", "./output/nugets");
+	DotNetPack("./scripts/SkiaSharp.Extended-Pack.slnf", settings);
 });
 
 Task("test")

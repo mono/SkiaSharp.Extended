@@ -1,0 +1,26 @@
+<Project>
+  <PropertyGroup>
+    <EnableDefaultArtifacts>false</EnableDefaultArtifacts>
+    <UseDotNetCertificate>false</UseDotNetCertificate>
+    <DoStrongNameCheck>false</DoStrongNameCheck>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ItemsToSign Remove="@(ItemsToSign)" />
+    <StrongNameSignInfo Remove="@(StrongNameSignInfo)" />
+    <FileSignInfo Remove="@(FileSignInfo)" />
+    <FileExtensionSignInfo Remove="@(FileExtensionSignInfo)" />
+
+    <ItemsToSign Include="$(ArtifactsShippingPackagesDir)**\*.nupkg" />
+    <ItemsToSign Include="$(ArtifactsShippingPackagesDir)**\*.snupkg" />
+
+    <FileExtensionSignInfo Include=".nupkg;.snupkg" CertificateName="NuGet" />
+
+    <FirstPartyFile Include="SkiaSharp.Extended.dll" />
+    <FirstPartyFile Include="SkiaSharp.Extended.UI.dll" />
+
+    <FileSignInfo Include="@(FirstPartyFile)" CertificateName="Microsoft400" />
+
+    <ItemsToSkip3rdPartyCheck Include="@(FirstPartyFile)" />
+  </ItemGroup>
+</Project>

@@ -6,6 +6,8 @@
 # Repository-specific files
 output/
 .DS_Store
+tools/
+.nuget/
 
 # Generated documentation files
 docs/llms.txt
@@ -33,6 +35,10 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+
+# Arcade repository-local toolsets and package cache
+/.dotnet/
+/.packages/
 
 # Visual Studio 2015 cache/options directory
 .vs/
