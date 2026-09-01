@@ -904,34 +904,6 @@ public class SKGestureTrackerTests
 
 
 	[Fact]
-	public void DragEnded_ReportsActualEndLocation_NotStartLocation()
-	{
-		// Regression: DragEnded was passing _dragStartLocation as both start and end,
-		// so CurrentLocation and Delta were always wrong.
-		var tracker = CreateTracker();
-		SKDragGestureEventArgs? dragEndedArgs = null;
-		tracker.DragEnded += (s, e) => dragEndedArgs = e;
-
-		var startPoint = new SKPoint(100, 100);
-		var midPoint = new SKPoint(150, 100);
-		var endPoint = new SKPoint(200, 100);
-
-		tracker.ProcessTouchDown(1, startPoint);
-		AdvanceTime(10);
-		tracker.ProcessTouchMove(1, midPoint);
-		AdvanceTime(500); // Long pause to avoid fling
-		tracker.ProcessTouchMove(1, endPoint);
-		AdvanceTime(500);
-		tracker.ProcessTouchUp(1, endPoint);
-
-		Assert.NotNull(dragEndedArgs);
-		// Location must reflect the final touch position, not the previous
-		Assert.NotEqual(dragEndedArgs!.PreviousLocation, dragEndedArgs.Location);
-		Assert.Equal(endPoint.X, dragEndedArgs.Location.X, 1f);
-		Assert.Equal(endPoint.Y, dragEndedArgs.Location.Y, 1f);
-	}
-
-	[Fact]
 	public void FlingCompleted_DoesNotFire_WhenFlingInterruptedByNewGesture()
 	{
 		// Regression: StopFling() unconditionally raised FlingCompleted, so starting a new

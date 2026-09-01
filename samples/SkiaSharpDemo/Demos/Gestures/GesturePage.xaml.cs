@@ -92,9 +92,6 @@ public partial class GesturePage : ContentPage
 		_tracker.FlingCompleted += OnFlingCompleted;
 		_tracker.ScrollDetected += OnScroll;
 		_tracker.HoverDetected += OnHover;
-		_tracker.DragStarted += OnDragStarted;
-		_tracker.DragUpdated += OnDragUpdated;
-		_tracker.DragEnded += OnDragEnded;
 		_tracker.TransformChanged += OnTransformChanged;
 	}
 
@@ -111,9 +108,6 @@ public partial class GesturePage : ContentPage
 		_tracker.FlingCompleted -= OnFlingCompleted;
 		_tracker.ScrollDetected -= OnScroll;
 		_tracker.HoverDetected -= OnHover;
-		_tracker.DragStarted -= OnDragStarted;
-		_tracker.DragUpdated -= OnDragUpdated;
-		_tracker.DragEnded -= OnDragEnded;
 		_tracker.TransformChanged -= OnTransformChanged;
 	}
 
@@ -337,7 +331,23 @@ public partial class GesturePage : ContentPage
 
 	private void OnPan(object? sender, SKPanGestureEventArgs e)
 	{
-		// Transform is handled by the tracker
+		if (_enableDrag && _selectedSticker != null)
+		{
+			var matrix = _tracker.Matrix;
+			if (matrix.TryInvert(out var inverse))
+			{
+				var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
+				_selectedSticker.Position = new SKPoint(
+					_selectedSticker.Position.X + contentDelta.X,
+					_selectedSticker.Position.Y + contentDelta.Y);
+			}
+
+			e.Handled = true;
+			statusLabel.Text = $"Dragging Sticker {_selectedSticker.Label}";
+			canvasView.InvalidateSurface();
+			return;
+		}
+
 		statusLabel.Text = $"Pan: Δ({e.Delta.X:F1}, {e.Delta.Y:F1})";
 	}
 
@@ -379,46 +389,6 @@ public partial class GesturePage : ContentPage
 	private void OnHover(object? sender, SKHoverGestureEventArgs e)
 	{
 		statusLabel.Text = $"Hover: ({e.Location.X:F0}, {e.Location.Y:F0})";
-	}
-
-	private void OnDragStarted(object? sender, SKDragGestureEventArgs e)
-	{
-		if (!_enableDrag) return;
-		LogEvent($"Drag started at ({e.Location.X:F0}, {e.Location.Y:F0})");
-		
-		if (_selectedSticker != null)
-		{
-			statusLabel.Text = $"Dragging Sticker {_selectedSticker.Label}";
-			e.Handled = true; // suppress canvas pan
-		}
-	}
-
-	private void OnDragUpdated(object? sender, SKDragGestureEventArgs e)
-	{
-		if (!_enableDrag) return;
-		// Move selected sticker in content-space
-		if (_selectedSticker != null)
-		{
-			// Convert screen-space delta to content-space via inverse matrix
-			var matrix = _tracker.Matrix;
-			if (matrix.TryInvert(out var inverse))
-			{
-				var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
-				_selectedSticker.Position = new SKPoint(
-					_selectedSticker.Position.X + contentDelta.X,
-					_selectedSticker.Position.Y + contentDelta.Y);
-			}
-
-			e.Handled = true; // suppress canvas pan
-			canvasView.InvalidateSurface();
-		}
-	}
-
-	private void OnDragEnded(object? sender, SKDragGestureEventArgs e)
-	{
-		if (!_enableDrag) return;
-		LogEvent($"Drag ended at ({e.Location.X:F0}, {e.Location.Y:F0})");
-		statusLabel.Text = "Drag completed";
 	}
 
 	private Sticker? HitTest(SKPoint location)

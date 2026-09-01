@@ -151,9 +151,6 @@
         _tracker.FlingCompleted += OnFlingCompleted;
         _tracker.ScrollDetected += OnScroll;
         _tracker.HoverDetected += OnHover;
-        _tracker.DragStarted += OnDragStarted;
-        _tracker.DragUpdated += OnDragUpdated;
-        _tracker.DragEnded += OnDragEnded;
         _tracker.TransformChanged += OnTransformChanged;
     }
 
@@ -170,9 +167,6 @@
         _tracker.FlingCompleted -= OnFlingCompleted;
         _tracker.ScrollDetected -= OnScroll;
         _tracker.HoverDetected -= OnHover;
-        _tracker.DragStarted -= OnDragStarted;
-        _tracker.DragUpdated -= OnDragUpdated;
-        _tracker.DragEnded -= OnDragEnded;
         _tracker.TransformChanged -= OnTransformChanged;
     }
 
@@ -415,6 +409,23 @@
 
     private void OnPan(object? sender, SKPanGestureEventArgs e)
     {
+        if (_enableDrag && _selectedSticker != null)
+        {
+            var matrix = _tracker.Matrix;
+            if (matrix.TryInvert(out var inverse))
+            {
+                var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
+                _selectedSticker.Position = new SKPoint(
+                    _selectedSticker.Position.X + contentDelta.X,
+                    _selectedSticker.Position.Y + contentDelta.Y);
+            }
+
+            e.Handled = true;
+            _statusText = $"Dragging Sticker {_selectedSticker.Label}";
+            Invalidate();
+            return;
+        }
+
         _statusText = $"Pan: Δ({e.Delta.X:F1}, {e.Delta.Y:F1})";
     }
 
@@ -454,45 +465,6 @@
     private void OnHover(object? sender, SKHoverGestureEventArgs e)
     {
         _statusText = $"Hover: ({e.Location.X:F0}, {e.Location.Y:F0})";
-    }
-
-    private void OnDragStarted(object? sender, SKDragGestureEventArgs e)
-    {
-        if (!_enableDrag) return;
-        LogEvent($"Drag started at ({e.Location.X:F0}, {e.Location.Y:F0})");
-
-        if (_selectedSticker != null)
-        {
-            _statusText = $"Dragging Sticker {_selectedSticker.Label}";
-            e.Handled = true;
-        }
-    }
-
-    private void OnDragUpdated(object? sender, SKDragGestureEventArgs e)
-    {
-        if (!_enableDrag) return;
-
-        if (_selectedSticker != null)
-        {
-            var matrix = _tracker.Matrix;
-            if (matrix.TryInvert(out var inverse))
-            {
-                var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
-                _selectedSticker.Position = new SKPoint(
-                    _selectedSticker.Position.X + contentDelta.X,
-                    _selectedSticker.Position.Y + contentDelta.Y);
-            }
-
-            e.Handled = true;
-            Invalidate();
-        }
-    }
-
-    private void OnDragEnded(object? sender, SKDragGestureEventArgs e)
-    {
-        if (!_enableDrag) return;
-        LogEvent($"Drag ended at ({e.Location.X:F0}, {e.Location.Y:F0})");
-        _statusText = "Drag completed";
     }
 
     private void OnTransformChanged(object? sender, EventArgs e)
