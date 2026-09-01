@@ -725,21 +725,21 @@ public class SKGestureDetectorTests
 	[Fact]
 	public void Options_TouchSlop_Negative_Throws()
 	{
-		var options = new SKGestureDetectorOptions();
+		var options = new SKGestureTrackerOptions();
 		Assert.Throws<ArgumentOutOfRangeException>(() => options.TouchSlop = -1f);
 	}
 
 	[Fact]
 	public void Options_DoubleTapSlop_Negative_Throws()
 	{
-		var options = new SKGestureDetectorOptions();
+		var options = new SKGestureTrackerOptions();
 		Assert.Throws<ArgumentOutOfRangeException>(() => options.DoubleTapSlop = -1f);
 	}
 
 	[Fact]
 	public void Options_FlingThreshold_Negative_Throws()
 	{
-		var options = new SKGestureDetectorOptions();
+		var options = new SKGestureTrackerOptions();
 		Assert.Throws<ArgumentOutOfRangeException>(() => options.FlingThreshold = -1f);
 	}
 
@@ -748,7 +748,7 @@ public class SKGestureDetectorTests
 	[InlineData(-1)]
 	public void Options_LongPressDuration_ZeroOrNegative_Throws(int value)
 	{
-		var options = new SKGestureDetectorOptions();
+		var options = new SKGestureTrackerOptions();
 		Assert.Throws<ArgumentOutOfRangeException>(() => options.LongPressDuration = TimeSpan.FromMilliseconds(value));
 	}
 
@@ -761,7 +761,7 @@ public class SKGestureDetectorTests
 	[Fact]
 	public void Options_ValidValues_PassThrough()
 	{
-		var options = new SKGestureDetectorOptions
+		var options = new SKGestureTrackerOptions
 		{
 			TouchSlop = 16f,
 			DoubleTapSlop = 80f,

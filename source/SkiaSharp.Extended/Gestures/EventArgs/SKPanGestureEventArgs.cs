@@ -7,7 +7,7 @@ namespace SkiaSharp.Extended;
 /// </summary>
 /// <remarks>
 /// <para>Pan events are raised continuously as a single touch moves beyond the
-/// <see cref="SKGestureDetectorOptions.TouchSlop"/> threshold. Each event provides both
+/// <see cref="SKGestureTrackerOptions.TouchSlop"/> threshold. Each event provides both
 /// the incremental <see cref="Delta"/> and the instantaneous <see cref="Velocity"/>.</para>
 /// <seealso cref="SKGestureTracker.PanDetected"/>
 /// </remarks>
