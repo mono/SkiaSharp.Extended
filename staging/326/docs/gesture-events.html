@@ -193,6 +193,9 @@ void OnPointerUp(long id, SKPoint location)
 suppresses fling for the remainder of that gesture.</p>
 <h2 id="scroll-mouse-wheel">Scroll (Mouse Wheel)</h2>
 <p>Mouse wheel zoom. Call <code>ProcessMouseWheel</code> to feed wheel events.</p>
+<p>On Mac Catalyst, use a native scroll-only <code>UIPanGestureRecognizer</code> because
+<code>SKCanvasView.Touch</code> does not emit wheel or trackpad-scroll events. The MAUI sample contains
+the platform adapter.</p>
 <pre><code class="lang-csharp">tracker.ScrollDetected += (s, e) =&gt;
 {
     // e.Location — mouse position
@@ -201,6 +204,8 @@ suppresses fling for the remainder of that gesture.</p>
 </code></pre>
 <h2 id="hover">Hover</h2>
 <p>Mouse movement without any buttons pressed. Useful for cursor-based UI feedback.</p>
+<p>On Mac Catalyst, attach a MAUI <code>PointerGestureRecognizer</code> and pass <code>PointerMoved</code> locations
+to <code>ProcessTouchMove</code> with <code>inContact: false</code>.</p>
 <pre><code class="lang-csharp">tracker.HoverDetected += (s, e) =&gt;
 {
     // e.Location — current mouse position
@@ -248,7 +253,7 @@ tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · c7c5575
+          source: PR #326 · 0778d7c
         </div>
       </div>
     </footer>

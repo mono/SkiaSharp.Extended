@@ -120,6 +120,14 @@ tracker.LongPressDetected += (s, e) =&gt; Console.WriteLine(&quot;Long press!&qu
         canvasView.InvalidateSurface();
 }
 </code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>On Mac Catalyst, <code>SKCanvasView.Touch</code> reports contact touches but not pointer hover,
+trackpad pinch, or scroll-wheel/two-finger scroll input. Add platform recognizers for
+those inputs and feed their values into the tracker. The
+<a href="https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo/Demos/Gestures">MAUI gesture sample</a>
+includes a Mac Catalyst adapter.</p>
+</div>
 <p><strong>Blazor</strong> — forward <code>PointerEventArgs</code>:</p>
 <pre><code class="lang-csharp">private void OnPointerDown(PointerEventArgs e)
 {
@@ -238,7 +246,7 @@ tracker.LongPressDetected += (s, e) =&gt; Console.WriteLine(&quot;Long press!&qu
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · c7c5575
+          source: PR #326 · 0778d7c
         </div>
       </div>
     </footer>
