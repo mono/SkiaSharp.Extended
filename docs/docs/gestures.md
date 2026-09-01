@@ -42,6 +42,13 @@ private void OnTouch(object? sender, SKTouchEventArgs e)
 }
 ```
 
+> [!NOTE]
+> On Mac Catalyst, `SKCanvasView.Touch` reports contact touches but not pointer hover,
+> trackpad pinch, or scroll-wheel/two-finger scroll input. Add platform recognizers for
+> those inputs and feed their values into the tracker. The
+> [MAUI gesture sample](https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo/Demos/Gestures)
+> includes a Mac Catalyst adapter.
+
 **Blazor** — forward `PointerEventArgs`:
 
 ```csharp
