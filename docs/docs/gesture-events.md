@@ -133,6 +133,10 @@ suppresses fling for the remainder of that gesture.
 
 Mouse wheel zoom. Call `ProcessMouseWheel` to feed wheel events.
 
+On Mac Catalyst, use a native scroll-only `UIPanGestureRecognizer` because
+`SKCanvasView.Touch` does not emit wheel or trackpad-scroll events. The MAUI sample contains
+the platform adapter.
+
 ```csharp
 tracker.ScrollDetected += (s, e) =>
 {
@@ -144,6 +148,9 @@ tracker.ScrollDetected += (s, e) =>
 ## Hover
 
 Mouse movement without any buttons pressed. Useful for cursor-based UI feedback.
+
+On Mac Catalyst, attach a MAUI `PointerGestureRecognizer` and pass `PointerMoved` locations
+to `ProcessTouchMove` with `inContact: false`.
 
 ```csharp
 tracker.HoverDetected += (s, e) =>

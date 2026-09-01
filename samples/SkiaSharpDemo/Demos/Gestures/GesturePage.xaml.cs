@@ -60,9 +60,12 @@ public partial class GesturePage : ContentPage
 			// Page attached to visual tree — ensure tracker exists
 			if (_tracker == null!)
 				CreateTracker();
+			ConnectPlatformGestures();
 		}
 		else
 		{
+			DisconnectPlatformGestures();
+
 			// Page removed from visual tree — dispose to release timers
 			if (_tracker != null!)
 			{
@@ -72,6 +75,10 @@ public partial class GesturePage : ContentPage
 			}
 		}
 	}
+
+	partial void ConnectPlatformGestures();
+
+	partial void DisconnectPlatformGestures();
 
 	private void CreateTracker()
 	{
@@ -567,7 +574,5 @@ public partial class GesturePage : ContentPage
 		public float Size { get; set; }
 		public SKColor Color { get; set; }
 		public string Label { get; set; } = "";
-		public float Rotation { get; set; }
-		public float Scale { get; set; } = 1f;
 	}
 }
