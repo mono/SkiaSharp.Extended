@@ -1,0 +1,126 @@
+parameters:
+  - name: buildAgent
+    type: object
+
+stages:
+  - stage: api_scan
+    displayName: API Scan
+    dependsOn: package
+    jobs:
+      - job: api_scan
+        displayName: API Scan
+        timeoutInMinutes: 480
+        pool: ${{ parameters.buildAgent.pool }}
+        workspace:
+          clean: all
+        steps:
+          - checkout: self
+            submodules: false
+            fetchDepth: 1
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download NuGet packages
+            inputs:
+              buildType: current
+              artifactName: nuget
+              targetPath: $(Agent.TempDirectory)\APIScan\packages
+
+          - pwsh: |
+              $scanRoot = "$(Agent.TempDirectory)\APIScan\extracted"
+              New-Item $scanRoot -ItemType Directory -Force | Out-Null
+              $packages = @(Get-ChildItem "$(Agent.TempDirectory)\APIScan\packages" -Filter '*.nupkg' -File)
+              if ($packages.Count -eq 0) {
+                throw 'No NuGet packages were downloaded for API Scan.'
+              }
+              foreach ($package in $packages) {
+                $destination = Join-Path $scanRoot ([IO.Path]::GetFileNameWithoutExtension($package.Name))
+                Expand-Archive $package.FullName $destination
+              }
+              $assemblies = @(Get-ChildItem $scanRoot -Filter '*.dll' -File -Recurse)
+              if ($assemblies.Count -eq 0) {
+                throw 'No assemblies were extracted for API Scan.'
+              }
+              Write-Host "Prepared $($assemblies.Count) assemblies for API Scan."
+            displayName: Prepare API Scan inputs
+
+          - task: AzureCLI@2
+            displayName: Login to API Scan identity
+            inputs:
+              azureSubscription: dotnet-apiscan
+              scriptType: pscore
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              inlineScript: |
+                Write-Host "##vso[task.setvariable variable=ARM_CLIENT_ID;issecret=true]$env:servicePrincipalId"
+                Write-Host "##vso[task.setvariable variable=ARM_ID_TOKEN;issecret=true]$env:idToken"
+                Write-Host "##vso[task.setvariable variable=ARM_TENANT_ID;issecret=true]$env:tenantId"
+
+          - pwsh: |
+              az login `
+                --service-principal `
+                --username "$(ARM_CLIENT_ID)" `
+                --tenant "$(ARM_TENANT_ID)" `
+                --allow-no-subscriptions `
+                --federated-token "$(ARM_ID_TOKEN)"
+            displayName: Activate API Scan WIF identity
+
+          - task: APIScan@2
+            displayName: Run API Scan
+            inputs:
+              softwareFolder: $(Agent.TempDirectory)\APIScan\extracted
+              symbolsFolder: SRV*https://symweb;$(Agent.TempDirectory)\APIScan\extracted
+              softwareName: SkiaSharp.Extended
+              softwareVersionNum: 4
+              softwareBuildNum: $(Build.BuildId)
+              modeType: release
+              toolVersion: Latest
+              verbosityLevel: standard
+              preserveLogsFolder: true
+            env:
+              AzureServicesAuthConnectionString: RunAs=Developer;DeveloperTool=AzureCli
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+          - task: SdtReport@2
+            displayName: Create API Scan security report
+            condition: succeededOrFailed()
+            inputs:
+              GdnExportVstsConsole: true
+              GdnExportSarifFile: true
+              GdnExportHtmlFile: true
+              GdnExportAllTools: true
+              GdnExportGdnToolApiScan: true
+              GdnExportGdnToolApiScanSeverity: Note
+              GdnExportPolicy: Microsoft
+              GdnExportPolicyMinSev: Note
+
+          - task: TSAUpload@2
+            displayName: Create bugs for API Scan results
+            condition: succeededOrFailed()
+            inputs:
+              GdnPublishTsaOnboard: true
+              GdnPublishTsaConfigFile: $(Build.SourcesDirectory)\.config\tsaoptions.json
+              GdnPublishTsaExportedResultsPublishable: true
+              GdnPublishTsaPolicy: Microsoft
+              GdnPublishTsaPolicyMinimumSeverity: Note
+              GdnPublishTsaAllTools: true
+              GdnPublishTsaGdnToolApiScan: true
+              GdnPublishTsaGdnToolApiScanSeverity: Note
+
+          - task: PublishSecurityAnalysisLogs@3
+            displayName: Publish API Scan analysis artifacts
+            condition: succeededOrFailed()
+            inputs:
+              ArtifactName: CodeAnalysisLogs - API Scan
+              ArtifactType: Container
+              AllTools: true
+              ApiScan: true
+              ToolLogsNotFoundAction: Standard
+
+          - task: PostAnalysis@2
+            displayName: Fail on API Scan issues
+            condition: succeededOrFailed()
+            inputs:
+              GdnBreakAllTools: true
+              GdnBreakGdnToolApiScan: true
+              GdnBreakGdnToolApiScanSeverity: Note
+              GdnBreakPolicyMinSev: Note

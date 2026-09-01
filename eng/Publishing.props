@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <PublishingVersion>3</PublishingVersion>
+    <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Artifact Include="$(ArtifactsShippingPackagesDir)**\*.nupkg"
+              Kind="Package" />
+    <Artifact Include="$(ArtifactsShippingPackagesDir)**\*.snupkg"
+              Kind="Blob"
+              RelativeBlobPath="assets/symbols/%(Filename)%(Extension)"
+              ManifestArtifactData="NonShipping=false;Category=SNORPKEG;" />
+  </ItemGroup>
+</Project>

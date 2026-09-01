@@ -1,21 +1,7 @@
 steps:
 
-  - pwsh: |
-      $pr = "pr." + $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
-      Write-Host "Preview label: $pr"
-      Write-Host "##vso[task.setvariable variable=PREVIEW_LABEL]$pr"
-    displayName: Use a special preview label for PRs
-    condition: eq(variables['Build.Reason'], 'PullRequest')
-
-  - pwsh: |
-      $label = ""
-      if ($env:BUILD_REASON -ne "PullRequest") {
-        $label = "+" + $env:BUILD_SOURCEBRANCHNAME
-      }
-      $label = "$env:BASE_VERSION-$env:PREVIEW_LABEL.$env:BUILD_NUMBER$label"
-      Write-Host "Build label: $label"
-      Write-Host "##vso[build.updatebuildnumber]$label"
-    displayName: Update the build number with a more readable one
+  - pwsh: ./scripts/infra/set-build-variables.ps1 -UpdateBuildNumber
+    displayName: Configure package version identity
 
   - task: JavaToolInstaller@0
     displayName: Select JDK
@@ -33,7 +19,7 @@ steps:
     displayName: Install .NET SDK
     inputs:
       packageType: 'sdk'
-      version: '10.0.x'
+      version: $(DOTNET_VERSION)
 
   - pwsh: dotnet workload install maui
     displayName: Install MAUI workload

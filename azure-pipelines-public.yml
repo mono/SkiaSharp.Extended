@@ -45,10 +45,32 @@ jobs:
     displayName: Pack
     steps:
       - template: /scripts/azure-pipelines-steps-prepare.yml@self
+      - pwsh: ./scripts/infra/tests/SetBuildVariables.Tests.ps1
+        displayName: Validate build identity
+      - pwsh: ./scripts/infra/tests/AssembleArcadeAssets.Tests.ps1
+        displayName: Validate Arcade asset assembly
       - pwsh: dotnet cake --target=pack
         displayName: Pack NuGet packages
-      - publish: output
-        artifact: pack
+      - pwsh: ./scripts/infra/assemble-arcade-assets.ps1 -OutputRoot ./output
+        displayName: Assemble Arcade assets
+      - publish: output/nugets
+        artifact: nuget
+        condition: always()
+        displayName: Upload NuGet packages
+      - publish: output/arcade-assets/Shipping
+        artifact: arcade_shipping
+        condition: always()
+        displayName: Upload Arcade Shipping assets
+      - publish: output/arcade-assets/NonShipping
+        artifact: arcade_nonshipping
+        condition: always()
+        displayName: Upload Arcade NonShipping assets
+      - publish: output/pdbs
+        artifact: PdbArtifacts
+        condition: always()
+        displayName: Upload loose PDBs
+      - publish: output/binlogs
+        artifact: pack_logs
         condition: always()
         displayName: Upload Logs
 
