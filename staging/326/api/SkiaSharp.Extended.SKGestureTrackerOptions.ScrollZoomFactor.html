@@ -139,8 +139,9 @@ Property ScrollZoomFactor  <a class="header-action link-secondary" title="View s
 <h4 class="section">Property Value</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd><p>A multiplier applied to each scroll tick's <a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.Delta.html#SkiaSharp_Extended_SKScrollGestureEventArgs_Delta">Delta</a>.Y
-to compute the scale change. The default is <code>0.1</code>. Must be positive.</p>
+  <dd><p>The proportional scale change applied per wheel notch, where a
+<a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.Delta.html#SkiaSharp_Extended_SKScrollGestureEventArgs_Delta">Delta</a>.Y value of <code>120</code> represents one notch.
+The default is <code>0.1</code> (10% per notch). Must be positive.</p>
 </dd>
 </dl>
 
@@ -176,7 +177,7 @@ to compute the scale change. The default is <code>0.1</code>. Must be positive.<
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 0778d7c
+          source: PR #326 · 6370bf7
         </div>
       </div>
     </footer>

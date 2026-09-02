@@ -140,9 +140,11 @@ Property Delta  <a class="header-action link-secondary" title="View source" href
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
   <dd><p>An <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a> where <code>X</code> is the horizontal scroll amount and <code>Y</code> is the
-vertical scroll amount. Positive <code>Y</code> typically indicates scrolling up or zooming in.
+vertical scroll amount in v120 units. Positive <code>Y</code> indicates scrolling up or zooming in.
+A value of <code>120</code> represents one discrete wheel notch; continuous input can be smaller.
 When <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.IsScrollZoomEnabled.html#SkiaSharp_Extended_SKGestureTrackerOptions_IsScrollZoomEnabled">IsScrollZoomEnabled</a> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>, <code>Y</code>
-is multiplied by <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.ScrollZoomFactor.html#SkiaSharp_Extended_SKGestureTrackerOptions_ScrollZoomFactor">ScrollZoomFactor</a> to determine the zoom change.</p>
+is converted to wheel notches and multiplied by
+<a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.ScrollZoomFactor.html#SkiaSharp_Extended_SKGestureTrackerOptions_ScrollZoomFactor">ScrollZoomFactor</a> to determine the zoom change.</p>
 </dd>
 </dl>
 
@@ -172,7 +174,7 @@ is multiplied by <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOption
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 0778d7c
+          source: PR #326 · 6370bf7
         </div>
       </div>
     </footer>

@@ -192,7 +192,9 @@ void OnPointerUp(long id, SKPoint location)
 <p>Once a <code>PanDetected</code> handler sets <code>Handled = true</code>, the tracker skips viewport movement and
 suppresses fling for the remainder of that gesture.</p>
 <h2 id="scroll-mouse-wheel">Scroll (Mouse Wheel)</h2>
-<p>Mouse wheel zoom. Call <code>ProcessMouseWheel</code> to feed wheel events.</p>
+<p>Mouse wheel zoom. Call <code>ProcessMouseWheel</code> with v120 deltas: <code>120</code> represents one discrete
+wheel notch, positive Y scrolls up, and continuous trackpad input can use proportional
+sub-120 values.</p>
 <p>On Mac Catalyst, use a native scroll-only <code>UIPanGestureRecognizer</code> because
 <code>SKCanvasView.Touch</code> does not emit wheel or trackpad-scroll events. The MAUI sample contains
 the platform adapter.</p>
@@ -253,7 +255,7 @@ tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 0778d7c
+          source: PR #326 · 6370bf7
         </div>
       </div>
     </footer>

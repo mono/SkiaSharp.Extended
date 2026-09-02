@@ -155,9 +155,8 @@ Class SKScrollGestureEventArgs  <a class="header-action link-secondary" title="V
   <div class="markdown level0 remarks"><p>Scroll events are raised when the mouse wheel is rotated or a trackpad scroll gesture
 is performed. The <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a> uses <a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.Delta.html#SkiaSharp_Extended_SKScrollGestureEventArgs_Delta">Delta</a>.Y for scroll-wheel zoom
 when <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.IsScrollZoomEnabled.html#SkiaSharp_Extended_SKGestureTrackerOptions_IsScrollZoomEnabled">IsScrollZoomEnabled</a> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>.</p>
-<p><strong>Platform note:</strong> The sign convention for scroll deltas may vary by platform
-and input device. Typically, positive <a class="xref" href="SkiaSharp.Extended.SKScrollGestureEventArgs.Delta.html#SkiaSharp_Extended_SKScrollGestureEventArgs_Delta">Delta</a>.Y indicates scrolling up (or zooming in),
-but this depends on the platform's scroll event normalization.</p>
+<p>Scroll deltas use the v120 convention: <code>120</code> represents one discrete wheel notch,
+positive Y scrolls up, and continuous trackpad input may produce proportional sub-120 values.</p>
 <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.ScrollDetected.html">ScrollDetected</a>
 <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.ProcessMouseWheel.html#SkiaSharp_Extended_SKGestureTracker_ProcessMouseWheel_SkiaSharp_SKPoint_System_Single_System_Single_">ProcessMouseWheel(SKPoint, float, float)</a>
 <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.ScrollDetected.html">ScrollDetected</a>
@@ -207,7 +206,7 @@ but this depends on the platform's scroll event normalization.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · 0778d7c
+          source: PR #326 · 6370bf7
         </div>
       </div>
     </footer>
