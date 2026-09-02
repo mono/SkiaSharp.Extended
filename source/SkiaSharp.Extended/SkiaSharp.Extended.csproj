@@ -5,6 +5,8 @@
     <AssemblyName>SkiaSharp.Extended</AssemblyName>
     <RootNamespace>SkiaSharp.Extended</RootNamespace>
     <!-- <Nullable>enable</Nullable> -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -12,6 +14,10 @@
     <Title>SkiaSharp.Extended</Title>
     <Description>This package adds many additional features and utilities for use with SkiaSharp.</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SkiaSharp.Extended.Tests" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="SkiaSharp" />
