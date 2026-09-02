@@ -7,7 +7,7 @@ namespace SkiaSharpDemo.Demos;
 
 public partial class GesturePage
 {
-	private const float ScrollPointsPerUnit = 40f;
+	private const float ScrollPointsPerNotch = 40f;
 
 	private PointerGestureRecognizer? _pointerGestureRecognizer;
 	private UIPinchGestureRecognizer? _pinchGestureRecognizer;
@@ -128,8 +128,8 @@ public partial class GesturePage
 
 		_tracker.ProcessMouseWheel(
 			GetPointerFocalPoint(),
-			(float)translation.X / ScrollPointsPerUnit,
-			(float)-translation.Y / ScrollPointsPerUnit);
+			(float)(translation.X * 120.0 / ScrollPointsPerNotch),
+			(float)(-translation.Y * 120.0 / ScrollPointsPerNotch));
 	}
 
 	private SKPoint GetPointerFocalPoint()

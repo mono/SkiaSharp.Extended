@@ -205,7 +205,12 @@
     {
         var location = GetCanvasLocation(e);
         // Convert wheel delta to SkiaSharp convention (positive = zoom in)
-        var deltaY = -(float)e.DeltaY / 100f;
+        var deltaY = e.DeltaMode switch
+        {
+            0 => -(float)e.DeltaY * 1.2f, // pixels: ~100 px per notch
+            1 => -(float)e.DeltaY * 40f,  // lines: ~3 lines per notch
+            _ => -(float)e.DeltaY * 120f, // pages
+        };
         _tracker.ProcessMouseWheel(location, 0, deltaY);
         Invalidate();
     }

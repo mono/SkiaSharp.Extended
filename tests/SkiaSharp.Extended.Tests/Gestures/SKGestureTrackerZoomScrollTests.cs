@@ -107,9 +107,9 @@ public class SKGestureTrackerZoomScrollTests
 	{
 		var tracker = CreateTracker();
 
-		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 1f);
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 120f);
 
-		Assert.True(tracker.Scale > 1.0f, $"Scale should increase on scroll up, was {tracker.Scale}");
+		Assert.Equal(1.1f, tracker.Scale, 3);
 	}
 
 	[Fact]
@@ -117,9 +117,9 @@ public class SKGestureTrackerZoomScrollTests
 	{
 		var tracker = CreateTracker();
 
-		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, -1f);
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, -120f);
 
-		Assert.True(tracker.Scale < 1.0f, $"Scale should decrease on scroll down, was {tracker.Scale}");
+		Assert.Equal(0.9f, tracker.Scale, 3);
 	}
 
 	[Fact]
@@ -129,7 +129,7 @@ public class SKGestureTrackerZoomScrollTests
 		var transformChanged = false;
 		tracker.TransformChanged += (s, e) => transformChanged = true;
 
-		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 1f);
+		tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 120f);
 
 		Assert.True(transformChanged);
 	}
@@ -142,12 +142,12 @@ public class SKGestureTrackerZoomScrollTests
 		tracker.Options.MaxScale = 3f;
 
 		for (int i = 0; i < 100; i++)
-			tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, -1f);
+			tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, -120f);
 
 		Assert.True(tracker.Scale >= 0.5f, "Scale should not go below MinScale");
 
 		for (int i = 0; i < 200; i++)
-			tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 1f);
+			tracker.ProcessMouseWheel(new SKPoint(200, 200), 0, 120f);
 
 		Assert.True(tracker.Scale <= 3f, "Scale should not exceed MaxScale");
 	}

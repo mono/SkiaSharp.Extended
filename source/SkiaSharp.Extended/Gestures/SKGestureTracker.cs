@@ -39,6 +39,8 @@ namespace SkiaSharp.Extended;
 /// </remarks>
 public sealed class SKGestureTracker : IDisposable
 {
+	private const float WheelDeltaPerNotch = 120f;
+
 	private readonly SKGestureDetector _engine;
 	private bool _disposed;
 
@@ -138,8 +140,8 @@ public sealed class SKGestureTracker : IDisposable
 	/// Processes a mouse wheel (scroll) event.
 	/// </summary>
 	/// <param name="location">The position of the mouse cursor in view coordinates.</param>
-	/// <param name="deltaX">The horizontal scroll delta.</param>
-	/// <param name="deltaY">The vertical scroll delta.</param>
+	/// <param name="deltaX">The horizontal scroll delta in v120 units.</param>
+	/// <param name="deltaY">The vertical scroll delta in v120 units, where <c>120</c> is one wheel notch.</param>
 	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
 	public bool ProcessMouseWheel(SKPoint location, float deltaX, float deltaY)
 		=> _engine.ProcessMouseWheel(location, deltaX, deltaY);
@@ -675,7 +677,8 @@ public sealed class SKGestureTracker : IDisposable
 		if (!IsScrollZoomEnabled || e.Delta.Y == 0)
 			return;
 
-		var scaleDelta = Math.Max(0.01f, 1f + e.Delta.Y * Options.ScrollZoomFactor);
+		var notchDelta = e.Delta.Y / WheelDeltaPerNotch;
+		var scaleDelta = Math.Max(0.01f, 1f + notchDelta * Options.ScrollZoomFactor);
 		var newScale = Clamp(_scale * scaleDelta, Options.MinScale, Options.MaxScale);
 		AdjustOffsetForPivot(e.Location, _scale, newScale, _rotation, _rotation);
 		_scale = newScale;

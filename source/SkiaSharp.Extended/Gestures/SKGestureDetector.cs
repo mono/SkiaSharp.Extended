@@ -462,8 +462,8 @@ internal sealed class SKGestureDetector : IDisposable
 	/// Processes a mouse wheel (scroll) event.
 	/// </summary>
 	/// <param name="location">The location of the mouse pointer.</param>
-	/// <param name="deltaX">The horizontal scroll delta.</param>
-	/// <param name="deltaY">The vertical scroll delta.</param>
+	/// <param name="deltaX">The horizontal scroll delta in v120 units.</param>
+	/// <param name="deltaY">The vertical scroll delta in v120 units, where <c>120</c> is one wheel notch.</param>
 	/// <returns>True if the event was handled.</returns>
 	public bool ProcessMouseWheel(SKPoint location, float deltaX, float deltaY)
 	{
