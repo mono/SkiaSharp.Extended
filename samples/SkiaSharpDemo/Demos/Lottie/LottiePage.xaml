@@ -5,10 +5,24 @@
              x:Class="SkiaSharpDemo.Demos.LottiePage"
              Title="Lottie">
 
-    <Grid RowDefinitions="*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto">
 
+        <!-- Animation Type Picker -->
+        <VerticalStackLayout Padding="12" Spacing="8" BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#2A2A2A}">
+            <Label Text="Animation Type:" FontAttributes="Bold" />
+            <Picker x:Name="animationTypePicker" 
+                    SelectedIndexChanged="OnAnimationTypeChanged"
+                    ItemsSource="{Binding AnimationTypes}"
+                    SelectedItem="{Binding SelectedAnimationType}" />
+            <Label Text="{Binding AnimationDescription}" 
+                   FontSize="12" 
+                   TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+        </VerticalStackLayout>
+
+        <!-- Lottie Animation View -->
         <controls:SKLottieView x:Name="lottieView"
-                               Source="Lottie/dotnetbot.json"
+                               Grid.Row="1"
+                               Source="{Binding LottieSource}"
                                Duration="{Binding Duration}"
                                Progress="{Binding Progress}"
                                IsAnimationEnabled="{Binding IsPlaying}"
@@ -20,11 +34,13 @@
                                AnimationCompleted="OnAnimationCompleted" />
 
         <BoxView Color="Green" Opacity="0.5" CornerRadius="12"
+                 Grid.Row="1"
                  WidthRequest="25" HeightRequest="24" Margin="24"
                  HorizontalOptions="End" VerticalOptions="Start"
                  IsVisible="{Binding IsComplete, Source={Reference lottieView}}" />
 
-        <VerticalStackLayout Spacing="12" Padding="12" Grid.Row="1">
+        <!-- Playback Controls -->
+        <VerticalStackLayout Spacing="12" Padding="12" Grid.Row="2">
 
             <Slider Minimum="0"
                     Maximum="{Binding Duration, Converter={StaticResource TimeSpanToDouble}, ConverterParameter=1}"
