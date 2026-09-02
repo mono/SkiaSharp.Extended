@@ -35,4 +35,10 @@
     <ProjectReference Include="..\..\source\SkiaSharp.Extended\SkiaSharp.Extended.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Deep Zoom testgrid tiles served from wwwroot/deepzoom/ -->
+    <Content Include="..\..\resources\collections\testgrid\testgrid.dzi" Link="wwwroot\deepzoom\testgrid.dzi" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\resources\collections\testgrid\testgrid_files\**" Link="wwwroot\deepzoom\testgrid_files\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

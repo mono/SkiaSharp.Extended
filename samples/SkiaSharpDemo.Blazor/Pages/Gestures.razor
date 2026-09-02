@@ -1,0 +1,547 @@
+@page "/gestures"
+@implements IDisposable
+
+<PageTitle>Gestures</PageTitle>
+
+<h1>Gestures</h1>
+
+<p>
+    Interactive demo using <code>SKGestureTracker</code> for pan, zoom, rotate, tap, long press, and fling gestures.
+    <br />
+    <strong>Try:</strong> Drag to pan • Scroll to zoom • Double-click to zoom in/reset • Click stickers to select • Drag stickers to move
+</p>
+
+<div class="gesture-container" 
+     @ref="_containerRef"
+     @onpointerdown="OnPointerDown"
+     @onpointermove="OnPointerMove"
+     @onpointerup="OnPointerUp"
+     @onpointercancel="OnPointerCancel"
+     @onwheel="OnWheel"
+     @onwheel:preventDefault
+     style="width: 100%; height: 600px; touch-action: none; cursor: grab;">
+    <SKCanvasView @ref="_canvasView"
+                  OnPaintSurface="OnPaintSurface"
+                  style="width: 100%; height: 100%;" />
+</div>
+
+<div class="status-panel">
+    <div class="status-label">@_statusText</div>
+    @foreach (var log in _eventLog)
+    {
+        <div class="event-log">@log</div>
+    }
+</div>
+
+<div class="settings-panel">
+    <button class="btn btn-sm btn-outline-secondary mb-2" @onclick="ToggleSettings">
+        ⚙️ @(_showSettings ? "Hide" : "Show") Settings
+    </button>
+
+    @if (_showSettings)
+    {
+        <div class="settings-grid">
+            <h6>Feature Toggles</h6>
+            <div class="toggle-row">
+                <label><input type="checkbox" checked="@_tracker.IsTapEnabled" @onchange="e => { _tracker.IsTapEnabled = (bool)e.Value!; }" /> Tap</label>
+                <label><input type="checkbox" checked="@_tracker.IsDoubleTapEnabled" @onchange="e => { _tracker.IsDoubleTapEnabled = (bool)e.Value!; }" /> Double Tap</label>
+                <label><input type="checkbox" checked="@_tracker.IsLongPressEnabled" @onchange="e => { _tracker.IsLongPressEnabled = (bool)e.Value!; }" /> Long Press</label>
+                <label><input type="checkbox" checked="@_tracker.IsHoverEnabled" @onchange="e => { _tracker.IsHoverEnabled = (bool)e.Value!; }" /> Hover</label>
+            </div>
+            <div class="toggle-row">
+                <label><input type="checkbox" checked="@_tracker.IsPanEnabled" @onchange="e => { _tracker.IsPanEnabled = (bool)e.Value!; }" /> Pan</label>
+                <label><input type="checkbox" checked="@_tracker.IsPinchEnabled" @onchange="e => { _tracker.IsPinchEnabled = (bool)e.Value!; }" /> Pinch</label>
+                <label><input type="checkbox" checked="@_tracker.IsRotateEnabled" @onchange="e => { _tracker.IsRotateEnabled = (bool)e.Value!; }" /> Rotate</label>
+                <label><input type="checkbox" checked="@_tracker.IsFlingEnabled" @onchange="e => { _tracker.IsFlingEnabled = (bool)e.Value!; }" /> Fling</label>
+            </div>
+            <div class="toggle-row">
+                <label><input type="checkbox" checked="@_tracker.IsDoubleTapZoomEnabled" @onchange="e => { _tracker.IsDoubleTapZoomEnabled = (bool)e.Value!; }" /> Double Tap Zoom</label>
+                <label><input type="checkbox" checked="@_tracker.IsScrollZoomEnabled" @onchange="e => { _tracker.IsScrollZoomEnabled = (bool)e.Value!; }" /> Scroll Zoom</label>
+                <label><input type="checkbox" checked="@_enableTap" @onchange="e => { _enableTap = (bool)e.Value!; }" /> App Tap</label>
+                <label><input type="checkbox" checked="@_enableDrag" @onchange="e => { _enableDrag = (bool)e.Value!; }" /> App Drag</label>
+            </div>
+
+            <h6 class="mt-2">Options</h6>
+            <div class="slider-row">
+                <label>Min Scale: @_tracker.Options.MinScale.ToString("F1")</label>
+                <input type="range" min="0.1" max="1.0" step="0.1" value="@_tracker.Options.MinScale" @onchange="e => { _tracker.Options.MinScale = float.Parse((string)e.Value!); }" />
+            </div>
+            <div class="slider-row">
+                <label>Max Scale: @_tracker.Options.MaxScale.ToString("F1")</label>
+                <input type="range" min="2" max="20" step="1" value="@_tracker.Options.MaxScale" @onchange="e => { _tracker.Options.MaxScale = float.Parse((string)e.Value!); }" />
+            </div>
+            <div class="slider-row">
+                <label>Double Tap Zoom: @_tracker.Options.DoubleTapZoomFactor.ToString("F1")x</label>
+                <input type="range" min="1.5" max="5.0" step="0.5" value="@_tracker.Options.DoubleTapZoomFactor" @onchange="e => { _tracker.Options.DoubleTapZoomFactor = float.Parse((string)e.Value!); }" />
+            </div>
+            <div class="slider-row">
+                <label>Scroll Zoom Factor: @_tracker.Options.ScrollZoomFactor.ToString("F2")</label>
+                <input type="range" min="0.01" max="0.5" step="0.01" value="@_tracker.Options.ScrollZoomFactor" @onchange="e => { _tracker.Options.ScrollZoomFactor = float.Parse((string)e.Value!); }" />
+            </div>
+
+            <h6 class="mt-2">Current State</h6>
+            <div class="state-info">
+                Scale: @_tracker.Scale.ToString("F2")x &nbsp;|&nbsp;
+                Rotation: @_tracker.Rotation.ToString("F1")° &nbsp;|&nbsp;
+                Offset: (@_tracker.Offset.X.ToString("F0"), @_tracker.Offset.Y.ToString("F0"))
+            </div>
+
+            <button class="btn btn-sm btn-warning mt-2" @onclick="ResetView">Reset View</button>
+        </div>
+    }
+</div>
+
+@code {
+    private SKCanvasView? _canvasView;
+    private ElementReference _containerRef;
+    private readonly SKGestureTracker _tracker = new();
+
+    // Sticker data for demonstration
+    private readonly List<Sticker> _stickers = new()
+    {
+        new Sticker { Position = new SKPoint(100, 100), Size = 80, Color = SKColors.Red, Label = "1" },
+        new Sticker { Position = new SKPoint(200, 200), Size = 60, Color = SKColors.Green, Label = "2" },
+        new Sticker { Position = new SKPoint(300, 150), Size = 70, Color = SKColors.Blue, Label = "3" },
+    };
+    private Sticker? _selectedSticker;
+    private readonly Queue<string> _eventLog = new();
+    private const int MaxLogEntries = 5;
+
+    // Canvas state
+    private string _statusText = "Touch/click the canvas to begin";
+    private int _canvasWidth;
+    private int _canvasHeight;
+    private float _displayScale = 1f;
+
+    // Feature toggles
+    private bool _enableTap = true;
+    private bool _enableDrag = true;
+    private bool _showSettings;
+
+    private void ToggleSettings() => _showSettings = !_showSettings;
+
+    private void ResetView()
+    {
+        _tracker.Reset();
+        _selectedSticker = null;
+        Invalidate();
+    }
+
+    protected override void OnInitialized()
+    {
+        SubscribeTrackerEvents();
+    }
+
+    public void Dispose()
+    {
+        UnsubscribeTrackerEvents();
+        _tracker.Dispose();
+    }
+
+    private void SubscribeTrackerEvents()
+    {
+        _tracker.TapDetected += OnTap;
+        _tracker.DoubleTapDetected += OnDoubleTap;
+        _tracker.LongPressDetected += OnLongPress;
+        _tracker.PanDetected += OnPan;
+        _tracker.PinchDetected += OnPinch;
+        _tracker.RotateDetected += OnRotate;
+        _tracker.FlingDetected += OnFling;
+        _tracker.FlingUpdated += OnFlingUpdated;
+        _tracker.FlingCompleted += OnFlingCompleted;
+        _tracker.ScrollDetected += OnScroll;
+        _tracker.HoverDetected += OnHover;
+        _tracker.DragStarted += OnDragStarted;
+        _tracker.DragUpdated += OnDragUpdated;
+        _tracker.DragEnded += OnDragEnded;
+        _tracker.TransformChanged += OnTransformChanged;
+    }
+
+    private void UnsubscribeTrackerEvents()
+    {
+        _tracker.TapDetected -= OnTap;
+        _tracker.DoubleTapDetected -= OnDoubleTap;
+        _tracker.LongPressDetected -= OnLongPress;
+        _tracker.PanDetected -= OnPan;
+        _tracker.PinchDetected -= OnPinch;
+        _tracker.RotateDetected -= OnRotate;
+        _tracker.FlingDetected -= OnFling;
+        _tracker.FlingUpdated -= OnFlingUpdated;
+        _tracker.FlingCompleted -= OnFlingCompleted;
+        _tracker.ScrollDetected -= OnScroll;
+        _tracker.HoverDetected -= OnHover;
+        _tracker.DragStarted -= OnDragStarted;
+        _tracker.DragUpdated -= OnDragUpdated;
+        _tracker.DragEnded -= OnDragEnded;
+        _tracker.TransformChanged -= OnTransformChanged;
+    }
+
+    #region Pointer Event Handlers
+
+    private void OnPointerDown(PointerEventArgs e)
+    {
+        var location = GetCanvasLocation(e);
+        var isMouse = e.PointerType == "mouse";
+        _tracker.ProcessTouchDown(e.PointerId, location, isMouse);
+        Invalidate();
+    }
+
+    private void OnPointerMove(PointerEventArgs e)
+    {
+        var location = GetCanvasLocation(e);
+        var inContact = e.Pressure > 0 || (e.Buttons & 1) != 0;
+        _tracker.ProcessTouchMove(e.PointerId, location, inContact);
+        Invalidate();
+    }
+
+    private void OnPointerUp(PointerEventArgs e)
+    {
+        var location = GetCanvasLocation(e);
+        var isMouse = e.PointerType == "mouse";
+        _tracker.ProcessTouchUp(e.PointerId, location, isMouse);
+        Invalidate();
+    }
+
+    private void OnPointerCancel(PointerEventArgs e)
+    {
+        _tracker.ProcessTouchCancel(e.PointerId);
+        Invalidate();
+    }
+
+    private void OnWheel(WheelEventArgs e)
+    {
+        var location = GetCanvasLocation(e);
+        // Convert wheel delta to SkiaSharp convention (positive = zoom in)
+        var deltaY = -(float)e.DeltaY / 100f;
+        _tracker.ProcessMouseWheel(location, 0, deltaY);
+        Invalidate();
+    }
+
+    private SKPoint GetCanvasLocation(MouseEventArgs e)
+    {
+        // OffsetX/OffsetY are in CSS pixels; scale to device pixels to match the canvas
+        return new SKPoint((float)e.OffsetX * _displayScale, (float)e.OffsetY * _displayScale);
+    }
+
+    private void Invalidate()
+    {
+        _canvasView?.Invalidate();
+        StateHasChanged();
+    }
+
+    #endregion
+
+    #region Paint
+
+    private void OnPaintSurface(SKPaintSurfaceEventArgs e)
+    {
+        var canvas = e.Surface.Canvas;
+        var width = e.Info.Width;
+        var height = e.Info.Height;
+
+        _canvasWidth = width;
+        _canvasHeight = height;
+
+        // Calculate display scale from canvas pixel size vs CSS size
+        // PointerEventArgs provides CSS pixels, but canvas size is in device pixels
+        // This handles high-DPI displays where devicePixelRatio > 1
+        const float expectedCssHeight = 600f;
+        _displayScale = height / expectedCssHeight;
+
+        // Clear background
+        canvas.Clear(SKColors.White);
+
+        // Apply transform from the tracker
+        canvas.Save();
+        canvas.Concat(_tracker.Matrix);
+
+        // Draw grid background
+        DrawGrid(canvas, width, height);
+
+        // Draw stickers
+        foreach (var sticker in _stickers)
+        {
+            DrawSticker(canvas, sticker, sticker == _selectedSticker);
+        }
+
+        canvas.Restore();
+
+        // Draw crosshair at center for reference
+        using var crosshairPaint = new SKPaint
+        {
+            Color = SKColors.Gray.WithAlpha(100),
+            StrokeWidth = 1,
+            IsAntialias = true
+        };
+        canvas.DrawLine(width / 2f, 0, width / 2f, height, crosshairPaint);
+        canvas.DrawLine(0, height / 2f, width, height / 2f, crosshairPaint);
+    }
+
+    private void DrawGrid(SKCanvas canvas, int width, int height)
+    {
+        const int gridSize = 40;
+
+        using var lightPaint = new SKPaint { Color = new SKColor(240, 240, 240) };
+        using var darkPaint = new SKPaint { Color = new SKColor(220, 220, 220) };
+
+        // Expand grid to fill when zoomed out
+        var scale = _tracker.Scale;
+        var extra = (int)(Math.Max(width, height) / scale) + gridSize * 4;
+        var startX = -(extra / gridSize) * gridSize;
+        var startY = startX;
+        var endX = width - startX;
+        var endY = height - startY;
+
+        for (int y = startY, row = 0; y < endY; y += gridSize, row++)
+        {
+            for (int x = startX, col = 0; x < endX; x += gridSize, col++)
+            {
+                var isLight = (col + row) % 2 == 0;
+                var rect = new SKRect(x, y, x + gridSize, y + gridSize);
+                canvas.DrawRect(rect, isLight ? lightPaint : darkPaint);
+            }
+        }
+    }
+
+    private void DrawSticker(SKCanvas canvas, Sticker sticker, bool isSelected)
+    {
+        var radius = sticker.Size / 2f;
+
+        // Draw shadow
+        using var shadowPaint = new SKPaint
+        {
+            Color = SKColors.Black.WithAlpha(50),
+            IsAntialias = true,
+            MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 5)
+        };
+        canvas.DrawCircle(sticker.Position.X + 3, sticker.Position.Y + 3, radius, shadowPaint);
+
+        // Draw sticker fill
+        using var fillPaint = new SKPaint
+        {
+            Color = sticker.Color,
+            IsAntialias = true,
+            Style = SKPaintStyle.Fill
+        };
+        canvas.DrawCircle(sticker.Position, radius, fillPaint);
+
+        // Draw selection ring
+        if (isSelected)
+        {
+            using var selectPaint = new SKPaint
+            {
+                Color = SKColors.Yellow,
+                IsAntialias = true,
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 4
+            };
+            canvas.DrawCircle(sticker.Position, radius + 4, selectPaint);
+        }
+
+        // Draw border
+        using var borderPaint = new SKPaint
+        {
+            Color = SKColors.White,
+            IsAntialias = true,
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = 2
+        };
+        canvas.DrawCircle(sticker.Position, radius, borderPaint);
+
+        // Draw label
+        using var textFont = new SKFont
+        {
+            Size = sticker.Size * 0.4f,
+            Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold)
+        };
+        using var textPaint = new SKPaint
+        {
+            Color = SKColors.White,
+            IsAntialias = true
+        };
+        canvas.DrawText(sticker.Label, sticker.Position.X, sticker.Position.Y + textFont.Size * 0.35f, SKTextAlign.Center, textFont, textPaint);
+    }
+
+    #endregion
+
+    #region Gesture Event Handlers
+
+    private void OnTap(object? sender, SKTapGestureEventArgs e)
+    {
+        if (!_enableTap) return;
+        LogEvent($"Tap at ({e.Location.X:F0}, {e.Location.Y:F0})");
+
+        var hitSticker = HitTest(e.Location);
+        if (hitSticker != null)
+        {
+            _selectedSticker = hitSticker;
+            _statusText = $"Selected: Sticker {hitSticker.Label}";
+        }
+        else
+        {
+            _selectedSticker = null;
+            _statusText = "No selection";
+        }
+
+        Invalidate();
+    }
+
+    private void OnDoubleTap(object? sender, SKTapGestureEventArgs e)
+    {
+        LogEvent($"Double tap ({e.TapCount}x) at ({e.Location.X:F0}, {e.Location.Y:F0})");
+
+        var hitSticker = HitTest(e.Location);
+        if (hitSticker != null)
+        {
+            _selectedSticker = hitSticker;
+            _statusText = $"Selected: Sticker {hitSticker.Label}";
+            e.Handled = true;
+            Invalidate();
+        }
+    }
+
+    private void OnLongPress(object? sender, SKLongPressGestureEventArgs e)
+    {
+        LogEvent($"Long press at ({e.Location.X:F0}, {e.Location.Y:F0})");
+
+        var hitSticker = HitTest(e.Location);
+        if (hitSticker != null)
+        {
+            _selectedSticker = hitSticker;
+            _statusText = $"Long press selected: Sticker {hitSticker.Label}";
+        }
+
+        Invalidate();
+    }
+
+    private void OnPan(object? sender, SKPanGestureEventArgs e)
+    {
+        _statusText = $"Pan: Δ({e.Delta.X:F1}, {e.Delta.Y:F1})";
+    }
+
+    private void OnPinch(object? sender, SKPinchGestureEventArgs e)
+    {
+        LogEvent($"Pinch scale: {e.ScaleDelta:F2}");
+        _statusText = $"Scale: {_tracker.Scale:F2}";
+    }
+
+    private void OnRotate(object? sender, SKRotateGestureEventArgs e)
+    {
+        LogEvent($"Rotate: {e.RotationDelta:F1}°");
+        _statusText = $"Rotation: {_tracker.Rotation:F1}°";
+    }
+
+    private void OnFling(object? sender, SKFlingGestureEventArgs e)
+    {
+        LogEvent($"Fling: ({e.Velocity.X:F0}, {e.Velocity.Y:F0}) px/s");
+        _statusText = $"Flinging at {e.Speed:F0} px/s";
+    }
+
+    private void OnFlingUpdated(object? sender, SKFlingGestureEventArgs e)
+    {
+        _statusText = $"Flinging... ({e.Speed:F0} px/s)";
+    }
+
+    private void OnFlingCompleted(object? sender, EventArgs e)
+    {
+        _statusText = "Fling ended";
+    }
+
+    private void OnScroll(object? sender, SKScrollGestureEventArgs e)
+    {
+        _statusText = $"Scroll zoom: {_tracker.Scale:F2}x";
+    }
+
+    private void OnHover(object? sender, SKHoverGestureEventArgs e)
+    {
+        _statusText = $"Hover: ({e.Location.X:F0}, {e.Location.Y:F0})";
+    }
+
+    private void OnDragStarted(object? sender, SKDragGestureEventArgs e)
+    {
+        if (!_enableDrag) return;
+        LogEvent($"Drag started at ({e.Location.X:F0}, {e.Location.Y:F0})");
+
+        if (_selectedSticker != null)
+        {
+            _statusText = $"Dragging Sticker {_selectedSticker.Label}";
+            e.Handled = true;
+        }
+    }
+
+    private void OnDragUpdated(object? sender, SKDragGestureEventArgs e)
+    {
+        if (!_enableDrag) return;
+
+        if (_selectedSticker != null)
+        {
+            var matrix = _tracker.Matrix;
+            if (matrix.TryInvert(out var inverse))
+            {
+                var contentDelta = inverse.MapVector(e.Delta.X, e.Delta.Y);
+                _selectedSticker.Position = new SKPoint(
+                    _selectedSticker.Position.X + contentDelta.X,
+                    _selectedSticker.Position.Y + contentDelta.Y);
+            }
+
+            e.Handled = true;
+            Invalidate();
+        }
+    }
+
+    private void OnDragEnded(object? sender, SKDragGestureEventArgs e)
+    {
+        if (!_enableDrag) return;
+        LogEvent($"Drag ended at ({e.Location.X:F0}, {e.Location.Y:F0})");
+        _statusText = "Drag completed";
+    }
+
+    private void OnTransformChanged(object? sender, EventArgs e)
+    {
+        Invalidate();
+    }
+
+    #endregion
+
+    #region Helpers
+
+    private Sticker? HitTest(SKPoint location)
+    {
+        if (_canvasWidth <= 0 || _canvasHeight <= 0)
+            return null;
+
+        var matrix = _tracker.Matrix;
+        if (!matrix.TryInvert(out var inverse))
+            return null;
+
+        var transformed = inverse.MapPoint(location);
+
+        // Check stickers in reverse order (top to bottom)
+        for (int i = _stickers.Count - 1; i >= 0; i--)
+        {
+            var sticker = _stickers[i];
+            var dist = SKPoint.Distance(transformed, sticker.Position);
+            if (dist <= sticker.Size / 2)
+                return sticker;
+        }
+
+        return null;
+    }
+
+    private void LogEvent(string message)
+    {
+        _eventLog.Enqueue($"[{DateTime.Now:HH:mm:ss}] {message}");
+        while (_eventLog.Count > MaxLogEntries)
+            _eventLog.Dequeue();
+    }
+
+    private class Sticker
+    {
+        public SKPoint Position { get; set; }
+        public float Size { get; set; }
+        public SKColor Color { get; set; }
+        public string Label { get; set; } = "";
+    }
+
+    #endregion
+}
