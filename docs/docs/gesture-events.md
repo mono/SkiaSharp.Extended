@@ -131,7 +131,9 @@ suppresses fling for the remainder of that gesture.
 
 ## Scroll (Mouse Wheel)
 
-Mouse wheel zoom. Call `ProcessMouseWheel` to feed wheel events.
+Mouse wheel zoom. Call `ProcessMouseWheel` with v120 deltas: `120` represents one discrete
+wheel notch, positive Y scrolls up, and continuous trackpad input can use proportional
+sub-120 values.
 
 On Mac Catalyst, use a native scroll-only `UIPanGestureRecognizer` because
 `SKCanvasView.Touch` does not emit wheel or trackpad-scroll events. The MAUI sample contains

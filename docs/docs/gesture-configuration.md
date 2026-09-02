@@ -25,7 +25,7 @@ var options = new SKGestureTrackerOptions
     ZoomAnimationInterval = TimeSpan.FromMilliseconds(16),
 
     // Scroll zoom
-    ScrollZoomFactor = 0.1f,  // Zoom per scroll unit (default: 0.1)
+    ScrollZoomFactor = 0.1f,  // 10% zoom per v120 wheel notch
 
     // Fling animation
     FlingFriction = 0.08f,    // Velocity decay per frame (default: 0.08)

@@ -191,8 +191,9 @@ public sealed class SKGestureTrackerOptions
 	/// Gets or sets the scale sensitivity for mouse scroll-wheel zoom.
 	/// </summary>
 	/// <value>
-	/// A multiplier applied to each scroll tick's <see cref="SKScrollGestureEventArgs.Delta"/>.Y
-	/// to compute the scale change. The default is <c>0.1</c>. Must be positive.
+	/// The proportional scale change applied per wheel notch, where a
+	/// <see cref="SKScrollGestureEventArgs.Delta"/>.Y value of <c>120</c> represents one notch.
+	/// The default is <c>0.1</c> (10% per notch). Must be positive.
 	/// </value>
 	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero or negative.</exception>
 	public float ScrollZoomFactor
