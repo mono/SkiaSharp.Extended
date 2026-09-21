@@ -11,7 +11,7 @@ public class SKConfettiEmitterBoundsTypeConverter : StringTypeConverter
 		if (value == null)
 			return null;
 
-		value = value?.Trim();
+		value = value.Trim();
 
 		if (string.Compare(value, "top", StringComparison.OrdinalIgnoreCase) == 0)
 			return SKConfettiEmitterBounds.Top;
@@ -28,15 +28,15 @@ public class SKConfettiEmitterBoundsTypeConverter : StringTypeConverter
 		if (string.Compare(value, "center", StringComparison.OrdinalIgnoreCase) == 0)
 			return SKConfettiEmitterBounds.Center;
 
-		if (value?.IndexOf(',') == value?.LastIndexOf(','))
+		if (value.IndexOf(',') == value.LastIndexOf(','))
 		{
 			var pointConverter = new PointTypeConverter();
-			var point = (Point)pointConverter.ConvertFromInvariantString(value);
+			var point = (Point)pointConverter.ConvertFromInvariantString(value)!;
 			return SKConfettiEmitterBounds.Point(point);
 		}
 
 		var rectConverter = new RectTypeConverter();
-		var rect = (Rect)rectConverter.ConvertFromInvariantString(value);
+		var rect = (Rect)rectConverter.ConvertFromInvariantString(value)!;
 		return SKConfettiEmitterBounds.Bounds(rect);
 	}
 }

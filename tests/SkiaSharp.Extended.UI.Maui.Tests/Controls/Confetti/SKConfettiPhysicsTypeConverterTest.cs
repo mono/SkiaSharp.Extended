@@ -38,7 +38,7 @@ namespace SkiaSharp.Extended.UI.Controls.Tests
 		{
 			var converter = new SKConfettiPhysicsTypeConverter();
 
-			var result = converter.ConvertFromInvariantString(null);
+			var result = converter.ConvertFromInvariantString((string)null!);
 
 			Assert.Null(result);
 		}

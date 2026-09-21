@@ -130,8 +130,8 @@ public class BottomTabBar : TemplatedView
 
 		if (selector != null)
 		{
-			selector.TranslateTo(tab.Frame.X, 0);
-			selector.ScaleXTo(tab.Frame.Width / selector.Width);
+			_ = selector.TranslateToAsync(tab.Frame.X, 0);
+			_ = selector.ScaleXToAsync(tab.Frame.Width / selector.Width);
 		}
 
 		foreach (VisualElement page in pages.Children)
@@ -147,7 +147,7 @@ public class BottomTabBar : TemplatedView
 
 		static async Task HideTab(VisualElement page)
 		{
-			await page.FadeTo(0, 100);
+			await page.FadeToAsync(0, 100);
 			page.IsVisible = false;
 		}
 
@@ -155,7 +155,7 @@ public class BottomTabBar : TemplatedView
 		{
 			page.Opacity = 0;
 			page.IsVisible = true;
-			await page.FadeTo(1, 100);
+			await page.FadeToAsync(1, 100);
 		}
 	}
 

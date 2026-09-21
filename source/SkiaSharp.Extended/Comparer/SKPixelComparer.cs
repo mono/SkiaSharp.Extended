@@ -624,7 +624,7 @@ namespace SkiaSharp.Extended
 			// Convert to platform color type so the returned image has the expected layout
 			using var resultBitmap = new SKBitmap(new SKImageInfo(width, height));
 			using (var canvas = new SKCanvas(resultBitmap))
-				canvas.DrawBitmap(diffBgra, 0, 0);
+				canvas.DrawBitmap(diffBgra, 0, 0, SKSamplingOptions.Default);
 
 			return SKImage.FromBitmap(resultBitmap);
 		}
@@ -716,7 +716,7 @@ namespace SkiaSharp.Extended
 			// Convert to platform color type so the returned image has the expected layout
 			using var resultBitmap = new SKBitmap(new SKImageInfo(width, height));
 			using (var canvas = new SKCanvas(resultBitmap))
-				canvas.DrawBitmap(diffBgra, 0, 0);
+				canvas.DrawBitmap(diffBgra, 0, 0, SKSamplingOptions.Default);
 
 			return SKImage.FromBitmap(resultBitmap);
 		}
@@ -753,7 +753,7 @@ namespace SkiaSharp.Extended
 			var bitmap = new SKBitmap(new SKImageInfo(width, height, SKColorType.Bgra8888, SKAlphaType.Unpremul));
 
 			using (var canvas = new SKCanvas(bitmap))
-				canvas.DrawImage(image, 0, 0);
+				canvas.DrawImage(image, 0, 0, SKSamplingOptions.Default);
 
 			return bitmap;
 		}

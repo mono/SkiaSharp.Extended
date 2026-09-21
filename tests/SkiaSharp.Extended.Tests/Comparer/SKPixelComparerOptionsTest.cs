@@ -10,7 +10,7 @@ namespace SkiaSharp.Extended.Tests
 			using var first = CreateTestImage(0xFF000000);
 			using var second = CreateTestImage(0xFF050505);
 
-			var result = SKPixelComparer.Compare(first, second, (SKPixelComparerOptions)null);
+			var result = SKPixelComparer.Compare(first, second, (SKPixelComparerOptions?)null);
 
 			Assert.Equal(25, result.TotalPixels);
 			Assert.Equal(25, result.ErrorPixelCount);

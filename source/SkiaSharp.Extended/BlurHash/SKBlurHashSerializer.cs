@@ -82,7 +82,7 @@ namespace SkiaSharp.Extended
 			{
 				using (var canvas = new SKCanvas(bitmap))
 				{
-					canvas.DrawImage(image, 0, 0);
+					canvas.DrawImage(image, 0, 0, SKSamplingOptions.Default);
 				}
 
 				using (var pixmap = bitmap.PeekPixels())

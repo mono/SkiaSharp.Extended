@@ -11,10 +11,10 @@ public class SKConfettiPhysicsTypeConverter : StringTypeConverter
 		if (value == null)
 			return null;
 
-		value = value?.Trim();
+		value = value.Trim();
 
 		var pointConverter = new PointTypeConverter();
-		var point = (Point)pointConverter.ConvertFromInvariantString(value);
+		var point = (Point)pointConverter.ConvertFromInvariantString(value)!;
 		return new SKConfettiPhysics(point.X, point.Y);
 	}
 }

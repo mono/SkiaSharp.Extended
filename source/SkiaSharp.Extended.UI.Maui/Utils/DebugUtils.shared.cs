@@ -11,8 +11,11 @@ internal static class DebugUtils
 	{
 		bindable.PropertyChanged += OnPropertyChanged;
 
-		static void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		static void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
+			if (sender is null || e.PropertyName is null)
+				return;
+
 			var value = sender.GetType().GetProperty(e.PropertyName)?.GetValue(sender);
 
 			Debug.WriteLine($"PropertyChanged: {sender.GetType().Name}.{e.PropertyName} = {value}");

@@ -177,6 +177,6 @@
 
         var drawRect = SKRect.Create(offsetX, offsetY, scaledWidth, scaledHeight);
 
-        canvas.DrawBitmap(decodedBlur, drawRect);
+        canvas.DrawBitmap(decodedBlur, drawRect, SKSamplingOptions.Default);
     }
 }

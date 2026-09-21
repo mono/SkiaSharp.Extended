@@ -57,7 +57,7 @@ namespace SkiaSharp.Extended.Tests
             // Normalize to BGRA8888 for reliable SKColor span reading
             var normalized = new SKBitmap(new SKImageInfo(1, 1, SKColorType.Bgra8888));
             using (var canvas = new SKCanvas(normalized))
-                canvas.DrawImage(decoded, 0, 0);
+                canvas.DrawImage(decoded, 0, 0, SKSamplingOptions.Default);
 
             using var px = normalized.PeekPixels();
             var c = px.GetPixelSpan<SKColor>()[0];
@@ -80,7 +80,7 @@ namespace SkiaSharp.Extended.Tests
 
             var normalized = new SKBitmap(new SKImageInfo(1, 1, SKColorType.Bgra8888));
             using (var canvas = new SKCanvas(normalized))
-                canvas.DrawImage(decoded, 0, 0);
+                canvas.DrawImage(decoded, 0, 0, SKSamplingOptions.Default);
 
             using var px = normalized.PeekPixels();
             var c = px.GetPixelSpan<SKColor>()[0];

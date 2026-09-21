@@ -87,35 +87,35 @@ public partial class ShapesPage : ContentPage
 
 		// Square
 		offsetY += textFont.Size;
-		canvas.DrawText("Square (from center)", offsetX, offsetY, textFont, textPaint);
+		canvas.DrawText("Square (from center)", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
 		offsetY += smallSpace;
 		canvas.DrawSquare(offsetX + 50, offsetY + 50, 75, shapePaint);
 		offsetY += shapeSize;
 
 		// Triangle
 		offsetY += textFont.Size;
-		canvas.DrawText("Triangle (using radius)", offsetX, offsetY, textFont, textPaint);
+		canvas.DrawText("Triangle (using radius)", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
 		offsetY += smallSpace;
 		canvas.DrawTriangle(offsetX + 50, offsetY + 50, 40, shapePaint);
 		offsetY += shapeSize;
 
 		// Triangle
 		offsetY += textFont.Size;
-		canvas.DrawText("Triangle (using radius)", offsetX, offsetY, textFont, textPaint);
+		canvas.DrawText("Triangle (using radius)", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
 		offsetY += smallSpace;
 		canvas.DrawTriangle(offsetX + 75, offsetY + 50, 75, 40, shapePaint);
 		offsetY += shapeSize;
 
 		// Triangle
 		offsetY += textFont.Size;
-		canvas.DrawText("Triangle (using rect)", offsetX, offsetY, textFont, textPaint);
+		canvas.DrawText("Triangle (using rect)", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
 		offsetY += smallSpace;
 		canvas.DrawTriangle(SKRect.Create(offsetX, offsetY + 15, 150, 75), shapePaint);
 		offsetY += shapeSize;
 
 		// Regular Polygons
 		offsetY += textFont.Size;
-		canvas.DrawText("Regular Polygons", offsetX, offsetY, textFont, textPaint);
+		canvas.DrawText("Regular Polygons", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
 		offsetY += smallSpace;
 		for (var i = 5; i < 12; i++)
 		{
@@ -126,7 +126,7 @@ public partial class ShapesPage : ContentPage
 
 		// Regular Stars
 		offsetY += textFont.Size;
-		canvas.DrawText("Regular Stars", offsetX, offsetY, textFont, textPaint);
+		canvas.DrawText("Regular Stars", offsetX, offsetY, SKTextAlign.Left, textFont, textPaint);
 		offsetY += smallSpace;
 		for (var i = 5; i < 12; i++)
 		{

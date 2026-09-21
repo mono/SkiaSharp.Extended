@@ -9,7 +9,7 @@ namespace SkiaSharp.Extended.Tests
 		[Fact]
 		public void NullEncodeThrows()
 		{
-			Assert.Throws<ArgumentNullException>(() => SKBlurHash.Serialize((SKBitmap)null, 4, 3));
+			Assert.Throws<ArgumentNullException>(() => SKBlurHash.Serialize((SKBitmap?)null, 4, 3));
 		}
 
 		[Theory]

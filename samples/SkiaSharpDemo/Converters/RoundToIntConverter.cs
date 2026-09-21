@@ -4,7 +4,7 @@ namespace SkiaSharpDemo.Converters;
 
 public class RoundToIntConverter : IValueConverter
 {
-	public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+	public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
 		value switch
 		{
 			double d => d,
@@ -12,7 +12,7 @@ public class RoundToIntConverter : IValueConverter
 			_ => throw new ArgumentException("Value was not an integer or double.", nameof(value)),
 		};
 
-	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+	public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
 		value switch
 		{
 			double d => (int)Math.Round(d),

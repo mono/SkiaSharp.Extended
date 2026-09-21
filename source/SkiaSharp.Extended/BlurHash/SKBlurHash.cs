@@ -19,7 +19,7 @@ namespace SkiaSharp.Extended
 		/// <returns>An <see cref="SKBitmap"/> representing the decoded BlurHash.</returns>
 		/// <exception cref="ArgumentNullException"><paramref name="blurHash"/> is <c>null</c>.</exception>
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="width"/> or <paramref name="height"/> is less than or equal to zero.</exception>
-		public static SKBitmap DeserializeBitmap(string blurHash, int width, int height, float punch = 1f)
+		public static SKBitmap DeserializeBitmap(string? blurHash, int width, int height, float punch = 1f)
 		{
 			if (blurHash == null)
 				throw new ArgumentNullException(nameof(blurHash));
@@ -60,7 +60,7 @@ namespace SkiaSharp.Extended
 		/// <returns>An <see cref="SKImage"/> representing the decoded BlurHash.</returns>
 		/// <exception cref="ArgumentNullException"><paramref name="blurHash"/> is <c>null</c>.</exception>
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="width"/> or <paramref name="height"/> is less than or equal to zero.</exception>
-		public static SKImage DeserializeImage(string blurHash, int width, int height, float punch = 1f)
+		public static SKImage DeserializeImage(string? blurHash, int width, int height, float punch = 1f)
 		{
 			if (blurHash == null)
 				throw new ArgumentNullException(nameof(blurHash));
@@ -102,7 +102,7 @@ namespace SkiaSharp.Extended
 		/// <returns>A BlurHash string representing the image.</returns>
 		/// <exception cref="ArgumentNullException"><paramref name="bitmap"/> is <c>null</c>.</exception>
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="componentsX"/> or <paramref name="componentsY"/> is outside the range [2..9].</exception>
-		public static string Serialize(SKBitmap bitmap, int componentsX, int componentsY)
+		public static string Serialize(SKBitmap? bitmap, int componentsX, int componentsY)
 		{
 			if (bitmap == null)
 				throw new ArgumentNullException(nameof(bitmap));
@@ -123,7 +123,7 @@ namespace SkiaSharp.Extended
 		/// <returns>A BlurHash string representing the image.</returns>
 		/// <exception cref="ArgumentNullException"><paramref name="image"/> is <c>null</c>.</exception>
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="componentsX"/> or <paramref name="componentsY"/> is outside the range [2..9].</exception>
-		public static string Serialize(SKImage image, int componentsX, int componentsY)
+		public static string Serialize(SKImage? image, int componentsX, int componentsY)
 		{
 			if (image == null)
 				throw new ArgumentNullException(nameof(image));
@@ -144,7 +144,7 @@ namespace SkiaSharp.Extended
 		/// <returns>A BlurHash string representing the image.</returns>
 		/// <exception cref="ArgumentNullException"><paramref name="pixmap"/> is <c>null</c>.</exception>
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="componentsX"/> or <paramref name="componentsY"/> is outside the range [2..9].</exception>
-		public static string Serialize(SKPixmap pixmap, int componentsX, int componentsY)
+		public static string Serialize(SKPixmap? pixmap, int componentsX, int componentsY)
 		{
 			if (pixmap == null)
 				throw new ArgumentNullException(nameof(pixmap));

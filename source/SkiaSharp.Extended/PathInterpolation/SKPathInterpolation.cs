@@ -77,9 +77,9 @@ namespace SkiaSharp.Extended
 
 			var points = Interpolate(pointsFrom!, pointsTo!, t);
 
-			var path = new SKPath();
-			path.AddPoly(points.ToArray());
-			return path;
+			using var builder = new SKPathBuilder();
+			builder.AddPoly(points.ToArray());
+			return builder.Detach();
 		}
 
 		private static List<SKPoint>? NormalizePath(SKPath parsed, float maxSegmentLength)
