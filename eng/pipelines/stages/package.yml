@@ -47,25 +47,20 @@ stages:
                   parameters:
                     installWasmTools: false
                 - pwsh: |
-                    $arguments = @(
-                      '-restore'
-                      '-build'
-                      '-pack'
-                      '-publish'
-                      '-configuration'
-                      '$(_BuildConfig)'
-                      '-prepareMachine'
-                      '-warnNotAsError'
-                      '$(LEGACY_WARNINGS_NOT_AS_ERRORS)'
-                      '-sign'
-                      '-ci'
-                      '-binaryLogName'
-                      'Pack.binlog'
-                      '/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)'
-                      '/p:BuildShippingOnly=true'
+                    ./eng/common/build.ps1 `
+                      -restore `
+                      -build `
+                      -pack `
+                      -publish `
+                      -configuration '$(_BuildConfig)' `
+                      -prepareMachine `
+                      -warnNotAsError '$(LEGACY_WARNINGS_NOT_AS_ERRORS)' `
+                      -sign `
+                      -ci `
+                      -binaryLogName Pack.binlog `
+                      '/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)' `
+                      '/p:BuildShippingOnly=true' `
                       '/p:DotNetSignType=$(_SignType)'
-                    )
-                    & ./eng/common/build.ps1 @arguments
                     if ($LASTEXITCODE) {
                       throw "Arcade packaging and signing failed with exit code $LASTEXITCODE."
                     }
@@ -93,23 +88,18 @@ stages:
                     installWasmTools: false
                 - ${{ if eq(buildAgent.value.pool.os, 'windows') }}:
                   - pwsh: |
-                      $arguments = @(
-                        '-restore'
-                        '-build'
-                        '-pack'
-                        '-publish'
-                        '-configuration'
-                        '$(_BuildConfig)'
-                        '-prepareMachine'
-                        '-warnNotAsError'
-                        '$(LEGACY_WARNINGS_NOT_AS_ERRORS)'
-                        '-ci'
-                        '-binaryLogName'
-                        'Pack.binlog'
-                        '/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)'
+                      ./eng/common/build.ps1 `
+                        -restore `
+                        -build `
+                        -pack `
+                        -publish `
+                        -configuration '$(_BuildConfig)' `
+                        -prepareMachine `
+                        -warnNotAsError '$(LEGACY_WARNINGS_NOT_AS_ERRORS)' `
+                        -ci `
+                        -binaryLogName Pack.binlog `
+                        '/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)' `
                         '/p:BuildShippingOnly=true'
-                      )
-                      & ./eng/common/build.ps1 @arguments
                       if ($LASTEXITCODE) {
                         throw "Arcade packaging failed with exit code $LASTEXITCODE."
                       }
