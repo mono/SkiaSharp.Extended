@@ -11,8 +11,6 @@ trigger:
       - docs/**
       - README.md
 
-pr: none
-
 schedules:
   - cron: "0 0 * * *"
     displayName: Daily main build
@@ -91,33 +89,32 @@ extends:
         enabled: true
         configFile: $(Build.SourcesDirectory)/.config/tsaoptions.json
     stages:
-      - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest'), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/'))) }}:
-        - template: /eng/pipelines/stages/package.yml@self
+      - template: /eng/pipelines/stages/package.yml@self
+        parameters:
+          buildAgents:
+            Windows: ${{ parameters.buildAgentWindows }}
+          official: true
+          ${{ if or(eq(parameters.forceRealSigning, 'true'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+            useRealSigning: true
+          ${{ else }}:
+            useRealSigning: false
+          ${{ if or(and(eq(parameters.forceRealSigning, 'true'), eq(parameters.registerInBar, 'true')), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+            publishAssets: true
+          ${{ else }}:
+            publishAssets: false
+
+      - ${{ if or(eq(parameters.runApiScan, 'true'), and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Schedule'))) }}:
+        - template: /eng/pipelines/stages/api-scan.yml@self
           parameters:
-            buildAgents:
-              Windows: ${{ parameters.buildAgentWindows }}
-            official: true
-            ${{ if or(eq(parameters.forceRealSigning, 'true'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
-              useRealSigning: true
-            ${{ else }}:
-              useRealSigning: false
-            ${{ if or(and(eq(parameters.forceRealSigning, 'true'), eq(parameters.registerInBar, 'true')), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
-              publishAssets: true
-            ${{ else }}:
-              publishAssets: false
+            buildAgentWindows: ${{ parameters.buildAgentWindows }}
 
-        - ${{ if or(eq(parameters.runApiScan, 'true'), and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Schedule'))) }}:
-          - template: /eng/pipelines/stages/api-scan.yml@self
-            parameters:
-              buildAgentWindows: ${{ parameters.buildAgentWindows }}
-
-        - ${{ if or(and(eq(parameters.forceRealSigning, 'true'), eq(parameters.registerInBar, 'true')), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
-          - template: /eng/common/templates-official/post-build/post-build.yml@self
-            parameters:
-              publishingInfraVersion: 3
-              publishAssetsImmediately: false
-              requireDefaultChannels: true
-              validateDependsOn:
-                - package
-                - ${{ if or(eq(parameters.runApiScan, 'true'), and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Schedule'))) }}:
-                  - api_scan
+      - ${{ if or(and(eq(parameters.forceRealSigning, 'true'), eq(parameters.registerInBar, 'true')), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+        - template: /eng/common/templates-official/post-build/post-build.yml@self
+          parameters:
+            publishingInfraVersion: 3
+            publishAssetsImmediately: false
+            requireDefaultChannels: true
+            validateDependsOn:
+              - package
+              - ${{ if or(eq(parameters.runApiScan, 'true'), and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Schedule'))) }}:
+                - api_scan

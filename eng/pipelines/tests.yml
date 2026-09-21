@@ -1,7 +1,6 @@
 name: $(Date:yyyyMMdd).$(Rev:r)
 
 trigger: none
-pr: none
 
 parameters:
   - name: buildAgentWindows
