@@ -1,3 +1,5 @@
+name: $(Date:yyyyMMdd).$(Rev:r)
+
 trigger:
   branches:
     include:
@@ -25,67 +27,37 @@ pr:
 
 variables:
   - template: /scripts/azure-pipelines-variables.yml@self
-
-pool:
-  vmImage: windows-latest
+  - name: OfficialBuildId
+    value: $(Build.BuildNumber)
 
 jobs:
-  - job: build
-    displayName: Build
-    steps:
-      - template: /scripts/azure-pipelines-steps-prepare.yml@self
-      - pwsh: dotnet cake --target=build
-        displayName: Build everything
-      - publish: output
-        artifact: build
-        condition: always()
-        displayName: Upload Logs
-
-  - job: pack
-    displayName: Pack
-    steps:
-      - template: /scripts/azure-pipelines-steps-prepare.yml@self
-      - pwsh: ./scripts/infra/tests/SetBuildVariables.Tests.ps1
-        displayName: Validate build identity
-      - pwsh: ./scripts/infra/tests/AssembleArcadeAssets.Tests.ps1
-        displayName: Validate Arcade asset assembly
-      - pwsh: dotnet cake --target=pack
-        displayName: Pack NuGet packages
-      - pwsh: ./scripts/infra/assemble-arcade-assets.ps1 -OutputRoot ./output
-        displayName: Assemble Arcade assets
-      - publish: output/nugets
-        artifact: nuget
-        condition: always()
-        displayName: Upload NuGet packages
-      - publish: output/arcade-assets/Shipping
-        artifact: arcade_shipping
-        condition: always()
-        displayName: Upload Arcade Shipping assets
-      - publish: output/arcade-assets/NonShipping
-        artifact: arcade_nonshipping
-        condition: always()
-        displayName: Upload Arcade NonShipping assets
-      - publish: output/pdbs
-        artifact: PdbArtifacts
-        condition: always()
-        displayName: Upload loose PDBs
-      - publish: output/binlogs
-        artifact: pack_logs
-        condition: always()
-        displayName: Upload Logs
-
-  - job: test
-    displayName: Test
-    steps:
-      - template: /scripts/azure-pipelines-steps-prepare.yml@self
-      - pwsh: dotnet cake --target=test
-        displayName: Run tests
-      - task: PublishTestResults@2
-        condition: always()
-        inputs:
-          testResultsFormat: VSTest
-          testResultsFiles: output/test-results/*.trx
-      - publish: output
-        artifact: test
-        condition: always()
-        displayName: Upload Logs
+  - template: /eng/common/templates/job/job.yml@self
+    parameters:
+      name: Build
+      displayName: Build, test, and pack
+      pool:
+        vmImage: windows-latest
+      runAsPublic: true
+      timeoutInMinutes: 180
+      enablePublishTestResults: true
+      testResultsFormat: vstest
+      testRunTitle: Unit Tests
+      artifacts:
+        publish:
+          logs:
+            name: BuildLogs
+      preSteps:
+        - checkout: self
+          clean: true
+          fetchDepth: 1
+      steps:
+        - template: /scripts/azure-pipelines-steps-prepare.yml@self
+        - pwsh: >
+            ./eng/common/build.ps1
+            -restore -build -test -pack -publish
+            -configuration $(_BuildConfig)
+            -prepareMachine
+            -warnNotAsError "CS0618;CS8600;CS8604;CS8605;CS8618;CS8622;CS8625;CS8767;XC0022;XC0025"
+            -ci
+            /p:OfficialBuildId=$(OfficialBuildId)
+          displayName: Restore, build, test, pack, and publish manifests

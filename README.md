@@ -16,12 +16,32 @@ interesting projects:
 
 ## Building
 
-To build the projects and samples, just open `SkiaSharp.Extended.sln` 
-in Visual Studio.
+Builds use the .NET Arcade SDK. The SDK and workload versions are pinned in
+`global.json`; the build scripts bootstrap the required .NET SDK when needed.
+Install the pinned workloads before your first full build:
 
-The CI server just runs `dotnet cake` and outputs all the packages,
-assemblies and test results. This can also be used to build everything
-locally.
+```bash
+# On macOS; use maui-android instead of maui on Linux.
+./eng/common/dotnet.sh workload install maui wasm-tools --source https://api.nuget.org/v3/index.json
+
+# Restore, build, run tests, and create NuGet packages.
+./build.sh -configuration Release -test -pack
+```
+
+On Windows, use `eng\common\dotnet.cmd workload install maui wasm-tools --source https://api.nuget.org/v3/index.json`,
+then `build.cmd -configuration Release -test -pack`. You can also open
+`SkiaSharp.Extended.sln` in Visual Studio.
+
+Outputs use Arcade's standard `artifacts/` layout: assemblies in `bin/`,
+shipping packages in `packages/Release/Shipping/`, test results in
+`TestResults/Release/`, and build logs in `log/Release/`. Package versions are
+defined in `eng/Versions.props`. Arcade owns CI versioning, Source Link, symbol
+generation, signing, and asset manifests; no Cake tools are required.
+
+Public CI builds and tests without signing credentials or BAR access. Official
+internal builds use the 1ES/Arcade templates for signing, Build Asset Registry
+registration, validation, and promotion through configured Maestro channels.
+NuGet.org publication remains a separate protected release operation.
 
 ## License
 

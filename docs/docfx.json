@@ -5,9 +5,10 @@
       "src": [
         {
           "files": [
-            "**/bin/Release/net10.0/**.dll"
+            "SkiaSharp.Extended/Release/net10.0/SkiaSharp.Extended.dll",
+            "SkiaSharp.Extended.UI.Maui/Release/net10.0/SkiaSharp.Extended.UI.dll"
           ],
-          "src": "../source/"
+          "src": "../artifacts/bin/"
         }
       ],
       "output": "api",

@@ -5,7 +5,7 @@ parameters:
 stages:
   - stage: api_scan
     displayName: API Scan
-    dependsOn: package
+    dependsOn: build
     jobs:
       - job: api_scan
         displayName: API Scan
@@ -18,17 +18,26 @@ stages:
             submodules: false
             fetchDepth: 1
 
-          - task: DownloadPipelineArtifact@2
+          - task: DownloadBuildArtifacts@0
             displayName: Download NuGet packages
             inputs:
               buildType: current
-              artifactName: nuget
-              targetPath: $(Agent.TempDirectory)\APIScan\packages
+              downloadType: single
+              artifactName: PackageArtifacts
+              downloadPath: $(Agent.TempDirectory)\APIScan
+
+          - task: DownloadBuildArtifacts@0
+            displayName: Download Symbol Store PDBs
+            inputs:
+              buildType: current
+              downloadType: single
+              artifactName: PdbArtifacts
+              downloadPath: $(Agent.TempDirectory)\APIScan
 
           - pwsh: |
               $scanRoot = "$(Agent.TempDirectory)\APIScan\extracted"
               New-Item $scanRoot -ItemType Directory -Force | Out-Null
-              $packages = @(Get-ChildItem "$(Agent.TempDirectory)\APIScan\packages" -Filter '*.nupkg' -File)
+              $packages = @(Get-ChildItem "$(Agent.TempDirectory)\APIScan\PackageArtifacts" -Filter '*.nupkg' -File -Recurse)
               if ($packages.Count -eq 0) {
                 throw 'No NuGet packages were downloaded for API Scan.'
               }
@@ -68,7 +77,7 @@ stages:
             displayName: Run API Scan
             inputs:
               softwareFolder: $(Agent.TempDirectory)\APIScan\extracted
-              symbolsFolder: SRV*https://symweb;$(Agent.TempDirectory)\APIScan\extracted
+              symbolsFolder: SRV*https://symweb;$(Agent.TempDirectory)\APIScan\PdbArtifacts
               softwareName: SkiaSharp.Extended
               softwareVersionNum: 4
               softwareBuildNum: $(Build.BuildId)

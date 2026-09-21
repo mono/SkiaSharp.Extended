@@ -1,8 +1,4 @@
 steps:
-
-  - pwsh: ./scripts/infra/set-build-variables.ps1 -UpdateBuildNumber
-    displayName: Configure package version identity
-
   - task: JavaToolInstaller@0
     displayName: Select JDK
     inputs:
@@ -15,17 +11,38 @@ steps:
       Write-Host "##vso[task.setvariable variable=JavaSdkDirectory]$env:JAVA_HOME"
     displayName: Set Java SDK Directory
 
-  - task: UseDotNet@2
-    displayName: Install .NET SDK
-    inputs:
-      packageType: 'sdk'
-      version: $(DOTNET_VERSION)
+  - pwsh: |
+      $androidSdkRoot = if ($env:ANDROID_SDK_ROOT) { $env:ANDROID_SDK_ROOT } else { $env:ANDROID_HOME }
+      if ([string]::IsNullOrWhiteSpace($androidSdkRoot)) {
+        throw 'The build agent must provide ANDROID_SDK_ROOT or ANDROID_HOME.'
+      }
 
-  - pwsh: dotnet workload install maui
-    displayName: Install MAUI workload
+      $sdkManager = Join-Path $androidSdkRoot 'cmdline-tools\latest\bin\sdkmanager.bat'
+      if (-not (Test-Path $sdkManager)) {
+        $sdkManager = Get-ChildItem (Join-Path $androidSdkRoot 'cmdline-tools') -Filter sdkmanager.bat -Recurse |
+          Select-Object -First 1 -ExpandProperty FullName
+      }
+      if ([string]::IsNullOrWhiteSpace($sdkManager)) {
+        throw "Unable to find sdkmanager.bat under '$androidSdkRoot'."
+      }
 
-  - pwsh: dotnet workload install wasm-tools
-    displayName: Install WASM tools workload
+      1..100 | ForEach-Object { 'y' } | & $sdkManager "--sdk_root=$androidSdkRoot" --licenses
+      if ($LASTEXITCODE) {
+        throw "Android SDK license acceptance failed with exit code $LASTEXITCODE."
+      }
 
-  - pwsh: dotnet tool restore
-    displayName: Restore the dotnet tools
+      & $sdkManager "--sdk_root=$androidSdkRoot" 'platform-tools' 'platforms;android-36' 'build-tools;36.0.0' 'cmdline-tools;19.0'
+      if ($LASTEXITCODE) {
+        throw "Android SDK provisioning failed with exit code $LASTEXITCODE."
+      }
+
+      Write-Host "##vso[task.setvariable variable=ANDROID_SDK_ROOT]$androidSdkRoot"
+      Write-Host "##vso[task.setvariable variable=AndroidSdkDirectory]$androidSdkRoot"
+    displayName: Install pinned Android SDK components
+
+  - pwsh: |
+      & ./eng/common/dotnet.ps1 workload install maui wasm-tools --source https://api.nuget.org/v3/index.json
+      if ($LASTEXITCODE) {
+        throw "Pinned workload installation failed with exit code $LASTEXITCODE."
+      }
+    displayName: Install pinned SDK and workloads

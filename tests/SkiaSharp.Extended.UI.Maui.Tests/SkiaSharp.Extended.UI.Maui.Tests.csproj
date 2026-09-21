@@ -5,13 +5,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UseMaui>true</UseMaui>
+    <IsPackable>false</IsPackable>
+    <IsShipping>false</IsShipping>
+    <TestRunnerName>XUnitV3</TestRunnerName>
+    <UseVSTestRunner>true</UseVSTestRunner>
+    <UseMicrosoftTestingPlatformRunner>false</UseMicrosoftTestingPlatformRunner>
+    <IsTestingPlatformApplication>false</IsTestingPlatformApplication>
+    <ExcludeMicrosoftNetTestSdk>true</ExcludeMicrosoftNetTestSdk>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.v3" />
-    <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="Microsoft.Maui.Controls" />
   </ItemGroup>
 

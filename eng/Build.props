@@ -1,8 +1,5 @@
 <Project>
-  <PropertyGroup>
-    <RestoreUsingNuGetTargets>false</RestoreUsingNuGetTargets>
-  </PropertyGroup>
   <ItemGroup>
-    <ProjectToBuild Include="$(MSBuildThisFileDirectory)NoBuild.proj" />
+    <ProjectToBuild Include="$(RepoRoot)SkiaSharp.Extended.sln" />
   </ItemGroup>
 </Project>
