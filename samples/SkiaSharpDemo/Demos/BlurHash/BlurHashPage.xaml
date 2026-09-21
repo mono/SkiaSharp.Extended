@@ -1,7 +1,9 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:SkiaSharpDemo.Views"
+             xmlns:local="clr-namespace:SkiaSharpDemo.Demos"
              x:Class="SkiaSharpDemo.Demos.BlurHashPage"
+             x:DataType="local:BlurHashPage"
              Title="BlurHash">
 
     <Grid RowSpacing="12" Padding="12" RowDefinitions="Auto,*,Auto,*">
@@ -30,7 +32,7 @@
                       PeekAreaInsets="24,0"
                       Margin="-12,0">
             <CarouselView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="StreamImageSource">
                     <Grid Padding="6,0">
                         <Image Source="{Binding}" Aspect="AspectFit" />
                     </Grid>

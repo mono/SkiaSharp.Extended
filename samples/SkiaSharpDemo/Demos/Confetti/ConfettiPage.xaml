@@ -2,7 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              xmlns:views="clr-namespace:SkiaSharpDemo.Views"
+             xmlns:local="clr-namespace:SkiaSharpDemo.Demos"
              x:Class="SkiaSharpDemo.Demos.ConfettiPage"
+             x:DataType="local:ConfettiPage"
              Title="Confetti">
 
     <Grid>
@@ -20,6 +22,7 @@
         <BoxView Color="Green" Opacity="0.5" CornerRadius="12"
                  WidthRequest="25" HeightRequest="24" Margin="24"
                  HorizontalOptions="End" VerticalOptions="Start"
+                 x:DataType="controls:SKConfettiView"
                  IsVisible="{Binding IsComplete, Source={Reference confettiView}}" />
 
         <views:BottomTabBar SelectedIndex="{Binding SelectedTab}" PagePadding="12" Background="{StaticResource BackgroundBrush}">
@@ -34,7 +37,7 @@
                         <StackLayout.Resources>
                             <ResourceDictionary>
                                 <Style TargetType="Button" BasedOn="{StaticResource TextOptionButtonStyle}">
-                                    <Setter Property="BindingContext" Value="{Binding Text, Source={RelativeSource Self}}" />
+                                    <Setter Property="BindingContext" Value="{Binding Text, Source={RelativeSource Self}, x:DataType=Button}" />
                                 </Style>
                             </ResourceDictionary>
                         </StackLayout.Resources>
@@ -58,7 +61,7 @@
                                 <Style TargetType="Button" BasedOn="{StaticResource OptionButtonStyle}">
                                     <Setter Property="WidthRequest" Value="48" />
                                     <Setter Property="HeightRequest" Value="32" />
-                                    <Setter Property="BindingContext" Value="{Binding BackgroundColor, Source={RelativeSource Self}}" />
+                                    <Setter Property="BindingContext" Value="{Binding BackgroundColor, Source={RelativeSource Self}, x:DataType=Button}" />
                                 </Style>
                             </ResourceDictionary>
                         </Grid.Resources>

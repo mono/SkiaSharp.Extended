@@ -2,7 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              xmlns:views="clr-namespace:SkiaSharpDemo.Views"
+             xmlns:local="clr-namespace:SkiaSharpDemo.Demos"
              x:Class="SkiaSharpDemo.Demos.LottiePage"
+             x:DataType="local:LottiePage"
              Title="Lottie">
 
     <Grid RowDefinitions="*,Auto">
@@ -22,6 +24,7 @@
         <BoxView Color="Green" Opacity="0.5" CornerRadius="12"
                  WidthRequest="25" HeightRequest="24" Margin="24"
                  HorizontalOptions="End" VerticalOptions="Start"
+                 x:DataType="controls:SKLottieView"
                  IsVisible="{Binding IsComplete, Source={Reference lottieView}}" />
 
         <VerticalStackLayout Spacing="12" Padding="12" Grid.Row="1">
