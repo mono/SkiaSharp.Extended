@@ -12,7 +12,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- see targets: <PackageVersion /> -->
     <Authors>Microsoft</Authors>
     <Owners>Microsoft</Owners>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
@@ -20,18 +19,16 @@
     <PackageIconFullPath>$(MSBuildThisFileDirectory)..\images\logo.png</PackageIconFullPath>
     <PackageTags>xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform skiasharp skiasharp.extended</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <!-- Preserve the historical Xamarin/Microsoft MIT notices instead of Arcade's exact-text template. -->
+    <SuppressLicenseValidation>true</SuppressLicenseValidation>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://go.microsoft.com/fwlink/?linkid=2071915</PackageProjectUrl>
-    <RepositoryUrl>https://go.microsoft.com/fwlink/?linkid=2071915</RepositoryUrl>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
     <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
@@ -42,9 +39,6 @@
   <ItemGroup>
     <None Include="..\..\LICENSE" PackagePath="" Pack="true" />
     <None Include="README.md" PackagePath="" Pack="true" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
   </ItemGroup>
 
 </Project>
