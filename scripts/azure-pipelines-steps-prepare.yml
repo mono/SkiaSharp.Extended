@@ -50,12 +50,12 @@ steps:
 
   - pwsh: |
       if ($IsMacOS) {
-        $xcode = Get-ChildItem '/Applications' -Directory -Filter 'Xcode_26.3*.app' |
-          Select-Object -First 1 -ExpandProperty FullName
-        if ($xcode) {
-          $env:DEVELOPER_DIR = Join-Path $xcode 'Contents/Developer'
-          Write-Host "##vso[task.setvariable variable=DEVELOPER_DIR]$env:DEVELOPER_DIR"
+        $xcode = '/Applications/Xcode_26.3.app'
+        if (-not (Test-Path $xcode)) {
+          throw "The hosted macOS image must provide '$xcode'."
         }
+        $env:DEVELOPER_DIR = Join-Path $xcode 'Contents/Developer'
+        Write-Host "##vso[task.setvariable variable=DEVELOPER_DIR]$env:DEVELOPER_DIR"
 
         $xcodeVersion = (& xcodebuild -version | Select-String '^Xcode\s+([0-9.]+)$').Matches.Groups[1].Value
         if ([version]$xcodeVersion -lt [version]'26.3') {
