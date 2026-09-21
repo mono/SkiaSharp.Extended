@@ -91,7 +91,7 @@ jobs:
         run: ./eng/common/dotnet.sh tool restore
 
       - name: Build the assemblies
-        run: ./build.sh -configuration Release -projects 'source/**/*.csproj' /p:TargetFramework=net10.0 /p:TargetFrameworks=net10.0
+        run: ./build.sh -configuration Release -projects "$PWD/source/**/*.csproj" /p:TargetFramework=net10.0 /p:TargetFrameworks=net10.0
 
       - name: Publish Blazor sample
         env:

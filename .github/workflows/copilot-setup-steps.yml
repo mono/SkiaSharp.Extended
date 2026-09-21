@@ -38,3 +38,13 @@ jobs:
 
       - name: Verify build
         run: ./build.sh -test -configuration Release
+
+      - name: Upload build and test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: setup-build-logs
+          path: |
+            artifacts/log/Release
+            artifacts/TestResults/Release
+          retention-days: 5
