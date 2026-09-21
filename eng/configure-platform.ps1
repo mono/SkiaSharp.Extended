@@ -27,7 +27,11 @@ function Set-CIEnvironmentVariable {
 
 $dotnet = if ($IsWindows) { './eng/common/dotnet.ps1' } else { './eng/common/dotnet.sh' }
 
-$javaHome = (& $dotnet android jdk find --version '[17.0,18.0)').Trim()
+$javaHomeOutput = @(& $dotnet android jdk find --version '[17.0,18.0)')
+$javaHome = ($javaHomeOutput -join [Environment]::NewLine).Trim()
+if ($LASTEXITCODE) {
+    throw "AndroidSdk.Tool JDK discovery failed with exit code $LASTEXITCODE."
+}
 if ([string]::IsNullOrWhiteSpace($javaHome) -or -not (Test-Path $javaHome)) {
     throw 'AndroidSdk.Tool could not locate JDK 17.'
 }
@@ -36,7 +40,21 @@ if ($LASTEXITCODE) {
     throw "Setting the preferred JDK failed with exit code $LASTEXITCODE."
 }
 
-$androidSdkRoot = (& $dotnet android sdk find).Trim()
+$androidSdkRootOutput = @(& $dotnet android sdk find)
+$androidSdkRoot = ($androidSdkRootOutput -join [Environment]::NewLine).Trim()
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($androidSdkRoot) -or -not (Test-Path $androidSdkRoot)) {
+    $homeDirectory = if (-not [string]::IsNullOrWhiteSpace($env:HOME)) {
+        $env:HOME
+    } else {
+        [Environment]::GetFolderPath('UserProfile')
+    }
+    $androidSdkRoot = Join-Path $homeDirectory 'android-sdk'
+    Write-Host "Android SDK was not found. Downloading command-line tools to $androidSdkRoot."
+    & $dotnet android sdk download --home $androidSdkRoot
+    if ($LASTEXITCODE) {
+        throw "Android SDK command-line tools download failed with exit code $LASTEXITCODE."
+    }
+}
 if ([string]::IsNullOrWhiteSpace($androidSdkRoot) -or -not (Test-Path $androidSdkRoot)) {
     throw 'AndroidSdk.Tool could not locate the Android SDK.'
 }
@@ -75,6 +93,7 @@ Write-Host "JDK: $javaHome"
 Write-Host "Android SDK: $androidSdkRoot"
 Set-CIEnvironmentVariable -Name JAVA_HOME -Value $javaHome
 Set-CIEnvironmentVariable -Name JavaSdkDirectory -Value $javaHome
+Set-CIEnvironmentVariable -Name ANDROID_HOME -Value $androidSdkRoot
 Set-CIEnvironmentVariable -Name ANDROID_SDK_ROOT -Value $androidSdkRoot
 Set-CIEnvironmentVariable -Name AndroidSdkDirectory -Value $androidSdkRoot
 

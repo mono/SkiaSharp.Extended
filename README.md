@@ -34,11 +34,12 @@ On Windows, use `eng\common\dotnet.cmd workload install maui wasm-tools --versio
 then `build.cmd -configuration Release -test -pack`. You can also open
 `SkiaSharp.Extended.sln` in Visual Studio.
 
-The local tool manifest pins `AndroidSdk.Tool` and `AppleDev.Tools`. CI uses
-them from the `dotnet-public` mirror to locate JDK 17 and the Android SDK,
-accept licenses, install the Android packages required by the workload
-manifest, select Xcode 26.3, and verify the iOS simulator runtime. The tools
-also provide AVD/emulator and Apple simulator lifecycle commands for future
+The local tool manifest pins `AndroidSdk.Tool` and `AppleDev.Tools`. CI follows
+the standard Azure Pipelines task to select OpenJDK 17, then uses the tools from
+the `dotnet-public` mirror to locate or bootstrap the Android SDK, accept
+licenses, install the Android packages required by the workload manifest,
+select Xcode 26.3, and verify the iOS simulator runtime. The tools also provide
+AVD/emulator and Apple simulator lifecycle commands for future
 device-test jobs; the current pipelines run host tests and compile samples, so
 they do not boot devices.
 
