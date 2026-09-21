@@ -53,15 +53,20 @@ stages:
                     /p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)
                   displayName: Build full solution and run tests
               - ${{ else }}:
-                - bash: >
-                    ./eng/common/build.sh
-                    -restore -build -test
-                    -configuration $(_BuildConfig)
-                    -prepareMachine
-                    -warnNotAsError "$(LEGACY_WARNINGS_NOT_AS_ERRORS)"
-                    -ci
-                    -binaryLogName Validation.binlog
-                    /p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)
-                    ${{ if eq(buildAgent.value.pool.os, 'macos') }}:
-                      /p:EnableCodeSigning=false
+                - bash: |
+                    args=(
+                      -restore
+                      -build
+                      -test
+                      -configuration "$(_BuildConfig)"
+                      -prepareMachine
+                      -warnNotAsError "$(LEGACY_WARNINGS_NOT_AS_ERRORS)"
+                      -ci
+                      -binaryLogName Validation.binlog
+                      "/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)"
+                    )
+                    if [[ '${{ buildAgent.value.pool.os }}' == 'macos' ]]; then
+                      args+=(/p:EnableCodeSigning=false)
+                    fi
+                    ./eng/common/build.sh "${args[@]}"
                   displayName: Build full solution and run tests
