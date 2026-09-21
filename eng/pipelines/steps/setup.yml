@@ -12,12 +12,9 @@ steps:
       }
     displayName: Restore Android and Apple SDK tools
 
-  - task: JavaToolInstaller@0
-    displayName: Select preinstalled OpenJDK 17
-    inputs:
-      versionSpec: '17'
-      jdkArchitectureOption: x64
-      jdkSourceOption: PreInstalled
+  - pwsh: ./eng/install-openjdk.ps1
+    displayName: Install OpenJDK
+    retryCountOnTaskFailure: 3
 
   - pwsh: >
       ./eng/configure-platform.ps1
