@@ -9,27 +9,24 @@ parameters:
     type: object
     default:
       pool:
-        name: ''
+        name: Azure Pipelines
         vmImage: windows-2022
-        demands: ''
         os: windows
   - name: buildAgentMac
     displayName: 'The macOS validation agent configuration:'
     type: object
     default:
       pool:
-        name: ''
+        name: Azure Pipelines
         vmImage: macos-15
-        demands: ''
         os: macos
   - name: buildAgentLinux
     displayName: 'The Linux validation agent configuration:'
     type: object
     default:
       pool:
-        name: ''
+        name: Azure Pipelines
         vmImage: ubuntu-22.04
-        demands: ''
         os: linux
 
 resources:
@@ -41,8 +38,8 @@ resources:
 variables:
   - template: /eng/pipelines/variables.yml@self
 
-jobs:
-  - template: /eng/pipelines/jobs/test.yml@self
+stages:
+  - template: /eng/pipelines/stages/test.yml@self
     parameters:
       expectedSourceCommit: $(resources.pipeline.package.sourceCommit)
       buildAgents:

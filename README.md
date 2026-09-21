@@ -47,6 +47,8 @@ shipping packages in `packages/Release/Shipping/`, test results in
 `TestResults/Release/`, and build logs in `log/Release/`. Package versions are
 defined in `eng/Versions.props`. Arcade owns CI versioning, Source Link, symbol
 generation, signing, and asset manifests; no Cake tools are required.
+Release branches set `DotNetFinalVersionKind` in `eng/Versions.props` to
+`release` when they are ready to produce exact stable package versions.
 
 To build and pack only the shipping libraries, without building tests or samples:
 

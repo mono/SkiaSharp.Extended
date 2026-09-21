@@ -94,7 +94,9 @@ extends:
       - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest'), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/'))) }}:
         - template: /eng/pipelines/stages/package.yml@self
           parameters:
-            buildAgentWindows: ${{ parameters.buildAgentWindows }}
+            buildAgents:
+              Windows: ${{ parameters.buildAgentWindows }}
+            official: true
             ${{ if or(eq(parameters.forceRealSigning, 'true'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
               useRealSigning: true
             ${{ else }}:
@@ -104,10 +106,10 @@ extends:
             ${{ else }}:
               publishAssets: false
 
-        - ${{ if or(eq(parameters.runApiScan, true), and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Schedule'))) }}:
+        - ${{ if or(eq(parameters.runApiScan, 'true'), and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Schedule'))) }}:
           - template: /eng/pipelines/stages/api-scan.yml@self
             parameters:
-              buildAgent: ${{ parameters.buildAgentWindows }}
+              buildAgentWindows: ${{ parameters.buildAgentWindows }}
 
         - ${{ if or(and(eq(parameters.forceRealSigning, 'true'), eq(parameters.registerInBar, 'true')), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
           - template: /eng/common/templates-official/post-build/post-build.yml@self
@@ -117,5 +119,5 @@ extends:
               requireDefaultChannels: true
               validateDependsOn:
                 - package
-                - ${{ if or(eq(parameters.runApiScan, true), and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Schedule'))) }}:
+                - ${{ if or(eq(parameters.runApiScan, 'true'), and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Schedule'))) }}:
                   - api_scan

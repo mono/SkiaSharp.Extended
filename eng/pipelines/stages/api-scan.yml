@@ -1,5 +1,5 @@
 parameters:
-  - name: buildAgent
+  - name: buildAgentWindows
     type: object
 
 stages:
@@ -10,7 +10,7 @@ stages:
       - job: api_scan
         displayName: API Scan
         timeoutInMinutes: 480
-        pool: ${{ parameters.buildAgent.pool }}
+        pool: ${{ parameters.buildAgentWindows.pool }}
         workspace:
           clean: all
         steps:
