@@ -38,10 +38,31 @@ shipping packages in `packages/Release/Shipping/`, test results in
 defined in `eng/Versions.props`. Arcade owns CI versioning, Source Link, symbol
 generation, signing, and asset manifests; no Cake tools are required.
 
-Public CI builds and tests without signing credentials or BAR access. Official
-internal builds use the 1ES/Arcade templates for signing, Build Asset Registry
-registration, validation, and promotion through configured Maestro channels.
+To build and pack only the shipping libraries, without building tests or samples:
+
+```bash
+./build.sh -configuration Release -projects "$PWD/scripts/SkiaSharp.Extended-Pack.slnf" -pack
+```
+
+## CI pipelines
+
+| Entry point | Responsibility | Platforms |
+| --- | --- | --- |
+| [azure-pipelines-public.yml](azure-pipelines-public.yml) | Build the full solution, including samples; run tests and pack unsigned packages | Windows, macOS, Linux |
+| [azure-pipelines.yml](azure-pipelines.yml) | Build and pack only the shipping libraries, sign, register assets in BAR, and promote through Maestro | Windows |
+| [azure-pipelines-tests.yml](azure-pipelines-tests.yml) | Build the full solution, including samples, and run tests; no packaging or promotion | Windows, macOS, Linux |
+
+The internal package pipeline does not build sample or test projects. Its
+signing and package-validation stages use the standard 1ES/Arcade templates;
 NuGet.org publication remains a separate protected release operation.
+
+The internal tests pipeline is triggered by successful completion of
+`\dotnet\skiasharp\skiasharp-extended-package`. Both internal definitions must use
+the same `mono-SkiaSharp.Extended` Azure Repos mirror so completion-triggered
+validation checks out the producer's branch and commit. Public CI and internal
+tests run without signing credentials or BAR access. For a manual internal
+validation run, select the package run and its matching source ref; the pipeline
+rejects mismatched commits.
 
 ## License
 

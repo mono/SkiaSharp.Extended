@@ -100,13 +100,13 @@ extends:
         configFile: $(Build.SourcesDirectory)/.config/tsaoptions.json
     stages:
       - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest'), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/'))) }}:
-        - stage: build
-          displayName: Build, test, pack, sign, and publish manifests
+        - stage: package
+          displayName: Build, pack, sign, and publish shipping products
           jobs:
             - template: /eng/common/templates-official/job/job.yml@self
               parameters:
                 name: Build
-                displayName: Build, test, pack, sign, and publish manifests
+                displayName: Build, pack, sign, and publish shipping products
                 pool: ${{ parameters.buildAgent.pool }}
                 runAsPublic: false
                 enableMicrobuild: true
@@ -122,9 +122,6 @@ extends:
                     - name: _SignType
                       value: test
                 timeoutInMinutes: 180
-                enablePublishTestResults: true
-                testResultsFormat: vstest
-                testRunTitle: Unit Tests
                 artifacts:
                   publish:
                     logs:
@@ -135,30 +132,32 @@ extends:
                     fetchDepth: 1
                 steps:
                   - template: /scripts/azure-pipelines-steps-prepare.yml@self
+                    parameters:
+                      installWasmTools: false
                   - pwsh: >
-                      ./eng/common/build.ps1
-                      -restore -build -test -pack -publish
+                      ./Build.cmd
+                      -pack -publish
+                      -projects "$(Build.SourcesDirectory)\scripts\SkiaSharp.Extended-Pack.slnf"
                       -configuration $(_BuildConfig)
                       -prepareMachine
-                      -warnNotAsError "CS0618;CS8600;CS8602;CS8604;CS8605;CS8618;CS8622;CS8625;CS8767;XC0022;XC0025"
                       -sign
                       -ci
                       /p:OfficialBuildId=$(OfficialBuildId)
                       /p:DotNetSignType=$(_SignType)
-                    displayName: Restore, build, test, pack, sign, and publish manifests
+                    displayName: Restore, build, pack, sign, and publish manifests
                     condition: and(succeeded(), eq('${{ parameters.packageLabel }}', 'preview'))
                   - pwsh: >
-                      ./eng/common/build.ps1
-                      -restore -build -test -pack -publish
+                      ./Build.cmd
+                      -pack -publish
+                      -projects "$(Build.SourcesDirectory)\scripts\SkiaSharp.Extended-Pack.slnf"
                       -configuration $(_BuildConfig)
                       -prepareMachine
-                      -warnNotAsError "CS0618;CS8600;CS8602;CS8604;CS8605;CS8618;CS8622;CS8625;CS8767;XC0022;XC0025"
                       -sign
                       -ci
                       /p:OfficialBuildId=$(OfficialBuildId)
                       /p:DotNetSignType=$(_SignType)
                       /p:DotNetFinalVersionKind=release
-                    displayName: Restore, build, test, pack, sign, and publish release manifests
+                    displayName: Restore, build, pack, sign, and publish release manifests
                     condition: and(succeeded(), eq('${{ parameters.packageLabel }}', 'stable'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
                   - pwsh: >
                       throw 'Stable packages require an internal refs/heads/release/* build.'
@@ -186,6 +185,6 @@ extends:
               publishAssetsImmediately: false
               requireDefaultChannels: true
               validateDependsOn:
-                - build
+                - package
                 - ${{ if or(eq(parameters.runApiScan, true), and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Schedule'))) }}:
                   - api_scan

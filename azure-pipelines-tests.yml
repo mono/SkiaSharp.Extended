@@ -1,0 +1,21 @@
+name: $(Date:yyyyMMdd).$(Rev:r)
+
+trigger: none
+pr: none
+
+resources:
+  pipelines:
+    - pipeline: package
+      source: '\dotnet\skiasharp\skiasharp-extended-package'
+      trigger: true
+
+variables:
+  - template: /scripts/azure-pipelines-variables.yml@self
+  - name: OfficialBuildId
+    value: $(Build.BuildNumber)
+
+jobs:
+  - template: /scripts/azure-pipelines-jobs-validation.yml@self
+    parameters:
+      pack: false
+      expectedSourceCommit: $(resources.pipeline.package.sourceCommit)

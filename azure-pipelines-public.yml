@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
       - main
+      - release/*
   paths:
     exclude:
       - README.md
@@ -16,6 +17,7 @@ pr:
   branches:
     include:
       - main
+      - release/*
   paths:
     exclude:
       - README.md
@@ -31,33 +33,6 @@ variables:
     value: $(Build.BuildNumber)
 
 jobs:
-  - template: /eng/common/templates/job/job.yml@self
+  - template: /scripts/azure-pipelines-jobs-validation.yml@self
     parameters:
-      name: Build
-      displayName: Build, test, and pack
-      pool:
-        vmImage: windows-latest
-      runAsPublic: true
-      timeoutInMinutes: 180
-      enablePublishTestResults: true
-      testResultsFormat: vstest
-      testRunTitle: Unit Tests
-      artifacts:
-        publish:
-          logs:
-            name: BuildLogs
-      preSteps:
-        - checkout: self
-          clean: true
-          fetchDepth: 1
-      steps:
-        - template: /scripts/azure-pipelines-steps-prepare.yml@self
-        - pwsh: >
-            ./eng/common/build.ps1
-            -restore -build -test -pack -publish
-            -configuration $(_BuildConfig)
-            -prepareMachine
-            -warnNotAsError "CS0618;CS8600;CS8602;CS8604;CS8605;CS8618;CS8622;CS8625;CS8767;XC0022;XC0025"
-            -ci
-            /p:OfficialBuildId=$(OfficialBuildId)
-          displayName: Restore, build, test, pack, and publish manifests
+      pack: true

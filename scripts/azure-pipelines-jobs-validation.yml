@@ -1,0 +1,101 @@
+parameters:
+  - name: pack
+    type: boolean
+    default: false
+  - name: expectedSourceCommit
+    type: string
+    default: ''
+
+jobs:
+  - template: /eng/common/templates/job/job.yml@self
+    parameters:
+      name: Validate
+      displayName: Build samples and run tests
+      strategy:
+        matrix:
+          Windows:
+            validationImage: windows-latest
+            validationPlatform: Windows
+            validationProperties: ''
+          macOS:
+            validationImage: macos-15
+            validationPlatform: macOS
+            validationProperties: /p:EnableCodeSigning=false
+          Linux:
+            validationImage: ubuntu-24.04
+            validationPlatform: Linux
+            validationProperties: ''
+      pool:
+        vmImage: $(validationImage)
+      runAsPublic: true
+      timeoutInMinutes: 180
+      enablePublishTestResults: true
+      testResultsFormat: vstest
+      testRunTitle: $(validationPlatform) unit tests
+      artifacts:
+        publish:
+          logs:
+            name: ValidationLogs_$(validationPlatform)
+      preSteps:
+        - checkout: self
+          clean: true
+          fetchDepth: 1
+        - ${{ if ne(parameters.expectedSourceCommit, '') }}:
+          - pwsh: |
+              if ($env:EXPECTED_SOURCE_COMMIT -ne $env:BUILD_SOURCEVERSION) {
+                throw "Validation source '$env:BUILD_SOURCEVERSION' does not match package source '$env:EXPECTED_SOURCE_COMMIT'. Select the package run and its matching source ref."
+              }
+            displayName: Verify package source provenance
+            env:
+              EXPECTED_SOURCE_COMMIT: ${{ parameters.expectedSourceCommit }}
+      steps:
+        - template: /scripts/azure-pipelines-steps-prepare.yml@self
+          parameters:
+            installWasmTools: true
+        - pwsh: >
+            ./Build.cmd -test
+            -configuration $(_BuildConfig)
+            -prepareMachine
+            -ci
+            -binaryLogName Validation.binlog
+            /p:OfficialBuildId=$(OfficialBuildId)
+          displayName: Build full solution and run tests
+          condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+        - bash: >
+            ./build.sh -test
+            -configuration $(_BuildConfig)
+            -prepareMachine
+            -ci
+            -binaryLogName Validation.binlog
+            /p:OfficialBuildId=$(OfficialBuildId)
+            $(validationProperties)
+          displayName: Build full solution and run tests
+          condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+        - ${{ if eq(parameters.pack, true) }}:
+          - pwsh: >
+              ./Build.cmd -pack -publish
+              -projects "$(Build.SourcesDirectory)\scripts\SkiaSharp.Extended-Pack.slnf"
+              -configuration $(_BuildConfig)
+              -prepareMachine
+              -ci
+              -binaryLogName Pack.binlog
+              /p:OfficialBuildId=$(OfficialBuildId)
+            displayName: Pack shipping products and publish Arcade assets
+            condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+          - bash: >
+              ./build.sh -pack
+              -projects "$(Build.SourcesDirectory)/scripts/SkiaSharp.Extended-Pack.slnf"
+              -configuration $(_BuildConfig)
+              -prepareMachine
+              -ci
+              -binaryLogName Pack.binlog
+              /p:OfficialBuildId=$(OfficialBuildId)
+              $(validationProperties)
+            displayName: Pack shipping products
+            condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+          - task: PublishPipelineArtifact@1
+            displayName: Publish platform packages
+            inputs:
+              targetPath: $(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/Shipping
+              artifact: Packages_$(validationPlatform)
+            condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
