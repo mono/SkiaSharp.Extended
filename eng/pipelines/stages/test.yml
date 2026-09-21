@@ -7,14 +7,14 @@ parameters:
 
 stages:
   - stage: test
-    displayName: Build samples and run tests
+    displayName: Tests
     dependsOn: []
     jobs:
       - ${{ each buildAgent in parameters.buildAgents }}:
         - template: /eng/common/templates/job/job.yml@self
           parameters:
             name: Test_${{ buildAgent.key }}
-            displayName: Build samples and run tests ${{ buildAgent.key }}
+            displayName: Tests ${{ buildAgent.key }}
             pool: ${{ buildAgent.value.pool }}
             runAsPublic: true
             timeoutInMinutes: 180
@@ -51,7 +51,7 @@ stages:
                     -ci
                     -binaryLogName Validation.binlog
                     /p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)
-                  displayName: Build full solution and run tests
+                  displayName: Test
               - ${{ else }}:
                 - bash: |
                     args=(
@@ -69,4 +69,4 @@ stages:
                       args+=(/p:EnableCodeSigning=false)
                     fi
                     ./eng/common/build.sh "${args[@]}"
-                  displayName: Build full solution and run tests
+                  displayName: Test

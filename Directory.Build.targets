@@ -14,4 +14,13 @@
                       !$([System.String]::Copy('$(BUILD_SOURCEBRANCH)').StartsWith('refs/heads/release/'))"
            Text="DotNetFinalVersionKind=release is reserved for non-PR builds of internal release/* branches." />
   </Target>
+
+  <Target Name="ReportPackageVersion"
+          BeforeTargets="Build"
+          Condition="'$(IsPackable)' == 'true' And '$(IsCrossTargetingBuild)' == 'true' And '$(PackageVersion)' != ''">
+    <Message Importance="high" Text="Package version: $(PackageVersion)" />
+    <Message Importance="high"
+             Condition="'$(TF_BUILD)' == 'True'"
+             Text="##vso[build.updatebuildnumber]$(PackageVersion)" />
+  </Target>
 </Project>
