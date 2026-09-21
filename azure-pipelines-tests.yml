@@ -19,3 +19,22 @@ jobs:
     parameters:
       pack: false
       expectedSourceCommit: $(resources.pipeline.package.sourceCommit)
+      platforms:
+        Windows:
+          os: windows
+          pool:
+            vmImage: windows-2022
+          publish: false
+          properties: ''
+        macOS:
+          os: macos
+          pool:
+            vmImage: macos-15
+          publish: false
+          properties: /p:EnableCodeSigning=false
+        Linux:
+          os: linux
+          pool:
+            vmImage: ubuntu-22.04
+          publish: false
+          properties: ''
