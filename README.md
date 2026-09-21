@@ -61,14 +61,14 @@ To build and pack only the shipping libraries, without building tests or samples
 | Entry point | Responsibility | Platforms |
 | --- | --- | --- |
 | [azure-pipelines-public.yml](azure-pipelines-public.yml) | Build the full solution, including samples; run tests and pack unsigned packages | Windows, macOS, Linux |
-| [azure-pipelines.yml](azure-pipelines.yml) | Build and pack only the shipping libraries, sign, register assets in BAR, and promote through Maestro | Windows |
+| [azure-pipelines-package.yml](azure-pipelines-package.yml) | Build and pack only the shipping libraries, sign, register assets in BAR, and promote through Maestro | Windows |
 | [azure-pipelines-tests.yml](azure-pipelines-tests.yml) | Build the full solution, including samples, and run tests; no packaging or promotion | Windows, macOS, Linux |
 
 The internal package pipeline does not build sample or test projects. Its
 signing and package-validation stages use the standard 1ES/Arcade templates;
 NuGet.org publication remains a separate protected release operation.
 
-`azure-pipelines.yml` still declares the `1ESPipelineTemplates` repository
+`azure-pipelines-package.yml` still declares the `1ESPipelineTemplates` repository
 because its root extends the official 1ES pipeline template from that external
 repository. Arcade supplies the repository-local build, job, signing, and
 publishing templates, but it does not replace the official 1ES root. The public
