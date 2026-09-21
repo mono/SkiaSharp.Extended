@@ -28,7 +28,6 @@ pr:
       - images/
 
 variables:
-  - template: /eng/common/templates/variables/pool-providers.yml@self
   - template: /scripts/azure-pipelines-variables.yml@self
   - name: OfficialBuildId
     value: $(Build.BuildNumber)
@@ -41,8 +40,7 @@ jobs:
         Windows:
           os: windows
           pool:
-            name: $(DncEngPublicBuildPool)
-            demands: ImageOverride -equals windows.vs2026.amd64.open
+            vmImage: windows-2022
           publish: true
           properties: ''
         macOS:
@@ -55,7 +53,6 @@ jobs:
         Linux:
           os: linux
           pool:
-            name: $(DncEngPublicBuildPool)
-            demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+            vmImage: ubuntu-22.04
           publish: false
           properties: ''
