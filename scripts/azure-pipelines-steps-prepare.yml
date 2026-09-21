@@ -66,7 +66,7 @@ steps:
     condition: eq(variables['Agent.OS'], 'Darwin')
 
   - pwsh: |
-      $workloads = if ($IsLinux) { @('maui-android') } else { @('maui') }
+      [string[]] $workloads = if ($IsLinux) { 'maui-android' } else { 'maui' }
       if ('${{ parameters.installWasmTools }}' -eq 'True') {
         $workloads += 'wasm-tools'
       }
