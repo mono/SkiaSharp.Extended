@@ -12,21 +12,19 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- see targets: <PackageVersion /> -->
     <Authors>Microsoft</Authors>
     <Owners>Microsoft</Owners>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <PackageIcon>logo.png</PackageIcon>
+    <PackageIconFullPath>$(MSBuildThisFileDirectory)..\images\logo.png</PackageIconFullPath>
     <PackageTags>xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform skiasharp skiasharp.extended</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <!-- Preserve the historical Xamarin/Microsoft MIT notices instead of Arcade's exact-text template. -->
+    <SuppressLicenseValidation>true</SuppressLicenseValidation>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://go.microsoft.com/fwlink/?linkid=2071915</PackageProjectUrl>
-    <RepositoryUrl>https://go.microsoft.com/fwlink/?linkid=2071915</RepositoryUrl>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <AssemblyFileVersion>2.0.0.0</AssemblyFileVersion>
-    <Version>4.0.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion Condition=" '$(Version)' != '' and '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</PackageVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
@@ -34,22 +32,13 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)'=='Release' and $([MSBuild]::IsOSPlatform('windows')) ">
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\..\LICENSE" PackagePath="" Pack="true" />
     <None Include="README.md" PackagePath="" Pack="true" />
-    <None Include="..\..\images\logo.png" PackagePath="" Pack="true" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(Configuration)'=='Debug' ">
   </ItemGroup>
 
 </Project>

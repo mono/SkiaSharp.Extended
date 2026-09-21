@@ -1,0 +1,52 @@
+parameters:
+  - name: installWasmTools
+    type: boolean
+    default: true
+
+steps:
+  - pwsh: ./eng/install-openjdk.ps1
+    displayName: Install OpenJDK
+    retryCountOnTaskFailure: 3
+
+  - pwsh: ./eng/install-android-sdk.ps1
+    displayName: Install Android SDK
+    retryCountOnTaskFailure: 3
+
+  - pwsh: ./eng/install-android-package.ps1 -Package platform-tools
+    displayName: Install Android platform tools
+    retryCountOnTaskFailure: 3
+
+  - pwsh: ./eng/install-android-package.ps1 -Package 'build-tools;36.0.0'
+    displayName: Install Android build tools
+    retryCountOnTaskFailure: 3
+
+  - pwsh: ./eng/install-android-platform.ps1 -API 36
+    displayName: Install Android API 36
+    retryCountOnTaskFailure: 3
+
+  - pwsh: |
+      ./eng/common/dotnet.sh tool restore
+      if ($LASTEXITCODE) {
+        throw "Apple SDK tool restore failed with exit code $LASTEXITCODE."
+      }
+    displayName: Restore Apple SDK tool
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
+
+  - pwsh: >
+      ./eng/configure-platform.ps1
+      -XcodeVersion '$(XCODE_VERSION)'
+    displayName: Configure Apple SDKs
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
+
+  - pwsh: |
+      [string[]] $workloads = if ($IsLinux) { 'maui-android' } else { 'maui' }
+      if ('${{ parameters.installWasmTools }}' -eq 'True') {
+        $workloads += 'wasm-tools'
+      }
+
+      $dotnet = if ($IsWindows) { './eng/common/dotnet.ps1' } else { './eng/common/dotnet.sh' }
+      & $dotnet workload install @workloads --version '$(DOTNET_WORKLOAD_VERSION)' --source '$(DOTNET_PUBLIC_FEED)'
+      if ($LASTEXITCODE) {
+        throw "Pinned workload installation failed with exit code $LASTEXITCODE."
+      }
+    displayName: Install pinned .NET workloads

@@ -28,17 +28,43 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "10.0.x"
+          global-json-file: global.json
 
-      - name: Install MAUI Android workload
-        run: dotnet workload install maui-android
+      - name: Install OpenJDK
+        shell: pwsh
+        run: ./eng/install-openjdk.ps1
 
-      - name: Install wasm-tools workload
-        run: dotnet workload install wasm-tools
+      - name: Install Android SDK
+        shell: pwsh
+        run: ./eng/install-android-sdk.ps1
 
-      - name: Restore local tools
-        run: dotnet tool restore
+      - name: Install Android platform tools
+        shell: pwsh
+        run: ./eng/install-android-package.ps1 -Package platform-tools
+
+      - name: Install Android build tools
+        shell: pwsh
+        run: ./eng/install-android-package.ps1 -Package 'build-tools;36.0.0'
+
+      - name: Install Android API 36
+        shell: pwsh
+        run: ./eng/install-android-platform.ps1 -API 36
+
+      - name: Install pinned workloads
+        run: |
+          ./eng/common/dotnet.sh workload install maui-android wasm-tools \
+            --version 10.0.203 \
+            --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json
 
       - name: Verify build
-        run: dotnet cake --target=build
-        continue-on-error: true
+        run: ./build.sh -test -configuration Release
+
+      - name: Upload build and test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: setup-build-logs
+          path: |
+            artifacts/log/Release
+            artifacts/TestResults/Release
+          retention-days: 5

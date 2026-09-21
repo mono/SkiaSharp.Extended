@@ -4,8 +4,9 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # Repository-specific files
-output/
 .DS_Store
+tools/
+.nuget/
 
 # Generated documentation files
 docs/llms.txt
@@ -29,10 +30,16 @@ docs/api/
 [Rr]eleases/
 x64/
 x86/
+!eng/common/
+!eng/common/**
 bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+
+# Arcade repository-local toolsets and package cache
+/.dotnet/
+/.packages/
 
 # Visual Studio 2015 cache/options directory
 .vs/

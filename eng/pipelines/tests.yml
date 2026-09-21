@@ -1,0 +1,47 @@
+name: $(Date:yyyyMMdd).$(Rev:r)
+
+trigger: none
+
+parameters:
+  - name: buildAgentWindows
+    displayName: 'The Windows validation agent configuration:'
+    type: object
+    default:
+      pool:
+        name: Azure Pipelines
+        vmImage: windows-2022
+        os: windows
+  - name: buildAgentMac
+    displayName: 'The macOS validation agent configuration:'
+    type: object
+    default:
+      pool:
+        name: Azure Pipelines
+        vmImage: macos-15
+        os: macos
+  - name: buildAgentLinux
+    displayName: 'The Linux validation agent configuration:'
+    type: object
+    default:
+      pool:
+        name: Azure Pipelines
+        vmImage: ubuntu-22.04
+        os: linux
+
+resources:
+  pipelines:
+    - pipeline: package
+      source: '\dotnet\skiasharp\skiasharp-extended-package'
+      trigger: true
+
+variables:
+  - template: /eng/pipelines/variables.yml@self
+
+stages:
+  - template: /eng/pipelines/stages/test.yml@self
+    parameters:
+      expectedSourceCommit: $(resources.pipeline.package.sourceCommit)
+      buildAgents:
+        Windows: ${{ parameters.buildAgentWindows }}
+        macOS: ${{ parameters.buildAgentMac }}
+        Linux: ${{ parameters.buildAgentLinux }}

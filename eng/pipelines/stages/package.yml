@@ -1,0 +1,141 @@
+parameters:
+  - name: buildAgents
+    type: object
+  - name: official
+    type: boolean
+    default: false
+  - name: useRealSigning
+    type: boolean
+    default: false
+  - name: publishAssets
+    type: boolean
+    default: false
+
+stages:
+  - stage: package
+    displayName: Package
+    dependsOn: []
+    jobs:
+      - ${{ each buildAgent in parameters.buildAgents }}:
+        - ${{ if eq(parameters.official, true) }}:
+          - template: /eng/common/templates-official/job/job.yml@self
+            parameters:
+              name: Pack_Windows
+              displayName: Pack Windows
+              pool: ${{ buildAgent.value.pool }}
+              runAsPublic: false
+              enableMicrobuild: true
+              enableMicrobuildForMacAndLinux: false
+              microbuildUseESRP: ${{ parameters.useRealSigning }}
+              variables:
+                - name: _SignType
+                  ${{ if eq(parameters.useRealSigning, true) }}:
+                    value: real
+                  ${{ else }}:
+                    value: test
+              timeoutInMinutes: 180
+              artifacts:
+                publish:
+                  logs:
+                    name: BuildLogs
+              preSteps:
+                - checkout: self
+                  clean: true
+                  fetchDepth: 1
+              steps:
+                - template: /eng/pipelines/steps/setup.yml@self
+                  parameters:
+                    installWasmTools: false
+                - pwsh: |
+                    ./eng/common/build.ps1 `
+                      -restore `
+                      -build `
+                      -pack `
+                      -publish `
+                      -configuration '$(_BuildConfig)' `
+                      -prepareMachine `
+                      -warnNotAsError '$(LEGACY_WARNINGS_NOT_AS_ERRORS)' `
+                      -sign `
+                      -ci `
+                      -binaryLogName Pack.binlog `
+                      '/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)' `
+                      '/p:BuildShippingOnly=true' `
+                      '/p:DotNetSignType=$(_SignType)'
+                    if ($LASTEXITCODE) {
+                      throw "Arcade packaging and signing failed with exit code $LASTEXITCODE."
+                    }
+                  displayName: Pack and sign
+
+        - ${{ else }}:
+          - template: /eng/common/templates/job/job.yml@self
+            parameters:
+              name: Pack_${{ buildAgent.key }}
+              displayName: Pack ${{ buildAgent.key }}
+              pool: ${{ buildAgent.value.pool }}
+              runAsPublic: true
+              timeoutInMinutes: 180
+              artifacts:
+                publish:
+                  logs:
+                    name: PackLogs_${{ buildAgent.key }}
+              preSteps:
+                - checkout: self
+                  clean: true
+                  fetchDepth: 1
+              steps:
+                - template: /eng/pipelines/steps/setup.yml@self
+                  parameters:
+                    installWasmTools: false
+                - ${{ if eq(buildAgent.value.pool.os, 'windows') }}:
+                  - pwsh: |
+                      ./eng/common/build.ps1 `
+                        -restore `
+                        -build `
+                        -pack `
+                        -publish `
+                        -configuration '$(_BuildConfig)' `
+                        -prepareMachine `
+                        -warnNotAsError '$(LEGACY_WARNINGS_NOT_AS_ERRORS)' `
+                        -ci `
+                        -binaryLogName Pack.binlog `
+                        '/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)' `
+                        '/p:BuildShippingOnly=true'
+                      if ($LASTEXITCODE) {
+                        throw "Arcade packaging failed with exit code $LASTEXITCODE."
+                      }
+                    displayName: Pack
+                - ${{ else }}:
+                  - bash: |
+                      args=(
+                        -restore
+                        -build
+                        -pack
+                        -configuration "$(_BuildConfig)"
+                        -prepareMachine
+                        -warnNotAsError "$(LEGACY_WARNINGS_NOT_AS_ERRORS)"
+                        -ci
+                        -binaryLogName Pack.binlog
+                        "/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)"
+                        /p:BuildShippingOnly=true
+                      )
+                      if [[ '${{ buildAgent.value.pool.os }}' == 'macos' ]]; then
+                        args+=(/p:EnableCodeSigning=false)
+                      fi
+                      ./eng/common/build.sh "${args[@]}"
+                    displayName: Pack
+                - ${{ if ne(buildAgent.value.pool.os, 'windows') }}:
+                  - task: PublishPipelineArtifact@1
+                    displayName: Publish ${{ buildAgent.key }} packages
+                    inputs:
+                      targetPath: $(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/Shipping
+                      artifact: Packages_${{ buildAgent.key }}
+                    condition: succeeded()
+
+      - ${{ if and(eq(parameters.official, true), eq(parameters.publishAssets, true)) }}:
+        - template: /eng/common/templates-official/job/publish-build-assets.yml@self
+          parameters:
+            dependsOn: Pack_Windows
+            runAsPublic: false
+            publishingVersion: 3
+            publishAssetsImmediately: false
+            officialBuildId: $(ARCADE_OFFICIAL_BUILD_ID)

@@ -1,0 +1,26 @@
+<Project>
+  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <ItemGroup Condition="'$(TestRunnerName)' == 'XUnitV3' And '$(UseVSTestRunner)' == 'true'">
+    <PackageReference Remove="xunit.runner.visualstudio" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+  </ItemGroup>
+
+  <Target Name="ValidateReleaseVersionKind"
+          BeforeTargets="GetAssemblyVersion"
+          Condition="'$(DotNetFinalVersionKind)' == 'release'">
+    <Error Condition="'$(SYSTEM_TEAMPROJECT)' != 'internal' Or
+                      '$(BUILD_REASON)' == 'PullRequest' Or
+                      !$([System.String]::Copy('$(BUILD_SOURCEBRANCH)').StartsWith('refs/heads/release/'))"
+           Text="DotNetFinalVersionKind=release is reserved for non-PR builds of internal release/* branches." />
+  </Target>
+
+  <Target Name="ReportPackageVersion"
+          BeforeTargets="Build"
+          Condition="'$(IsPackable)' == 'true' And '$(IsCrossTargetingBuild)' == 'true' And '$(PackageVersion)' != ''">
+    <Message Importance="high" Text="Package version: $(PackageVersion)" />
+    <Message Importance="high"
+             Condition="'$(TF_BUILD)' == 'True'"
+             Text="##vso[build.updatebuildnumber]$(PackageVersion)" />
+  </Target>
+</Project>

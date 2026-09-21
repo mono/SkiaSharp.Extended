@@ -1,7 +1,10 @@
 <Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Shipped assemblies have historically not been strong named. -->
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
 </Project>

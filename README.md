@@ -1,6 +1,6 @@
 # SkiaSharp.Extended
 
-[![Build Status](https://dev.azure.com/devdiv/DevDiv/_apis/build/status/Xamarin/Components/SkiaSharp.Extended?branchName=main)](https://dev.azure.com/devdiv/DevDiv/_build/latest?definitionId=10846&branchName=main)  [![Build Status](https://dev.azure.com/xamarin/public/_apis/build/status/mono/SkiaSharp/SkiaSharp.Extended%20(Public)?branchName=main)](https://dev.azure.com/xamarin/public/_build/latest?definitionId=6&branchName=main)
+[![Build Status](https://dev.azure.com/dnceng-public/public/_apis/build/status/346?branchName=main)](https://dev.azure.com/dnceng-public/public/_build?definitionId=346&branchName=main)
 
 **SkiaSharp.Extended** is a collection some cool libraries that may be
 useful to some apps. There are several repositories that may have
@@ -16,12 +16,44 @@ interesting projects:
 
 ## Building
 
-To build the projects and samples, just open `SkiaSharp.Extended.sln` 
-in Visual Studio.
+Install the .NET SDK specified by `global.json` and the required MAUI workloads
+globally on your machine. The repository does not install an SDK or package
+cache into your checkout.
 
-The CI server just runs `dotnet cake` and outputs all the packages,
-assemblies and test results. This can also be used to build everything
-locally.
+```bash
+# Each command restores and builds what it needs.
+dotnet build SkiaSharp.Extended.sln --configuration Release
+dotnet test SkiaSharp.Extended.sln --configuration Release
+dotnet pack SkiaSharp.Extended.sln --configuration Release
+```
+
+Run the Blazor sample with:
+
+```bash
+dotnet run --project samples/SkiaSharpDemo.Blazor
+```
+
+Run the MAUI sample on a supported platform with its target framework:
+
+```bash
+# Android device or emulator
+dotnet run --project samples/SkiaSharpDemo -f net10.0-android
+
+# iOS simulator or device (macOS)
+dotnet run --project samples/SkiaSharpDemo -f net10.0-ios
+
+# Mac Catalyst (macOS)
+dotnet run --project samples/SkiaSharpDemo -f net10.0-maccatalyst
+
+# Windows
+dotnet run --project samples/SkiaSharpDemo -f net10.0-windows10.0.19041.0
+```
+
+Outputs use Arcade's standard `artifacts/` layout: assemblies in `bin/`,
+shipping packages in `packages/Release/Shipping/`, test results in
+`TestResults/Release/`, and build logs in `log/Release/`. Package versions are
+defined in `eng/Versions.props`. Arcade supplies repository and CI build
+infrastructure; it does not require a repository-local .NET SDK.
 
 ## License
 

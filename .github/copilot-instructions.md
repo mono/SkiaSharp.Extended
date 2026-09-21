@@ -3,17 +3,20 @@
 ## Build, Test, and Lint
 
 ```bash
-# Restore local tools first (required for Cake)
-dotnet tool restore
+# Install workloads for the SDK/workload set pinned in global.json.
+# On Linux use maui-android instead of maui; on Windows use eng\common\dotnet.cmd.
+./eng/common/dotnet.sh workload install maui wasm-tools \
+  --version 10.0.203 \
+  --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json
 
 # Full build, pack, and test (CI equivalent)
-dotnet cake
+./build.sh -configuration Release -pack -test
 
 # Build only
-dotnet cake --target=build
+./build.sh -configuration Release
 
 # Run all tests
-dotnet cake --target=test
+./build.sh -configuration Release -test
 
 # Run a single test by name
 dotnet test tests/SkiaSharp.Extended.Tests --filter "FullyQualifiedName~CanEncodeAndDecode"
@@ -21,6 +24,15 @@ dotnet test tests/SkiaSharp.Extended.Tests --filter "FullyQualifiedName~CanEncod
 # Build specific project (useful for MAUI on Linux - only Android supported)
 dotnet build source/SkiaSharp.Extended.UI.Maui/SkiaSharp.Extended.UI.Maui.csproj -f net10.0-android36.0
 ```
+
+Use `build.cmd` on Windows. Arcade owns the real project graph, versioning,
+packaging, symbols, signing, and publishing. Build outputs belong in `artifacts/`;
+do not add Cake adapters or custom package/version staging scripts. The generated
+`eng/common/` snapshot must remain identical to its pinned upstream revision.
+Repository-owned build engineering belongs under `eng/`; keep only Azure DevOps
+public-entry compatibility YAML at the repository root until definition 346 is
+updated to `eng/pipelines/public.yml`. CI provisions Android with the
+SkiaSharp-managed SDK scripts and uses `AppleDev.Tools` only for macOS setup.
 
 ## Architecture
 
@@ -88,7 +100,7 @@ Tests use xUnit v3 and mirror the source structure. Test files are named `*Test.
 
 ## Blazor Sample
 
-There is a Blazor WebAssembly sample app at `samples/SkiaSharpDemo.Blazor/` that demonstrates core `SkiaSharp.Extended` features (Shapes, Path Interpolation, BlurHash). It is deployed to GitHub Pages at `mono.github.io/SkiaSharp.Extended/sample/` via the `builds-docs.yml` workflow.
+There is a Blazor WebAssembly sample app at `samples/SkiaSharpDemo.Blazor/` that demonstrates core `SkiaSharp.Extended` features (Shapes, Path Interpolation, BlurHash). It is deployed to GitHub Pages at `mono.github.io/SkiaSharp.Extended/sample/` via the `docs-deploy.yml` workflow.
 
 ## PR Screenshot Requirement
 
