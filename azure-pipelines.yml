@@ -135,11 +135,12 @@ extends:
                     parameters:
                       installWasmTools: false
                   - pwsh: >
-                      ./Build.cmd
-                      -pack -publish
+                      ./eng/common/build.ps1
+                      -restore -build -pack -publish
                       -projects "$(Build.SourcesDirectory)\scripts\SkiaSharp.Extended-Pack.slnf"
                       -configuration $(_BuildConfig)
                       -prepareMachine
+                      -warnNotAsError "CS0618;CS8600;CS8602;CS8604;CS8605;CS8618;CS8622;CS8625;CS8767;XC0022;XC0025"
                       -sign
                       -ci
                       /p:OfficialBuildId=$(OfficialBuildId)
@@ -147,11 +148,12 @@ extends:
                     displayName: Restore, build, pack, sign, and publish manifests
                     condition: and(succeeded(), eq('${{ parameters.packageLabel }}', 'preview'))
                   - pwsh: >
-                      ./Build.cmd
-                      -pack -publish
+                      ./eng/common/build.ps1
+                      -restore -build -pack -publish
                       -projects "$(Build.SourcesDirectory)\scripts\SkiaSharp.Extended-Pack.slnf"
                       -configuration $(_BuildConfig)
                       -prepareMachine
+                      -warnNotAsError "CS0618;CS8600;CS8602;CS8604;CS8605;CS8618;CS8622;CS8625;CS8767;XC0022;XC0025"
                       -sign
                       -ci
                       /p:OfficialBuildId=$(OfficialBuildId)

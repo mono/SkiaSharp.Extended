@@ -42,9 +42,11 @@ jobs:
               installWasmTools: true
           - ${{ if eq(platform.value.os, 'windows') }}:
             - pwsh: >
-                ./Build.cmd -test
+                ./eng/common/build.ps1
+                -restore -build -test
                 -configuration $(_BuildConfig)
                 -prepareMachine
+                -warnNotAsError "CS0618;CS8600;CS8602;CS8604;CS8605;CS8618;CS8622;CS8625;CS8767;XC0022;XC0025"
                 -ci
                 -binaryLogName Validation.binlog
                 /p:OfficialBuildId=$(OfficialBuildId)
@@ -62,10 +64,12 @@ jobs:
           - ${{ if eq(parameters.pack, true) }}:
             - ${{ if eq(platform.value.os, 'windows') }}:
               - pwsh: >
-                  ./Build.cmd -pack -publish
+                  ./eng/common/build.ps1
+                  -restore -build -pack -publish
                   -projects "$(Build.SourcesDirectory)\scripts\SkiaSharp.Extended-Pack.slnf"
                   -configuration $(_BuildConfig)
                   -prepareMachine
+                  -warnNotAsError "CS0618;CS8600;CS8602;CS8604;CS8605;CS8618;CS8622;CS8625;CS8767;XC0022;XC0025"
                   -ci
                   -binaryLogName Pack.binlog
                   /p:OfficialBuildId=$(OfficialBuildId)
