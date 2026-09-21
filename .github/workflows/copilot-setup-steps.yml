@@ -30,12 +30,25 @@ jobs:
         with:
           global-json-file: global.json
 
-      - name: Restore local tools
-        run: ./eng/common/dotnet.sh tool restore
-
-      - name: Configure platform SDKs
+      - name: Install OpenJDK
         shell: pwsh
-        run: ./eng/configure-platform.ps1
+        run: ./eng/install-openjdk.ps1
+
+      - name: Install Android SDK
+        shell: pwsh
+        run: ./eng/install-android-sdk.ps1
+
+      - name: Install Android platform tools
+        shell: pwsh
+        run: ./eng/install-android-package.ps1 -Package platform-tools
+
+      - name: Install Android build tools
+        shell: pwsh
+        run: ./eng/install-android-package.ps1 -Package 'build-tools;36.0.0'
+
+      - name: Install Android API 36
+        shell: pwsh
+        run: ./eng/install-android-platform.ps1 -API 36
 
       - name: Install pinned workloads
         run: |

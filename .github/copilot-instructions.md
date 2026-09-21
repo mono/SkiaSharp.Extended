@@ -31,8 +31,8 @@ do not add Cake adapters or custom package/version staging scripts. The generate
 `eng/common/` snapshot must remain identical to its pinned upstream revision.
 Repository-owned build engineering belongs under `eng/`; keep only Azure DevOps
 public-entry compatibility YAML at the repository root until definition 346 is
-updated to `eng/pipelines/public.yml`. CI platform discovery and setup uses the
-pinned `AndroidSdk.Tool` and `AppleDev.Tools` commands.
+updated to `eng/pipelines/public.yml`. CI provisions Android with the
+SkiaSharp-managed SDK scripts and uses `AppleDev.Tools` only for macOS setup.
 
 ## Architecture
 

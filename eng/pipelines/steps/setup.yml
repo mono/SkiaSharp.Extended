@@ -4,23 +4,40 @@ parameters:
     default: true
 
 steps:
-  - pwsh: |
-      $dotnet = if ($IsWindows) { './eng/common/dotnet.ps1' } else { './eng/common/dotnet.sh' }
-      & $dotnet tool restore
-      if ($LASTEXITCODE) {
-        throw "Local tool restore failed with exit code $LASTEXITCODE."
-      }
-    displayName: Restore Android and Apple SDK tools
-
   - pwsh: ./eng/install-openjdk.ps1
     displayName: Install OpenJDK
     retryCountOnTaskFailure: 3
+
+  - pwsh: ./eng/install-android-sdk.ps1
+    displayName: Install Android SDK
+    retryCountOnTaskFailure: 3
+
+  - pwsh: ./eng/install-android-package.ps1 -Package platform-tools
+    displayName: Install Android platform tools
+    retryCountOnTaskFailure: 3
+
+  - pwsh: ./eng/install-android-package.ps1 -Package 'build-tools;36.0.0'
+    displayName: Install Android build tools
+    retryCountOnTaskFailure: 3
+
+  - pwsh: ./eng/install-android-platform.ps1 -API 36
+    displayName: Install Android API 36
+    retryCountOnTaskFailure: 3
+
+  - pwsh: |
+      ./eng/common/dotnet.sh tool restore
+      if ($LASTEXITCODE) {
+        throw "Apple SDK tool restore failed with exit code $LASTEXITCODE."
+      }
+    displayName: Restore Apple SDK tool
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
 
   - pwsh: >
       ./eng/configure-platform.ps1
       -XcodeVersion '$(XCODE_VERSION)'
       -IosSimulatorRuntime '$(IOS_SIMULATOR_RUNTIME)'
-    displayName: Configure platform SDKs
+    displayName: Configure Apple SDKs
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
 
   - pwsh: |
       [string[]] $workloads = if ($IsLinux) { 'maui-android' } else { 'maui' }
