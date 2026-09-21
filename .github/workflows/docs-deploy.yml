@@ -7,7 +7,6 @@ on:
       - 'docs/**'
       - 'samples/SkiaSharpDemo.Blazor/**'
       - 'source/**'
-      - 'scripts/**'
       - 'eng/**'
       - 'Directory.Build.*'
       - 'Directory.Packages.props'
@@ -20,7 +19,6 @@ on:
       - 'docs/**'
       - 'samples/SkiaSharpDemo.Blazor/**'
       - 'source/**'
-      - 'scripts/**'
       - 'eng/**'
       - 'Directory.Build.*'
       - 'Directory.Packages.props'
@@ -85,7 +83,10 @@ jobs:
           global-json-file: global.json
 
       - name: Install pinned workloads
-        run: ./eng/common/dotnet.sh workload install maui-android wasm-tools --source https://api.nuget.org/v3/index.json
+        run: |
+          ./eng/common/dotnet.sh workload install maui-android wasm-tools \
+            --version 10.0.203 \
+            --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json
 
       - name: Restore .NET tools
         run: ./eng/common/dotnet.sh tool restore

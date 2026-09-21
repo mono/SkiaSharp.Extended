@@ -5,7 +5,9 @@
 ```bash
 # Install workloads for the SDK/workload set pinned in global.json.
 # On Linux use maui-android instead of maui; on Windows use eng\common\dotnet.cmd.
-./eng/common/dotnet.sh workload install maui wasm-tools --source https://api.nuget.org/v3/index.json
+./eng/common/dotnet.sh workload install maui wasm-tools \
+  --version 10.0.203 \
+  --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json
 
 # Full build, pack, and test (CI equivalent)
 ./build.sh -configuration Release -pack -test
@@ -27,6 +29,9 @@ Use `build.cmd` on Windows. Arcade owns the real project graph, versioning,
 packaging, symbols, signing, and publishing. Build outputs belong in `artifacts/`;
 do not add Cake adapters or custom package/version staging scripts. The generated
 `eng/common/` snapshot must remain identical to its pinned upstream revision.
+Repository-owned build engineering belongs under `eng/`; keep only Azure DevOps
+entry-point YAML files at the repository root. CI platform discovery and setup
+uses the pinned `AndroidSdk.Tool` and `AppleDev.Tools` commands.
 
 ## Architecture
 

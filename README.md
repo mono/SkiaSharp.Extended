@@ -17,20 +17,30 @@ interesting projects:
 ## Building
 
 Builds use the .NET Arcade SDK. The SDK and workload versions are pinned in
-`global.json`; the build scripts bootstrap the required .NET SDK when needed.
+`global.json` and `eng/pipelines/variables.yml`; the build scripts bootstrap the required .NET SDK when needed.
 Install the pinned workloads before your first full build:
 
 ```bash
 # On macOS; use maui-android instead of maui on Linux.
-./eng/common/dotnet.sh workload install maui wasm-tools --source https://api.nuget.org/v3/index.json
+./eng/common/dotnet.sh workload install maui wasm-tools \
+  --version 10.0.203 \
+  --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json
 
 # Restore, build, run tests, and create NuGet packages.
 ./build.sh -configuration Release -test -pack
 ```
 
-On Windows, use `eng\common\dotnet.cmd workload install maui wasm-tools --source https://api.nuget.org/v3/index.json`,
+On Windows, use `eng\common\dotnet.cmd workload install maui wasm-tools --version 10.0.203 --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json`,
 then `build.cmd -configuration Release -test -pack`. You can also open
 `SkiaSharp.Extended.sln` in Visual Studio.
+
+The local tool manifest pins `AndroidSdk.Tool` and `AppleDev.Tools`. CI uses
+them from the `dotnet-public` mirror to locate JDK 17 and the Android SDK,
+accept licenses, install the Android packages required by the workload
+manifest, select Xcode 26.3, and verify the iOS simulator runtime. The tools
+also provide AVD/emulator and Apple simulator lifecycle commands for future
+device-test jobs; the current pipelines run host tests and compile samples, so
+they do not boot devices.
 
 Outputs use Arcade's standard `artifacts/` layout: assemblies in `bin/`,
 shipping packages in `packages/Release/Shipping/`, test results in
@@ -41,7 +51,7 @@ generation, signing, and asset manifests; no Cake tools are required.
 To build and pack only the shipping libraries, without building tests or samples:
 
 ```bash
-./build.sh -configuration Release -projects "$PWD/scripts/SkiaSharp.Extended-Pack.slnf" -pack
+./build.sh -configuration Release -pack /p:BuildShippingOnly=true
 ```
 
 ## CI pipelines
@@ -55,6 +65,13 @@ To build and pack only the shipping libraries, without building tests or samples
 The internal package pipeline does not build sample or test projects. Its
 signing and package-validation stages use the standard 1ES/Arcade templates;
 NuGet.org publication remains a separate protected release operation.
+
+`azure-pipelines.yml` still declares the `1ESPipelineTemplates` repository
+because its root extends the official 1ES pipeline template from that external
+repository. Arcade supplies the repository-local build, job, signing, and
+publishing templates, but it does not replace the official 1ES root. The public
+and internal-test roots use only local Arcade templates and do not reference
+`1ESPipelineTemplates`.
 
 The internal tests pipeline is triggered by successful completion of
 `\dotnet\skiasharp\skiasharp-extended-package`. Both internal definitions must use

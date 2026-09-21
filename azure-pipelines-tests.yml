@@ -3,6 +3,35 @@ name: $(Date:yyyyMMdd).$(Rev:r)
 trigger: none
 pr: none
 
+parameters:
+  - name: buildAgentWindows
+    displayName: 'The Windows validation agent configuration:'
+    type: object
+    default:
+      pool:
+        name: ''
+        vmImage: windows-2022
+        demands: ''
+        os: windows
+  - name: buildAgentMac
+    displayName: 'The macOS validation agent configuration:'
+    type: object
+    default:
+      pool:
+        name: ''
+        vmImage: macos-15
+        demands: ''
+        os: macos
+  - name: buildAgentLinux
+    displayName: 'The Linux validation agent configuration:'
+    type: object
+    default:
+      pool:
+        name: ''
+        vmImage: ubuntu-22.04
+        demands: ''
+        os: linux
+
 resources:
   pipelines:
     - pipeline: package
@@ -10,31 +39,13 @@ resources:
       trigger: true
 
 variables:
-  - template: /scripts/azure-pipelines-variables.yml@self
-  - name: OfficialBuildId
-    value: $(Build.BuildNumber)
+  - template: /eng/pipelines/variables.yml@self
 
 jobs:
-  - template: /scripts/azure-pipelines-jobs-validation.yml@self
+  - template: /eng/pipelines/jobs/test.yml@self
     parameters:
-      pack: false
       expectedSourceCommit: $(resources.pipeline.package.sourceCommit)
-      platforms:
-        Windows:
-          os: windows
-          pool:
-            vmImage: windows-2022
-          publish: false
-          properties: ''
-        macOS:
-          os: macos
-          pool:
-            vmImage: macos-15
-          publish: false
-          properties: /p:EnableCodeSigning=false
-        Linux:
-          os: linux
-          pool:
-            vmImage: ubuntu-22.04
-          publish: false
-          properties: ''
+      buildAgents:
+        Windows: ${{ parameters.buildAgentWindows }}
+        macOS: ${{ parameters.buildAgentMac }}
+        Linux: ${{ parameters.buildAgentLinux }}

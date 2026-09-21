@@ -22,27 +22,20 @@ schedules:
     always: true
 
 parameters:
-  - name: buildAgent
-    displayName: The Windows build agent configuration
+  - name: buildAgentWindows
+    displayName: 'The Windows build agent configuration:'
     type: object
     default:
       pool:
-        name: NetCore1ESPool-Internal
+        name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
-  - name: packageLabel
-    displayName: Package label
-    type: string
-    default: preview
-    values:
-      - preview
-      - stable
   - name: runApiScan
-    displayName: Run API Scan for this build
+    displayName: 'Run API Scan for this build (scheduled main builds run automatically)'
     type: boolean
     default: false
   - name: forceRealSigning
-    displayName: Force real signing on a trusted feature build
+    displayName: 'Ignore branch selection and force ESRP real signing'
     type: boolean
     default: false
   - name: registerInBar
@@ -51,9 +44,8 @@ parameters:
     default: false
 
 variables:
-  - template: /scripts/azure-pipelines-variables.yml@self
-  - name: OfficialBuildId
-    value: $(Build.BuildNumber)
+  - template: /eng/common/templates-official/variables/pool-providers.yml@self
+  - template: /eng/pipelines/variables.yml@self
 
 resources:
   repositories:
@@ -65,7 +57,7 @@ resources:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
-    pool: ${{ parameters.buildAgent.pool }}
+    pool: ${{ parameters.buildAgentWindows.pool }}
     settings:
       networkIsolationMode: Audit
     customBuildTags:
@@ -100,87 +92,24 @@ extends:
         configFile: $(Build.SourcesDirectory)/.config/tsaoptions.json
     stages:
       - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest'), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/'))) }}:
-        - stage: package
-          displayName: Build, pack, sign, and publish shipping products
-          jobs:
-            - template: /eng/common/templates-official/job/job.yml@self
-              parameters:
-                name: Build
-                displayName: Build, pack, sign, and publish shipping products
-                pool: ${{ parameters.buildAgent.pool }}
-                runAsPublic: false
-                enableMicrobuild: true
-                enableMicrobuildForMacAndLinux: false
-                ${{ if or(eq(parameters.forceRealSigning, true), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
-                  microbuildUseESRP: true
-                  variables:
-                    - name: _SignType
-                      value: real
-                ${{ else }}:
-                  microbuildUseESRP: false
-                  variables:
-                    - name: _SignType
-                      value: test
-                timeoutInMinutes: 180
-                artifacts:
-                  publish:
-                    logs:
-                      name: BuildLogs
-                preSteps:
-                  - checkout: self
-                    clean: true
-                    fetchDepth: 1
-                steps:
-                  - template: /scripts/azure-pipelines-steps-prepare.yml@self
-                    parameters:
-                      installWasmTools: false
-                  - pwsh: >
-                      ./eng/common/build.ps1
-                      -restore -build -pack -publish
-                      -projects "$(Build.SourcesDirectory)\scripts\SkiaSharp.Extended-Pack.slnf"
-                      -configuration $(_BuildConfig)
-                      -prepareMachine
-                      -warnNotAsError "CS0618;CS8600;CS8602;CS8604;CS8605;CS8618;CS8622;CS8625;CS8767;XC0022;XC0025"
-                      -sign
-                      -ci
-                      /p:OfficialBuildId=$(OfficialBuildId)
-                      /p:DotNetSignType=$(_SignType)
-                    displayName: Restore, build, pack, sign, and publish manifests
-                    condition: and(succeeded(), eq('${{ parameters.packageLabel }}', 'preview'))
-                  - pwsh: >
-                      ./eng/common/build.ps1
-                      -restore -build -pack -publish
-                      -projects "$(Build.SourcesDirectory)\scripts\SkiaSharp.Extended-Pack.slnf"
-                      -configuration $(_BuildConfig)
-                      -prepareMachine
-                      -warnNotAsError "CS0618;CS8600;CS8602;CS8604;CS8605;CS8618;CS8622;CS8625;CS8767;XC0022;XC0025"
-                      -sign
-                      -ci
-                      /p:OfficialBuildId=$(OfficialBuildId)
-                      /p:DotNetSignType=$(_SignType)
-                      /p:DotNetFinalVersionKind=release
-                    displayName: Restore, build, pack, sign, and publish release manifests
-                    condition: and(succeeded(), eq('${{ parameters.packageLabel }}', 'stable'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
-                  - pwsh: >
-                      throw 'Stable packages require an internal refs/heads/release/* build.'
-                    displayName: Reject an untrusted stable build
-                    condition: and(succeeded(), eq('${{ parameters.packageLabel }}', 'stable'), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
-
-            - ${{ if or(and(eq(parameters.forceRealSigning, true), eq(parameters.registerInBar, true)), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
-              - template: /eng/common/templates-official/job/publish-build-assets.yml@self
-                parameters:
-                  dependsOn: Build
-                  runAsPublic: false
-                  publishingVersion: 3
-                  publishAssetsImmediately: false
-                  officialBuildId: $(OfficialBuildId)
+        - template: /eng/pipelines/stages/package.yml@self
+          parameters:
+            buildAgentWindows: ${{ parameters.buildAgentWindows }}
+            ${{ if or(eq(parameters.forceRealSigning, 'true'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+              useRealSigning: true
+            ${{ else }}:
+              useRealSigning: false
+            ${{ if or(and(eq(parameters.forceRealSigning, 'true'), eq(parameters.registerInBar, 'true')), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+              publishAssets: true
+            ${{ else }}:
+              publishAssets: false
 
         - ${{ if or(eq(parameters.runApiScan, true), and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Schedule'))) }}:
-          - template: /scripts/azure-pipelines-stages-apiscan.yml@self
+          - template: /eng/pipelines/stages/api-scan.yml@self
             parameters:
-              buildAgent: ${{ parameters.buildAgent }}
+              buildAgent: ${{ parameters.buildAgentWindows }}
 
-        - ${{ if or(and(eq(parameters.forceRealSigning, true), eq(parameters.registerInBar, true)), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+        - ${{ if or(and(eq(parameters.forceRealSigning, 'true'), eq(parameters.registerInBar, 'true')), eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
           - template: /eng/common/templates-official/post-build/post-build.yml@self
             parameters:
               publishingInfraVersion: 3

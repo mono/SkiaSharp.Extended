@@ -1,0 +1,69 @@
+parameters:
+  - name: expectedSourceCommit
+    type: string
+    default: ''
+  - name: buildAgents
+    type: object
+
+jobs:
+  - ${{ each buildAgent in parameters.buildAgents }}:
+    - template: /eng/common/templates/job/job.yml@self
+      parameters:
+        name: Test_${{ buildAgent.key }}
+        displayName: Build samples and run tests ${{ buildAgent.key }}
+        pool:
+          ${{ if ne(buildAgent.value.pool.name, '') }}:
+            name: ${{ buildAgent.value.pool.name }}
+          ${{ if ne(buildAgent.value.pool.vmImage, '') }}:
+            vmImage: ${{ buildAgent.value.pool.vmImage }}
+          ${{ if ne(buildAgent.value.pool.demands, '') }}:
+            demands: ${{ buildAgent.value.pool.demands }}
+        runAsPublic: true
+        timeoutInMinutes: 180
+        enablePublishTestResults: true
+        testResultsFormat: vstest
+        testRunTitle: ${{ buildAgent.key }} unit tests
+        artifacts:
+          publish:
+            logs:
+              name: ValidationLogs_${{ buildAgent.key }}
+        preSteps:
+          - checkout: self
+            clean: true
+            fetchDepth: 1
+          - ${{ if ne(parameters.expectedSourceCommit, '') }}:
+            - pwsh: |
+                if ($env:EXPECTED_SOURCE_COMMIT -ne $env:BUILD_SOURCEVERSION) {
+                  throw "Validation source '$env:BUILD_SOURCEVERSION' does not match package source '$env:EXPECTED_SOURCE_COMMIT'. Select the package run and its matching source ref."
+                }
+              displayName: Verify package source provenance
+              env:
+                EXPECTED_SOURCE_COMMIT: ${{ parameters.expectedSourceCommit }}
+        steps:
+          - template: /eng/pipelines/steps/setup.yml@self
+            parameters:
+              installWasmTools: true
+          - ${{ if eq(buildAgent.value.pool.os, 'windows') }}:
+            - pwsh: >
+                ./eng/common/build.ps1
+                -restore -build -test
+                -configuration $(_BuildConfig)
+                -prepareMachine
+                -warnNotAsError "$(LEGACY_WARNINGS_NOT_AS_ERRORS)"
+                -ci
+                -binaryLogName Validation.binlog
+                /p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)
+              displayName: Build full solution and run tests
+          - ${{ else }}:
+            - bash: >
+                ./eng/common/build.sh
+                -restore -build -test
+                -configuration $(_BuildConfig)
+                -prepareMachine
+                -warnNotAsError "$(LEGACY_WARNINGS_NOT_AS_ERRORS)"
+                -ci
+                -binaryLogName Validation.binlog
+                /p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)
+                ${{ if eq(buildAgent.value.pool.os, 'macos') }}:
+                  /p:EnableCodeSigning=false
+              displayName: Build full solution and run tests

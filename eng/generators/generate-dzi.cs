@@ -1,6 +1,6 @@
 #!/usr/bin/env dotnet-script
 // Deep Zoom Image (DZI) tile generator
-// Usage: dotnet run scripts/generate-dzi.cs -- <input-image> <output-dir> [options]
+// Usage: dotnet run eng/generators/generate-dzi.cs -- <input-image> <output-dir> [options]
 //
 // Options:
 //   --tile-size <n>   Tile size in pixels (default: 256)
@@ -9,7 +9,7 @@
 //   --quality <n>     JPEG quality 1-100, only used for jpg (default: 90)
 //
 // Example:
-//   dotnet run scripts/generate-dzi.cs -- myimage.png output/ --tile-size 256 --overlap 1
+//   dotnet run eng/generators/generate-dzi.cs -- myimage.png tiles/ --tile-size 256 --overlap 1
 
 #:property ManagePackageVersionsCentrally=false
 #:package SkiaSharp@4.150.1
@@ -45,7 +45,7 @@ for (int i = 0; i < args.Length; i++)
 
 if (inputPath is null || outputDir is null)
 {
-    Console.Error.WriteLine("Usage: dotnet run scripts/generate-dzi.cs -- <input-image> <output-dir> [--tile-size 256] [--overlap 1] [--format png|jpg] [--quality 90]");
+    Console.Error.WriteLine("Usage: dotnet run eng/generators/generate-dzi.cs -- <input-image> <output-dir> [--tile-size 256] [--overlap 1] [--format png|jpg] [--quality 90]");
     Environment.Exit(1);
 }
 

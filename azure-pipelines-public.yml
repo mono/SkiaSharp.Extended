@@ -27,32 +27,50 @@ pr:
       - docs/
       - images/
 
+parameters:
+  - name: buildAgentWindows
+    displayName: 'The Windows validation agent configuration:'
+    type: object
+    default:
+      pool:
+        name: $(DncEngPublicBuildPool)
+        vmImage: ''
+        demands: ImageOverride -equals windows.vs2026.amd64.open
+        os: windows
+  - name: buildAgentMac
+    displayName: 'The macOS validation agent configuration:'
+    type: object
+    default:
+      pool:
+        name: Azure Pipelines
+        vmImage: macos-15
+        demands: ''
+        os: macos
+  - name: buildAgentLinux
+    displayName: 'The Linux validation agent configuration:'
+    type: object
+    default:
+      pool:
+        name: $(DncEngPublicBuildPool)
+        vmImage: ''
+        demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+        os: linux
+
 variables:
-  - template: /scripts/azure-pipelines-variables.yml@self
-  - name: OfficialBuildId
-    value: $(Build.BuildNumber)
+  - template: /eng/common/templates/variables/pool-providers.yml@self
+  - template: /eng/pipelines/variables.yml@self
 
 jobs:
-  - template: /scripts/azure-pipelines-jobs-validation.yml@self
+  - template: /eng/pipelines/jobs/test.yml@self
     parameters:
-      pack: true
-      platforms:
-        Windows:
-          os: windows
-          pool:
-            vmImage: windows-2022
-          publish: true
-          properties: ''
-        macOS:
-          os: macos
-          pool:
-            name: Azure Pipelines
-            vmImage: macos-15
-          publish: false
-          properties: /p:EnableCodeSigning=false
-        Linux:
-          os: linux
-          pool:
-            vmImage: ubuntu-22.04
-          publish: false
-          properties: ''
+      buildAgents:
+        Windows: ${{ parameters.buildAgentWindows }}
+        macOS: ${{ parameters.buildAgentMac }}
+        Linux: ${{ parameters.buildAgentLinux }}
+
+  - template: /eng/pipelines/jobs/pack.yml@self
+    parameters:
+      buildAgents:
+        Windows: ${{ parameters.buildAgentWindows }}
+        macOS: ${{ parameters.buildAgentMac }}
+        Linux: ${{ parameters.buildAgentLinux }}

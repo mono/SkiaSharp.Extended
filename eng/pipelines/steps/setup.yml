@@ -1,0 +1,32 @@
+parameters:
+  - name: installWasmTools
+    type: boolean
+    default: true
+
+steps:
+  - pwsh: |
+      $dotnet = if ($IsWindows) { './eng/common/dotnet.ps1' } else { './eng/common/dotnet.sh' }
+      & $dotnet tool restore
+      if ($LASTEXITCODE) {
+        throw "Local tool restore failed with exit code $LASTEXITCODE."
+      }
+    displayName: Restore Android and Apple SDK tools
+
+  - pwsh: >
+      ./eng/configure-platform.ps1
+      -XcodeVersion '$(XCODE_VERSION)'
+      -IosSimulatorRuntime '$(IOS_SIMULATOR_RUNTIME)'
+    displayName: Configure platform SDKs
+
+  - pwsh: |
+      [string[]] $workloads = if ($IsLinux) { 'maui-android' } else { 'maui' }
+      if ('${{ parameters.installWasmTools }}' -eq 'True') {
+        $workloads += 'wasm-tools'
+      }
+
+      $dotnet = if ($IsWindows) { './eng/common/dotnet.ps1' } else { './eng/common/dotnet.sh' }
+      & $dotnet workload install @workloads --version '$(DOTNET_WORKLOAD_VERSION)' --source '$(DOTNET_PUBLIC_FEED)'
+      if ($LASTEXITCODE) {
+        throw "Pinned workload installation failed with exit code $LASTEXITCODE."
+      }
+    displayName: Install pinned .NET workloads

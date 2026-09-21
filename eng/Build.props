@@ -1,5 +1,14 @@
 <Project>
-  <ItemGroup>
+  <ItemGroup Condition="'$(BuildShippingOnly)' != 'true'">
     <ProjectToBuild Include="$(RepoRoot)SkiaSharp.Extended.sln" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(BuildShippingOnly)' == 'true'">
+    <ProjectToBuild Include="$(RepoRoot)source\SkiaSharp.Extended\SkiaSharp.Extended.csproj"
+                    BuildStep="1"
+                    BuildInParallel="false" />
+    <ProjectToBuild Include="$(RepoRoot)source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj"
+                    BuildStep="2"
+                    BuildInParallel="false" />
   </ItemGroup>
 </Project>

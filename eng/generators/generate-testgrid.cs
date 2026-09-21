@@ -8,8 +8,8 @@
 // Colors are light pastels. No borders. Each tile shows its DZI level in the top-left corner.
 //
 // Usage:
-//   dotnet run scripts/generate-testgrid.cs
-//   dotnet run scripts/generate-testgrid.cs -- <output-dir>    (default: resources/collections/testgrid)
+//   dotnet run eng/generators/generate-testgrid.cs
+//   dotnet run eng/generators/generate-testgrid.cs -- <output-dir>    (default: resources/collections/testgrid)
 //
 // The output directory will contain:
 //   <name>.dzi              — DZI manifest
