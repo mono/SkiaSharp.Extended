@@ -35,7 +35,6 @@ steps:
   - pwsh: >
       ./eng/configure-platform.ps1
       -XcodeVersion '$(XCODE_VERSION)'
-      -IosSimulatorRuntime '$(IOS_SIMULATOR_RUNTIME)'
     displayName: Configure Apple SDKs
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
 

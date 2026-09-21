@@ -1,7 +1,6 @@
 [CmdletBinding()]
 param(
-    [string] $XcodeVersion = '26.3',
-    [string] $IosSimulatorRuntime = 'iOS 26.2'
+    [string] $XcodeVersion = '26.3'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -23,9 +22,3 @@ $developerDirectory = Join-Path $xcode.Path 'Contents/Developer'
 Write-Host "Xcode: $($xcode.Version) at $($xcode.Path)"
 Write-Host "##vso[task.setvariable variable=DEVELOPER_DIR]$developerDirectory"
 $env:DEVELOPER_DIR = $developerDirectory
-
-$simulators = @((& $dotnet apple simulator list --available --runtime $IosSimulatorRuntime --format json) | ConvertFrom-Json)
-if ($simulators.Count -eq 0) {
-    throw "AppleDev.Tools found no available $IosSimulatorRuntime simulator."
-}
-Write-Host "Available $IosSimulatorRuntime simulators: $($simulators.Count)"
