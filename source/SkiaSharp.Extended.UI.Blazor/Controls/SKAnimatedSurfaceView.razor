@@ -1,5 +1,20 @@
 @namespace SkiaSharp.Extended.UI.Blazor.Controls
 
-<SkiaSharp.Views.Blazor.SKCanvasView @ref="_canvasView"
-                                      OnPaintSurface="HandlePaintSurface"
+@if (Backend == SKAnimatedSurfaceViewBackend.OpenGL)
+{
+    <SkiaSharp.Views.Blazor.SKGLView @key="@Backend"
+                                      @ref="_glView"
+                                      EnableRenderLoop="IsAnimationEnabled"
+                                      IgnorePixelScaling="IgnorePixelScaling"
+                                      OnPaintSurface="HandleGlPaintSurface"
                                       @attributes="AdditionalAttributes" />
+}
+else
+{
+    <SkiaSharp.Views.Blazor.SKCanvasView @key="@Backend"
+                                          @ref="_canvasView"
+                                          EnableRenderLoop="IsAnimationEnabled"
+                                          IgnorePixelScaling="IgnorePixelScaling"
+                                          OnPaintSurface="HandleCanvasPaintSurface"
+                                          @attributes="AdditionalAttributes" />
+}

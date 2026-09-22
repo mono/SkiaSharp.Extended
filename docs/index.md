@@ -76,6 +76,17 @@ Celebrate achievements with customizable particle explosions.
 
 ---
 
+## SkiaSharp.Extended.UI.Blazor
+
+Ready-to-use Blazor controls for browser-rendered SkiaSharp scenes.
+
+### [Animated Surface View](docs/animated-surface-blazor.md)
+
+Drive synchronous update and paint callbacks from the browser's rendering loop,
+using either Canvas or OpenGL.
+
+---
+
 ## Resources
 
 - [GitHub Repository](https://github.com/mono/SkiaSharp.Extended)

@@ -1,6 +1,4 @@
-using System;
-
-namespace SkiaSharp.Extended;
+﻿namespace SkiaSharp.Extended.UI;
 
 internal class SKFrameCounter
 {

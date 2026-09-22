@@ -1,103 +1,130 @@
+using SkiaSharp;
 using SkiaSharp.Extended.UI.Blazor.Controls;
-using SkiaSharp.Views.Blazor;
 
 namespace SkiaSharp.Extended.UI.Blazor.Tests.Controls;
 
 public class SKAnimatedSurfaceViewTest
 {
-    /// <summary>
-    /// Verifies that the default parameter values are as documented.
-    /// </summary>
     [Fact]
-    public void DefaultParameters_AreCorrect()
+    public void FirstAnimatedFrame_UpdatesWithZeroDeltaBeforePainting()
+    {
+        var calls = new List<string>();
+        var view = new TestSKAnimatedSurfaceView();
+        view.Configure(
+            onUpdate: delta => calls.Add($"update:{delta.TotalMilliseconds}"),
+            onPaintSurface: (_, _) => calls.Add("paint"));
+
+        view.ApplyParameters();
+        view.Render();
+
+        Assert.Equal(["update:0", "paint"], calls);
+    }
+
+    [Fact]
+    public void ResumingAnimation_ResetsDeltaBeforeTheNextPaint()
+    {
+        var deltas = new List<TimeSpan>();
+        var view = new TestSKAnimatedSurfaceView();
+        view.Configure(onUpdate: deltas.Add);
+
+        view.ApplyParameters();
+        view.Render();
+
+        view.SetAnimationEnabled(false);
+        view.ApplyParameters();
+        view.Render();
+
+        view.SetAnimationEnabled(true);
+        view.ApplyParameters();
+        view.Render();
+
+        Assert.Equal([TimeSpan.Zero, TimeSpan.Zero], deltas);
+    }
+
+    [Fact]
+    public void PausedFrame_PaintsWithoutUpdating()
+    {
+        var updateCount = 0;
+        var paintCount = 0;
+        var view = new TestSKAnimatedSurfaceView();
+        view.Configure(
+            isAnimationEnabled: false,
+            onUpdate: _ => updateCount++,
+            onPaintSurface: (_, _) => paintCount++);
+
+        view.ApplyParameters();
+        view.Render();
+
+        Assert.Equal(0, updateCount);
+        Assert.Equal(1, paintCount);
+    }
+
+    [Fact]
+    public void ReplacingBackend_ResetsTheNextAnimatedDelta()
+    {
+        var deltas = new List<TimeSpan>();
+        var view = new TestSKAnimatedSurfaceView();
+        view.Configure(onUpdate: deltas.Add);
+
+        view.ApplyParameters();
+        view.Render();
+
+        view.SetBackend(SKAnimatedSurfaceViewBackend.OpenGL);
+        view.ApplyParameters();
+        view.Render();
+
+        Assert.Equal([TimeSpan.Zero, TimeSpan.Zero], deltas);
+    }
+
+    [Fact]
+    public void CallbackFailure_IsNotSuppressed()
     {
         var view = new TestSKAnimatedSurfaceView();
+        view.Configure(onUpdate: _ => throw new InvalidOperationException("update failure"));
 
-        Assert.True(view.IsAnimationEnabled);
-        Assert.Null(view.OnUpdate);
-        Assert.Null(view.OnPaintSurface);
-        Assert.Null(view.AdditionalAttributes);
+        view.ApplyParameters();
+
+        var exception = Assert.Throws<InvalidOperationException>(view.Render);
+
+        Assert.Equal("update failure", exception.Message);
     }
 
-    /// <summary>
-    /// Verifies that setting <c>IsAnimationEnabled</c> to false then true round-trips correctly.
-    /// </summary>
     [Fact]
-    public void ToggleIsAnimationEnabled_DoesNotThrow()
+    public void Component_DoesNotOwnAnAsyncFrameLoop()
     {
-        var view = new TestSKAnimatedSurfaceView();
-
-        Assert.True(view.IsAnimationEnabled);
-
-        var ex1 = Record.Exception(() => view.IsAnimationEnabled = false);
-        Assert.Null(ex1);
-        Assert.False(view.IsAnimationEnabled);
-
-        var ex2 = Record.Exception(() => view.IsAnimationEnabled = true);
-        Assert.Null(ex2);
-        Assert.True(view.IsAnimationEnabled);
+        Assert.False(typeof(IAsyncDisposable).IsAssignableFrom(typeof(SKAnimatedSurfaceView)));
+        Assert.DoesNotContain(
+            typeof(SKAnimatedSurfaceView).GetFields(
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic),
+            field => typeof(Task).IsAssignableFrom(field.FieldType));
     }
 
-    /// <summary>
-    /// Verifies that <c>UpdateAsync</c> calls the <c>OnUpdate</c> callback.
-    /// </summary>
-    [Fact]
-    public async Task UpdateAsync_CallsOnUpdateCallback()
-    {
-        var capturedDelta = TimeSpan.MinValue;
-        var view = new TestSKAnimatedSurfaceView
-        {
-            OnUpdate = delta => capturedDelta = delta
-        };
-        var expectedDelta = TimeSpan.FromMilliseconds(16);
-
-        await view.InvokeUpdateAsync(expectedDelta);
-
-        Assert.Equal(expectedDelta, capturedDelta);
-    }
-
-    /// <summary>
-    /// Verifies that <c>UpdateAsync</c> does not throw when <c>OnUpdate</c> is null.
-    /// </summary>
-    [Fact]
-    public async Task UpdateAsync_WithNullCallback_DoesNotThrow()
-    {
-        var view = new TestSKAnimatedSurfaceView { OnUpdate = null };
-
-        var ex = await Record.ExceptionAsync(() => view.InvokeUpdateAsync(TimeSpan.FromMilliseconds(16)));
-        Assert.Null(ex);
-    }
-
-    /// <summary>
-    /// A test subclass that exposes protected members for unit testing without
-    /// requiring a real Blazor/WASM environment.
-    /// </summary>
     private sealed class TestSKAnimatedSurfaceView : SKAnimatedSurfaceView
     {
-        public new bool IsAnimationEnabled
+        public void Configure(
+            bool? isAnimationEnabled = null,
+            Action<TimeSpan>? onUpdate = null,
+            Action<SKCanvas, SKSize>? onPaintSurface = null)
         {
-            get => base.IsAnimationEnabled;
-            set => base.IsAnimationEnabled = value;
+            if (isAnimationEnabled is not null)
+                IsAnimationEnabled = isAnimationEnabled.Value;
+
+            OnUpdate = onUpdate;
+            OnPaintSurface = onPaintSurface;
         }
 
-        public new Action<TimeSpan>? OnUpdate
-        {
-            get => base.OnUpdate;
-            set => base.OnUpdate = value;
-        }
+        public void ApplyParameters() => OnParametersSet();
 
-        public new Action<SKPaintSurfaceEventArgs>? OnPaintSurface
-        {
-            get => base.OnPaintSurface;
-            set => base.OnPaintSurface = value;
-        }
+        public void SetAnimationEnabled(bool isAnimationEnabled) =>
+            IsAnimationEnabled = isAnimationEnabled;
 
-        public new IDictionary<string, object>? AdditionalAttributes
-        {
-            get => base.AdditionalAttributes;
-            set => base.AdditionalAttributes = value;
-        }
+        public void SetBackend(SKAnimatedSurfaceViewBackend backend) => Backend = backend;
 
-        public Task InvokeUpdateAsync(TimeSpan delta) => UpdateAsync(delta);
+        public void Render()
+        {
+            using var surface = SKSurface.Create(new SKImageInfo(1, 1));
+            RenderFrame(surface.Canvas, new SKSize(1, 1));
+        }
     }
 }

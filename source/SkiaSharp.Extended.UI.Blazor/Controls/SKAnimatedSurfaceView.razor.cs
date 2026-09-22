@@ -1,187 +1,130 @@
+using System.Diagnostics;
+using System.Runtime.Versioning;
 using Microsoft.AspNetCore.Components;
-using SkiaSharp.Extended;
 using SkiaSharp.Views.Blazor;
 
 namespace SkiaSharp.Extended.UI.Blazor.Controls;
 
 /// <summary>
-/// A Blazor component that drives a frame-update loop and renders onto a
-/// software-rendered <see cref="SKCanvasView"/>.
+/// Chooses the browser-backed SkiaSharp view used by <see cref="SKAnimatedSurfaceView"/>.
+/// </summary>
+public enum SKAnimatedSurfaceViewBackend
+{
+    /// <summary>Uses a software-rendered <see cref="SKCanvasView"/>.</summary>
+    Canvas,
+
+    /// <summary>Uses a GPU-rendered <see cref="SKGLView"/>.</summary>
+    OpenGL,
+}
+
+/// <summary>
+/// Renders SkiaSharp content through the browser's animation-frame loop.
 /// </summary>
 /// <remarks>
 /// <para>
-/// The animation loop runs at approximately 60 fps while <see cref="IsAnimationEnabled"/> is
-/// <see langword="true"/>. Setting it to <see langword="false"/> stops the loop; setting it back
-/// to <see langword="true"/> restarts it.
+/// The component delegates scheduling to <see cref="SKCanvasView"/> or
+/// <see cref="SKGLView"/>. When animation is enabled, <see cref="OnUpdate"/> runs
+/// immediately before <see cref="OnPaintSurface"/> on each rendered frame.
 /// </para>
 /// <para>
-/// Subscribe to <see cref="OnPaintSurface"/> to render content, and <see cref="OnUpdate"/> to
-/// update animation state each frame. Subclasses can override <see cref="UpdateAsync"/> instead.
+/// Calling <see cref="Invalidate"/> repaints once, including while animation is paused.
 /// </para>
 /// </remarks>
-public partial class SKAnimatedSurfaceView : ComponentBase, IAsyncDisposable
+public partial class SKAnimatedSurfaceView : ComponentBase
 {
-    private bool _isAnimationEnabled = true;
-    private CancellationTokenSource? _cts;
-    private Task? _loopTask;
     private SKCanvasView? _canvasView;
-    private readonly SKFrameCounter _frameCounter = new SKFrameCounter();
-
-#if DEBUG
-    private const float DebugOverlayMargin = 12f;
-    private const float DebugOverlayTextSize = 24f; // physical pixels; appearance varies with device pixel ratio
-    private SKFont? _debugFont;
-    private SKPaint? _debugPaint;
-#endif
+    private SKGLView? _glView;
+    private SKAnimatedSurfaceViewBackend _backend;
+    private bool _hasParameters;
+    private bool _wasAnimationEnabled;
+    private long? _lastTimestamp;
 
     /// <summary>
-    /// Gets or sets whether the animation loop is running.
+    /// Gets or sets the SkiaSharp browser view used for rendering.
+    /// Defaults to <see cref="SKAnimatedSurfaceViewBackend.Canvas"/>.
+    /// </summary>
+    [Parameter]
+    public SKAnimatedSurfaceViewBackend Backend { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether browser animation frames update and repaint the view.
     /// Defaults to <see langword="true"/>.
     /// </summary>
     [Parameter]
     public bool IsAnimationEnabled { get; set; } = true;
 
     /// <summary>
-    /// Callback invoked on each frame tick with the elapsed time since the previous frame.
-    /// Use this to update animation state.
+    /// Gets or sets whether rendering uses CSS pixels instead of physical pixels.
+    /// </summary>
+    [Parameter]
+    public bool IgnorePixelScaling { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked immediately before each animated paint.
     /// </summary>
     [Parameter]
     public Action<TimeSpan>? OnUpdate { get; set; }
 
     /// <summary>
-    /// Callback invoked each time the canvas needs to be redrawn.
-    /// Subscribe here to render content onto the <see cref="SKCanvas"/>.
+    /// Gets or sets the callback invoked to paint the current frame.
     /// </summary>
     [Parameter]
-    public Action<SKPaintSurfaceEventArgs>? OnPaintSurface { get; set; }
+    public Action<SKCanvas, SKSize>? OnPaintSurface { get; set; }
 
     /// <summary>
-    /// Additional HTML attributes forwarded to the underlying canvas element
-    /// (e.g., <c>style</c>, <c>class</c>).
+    /// Gets or sets additional HTML attributes forwarded to the underlying canvas.
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
-    public IDictionary<string, object>? AdditionalAttributes { get; set; }
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
     /// <inheritdoc />
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
-        var enabledChanged = _isAnimationEnabled != IsAnimationEnabled;
-        _isAnimationEnabled = IsAnimationEnabled;
-
-        if (enabledChanged)
+        if (!_hasParameters ||
+            _backend != Backend ||
+            (!_wasAnimationEnabled && IsAnimationEnabled))
         {
-            if (_isAnimationEnabled)
-                await StartLoopAsync();
-            else
-                await StopLoopAsync();
+            ResetTiming();
         }
-    }
 
-    /// <inheritdoc />
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender && IsAnimationEnabled)
-            await StartLoopAsync();
+        _backend = Backend;
+        _wasAnimationEnabled = IsAnimationEnabled;
+        _hasParameters = true;
     }
 
     /// <summary>
-    /// Called once per frame before the canvas is invalidated. Override this in a subclass
-    /// to update animation state.
+    /// Schedules an on-demand repaint. This works even while animation is paused.
     /// </summary>
-    /// <param name="deltaTime">Time elapsed since the previous frame.</param>
-    protected virtual Task UpdateAsync(TimeSpan deltaTime)
-    {
-        OnUpdate?.Invoke(deltaTime);
-        return Task.CompletedTask;
-    }
-
-    /// <summary>Forces the underlying canvas to repaint on the next frame.</summary>
+    [SupportedOSPlatform("browser")]
     public void Invalidate()
     {
-#pragma warning disable CA1416 // Blazor canvas views are browser-only
-        _canvasView?.Invalidate();
-#pragma warning restore CA1416
+        if (Backend == SKAnimatedSurfaceViewBackend.OpenGL)
+            _glView?.Invalidate();
+        else
+            _canvasView?.Invalidate();
     }
 
-    private void HandlePaintSurface(SKPaintSurfaceEventArgs e)
+    internal void RenderFrame(SKCanvas canvas, SKSize size)
     {
-        OnPaintSurface?.Invoke(e);
-
-#if DEBUG
-        DrawDebugOverlay(e.Surface.Canvas);
-#endif
-    }
-
-#if DEBUG
-    private void DrawDebugOverlay(SKCanvas canvas)
-    {
-        var font = _debugFont ??= new SKFont { Size = DebugOverlayTextSize };
-        var paint = _debugPaint ??= new SKPaint { IsAntialias = true, Color = SKColors.Black };
-        canvas.DrawText(
-            $"FPS: {_frameCounter.Rate:0.0}",
-            DebugOverlayMargin,
-            DebugOverlayMargin + DebugOverlayTextSize,
-            SKTextAlign.Left,
-            font,
-            paint);
-    }
-#endif
-
-    private async Task StartLoopAsync()
-    {
-        await StopLoopAsync();
-        _frameCounter.Reset();
-        _cts = new CancellationTokenSource();
-        _loopTask = RunLoopAsync(_cts.Token);
-    }
-
-    private async Task StopLoopAsync()
-    {
-        _cts?.Cancel();
-        _cts?.Dispose();
-        _cts = null;
-        var loopTask = _loopTask;
-        _loopTask = null;
-        if (loopTask is not null)
+        if (IsAnimationEnabled)
         {
-            try { await loopTask; }
-            catch (Exception) { }
+            var timestamp = Stopwatch.GetTimestamp();
+            var delta = _lastTimestamp is long lastTimestamp
+                ? TimeSpan.FromSeconds((double)(timestamp - lastTimestamp) / Stopwatch.Frequency)
+                : TimeSpan.Zero;
+
+            _lastTimestamp = timestamp;
+            OnUpdate?.Invoke(delta);
         }
-        _frameCounter.Reset();
+
+        OnPaintSurface?.Invoke(canvas, size);
     }
 
-    private async Task RunLoopAsync(CancellationToken ct)
-    {
-        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000.0 / 60));
+    private void HandleCanvasPaintSurface(SKPaintSurfaceEventArgs e) =>
+        RenderFrame(e.Surface.Canvas, new SKSize(e.Info.Width, e.Info.Height));
 
-        try
-        {
-            while (await timer.WaitForNextTickAsync(ct))
-            {
-                var delta = _frameCounter.NextFrame();
+    private void HandleGlPaintSurface(SKPaintGLSurfaceEventArgs e) =>
+        RenderFrame(e.Surface.Canvas, new SKSize(e.Info.Width, e.Info.Height));
 
-                await InvokeAsync(async () =>
-                {
-                    await UpdateAsync(delta);
-                    Invalidate();
-                    StateHasChanged();
-                });
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            // Normal shutdown — ignore.
-        }
-    }
-
-    /// <inheritdoc />
-    public async ValueTask DisposeAsync()
-    {
-        await StopLoopAsync();
-
-#if DEBUG
-        _debugFont?.Dispose();
-        _debugPaint?.Dispose();
-#endif
-    }
+    private void ResetTiming() => _lastTimestamp = null;
 }
