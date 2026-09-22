@@ -3,20 +3,20 @@
   <PropertyGroup>
     <PublicApiType
         Condition="'$(PublicApiType)' == '' And
-                   ('$(CI)' == 'true' Or '$(CI)' == 'True' Or '$(TF_BUILD)' == 'true' Or '$(TF_BUILD)' == 'True' Or
-                    '$(ContinuousIntegrationBuild)' == 'true' Or '$(ContinuousIntegrationBuild)' == 'True')">Validate</PublicApiType>
+                   ('$(CI)' == 'true' Or '$(TF_BUILD)' == 'true' Or '$(ContinuousIntegrationBuild)' == 'true')">Validate</PublicApiType>
     <PublicApiType Condition="'$(PublicApiType)' == ''">Generate</PublicApiType>
-    <PublicApiDirectory>$(MSBuildProjectDirectory)/PublicAPI/$(TargetFramework)</PublicApiDirectory>
+    <PublicApiTarget Condition="$(TargetFramework.StartsWith('netstandard'))">netstandard</PublicApiTarget>
+    <PublicApiTarget Condition="'$(PublicApiTarget)' == '' And '$(TargetPlatformIdentifier)' == ''">net</PublicApiTarget>
+    <PublicApiTarget Condition="'$(PublicApiTarget)' == ''">net-$(TargetPlatformIdentifier.ToLower())</PublicApiTarget>
+    <PublicApiDirectory>$(MSBuildProjectDirectory)/PublicAPI/$(PublicApiTarget)</PublicApiDirectory>
     <PublicApiShippedFile>$(PublicApiDirectory)/PublicAPI.Shipped.txt</PublicApiShippedFile>
     <PublicApiUnshippedFile>$(PublicApiDirectory)/PublicAPI.Unshipped.txt</PublicApiUnshippedFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers"
-                      PrivateAssets="all"
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all"
                       Condition="'$(PublicApiType)' == 'Validate'" />
-    <PackageReference Include="Mono.ApiTools.MSBuildTasks"
-                      PrivateAssets="all"
+    <PackageReference Include="Mono.ApiTools.MSBuildTasks" PrivateAssets="all"
                       Condition="'$(PublicApiType)' == 'Generate'" />
     <AdditionalFiles Include="$(PublicApiShippedFile)" />
     <AdditionalFiles Include="$(PublicApiUnshippedFile)" />
@@ -34,19 +34,12 @@
 
     <MakeDir Directories="$(PublicApiDirectory)" />
 
-    <WriteLinesToFile File="$(PublicApiShippedFile)"
-                      Lines="#nullable enable"
-                      Condition="!Exists('$(PublicApiShippedFile)')" />
-    <WriteLinesToFile File="$(PublicApiUnshippedFile)"
-                      Lines="#nullable enable"
-                      Condition="!Exists('$(PublicApiUnshippedFile)')" />
+    <WriteLinesToFile File="$(PublicApiShippedFile)" Lines="#nullable enable" Condition="!Exists('$(PublicApiShippedFile)')" />
+    <WriteLinesToFile File="$(PublicApiUnshippedFile)" Lines="#nullable enable" Condition="!Exists('$(PublicApiUnshippedFile)')" />
 
-    <GeneratePublicApiFiles Assembly="$(TargetPath)"
-                            Files="@(_PublicApiFiles)"
-                            ReferenceSearchPaths="@(ReferencePath)" />
+    <GeneratePublicApiFiles Assembly="$(TargetPath)" Files="@(_PublicApiFiles)" ReferenceSearchPaths="@(ReferencePath)" />
 
-    <Touch Files="$(IntermediateOutputPath)GeneratePublicApiFiles.stamp"
-           AlwaysCreate="true" />
+    <Touch Files="$(IntermediateOutputPath)GeneratePublicApiFiles.stamp" AlwaysCreate="true" />
     <ItemGroup>
       <FileWrites Include="$(IntermediateOutputPath)GeneratePublicApiFiles.stamp" />
     </ItemGroup>
