@@ -1,10 +1,42 @@
+using Microsoft.AspNetCore.Components;
 using SkiaSharp;
 using SkiaSharp.Extended.UI.Blazor.Controls;
+using SkiaSharp.Views.Blazor;
 
 namespace SkiaSharp.Extended.UI.Blazor.Tests.Controls;
 
 public class SKAnimatedSurfaceViewTest
 {
+    [Fact]
+    public void DefaultSurfaceType_IsCanvasView()
+    {
+        var view = new TestSKAnimatedSurfaceView();
+
+        Assert.Equal(typeof(SKCanvasView), view.GetSurfaceType());
+    }
+
+    [Fact]
+    public void UnsupportedSurfaceType_IsRejected()
+    {
+        var view = new TestSKAnimatedSurfaceView();
+        view.SetSurfaceType(typeof(ComponentBase));
+
+        var exception = Assert.Throws<ArgumentException>(view.ApplyParameters);
+
+        Assert.Equal("SurfaceType", exception.ParamName);
+    }
+
+    [Fact]
+    public void DerivedSurfaceType_IsAccepted()
+    {
+        var view = new TestSKAnimatedSurfaceView();
+        view.SetSurfaceType(typeof(CustomCanvasView));
+
+        var exception = Record.Exception(view.ApplyParameters);
+
+        Assert.Null(exception);
+    }
+
     [Fact]
     public void FirstAnimatedFrame_UpdatesWithZeroDeltaBeforePainting()
     {
@@ -60,7 +92,7 @@ public class SKAnimatedSurfaceViewTest
     }
 
     [Fact]
-    public void ReplacingBackend_ResetsTheNextAnimatedDelta()
+    public void ReplacingSurfaceType_ResetsTheNextAnimatedDelta()
     {
         var deltas = new List<TimeSpan>();
         var view = new TestSKAnimatedSurfaceView();
@@ -69,7 +101,7 @@ public class SKAnimatedSurfaceViewTest
         view.ApplyParameters();
         view.Render();
 
-        view.SetBackend(SKAnimatedSurfaceViewBackend.OpenGL);
+        view.SetSurfaceType(typeof(SKGLView));
         view.ApplyParameters();
         view.Render();
 
@@ -119,12 +151,18 @@ public class SKAnimatedSurfaceViewTest
         public void SetAnimationEnabled(bool isAnimationEnabled) =>
             IsAnimationEnabled = isAnimationEnabled;
 
-        public void SetBackend(SKAnimatedSurfaceViewBackend backend) => Backend = backend;
+        public void SetSurfaceType(Type surfaceType) => SurfaceType = surfaceType;
+
+        public Type GetSurfaceType() => SurfaceType;
 
         public void Render()
         {
             using var surface = SKSurface.Create(new SKImageInfo(1, 1));
             RenderFrame(surface.Canvas, new SKSize(1, 1));
         }
+    }
+
+    private sealed class CustomCanvasView : SKCanvasView
+    {
     }
 }

@@ -17,6 +17,7 @@ Import the component namespace:
 
 ```razor
 @using SkiaSharp
+@using SkiaSharp.Views.Blazor
 @using SkiaSharp.Extended.UI.Blazor.Controls
 ```
 
@@ -36,7 +37,8 @@ Then draw with the component:
 ## Included controls
 
 - **`SKAnimatedSurfaceView`** — coordinates synchronous update and paint
-  callbacks through SkiaSharp's Canvas or OpenGL Blazor render loop.
+  callbacks through SkiaSharp's Canvas or OpenGL Blazor render loop. Set
+  `SurfaceType` to `typeof(SKGLView)` to select GPU rendering per control.
 
 ## Compatibility
 

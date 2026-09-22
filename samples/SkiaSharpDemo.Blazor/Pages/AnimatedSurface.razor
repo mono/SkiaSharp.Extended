@@ -12,9 +12,9 @@
 <div class="row mb-3 align-items-end">
     <div class="col-auto">
         <label class="form-label">Backend</label>
-        <select class="form-select" @bind="backend">
-            <option value="@SKAnimatedSurfaceViewBackend.Canvas">Canvas</option>
-            <option value="@SKAnimatedSurfaceViewBackend.OpenGL">OpenGL</option>
+        <select class="form-select" @bind="surfaceName">
+            <option value="Canvas">Canvas</option>
+            <option value="OpenGL">OpenGL</option>
         </select>
     </div>
     <div class="col-auto">
@@ -43,7 +43,7 @@
 
 <div class="canvas-wrapper" style="width: @(canvasSize)px; height: @(canvasSize)px;">
     <SKAnimatedSurfaceView @ref="animatedSurface"
-                           Backend="backend"
+                           SurfaceType="surfaceType"
                            IsAnimationEnabled="isEnabled"
                            OnUpdate="HandleUpdate"
                            OnPaintSurface="HandlePaintSurface"
@@ -56,11 +56,17 @@
 
 @code {
     private SKAnimatedSurfaceView? animatedSurface;
-    private SKAnimatedSurfaceViewBackend backend;
+    private Type surfaceType = typeof(SKCanvasView);
     private bool isEnabled = true;
     private double speed = 1.0;
     private int canvasSize = 400;
     private float angle;
+
+    private string surfaceName
+    {
+        get => surfaceType == typeof(SKGLView) ? "OpenGL" : "Canvas";
+        set => surfaceType = value == "OpenGL" ? typeof(SKGLView) : typeof(SKCanvasView);
+    }
 
     private void HandleUpdate(TimeSpan delta)
     {
