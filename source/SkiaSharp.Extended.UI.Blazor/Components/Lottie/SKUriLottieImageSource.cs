@@ -1,4 +1,4 @@
-namespace SkiaSharp.Extended.UI.Blazor.Components;
+﻿namespace SkiaSharp.Extended.UI.Blazor.Components;
 
 internal sealed class SKUriLottieImageSource : SKLottieImageSource
 {
@@ -9,22 +9,17 @@ internal sealed class SKUriLottieImageSource : SKLottieImageSource
 		this.uri = uri;
 	}
 
-	internal override async Task<string> LoadJsonAsync(
+	protected internal override async Task<SKLottieAnimation> LoadAnimationAsync(
 		HttpClient? httpClient,
 		CancellationToken cancellationToken)
 	{
-		if (httpClient is null)
-		{
-			throw new InvalidOperationException(
-				"Loading a URI source requires SKLottieView.HttpClient or a registered HttpClient service.");
-		}
+		var client = httpClient ?? throw new InvalidOperationException(
+			"Loading a URI source requires a registered HttpClient service.");
 
-		return await httpClient.GetStringAsync(uri, cancellationToken).ConfigureAwait(false);
+		await using var stream = await client.GetStreamAsync(uri, cancellationToken).ConfigureAwait(false);
+		return new SKLottieAnimation(await SKLottieAnimationLoader.LoadAsync(stream, cancellationToken).ConfigureAwait(false));
 	}
 
-	internal override bool EqualsCore(SKLottieImageSource other) =>
-		uri.Equals(((SKUriLottieImageSource)other).uri);
-
-	internal override int GetHashCodeCore() =>
-		HashCode.Combine(typeof(SKUriLottieImageSource), uri);
+	internal override bool IsSameSource(SKLottieImageSource? other) =>
+		other is SKUriLottieImageSource source && uri.Equals(source.uri);
 }

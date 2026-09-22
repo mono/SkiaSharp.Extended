@@ -2,111 +2,199 @@
 
 <PageTitle>Lottie</PageTitle>
 
-<h1>Lottie Animation</h1>
-
-<p>
-    Play Lottie animations using the <code>SKLottieView</code> Blazor component.
-    The same <code>SKLottiePlayer</code> logic is shared between this Blazor
-    component and the .NET MAUI <code>SKLottieView</code>. The underlying
-    animated surface shares its timing with MAUI and shows an FPS overlay in
-    DEBUG builds.
-</p>
-
-<div class="row mb-3 align-items-end">
-    <div class="col-auto">
-        <label class="form-label">Lottie JSON</label>
-        <InputFile class="form-control" accept=".json,application/json" OnChange="SelectFileAsync" />
-    </div>
-    <div class="col-auto">
-        <label class="form-label">Repeat Mode</label>
-        <select class="form-select" value="@repeatKind" @onchange="OnRepeatKindChanged">
-            <option value="restart">Restart</option>
-            <option value="reverse">Reverse</option>
-        </select>
-    </div>
-    <div class="col-auto">
-        <label class="form-label">Speed (@(animationSpeed)&#x78;)</label>
-        <input type="range" class="form-range speed-slider"
-               min="-3" max="3" step="0.25"
-               @bind="animationSpeed" />
-    </div>
-    <div class="col-auto">
-        <label class="form-label">Additional @(repeatKind == "reverse" ? "Cycles" : "Plays")</label>
-        <select class="form-select" value="@repeatCount" @onchange="OnRepeatCountChanged">
-            <option value="0">0 (@(repeatKind == "reverse" ? "1 cycle total" : "1 play total"))</option>
-            <option value="1">1 additional</option>
-            <option value="2">2 additional</option>
-            <option value="-1">Infinite</option>
-        </select>
-    </div>
-    <div class="col-auto">
-        <label class="form-label">Backend</label>
-        <select class="form-select" @bind="surfaceName">
-            <option value="Canvas">Canvas</option>
-            <option value="OpenGL">OpenGL</option>
-        </select>
-    </div>
-    <div class="col-auto pt-4">
-        <button class="btn btn-outline-secondary" @onclick="() => lottieView?.Restart()">&#x21BA; Restart</button>
-    </div>
-</div>
-
-@if (selectedFileName is not null)
-{
-    <p class="text-muted small">Selected: @selectedFileName</p>
-}
-@if (selectedFileError is not null)
-{
-    <p class="text-danger small">@selectedFileError</p>
-}
-
-<div class="row mb-2">
-    <div class="col">
-        @if (lottieView?.IsLoading == true)
-        {
-            <div class="d-flex align-items-center">
-                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                <span>Loading animation…</span>
-            </div>
-        }
-        else if (loadFailed)
-        {
-            <span class="text-danger">Failed to load animation.</span>
-        }
-        else if (lottieView?.HasAnimation == true)
-        {
-            <span class="text-muted small">
-                Duration: @lottieView.Duration.TotalSeconds.ToString("0.00")s &nbsp;|&nbsp;
-                @(lottieView.IsComplete ? "Complete ✓" : "Playing")
-            </span>
-        }
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-auto">
-        <div class="lottie-wrapper">
-            <SKLottieView @ref="lottieView"
-                          Source="source"
-                          Repeat="repeat"
-                          AnimationSpeed="animationSpeed"
-                          SurfaceType="surfaceType"
-                          AnimationLoaded="OnAnimationLoaded"
-                          AnimationFailed="OnAnimationFailed"
-                          AnimationCompleted="StateHasChanged"
-                          style="width: 100%; height: 100%;" />
+<div class="lottie-workbench">
+    <header class="workbench-header">
+        <div>
+            <h1>Lottie workbench</h1>
+            <p>Load an animation, tune playback and rendering, then inspect every live value from the shared player.</p>
         </div>
+        <span class="state-badge @PlaybackStateClass">@PlaybackState</span>
+    </header>
+
+    <div class="workbench-layout">
+        <section class="stage-panel" aria-label="Animation preview and transport controls">
+            <div class="stage-toolbar">
+                <div class="source-summary">
+                    <span>Source</span>
+                    <strong>@SourceDisplayName</strong>
+                </div>
+                <div class="stage-badges">
+                    <span>@surfaceName</span>
+                    <span>@(ignorePixelScaling ? "CSS pixels" : "Device pixels")</span>
+                </div>
+            </div>
+
+            <div class="lottie-stage">
+                <SKLottieView @ref="lottieView"
+                              Source="source"
+                              Repeat="repeat"
+                              AnimationSpeed="animationSpeed"
+                              IsAnimationEnabled="isPlaying"
+                              SurfaceType="surfaceType"
+                              IgnorePixelScaling="ignorePixelScaling"
+                              AnimationLoaded="OnAnimationLoaded"
+                              AnimationFailed="OnAnimationFailed"
+                              AnimationCompleted="OnAnimationCompleted"
+                              ProgressChanged="OnProgressChanged"
+                              style="width: 100%; height: 100%;" />
+
+                @if (loadFailed)
+                {
+                    <div class="stage-error" role="alert">
+                        <strong>Could not load this animation</strong>
+                        <span>@loadError</span>
+                    </div>
+                }
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-labels">
+                    <span>@FormatTime(progress)</span>
+                    <span>@FormatTime(lottieView?.Duration ?? TimeSpan.Zero)</span>
+                </div>
+                <input type="range"
+                       aria-label="Animation progress"
+                       min="0"
+                       max="@Math.Max(1, lottieView?.Duration.TotalMilliseconds ?? 1)"
+                       step="10"
+                       value="@progress.TotalMilliseconds.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                       disabled="@(lottieView?.HasAnimation != true)"
+                       @oninput="OnProgressInput" />
+            </div>
+
+            <div class="transport-controls">
+                <button class="btn btn-primary"
+                        disabled="@(lottieView?.HasAnimation != true)"
+                        @onclick="TogglePlayback">@PlayPauseLabel</button>
+                <button class="btn btn-outline-secondary"
+                        disabled="@(lottieView?.HasAnimation != true)"
+                        @onclick="RestartAnimation">Restart</button>
+                <button class="btn btn-outline-secondary"
+                        disabled="@(lottieView?.HasAnimation != true)"
+                        @onclick="() => Step(-100)">-100 ms</button>
+                <button class="btn btn-outline-secondary"
+                        disabled="@(lottieView?.HasAnimation != true)"
+                        @onclick="() => Step(100)">+100 ms</button>
+                <button class="btn btn-outline-secondary"
+                        disabled="@(lottieView?.HasAnimation != true)"
+                        @onclick="SeekToEnd">End</button>
+            </div>
+        </section>
+
+        <aside class="control-panel" aria-label="Lottie controls and live values">
+            <section class="control-section">
+                <div class="section-heading">
+                    <h2>Source</h2>
+                    <span>JSON, up to 5 MiB</span>
+                </div>
+                <InputFile class="form-control source-input" accept=".json,application/json" OnChange="SelectFileAsync" />
+                @if (selectedFileError is not null)
+                {
+                    <p class="field-error" role="alert">@selectedFileError</p>
+                }
+            </section>
+
+            <section class="control-section">
+                <div class="section-heading">
+                    <h2>Playback</h2>
+                    <span>@animationSpeed.ToString("0.##")x</span>
+                </div>
+
+                <label class="control-label" for="lottie-speed">Speed</label>
+                <input id="lottie-speed"
+                       type="range"
+                       min="-3"
+                       max="3"
+                       step="0.25"
+                       @bind="animationSpeed" />
+
+                <div class="preset-row" aria-label="Speed presets">
+                    @foreach (var speed in SpeedPresets)
+                    {
+                        <button class="preset-button @(animationSpeed == speed ? "active" : null)" @onclick="() => SetSpeed(speed)">
+                            @speed.ToString("0.##")x
+                        </button>
+                    }
+                </div>
+
+                <div class="two-column-controls">
+                    <div>
+                        <label class="control-label" for="repeat-mode">Repeat mode</label>
+                        <select id="repeat-mode" class="form-select" value="@repeatKind" @onchange="OnRepeatKindChanged">
+                            <option value="restart">Restart</option>
+                            <option value="reverse">Reverse</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="control-label" for="repeat-count">Additional @(repeatKind == "reverse" ? "cycles" : "plays")</label>
+                        <select id="repeat-count" class="form-select" value="@repeatCount" @onchange="OnRepeatCountChanged">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="5">5</option>
+                            <option value="-1">Infinite</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="control-section">
+                <div class="section-heading">
+                    <h2>Rendering</h2>
+                    <span>Browser surface</span>
+                </div>
+
+                <label class="control-label" for="surface-type">Backend</label>
+                <select id="surface-type" class="form-select" @bind="surfaceName">
+                    <option value="Canvas">Canvas</option>
+                    <option value="OpenGL">OpenGL</option>
+                </select>
+
+                <div class="form-check form-switch pixel-switch">
+                    <input id="pixel-scaling" class="form-check-input" type="checkbox" @bind="ignorePixelScaling" />
+                    <label class="form-check-label" for="pixel-scaling">Ignore device pixel scaling</label>
+                </div>
+            </section>
+
+            <section class="control-section live-section">
+                <div class="section-heading">
+                    <h2>Live values</h2>
+                    <span>Current component state</span>
+                </div>
+
+                <dl class="value-grid">
+                    <div><dt>State</dt><dd>@PlaybackState</dd></div>
+                    <div><dt>Loaded</dt><dd>@YesNo(lottieView?.HasAnimation == true)</dd></div>
+                    <div><dt>Complete</dt><dd>@YesNo(lottieView?.IsComplete == true)</dd></div>
+                    <div><dt>Progress</dt><dd>@FormatTime(progress)</dd></div>
+                    <div><dt>Duration</dt><dd>@FormatTime(lottieView?.Duration ?? TimeSpan.Zero)</dd></div>
+                    <div><dt>Natural size</dt><dd>@FormatSize()</dd></div>
+                    <div><dt>Frame rate</dt><dd>@FormatFps()</dd></div>
+                    <div><dt>Speed</dt><dd>@animationSpeed.ToString("0.##")x</dd></div>
+                    <div><dt>Repeat</dt><dd>@RepeatSummary</dd></div>
+                    <div><dt>Backend</dt><dd>@surfaceName</dd></div>
+                    <div><dt>Pixel scaling</dt><dd>@(ignorePixelScaling ? "CSS" : "Device")</dd></div>
+                    <div><dt>Source</dt><dd title="@SourceDisplayName">@SourceDisplayName</dd></div>
+                </dl>
+            </section>
+        </aside>
     </div>
 </div>
 
 @code {
+    private static readonly double[] SpeedPresets = [-1, 0, 0.5, 1, 2];
+
     private SKLottieView? lottieView;
     private string repeatKind = "restart";
     private SKLottieRepeat repeat = SKLottieRepeat.Restart();
     private double animationSpeed = 1.0;
     private int repeatCount = -1;
     private Type surfaceType = typeof(SKCanvasView);
+    private bool isPlaying = true;
+    private bool ignorePixelScaling;
     private bool loadFailed;
+    private string? loadError;
+    private TimeSpan progress;
     private SKLottieImageSource? source = "animations/trophy.json";
     private string? selectedFileName;
     private string? selectedFileError;
@@ -116,6 +204,68 @@
         get => surfaceType == typeof(SKGLView) ? "OpenGL" : "Canvas";
         set => surfaceType = value == "OpenGL" ? typeof(SKGLView) : typeof(SKCanvasView);
     }
+
+    private string PlaybackState =>
+        loadFailed
+            ? "Error"
+            : lottieView?.HasAnimation != true
+                ? "Empty"
+                : lottieView.IsComplete
+                    ? "Complete"
+                    : !isPlaying || animationSpeed == 0
+                        ? "Paused"
+                        : "Playing";
+
+    private string PlaybackStateClass => PlaybackState.ToLowerInvariant();
+
+    private string PlayPauseLabel =>
+        lottieView?.IsComplete == true
+            ? "Replay"
+            : isPlaying
+                ? "Pause"
+                : "Play";
+
+    private string SourceDisplayName => selectedFileName ?? "Bundled trophy.json";
+
+    private string RepeatSummary =>
+        repeatCount < 0
+            ? $"{repeatKind}, infinite"
+            : $"{repeatKind}, {repeatCount} additional";
+
+    private void TogglePlayback()
+    {
+        if (lottieView?.IsComplete == true)
+        {
+            lottieView.Seek(TimeSpan.Zero);
+            isPlaying = true;
+            return;
+        }
+
+        isPlaying = !isPlaying;
+    }
+
+    private void RestartAnimation()
+    {
+        if (lottieView is null)
+            return;
+
+        isPlaying = true;
+        lottieView.Seek(TimeSpan.Zero);
+    }
+
+    private void Step(double milliseconds)
+    {
+        if (lottieView is not null)
+            lottieView.Seek(lottieView.Progress + TimeSpan.FromMilliseconds(milliseconds));
+    }
+
+    private void SeekToEnd()
+    {
+        if (lottieView is not null)
+            lottieView.Seek(lottieView.Duration);
+    }
+
+    private void SetSpeed(double speed) => animationSpeed = speed;
 
     private void OnRepeatKindChanged(ChangeEventArgs e)
     {
@@ -136,16 +286,40 @@
                 ? SKLottieRepeat.Never
                 : SKLottieRepeat.Restart(repeatCount);
 
+    private void OnProgressChanged(TimeSpan value) => progress = value;
+
+    private void OnProgressInput(ChangeEventArgs e)
+    {
+        if (lottieView is null ||
+            !double.TryParse(
+                e.Value?.ToString(),
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var milliseconds))
+        {
+            return;
+        }
+
+        progress = TimeSpan.FromMilliseconds(milliseconds);
+        lottieView.Seek(progress);
+    }
+
     private void OnAnimationLoaded()
     {
         loadFailed = false;
-        StateHasChanged();
+        loadError = null;
+        progress = lottieView?.Progress ?? TimeSpan.Zero;
     }
 
-    private void OnAnimationFailed(Exception? _)
+    private void OnAnimationFailed(Exception exception)
     {
         loadFailed = true;
-        StateHasChanged();
+        loadError = exception.Message;
+    }
+
+    private void OnAnimationCompleted()
+    {
+        progress = lottieView?.Progress ?? progress;
     }
 
     private async Task SelectFileAsync(InputFileChangeEventArgs e)
@@ -158,15 +332,32 @@
         {
             var file = e.File;
             await using var input = file.OpenReadStream(maximumFileSize);
-            using var data = new MemoryStream();
-            await input.CopyToAsync(data);
-            source = SKLottieImageSource.FromBytes(data.ToArray());
+            using var reader = new StreamReader(input);
+            source = SKLottieImageSource.FromJson(await reader.ReadToEndAsync());
             selectedFileName = file.Name;
             loadFailed = false;
+            loadError = null;
+            progress = TimeSpan.Zero;
         }
         catch (Exception ex)
         {
             selectedFileError = $"Could not load the selected JSON file: {ex.Message}";
         }
     }
+
+    private string FormatSize()
+    {
+        var size = lottieView?.Size ?? SKSize.Empty;
+        return size.IsEmpty ? "—" : $"{size.Width:0} × {size.Height:0}";
+    }
+
+    private string FormatFps()
+    {
+        var fps = lottieView?.Fps ?? 0;
+        return fps <= 0 ? "—" : $"{fps:0.##} fps";
+    }
+
+    private static string FormatTime(TimeSpan value) => value.ToString(@"mm\:ss\.fff");
+
+    private static string YesNo(bool value) => value ? "Yes" : "No";
 }

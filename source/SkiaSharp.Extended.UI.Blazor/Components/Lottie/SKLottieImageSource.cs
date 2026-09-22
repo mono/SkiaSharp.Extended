@@ -1,13 +1,14 @@
-using System.Text;
-
-namespace SkiaSharp.Extended.UI.Blazor.Components;
+﻿namespace SkiaSharp.Extended.UI.Blazor.Components;
 
 /// <summary>
-/// An immutable, browser-specific source for Lottie JSON animation data.
+/// A browser-specific source that loads Lottie animations.
 /// </summary>
-public abstract class SKLottieImageSource : IEquatable<SKLottieImageSource>
+public abstract class SKLottieImageSource
 {
-	internal SKLottieImageSource()
+	/// <summary>
+	/// Initializes a Lottie image source.
+	/// </summary>
+	protected SKLottieImageSource()
 	{
 	}
 
@@ -19,16 +20,11 @@ public abstract class SKLottieImageSource : IEquatable<SKLottieImageSource>
 	public static SKLottieImageSource FromJson(string json) =>
 		new SKJsonLottieImageSource(json ?? throw new ArgumentNullException(nameof(json)));
 
-	/// <summary>Creates a source from a private copy of UTF-encoded Lottie JSON bytes.</summary>
-	public static SKLottieImageSource FromBytes(ReadOnlyMemory<byte> bytes) =>
-		new SKBytesLottieImageSource(bytes.ToArray());
-
 	/// <summary>
 	/// Creates a source that obtains a fresh, readable stream for every load.
 	/// The component disposes each returned stream after reading it.
 	/// </summary>
-	public static SKLottieImageSource FromStream(
-		Func<CancellationToken, ValueTask<Stream>> streamFactory) =>
+	public static SKLottieImageSource FromStream(Func<CancellationToken, ValueTask<Stream>> streamFactory) =>
 		new SKStreamLottieImageSource(streamFactory ?? throw new ArgumentNullException(nameof(streamFactory)));
 
 	/// <summary>
@@ -38,41 +34,13 @@ public abstract class SKLottieImageSource : IEquatable<SKLottieImageSource>
 	public static implicit operator SKLottieImageSource?(string? value) =>
 		value is null ? null : FromUri(new Uri(value, UriKind.RelativeOrAbsolute));
 
-	/// <inheritdoc />
-	public bool Equals(SKLottieImageSource? other) =>
-		ReferenceEquals(this, other) ||
-		(other is not null &&
-		 GetType() == other.GetType() &&
-		 EqualsCore(other));
+	/// <summary>
+	/// Loads a fresh animation result.
+	/// </summary>
+	/// <param name="httpClient">The view's configured HTTP client, or <see langword="null"/>.</param>
+	/// <param name="cancellationToken">A cancellation token.</param>
+	/// <returns>An animation result. Implementations must return a fresh native animation for each successful load.</returns>
+	protected internal abstract Task<SKLottieAnimation> LoadAnimationAsync(HttpClient? httpClient, CancellationToken cancellationToken);
 
-	/// <inheritdoc />
-	public override bool Equals(object? obj) => Equals(obj as SKLottieImageSource);
-
-	/// <inheritdoc />
-	public override int GetHashCode() => GetHashCodeCore();
-
-	internal abstract Task<string> LoadJsonAsync(
-		HttpClient? httpClient,
-		CancellationToken cancellationToken);
-
-	internal abstract bool EqualsCore(SKLottieImageSource other);
-
-	internal abstract int GetHashCodeCore();
-
-	internal static async Task<string> ReadJsonAsync(
-		Stream stream,
-		CancellationToken cancellationToken)
-	{
-		if (!stream.CanRead)
-			throw new InvalidOperationException("The Lottie stream must be readable.");
-
-		using var reader = new StreamReader(
-			stream,
-			Encoding.UTF8,
-			detectEncodingFromByteOrderMarks: true,
-			bufferSize: 1024,
-			leaveOpen: true);
-		return await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
-	}
-
+	internal virtual bool IsSameSource(SKLottieImageSource? other) => ReferenceEquals(this, other);
 }

@@ -1,4 +1,6 @@
-using System;
+﻿using System;
+using System.IO;
+using System.Text;
 using SkiaSharp.Skottie;
 using Xunit;
 
@@ -8,11 +10,47 @@ public class SKLottiePlayerTest
 {
 	// Minimal valid Lottie JSON: 60 frames at 60 fps → 1-second duration.
 	private static readonly string MinimalLottieJson =
-		"""{"v":"5.7.4","fr":60,"ip":0,"op":60,"w":100,"h":100,"nm":"test","ddd":0,"assets":[],"layers":[{"ddd":0,"ind":1,"ty":4,"nm":"layer","sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[50,50,0],"ix":2},"a":{"a":0,"k":[0,0,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[],"ip":0,"op":60,"st":0,"bm":0}]}""";
+		"""
+		{
+		  "v": "5.7.4",
+		  "fr": 60,
+		  "ip": 0,
+		  "op": 60,
+		  "w": 100,
+		  "h": 100,
+		  "nm": "test",
+		  "ddd": 0,
+		  "assets": [],
+		  "layers": [
+		    {
+		      "ddd": 0,
+		      "ind": 1,
+		      "ty": 4,
+		      "nm": "layer",
+		      "sr": 1,
+		      "ks": {
+		        "o": { "a": 0, "k": 100, "ix": 11 },
+		        "r": { "a": 0, "k": 0, "ix": 10 },
+		        "p": { "a": 0, "k": [50, 50, 0], "ix": 2 },
+		        "a": { "a": 0, "k": [0, 0, 0], "ix": 1 },
+		        "s": { "a": 0, "k": [100, 100, 100], "ix": 6 }
+		      },
+		      "ao": 0,
+		      "shapes": [],
+		      "ip": 0,
+		      "op": 60,
+		      "st": 0,
+		      "bm": 0
+		    }
+		  ]
+		}
+		""";
 
-	private static Animation CreateAnimation() =>
-		Animation.Parse(MinimalLottieJson)
-		?? throw new InvalidOperationException("Failed to parse test animation.");
+	private static Animation CreateAnimation()
+	{
+		using var stream = new MemoryStream(Encoding.UTF8.GetBytes(MinimalLottieJson));
+		return SKLottieAnimationLoader.Load(stream);
+	}
 
 	// ── Initial state ────────────────────────────────────────────────────────
 
@@ -30,12 +68,12 @@ public class SKLottiePlayerTest
 	// ── SetAnimation ─────────────────────────────────────────────────────────
 
 	[Fact]
-	public void SetAnimation_Null_ClearsState()
+	public void Animation_Null_ClearsState()
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
-		player.SetAnimation(null);
+		player.Animation = anim;
+		player.Animation = null;
 
 		Assert.Equal(TimeSpan.Zero, player.Duration);
 		Assert.Equal(TimeSpan.Zero, player.Progress);
@@ -43,48 +81,50 @@ public class SKLottiePlayerTest
 	}
 
 	[Fact]
-	public void SetAnimation_SetsHasAnimation()
+	public void Animation_SetsHasAnimation()
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		Assert.True(player.HasAnimation);
+		Assert.Same(anim, player.Animation);
 	}
 
 	[Fact]
-	public void SetAnimation_SetsDuration()
+	public void Animation_SetsDuration()
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		Assert.Equal(TimeSpan.FromSeconds(1), player.Duration);
 	}
 
 	[Fact]
-	public void SetAnimation_ResetsProgress()
+	public void Animation_ResetsProgress()
 	{
-		using var anim = CreateAnimation();
+		using var firstAnimation = CreateAnimation();
+		using var secondAnimation = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = firstAnimation;
 		player.Seek(TimeSpan.FromSeconds(0.5));
 
-		player.SetAnimation(anim);
+		player.Animation = secondAnimation;
 
 		Assert.Equal(TimeSpan.Zero, player.Progress);
 		Assert.False(player.IsComplete);
 	}
 
 	[Fact]
-	public void SetAnimation_RaisesAnimationUpdated()
+	public void Animation_RaisesAnimationUpdated()
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
 		var raised = 0;
 		player.AnimationUpdated += (_, _) => raised++;
 
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		Assert.Equal(1, raised);
 	}
@@ -96,7 +136,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Seek(TimeSpan.FromSeconds(0.5));
 
@@ -108,7 +148,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		var raised = 0;
 		player.AnimationUpdated += (_, _) => raised++;
 
@@ -122,7 +162,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Seek(TimeSpan.FromSeconds(-5));
 
@@ -134,7 +174,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Seek(player.Duration + TimeSpan.FromSeconds(10));
 
@@ -148,7 +188,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Update(TimeSpan.FromSeconds(0.5));
 
@@ -170,7 +210,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Repeat = SKLottieRepeat.Never;
 
 		player.Update(TimeSpan.FromSeconds(10));
@@ -185,7 +225,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Repeat = SKLottieRepeat.Never;
 		var completed = 0;
 		player.AnimationCompleted += (_, _) => completed++;
@@ -201,7 +241,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Repeat = SKLottieRepeat.Never;
 		var completed = 0;
 		player.AnimationCompleted += (_, _) => completed++;
@@ -217,7 +257,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Update(player.Duration);
 
 		player.AnimationSpeed = -1;
@@ -240,7 +280,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Repeat = SKLottieRepeat.Restart();
 		var completed = 0;
 		player.AnimationCompleted += (_, _) => completed++;
@@ -258,7 +298,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Repeat = SKLottieRepeat.Restart(count: 2); // 3 plays total
 		var completed = 0;
 		player.AnimationCompleted += (_, _) => completed++;
@@ -282,7 +322,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Repeat = SKLottieRepeat.Restart(count: 1);
 
 		// Seek exactly to the end. This must only render that frame.
@@ -304,7 +344,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Repeat = SKLottieRepeat.Reverse();
 		var completed = 0;
 		player.AnimationCompleted += (_, _) => completed++;
@@ -321,7 +361,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Repeat = SKLottieRepeat.Reverse();
 
 		// Play forward to end
@@ -343,7 +383,7 @@ public class SKLottiePlayerTest
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = -1.0;
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		Assert.Equal(player.Duration, player.Progress);
 	}
@@ -355,7 +395,7 @@ public class SKLottiePlayerTest
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = -1.0;
 		player.Repeat = SKLottieRepeat.Never;
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Update(TimeSpan.FromSeconds(0.5));
 
@@ -370,7 +410,7 @@ public class SKLottiePlayerTest
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = -1.0;
 		player.Repeat = SKLottieRepeat.Never;
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		var completed = 0;
 		player.AnimationCompleted += (_, _) => completed++;
 
@@ -387,7 +427,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		var raised = 0;
 		player.AnimationUpdated += (_, _) => raised++;
 
@@ -403,7 +443,7 @@ public class SKLottiePlayerTest
 		// event once internally, then the outer Seek() fired it again — 2x per cycle.
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Repeat = SKLottieRepeat.Restart(2);
 
 		// Advance to well past the first cycle boundary so a restart is triggered.
@@ -416,7 +456,7 @@ public class SKLottiePlayerTest
 	}
 
 	[Fact]
-	public void Seek_BeforeSetAnimation_DoesNotSetIsComplete()
+	public void Seek_BeforeAnimation_DoesNotSetIsComplete()
 	{
 		// Regression: UpdateProgress with null animation was setting IsComplete=true.
 		var player = new SKLottiePlayer();
@@ -433,7 +473,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Update(TimeSpan.FromSeconds(-1));
 
@@ -446,7 +486,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Update(TimeSpan.FromSeconds(0.5));
 
 		player.Update(TimeSpan.FromSeconds(-0.3));
@@ -463,7 +503,7 @@ public class SKLottiePlayerTest
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = 2.0;
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Update(TimeSpan.FromSeconds(0.3));
 
@@ -476,7 +516,7 @@ public class SKLottiePlayerTest
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = 0.5;
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Update(TimeSpan.FromSeconds(0.5));
 
@@ -489,7 +529,7 @@ public class SKLottiePlayerTest
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = 0;
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Update(TimeSpan.FromSeconds(1));
 
@@ -503,7 +543,7 @@ public class SKLottiePlayerTest
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = 1.0;
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Update(TimeSpan.FromSeconds(0.3));
 		player.AnimationSpeed = 2.0;
@@ -520,7 +560,7 @@ public class SKLottiePlayerTest
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = 1.0;
 		player.Repeat = SKLottieRepeat.Never;
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Update(TimeSpan.FromSeconds(0.5));
 		var progressBefore = player.Progress;
@@ -538,7 +578,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Repeat = SKLottieRepeat.Reverse(count: 0);
 		var completed = 0;
 		player.AnimationCompleted += (_, _) => completed++;
@@ -561,7 +601,7 @@ public class SKLottiePlayerTest
 		{
 			Repeat = SKLottieRepeat.Restart(2),
 		};
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Update(TimeSpan.FromSeconds(1.25));
 
@@ -577,7 +617,7 @@ public class SKLottiePlayerTest
 		{
 			Repeat = SKLottieRepeat.Reverse(0),
 		};
-		player.SetAnimation(anim);
+		player.Animation = anim;
 
 		player.Update(TimeSpan.FromSeconds(1.25));
 
@@ -590,7 +630,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		var completed = 0;
 		var updated = 0;
 		player.AnimationCompleted += (_, _) => completed++;
@@ -619,7 +659,7 @@ public class SKLottiePlayerTest
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = -1.0;
 		player.Repeat = SKLottieRepeat.Reverse();
-		player.SetAnimation(anim); // starts at Duration (negative speed)
+		player.Animation = anim; // starts at Duration (negative speed)
 
 		// Advance past the first boundary flip so isInForwardPhase becomes false internally.
 		// With -1 speed and Reverse, progress moves from Duration toward Zero, flips at Zero.
@@ -648,7 +688,7 @@ public class SKLottiePlayerTest
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = -1.0;
 		player.Repeat = SKLottieRepeat.Reverse();
-		player.SetAnimation(anim); // starts at Duration
+		player.Animation = anim; // starts at Duration
 
 		// Get into backward phase (isInForwardPhase=false: animation moving toward Duration)
 		player.Update(player.Duration); // flip at Zero → isInForwardPhase=false
@@ -681,7 +721,7 @@ public class SKLottiePlayerTest
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = -1.0;
 		player.Repeat = SKLottieRepeat.Reverse();
-		player.SetAnimation(anim); // starts at Duration
+		player.Animation = anim; // starts at Duration
 
 		// Advance past first flip: isInForwardPhase=false, progress moving toward Duration
 		player.Update(player.Duration); // flip at Zero
@@ -707,7 +747,7 @@ public class SKLottiePlayerTest
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = -1.0;
 		player.Repeat = SKLottieRepeat.Reverse();
-		player.SetAnimation(anim); // starts at Duration
+		player.Animation = anim; // starts at Duration
 
 		// Advance to flip: isInForwardPhase becomes false (moving toward Duration with -1 speed)
 		player.Update(player.Duration); // flip at Zero
@@ -729,7 +769,7 @@ public class SKLottiePlayerTest
 	{
 		using var anim = CreateAnimation();
 		var player = new SKLottiePlayer();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		player.Repeat = SKLottieRepeat.Never;
 
 		// Advance to completion
@@ -750,7 +790,7 @@ public class SKLottiePlayerTest
 		var player = new SKLottiePlayer();
 		player.AnimationSpeed = -1.0;
 		player.Repeat = SKLottieRepeat.Restart();
-		player.SetAnimation(anim);
+		player.Animation = anim;
 		var completed = 0;
 		player.AnimationCompleted += (_, _) => completed++;
 

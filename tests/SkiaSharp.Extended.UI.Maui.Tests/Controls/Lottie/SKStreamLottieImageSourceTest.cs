@@ -30,8 +30,10 @@ public class SKStreamLottieImageSourceTest : SKLottieImageSourceTest<SKStreamLot
 
 		Assert.Equal(input.Length, input.Position);
 
-		using var first = await source.LoadAnimationAsync(TestContext.Current.CancellationToken);
-		using var second = await source.LoadAnimationAsync(TestContext.Current.CancellationToken);
+		var first = await source.LoadAnimationAsync(TestContext.Current.CancellationToken);
+		var second = await source.LoadAnimationAsync(TestContext.Current.CancellationToken);
+		using var firstAnimation = first.Animation;
+		using var secondAnimation = second.Animation;
 
 		Assert.True(first.IsLoaded);
 		Assert.True(second.IsLoaded);

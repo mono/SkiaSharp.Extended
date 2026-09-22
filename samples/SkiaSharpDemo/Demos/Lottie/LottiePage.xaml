@@ -1,89 +1,280 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
-             xmlns:views="clr-namespace:SkiaSharpDemo.Views"
              xmlns:local="clr-namespace:SkiaSharpDemo.Demos"
              x:Class="SkiaSharpDemo.Demos.LottiePage"
              x:DataType="local:LottiePage"
              Title="Lottie">
 
-    <Grid RowDefinitions="*,Auto">
+    <ContentPage.Resources>
+        <Style x:Key="SectionTitleStyle" TargetType="Label">
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+        </Style>
+        <Style x:Key="CaptionStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="{StaticResource Gray500}" />
+        </Style>
+        <Style x:Key="ValueLabelStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="{StaticResource Gray500}" />
+        </Style>
+        <Style x:Key="ValueStyle" TargetType="Label">
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+        </Style>
+    </ContentPage.Resources>
 
-        <controls:SKLottieView x:Name="lottieView"
-                               AutomationId="LottieView"
-                               Source="Lottie/dotnetbot.json"
-                               Duration="{Binding Duration}"
-                               Progress="{Binding Progress}"
-                               IsAnimationEnabled="{Binding IsPlaying}"
-                               AnimationSpeed="{Binding AnimationSpeed}"
-                               RepeatMode="{Binding RepeatMode}"
-                               RepeatCount="{Binding RepeatCount}"
-                               AnimationFailed="OnAnimationFailed"
-                               AnimationLoaded="OnAnimationLoaded"
-                               AnimationCompleted="OnAnimationCompleted" />
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="18">
 
-        <BoxView Color="Green" Opacity="0.5" CornerRadius="12"
-                 WidthRequest="25" HeightRequest="24" Margin="24"
-                 HorizontalOptions="End" VerticalOptions="Start"
-                 x:DataType="controls:SKLottieView"
-                 IsVisible="{Binding IsComplete, Source={Reference lottieView}}" />
-
-        <VerticalStackLayout Spacing="12" Padding="12" Grid.Row="1">
-
-            <Slider Minimum="0"
-                    Maximum="{Binding Duration, Converter={StaticResource TimeSpanToDouble}, ConverterParameter=1}"
-                    Value="{Binding Progress, Converter={StaticResource TimeSpanToDouble}}" />
-
-            <Grid ColumnDefinitions="*,*" Margin="0,-12,0,0">
-                <Label Grid.Column="0"
-                       Text="{Binding Progress, StringFormat='{}{0:mm\\:ss\\.fff}'}" />
-                <Label Grid.Column="1" HorizontalOptions="End"
-                       Text="{Binding Duration, StringFormat='{}{0:mm\\:ss\\.fff}'}" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Lottie workbench" Style="{StaticResource SectionTitleStyle}" FontSize="24" />
+                    <Label Text="Tune playback, load a source, and inspect the live player state."
+                           Style="{StaticResource CaptionStyle}" />
+                </VerticalStackLayout>
+                <Border Grid.Column="1"
+                        Padding="12,6"
+                        BackgroundColor="{AppThemeBinding Light=#F0EBFF, Dark=#2B2350}"
+                        StrokeThickness="0"
+                        VerticalOptions="Center">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="14" />
+                    </Border.StrokeShape>
+                    <Label Text="{Binding StatusText}"
+                           FontAttributes="Bold"
+                           FontSize="12"
+                           TextColor="{StaticResource Primary}" />
+                </Border>
             </Grid>
 
-            <!-- Speed Controls -->
-            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                <Label Text="Speed:" VerticalOptions="Center" />
-                <Slider AutomationId="AnimationSpeedSlider"
-                        Grid.Column="1" Minimum="-2" Maximum="2" Value="{Binding AnimationSpeed}" />
-                <Label Grid.Column="2" Text="{Binding AnimationSpeed, StringFormat='{0:F1}x'}" WidthRequest="40" />
-            </Grid>
-            <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
-                <Button Text="-1x" Command="{Binding SetSpeedCommand}" CommandParameter="-1" />
-                <Button Text="0.5x" Command="{Binding SetSpeedCommand}" CommandParameter="0.5" />
-                <Button Text="1x" Command="{Binding SetSpeedCommand}" CommandParameter="1" />
-                <Button Text="2x" Command="{Binding SetSpeedCommand}" CommandParameter="2" />
-            </HorizontalStackLayout>
+            <Border HeightRequest="360"
+                    BackgroundColor="{AppThemeBinding Light=#F7F6FA, Dark=#19171F}"
+                    Stroke="{AppThemeBinding Light=#DFDCE8, Dark=#3D3948}"
+                    StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+                <Grid>
+                    <controls:SKLottieView x:Name="lottieView"
+                                           AutomationId="LottieView"
+                                           Source="Lottie/dotnetbot.json"
+                                           Duration="{Binding Duration}"
+                                           Progress="{Binding Progress}"
+                                           IsAnimationEnabled="{Binding IsPlaying}"
+                                           AnimationSpeed="{Binding AnimationSpeed}"
+                                           RepeatMode="{Binding RepeatMode}"
+                                           RepeatCount="{Binding RepeatCount}"
+                                           AnimationFailed="OnAnimationFailed"
+                                           AnimationLoaded="OnAnimationLoaded"
+                                           AnimationCompleted="OnAnimationCompleted" />
 
-            <!-- Repeat Controls -->
-            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
-                <Label Text="Repeat:" VerticalOptions="Center" />
-                <Picker Grid.Column="1" SelectedItem="{Binding RepeatMode}">
-                    <Picker.ItemsSource>
-                        <x:Array Type="{x:Type controls:SKLottieRepeatMode}">
-                            <controls:SKLottieRepeatMode>Restart</controls:SKLottieRepeatMode>
-                            <controls:SKLottieRepeatMode>Reverse</controls:SKLottieRepeatMode>
-                        </x:Array>
-                    </Picker.ItemsSource>
-                </Picker>
-                <Label Grid.Column="2" Text="Count:" VerticalOptions="Center" />
-                <Entry Grid.Column="3" Text="{Binding RepeatCount}" Keyboard="Numeric" WidthRequest="60" />
-            </Grid>
+                    <Border Margin="12"
+                            Padding="10,5"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            BackgroundColor="{AppThemeBinding Light=#EEFFFFFF, Dark=#DD212121}"
+                            StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <Label Text="{Binding SourceName}" FontSize="11" LineBreakMode="TailTruncation" MaxLines="1" />
+                    </Border>
 
-            <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
-                <Button AutomationId="SelectLottieJsonButton"
-                        Text="Select Lottie JSON"
-                        Clicked="OnSelectLottieJsonClicked" />
-                <Button AutomationId="ResetButton" Text="Reset" Command="{Binding ResetCommand}" />
-                <Button Text="-100ms" Command="{Binding StepCommand}" CommandParameter="-100" />
-                <Button AutomationId="PlayPauseButton"
-                        Text="Play/Pause"
-                        Command="{Binding PlayPauseCommand}" />
-                <Button Text="+100ms" Command="{Binding StepCommand}" CommandParameter="100" />
-                <Button Text="End" Command="{Binding EndCommand}" />
-            </HorizontalStackLayout>
+                    <Border Margin="12"
+                            Padding="10,5"
+                            HorizontalOptions="End"
+                            VerticalOptions="Start"
+                            BackgroundColor="#EAF8EF"
+                            StrokeThickness="0"
+                            IsVisible="{Binding IsComplete}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <Label Text="Complete" FontAttributes="Bold" FontSize="11" TextColor="#176B35" />
+                    </Border>
+
+                    <Border Margin="12"
+                            Padding="12,8"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="End"
+                            BackgroundColor="#EEFFF0EE"
+                            Stroke="#F2B8B2"
+                            StrokeThickness="1"
+                            IsVisible="{Binding HasError}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <Label Text="{Binding ErrorText}" FontSize="12" TextColor="#B42318" />
+                    </Border>
+                </Grid>
+            </Border>
+
+            <VerticalStackLayout Spacing="6">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Timeline" Style="{StaticResource SectionTitleStyle}" />
+                    <Label Grid.Column="1"
+                           Style="{StaticResource ValueStyle}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding Progress, StringFormat='{}{0:mm\\:ss\\.fff}'}" />
+                                <Span Text="  /  " />
+                                <Span Text="{Binding Duration, StringFormat='{}{0:mm\\:ss\\.fff}'}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </Grid>
+                <Slider AutomationId="ProgressSlider"
+                        Minimum="0"
+                        Maximum="{Binding Duration, Converter={StaticResource TimeSpanToDouble}, ConverterParameter=1}"
+                        Value="{Binding Progress, Converter={StaticResource TimeSpanToDouble}}" />
+            </VerticalStackLayout>
+
+            <Border Padding="16"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark=#19171F}"
+                    Stroke="{AppThemeBinding Light=#DFDCE8, Dark=#3D3948}"
+                    StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="14">
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Playback" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Grid.Column="1" Text="{Binding PlayPauseText}" Style="{StaticResource CaptionStyle}" />
+                    </Grid>
+
+                    <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Start" AlignItems="Center">
+                        <Button AutomationId="PlayPauseButton"
+                                Text="{Binding PlayPauseText}"
+                                Command="{Binding PlayPauseCommand}"
+                                MinimumWidthRequest="84"
+                                Margin="0,0,8,8" />
+                        <Button AutomationId="ResetButton" Text="Restart" Command="{Binding ResetCommand}" Margin="0,0,8,8" />
+                        <Button Text="-100 ms" Command="{Binding StepCommand}" CommandParameter="-100" Margin="0,0,8,8" />
+                        <Button Text="+100 ms" Command="{Binding StepCommand}" CommandParameter="100" Margin="0,0,8,8" />
+                        <Button Text="End" Command="{Binding EndCommand}" Margin="0,0,8,8" />
+                    </FlexLayout>
+
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Label Text="Speed" VerticalOptions="Center" Style="{StaticResource ValueLabelStyle}" />
+                        <Slider AutomationId="AnimationSpeedSlider"
+                                Grid.Column="1"
+                                Minimum="-2"
+                                Maximum="2"
+                                Value="{Binding AnimationSpeed}" />
+                        <Label Grid.Column="2"
+                               Text="{Binding AnimationSpeed, StringFormat='{0:0.##}x'}"
+                               Style="{StaticResource ValueStyle}"
+                               WidthRequest="48"
+                               HorizontalTextAlignment="End" />
+                    </Grid>
+
+                    <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Center">
+                        <Button Text="-1x" Command="{Binding SetSpeedCommand}" CommandParameter="-1" Margin="4" />
+                        <Button Text="0x" Command="{Binding SetSpeedCommand}" CommandParameter="0" Margin="4" />
+                        <Button Text="0.5x" Command="{Binding SetSpeedCommand}" CommandParameter="0.5" Margin="4" />
+                        <Button Text="1x" Command="{Binding SetSpeedCommand}" CommandParameter="1" Margin="4" />
+                        <Button Text="2x" Command="{Binding SetSpeedCommand}" CommandParameter="2" Margin="4" />
+                    </FlexLayout>
+
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#E8E5EE, Dark=#3D3948}" />
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Repeat mode" Style="{StaticResource ValueLabelStyle}" />
+                            <Picker AutomationId="RepeatModePicker" SelectedItem="{Binding RepeatMode}">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type controls:SKLottieRepeatMode}">
+                                        <controls:SKLottieRepeatMode>Restart</controls:SKLottieRepeatMode>
+                                        <controls:SKLottieRepeatMode>Reverse</controls:SKLottieRepeatMode>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Text="Additional plays or cycles" Style="{StaticResource ValueLabelStyle}" />
+                            <Entry AutomationId="RepeatCountEntry"
+                                   Text="{Binding RepeatCount}"
+                                   Keyboard="Numeric"
+                                   Placeholder="-1 for infinite" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#E8E5EE, Dark=#3D3948}" />
+
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Animation source" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+                            <Label Text="{Binding SourceName}"
+                                   Style="{StaticResource CaptionStyle}"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="1" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1"
+                                AutomationId="SelectLottieJsonButton"
+                                Text="Choose JSON"
+                                Clicked="OnSelectLottieJsonClicked"
+                                VerticalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Padding="16"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark=#19171F}"
+                    Stroke="{AppThemeBinding Light=#DFDCE8, Dark=#3D3948}"
+                    StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Live values" Style="{StaticResource SectionTitleStyle}" />
+                    <Grid ColumnDefinitions="Auto,*"
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                          ColumnSpacing="18"
+                          RowSpacing="8">
+                        <Label Text="State" Style="{StaticResource ValueLabelStyle}" />
+                        <Label Grid.Column="1" Text="{Binding StatusText}" Style="{StaticResource ValueStyle}" />
+
+                        <Label Grid.Row="1" Text="Loaded" Style="{StaticResource ValueLabelStyle}" />
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding IsAnimationLoaded}" Style="{StaticResource ValueStyle}" />
+
+                        <Label Grid.Row="2" Text="Complete" Style="{StaticResource ValueLabelStyle}" />
+                        <Label Grid.Row="2" Grid.Column="1" Text="{Binding IsComplete}" Style="{StaticResource ValueStyle}" />
+
+                        <Label Grid.Row="3" Text="Progress" Style="{StaticResource ValueLabelStyle}" />
+                        <Label Grid.Row="3"
+                               Grid.Column="1"
+                               Text="{Binding Progress, StringFormat='{}{0:mm\\:ss\\.fff}'}"
+                               Style="{StaticResource ValueStyle}" />
+
+                        <Label Grid.Row="4" Text="Duration" Style="{StaticResource ValueLabelStyle}" />
+                        <Label Grid.Row="4"
+                               Grid.Column="1"
+                               Text="{Binding Duration, StringFormat='{}{0:mm\\:ss\\.fff}'}"
+                               Style="{StaticResource ValueStyle}" />
+
+                        <Label Grid.Row="5" Text="Natural size" Style="{StaticResource ValueLabelStyle}" />
+                        <Label Grid.Row="5" Grid.Column="1" Text="{Binding NaturalSize}" Style="{StaticResource ValueStyle}" />
+
+                        <Label Grid.Row="6" Text="Frame rate" Style="{StaticResource ValueLabelStyle}" />
+                        <Label Grid.Row="6" Grid.Column="1" Text="{Binding FrameRate}" Style="{StaticResource ValueStyle}" />
+
+                        <Label Grid.Row="7" Text="Speed" Style="{StaticResource ValueLabelStyle}" />
+                        <Label Grid.Row="7"
+                               Grid.Column="1"
+                               Text="{Binding AnimationSpeed, StringFormat='{0:0.##}x'}"
+                               Style="{StaticResource ValueStyle}" />
+
+                        <Label Grid.Row="8" Text="Repeat" Style="{StaticResource ValueLabelStyle}" />
+                        <Label Grid.Row="8" Grid.Column="1" Text="{Binding RepeatSummary}" Style="{StaticResource ValueStyle}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
 
         </VerticalStackLayout>
-    </Grid>
-
+    </ScrollView>
 </ContentPage>

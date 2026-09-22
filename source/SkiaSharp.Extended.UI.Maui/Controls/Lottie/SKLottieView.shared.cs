@@ -1,4 +1,4 @@
-namespace SkiaSharp.Extended.UI.Controls;
+﻿namespace SkiaSharp.Extended.UI.Controls;
 
 /// <summary>
 /// A view that plays Lottie animations using the Skottie library.
@@ -82,7 +82,6 @@ public class SKLottieView : SKAnimatedSurfaceView, IDisposable
 
 	private readonly SKLottiePlayer player = new();
 	private CancellationTokenSource? loadCancellation;
-	private SKLottieAnimation? loadedAnimation;
 	private bool disposed;
 	private bool handlerWasAttached;
 	private bool isHandlerAttached;
@@ -246,7 +245,7 @@ public class SKLottieView : SKAnimatedSurfaceView, IDisposable
 			if (loadResult?.IsLoaded == true)
 			{
 				var animation = loadResult.Animation!;
-				ReplaceAnimation(loadResult);
+				ReplaceAnimation(animation);
 				loadResult = null;
 				AnimationLoaded?.Invoke(this, SKLottieAnimationLoadedEventArgs.Create(animation));
 			}
@@ -272,7 +271,7 @@ public class SKLottieView : SKAnimatedSurfaceView, IDisposable
 		}
 		finally
 		{
-			loadResult?.Dispose();
+			loadResult?.Animation?.Dispose();
 			if (IsCurrentLoad(currentCancellation) && !IsAnimationEnabled)
 				Invalidate();
 			if (ReferenceEquals(loadCancellation, currentCancellation))
@@ -356,41 +355,18 @@ public class SKLottieView : SKAnimatedSurfaceView, IDisposable
 		cancellation?.Cancel();
 	}
 
-	private void ReplaceAnimation(SKLottieAnimation? newAnimation)
-	{
-		var previousAnimation = loadedAnimation;
-		if (ReferenceEquals(previousAnimation, newAnimation))
-			return;
-
-		if (previousAnimation?.Animation is not null &&
-			ReferenceEquals(previousAnimation.Animation, newAnimation?.Animation))
-		{
-			if (previousAnimation.OwnsAnimation)
-			{
-				newAnimation!.TransferOwnershipTo(previousAnimation);
-				newAnimation.Dispose();
-			}
-			else if (newAnimation!.OwnsAnimation)
-			{
-				loadedAnimation = newAnimation;
-			}
-			else
-			{
-				newAnimation.Dispose();
-			}
-
-			return;
-		}
-
-		loadedAnimation = newAnimation;
-		player.SetAnimation(newAnimation?.Animation);
-		previousAnimation?.Dispose();
-	}
-
 	private bool IsCurrentLoad(CancellationTokenSource cancellation) =>
 		!disposed &&
 		ReferenceEquals(loadCancellation, cancellation) &&
 		!cancellation.IsCancellationRequested;
+
+	private void ReplaceAnimation(Skottie.Animation? newAnimation)
+	{
+		var previousAnimation = player.Animation;
+		player.Animation = newAnimation;
+		if (!ReferenceEquals(previousAnimation, newAnimation))
+			previousAnimation?.Dispose();
+	}
 
 	private bool ShouldLoadForCurrentHandler() =>
 		!disposed && (!handlerWasAttached || isHandlerAttached);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace SkiaSharp.Extended;
 
@@ -28,7 +28,7 @@ public class SKLottiePlayer
 	/// <summary>Gets or sets how the animation repeats. Defaults to <see cref="SKLottieRepeat.Never"/>.</summary>
 	/// <remarks>
 	/// Changing this property resets the repeat counter and completion state but preserves the
-	/// current playback direction. The direction phase is only reset when the animation restarts.
+	/// current playback direction. The direction phase is reset when <see cref="Animation"/> changes.
 	/// </remarks>
 	public SKLottieRepeat Repeat
 	{
@@ -51,23 +51,26 @@ public class SKLottiePlayer
 	public double AnimationSpeed { get; set; } = 1.0;
 
 	/// <summary>Gets whether an animation is currently loaded.</summary>
-	public bool HasAnimation => animation is not null;
+	public bool HasAnimation => Animation is not null;
+
+	/// <summary>
+	/// Gets or sets the animation currently loaded into the player. The caller retains ownership of the native animation.
+	/// </summary>
+	public Skottie.Animation? Animation
+	{
+		get => animation;
+		set
+		{
+			animation = value;
+			Reset();
+		}
+	}
 
 	/// <summary>Fires when the animation completes all repeats.</summary>
 	public event EventHandler? AnimationCompleted;
 
 	/// <summary>Fires after each <see cref="Seek"/> or <see cref="Update"/> call that changes playback state.</summary>
 	public event EventHandler? AnimationUpdated;
-
-	/// <summary>
-	/// Sets the animation to play. Pass <see langword="null"/> to clear the current animation.
-	/// The player does not take ownership of the animation; the caller is responsible for disposing it.
-	/// </summary>
-	public void SetAnimation(Skottie.Animation? newAnimation)
-	{
-		animation = newAnimation;
-		Reset();
-	}
 
 	/// <summary>
 	/// Seeks the animation to an absolute position and raises <see cref="AnimationUpdated"/>.
@@ -88,12 +91,12 @@ public class SKLottiePlayer
 	/// Advances the animation by the given time delta, applying <see cref="AnimationSpeed"/> and <see cref="Repeat"/>.
 	/// </summary>
 	/// <remarks>
-	/// Once complete, updates are ignored until <see cref="Seek"/>, <see cref="SetAnimation"/>, or a changed
+	/// Once complete, updates are ignored until <see cref="Seek"/>, a changed <see cref="Animation"/>, or a changed
 	/// <see cref="Repeat"/> value clears completion. Changing <see cref="AnimationSpeed"/> alone does not resume playback.
 	/// </remarks>
 	public void Update(TimeSpan deltaTime)
 	{
-		if (animation is null || IsComplete)
+		if (!HasAnimation || IsComplete)
 			return;
 
 		var scaledTicks = ScaleTicks(deltaTime.Ticks, AnimationSpeed);
@@ -123,7 +126,7 @@ public class SKLottiePlayer
 
 	/// <summary>Renders the current animation frame to the given canvas within the specified rectangle.</summary>
 	public void Render(SKCanvas canvas, SKRect rect) =>
-		animation?.Render(canvas, rect);
+		Animation?.Render(canvas, rect);
 
 	private void AdvanceOnce(double remainingTicks)
 	{
@@ -272,7 +275,7 @@ public class SKLottiePlayer
 			position = Duration;
 
 		Progress = position;
-		animation?.SeekFrameTime(position.TotalSeconds);
+		Animation?.SeekFrameTime(position.TotalSeconds);
 	}
 
 	private void Complete()
@@ -289,7 +292,7 @@ public class SKLottiePlayer
 		isInForwardPhase = true;
 		repeatsCompleted = 0;
 		IsComplete = false;
-		Duration = animation?.Duration ?? TimeSpan.Zero;
+		Duration = Animation?.Duration ?? TimeSpan.Zero;
 		SetPosition(AnimationSpeed < 0 ? Duration : TimeSpan.Zero);
 		AnimationUpdated?.Invoke(this, EventArgs.Empty);
 	}

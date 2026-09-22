@@ -1,6 +1,4 @@
-﻿using SkiaSharp.Resources;
-
-namespace SkiaSharp.Extended.UI.Controls;
+﻿namespace SkiaSharp.Extended.UI.Controls;
 
 /// <summary>
 /// Abstract base class for Lottie animation image sources.
@@ -19,13 +17,8 @@ public abstract class SKLottieImageSource : Element
 	/// Loads the Lottie animation asynchronously.
 	/// </summary>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>An <see cref="SKLottieAnimation"/> containing the loaded animation.</returns>
+	/// <returns>An animation result. Implementations must return a fresh native animation for each successful load.</returns>
 	public abstract Task<SKLottieAnimation> LoadAnimationAsync(CancellationToken cancellationToken = default);
-
-	internal Skottie.AnimationBuilder CreateAnimationBuilder() =>
-		Skottie.Animation.CreateBuilder()
-			.SetResourceProvider(new CachingResourceProvider(new DataUriResourceProvider()))
-			.SetFontManager(SKFontManager.Default);
 
 	/// <summary>
 	/// Creates a Lottie image source from a URI.

@@ -12,78 +12,24 @@ namespace SkiaSharp.Extended.UI.Blazor.Components;
 /// with an <see cref="SKLottiePlayer"/>.
 /// </summary>
 [SupportedOSPlatform("browser")]
-public class SKLottieView : ComponentBase, IAsyncDisposable
+public class SKLottieView : ComponentBase, IDisposable
 {
+	private static readonly TimeSpan ProgressReportInterval = TimeSpan.FromMilliseconds(100);
 	private static readonly IReadOnlyDictionary<string, object> EmptyAttributes =
 		new Dictionary<string, object>();
 
-	private sealed class LoadRequest : IDisposable
-	{
-		public LoadRequest(
-			long generation,
-			SKLottieImageSource? source,
-			CancellationToken cancellationToken,
-			TaskCompletionSource<bool>? completion,
-			bool reportFailure)
-		{
-			Generation = generation;
-			Source = source;
-			Cancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-			Completion = completion;
-			ReportFailure = reportFailure;
-			CancellationRegistration = Cancellation.Token.Register(() => Completion?.TrySetCanceled(Cancellation.Token));
-		}
-
-		public CancellationTokenSource Cancellation { get; }
-
-		public CancellationTokenRegistration CancellationRegistration { get; }
-
-		public TaskCompletionSource<bool>? Completion { get; }
-
-		public long Generation { get; }
-
-		public bool ReportFailure { get; }
-
-		public SKLottieImageSource? Source { get; }
-
-		public bool Started { get; set; }
-
-		public void Cancel()
-		{
-			Cancellation.Cancel();
-			Completion?.TrySetCanceled(Cancellation.Token);
-		}
-
-		public void Dispose()
-		{
-			CancellationRegistration.Dispose();
-			Cancellation.Dispose();
-		}
-	}
-
 	private readonly SKLottiePlayer player = new();
-	private Animation? loadedAnimation;
+	private CancellationTokenSource? loadCancellation;
 	private SKAnimatedSurfaceView? surface;
 	private SKLottieImageSource? currentSource;
-	private LoadRequest? loadRequest;
-	private long nextLoadGeneration;
-	private long currentLoadGeneration;
-	private bool hasRendered;
 	private bool invalidateAfterRender;
-	private bool loadPending;
-	private bool isLoading;
+	private bool progressChangedPending;
 	private bool completionPending;
 	private bool disposed;
+	private TimeSpan progressReportElapsed;
 
 	[Inject]
 	private IServiceProvider? services { get; set; }
-
-	/// <summary>
-	/// Gets or sets the HTTP client used for URI sources. When omitted, the component resolves
-	/// a registered default <see cref="HttpClient"/> after interactivity begins.
-	/// </summary>
-	[Parameter]
-	public HttpClient? HttpClient { get; set; }
 
 	/// <summary>Gets or sets the Lottie source.</summary>
 	[Parameter]
@@ -121,16 +67,17 @@ public class SKLottieView : ComponentBase, IAsyncDisposable
 	[Parameter]
 	public EventCallback AnimationCompleted { get; set; }
 
+	/// <summary>Reports playback progress about ten times per second while the animation is running.</summary>
+	[Parameter]
+	public EventCallback<TimeSpan> ProgressChanged { get; set; }
+
 	/// <summary>Fires when loading fails.</summary>
 	[Parameter]
-	public EventCallback<Exception?> AnimationFailed { get; set; }
+	public EventCallback<Exception> AnimationFailed { get; set; }
 
 	/// <summary>Additional HTML attributes forwarded to the underlying canvas element.</summary>
 	[Parameter(CaptureUnmatchedValues = true)]
 	public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
-
-	/// <summary>Gets whether the animation is currently loading.</summary>
-	public bool IsLoading => isLoading;
 
 	/// <summary>Gets whether an animation is loaded and ready to play.</summary>
 	public bool HasAnimation => player.HasAnimation;
@@ -138,51 +85,36 @@ public class SKLottieView : ComponentBase, IAsyncDisposable
 	/// <summary>Gets the total animation duration.</summary>
 	public TimeSpan Duration => player.Duration;
 
+	/// <summary>Gets the animation's natural size.</summary>
+	public SKSize Size => player.Animation?.Size ?? SKSize.Empty;
+
+	/// <summary>Gets the animation's frame rate.</summary>
+	public double Fps => player.Animation?.Fps ?? 0;
+
 	/// <summary>Gets the current playback position.</summary>
 	public TimeSpan Progress => player.Progress;
 
 	/// <summary>Gets whether the animation has completed all repeats.</summary>
 	public bool IsComplete => player.IsComplete;
 
-	internal bool ShouldRenderContinuously =>
-		IsAnimationEnabled && player.HasAnimation && !player.IsComplete;
-
-	/// <summary>
-	/// Reloads the current source, including an equal source. Before interactivity, the request
-	/// is queued and completes after the component's first interactive render.
-	/// </summary>
-	public Task ReloadAsync(CancellationToken cancellationToken = default)
+	/// <summary>Seeks to an absolute playback position, clamped to the loaded animation's duration.</summary>
+	public void Seek(TimeSpan position)
 	{
-		if (disposed)
-			return Task.FromCanceled(new CancellationToken(canceled: true));
-
-		if (cancellationToken.IsCancellationRequested)
-			return Task.FromCanceled(cancellationToken);
-
-		var completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-		QueueLoad(Source, cancellationToken, completion, reportFailure: true);
-		RequestRenderAndInvalidate();
-		return completion.Task;
-	}
-
-	/// <summary>Restarts the animation from the beginning with current settings.</summary>
-	public void Restart()
-	{
-		ApplySettings();
-		player.SetAnimation(loadedAnimation);
-		RequestRenderAndInvalidate();
+		player.Seek(position);
+		QueueProgressChanged();
+		_ = RequestRenderAsync(invalidateSurface: true);
 	}
 
 	/// <inheritdoc />
 	protected override void BuildRenderTree(RenderTreeBuilder builder)
 	{
 		builder.OpenComponent<SKAnimatedSurfaceView>(0);
-		builder.AddAttribute(
-			1,
-			nameof(SKAnimatedSurfaceView.AdditionalAttributes),
-			AdditionalAttributes ?? EmptyAttributes);
+		builder.AddAttribute(1, nameof(SKAnimatedSurfaceView.AdditionalAttributes), AdditionalAttributes ?? EmptyAttributes);
 		builder.AddAttribute(2, nameof(SKAnimatedSurfaceView.SurfaceType), SurfaceType);
-		builder.AddAttribute(3, nameof(SKAnimatedSurfaceView.IsAnimationEnabled), ShouldRenderContinuously);
+		builder.AddAttribute(
+			3,
+			nameof(SKAnimatedSurfaceView.IsAnimationEnabled),
+			IsAnimationEnabled && player.AnimationSpeed != 0 && player.HasAnimation && !player.IsComplete);
 		builder.AddAttribute(4, nameof(SKAnimatedSurfaceView.IgnorePixelScaling), IgnorePixelScaling);
 		builder.AddAttribute(5, nameof(SKAnimatedSurfaceView.OnUpdate), (Action<TimeSpan>)HandleUpdate);
 		builder.AddAttribute(6, nameof(SKAnimatedSurfaceView.OnPaintSurface), (Action<SKCanvas, SKSize>)HandlePaintSurface);
@@ -191,22 +123,15 @@ public class SKLottieView : ComponentBase, IAsyncDisposable
 	}
 
 	/// <inheritdoc />
-	protected override Task OnParametersSetAsync()
+	protected override void OnParametersSet()
 	{
-		ApplySettings();
-		if (!Equals(Source, currentSource))
-		{
-			currentSource = Source;
-			QueueLoad(Source, CancellationToken.None, completion: null, reportFailure: true);
-		}
-
-		return Task.CompletedTask;
+		player.Repeat = Repeat;
+		player.AnimationSpeed = AnimationSpeed;
 	}
 
 	/// <inheritdoc />
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		hasRendered = true;
 		if (invalidateAfterRender)
 		{
 			invalidateAfterRender = false;
@@ -215,20 +140,22 @@ public class SKLottieView : ComponentBase, IAsyncDisposable
 #pragma warning restore CA1416
 		}
 
-		if (loadPending)
+		if (!IsSameSource(Source, currentSource))
 		{
-			var request = loadRequest;
-			loadPending = false;
-			if (request is not null && IsCurrent(request))
-				await LoadAnimationAsync(request);
-			else if (request is not null &&
-				ReferenceEquals(loadRequest, request) &&
-				currentLoadGeneration == request.Generation &&
-				!request.Started)
+			currentSource = Source;
+			CancelLoad();
+			await LoadAnimationAsync(currentSource);
+		}
+
+		if (progressChangedPending)
+		{
+			try
 			{
-				loadRequest = null;
-				currentLoadGeneration = 0;
-				request.Dispose();
+				await ProgressChanged.InvokeAsync(player.Progress);
+			}
+			finally
+			{
+				progressChangedPending = false;
 			}
 		}
 
@@ -239,29 +166,36 @@ public class SKLottieView : ComponentBase, IAsyncDisposable
 		}
 	}
 
-	internal void ApplySettings()
-	{
-		player.Repeat = Repeat;
-		player.AnimationSpeed = AnimationSpeed;
-	}
-
 	internal void HandleUpdate(TimeSpan delta)
 	{
 		var wasComplete = player.IsComplete;
 		player.Update(delta);
-		if (!wasComplete && player.IsComplete)
+		var completed = !wasComplete && player.IsComplete;
+
+		if (ProgressChanged.HasDelegate)
+		{
+			progressReportElapsed += delta;
+			if (completed || progressReportElapsed >= ProgressReportInterval)
+			{
+				if (QueueProgressChanged() && !completed)
+					_ = RequestRenderAsync();
+			}
+		}
+
+		if (completed)
 		{
 			completionPending = true;
-			RequestRenderAndInvalidate();
+			_ = RequestRenderAsync(invalidateSurface: true);
 		}
 	}
 
-	internal void SetAnimation(Animation? animation)
+	internal void ReplaceAnimation(Animation? animation)
 	{
-		player.SetAnimation(null);
-		loadedAnimation?.Dispose();
-		loadedAnimation = animation;
-		player.SetAnimation(animation);
+		var previousAnimation = player.Animation;
+		player.Animation = animation;
+		QueueProgressChanged();
+		if (!ReferenceEquals(previousAnimation, animation))
+			previousAnimation?.Dispose();
 	}
 
 	private void HandlePaintSurface(SKCanvas canvas, SKSize size)
@@ -270,174 +204,112 @@ public class SKLottieView : ComponentBase, IAsyncDisposable
 		player.Render(canvas, SKRect.Create(0, 0, size.Width, size.Height));
 	}
 
-	private void QueueLoad(
-		SKLottieImageSource? source,
-		CancellationToken cancellationToken,
-		TaskCompletionSource<bool>? completion,
-		bool reportFailure)
+	private async Task LoadAnimationAsync(SKLottieImageSource? source)
 	{
-		CancelLoad();
-		var request = new LoadRequest(
-			++nextLoadGeneration,
-			source,
-			cancellationToken,
-			completion,
-			reportFailure);
-		loadRequest = request;
-		currentLoadGeneration = request.Generation;
-		loadPending = true;
-	}
+		if (source is null)
+		{
+			ReplaceAnimation(null);
+			await RequestRenderAsync(invalidateSurface: true);
+			return;
+		}
 
-	private async Task LoadAnimationAsync(LoadRequest request)
-	{
-		Animation? animation = null;
-		var cancellationToken = request.Cancellation.Token;
+		var currentCancellation = new CancellationTokenSource();
+		loadCancellation = currentCancellation;
+		SKLottieAnimation? result = null;
+		var cancellationToken = currentCancellation.Token;
 		try
 		{
-			request.Started = true;
-			if (!IsCurrent(request))
-				return;
-
-			if (request.Source is null)
-			{
-				SetAnimation(null);
-				isLoading = false;
-				await RenderAndInvalidateAsync();
-				if (!IsCurrent(request))
-					return;
-
-				request.Completion?.TrySetResult(true);
-				return;
-			}
-
 			try
 			{
-				isLoading = true;
-				SetAnimation(null);
-				await InvokeAsync(StateHasChanged);
-				if (!IsCurrent(request))
+				if (!IsCurrentLoad(currentCancellation, source))
 					return;
 
-				var httpClient = HttpClient ?? services?.GetService(typeof(HttpClient)) as HttpClient;
-				var json = await request.Source.LoadJsonAsync(httpClient, cancellationToken);
-				if (!IsCurrent(request))
-					return;
-
-				animation = Animation.Parse(json);
-				if (animation is null)
+				var httpClient = services?.GetService(typeof(HttpClient)) as HttpClient;
+				result = await source.LoadAnimationAsync(httpClient, cancellationToken);
+				if (result is null || !result.IsLoaded)
 					throw new InvalidOperationException("The Lottie animation source could not be parsed.");
-
-				if (!IsCurrent(request))
-					return;
-
-				SetAnimation(animation);
-				animation = null;
-				isLoading = false;
-				await RenderAndInvalidateAsync();
-				if (!IsCurrent(request))
-					return;
 			}
 			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
 			{
-				request.Completion?.TrySetCanceled(cancellationToken);
-				if (IsLatestGeneration(request))
-				{
-					isLoading = false;
-					await RenderAndInvalidateAsync();
-				}
 				return;
 			}
 			catch (Exception ex)
 			{
-				if (!IsCurrent(request))
+				if (!IsCurrentLoad(currentCancellation, source))
 					return;
 
-				SetAnimation(null);
-				isLoading = false;
-				await RenderAndInvalidateAsync();
-				if (!IsCurrent(request))
+				ReplaceAnimation(null);
+				await RequestRenderAsync(invalidateSurface: true);
+				if (!IsCurrentLoad(currentCancellation, source))
 					return;
 
-				request.Completion?.TrySetException(ex);
-				if (request.ReportFailure)
-					await AnimationFailed.InvokeAsync(ex);
+				await AnimationFailed.InvokeAsync(ex);
 				return;
 			}
 
-			try
-			{
-				await AnimationLoaded.InvokeAsync();
-			}
-			catch (Exception ex)
-			{
-				request.Completion?.TrySetException(ex);
-				throw;
-			}
-
-			if (!IsCurrent(request))
+			if (!IsCurrentLoad(currentCancellation, source))
 				return;
 
-			request.Completion?.TrySetResult(true);
+			ReplaceAnimation(result.Animation);
+			result = null;
+			await RequestRenderAsync(invalidateSurface: true);
+			if (!IsCurrentLoad(currentCancellation, source))
+				return;
+
+			await AnimationLoaded.InvokeAsync();
 		}
 		finally
 		{
-			animation?.Dispose();
-			if (ReferenceEquals(loadRequest, request) && currentLoadGeneration == request.Generation)
-			{
-				loadRequest = null;
-				currentLoadGeneration = 0;
-				isLoading = false;
-			}
+			result?.Animation?.Dispose();
+			if (ReferenceEquals(loadCancellation, currentCancellation))
+				loadCancellation = null;
 
-			request.Dispose();
+			currentCancellation.Dispose();
 		}
 	}
 
 	private void CancelLoad()
 	{
-		var request = loadRequest;
-		if (request is not null)
-		{
-			loadRequest = null;
-			currentLoadGeneration = 0;
-			loadPending = false;
-			isLoading = false;
-			request.Cancel();
-			if (!request.Started)
-				request.Dispose();
-		}
+		var cancellation = loadCancellation;
+		loadCancellation = null;
+		cancellation?.Cancel();
 	}
 
-	private bool IsCurrent(LoadRequest request) =>
+	private bool IsCurrentLoad(CancellationTokenSource cancellation, SKLottieImageSource? source) =>
 		!disposed &&
-		IsLatestGeneration(request) &&
-		!request.Cancellation.IsCancellationRequested;
+		ReferenceEquals(loadCancellation, cancellation) &&
+		IsSameSource(Source, source) &&
+		!cancellation.IsCancellationRequested;
 
-	private bool IsLatestGeneration(LoadRequest request) =>
-		ReferenceEquals(loadRequest, request) &&
-		currentLoadGeneration == request.Generation;
-
-	private Task RenderAndInvalidateAsync()
+	private Task RequestRenderAsync(bool invalidateSurface = false)
 	{
-		invalidateAfterRender = true;
-		return hasRendered ? InvokeAsync(StateHasChanged) : Task.CompletedTask;
+		if (invalidateSurface)
+			invalidateAfterRender = true;
+
+		return surface is not null ? InvokeAsync(StateHasChanged) : Task.CompletedTask;
 	}
 
-	private void RequestRenderAndInvalidate()
+	private bool QueueProgressChanged()
 	{
-		invalidateAfterRender = true;
-		if (hasRendered)
-			_ = InvokeAsync(StateHasChanged);
+		progressReportElapsed = TimeSpan.Zero;
+		if (disposed || !ProgressChanged.HasDelegate || progressChangedPending)
+			return false;
+
+		progressChangedPending = true;
+		return true;
 	}
+
+	private static bool IsSameSource(SKLottieImageSource? left, SKLottieImageSource? right) =>
+		ReferenceEquals(left, right) ||
+		(left is not null && left.IsSameSource(right));
 
 	internal SKLottiePlayer Player => player;
 
 	/// <inheritdoc />
-	public ValueTask DisposeAsync()
+	public void Dispose()
 	{
 		disposed = true;
 		CancelLoad();
-		SetAnimation(null);
-		return ValueTask.CompletedTask;
+		ReplaceAnimation(null);
 	}
 }

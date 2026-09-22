@@ -47,18 +47,13 @@ Or play a Lottie animation:
 
 ## Included components
 
-- **`SKSurfaceView`** — provides validated Canvas or OpenGL rendering with a
-  synchronous paint callback and explicit `Invalidate()` redraws.
-- **`SKAnimatedSurfaceView`** — coordinates synchronous update and paint
-  callbacks through the inherited Canvas or OpenGL surface and the Blazor
-  render loop. Set `SurfaceType` to `typeof(SKGLView)` to select GPU rendering
-  per control. In DEBUG builds, it draws an FPS label after your paint
-  callback; release builds have no diagnostic overlay. Its monotonic timing is
-  shared with the .NET MAUI animated surface.
-- **`SKLottieView`** — loads and plays Lottie JSON using the shared
-  `SKLottiePlayer` engine on `SKAnimatedSurfaceView`, including its
-  `SurfaceType` and `IgnorePixelScaling` options. It composes the animated
-  surface; it does not inherit from it.
+- **`SKAnimatedSurfaceView`** — coordinates synchronous update and paint callbacks through a Canvas or OpenGL surface and the Blazor render
+  loop. Disable animation and call `Invalidate()` for on-demand rendering. Set `SurfaceType` to `typeof(SKGLView)` to select GPU rendering
+  per component. In DEBUG builds, it draws an FPS label after your paint callback; release builds have no diagnostic overlay. Its monotonic
+  timing is shared with the .NET MAUI animated surface.
+- **`SKLottieView`** — loads and plays Lottie JSON using the shared `SKLottiePlayer` engine on `SKAnimatedSurfaceView`, including its
+  `SurfaceType` and `IgnorePixelScaling` options. It supports explicit seeking and opt-in throttled progress reporting. It composes the
+  animated surface; it does not inherit from it. Derive from `SKLottieImageSource` to replace the complete loading pipeline.
 
 ## Compatibility
 

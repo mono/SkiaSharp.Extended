@@ -1,16 +1,15 @@
-namespace SkiaSharp.Extended.UI.Blazor.Components;
+﻿namespace SkiaSharp.Extended.UI.Blazor.Components;
 
 internal sealed class SKStreamLottieImageSource : SKLottieImageSource
 {
 	private readonly Func<CancellationToken, ValueTask<Stream>> streamFactory;
 
-	internal SKStreamLottieImageSource(
-		Func<CancellationToken, ValueTask<Stream>> streamFactory)
+	internal SKStreamLottieImageSource(Func<CancellationToken, ValueTask<Stream>> streamFactory)
 	{
 		this.streamFactory = streamFactory;
 	}
 
-	internal override async Task<string> LoadJsonAsync(
+	protected internal override async Task<SKLottieAnimation> LoadAnimationAsync(
 		HttpClient? httpClient,
 		CancellationToken cancellationToken)
 	{
@@ -19,12 +18,11 @@ internal sealed class SKStreamLottieImageSource : SKLottieImageSource
 			throw new InvalidOperationException("The Lottie stream factory returned null.");
 
 		await using (stream)
-			return await ReadJsonAsync(stream, cancellationToken).ConfigureAwait(false);
+		{
+			return new SKLottieAnimation(await SKLottieAnimationLoader.LoadAsync(stream, cancellationToken).ConfigureAwait(false));
+		}
 	}
 
-	internal override bool EqualsCore(SKLottieImageSource other) =>
-		streamFactory.Equals(((SKStreamLottieImageSource)other).streamFactory);
-
-	internal override int GetHashCodeCore() =>
-		HashCode.Combine(typeof(SKStreamLottieImageSource), streamFactory);
+	internal override bool IsSameSource(SKLottieImageSource? other) =>
+		other is SKStreamLottieImageSource source && streamFactory.Equals(source.streamFactory);
 }

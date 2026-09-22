@@ -1,10 +1,13 @@
 # Lottie Player
 
-[`SKLottiePlayer`](xref:SkiaSharp.Extended.SKLottiePlayer) is the platform-agnostic engine that drives Lottie animation playback. It manages timing, repeat logic, and rendering — you just feed it frames. Both the [MAUI `SKLottieView`](lottie-maui.md) and the [Blazor `SKLottieView`](lottie-blazor.md) are built on top of this player.
+[`SKLottiePlayer`](xref:SkiaSharp.Extended.SKLottiePlayer) is the platform-agnostic engine that drives loaded Lottie animations. It manages
+timing, repeat logic, seeking, and rendering. Both the [MAUI `SKLottieView`](lottie-maui.md) and the
+[Blazor `SKLottieView`](lottie-blazor.md) are thin platform hosts around this player.
 
 ## When to Use the Player Directly
 
-Most apps should use the higher-level view components for [MAUI](lottie-maui.md) or [Blazor](lottie-blazor.md). Use `SKLottiePlayer` directly when you need:
+Most apps should use the higher-level view components for [MAUI](lottie-maui.md) or [Blazor](lottie-blazor.md). Use `SKLottiePlayer`
+directly when you need:
 
 - A custom rendering host (WPF, Avalonia, console, tests)
 - Full control over the frame loop
@@ -24,10 +27,9 @@ var player = new SKLottiePlayer
     AnimationSpeed = 1.0
 };
 
-// 2. Load a Lottie animation
-var json = File.ReadAllText("animation.json");
-var animation = Animation.Parse(json);
-player.SetAnimation(animation);
+// 2. Load an animation
+using var animation = Animation.Parse(File.ReadAllText("animation.json"));
+player.Animation = animation;
 
 // 3. On each frame tick, advance and render
 player.Update(deltaTime);               // deltaTime = time since last frame
@@ -95,7 +97,8 @@ player.Repeat = SKLottieRepeat.Reverse();
 player.Repeat = SKLottieRepeat.Reverse(2);
 ```
 
-You can change the repeat mode mid-playback. The player preserves the current direction until the animation hits its next boundary, preventing abrupt mid-animation direction changes.
+You can change the repeat mode mid-playback. The player preserves the current direction until the animation hits its next boundary,
+preventing abrupt mid-animation direction changes.
 `SKLottieRepeat.Reverse(0)` is one forward/back cycle; `Never` is the
 single-direction, play-once mode.
 
@@ -138,7 +141,8 @@ player.AnimationUpdated += (s, e) =>
 
 | Property | Type | Description |
 | :------- | :--- | :---------- |
-| `Duration` | `TimeSpan` | Total animation duration (read-only, set when animation loads) |
+| `Animation` | `Skottie.Animation?` | Current caller-owned native animation |
+| `Duration` | `TimeSpan` | Total animation duration (read-only, set when `Animation` changes) |
 | `Progress` | `TimeSpan` | Current playback position (read-only, advances via `Update`) |
 | `IsComplete` | `bool` | Whether all repeats have finished |
 | `HasAnimation` | `bool` | Whether an animation is currently loaded |
@@ -148,15 +152,19 @@ player.AnimationUpdated += (s, e) =>
 ## Loading and Resetting
 
 ```csharp
-// Load a new animation (resets progress, completion, and repeat counters)
-var animation = Animation.Parse(json);
-player.SetAnimation(animation);
+// Set a new animation (resets progress, completion, and repeat counters)
+using var animation = Animation.Parse(File.ReadAllText("animation.json"));
+player.Animation = animation;
 
-// Clear the animation
-player.SetAnimation(null);
+// Return to the beginning without loading again
+player.Seek(TimeSpan.Zero);
+
+// Clear the player
+player.Animation = null;
 ```
 
-The caller owns the `Skottie.Animation` instance and is responsible for disposing it when no longer needed.
+The caller owns the native `Animation` and disposes it when it is no longer used. Use `Seek` to move within the current animation. Do not
+share one native animation between players because Skottie animations contain mutable playback state.
 
 ## Learn More
 

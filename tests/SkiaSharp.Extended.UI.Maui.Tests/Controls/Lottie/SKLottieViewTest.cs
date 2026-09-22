@@ -92,28 +92,13 @@ public class SKLottieViewTest
 	}
 
 	[Fact]
-	public void DisposingPublicAnimationWrapper_PreservesCallerOwnedAnimation()
-	{
-		using var stream = File.OpenRead(TrophyJson);
-		using var animation = SkiaSharp.Skottie.Animation.CreateBuilder().Build(stream)
-			?? throw new InvalidOperationException("Failed to parse test animation.");
-		var wrapper = new SKLottieAnimation(animation);
-
-		wrapper.Dispose();
-
-		Assert.Same(animation, wrapper.Animation);
-		Assert.True(wrapper.IsLoaded);
-	}
-
-	[Fact]
-	public async Task DisposingSourceResult_ClearsOwnedAnimation()
+	public async Task SourceResult_CreatesAnimation()
 	{
 		var source = new SKFileLottieImageSource { File = TrophyJson };
 		var result = await source.LoadAnimationAsync(TestContext.Current.CancellationToken);
+		using var animation = result.Animation;
 
-		result.Dispose();
-
-		Assert.Null(result.Animation);
-		Assert.False(result.IsLoaded);
+		Assert.True(result.IsLoaded);
+		Assert.True(animation!.Duration > TimeSpan.Zero);
 	}
 }

@@ -12,7 +12,41 @@ namespace SkiaSharp.Extended.UI.Blazor.Tests.Components.Lottie;
 public class SKLottieViewTest
 {
 	private const string MinimalLottieJson =
-		"""{"v":"5.7.4","fr":60,"ip":0,"op":60,"w":100,"h":100,"nm":"test","ddd":0,"assets":[],"layers":[{"ddd":0,"ind":1,"ty":4,"nm":"layer","sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[50,50,0],"ix":2},"a":{"a":0,"k":[0,0,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[],"ip":0,"op":60,"st":0,"bm":0}]}""";
+		"""
+		{
+		  "v": "5.7.4",
+		  "fr": 60,
+		  "ip": 0,
+		  "op": 60,
+		  "w": 100,
+		  "h": 100,
+		  "nm": "test",
+		  "ddd": 0,
+		  "assets": [],
+		  "layers": [
+		    {
+		      "ddd": 0,
+		      "ind": 1,
+		      "ty": 4,
+		      "nm": "layer",
+		      "sr": 1,
+		      "ks": {
+		        "o": { "a": 0, "k": 100, "ix": 11 },
+		        "r": { "a": 0, "k": 0, "ix": 10 },
+		        "p": { "a": 0, "k": [50, 50, 0], "ix": 2 },
+		        "a": { "a": 0, "k": [0, 0, 0], "ix": 1 },
+		        "s": { "a": 0, "k": [100, 100, 100], "ix": 6 }
+		      },
+		      "ao": 0,
+		      "shapes": [],
+		      "ip": 0,
+		      "op": 60,
+		      "st": 0,
+		      "bm": 0
+		    }
+		  ]
+		}
+		""";
 
 	[Fact]
 	public void DefaultSurfaceType_IsCanvasView()
@@ -23,36 +57,48 @@ public class SKLottieViewTest
 	}
 
 	[Fact]
-	public async Task SurfaceRunsOnlyWhileAnimationIsPlayable()
+	public void SurfaceRunsOnlyWhileAnimationIsPlayable()
 	{
-		var view = new SKLottieView();
+		var view = new TestLottieView();
 
-		Assert.False(view.ShouldRenderContinuously);
+		Assert.False(view.IsRenderLoopEnabled);
 
-		view.SetAnimation(CreateAnimation());
+		view.ReplaceAnimation(CreateAnimation());
 
-		Assert.True(view.ShouldRenderContinuously);
+		Assert.True(view.IsRenderLoopEnabled);
 
 		view.HandleUpdate(view.Duration);
 
-		Assert.False(view.ShouldRenderContinuously);
+		Assert.False(view.IsRenderLoopEnabled);
 
-		await view.DisposeAsync();
+		view.Dispose();
 	}
 
 	[Fact]
-	public async Task ApplyingSettings_PassesRepeatAndSpeedToThePlayer()
+	public void ApplyingSettings_PassesRepeatAndSpeedToThePlayer()
 	{
-		var view = new SKLottieView();
+		var view = new TestLottieView();
 		SetParameter(view, nameof(SKLottieView.Repeat), SKLottieRepeat.Reverse(2));
 		SetParameter(view, nameof(SKLottieView.AnimationSpeed), -1.5);
 
-		view.ApplySettings();
+		view.ApplyParameters();
 
 		Assert.Equal(SKLottieRepeat.Reverse(2), view.Player.Repeat);
 		Assert.Equal(-1.5, view.Player.AnimationSpeed);
 
-		await view.DisposeAsync();
+		view.Dispose();
+	}
+
+	[Fact]
+	public void ZeroSpeed_DisablesTheRenderLoop()
+	{
+		var view = new TestLottieView();
+		view.ReplaceAnimation(CreateAnimation());
+		SetParameter(view, nameof(SKLottieView.AnimationSpeed), 0.0);
+		view.ApplyParameters();
+
+		Assert.False(view.IsRenderLoopEnabled);
+		view.Dispose();
 	}
 
 	[Fact]
@@ -65,7 +111,7 @@ public class SKLottieViewTest
 			view,
 			nameof(SKLottieView.AnimationCompleted),
 			EventCallback.Factory.Create(callbackReceiver, () => completed++));
-		view.SetAnimation(CreateAnimation());
+		view.ReplaceAnimation(CreateAnimation());
 
 		view.HandleUpdate(view.Duration);
 
@@ -76,23 +122,49 @@ public class SKLottieViewTest
 
 		Assert.Equal(1, completed);
 
-		await view.DisposeAsync();
+		view.Dispose();
 	}
 
 	[Fact]
-	public async Task Restart_ResetsCompletedPlayerAndRequestsThePlayableSurface()
+	public async Task ProgressChanged_IsThrottledAndDispatchedAfterRender()
 	{
-		var view = new SKLottieView();
-		view.SetAnimation(CreateAnimation());
+		var view = new TestLottieView();
+		var callbackReceiver = new object();
+		var progress = new List<TimeSpan>();
+		SetParameter(
+			view,
+			nameof(SKLottieView.ProgressChanged),
+			EventCallback.Factory.Create<TimeSpan>(callbackReceiver, progress.Add));
+		view.ReplaceAnimation(CreateAnimation());
+		await view.AfterRenderAsync();
+		progress.Clear();
+
+		view.HandleUpdate(TimeSpan.FromMilliseconds(50));
+		await view.AfterRenderAsync();
+
+		Assert.Empty(progress);
+
+		view.HandleUpdate(TimeSpan.FromMilliseconds(50));
+		await view.AfterRenderAsync();
+
+		Assert.Equal([TimeSpan.FromMilliseconds(100)], progress);
+		view.Dispose();
+	}
+
+	[Fact]
+	public void Seek_ResumesCompletedPlayerAndRequestsThePlayableSurface()
+	{
+		var view = new TestLottieView();
+		view.ReplaceAnimation(CreateAnimation());
 		view.HandleUpdate(view.Duration);
 
-		view.Restart();
+		view.Seek(TimeSpan.Zero);
 
 		Assert.False(view.IsComplete);
 		Assert.Equal(TimeSpan.Zero, view.Progress);
-		Assert.True(view.ShouldRenderContinuously);
+		Assert.True(view.IsRenderLoopEnabled);
 
-		await view.DisposeAsync();
+		view.Dispose();
 	}
 
 	[Fact]
@@ -101,23 +173,29 @@ public class SKLottieViewTest
 		var view = new TestLottieView();
 		SetParameter(view, nameof(SKLottieView.Source), SKLottieImageSource.FromJson(MinimalLottieJson));
 
-		await view.ParametersAsync();
+		view.ApplyParameters();
 
-		Assert.False(view.IsLoading);
+		await view.AfterRenderAsync();
 
-		await view.DisposeAsync();
+		Assert.True(view.HasAnimation);
+		view.Dispose();
 	}
 
 	[Fact]
-	public async Task ReloadBeforeFirstRender_IsQueued()
+	public async Task EquivalentSource_DoesNotReloadAfterParentRender()
 	{
 		var view = new TestLottieView();
-		var reload = view.ReloadAsync(TestContext.Current.CancellationToken);
+		SetParameter(view, nameof(SKLottieView.Source), SKLottieImageSource.FromJson(MinimalLottieJson));
+		view.ApplyParameters();
+		await view.AfterRenderAsync();
+		var animation = view.Player.Animation;
 
-		Assert.False(reload.IsCompleted);
+		SetParameter(view, nameof(SKLottieView.Source), SKLottieImageSource.FromJson(MinimalLottieJson));
+		view.ApplyParameters();
+		await view.AfterRenderAsync();
 
-		await view.DisposeAsync();
-		await Assert.ThrowsAnyAsync<OperationCanceledException>(() => reload);
+		Assert.Same(animation, view.Player.Animation);
+		view.Dispose();
 	}
 
 	[Fact]
@@ -152,9 +230,12 @@ public class SKLottieViewTest
 
 	private sealed class TestLottieView : SKLottieView
 	{
+		public bool IsRenderLoopEnabled =>
+			Assert.IsType<bool>(GetRenderedParameter(nameof(SKAnimatedSurfaceView.IsAnimationEnabled)));
+
 		public Task AfterRenderAsync() => base.OnAfterRenderAsync(firstRender: false);
 
-		public Task ParametersAsync() => base.OnParametersSetAsync();
+		public void ApplyParameters() => base.OnParametersSet();
 
 #pragma warning disable BL0006 // Inspect generated component parameters without a renderer.
 		public object? GetRenderedParameter(string name)

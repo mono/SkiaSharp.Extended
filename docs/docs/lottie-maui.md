@@ -1,10 +1,13 @@
 # Lottie Animations
 
-Lottie brings designer-created animations to your .NET MAUI apps. Instead of manually coding complex animations, designers export their After Effects animations as JSON files, and [`SKLottieView`](xref:SkiaSharp.Extended.UI.Controls.SKLottieView) plays them natively with smooth, scalable vector graphics.
+Lottie brings designer-created animations to your .NET MAUI apps. Instead of manually coding complex animations, designers export their
+After Effects animations as JSON files, and [`SKLottieView`](xref:SkiaSharp.Extended.UI.Controls.SKLottieView) plays them natively with
+smooth, scalable vector graphics.
 
 ![Lottie animation preview][lottie-preview]
 
-> **Other platforms:** This page covers .NET MAUI. For Blazor WebAssembly, see [Blazor Lottie Animations](lottie-blazor.md). For the shared playback engine, see [Lottie Player](lottie-player.md).
+> **Other platforms:** This page covers .NET MAUI. For Blazor WebAssembly, see [Blazor Lottie Animations](lottie-blazor.md). For the shared
+> playback engine, see [Lottie Player](lottie-player.md).
 
 > **Development diagnostics:** DEBUG builds show an FPS label after the Lottie
 > frame is painted. The MAUI and Blazor animation surfaces share the same
@@ -13,7 +16,9 @@ Lottie brings designer-created animations to your .NET MAUI apps. Instead of man
 
 ## What is Lottie?
 
-[Lottie](https://airbnb.design/lottie/) is an animation format created by Airbnb. Animations are designed in Adobe After Effects, exported as JSON using the [Bodymovin](https://github.com/airbnb/lottie-web) plugin, and rendered natively on mobile and web. The name honors Lotte Reiniger, a pioneer of silhouette animation.
+[Lottie](https://airbnb.design/lottie/) is an animation format created by Airbnb. Animations are designed in Adobe After Effects,
+exported as JSON using the [Bodymovin](https://github.com/airbnb/lottie-web) plugin, and rendered natively on mobile and web. The name
+honors Lotte Reiniger, a pioneer of silhouette animation.
 
 **Why Lottie?**
 - 🎨 Designers create animations visually in After Effects
@@ -68,16 +73,21 @@ lottieView.Source = new SKStreamLottieImageSource { Stream = _ => OpenAnimationS
 <skia:SKLottieView Source="animation.json" RepeatCount="-1" RepeatMode="Reverse" />
 ```
 
-> **Under the hood:** The MAUI `SKLottieView` translates `RepeatCount` and `RepeatMode` into [`SKLottieRepeat`](xref:SkiaSharp.Extended.SKLottieRepeat) values on the shared [`SKLottiePlayer`](lottie-player.md). `Reverse` with `RepeatCount="0"` still plays one full forward/back cycle; restart mode with `0` plays once.
+> **Under the hood:** The MAUI `SKLottieView` translates `RepeatCount` and `RepeatMode` into
+> [`SKLottieRepeat`](xref:SkiaSharp.Extended.SKLottieRepeat) values on the shared [`SKLottiePlayer`](lottie-player.md). `Reverse` with
+> `RepeatCount="0"` still plays one full forward/back cycle; restart mode with `0` plays once.
 
-The built-in file, URI, and stream sources create a fresh owned native
-animation for each load. Public `SKLottieAnimation(Animation?)` wrappers remain
-caller-owned for compatibility. The legacy `SKLottieImageSource.FromStream(Stream)`
+The built-in file, URI, and stream sources use one internal shared loader. Each load creates a private native animation for that view, and
+the view releases it when it is replaced or disposed. The legacy `SKLottieImageSource.FromStream(Stream)`
 snapshots the unread bytes (up to 32 MiB) without taking ownership of the input,
 then uses fresh memory streams for reloads; its input stream position advances
 to the end. Keep picker and application-service code in your app. For example,
 the sample's **Select Lottie JSON** button uses `FilePicker` and supplies
 `file.OpenReadAsync()` as a reloadable stream factory.
+
+You can derive from `SKLottieImageSource` and override `LoadAnimationAsync` when an app needs a custom database, archive,
+authentication, or resource pipeline. Return a new `SKLottieAnimation` result for each successful load; native Skottie animations contain
+mutable playback state and must not be shared between views.
 
 ### Speed and direction
 

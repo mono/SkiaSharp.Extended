@@ -1,6 +1,7 @@
 # SkiaSharp.Extended
 
-SkiaSharp.Extended brings powerful graphics utilities and .NET MAUI controls to your SkiaSharp projects—from blur hash placeholders to Lottie animations and confetti effects.
+SkiaSharp.Extended brings powerful graphics utilities and .NET MAUI controls to your SkiaSharp projects—from blur hash placeholders to
+Lottie animations and confetti effects.
 
 ## Getting Started
 
@@ -83,10 +84,9 @@ Celebrate achievements with customizable particle explosions.
 
 Ready-to-use Blazor components for browser-rendered SkiaSharp scenes.
 
-### [Surface Views](docs/animated-surface-blazor.md)
+### [Animated Surface View](docs/animated-surface-blazor.md)
 
-Draw on demand with `SKSurfaceView`, or add browser-loop updates with
-`SKAnimatedSurfaceView`, using either Canvas or OpenGL.
+Draw on demand or run browser-loop updates with `SKAnimatedSurfaceView`, using either Canvas or OpenGL.
 
 ### [Lottie Animations](docs/lottie-blazor.md)
 
