@@ -12,7 +12,10 @@ see [PACKAGE-README.md](PACKAGE-README.md).
 - `BlurHash/` contains the BlurHash serializer, deserializer, and helpers.
 - `Comparer/` contains pixel-comparison APIs.
 - `Geometry/` contains shape and path helpers.
+- `Lottie/` contains the shared Lottie playback engine.
 - `PathInterpolation/` contains path interpolation support.
+- `Internal/` contains shared non-public timing support used by the MAUI and
+  Blazor animation surfaces.
 
 ## Build and test
 

@@ -18,6 +18,8 @@ see [PACKAGE-README.md](PACKAGE-README.md).
 Platform-independent sources use the `.shared.cs` suffix. Platform-specific
 files use the appropriate `.android.cs`, `.ios.cs`, `.macos.cs`, or
 `.windows.cs` suffix and are included conditionally by the project file.
+The animated surface uses the core monotonic frame counter shared with Blazor;
+DEBUG builds retain the existing FPS overlay and release builds omit it.
 
 ## Build and test
 

@@ -34,6 +34,9 @@ the original. A `4 x 3` component hash is a useful default for most images.
   `SKBlurHash`.
 - **Geometry** — create shapes and work with paths through `SKGeometry` and
   `SKGeometryExtensions`.
+- **Lottie playback** — drive Lottie animations with `SKLottiePlayer` and
+  `SKLottieRepeat`. Its MAUI and Blazor hosts share internal monotonic frame
+  timing.
 - **Path interpolation** — animate between compatible paths with
   `SKPathInterpolation`.
 - **Pixel comparison** — compare rendered images with `SKPixelComparer`.

@@ -38,6 +38,6 @@ public class SKStreamLottieImageSource : SKLottieImageSource
 		if (animation is null)
 			throw new FileLoadException($"Unable to parse Lottie animation.");
 
-		return new SKLottieAnimation(animation);
+		return SKLottieAnimation.CreateOwned(animation);
 	}
 }

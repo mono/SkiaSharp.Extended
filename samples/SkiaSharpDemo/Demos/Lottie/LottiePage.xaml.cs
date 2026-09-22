@@ -127,4 +127,33 @@ public partial class LottiePage : ContentPage
 	{
 		Debug.WriteLine("Lottie animation finished playing.");
 	}
+
+	private async void OnSelectLottieJsonClicked(object sender, EventArgs e)
+	{
+		try
+		{
+			var file = await FilePicker.Default.PickAsync(new PickOptions
+			{
+				PickerTitle = "Select a Lottie JSON animation",
+				FileTypes = JsonFileTypes,
+			});
+			if (file is not null)
+			{
+				lottieView.Source = (SKLottieImageSource)SKLottieImageSource.FromStream(
+					async _ => (Stream?)await file.OpenReadAsync());
+			}
+		}
+		catch (Exception ex)
+		{
+			Debug.WriteLine($"Could not select Lottie animation: {ex}");
+		}
+	}
+
+	private static readonly FilePickerFileType JsonFileTypes = new(new Dictionary<DevicePlatform, IEnumerable<string>>
+	{
+		{ DevicePlatform.iOS, ["public.json"] },
+		{ DevicePlatform.MacCatalyst, ["public.json"] },
+		{ DevicePlatform.Android, ["application/json"] },
+		{ DevicePlatform.WinUI, [".json"] },
+	});
 }

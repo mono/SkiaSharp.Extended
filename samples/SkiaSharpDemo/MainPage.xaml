@@ -8,9 +8,11 @@
              Title="SkiaSharp Extended">
 
     <CollectionView x:Name="collectionView"
+                    AutomationId="DemoCollection"
                     IsGrouped="True"
                     ItemsSource="{Binding Demos}"
-                    SelectionChanged="OnSelectionChanged" SelectionMode="Single">
+                    SelectionChanged="OnSelectionChanged"
+                    SelectionMode="Single">
         <!-- <VisualStateManager.VisualStateGroups>
             <VisualStateGroupList>
                 <VisualStateGroup>
@@ -52,7 +54,8 @@
             <DataTemplate x:DataType="local:Demo">
                 <Grid Padding="12,3,12,3">
                     <views:DemoListItem FontSize="16" Color="{Binding Color}"
-                                        Title="{Binding Title}" Description="{Binding Description}" />
+                                        Title="{Binding Title}" Description="{Binding Description}"
+                                        Tapped="OnDemoTapped" />
                 </Grid>
             </DataTemplate>
         </CollectionView.ItemTemplate>

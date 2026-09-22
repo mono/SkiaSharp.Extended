@@ -1,9 +1,9 @@
-﻿namespace SkiaSharp.Extended.UI.Controls;
+namespace SkiaSharp.Extended.UI.Controls;
 
 /// <summary>
 /// A view that plays Lottie animations using the Skottie library.
 /// </summary>
-public class SKLottieView : SKAnimatedSurfaceView
+public class SKLottieView : SKAnimatedSurfaceView, IDisposable
 {
 	/// <summary>
 	/// Identifies the <see cref="Source"/> bindable property.
@@ -20,8 +20,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		typeof(TimeSpan),
 		typeof(SKLottieView),
 		TimeSpan.Zero,
-		defaultBindingMode: BindingMode.OneWayToSource,
-		propertyChanged: OnProgressDurationPropertyChanged);
+		defaultBindingMode: BindingMode.OneWayToSource);
 
 	/// <summary>
 	/// Identifies the <see cref="Duration"/> bindable property.
@@ -37,7 +36,7 @@ public class SKLottieView : SKAnimatedSurfaceView
 		typeof(SKLottieView),
 		TimeSpan.Zero,
 		BindingMode.TwoWay,
-		propertyChanged: OnProgressDurationPropertyChanged);
+		propertyChanged: OnProgressPropertyChanged);
 
 	private static readonly BindablePropertyKey IsCompletePropertyKey = BindableProperty.CreateReadOnly(
 		nameof(IsComplete),
@@ -58,7 +57,8 @@ public class SKLottieView : SKAnimatedSurfaceView
 		nameof(RepeatCount),
 		typeof(int),
 		typeof(SKLottieView),
-		0);
+		0,
+		propertyChanged: OnRepeatPropertyChanged);
 
 	/// <summary>
 	/// Identifies the <see cref="RepeatMode"/> bindable property.
@@ -67,7 +67,8 @@ public class SKLottieView : SKAnimatedSurfaceView
 		nameof(RepeatMode),
 		typeof(SKLottieRepeatMode),
 		typeof(SKLottieView),
-		SKLottieRepeatMode.Restart);
+		SKLottieRepeatMode.Restart,
+		propertyChanged: OnRepeatPropertyChanged);
 
 	/// <summary>
 	/// Identifies the <see cref="AnimationSpeed"/> bindable property.
@@ -76,13 +77,15 @@ public class SKLottieView : SKAnimatedSurfaceView
 		nameof(AnimationSpeed),
 		typeof(double),
 		typeof(SKLottieView),
-		1.0);
+		1.0,
+		propertyChanged: OnAnimationSpeedPropertyChanged);
 
-	Skottie.Animation? animation;
-	bool isInForwardPhase = true;
-	int repeatsCompleted = 0;
-	CancellationTokenSource? loadCancellation;
-	bool isResetting;
+	private readonly SKLottiePlayer player = new();
+	private CancellationTokenSource? loadCancellation;
+	private SKLottieAnimation? loadedAnimation;
+	private bool disposed;
+	private bool handlerWasAttached;
+	private bool isHandlerAttached;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SKLottieView"/> class.
@@ -92,6 +95,16 @@ public class SKLottieView : SKAnimatedSurfaceView
 		ResourceLoader<Themes.SKLottieViewResources>.EnsureRegistered(this);
 
 		IsAnimationEnabled = true;
+
+		// Initialize player from default property values (propertyChanged callbacks don't
+		// fire for the initial default, so we push the defaults explicitly here).
+		player.Repeat = GetRepeat();
+		player.AnimationSpeed = AnimationSpeed;
+
+		player.AnimationUpdated += OnPlayerAnimationUpdated;
+		player.AnimationCompleted += OnPlayerAnimationCompleted;
+		HandlerChanging += OnHandlerChanging;
+		HandlerChanged += OnHandlerChanged;
 
 #if DEBUG
 		AnimationCompleted += (s, e) => DebugUtils.LogEvent(nameof(AnimationCompleted));
@@ -184,207 +197,87 @@ public class SKLottieView : SKAnimatedSurfaceView
 	/// <inheritdoc/>
 	protected override void Update(TimeSpan deltaTime)
 	{
-		if (animation is null)
-			return;
-
-		// Apply animation speed with overflow protection
-		// Handle NaN and Infinity explicitly, and use safe bounds for long cast
-		var scaledTicks = deltaTime.Ticks * AnimationSpeed;
-		const long SafeMax = long.MaxValue - 1;  // Avoid overflow when casting from double
-		const long SafeMin = long.MinValue + 2;  // Avoid overflow when negating TimeSpan
-		if (!double.IsFinite(scaledTicks))
-			scaledTicks = double.IsNaN(scaledTicks) || scaledTicks < 0 ? SafeMin : SafeMax;
-		else if (scaledTicks > SafeMax)
-			scaledTicks = SafeMax;
-		else if (scaledTicks < SafeMin)
-			scaledTicks = SafeMin;
-		deltaTime = TimeSpan.FromTicks((long)scaledTicks);
-
-		// Apply phase direction (for RepeatMode.Reverse ping-pong)
-		if (!isInForwardPhase)
-			deltaTime = -deltaTime;
-
-		var newProgress = Progress + deltaTime;
-		if (newProgress > Duration)
-			newProgress = Duration;
-		if (newProgress < TimeSpan.Zero)
-			newProgress = TimeSpan.Zero;
-
-		Progress = newProgress;
+		player.Update(deltaTime);
 	}
 
 	/// <inheritdoc/>
 	protected override void OnPaintSurface(SKCanvas canvas, SKSize size)
 	{
-		if (animation is null)
-			return;
-
-		animation.Render(canvas, SKRect.Create(SKPoint.Empty, size));
-
-#if DEBUG
-		WriteDebugStatus($"Repeats: {repeatsCompleted}/{RepeatCount}");
-		WriteDebugStatus($"Forward: {isInForwardPhase} ({RepeatMode})");
-#endif
+		player.Render(canvas, SKRect.Create(SKPoint.Empty, size));
 	}
 
-	private void UpdateProgress(TimeSpan progress)
+	private void OnPlayerAnimationUpdated(object? sender, EventArgs e)
 	{
-		if (animation is null)
-		{
-			IsComplete = true;
-			return;
-		}
+		Duration = player.Duration;
+		Progress = player.Progress;
+		IsComplete = player.IsComplete;
+	}
 
-		animation.SeekFrameTime(progress.TotalSeconds);
-
-		// Skip completion/repeat logic during Reset to avoid spurious events
-		if (isResetting)
-			return;
-
-		var repeatMode = RepeatMode;
-		var duration = Duration;
-
-		// Determine effective movement direction
-		// Negative AnimationSpeed inverts the movement relative to the phase
-		var movingForward = AnimationSpeed >= 0 ? isInForwardPhase : !isInForwardPhase;
-
-		// Have we reached a boundary based on our movement direction?
-		var atStart = !movingForward && progress <= TimeSpan.Zero;
-		var atEnd = movingForward && progress >= duration;
-		
-		// A run is "finished" based on RepeatMode:
-		// - Restart: finished when reaching the destination (end for forward, start for backward)
-		// - Reverse: finished when completing full cycle (forward + back to start, or backward + back to end)
-		//   With positive speed: start -> end -> start (finish at start)
-		//   With negative speed: end -> start -> end (finish at end)
-		var reverseFinishPoint = AnimationSpeed >= 0 ? atStart : atEnd;
-		var isFinishedRun = repeatMode == SKLottieRepeatMode.Restart 
-			? (movingForward ? atEnd : atStart)
-			: reverseFinishPoint;
-
-		// For Reverse mode: flip direction when hitting a boundary (but not the finish boundary)
-		// With positive speed: flip at end (start going back toward start)
-		// With negative speed: flip at start (start going back toward end)
-		var needsFlip = repeatMode == SKLottieRepeatMode.Reverse && 
-			(AnimationSpeed >= 0 ? atEnd : atStart) && !isFinishedRun;
-
-		if (needsFlip)
-		{
-			// we need to reverse to finish the run
-			isInForwardPhase = !isInForwardPhase;
-
-			IsComplete = false;
-		}
-		else
-		{
-			// make sure repeats are positive to make things easier
-			var totalRepeatCount = RepeatCount;
-			if (totalRepeatCount < 0)
-				totalRepeatCount = int.MaxValue;
-
-			// infinite
-			var infinite = totalRepeatCount == int.MaxValue;
-			if (infinite)
-				repeatsCompleted = 0;
-
-			// if we are at the end and we are repeating, then repeat
-			if (isFinishedRun && repeatsCompleted < totalRepeatCount)
-			{
-				if (!infinite)
-					repeatsCompleted++;
-
-				isFinishedRun = false;
-
-				if (repeatMode == SKLottieRepeatMode.Restart)
-				{
-					// Restart at the beginning of the movement direction:
-					// - Positive speed: restart at 0, move toward Duration
-					// - Negative speed: restart at Duration, move toward 0
-					Progress = AnimationSpeed >= 0 ? TimeSpan.Zero : Duration;
-				}
-				else if (repeatMode == SKLottieRepeatMode.Reverse)
-					isInForwardPhase = !isInForwardPhase;
-			}
-
-			IsComplete =
-				isFinishedRun &&
-				repeatsCompleted >= totalRepeatCount;
-
-			if (IsComplete)
-				AnimationCompleted?.Invoke(this, EventArgs.Empty);
-		}
-
-		if (!IsAnimationEnabled)
-			Invalidate();
+	private void OnPlayerAnimationCompleted(object? sender, EventArgs e)
+	{
+		Duration = player.Duration;
+		Progress = player.Progress;
+		IsComplete = player.IsComplete;
+		AnimationCompleted?.Invoke(this, EventArgs.Empty);
 	}
 
 	private async Task LoadAnimationAsync(SKLottieImageSource? imageSource)
 	{
-		// Cancel and dispose any in-flight load
-		loadCancellation?.Cancel();
-		loadCancellation?.Dispose();
-		loadCancellation = new CancellationTokenSource();
-		var cancellationToken = loadCancellation.Token;
+		CancelLoad();
+		var currentCancellation = new CancellationTokenSource();
+		loadCancellation = currentCancellation;
+		var cancellationToken = currentCancellation.Token;
 
-		if (imageSource is null || imageSource.IsEmpty)
+		SKLottieAnimation? loadResult = null;
+		try
 		{
-			animation = null;
-			Reset();
-		}
-		else
-		{
-			Exception? exception;
-			try
+			if (imageSource is null || imageSource.IsEmpty)
 			{
-				var loadResult = await Task.Run(() => imageSource.LoadAnimationAsync(cancellationToken), cancellationToken);
-
-				// Check if cancelled before applying result
-				if (cancellationToken.IsCancellationRequested)
-					return;
-
-				exception = null;
-				animation = loadResult.Animation;
-			}
-			catch (OperationCanceledException)
-			{
-				// Load was cancelled, don't update state
+				if (IsCurrentLoad(currentCancellation))
+					ReplaceAnimation(null);
 				return;
 			}
-			catch (Exception ex)
+
+			loadResult = await Task.Run(() => imageSource.LoadAnimationAsync(cancellationToken), cancellationToken);
+
+			if (!IsCurrentLoad(currentCancellation))
+				return;
+
+			if (loadResult?.IsLoaded == true)
 			{
-				exception = ex;
-				animation = null;
-			}
-
-			Reset();
-
-			if (animation is null)
-				AnimationFailed?.Invoke(this, new SKLottieAnimationFailedEventArgs(exception));
-			else
+				var animation = loadResult.Animation!;
+				ReplaceAnimation(loadResult);
+				loadResult = null;
 				AnimationLoaded?.Invoke(this, SKLottieAnimationLoadedEventArgs.Create(animation));
+			}
+			else
+			{
+				ReplaceAnimation(null);
+				AnimationFailed?.Invoke(
+					this,
+					new SKLottieAnimationFailedEventArgs(
+						new InvalidOperationException("The Lottie animation source could not be parsed.")));
+			}
 		}
-
-		if (!IsAnimationEnabled)
-			Invalidate();
-
-		void Reset()
+		catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
 		{
-			isResetting = true;
-			try
+		}
+		catch (Exception ex)
+		{
+			if (IsCurrentLoad(currentCancellation))
 			{
-				isInForwardPhase = true;
-				repeatsCompleted = 0;
-
-				// Initialize Progress based on AnimationSpeed:
-				// - Positive/zero speed: start at 0, move toward Duration
-				// - Negative speed: start at Duration, move toward 0
-				Duration = animation?.Duration ?? TimeSpan.Zero;
-				Progress = AnimationSpeed < 0 ? Duration : TimeSpan.Zero;
+				ReplaceAnimation(null);
+				AnimationFailed?.Invoke(this, new SKLottieAnimationFailedEventArgs(ex));
 			}
-			finally
-			{
-				isResetting = false;
-			}
+		}
+		finally
+		{
+			loadResult?.Dispose();
+			if (IsCurrentLoad(currentCancellation) && !IsAnimationEnabled)
+				Invalidate();
+			if (ReferenceEquals(loadCancellation, currentCancellation))
+				loadCancellation = null;
+			currentCancellation.Dispose();
 		}
 	}
 
@@ -398,19 +291,154 @@ public class SKLottieView : SKAnimatedSurfaceView
 		if (newValue is SKLottieImageSource newSource)
 			newSource.SourceChanged += lv.OnSourceChanged;
 
+		if (!lv.ShouldLoadForCurrentHandler())
+			return;
+
 		await lv.LoadAnimationAsync(newValue as SKLottieImageSource);
 	}
 
 	private async void OnSourceChanged(object? sender, EventArgs e)
 	{
+		if (!ReferenceEquals(sender, Source) || !ShouldLoadForCurrentHandler())
+			return;
+
 		await LoadAnimationAsync(sender as SKLottieImageSource);
 	}
 
-	private static void OnProgressDurationPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
+	private static void OnProgressPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
 	{
 		if (bindable is not SKLottieView lv)
 			return;
 
-		lv.UpdateProgress(lv.Progress);
+		var newProgress = (TimeSpan)newValue!;
+
+		// Skip if the player already has this value (e.g. set via AnimationUpdated event).
+		if (lv.player.Progress == newProgress)
+			return;
+
+		// User-driven change (e.g. scrubbing): propagate to player.
+		// AnimationUpdated fires from Seek(), which syncs Duration, Progress,
+		// and IsComplete back to the view via OnPlayerAnimationUpdated.
+		lv.player.Seek(newProgress);
+
+		// Trigger repaint if animation is disabled (e.g. user is scrubbing a paused animation).
+		if (!lv.IsAnimationEnabled)
+			lv.Invalidate();
 	}
+
+	private static void OnRepeatPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
+	{
+		if (bindable is not SKLottieView lv)
+			return;
+
+		lv.player.Repeat = lv.GetRepeat();
+	}
+
+	private static void OnAnimationSpeedPropertyChanged(BindableObject bindable, object? oldValue, object? newValue)
+	{
+		if (bindable is not SKLottieView lv)
+			return;
+
+		lv.player.AnimationSpeed = (double)newValue!;
+	}
+
+	private SKLottieRepeat GetRepeat() =>
+		RepeatMode == SKLottieRepeatMode.Reverse
+			? SKLottieRepeat.Reverse(RepeatCount)
+			: RepeatCount == 0
+				? SKLottieRepeat.Never
+				: SKLottieRepeat.Restart(RepeatCount);
+
+	private void CancelLoad()
+	{
+		var cancellation = loadCancellation;
+		loadCancellation = null;
+		cancellation?.Cancel();
+	}
+
+	private void ReplaceAnimation(SKLottieAnimation? newAnimation)
+	{
+		var previousAnimation = loadedAnimation;
+		if (ReferenceEquals(previousAnimation, newAnimation))
+			return;
+
+		if (previousAnimation?.Animation is not null &&
+			ReferenceEquals(previousAnimation.Animation, newAnimation?.Animation))
+		{
+			if (previousAnimation.OwnsAnimation)
+			{
+				newAnimation!.TransferOwnershipTo(previousAnimation);
+				newAnimation.Dispose();
+			}
+			else if (newAnimation!.OwnsAnimation)
+			{
+				loadedAnimation = newAnimation;
+			}
+			else
+			{
+				newAnimation.Dispose();
+			}
+
+			return;
+		}
+
+		loadedAnimation = newAnimation;
+		player.SetAnimation(newAnimation?.Animation);
+		previousAnimation?.Dispose();
+	}
+
+	private bool IsCurrentLoad(CancellationTokenSource cancellation) =>
+		!disposed &&
+		ReferenceEquals(loadCancellation, cancellation) &&
+		!cancellation.IsCancellationRequested;
+
+	private bool ShouldLoadForCurrentHandler() =>
+		!disposed && (!handlerWasAttached || isHandlerAttached);
+
+	private void OnHandlerChanging(object? sender, HandlerChangingEventArgs e)
+	{
+		if (e.OldHandler is null)
+			return;
+
+		handlerWasAttached = true;
+		isHandlerAttached = false;
+		CancelLoad();
+		ReplaceAnimation(null);
+	}
+
+	private void OnHandlerChanged(object? sender, EventArgs e)
+	{
+		if (disposed || Handler is null)
+			return;
+
+		var shouldReload = handlerWasAttached && !isHandlerAttached;
+		handlerWasAttached = true;
+		isHandlerAttached = true;
+		if (shouldReload && Source is { IsEmpty: false } source)
+			_ = LoadAnimationAsync(source);
+	}
+
+	/// <summary>
+	/// Releases the loaded animation and cancels any in-progress source load.
+	/// </summary>
+	public void Dispose()
+	{
+		if (disposed)
+			return;
+
+		disposed = true;
+		CancelLoad();
+
+		if (Source is SKLottieImageSource source)
+			source.SourceChanged -= OnSourceChanged;
+
+		ReplaceAnimation(null);
+		player.AnimationUpdated -= OnPlayerAnimationUpdated;
+		player.AnimationCompleted -= OnPlayerAnimationCompleted;
+		HandlerChanging -= OnHandlerChanging;
+		HandlerChanged -= OnHandlerChanged;
+
+		GC.SuppressFinalize(this);
+	}
+
 }

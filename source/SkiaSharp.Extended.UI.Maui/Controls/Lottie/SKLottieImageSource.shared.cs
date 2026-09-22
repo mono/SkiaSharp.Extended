@@ -52,12 +52,34 @@ public abstract class SKLottieImageSource : Element
 		new SKStreamLottieImageSource { Stream = getter };
 
 	/// <summary>
-	/// Creates a Lottie image source from a stream.
+	/// Creates a replayable Lottie image source from the unread bytes in a stream.
 	/// </summary>
-	/// <param name="stream">The stream containing the animation data.</param>
-	/// <returns>An <see cref="SKStreamLottieImageSource"/>.</returns>
-	public static object FromStream(Stream stream) =>
-		FromStream(token => Task.FromResult<Stream?>(stream));
+	/// <param name="stream">The stream to snapshot. The caller retains ownership; its position advances to its end.</param>
+	/// <returns>An <see cref="SKStreamLottieImageSource"/> that produces a fresh memory stream for every load.</returns>
+	/// <remarks>
+	/// This overload preserves the legacy signature while avoiding a disposed one-shot source.
+	/// Keep the input reasonably sized: snapshots larger than 32 MiB are rejected.
+	/// </remarks>
+	public static object FromStream(Stream stream)
+	{
+		ArgumentNullException.ThrowIfNull(stream);
+		if (!stream.CanRead)
+			throw new ArgumentException("The stream must be readable.", nameof(stream));
+
+		const int maximumSnapshotBytes = 32 * 1024 * 1024;
+		using var snapshot = new MemoryStream();
+		var buffer = new byte[81920];
+		int read;
+		while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+		{
+			if (snapshot.Length + read > maximumSnapshotBytes)
+				throw new ArgumentException("The stream exceeds the 32 MiB Lottie source limit.", nameof(stream));
+			snapshot.Write(buffer, 0, read);
+		}
+
+		var bytes = snapshot.ToArray();
+		return FromStream(_ => Task.FromResult<Stream?>(new MemoryStream(bytes, writable: false)));
+	}
 
 	/// <summary>
 	/// Occurs when the underlying source data changes.

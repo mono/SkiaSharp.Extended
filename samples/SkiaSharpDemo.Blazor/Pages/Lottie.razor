@@ -1,0 +1,172 @@
+@page "/lottie"
+
+<PageTitle>Lottie</PageTitle>
+
+<h1>Lottie Animation</h1>
+
+<p>
+    Play Lottie animations using the <code>SKLottieView</code> Blazor component.
+    The same <code>SKLottiePlayer</code> logic is shared between this Blazor
+    component and the .NET MAUI <code>SKLottieView</code>. The underlying
+    animated surface shares its timing with MAUI and shows an FPS overlay in
+    DEBUG builds.
+</p>
+
+<div class="row mb-3 align-items-end">
+    <div class="col-auto">
+        <label class="form-label">Lottie JSON</label>
+        <InputFile class="form-control" accept=".json,application/json" OnChange="SelectFileAsync" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Repeat Mode</label>
+        <select class="form-select" value="@repeatKind" @onchange="OnRepeatKindChanged">
+            <option value="restart">Restart</option>
+            <option value="reverse">Reverse</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Speed (@(animationSpeed)&#x78;)</label>
+        <input type="range" class="form-range speed-slider"
+               min="-3" max="3" step="0.25"
+               @bind="animationSpeed" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Additional @(repeatKind == "reverse" ? "Cycles" : "Plays")</label>
+        <select class="form-select" value="@repeatCount" @onchange="OnRepeatCountChanged">
+            <option value="0">0 (@(repeatKind == "reverse" ? "1 cycle total" : "1 play total"))</option>
+            <option value="1">1 additional</option>
+            <option value="2">2 additional</option>
+            <option value="-1">Infinite</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Backend</label>
+        <select class="form-select" @bind="surfaceName">
+            <option value="Canvas">Canvas</option>
+            <option value="OpenGL">OpenGL</option>
+        </select>
+    </div>
+    <div class="col-auto pt-4">
+        <button class="btn btn-outline-secondary" @onclick="() => lottieView?.Restart()">&#x21BA; Restart</button>
+    </div>
+</div>
+
+@if (selectedFileName is not null)
+{
+    <p class="text-muted small">Selected: @selectedFileName</p>
+}
+@if (selectedFileError is not null)
+{
+    <p class="text-danger small">@selectedFileError</p>
+}
+
+<div class="row mb-2">
+    <div class="col">
+        @if (lottieView?.IsLoading == true)
+        {
+            <div class="d-flex align-items-center">
+                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                <span>Loading animation…</span>
+            </div>
+        }
+        else if (loadFailed)
+        {
+            <span class="text-danger">Failed to load animation.</span>
+        }
+        else if (lottieView?.HasAnimation == true)
+        {
+            <span class="text-muted small">
+                Duration: @lottieView.Duration.TotalSeconds.ToString("0.00")s &nbsp;|&nbsp;
+                @(lottieView.IsComplete ? "Complete ✓" : "Playing")
+            </span>
+        }
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-auto">
+        <div class="lottie-wrapper">
+            <SKLottieView @ref="lottieView"
+                          Source="source"
+                          Repeat="repeat"
+                          AnimationSpeed="animationSpeed"
+                          SurfaceType="surfaceType"
+                          AnimationLoaded="OnAnimationLoaded"
+                          AnimationFailed="OnAnimationFailed"
+                          AnimationCompleted="StateHasChanged"
+                          style="width: 100%; height: 100%;" />
+        </div>
+    </div>
+</div>
+
+@code {
+    private SKLottieView? lottieView;
+    private string repeatKind = "restart";
+    private SKLottieRepeat repeat = SKLottieRepeat.Restart();
+    private double animationSpeed = 1.0;
+    private int repeatCount = -1;
+    private Type surfaceType = typeof(SKCanvasView);
+    private bool loadFailed;
+    private SKLottieImageSource? source = "animations/trophy.json";
+    private string? selectedFileName;
+    private string? selectedFileError;
+
+    private string surfaceName
+    {
+        get => surfaceType == typeof(SKGLView) ? "OpenGL" : "Canvas";
+        set => surfaceType = value == "OpenGL" ? typeof(SKGLView) : typeof(SKCanvasView);
+    }
+
+    private void OnRepeatKindChanged(ChangeEventArgs e)
+    {
+        repeatKind = e.Value?.ToString() ?? "restart";
+        UpdateRepeat();
+    }
+
+    private void OnRepeatCountChanged(ChangeEventArgs e)
+    {
+        repeatCount = int.Parse(e.Value?.ToString() ?? "-1", System.Globalization.CultureInfo.InvariantCulture);
+        UpdateRepeat();
+    }
+
+    private void UpdateRepeat() =>
+        repeat = repeatKind == "reverse"
+            ? SKLottieRepeat.Reverse(repeatCount)
+            : repeatCount == 0
+                ? SKLottieRepeat.Never
+                : SKLottieRepeat.Restart(repeatCount);
+
+    private void OnAnimationLoaded()
+    {
+        loadFailed = false;
+        StateHasChanged();
+    }
+
+    private void OnAnimationFailed(Exception? _)
+    {
+        loadFailed = true;
+        StateHasChanged();
+    }
+
+    private async Task SelectFileAsync(InputFileChangeEventArgs e)
+    {
+        const long maximumFileSize = 5 * 1024 * 1024;
+        selectedFileName = null;
+        selectedFileError = null;
+
+        try
+        {
+            var file = e.File;
+            await using var input = file.OpenReadStream(maximumFileSize);
+            using var data = new MemoryStream();
+            await input.CopyToAsync(data);
+            source = SKLottieImageSource.FromBytes(data.ToArray());
+            selectedFileName = file.Name;
+            loadFailed = false;
+        }
+        catch (Exception ex)
+        {
+            selectedFileError = $"Could not load the selected JSON file: {ex.Message}";
+        }
+    }
+}

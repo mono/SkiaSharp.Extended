@@ -21,4 +21,19 @@ public class SKStreamLottieImageSourceTest : SKLottieImageSourceTest<SKStreamLot
 
 	protected override void ResetImageSource(SKStreamLottieImageSource imageSource) =>
 		imageSource.Stream = null;
+
+	[Fact]
+	public async Task LegacyStreamFactory_CreatesReplayableSource()
+	{
+		await using var input = File.OpenRead(TrophyJson);
+		var source = Assert.IsType<SKStreamLottieImageSource>(SKLottieImageSource.FromStream(input));
+
+		Assert.Equal(input.Length, input.Position);
+
+		using var first = await source.LoadAnimationAsync(TestContext.Current.CancellationToken);
+		using var second = await source.LoadAnimationAsync(TestContext.Current.CancellationToken);
+
+		Assert.True(first.IsLoaded);
+		Assert.True(second.IsLoaded);
+	}
 }

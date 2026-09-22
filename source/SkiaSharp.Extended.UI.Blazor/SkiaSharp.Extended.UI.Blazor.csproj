@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>SkiaSharp.Extended.UI.Blazor</AssemblyName>
+    <RootNamespace>SkiaSharp.Extended.UI.Blazor</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SkiaSharp.Extended.UI.Blazor</PackageId>
+    <Title>Additional SkiaSharp components for Blazor</Title>
+    <Description>This package adds additional SkiaSharp components and utilities for Blazor applications.</Description>
+    <IsPackable>true</IsPackable>
+    <IsShipping>true</IsShipping>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp.Skottie" />
+    <PackageReference Include="SkiaSharp.Views.Blazor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SkiaSharp.Extended\SkiaSharp.Extended.csproj" />
+  </ItemGroup>
+</Project>

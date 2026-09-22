@@ -44,7 +44,9 @@ confettiView.Systems.Add(new SKConfettiSystem
 ## Included controls
 
 - **`SKLottieView`** — plays Lottie JSON animations from app resources,
-  streams, or URIs, with repeat and playback controls.
+  streams, or URIs, with repeat and playback controls. DEBUG builds display an
+  FPS label after the animation frame; release builds omit the diagnostic.
+  Timing is shared with the Blazor animated surface.
 - **`SKConfettiView`** — renders configurable particle systems with burst,
   stream, and infinite emission patterns.
 
@@ -56,7 +58,7 @@ and the platform-neutral .NET MAUI target. It depends on
 
 ## Documentation and support
 
-- [Lottie animation guide](https://mono.github.io/SkiaSharp.Extended/docs/lottie.html)
+- [Lottie animation guide](https://mono.github.io/SkiaSharp.Extended/docs/lottie-maui.html)
 - [Confetti effects guide](https://mono.github.io/SkiaSharp.Extended/docs/confetti.html)
 - [API reference](https://mono.github.io/SkiaSharp.Extended/api/SkiaSharp.Extended.UI.Controls.html)
 - [Source code and issue tracker](https://github.com/mono/SkiaSharp.Extended)

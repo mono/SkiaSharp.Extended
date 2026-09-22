@@ -10,6 +10,7 @@
     <Grid RowDefinitions="*,Auto">
 
         <controls:SKLottieView x:Name="lottieView"
+                               AutomationId="LottieView"
                                Source="Lottie/dotnetbot.json"
                                Duration="{Binding Duration}"
                                Progress="{Binding Progress}"
@@ -43,7 +44,8 @@
             <!-- Speed Controls -->
             <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                 <Label Text="Speed:" VerticalOptions="Center" />
-                <Slider Grid.Column="1" Minimum="-2" Maximum="2" Value="{Binding AnimationSpeed}" />
+                <Slider AutomationId="AnimationSpeedSlider"
+                        Grid.Column="1" Minimum="-2" Maximum="2" Value="{Binding AnimationSpeed}" />
                 <Label Grid.Column="2" Text="{Binding AnimationSpeed, StringFormat='{0:F1}x'}" WidthRequest="40" />
             </Grid>
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
@@ -69,9 +71,14 @@
             </Grid>
 
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
-                <Button Text="Reset" Command="{Binding ResetCommand}" />
+                <Button AutomationId="SelectLottieJsonButton"
+                        Text="Select Lottie JSON"
+                        Clicked="OnSelectLottieJsonClicked" />
+                <Button AutomationId="ResetButton" Text="Reset" Command="{Binding ResetCommand}" />
                 <Button Text="-100ms" Command="{Binding StepCommand}" CommandParameter="-100" />
-                <Button Text="Play/Pause" Command="{Binding PlayPauseCommand}" />
+                <Button AutomationId="PlayPauseButton"
+                        Text="Play/Pause"
+                        Command="{Binding PlayPauseCommand}" />
                 <Button Text="+100ms" Command="{Binding StepCommand}" CommandParameter="100" />
                 <Button Text="End" Command="{Binding EndCommand}" />
             </HorizontalStackLayout>
