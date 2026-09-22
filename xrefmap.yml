@@ -23,13 +23,13 @@ references:
   nameWithType: SKBlurHash.DeserializeBitmap(ReadOnlySpan<char>, int, int, float)
   nameWithType.vb: SKBlurHash.DeserializeBitmap(ReadOnlySpan(Of Char), Integer, Integer, Single)
 - uid: SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(System.String,System.Int32,System.Int32,System.Single)
-  name: DeserializeBitmap(string, int, int, float)
+  name: DeserializeBitmap(string?, int, int, float)
   href: api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html#SkiaSharp_Extended_SKBlurHash_DeserializeBitmap_System_String_System_Int32_System_Int32_System_Single_
   commentId: M:SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(System.String,System.Int32,System.Int32,System.Single)
   name.vb: DeserializeBitmap(String, Integer, Integer, Single)
-  fullName: SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(string, int, int, float)
+  fullName: SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(string?, int, int, float)
   fullName.vb: SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(String, Integer, Integer, Single)
-  nameWithType: SKBlurHash.DeserializeBitmap(string, int, int, float)
+  nameWithType: SKBlurHash.DeserializeBitmap(string?, int, int, float)
   nameWithType.vb: SKBlurHash.DeserializeBitmap(String, Integer, Integer, Single)
 - uid: SkiaSharp.Extended.SKBlurHash.DeserializeBitmap*
   name: DeserializeBitmap
@@ -47,13 +47,13 @@ references:
   nameWithType: SKBlurHash.DeserializeImage(ReadOnlySpan<char>, int, int, float)
   nameWithType.vb: SKBlurHash.DeserializeImage(ReadOnlySpan(Of Char), Integer, Integer, Single)
 - uid: SkiaSharp.Extended.SKBlurHash.DeserializeImage(System.String,System.Int32,System.Int32,System.Single)
-  name: DeserializeImage(string, int, int, float)
+  name: DeserializeImage(string?, int, int, float)
   href: api/SkiaSharp.Extended.SKBlurHash.DeserializeImage.html#SkiaSharp_Extended_SKBlurHash_DeserializeImage_System_String_System_Int32_System_Int32_System_Single_
   commentId: M:SkiaSharp.Extended.SKBlurHash.DeserializeImage(System.String,System.Int32,System.Int32,System.Single)
   name.vb: DeserializeImage(String, Integer, Integer, Single)
-  fullName: SkiaSharp.Extended.SKBlurHash.DeserializeImage(string, int, int, float)
+  fullName: SkiaSharp.Extended.SKBlurHash.DeserializeImage(string?, int, int, float)
   fullName.vb: SkiaSharp.Extended.SKBlurHash.DeserializeImage(String, Integer, Integer, Single)
-  nameWithType: SKBlurHash.DeserializeImage(string, int, int, float)
+  nameWithType: SKBlurHash.DeserializeImage(string?, int, int, float)
   nameWithType.vb: SKBlurHash.DeserializeImage(String, Integer, Integer, Single)
 - uid: SkiaSharp.Extended.SKBlurHash.DeserializeImage*
   name: DeserializeImage
@@ -62,31 +62,31 @@ references:
   fullName: SkiaSharp.Extended.SKBlurHash.DeserializeImage
   nameWithType: SKBlurHash.DeserializeImage
 - uid: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKBitmap,System.Int32,System.Int32)
-  name: Serialize(SKBitmap, int, int)
+  name: Serialize(SKBitmap?, int, int)
   href: api/SkiaSharp.Extended.SKBlurHash.Serialize.html#SkiaSharp_Extended_SKBlurHash_Serialize_SkiaSharp_SKBitmap_System_Int32_System_Int32_
   commentId: M:SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKBitmap,System.Int32,System.Int32)
   name.vb: Serialize(SKBitmap, Integer, Integer)
-  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKBitmap, int, int)
+  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKBitmap?, int, int)
   fullName.vb: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKBitmap, Integer, Integer)
-  nameWithType: SKBlurHash.Serialize(SKBitmap, int, int)
+  nameWithType: SKBlurHash.Serialize(SKBitmap?, int, int)
   nameWithType.vb: SKBlurHash.Serialize(SKBitmap, Integer, Integer)
 - uid: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKImage,System.Int32,System.Int32)
-  name: Serialize(SKImage, int, int)
+  name: Serialize(SKImage?, int, int)
   href: api/SkiaSharp.Extended.SKBlurHash.Serialize.html#SkiaSharp_Extended_SKBlurHash_Serialize_SkiaSharp_SKImage_System_Int32_System_Int32_
   commentId: M:SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKImage,System.Int32,System.Int32)
   name.vb: Serialize(SKImage, Integer, Integer)
-  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKImage, int, int)
+  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKImage?, int, int)
   fullName.vb: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKImage, Integer, Integer)
-  nameWithType: SKBlurHash.Serialize(SKImage, int, int)
+  nameWithType: SKBlurHash.Serialize(SKImage?, int, int)
   nameWithType.vb: SKBlurHash.Serialize(SKImage, Integer, Integer)
 - uid: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKPixmap,System.Int32,System.Int32)
-  name: Serialize(SKPixmap, int, int)
+  name: Serialize(SKPixmap?, int, int)
   href: api/SkiaSharp.Extended.SKBlurHash.Serialize.html#SkiaSharp_Extended_SKBlurHash_Serialize_SkiaSharp_SKPixmap_System_Int32_System_Int32_
   commentId: M:SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKPixmap,System.Int32,System.Int32)
   name.vb: Serialize(SKPixmap, Integer, Integer)
-  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKPixmap, int, int)
+  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKPixmap?, int, int)
   fullName.vb: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKPixmap, Integer, Integer)
-  nameWithType: SKBlurHash.Serialize(SKPixmap, int, int)
+  nameWithType: SKBlurHash.Serialize(SKPixmap?, int, int)
   nameWithType.vb: SKBlurHash.Serialize(SKPixmap, Integer, Integer)
 - uid: SkiaSharp.Extended.SKBlurHash.Serialize*
   name: Serialize
