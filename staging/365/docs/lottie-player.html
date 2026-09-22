@@ -1,10 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
       <title>Lottie Player | SkiaSharp.Extended </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Lottie Player | SkiaSharp.Extended ">
+      
       
       <link rel="icon" href="../images/logo.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
@@ -28,23 +29,23 @@
       <meta name="loc:changeTheme" content="Change theme">
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-
-  <script type="module" src="./../public/docfx.min.js"></script>
-
-  <script>
-    const theme = localStorage.getItem('theme') || 'auto'
-    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
-  </script>
-
 
   <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
     <header class="bg-body border-bottom">
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
-            
+            <img id="logo" class="svg" src="../images/logo.png" alt="SkiaSharp.Extended">
+            SkiaSharp.Extended
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
             <i class="bi bi-three-dots"></i>
@@ -53,7 +54,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -76,7 +77,7 @@
 
       <div class="content">
         <div class="actionbar">
-          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
             <i class="bi bi-list"></i>
           </button>
 
@@ -122,11 +123,12 @@ player.Render(canvas, destRect);         // draw current frame
 <li><strong><code>Render(canvas, rect)</code></strong> — Draws the current frame onto the canvas within the given rectangle.</li>
 </ol>
 <pre><code class="lang-csharp">// Typical game/render loop integration
-var lastTick = DateTime.UtcNow;
+var stopwatch = Stopwatch.StartNew();
+var lastTick = stopwatch.Elapsed;
 
 void OnFrame()
 {
-    var now = DateTime.UtcNow;
+    var now = stopwatch.Elapsed;
     var delta = now - lastTick;
     lastTick = now;
 
@@ -183,10 +185,12 @@ player.Repeat = SKLottieRepeat.Restart(3);
 // Ping-pong forever (forward → backward → forward → …)
 player.Repeat = SKLottieRepeat.Reverse();
 
-// Ping-pong 2 additional times (3 total plays)
+// Ping-pong 2 additional times (3 forward/back cycles)
 player.Repeat = SKLottieRepeat.Reverse(2);
 </code></pre>
-<p>You can change the repeat mode mid-playback. The player preserves the current direction until the animation hits its next boundary, preventing abrupt mid-animation direction changes.</p>
+<p>You can change the repeat mode mid-playback. The player preserves the current direction until the animation hits its next boundary, preventing abrupt mid-animation direction changes.
+<code>SKLottieRepeat.Reverse(0)</code> is one forward/back cycle; <code>Never</code> is the
+single-direction, play-once mode.</p>
 <h2 id="seeking">Seeking</h2>
 <p>Use <code>Seek</code> to jump to an absolute position (clamped to <code>[0, Duration]</code>):</p>
 <pre><code class="lang-csharp">// Jump to the 1-second mark
@@ -196,7 +200,9 @@ player.Seek(TimeSpan.FromSeconds(1.0));
 player.Seek(TimeSpan.Zero);
 </code></pre>
 <blockquote>
-<p><strong>Note:</strong> <code>Seek</code> does not increment the internal repeat counter. Use <code>Update</code> for frame-by-frame playback with repeat/completion logic.</p>
+<p><strong>Note:</strong> <code>Seek</code> does not increment the internal repeat counter or trigger
+completion logic. It clears <code>IsComplete</code>, so seeking to a frame can resume
+playback with the remaining repeat state intact.</p>
 </blockquote>
 <h2 id="events">Events</h2>
 <table>
@@ -213,7 +219,7 @@ player.Seek(TimeSpan.Zero);
 </tr>
 <tr>
 <td style="text-align: left;"><code>AnimationUpdated</code></td>
-<td style="text-align: left;">After every <code>Seek</code> call, including those triggered by <code>Update</code></td>
+<td style="text-align: left;">Once after every <code>Seek</code> or <code>Update</code> call</td>
 </tr>
 </tbody>
 </table>
@@ -307,7 +313,7 @@ player.SetAnimation(null);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 1707d9c
+          source: PR #365 · 4562040
         </div>
       </div>
     </footer>

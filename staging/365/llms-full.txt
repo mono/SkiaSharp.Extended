@@ -25,6 +25,9 @@ dotnet add package SkiaSharp.Extended
 
 # MAUI controls (includes core)
 dotnet add package SkiaSharp.Extended.UI.Maui
+
+# Blazor Lottie component (includes core)
+dotnet add package SkiaSharp.Extended.UI.Blazor
 ```
 
 For MAUI projects, register the handler in `MauiProgram.cs`:
@@ -86,6 +89,15 @@ Play designer-created After Effects animations exported as Lottie JSON files.
 Celebrate achievements with customizable particle explosions.
 
 ![Confetti][confetti-img]
+
+---
+
+## SkiaSharp.Extended.UI.Blazor
+
+### [Lottie Animations](docs/lottie-blazor.md)
+
+Play Lottie JSON animations in Blazor with `SKLottieView` and the shared
+playback engine.
 
 ---
 
@@ -635,236 +647,98 @@ Or use the canvas extension methods which take position parameters directly.
 
 # Blazor Lottie Animations
 
-Play Lottie animations in Blazor WebAssembly apps with [`SKLottieView`](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView). This component wraps the shared [`SKLottiePlayer`](lottie-player.md) engine with a Blazor-friendly API — just point it at a JSON URL and it handles loading, frame updates, and rendering.
-
-For building custom animated canvases beyond Lottie, see [`SKAnimatedCanvasView`](#custom-animations-with-skanimatedcanvasview) below.
+[`SKLottieView`](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView) plays
+Lottie JSON in Blazor with SkiaSharp. It uses the shared
+[`SKLottiePlayer`](lottie-player.md) engine and `SKCanvasView`'s browser render
+loop, so frames are timed with a monotonic clock without a component render per
+frame.
 
 ## Quick Start
 
-### 1. Add the NuGet package
+Install the package and add its namespaces to `_Imports.razor`:
 
 ```bash
 dotnet add package SkiaSharp.Extended.UI.Blazor
 ```
 
-### 2. Add the namespace
-
-In your `_Imports.razor`:
-
-```cshtml-razor
+```razor
+@using SkiaSharp.Extended
 @using SkiaSharp.Extended.UI.Blazor.Controls
 ```
 
-### 3. Add the component
+Render a Lottie file:
 
-```cshtml-razor
+```razor
 <SKLottieView Source="animations/trophy.json"
-              RepeatCount="-1"
+              Repeat="SKLottieRepeat.Restart()"
               style="width: 300px; height: 300px;" />
 ```
 
-That's it — the animation loads from the URL and starts playing automatically.
+The default `Repeat` is `SKLottieRepeat.Never`, so an animation plays once.
+The render loop runs only while the view is enabled, an animation is loaded,
+and playback has not completed.
 
 ## Playback Controls
 
-### Repeat modes
+Use `SKLottieRepeat` directly to select the repeat behavior:
 
-```cshtml-razor
-@* Loop forever, restarting each time *@
-<SKLottieView Source="animation.json"
-              RepeatMode="SKLottieRepeatMode.Restart"
-              RepeatCount="-1" />
-
-@* Ping-pong 3 times *@
-<SKLottieView Source="animation.json"
-              RepeatMode="SKLottieRepeatMode.Reverse"
-              RepeatCount="3" />
-
+```razor
 @* Play once *@
 <SKLottieView Source="animation.json"
-              RepeatCount="0" />
+              Repeat="SKLottieRepeat.Never" />
+
+@* Restart forever *@
+<SKLottieView Source="animation.json"
+              Repeat="SKLottieRepeat.Restart()" />
+
+@* Three additional restart plays *@
+<SKLottieView Source="animation.json"
+              Repeat="SKLottieRepeat.Restart(3)" />
+
+@* Ping-pong once, forward then back *@
+<SKLottieView Source="animation.json"
+              Repeat="SKLottieRepeat.Reverse(0)" />
 ```
 
-### Speed and direction
+`Restart(count)` counts additional full plays. `Reverse(count)` counts
+additional forward/back cycles; `Reverse(0)` therefore performs one complete
+forward/back cycle. Use a negative `AnimationSpeed` to begin at the end and
+play in reverse.
 
-```cshtml-razor
-<SKLottieView Source="animation.json"
-              AnimationSpeed="2.0"
-              RepeatCount="-1" />
+Pause or resume by binding `IsAnimationEnabled`; call `Restart()` through an
+`@ref` to begin again with the current settings:
 
-@* Negative speed plays in reverse *@
-<SKLottieView Source="animation.json"
-              AnimationSpeed="-1.0"
-              RepeatCount="-1" />
-```
-
-### Pause and resume
-
-```cshtml-razor
-<SKLottieView Source="animation.json"
-              IsAnimationEnabled="@isPlaying"
-              RepeatCount="-1" />
-
-<button @onclick="() => isPlaying = !isPlaying">
-    @(isPlaying ? "Pause" : "Play")
-</button>
-
-@code {
-    private bool isPlaying = true;
-}
-```
-
-### Restart programmatically
-
-Use an `@ref` to call `Restart()`:
-
-```cshtml-razor
+```razor
 <SKLottieView @ref="lottieView"
               Source="animation.json"
-              RepeatCount="-1" />
+              IsAnimationEnabled="@isPlaying" />
 
+<button @onclick="() => isPlaying = !isPlaying">Pause or resume</button>
 <button @onclick="() => lottieView?.Restart()">Restart</button>
 
 @code {
     private SKLottieView? lottieView;
+    private bool isPlaying = true;
 }
 ```
 
-## Reading Playback State
+## Events and State
 
-Access read-only state through the component reference:
+`AnimationLoaded`, `AnimationFailed`, and `AnimationCompleted` report load and
+playback transitions. `AnimationUpdated` fires after each animation frame; use
+it only when your surrounding UI needs live playback state, as that callback
+may request its own component render.
 
-```cshtml-razor
-<SKLottieView @ref="lottieView"
-              Source="animation.json"
-              RepeatCount="-1"
-              AnimationUpdated="StateHasChanged" />
-
-@if (lottieView?.HasAnimation == true)
-{
-    <p>
-        Duration: @lottieView.Duration.TotalSeconds.ToString("0.00")s |
-        Progress: @lottieView.Progress.TotalSeconds.ToString("0.00")s |
-        @(lottieView.IsComplete ? "Complete ✓" : "Playing")
-    </p>
-}
-
-@code {
-    private SKLottieView? lottieView;
-}
-```
-
-> **Tip:** Bind `AnimationUpdated` to `StateHasChanged` so the UI refreshes with each frame. Without this, the displayed progress won't update live.
-
-## Events
-
-| Event | Type | Description |
-| :---- | :--- | :---------- |
-| `AnimationLoaded` | `EventCallback` | The animation JSON was loaded and parsed successfully |
-| `AnimationCompleted` | `EventCallback` | All repeats finished (never fires for infinite loops) |
-| `AnimationFailed` | `EventCallback<Exception?>` | Loading or parsing failed |
-| `AnimationUpdated` | `EventCallback` | Fires after each frame update |
-
-```cshtml-razor
-<SKLottieView Source="animation.json"
-              AnimationLoaded="OnLoaded"
-              AnimationFailed="OnFailed"
-              AnimationCompleted="OnCompleted" />
-
-@code {
-    private void OnLoaded() => Console.WriteLine("Loaded!");
-    private void OnFailed(Exception? ex) => Console.WriteLine($"Failed: {ex?.Message}");
-    private void OnCompleted() => Console.WriteLine("Done!");
-}
-```
-
-## Parameters Reference
-
-| Parameter | Type | Default | Description |
-| :-------- | :--- | :------ | :---------- |
-| `Source` | `string?` | `null` | URL of the Lottie JSON file to load |
-| `RepeatMode` | `SKLottieRepeatMode` | `Restart` | `Restart` or `Reverse` (ping-pong) |
-| `RepeatCount` | `int` | `-1` | Additional plays after the first (`0` = once, `-1` = infinite) |
-| `AnimationSpeed` | `double` | `1.0` | Speed multiplier (negative = reverse) |
-| `IsAnimationEnabled` | `bool` | `true` | Play/pause the animation loop |
-
-Additional HTML attributes (like `style` and `class`) are forwarded to the underlying canvas element.
-
-## Read-Only State (via `@ref`)
-
-| Property | Type | Description |
-| :------- | :--- | :---------- |
-| `IsLoading` | `bool` | Whether the animation is currently being fetched |
-| `HasAnimation` | `bool` | Whether an animation is loaded and ready |
-| `Duration` | `TimeSpan` | Total animation duration |
-| `Progress` | `TimeSpan` | Current playback position |
-| `IsComplete` | `bool` | Whether all repeats have finished |
-
-## Sizing
-
-The component renders an HTML `<canvas>` element. Set the size using standard CSS:
-
-```cshtml-razor
-@* Fixed size *@
-<SKLottieView Source="animation.json" style="width: 300px; height: 300px;" />
-
-@* Fill parent container *@
-<div style="width: 100%; height: 400px;">
-    <SKLottieView Source="animation.json" style="width: 100%; height: 100%;" />
-</div>
-```
-
-## Custom Animations with SKAnimatedCanvasView
-
-For animations beyond Lottie, [`SKAnimatedCanvasView`](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedCanvasView) provides a frame loop with a SkiaSharp canvas. It runs at ~60 fps and calls your update and paint callbacks each frame.
-
-```cshtml-razor
-@using SkiaSharp
-@using SkiaSharp.Extended.UI.Blazor.Controls
-
-<SKAnimatedCanvasView OnUpdate="HandleUpdate"
-                      OnPaintSurface="HandlePaint"
-                      style="width: 400px; height: 400px;" />
-
-@code {
-    private float angle = 0;
-
-    private void HandleUpdate(TimeSpan delta)
-    {
-        angle += (float)(delta.TotalSeconds * 90);  // 90° per second
-    }
-
-    private void HandlePaint(SKPaintSurfaceEventArgs e)
-    {
-        var canvas = e.Surface.Canvas;
-        canvas.Clear(SKColors.White);
-        canvas.RotateDegrees(angle, e.Info.Width / 2f, e.Info.Height / 2f);
-
-        using var paint = new SKPaint { Color = SKColors.CornflowerBlue };
-        canvas.DrawRect(
-            e.Info.Width / 2f - 50, e.Info.Height / 2f - 50,
-            100, 100, paint);
-    }
-}
-```
-
-### SKAnimatedCanvasView Parameters
-
-| Parameter | Type | Default | Description |
-| :-------- | :--- | :------ | :---------- |
-| `IsAnimationEnabled` | `bool` | `true` | Start/stop the frame loop |
-| `OnUpdate` | `EventCallback<TimeSpan>` | — | Called each frame with delta time |
-| `OnPaintSurface` | `EventCallback<SKPaintSurfaceEventArgs>` | — | Called to render each frame |
-
-> **Important:** `OnPaintSurface` handlers must be synchronous. The canvas is only valid during the paint callback.
+Read `IsLoading`, `HasAnimation`, `Duration`, `Progress`, and `IsComplete`
+through an `@ref`. Additional attributes such as `style` and `class` are passed
+to the underlying canvas.
 
 ## Learn More
 
-- [Lottie Player](lottie-player.md) — The shared playback engine behind both MAUI and Blazor views
-- [MAUI Lottie Animations](lottie-maui.md) — Use Lottie in .NET MAUI apps
-- [Lottie by Airbnb](https://airbnb.design/lottie/) — Official project page
-- [LottieFiles](https://lottiefiles.com/) — Free and premium animations
-- [API Reference](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView) — Full method documentation
+- [Lottie Player](lottie-player.md) — shared playback semantics
+- [MAUI Lottie Animations](lottie-maui.md) — use Lottie in .NET MAUI
+- [Lottie](https://airbnb.design/lottie/) — animation format overview
+- [API Reference](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView)
 
 
 ---
@@ -934,7 +808,7 @@ lottieView.Source = new SKStreamLottieImageSource { Stream = myStream };
 <skia:SKLottieView Source="animation.json" RepeatCount="-1" RepeatMode="Reverse" />
 ```
 
-> **Under the hood:** The MAUI `SKLottieView` translates `RepeatCount` and `RepeatMode` into [`SKLottieRepeat`](xref:SkiaSharp.Extended.SKLottieRepeat) values on the shared [`SKLottiePlayer`](lottie-player.md). See the [Lottie Player](lottie-player.md) docs for details on repeat semantics.
+> **Under the hood:** The MAUI `SKLottieView` translates `RepeatCount` and `RepeatMode` into [`SKLottieRepeat`](xref:SkiaSharp.Extended.SKLottieRepeat) values on the shared [`SKLottiePlayer`](lottie-player.md). `Reverse` with `RepeatCount="0"` still plays one full forward/back cycle; restart mode with `0` plays once.
 
 ### Speed and direction
 
@@ -1085,11 +959,12 @@ player.Render(canvas, destRect);         // draw current frame
 
 ```csharp
 // Typical game/render loop integration
-var lastTick = DateTime.UtcNow;
+var stopwatch = Stopwatch.StartNew();
+var lastTick = stopwatch.Elapsed;
 
 void OnFrame()
 {
-    var now = DateTime.UtcNow;
+    var now = stopwatch.Elapsed;
     var delta = now - lastTick;
     lastTick = now;
 
@@ -1132,11 +1007,13 @@ player.Repeat = SKLottieRepeat.Restart(3);
 // Ping-pong forever (forward → backward → forward → …)
 player.Repeat = SKLottieRepeat.Reverse();
 
-// Ping-pong 2 additional times (3 total plays)
+// Ping-pong 2 additional times (3 forward/back cycles)
 player.Repeat = SKLottieRepeat.Reverse(2);
 ```
 
 You can change the repeat mode mid-playback. The player preserves the current direction until the animation hits its next boundary, preventing abrupt mid-animation direction changes.
+`SKLottieRepeat.Reverse(0)` is one forward/back cycle; `Never` is the
+single-direction, play-once mode.
 
 ## Seeking
 
@@ -1150,14 +1027,16 @@ player.Seek(TimeSpan.FromSeconds(1.0));
 player.Seek(TimeSpan.Zero);
 ```
 
-> **Note:** `Seek` does not increment the internal repeat counter. Use `Update` for frame-by-frame playback with repeat/completion logic.
+> **Note:** `Seek` does not increment the internal repeat counter or trigger
+> completion logic. It clears `IsComplete`, so seeking to a frame can resume
+> playback with the remaining repeat state intact.
 
 ## Events
 
 | Event | When It Fires |
 | :---- | :------------ |
 | `AnimationCompleted` | All repeats finished (never fires for infinite loops) |
-| `AnimationUpdated` | After every `Seek` call, including those triggered by `Update` |
+| `AnimationUpdated` | Once after every `Seek` or `Update` call |
 
 ```csharp
 player.AnimationCompleted += (s, e) =>
@@ -1375,6 +1254,8 @@ Console.WriteLine($"Total pixels: {result.TotalPixels}");
 Console.WriteLine($"Error pixels: {result.ErrorPixelCount}");
 Console.WriteLine($"Error percentage: {result.ErrorPixelPercentage:P2}");
 Console.WriteLine($"Absolute error: {result.AbsoluteError}");
+Console.WriteLine($"RMSE: {result.RootMeanSquaredError:F4}");
+Console.WriteLine($"PSNR: {result.PeakSignalToNoiseRatio:F2} dB");
 ```
 
 ### Generate a difference mask
@@ -1391,11 +1272,12 @@ The mask is a black-and-white image where **white pixels** indicate differences 
 
 ## How It Works
 
-The comparer normalizes both images to BGRA8888 format, then walks through every pixel and sums the per-channel (red, green, blue) absolute differences:
+The comparer normalizes both images to BGRA8888 unpremultiplied format, then walks through every pixel and computes per-channel differences:
 
-1. For each pixel, compute `|R₁ − R₂| + |G₁ − G₂| + |B₁ − B₂|`
-2. If the sum is greater than zero, that pixel is counted as an error
-3. The total per-pixel sums are accumulated into `AbsoluteError`
+1. For each pixel, compute per-channel differences: `ΔR = |R₁ − R₂|`, `ΔG = |G₁ − G₂|`, `ΔB = |B₁ − B₂|`
+2. If the sum `ΔR + ΔG + ΔB` is greater than zero, that pixel is counted as an error
+3. The per-pixel sums are accumulated into `AbsoluteError`
+4. The per-channel squared differences (`ΔR² + ΔG² + ΔB²`) are accumulated into `SumSquaredError`, which drives the MSE, RMSE, NRMSE, and PSNR metrics
 
 Both images must have the same dimensions; otherwise an `InvalidOperationException` is thrown.
 
@@ -1409,10 +1291,19 @@ The [`SKPixelComparisonResult`](xref:SkiaSharp.Extended.SKPixelComparisonResult)
 | `ErrorPixelCount` | `int` | Number of pixels with any difference |
 | `ErrorPixelPercentage` | `double` | `ErrorPixelCount / TotalPixels` |
 | `AbsoluteError` | `int` | Sum of all per-channel differences |
+| `SumSquaredError` | `long` | Sum of all per-channel squared differences |
+| `ChannelCount` | `int` | Number of channels compared (3 for RGB, 4 for RGBA) |
+| `MeanAbsoluteError` | `double` | Average absolute error per channel (range: 0–255) |
+| `MeanSquaredError` | `double` | Average squared error per channel (range: 0–65025) |
+| `RootMeanSquaredError` | `double` | Square root of MSE (range: 0–255) |
+| `NormalizedRootMeanSquaredError` | `double` | RMSE divided by 255 (range: 0–1) |
+| `PeakSignalToNoiseRatio` | `double` | PSNR in dB (∞ for identical images) |
+
+The **RMSE** metric is commonly used in visual testing tools (such as .NET MAUI's `VisualTestUtils.MagickNet`) to quantify image differences as a single number. The **NormalizedRootMeanSquaredError** maps this to a 0–1 range, where 0 means identical and 1 means maximum difference—useful for threshold-based pass/fail testing.
 
 ## Mask-Based Comparison
 
-When comparing images that have expected minor differences (e.g., anti-aliasing, compression artifacts), you can supply a tolerance mask. The mask image uses per-channel thresholds—a difference is only counted if it exceeds the corresponding channel value in the mask pixel:
+When comparing images that have expected minor differences (e.g., anti-aliasing, compression artifacts), you can supply a tolerance mask. By default, the mask uses per-channel thresholds — each channel's difference is checked independently against the corresponding mask channel value:
 
 ```csharp
 using var expected = SKImage.FromEncodedData("expected.png");
@@ -1422,7 +1313,90 @@ using var mask = SKImage.FromEncodedData("tolerance-mask.png");
 var result = SKPixelComparer.Compare(expected, actual, mask);
 ```
 
-For example, if a mask pixel has RGB values of `(10, 10, 10)`, differences of up to 10 per channel at that location are ignored. This lets you define region-specific tolerances.
+For example, if a mask pixel has RGB values of `(10, 10, 10)`, each channel is independently checked — a red difference of 12 would be counted but a green difference of 8 would be ignored. The mask must have the same dimensions as the images being compared; otherwise an `InvalidOperationException` is thrown.
+
+## Tolerance-Based Comparison
+
+For a simpler approach than mask-based comparison, you can specify a uniform per-pixel tolerance threshold (similar to ImageMagick's "fuzz" parameter). By default, tolerance is applied **per channel** — each channel (R, G, B) is checked independently, and only channels that exceed the tolerance contribute to error metrics:
+
+```csharp
+// Ignore channels where the individual difference is 10 or less
+var result = SKPixelComparer.Compare(expected, actual, tolerance: 10);
+
+Console.WriteLine($"Pixels exceeding tolerance: {result.ErrorPixelCount}");
+```
+
+When a pixel falls within tolerance, it is completely excluded from **all** metrics — not just `ErrorPixelCount`, but also `AbsoluteError`, `SumSquaredError`, and all derived metrics (MAE, MSE, RMSE, NRMSE, PSNR).
+
+A tolerance of `0` is equivalent to the standard comparison. In per-channel mode (the default), the maximum meaningful tolerance is 255. In summed mode (`TolerancePerChannel = false`), the maximum is 765 (255 × 3 channels), or 1020 (255 × 4) when `CompareAlpha` is enabled. A negative tolerance throws `ArgumentOutOfRangeException`.
+
+### Summed Tolerance Mode
+
+By default, `TolerancePerChannel` is `true` and each channel is checked independently. You can switch to summed mode where the total difference (`|ΔR| + |ΔG| + |ΔB|`) is compared against the tolerance:
+
+```csharp
+// Summed: ignore pixels where the total RGB difference is 15 or less
+var options = new SKPixelComparerOptions { TolerancePerChannel = false };
+var result = SKPixelComparer.Compare(expected, actual, tolerance: 15, options);
+```
+
+In summed mode, the entire pixel is either counted as an error (all channels contribute) or excluded (none do).
+
+The same option is available for mask-based comparison. When `TolerancePerChannel` is `false`, the sum of channel differences is checked against the sum of the mask's channel values — the pixel is either fully counted or fully excluded:
+
+```csharp
+// Mask with sum-based semantics
+var options = new SKPixelComparerOptions { TolerancePerChannel = false };
+var result = SKPixelComparer.Compare(expected, actual, mask, options);
+```
+
+## Comparison Options
+
+For more control over comparison behavior, use [`SKPixelComparerOptions`](xref:SkiaSharp.Extended.SKPixelComparerOptions):
+
+```csharp
+var options = new SKPixelComparerOptions
+{
+    TolerancePerChannel = true,  // Check each channel independently (default: true)
+    CompareAlpha = true          // Include alpha channel in comparison (default: false)
+};
+
+var result = SKPixelComparer.Compare(expected, actual, options);
+```
+
+| Property | Type | Default | Description |
+| :------- | :--- | :------ | :---------- |
+| `TolerancePerChannel` | `bool` | `true` | When `true`, each channel is checked independently against the tolerance. When `false`, the sum of per-channel differences is used. |
+| `CompareAlpha` | `bool` | `false` | When `true`, the alpha channel is included in all error calculations and metrics. |
+
+Options can be used with all comparison modes:
+
+```csharp
+// Base comparison with alpha
+var result = SKPixelComparer.Compare(expected, actual, options);
+
+// Tolerance-based with options
+var result = SKPixelComparer.Compare(expected, actual, tolerance: 10, options);
+
+// Mask-based with options
+var result = SKPixelComparer.Compare(expected, actual, mask, options);
+```
+
+### Alpha Channel Comparison
+
+By default, only RGB channels are compared. Set `CompareAlpha = true` to include the alpha channel in difference detection and error metrics. When enabled:
+
+- Alpha differences contribute to `AbsoluteError`, `SumSquaredError`, and all derived metrics
+- The `ChannelCount` in the result is set to 4 (instead of 3), so MAE and MSE are normalized per 4 channels
+- Tolerance and mask thresholds apply to the alpha channel as well
+
+```csharp
+var options = new SKPixelComparerOptions { CompareAlpha = true };
+
+var result = SKPixelComparer.Compare(expected, actual, options);
+Console.WriteLine($"Channels compared: {result.ChannelCount}"); // 4
+Console.WriteLine($"MAE: {result.MeanAbsoluteError}"); // Normalized over RGBA
+```
 
 ## Input Overloads
 
@@ -1435,7 +1409,21 @@ All comparison methods accept multiple input types for convenience:
 | `SKBitmap` | `Compare(bitmapA, bitmapB)` |
 | `SKPixmap` | `Compare(pixmapA, pixmapB)` |
 
-The same overloads are available for `GenerateDifferenceMask` (without mask support) and for the three-argument masked `Compare`.
+The same input type overloads are available for `GenerateDifferenceMask`, `GenerateDifferenceImage`, mask-based `Compare`, and tolerance-based `Compare`.
+
+### Generate a difference image
+
+Unlike the binary black-and-white mask, `GenerateDifferenceImage` produces a full-color visualization of per-channel differences:
+
+```csharp
+using var diff = SKPixelComparer.GenerateDifferenceImage("expected.png", "actual.png");
+
+// Each pixel's R, G, B values represent the absolute channel differences
+using var data = diff.Encode(SKEncodedImageFormat.Png, 100);
+File.WriteAllBytes("diff-image.png", data.ToArray());
+```
+
+This is similar to the difference visualization produced by ImageMagick's `compare` command and is useful for understanding the magnitude and distribution of differences across channels.
 
 ## Usage Patterns
 
@@ -1467,11 +1455,14 @@ public void UI_MatchesBaseline_WithTolerance()
     using var actual = CaptureScreenshot();
     using var expected = SKImage.FromEncodedData("baselines/screen.png");
 
-    var result = SKPixelComparer.Compare(expected, actual);
+    // Option 1: Use per-pixel tolerance to ignore minor differences
+    var result = SKPixelComparer.Compare(expected, actual, tolerance: 10);
+    Assert.Equal(0, result.ErrorPixelCount);
 
-    // Allow up to 0.5% pixel difference
-    Assert.True(result.ErrorPixelPercentage < 0.005,
-        $"Too many differing pixels: {result.ErrorPixelPercentage:P2}");
+    // Option 2: Use RMSE threshold (like .NET MAUI VisualTestUtils)
+    var result2 = SKPixelComparer.Compare(expected, actual);
+    Assert.True(result2.NormalizedRootMeanSquaredError < 0.005,
+        $"NRMSE too high: {result2.NormalizedRootMeanSquaredError:F4}");
 }
 ```
 
@@ -1492,6 +1483,7 @@ if (result.ErrorPixelCount > 0)
 
 - [API Reference — SKPixelComparer](xref:SkiaSharp.Extended.SKPixelComparer) — Full method documentation
 - [API Reference — SKPixelComparisonResult](xref:SkiaSharp.Extended.SKPixelComparisonResult) — Result class documentation
+- [API Reference — SKPixelComparerOptions](xref:SkiaSharp.Extended.SKPixelComparerOptions) — Options class documentation
 
 
 ---
@@ -1500,14 +1492,14 @@ if (result.ErrorPixelCount > 0)
 
 ## Overview
 
-`SkiaSharp.Extended.Svg` has been deprecated and is no longer maintained. Due to breaking changes in SkiaSharp (specifically the removal of `SKMatrix.MakeTranslation` method), the old library is incompatible with .NET 9 and recent versions of SkiaSharp.
+`SkiaSharp.Extended.Svg` has been deprecated and is no longer maintained. Due to breaking changes in SkiaSharp (specifically the removal of `SKMatrix.MakeTranslation` method), the old library is incompatible with modern .NET versions and recent versions of SkiaSharp.
 
 **The recommended migration path is to use the [Svg.Skia](https://github.com/wieslawsoltes/Svg.Skia) library**, which is actively maintained and fully compatible with modern SkiaSharp versions.
 
 ## Why Migrate?
 
 - ⚠️ `SkiaSharp.Extended.Svg` is **no longer maintained**
-- ❌ Incompatible with .NET 9 and recent SkiaSharp versions
+- ❌ Incompatible with modern .NET and recent SkiaSharp versions
 - 🚫 Causes runtime errors: `MissingMethodException: Method not found: SkiaSharp.SKMatrix.MakeTranslation`
 - ✅ `Svg.Skia` is actively maintained with regular updates
 - ✅ Full SVG specification support
@@ -1593,9 +1585,9 @@ SkiaSharp.SKMatrix SkiaSharp.SKMatrix.MakeTranslation(single,single)
 If you're experiencing package conflicts, ensure all SkiaSharp-related packages are aligned to compatible versions:
 
 ```xml
-<PackageReference Include="SkiaSharp" Version="3.119.0" />
-<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
-<PackageReference Include="Svg.Skia" Version="3.4.1" />
+<PackageReference Include="SkiaSharp" Version="4.150.1" />
+<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="4.150.1" />
+<PackageReference Include="Svg.Skia" Version="5.1.1" />
 ```
 
 ## Example: Complete Migration

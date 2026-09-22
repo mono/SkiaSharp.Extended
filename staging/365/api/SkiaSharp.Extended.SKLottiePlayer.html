@@ -1,13 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Class SKLottiePlayer
- | SkiaSharp.Extended </title>
+      <title>Class SKLottiePlayer | SkiaSharp.Extended </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Class SKLottiePlayer
- | SkiaSharp.Extended ">
+      <meta name="title" content="Class SKLottiePlayer | SkiaSharp.Extended ">
       
+      <meta name="description" content="A platform-agnostic Skottie (Lottie) animation player that manages playback state and rendering.">
       <link rel="icon" href="../images/logo.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -30,23 +29,23 @@
       <meta name="loc:changeTheme" content="Change theme">
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-
-  <script type="module" src="./../public/docfx.min.js"></script>
-
-  <script>
-    const theme = localStorage.getItem('theme') || 'auto'
-    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
-  </script>
-
 
   <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
     <header class="bg-body border-bottom">
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../images/logo.png" alt="">
-            
+            <img id="logo" class="svg" src="../images/logo.png" alt="SkiaSharp.Extended">
+            SkiaSharp.Extended
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
             <i class="bi bi-three-dots"></i>
@@ -55,7 +54,7 @@
             <div id="navbar">
               <form class="search" role="search" id="search">
                 <i class="bi bi-search"></i>
-                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
@@ -78,7 +77,7 @@
 
       <div class="content">
         <div class="actionbar">
-          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
             <i class="bi bi-list"></i>
           </button>
 
@@ -90,8 +89,7 @@
 
 
   <h1 id="SkiaSharp_Extended_SKLottiePlayer" data-uid="SkiaSharp.Extended.SKLottiePlayer" class="text-break">
-    Class SKLottiePlayer
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended/Lottie/SKLottiePlayer.cs"><i class="bi bi-code-slash"></i></a>
+Class SKLottiePlayer  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended/Lottie/SKLottiePlayer.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -100,8 +98,7 @@
   </div>
 
   <div class="markdown summary"><p>A platform-agnostic Skottie (Lottie) animation player that manages playback state
-and rendering. Can be used directly from any .NET host including .NET MAUI, Blazor,
-console apps, or custom renderers.</p>
+and rendering.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -122,7 +119,7 @@ console apps, or custom renderers.</p>
 
 
 
-  <dl class="typelist derived">
+  <dl class="typelist inheritedMembers">
     <dt>Inherited Members</dt>
     <dd>
     <div>
@@ -152,13 +149,7 @@ console apps, or custom renderers.</p>
 
 
   <h2 id="SkiaSharp_Extended_SKLottiePlayer_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p>
-Typical usage:
-<ol><li>Create a player and set <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Repeat.html#SkiaSharp_Extended_SKLottiePlayer_Repeat">Repeat</a> and <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html#SkiaSharp_Extended_SKLottiePlayer_AnimationSpeed">AnimationSpeed</a>.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.SetAnimation.html#SkiaSharp_Extended_SKLottiePlayer_SetAnimation_SkiaSharp_Skottie_Animation_">SetAnimation(Animation?)</a> with a loaded <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a>.</li><li>On each frame tick, call <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Update.html#SkiaSharp_Extended_SKLottiePlayer_Update_System_TimeSpan_">Update(TimeSpan)</a> with the elapsed time.</li><li>Call <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Render.html#SkiaSharp_Extended_SKLottiePlayer_Render_SkiaSharp_SKCanvas_SkiaSharp_SKRect_">Render(SKCanvas, SKRect)</a> inside your paint/draw callback.</li></ol>
-
-<p>
-The player is not thread-safe; all calls should occur on the same thread (typically the UI thread).
-</p>
+  <div class="markdown level0 remarks"><p>The player is not thread-safe; all calls should occur on the same thread (typically the UI thread).</p>
 </div>
 
   <h2 class="section" id="constructors">Constructors
@@ -214,20 +205,18 @@ The player is not thread-safe; all calls should occur on the same thread (typica
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Seek.html#SkiaSharp_Extended_SKLottiePlayer_Seek_System_TimeSpan_">Seek(TimeSpan)</a></dt>
-    <dd><p>Seeks the animation to the specified position and raises <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated.html">AnimationUpdated</a>.
-Completion and repeat logic is applied as part of the seek.</p>
+    <dd><p>Seeks the animation to an absolute position and raises <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated.html">AnimationUpdated</a>.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.SetAnimation.html#SkiaSharp_Extended_SKLottiePlayer_SetAnimation_SkiaSharp_Skottie_Animation_">SetAnimation(Animation?)</a></dt>
     <dd><p>Sets the animation to play. Pass <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> to clear the current animation.
-Resets playback state (Progress, IsComplete, repeat counters).</p>
+The player does not take ownership of the animation; the caller is responsible for disposing it.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Update.html#SkiaSharp_Extended_SKLottiePlayer_Update_System_TimeSpan_">Update(TimeSpan)</a></dt>
-    <dd><p>Advances the animation by the given time delta, applying <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html#SkiaSharp_Extended_SKLottiePlayer_AnimationSpeed">AnimationSpeed</a> and <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Repeat.html#SkiaSharp_Extended_SKLottiePlayer_Repeat">Repeat</a>.
-Call this on each frame tick.</p>
+    <dd><p>Advances the animation by the given time delta, applying <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html#SkiaSharp_Extended_SKLottiePlayer_AnimationSpeed">AnimationSpeed</a> and <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Repeat.html#SkiaSharp_Extended_SKLottiePlayer_Repeat">Repeat</a>.</p>
 </dd>
   </dl>
 
@@ -241,8 +230,7 @@ Call this on each frame tick.</p>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated.html">AnimationUpdated</a></dt>
-    <dd><p>Fires after each <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Seek.html#SkiaSharp_Extended_SKLottiePlayer_Seek_System_TimeSpan_">Seek(TimeSpan)</a> call, notifying subscribers of
-updated state (Progress, Duration, IsComplete).</p>
+    <dd><p>Fires after each <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Seek.html#SkiaSharp_Extended_SKLottiePlayer_Seek_System_TimeSpan_">Seek(TimeSpan)</a> or <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Update.html#SkiaSharp_Extended_SKLottiePlayer_Update_System_TimeSpan_">Update(TimeSpan)</a> call that changes playback state.</p>
 </dd>
   </dl>
 
@@ -267,7 +255,7 @@ updated state (Progress, Duration, IsComplete).</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 1707d9c
+          source: PR #365 · 4562040
         </div>
       </div>
     </footer>
