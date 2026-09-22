@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Property AdditionalAttributes | SkiaSharp.Extended </title>
+      <title>Property IsRenderLoopEnabled | SkiaSharp.Extended </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Property AdditionalAttributes | SkiaSharp.Extended ">
+      <meta name="title" content="Property IsRenderLoopEnabled | SkiaSharp.Extended ">
       
       
       <link rel="icon" href="../images/logo.ico">
@@ -84,14 +84,14 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes*">
+        <article data-uid="SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.IsRenderLoopEnabled*">
 
 
 
 
 
-<h1 id="SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_AdditionalAttributes_" data-uid="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes*" class="text-break">
-Property AdditionalAttributes  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended.UI.Blazor/Controls/SKAnimatedSurfaceView.cs"><i class="bi bi-code-slash"></i></a>
+<h1 id="SkiaSharp_Extended_UI_Blazor_Controls_SKSurfaceView_IsRenderLoopEnabled_" data-uid="SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.IsRenderLoopEnabled*" class="text-break">
+Property IsRenderLoopEnabled  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended.UI.Blazor/Controls/SKSurfaceView.cs"><i class="bi bi-code-slash"></i></a>
 </h1>
 
 <div class="facts text-secondary">
@@ -117,20 +117,19 @@ Property AdditionalAttributes  <a class="header-action link-secondary" title="Vi
 
 
 
-<a id="SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_AdditionalAttributes_" data-uid="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes*"></a>
+<a id="SkiaSharp_Extended_UI_Blazor_Controls_SKSurfaceView_IsRenderLoopEnabled_" data-uid="SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.IsRenderLoopEnabled*"></a>
 
-<h3 id="SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_AdditionalAttributes" data-uid="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes">
-  AdditionalAttributes
-  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended.UI.Blazor/Controls/SKAnimatedSurfaceView.cs"><i class="bi bi-code-slash"></i></a>
+<h3 id="SkiaSharp_Extended_UI_Blazor_Controls_SKSurfaceView_IsRenderLoopEnabled" data-uid="SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.IsRenderLoopEnabled">
+  IsRenderLoopEnabled
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended.UI.Blazor/Controls/SKSurfaceView.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Gets or sets additional HTML attributes forwarded to the underlying canvas.</p>
+<div class="markdown level1 summary"><p>Gets whether the underlying SkiaSharp view schedules continuous renders.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
 <div class="codewrapper">
-  <pre><code class="lang-csharp hljs">[Parameter(CaptureUnmatchedValues = true)]
-public IReadOnlyDictionary&lt;string, object&gt;? AdditionalAttributes { get; set; }</code></pre>
+  <pre><code class="lang-csharp hljs">protected virtual bool IsRenderLoopEnabled { get; }</code></pre>
 </div>
 
 
@@ -139,7 +138,7 @@ public IReadOnlyDictionary&lt;string, object&gt;? AdditionalAttributes { get; se
 
 <h4 class="section">Property Value</h4>
 <dl class="parameters">
-  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlydictionary-2">IReadOnlyDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>&gt;</dt>
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
   <dd></dd>
 </dl>
 
@@ -153,7 +152,7 @@ public IReadOnlyDictionary&lt;string, object&gt;? AdditionalAttributes { get; se
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended.UI.Blazor/Controls/SKAnimatedSurfaceView.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended.UI.Blazor/Controls/SKSurfaceView.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -169,7 +168,7 @@ public IReadOnlyDictionary&lt;string, object&gt;? AdditionalAttributes { get; se
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · d989af0
+          source: PR #365 · d7dc09a
         </div>
       </div>
     </footer>

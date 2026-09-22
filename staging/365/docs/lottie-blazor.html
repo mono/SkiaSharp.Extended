@@ -92,7 +92,12 @@ Lottie JSON in Blazor with SkiaSharp. It uses the shared
 <a href="lottie-player.html"><code>SKLottiePlayer</code></a> engine with
 <a href="animated-surface-blazor.html"><code>SKAnimatedSurfaceView</code></a>. The surface owns the
 browser render loop and timing, so frames are updated and painted together
-without a component render per frame.</p>
+without a component render per frame. Its monotonic timing and rolling
+frame-rate calculation are shared with the .NET MAUI animated surface.
+<code>SKAnimatedSurfaceView</code> inherits the on-demand Canvas/OpenGL handling from
+<code>SKSurfaceView</code>.</p>
+<p>In DEBUG builds, the underlying animated surface draws an FPS label after each
+Lottie frame. The diagnostic is not included in release builds.</p>
 <h2 id="quick-start">Quick Start</h2>
 <p>Install the package and add its namespaces to <code>_Imports.razor</code>:</p>
 <pre><code class="lang-bash">dotnet add package SkiaSharp.Extended.UI.Blazor
@@ -192,7 +197,7 @@ to the underlying canvas.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · d989af0
+          source: PR #365 · d7dc09a
         </div>
       </div>
     </footer>

@@ -96,10 +96,10 @@ Celebrate achievements with customizable particle explosions.
 
 Ready-to-use Blazor controls for browser-rendered SkiaSharp scenes.
 
-### [Animated Surface View](docs/animated-surface-blazor.md)
+### [Surface Views](docs/animated-surface-blazor.md)
 
-Drive synchronous update and paint callbacks from the browser's rendering loop,
-using either Canvas or OpenGL.
+Draw on demand with `SKSurfaceView`, or add browser-loop updates with
+`SKAnimatedSurfaceView`, using either Canvas or OpenGL.
 
 ### [Lottie Animations](docs/lottie-blazor.md)
 
@@ -123,16 +123,17 @@ playback engine.
 
 ---
 
-# Animated Surface View
+# Surface Views
 
+[`SKSurfaceView`](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView)
+is the common Canvas/OpenGL host for the Blazor controls. It draws on demand;
 [`SKAnimatedSurfaceView`](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView)
-connects your update and drawing callbacks to the browser's animation-frame
-loop. You can use it when a Blazor page needs a SkiaSharp scene that moves
-smoothly without maintaining a separate timer.
+inherits it to connect update and drawing callbacks to the browser's
+animation-frame loop.
 
 ![The animated surface sample using the Canvas backend](../images/ui/controls/animated-surface/canvas.png)
 
-## Quick start
+## On-demand drawing
 
 Install the package:
 
@@ -148,8 +149,29 @@ Import the namespaces in `_Imports.razor`:
 @using SkiaSharp.Extended.UI.Blazor.Controls
 ```
 
-Then place the component on a page. `OnUpdate` runs immediately before
-`OnPaintSurface` for every animated frame.
+Use `SKSurfaceView` when a page only needs explicit redraws. It selects and
+validates `SKCanvasView` or `SKGLView`, forwards canvas attributes, and exposes
+the same synchronous paint callback as its animated subclass:
+
+```razor
+<SKSurfaceView @ref="surface"
+               OnPaintSurface="Paint"
+               style="width: 400px; height: 300px;" />
+
+@code {
+    private SKSurfaceView? surface;
+
+    private void Paint(SKCanvas canvas, SKSize size) => canvas.Clear(SKColors.CornflowerBlue);
+
+    private void Redraw() => surface?.Invalidate();
+}
+```
+
+## Animation loop
+
+Use `SKAnimatedSurfaceView` when a Blazor page needs a SkiaSharp scene that
+moves smoothly without maintaining a separate timer. `OnUpdate` runs
+immediately before `OnPaintSurface` for every animated frame.
 
 ```razor
 <SKAnimatedSurfaceView OnUpdate="Update"
@@ -202,7 +224,9 @@ attributes such as `class`, `id`, and `style` are forwarded to its canvas.
 Set `IsAnimationEnabled` to pause updates and browser-driven repainting. A
 paused component can still draw a changed scene when you call `Invalidate()`.
 The first update after creating, resuming, or replacing the surface receives a
-zero delta so paused time is not added to the animation.
+zero delta so paused time is not added to the animation. Its timing is shared
+with the .NET MAUI animated surface, using a monotonic clock and a rolling
+frame-rate calculation.
 
 ```razor
 <button @onclick="ToggleAnimation">@(isPlaying ? "Pause" : "Play")</button>
@@ -221,9 +245,16 @@ zero delta so paused time is not added to the animation.
 }
 ```
 
+## Development diagnostics
+
+DEBUG builds draw a small FPS label after your `OnPaintSurface` callback. It
+works with both Canvas and OpenGL surfaces, does not trigger component renders,
+and is omitted entirely from release builds.
+
 ## Learn more
 
 - [SkiaSharp.Views.Blazor](https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor)
+- [Surface View API Reference](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView)
 - [API Reference](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView)
 
 
@@ -765,7 +796,13 @@ Lottie JSON in Blazor with SkiaSharp. It uses the shared
 [`SKLottiePlayer`](lottie-player.md) engine with
 [`SKAnimatedSurfaceView`](animated-surface-blazor.md). The surface owns the
 browser render loop and timing, so frames are updated and painted together
-without a component render per frame.
+without a component render per frame. Its monotonic timing and rolling
+frame-rate calculation are shared with the .NET MAUI animated surface.
+`SKAnimatedSurfaceView` inherits the on-demand Canvas/OpenGL handling from
+`SKSurfaceView`.
+
+In DEBUG builds, the underlying animated surface draws an FPS label after each
+Lottie frame. The diagnostic is not included in release builds.
 
 ## Quick Start
 
@@ -881,6 +918,11 @@ Lottie brings designer-created animations to your .NET MAUI apps. Instead of man
 ![Lottie animation preview][lottie-preview]
 
 > **Other platforms:** This page covers .NET MAUI. For Blazor WebAssembly, see [Blazor Lottie Animations](lottie-blazor.md). For the shared playback engine, see [Lottie Player](lottie-player.md).
+
+> **Development diagnostics:** DEBUG builds show an FPS label after the Lottie
+> frame is painted. The MAUI and Blazor animation surfaces share the same
+> monotonic timing and rolling frame-rate calculation; this diagnostic is not
+> included in release builds.
 
 ## What is Lottie?
 

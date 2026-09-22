@@ -92,6 +92,12 @@
 <blockquote>
 <p><strong>Other platforms:</strong> This page covers .NET MAUI. For Blazor WebAssembly, see <a href="lottie-blazor.html">Blazor Lottie Animations</a>. For the shared playback engine, see <a href="lottie-player.html">Lottie Player</a>.</p>
 </blockquote>
+<blockquote>
+<p><strong>Development diagnostics:</strong> DEBUG builds show an FPS label after the Lottie
+frame is painted. The MAUI and Blazor animation surfaces share the same
+monotonic timing and rolling frame-rate calculation; this diagnostic is not
+included in release builds.</p>
+</blockquote>
 <h2 id="what-is-lottie">What is Lottie?</h2>
 <p><a href="https://airbnb.design/lottie/">Lottie</a> is an animation format created by Airbnb. Animations are designed in Adobe After Effects, exported as JSON using the <a href="https://github.com/airbnb/lottie-web">Bodymovin</a> plugin, and rendered natively on mobile and web. The name honors Lotte Reiniger, a pioneer of silhouette animation.</p>
 <p><strong>Why Lottie?</strong></p>
@@ -284,7 +290,7 @@ lottieView.AnimationCompleted += (s, e) =&gt;
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · d989af0
+          source: PR #365 · d7dc09a
         </div>
       </div>
     </footer>
