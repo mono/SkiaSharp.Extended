@@ -4,6 +4,7 @@
   <PropertyGroup>
     <VersionPrefix>4.0.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
+    <!-- Azure Pipelines exposes the triggering event through BUILD_REASON. -->
     <PreReleaseVersionLabel Condition="'$(BUILD_REASON)' == 'PullRequest'">pr.$(SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)</PreReleaseVersionLabel>
     <PreReleaseVersionLabel Condition="'$(BUILD_REASON)' == 'Schedule'">nightly</PreReleaseVersionLabel>
     <!-- Set to release on a release branch when that branch should produce exact stable versions. -->
