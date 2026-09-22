@@ -136,6 +136,7 @@ Import the namespaces in `_Imports.razor`:
 
 ```razor
 @using SkiaSharp
+@using SkiaSharp.Views.Blazor
 @using SkiaSharp.Extended.UI.Blazor.Controls
 ```
 
@@ -170,17 +171,19 @@ Then place the component on a page. `OnUpdate` runs immediately before
 
 ## Canvas and OpenGL
 
-The component uses the Canvas backend by default. Set `Backend` to
-`OpenGL` for GPU rendering; the component does not automatically switch
-backends if OpenGL is unavailable.
+The component renders an `SKCanvasView` by default. Set `SurfaceType` to
+`SKGLView` for GPU rendering. The selected type can also be a custom component
+derived from either supported view.
 
 ```razor
-<SKAnimatedSurfaceView Backend="SKAnimatedSurfaceViewBackend.OpenGL"
+<SKAnimatedSurfaceView SurfaceType="@typeof(SKGLView)"
                        IgnorePixelScaling="true"
                        OnPaintSurface="Paint"
                        style="width: 400px; height: 300px;" />
 ```
 
+The component validates the type and wires the matching native paint callback.
+It does not automatically fall back when OpenGL is unavailable.
 `IgnorePixelScaling` is forwarded to the underlying SkiaSharp view. Additional
 attributes such as `class`, `id`, and `style` are forwarded to its canvas.
 
@@ -190,7 +193,7 @@ attributes such as `class`, `id`, and `style` are forwarded to its canvas.
 
 Set `IsAnimationEnabled` to pause updates and browser-driven repainting. A
 paused component can still draw a changed scene when you call `Invalidate()`.
-The first update after creating, resuming, or switching backends receives a
+The first update after creating, resuming, or replacing the surface receives a
 zero delta so paused time is not added to the animation.
 
 ```razor

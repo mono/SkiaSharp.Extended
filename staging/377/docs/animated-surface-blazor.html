@@ -98,6 +98,7 @@ smoothly without maintaining a separate timer.</p>
 </code></pre>
 <p>Import the namespaces in <code>_Imports.razor</code>:</p>
 <pre><code class="lang-razor">@using SkiaSharp
+@using SkiaSharp.Views.Blazor
 @using SkiaSharp.Extended.UI.Blazor.Controls
 </code></pre>
 <p>Then place the component on a page. <code>OnUpdate</code> runs immediately before
@@ -127,21 +128,23 @@ smoothly without maintaining a separate timer.</p>
 }
 </code></pre>
 <h2 id="canvas-and-opengl">Canvas and OpenGL</h2>
-<p>The component uses the Canvas backend by default. Set <code>Backend</code> to
-<code>OpenGL</code> for GPU rendering; the component does not automatically switch
-backends if OpenGL is unavailable.</p>
-<pre><code class="lang-razor">&lt;SKAnimatedSurfaceView Backend=&quot;SKAnimatedSurfaceViewBackend.OpenGL&quot;
+<p>The component renders an <code>SKCanvasView</code> by default. Set <code>SurfaceType</code> to
+<code>SKGLView</code> for GPU rendering. The selected type can also be a custom component
+derived from either supported view.</p>
+<pre><code class="lang-razor">&lt;SKAnimatedSurfaceView SurfaceType=&quot;@typeof(SKGLView)&quot;
                        IgnorePixelScaling=&quot;true&quot;
                        OnPaintSurface=&quot;Paint&quot;
                        style=&quot;width: 400px; height: 300px;&quot; /&gt;
 </code></pre>
-<p><code>IgnorePixelScaling</code> is forwarded to the underlying SkiaSharp view. Additional
+<p>The component validates the type and wires the matching native paint callback.
+It does not automatically fall back when OpenGL is unavailable.
+<code>IgnorePixelScaling</code> is forwarded to the underlying SkiaSharp view. Additional
 attributes such as <code>class</code>, <code>id</code>, and <code>style</code> are forwarded to its canvas.</p>
 <p><img src="../images/ui/controls/animated-surface/opengl.png" alt="The animated surface sample using the OpenGL backend"></p>
 <h2 id="pausing-and-on-demand-redraws">Pausing and on-demand redraws</h2>
 <p>Set <code>IsAnimationEnabled</code> to pause updates and browser-driven repainting. A
 paused component can still draw a changed scene when you call <code>Invalidate()</code>.
-The first update after creating, resuming, or switching backends receives a
+The first update after creating, resuming, or replacing the surface receives a
 zero delta so paused time is not added to the animation.</p>
 <pre><code class="lang-razor">&lt;button @onclick=&quot;ToggleAnimation&quot;&gt;@(isPlaying ? &quot;Pause&quot; : &quot;Play&quot;)&lt;/button&gt;
 &lt;button @onclick=&quot;animatedSurface?.Invalidate()&quot;&gt;Redraw once&lt;/button&gt;
@@ -184,7 +187,7 @@ zero delta so paused time is not added to the animation.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #377 · 15a50a5
+          source: PR #377 · 3979275
         </div>
       </div>
     </footer>

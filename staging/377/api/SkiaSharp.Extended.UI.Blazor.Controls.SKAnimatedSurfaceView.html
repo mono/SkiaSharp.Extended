@@ -89,7 +89,7 @@
 
 
   <h1 id="SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView" data-uid="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView" class="text-break">
-Class SKAnimatedSurfaceView  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/377/merge/artifacts/obj/SkiaSharp.Extended.UI.Blazor/Release/net10.0/Microsoft.CodeAnalysis.Razor.Compiler/Microsoft.NET.Sdk.Razor.SourceGenerators.RazorSourceGenerator/Controls/SKAnimatedSurfaceView_razor.g.cs"><i class="bi bi-code-slash"></i></a>
+Class SKAnimatedSurfaceView  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/377/merge/source/SkiaSharp.Extended.UI.Blazor/Controls/SKAnimatedSurfaceView.cs"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -200,9 +200,9 @@ Class SKAnimatedSurfaceView  <a class="header-action link-secondary" title="View
 
   <h2 id="SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_remarks">Remarks</h2>
   <div class="markdown level0 remarks"><p>
-The component delegates scheduling to <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor.skcanvasview">SKCanvasView</a> or
-<a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor.skglview">SKGLView</a>. When animation is enabled, <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_OnUpdate">OnUpdate</a> runs
-immediately before <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurface.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_OnPaintSurface">OnPaintSurface</a> on each rendered frame.
+The component delegates scheduling to the selected <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.SurfaceType.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_SurfaceType">SurfaceType</a>.
+When animation is enabled, <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_OnUpdate">OnUpdate</a> runs immediately before
+<a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurface.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_OnPaintSurface">OnPaintSurface</a> on each rendered frame.
 </p>
 <p>
 Calling <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Invalidate.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_Invalidate">Invalidate()</a> repaints once, including while animation is paused.
@@ -226,12 +226,6 @@ Calling <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSu
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Backend.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_Backend">Backend</a></dt>
-    <dd><p>Gets or sets the SkiaSharp browser view used for rendering.
-Defaults to <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceViewBackend_Canvas">Canvas</a>.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IgnorePixelScaling.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_IgnorePixelScaling">IgnorePixelScaling</a></dt>
     <dd><p>Gets or sets whether rendering uses CSS pixels instead of physical pixels.</p>
 </dd>
@@ -250,6 +244,12 @@ Defaults to <a href="https://learn.microsoft.com/dotnet/csharp/language-referenc
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_OnUpdate">OnUpdate</a></dt>
     <dd><p>Gets or sets the callback invoked immediately before each animated paint.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.SurfaceType.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_SurfaceType">SurfaceType</a></dt>
+    <dd><p>Gets or sets the SkiaSharp browser view type used for rendering.
+The type must derive from <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor.skcanvasview">SKCanvasView</a> or <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor.skglview">SKGLView</a>.</p>
 </dd>
   </dl>
 
@@ -278,7 +278,7 @@ the render tree, and the incoming values have been assigned to properties.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mono/SkiaSharp.Extended/blob/377/merge/artifacts/obj/SkiaSharp.Extended.UI.Blazor/Release/net10.0/Microsoft.CodeAnalysis.Razor.Compiler/Microsoft.NET.Sdk.Razor.SourceGenerators.RazorSourceGenerator/Controls/SKAnimatedSurfaceView_razor.g.cs" class="edit-link">Edit this page</a>
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/377/merge/source/SkiaSharp.Extended.UI.Blazor/Controls/SKAnimatedSurfaceView.cs" class="edit-link">Edit this page</a>
         </div>
 
 
@@ -294,7 +294,7 @@ the render tree, and the incoming values have been assigned to properties.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #377 · 15a50a5
+          source: PR #377 · 3979275
         </div>
       </div>
     </footer>
