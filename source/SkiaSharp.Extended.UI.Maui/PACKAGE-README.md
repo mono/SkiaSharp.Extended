@@ -58,7 +58,7 @@ and the platform-neutral .NET MAUI target. It depends on
 
 - [Lottie animation guide](https://mono.github.io/SkiaSharp.Extended/docs/lottie.html)
 - [Confetti effects guide](https://mono.github.io/SkiaSharp.Extended/docs/confetti.html)
-- [API reference](https://mono.github.io/SkiaSharp.Extended/api/ui-maui/)
+- [API reference](https://mono.github.io/SkiaSharp.Extended/api/SkiaSharp.Extended.UI.Controls.html)
 - [Source code and issue tracker](https://github.com/mono/SkiaSharp.Extended)
 
 ## License
