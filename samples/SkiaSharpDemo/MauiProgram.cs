@@ -1,4 +1,7 @@
 ﻿using SkiaSharp.Views.Maui.Controls.Hosting;
+#if DEBUG
+using Microsoft.Maui.DevFlow.Agent;
+#endif
 
 namespace SkiaSharpDemo;
 
@@ -23,6 +26,10 @@ public static class MauiProgram
 				handlers.AddHandler<CarouselView, Microsoft.Maui.Controls.Handlers.Items2.CarouselViewHandler2>();
 #endif
 			});
+
+#if DEBUG
+		builder.AddMauiDevFlowAgent();
+#endif
 
 		return builder.Build();
 	}
