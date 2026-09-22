@@ -124,7 +124,7 @@ Property FlingMinVelocity  <a class="header-action link-secondary" title="View s
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTrackerOptions.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Gets or sets the minimum velocity, in pixels per second, below which the fling animation stops.</p>
+<div class="markdown level1 summary"><p>Gets or sets the minimum velocity, in pixels per second, at or below which the fling animation stops.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -150,7 +150,7 @@ Property FlingMinVelocity  <a class="header-action link-secondary" title="View s
 <h4 class="section">Exceptions</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
-  <dd><p><code class="paramref">value</code> is negative.</p>
+  <dd><p><code class="paramref">value</code> is not a non-negative finite number.</p>
 </dd>
 </dl>
 
@@ -175,7 +175,7 @@ Property FlingMinVelocity  <a class="header-action link-secondary" title="View s
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · dd4b62b
+          source: PR #326 · 2c47325
         </div>
       </div>
     </footer>

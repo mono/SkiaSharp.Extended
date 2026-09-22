@@ -137,10 +137,10 @@ entirely outside the current default range of [0.1, 10].</p>
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>minScale</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd><p>The minimum scale value. Must be positive and less than <code class="paramref">maxScale</code>.</p>
+  <dd><p>The minimum scale value. Must be positive, finite, and less than <code class="paramref">maxScale</code>.</p>
 </dd>
   <dt><code>maxScale</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
-  <dd><p>The maximum scale value. Must be positive and greater than <code class="paramref">minScale</code>.</p>
+  <dd><p>The maximum scale value. Must be positive, finite, and greater than <code class="paramref">minScale</code>.</p>
 </dd>
 </dl>
 
@@ -181,7 +181,7 @@ or equal to zero, or <code class="paramref">minScale</code> is greater than or e
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · dd4b62b
+          source: PR #326 · 2c47325
         </div>
       </div>
     </footer>

@@ -191,6 +191,12 @@ tracker.TransformChanged += (s, e) =&gt; canvasView.InvalidateSurface();</p></co
     <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a> class with the specified options.</p>
 </dd>
   </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.-ctor.html#SkiaSharp_Extended_SKGestureTracker__ctor_SkiaSharp_Extended_SKGestureTrackerOptions_System_Action_System_Action__">SKGestureTracker(SKGestureTrackerOptions, Action&lt;Action&gt;)</a></dt>
+    <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a> class with the specified
+options and owner-thread dispatcher.</p>
+</dd>
+  </dl>
 
   <h2 class="section" id="properties">Properties
 </h2>
@@ -328,8 +334,8 @@ stopping all animations.</p>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.Reset.html#SkiaSharp_Extended_SKGestureTracker_Reset">Reset()</a></dt>
-    <dd><p>Resets the tracker to an identity transform (scale 1, rotation 0, offset zero), stops all
-animations, and raises <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.TransformChanged.html">TransformChanged</a>.</p>
+    <dd><p>Resets rotation and offset, resets scale to <code>1</code> clamped to the configured scale range,
+stops all animations, and raises <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.TransformChanged.html">TransformChanged</a>.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -380,7 +386,7 @@ and raises <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.TransformCh
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKGestureTracker.FlingCompleted.html">FlingCompleted</a></dt>
-    <dd><p>Occurs when a fling animation completes (velocity drops below
+    <dd><p>Occurs when a fling animation completes (velocity reaches or drops below
 <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.FlingMinVelocity.html#SkiaSharp_Extended_SKGestureTrackerOptions_FlingMinVelocity">FlingMinVelocity</a>).</p>
 </dd>
   </dl>
@@ -467,7 +473,7 @@ and raises <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.TransformCh
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · dd4b62b
+          source: PR #326 · 2c47325
         </div>
       </div>
     </footer>

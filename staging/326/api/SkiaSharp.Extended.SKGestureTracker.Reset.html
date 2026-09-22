@@ -124,8 +124,8 @@ Method Reset  <a class="header-action link-secondary" title="View source" href="
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTracker.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Resets the tracker to an identity transform (scale 1, rotation 0, offset zero), stops all
-animations, and raises <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.TransformChanged.html">TransformChanged</a>.</p>
+<div class="markdown level1 summary"><p>Resets rotation and offset, resets scale to <code>1</code> clamped to the configured scale range,
+stops all animations, and raises <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.TransformChanged.html">TransformChanged</a>.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -164,7 +164,7 @@ animations, and raises <a class="xref" href="SkiaSharp.Extended.SKGestureTracker
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · dd4b62b
+          source: PR #326 · 2c47325
         </div>
       </div>
     </footer>

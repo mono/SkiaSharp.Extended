@@ -147,7 +147,9 @@ tracker.IsDoubleTapZoomEnabled = false;
 tracker.IsScrollZoomEnabled = false;
 tracker.IsHoverEnabled = false;
 </code></pre>
-<p>When a gesture is disabled, the tracker suppresses its events. You can toggle any of these at runtime without losing transform state.</p>
+<p>When a gesture is disabled, the tracker suppresses its events. Setting <code>IsEnabled</code> to
+<code>false</code> also abandons active contacts and stops pending gesture animations, while preserving
+the current transform.</p>
 <h2 id="reading-transform-state">Reading Transform State</h2>
 <pre><code class="lang-csharp">float scale = tracker.Scale;       // Current zoom level
 float rotation = tracker.Rotation; // Current rotation in degrees
@@ -156,7 +158,7 @@ SKMatrix matrix = tracker.Matrix;  // Combined transform matrix
 </code></pre>
 <h2 id="programmatic-transform-control">Programmatic Transform Control</h2>
 <p>You can set the transform directly without any touch input:</p>
-<pre><code class="lang-csharp">// Reset everything back to identity
+<pre><code class="lang-csharp">// Reset rotation/offset and return scale to 1, clamped to the configured scale range
 tracker.Reset();
 
 // Set all values at once
@@ -177,7 +179,7 @@ tracker.ZoomTo(factor: 3f, focalPoint: new SKPoint(400, 300));
 // Check animation state
 bool animating = tracker.IsZoomAnimating;
 </code></pre>
-<p>The animation duration and frame interval are controlled by <code>ZoomAnimationDuration</code> and <code>ZoomAnimationInterval</code> in the options.</p>
+<p>The animation duration and frame interval are controlled by <code>ZoomAnimationDuration</code> and <code>ZoomAnimationInterval</code> in the options. Set <code>ZoomAnimationDuration</code> to <code>TimeSpan.Zero</code> to apply the zoom synchronously.</p>
 <h2 id="see-also">See Also</h2>
 <ul>
 <li><a href="gestures.html">Gestures — Quick Start</a></li>
@@ -205,7 +207,7 @@ bool animating = tracker.IsZoomAnimating;
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · dd4b62b
+          source: PR #326 · 2c47325
         </div>
       </div>
     </footer>

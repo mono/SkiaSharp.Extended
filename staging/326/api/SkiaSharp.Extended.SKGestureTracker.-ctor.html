@@ -183,6 +183,53 @@ Constructor SKGestureTracker  <a class="header-action link-secondary" title="Vie
 
 
 
+<a id="SkiaSharp_Extended_SKGestureTracker__ctor_" data-uid="SkiaSharp.Extended.SKGestureTracker.#ctor*"></a>
+
+<h3 id="SkiaSharp_Extended_SKGestureTracker__ctor_SkiaSharp_Extended_SKGestureTrackerOptions_System_Action_System_Action__" data-uid="SkiaSharp.Extended.SKGestureTracker.#ctor(SkiaSharp.Extended.SKGestureTrackerOptions,System.Action{System.Action})">
+  SKGestureTracker(SKGestureTrackerOptions, Action&lt;Action&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/326/merge/source/SkiaSharp.Extended/Gestures/SKGestureTracker.cs"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.SKGestureTracker.html">SKGestureTracker</a> class with the specified
+options and owner-thread dispatcher.</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public SKGestureTracker(SKGestureTrackerOptions options, Action&lt;Action&gt; dispatcher)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>options</code> <a class="xref" href="SkiaSharp.Extended.SKGestureTrackerOptions.html">SKGestureTrackerOptions</a></dt>
+  <dd><p>The configuration options for gesture detection and tracking.</p>
+</dd>
+  <dt><code>dispatcher</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a>&gt;</dt>
+  <dd><p>A dispatcher that serially invokes callbacks on the thread that owns this tracker.</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+<h4 class="section" id="SkiaSharp_Extended_SKGestureTracker__ctor_SkiaSharp_Extended_SKGestureTrackerOptions_System_Action_System_Action___remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>Use this overload in hosts that do not provide a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.synchronizationcontext">SynchronizationContext</a>
+but can explicitly marshal work to their UI thread.</p>
+</div>
+
+<h4 class="section">Exceptions</h4>
+<dl class="parameters">
+  <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+  <dd><p><code class="paramref">options</code> or <code class="paramref">dispatcher</code> is <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+</dl>
+
+
+
 </article>
 
         <div class="contribution d-print-none">
@@ -202,7 +249,7 @@ Constructor SKGestureTracker  <a class="header-action link-secondary" title="Vie
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · dd4b62b
+          source: PR #326 · 2c47325
         </div>
       </div>
     </footer>

@@ -102,6 +102,16 @@ tracker.TapDetected += (s, e) =&gt; Console.WriteLine($&quot;Tap at {e.Location}
 tracker.DoubleTapDetected += (s, e) =&gt; Console.WriteLine(&quot;Double tap!&quot;);
 tracker.LongPressDetected += (s, e) =&gt; Console.WriteLine(&quot;Long press!&quot;);
 </code></pre>
+<p>Create and use the tracker on its owning UI thread. If UI updates must run on that
+thread and your host doesn't install a <code>SynchronizationContext</code>, pass an explicit
+owner-thread dispatcher:</p>
+<pre><code class="lang-csharp">var tracker = new SKGestureTracker(
+    new SKGestureTrackerOptions(),
+    callback =&gt; uiDispatcher.Invoke(callback));
+</code></pre>
+<p>Animation and long-press callbacks are serialized through that dispatcher. Without a
+context or dispatcher, callbacks remain serialized for compatibility but run on timer
+threads. The Blazor sample uses <code>ComponentBase.InvokeAsync</code> to preserve UI affinity.</p>
 <h3 id="2-feed-touch-events-from-your-platform">2. Feed touch events from your platform</h3>
 <p><strong>MAUI</strong> — forward <code>SKTouchEventArgs</code>:</p>
 <pre><code class="lang-csharp">private void OnTouch(object? sender, SKTouchEventArgs e)
@@ -135,6 +145,10 @@ includes a Mac Catalyst adapter.</p>
     tracker.ProcessTouchDown(e.PointerId, location, e.PointerType == &quot;mouse&quot;);
 }
 </code></pre>
+<p>Capture the pointer on pointer-down so drags continue to receive move and release events
+after leaving the canvas, and treat <code>lostpointercapture</code> as cancellation. See the
+<a href="https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo.Blazor/Pages/Gestures.razor">Blazor sample</a>
+for the JavaScript interop.</p>
 <h3 id="3-apply-the-transform-when-drawing">3. Apply the transform when drawing</h3>
 <pre><code class="lang-csharp">private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
 {
@@ -246,7 +260,7 @@ includes a Mac Catalyst adapter.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · dd4b62b
+          source: PR #326 · 2c47325
         </div>
       </div>
     </footer>

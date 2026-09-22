@@ -707,7 +707,9 @@ tracker.IsScrollZoomEnabled = false;
 tracker.IsHoverEnabled = false;
 ```
 
-When a gesture is disabled, the tracker suppresses its events. You can toggle any of these at runtime without losing transform state.
+When a gesture is disabled, the tracker suppresses its events. Setting `IsEnabled` to
+`false` also abandons active contacts and stops pending gesture animations, while preserving
+the current transform.
 
 ## Reading Transform State
 
@@ -723,7 +725,7 @@ SKMatrix matrix = tracker.Matrix;  // Combined transform matrix
 You can set the transform directly without any touch input:
 
 ```csharp
-// Reset everything back to identity
+// Reset rotation/offset and return scale to 1, clamped to the configured scale range
 tracker.Reset();
 
 // Set all values at once
@@ -749,7 +751,7 @@ tracker.ZoomTo(factor: 3f, focalPoint: new SKPoint(400, 300));
 bool animating = tracker.IsZoomAnimating;
 ```
 
-The animation duration and frame interval are controlled by `ZoomAnimationDuration` and `ZoomAnimationInterval` in the options.
+The animation duration and frame interval are controlled by `ZoomAnimationDuration` and `ZoomAnimationInterval` in the options. Set `ZoomAnimationDuration` to `TimeSpan.Zero` to apply the zoom synchronously.
 
 ## See Also
 
@@ -925,7 +927,7 @@ tracker.HoverDetected += (s, e) =>
 
 ## Double Tap Zoom
 
-By default, double-tapping zooms in by `DoubleTapZoomFactor` (2×). Double-tapping again at max scale resets to 1×. The zoom animates smoothly over `ZoomAnimationDuration` milliseconds.
+By default, double-tapping zooms in by `DoubleTapZoomFactor` (2×). Double-tapping again at max scale resets toward 1×, clamped to the configured scale range. The zoom animates smoothly over `ZoomAnimationDuration` milliseconds.
 
 To use double tap for your own logic instead, set `e.Handled = true` in your `DoubleTapDetected` handler, or disable it entirely:
 
@@ -977,6 +979,20 @@ tracker.DoubleTapDetected += (s, e) => Console.WriteLine("Double tap!");
 tracker.LongPressDetected += (s, e) => Console.WriteLine("Long press!");
 ```
 
+Create and use the tracker on its owning UI thread. If UI updates must run on that
+thread and your host doesn't install a `SynchronizationContext`, pass an explicit
+owner-thread dispatcher:
+
+```csharp
+var tracker = new SKGestureTracker(
+    new SKGestureTrackerOptions(),
+    callback => uiDispatcher.Invoke(callback));
+```
+
+Animation and long-press callbacks are serialized through that dispatcher. Without a
+context or dispatcher, callbacks remain serialized for compatibility but run on timer
+threads. The Blazor sample uses `ComponentBase.InvokeAsync` to preserve UI affinity.
+
 ### 2. Feed touch events from your platform
 
 **MAUI** — forward `SKTouchEventArgs`:
@@ -1015,6 +1031,11 @@ private void OnPointerDown(PointerEventArgs e)
     tracker.ProcessTouchDown(e.PointerId, location, e.PointerType == "mouse");
 }
 ```
+
+Capture the pointer on pointer-down so drags continue to receive move and release events
+after leaving the canvas, and treat `lostpointercapture` as cancellation. See the
+[Blazor sample](https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo.Blazor/Pages/Gestures.razor)
+for the JavaScript interop.
 
 ### 3. Apply the transform when drawing
 

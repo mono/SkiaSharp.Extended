@@ -214,7 +214,7 @@ to <code>ProcessTouchMove</code> with <code>inContact: false</code>.</p>
 };
 </code></pre>
 <h2 id="double-tap-zoom">Double Tap Zoom</h2>
-<p>By default, double-tapping zooms in by <code>DoubleTapZoomFactor</code> (2×). Double-tapping again at max scale resets to 1×. The zoom animates smoothly over <code>ZoomAnimationDuration</code> milliseconds.</p>
+<p>By default, double-tapping zooms in by <code>DoubleTapZoomFactor</code> (2×). Double-tapping again at max scale resets toward 1×, clamped to the configured scale range. The zoom animates smoothly over <code>ZoomAnimationDuration</code> milliseconds.</p>
 <p>To use double tap for your own logic instead, set <code>e.Handled = true</code> in your <code>DoubleTapDetected</code> handler, or disable it entirely:</p>
 <pre><code class="lang-csharp">tracker.IsDoubleTapZoomEnabled = false;
 </code></pre>
@@ -255,7 +255,7 @@ tracker.TransformChanged += (s, e) =&gt; canvas.Invalidate();
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #326 · dd4b62b
+          source: PR #326 · 2c47325
         </div>
       </div>
     </footer>
