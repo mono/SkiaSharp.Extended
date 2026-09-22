@@ -4,6 +4,15 @@
   <PropertyGroup>
     <VersionPrefix>4.0.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
+    <BuildBranchName>$([System.Text.RegularExpressions.Regex]::Replace('$(BUILD_SOURCEBRANCH)', '^refs/heads/', ''))</BuildBranchName>
+    <BuildBranchName>$([System.Text.RegularExpressions.Regex]::Replace('$(BuildBranchName)', '[^0-9A-Za-z-]', '-'))</BuildBranchName>
+    <BuildPullRequestNumber>$([System.Text.RegularExpressions.Regex]::Match('$(BUILD_SOURCEBRANCH)', '^refs/pull/([0-9]+)/merge$').Groups[1].Value)</BuildPullRequestNumber>
+    <!-- Manual PR runs have a merge ref but do not set the PR system variable. -->
+    <PreReleaseVersionLabel Condition="'$(TF_BUILD)' == 'True' And $([System.String]::Copy('$(BUILD_SOURCEBRANCH)').StartsWith('refs/heads/'))">branch.$(BuildBranchName)</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel Condition="'$(TF_BUILD)' == 'True' And ('$(BUILD_SOURCEBRANCH)' == 'refs/heads/main' Or $([System.String]::Copy('$(BUILD_SOURCEBRANCH)').StartsWith('refs/heads/release/')))">preview</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel Condition="'$(SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)' != ''">pr.$(SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel Condition="'$(BuildPullRequestNumber)' != ''">pr.$(BuildPullRequestNumber)</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel Condition="'$(BUILD_REASON)' == 'Schedule'">nightly</PreReleaseVersionLabel>
     <!-- Set to release on a release branch when that branch should produce exact stable versions. -->
     <DotNetFinalVersionKind></DotNetFinalVersionKind>
 
