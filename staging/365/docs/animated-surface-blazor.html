@@ -87,9 +87,9 @@
         <article data-uid="">
 <h1 id="surface-views">Surface Views</h1>
 
-<p><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.html"><code>SKSurfaceView</code></a>
-is the common Canvas/OpenGL host for the Blazor controls. It draws on demand;
-<a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.html"><code>SKAnimatedSurfaceView</code></a>
+<p><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.html"><code>SKSurfaceView</code></a>
+is the common Canvas/OpenGL host for the Blazor components. It draws on demand;
+<a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.html"><code>SKAnimatedSurfaceView</code></a>
 inherits it to connect update and drawing callbacks to the browser's
 animation-frame loop.</p>
 <p><img src="../images/ui/controls/animated-surface/canvas.png" alt="The animated surface sample using the Canvas backend"></p>
@@ -100,7 +100,7 @@ animation-frame loop.</p>
 <p>Import the namespaces in <code>_Imports.razor</code>:</p>
 <pre><code class="lang-razor">@using SkiaSharp
 @using SkiaSharp.Views.Blazor
-@using SkiaSharp.Extended.UI.Blazor.Controls
+@using SkiaSharp.Extended.UI.Blazor.Components
 </code></pre>
 <p>Use <code>SKSurfaceView</code> when a page only needs explicit redraws. It selects and
 validates <code>SKCanvasView</code> or <code>SKGLView</code>, forwards canvas attributes, and exposes
@@ -188,8 +188,8 @@ and is omitted entirely from release builds.</p>
 <h2 id="learn-more">Learn more</h2>
 <ul>
 <li><a href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor">SkiaSharp.Views.Blazor</a></li>
-<li><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.html">Surface View API Reference</a></li>
-<li><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.html">API Reference</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.html">Surface View API Reference</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.html">API Reference</a></li>
 </ul>
 
 </article>
@@ -212,7 +212,7 @@ and is omitted entirely from release builds.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 8aa9a71
+          source: PR #365 · ae75e2b
         </div>
       </div>
     </footer>

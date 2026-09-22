@@ -94,7 +94,7 @@ Celebrate achievements with customizable particle explosions.
 
 ## SkiaSharp.Extended.UI.Blazor
 
-Ready-to-use Blazor controls for browser-rendered SkiaSharp scenes.
+Ready-to-use Blazor components for browser-rendered SkiaSharp scenes.
 
 ### [Surface Views](docs/animated-surface-blazor.md)
 
@@ -125,9 +125,9 @@ playback engine.
 
 # Surface Views
 
-[`SKSurfaceView`](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView)
-is the common Canvas/OpenGL host for the Blazor controls. It draws on demand;
-[`SKAnimatedSurfaceView`](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView)
+[`SKSurfaceView`](xref:SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView)
+is the common Canvas/OpenGL host for the Blazor components. It draws on demand;
+[`SKAnimatedSurfaceView`](xref:SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView)
 inherits it to connect update and drawing callbacks to the browser's
 animation-frame loop.
 
@@ -146,7 +146,7 @@ Import the namespaces in `_Imports.razor`:
 ```razor
 @using SkiaSharp
 @using SkiaSharp.Views.Blazor
-@using SkiaSharp.Extended.UI.Blazor.Controls
+@using SkiaSharp.Extended.UI.Blazor.Components
 ```
 
 Use `SKSurfaceView` when a page only needs explicit redraws. It selects and
@@ -254,8 +254,8 @@ and is omitted entirely from release builds.
 ## Learn more
 
 - [SkiaSharp.Views.Blazor](https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor)
-- [Surface View API Reference](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView)
-- [API Reference](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView)
+- [Surface View API Reference](xref:SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView)
+- [API Reference](xref:SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView)
 
 
 ---
@@ -791,7 +791,7 @@ Or use the canvas extension methods which take position parameters directly.
 
 # Blazor Lottie Animations
 
-[`SKLottieView`](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView) plays
+[`SKLottieView`](xref:SkiaSharp.Extended.UI.Blazor.Components.SKLottieView) plays
 Lottie JSON in Blazor WebAssembly and Interactive WebAssembly with SkiaSharp.
 It does not support Interactive Server or unrestricted Interactive Auto because
 SkiaSharp's browser rendering host must be interactive in the browser. It uses the shared
@@ -816,7 +816,7 @@ dotnet add package SkiaSharp.Extended.UI.Blazor
 
 ```razor
 @using SkiaSharp.Extended
-@using SkiaSharp.Extended.UI.Blazor.Controls
+@using SkiaSharp.Extended.UI.Blazor.Components
 ```
 
 Render a Lottie file:
@@ -937,7 +937,7 @@ library API. Call `ReloadAsync()` to intentionally reload an equal source.
 - [Lottie Player](lottie-player.md) — shared playback semantics
 - [MAUI Lottie Animations](lottie-maui.md) — use Lottie in .NET MAUI
 - [Lottie](https://airbnb.design/lottie/) — animation format overview
-- [API Reference](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView)
+- [API Reference](xref:SkiaSharp.Extended.UI.Blazor.Components.SKLottieView)
 
 
 ---

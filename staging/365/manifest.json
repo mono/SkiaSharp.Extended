@@ -35,13 +35,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKBlurHash.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html"
+          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKBlurHash.DeserializeBitmap",
+      "Title": "SkiaSharp.Extended.SKBlurHash",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKBlurHash.yml\" sourcestartlinenumber=\"1\">Provides methods to encode and decode BlurHash strings, a compact representation of image placeholders.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKBlurHash.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.Serialize.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKBlurHash.Serialize",
       "Summary": null
     },
     {
@@ -63,55 +77,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKBlurHash.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.Serialize.html"
+          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKBlurHash.Serialize",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKBlurHash.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKBlurHash.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKBlurHash",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKBlurHash.yml\" sourcestartlinenumber=\"1\">Provides methods to encode and decode BlurHash strings, a compact representation of image placeholders.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKGeometry",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKGeometry.yml\" sourcestartlinenumber=\"1\">Provides geometry utility methods for creating paths, calculating polygon properties, and interpolating between paths.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateRegularStarPath.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKGeometry.CreateRegularStarPath",
+      "Title": "SkiaSharp.Extended.SKBlurHash.DeserializeBitmap",
       "Summary": null
     },
     {
@@ -119,41 +91,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateRegularPolygonPath.html"
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.PI.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKGeometry.CreateRegularPolygonPath",
-      "Summary": null
+      "Title": "SkiaSharp.Extended.SKGeometry.PI",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKGeometry.yml\" sourcestartlinenumber=\"1\">The value of π as a <xref href=\"System.Single\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
     },
     {
       "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateTrianglePath.html"
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.Area.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKGeometry.CreateTrianglePath",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateRectanglePath.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKGeometry.CreateRectanglePath",
+      "Title": "SkiaSharp.Extended.SKGeometry.Area",
       "Summary": null
     },
     {
@@ -189,14 +147,84 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.Area.html"
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateSquarePath.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKGeometry.Area",
+      "Title": "SkiaSharp.Extended.SKGeometry.CreateSquarePath",
       "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateRectanglePath.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKGeometry.CreateRectanglePath",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateTrianglePath.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKGeometry.CreateTrianglePath",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateRegularPolygonPath.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKGeometry.CreateRegularPolygonPath",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateRegularStarPath.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKGeometry.CreateRegularStarPath",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometry.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKGeometry",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKGeometry.yml\" sourcestartlinenumber=\"1\">Provides geometry utility methods for creating paths, calculating polygon properties, and interpolating between paths.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -228,58 +256,16 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.PI.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKGeometry.PI",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKGeometry.yml\" sourcestartlinenumber=\"1\">The value of π as a <xref href=\"System.Single\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometry.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometry.CreateSquarePath.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKGeometry.CreateSquarePath",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.html"
+          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.DrawSquare.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKGeometryExtensions",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKGeometryExtensions.yml\" sourcestartlinenumber=\"1\">Provides extension methods on <xref href=\"SkiaSharp.SKCanvas\" data-throw-if-not-resolved=\"false\"></xref> for drawing geometric shapes centered at a given point.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.DrawStar.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKGeometryExtensions.DrawStar",
+      "Title": "SkiaSharp.Extended.SKGeometryExtensions.DrawSquare",
       "Summary": null
     },
     {
@@ -301,20 +287,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.DrawSquare.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKGeometryExtensions.DrawSquare",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.DrawRegularPolygon.html"
         }
       },
@@ -326,16 +298,44 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.Progress.html"
+          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.DrawStar.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.Progress",
+      "Title": "SkiaSharp.Extended.SKGeometryExtensions.DrawStar",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKGeometryExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKGeometryExtensions",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKGeometryExtensions.yml\" sourcestartlinenumber=\"1\">Provides extension methods on <xref href=\"SkiaSharp.SKCanvas\" data-throw-if-not-resolved=\"false\"></xref> for drawing geometric shapes centered at a given point.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.HasAnimation.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.HasAnimation",
       "Summary": null
     },
     {
@@ -343,97 +343,55 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.SetAnimation.html"
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.SetAnimation",
-      "Summary": null
+      "Title": "SkiaSharp.Extended.SKLottiePlayer",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKLottiePlayer.yml\" sourcestartlinenumber=\"1\">A platform-agnostic Skottie (Lottie) animation player that manages playback state\nand rendering.</p>\n"
     },
     {
       "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.Seek.html"
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.Seek",
-      "Summary": null
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKLottiePlayer.yml\" sourcestartlinenumber=\"1\">Fires after each <xref href=\"SkiaSharp.Extended.SKLottiePlayer.Seek(System.TimeSpan)\" data-throw-if-not-resolved=\"false\"></xref> or <xref href=\"SkiaSharp.Extended.SKLottiePlayer.Update(System.TimeSpan)\" data-throw-if-not-resolved=\"false\"></xref> call that changes playback state.</p>\n"
     },
     {
       "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.Update.html"
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.AnimationCompleted.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.Update",
-      "Summary": null
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.AnimationCompleted",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKLottiePlayer.yml\" sourcestartlinenumber=\"1\">Fires when the animation completes all repeats.</p>\n"
     },
     {
       "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.Render.html"
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.Render",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.-ctor.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.SKLottiePlayer",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.Duration.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.Duration",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.IsComplete.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.IsComplete",
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed",
       "Summary": null
     },
     {
@@ -455,13 +413,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.html"
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.IsComplete.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed",
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.IsComplete",
       "Summary": null
     },
     {
@@ -469,13 +427,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.HasAnimation.html"
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.Progress.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.HasAnimation",
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.Progress",
       "Summary": null
     },
     {
@@ -483,55 +441,195 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.AnimationCompleted.html"
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.Duration.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.AnimationCompleted",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKLottiePlayer.yml\" sourcestartlinenumber=\"1\">Fires when the animation completes all repeats.</p>\n"
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.Duration",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated.html"
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.-ctor.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKLottiePlayer.yml\" sourcestartlinenumber=\"1\">Fires after each <xref href=\"SkiaSharp.Extended.SKLottiePlayer.Seek(System.TimeSpan)\" data-throw-if-not-resolved=\"false\"></xref> or <xref href=\"SkiaSharp.Extended.SKLottiePlayer.Update(System.TimeSpan)\" data-throw-if-not-resolved=\"false\"></xref> call that changes playback state.</p>\n"
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.SKLottiePlayer",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.html"
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.Render.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottiePlayer",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKLottiePlayer.yml\" sourcestartlinenumber=\"1\">A platform-agnostic Skottie (Lottie) animation player that manages playback state\nand rendering.</p>\n"
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.Render",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.Update.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.Update",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.Seek.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.Seek",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKLottiePlayer.SetAnimation.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKLottiePlayer.SetAnimation",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.Restart.html"
+          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottieRepeat.Restart",
+      "Title": "SkiaSharp.Extended.SKLottieRepeat",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKLottieRepeat.yml\" sourcestartlinenumber=\"1\">Describes how a Lottie animation repeats. Use the static factory members\n<xref href=\"SkiaSharp.Extended.SKLottieRepeat.Never\" data-throw-if-not-resolved=\"false\"></xref>, <xref href=\"SkiaSharp.Extended.SKLottieRepeat.Restart(System.Int32)\" data-throw-if-not-resolved=\"false\"></xref>, and <xref href=\"SkiaSharp.Extended.SKLottieRepeat.Reverse(System.Int32)\" data-throw-if-not-resolved=\"false\"></xref> to\ncreate instances.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.Count.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKLottieRepeat.Count",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.IsRestartRepeating.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKLottieRepeat.IsRestartRepeating",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.IsRepeating.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKLottieRepeat.IsRepeating",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.Never.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKLottieRepeat.Never",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.op_Inequality.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKLottieRepeat.operator !=",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.IsReverseRepeating.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKLottieRepeat.IsReverseRepeating",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.GetHashCode.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKLottieRepeat.GetHashCode",
       "Summary": null
     },
     {
@@ -567,13 +665,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.GetHashCode.html"
+          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.Restart.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottieRepeat.GetHashCode",
+      "Title": "SkiaSharp.Extended.SKLottieRepeat.Restart",
       "Summary": null
     },
     {
@@ -588,146 +686,6 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.SKLottieRepeat.operator ==",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.op_Inequality.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottieRepeat.operator !=",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.Never.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottieRepeat.Never",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.IsRepeating.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottieRepeat.IsRepeating",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.IsRestartRepeating.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottieRepeat.IsRestartRepeating",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.IsReverseRepeating.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottieRepeat.IsReverseRepeating",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.Count.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottieRepeat.Count",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKLottieRepeat.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKLottieRepeat",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKLottieRepeat.yml\" sourcestartlinenumber=\"1\">Describes how a Lottie animation repeats. Use the static factory members\n<xref href=\"SkiaSharp.Extended.SKLottieRepeat.Never\" data-throw-if-not-resolved=\"false\"></xref>, <xref href=\"SkiaSharp.Extended.SKLottieRepeat.Restart(System.Int32)\" data-throw-if-not-resolved=\"false\"></xref>, and <xref href=\"SkiaSharp.Extended.SKLottieRepeat.Reverse(System.Int32)\" data-throw-if-not-resolved=\"false\"></xref> to\ncreate instances.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPathInterpolation",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKPathInterpolation.yml\" sourcestartlinenumber=\"1\">Interpolates between two <xref href=\"SkiaSharp.SKPath\" data-throw-if-not-resolved=\"false\"></xref> objects by converting them to normalized point arrays and morphing between them.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.MaxSegmentLength.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPathInterpolation.MaxSegmentLength",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.To.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPathInterpolation.To",
       "Summary": null
     },
     {
@@ -749,20 +707,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.Interpolate.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPathInterpolation.Interpolate",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.-ctor.html"
         }
       },
@@ -770,6 +714,20 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.SKPathInterpolation.SKPathInterpolation",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.Interpolate.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKPathInterpolation.Interpolate",
       "Summary": null
     },
     {
@@ -785,6 +743,48 @@
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.SKPathInterpolation.From",
       "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.To.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKPathInterpolation.To",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.MaxSegmentLength.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKPathInterpolation.MaxSegmentLength",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.SKPathInterpolation.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.SKPathInterpolation",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKPathInterpolation.yml\" sourcestartlinenumber=\"1\">Interpolates between two <xref href=\"SkiaSharp.SKPath\" data-throw-if-not-resolved=\"false\"></xref> objects by converting them to normalized point arrays and morphing between them.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -847,20 +847,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.CompareAlpha.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparerOptions.CompareAlpha",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.html"
         }
       },
@@ -875,13 +861,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.TolerancePerChannel.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.CompareAlpha.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparerOptions.TolerancePerChannel",
+      "Title": "SkiaSharp.Extended.SKPixelComparerOptions.CompareAlpha",
       "Summary": null
     },
     {
@@ -900,100 +886,16 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparerOptions.TolerancePerChannel.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.SKPixelComparisonResult",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelCount.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelCount",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelPercentage.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelPercentage",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.SumSquaredError.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.SumSquaredError",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.ChannelCount.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.ChannelCount",
+      "Title": "SkiaSharp.Extended.SKPixelComparerOptions.TolerancePerChannel",
       "Summary": null
     },
     {
@@ -1015,27 +917,27 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError",
-      "Summary": null
+      "Title": "SkiaSharp.Extended.SKPixelComparisonResult",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKPixelComparisonResult.yml\" sourcestartlinenumber=\"1\">Holds the results of a pixel-by-pixel image comparison.</p>\n"
     },
     {
       "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.RootMeanSquaredError.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.PeakSignalToNoiseRatio.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.RootMeanSquaredError",
+      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.PeakSignalToNoiseRatio",
       "Summary": null
     },
     {
@@ -1057,13 +959,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.PeakSignalToNoiseRatio.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.PeakSignalToNoiseRatio",
+      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError",
       "Summary": null
     },
     {
@@ -1071,755 +973,853 @@
       "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.ChannelCount.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.SKPixelComparisonResult",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.SKPixelComparisonResult.yml\" sourcestartlinenumber=\"1\">Holds the results of a pixel-by-pixel image comparison.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate",
+      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.ChannelCount",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsAnimationEnabled.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.RootMeanSquaredError.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsAnimationEnabled",
+      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.RootMeanSquaredError",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurfaceCore.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurfaceCore",
+      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnParametersSet.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelPercentage.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnParametersSet",
+      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelPercentage",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnSurfaceChanged.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelCount.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnSurfaceChanged",
+      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelCount",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.yml\" sourcestartlinenumber=\"1\">Renders SkiaSharp content through the browser's animation-frame loop.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsRenderLoopEnabled.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsRenderLoopEnabled",
+      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.-ctor.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.SKAnimatedSurfaceView",
+      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.SKPixelComparisonResult",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.FromUri.html"
+          "relative_path": "api/SkiaSharp.Extended.SKPixelComparisonResult.SumSquaredError.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.FromUri",
+      "Title": "SkiaSharp.Extended.SKPixelComparisonResult.SumSquaredError",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.FromJson.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.FromJson",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.yml\" sourcestartlinenumber=\"1\">Renders SkiaSharp content through the browser's animation-frame loop.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.IsAnimationEnabled.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.IsAnimationEnabled",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.FromBytes.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.-ctor.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.FromBytes",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.SKAnimatedSurfaceView",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnUpdate.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.yml\" sourcestartlinenumber=\"1\">An immutable, browser-specific source for a Lottie JSON animation.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.op_Implicit.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.implicit operator",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnUpdate",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.Equals.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnSurfaceChanged.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.Equals",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnSurfaceChanged",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.GetHashCode.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnParametersSet.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.GetHashCode",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnParametersSet",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.FromStream.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnPaintSurfaceCore.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieImageSource.FromStream",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnPaintSurfaceCore",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromBytes.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.SKLottieView",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromBytes",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HttpClient.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromStream.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HttpClient",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromStream",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Source.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromUri.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Source",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromUri",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Repeat.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.op_Implicit.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Repeat",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.implicit operator",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationSpeed.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.Equals.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationSpeed",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.Equals",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsAnimationEnabled.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.GetHashCode.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsAnimationEnabled",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.GetHashCode",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.SurfaceType.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.SurfaceType",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.yml\" sourcestartlinenumber=\"1\">An immutable, browser-specific source for Lottie JSON animation data.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromJson.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromJson",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationLoaded.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.ReloadAsync.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationLoaded",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.ReloadAsync",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.DisposeAsync.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Restart.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.DisposeAsync",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Restart",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationCompleted.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.BuildRenderTree.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationCompleted",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.BuildRenderTree",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationFailed.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.OnParametersSetAsync.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationFailed",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.OnParametersSetAsync",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AdditionalAttributes.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.OnAfterRenderAsync.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AdditionalAttributes",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.OnAfterRenderAsync",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsLoading.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.DisposeAsync.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsLoading",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.DisposeAsync",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HasAnimation.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HasAnimation",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml\" sourcestartlinenumber=\"1\">A browser-only Blazor Lottie component that composes <xref href=\"SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView\" data-throw-if-not-resolved=\"false\"></xref>\nwith an <xref href=\"SkiaSharp.Extended.SKLottiePlayer\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IsComplete.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IsComplete",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IgnorePixelScaling.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Progress.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IgnorePixelScaling",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Progress",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsComplete.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Duration.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsComplete",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Duration",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.OnParametersSetAsync.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IsLoading.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.OnParametersSetAsync",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IsLoading",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Duration.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AdditionalAttributes.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Duration",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AdditionalAttributes",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Restart.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationFailed.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Restart",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationFailed",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.BuildRenderTree.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationCompleted.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.BuildRenderTree",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationCompleted",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.ReloadAsync.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationLoaded.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.ReloadAsync",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationLoaded",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.OnAfterRenderAsync.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IgnorePixelScaling.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.OnAfterRenderAsync",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IgnorePixelScaling",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Progress.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.HasAnimation.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Progress",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.HasAnimation",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IsAnimationEnabled.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">A browser-only Blazor component that composes <xref href=\"SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView\" data-throw-if-not-resolved=\"false\"></xref>\nwith an <xref href=\"SkiaSharp.Extended.SKLottiePlayer\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.OnPaintSurfaceCore.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.OnPaintSurfaceCore",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IsAnimationEnabled",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationSpeed.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.SKSurfaceView",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationSpeed",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.Invalidate.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Repeat.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.Invalidate",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Repeat",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.BuildRenderTree.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Source.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.BuildRenderTree",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Source",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.OnPaintSurface.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.HttpClient.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.OnPaintSurface",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.HttpClient",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.IsRenderLoopEnabled.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.-ctor.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.IsRenderLoopEnabled",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.SKLottieView",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.SurfaceType.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml\" sourcestartlinenumber=\"1\">Renders SkiaSharp content through a browser canvas or OpenGL surface.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.OnParametersSet.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.OnParametersSet",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.SurfaceType",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.OnSurfaceChanged.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.OnSurfaceChanged",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml\" sourcestartlinenumber=\"1\">Renders SkiaSharp content through a browser canvas or OpenGL surface.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.AdditionalAttributes.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.AdditionalAttributes",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.SurfaceType.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnPaintSurface.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.SurfaceType",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnPaintSurface",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.AdditionalAttributes.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.IgnorePixelScaling.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.AdditionalAttributes",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.IgnorePixelScaling",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.IgnorePixelScaling.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.SurfaceType.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls.SKSurfaceView.IgnorePixelScaling",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.SurfaceType",
       "Summary": null
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Controls.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.-ctor.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Blazor.Controls",
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.SKSurfaceView",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.BuildRenderTree.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.BuildRenderTree",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnPaintSurfaceCore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnPaintSurfaceCore",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnAfterRenderAsync.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnAfterRenderAsync",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.Invalidate.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.Invalidate",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnParametersSet.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnParametersSet",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnSurfaceChanged.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnSurfaceChanged",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Blazor.Components.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Blazor.Components",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.-ctor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.SKConfettiColorCollectionTypeConverter",
       "Summary": null
     },
     {
@@ -1835,20 +1835,6 @@
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter",
       "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.yml\" sourcestartlinenumber=\"1\">Converts comma-separated color strings to <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection\" data-throw-if-not-resolved=\"false\"></xref> instances.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.-ctor.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.SKConfettiColorCollectionTypeConverter",
-      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -1911,20 +1897,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.-ctor.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.SKConfettiPhysicsTypeConverter",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.html"
         }
       },
@@ -1939,6 +1911,20 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.-ctor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.SKConfettiPhysicsTypeConverter",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.ConvertFromStringCore.html"
         }
       },
@@ -1946,6 +1932,20 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.ConvertFromStringCore",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertFromStringCore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertFromStringCore",
       "Summary": null
     },
     {
@@ -1988,20 +1988,6 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertToStringCore",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertFromStringCore.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.ConvertFromStringCore",
       "Summary": null
     },
     {
@@ -2051,6 +2037,20 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertTo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertTo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertFromStringCore.html"
         }
       },
@@ -2090,20 +2090,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertTo.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertTo",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Converters.yml",
       "output": {
         ".html": {
@@ -2114,6 +2100,20 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.Converters",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabled.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabled",
       "Summary": null
     },
     {
@@ -2135,20 +2135,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabled.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabled",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.Update.html"
         }
       },
@@ -2156,20 +2142,6 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.Update",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.-ctor.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.SKAnimatedSurfaceView",
       "Summary": null
     },
     {
@@ -2185,6 +2157,20 @@
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabledProperty",
       "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabled\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.-ctor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.SKAnimatedSurfaceView",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -2233,20 +2219,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.yml\" sourcestartlinenumber=\"1\">A collection of <xref href=\"Microsoft.Maui.Graphics.Color\" data-throw-if-not-resolved=\"false\"></xref> values used for confetti particles.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.-ctor.html"
         }
       },
@@ -2258,115 +2230,17 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Update.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Update",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRateProperty.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRateProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRate\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsComplete.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsComplete",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsCompleteProperty.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsCompleteProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsComplete\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Duration.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Duration",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml\" sourcestartlinenumber=\"1\">Controls the rate and duration of particle emission for a confetti system.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Infinite.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Infinite",
-      "Summary": null
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.yml\" sourcestartlinenumber=\"1\">A collection of <xref href=\"Microsoft.Maui.Graphics.Color\" data-throw-if-not-resolved=\"false\"></xref> values used for confetti particles.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2401,28 +2275,14 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticlesProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Update.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticlesProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticlesCreated.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticlesCreated",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml\" sourcestartlinenumber=\"1\">Occurs when new particles have been created.</p>\n"
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Update",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -2443,14 +2303,28 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRate.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticlesCreated.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRate",
-      "Summary": null
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticlesCreated",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml\" sourcestartlinenumber=\"1\">Occurs when new particles have been created.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsCompleteProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsCompleteProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsComplete\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2468,16 +2342,114 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.op_Implicit.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticlesProperty.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.implicit operator",
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticlesProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRateProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRateProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRate\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml\" sourcestartlinenumber=\"1\">Controls the rate and duration of particle emission for a confetti system.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRate.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRate",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsComplete.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsComplete",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Duration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Duration",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Infinite.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Infinite",
       "Summary": null
     },
     {
@@ -2485,41 +2457,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Side.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml\" sourcestartlinenumber=\"1\">Defines the bounds from which a confetti emitter spawns particles.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Center.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Center",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bottom.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bottom",
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Side",
       "Summary": null
     },
     {
@@ -2555,34 +2499,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Top.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Top",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Side.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Side",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Rect.html"
         }
       },
@@ -2590,6 +2506,20 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Rect",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Top.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Top",
       "Summary": null
     },
     {
@@ -2625,6 +2555,20 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Center.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Center",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.-ctor.html"
         }
       },
@@ -2632,6 +2576,48 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.SKConfettiEmitterBounds",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml\" sourcestartlinenumber=\"1\">Defines the bounds from which a confetti emitter spawns particles.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.op_Implicit.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.implicit operator",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bottom.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bottom",
       "Summary": null
     },
     {
@@ -2653,20 +2639,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml\" sourcestartlinenumber=\"1\">A confetti shape that draws an oval with a configurable height ratio.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.OnDraw.html"
         }
       },
@@ -2681,14 +2653,14 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatioProperty.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio",
-      "Summary": null
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatioProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2709,27 +2681,69 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatioProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatioProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml\" sourcestartlinenumber=\"1\">A confetti shape that draws an oval with a configurable height ratio.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.Path.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.-ctor.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.Path",
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.SKConfettiPathShape",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.PathProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.PathProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.Path\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.OnDraw.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.OnDraw",
       "Summary": null
     },
     {
@@ -2751,55 +2765,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.PathProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.Path.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.PathProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.Path\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.-ctor.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.SKConfettiPathShape",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.OnDraw.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.OnDraw",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.-ctor.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.SKConfettiPhysics",
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.Path",
       "Summary": null
     },
     {
@@ -2814,6 +2786,20 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.Size",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.-ctor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.SKConfettiPhysics",
       "Summary": null
     },
     {
@@ -2849,20 +2835,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.yml\" sourcestartlinenumber=\"1\">A collection of <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiPhysics\" data-throw-if-not-resolved=\"false\"></xref> configurations for confetti particles.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.-ctor.html"
         }
       },
@@ -2874,17 +2846,17 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.OnDraw.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.OnDraw",
-      "Summary": null
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.yml\" sourcestartlinenumber=\"1\">A collection of <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiPhysics\" data-throw-if-not-resolved=\"false\"></xref> configurations for confetti particles.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2913,6 +2885,20 @@
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiRectShape",
       "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.yml\" sourcestartlinenumber=\"1\">A confetti shape that draws a rectangle with a configurable height ratio.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.OnDraw.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.OnDraw",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -3003,20 +2989,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.yml\" sourcestartlinenumber=\"1\">A collection of <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiShape\" data-throw-if-not-resolved=\"false\"></xref> instances used for confetti particles.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.-ctor.html"
         }
       },
@@ -3025,6 +2997,20 @@
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.SKConfettiShapeCollection",
       "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.yml\" sourcestartlinenumber=\"1\">A collection of <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiShape\" data-throw-if-not-resolved=\"false\"></xref> instances used for confetti particles.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3045,20 +3031,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.OnDraw.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.OnDraw",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.-ctor.html"
         }
       },
@@ -3070,16 +3042,30 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Emitter.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.OnDraw.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Emitter",
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.OnDraw",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngle.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngle",
       "Summary": null
     },
     {
@@ -3115,6 +3101,20 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Shapes.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Shapes",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.StartAngle.html"
         }
       },
@@ -3129,27 +3129,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngle.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Emitter.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngle",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocity.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocity",
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Emitter",
       "Summary": null
     },
     {
@@ -3164,6 +3150,20 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocity",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsComplete.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsComplete",
       "Summary": null
     },
     {
@@ -3241,20 +3241,6 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsComplete.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsComplete",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.html"
         }
       },
@@ -3311,13 +3297,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Shapes.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocity.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Shapes",
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocity",
       "Summary": null
     },
     {
@@ -3493,6 +3479,20 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBoundsProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBoundsProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBounds\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.LifetimeProperty.html"
         }
       },
@@ -3529,20 +3529,6 @@
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.GravityProperty",
       "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Gravity\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBoundsProperty.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBoundsProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKConfettiSystem.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBounds\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3969,13 +3955,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Fps.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Duration.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Fps",
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Duration",
       "Summary": null
     },
     {
@@ -4011,42 +3997,14 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Duration.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Fps.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Duration",
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Fps",
       "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromUri.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromUri",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.SourceChanged.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieImageSource.SourceChanged",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml\" sourcestartlinenumber=\"1\">Occurs when the underlying source data changes.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4095,6 +4053,20 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.SourceChanged.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieImageSource.SourceChanged",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml\" sourcestartlinenumber=\"1\">Occurs when the underlying source data changes.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.-ctor.html"
         }
       },
@@ -4137,6 +4109,20 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromUri.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromUri",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieImageSource.LoadAnimationAsync.html"
         }
       },
@@ -4159,20 +4145,6 @@
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode",
       "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode.yml\" sourcestartlinenumber=\"1\">Specifies how a Lottie animation repeats.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">A view that plays Lottie animations using the Skottie library.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4228,6 +4200,20 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.IsComplete",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.Progress.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.Progress",
       "Summary": null
     },
     {
@@ -4305,13 +4291,13 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.Progress.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.-ctor.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.Progress",
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.SKLottieView",
       "Summary": null
     },
     {
@@ -4333,84 +4319,14 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.-ctor.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationFailed.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.SKLottieView",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.DurationProperty.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.DurationProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.Duration\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.ProgressProperty.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.ProgressProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.Progress\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.IsCompleteProperty.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.IsCompleteProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.IsComplete\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCountProperty.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCountProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCount\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.SourceProperty.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.SourceProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.Source\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationFailed",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Occurs when the animation fails to load.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4431,14 +4347,84 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationFailed.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatModeProperty.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationFailed",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Occurs when the animation fails to load.</p>\n"
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatModeProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatMode\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCountProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCountProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCount\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.IsCompleteProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.IsCompleteProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.IsComplete\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.ProgressProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.ProgressProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.Progress\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.DurationProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.DurationProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.Duration\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.SourceProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.SourceProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.Source\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4459,14 +4445,70 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatModeProperty.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKLottieView.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatModeProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatMode\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+      "Title": "SkiaSharp.Extended.UI.Controls.SKLottieView",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKLottieView.yml\" sourcestartlinenumber=\"1\">A view that plays Lottie animations using the Skottie library.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.StreamProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.StreamProperty",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.Stream\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource",
+      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml\" sourcestartlinenumber=\"1\">A Lottie image source that loads animations from a stream.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.IsEmpty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.IsEmpty",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.Stream.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.Stream",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -4494,76 +4536,6 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.SKStreamLottieImageSource",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.Stream.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.Stream",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.IsEmpty.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.IsEmpty",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml\" sourcestartlinenumber=\"1\">A Lottie image source that loads animations from a stream.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.StreamProperty.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.StreamProperty",
-      "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.yml\" sourcestartlinenumber=\"1\">Identifies the <xref href=\"SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.Stream\" data-throw-if-not-resolved=\"false\"></xref> bindable property.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.Invalidate.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKSurfaceView.Invalidate",
       "Summary": null
     },
     {
@@ -4613,6 +4585,20 @@
       "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
       "output": {
         ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.Invalidate.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKSurfaceView.Invalidate",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml",
+      "output": {
+        ".html": {
           "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.html"
         }
       },
@@ -4621,6 +4607,48 @@
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.SKSurfaceView",
       "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.SKSurfaceView.yml\" sourcestartlinenumber=\"1\">A base SkiaSharp surface view that wraps an <xref href=\"SkiaSharp.Views.Maui.Controls.SKCanvasView\" data-throw-if-not-resolved=\"false\"></xref> inside a <xref href=\"Microsoft.Maui.Controls.TemplatedView\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.-ctor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.SKUriLottieImageSource",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.LoadAnimationAsync.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.LoadAnimationAsync",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.Uri.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.Uri",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -4666,44 +4694,16 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
+      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.yml",
       "output": {
         ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.LoadAnimationAsync.html"
+          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.-ctor.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.LoadAnimationAsync",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.Uri.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.Uri",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.-ctor.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.SKUriLottieImageSource",
+      "Title": "SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.SKConfettiViewResources",
       "Summary": null
     },
     {
@@ -4719,20 +4719,6 @@
       "IsMRef": true,
       "Title": "SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources",
       "Summary": "<p sourcefile=\"api/SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.yml\" sourcestartlinenumber=\"1\">Resource dictionary containing the default template for <xref href=\"SkiaSharp.Extended.UI.Controls.SKConfettiView\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.-ctor.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.SKConfettiViewResources",
-      "Summary": null
     },
     {
       "type": "ManagedReference",
