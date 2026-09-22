@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <!-- Shipped assemblies have historically not been strong named. -->
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>

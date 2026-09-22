@@ -11,11 +11,7 @@ public class SKConfettiColorCollectionTypeConverter : StringTypeConverter
 		if (value == null)
 			return null;
 
-		value = value?.Trim();
-		var parts = value?.Split(',');
-
-		if (parts == null)
-			return null;
+		var parts = value.Trim().Split(',');
 
 		var colors = new SKConfettiColorCollection();
 		var colConv = new ColorTypeConverter();
@@ -23,7 +19,7 @@ public class SKConfettiColorCollectionTypeConverter : StringTypeConverter
 		foreach (var part in parts)
 		{
 			var c = colConv.ConvertFromInvariantString(part.Trim());
-			colors.Add((Color)c);
+			colors.Add((Color)c!);
 		}
 
 		return colors;

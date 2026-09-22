@@ -140,10 +140,10 @@ namespace SkiaSharp.Extended
 		/// <returns>A new <see cref="SKPath"/> representing the rectangle.</returns>
 		public static SKPath CreateRectanglePath(float width, float height, SKPathDirection direction = SKPathDirection.Clockwise)
 		{
-			var path = new SKPath();
-			path.AddRect(new SKRect(width / -2, height / -2, width / 2, height / 2), direction);
-			path.Close();
-			return path;
+			using var builder = new SKPathBuilder();
+			builder.AddRect(new SKRect(width / -2, height / -2, width / 2, height / 2), direction);
+			builder.Close();
+			return builder.Detach();
 		}
 
 		/// <summary>
@@ -155,20 +155,20 @@ namespace SkiaSharp.Extended
 		/// <returns>A new <see cref="SKPath"/> representing the triangle.</returns>
 		public static SKPath CreateTrianglePath(float width, float height, SKPathDirection direction = SKPathDirection.Clockwise)
 		{
-			var path = new SKPath();
-			path.MoveTo(0, height / -2);
+			using var builder = new SKPathBuilder();
+			builder.MoveTo(new SKPoint(0, height / -2));
 			if (direction == SKPathDirection.Clockwise)
 			{
-				path.LineTo(width / -2, height / 2);
-				path.LineTo(width / 2, height / 2);
+				builder.LineTo(new SKPoint(width / -2, height / 2));
+				builder.LineTo(new SKPoint(width / 2, height / 2));
 			}
 			else
 			{
-				path.LineTo(width / 2, height / 2);
-				path.LineTo(width / -2, height / 2);
+				builder.LineTo(new SKPoint(width / 2, height / 2));
+				builder.LineTo(new SKPoint(width / -2, height / 2));
 			}
-			path.Close();
-			return path;
+			builder.Close();
+			return builder.Detach();
 		}
 
 		/// <summary>
@@ -190,7 +190,7 @@ namespace SkiaSharp.Extended
 		/// <returns>A new <see cref="SKPath"/> representing the regular polygon.</returns>
 		public static SKPath CreateRegularPolygonPath(float radius, int points, bool horizontalBase = true, SKPathDirection direction = SKPathDirection.Clockwise)
 		{
-			var path = new SKPath();
+			using var builder = new SKPathBuilder();
 
 			var stepAngle = direction == SKPathDirection.CounterClockwise
 				? -TotalAngle / points
@@ -207,13 +207,13 @@ namespace SkiaSharp.Extended
 				float y = radius * (float)Math.Sin(angle);
 
 				if (p == 0)
-					path.MoveTo(x, y);
+					builder.MoveTo(new SKPoint(x, y));
 				else
-					path.LineTo(x, y);
+					builder.LineTo(new SKPoint(x, y));
 			}
 
-			path.Close();
-			return path;
+			builder.Close();
+			return builder.Detach();
 		}
 
 		/// <summary>
@@ -226,7 +226,7 @@ namespace SkiaSharp.Extended
 		/// <returns>A new <see cref="SKPath"/> representing the star.</returns>
 		public static SKPath CreateRegularStarPath(float outerRadius, float innerRadius, int points, SKPathDirection direction = SKPathDirection.Clockwise)
 		{
-			var path = new SKPath();
+			using var builder = new SKPathBuilder();
 
 			bool isInner = false;
 			points *= 2;
@@ -244,15 +244,15 @@ namespace SkiaSharp.Extended
 				float y = radius * (float)Math.Sin(angle);
 
 				if (p == 0)
-					path.MoveTo(x, y);
+					builder.MoveTo(new SKPoint(x, y));
 				else
-					path.LineTo(x, y);
+					builder.LineTo(new SKPoint(x, y));
 
 				isInner = !isInner;
 			}
 
-			path.Close();
-			return path;
+			builder.Close();
+			return builder.Detach();
 		}
 	}
 }

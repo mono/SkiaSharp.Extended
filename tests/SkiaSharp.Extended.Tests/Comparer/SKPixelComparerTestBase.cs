@@ -42,7 +42,7 @@ namespace SkiaSharp.Extended.Tests
 		{
 			var bitmap = new SKBitmap(new SKImageInfo(image.Width, image.Height, SKColorType.Bgra8888));
 			using (var canvas = new SKCanvas(bitmap))
-				canvas.DrawImage(image, 0, 0);
+				canvas.DrawImage(image, 0, 0, SKSamplingOptions.Default);
 			return bitmap;
 		}
 	}

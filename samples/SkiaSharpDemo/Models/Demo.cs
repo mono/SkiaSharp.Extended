@@ -4,13 +4,13 @@ namespace SkiaSharpDemo;
 
 public class Demo
 {
-	public string Title { get; set; }
+	public required string Title { get; set; }
 
-	public string Description { get; set; }
+	public required string Description { get; set; }
 
-	public SKPath ImagePath { get; set; }
+	public SKPath? ImagePath { get; set; }
 
-	public Color Color { get; set; }
+	public required Color Color { get; set; }
 
-	public Type PageType { get; set; }
+	public required Type PageType { get; set; }
 }

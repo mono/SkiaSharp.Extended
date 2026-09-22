@@ -163,7 +163,7 @@ public partial class BlurHashPage : ContentPage
 			Title = "Custom Image",
 		};
 
-		var image = await MediaPicker.PickPhotoAsync(options);
+		var image = (await MediaPicker.PickPhotosAsync(options)).FirstOrDefault();
 
 		if (image != null)
 		{

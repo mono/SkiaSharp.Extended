@@ -145,8 +145,11 @@ internal class OptionButtonsManager
 		VisualStateManager.GoToState(button, shouldSelect ? SelectedState : UnselectedState);
 
 #if WINDOWS
-		(button.Handler.PlatformView as Microsoft.UI.Xaml.Controls.Button).RequestedTheme = Microsoft.UI.Xaml.ElementTheme.Dark;
-		(button.Handler.PlatformView as Microsoft.UI.Xaml.Controls.Button).RequestedTheme = Microsoft.UI.Xaml.ElementTheme.Default;
+		if (button.Handler?.PlatformView is Microsoft.UI.Xaml.Controls.Button platformButton)
+		{
+			platformButton.RequestedTheme = Microsoft.UI.Xaml.ElementTheme.Dark;
+			platformButton.RequestedTheme = Microsoft.UI.Xaml.ElementTheme.Default;
+		}
 #endif
 	}
 }

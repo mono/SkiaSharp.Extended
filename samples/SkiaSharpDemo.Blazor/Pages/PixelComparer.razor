@@ -329,7 +329,7 @@
 
         var drawRect = SKRect.Create(offsetX, offsetY, scaledWidth, scaledHeight);
 
-        canvas.DrawImage(image, drawRect);
+        canvas.DrawImage(image, drawRect, SKSamplingOptions.Default);
     }
 
     private static string FormatPsnr(double psnr)
