@@ -108,16 +108,18 @@ without a component render per frame.</p>
 <p>The default <code>Repeat</code> is <code>SKLottieRepeat.Never</code>, so an animation plays once.
 The render loop runs only while the view is enabled, an animation is loaded,
 and playback has not completed.</p>
-<h2 id="rendering-backend">Rendering Backend</h2>
+<h2 id="rendering-surface">Rendering Surface</h2>
 <p><code>SKLottieView</code> inherits the generic surface's rendering options. Canvas is the
 default; select OpenGL when your app benefits from SkiaSharp's GPU-backed
 Blazor view. Set <code>IgnorePixelScaling</code> when the canvas should use CSS pixels
 rather than physical pixels:</p>
 <pre><code class="lang-razor">&lt;SKLottieView Source=&quot;animations/trophy.json&quot;
-              Backend=&quot;SKAnimatedSurfaceViewBackend.OpenGL&quot;
+              SurfaceType=&quot;@typeof(SKGLView)&quot;
               IgnorePixelScaling=&quot;true&quot;
               style=&quot;width: 300px; height: 300px;&quot; /&gt;
 </code></pre>
+<p><code>SurfaceType</code> can also be a custom component derived from <code>SKCanvasView</code> or
+<code>SKGLView</code>.</p>
 <h2 id="playback-controls">Playback Controls</h2>
 <p>Use <code>SKLottieRepeat</code> directly to select the repeat behavior:</p>
 <pre><code class="lang-razor">@* Play once *@
@@ -190,7 +192,7 @@ to the underlying canvas.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 926d4f0
+          source: PR #365 · d989af0
         </div>
       </div>
     </footer>
