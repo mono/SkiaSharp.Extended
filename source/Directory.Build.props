@@ -16,7 +16,7 @@
     <Owners>Microsoft</Owners>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <PackageIcon>logo.png</PackageIcon>
-    <PackageIconFullPath>$(MSBuildThisFileDirectory)..\images\logo.png</PackageIconFullPath>
+    <PackageIconFullPath>$(MSBuildThisFileDirectory)assets\logo.png</PackageIconFullPath>
     <PackageTags>xamarin graphics ios android linux windows uwp tvos watchos macos cross-platform skiasharp skiasharp.extended</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <!-- Preserve the historical Xamarin/Microsoft MIT notices instead of Arcade's exact-text template. -->
@@ -38,7 +38,7 @@
 
   <ItemGroup>
     <None Include="..\..\LICENSE" PackagePath="" Pack="true" />
-    <None Include="README.md" PackagePath="" Pack="true" />
+    <None Include="PACKAGE-README.md" PackagePath="README.md" Pack="true" />
   </ItemGroup>
 
 </Project>
