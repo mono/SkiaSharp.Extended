@@ -54,7 +54,6 @@ stages:
                       -publish `
                       -configuration '$(_BuildConfig)' `
                       -prepareMachine `
-                      -warnNotAsError '$(LEGACY_WARNINGS_NOT_AS_ERRORS)' `
                       -sign `
                       -ci `
                       -binaryLogName Pack.binlog `
@@ -95,7 +94,6 @@ stages:
                         -publish `
                         -configuration '$(_BuildConfig)' `
                         -prepareMachine `
-                        -warnNotAsError '$(LEGACY_WARNINGS_NOT_AS_ERRORS)' `
                         -ci `
                         -binaryLogName Pack.binlog `
                         '/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)' `
@@ -112,7 +110,6 @@ stages:
                         -pack
                         -configuration "$(_BuildConfig)"
                         -prepareMachine
-                        -warnNotAsError "$(LEGACY_WARNINGS_NOT_AS_ERRORS)"
                         -ci
                         -binaryLogName Pack.binlog
                         "/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)"

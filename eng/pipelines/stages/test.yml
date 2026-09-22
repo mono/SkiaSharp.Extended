@@ -47,7 +47,6 @@ stages:
                     -restore -build -test
                     -configuration $(_BuildConfig)
                     -prepareMachine
-                    -warnNotAsError "$(LEGACY_WARNINGS_NOT_AS_ERRORS)"
                     -ci
                     -binaryLogName Validation.binlog
                     /p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)
@@ -60,7 +59,6 @@ stages:
                       -test
                       -configuration "$(_BuildConfig)"
                       -prepareMachine
-                      -warnNotAsError "$(LEGACY_WARNINGS_NOT_AS_ERRORS)"
                       -ci
                       -binaryLogName Validation.binlog
                       "/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)"

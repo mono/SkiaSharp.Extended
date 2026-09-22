@@ -7,4 +7,3 @@ variables:
   DOTNET_WORKLOAD_VERSION: '10.0.203'
   ARCADE_OFFICIAL_BUILD_ID: $[format('{0}.{1}', format('{0:yyyyMMdd}', pipeline.startTime), counter(format('arcade_{0}', format('{0:yyyyMMdd}', pipeline.startTime)), 1))]
   XCODE_VERSION: '26.3'
-  LEGACY_WARNINGS_NOT_AS_ERRORS: CS0618;CS8600;CS8602;CS8604;CS8605;CS8618;CS8622;CS8625;CS8767;XC0022;XC0025
