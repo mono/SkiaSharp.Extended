@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class SKLottieView | SkiaSharp.Extended ">
       
-      <meta name="description" content="A Blazor component that plays Lottie animations with  and an .">
+      <meta name="description" content="A browser-only Blazor component that composes  with an .">
       <link rel="icon" href="../images/logo.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -97,8 +97,8 @@ Class SKLottieView  <a class="header-action link-secondary" title="View source" 
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.UI.Blazor.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>A Blazor component that plays Lottie animations with <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.html">SKAnimatedSurfaceView</a>
-and an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePlayer</a>.</p>
+  <div class="markdown summary"><p>A browser-only Blazor component that composes <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.html">SKAnimatedSurfaceView</a>
+with an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePlayer</a>.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -216,7 +216,7 @@ and an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePla
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationCompleted.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_AnimationCompleted">AnimationCompleted</a></dt>
-    <dd><p>Fires when all repeats complete.</p>
+    <dd><p>Fires after all repeats complete.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -235,11 +235,6 @@ and an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePla
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationUpdated.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_AnimationUpdated">AnimationUpdated</a></dt>
-    <dd><p>Fires after each frame update, allowing the host to refresh displayed state.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Duration.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Duration">Duration</a></dt>
     <dd><p>Gets the total animation duration.</p>
 </dd>
@@ -247,6 +242,12 @@ and an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePla
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HasAnimation.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_HasAnimation">HasAnimation</a></dt>
     <dd><p>Gets whether an animation is loaded and ready to play.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HttpClient.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_HttpClient">HttpClient</a></dt>
+    <dd><p>Gets or sets the HTTP client used for URI sources. When omitted, the component resolves
+a registered default <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HttpClient.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_HttpClient">HttpClient</a> after interactivity begins.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -281,7 +282,7 @@ and an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePla
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Source.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Source">Source</a></dt>
-    <dd><p>URL of the Lottie JSON file to load.</p>
+    <dd><p>Gets or sets the Lottie source.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -321,6 +322,12 @@ the render tree, and the incoming values have been assigned to properties.</p>
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.ReloadAsync.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_ReloadAsync_System_Threading_CancellationToken_">ReloadAsync(CancellationToken)</a></dt>
+    <dd><p>Reloads the current source, including an equal source. Before interactivity, the request
+is queued and completes after the component's first interactive render.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Restart.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Restart">Restart()</a></dt>
     <dd><p>Restarts the animation from the beginning with current settings.</p>
 </dd>
@@ -347,7 +354,7 @@ the render tree, and the incoming values have been assigned to properties.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 62b76f2
+          source: PR #365 · 02602bb
         </div>
       </div>
     </footer>

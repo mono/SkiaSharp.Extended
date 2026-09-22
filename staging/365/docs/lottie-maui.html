@@ -109,7 +109,7 @@ included in release builds.</p>
 </ul>
 <h2 id="quick-start">Quick Start</h2>
 <h3 id="add-to-your-xaml">Add to your XAML</h3>
-<pre><code class="lang-xml">&lt;ContentPage xmlns:skia=&quot;clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI.Maui&quot;&gt;
+<pre><code class="lang-xml">&lt;ContentPage xmlns:skia=&quot;clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI&quot;&gt;
 
     &lt;skia:SKLottieView
         Source=&quot;animation.json&quot;
@@ -126,8 +126,8 @@ lottieView.Source = new SKFileLottieImageSource { File = &quot;animation.json&qu
 // From a URL
 lottieView.Source = new SKUriLottieImageSource { Uri = new Uri(&quot;https://...&quot;) };
 
-// From a stream
-lottieView.Source = new SKStreamLottieImageSource { Stream = myStream };
+// From a stream factory. Return a fresh stream for each reload.
+lottieView.Source = new SKStreamLottieImageSource { Stream = _ =&gt; OpenAnimationStreamAsync() };
 </code></pre>
 <h2 id="playback-control">Playback Control</h2>
 <h3 id="repeat-modes">Repeat modes</h3>
@@ -146,6 +146,14 @@ lottieView.Source = new SKStreamLottieImageSource { Stream = myStream };
 <blockquote>
 <p><strong>Under the hood:</strong> The MAUI <code>SKLottieView</code> translates <code>RepeatCount</code> and <code>RepeatMode</code> into <a class="xref" href="../api/SkiaSharp.Extended.SKLottieRepeat.html"><code>SKLottieRepeat</code></a> values on the shared <a href="lottie-player.html"><code>SKLottiePlayer</code></a>. <code>Reverse</code> with <code>RepeatCount=&quot;0&quot;</code> still plays one full forward/back cycle; restart mode with <code>0</code> plays once.</p>
 </blockquote>
+<p>The built-in file, URI, and stream sources create a fresh owned native
+animation for each load. Public <code>SKLottieAnimation(Animation?)</code> wrappers remain
+caller-owned for compatibility. The legacy <code>SKLottieImageSource.FromStream(Stream)</code>
+snapshots the unread bytes (up to 32 MiB) without taking ownership of the input,
+then uses fresh memory streams for reloads; its input stream position advances
+to the end. Keep picker and application-service code in your app. For example,
+the sample's <strong>Select Lottie JSON</strong> button uses <code>FilePicker</code> and supplies
+<code>file.OpenReadAsync()</code> as a reloadable stream factory.</p>
 <h3 id="speed-and-direction">Speed and direction</h3>
 <pre><code class="lang-xml">&lt;!-- Double speed --&gt;
 &lt;skia:SKLottieView Source=&quot;animation.json&quot; AnimationSpeed=&quot;2.0&quot; RepeatCount=&quot;-1&quot; /&gt;
@@ -250,14 +258,19 @@ lottieView.AnimationCompleted += (s, e) =&gt;
 <p>Or create your own in Adobe After Effects using the <a href="https://github.com/airbnb/lottie-web">Bodymovin plugin</a>.</p>
 <h2 id="template-customization">Template Customization</h2>
 <p>You can customize the rendering surface by overriding the control template:</p>
-<pre><code class="lang-xml">&lt;skia:SKLottieView Source=&quot;animation.json&quot;&gt;
-    &lt;skia:SKLottieView.ControlTemplate&gt;
-        &lt;ControlTemplate&gt;
-            &lt;!-- Use SKGLView for GPU-accelerated rendering --&gt;
-            &lt;skia:SKGLView x:Name=&quot;PART_DrawingSurface&quot; /&gt;
-        &lt;/ControlTemplate&gt;
-    &lt;/skia:SKLottieView.ControlTemplate&gt;
-&lt;/skia:SKLottieView&gt;
+<pre><code class="lang-xml">&lt;ContentPage
+    xmlns:skia=&quot;clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI&quot;
+    xmlns:views=&quot;clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls&quot;&gt;
+
+    &lt;skia:SKLottieView Source=&quot;animation.json&quot;&gt;
+        &lt;skia:SKLottieView.ControlTemplate&gt;
+            &lt;ControlTemplate&gt;
+                &lt;!-- Use SKGLView for GPU-accelerated rendering --&gt;
+                &lt;views:SKGLView x:Name=&quot;PART_DrawingSurface&quot; /&gt;
+            &lt;/ControlTemplate&gt;
+        &lt;/skia:SKLottieView.ControlTemplate&gt;
+    &lt;/skia:SKLottieView&gt;
+&lt;/ContentPage&gt;
 </code></pre>
 <p>The <code>PART_DrawingSurface</code> name is required — it can be either <code>SKCanvasView</code> (software) or <code>SKGLView</code> (GPU).</p>
 <h2 id="learn-more">Learn More</h2>
@@ -290,7 +303,7 @@ lottieView.AnimationCompleted += (s, e) =&gt;
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 62b76f2
+          source: PR #365 · 02602bb
         </div>
       </div>
     </footer>

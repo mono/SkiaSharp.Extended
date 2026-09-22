@@ -792,7 +792,9 @@ Or use the canvas extension methods which take position parameters directly.
 # Blazor Lottie Animations
 
 [`SKLottieView`](xref:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView) plays
-Lottie JSON in Blazor with SkiaSharp. It uses the shared
+Lottie JSON in Blazor WebAssembly and Interactive WebAssembly with SkiaSharp.
+It does not support Interactive Server or unrestricted Interactive Auto because
+SkiaSharp's browser rendering host must be interactive in the browser. It uses the shared
 [`SKLottiePlayer`](lottie-player.md) engine with
 [`SKAnimatedSurfaceView`](animated-surface-blazor.md). The surface owns the
 browser render loop and timing, so frames are updated and painted together
@@ -831,7 +833,7 @@ and playback has not completed.
 
 ## Rendering Surface
 
-`SKLottieView` inherits the generic surface's rendering options. Canvas is the
+`SKLottieView` composes and forwards the generic surface's rendering options. Canvas is the
 default; select OpenGL when your app benefits from SkiaSharp's GPU-backed
 Blazor view. Set `IgnorePixelScaling` when the canvas should use CSS pixels
 rather than physical pixels:
@@ -893,13 +895,42 @@ Pause or resume by binding `IsAnimationEnabled`; call `Restart()` through an
 ## Events and State
 
 `AnimationLoaded`, `AnimationFailed`, and `AnimationCompleted` report load and
-playback transitions. `AnimationUpdated` fires after each animation frame; use
-it only when your surrounding UI needs live playback state, as that callback
-may request its own component render.
+playback transitions. Completion is dispatched after the frame update has been
+rendered; there is deliberately no per-frame async callback.
 
 Read `IsLoading`, `HasAnimation`, `Duration`, `Progress`, and `IsComplete`
 through an `@ref`. Additional attributes such as `style` and `class` are passed
 to the underlying canvas.
+
+## Loading Sources
+
+Strings, including the quick-start example, are URLs relative to `wwwroot` or
+absolute URLs. URI loading uses the optional `HttpClient` parameter first, then
+the app's registered default `HttpClient`. Supply your authenticated client
+when an endpoint needs credentials:
+
+```razor
+<SKLottieView Source="@SKLottieImageSource.FromUri(new Uri("api/animation", UriKind.Relative))"
+              HttpClient="@authenticatedClient" />
+```
+
+For data that is already in your app, use raw JSON, a copied byte payload, or
+a stream factory. The factory must return a fresh readable stream every time;
+the component disposes each stream after reading it. This keeps database, blob,
+and application-service integrations in your app layer rather than in the
+control API:
+
+```csharp
+var source = SKLottieImageSource.FromStream(
+    cancellationToken => new ValueTask<Stream>(
+        blobStore.OpenAnimationAsync(cancellationToken)));
+```
+
+Use `SKLottieImageSource.FromJson(json)` or `FromBytes(bytes)` when your app
+already has the payload. Browser storage and `InputFile` are also app-layer
+concerns. The sample page uses an `InputFile` picker with a 5 MiB limit and
+converts the selected JSON into `FromBytes`; picker types are not part of the
+library API. Call `ReloadAsync()` to intentionally reload an equal source.
 
 ## Learn More
 
@@ -939,7 +970,7 @@ Lottie brings designer-created animations to your .NET MAUI apps. Instead of man
 ### Add to your XAML
 
 ```xml
-<ContentPage xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI.Maui">
+<ContentPage xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI">
 
     <skia:SKLottieView
         Source="animation.json"
@@ -959,8 +990,8 @@ lottieView.Source = new SKFileLottieImageSource { File = "animation.json" };
 // From a URL
 lottieView.Source = new SKUriLottieImageSource { Uri = new Uri("https://...") };
 
-// From a stream
-lottieView.Source = new SKStreamLottieImageSource { Stream = myStream };
+// From a stream factory. Return a fresh stream for each reload.
+lottieView.Source = new SKStreamLottieImageSource { Stream = _ => OpenAnimationStreamAsync() };
 ```
 
 ## Playback Control
@@ -982,6 +1013,15 @@ lottieView.Source = new SKStreamLottieImageSource { Stream = myStream };
 ```
 
 > **Under the hood:** The MAUI `SKLottieView` translates `RepeatCount` and `RepeatMode` into [`SKLottieRepeat`](xref:SkiaSharp.Extended.SKLottieRepeat) values on the shared [`SKLottiePlayer`](lottie-player.md). `Reverse` with `RepeatCount="0"` still plays one full forward/back cycle; restart mode with `0` plays once.
+
+The built-in file, URI, and stream sources create a fresh owned native
+animation for each load. Public `SKLottieAnimation(Animation?)` wrappers remain
+caller-owned for compatibility. The legacy `SKLottieImageSource.FromStream(Stream)`
+snapshots the unread bytes (up to 32 MiB) without taking ownership of the input,
+then uses fresh memory streams for reloads; its input stream position advances
+to the end. Keep picker and application-service code in your app. For example,
+the sample's **Select Lottie JSON** button uses `FilePicker` and supplies
+`file.OpenReadAsync()` as a reloadable stream factory.
 
 ### Speed and direction
 
@@ -1061,14 +1101,19 @@ Or create your own in Adobe After Effects using the [Bodymovin plugin](https://g
 You can customize the rendering surface by overriding the control template:
 
 ```xml
-<skia:SKLottieView Source="animation.json">
-    <skia:SKLottieView.ControlTemplate>
-        <ControlTemplate>
-            <!-- Use SKGLView for GPU-accelerated rendering -->
-            <skia:SKGLView x:Name="PART_DrawingSurface" />
-        </ControlTemplate>
-    </skia:SKLottieView.ControlTemplate>
-</skia:SKLottieView>
+<ContentPage
+    xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+    xmlns:views="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls">
+
+    <skia:SKLottieView Source="animation.json">
+        <skia:SKLottieView.ControlTemplate>
+            <ControlTemplate>
+                <!-- Use SKGLView for GPU-accelerated rendering -->
+                <views:SKGLView x:Name="PART_DrawingSurface" />
+            </ControlTemplate>
+        </skia:SKLottieView.ControlTemplate>
+    </skia:SKLottieView>
+</ContentPage>
 ```
 
 The `PART_DrawingSurface` name is required — it can be either `SKCanvasView` (software) or `SKGLView` (GPU).

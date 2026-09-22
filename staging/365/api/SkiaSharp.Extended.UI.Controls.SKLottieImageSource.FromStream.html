@@ -163,7 +163,7 @@ Method FromStream  <a class="header-action link-secondary" title="View source" h
   <a class="header-action link-secondary" title="View source" href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/source/SkiaSharp.Extended.UI.Maui/Controls/Lottie/SKLottieImageSource.shared.cs"><i class="bi bi-code-slash"></i></a>
 </h3>
 
-<div class="markdown level1 summary"><p>Creates a Lottie image source from a stream.</p>
+<div class="markdown level1 summary"><p>Creates a replayable Lottie image source from the unread bytes in a stream.</p>
 </div>
 <div class="markdown level1 conceptual"></div>
 
@@ -174,14 +174,14 @@ Method FromStream  <a class="header-action link-secondary" title="View source" h
 <h4 class="section">Parameters</h4>
 <dl class="parameters">
   <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
-  <dd><p>The stream containing the animation data.</p>
+  <dd><p>The stream to snapshot. The caller retains ownership; its position advances to its end.</p>
 </dd>
 </dl>
 
 <h4 class="section">Returns</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
-  <dd><p>An <a class="xref" href="SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.html">SKStreamLottieImageSource</a>.</p>
+  <dd><p>An <a class="xref" href="SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.html">SKStreamLottieImageSource</a> that produces a fresh memory stream for every load.</p>
 </dd>
 </dl>
 
@@ -191,6 +191,10 @@ Method FromStream  <a class="header-action link-secondary" title="View source" h
 
 
 
+<h4 class="section" id="SkiaSharp_Extended_UI_Controls_SKLottieImageSource_FromStream_System_IO_Stream__remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>This overload preserves the legacy signature while avoiding a disposed one-shot source.
+Keep the input reasonably sized: snapshots larger than 32 MiB are rejected.</p>
+</div>
 
 
 
@@ -214,7 +218,7 @@ Method FromStream  <a class="header-action link-secondary" title="View source" h
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 62b76f2
+          source: PR #365 · 02602bb
         </div>
       </div>
     </footer>
