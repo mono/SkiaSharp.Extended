@@ -35,6 +35,8 @@ internal sealed class SKGestureDetector : IDisposable
 	private PinchState _pinchState;
 	private bool _longPressTriggered;
 	private long _touchStartTicks;
+	private long _operationVersion;
+	private bool _isEnabled = true;
 	private bool _disposed;
 
 	/// <summary>
@@ -78,7 +80,19 @@ internal sealed class SKGestureDetector : IDisposable
 	/// <see langword="true"/> if the detector processes touch events; otherwise, <see langword="false"/>.
 	/// The default is <see langword="true"/>. When disabled, all <c>ProcessTouch*</c> methods return <see langword="false"/>.
 	/// </value>
-	public bool IsEnabled { get; set; } = true;
+	public bool IsEnabled
+	{
+		get => _isEnabled;
+		set
+		{
+			if (_isEnabled == value)
+				return;
+
+			_isEnabled = value;
+			if (!value)
+				Reset();
+		}
+	}
 
 	/// <summary>
 	/// Gets a value indicating whether a gesture is currently in progress.
@@ -185,6 +199,7 @@ internal sealed class SKGestureDetector : IDisposable
 		if (!IsEnabled || _disposed)
 			return false;
 
+		_operationVersion++;
 		var ticks = _clock.GetTimestamp();
 
 		_touches[id] = new TouchState(location, isMouse);
@@ -196,7 +211,15 @@ internal sealed class SKGestureDetector : IDisposable
 			_touchStartTicks = ticks;
 			_longPressTriggered = false;
 			// Start the long press timer only on the first finger (not on 2nd+ during pinch)
-			StartLongPressTimer();
+			try
+			{
+				StartLongPressTimer();
+			}
+			catch
+			{
+				Reset();
+				throw;
+			}
 		}
 
 		// Check for double tap using the last completed tap location
@@ -213,30 +236,29 @@ internal sealed class SKGestureDetector : IDisposable
 
 		var touchPoints = GetActiveTouchPoints();
 
-		if (touchPoints.Length > 0)
+		if (touchPoints.Length == 0)
+			return false;
+
+		if (touchPoints.Length >= 2)
 		{
-			// Only raise GestureStarted for the first touch
-			if (_touches.Count == 1)
-				OnGestureStarted(new SKGestureLifecycleEventArgs());
-
-			if (touchPoints.Length >= 2)
-			{
-				StopLongPressTimer();
-				_tapCount = 0;
-				_lastTapTicks = 0;
-				_pinchState = PinchState.FromLocations(touchPoints);
-				_gestureState = GestureState.Pinching;
-			}
-			else
-			{
-				_pinchState = new PinchState(touchPoints[0], 0, 0);
-				_gestureState = GestureState.Detecting;
-			}
-
-			return true;
+			StopLongPressTimer();
+			_tapCount = 0;
+			_lastTapTicks = 0;
+			_pinchState = PinchState.FromLocations(touchPoints);
+			_gestureState = GestureState.Pinching;
+		}
+		else
+		{
+			_pinchState = new PinchState(touchPoints[0], 0, 0);
+			_gestureState = GestureState.Detecting;
 		}
 
-		return false;
+		// Commit the initial state before notifying consumers so Reset, Dispose, or a
+		// reentrant contact cannot be overwritten after the callback returns.
+		if (_touches.Count == 1)
+			OnGestureStarted(new SKGestureLifecycleEventArgs());
+
+		return true;
 	}
 
 	/// <summary>
@@ -263,9 +285,15 @@ internal sealed class SKGestureDetector : IDisposable
 		if (!_touches.TryGetValue(id, out var existingTouch))
 			return false;
 
+		var operationVersion = ++_operationVersion;
+		ProcessContactMove(id, location, ticks, existingTouch, operationVersion);
+		return true;
+	}
+
+	private void ProcessContactMove(long id, SKPoint location, long ticks, TouchState existingTouch, long operationVersion)
+	{
 		_touches[id] = new TouchState(location, existingTouch.IsMouse);
 		_flingTracker.AddEvent(id, location, ticks);
-
 		var touchPoints = GetActiveTouchPoints();
 		var distance = SKPoint.Distance(location, _initialTouch);
 
@@ -285,8 +313,9 @@ internal sealed class SKGestureDetector : IDisposable
 				if (touchPoints.Length == 1)
 				{
 					var velocity = _flingTracker.CalculateVelocity(id, ticks);
-					OnPanDetected(new SKPanGestureEventArgs(location, _pinchState.Center, velocity));
+					var previousLocation = _pinchState.Center;
 					_pinchState = new PinchState(location, 0, 0);
+					OnPanDetected(new SKPanGestureEventArgs(location, previousLocation, velocity));
 				}
 				break;
 
@@ -294,22 +323,23 @@ internal sealed class SKGestureDetector : IDisposable
 				if (touchPoints.Length >= 2)
 				{
 					var newPinch = PinchState.FromLocations(touchPoints);
+					var previousPinch = _pinchState;
+					_pinchState = newPinch;
 
 					// Calculate scale
-					var scaleDelta = _pinchState.Radius > 0 ? newPinch.Radius / _pinchState.Radius : 1f;
-					OnPinchDetected(new SKPinchGestureEventArgs(newPinch.Center, _pinchState.Center, scaleDelta));
+					var scaleDelta = previousPinch.Radius > 0 ? newPinch.Radius / previousPinch.Radius : 1f;
+					OnPinchDetected(new SKPinchGestureEventArgs(newPinch.Center, previousPinch.Center, scaleDelta));
+
+					if (!IsCurrentOperation(operationVersion) || _gestureState != GestureState.Pinching)
+						return;
 
 					// Calculate rotation
-					var rotationDelta = newPinch.Angle - _pinchState.Angle;
+					var rotationDelta = newPinch.Angle - previousPinch.Angle;
 					rotationDelta = NormalizeAngle(rotationDelta);
-					OnRotateDetected(new SKRotateGestureEventArgs(newPinch.Center, _pinchState.Center, rotationDelta));
-
-					_pinchState = newPinch;
+					OnRotateDetected(new SKRotateGestureEventArgs(newPinch.Center, previousPinch.Center, rotationDelta));
 				}
 				break;
 		}
-
-		return true;
 	}
 
 	/// <summary>
@@ -323,35 +353,85 @@ internal sealed class SKGestureDetector : IDisposable
 		if (!IsEnabled || _disposed)
 			return false;
 
-		StopLongPressTimer();
-		var ticks = _clock.GetTimestamp();
-
 		if (!_touches.TryGetValue(id, out var releasedTouch))
 			return false;
 
+		var operationVersion = ++_operationVersion;
+		StopLongPressTimer();
+		var ticks = _clock.GetTimestamp();
+
+		// Some platforms only report the final movement with pointer-up. Feed that sample
+		// through the normal movement and velocity path, but avoid duplicating an unchanged
+		// final point.
+		if (releasedTouch.Location != location)
+		{
+			ProcessContactMove(id, location, ticks, releasedTouch, operationVersion);
+			if (!IsCurrentOperation(operationVersion) || !_touches.TryGetValue(id, out releasedTouch))
+				return true;
+		}
+
 		// The device type recorded at touch-down is authoritative.
 		var storedIsMouse = releasedTouch.IsMouse;
+		var releasedGestureState = _gestureState;
+		var velocity = releasedGestureState == GestureState.Panning
+			? _flingTracker.CalculateVelocity(id, ticks)
+			: SKPoint.Empty;
 
 		_touches.Remove(id);
 
 		var touchPoints = GetActiveTouchPoints();
 		var handled = false;
 
-		// Check for fling — only after a single-finger pan, not after pinch/rotate
-		if (touchPoints.Length == 0 && _gestureState == GestureState.Panning)
+		// Commit the next state before callbacks so reentrant Reset, Dispose, or new
+		// contacts cannot be overwritten by stale release processing.
+		if (touchPoints.Length == 0)
 		{
-			var velocity = _flingTracker.CalculateVelocity(id, ticks);
+			_gestureState = GestureState.None;
+			_pinchState = default;
+		}
+		else if (touchPoints.Length == 1)
+		{
+			if (releasedGestureState == GestureState.Pinching)
+			{
+				_initialTouch = touchPoints[0];
+				_flingTracker.Clear();
+			}
+			_gestureState = GestureState.Panning;
+			_pinchState = new PinchState(touchPoints[0], 0, 0);
+		}
+		else
+		{
+			_pinchState = PinchState.FromLocations(touchPoints);
+		}
+
+		_flingTracker.RemoveId(id);
+
+		// Publish the completed interaction before outcome callbacks such as tap or fling.
+		// Those callbacks may synchronously start another contact, and lifecycle consumers
+		// must observe the old interaction ending before the new one starts.
+		if (touchPoints.Length == 0 && releasedGestureState != GestureState.None)
+		{
+			OnGestureEnded(new SKGestureLifecycleEventArgs());
+			if (!IsCurrentOperation(operationVersion))
+				return handled;
+		}
+
+		// Check for fling — only after a single-finger pan, not after pinch/rotate
+		if (touchPoints.Length == 0 && releasedGestureState == GestureState.Panning)
+		{
 			var velocityMagnitude = (float)Math.Sqrt(velocity.X * velocity.X + velocity.Y * velocity.Y);
 
 			if (velocityMagnitude > Options.FlingThreshold)
 			{
 				OnFlingDetected(new SKFlingGestureEventArgs(velocity));
 				handled = true;
+				if (!IsCurrentOperation(operationVersion))
+					return handled;
 			}
 		}
 
 		// Check for tap — only if we haven't transitioned to panning/pinching
-		if (touchPoints.Length == 0 && _gestureState == GestureState.Detecting)
+		if (touchPoints.Length == 0 && releasedGestureState == GestureState.Detecting)
 		{
 			var distance = SKPoint.Distance(location, _initialTouch);
 			var duration = ticks - _touchStartTicks;
@@ -364,14 +444,17 @@ internal sealed class SKGestureDetector : IDisposable
 
 				if (_tapCount > 1)
 				{
-					OnDoubleTapDetected(new SKTapGestureEventArgs(location, _tapCount));
+					var tapCount = _tapCount;
 					_tapCount = 0;
+					OnDoubleTapDetected(new SKTapGestureEventArgs(location, tapCount));
 				}
 				else
 				{
 					OnTapDetected(new SKTapGestureEventArgs(location, 1));
 				}
 				handled = true;
+				if (!IsCurrentOperation(operationVersion))
+					return handled;
 			}
 			else
 			{
@@ -380,35 +463,6 @@ internal sealed class SKGestureDetector : IDisposable
 				_tapCount = 0;
 				_lastTapTicks = 0;
 			}
-		}
-
-		_flingTracker.RemoveId(id);
-
-		// Transition gesture state
-		if (touchPoints.Length == 0)
-		{
-			if (_gestureState != GestureState.None)
-			{
-				OnGestureEnded(new SKGestureLifecycleEventArgs());
-				_gestureState = GestureState.None;
-			}
-		}
-		else if (touchPoints.Length == 1)
-		{
-			// Transition from pinch to pan
-			if (_gestureState == GestureState.Pinching)
-			{
-				_initialTouch = touchPoints[0];
-				// Clear velocity history so rotation movement doesn't cause a fling
-				_flingTracker.Clear();
-			}
-			_gestureState = GestureState.Panning;
-			_pinchState = new PinchState(touchPoints[0], 0, 0);
-		}
-		else if (touchPoints.Length >= 2)
-		{
-			// Recalculate pinch state for remaining fingers to avoid jumps
-			_pinchState = PinchState.FromLocations(touchPoints);
 		}
 
 		return handled;
@@ -424,23 +478,25 @@ internal sealed class SKGestureDetector : IDisposable
 		if (!IsEnabled || _disposed)
 			return false;
 
+		if (!_touches.ContainsKey(id))
+			return false;
+
+		_operationVersion++;
 		StopLongPressTimer();
 		_touches.Remove(id);
 		_flingTracker.RemoveId(id);
 
 		var touchPoints = GetActiveTouchPoints();
+		var previousState = _gestureState;
 		if (touchPoints.Length == 0)
 		{
-			if (_gestureState != GestureState.None)
-			{
-				OnGestureEnded(new SKGestureLifecycleEventArgs());
-				_gestureState = GestureState.None;
-			}
+			_gestureState = GestureState.None;
+			_pinchState = default;
 		}
 		else if (touchPoints.Length == 1)
 		{
 			// Transition from pinch to pan when one finger is cancelled
-			if (_gestureState == GestureState.Pinching)
+			if (previousState == GestureState.Pinching)
 			{
 				_initialTouch = touchPoints[0];
 				// Clear velocity history so rotation movement doesn't cause a fling
@@ -454,6 +510,9 @@ internal sealed class SKGestureDetector : IDisposable
 			// Recalculate pinch state for remaining fingers to avoid jumps
 			_pinchState = PinchState.FromLocations(touchPoints);
 		}
+
+		if (touchPoints.Length == 0 && previousState != GestureState.None)
+			OnGestureEnded(new SKGestureLifecycleEventArgs());
 
 		return true;
 	}
@@ -480,6 +539,7 @@ internal sealed class SKGestureDetector : IDisposable
 	/// </summary>
 	public void Reset()
 	{
+		_operationVersion++;
 		StopLongPressTimer();
 		_touches.Clear();
 		_flingTracker.Clear();
@@ -539,6 +599,9 @@ internal sealed class SKGestureDetector : IDisposable
 			}
 		}
 	}
+
+	private bool IsCurrentOperation(long operationVersion)
+		=> !_disposed && IsEnabled && _operationVersion == operationVersion;
 
 	private SKPoint[] GetActiveTouchPoints()
 	{

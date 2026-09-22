@@ -72,7 +72,9 @@ tracker.IsScrollZoomEnabled = false;
 tracker.IsHoverEnabled = false;
 ```
 
-When a gesture is disabled, the tracker suppresses its events. You can toggle any of these at runtime without losing transform state.
+When a gesture is disabled, the tracker suppresses its events. Setting `IsEnabled` to
+`false` also abandons active contacts and stops pending gesture animations, while preserving
+the current transform.
 
 ## Reading Transform State
 
@@ -88,7 +90,7 @@ SKMatrix matrix = tracker.Matrix;  // Combined transform matrix
 You can set the transform directly without any touch input:
 
 ```csharp
-// Reset everything back to identity
+// Reset rotation/offset and return scale to 1, clamped to the configured scale range
 tracker.Reset();
 
 // Set all values at once
@@ -114,7 +116,7 @@ tracker.ZoomTo(factor: 3f, focalPoint: new SKPoint(400, 300));
 bool animating = tracker.IsZoomAnimating;
 ```
 
-The animation duration and frame interval are controlled by `ZoomAnimationDuration` and `ZoomAnimationInterval` in the options.
+The animation duration and frame interval are controlled by `ZoomAnimationDuration` and `ZoomAnimationInterval` in the options. Set `ZoomAnimationDuration` to `TimeSpan.Zero` to apply the zoom synchronously.
 
 ## See Also
 

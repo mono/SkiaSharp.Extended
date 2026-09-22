@@ -20,6 +20,20 @@ tracker.DoubleTapDetected += (s, e) => Console.WriteLine("Double tap!");
 tracker.LongPressDetected += (s, e) => Console.WriteLine("Long press!");
 ```
 
+Create and use the tracker on its owning UI thread. If UI updates must run on that
+thread and your host doesn't install a `SynchronizationContext`, pass an explicit
+owner-thread dispatcher:
+
+```csharp
+var tracker = new SKGestureTracker(
+    new SKGestureTrackerOptions(),
+    callback => uiDispatcher.Invoke(callback));
+```
+
+Animation and long-press callbacks are serialized through that dispatcher. Without a
+context or dispatcher, callbacks remain serialized for compatibility but run on timer
+threads. The Blazor sample uses `ComponentBase.InvokeAsync` to preserve UI affinity.
+
 ### 2. Feed touch events from your platform
 
 **MAUI** — forward `SKTouchEventArgs`:
@@ -58,6 +72,11 @@ private void OnPointerDown(PointerEventArgs e)
     tracker.ProcessTouchDown(e.PointerId, location, e.PointerType == "mouse");
 }
 ```
+
+Capture the pointer on pointer-down so drags continue to receive move and release events
+after leaving the canvas, and treat `lostpointercapture` as cancellation. See the
+[Blazor sample](https://github.com/mono/SkiaSharp.Extended/tree/main/samples/SkiaSharpDemo.Blazor/Pages/Gestures.razor)
+for the JavaScript interop.
 
 ### 3. Apply the transform when drawing
 

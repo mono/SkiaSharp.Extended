@@ -141,5 +141,54 @@ public class SKGestureTrackerFlingTests
 		tracker.Dispose();
 	}
 
+	[Fact]
+	public void DelayedFlingFrame_IntegratesDecayAcrossElapsedTime()
+	{
+		var tracker = CreateTracker();
+		tracker.Options.FlingFrameInterval = TimeSpan.FromMilliseconds(100);
+		tracker.Options.FlingFriction = 0.5f;
+		tracker.Options.FlingMinVelocity = 1f;
+		SKFlingGestureEventArgs? detected = null;
+		SKFlingGestureEventArgs? updated = null;
+		tracker.FlingDetected += (_, e) => detected = e;
+		tracker.FlingUpdated += (_, e) => updated = e;
+
+		SimulateFastSwipe(tracker, new SKPoint(0, 0), new SKPoint(200, 0));
+		var offsetBeforeFrame = tracker.Offset.X;
+
+		_clock.AdvanceAndRunNext(TimeSpan.FromSeconds(1));
+
+		Assert.NotNull(detected);
+		Assert.NotNull(updated);
+		var elapsedFrames = 1d / tracker.Options.FlingFrameInterval.TotalSeconds;
+		var decay = Math.Pow(1d - tracker.Options.FlingFriction, elapsedFrames);
+		var expectedSeconds = tracker.Options.FlingFrameInterval.TotalSeconds *
+			(1d - decay) / tracker.Options.FlingFriction;
+		var expectedDelta = detected.Velocity.X * expectedSeconds;
+
+		Assert.Equal(expectedDelta, updated.Delta.X, 2);
+		Assert.Equal(expectedDelta, tracker.Offset.X - offsetBeforeFrame, 2);
+		Assert.True(updated.Delta.X < detected.Velocity.X);
+	}
+
+	[Fact]
+	public void NominalFlingFrame_PreservesConfiguredPerFrameDistance()
+	{
+		var tracker = CreateTracker();
+		tracker.Options.FlingFrameInterval = TimeSpan.FromMilliseconds(100);
+		tracker.Options.FlingFriction = 0.5f;
+		tracker.Options.FlingMinVelocity = 1f;
+		SKFlingGestureEventArgs? detected = null;
+		SKFlingGestureEventArgs? updated = null;
+		tracker.FlingDetected += (_, e) => detected = e;
+		tracker.FlingUpdated += (_, e) => updated = e;
+
+		SimulateFastSwipe(tracker, new SKPoint(0, 0), new SKPoint(200, 0));
+		_clock.AdvanceAndRunNext(TimeSpan.FromMilliseconds(100));
+
+		Assert.NotNull(detected);
+		Assert.NotNull(updated);
+		Assert.Equal(detected.Velocity.X * 0.1f, updated.Delta.X, 2);
+	}
 
 }

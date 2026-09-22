@@ -163,7 +163,7 @@ tracker.HoverDetected += (s, e) =>
 
 ## Double Tap Zoom
 
-By default, double-tapping zooms in by `DoubleTapZoomFactor` (2×). Double-tapping again at max scale resets to 1×. The zoom animates smoothly over `ZoomAnimationDuration` milliseconds.
+By default, double-tapping zooms in by `DoubleTapZoomFactor` (2×). Double-tapping again at max scale resets toward 1×, clamped to the configured scale range. The zoom animates smoothly over `ZoomAnimationDuration` milliseconds.
 
 To use double tap for your own logic instead, set `e.Handled = true` in your `DoubleTapDetected` handler, or disable it entirely:
 

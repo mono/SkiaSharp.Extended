@@ -65,6 +65,35 @@ internal sealed class FakeGestureClock : ISKGestureClock
 		_ticks = target;
 	}
 
+	/// <summary>
+	/// Simulates a delayed timer callback by advancing time and invoking only the next due
+	/// callback once, coalescing any missed periodic ticks.
+	/// </summary>
+	public void AdvanceAndRunNext(TimeSpan by)
+	{
+		_ticks += by.Ticks;
+
+		Scheduled? next = null;
+		foreach (var scheduled in _scheduled)
+		{
+			if (scheduled.Removed || scheduled.NextTicks > _ticks)
+				continue;
+			if (next is null || scheduled.NextTicks < next.NextTicks)
+				next = scheduled;
+		}
+
+		if (next is null)
+			return;
+
+		if (next.PeriodTicks > 0)
+			next.NextTicks = _ticks + next.PeriodTicks;
+		else
+			next.Removed = true;
+
+		next.OnTick();
+		_scheduled.RemoveAll(x => x.Removed);
+	}
+
 	private sealed class Scheduled : IDisposable
 	{
 		public long NextTicks;

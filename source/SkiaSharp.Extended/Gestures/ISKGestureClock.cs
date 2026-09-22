@@ -21,25 +21,37 @@ internal interface ISKGestureClock
 	/// <see cref="TimeSpan.Zero"/> schedules a single (one-shot) callback.
 	/// </summary>
 	/// <remarks>
-	/// Implementations must invoke <paramref name="onTick"/> on the same thread that called
-	/// <see cref="Schedule"/> (the UI thread). Dispose the returned handle to cancel; once disposed,
-	/// no further callbacks are invoked (including any already marshalled but not yet run).
+	/// Implementations must serialize callbacks. Production callers should marshal them to the
+	/// tracker owner thread when UI thread affinity is required. Dispose the returned handle to
+	/// cancel; once disposed, no further callbacks are invoked (including any already marshalled
+	/// but not yet run).
 	/// </remarks>
 	IDisposable Schedule(TimeSpan dueTime, TimeSpan period, Action onTick);
 }
 
 /// <summary>
 /// The default <see cref="ISKGestureClock"/> used in production. Reads wall-clock time from
-/// <see cref="DateTime.UtcNow"/> and schedules callbacks with <see cref="Timer"/>. When a
-/// <see cref="SynchronizationContext"/> is present (the UI thread on MAUI/WPF/WinUI), each callback
-/// is marshalled back to it; on single-threaded hosts such as Blazor WebAssembly, where no
-/// <see cref="SynchronizationContext"/> exists, the callback runs directly on the timer's thread
-/// (which is the single main thread).
+/// <see cref="DateTime.UtcNow"/> and schedules callbacks with <see cref="Timer"/>. Callbacks are
+/// marshalled through an explicitly supplied dispatcher or through the
+/// <see cref="SynchronizationContext"/> active when <see cref="Schedule"/> is called. For
+/// compatibility, context-free callers run serialized callbacks on timer threads; UI hosts
+/// without a synchronization context should supply a dispatcher.
 /// </summary>
 internal sealed class SystemGestureClock : ISKGestureClock
 {
 	/// <summary>Gets the shared default instance.</summary>
 	public static readonly SystemGestureClock Default = new();
+
+	private readonly Action<Action>? _dispatcher;
+
+	public SystemGestureClock()
+	{
+	}
+
+	public SystemGestureClock(Action<Action> dispatcher)
+	{
+		_dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+	}
 
 	/// <inheritdoc />
 	public long GetTimestamp() => DateTime.UtcNow.Ticks;
@@ -50,30 +62,46 @@ internal sealed class SystemGestureClock : ISKGestureClock
 		if (onTick is null)
 			throw new ArgumentNullException(nameof(onTick));
 
-		// Capture the current context — the UI thread on MAUI/WPF/WinUI. On single-threaded
-		// hosts such as Blazor WebAssembly there is no SynchronizationContext; there the timer
-		// callback already runs on the single main thread, so it is invoked directly.
 		var context = SynchronizationContext.Current;
+		var runInline = _dispatcher is null && context is null;
 
-		return new ScheduledTimer(dueTime, period, onTick, context);
+		return new ScheduledTimer(dueTime, period, onTick, _dispatcher, context, runInline);
 	}
 
 	private sealed class ScheduledTimer : IDisposable
 	{
 		private readonly Action _onTick;
+		private readonly Action<Action>? _dispatcher;
 		private readonly SynchronizationContext? _context;
 		private readonly SendOrPostCallback _post;
+		private readonly bool _runInline;
 		private Timer? _timer;
 		private int _disposed;
+		private int _callbackPending;
 
-		public ScheduledTimer(TimeSpan dueTime, TimeSpan period, Action onTick, SynchronizationContext? context)
+		public ScheduledTimer(
+			TimeSpan dueTime,
+			TimeSpan period,
+			Action onTick,
+			Action<Action>? dispatcher,
+			SynchronizationContext? context,
+			bool runInline)
 		{
 			_onTick = onTick;
+			_dispatcher = dispatcher;
 			_context = context;
+			_runInline = runInline;
 			_post = _ =>
 			{
-				if (Volatile.Read(ref _disposed) == 0)
-					_onTick();
+				try
+				{
+					if (Volatile.Read(ref _disposed) == 0)
+						_onTick();
+				}
+				finally
+				{
+					Volatile.Write(ref _callbackPending, 0);
+				}
 			};
 
 			var repeat = period == TimeSpan.Zero ? Timeout.InfiniteTimeSpan : period;
@@ -85,10 +113,25 @@ internal sealed class SystemGestureClock : ISKGestureClock
 			if (Volatile.Read(ref _disposed) != 0)
 				return;
 
-			if (_context != null)
-				_context.Post(_post, null);
-			else
-				_post(null); // single-threaded host (e.g. Blazor WebAssembly): run inline
+			// Coalesce timer ticks while the previous callback is queued or executing. This
+			// prevents concurrent access even when a dispatcher is temporarily backlogged.
+			if (Interlocked.CompareExchange(ref _callbackPending, 1, 0) != 0)
+				return;
+
+			try
+			{
+				if (_dispatcher != null)
+					_dispatcher(() => _post(null));
+				else if (_context != null)
+					_context.Post(_post, null);
+				else if (_runInline)
+					_post(null);
+			}
+			catch
+			{
+				Volatile.Write(ref _callbackPending, 0);
+				throw;
+			}
 		}
 
 		public void Dispose()

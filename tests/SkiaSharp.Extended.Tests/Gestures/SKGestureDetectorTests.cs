@@ -1051,4 +1051,114 @@ public class SKGestureDetectorTests
 		Assert.Equal(0, doubleTapCount);
 	}
 
+	[Fact]
+	public void GestureStarted_ResetInHandler_DoesNotReactivateGesture()
+	{
+		var engine = CreateEngine();
+		engine.GestureStarted += (_, _) => engine.Reset();
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+
+		Assert.False(engine.IsGestureActive);
+		Assert.False(engine.ProcessTouchUp(1, new SKPoint(100, 100)));
+	}
+
+	[Fact]
+	public void GestureEnded_NewContactInHandler_RemainsActive()
+	{
+		var engine = CreateEngine();
+		engine.GestureEnded += (_, _) => engine.ProcessTouchDown(2, new SKPoint(200, 200));
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(120, 100));
+		engine.ProcessTouchUp(1, new SKPoint(120, 100));
+
+		Assert.True(engine.IsGestureActive);
+		Assert.True(engine.ProcessTouchMove(2, new SKPoint(220, 200)));
+	}
+
+	[Fact]
+	public void TapHandler_NewContact_ObservesPreviousGestureEndFirst()
+	{
+		var engine = CreateEngine();
+		var events = new List<string>();
+		engine.GestureStarted += (_, _) => events.Add("started");
+		engine.GestureEnded += (_, _) => events.Add("ended");
+		engine.TapDetected += (_, _) =>
+		{
+			events.Add("tap");
+			engine.ProcessTouchDown(2, new SKPoint(300, 300));
+		};
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(50);
+		engine.ProcessTouchUp(1, new SKPoint(100, 100));
+
+		Assert.Equal(new[] { "started", "ended", "tap", "started" }, events);
+		Assert.True(engine.IsGestureActive);
+	}
+
+	[Fact]
+	public void FlingHandler_NewContact_ObservesPreviousGestureEndFirst()
+	{
+		var engine = CreateEngine();
+		var events = new List<string>();
+		engine.GestureStarted += (_, _) => events.Add("started");
+		engine.GestureEnded += (_, _) => events.Add("ended");
+		engine.FlingDetected += (_, _) =>
+		{
+			events.Add("fling");
+			engine.ProcessTouchDown(2, new SKPoint(300, 300));
+		};
+
+		engine.ProcessTouchDown(1, new SKPoint(0, 0));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(100, 0));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(200, 0));
+
+		Assert.Equal(new[] { "started", "ended", "fling", "started" }, events);
+		Assert.True(engine.IsGestureActive);
+	}
+
+	[Fact]
+	public void UnknownReleaseEvents_DoNotCancelValidLongPress()
+	{
+		var engine = CreateEngine();
+		var longPressCount = 0;
+		engine.LongPressDetected += (_, _) => longPressCount++;
+
+		engine.ProcessTouchDown(1, new SKPoint(100, 100));
+		AdvanceTime(100);
+
+		Assert.False(engine.ProcessTouchUp(999, new SKPoint(0, 0)));
+		Assert.False(engine.ProcessTouchCancel(999));
+
+		AdvanceTime(500);
+		Assert.Equal(1, longPressCount);
+		Assert.True(engine.IsGestureActive);
+	}
+
+	[Fact]
+	public void TouchUp_FinalLocationFlowsThroughPanAndVelocity()
+	{
+		var engine = CreateEngine();
+		SKPanGestureEventArgs? finalPan = null;
+		SKFlingGestureEventArgs? fling = null;
+		engine.PanDetected += (_, e) => finalPan = e;
+		engine.FlingDetected += (_, e) => fling = e;
+
+		engine.ProcessTouchDown(1, new SKPoint(0, 0));
+		AdvanceTime(10);
+		engine.ProcessTouchMove(1, new SKPoint(20, 0));
+		AdvanceTime(10);
+		engine.ProcessTouchUp(1, new SKPoint(100, 0));
+
+		Assert.NotNull(finalPan);
+		Assert.Equal(80f, finalPan.Delta.X, 3);
+		Assert.NotNull(fling);
+		Assert.True(fling.Velocity.X > 0);
+	}
+
 }

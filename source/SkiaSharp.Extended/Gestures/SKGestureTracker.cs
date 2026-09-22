@@ -57,6 +57,7 @@ public sealed class SKGestureTracker : IDisposable
 	private float _flingVelocityY;
 	private bool _isFlinging;
 	private long _flingLastFrameTimestamp; // clock ticks at last fling frame
+	private long _flingGeneration;
 
 	// Zoom animation state
 	private IDisposable? _zoomRegistration;
@@ -65,6 +66,8 @@ public sealed class SKGestureTracker : IDisposable
 	private float _zoomTargetFactor;
 	private SKPoint _zoomFocalPoint;
 	private long _zoomStartTicks;
+	private long _zoomGeneration;
+	private long _operationVersion;
 	private SKPoint? _gesturePivotOverride;
 
 	/// <summary>
@@ -81,9 +84,37 @@ public sealed class SKGestureTracker : IDisposable
 	/// <param name="options">The configuration options for gesture detection and tracking.</param>
 	/// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
 	public SKGestureTracker(SKGestureTrackerOptions options)
+		: this(options, (ISKGestureClock?)null)
+	{
+	}
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="SKGestureTracker"/> class with the specified
+	/// options and owner-thread dispatcher.
+	/// </summary>
+	/// <param name="options">The configuration options for gesture detection and tracking.</param>
+	/// <param name="dispatcher">
+	/// A dispatcher that serially invokes callbacks on the thread that owns this tracker.
+	/// </param>
+	/// <remarks>
+	/// Use this overload in hosts that do not provide a <see cref="System.Threading.SynchronizationContext"/>
+	/// but can explicitly marshal work to their UI thread.
+	/// </remarks>
+	/// <exception cref="ArgumentNullException">
+	/// <paramref name="options"/> or <paramref name="dispatcher"/> is <see langword="null"/>.
+	/// </exception>
+	public SKGestureTracker(SKGestureTrackerOptions options, Action<Action> dispatcher)
+		: this(options, new SystemGestureClock(dispatcher ?? throw new ArgumentNullException(nameof(dispatcher))))
+	{
+	}
+
+	private SKGestureTracker(SKGestureTrackerOptions options, ISKGestureClock? clock)
 	{
 		Options = options ?? throw new ArgumentNullException(nameof(options));
 		_engine = new SKGestureDetector(options);
+		if (clock != null)
+			_engine.Clock = clock;
+		_scale = Clamp(1f, Options.MinScale, Options.MaxScale);
 		SubscribeEngineEvents();
 	}
 
@@ -104,7 +135,10 @@ public sealed class SKGestureTracker : IDisposable
 	/// <param name="isMouse">Whether this event originates from a mouse device.</param>
 	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
 	public bool ProcessTouchDown(long id, SKPoint location, bool isMouse = false)
-		=> _engine.ProcessTouchDown(id, location, isMouse);
+	{
+		_operationVersion++;
+		return _engine.ProcessTouchDown(id, location, isMouse);
+	}
 
 	/// <summary>
 	/// Processes a touch move event.
@@ -117,7 +151,10 @@ public sealed class SKGestureTracker : IDisposable
 	/// </param>
 	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
 	public bool ProcessTouchMove(long id, SKPoint location, bool inContact = true)
-		=> _engine.ProcessTouchMove(id, location, inContact);
+	{
+		_operationVersion++;
+		return _engine.ProcessTouchMove(id, location, inContact);
+	}
 
 	/// <summary>
 	/// Processes a touch up event.
@@ -126,7 +163,10 @@ public sealed class SKGestureTracker : IDisposable
 	/// <param name="location">The final location of the touch in view coordinates.</param>
 	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
 	public bool ProcessTouchUp(long id, SKPoint location)
-		=> _engine.ProcessTouchUp(id, location);
+	{
+		_operationVersion++;
+		return _engine.ProcessTouchUp(id, location);
+	}
 
 	/// <summary>
 	/// Processes a touch cancel event.
@@ -134,7 +174,10 @@ public sealed class SKGestureTracker : IDisposable
 	/// <param name="id">The unique identifier for the cancelled touch pointer.</param>
 	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
 	public bool ProcessTouchCancel(long id)
-		=> _engine.ProcessTouchCancel(id);
+	{
+		_operationVersion++;
+		return _engine.ProcessTouchCancel(id);
+	}
 
 	/// <summary>
 	/// Processes a mouse wheel (scroll) event.
@@ -144,7 +187,10 @@ public sealed class SKGestureTracker : IDisposable
 	/// <param name="deltaY">The vertical scroll delta in v120 units, where <c>120</c> is one wheel notch.</param>
 	/// <returns><see langword="true"/> if the event was processed; otherwise, <see langword="false"/>.</returns>
 	public bool ProcessMouseWheel(SKPoint location, float deltaX, float deltaY)
-		=> _engine.ProcessMouseWheel(location, deltaX, deltaY);
+	{
+		_operationVersion++;
+		return _engine.ProcessMouseWheel(location, deltaX, deltaY);
+	}
 
 	#endregion
 
@@ -160,7 +206,22 @@ public sealed class SKGestureTracker : IDisposable
 	public bool IsEnabled
 	{
 		get => _engine.IsEnabled;
-		set => _engine.IsEnabled = value;
+		set
+		{
+			if (_engine.IsEnabled == value)
+				return;
+
+			if (!value)
+			{
+				_operationVersion++;
+				CancelFlingInternal();
+				StopZoomAnimation();
+				_isPanHandled = false;
+				_gesturePivotOverride = null;
+			}
+
+			_engine.IsEnabled = value;
+		}
 	}
 
 	/// <summary>
@@ -242,7 +303,16 @@ public sealed class SKGestureTracker : IDisposable
 
 	/// <summary>Gets or sets a value indicating whether pan gestures update the <see cref="Offset"/>.</summary>
 	/// <value><see langword="true"/> to apply pan deltas to the offset; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
-	public bool IsPanEnabled { get => Options.IsPanEnabled; set => Options.IsPanEnabled = value; }
+	public bool IsPanEnabled
+	{
+		get => Options.IsPanEnabled;
+		set
+		{
+			Options.IsPanEnabled = value;
+			if (!value)
+				CancelFlingInternal();
+		}
+	}
 
 	/// <summary>Gets or sets a value indicating whether pinch-to-zoom gestures update the <see cref="Scale"/>.</summary>
 	/// <value><see langword="true"/> to apply pinch scale changes; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
@@ -254,7 +324,16 @@ public sealed class SKGestureTracker : IDisposable
 
 	/// <summary>Gets or sets a value indicating whether fling (inertia) animation is enabled after a pan gesture.</summary>
 	/// <value><see langword="true"/> to run fling animations; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
-	public bool IsFlingEnabled { get => Options.IsFlingEnabled; set => Options.IsFlingEnabled = value; }
+	public bool IsFlingEnabled
+	{
+		get => Options.IsFlingEnabled;
+		set
+		{
+			Options.IsFlingEnabled = value;
+			if (!value)
+				CancelFlingInternal();
+		}
+	}
 
 	/// <summary>Gets or sets a value indicating whether double-tap triggers an animated zoom.</summary>
 	/// <value><see langword="true"/> to enable double-tap zoom; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
@@ -348,7 +427,7 @@ public sealed class SKGestureTracker : IDisposable
 	public event EventHandler<SKFlingGestureEventArgs>? FlingUpdated;
 
 	/// <summary>
-	/// Occurs when a fling animation completes (velocity drops below
+	/// Occurs when a fling animation completes (velocity reaches or drops below
 	/// <see cref="SKGestureTrackerOptions.FlingMinVelocity"/>).
 	/// </summary>
 	public event EventHandler? FlingCompleted;
@@ -431,24 +510,37 @@ public sealed class SKGestureTracker : IDisposable
 
 		StopZoomAnimation();
 
+		if (Options.ZoomAnimationDuration == TimeSpan.Zero)
+		{
+			SetScale(_scale * factor, focalPoint);
+			return;
+		}
+
 		_zoomStartScale = _scale;
 		_zoomTargetFactor = factor;
 		_zoomFocalPoint = focalPoint;
 		_zoomStartTicks = _engine.Clock.GetTimestamp();
 		_isZoomAnimating = true;
+		var generation = _zoomGeneration;
 
-		_zoomRegistration = _engine.Clock.Schedule(
-			Options.ZoomAnimationInterval,
-			Options.ZoomAnimationInterval,
-			HandleZoomFrame);
+		try
+		{
+			_zoomRegistration = _engine.Clock.Schedule(
+				Options.ZoomAnimationInterval,
+				Options.ZoomAnimationInterval,
+				() => HandleZoomFrame(generation));
+		}
+		catch
+		{
+			StopZoomAnimation();
+			throw;
+		}
 	}
 
 	/// <summary>Stops any active zoom animation immediately.</summary>
 	public void StopZoomAnimation()
 	{
-		if (!_isZoomAnimating)
-			return;
-
+		_zoomGeneration++;
 		_isZoomAnimating = false;
 		var registration = _zoomRegistration;
 		_zoomRegistration = null;
@@ -460,39 +552,41 @@ public sealed class SKGestureTracker : IDisposable
 	/// </summary>
 	public void StopFling()
 	{
-		if (!_isFlinging)
-			return;
-
-		CancelFlingInternal();
-		FlingCompleted?.Invoke(this, EventArgs.Empty);
+		if (CancelFlingInternal())
+			FlingCompleted?.Invoke(this, EventArgs.Empty);
 	}
 
 	/// <summary>Cancels any active fling animation without raising <see cref="FlingCompleted"/>.</summary>
-	private void CancelFlingInternal()
+	private bool CancelFlingInternal(long? expectedGeneration = null)
 	{
-		if (!_isFlinging)
-			return;
+		if (expectedGeneration.HasValue && expectedGeneration.Value != _flingGeneration)
+			return false;
 
+		_flingGeneration++;
+		var wasFlinging = _isFlinging;
 		_isFlinging = false;
 		_flingVelocityX = 0;
 		_flingVelocityY = 0;
 		var registration = _flingRegistration;
 		_flingRegistration = null;
 		registration?.Dispose();
+		return wasFlinging;
 	}
 
 	/// <summary>
-	/// Resets the tracker to an identity transform (scale 1, rotation 0, offset zero), stops all
-	/// animations, and raises <see cref="TransformChanged"/>.
+	/// Resets rotation and offset, resets scale to <c>1</c> clamped to the configured scale range,
+	/// stops all animations, and raises <see cref="TransformChanged"/>.
 	/// </summary>
 	public void Reset()
 	{
+		_operationVersion++;
 		StopFling();
 		StopZoomAnimation();
-		_scale = 1f;
+		_scale = Clamp(1f, Options.MinScale, Options.MaxScale);
 		_rotation = 0f;
 		_offset = SKPoint.Empty;
 		_isPanHandled = false;
+		_gesturePivotOverride = null;
 		_engine.Reset();
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 	}
@@ -506,9 +600,11 @@ public sealed class SKGestureTracker : IDisposable
 		if (_disposed)
 			return;
 
+		_operationVersion++;
 		_disposed = true;
 		CancelFlingInternal();
 		StopZoomAnimation();
+		_gesturePivotOverride = null;
 		UnsubscribeEngineEvents();
 		_engine.Dispose();
 	}
@@ -563,10 +659,14 @@ public sealed class SKGestureTracker : IDisposable
 		if (!IsDoubleTapEnabled)
 			return;
 
+		var operationVersion = _operationVersion;
+		var zoomGeneration = _zoomGeneration;
 		DoubleTapDetected?.Invoke(this, e);
 
 		// If the consumer handled the event (e.g. sticker selection), skip zoom
-		if (e.Handled)
+		if (e.Handled ||
+			!IsCurrentOperation(operationVersion) ||
+			zoomGeneration != _zoomGeneration)
 			return;
 
 		if (!IsDoubleTapZoomEnabled)
@@ -593,8 +693,12 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEnginePanDetected(object? s, SKPanGestureEventArgs e)
 	{
+		var operationVersion = _operationVersion;
 		if (IsPanEnabled)
 			PanDetected?.Invoke(this, e);
+
+		if (!IsCurrentOperation(operationVersion))
+			return;
 
 		if (e.Handled)
 			_isPanHandled = true;
@@ -612,8 +716,12 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEnginePinchDetected(object? s, SKPinchGestureEventArgs e)
 	{
+		var operationVersion = _operationVersion;
 		if (IsPinchEnabled)
 			PinchDetected?.Invoke(this, e);
+
+		if (!IsCurrentOperation(operationVersion))
+			return;
 
 		// Apply center movement as pan
 		if (IsPanEnabled)
@@ -639,9 +747,13 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEngineRotateDetected(object? s, SKRotateGestureEventArgs e)
 	{
+		var operationVersion = _operationVersion;
 		if (IsRotateEnabled)
 		{
 			RotateDetected?.Invoke(this, e);
+
+			if (!IsCurrentOperation(operationVersion))
+				return;
 
 			var pivot = GetEffectiveGesturePivot(e.FocalPoint);
 			var newRotation = _rotation + e.RotationDelta;
@@ -656,10 +768,19 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEngineFlingDetected(object? s, SKFlingGestureEventArgs e)
 	{
-		if (!IsFlingEnabled || _isPanHandled)
+		if (!IsFlingEnabled || !IsPanEnabled || _isPanHandled)
 			return;
 
+		var operationVersion = _operationVersion;
+		var flingGeneration = _flingGeneration;
 		FlingDetected?.Invoke(this, e);
+
+		if (!IsCurrentOperation(operationVersion) ||
+			flingGeneration != _flingGeneration ||
+			!IsFlingEnabled ||
+			!IsPanEnabled)
+			return;
+
 		StartFlingAnimation(e.Velocity.X, e.Velocity.Y);
 	}
 
@@ -672,9 +793,10 @@ public sealed class SKGestureTracker : IDisposable
 
 	private void OnEngineScrollDetected(object? s, SKScrollGestureEventArgs e)
 	{
+		var operationVersion = _operationVersion;
 		ScrollDetected?.Invoke(this, e);
 
-		if (!IsScrollZoomEnabled || e.Delta.Y == 0)
+		if (!IsCurrentOperation(operationVersion) || !IsScrollZoomEnabled || e.Delta.Y == 0)
 			return;
 
 		var notchDelta = e.Delta.Y / WheelDeltaPerNotch;
@@ -696,7 +818,6 @@ public sealed class SKGestureTracker : IDisposable
 	private void OnEngineGestureEnded(object? s, SKGestureLifecycleEventArgs e)
 	{
 		_gesturePivotOverride = null;
-		_isPanHandled = false;
 		GestureEnded?.Invoke(this, new SKGestureLifecycleEventArgs());
 	}
 
@@ -740,58 +861,96 @@ public sealed class SKGestureTracker : IDisposable
 	private static float Clamp(float value, float min, float max)
 		=> float.IsNaN(value) ? min : value < min ? min : value > max ? max : value;
 
+	private bool IsCurrentOperation(long operationVersion)
+		=> !_disposed && IsEnabled && _operationVersion == operationVersion;
+
 	#endregion
 
 	#region Fling Animation
 
 	private void StartFlingAnimation(float velocityX, float velocityY)
 	{
-		StopFling();
+		CancelFlingInternal();
 
 		_flingVelocityX = velocityX;
 		_flingVelocityY = velocityY;
 		_isFlinging = true;
 		_flingLastFrameTimestamp = _engine.Clock.GetTimestamp();
+		var generation = _flingGeneration;
 
-		_flingRegistration = _engine.Clock.Schedule(
-			Options.FlingFrameInterval,
-			Options.FlingFrameInterval,
-			HandleFlingFrame);
+		try
+		{
+			_flingRegistration = _engine.Clock.Schedule(
+				Options.FlingFrameInterval,
+				Options.FlingFrameInterval,
+				() => HandleFlingFrame(generation));
+		}
+		catch
+		{
+			CancelFlingInternal(generation);
+			throw;
+		}
 	}
 
-	private void HandleFlingFrame()
+	private void HandleFlingFrame(long generation)
 	{
-		if (!_isFlinging || _disposed)
+		if (!_isFlinging ||
+			_disposed ||
+			!IsEnabled ||
+			!IsPanEnabled ||
+			!IsFlingEnabled ||
+			generation != _flingGeneration)
+		{
+			CancelFlingInternal(generation);
 			return;
+		}
 
 		// Use actual elapsed time for frame-rate-independent deceleration
 		var now = _engine.Clock.GetTimestamp();
 		var actualDtMs = Math.Max(1f, (float)((now - _flingLastFrameTimestamp) / (double)TimeSpan.TicksPerMillisecond));
 		_flingLastFrameTimestamp = now;
 
-		var dt = actualDtMs / 1000f;
-		var deltaX = _flingVelocityX * dt;
-		var deltaY = _flingVelocityY * dt;
+		var nominalDtMs = (float)Options.FlingFrameInterval.TotalMilliseconds;
+		var friction = Options.FlingFriction;
+		float decay;
+		float displacementSeconds;
+
+		if (friction <= 0f)
+		{
+			decay = 1f;
+			displacementSeconds = actualDtMs / 1000f;
+		}
+		else
+		{
+			var elapsedFrames = actualDtMs / nominalDtMs;
+			decay = friction >= 1f ? 0f : (float)Math.Pow(1f - friction, elapsedFrames);
+			displacementSeconds = nominalDtMs / 1000f * (1f - decay) / friction;
+		}
+
+		var deltaX = _flingVelocityX * displacementSeconds;
+		var deltaY = _flingVelocityY * displacementSeconds;
 
 		FlingUpdated?.Invoke(this, new SKFlingGestureEventArgs(new SKPoint(_flingVelocityX, _flingVelocityY), new SKPoint(deltaX, deltaY)));
+
+		if (generation != _flingGeneration || !_isFlinging || _disposed || !IsEnabled || !IsPanEnabled || !IsFlingEnabled)
+			return;
 
 		// Apply as pan offset
 		var d = ScreenToContentDelta(deltaX, deltaY);
 		_offset = new SKPoint(_offset.X + d.X, _offset.Y + d.Y);
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 
-		// Apply time-scaled friction so deceleration is consistent regardless of frame rate
-		var nominalDtMs = (float)Options.FlingFrameInterval.TotalMilliseconds;
-		var decay = nominalDtMs > 0
-			? (float)Math.Pow(1.0 - Options.FlingFriction, actualDtMs / nominalDtMs)
-			: 1f - Options.FlingFriction;
+		if (generation != _flingGeneration || !_isFlinging || _disposed || !IsEnabled || !IsPanEnabled || !IsFlingEnabled)
+			return;
+
 		_flingVelocityX *= decay;
 		_flingVelocityY *= decay;
 
 		var speed = (float)Math.Sqrt(_flingVelocityX * _flingVelocityX + _flingVelocityY * _flingVelocityY);
-		if (speed < Options.FlingMinVelocity)
+		if (speed <= Options.FlingMinVelocity)
 		{
-			StopFling();
+			if (CancelFlingInternal(generation))
+				FlingCompleted?.Invoke(this, EventArgs.Empty);
 		}
 	}
 
@@ -799,9 +958,9 @@ public sealed class SKGestureTracker : IDisposable
 
 	#region Zoom Animation
 
-	private void HandleZoomFrame()
+	private void HandleZoomFrame(long generation)
 	{
-		if (!_isZoomAnimating || _disposed)
+		if (!_isZoomAnimating || _disposed || !IsEnabled || generation != _zoomGeneration)
 			return;
 
 		var elapsed = _engine.Clock.GetTimestamp() - _zoomStartTicks;
@@ -821,7 +980,7 @@ public sealed class SKGestureTracker : IDisposable
 		_scale = newScale;
 		TransformChanged?.Invoke(this, EventArgs.Empty);
 
-		if (t >= 1.0)
+		if (t >= 1.0 && generation == _zoomGeneration && _isZoomAnimating && !_disposed)
 			StopZoomAnimation();
 	}
 

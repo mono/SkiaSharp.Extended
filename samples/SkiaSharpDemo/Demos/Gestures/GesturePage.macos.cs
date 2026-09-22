@@ -107,6 +107,9 @@ public partial class GesturePage
 		var scale = currentScale / _lastPinchScale;
 		_lastPinchScale = currentScale;
 
+		if (!_tracker.IsEnabled || !_tracker.IsPinchEnabled)
+			return;
+
 		_tracker.SetScale(_tracker.Scale * scale, GetPointerFocalPoint());
 		LogEvent($"Trackpad pinch: {scale:F2}x");
 		statusLabel.Text = $"Scale: {_tracker.Scale:F2}";

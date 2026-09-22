@@ -29,14 +29,14 @@ public sealed class SKGestureTrackerOptions
 	/// Gets or sets the minimum movement distance, in pixels, before a touch is considered a pan gesture.
 	/// </summary>
 	/// <value>The touch slop distance in pixels. The default is <c>8</c>.</value>
-	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative or non-finite.</exception>
 	public float TouchSlop
 	{
 		get => _touchSlop;
 		set
 		{
-			if (value < 0)
-				throw new ArgumentOutOfRangeException(nameof(value), value, "TouchSlop must not be negative.");
+			if (!IsFinite(value) || value < 0)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "TouchSlop must be a finite, non-negative number.");
 			_touchSlop = value;
 		}
 	}
@@ -46,14 +46,14 @@ public sealed class SKGestureTrackerOptions
 	/// as a double-tap gesture.
 	/// </summary>
 	/// <value>The double-tap slop distance in pixels. The default is <c>40</c>.</value>
-	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative or non-finite.</exception>
 	public float DoubleTapSlop
 	{
 		get => _doubleTapSlop;
 		set
 		{
-			if (value < 0)
-				throw new ArgumentOutOfRangeException(nameof(value), value, "DoubleTapSlop must not be negative.");
+			if (!IsFinite(value) || value < 0)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "DoubleTapSlop must be a finite, non-negative number.");
 			_doubleTapSlop = value;
 		}
 	}
@@ -63,14 +63,14 @@ public sealed class SKGestureTrackerOptions
 	/// to be classified as a fling upon touch release.
 	/// </summary>
 	/// <value>The fling velocity threshold in pixels per second. The default is <c>200</c>.</value>
-	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative or non-finite.</exception>
 	public float FlingThreshold
 	{
 		get => _flingThreshold;
 		set
 		{
-			if (value < 0)
-				throw new ArgumentOutOfRangeException(nameof(value), value, "FlingThreshold must not be negative.");
+			if (!IsFinite(value) || value < 0)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "FlingThreshold must be a finite, non-negative number.");
 			_flingThreshold = value;
 		}
 	}
@@ -79,7 +79,7 @@ public sealed class SKGestureTrackerOptions
 	/// Gets or sets the duration a touch must be held stationary before a long press gesture is recognized.
 	/// </summary>
 	/// <value>The long press duration. The default is <c>500 ms</c>. Must be positive.</value>
-	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero or negative.</exception>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not a positive finite number.</exception>
 	public TimeSpan LongPressDuration
 	{
 		get => _longPressDuration;
@@ -101,8 +101,8 @@ public sealed class SKGestureTrackerOptions
 		get => _minScale;
 		set
 		{
-			if (value <= 0)
-				throw new ArgumentOutOfRangeException(nameof(value), value, "MinScale must be positive.");
+			if (!IsFinite(value) || value <= 0)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "MinScale must be a positive finite number.");
 			if (value > _maxScale)
 				throw new ArgumentOutOfRangeException(nameof(value), value, "MinScale must not be greater than MaxScale.");
 			_minScale = value;
@@ -113,14 +113,14 @@ public sealed class SKGestureTrackerOptions
 	/// Gets or sets the maximum allowed zoom scale.
 	/// </summary>
 	/// <value>The maximum scale factor. The default is <c>10</c>. Must be positive and greater than or equal to <see cref="MinScale"/>.</value>
-	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero, negative, or less than <see cref="MinScale"/>.</exception>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not positive and finite, or is less than <see cref="MinScale"/>.</exception>
 	public float MaxScale
 	{
 		get => _maxScale;
 		set
 		{
-			if (value <= 0)
-				throw new ArgumentOutOfRangeException(nameof(value), value, "MaxScale must be positive.");
+			if (!IsFinite(value) || value <= 0)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "MaxScale must be a positive finite number.");
 			if (value < _minScale)
 				throw new ArgumentOutOfRangeException(nameof(value), value, "MaxScale must not be less than MinScale.");
 			_maxScale = value;
@@ -132,18 +132,18 @@ public sealed class SKGestureTrackerOptions
 	/// avoiding ordering-dependent validation errors when the desired range lies
 	/// entirely outside the current default range of [0.1, 10].
 	/// </summary>
-	/// <param name="minScale">The minimum scale value. Must be positive and less than <paramref name="maxScale"/>.</param>
-	/// <param name="maxScale">The maximum scale value. Must be positive and greater than <paramref name="minScale"/>.</param>
+	/// <param name="minScale">The minimum scale value. Must be positive, finite, and less than <paramref name="maxScale"/>.</param>
+	/// <param name="maxScale">The maximum scale value. Must be positive, finite, and greater than <paramref name="minScale"/>.</param>
 	/// <exception cref="ArgumentOutOfRangeException">
 	/// Thrown when <paramref name="minScale"/> is less than or equal to zero, <paramref name="maxScale"/> is less than
 	/// or equal to zero, or <paramref name="minScale"/> is greater than or equal to <paramref name="maxScale"/>.
 	/// </exception>
 	public void SetScaleRange(float minScale, float maxScale)
 	{
-		if (minScale <= 0)
-			throw new ArgumentOutOfRangeException(nameof(minScale), minScale, "MinScale must be positive.");
-		if (maxScale <= 0)
-			throw new ArgumentOutOfRangeException(nameof(maxScale), maxScale, "MaxScale must be positive.");
+		if (!IsFinite(minScale) || minScale <= 0)
+			throw new ArgumentOutOfRangeException(nameof(minScale), minScale, "MinScale must be a positive finite number.");
+		if (!IsFinite(maxScale) || maxScale <= 0)
+			throw new ArgumentOutOfRangeException(nameof(maxScale), maxScale, "MaxScale must be a positive finite number.");
 		if (minScale >= maxScale)
 			throw new ArgumentOutOfRangeException(nameof(minScale), minScale, "MinScale must be less than MaxScale.");
 
@@ -155,7 +155,7 @@ public sealed class SKGestureTrackerOptions
 	/// Gets or sets the multiplicative zoom factor applied when a double-tap is detected.
 	/// </summary>
 	/// <value>The zoom multiplier per double-tap. The default is <c>2.0</c>. Must be positive.</value>
-	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero or negative.</exception>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not a positive finite number.</exception>
 	/// <remarks>
 	/// When the current scale is at or near <see cref="MaxScale"/>, a double-tap animates
 	/// the scale back to <c>1.0</c> instead of zooming further.
@@ -165,8 +165,8 @@ public sealed class SKGestureTrackerOptions
 		get => _doubleTapZoomFactor;
 		set
 		{
-			if (value <= 0)
-				throw new ArgumentOutOfRangeException(nameof(value), value, "DoubleTapZoomFactor must be positive.");
+			if (!IsFinite(value) || value <= 0)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "DoubleTapZoomFactor must be a positive finite number.");
 			_doubleTapZoomFactor = value;
 		}
 	}
@@ -195,14 +195,14 @@ public sealed class SKGestureTrackerOptions
 	/// <see cref="SKScrollGestureEventArgs.Delta"/>.Y value of <c>120</c> represents one notch.
 	/// The default is <c>0.1</c> (10% per notch). Must be positive.
 	/// </value>
-	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero or negative.</exception>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not a positive finite number.</exception>
 	public float ScrollZoomFactor
 	{
 		get => _scrollZoomFactor;
 		set
 		{
-			if (value <= 0)
-				throw new ArgumentOutOfRangeException(nameof(value), value, "ScrollZoomFactor must be positive.");
+			if (!IsFinite(value) || value <= 0)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "ScrollZoomFactor must be a positive finite number.");
 			_scrollZoomFactor = value;
 		}
 	}
@@ -214,30 +214,30 @@ public sealed class SKGestureTrackerOptions
 	/// A value between <c>0</c> (no friction, fling continues indefinitely) and <c>1</c> (full friction,
 	/// fling stops immediately). The default is <c>0.08</c>.
 	/// </value>
-	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is less than <c>0</c> or greater than <c>1</c>.</exception>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is non-finite, less than <c>0</c>, or greater than <c>1</c>.</exception>
 	public float FlingFriction
 	{
 		get => _flingFriction;
 		set
 		{
-			if (value < 0 || value > 1)
-				throw new ArgumentOutOfRangeException(nameof(value), value, "FlingFriction must be between 0 and 1.");
+			if (!IsFinite(value) || value < 0 || value > 1)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "FlingFriction must be a finite number between 0 and 1.");
 			_flingFriction = value;
 		}
 	}
 
 	/// <summary>
-	/// Gets or sets the minimum velocity, in pixels per second, below which the fling animation stops.
+	/// Gets or sets the minimum velocity, in pixels per second, at or below which the fling animation stops.
 	/// </summary>
 	/// <value>The minimum fling velocity threshold in pixels per second. The default is <c>5</c>.</value>
-	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not a non-negative finite number.</exception>
 	public float FlingMinVelocity
 	{
 		get => _flingMinVelocity;
 		set
 		{
-			if (value < 0)
-				throw new ArgumentOutOfRangeException(nameof(value), value, "FlingMinVelocity must not be negative.");
+			if (!IsFinite(value) || value < 0)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "FlingMinVelocity must be a non-negative finite number.");
 			_flingMinVelocity = value;
 		}
 	}
@@ -319,4 +319,6 @@ public sealed class SKGestureTrackerOptions
 	/// <summary>Gets or sets a value indicating whether hover (mouse move without contact) detection is enabled.</summary>
 	/// <value><see langword="true"/> to detect hover events; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</value>
 	public bool IsHoverEnabled { get; set; } = true;
+
+	private static bool IsFinite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
 }

@@ -1,5 +1,6 @@
 @page "/gestures"
-@implements IDisposable
+@implements IAsyncDisposable
+@inject IJSRuntime JS
 
 <PageTitle>Gestures</PageTitle>
 
@@ -17,6 +18,7 @@
      @onpointermove="OnPointerMove"
      @onpointerup="OnPointerUp"
      @onpointercancel="OnPointerCancel"
+     @onlostpointercapture="OnLostPointerCapture"
      @onwheel="OnWheel"
      @onwheel:preventDefault
      style="width: 100%; height: 600px; touch-action: none; cursor: grab;">
@@ -94,7 +96,8 @@
 @code {
     private SKCanvasView? _canvasView;
     private ElementReference _containerRef;
-    private readonly SKGestureTracker _tracker = new();
+    private IJSObjectReference? _pointerCaptureModule;
+    private SKGestureTracker _tracker = null!;
 
     // Sticker data for demonstration
     private readonly List<Sticker> _stickers = new()
@@ -129,13 +132,24 @@
 
     protected override void OnInitialized()
     {
+        _tracker = new SKGestureTracker(
+            new SKGestureTrackerOptions(),
+            callback => _ = InvokeAsync(callback));
         SubscribeTrackerEvents();
     }
 
-    public void Dispose()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            _pointerCaptureModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/gesturePointerCapture.js");
+    }
+
+    public async ValueTask DisposeAsync()
     {
         UnsubscribeTrackerEvents();
         _tracker.Dispose();
+        if (_pointerCaptureModule != null)
+            await _pointerCaptureModule.DisposeAsync();
     }
 
     private void SubscribeTrackerEvents()
@@ -172,11 +186,13 @@
 
     #region Pointer Event Handlers
 
-    private void OnPointerDown(PointerEventArgs e)
+    private async Task OnPointerDown(PointerEventArgs e)
     {
         var location = GetCanvasLocation(e);
         var isMouse = e.PointerType == "mouse";
         _tracker.ProcessTouchDown(e.PointerId, location, isMouse);
+        if (_pointerCaptureModule != null)
+            await _pointerCaptureModule.InvokeVoidAsync("capturePointer", _containerRef, e.PointerId);
         Invalidate();
     }
 
@@ -196,6 +212,12 @@
     }
 
     private void OnPointerCancel(PointerEventArgs e)
+    {
+        _tracker.ProcessTouchCancel(e.PointerId);
+        Invalidate();
+    }
+
+    private void OnLostPointerCapture(PointerEventArgs e)
     {
         _tracker.ProcessTouchCancel(e.PointerId);
         Invalidate();
