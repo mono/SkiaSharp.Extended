@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class SKLottieAnimation | SkiaSharp.Extended ">
       
-      <meta name="description" content="A source-created Lottie animation that owns its underlying Skottie animation.">
+      <meta name="description" content="Wraps a loaded Skottie animation instance and owns its lifetime.">
       <link rel="icon" href="../images/logo.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -97,7 +97,7 @@ Class SKLottieAnimation  <a class="header-action link-secondary" title="View sou
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.UI.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>A source-created Lottie animation that owns its underlying Skottie animation.</p>
+  <div class="markdown summary"><p>Wraps a loaded Skottie animation instance and owns its lifetime.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -159,11 +159,13 @@ Class SKLottieAnimation  <a class="header-action link-secondary" title="View sou
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Controls.SKLottieAnimation.-ctor.html#SkiaSharp_Extended_UI_Controls_SKLottieAnimation__ctor">SKLottieAnimation()</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.UI.Controls.SKLottieAnimation.html">SKLottieAnimation</a> class with no animation loaded.</p>
+</dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Controls.SKLottieAnimation.-ctor.html#SkiaSharp_Extended_UI_Controls_SKLottieAnimation__ctor_SkiaSharp_Skottie_Animation_">SKLottieAnimation(Animation?)</a></dt>
-    <dd></dd>
+    <dd><p>Initializes a new instance of the <a class="xref" href="SkiaSharp.Extended.UI.Controls.SKLottieAnimation.html">SKLottieAnimation</a> class with the specified animation.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="properties">Properties
@@ -171,12 +173,12 @@ Class SKLottieAnimation  <a class="header-action link-secondary" title="View sou
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Controls.SKLottieAnimation.Animation.html#SkiaSharp_Extended_UI_Controls_SKLottieAnimation_Animation">Animation</a></dt>
-    <dd><p>Gets the loaded Skottie animation.</p>
+    <dd><p>Gets the underlying Skottie animation instance, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> if not loaded.</p>
 </dd>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Controls.SKLottieAnimation.IsLoaded.html#SkiaSharp_Extended_UI_Controls_SKLottieAnimation_IsLoaded">IsLoaded</a></dt>
-    <dd><p>Gets whether an animation was loaded.</p>
+    <dd><p>Gets a value indicating whether the animation is loaded.</p>
 </dd>
   </dl>
 
@@ -185,7 +187,7 @@ Class SKLottieAnimation  <a class="header-action link-secondary" title="View sou
 
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Controls.SKLottieAnimation.Dispose.html#SkiaSharp_Extended_UI_Controls_SKLottieAnimation_Dispose">Dispose()</a></dt>
-    <dd><p>Disposes the source-created Skottie animation.</p>
+    <dd><p>Disposes the underlying Skottie animation and clears this wrapper.</p>
 </dd>
   </dl>
 
@@ -210,7 +212,7 @@ Class SKLottieAnimation  <a class="header-action link-secondary" title="View sou
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 4562040
+          source: PR #365 · 926d4f0
         </div>
       </div>
     </footer>

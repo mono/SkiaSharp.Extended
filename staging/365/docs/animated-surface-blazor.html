@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Animated Surface View | SkiaSharp.Extended </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Animated Surface View | SkiaSharp.Extended ">
+      
+      
+      <link rel="icon" href="../images/logo.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/docs/docs/animated-surface-blazor.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="SkiaSharp.Extended">
+            SkiaSharp.Extended
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="animated-surface-view">Animated Surface View</h1>
+
+<p><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.html"><code>SKAnimatedSurfaceView</code></a>
+connects your update and drawing callbacks to the browser's animation-frame
+loop. You can use it when a Blazor page needs a SkiaSharp scene that moves
+smoothly without maintaining a separate timer.</p>
+<p><img src="../images/ui/controls/animated-surface/canvas.png" alt="The animated surface sample using the Canvas backend"></p>
+<h2 id="quick-start">Quick start</h2>
+<p>Install the package:</p>
+<pre><code class="lang-bash">dotnet add package SkiaSharp.Extended.UI.Blazor
+</code></pre>
+<p>Import the namespaces in <code>_Imports.razor</code>:</p>
+<pre><code class="lang-razor">@using SkiaSharp
+@using SkiaSharp.Extended.UI.Blazor.Controls
+</code></pre>
+<p>Then place the component on a page. <code>OnUpdate</code> runs immediately before
+<code>OnPaintSurface</code> for every animated frame.</p>
+<pre><code class="lang-razor">&lt;SKAnimatedSurfaceView OnUpdate=&quot;Update&quot;
+                       OnPaintSurface=&quot;Paint&quot;
+                       style=&quot;width: 400px; height: 300px;&quot; /&gt;
+
+@code {
+    private float angle;
+
+    private void Update(TimeSpan delta)
+    {
+        angle = (angle + (float)(delta.TotalSeconds * 90)) % 360;
+    }
+
+    private void Paint(SKCanvas canvas, SKSize size)
+    {
+        canvas.Clear(SKColors.White);
+
+        canvas.Translate(size.Width / 2, size.Height / 2);
+        canvas.RotateDegrees(angle);
+
+        using var paint = new SKPaint { Color = SKColors.CornflowerBlue, IsAntialias = true };
+        canvas.DrawRect(-50, -50, 100, 100, paint);
+    }
+}
+</code></pre>
+<h2 id="canvas-and-opengl">Canvas and OpenGL</h2>
+<p>The component uses the Canvas backend by default. Set <code>Backend</code> to
+<code>OpenGL</code> for GPU rendering; the component does not automatically switch
+backends if OpenGL is unavailable.</p>
+<pre><code class="lang-razor">&lt;SKAnimatedSurfaceView Backend=&quot;SKAnimatedSurfaceViewBackend.OpenGL&quot;
+                       IgnorePixelScaling=&quot;true&quot;
+                       OnPaintSurface=&quot;Paint&quot;
+                       style=&quot;width: 400px; height: 300px;&quot; /&gt;
+</code></pre>
+<p><code>IgnorePixelScaling</code> is forwarded to the underlying SkiaSharp view. Additional
+attributes such as <code>class</code>, <code>id</code>, and <code>style</code> are forwarded to its canvas.</p>
+<p><img src="../images/ui/controls/animated-surface/opengl.png" alt="The animated surface sample using the OpenGL backend"></p>
+<h2 id="pausing-and-on-demand-redraws">Pausing and on-demand redraws</h2>
+<p>Set <code>IsAnimationEnabled</code> to pause updates and browser-driven repainting. A
+paused component can still draw a changed scene when you call <code>Invalidate()</code>.
+The first update after creating, resuming, or switching backends receives a
+zero delta so paused time is not added to the animation.</p>
+<pre><code class="lang-razor">&lt;button @onclick=&quot;ToggleAnimation&quot;&gt;@(isPlaying ? &quot;Pause&quot; : &quot;Play&quot;)&lt;/button&gt;
+&lt;button @onclick=&quot;animatedSurface?.Invalidate()&quot;&gt;Redraw once&lt;/button&gt;
+
+&lt;SKAnimatedSurfaceView @ref=&quot;animatedSurface&quot;
+                       IsAnimationEnabled=&quot;isPlaying&quot;
+                       OnPaintSurface=&quot;Paint&quot;
+                       style=&quot;width: 400px; height: 300px;&quot; /&gt;
+
+@code {
+    private SKAnimatedSurfaceView? animatedSurface;
+    private bool isPlaying = true;
+
+    private void ToggleAnimation() =&gt; isPlaying = !isPlaying;
+}
+</code></pre>
+<h2 id="learn-more">Learn more</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor">SkiaSharp.Views.Blazor</a></li>
+<li><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.html">API Reference</a></li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/mono/SkiaSharp.Extended/blob/365/merge/docs/docs/animated-surface-blazor.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          source: PR #365 · 926d4f0
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

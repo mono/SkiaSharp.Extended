@@ -102,7 +102,7 @@ Class SKLottieView  <a class="header-action link-secondary" title="View source" 
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKLottieView : SKAnimatedSurfaceView, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IViewController, IVisualElementController, IElementController, IGestureController, IGestureRecognizers, IPropertyMapperView, IHotReloadableView, IReplaceableView, ILayout, ILayoutController, IVisualTreeElement, IContentView, IView, IElement, ITransform, IPadding, ICrossPlatformLayout</code></pre>
+    <pre><code class="lang-csharp hljs">public class SKLottieView : SKAnimatedSurfaceView, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IViewController, IVisualElementController, IElementController, IGestureController, IGestureRecognizers, IPropertyMapperView, IHotReloadableView, IReplaceableView, ILayout, ILayoutController, IVisualTreeElement, IContentView, IView, IElement, ITransform, IPadding, ICrossPlatformLayout, IDisposable</code></pre>
   </div>
 
 
@@ -151,6 +151,7 @@ Class SKLottieView  <a class="header-action link-secondary" title="View source" 
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ipadding">IPadding</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icrossplatformlayout">ICrossPlatformLayout</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
     </dd>
   </dl>
 
@@ -657,6 +658,12 @@ Class SKLottieView  <a class="header-action link-secondary" title="View source" 
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element.onparentchanged">Element.OnParentChanged()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element.onhandlerchanging">Element.OnHandlerChanging(HandlerChangingEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element.onhandlerchanged">Element.OnHandlerChanged()</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element.mapautomationpropertiesisinaccessibletree">Element.MapAutomationPropertiesIsInAccessibleTree(IElementHandler, Element)</a>
     </div>
     <div>
@@ -882,13 +889,8 @@ Negative values reverse the playback direction.</p>
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanged.html#SkiaSharp_Extended_UI_Controls_SKLottieView_OnHandlerChanged">OnHandlerChanged()</a></dt>
-    <dd><p>When overridden in a derived class, should raise the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element.handlerchanged">HandlerChanged</a> event.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanging.html#SkiaSharp_Extended_UI_Controls_SKLottieView_OnHandlerChanging_Microsoft_Maui_Controls_HandlerChangingEventArgs_">OnHandlerChanging(HandlerChangingEventArgs)</a></dt>
-    <dd><p>When overridden in a derived class, should raise the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element.handlerchanging">HandlerChanging</a> event.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Controls.SKLottieView.Dispose.html#SkiaSharp_Extended_UI_Controls_SKLottieView_Dispose">Dispose()</a></dt>
+    <dd><p>Releases the loaded animation and cancels any in-progress source load.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -942,7 +944,7 @@ Negative values reverse the playback direction.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 4562040
+          source: PR #365 · 926d4f0
         </div>
       </div>
     </footer>

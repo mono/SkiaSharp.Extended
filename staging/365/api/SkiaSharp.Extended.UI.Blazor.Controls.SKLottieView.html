@@ -97,7 +97,7 @@ Class SKLottieView  <a class="header-action link-secondary" title="View source" 
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.UI.Blazor.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>A Blazor component that plays Lottie animations with <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor.skcanvasview">SKCanvasView</a>
+  <div class="markdown summary"><p>A Blazor component that plays Lottie animations with <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.html">SKAnimatedSurfaceView</a>
 and an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePlayer</a>.</p>
 </div>
   <div class="markdown conceptual"></div>
@@ -240,6 +240,12 @@ and an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePla
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Backend.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Backend">Backend</a></dt>
+    <dd><p>Gets or sets the SkiaSharp browser view used to render the animation.
+Defaults to <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceViewBackend_Canvas">Canvas</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Duration.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Duration">Duration</a></dt>
     <dd><p>Gets the total animation duration.</p>
 </dd>
@@ -247,6 +253,11 @@ and an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePla
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HasAnimation.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_HasAnimation">HasAnimation</a></dt>
     <dd><p>Gets whether an animation is loaded and ready to play.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IgnorePixelScaling.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_IgnorePixelScaling">IgnorePixelScaling</a></dt>
+    <dd><p>Gets or sets whether rendering uses CSS pixels instead of physical pixels.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -336,7 +347,7 @@ the render tree, and the incoming values have been assigned to properties.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 4562040
+          source: PR #365 · 926d4f0
         </div>
       </div>
     </footer>

@@ -23,13 +23,13 @@ references:
   nameWithType: SKBlurHash.DeserializeBitmap(ReadOnlySpan<char>, int, int, float)
   nameWithType.vb: SKBlurHash.DeserializeBitmap(ReadOnlySpan(Of Char), Integer, Integer, Single)
 - uid: SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(System.String,System.Int32,System.Int32,System.Single)
-  name: DeserializeBitmap(string, int, int, float)
+  name: DeserializeBitmap(string?, int, int, float)
   href: api/SkiaSharp.Extended.SKBlurHash.DeserializeBitmap.html#SkiaSharp_Extended_SKBlurHash_DeserializeBitmap_System_String_System_Int32_System_Int32_System_Single_
   commentId: M:SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(System.String,System.Int32,System.Int32,System.Single)
   name.vb: DeserializeBitmap(String, Integer, Integer, Single)
-  fullName: SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(string, int, int, float)
+  fullName: SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(string?, int, int, float)
   fullName.vb: SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(String, Integer, Integer, Single)
-  nameWithType: SKBlurHash.DeserializeBitmap(string, int, int, float)
+  nameWithType: SKBlurHash.DeserializeBitmap(string?, int, int, float)
   nameWithType.vb: SKBlurHash.DeserializeBitmap(String, Integer, Integer, Single)
 - uid: SkiaSharp.Extended.SKBlurHash.DeserializeBitmap*
   name: DeserializeBitmap
@@ -47,13 +47,13 @@ references:
   nameWithType: SKBlurHash.DeserializeImage(ReadOnlySpan<char>, int, int, float)
   nameWithType.vb: SKBlurHash.DeserializeImage(ReadOnlySpan(Of Char), Integer, Integer, Single)
 - uid: SkiaSharp.Extended.SKBlurHash.DeserializeImage(System.String,System.Int32,System.Int32,System.Single)
-  name: DeserializeImage(string, int, int, float)
+  name: DeserializeImage(string?, int, int, float)
   href: api/SkiaSharp.Extended.SKBlurHash.DeserializeImage.html#SkiaSharp_Extended_SKBlurHash_DeserializeImage_System_String_System_Int32_System_Int32_System_Single_
   commentId: M:SkiaSharp.Extended.SKBlurHash.DeserializeImage(System.String,System.Int32,System.Int32,System.Single)
   name.vb: DeserializeImage(String, Integer, Integer, Single)
-  fullName: SkiaSharp.Extended.SKBlurHash.DeserializeImage(string, int, int, float)
+  fullName: SkiaSharp.Extended.SKBlurHash.DeserializeImage(string?, int, int, float)
   fullName.vb: SkiaSharp.Extended.SKBlurHash.DeserializeImage(String, Integer, Integer, Single)
-  nameWithType: SKBlurHash.DeserializeImage(string, int, int, float)
+  nameWithType: SKBlurHash.DeserializeImage(string?, int, int, float)
   nameWithType.vb: SKBlurHash.DeserializeImage(String, Integer, Integer, Single)
 - uid: SkiaSharp.Extended.SKBlurHash.DeserializeImage*
   name: DeserializeImage
@@ -62,31 +62,31 @@ references:
   fullName: SkiaSharp.Extended.SKBlurHash.DeserializeImage
   nameWithType: SKBlurHash.DeserializeImage
 - uid: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKBitmap,System.Int32,System.Int32)
-  name: Serialize(SKBitmap, int, int)
+  name: Serialize(SKBitmap?, int, int)
   href: api/SkiaSharp.Extended.SKBlurHash.Serialize.html#SkiaSharp_Extended_SKBlurHash_Serialize_SkiaSharp_SKBitmap_System_Int32_System_Int32_
   commentId: M:SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKBitmap,System.Int32,System.Int32)
   name.vb: Serialize(SKBitmap, Integer, Integer)
-  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKBitmap, int, int)
+  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKBitmap?, int, int)
   fullName.vb: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKBitmap, Integer, Integer)
-  nameWithType: SKBlurHash.Serialize(SKBitmap, int, int)
+  nameWithType: SKBlurHash.Serialize(SKBitmap?, int, int)
   nameWithType.vb: SKBlurHash.Serialize(SKBitmap, Integer, Integer)
 - uid: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKImage,System.Int32,System.Int32)
-  name: Serialize(SKImage, int, int)
+  name: Serialize(SKImage?, int, int)
   href: api/SkiaSharp.Extended.SKBlurHash.Serialize.html#SkiaSharp_Extended_SKBlurHash_Serialize_SkiaSharp_SKImage_System_Int32_System_Int32_
   commentId: M:SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKImage,System.Int32,System.Int32)
   name.vb: Serialize(SKImage, Integer, Integer)
-  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKImage, int, int)
+  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKImage?, int, int)
   fullName.vb: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKImage, Integer, Integer)
-  nameWithType: SKBlurHash.Serialize(SKImage, int, int)
+  nameWithType: SKBlurHash.Serialize(SKImage?, int, int)
   nameWithType.vb: SKBlurHash.Serialize(SKImage, Integer, Integer)
 - uid: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKPixmap,System.Int32,System.Int32)
-  name: Serialize(SKPixmap, int, int)
+  name: Serialize(SKPixmap?, int, int)
   href: api/SkiaSharp.Extended.SKBlurHash.Serialize.html#SkiaSharp_Extended_SKBlurHash_Serialize_SkiaSharp_SKPixmap_System_Int32_System_Int32_
   commentId: M:SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKPixmap,System.Int32,System.Int32)
   name.vb: Serialize(SKPixmap, Integer, Integer)
-  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKPixmap, int, int)
+  fullName: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKPixmap?, int, int)
   fullName.vb: SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKPixmap, Integer, Integer)
-  nameWithType: SKBlurHash.Serialize(SKPixmap, int, int)
+  nameWithType: SKBlurHash.Serialize(SKPixmap?, int, int)
   nameWithType.vb: SKBlurHash.Serialize(SKPixmap, Integer, Integer)
 - uid: SkiaSharp.Extended.SKBlurHash.Serialize*
   name: Serialize
@@ -1303,6 +1303,156 @@ references:
   commentId: N:SkiaSharp.Extended.UI.Blazor.Controls
   fullName: SkiaSharp.Extended.UI.Blazor.Controls
   nameWithType: SkiaSharp.Extended.UI.Blazor.Controls
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView
+  name: SKAnimatedSurfaceView
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.html
+  commentId: T:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView
+  nameWithType: SKAnimatedSurfaceView
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.#ctor
+  name: SKAnimatedSurfaceView()
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.-ctor.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView__ctor
+  commentId: M:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.#ctor
+  name.vb: New()
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.SKAnimatedSurfaceView()
+  fullName.vb: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.New()
+  nameWithType: SKAnimatedSurfaceView.SKAnimatedSurfaceView()
+  nameWithType.vb: SKAnimatedSurfaceView.New()
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.#ctor*
+  name: SKAnimatedSurfaceView
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.-ctor.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.#ctor
+  name.vb: New
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.SKAnimatedSurfaceView
+  fullName.vb: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.New
+  nameWithType: SKAnimatedSurfaceView.SKAnimatedSurfaceView
+  nameWithType.vb: SKAnimatedSurfaceView.New
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes
+  name: AdditionalAttributes
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_AdditionalAttributes
+  commentId: P:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes
+  nameWithType: SKAnimatedSurfaceView.AdditionalAttributes
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes*
+  name: AdditionalAttributes
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.AdditionalAttributes
+  nameWithType: SKAnimatedSurfaceView.AdditionalAttributes
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Backend
+  name: Backend
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Backend.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_Backend
+  commentId: P:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Backend
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Backend
+  nameWithType: SKAnimatedSurfaceView.Backend
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Backend*
+  name: Backend
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Backend.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Backend
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Backend
+  nameWithType: SKAnimatedSurfaceView.Backend
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  name: BuildRenderTree(RenderTreeBuilder)
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.BuildRenderTree.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_BuildRenderTree_Microsoft_AspNetCore_Components_Rendering_RenderTreeBuilder_
+  commentId: M:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
+  nameWithType: SKAnimatedSurfaceView.BuildRenderTree(RenderTreeBuilder)
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.BuildRenderTree*
+  name: BuildRenderTree
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.BuildRenderTree.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.BuildRenderTree
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.BuildRenderTree
+  nameWithType: SKAnimatedSurfaceView.BuildRenderTree
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IgnorePixelScaling
+  name: IgnorePixelScaling
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IgnorePixelScaling.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_IgnorePixelScaling
+  commentId: P:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IgnorePixelScaling
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IgnorePixelScaling
+  nameWithType: SKAnimatedSurfaceView.IgnorePixelScaling
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IgnorePixelScaling*
+  name: IgnorePixelScaling
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IgnorePixelScaling.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IgnorePixelScaling
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IgnorePixelScaling
+  nameWithType: SKAnimatedSurfaceView.IgnorePixelScaling
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Invalidate
+  name: Invalidate()
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Invalidate.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_Invalidate
+  commentId: M:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Invalidate
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Invalidate()
+  nameWithType: SKAnimatedSurfaceView.Invalidate()
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Invalidate*
+  name: Invalidate
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Invalidate.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Invalidate
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.Invalidate
+  nameWithType: SKAnimatedSurfaceView.Invalidate
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsAnimationEnabled
+  name: IsAnimationEnabled
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsAnimationEnabled.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_IsAnimationEnabled
+  commentId: P:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsAnimationEnabled
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsAnimationEnabled
+  nameWithType: SKAnimatedSurfaceView.IsAnimationEnabled
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsAnimationEnabled*
+  name: IsAnimationEnabled
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsAnimationEnabled.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsAnimationEnabled
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.IsAnimationEnabled
+  nameWithType: SKAnimatedSurfaceView.IsAnimationEnabled
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurface
+  name: OnPaintSurface
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurface.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_OnPaintSurface
+  commentId: P:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurface
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurface
+  nameWithType: SKAnimatedSurfaceView.OnPaintSurface
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurface*
+  name: OnPaintSurface
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurface.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurface
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnPaintSurface
+  nameWithType: SKAnimatedSurfaceView.OnPaintSurface
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnParametersSet
+  name: OnParametersSet()
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnParametersSet.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_OnParametersSet
+  commentId: M:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnParametersSet
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnParametersSet()
+  nameWithType: SKAnimatedSurfaceView.OnParametersSet()
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnParametersSet*
+  name: OnParametersSet
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnParametersSet.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnParametersSet
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnParametersSet
+  nameWithType: SKAnimatedSurfaceView.OnParametersSet
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate
+  name: OnUpdate
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceView_OnUpdate
+  commentId: P:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate
+  nameWithType: SKAnimatedSurfaceView.OnUpdate
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate*
+  name: OnUpdate
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceView.OnUpdate
+  nameWithType: SKAnimatedSurfaceView.OnUpdate
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend
+  name: SKAnimatedSurfaceViewBackend
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend.html
+  commentId: T:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend
+  nameWithType: SKAnimatedSurfaceViewBackend
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend.Canvas
+  name: Canvas
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceViewBackend_Canvas
+  commentId: F:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend.Canvas
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend.Canvas
+  nameWithType: SKAnimatedSurfaceViewBackend.Canvas
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend.OpenGL
+  name: OpenGL
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend.html#SkiaSharp_Extended_UI_Blazor_Controls_SKAnimatedSurfaceViewBackend_OpenGL
+  commentId: F:SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend.OpenGL
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKAnimatedSurfaceViewBackend.OpenGL
+  nameWithType: SKAnimatedSurfaceViewBackend.OpenGL
 - uid: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView
   name: SKLottieView
   href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.html
@@ -1399,6 +1549,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationUpdated
   fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.AnimationUpdated
   nameWithType: SKLottieView.AnimationUpdated
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Backend
+  name: Backend
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Backend.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_Backend
+  commentId: P:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Backend
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Backend
+  nameWithType: SKLottieView.Backend
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Backend*
+  name: Backend
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Backend.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Backend
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.Backend
+  nameWithType: SKLottieView.Backend
 - uid: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder)
   name: BuildRenderTree(RenderTreeBuilder)
   href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.BuildRenderTree.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_BuildRenderTree_Microsoft_AspNetCore_Components_Rendering_RenderTreeBuilder_
@@ -1447,6 +1609,18 @@ references:
   commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HasAnimation
   fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.HasAnimation
   nameWithType: SKLottieView.HasAnimation
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IgnorePixelScaling
+  name: IgnorePixelScaling
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IgnorePixelScaling.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_IgnorePixelScaling
+  commentId: P:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IgnorePixelScaling
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IgnorePixelScaling
+  nameWithType: SKLottieView.IgnorePixelScaling
+- uid: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IgnorePixelScaling*
+  name: IgnorePixelScaling
+  href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IgnorePixelScaling.html
+  commentId: Overload:SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IgnorePixelScaling
+  fullName: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IgnorePixelScaling
+  nameWithType: SKLottieView.IgnorePixelScaling
 - uid: SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsAnimationEnabled
   name: IsAnimationEnabled
   href: api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.IsAnimationEnabled.html#SkiaSharp_Extended_UI_Blazor_Controls_SKLottieView_IsAnimationEnabled
@@ -3766,6 +3940,18 @@ references:
   commentId: F:SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationSpeedProperty
   fullName: SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationSpeedProperty
   nameWithType: SKLottieView.AnimationSpeedProperty
+- uid: SkiaSharp.Extended.UI.Controls.SKLottieView.Dispose
+  name: Dispose()
+  href: api/SkiaSharp.Extended.UI.Controls.SKLottieView.Dispose.html#SkiaSharp_Extended_UI_Controls_SKLottieView_Dispose
+  commentId: M:SkiaSharp.Extended.UI.Controls.SKLottieView.Dispose
+  fullName: SkiaSharp.Extended.UI.Controls.SKLottieView.Dispose()
+  nameWithType: SKLottieView.Dispose()
+- uid: SkiaSharp.Extended.UI.Controls.SKLottieView.Dispose*
+  name: Dispose
+  href: api/SkiaSharp.Extended.UI.Controls.SKLottieView.Dispose.html
+  commentId: Overload:SkiaSharp.Extended.UI.Controls.SKLottieView.Dispose
+  fullName: SkiaSharp.Extended.UI.Controls.SKLottieView.Dispose
+  nameWithType: SKLottieView.Dispose
 - uid: SkiaSharp.Extended.UI.Controls.SKLottieView.Duration
   name: Duration
   href: api/SkiaSharp.Extended.UI.Controls.SKLottieView.Duration.html#SkiaSharp_Extended_UI_Controls_SKLottieView_Duration
@@ -3802,30 +3988,6 @@ references:
   commentId: F:SkiaSharp.Extended.UI.Controls.SKLottieView.IsCompleteProperty
   fullName: SkiaSharp.Extended.UI.Controls.SKLottieView.IsCompleteProperty
   nameWithType: SKLottieView.IsCompleteProperty
-- uid: SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanged
-  name: OnHandlerChanged()
-  href: api/SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanged.html#SkiaSharp_Extended_UI_Controls_SKLottieView_OnHandlerChanged
-  commentId: M:SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanged
-  fullName: SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanged()
-  nameWithType: SKLottieView.OnHandlerChanged()
-- uid: SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanged*
-  name: OnHandlerChanged
-  href: api/SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanged.html
-  commentId: Overload:SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanged
-  fullName: SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanged
-  nameWithType: SKLottieView.OnHandlerChanged
-- uid: SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanging(Microsoft.Maui.Controls.HandlerChangingEventArgs)
-  name: OnHandlerChanging(HandlerChangingEventArgs)
-  href: api/SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanging.html#SkiaSharp_Extended_UI_Controls_SKLottieView_OnHandlerChanging_Microsoft_Maui_Controls_HandlerChangingEventArgs_
-  commentId: M:SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanging(Microsoft.Maui.Controls.HandlerChangingEventArgs)
-  fullName: SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanging(Microsoft.Maui.Controls.HandlerChangingEventArgs)
-  nameWithType: SKLottieView.OnHandlerChanging(HandlerChangingEventArgs)
-- uid: SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanging*
-  name: OnHandlerChanging
-  href: api/SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanging.html
-  commentId: Overload:SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanging
-  fullName: SkiaSharp.Extended.UI.Controls.SKLottieView.OnHandlerChanging
-  nameWithType: SKLottieView.OnHandlerChanging
 - uid: SkiaSharp.Extended.UI.Controls.SKLottieView.OnPaintSurface(SkiaSharp.SKCanvas,SkiaSharp.SKSize)
   name: OnPaintSurface(SKCanvas, SKSize)
   href: api/SkiaSharp.Extended.UI.Controls.SKLottieView.OnPaintSurface.html#SkiaSharp_Extended_UI_Controls_SKLottieView_OnPaintSurface_SkiaSharp_SKCanvas_SkiaSharp_SKSize_

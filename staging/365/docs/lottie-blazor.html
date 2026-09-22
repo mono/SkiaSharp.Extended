@@ -89,9 +89,10 @@
 
 <p><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Controls.SKLottieView.html"><code>SKLottieView</code></a> plays
 Lottie JSON in Blazor with SkiaSharp. It uses the shared
-<a href="lottie-player.html"><code>SKLottiePlayer</code></a> engine and <code>SKCanvasView</code>'s browser render
-loop, so frames are timed with a monotonic clock without a component render per
-frame.</p>
+<a href="lottie-player.html"><code>SKLottiePlayer</code></a> engine with
+<a href="animated-surface-blazor.html"><code>SKAnimatedSurfaceView</code></a>. The surface owns the
+browser render loop and timing, so frames are updated and painted together
+without a component render per frame.</p>
 <h2 id="quick-start">Quick Start</h2>
 <p>Install the package and add its namespaces to <code>_Imports.razor</code>:</p>
 <pre><code class="lang-bash">dotnet add package SkiaSharp.Extended.UI.Blazor
@@ -107,6 +108,16 @@ frame.</p>
 <p>The default <code>Repeat</code> is <code>SKLottieRepeat.Never</code>, so an animation plays once.
 The render loop runs only while the view is enabled, an animation is loaded,
 and playback has not completed.</p>
+<h2 id="rendering-backend">Rendering Backend</h2>
+<p><code>SKLottieView</code> inherits the generic surface's rendering options. Canvas is the
+default; select OpenGL when your app benefits from SkiaSharp's GPU-backed
+Blazor view. Set <code>IgnorePixelScaling</code> when the canvas should use CSS pixels
+rather than physical pixels:</p>
+<pre><code class="lang-razor">&lt;SKLottieView Source=&quot;animations/trophy.json&quot;
+              Backend=&quot;SKAnimatedSurfaceViewBackend.OpenGL&quot;
+              IgnorePixelScaling=&quot;true&quot;
+              style=&quot;width: 300px; height: 300px;&quot; /&gt;
+</code></pre>
 <h2 id="playback-controls">Playback Controls</h2>
 <p>Use <code>SKLottieRepeat</code> directly to select the repeat behavior:</p>
 <pre><code class="lang-razor">@* Play once *@
@@ -179,7 +190,7 @@ to the underlying canvas.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 4562040
+          source: PR #365 · 926d4f0
         </div>
       </div>
     </footer>
