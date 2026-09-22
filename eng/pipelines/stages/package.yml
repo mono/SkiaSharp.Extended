@@ -97,8 +97,7 @@ stages:
                         -ci `
                         -binaryLogName Pack.binlog `
                         '/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)' `
-                        '/p:BuildShippingOnly=true' `
-                        '/p:PublicApiType=Generate'
+                        '/p:BuildShippingOnly=true'
                       if ($LASTEXITCODE) {
                         throw "Arcade packaging failed with exit code $LASTEXITCODE."
                       }
@@ -115,29 +114,12 @@ stages:
                         -binaryLogName Pack.binlog
                         "/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)"
                         /p:BuildShippingOnly=true
-                        /p:PublicApiType=Generate
                       )
                       if [[ '${{ buildAgent.value.pool.os }}' == 'macos' ]]; then
                         args+=(/p:EnableCodeSigning=false)
                       fi
                       ./eng/common/build.sh "${args[@]}"
                     displayName: Pack
-                - pwsh: |
-                    $sourceRoot = Join-Path '$(Build.SourcesDirectory)' 'source'
-                    $artifactRoot = Join-Path '$(Build.ArtifactStagingDirectory)' 'PublicAPI'
-
-                    Get-ChildItem $sourceRoot -Filter 'PublicAPI.*.txt' -File -Recurse | ForEach-Object {
-                      $relativePath = [IO.Path]::GetRelativePath($sourceRoot, $_.FullName)
-                      $destination = Join-Path $artifactRoot $relativePath
-                      New-Item (Split-Path $destination) -ItemType Directory -Force | Out-Null
-                      Copy-Item $_.FullName $destination
-                    }
-                  displayName: Collect generated public APIs
-                - task: PublishPipelineArtifact@1
-                  displayName: Publish generated public APIs
-                  inputs:
-                    targetPath: $(Build.ArtifactStagingDirectory)/PublicAPI
-                    artifact: PublicAPI_${{ buildAgent.key }}
                 - ${{ if ne(buildAgent.value.pool.os, 'windows') }}:
                   - task: PublishPipelineArtifact@1
                     displayName: Publish ${{ buildAgent.key }} packages
