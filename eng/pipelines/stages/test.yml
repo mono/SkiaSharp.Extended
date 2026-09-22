@@ -50,6 +50,7 @@ stages:
                     -ci
                     -binaryLogName Validation.binlog
                     /p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)
+                    /p:PublicApiType=Generate
                   displayName: Test
               - ${{ else }}:
                 - bash: |
@@ -62,6 +63,7 @@ stages:
                       -ci
                       -binaryLogName Validation.binlog
                       "/p:OfficialBuildId=$(ARCADE_OFFICIAL_BUILD_ID)"
+                      /p:PublicApiType=Generate
                     )
                     if [[ '${{ buildAgent.value.pool.os }}' == 'macos' ]]; then
                       args+=(/p:EnableCodeSigning=false)

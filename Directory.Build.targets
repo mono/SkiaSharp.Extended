@@ -23,4 +23,7 @@
              Condition="'$(TF_BUILD)' == 'True'"
              Text="##vso[build.updatebuildnumber]$(PackageVersion)" />
   </Target>
+
+  <Import Project="$(MSBuildThisFileDirectory)source/PublicAPI.targets"
+          Condition="'$(IsShipping)' == 'true'" />
 </Project>
