@@ -41,11 +41,7 @@ public class SKUriLottieImageSource : SKLottieImageSource
 			if (stream is null)
 				throw new FileLoadException($"Unable to load Lottie animation uri \"{Uri}\".");
 
-			var animation = CreateAnimationBuilder().Build(stream);
-			if (animation is null)
-				throw new FileLoadException($"Unable to parse Lottie animation \"{Uri}\".");
-
-			return new SKLottieAnimation(animation);
+			return new SKLottieAnimation(SKLottieAnimationLoader.Load(stream));
 		}
 		catch (Exception ex)
 		{

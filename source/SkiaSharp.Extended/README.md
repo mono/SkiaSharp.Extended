@@ -12,6 +12,7 @@ see [PACKAGE-README.md](PACKAGE-README.md).
 - `BlurHash/` contains the BlurHash serializer, deserializer, and helpers.
 - `Comparer/` contains pixel-comparison APIs.
 - `Geometry/` contains shape and path helpers.
+- `Lottie/` contains the shared playback engine and internal source-loading helper.
 - `PathInterpolation/` contains path interpolation support.
 
 ## Build and test
