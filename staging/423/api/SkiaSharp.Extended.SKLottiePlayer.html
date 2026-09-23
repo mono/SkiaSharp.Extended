@@ -229,7 +229,8 @@ and rendering.</p>
   </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated.html">AnimationUpdated</a></dt>
-    <dd><p>Fires after each <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Seek.html#SkiaSharp_Extended_SKLottiePlayer_Seek_System_TimeSpan_">Seek(TimeSpan)</a> or <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Update.html#SkiaSharp_Extended_SKLottiePlayer_Update_System_TimeSpan_">Update(TimeSpan)</a> call that changes playback state.</p>
+    <dd><p>Fires after every <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Seek.html#SkiaSharp_Extended_SKLottiePlayer_Seek_System_TimeSpan_">Seek(TimeSpan)</a> and every processed <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Update.html#SkiaSharp_Extended_SKLottiePlayer_Update_System_TimeSpan_">Update(TimeSpan)</a>, even if the position is unchanged.
+Updates with no animation or after completion are ignored.</p>
 </dd>
   </dl>
 
@@ -254,7 +255,7 @@ and rendering.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #423 · 73d06f9
+          source: PR #423 · c75dc60
         </div>
       </div>
     </footer>

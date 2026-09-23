@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Event AnimationUpdated | SkiaSharp.Extended ">
       
-      <meta name="description" content="Fires after each  or  call that changes playback state.">
+      <meta name="description" content="Fires after every  and every processed , even if the position is unchanged. Updates with no animation or after completion are ignored.">
       <link rel="icon" href="../images/logo.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -98,7 +98,8 @@ Event AnimationUpdated  <a class="header-action link-secondary" title="View sour
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.dll</dd></dl>
 </div>
 
-<div class="markdown summary"><p>Fires after each <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Seek.html#SkiaSharp_Extended_SKLottiePlayer_Seek_System_TimeSpan_">Seek(TimeSpan)</a> or <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Update.html#SkiaSharp_Extended_SKLottiePlayer_Update_System_TimeSpan_">Update(TimeSpan)</a> call that changes playback state.</p>
+<div class="markdown summary"><p>Fires after every <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Seek.html#SkiaSharp_Extended_SKLottiePlayer_Seek_System_TimeSpan_">Seek(TimeSpan)</a> and every processed <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.Update.html#SkiaSharp_Extended_SKLottiePlayer_Update_System_TimeSpan_">Update(TimeSpan)</a>, even if the position is unchanged.
+Updates with no animation or after completion are ignored.</p>
 </div>
 <div class="markdown conceptual"></div>
 
@@ -110,7 +111,7 @@ Event AnimationUpdated  <a class="header-action link-secondary" title="View sour
 <h4 class="section">Returns</h4>
 <dl class="parameters">
   <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></dt>
-  <dd>Fires after each  or  call that changes playback state.</dd>
+  <dd>Fires after every  and every processed , even if the position is unchanged. Updates with no animation or after completion are ignored.</dd>
 </dl>
 
 
@@ -140,7 +141,7 @@ Event AnimationUpdated  <a class="header-action link-secondary" title="View sour
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #423 · 73d06f9
+          source: PR #423 · c75dc60
         </div>
       </div>
     </footer>
