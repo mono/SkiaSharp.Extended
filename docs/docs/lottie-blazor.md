@@ -7,6 +7,8 @@ host must be interactive in the browser. It uses the shared [`SKLottiePlayer`](l
 painted together without a component render per frame. Its monotonic timing and rolling frame-rate calculation are shared with the .NET
 MAUI animated surface.
 
+![The Blazor Lottie sample using the Canvas backend](../images/ui/controls/lottie/blazor-canvas.png)
+
 URI, JSON, and stream sources use one internal shared loader with cached Data URI resources and the default SkiaSharp font manager. Each
 load creates a private native animation for that view; `SKLottiePlayer` manages playback state, seeking, repeat behavior, and rendering.
 
@@ -54,6 +56,8 @@ rather than physical pixels:
 
 `SurfaceType` can also be a custom component derived from `SKCanvasView` or
 `SKGLView`.
+
+![The Blazor Lottie sample using the OpenGL backend](../images/ui/controls/lottie/blazor-opengl.png)
 
 ## Playback Controls
 
