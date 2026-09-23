@@ -1,0 +1,123 @@
+@page "/lottie"
+
+<PageTitle>Lottie</PageTitle>
+
+<h1>Lottie Animation</h1>
+
+<p>
+    This small example loads the bundled <code>trophy.json</code> animation through the browser <code>HttpClient</code>.
+</p>
+
+<div class="row g-3 align-items-end mb-3">
+    <div class="col-auto">
+        <label class="form-label" for="lottie-backend">Backend</label>
+        <select id="lottie-backend" class="form-select" @bind="surfaceName">
+            <option value="Canvas">Canvas</option>
+            <option value="OpenGL">OpenGL</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-primary" disabled="@(!hasAnimation)" @onclick="TogglePlayback">@playPauseText</button>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-secondary" disabled="@(!hasAnimation)" @onclick="Restart">Restart</button>
+    </div>
+</div>
+
+<div class="lottie-preview">
+    <SKLottieView @ref="lottieView"
+                  Source="source"
+                  Repeat="SKLottieRepeat.Restart()"
+                  IsAnimationEnabled="isPlaying"
+                  SurfaceType="surfaceType"
+                  AnimationLoaded="OnAnimationLoaded"
+                  AnimationFailed="OnAnimationFailed"
+                  ProgressChanged="OnProgressChanged"
+                  style="width: 100%; height: 100%;" />
+</div>
+
+<div class="mt-3 lottie-controls">
+    <label class="form-label" for="lottie-progress">Progress</label>
+    <input id="lottie-progress"
+           class="form-range"
+           type="range"
+           min="0"
+           max="@Math.Max(1, duration.TotalMilliseconds)"
+           step="10"
+           value="@progress.TotalMilliseconds.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+           disabled="@(!hasAnimation)"
+           @oninput="Seek" />
+    <p class="text-muted small mb-0">
+        @status · @FormatTime(progress) / @FormatTime(duration)
+    </p>
+</div>
+
+@code {
+    private readonly SKLottieImageSource source = SKLottieImageSource.FromUri(new Uri("animations/trophy.json", UriKind.Relative));
+    private SKLottieView? lottieView;
+    private Type surfaceType = typeof(SKCanvasView);
+    private bool hasAnimation;
+    private bool isPlaying = true;
+    private TimeSpan duration;
+    private TimeSpan progress;
+    private string status = "Loading animation";
+
+    private string surfaceName
+    {
+        get => surfaceType == typeof(SKGLView) ? "OpenGL" : "Canvas";
+        set => surfaceType = value == "OpenGL" ? typeof(SKGLView) : typeof(SKCanvasView);
+    }
+
+    private string playPauseText => isPlaying ? "Pause" : "Resume";
+
+    private void TogglePlayback()
+    {
+        isPlaying = !isPlaying;
+        status = isPlaying ? "Playing" : "Paused";
+    }
+
+    private void Restart()
+    {
+        isPlaying = true;
+        status = "Playing";
+        lottieView?.Seek(TimeSpan.Zero);
+    }
+
+    private void Seek(ChangeEventArgs e)
+    {
+        if (lottieView is null ||
+            !double.TryParse(
+                e.Value?.ToString(),
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var milliseconds))
+        {
+            return;
+        }
+
+        progress = TimeSpan.FromMilliseconds(milliseconds);
+        lottieView.Seek(progress);
+    }
+
+    private void OnAnimationLoaded()
+    {
+        hasAnimation = lottieView?.HasAnimation == true;
+        duration = lottieView?.Duration ?? TimeSpan.Zero;
+        progress = lottieView?.Progress ?? TimeSpan.Zero;
+        status = hasAnimation ? "Playing" : "No animation";
+    }
+
+    private void OnAnimationFailed(Exception exception)
+    {
+        hasAnimation = false;
+        status = $"Load failed: {exception.Message}";
+    }
+
+    private void OnProgressChanged(TimeSpan value)
+    {
+        progress = value;
+        status = isPlaying ? "Playing" : "Paused";
+    }
+
+    private static string FormatTime(TimeSpan value) => value.ToString(@"m\:ss\.fff");
+}
