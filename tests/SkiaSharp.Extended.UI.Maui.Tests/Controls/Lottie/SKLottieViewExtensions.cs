@@ -22,10 +22,13 @@ public static class SKLottieViewExtensions
 			tcs.SetResult(true);
 		}
 
-		void OnAnimationFailed(object? sender, EventArgs e)
+		void OnAnimationFailed(object? sender, SKLottieAnimationFailedEventArgs e)
 		{
 			Cleanup();
-			tcs.SetException(new Exception("Unable to load Lottie animation."));
+			if (e.Exception != null)
+				tcs.SetException(new Exception("Unable to load Lottie animation.", e.Exception));
+			else
+				tcs.SetException(new Exception("Unable to load Lottie animation (animation source returned null)."));
 		}
 
 		void OnTimeout()

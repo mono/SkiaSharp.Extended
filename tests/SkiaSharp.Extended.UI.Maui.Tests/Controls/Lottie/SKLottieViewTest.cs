@@ -147,6 +147,75 @@ public class SKLottieViewTest
 		Assert.Equal(0, animationCompleted);
 	}
 
+	[Fact]
+	public async Task AnimationFailedContainsException()
+	{
+		// create - use non-existent file to trigger actual load failure with exception
+		var source = new SKFileLottieImageSource { File = "nonexistent.json" };
+		var lottie = new SKLottieView { Source = source };
+		
+		SKLottieAnimationFailedEventArgs? failedEventArgs = null;
+		var tcs = new TaskCompletionSource<bool>();
+		
+		lottie.AnimationFailed += (s, e) =>
+		{
+			failedEventArgs = e;
+			tcs.SetResult(true);
+		};
+
+		// wait for animation to fail (using consistent 3000ms timeout)
+		var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(3000));
+		
+		// test - verify the failure event was triggered with proper event args
+		Assert.Equal(tcs.Task, completedTask);
+		Assert.NotNull(failedEventArgs);
+		Assert.IsType<SKLottieAnimationFailedEventArgs>(failedEventArgs);
+		// Verify exception is populated when file doesn't exist
+		Assert.NotNull(failedEventArgs.Exception);
+	}
+
+	[Fact]
+	public async Task AnimationFailedNotTriggeredForEmptySource()
+	{
+		// create - empty source should NOT trigger AnimationFailed (early return)
+		var source = new SKFileLottieImageSource();
+		var lottie = new SKLottieView { Source = source };
+		
+		var failedTriggered = false;
+		var loadedTriggered = false;
+		
+		lottie.AnimationFailed += (s, e) => failedTriggered = true;
+		lottie.AnimationLoaded += (s, e) => loadedTriggered = true;
+
+		// wait to ensure events have time to fire (using consistent 3000ms)
+		await Task.Delay(3000);
+		
+		// test - verify neither event was triggered for empty source
+		Assert.False(failedTriggered);
+		Assert.False(loadedTriggered);
+	}
+
+	[Fact]
+	public async Task AnimationLoadedNotTriggeredOnFailure()
+	{
+		// create - non-existent file to trigger failure
+		var source = new SKFileLottieImageSource { File = "nonexistent.json" };
+		var lottie = new SKLottieView { Source = source };
+		
+		var loadedTriggered = false;
+		var tcs = new TaskCompletionSource<bool>();
+		
+		lottie.AnimationLoaded += (s, e) => loadedTriggered = true;
+		lottie.AnimationFailed += (s, e) => tcs.SetResult(true);
+
+		// wait for failure
+		var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(3000));
+		
+		// test - verify AnimationLoaded was NOT triggered on failure
+		Assert.Equal(tcs.Task, completedTask);
+		Assert.False(loadedTriggered);
+	}
+
 	[Theory]
 	[InlineData(SKLottieRepeatMode.Restart, 1, 1)]
 	[InlineData(SKLottieRepeatMode.Restart, 2, 2)]
