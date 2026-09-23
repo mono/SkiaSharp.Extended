@@ -69,7 +69,10 @@ public class SKLottiePlayer
 	/// <summary>Fires when the animation completes all repeats.</summary>
 	public event EventHandler? AnimationCompleted;
 
-	/// <summary>Fires after each <see cref="Seek"/> or <see cref="Update"/> call that changes playback state.</summary>
+	/// <summary>
+	/// Fires after every <see cref="Seek"/> and every processed <see cref="Update"/>, even if the position is unchanged.
+	/// Updates with no animation or after completion are ignored.
+	/// </summary>
 	public event EventHandler? AnimationUpdated;
 
 	/// <summary>
@@ -93,6 +96,7 @@ public class SKLottiePlayer
 	/// <remarks>
 	/// Once complete, updates are ignored until <see cref="Seek"/>, a changed <see cref="Animation"/>, or a changed
 	/// <see cref="Repeat"/> value clears completion. Changing <see cref="AnimationSpeed"/> alone does not resume playback.
+	/// A negative delta moves by the signed, speed-scaled amount without consuming repeats or completing playback.
 	/// </remarks>
 	public void Update(TimeSpan deltaTime)
 	{
@@ -108,7 +112,14 @@ public class SKLottiePlayer
 
 		if (deltaTime < TimeSpan.Zero)
 		{
-			SetPosition(Progress + TimeSpan.FromTicks(scaledTicks));
+			var currentTicks = Progress.Ticks;
+			var durationTicks = Duration.Ticks;
+			var position = scaledTicks > 0 && scaledTicks >= durationTicks - currentTicks
+				? Duration
+				: scaledTicks < 0 && scaledTicks <= -currentTicks
+					? TimeSpan.Zero
+					: TimeSpan.FromTicks(currentTicks + scaledTicks);
+			SetPosition(position);
 			AnimationUpdated?.Invoke(this, EventArgs.Empty);
 			return;
 		}

@@ -49,6 +49,10 @@ public abstract class SKLottieImageSource : Element
 	/// </summary>
 	/// <param name="stream">The stream to snapshot. The caller retains ownership; its position advances to its end.</param>
 	/// <returns>An <see cref="SKStreamLottieImageSource"/> that produces a fresh memory stream for every load.</returns>
+	/// <remarks>
+	/// This overload reads synchronously and can block the calling thread. For slow streams, use the
+	/// asynchronous stream-factory overload. The snapshot is limited to 32 MiB.
+	/// </remarks>
 	public static object FromStream(Stream stream)
 	{
 		ArgumentNullException.ThrowIfNull(stream);
@@ -66,8 +70,11 @@ public abstract class SKLottieImageSource : Element
 			snapshot.Write(buffer, 0, read);
 		}
 
-		var bytes = snapshot.ToArray();
-		return FromStream(_ => Task.FromResult<Stream?>(new MemoryStream(bytes, writable: false)));
+		if (!snapshot.TryGetBuffer(out var bytes))
+			throw new InvalidOperationException("Unable to access the Lottie stream snapshot.");
+
+		return FromStream(_ => Task.FromResult<Stream?>(
+			new MemoryStream(bytes.Array!, bytes.Offset, bytes.Count, writable: false, publiclyVisible: false)));
 	}
 
 	/// <summary>

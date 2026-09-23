@@ -72,4 +72,110 @@ public class SKLottiePlayerTest
 		Assert.False(player.IsComplete);
 		Assert.Equal(TimeSpan.Zero, player.Progress);
 	}
+
+	[Theory]
+	[InlineData(1.0, false)]
+	[InlineData(-1.0, true)]
+	public void NegativeDelta_SaturatesWithoutOverflow(double speed, bool reachesEnd)
+	{
+		using var animation = CreateAnimation();
+		var player = new SKLottiePlayer { AnimationSpeed = speed, Animation = animation };
+		player.Seek(TimeSpan.FromTicks(1));
+
+		player.Update(TimeSpan.MinValue);
+
+		Assert.Equal(reachesEnd ? player.Duration : TimeSpan.Zero, player.Progress);
+		Assert.False(player.IsComplete);
+	}
+
+	[Fact]
+	public void NegativeDelta_WithNegativeSpeedMovesForwardWithoutConsumingRepeats()
+	{
+		using var animation = CreateAnimation();
+		var player = new SKLottiePlayer
+		{
+			AnimationSpeed = -1,
+			Repeat = SKLottieRepeat.Restart(1),
+			Animation = animation,
+		};
+		player.Seek(TimeSpan.FromSeconds(0.25));
+
+		player.Update(TimeSpan.FromSeconds(-0.5));
+
+		Assert.Equal(TimeSpan.FromSeconds(0.75), player.Progress);
+		Assert.False(player.IsComplete);
+	}
+
+	[Theory]
+	[InlineData(double.NaN, 0.5)]
+	[InlineData(0, 0.5)]
+	[InlineData(double.PositiveInfinity, 1)]
+	[InlineData(double.NegativeInfinity, 0)]
+	public void SpeedEdgeCases_ScaleAndClamp(double speed, double expectedSeconds)
+	{
+		using var animation = CreateAnimation();
+		var player = new SKLottiePlayer { AnimationSpeed = speed, Animation = animation };
+		player.Seek(TimeSpan.FromSeconds(0.5));
+
+		player.Update(TimeSpan.FromSeconds(1));
+
+		Assert.Equal(TimeSpan.FromSeconds(expectedSeconds), player.Progress);
+		Assert.Equal(double.IsInfinity(speed), player.IsComplete);
+	}
+
+	[Theory]
+	[InlineData(false)]
+	[InlineData(true)]
+	public void LargeDelta_FiniteRepeatsCompleteAtExpectedBoundary(bool reverse)
+	{
+		using var animation = CreateAnimation();
+		var player = new SKLottiePlayer
+		{
+			Repeat = reverse ? SKLottieRepeat.Reverse(1) : SKLottieRepeat.Restart(1),
+			Animation = animation,
+		};
+
+		player.Update(TimeSpan.MaxValue);
+
+		Assert.True(player.IsComplete);
+		Assert.Equal(reverse ? TimeSpan.Zero : player.Duration, player.Progress);
+	}
+
+	[Theory]
+	[InlineData(false)]
+	[InlineData(true)]
+	public void NegativeSpeed_FiniteRepeatsCompleteAtExpectedBoundary(bool reverse)
+	{
+		using var animation = CreateAnimation();
+		var player = new SKLottiePlayer
+		{
+			AnimationSpeed = -1,
+			Repeat = reverse ? SKLottieRepeat.Reverse(1) : SKLottieRepeat.Restart(1),
+			Animation = animation,
+		};
+
+		player.Update(TimeSpan.FromSeconds(4));
+
+		Assert.True(player.IsComplete);
+		Assert.Equal(reverse ? player.Duration : TimeSpan.Zero, player.Progress);
+	}
+
+	[Fact]
+	public void AnimationUpdated_FiresForProcessedNoOpButNotAfterCompletion()
+	{
+		using var animation = CreateAnimation();
+		var player = new SKLottiePlayer { Animation = animation };
+		var updates = 0;
+		player.AnimationUpdated += (_, _) => updates++;
+
+		player.Seek(TimeSpan.Zero);
+		player.AnimationSpeed = 0;
+		player.Update(TimeSpan.FromSeconds(1));
+		Assert.Equal(2, updates);
+
+		player.AnimationSpeed = 1;
+		player.Update(player.Duration);
+		player.Update(player.Duration);
+		Assert.Equal(3, updates);
+	}
 }

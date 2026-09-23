@@ -38,4 +38,23 @@ public class SKStreamLottieImageSourceTest : SKLottieImageSourceTest<SKStreamLot
 		Assert.True(first.IsLoaded);
 		Assert.True(second.IsLoaded);
 	}
+
+	[Fact]
+	public async Task LegacyStreamFactory_DoesNotDependOnInputStreamAfterSnapshot()
+	{
+		SKLottieImageSource source;
+		using (var input = File.OpenRead(TrophyJson))
+		{
+			source = Assert.IsType<SKStreamLottieImageSource>(SKLottieImageSource.FromStream(input));
+		}
+
+		var first = await source.LoadAnimationAsync(TestContext.Current.CancellationToken);
+		var second = await source.LoadAnimationAsync(TestContext.Current.CancellationToken);
+		using var firstAnimation = first.Animation;
+		using var secondAnimation = second.Animation;
+
+		Assert.True(first.IsLoaded);
+		Assert.True(second.IsLoaded);
+		Assert.NotSame(firstAnimation, secondAnimation);
+	}
 }
