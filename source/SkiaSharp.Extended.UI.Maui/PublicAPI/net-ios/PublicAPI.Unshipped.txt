@@ -1,1 +1,15 @@
 #nullable enable
+*REMOVED*SkiaSharp.Extended.UI.Controls.SKLottieAnimation
+*REMOVED*SkiaSharp.Extended.UI.Controls.SKLottieAnimation.Animation.get -> SkiaSharp.Skottie.Animation?
+*REMOVED*SkiaSharp.Extended.UI.Controls.SKLottieAnimation.IsLoaded.get -> bool
+*REMOVED*SkiaSharp.Extended.UI.Controls.SKLottieAnimation.SKLottieAnimation() -> void
+*REMOVED*SkiaSharp.Extended.UI.Controls.SKLottieAnimation.SKLottieAnimation(SkiaSharp.Skottie.Animation? animation) -> void
+*REMOVED*abstract SkiaSharp.Extended.UI.Controls.SKLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.UI.Controls.SKLottieAnimation!>!
+*REMOVED*override SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.UI.Controls.SKLottieAnimation!>!
+*REMOVED*override SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.UI.Controls.SKLottieAnimation!>!
+*REMOVED*override SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.UI.Controls.SKLottieAnimation!>!
+SkiaSharp.Extended.UI.Controls.SKLottieView.Dispose() -> void
+abstract SkiaSharp.Extended.UI.Controls.SKLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.SKLottieAnimation!>!
+override SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.SKLottieAnimation!>!
+override SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.SKLottieAnimation!>!
+override SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.SKLottieAnimation!>!
