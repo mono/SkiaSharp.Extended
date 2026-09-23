@@ -1,0 +1,20 @@
+﻿#nullable enable
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.AdditionalAttributes.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.IgnorePixelScaling.get -> bool
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.IgnorePixelScaling.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.Invalidate() -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.IsAnimationEnabled.get -> bool
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.IsAnimationEnabled.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnPaintSurface.get -> System.Action<SkiaSharp.SKCanvas!, SkiaSharp.SKSize>?
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnPaintSurface.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnUpdate.get -> System.Action<System.TimeSpan>?
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnUpdate.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.SKAnimatedSurfaceView() -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.SurfaceType.get -> System.Type!
+SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.SurfaceType.set -> void
+override SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder! builder) -> void
+override SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnAfterRender(bool firstRender) -> void
+override SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnParametersSet() -> void
+virtual SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnPaintSurfaceCore(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKSize size) -> void

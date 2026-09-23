@@ -12,6 +12,9 @@ dotnet add package SkiaSharp.Extended
 
 # MAUI controls (includes core)
 dotnet add package SkiaSharp.Extended.UI.Maui
+
+# Blazor components (includes core)
+dotnet add package SkiaSharp.Extended.UI.Blazor
 ```
 
 For MAUI projects, register the handler in `MauiProgram.cs`:
@@ -73,6 +76,16 @@ Play designer-created After Effects animations exported as Lottie JSON files.
 Celebrate achievements with customizable particle explosions.
 
 ![Confetti][confetti-img]
+
+---
+
+## SkiaSharp.Extended.UI.Blazor
+
+Ready-to-use Blazor components for browser-rendered SkiaSharp scenes.
+
+### [Animated Surface View](docs/animated-surface-blazor.md)
+
+Draw on demand or run browser-loop updates with `SKAnimatedSurfaceView`, using either Canvas or OpenGL.
 
 ---
 
