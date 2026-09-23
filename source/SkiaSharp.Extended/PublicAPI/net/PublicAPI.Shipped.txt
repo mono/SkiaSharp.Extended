@@ -1,0 +1,95 @@
+﻿#nullable enable
+SkiaSharp.Extended.SKBlurHash
+SkiaSharp.Extended.SKGeometry
+SkiaSharp.Extended.SKGeometryExtensions
+SkiaSharp.Extended.SKPathInterpolation
+SkiaSharp.Extended.SKPathInterpolation.From.get -> SkiaSharp.SKPath!
+SkiaSharp.Extended.SKPathInterpolation.Interpolate(float t) -> SkiaSharp.SKPath!
+SkiaSharp.Extended.SKPathInterpolation.MaxSegmentLength.get -> float
+SkiaSharp.Extended.SKPathInterpolation.Prepare() -> void
+SkiaSharp.Extended.SKPathInterpolation.SKPathInterpolation(SkiaSharp.SKPath! from, SkiaSharp.SKPath! to, float maxSegmentLength = 5) -> void
+SkiaSharp.Extended.SKPathInterpolation.To.get -> SkiaSharp.SKPath!
+SkiaSharp.Extended.SKPixelComparer
+SkiaSharp.Extended.SKPixelComparerOptions
+SkiaSharp.Extended.SKPixelComparerOptions.CompareAlpha.get -> bool
+SkiaSharp.Extended.SKPixelComparerOptions.CompareAlpha.set -> void
+SkiaSharp.Extended.SKPixelComparerOptions.SKPixelComparerOptions() -> void
+SkiaSharp.Extended.SKPixelComparerOptions.TolerancePerChannel.get -> bool
+SkiaSharp.Extended.SKPixelComparerOptions.TolerancePerChannel.set -> void
+SkiaSharp.Extended.SKPixelComparisonResult
+SkiaSharp.Extended.SKPixelComparisonResult.AbsoluteError.get -> int
+SkiaSharp.Extended.SKPixelComparisonResult.ChannelCount.get -> int
+SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelCount.get -> int
+SkiaSharp.Extended.SKPixelComparisonResult.ErrorPixelPercentage.get -> double
+SkiaSharp.Extended.SKPixelComparisonResult.MeanAbsoluteError.get -> double
+SkiaSharp.Extended.SKPixelComparisonResult.MeanSquaredError.get -> double
+SkiaSharp.Extended.SKPixelComparisonResult.NormalizedRootMeanSquaredError.get -> double
+SkiaSharp.Extended.SKPixelComparisonResult.PeakSignalToNoiseRatio.get -> double
+SkiaSharp.Extended.SKPixelComparisonResult.RootMeanSquaredError.get -> double
+SkiaSharp.Extended.SKPixelComparisonResult.SKPixelComparisonResult(int totalPixels, int errorPixelCount, int absoluteError) -> void
+SkiaSharp.Extended.SKPixelComparisonResult.SKPixelComparisonResult(int totalPixels, int errorPixelCount, int absoluteError, long sumSquaredError) -> void
+SkiaSharp.Extended.SKPixelComparisonResult.SKPixelComparisonResult(int totalPixels, int errorPixelCount, int absoluteError, long sumSquaredError, int channelCount) -> void
+SkiaSharp.Extended.SKPixelComparisonResult.SumSquaredError.get -> long
+SkiaSharp.Extended.SKPixelComparisonResult.TotalPixels.get -> int
+const SkiaSharp.Extended.SKGeometry.PI = 3.1415927 -> float
+static SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(System.ReadOnlySpan<char> blurHash, int width, int height, float punch = 1) -> SkiaSharp.SKBitmap!
+static SkiaSharp.Extended.SKBlurHash.DeserializeBitmap(string? blurHash, int width, int height, float punch = 1) -> SkiaSharp.SKBitmap!
+static SkiaSharp.Extended.SKBlurHash.DeserializeImage(System.ReadOnlySpan<char> blurHash, int width, int height, float punch = 1) -> SkiaSharp.SKImage!
+static SkiaSharp.Extended.SKBlurHash.DeserializeImage(string? blurHash, int width, int height, float punch = 1) -> SkiaSharp.SKImage!
+static SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKBitmap? bitmap, int componentsX, int componentsY) -> string!
+static SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKImage? image, int componentsX, int componentsY) -> string!
+static SkiaSharp.Extended.SKBlurHash.Serialize(SkiaSharp.SKPixmap? pixmap, int componentsX, int componentsY) -> string!
+static SkiaSharp.Extended.SKGeometry.Area(System.Collections.Generic.IList<SkiaSharp.SKPoint>! polygon) -> float
+static SkiaSharp.Extended.SKGeometry.CirclePoint(float radius, float radians) -> SkiaSharp.SKPoint
+static SkiaSharp.Extended.SKGeometry.CreateInterpolation(SkiaSharp.SKPath! from, SkiaSharp.SKPath! to, float t) -> SkiaSharp.SKPath!
+static SkiaSharp.Extended.SKGeometry.CreateRectanglePath(float width, float height, SkiaSharp.SKPathDirection direction = SkiaSharp.SKPathDirection.Clockwise) -> SkiaSharp.SKPath!
+static SkiaSharp.Extended.SKGeometry.CreateRegularPolygonPath(float radius, int points, bool horizontalBase = true, SkiaSharp.SKPathDirection direction = SkiaSharp.SKPathDirection.Clockwise) -> SkiaSharp.SKPath!
+static SkiaSharp.Extended.SKGeometry.CreateRegularStarPath(float outerRadius, float innerRadius, int points, SkiaSharp.SKPathDirection direction = SkiaSharp.SKPathDirection.Clockwise) -> SkiaSharp.SKPath!
+static SkiaSharp.Extended.SKGeometry.CreateSquarePath(float side, SkiaSharp.SKPathDirection direction = SkiaSharp.SKPathDirection.Clockwise) -> SkiaSharp.SKPath!
+static SkiaSharp.Extended.SKGeometry.CreateTrianglePath(float radius, SkiaSharp.SKPathDirection direction = SkiaSharp.SKPathDirection.Clockwise) -> SkiaSharp.SKPath!
+static SkiaSharp.Extended.SKGeometry.CreateTrianglePath(float width, float height, SkiaSharp.SKPathDirection direction = SkiaSharp.SKPathDirection.Clockwise) -> SkiaSharp.SKPath!
+static SkiaSharp.Extended.SKGeometry.Perimeter(System.Collections.Generic.IList<SkiaSharp.SKPoint>! polygon) -> float
+static SkiaSharp.Extended.SKGeometry.PointAlong(SkiaSharp.SKPoint a, SkiaSharp.SKPoint b, float pct) -> SkiaSharp.SKPoint
+static SkiaSharp.Extended.SKGeometryExtensions.DrawRegularPolygon(this SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPoint c, float radius, int points, SkiaSharp.SKPaint! paint) -> void
+static SkiaSharp.Extended.SKGeometryExtensions.DrawRegularPolygon(this SkiaSharp.SKCanvas! canvas, float cx, float cy, float radius, int points, SkiaSharp.SKPaint! paint) -> void
+static SkiaSharp.Extended.SKGeometryExtensions.DrawSquare(this SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPoint c, float side, SkiaSharp.SKPaint! paint) -> void
+static SkiaSharp.Extended.SKGeometryExtensions.DrawSquare(this SkiaSharp.SKCanvas! canvas, float cx, float cy, float side, SkiaSharp.SKPaint! paint) -> void
+static SkiaSharp.Extended.SKGeometryExtensions.DrawStar(this SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPoint c, float outerRadius, float innerRadius, int points, SkiaSharp.SKPaint! paint) -> void
+static SkiaSharp.Extended.SKGeometryExtensions.DrawStar(this SkiaSharp.SKCanvas! canvas, float cx, float cy, float outerRadius, float innerRadius, int points, SkiaSharp.SKPaint! paint) -> void
+static SkiaSharp.Extended.SKGeometryExtensions.DrawTriangle(this SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPoint c, SkiaSharp.SKSize r, SkiaSharp.SKPaint! paint) -> void
+static SkiaSharp.Extended.SKGeometryExtensions.DrawTriangle(this SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPoint c, float radius, SkiaSharp.SKPaint! paint) -> void
+static SkiaSharp.Extended.SKGeometryExtensions.DrawTriangle(this SkiaSharp.SKCanvas! canvas, SkiaSharp.SKRect rect, SkiaSharp.SKPaint! paint) -> void
+static SkiaSharp.Extended.SKGeometryExtensions.DrawTriangle(this SkiaSharp.SKCanvas! canvas, float cx, float cy, float radius, SkiaSharp.SKPaint! paint) -> void
+static SkiaSharp.Extended.SKGeometryExtensions.DrawTriangle(this SkiaSharp.SKCanvas! canvas, float cx, float cy, float rx, float ry, SkiaSharp.SKPaint! paint) -> void
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKBitmap! first, SkiaSharp.SKBitmap! second) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKBitmap! first, SkiaSharp.SKBitmap! second, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKBitmap! first, SkiaSharp.SKBitmap! second, SkiaSharp.SKBitmap! mask) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKBitmap! first, SkiaSharp.SKBitmap! second, SkiaSharp.SKBitmap! mask, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKBitmap! first, SkiaSharp.SKBitmap! second, int tolerance) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKBitmap! first, SkiaSharp.SKBitmap! second, int tolerance, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKImage! first, SkiaSharp.SKImage! second) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKImage! first, SkiaSharp.SKImage! second, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKImage! first, SkiaSharp.SKImage! second, SkiaSharp.SKImage! mask) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKImage! first, SkiaSharp.SKImage! second, SkiaSharp.SKImage! mask, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKImage! first, SkiaSharp.SKImage! second, int tolerance) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKImage! first, SkiaSharp.SKImage! second, int tolerance, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKPixmap! first, SkiaSharp.SKPixmap! second) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKPixmap! first, SkiaSharp.SKPixmap! second, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKPixmap! first, SkiaSharp.SKPixmap! second, SkiaSharp.SKPixmap! mask) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKPixmap! first, SkiaSharp.SKPixmap! second, SkiaSharp.SKPixmap! mask, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKPixmap! first, SkiaSharp.SKPixmap! second, int tolerance) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(SkiaSharp.SKPixmap! first, SkiaSharp.SKPixmap! second, int tolerance, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(string! firstFilename, string! secondFilename) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(string! firstFilename, string! secondFilename, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(string! firstFilename, string! secondFilename, int tolerance) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(string! firstFilename, string! secondFilename, int tolerance, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(string! firstFilename, string! secondFilename, string! maskFilename) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.Compare(string! firstFilename, string! secondFilename, string! maskFilename, SkiaSharp.Extended.SKPixelComparerOptions? options) -> SkiaSharp.Extended.SKPixelComparisonResult!
+static SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceImage(SkiaSharp.SKBitmap! first, SkiaSharp.SKBitmap! second) -> SkiaSharp.SKImage!
+static SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceImage(SkiaSharp.SKImage! first, SkiaSharp.SKImage! second) -> SkiaSharp.SKImage!
+static SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceImage(SkiaSharp.SKPixmap! first, SkiaSharp.SKPixmap! second) -> SkiaSharp.SKImage!
+static SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceImage(string! firstFilename, string! secondFilename) -> SkiaSharp.SKImage!
+static SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceMask(SkiaSharp.SKBitmap! first, SkiaSharp.SKBitmap! second) -> SkiaSharp.SKImage!
+static SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceMask(SkiaSharp.SKImage! first, SkiaSharp.SKImage! second) -> SkiaSharp.SKImage!
+static SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceMask(SkiaSharp.SKPixmap! first, SkiaSharp.SKPixmap! second) -> SkiaSharp.SKImage!
+static SkiaSharp.Extended.SKPixelComparer.GenerateDifferenceMask(string! firstFilename, string! secondFilename) -> SkiaSharp.SKImage!

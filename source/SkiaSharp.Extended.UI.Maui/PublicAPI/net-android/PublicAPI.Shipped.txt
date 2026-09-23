@@ -1,0 +1,274 @@
+﻿#nullable enable
+SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter
+SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.SKConfettiColorCollectionTypeConverter() -> void
+SkiaSharp.Extended.UI.Controls.Converters.SKConfettiEmitterBoundsTypeConverter
+SkiaSharp.Extended.UI.Controls.Converters.SKConfettiEmitterBoundsTypeConverter.SKConfettiEmitterBoundsTypeConverter() -> void
+SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter
+SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.SKConfettiPhysicsTypeConverter() -> void
+SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter
+SkiaSharp.Extended.UI.Controls.Converters.SKLottieImageSourceConverter.SKLottieImageSourceConverter() -> void
+SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter
+SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView
+SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabled.get -> bool
+SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabled.set -> void
+SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.SKAnimatedSurfaceView() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape
+SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.SKConfettiCircleShape() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection
+SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.SKConfettiColorCollection() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.SKConfettiColorCollection(System.Collections.Generic.IEnumerable<Microsoft.Maui.Graphics.Color!>! collection) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection.SKConfettiColorCollection(int capacity) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Duration.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Duration.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsComplete.get -> bool
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles.get -> int
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticles.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRate.get -> int
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRate.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticlesCreated -> System.Action<int>?
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.SKConfettiEmitter() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.SKConfettiEmitter(int particleRate, int maxParticles, double duration) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Update(System.TimeSpan deltaTime) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Rect.get -> Microsoft.Maui.Graphics.Rect
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.SKConfettiEmitterBounds() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.SKConfettiEmitterBounds(Microsoft.Maui.Graphics.Point point) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.SKConfettiEmitterBounds(Microsoft.Maui.Graphics.Rect rect) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.SKConfettiEmitterBounds(SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide side) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.SKConfettiEmitterBounds(double x, double y) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.SKConfettiEmitterBounds(double x, double y, double width, double height) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Side.get -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide.Bottom = 3 -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide.Bounds = 5 -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide.Center = 4 -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide.Left = 1 -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide.Right = 2 -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide
+SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide.Top = 0 -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide
+SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape
+SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatio.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.SKConfettiOvalShape() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.SKConfettiOvalShape(double heightRatio) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiPathShape
+SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.Path.get -> SkiaSharp.SKPath?
+SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.Path.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.SKConfettiPathShape() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.SKConfettiPathShape(SkiaSharp.SKPath! path) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiPhysics
+SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.Mass.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.SKConfettiPhysics() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.SKConfettiPhysics(double size, double mass) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiPhysics.Size.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection
+SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.SKConfettiPhysicsCollection() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.SKConfettiPhysicsCollection(System.Collections.Generic.IEnumerable<SkiaSharp.Extended.UI.Controls.SKConfettiPhysics>! collection) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection.SKConfettiPhysicsCollection(int capacity) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiRectShape
+SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.HeightRatio.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.HeightRatio.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.SKConfettiRectShape() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.SKConfettiRectShape(double heightRatio) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiShape
+SkiaSharp.Extended.UI.Controls.SKConfettiShape.Draw(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPaint! paint, float size) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiShape.SKConfettiShape() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection
+SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.SKConfettiShapeCollection() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.SKConfettiShapeCollection(System.Collections.Generic.IEnumerable<SkiaSharp.Extended.UI.Controls.SKConfettiShape!>! collection) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection.SKConfettiShapeCollection(int capacity) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape
+SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.SKConfettiSquareShape() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Colors.get -> SkiaSharp.Extended.UI.Controls.SKConfettiColorCollection?
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Colors.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Draw(SkiaSharp.SKCanvas! canvas) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Emitter.get -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitter?
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Emitter.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBounds.get -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBounds.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngle.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngle.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.FadeOut.get -> bool
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.FadeOut.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Gravity.get -> Microsoft.Maui.Graphics.Point
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Gravity.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsAnimationEnabled.get -> bool
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsAnimationEnabled.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsComplete.get -> bool
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Lifetime.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Lifetime.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocity.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocity.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumRotationVelocity.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumRotationVelocity.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumVelocity.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumVelocity.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocity.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocity.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumRotationVelocity.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumRotationVelocity.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Physics.get -> SkiaSharp.Extended.UI.Controls.SKConfettiPhysicsCollection?
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Physics.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.SKConfettiSystem() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Shapes.get -> SkiaSharp.Extended.UI.Controls.SKConfettiShapeCollection?
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Shapes.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.StartAngle.get -> double
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.StartAngle.set -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.Update(System.TimeSpan deltaTime) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystem.UpdateEmitterBounds(double width, double height) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystemCollection
+SkiaSharp.Extended.UI.Controls.SKConfettiSystemCollection.SKConfettiSystemCollection() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystemCollection.SKConfettiSystemCollection(System.Collections.Generic.IEnumerable<SkiaSharp.Extended.UI.Controls.SKConfettiSystem!>! collection) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiSystemCollection.SKConfettiSystemCollection(System.Collections.Generic.List<SkiaSharp.Extended.UI.Controls.SKConfettiSystem!>! list) -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiView
+SkiaSharp.Extended.UI.Controls.SKConfettiView.IsComplete.get -> bool
+SkiaSharp.Extended.UI.Controls.SKConfettiView.SKConfettiView() -> void
+SkiaSharp.Extended.UI.Controls.SKConfettiView.Systems.get -> SkiaSharp.Extended.UI.Controls.SKConfettiSystemCollection?
+SkiaSharp.Extended.UI.Controls.SKConfettiView.Systems.set -> void
+SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource
+SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.File.get -> string?
+SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.File.set -> void
+SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.SKFileLottieImageSource() -> void
+SkiaSharp.Extended.UI.Controls.SKLottieAnimation
+SkiaSharp.Extended.UI.Controls.SKLottieAnimation.Animation.get -> SkiaSharp.Skottie.Animation?
+SkiaSharp.Extended.UI.Controls.SKLottieAnimation.IsLoaded.get -> bool
+SkiaSharp.Extended.UI.Controls.SKLottieAnimation.SKLottieAnimation() -> void
+SkiaSharp.Extended.UI.Controls.SKLottieAnimation.SKLottieAnimation(SkiaSharp.Skottie.Animation? animation) -> void
+SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs
+SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.Exception.get -> System.Exception?
+SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.SKLottieAnimationFailedEventArgs() -> void
+SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs.SKLottieAnimationFailedEventArgs(System.Exception? exception) -> void
+SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs
+SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Duration.get -> System.TimeSpan
+SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Fps.get -> double
+SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.SKLottieAnimationLoadedEventArgs(Microsoft.Maui.Graphics.Size size, System.TimeSpan duration, double fps) -> void
+SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs.Size.get -> Microsoft.Maui.Graphics.Size
+SkiaSharp.Extended.UI.Controls.SKLottieImageSource
+SkiaSharp.Extended.UI.Controls.SKLottieImageSource.SKLottieImageSource() -> void
+SkiaSharp.Extended.UI.Controls.SKLottieImageSource.SourceChanged -> System.EventHandler!
+SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode
+SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode.Restart = 0 -> SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode
+SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode.Reverse = 1 -> SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode
+SkiaSharp.Extended.UI.Controls.SKLottieView
+SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationCompleted -> System.EventHandler?
+SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationFailed -> System.EventHandler<SkiaSharp.Extended.UI.Controls.SKLottieAnimationFailedEventArgs!>?
+SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationLoaded -> System.EventHandler<SkiaSharp.Extended.UI.Controls.SKLottieAnimationLoadedEventArgs!>?
+SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationSpeed.get -> double
+SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationSpeed.set -> void
+SkiaSharp.Extended.UI.Controls.SKLottieView.Duration.get -> System.TimeSpan
+SkiaSharp.Extended.UI.Controls.SKLottieView.IsComplete.get -> bool
+SkiaSharp.Extended.UI.Controls.SKLottieView.Progress.get -> System.TimeSpan
+SkiaSharp.Extended.UI.Controls.SKLottieView.Progress.set -> void
+SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCount.get -> int
+SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCount.set -> void
+SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatMode.get -> SkiaSharp.Extended.UI.Controls.SKLottieRepeatMode
+SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatMode.set -> void
+SkiaSharp.Extended.UI.Controls.SKLottieView.SKLottieView() -> void
+SkiaSharp.Extended.UI.Controls.SKLottieView.Source.get -> SkiaSharp.Extended.UI.Controls.SKLottieImageSource?
+SkiaSharp.Extended.UI.Controls.SKLottieView.Source.set -> void
+SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource
+SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.SKStreamLottieImageSource() -> void
+SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.Stream.get -> System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<System.IO.Stream?>!>?
+SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.Stream.set -> void
+SkiaSharp.Extended.UI.Controls.SKSurfaceView
+SkiaSharp.Extended.UI.Controls.SKSurfaceView.Invalidate() -> void
+SkiaSharp.Extended.UI.Controls.SKSurfaceView.SKSurfaceView() -> void
+SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource
+SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.SKUriLottieImageSource() -> void
+SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.Uri.get -> System.Uri?
+SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.Uri.set -> void
+SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources
+SkiaSharp.Extended.UI.Controls.Themes.SKConfettiViewResources.SKConfettiViewResources() -> void
+SkiaSharp.Extended.UI.Controls.Themes.SKLottieViewResources
+SkiaSharp.Extended.UI.Controls.Themes.SKLottieViewResources.SKLottieViewResources() -> void
+SkiaSharp.Extended.UI.Controls.Themes.SKSurfaceViewResources
+SkiaSharp.Extended.UI.Controls.Themes.SKSurfaceViewResources.SKSurfaceViewResources() -> void
+SkiaSharp.Extended.UI.Resource
+SkiaSharp.Extended.UI.Resource.Resource() -> void
+abstract SkiaSharp.Extended.UI.Controls.SKConfettiShape.OnDraw(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPaint! paint, float size) -> void
+abstract SkiaSharp.Extended.UI.Controls.SKLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.UI.Controls.SKLottieAnimation!>!
+override SkiaSharp.Extended.UI.Controls.Converters.SKConfettiColorCollectionTypeConverter.ConvertFromStringCore(string? value) -> object?
+override SkiaSharp.Extended.UI.Controls.Converters.SKConfettiEmitterBoundsTypeConverter.ConvertFromStringCore(string? value) -> object?
+override SkiaSharp.Extended.UI.Controls.Converters.SKConfettiPhysicsTypeConverter.ConvertFromStringCore(string? value) -> object?
+override SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext? context, System.Type! sourceType) -> bool
+override SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext? context, System.Type? destinationType) -> bool
+override SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object! value) -> object?
+override SkiaSharp.Extended.UI.Controls.Converters.StringTypeConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object? value, System.Type! destinationType) -> object?
+override SkiaSharp.Extended.UI.Controls.SKConfettiCircleShape.OnDraw(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPaint! paint, float size) -> void
+override SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.OnDraw(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPaint! paint, float size) -> void
+override SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.OnDraw(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPaint! paint, float size) -> void
+override SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.OnDraw(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPaint! paint, float size) -> void
+override SkiaSharp.Extended.UI.Controls.SKConfettiSquareShape.OnDraw(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKPaint! paint, float size) -> void
+override SkiaSharp.Extended.UI.Controls.SKConfettiView.OnPaintSurface(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKSize size) -> void
+override SkiaSharp.Extended.UI.Controls.SKConfettiView.Update(System.TimeSpan deltaTime) -> void
+override SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.IsEmpty.get -> bool
+override SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.UI.Controls.SKLottieAnimation!>!
+override SkiaSharp.Extended.UI.Controls.SKLottieView.OnPaintSurface(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKSize size) -> void
+override SkiaSharp.Extended.UI.Controls.SKLottieView.Update(System.TimeSpan deltaTime) -> void
+override SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.IsEmpty.get -> bool
+override SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.UI.Controls.SKLottieAnimation!>!
+override SkiaSharp.Extended.UI.Controls.SKSurfaceView.OnApplyTemplate() -> void
+override SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.IsEmpty.get -> bool
+override SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<SkiaSharp.Extended.UI.Controls.SKLottieAnimation!>!
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Burst(int particles) -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitter!
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Infinite(int particleRate) -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitter!
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Infinite(int particleRate, int maxParticles) -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitter!
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.Stream(int particleRate, double duration) -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitter!
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bottom.get -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bounds(Microsoft.Maui.Graphics.Rect rect) -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Bounds(double x, double y, double width, double height) -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Center.get -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Left.get -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Point(Microsoft.Maui.Graphics.Point point) -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Point(double x, double y) -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Right.get -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.Top.get -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.implicit operator SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds(Microsoft.Maui.Graphics.Point point) -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.implicit operator SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds(Microsoft.Maui.Graphics.Rect rect) -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds.implicit operator SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds(SkiaSharp.Extended.UI.Controls.SKConfettiEmitterSide side) -> SkiaSharp.Extended.UI.Controls.SKConfettiEmitterBounds
+static SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromFile(string! file) -> object!
+static SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromStream(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<System.IO.Stream?>!>! getter) -> object!
+static SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromStream(System.IO.Stream! stream) -> object!
+static SkiaSharp.Extended.UI.Controls.SKLottieImageSource.FromUri(System.Uri! uri) -> object!
+static SkiaSharp.Extended.UI.Controls.SKLottieImageSource.OnSourceChanged(Microsoft.Maui.Controls.BindableObject! bindable, object! oldValue, object! newValue) -> void
+static readonly SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.IsAnimationEnabledProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.DurationProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.IsCompleteProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.MaxParticlesProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiEmitter.ParticleRateProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiOvalShape.HeightRatioProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiPathShape.PathProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiRectShape.HeightRatioProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.ColorsProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterBoundsProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EmitterProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.EndAngleProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.FadeOutProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.GravityProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsAnimationEnabledProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.IsCompleteProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.LifetimeProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumInitialVelocityProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumRotationVelocityProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MaximumVelocityProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumInitialVelocityProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.MinimumRotationVelocityProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.PhysicsProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.ShapesProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiSystem.StartAngleProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiView.IsCompleteProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKConfettiView.SystemsProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKFileLottieImageSource.FileProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKLottieView.AnimationSpeedProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKLottieView.DurationProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKLottieView.IsCompleteProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKLottieView.ProgressProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatCountProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKLottieView.RepeatModeProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKLottieView.SourceProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKStreamLottieImageSource.StreamProperty -> Microsoft.Maui.Controls.BindableProperty!
+static readonly SkiaSharp.Extended.UI.Controls.SKUriLottieImageSource.UriProperty -> Microsoft.Maui.Controls.BindableProperty!
+virtual SkiaSharp.Extended.UI.Controls.SKAnimatedSurfaceView.Update(System.TimeSpan deltaTime) -> void
+virtual SkiaSharp.Extended.UI.Controls.SKLottieImageSource.IsEmpty.get -> bool
+virtual SkiaSharp.Extended.UI.Controls.SKSurfaceView.OnPaintSurface(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKSize size) -> void
