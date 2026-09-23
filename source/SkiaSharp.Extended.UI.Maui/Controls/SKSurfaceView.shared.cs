@@ -112,7 +112,13 @@ public class SKSurfaceView : TemplatedView
 
 		debugStatusOffset += debugStatusFont.Size;
 
-		debugStatusCanvas.DrawText(statusMessage, DebugStatusMargin, debugStatusOffset, debugStatusFont, debugStatusPaint);
+		debugStatusCanvas.DrawText(
+			statusMessage,
+			DebugStatusMargin,
+			debugStatusOffset,
+			SKTextAlign.Left,
+			debugStatusFont,
+			debugStatusPaint);
 	}
 #endif
 
