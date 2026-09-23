@@ -14,7 +14,49 @@ SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnUpdate.set -> vo
 SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.SKAnimatedSurfaceView() -> void
 SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.SurfaceType.get -> System.Type!
 SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.SurfaceType.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.SKLottieImageSource() -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AdditionalAttributes.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationCompleted.get -> Microsoft.AspNetCore.Components.EventCallback
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationCompleted.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationFailed.get -> Microsoft.AspNetCore.Components.EventCallback<System.Exception!>
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationFailed.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationLoaded.get -> Microsoft.AspNetCore.Components.EventCallback
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationLoaded.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationSpeed.get -> double
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.AnimationSpeed.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Dispose() -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Duration.get -> System.TimeSpan
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Fps.get -> double
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.HasAnimation.get -> bool
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IgnorePixelScaling.get -> bool
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IgnorePixelScaling.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IsAnimationEnabled.get -> bool
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IsAnimationEnabled.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IsComplete.get -> bool
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Progress.get -> System.TimeSpan
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.ProgressChanged.get -> Microsoft.AspNetCore.Components.EventCallback<System.TimeSpan>
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.ProgressChanged.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Repeat.get -> SkiaSharp.Extended.SKLottieRepeat
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Repeat.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.SKLottieView() -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Seek(System.TimeSpan position) -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Size.get -> SkiaSharp.SKSize
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Source.get -> SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource?
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Source.set -> void
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.SurfaceType.get -> System.Type!
+SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.SurfaceType.set -> void
+abstract SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.LoadAnimationAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<SkiaSharp.Extended.SKLottieAnimation!>!
 override SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder! builder) -> void
 override SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnAfterRender(bool firstRender) -> void
 override SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnParametersSet() -> void
+override SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder! builder) -> void
+override SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
+override SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.OnParametersSet() -> void
+static SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromJson(string! json) -> SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource!
+static SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromStream(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<System.IO.Stream!>>! streamFactory) -> SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource!
+static SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromUri(System.Uri! uri) -> SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource!
+static SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.implicit operator SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource?(string? value) -> SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource?
 virtual SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnPaintSurfaceCore(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKSize size) -> void
