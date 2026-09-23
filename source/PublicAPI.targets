@@ -1,9 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <PublicApiType
-        Condition="'$(PublicApiType)' == '' And
-                   ('$(CI)' == 'true' Or '$(TF_BUILD)' == 'true' Or '$(ContinuousIntegrationBuild)' == 'true')">Validate</PublicApiType>
+    <PublicApiType Condition="'$(PublicApiType)' == '' And ('$(CI)' == 'true' Or '$(TF_BUILD)' == 'true' Or '$(ContinuousIntegrationBuild)' == 'true')">Validate</PublicApiType>
     <PublicApiType Condition="'$(PublicApiType)' == ''">Generate</PublicApiType>
     <PublicApiTarget Condition="$(TargetFramework.StartsWith('netstandard'))">netstandard</PublicApiTarget>
     <PublicApiTarget Condition="'$(PublicApiTarget)' == '' And '$(TargetPlatformIdentifier)' == ''">net</PublicApiTarget>
@@ -14,10 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all"
-                      Condition="'$(PublicApiType)' == 'Validate'" />
-    <PackageReference Include="Mono.ApiTools.MSBuildTasks" PrivateAssets="all"
-                      Condition="'$(PublicApiType)' == 'Generate'" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" Condition="'$(PublicApiType)' == 'Validate'" />
+    <PackageReference Include="Mono.ApiTools.MSBuildTasks" PrivateAssets="all" Condition="'$(PublicApiType)' == 'Generate'" />
     <AdditionalFiles Include="$(PublicApiShippedFile)" />
     <AdditionalFiles Include="$(PublicApiUnshippedFile)" />
   </ItemGroup>
