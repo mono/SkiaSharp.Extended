@@ -1,0 +1,109 @@
+@page "/animatedsurface"
+
+<PageTitle>Animated Surface</PageTitle>
+
+<h1>Animated Surface View</h1>
+
+<p>
+    <code>SKAnimatedSurfaceView</code> hosts Canvas or OpenGL rendering with optional browser render-loop updates. Its timing is shared with
+    MAUI.
+    DEBUG builds display an FPS overlay after the scene is painted; release builds omit it.
+</p>
+
+<div class="row mb-3 align-items-end">
+    <div class="col-auto">
+        <label class="form-label">Backend</label>
+        <select class="form-select" @bind="surfaceName">
+            <option value="Canvas">Canvas</option>
+            <option value="OpenGL">OpenGL</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Animation</label>
+        <div class="form-check form-switch mt-1">
+            <input class="form-check-input" type="checkbox" id="enabledSwitch" @bind="isEnabled" />
+            <label class="form-check-label" for="enabledSwitch">
+                @(isEnabled ? "Running" : "Paused")
+            </label>
+        </div>
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Speed (@speed.ToString("0.00")&#xD7;)</label>
+        <input type="range" class="form-range speed-slider"
+               min="0.25" max="4" step="0.25" @bind="speed" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Size (@canvasSize px)</label>
+        <input type="range" class="form-range size-slider"
+               min="200" max="600" step="50" @bind="canvasSize" />
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-secondary" @onclick="Redraw">Redraw once</button>
+    </div>
+</div>
+
+<div class="canvas-wrapper" style="width: @(canvasSize)px; height: @(canvasSize)px;">
+    <SKAnimatedSurfaceView @ref="animatedSurface"
+                           SurfaceType="surfaceType"
+                           IsAnimationEnabled="isEnabled"
+                           OnUpdate="HandleUpdate"
+                           OnPaintSurface="HandlePaintSurface"
+                           style="width: 100%; height: 100%;" />
+</div>
+
+<div class="mt-2 text-muted small">
+    <code>angle = @angle.ToString("0.0")°</code>
+</div>
+
+@code {
+    private SKAnimatedSurfaceView? animatedSurface;
+    private Type surfaceType = typeof(SKCanvasView);
+    private bool isEnabled = true;
+    private double speed = 1.0;
+    private int canvasSize = 400;
+    private float angle;
+
+    private string surfaceName
+    {
+        get => surfaceType == typeof(SKGLView) ? "OpenGL" : "Canvas";
+        set => surfaceType = value == "OpenGL" ? typeof(SKGLView) : typeof(SKCanvasView);
+    }
+
+    private void HandleUpdate(TimeSpan delta)
+    {
+        angle = (angle + (float)(delta.TotalSeconds * 90.0 * speed)) % 360f;
+    }
+
+    private void HandlePaintSurface(SKCanvas canvas, SKSize size)
+    {
+        canvas.Clear(SKColors.White);
+
+        var cx = size.Width / 2f;
+        var cy = size.Height / 2f;
+        var side = Math.Min(cx, cy) * 0.6f;
+
+        canvas.Save();
+        canvas.Translate(cx, cy);
+        canvas.RotateDegrees(angle);
+
+        using var fillPaint = new SKPaint
+        {
+            IsAntialias = true,
+            Color = SKColors.CornflowerBlue,
+        };
+        canvas.DrawRect(-side, -side, side * 2, side * 2, fillPaint);
+
+        using var strokePaint = new SKPaint
+        {
+            IsAntialias = true,
+            Style = SKPaintStyle.Stroke,
+            Color = SKColors.DarkBlue,
+            StrokeWidth = 4,
+        };
+        canvas.DrawRect(-side, -side, side * 2, side * 2, strokePaint);
+
+        canvas.Restore();
+    }
+
+    private void Redraw() => animatedSurface?.Invalidate();
+}
