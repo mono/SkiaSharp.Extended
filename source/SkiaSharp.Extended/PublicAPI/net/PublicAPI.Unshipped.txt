@@ -1,1 +1,37 @@
 #nullable enable
+SkiaSharp.Extended.SKLottieAnimation
+SkiaSharp.Extended.SKLottieAnimation.Animation.get -> SkiaSharp.Skottie.Animation?
+SkiaSharp.Extended.SKLottieAnimation.IsLoaded.get -> bool
+SkiaSharp.Extended.SKLottieAnimation.SKLottieAnimation() -> void
+SkiaSharp.Extended.SKLottieAnimation.SKLottieAnimation(SkiaSharp.Skottie.Animation? animation) -> void
+SkiaSharp.Extended.SKLottiePlayer
+SkiaSharp.Extended.SKLottiePlayer.Animation.get -> SkiaSharp.Skottie.Animation?
+SkiaSharp.Extended.SKLottiePlayer.Animation.set -> void
+SkiaSharp.Extended.SKLottiePlayer.AnimationCompleted -> System.EventHandler?
+SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.get -> double
+SkiaSharp.Extended.SKLottiePlayer.AnimationSpeed.set -> void
+SkiaSharp.Extended.SKLottiePlayer.AnimationUpdated -> System.EventHandler?
+SkiaSharp.Extended.SKLottiePlayer.Duration.get -> System.TimeSpan
+SkiaSharp.Extended.SKLottiePlayer.HasAnimation.get -> bool
+SkiaSharp.Extended.SKLottiePlayer.IsComplete.get -> bool
+SkiaSharp.Extended.SKLottiePlayer.Progress.get -> System.TimeSpan
+SkiaSharp.Extended.SKLottiePlayer.Render(SkiaSharp.SKCanvas! canvas, SkiaSharp.SKRect rect) -> void
+SkiaSharp.Extended.SKLottiePlayer.Repeat.get -> SkiaSharp.Extended.SKLottieRepeat
+SkiaSharp.Extended.SKLottiePlayer.Repeat.set -> void
+SkiaSharp.Extended.SKLottiePlayer.SKLottiePlayer() -> void
+SkiaSharp.Extended.SKLottiePlayer.Seek(System.TimeSpan position) -> void
+SkiaSharp.Extended.SKLottiePlayer.Update(System.TimeSpan deltaTime) -> void
+SkiaSharp.Extended.SKLottieRepeat
+SkiaSharp.Extended.SKLottieRepeat.Count.get -> int
+SkiaSharp.Extended.SKLottieRepeat.Equals(SkiaSharp.Extended.SKLottieRepeat other) -> bool
+SkiaSharp.Extended.SKLottieRepeat.IsRepeating.get -> bool
+SkiaSharp.Extended.SKLottieRepeat.IsRestartRepeating.get -> bool
+SkiaSharp.Extended.SKLottieRepeat.IsReverseRepeating.get -> bool
+SkiaSharp.Extended.SKLottieRepeat.SKLottieRepeat() -> void
+override SkiaSharp.Extended.SKLottieRepeat.Equals(object? obj) -> bool
+override SkiaSharp.Extended.SKLottieRepeat.GetHashCode() -> int
+static SkiaSharp.Extended.SKLottieRepeat.Never.get -> SkiaSharp.Extended.SKLottieRepeat
+static SkiaSharp.Extended.SKLottieRepeat.Restart(int count = -1) -> SkiaSharp.Extended.SKLottieRepeat
+static SkiaSharp.Extended.SKLottieRepeat.Reverse(int count = -1) -> SkiaSharp.Extended.SKLottieRepeat
+static SkiaSharp.Extended.SKLottieRepeat.operator !=(SkiaSharp.Extended.SKLottieRepeat left, SkiaSharp.Extended.SKLottieRepeat right) -> bool
+static SkiaSharp.Extended.SKLottieRepeat.operator ==(SkiaSharp.Extended.SKLottieRepeat left, SkiaSharp.Extended.SKLottieRepeat right) -> bool
