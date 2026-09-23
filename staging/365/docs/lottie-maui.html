@@ -87,10 +87,13 @@
         <article data-uid="">
 <h1 id="lottie-animations">Lottie Animations</h1>
 
-<p>Lottie brings designer-created animations to your .NET MAUI apps. Instead of manually coding complex animations, designers export their After Effects animations as JSON files, and <a class="xref" href="../api/SkiaSharp.Extended.UI.Controls.SKLottieView.html"><code>SKLottieView</code></a> plays them natively with smooth, scalable vector graphics.</p>
+<p>Lottie brings designer-created animations to your .NET MAUI apps. Instead of manually coding complex animations, designers export their
+After Effects animations as JSON files, and <a class="xref" href="../api/SkiaSharp.Extended.UI.Controls.SKLottieView.html"><code>SKLottieView</code></a> plays them natively with
+smooth, scalable vector graphics.</p>
 <p><img src="../images/ui/controls/sklottieview/lottie.gif" alt="Lottie animation preview"></p>
 <blockquote>
-<p><strong>Other platforms:</strong> This page covers .NET MAUI. For Blazor WebAssembly, see <a href="lottie-blazor.html">Blazor Lottie Animations</a>. For the shared playback engine, see <a href="lottie-player.html">Lottie Player</a>.</p>
+<p><strong>Other platforms:</strong> This page covers .NET MAUI. For Blazor WebAssembly, see <a href="lottie-blazor.html">Blazor Lottie Animations</a>. For the shared
+playback engine, see <a href="lottie-player.html">Lottie Player</a>.</p>
 </blockquote>
 <blockquote>
 <p><strong>Development diagnostics:</strong> DEBUG builds show an FPS label after the Lottie
@@ -99,7 +102,9 @@ monotonic timing and rolling frame-rate calculation; this diagnostic is not
 included in release builds.</p>
 </blockquote>
 <h2 id="what-is-lottie">What is Lottie?</h2>
-<p><a href="https://airbnb.design/lottie/">Lottie</a> is an animation format created by Airbnb. Animations are designed in Adobe After Effects, exported as JSON using the <a href="https://github.com/airbnb/lottie-web">Bodymovin</a> plugin, and rendered natively on mobile and web. The name honors Lotte Reiniger, a pioneer of silhouette animation.</p>
+<p><a href="https://airbnb.design/lottie/">Lottie</a> is an animation format created by Airbnb. Animations are designed in Adobe After Effects,
+exported as JSON using the <a href="https://github.com/airbnb/lottie-web">Bodymovin</a> plugin, and rendered natively on mobile and web. The name
+honors Lotte Reiniger, a pioneer of silhouette animation.</p>
 <p><strong>Why Lottie?</strong></p>
 <ul>
 <li>🎨 Designers create animations visually in After Effects</li>
@@ -144,16 +149,20 @@ lottieView.Source = new SKStreamLottieImageSource { Stream = _ =&gt; OpenAnimati
 &lt;skia:SKLottieView Source=&quot;animation.json&quot; RepeatCount=&quot;-1&quot; RepeatMode=&quot;Reverse&quot; /&gt;
 </code></pre>
 <blockquote>
-<p><strong>Under the hood:</strong> The MAUI <code>SKLottieView</code> translates <code>RepeatCount</code> and <code>RepeatMode</code> into <a class="xref" href="../api/SkiaSharp.Extended.SKLottieRepeat.html"><code>SKLottieRepeat</code></a> values on the shared <a href="lottie-player.html"><code>SKLottiePlayer</code></a>. <code>Reverse</code> with <code>RepeatCount=&quot;0&quot;</code> still plays one full forward/back cycle; restart mode with <code>0</code> plays once.</p>
+<p><strong>Under the hood:</strong> The MAUI <code>SKLottieView</code> translates <code>RepeatCount</code> and <code>RepeatMode</code> into
+<a class="xref" href="../api/SkiaSharp.Extended.SKLottieRepeat.html"><code>SKLottieRepeat</code></a> values on the shared <a href="lottie-player.html"><code>SKLottiePlayer</code></a>. <code>Reverse</code> with
+<code>RepeatCount=&quot;0&quot;</code> still plays one full forward/back cycle; restart mode with <code>0</code> plays once.</p>
 </blockquote>
-<p>The built-in file, URI, and stream sources create a fresh owned native
-animation for each load. Public <code>SKLottieAnimation(Animation?)</code> wrappers remain
-caller-owned for compatibility. The legacy <code>SKLottieImageSource.FromStream(Stream)</code>
+<p>The built-in file, URI, and stream sources use one internal shared loader. Each load creates a private native animation for that view, and
+the view releases it when it is replaced or disposed. The legacy <code>SKLottieImageSource.FromStream(Stream)</code>
 snapshots the unread bytes (up to 32 MiB) without taking ownership of the input,
 then uses fresh memory streams for reloads; its input stream position advances
 to the end. Keep picker and application-service code in your app. For example,
 the sample's <strong>Select Lottie JSON</strong> button uses <code>FilePicker</code> and supplies
 <code>file.OpenReadAsync()</code> as a reloadable stream factory.</p>
+<p>You can derive from <code>SKLottieImageSource</code> and override <code>LoadAnimationAsync</code> when an app needs a custom database, archive,
+authentication, or resource pipeline. Return a new <code>SKLottieAnimation</code> result for each successful load; native Skottie animations contain
+mutable playback state and must not be shared between views.</p>
 <h3 id="speed-and-direction">Speed and direction</h3>
 <pre><code class="lang-xml">&lt;!-- Double speed --&gt;
 &lt;skia:SKLottieView Source=&quot;animation.json&quot; AnimationSpeed=&quot;2.0&quot; RepeatCount=&quot;-1&quot; /&gt;
@@ -303,7 +312,7 @@ lottieView.AnimationCompleted += (s, e) =&gt;
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 7eadca2
+          source: PR #365 · 2a91c62
         </div>
       </div>
     </footer>

@@ -87,9 +87,12 @@
         <article data-uid="">
 <h1 id="lottie-player">Lottie Player</h1>
 
-<p><a class="xref" href="../api/SkiaSharp.Extended.SKLottiePlayer.html"><code>SKLottiePlayer</code></a> is the platform-agnostic engine that drives Lottie animation playback. It manages timing, repeat logic, and rendering — you just feed it frames. Both the <a href="lottie-maui.html">MAUI <code>SKLottieView</code></a> and the <a href="lottie-blazor.html">Blazor <code>SKLottieView</code></a> are built on top of this player.</p>
+<p><a class="xref" href="../api/SkiaSharp.Extended.SKLottiePlayer.html"><code>SKLottiePlayer</code></a> is the platform-agnostic engine that drives loaded Lottie animations. It manages
+timing, repeat logic, seeking, and rendering. Both the <a href="lottie-maui.html">MAUI <code>SKLottieView</code></a> and the
+<a href="lottie-blazor.html">Blazor <code>SKLottieView</code></a> are thin platform hosts around this player.</p>
 <h2 id="when-to-use-the-player-directly">When to Use the Player Directly</h2>
-<p>Most apps should use the higher-level view components for <a href="lottie-maui.html">MAUI</a> or <a href="lottie-blazor.html">Blazor</a>. Use <code>SKLottiePlayer</code> directly when you need:</p>
+<p>Most apps should use the higher-level view components for <a href="lottie-maui.html">MAUI</a> or <a href="lottie-blazor.html">Blazor</a>. Use <code>SKLottiePlayer</code>
+directly when you need:</p>
 <ul>
 <li>A custom rendering host (WPF, Avalonia, console, tests)</li>
 <li>Full control over the frame loop</li>
@@ -107,10 +110,9 @@ var player = new SKLottiePlayer
     AnimationSpeed = 1.0
 };
 
-// 2. Load a Lottie animation
-var json = File.ReadAllText(&quot;animation.json&quot;);
-var animation = Animation.Parse(json);
-player.SetAnimation(animation);
+// 2. Load an animation
+using var animation = Animation.Parse(File.ReadAllText(&quot;animation.json&quot;));
+player.Animation = animation;
 
 // 3. On each frame tick, advance and render
 player.Update(deltaTime);               // deltaTime = time since last frame
@@ -188,7 +190,8 @@ player.Repeat = SKLottieRepeat.Reverse();
 // Ping-pong 2 additional times (3 forward/back cycles)
 player.Repeat = SKLottieRepeat.Reverse(2);
 </code></pre>
-<p>You can change the repeat mode mid-playback. The player preserves the current direction until the animation hits its next boundary, preventing abrupt mid-animation direction changes.
+<p>You can change the repeat mode mid-playback. The player preserves the current direction until the animation hits its next boundary,
+preventing abrupt mid-animation direction changes.
 <code>SKLottieRepeat.Reverse(0)</code> is one forward/back cycle; <code>Never</code> is the
 single-direction, play-once mode.</p>
 <h2 id="seeking">Seeking</h2>
@@ -244,9 +247,14 @@ player.AnimationUpdated += (s, e) =&gt;
 </thead>
 <tbody>
 <tr>
+<td style="text-align: left;"><code>Animation</code></td>
+<td style="text-align: left;"><code>Skottie.Animation?</code></td>
+<td style="text-align: left;">Current caller-owned native animation</td>
+</tr>
+<tr>
 <td style="text-align: left;"><code>Duration</code></td>
 <td style="text-align: left;"><code>TimeSpan</code></td>
-<td style="text-align: left;">Total animation duration (read-only, set when animation loads)</td>
+<td style="text-align: left;">Total animation duration (read-only, set when <code>Animation</code> changes)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>Progress</code></td>
@@ -276,14 +284,18 @@ player.AnimationUpdated += (s, e) =&gt;
 </tbody>
 </table>
 <h2 id="loading-and-resetting">Loading and Resetting</h2>
-<pre><code class="lang-csharp">// Load a new animation (resets progress, completion, and repeat counters)
-var animation = Animation.Parse(json);
-player.SetAnimation(animation);
+<pre><code class="lang-csharp">// Set a new animation (resets progress, completion, and repeat counters)
+using var animation = Animation.Parse(File.ReadAllText(&quot;animation.json&quot;));
+player.Animation = animation;
 
-// Clear the animation
-player.SetAnimation(null);
+// Return to the beginning without loading again
+player.Seek(TimeSpan.Zero);
+
+// Clear the player
+player.Animation = null;
 </code></pre>
-<p>The caller owns the <code>Skottie.Animation</code> instance and is responsible for disposing it when no longer needed.</p>
+<p>The caller owns the native <code>Animation</code> and disposes it when it is no longer used. Use <code>Seek</code> to move within the current animation. Do not
+share one native animation between players because Skottie animations contain mutable playback state.</p>
 <h2 id="learn-more">Learn More</h2>
 <ul>
 <li><a href="lottie-maui.html">MAUI Lottie Animations</a> — Use Lottie in .NET MAUI with <code>SKLottieView</code></li>
@@ -313,7 +325,7 @@ player.SetAnimation(null);
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 7eadca2
+          source: PR #365 · 2a91c62
         </div>
       </div>
     </footer>

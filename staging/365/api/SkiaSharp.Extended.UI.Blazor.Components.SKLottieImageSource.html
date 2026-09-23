@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class SKLottieImageSource | SkiaSharp.Extended ">
       
-      <meta name="description" content="An immutable, browser-specific source for Lottie JSON animation data.">
+      <meta name="description" content="A browser-specific source that loads Lottie animations.">
       <link rel="icon" href="../images/logo.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -97,12 +97,12 @@ Class SKLottieImageSource  <a class="header-action link-secondary" title="View s
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.UI.Blazor.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>An immutable, browser-specific source for Lottie JSON animation data.</p>
+  <div class="markdown summary"><p>A browser-specific source that loads Lottie animations.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class SKLottieImageSource : IEquatable&lt;SKLottieImageSource&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class SKLottieImageSource</code></pre>
   </div>
 
 
@@ -116,12 +116,6 @@ Class SKLottieImageSource  <a class="header-action link-secondary" title="View s
     </dd>
   </dl>
 
-  <dl class="typelist implements">
-    <dt>Implements</dt>
-    <dd>
-      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.html">SKLottieImageSource</a>&gt;</div>
-    </dd>
-  </dl>
 
 
   <dl class="typelist inheritedMembers">
@@ -137,10 +131,16 @@ Class SKLottieImageSource  <a class="header-action link-secondary" title="View s
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
     <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
     </div>
   </dd></dl>
 
@@ -148,22 +148,18 @@ Class SKLottieImageSource  <a class="header-action link-secondary" title="View s
 
 
 
-  <h2 class="section" id="methods">Methods
+  <h2 class="section" id="constructors">Constructors
 </h2>
 
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.Equals.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieImageSource_Equals_SkiaSharp_Extended_UI_Blazor_Components_SKLottieImageSource_">Equals(SKLottieImageSource?)</a></dt>
-    <dd></dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.Equals.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieImageSource_Equals_System_Object_">Equals(object?)</a></dt>
-    <dd></dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromBytes.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieImageSource_FromBytes_System_ReadOnlyMemory_System_Byte__">FromBytes(ReadOnlyMemory&lt;byte&gt;)</a></dt>
-    <dd><p>Creates a source from a private copy of UTF-encoded Lottie JSON bytes.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.-ctor.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieImageSource__ctor">SKLottieImageSource()</a></dt>
+    <dd><p>Initializes a Lottie image source.</p>
 </dd>
   </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.FromJson.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieImageSource_FromJson_System_String_">FromJson(string)</a></dt>
     <dd><p>Creates a source from raw Lottie JSON.</p>
@@ -181,8 +177,9 @@ The component disposes each returned stream after reading it.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.GetHashCode.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieImageSource_GetHashCode">GetHashCode()</a></dt>
-    <dd></dd>
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieImageSource.LoadAnimationAsync.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieImageSource_LoadAnimationAsync_System_Net_Http_HttpClient_System_Threading_CancellationToken_">LoadAnimationAsync(HttpClient?, CancellationToken)</a></dt>
+    <dd><p>Loads a fresh animation result.</p>
+</dd>
   </dl>
 
   <h2 class="section" id="operators">Operators
@@ -216,7 +213,7 @@ never raw JSON.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 7eadca2
+          source: PR #365 · 2a91c62
         </div>
       </div>
     </footer>

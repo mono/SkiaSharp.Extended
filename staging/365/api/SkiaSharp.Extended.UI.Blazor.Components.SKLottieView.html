@@ -103,7 +103,7 @@ with an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePl
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKLottieView : ComponentBase, IComponent, IHandleEvent, IHandleAfterRender, IAsyncDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public class SKLottieView : ComponentBase, IComponent, IHandleEvent, IHandleAfterRender, IDisposable</code></pre>
   </div>
 
 
@@ -124,7 +124,7 @@ with an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePl
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.icomponent">IComponent</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.ihandleevent">IHandleEvent</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.ihandleafterrender">IHandleAfterRender</a></div>
-      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iasyncdisposable">IAsyncDisposable</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
     </dd>
   </dl>
 
@@ -139,7 +139,7 @@ with an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePl
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.oninitializedasync">ComponentBase.OnInitializedAsync()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onparametersset">ComponentBase.OnParametersSet()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onparameterssetasync">ComponentBase.OnParametersSetAsync()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.statehaschanged">ComponentBase.StateHasChanged()</a>
@@ -240,14 +240,13 @@ with an <a class="xref" href="SkiaSharp.Extended.SKLottiePlayer.html">SKLottiePl
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.HasAnimation.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_HasAnimation">HasAnimation</a></dt>
-    <dd><p>Gets whether an animation is loaded and ready to play.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Fps.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_Fps">Fps</a></dt>
+    <dd><p>Gets the animation's frame rate.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.HttpClient.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_HttpClient">HttpClient</a></dt>
-    <dd><p>Gets or sets the HTTP client used for URI sources. When omitted, the component resolves
-a registered default <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.HttpClient.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_HttpClient">HttpClient</a> after interactivity begins.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.HasAnimation.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_HasAnimation">HasAnimation</a></dt>
+    <dd><p>Gets whether an animation is loaded and ready to play.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -266,18 +265,23 @@ a registered default <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Componen
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.IsLoading.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_IsLoading">IsLoading</a></dt>
-    <dd><p>Gets whether the animation is currently loading.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Progress.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_Progress">Progress</a></dt>
     <dd><p>Gets the current playback position.</p>
 </dd>
   </dl>
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.ProgressChanged.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_ProgressChanged">ProgressChanged</a></dt>
+    <dd><p>Reports playback progress about ten times per second while the animation is running.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Repeat.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_Repeat">Repeat</a></dt>
     <dd><p>How the animation repeats. Defaults to <a class="xref" href="SkiaSharp.Extended.SKLottieRepeat.Never.html#SkiaSharp_Extended_SKLottieRepeat_Never">Never</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Size.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_Size">Size</a></dt>
+    <dd><p>Gets the animation's natural size.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -301,7 +305,7 @@ The type must derive from <a class="xref" href="https://learn.microsoft.com/dotn
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.DisposeAsync.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_DisposeAsync">DisposeAsync()</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Dispose.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_Dispose">Dispose()</a></dt>
     <dd></dd>
   </dl>
   <dl class="jumplist">
@@ -316,20 +320,14 @@ because that would cause an infinite render loop.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.OnParametersSetAsync.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_OnParametersSetAsync">OnParametersSetAsync()</a></dt>
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.OnParametersSet.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_OnParametersSet">OnParametersSet()</a></dt>
     <dd><p>Method invoked when the component has received parameters from its parent in
 the render tree, and the incoming values have been assigned to properties.</p>
 </dd>
   </dl>
   <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.ReloadAsync.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_ReloadAsync_System_Threading_CancellationToken_">ReloadAsync(CancellationToken)</a></dt>
-    <dd><p>Reloads the current source, including an equal source. Before interactivity, the request
-is queued and completes after the component's first interactive render.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Restart.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_Restart">Restart()</a></dt>
-    <dd><p>Restarts the animation from the beginning with current settings.</p>
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.Seek.html#SkiaSharp_Extended_UI_Blazor_Components_SKLottieView_Seek_System_TimeSpan_">Seek(TimeSpan)</a></dt>
+    <dd><p>Seeks to an absolute playback position, clamped to the loaded animation's duration.</p>
 </dd>
   </dl>
 
@@ -354,7 +352,7 @@ is queued and completes after the component's first interactive render.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 7eadca2
+          source: PR #365 · 2a91c62
         </div>
       </div>
     </footer>

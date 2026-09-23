@@ -13,7 +13,8 @@ API Reference: https://mono.github.io/SkiaSharp.Extended/api/
 
 # SkiaSharp.Extended
 
-SkiaSharp.Extended brings powerful graphics utilities and .NET MAUI controls to your SkiaSharp projects—from blur hash placeholders to Lottie animations and confetti effects.
+SkiaSharp.Extended brings powerful graphics utilities and .NET MAUI controls to your SkiaSharp projects—from blur hash placeholders to
+Lottie animations and confetti effects.
 
 ## Getting Started
 
@@ -96,10 +97,9 @@ Celebrate achievements with customizable particle explosions.
 
 Ready-to-use Blazor components for browser-rendered SkiaSharp scenes.
 
-### [Surface Views](docs/animated-surface-blazor.md)
+### [Animated Surface View](docs/animated-surface-blazor.md)
 
-Draw on demand with `SKSurfaceView`, or add browser-loop updates with
-`SKAnimatedSurfaceView`, using either Canvas or OpenGL.
+Draw on demand or run browser-loop updates with `SKAnimatedSurfaceView`, using either Canvas or OpenGL.
 
 ### [Lottie Animations](docs/lottie-blazor.md)
 
@@ -123,17 +123,15 @@ playback engine.
 
 ---
 
-# Surface Views
+# Animated Surface View
 
-[`SKSurfaceView`](xref:SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView)
-is the common Canvas/OpenGL host for the Blazor components. It draws on demand;
 [`SKAnimatedSurfaceView`](xref:SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView)
-inherits it to connect update and drawing callbacks to the browser's
-animation-frame loop.
+hosts SkiaSharp Canvas or OpenGL drawing with optional browser animation-frame updates. Disable animation to use the same component for
+on-demand rendering.
 
 ![The animated surface sample using the Canvas backend](../images/ui/controls/animated-surface/canvas.png)
 
-## On-demand drawing
+## Quick Start
 
 Install the package:
 
@@ -149,17 +147,16 @@ Import the namespaces in `_Imports.razor`:
 @using SkiaSharp.Extended.UI.Blazor.Components
 ```
 
-Use `SKSurfaceView` when a page only needs explicit redraws. It selects and
-validates `SKCanvasView` or `SKGLView`, forwards canvas attributes, and exposes
-the same synchronous paint callback as its animated subclass:
+Set `IsAnimationEnabled` to `false` when a page only needs explicit redraws:
 
 ```razor
-<SKSurfaceView @ref="surface"
-               OnPaintSurface="Paint"
-               style="width: 400px; height: 300px;" />
+<SKAnimatedSurfaceView @ref="surface"
+                       IsAnimationEnabled="false"
+                       OnPaintSurface="Paint"
+                       style="width: 400px; height: 300px;" />
 
 @code {
-    private SKSurfaceView? surface;
+    private SKAnimatedSurfaceView? surface;
 
     private void Paint(SKCanvas canvas, SKSize size) => canvas.Clear(SKColors.CornflowerBlue);
 
@@ -169,8 +166,7 @@ the same synchronous paint callback as its animated subclass:
 
 ## Animation loop
 
-Use `SKAnimatedSurfaceView` when a Blazor page needs a SkiaSharp scene that
-moves smoothly without maintaining a separate timer. `OnUpdate` runs
+Enable animation when a Blazor page needs a SkiaSharp scene that moves smoothly without maintaining a separate timer. `OnUpdate` runs
 immediately before `OnPaintSurface` for every animated frame.
 
 ```razor
@@ -201,9 +197,8 @@ immediately before `OnPaintSurface` for every animated frame.
 
 ## Canvas and OpenGL
 
-The component renders an `SKCanvasView` by default. Set `SurfaceType` to
-`SKGLView` for GPU rendering. The selected type can also be a custom component
-derived from either supported view.
+The component renders an `SKCanvasView` by default. Set `SurfaceType` to `SKGLView` for GPU rendering. The selected type can also be a
+custom component derived from either supported view.
 
 ```razor
 <SKAnimatedSurfaceView SurfaceType="@typeof(SKGLView)"
@@ -212,21 +207,17 @@ derived from either supported view.
                        style="width: 400px; height: 300px;" />
 ```
 
-The component validates the type and wires the matching native paint callback.
-It does not automatically fall back when OpenGL is unavailable.
-`IgnorePixelScaling` is forwarded to the underlying SkiaSharp view. Additional
-attributes such as `class`, `id`, and `style` are forwarded to its canvas.
+The component validates the type and wires the matching native paint callback. It does not automatically fall back when OpenGL is
+unavailable. `IgnorePixelScaling` is forwarded to the underlying SkiaSharp view. Additional attributes such as `class`, `id`, and `style`
+are forwarded to its canvas.
 
 ![The animated surface sample using the OpenGL backend](../images/ui/controls/animated-surface/opengl.png)
 
 ## Pausing and on-demand redraws
 
-Set `IsAnimationEnabled` to pause updates and browser-driven repainting. A
-paused component can still draw a changed scene when you call `Invalidate()`.
-The first update after creating, resuming, or replacing the surface receives a
-zero delta so paused time is not added to the animation. Its timing is shared
-with the .NET MAUI animated surface, using a monotonic clock and a rolling
-frame-rate calculation.
+Set `IsAnimationEnabled` to pause updates and browser-driven repainting. A paused component can still draw a changed scene when you call
+`Invalidate()`. The first update after creating, resuming, or replacing the surface receives a zero delta so paused time is not added to the
+animation. Its timing is shared with the .NET MAUI animated surface, using a monotonic clock and a rolling frame-rate calculation.
 
 ```razor
 <button @onclick="ToggleAnimation">@(isPlaying ? "Pause" : "Play")</button>
@@ -247,14 +238,12 @@ frame-rate calculation.
 
 ## Development diagnostics
 
-DEBUG builds draw a small FPS label after your `OnPaintSurface` callback. It
-works with both Canvas and OpenGL surfaces, does not trigger component renders,
-and is omitted entirely from release builds.
+DEBUG builds draw a small FPS label after your `OnPaintSurface` callback. It works with both Canvas and OpenGL surfaces, does not trigger
+component renders, and is omitted entirely from release builds.
 
 ## Learn more
 
 - [SkiaSharp.Views.Blazor](https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor)
-- [Surface View API Reference](xref:SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView)
 - [API Reference](xref:SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView)
 
 
@@ -791,20 +780,18 @@ Or use the canvas extension methods which take position parameters directly.
 
 # Blazor Lottie Animations
 
-[`SKLottieView`](xref:SkiaSharp.Extended.UI.Blazor.Components.SKLottieView) plays
-Lottie JSON in Blazor WebAssembly and Interactive WebAssembly with SkiaSharp.
-It does not support Interactive Server or unrestricted Interactive Auto because
-SkiaSharp's browser rendering host must be interactive in the browser. It uses the shared
-[`SKLottiePlayer`](lottie-player.md) engine with
-[`SKAnimatedSurfaceView`](animated-surface-blazor.md). The surface owns the
-browser render loop and timing, so frames are updated and painted together
-without a component render per frame. Its monotonic timing and rolling
-frame-rate calculation are shared with the .NET MAUI animated surface.
-`SKAnimatedSurfaceView` inherits the on-demand Canvas/OpenGL handling from
-`SKSurfaceView`.
+[`SKLottieView`](xref:SkiaSharp.Extended.UI.Blazor.Components.SKLottieView) plays Lottie JSON in Blazor WebAssembly and Interactive
+WebAssembly with SkiaSharp. It does not support Interactive Server or unrestricted Interactive Auto because SkiaSharp's browser rendering
+host must be interactive in the browser. It uses the shared [`SKLottiePlayer`](lottie-player.md) engine with
+[`SKAnimatedSurfaceView`](animated-surface-blazor.md). The surface owns the browser render loop and timing, so frames are updated and
+painted together without a component render per frame. Its monotonic timing and rolling frame-rate calculation are shared with the .NET
+MAUI animated surface.
 
-In DEBUG builds, the underlying animated surface draws an FPS label after each
-Lottie frame. The diagnostic is not included in release builds.
+URI, JSON, and stream sources use one internal shared loader with cached Data URI resources and the default SkiaSharp font manager. Each
+load creates a private native animation for that view; `SKLottiePlayer` manages playback state, seeking, repeat behavior, and rendering.
+
+In DEBUG builds, the underlying animated surface draws an FPS label after each Lottie frame. The diagnostic is not included in release
+builds.
 
 ## Quick Start
 
@@ -875,50 +862,77 @@ additional forward/back cycles; `Reverse(0)` therefore performs one complete
 forward/back cycle. Use a negative `AnimationSpeed` to begin at the end and
 play in reverse.
 
-Pause or resume by binding `IsAnimationEnabled`; call `Restart()` through an
-`@ref` to begin again with the current settings:
+Pause or resume by binding `IsAnimationEnabled`. Use `Seek` from a slider,
+button, or other event handler. Bind `ProgressChanged` only when the page needs
+periodic progress reporting; the callback is throttled to about 10 updates per
+second rather than running for every animation frame:
 
 ```razor
 <SKLottieView @ref="lottieView"
               Source="animation.json"
-              IsAnimationEnabled="@isPlaying" />
+              IsAnimationEnabled="@isPlaying"
+              ProgressChanged="OnProgressChanged" />
 
 <button @onclick="() => isPlaying = !isPlaying">Pause or resume</button>
-<button @onclick="() => lottieView?.Restart()">Restart</button>
+<button @onclick="RestartAnimation">Restart</button>
+
+<input type="range"
+       min="0"
+       max="@Math.Max(1, duration.TotalMilliseconds)"
+       value="@progress.TotalMilliseconds"
+       @oninput="Seek" />
 
 @code {
     private SKLottieView? lottieView;
     private bool isPlaying = true;
+    private TimeSpan progress;
+    private TimeSpan duration;
+
+    private void RestartAnimation()
+    {
+        if (lottieView is not null)
+            lottieView.Seek(TimeSpan.Zero);
+    }
+
+    private void OnProgressChanged(TimeSpan value)
+    {
+        progress = value;
+        duration = lottieView?.Duration ?? TimeSpan.Zero;
+    }
+
+    private void Seek(ChangeEventArgs e)
+    {
+        if (lottieView is not null &&
+            double.TryParse(
+                e.Value?.ToString(),
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var milliseconds))
+        {
+            progress = TimeSpan.FromMilliseconds(milliseconds);
+            lottieView.Seek(progress);
+        }
+    }
 }
 ```
 
 ## Events and State
 
-`AnimationLoaded`, `AnimationFailed`, and `AnimationCompleted` report load and
-playback transitions. Completion is dispatched after the frame update has been
-rendered; there is deliberately no per-frame async callback.
+`AnimationLoaded`, `AnimationFailed`, and `AnimationCompleted` report load and playback transitions. Completion is dispatched after the
+frame update has been rendered. `ProgressChanged` is opt-in and throttled, so it does not create an async callback for every rendered frame.
 
-Read `IsLoading`, `HasAnimation`, `Duration`, `Progress`, and `IsComplete`
-through an `@ref`. Additional attributes such as `style` and `class` are passed
+Read `HasAnimation`, `Duration`, `Progress`, and `IsComplete` through an `@ref`.
+Additional attributes such as `style` and `class` are passed
 to the underlying canvas.
 
 ## Loading Sources
 
-Strings, including the quick-start example, are URLs relative to `wwwroot` or
-absolute URLs. URI loading uses the optional `HttpClient` parameter first, then
-the app's registered default `HttpClient`. Supply your authenticated client
-when an endpoint needs credentials:
+Strings, including the quick-start example, are URLs relative to `wwwroot` or absolute URLs. URI loading uses the app's registered default
+`HttpClient`. Use a custom `SKLottieImageSource` when an endpoint needs specialized authentication or request handling.
 
-```razor
-<SKLottieView Source="@SKLottieImageSource.FromUri(new Uri("api/animation", UriKind.Relative))"
-              HttpClient="@authenticatedClient" />
-```
-
-For data that is already in your app, use raw JSON, a copied byte payload, or
-a stream factory. The factory must return a fresh readable stream every time;
-the component disposes each stream after reading it. This keeps database, blob,
-and application-service integrations in your app layer rather than in the
-control API:
+For data that is already in your app, use raw JSON or a stream factory. The factory must return a fresh readable stream every time; the
+component disposes each stream after reading it. This keeps database, blob, and application-service integrations in your app layer rather
+than in the control API:
 
 ```csharp
 var source = SKLottieImageSource.FromStream(
@@ -926,11 +940,14 @@ var source = SKLottieImageSource.FromStream(
         blobStore.OpenAnimationAsync(cancellationToken)));
 ```
 
-Use `SKLottieImageSource.FromJson(json)` or `FromBytes(bytes)` when your app
-already has the payload. Browser storage and `InputFile` are also app-layer
-concerns. The sample page uses an `InputFile` picker with a 5 MiB limit and
-converts the selected JSON into `FromBytes`; picker types are not part of the
-library API. Call `ReloadAsync()` to intentionally reload an equal source.
+Use `SKLottieImageSource.FromJson(json)` when your app already has the payload. Browser storage and `InputFile` are also app-layer concerns.
+The sample page uses an `InputFile` picker with a 5 MiB limit and reads the selected JSON into `FromJson`; picker types are not part of the
+library API.
+
+For a fully custom loader, derive from `SKLottieImageSource` and override `LoadAnimationAsync`. The view supplies the registered default
+`HttpClient` and cancellation token. Return a new `SKLottieAnimation` result for each successful load; native Skottie animations contain
+mutable playback state and must not be shared between views. Assign a new custom source instance when its underlying data should be
+reloaded.
 
 ## Learn More
 
@@ -944,11 +961,14 @@ library API. Call `ReloadAsync()` to intentionally reload an equal source.
 
 # Lottie Animations
 
-Lottie brings designer-created animations to your .NET MAUI apps. Instead of manually coding complex animations, designers export their After Effects animations as JSON files, and [`SKLottieView`](xref:SkiaSharp.Extended.UI.Controls.SKLottieView) plays them natively with smooth, scalable vector graphics.
+Lottie brings designer-created animations to your .NET MAUI apps. Instead of manually coding complex animations, designers export their
+After Effects animations as JSON files, and [`SKLottieView`](xref:SkiaSharp.Extended.UI.Controls.SKLottieView) plays them natively with
+smooth, scalable vector graphics.
 
 ![Lottie animation preview][lottie-preview]
 
-> **Other platforms:** This page covers .NET MAUI. For Blazor WebAssembly, see [Blazor Lottie Animations](lottie-blazor.md). For the shared playback engine, see [Lottie Player](lottie-player.md).
+> **Other platforms:** This page covers .NET MAUI. For Blazor WebAssembly, see [Blazor Lottie Animations](lottie-blazor.md). For the shared
+> playback engine, see [Lottie Player](lottie-player.md).
 
 > **Development diagnostics:** DEBUG builds show an FPS label after the Lottie
 > frame is painted. The MAUI and Blazor animation surfaces share the same
@@ -957,7 +977,9 @@ Lottie brings designer-created animations to your .NET MAUI apps. Instead of man
 
 ## What is Lottie?
 
-[Lottie](https://airbnb.design/lottie/) is an animation format created by Airbnb. Animations are designed in Adobe After Effects, exported as JSON using the [Bodymovin](https://github.com/airbnb/lottie-web) plugin, and rendered natively on mobile and web. The name honors Lotte Reiniger, a pioneer of silhouette animation.
+[Lottie](https://airbnb.design/lottie/) is an animation format created by Airbnb. Animations are designed in Adobe After Effects,
+exported as JSON using the [Bodymovin](https://github.com/airbnb/lottie-web) plugin, and rendered natively on mobile and web. The name
+honors Lotte Reiniger, a pioneer of silhouette animation.
 
 **Why Lottie?**
 - 🎨 Designers create animations visually in After Effects
@@ -1012,16 +1034,21 @@ lottieView.Source = new SKStreamLottieImageSource { Stream = _ => OpenAnimationS
 <skia:SKLottieView Source="animation.json" RepeatCount="-1" RepeatMode="Reverse" />
 ```
 
-> **Under the hood:** The MAUI `SKLottieView` translates `RepeatCount` and `RepeatMode` into [`SKLottieRepeat`](xref:SkiaSharp.Extended.SKLottieRepeat) values on the shared [`SKLottiePlayer`](lottie-player.md). `Reverse` with `RepeatCount="0"` still plays one full forward/back cycle; restart mode with `0` plays once.
+> **Under the hood:** The MAUI `SKLottieView` translates `RepeatCount` and `RepeatMode` into
+> [`SKLottieRepeat`](xref:SkiaSharp.Extended.SKLottieRepeat) values on the shared [`SKLottiePlayer`](lottie-player.md). `Reverse` with
+> `RepeatCount="0"` still plays one full forward/back cycle; restart mode with `0` plays once.
 
-The built-in file, URI, and stream sources create a fresh owned native
-animation for each load. Public `SKLottieAnimation(Animation?)` wrappers remain
-caller-owned for compatibility. The legacy `SKLottieImageSource.FromStream(Stream)`
+The built-in file, URI, and stream sources use one internal shared loader. Each load creates a private native animation for that view, and
+the view releases it when it is replaced or disposed. The legacy `SKLottieImageSource.FromStream(Stream)`
 snapshots the unread bytes (up to 32 MiB) without taking ownership of the input,
 then uses fresh memory streams for reloads; its input stream position advances
 to the end. Keep picker and application-service code in your app. For example,
 the sample's **Select Lottie JSON** button uses `FilePicker` and supplies
 `file.OpenReadAsync()` as a reloadable stream factory.
+
+You can derive from `SKLottieImageSource` and override `LoadAnimationAsync` when an app needs a custom database, archive,
+authentication, or resource pipeline. Return a new `SKLottieAnimation` result for each successful load; native Skottie animations contain
+mutable playback state and must not be shared between views.
 
 ### Speed and direction
 
@@ -1134,11 +1161,14 @@ The `PART_DrawingSurface` name is required — it can be either `SKCanvasView` (
 
 # Lottie Player
 
-[`SKLottiePlayer`](xref:SkiaSharp.Extended.SKLottiePlayer) is the platform-agnostic engine that drives Lottie animation playback. It manages timing, repeat logic, and rendering — you just feed it frames. Both the [MAUI `SKLottieView`](lottie-maui.md) and the [Blazor `SKLottieView`](lottie-blazor.md) are built on top of this player.
+[`SKLottiePlayer`](xref:SkiaSharp.Extended.SKLottiePlayer) is the platform-agnostic engine that drives loaded Lottie animations. It manages
+timing, repeat logic, seeking, and rendering. Both the [MAUI `SKLottieView`](lottie-maui.md) and the
+[Blazor `SKLottieView`](lottie-blazor.md) are thin platform hosts around this player.
 
 ## When to Use the Player Directly
 
-Most apps should use the higher-level view components for [MAUI](lottie-maui.md) or [Blazor](lottie-blazor.md). Use `SKLottiePlayer` directly when you need:
+Most apps should use the higher-level view components for [MAUI](lottie-maui.md) or [Blazor](lottie-blazor.md). Use `SKLottiePlayer`
+directly when you need:
 
 - A custom rendering host (WPF, Avalonia, console, tests)
 - Full control over the frame loop
@@ -1158,10 +1188,9 @@ var player = new SKLottiePlayer
     AnimationSpeed = 1.0
 };
 
-// 2. Load a Lottie animation
-var json = File.ReadAllText("animation.json");
-var animation = Animation.Parse(json);
-player.SetAnimation(animation);
+// 2. Load an animation
+using var animation = Animation.Parse(File.ReadAllText("animation.json"));
+player.Animation = animation;
 
 // 3. On each frame tick, advance and render
 player.Update(deltaTime);               // deltaTime = time since last frame
@@ -1229,7 +1258,8 @@ player.Repeat = SKLottieRepeat.Reverse();
 player.Repeat = SKLottieRepeat.Reverse(2);
 ```
 
-You can change the repeat mode mid-playback. The player preserves the current direction until the animation hits its next boundary, preventing abrupt mid-animation direction changes.
+You can change the repeat mode mid-playback. The player preserves the current direction until the animation hits its next boundary,
+preventing abrupt mid-animation direction changes.
 `SKLottieRepeat.Reverse(0)` is one forward/back cycle; `Never` is the
 single-direction, play-once mode.
 
@@ -1272,7 +1302,8 @@ player.AnimationUpdated += (s, e) =>
 
 | Property | Type | Description |
 | :------- | :--- | :---------- |
-| `Duration` | `TimeSpan` | Total animation duration (read-only, set when animation loads) |
+| `Animation` | `Skottie.Animation?` | Current caller-owned native animation |
+| `Duration` | `TimeSpan` | Total animation duration (read-only, set when `Animation` changes) |
 | `Progress` | `TimeSpan` | Current playback position (read-only, advances via `Update`) |
 | `IsComplete` | `bool` | Whether all repeats have finished |
 | `HasAnimation` | `bool` | Whether an animation is currently loaded |
@@ -1282,15 +1313,19 @@ player.AnimationUpdated += (s, e) =>
 ## Loading and Resetting
 
 ```csharp
-// Load a new animation (resets progress, completion, and repeat counters)
-var animation = Animation.Parse(json);
-player.SetAnimation(animation);
+// Set a new animation (resets progress, completion, and repeat counters)
+using var animation = Animation.Parse(File.ReadAllText("animation.json"));
+player.Animation = animation;
 
-// Clear the animation
-player.SetAnimation(null);
+// Return to the beginning without loading again
+player.Seek(TimeSpan.Zero);
+
+// Clear the player
+player.Animation = null;
 ```
 
-The caller owns the `Skottie.Animation` instance and is responsible for disposing it when no longer needed.
+The caller owns the native `Animation` and disposes it when it is no longer used. Use `Seek` to move within the current animation. Do not
+share one native animation between players because Skottie animations contain mutable playback state.
 
 ## Learn More
 

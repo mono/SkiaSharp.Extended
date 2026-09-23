@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Surface Views | SkiaSharp.Extended </title>
+      <title>Animated Surface View | SkiaSharp.Extended </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Surface Views | SkiaSharp.Extended ">
+      <meta name="title" content="Animated Surface View | SkiaSharp.Extended ">
       
       
       <link rel="icon" href="../images/logo.ico">
@@ -85,15 +85,13 @@
         </div>
 
         <article data-uid="">
-<h1 id="surface-views">Surface Views</h1>
+<h1 id="animated-surface-view">Animated Surface View</h1>
 
-<p><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.html"><code>SKSurfaceView</code></a>
-is the common Canvas/OpenGL host for the Blazor components. It draws on demand;
-<a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.html"><code>SKAnimatedSurfaceView</code></a>
-inherits it to connect update and drawing callbacks to the browser's
-animation-frame loop.</p>
+<p><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.html"><code>SKAnimatedSurfaceView</code></a>
+hosts SkiaSharp Canvas or OpenGL drawing with optional browser animation-frame updates. Disable animation to use the same component for
+on-demand rendering.</p>
 <p><img src="../images/ui/controls/animated-surface/canvas.png" alt="The animated surface sample using the Canvas backend"></p>
-<h2 id="on-demand-drawing">On-demand drawing</h2>
+<h2 id="quick-start">Quick Start</h2>
 <p>Install the package:</p>
 <pre><code class="lang-bash">dotnet add package SkiaSharp.Extended.UI.Blazor
 </code></pre>
@@ -102,15 +100,14 @@ animation-frame loop.</p>
 @using SkiaSharp.Views.Blazor
 @using SkiaSharp.Extended.UI.Blazor.Components
 </code></pre>
-<p>Use <code>SKSurfaceView</code> when a page only needs explicit redraws. It selects and
-validates <code>SKCanvasView</code> or <code>SKGLView</code>, forwards canvas attributes, and exposes
-the same synchronous paint callback as its animated subclass:</p>
-<pre><code class="lang-razor">&lt;SKSurfaceView @ref=&quot;surface&quot;
-               OnPaintSurface=&quot;Paint&quot;
-               style=&quot;width: 400px; height: 300px;&quot; /&gt;
+<p>Set <code>IsAnimationEnabled</code> to <code>false</code> when a page only needs explicit redraws:</p>
+<pre><code class="lang-razor">&lt;SKAnimatedSurfaceView @ref=&quot;surface&quot;
+                       IsAnimationEnabled=&quot;false&quot;
+                       OnPaintSurface=&quot;Paint&quot;
+                       style=&quot;width: 400px; height: 300px;&quot; /&gt;
 
 @code {
-    private SKSurfaceView? surface;
+    private SKAnimatedSurfaceView? surface;
 
     private void Paint(SKCanvas canvas, SKSize size) =&gt; canvas.Clear(SKColors.CornflowerBlue);
 
@@ -118,8 +115,7 @@ the same synchronous paint callback as its animated subclass:</p>
 }
 </code></pre>
 <h2 id="animation-loop">Animation loop</h2>
-<p>Use <code>SKAnimatedSurfaceView</code> when a Blazor page needs a SkiaSharp scene that
-moves smoothly without maintaining a separate timer. <code>OnUpdate</code> runs
+<p>Enable animation when a Blazor page needs a SkiaSharp scene that moves smoothly without maintaining a separate timer. <code>OnUpdate</code> runs
 immediately before <code>OnPaintSurface</code> for every animated frame.</p>
 <pre><code class="lang-razor">&lt;SKAnimatedSurfaceView OnUpdate=&quot;Update&quot;
                        OnPaintSurface=&quot;Paint&quot;
@@ -146,26 +142,21 @@ immediately before <code>OnPaintSurface</code> for every animated frame.</p>
 }
 </code></pre>
 <h2 id="canvas-and-opengl">Canvas and OpenGL</h2>
-<p>The component renders an <code>SKCanvasView</code> by default. Set <code>SurfaceType</code> to
-<code>SKGLView</code> for GPU rendering. The selected type can also be a custom component
-derived from either supported view.</p>
+<p>The component renders an <code>SKCanvasView</code> by default. Set <code>SurfaceType</code> to <code>SKGLView</code> for GPU rendering. The selected type can also be a
+custom component derived from either supported view.</p>
 <pre><code class="lang-razor">&lt;SKAnimatedSurfaceView SurfaceType=&quot;@typeof(SKGLView)&quot;
                        IgnorePixelScaling=&quot;true&quot;
                        OnPaintSurface=&quot;Paint&quot;
                        style=&quot;width: 400px; height: 300px;&quot; /&gt;
 </code></pre>
-<p>The component validates the type and wires the matching native paint callback.
-It does not automatically fall back when OpenGL is unavailable.
-<code>IgnorePixelScaling</code> is forwarded to the underlying SkiaSharp view. Additional
-attributes such as <code>class</code>, <code>id</code>, and <code>style</code> are forwarded to its canvas.</p>
+<p>The component validates the type and wires the matching native paint callback. It does not automatically fall back when OpenGL is
+unavailable. <code>IgnorePixelScaling</code> is forwarded to the underlying SkiaSharp view. Additional attributes such as <code>class</code>, <code>id</code>, and <code>style</code>
+are forwarded to its canvas.</p>
 <p><img src="../images/ui/controls/animated-surface/opengl.png" alt="The animated surface sample using the OpenGL backend"></p>
 <h2 id="pausing-and-on-demand-redraws">Pausing and on-demand redraws</h2>
-<p>Set <code>IsAnimationEnabled</code> to pause updates and browser-driven repainting. A
-paused component can still draw a changed scene when you call <code>Invalidate()</code>.
-The first update after creating, resuming, or replacing the surface receives a
-zero delta so paused time is not added to the animation. Its timing is shared
-with the .NET MAUI animated surface, using a monotonic clock and a rolling
-frame-rate calculation.</p>
+<p>Set <code>IsAnimationEnabled</code> to pause updates and browser-driven repainting. A paused component can still draw a changed scene when you call
+<code>Invalidate()</code>. The first update after creating, resuming, or replacing the surface receives a zero delta so paused time is not added to the
+animation. Its timing is shared with the .NET MAUI animated surface, using a monotonic clock and a rolling frame-rate calculation.</p>
 <pre><code class="lang-razor">&lt;button @onclick=&quot;ToggleAnimation&quot;&gt;@(isPlaying ? &quot;Pause&quot; : &quot;Play&quot;)&lt;/button&gt;
 &lt;button @onclick=&quot;animatedSurface?.Invalidate()&quot;&gt;Redraw once&lt;/button&gt;
 
@@ -182,13 +173,11 @@ frame-rate calculation.</p>
 }
 </code></pre>
 <h2 id="development-diagnostics">Development diagnostics</h2>
-<p>DEBUG builds draw a small FPS label after your <code>OnPaintSurface</code> callback. It
-works with both Canvas and OpenGL surfaces, does not trigger component renders,
-and is omitted entirely from release builds.</p>
+<p>DEBUG builds draw a small FPS label after your <code>OnPaintSurface</code> callback. It works with both Canvas and OpenGL surfaces, does not trigger
+component renders, and is omitted entirely from release builds.</p>
 <h2 id="learn-more">Learn more</h2>
 <ul>
 <li><a href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor">SkiaSharp.Views.Blazor</a></li>
-<li><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.html">Surface View API Reference</a></li>
 <li><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.html">API Reference</a></li>
 </ul>
 
@@ -212,7 +201,7 @@ and is omitted entirely from release builds.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 7eadca2
+          source: PR #365 · 2a91c62
         </div>
       </div>
     </footer>

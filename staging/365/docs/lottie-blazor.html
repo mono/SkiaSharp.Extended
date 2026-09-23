@@ -87,19 +87,16 @@
         <article data-uid="">
 <h1 id="blazor-lottie-animations">Blazor Lottie Animations</h1>
 
-<p><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.html"><code>SKLottieView</code></a> plays
-Lottie JSON in Blazor WebAssembly and Interactive WebAssembly with SkiaSharp.
-It does not support Interactive Server or unrestricted Interactive Auto because
-SkiaSharp's browser rendering host must be interactive in the browser. It uses the shared
-<a href="lottie-player.html"><code>SKLottiePlayer</code></a> engine with
-<a href="animated-surface-blazor.html"><code>SKAnimatedSurfaceView</code></a>. The surface owns the
-browser render loop and timing, so frames are updated and painted together
-without a component render per frame. Its monotonic timing and rolling
-frame-rate calculation are shared with the .NET MAUI animated surface.
-<code>SKAnimatedSurfaceView</code> inherits the on-demand Canvas/OpenGL handling from
-<code>SKSurfaceView</code>.</p>
-<p>In DEBUG builds, the underlying animated surface draws an FPS label after each
-Lottie frame. The diagnostic is not included in release builds.</p>
+<p><a class="xref" href="../api/SkiaSharp.Extended.UI.Blazor.Components.SKLottieView.html"><code>SKLottieView</code></a> plays Lottie JSON in Blazor WebAssembly and Interactive
+WebAssembly with SkiaSharp. It does not support Interactive Server or unrestricted Interactive Auto because SkiaSharp's browser rendering
+host must be interactive in the browser. It uses the shared <a href="lottie-player.html"><code>SKLottiePlayer</code></a> engine with
+<a href="animated-surface-blazor.html"><code>SKAnimatedSurfaceView</code></a>. The surface owns the browser render loop and timing, so frames are updated and
+painted together without a component render per frame. Its monotonic timing and rolling frame-rate calculation are shared with the .NET
+MAUI animated surface.</p>
+<p>URI, JSON, and stream sources use one internal shared loader with cached Data URI resources and the default SkiaSharp font manager. Each
+load creates a private native animation for that view; <code>SKLottiePlayer</code> manages playback state, seeking, repeat behavior, and rendering.</p>
+<p>In DEBUG builds, the underlying animated surface draws an FPS label after each Lottie frame. The diagnostic is not included in release
+builds.</p>
 <h2 id="quick-start">Quick Start</h2>
 <p>Install the package and add its namespaces to <code>_Imports.razor</code>:</p>
 <pre><code class="lang-bash">dotnet add package SkiaSharp.Extended.UI.Blazor
@@ -149,49 +146,80 @@ rather than physical pixels:</p>
 additional forward/back cycles; <code>Reverse(0)</code> therefore performs one complete
 forward/back cycle. Use a negative <code>AnimationSpeed</code> to begin at the end and
 play in reverse.</p>
-<p>Pause or resume by binding <code>IsAnimationEnabled</code>; call <code>Restart()</code> through an
-<code>@ref</code> to begin again with the current settings:</p>
+<p>Pause or resume by binding <code>IsAnimationEnabled</code>. Use <code>Seek</code> from a slider,
+button, or other event handler. Bind <code>ProgressChanged</code> only when the page needs
+periodic progress reporting; the callback is throttled to about 10 updates per
+second rather than running for every animation frame:</p>
 <pre><code class="lang-razor">&lt;SKLottieView @ref=&quot;lottieView&quot;
               Source=&quot;animation.json&quot;
-              IsAnimationEnabled=&quot;@isPlaying&quot; /&gt;
+              IsAnimationEnabled=&quot;@isPlaying&quot;
+              ProgressChanged=&quot;OnProgressChanged&quot; /&gt;
 
 &lt;button @onclick=&quot;() =&gt; isPlaying = !isPlaying&quot;&gt;Pause or resume&lt;/button&gt;
-&lt;button @onclick=&quot;() =&gt; lottieView?.Restart()&quot;&gt;Restart&lt;/button&gt;
+&lt;button @onclick=&quot;RestartAnimation&quot;&gt;Restart&lt;/button&gt;
+
+&lt;input type=&quot;range&quot;
+       min=&quot;0&quot;
+       max=&quot;@Math.Max(1, duration.TotalMilliseconds)&quot;
+       value=&quot;@progress.TotalMilliseconds&quot;
+       @oninput=&quot;Seek&quot; /&gt;
 
 @code {
     private SKLottieView? lottieView;
     private bool isPlaying = true;
+    private TimeSpan progress;
+    private TimeSpan duration;
+
+    private void RestartAnimation()
+    {
+        if (lottieView is not null)
+            lottieView.Seek(TimeSpan.Zero);
+    }
+
+    private void OnProgressChanged(TimeSpan value)
+    {
+        progress = value;
+        duration = lottieView?.Duration ?? TimeSpan.Zero;
+    }
+
+    private void Seek(ChangeEventArgs e)
+    {
+        if (lottieView is not null &amp;&amp;
+            double.TryParse(
+                e.Value?.ToString(),
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var milliseconds))
+        {
+            progress = TimeSpan.FromMilliseconds(milliseconds);
+            lottieView.Seek(progress);
+        }
+    }
 }
 </code></pre>
 <h2 id="events-and-state">Events and State</h2>
-<p><code>AnimationLoaded</code>, <code>AnimationFailed</code>, and <code>AnimationCompleted</code> report load and
-playback transitions. Completion is dispatched after the frame update has been
-rendered; there is deliberately no per-frame async callback.</p>
-<p>Read <code>IsLoading</code>, <code>HasAnimation</code>, <code>Duration</code>, <code>Progress</code>, and <code>IsComplete</code>
-through an <code>@ref</code>. Additional attributes such as <code>style</code> and <code>class</code> are passed
+<p><code>AnimationLoaded</code>, <code>AnimationFailed</code>, and <code>AnimationCompleted</code> report load and playback transitions. Completion is dispatched after the
+frame update has been rendered. <code>ProgressChanged</code> is opt-in and throttled, so it does not create an async callback for every rendered frame.</p>
+<p>Read <code>HasAnimation</code>, <code>Duration</code>, <code>Progress</code>, and <code>IsComplete</code> through an <code>@ref</code>.
+Additional attributes such as <code>style</code> and <code>class</code> are passed
 to the underlying canvas.</p>
 <h2 id="loading-sources">Loading Sources</h2>
-<p>Strings, including the quick-start example, are URLs relative to <code>wwwroot</code> or
-absolute URLs. URI loading uses the optional <code>HttpClient</code> parameter first, then
-the app's registered default <code>HttpClient</code>. Supply your authenticated client
-when an endpoint needs credentials:</p>
-<pre><code class="lang-razor">&lt;SKLottieView Source=&quot;@SKLottieImageSource.FromUri(new Uri(&quot;api/animation&quot;, UriKind.Relative))&quot;
-              HttpClient=&quot;@authenticatedClient&quot; /&gt;
-</code></pre>
-<p>For data that is already in your app, use raw JSON, a copied byte payload, or
-a stream factory. The factory must return a fresh readable stream every time;
-the component disposes each stream after reading it. This keeps database, blob,
-and application-service integrations in your app layer rather than in the
-control API:</p>
+<p>Strings, including the quick-start example, are URLs relative to <code>wwwroot</code> or absolute URLs. URI loading uses the app's registered default
+<code>HttpClient</code>. Use a custom <code>SKLottieImageSource</code> when an endpoint needs specialized authentication or request handling.</p>
+<p>For data that is already in your app, use raw JSON or a stream factory. The factory must return a fresh readable stream every time; the
+component disposes each stream after reading it. This keeps database, blob, and application-service integrations in your app layer rather
+than in the control API:</p>
 <pre><code class="lang-csharp">var source = SKLottieImageSource.FromStream(
     cancellationToken =&gt; new ValueTask&lt;Stream&gt;(
         blobStore.OpenAnimationAsync(cancellationToken)));
 </code></pre>
-<p>Use <code>SKLottieImageSource.FromJson(json)</code> or <code>FromBytes(bytes)</code> when your app
-already has the payload. Browser storage and <code>InputFile</code> are also app-layer
-concerns. The sample page uses an <code>InputFile</code> picker with a 5 MiB limit and
-converts the selected JSON into <code>FromBytes</code>; picker types are not part of the
-library API. Call <code>ReloadAsync()</code> to intentionally reload an equal source.</p>
+<p>Use <code>SKLottieImageSource.FromJson(json)</code> when your app already has the payload. Browser storage and <code>InputFile</code> are also app-layer concerns.
+The sample page uses an <code>InputFile</code> picker with a 5 MiB limit and reads the selected JSON into <code>FromJson</code>; picker types are not part of the
+library API.</p>
+<p>For a fully custom loader, derive from <code>SKLottieImageSource</code> and override <code>LoadAnimationAsync</code>. The view supplies the registered default
+<code>HttpClient</code> and cancellation token. Return a new <code>SKLottieAnimation</code> result for each successful load; native Skottie animations contain
+mutable playback state and must not be shared between views. Assign a new custom source instance when its underlying data should be
+reloaded.</p>
 <h2 id="learn-more">Learn More</h2>
 <ul>
 <li><a href="lottie-player.html">Lottie Player</a> — shared playback semantics</li>
@@ -220,7 +248,7 @@ library API. Call <code>ReloadAsync()</code> to intentionally reload an equal so
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 7eadca2
+          source: PR #365 · 2a91c62
         </div>
       </div>
     </footer>

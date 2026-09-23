@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class SKAnimatedSurfaceView | SkiaSharp.Extended ">
       
-      <meta name="description" content="Renders SkiaSharp content through the browser&#39;s animation-frame loop.">
+      <meta name="description" content="Renders static or animated SkiaSharp content through a browser canvas or OpenGL surface.">
       <link rel="icon" href="../images/logo.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -97,12 +97,12 @@ Class SKAnimatedSurfaceView  <a class="header-action link-secondary" title="View
   <dl><dt>Assembly</dt><dd>SkiaSharp.Extended.UI.Blazor.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Renders SkiaSharp content through the browser's animation-frame loop.</p>
+  <div class="markdown summary"><p>Renders static or animated SkiaSharp content through a browser canvas or OpenGL surface.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SKAnimatedSurfaceView : SKSurfaceView, IComponent, IHandleEvent, IHandleAfterRender</code></pre>
+    <pre><code class="lang-csharp hljs">public class SKAnimatedSurfaceView : ComponentBase, IComponent, IHandleEvent, IHandleAfterRender</code></pre>
   </div>
 
 
@@ -113,7 +113,6 @@ Class SKAnimatedSurfaceView  <a class="header-action link-secondary" title="View
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase">ComponentBase</a></div>
-      <div><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.html">SKSurfaceView</a></div>
       <div><span class="xref">SKAnimatedSurfaceView</span></div>
     </dd>
   </dl>
@@ -132,27 +131,6 @@ Class SKAnimatedSurfaceView  <a class="header-action link-secondary" title="View
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnAfterRenderAsync.html#SkiaSharp_Extended_UI_Blazor_Components_SKSurfaceView_OnAfterRenderAsync_System_Boolean_">SKSurfaceView.OnAfterRenderAsync(bool)</a>
-    </div>
-    <div>
-      <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.Invalidate.html#SkiaSharp_Extended_UI_Blazor_Components_SKSurfaceView_Invalidate">SKSurfaceView.Invalidate()</a>
-    </div>
-    <div>
-      <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.BuildRenderTree.html#SkiaSharp_Extended_UI_Blazor_Components_SKSurfaceView_BuildRenderTree_Microsoft_AspNetCore_Components_Rendering_RenderTreeBuilder_">SKSurfaceView.BuildRenderTree(RenderTreeBuilder)</a>
-    </div>
-    <div>
-      <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.SurfaceType.html#SkiaSharp_Extended_UI_Blazor_Components_SKSurfaceView_SurfaceType">SKSurfaceView.SurfaceType</a>
-    </div>
-    <div>
-      <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.IgnorePixelScaling.html#SkiaSharp_Extended_UI_Blazor_Components_SKSurfaceView_IgnorePixelScaling">SKSurfaceView.IgnorePixelScaling</a>
-    </div>
-    <div>
-      <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnPaintSurface.html#SkiaSharp_Extended_UI_Blazor_Components_SKSurfaceView_OnPaintSurface">SKSurfaceView.OnPaintSurface</a>
-    </div>
-    <div>
-      <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.AdditionalAttributes.html#SkiaSharp_Extended_UI_Blazor_Components_SKSurfaceView_AdditionalAttributes">SKSurfaceView.AdditionalAttributes</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.oninitialized">ComponentBase.OnInitialized()</a>
     </div>
     <div>
@@ -168,7 +146,7 @@ Class SKAnimatedSurfaceView  <a class="header-action link-secondary" title="View
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.shouldrender">ComponentBase.ShouldRender()</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onafterrender">ComponentBase.OnAfterRender(bool)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.onafterrenderasync">ComponentBase.OnAfterRenderAsync(bool)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.componentbase.invokeasync#microsoft-aspnetcore-components-componentbase-invokeasync(system-action)">ComponentBase.InvokeAsync(Action)</a>
@@ -218,13 +196,8 @@ Class SKAnimatedSurfaceView  <a class="header-action link-secondary" title="View
 
 
   <h2 id="SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p>
-When animation is enabled, <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnUpdate.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_OnUpdate">OnUpdate</a> runs immediately before
-<a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.OnPaintSurface.html#SkiaSharp_Extended_UI_Blazor_Components_SKSurfaceView_OnPaintSurface">OnPaintSurface</a> on each rendered frame.
-</p>
-<p>
-Calling <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceView.Invalidate.html#SkiaSharp_Extended_UI_Blazor_Components_SKSurfaceView_Invalidate">Invalidate()</a> repaints once, including while animation is paused.
-</p>
+  <div class="markdown level0 remarks"><p>When animation is enabled, <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnUpdate.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_OnUpdate">OnUpdate</a> runs immediately before <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnPaintSurface.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_OnPaintSurface">OnPaintSurface</a> on each rendered frame.
+Disable animation and call <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.Invalidate.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_Invalidate">Invalidate()</a> for on-demand rendering.</p>
 </div>
 
   <h2 class="section" id="constructors">Constructors
@@ -239,9 +212,24 @@ Calling <a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKSurfaceV
 </h2>
 
   <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.AdditionalAttributes.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_AdditionalAttributes">AdditionalAttributes</a></dt>
+    <dd><p>Gets or sets additional HTML attributes forwarded to the underlying canvas.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.IgnorePixelScaling.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_IgnorePixelScaling">IgnorePixelScaling</a></dt>
+    <dd><p>Gets or sets whether rendering uses CSS pixels instead of physical pixels.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.IsAnimationEnabled.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_IsAnimationEnabled">IsAnimationEnabled</a></dt>
     <dd><p>Gets or sets whether browser animation frames update and repaint the view.
 Defaults to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnPaintSurface.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_OnPaintSurface">OnPaintSurface</a></dt>
+    <dd><p>Gets or sets the callback invoked to paint the current surface.</p>
 </dd>
   </dl>
   <dl class="jumplist">
@@ -249,10 +237,35 @@ Defaults to <a href="https://learn.microsoft.com/dotnet/csharp/language-referenc
     <dd><p>Gets or sets the callback invoked immediately before each animated paint.</p>
 </dd>
   </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.SurfaceType.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_SurfaceType">SurfaceType</a></dt>
+    <dd><p>Gets or sets the SkiaSharp browser view type used for rendering.
+The type must derive from <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor.skcanvasview">SKCanvasView</a> or <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.views.blazor.skglview">SKGLView</a>.</p>
+</dd>
+  </dl>
 
   <h2 class="section" id="methods">Methods
 </h2>
 
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.BuildRenderTree.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_BuildRenderTree_Microsoft_AspNetCore_Components_Rendering_RenderTreeBuilder_">BuildRenderTree(RenderTreeBuilder)</a></dt>
+    <dd><p>Renders the component to the supplied <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.rendering.rendertreebuilder">RenderTreeBuilder</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.Invalidate.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_Invalidate">Invalidate()</a></dt>
+    <dd><p>Schedules an on-demand repaint, including while animation is disabled.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnAfterRender.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_OnAfterRender_System_Boolean_">OnAfterRender(bool)</a></dt>
+    <dd><p>Method invoked after each time the component has rendered interactively and the UI has finished
+updating (for example, after elements have been added to the browser DOM). Any <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.elementreference">ElementReference</a>
+fields will be populated by the time this runs.</p>
+<p>This method is not invoked during prerendering or server-side rendering, because those processes
+are not attached to any live browser DOM and are already complete before the DOM is updated.</p>
+</dd>
+  </dl>
   <dl class="jumplist">
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnPaintSurfaceCore.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_OnPaintSurfaceCore_SkiaSharp_SKCanvas_SkiaSharp_SKSize_">OnPaintSurfaceCore(SKCanvas, SKSize)</a></dt>
     <dd><p>Invoked when the native surface needs to be painted.</p>
@@ -262,11 +275,6 @@ Defaults to <a href="https://learn.microsoft.com/dotnet/csharp/language-referenc
     <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnParametersSet.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_OnParametersSet">OnParametersSet()</a></dt>
     <dd><p>Method invoked when the component has received parameters from its parent in
 the render tree, and the incoming values have been assigned to properties.</p>
-</dd>
-  </dl>
-  <dl class="jumplist">
-    <dt><a class="xref" href="SkiaSharp.Extended.UI.Blazor.Components.SKAnimatedSurfaceView.OnSurfaceChanged.html#SkiaSharp_Extended_UI_Blazor_Components_SKAnimatedSurfaceView_OnSurfaceChanged">OnSurfaceChanged()</a></dt>
-    <dd><p>Invoked when the selected native surface type or captured instance changes.</p>
 </dd>
   </dl>
 
@@ -291,7 +299,7 @@ the render tree, and the incoming values have been assigned to properties.</p>
     <footer class="border-top text-secondary">
       <div class="container-xxl">
         <div class="flex-fill">
-          source: PR #365 · 7eadca2
+          source: PR #365 · 2a91c62
         </div>
       </div>
     </footer>
