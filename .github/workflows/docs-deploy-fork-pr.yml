@@ -5,9 +5,13 @@ name: "Docs - Fork PR - Deploy"
 # The "Docs - Deploy" build job uploads the site artifact; this workflow
 # downloads it and deploys to gh-pages/staging/{pr}/, then comments on the PR.
 #
-# Security: no untrusted code is executed here — we only deploy a pre-built
-# artifact produced by our own workflow. The workflow_run trigger always runs
-# with the base repository's token, regardless of where the PR originated.
+# Security: although no untrusted *code* runs on this runner, the artifact
+# content itself (HTML/JS built from fork PR sources) is untrusted and is
+# published verbatim to the project's GitHub Pages origin. To avoid letting
+# any fork contributor publish arbitrary web content unreviewed, the
+# publishing job below is gated behind the "fork-pr-preview" GitHub
+# Environment, which must be configured with required reviewers so a
+# maintainer approves each deployment before it runs.
 
 on:
   workflow_run:
@@ -30,6 +34,11 @@ jobs:
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.head_repository.full_name != github.repository
     runs-on: ubuntu-latest
+    # Requires a maintainer to approve the deployment before it publishes any
+    # fork-PR-built content to gh-pages. Configure required reviewers for this
+    # environment in the repository's Settings > Environments.
+    environment:
+      name: fork-pr-preview
     permissions:
       contents: write      # push to gh-pages
       pull-requests: write # comment on PR
