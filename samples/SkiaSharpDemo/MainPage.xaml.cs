@@ -2,6 +2,8 @@
 
 public partial class MainPage : ContentPage
 {
+	private bool isNavigating;
+
 	public MainPage()
 	{
 		InitializeComponent();
@@ -13,19 +15,37 @@ public partial class MainPage : ContentPage
 
 	public List<DemoGroup> Demos { get; }
 
-	private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+	private async void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		if (e.CurrentSelection.FirstOrDefault() is Demo demo)
 		{
-			NavigateTo(demo);
 			collectionView.SelectedItem = null;
+			await NavigateToAsync(demo);
 		}
 	}
 
-	private void NavigateTo(Demo demo)
+	private async void OnDemoTapped(object sender, TappedEventArgs e)
 	{
-		var page = Activator.CreateInstance(demo.PageType) as Page;
+		if (sender is BindableObject { BindingContext: Demo demo })
+			await NavigateToAsync(demo);
+	}
 
-		Navigation.PushAsync(page);
+	private async Task NavigateToAsync(Demo demo)
+	{
+		if (isNavigating)
+			return;
+
+		isNavigating = true;
+		try
+		{
+			if (Activator.CreateInstance(demo.PageType) is not Page page)
+				throw new InvalidOperationException($"The demo page type {demo.PageType} is not a Page.");
+
+			await Navigation.PushAsync(page);
+		}
+		finally
+		{
+			isNavigating = false;
+		}
 	}
 }
