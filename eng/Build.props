@@ -10,5 +10,8 @@
     <ProjectToBuild Include="$(RepoRoot)source\SkiaSharp.Extended.UI.Maui\SkiaSharp.Extended.UI.Maui.csproj"
                     BuildStep="2"
                     BuildInParallel="false" />
+    <ProjectToBuild Include="$(RepoRoot)source\SkiaSharp.Extended.UI.Blazor\SkiaSharp.Extended.UI.Blazor.csproj"
+                    BuildStep="3"
+                    BuildInParallel="false" />
   </ItemGroup>
 </Project>

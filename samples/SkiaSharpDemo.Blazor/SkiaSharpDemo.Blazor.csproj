@@ -28,12 +28,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
-    <PackageReference Include="SkiaSharp" />
     <PackageReference Include="SkiaSharp.Views.Blazor" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\source\SkiaSharp.Extended\SkiaSharp.Extended.csproj" />
+    <ProjectReference Include="..\..\source\SkiaSharp.Extended.UI.Blazor\SkiaSharp.Extended.UI.Blazor.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,6 @@
-﻿namespace SkiaSharp.Extended.UI.Controls;
+﻿using SkiaSharp.Extended.Internal;
+
+namespace SkiaSharp.Extended.UI.Controls;
 
 /// <summary>
 /// An animated surface view that extends <see cref="SKSurfaceView"/> with a timer-based rendering loop.
