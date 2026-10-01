@@ -44,7 +44,8 @@ confettiView.Systems.Add(new SKConfettiSystem
 ## Included controls
 
 - **`SKLottieView`** — plays Lottie JSON animations from app resources,
-  streams, or URIs, with repeat and playback controls.
+  streams, or URIs. It retains MAUI source and lifecycle behavior while
+  delegating playback, repeat, seeking, and rendering to the core player.
 - **`SKConfettiView`** — renders configurable particle systems with burst,
   stream, and infinite emission patterns.
 

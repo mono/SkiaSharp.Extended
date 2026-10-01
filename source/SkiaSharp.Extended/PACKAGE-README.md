@@ -34,6 +34,9 @@ the original. A `4 x 3` component hash is a useful default for most images.
   `SKBlurHash`.
 - **Geometry** — create shapes and work with paths through `SKGeometry` and
   `SKGeometryExtensions`.
+- **Lottie playback** — drive loaded animations with `SKLottiePlayer` and
+  `SKLottieRepeat`; platform UI adapters can share its repeat, seeking, and
+  rendering behavior.
 - **Path interpolation** — animate between compatible paths with
   `SKPathInterpolation`.
 - **Pixel comparison** — compare rendered images with `SKPixelComparer`.
@@ -41,7 +44,7 @@ the original. A `4 x 3` component hash is a useful default for most images.
 ## Compatibility
 
 The package supports `netstandard2.0` and `net10.0`, and depends on
-`SkiaSharp`.
+`SkiaSharp` and `SkiaSharp.Skottie`.
 
 ## Documentation and support
 

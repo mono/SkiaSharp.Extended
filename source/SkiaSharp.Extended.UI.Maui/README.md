@@ -9,8 +9,8 @@ see [PACKAGE-README.md](PACKAGE-README.md).
 
 ## Source layout
 
-- `Controls/Lottie/` contains `SKLottieView`, its image sources, and playback
-  support.
+- `Controls/Lottie/` contains `SKLottieView` and its MAUI image sources. The
+  core project owns the shared playback and source-loading implementation.
 - `Controls/Confetti/` contains `SKConfettiView` and its particle-system
   types.
 - `Controls/` also contains the shared surface and animation infrastructure.

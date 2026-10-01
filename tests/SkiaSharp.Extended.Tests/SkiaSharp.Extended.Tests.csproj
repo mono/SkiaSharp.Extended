@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" PrivateAssets="all" Condition="$([MSBuild]::IsOSPlatform('linux'))" />
+    <PackageReference Include="SkiaSharp.Skottie" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,10 +27,6 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\source\SkiaSharp.Extended\Utils\**\*.cs" Link="Utils\%(RecursiveDir)\%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
