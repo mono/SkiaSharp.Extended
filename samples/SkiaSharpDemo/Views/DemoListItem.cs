@@ -47,7 +47,13 @@ public class DemoListItem : SKCanvasView
 	public DemoListItem()
 	{
 		IgnorePixelScaling = true;
+
+		var tapGesture = new TapGestureRecognizer();
+		tapGesture.Tapped += OnTapped;
+		GestureRecognizers.Add(tapGesture);
 	}
+
+	public event EventHandler<TappedEventArgs>? Tapped;
 
 	public string Title
 	{
@@ -185,6 +191,9 @@ public class DemoListItem : SKCanvasView
 	{
 		if (bindable is DemoListItem item)
 		{
+			item.AutomationId = $"Demo_{item.Title.Replace(' ', '_')}";
+			SemanticProperties.SetDescription(item, item.Title);
+			SemanticProperties.SetHint(item, $"Open the {item.Title} demo");
 			item.titleString = new RichString()
 				.FontFamily("Segoe UI")
 				.Bold()
@@ -194,6 +203,9 @@ public class DemoListItem : SKCanvasView
 
 		OnInvalidate(bindable, oldValue, newValue);
 	}
+
+	private void OnTapped(object? sender, TappedEventArgs e) =>
+		Tapped?.Invoke(this, e);
 
 	private static void OnDescriptionUpdated(BindableObject bindable, object oldValue, object newValue)
 	{
